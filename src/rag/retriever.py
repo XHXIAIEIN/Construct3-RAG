@@ -83,10 +83,35 @@ class HybridRetriever:
             for r in results
         ]
 
-    def search_manual(self, query: str, top_k: int = 5) -> List[SearchResult]:
-        """Search manual documentation"""
-        from src.config import COLLECTION_MANUAL
-        return self.search_collection(COLLECTION_MANUAL, query, top_k)
+    def search_guide(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search guide documentation (getting started, tips, overview)"""
+        from src.config import COLLECTION_GUIDE
+        return self.search_collection(COLLECTION_GUIDE, query, top_k)
+
+    def search_interface(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search interface documentation (editor UI, dialogs, debugger)"""
+        from src.config import COLLECTION_INTERFACE
+        return self.search_collection(COLLECTION_INTERFACE, query, top_k)
+
+    def search_project(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search project primitives (events, objects, timelines)"""
+        from src.config import COLLECTION_PROJECT
+        return self.search_collection(COLLECTION_PROJECT, query, top_k)
+
+    def search_plugins(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search plugin reference documentation"""
+        from src.config import COLLECTION_PLUGINS
+        return self.search_collection(COLLECTION_PLUGINS, query, top_k)
+
+    def search_behaviors(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search behavior reference documentation"""
+        from src.config import COLLECTION_BEHAVIORS
+        return self.search_collection(COLLECTION_BEHAVIORS, query, top_k)
+
+    def search_scripting(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search scripting API documentation"""
+        from src.config import COLLECTION_SCRIPTING
+        return self.search_collection(COLLECTION_SCRIPTING, query, top_k)
 
     def search_terms(self, query: str, top_k: int = 10) -> List[SearchResult]:
         """Search translation terms"""
@@ -101,11 +126,16 @@ class HybridRetriever:
     def search_all(
         self,
         query: str,
-        top_k_per_collection: int = 3
+        top_k_per_collection: int = 2
     ) -> Dict[str, List[SearchResult]]:
         """Search all collections and return organized results"""
         results = {
-            "manual": self.search_manual(query, top_k_per_collection),
+            "guide": self.search_guide(query, top_k_per_collection),
+            "interface": self.search_interface(query, top_k_per_collection),
+            "project": self.search_project(query, top_k_per_collection),
+            "plugins": self.search_plugins(query, top_k_per_collection),
+            "behaviors": self.search_behaviors(query, top_k_per_collection),
+            "scripting": self.search_scripting(query, top_k_per_collection),
             "terms": self.search_terms(query, top_k_per_collection),
             "examples": self.search_examples(query, top_k_per_collection)
         }
@@ -115,13 +145,31 @@ class HybridRetriever:
         """Format search results as context for LLM"""
         context_parts = []
 
-        # Manual results
-        if results.get("manual"):
-            context_parts.append("### 手册文档\n")
-            for r in results["manual"]:
-                source = r.metadata.get("source", "unknown")
-                page = r.metadata.get("page", "")
-                context_parts.append(f"[来源: {source} P{page}]\n{r.text}\n")
+        def format_doc_result(r: SearchResult) -> str:
+            breadcrumb = r.metadata.get("breadcrumb", "")
+            h2 = r.metadata.get("h2_heading", "")
+            source = r.metadata.get("source", "")
+            header = f"[{breadcrumb}"
+            if h2:
+                header += f" > {h2}"
+            header += "]"
+            return f"{header}\n{r.text}\n来源: {source}\n"
+
+        # Document collections with their display names
+        doc_sections = [
+            ("guide", "入门指南"),
+            ("interface", "编辑器界面"),
+            ("project", "项目元素"),
+            ("plugins", "插件参考"),
+            ("behaviors", "行为参考"),
+            ("scripting", "脚本 API"),
+        ]
+
+        for key, title in doc_sections:
+            if results.get(key):
+                context_parts.append(f"\n### {title}\n")
+                for r in results[key]:
+                    context_parts.append(format_doc_result(r))
 
         # Term results
         if results.get("terms"):

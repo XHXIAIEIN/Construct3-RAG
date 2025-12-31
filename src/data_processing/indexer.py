@@ -160,12 +160,12 @@ class Indexer:
 def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant"""
     from src.config import (
-        QDRANT_HOST, QDRANT_PORT,
-        COLLECTION_MANUAL, COLLECTION_TERMS, COLLECTION_EXAMPLES,
-        EMBEDDING_MODEL
+        QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL, CSV_TERMS,
+        DOC_COLLECTIONS, ALL_COLLECTIONS,
+        COLLECTION_TERMS, COLLECTION_EXAMPLES,
     )
-    from src.data_processing.pdf_parser import process_all_manuals
-    from src.data_processing.csv_parser import process_terms, CSVParser
+    from src.data_processing.markdown_parser import MarkdownParser
+    from src.data_processing.csv_parser import CSVParser
     from src.data_processing.project_parser import process_example_projects
 
     indexer = Indexer(
@@ -174,28 +174,40 @@ def index_all_data(rebuild: bool = False):
         embedding_model=EMBEDDING_MODEL
     )
 
-    # 1. Index PDF manuals
-    print("\n=== Indexing PDF Manuals ===")
-    indexer.create_collection(COLLECTION_MANUAL, recreate=rebuild)
-    chunks = process_all_manuals()
-    if chunks:
-        docs = [
-            {
-                "id": f"manual_{i}",
-                "text": chunk.text,
-                "metadata": chunk.metadata
-            }
-            for i, chunk in enumerate(chunks)
-        ]
-        indexer.index_documents(COLLECTION_MANUAL, docs)
+    # Parse all markdown files once
+    print("\n=== Parsing Markdown Documentation ===")
+    md_parser = MarkdownParser()
+    all_chunks = md_parser.parse_directory()
 
-    # 2. Index translation terms
+    # Group chunks by collection
+    chunks_by_collection = {col: [] for col in DOC_COLLECTIONS}
+    for chunk in all_chunks:
+        collection = chunk.metadata.get('collection')
+        if collection in chunks_by_collection:
+            chunks_by_collection[collection].append(chunk)
+
+    # Index each document collection
+    for collection in DOC_COLLECTIONS:
+        chunks = chunks_by_collection[collection]
+        print(f"\n=== Indexing {collection} ({len(chunks)} chunks) ===")
+        indexer.create_collection(collection, recreate=rebuild)
+        if chunks:
+            docs = [
+                {
+                    "id": f"{collection}_{i}",
+                    "text": chunk.text,
+                    "metadata": chunk.metadata
+                }
+                for i, chunk in enumerate(chunks)
+            ]
+            indexer.index_documents(collection, docs)
+
+    # Index translation terms
     print("\n=== Indexing Translation Terms ===")
     indexer.create_collection(COLLECTION_TERMS, recreate=rebuild)
-    parser = CSVParser()
-    from src.config import CSV_TERMS
+    csv_parser = CSVParser()
     if CSV_TERMS.exists():
-        entries = parser.parse_file(CSV_TERMS)
+        entries = csv_parser.parse_file(CSV_TERMS)
         docs = [
             {
                 "id": f"term_{i}",
@@ -212,7 +224,7 @@ def index_all_data(rebuild: bool = False):
         ]
         indexer.index_documents(COLLECTION_TERMS, docs)
 
-    # 3. Index example projects
+    # Index example projects
     print("\n=== Indexing Example Projects ===")
     indexer.create_collection(COLLECTION_EXAMPLES, recreate=rebuild)
     project_parser = process_example_projects()
@@ -223,7 +235,7 @@ def index_all_data(rebuild: bool = False):
     print("\n=== Indexing Complete ===")
 
     # Print collection stats
-    for collection in [COLLECTION_MANUAL, COLLECTION_TERMS, COLLECTION_EXAMPLES]:
+    for collection in ALL_COLLECTIONS:
         try:
             info = indexer.client.get_collection(collection)
             print(f"  {collection}: {info.points_count} vectors")
