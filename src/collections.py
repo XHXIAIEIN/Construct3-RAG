@@ -5,49 +5,41 @@ Construct 3 RAG 向量数据库集合配置
 """
 
 __all__ = [
-    # 集合名称
-    "COLLECTION_GUIDE",
-    "COLLECTION_INTERFACE",
-    "COLLECTION_PROJECT",
-    "COLLECTION_PLUGINS",
-    "COLLECTION_BEHAVIORS",
-    "COLLECTION_SCRIPTING",
-    "COLLECTION_TERMS",
-    "COLLECTION_EXAMPLES",
-    # 集合列表
+    "COLLECTIONS",
     "DOC_COLLECTIONS",
     "ALL_COLLECTIONS",
-    # 映射配置
     "DIR_TO_COLLECTION",
     "SUBCATEGORY_MAPPING",
     "COLLECTION_DESCRIPTIONS",
 ]
 
 # ============================================================
-# 集合定义 (8 个文档集合 + 2 个数据集合)
+# 集合定义
 # ============================================================
 
-COLLECTION_GUIDE = "c3_guide"           # 入门教程 + 概述 + 技巧指南
-COLLECTION_INTERFACE = "c3_interface"   # 编辑器界面文档
-COLLECTION_PROJECT = "c3_project"       # 项目元素 (事件/对象/时间轴)
-COLLECTION_PLUGINS = "c3_plugins"       # 插件参考
-COLLECTION_BEHAVIORS = "c3_behaviors"   # 行为 + 系统参考
-COLLECTION_SCRIPTING = "c3_scripting"   # 脚本 API 文档
-COLLECTION_TERMS = "c3_terms"           # 术语翻译
-COLLECTION_EXAMPLES = "c3_examples"     # 示例项目
+COLLECTIONS = {
+    "guide": "c3_guide",           # 入门教程 + 概述 + 技巧指南
+    "interface": "c3_interface",   # 编辑器界面文档
+    "project": "c3_project",       # 项目元素 (事件/对象/时间轴)
+    "plugins": "c3_plugins",       # 插件参考
+    "behaviors": "c3_behaviors",   # 行为 + 系统参考
+    "scripting": "c3_scripting",   # 脚本 API 文档
+    "terms": "c3_terms",           # 术语翻译
+    "examples": "c3_examples",     # 示例项目
+}
 
-# 所有文档集合 (不含 terms/examples)
+# 文档集合 (不含 terms/examples)
 DOC_COLLECTIONS = [
-    COLLECTION_GUIDE,
-    COLLECTION_INTERFACE,
-    COLLECTION_PROJECT,
-    COLLECTION_PLUGINS,
-    COLLECTION_BEHAVIORS,
-    COLLECTION_SCRIPTING,
+    COLLECTIONS["guide"],
+    COLLECTIONS["interface"],
+    COLLECTIONS["project"],
+    COLLECTIONS["plugins"],
+    COLLECTIONS["behaviors"],
+    COLLECTIONS["scripting"],
 ]
 
 # 所有集合
-ALL_COLLECTIONS = DOC_COLLECTIONS + [COLLECTION_TERMS, COLLECTION_EXAMPLES]
+ALL_COLLECTIONS = list(COLLECTIONS.values())
 
 
 # ============================================================
@@ -56,25 +48,25 @@ ALL_COLLECTIONS = DOC_COLLECTIONS + [COLLECTION_TERMS, COLLECTION_EXAMPLES]
 
 DIR_TO_COLLECTION = {
     # Guide: 入门 + 概述 + 技巧
-    "getting-started": COLLECTION_GUIDE,
-    "overview": COLLECTION_GUIDE,
-    "tips-and-guides": COLLECTION_GUIDE,
+    "getting-started": COLLECTIONS["guide"],
+    "overview": COLLECTIONS["guide"],
+    "tips-and-guides": COLLECTIONS["guide"],
 
     # Interface: 编辑器界面
-    "interface": COLLECTION_INTERFACE,
+    "interface": COLLECTIONS["interface"],
 
     # Project: 项目元素
-    "project-primitives": COLLECTION_PROJECT,
+    "project-primitives": COLLECTIONS["project"],
 
     # Plugins: 插件参考
-    "plugin-reference": COLLECTION_PLUGINS,
+    "plugin-reference": COLLECTIONS["plugins"],
 
     # Behaviors: 行为 + 系统
-    "behavior-reference": COLLECTION_BEHAVIORS,
-    "system-reference": COLLECTION_BEHAVIORS,
+    "behavior-reference": COLLECTIONS["behaviors"],
+    "system-reference": COLLECTIONS["behaviors"],
 
     # Scripting: 脚本 API
-    "scripting": COLLECTION_SCRIPTING,
+    "scripting": COLLECTIONS["scripting"],
 }
 
 
@@ -85,88 +77,117 @@ DIR_TO_COLLECTION = {
 SUBCATEGORY_MAPPING = {
     # Plugin Reference 子分类
     "plugin-reference": {
-        # Visual 可视化
-        "sprite": "visual",
-        "tiled-background": "visual",
-        "tilemap": "visual",
-        "9-patch": "visual",
-        "particles": "visual",
-        "text": "visual",
-        "sprite-font": "visual",
-        "drawing-canvas": "visual",
-        "svg-picture": "visual",
-        "video": "visual",
-
         # 3D
         "3d-camera": "3d",
         "3d-shape": "3d",
-        "shadow-light": "3d",
 
-        # Form Controls 表单控件
-        "button": "form",
-        "text-input": "form",
-        "list": "form",
-        "progress-bar": "form",
-        "slider-bar": "form",
-        "file-chooser": "form",
-        "html-element": "form",
-        "iframe": "form",
+        # Data & storage
+        "array": "data",
+        "binary-data": "data",
+        "clipboard": "data",
+        "cryptography": "data",
+        "dictionary": "data",
+        "file-system": "data",
+        "json": "data",
+        "local-storage": "data",
+        "xml": "data",
 
-        # Input 输入
+        # General
+        "9-patch": "general",
+        "flowchart-controller": "general",
+        "particles": "general",
+        "shadow-light": "general",
+        "sprite": "general",
+        "sprite-font": "general",
+        "svg-picture": "general",
+        "text": "general",
+        "tiled-background": "general",
+        "tilemap": "general",
+        "timeline-controller": "general",
+
+        # HTML elements
+        "button": "html-elements",
+        "file-chooser": "html-elements",
+        "html-element": "html-elements",
+        "iframe": "html-elements",
+        "list": "html-elements",
+        "progress-bar": "html-elements",
+        "slider-bar": "html-elements",
+        "text-input": "html-elements",
+
+        # Input
+        "gamepad": "input",
         "keyboard": "input",
         "mouse": "input",
         "touch": "input",
-        "gamepad": "input",
 
-        # Data & Storage 数据存储
-        "array": "data",
-        "dictionary": "data",
-        "json": "data",
-        "xml": "data",
-        "csv": "data",
-        "binary-data": "data",
-        "local-storage": "data",
-        "filesystem": "data",
-
-        # Audio 音频
-        "audio": "audio",
-        "midi": "audio",
-        "speech-recognition": "audio",
-        "speech-synthesis": "audio",
-
-        # Web & Network 网络
-        "ajax": "network",
-        "websocket": "network",
-        "multiplayer": "network",
-        "browser": "network",
-
-        # Media & Devices 媒体设备
+        # Media
+        "audio": "media",
+        "geolocation": "media",
+        "midi": "media",
+        "qrcode": "media",
+        "speech-recognition": "media",
+        "speech-synthesis": "media",
         "user-media": "media",
         "video-recorder": "media",
-        "geolocation": "media",
-        "bluetooth": "media",
-        "bbc-micro-bit": "media",
 
-        # Platform Services 平台服务
-        "facebook": "platform",
-        "google-play": "platform",
-        "instant-games": "platform",
-        "mobile-advert": "platform",
-        "mobile-iap": "platform",
-        "construct-game-services": "platform",
+        # Other
+        "advanced-random": "other",
+        "bluetooth": "other",
+        "date": "other",
+        "drawing-canvas": "other",
+        "internationalization": "other",
+        "platform-info": "other",
+        "share": "other",
 
-        # Utilities 工具
-        "function": "utility",
-        "date": "utility",
-        "advanced-random": "utility",
-        "cryptography": "utility",
-        "clipboard": "utility",
-        "share": "utility",
-        "qrcode": "utility",
-        "platform-info": "utility",
-        "internationalization": "utility",
-        "timeline-controller": "utility",
-        "flowchart-controller": "utility",
+        # Platform specific
+        "bbc-micro-bit": "platform-specific",
+
+        # Web
+        "ajax": "web",
+        "browser": "web",
+        "construct-game-services": "web",
+        "multiplayer": "web",
+        "websocket": "web",
+    },
+
+    # Behavior Reference 子分类
+    "behavior-reference": {
+        # Attributes
+        "jump-thru": "attributes",
+        "persist": "attributes",
+        "shadow-caster": "attributes",
+        "solid": "attributes",
+
+        # General
+        "anchor": "general",
+        "bound-to-layout": "general",
+        "destroy-outside-layout": "general",
+        "drag-drop": "general",
+        "fade": "general",
+        "flash": "general",
+        "line-of-sight": "general",
+        "pin": "general",
+        "scroll-to": "general",
+        "timer": "general",
+        "tween": "general",
+        "wrap": "general",
+
+        # Movements
+        "8-direction": "movements",
+        "bullet": "movements",
+        "car": "movements",
+        "custom": "movements",
+        "follow": "movements",
+        "move-to": "movements",
+        "orbit": "movements",
+        "pathfinding": "movements",
+        "physics": "movements",
+        "platform": "movements",
+        "rotate": "movements",
+        "sine": "movements",
+        "tile-movement": "movements",
+        "turret": "movements",
     },
 
     # Scripting 子分类
@@ -199,12 +220,12 @@ SUBCATEGORY_MAPPING = {
 # ============================================================
 
 COLLECTION_DESCRIPTIONS = {
-    COLLECTION_GUIDE: "入门教程、概述、技巧指南",
-    COLLECTION_INTERFACE: "编辑器界面 (工具栏、对话框、调试器)",
-    COLLECTION_PROJECT: "项目元素 (事件、对象、时间轴、流程图)",
-    COLLECTION_PLUGINS: "插件参考 (Sprite、Audio、Array 等)",
-    COLLECTION_BEHAVIORS: "行为参考 (Platform、Physics、Tween 等)",
-    COLLECTION_SCRIPTING: "脚本 API (JavaScript/TypeScript)",
-    COLLECTION_TERMS: "官方术语翻译",
-    COLLECTION_EXAMPLES: "示例项目代码",
+    COLLECTIONS["guide"]: "入门教程、概述、技巧指南",
+    COLLECTIONS["interface"]: "编辑器界面 (工具栏、对话框、调试器)",
+    COLLECTIONS["project"]: "项目元素 (事件、对象、时间轴、流程图)",
+    COLLECTIONS["plugins"]: "插件参考 (Sprite、Audio、Array 等)",
+    COLLECTIONS["behaviors"]: "行为参考 (Platform、Physics、Tween 等)",
+    COLLECTIONS["scripting"]: "脚本 API (JavaScript/TypeScript)",
+    COLLECTIONS["terms"]: "官方术语翻译",
+    COLLECTIONS["examples"]: "示例项目代码",
 }

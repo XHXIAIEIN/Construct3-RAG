@@ -24,20 +24,21 @@ except ImportError:
 class EmbeddingModel:
     """Wrapper for embedding model"""
 
-    def __init__(self, model_name: str = "BAAI/bge-m3"):
+    def __init__(self, model_name: str = "BAAI/bge-m3", device: str = "cpu"):
         self.model_name = model_name
+        self.device = device
         self._model = None
 
     @property
     def model(self):
         if self._model is None:
-            print(f"Loading embedding model: {self.model_name}")
-            self._model = SentenceTransformer(self.model_name)
+            print(f"Loading embedding model: {self.model_name} (device: {self.device})")
+            self._model = SentenceTransformer(self.model_name, device=self.device)
         return self._model
 
-    def encode(self, texts: List[str]) -> List[List[float]]:
+    def encode(self, texts: List[str], batch_size: int = 8) -> List[List[float]]:
         """Encode texts to vectors"""
-        return self.model.encode(texts, show_progress_bar=True).tolist()
+        return self.model.encode(texts, show_progress_bar=True, batch_size=batch_size).tolist()
 
     def encode_single(self, text: str) -> List[float]:
         """Encode single text to vector"""
@@ -59,7 +60,7 @@ class Indexer:
         embedding_model: str = "BAAI/bge-m3"
     ):
         self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
-        self.embedder = EmbeddingModel(embedding_model)
+        self.embedder = EmbeddingModel(embedding_model, device="cpu")
 
     def _generate_id(self, text: str) -> str:
         """Generate stable ID from text"""
@@ -161,8 +162,7 @@ def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant"""
     from src.config import (
         QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL, CSV_TERMS,
-        DOC_COLLECTIONS, ALL_COLLECTIONS,
-        COLLECTION_TERMS, COLLECTION_EXAMPLES,
+        DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS,
     )
     from src.data_processing.markdown_parser import MarkdownParser
     from src.data_processing.csv_parser import CSVParser
@@ -204,7 +204,7 @@ def index_all_data(rebuild: bool = False):
 
     # Index translation terms
     print("\n=== Indexing Translation Terms ===")
-    indexer.create_collection(COLLECTION_TERMS, recreate=rebuild)
+    indexer.create_collection(COLLECTIONS["terms"], recreate=rebuild)
     csv_parser = CSVParser()
     if CSV_TERMS.exists():
         entries = csv_parser.parse_file(CSV_TERMS)
@@ -222,15 +222,15 @@ def index_all_data(rebuild: bool = False):
             }
             for i, entry in enumerate(entries)
         ]
-        indexer.index_documents(COLLECTION_TERMS, docs)
+        indexer.index_documents(COLLECTIONS["terms"], docs)
 
     # Index example projects
     print("\n=== Indexing Example Projects ===")
-    indexer.create_collection(COLLECTION_EXAMPLES, recreate=rebuild)
+    indexer.create_collection(COLLECTIONS["examples"], recreate=rebuild)
     project_parser = process_example_projects()
     if project_parser:
         docs = project_parser.export_for_vectordb()
-        indexer.index_documents(COLLECTION_EXAMPLES, docs)
+        indexer.index_documents(COLLECTIONS["examples"], docs)
 
     print("\n=== Indexing Complete ===")
 

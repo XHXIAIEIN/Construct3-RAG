@@ -48,7 +48,7 @@ class HybridRetriever:
             logger.info(f"[加载] Embedding 模型: {self.embedding_model_name} ...")
             t0 = time.time()
             from src.data_processing.indexer import EmbeddingModel
-            self._embedder = EmbeddingModel(self.embedding_model_name)
+            self._embedder = EmbeddingModel(self.embedding_model_name, device="cpu")
             logger.info(f"[加载] Embedding 模型完成 ({time.time()-t0:.1f}s)")
         return self._embedder
 
@@ -85,43 +85,43 @@ class HybridRetriever:
 
     def search_guide(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search guide documentation (getting started, tips, overview)"""
-        from src.config import COLLECTION_GUIDE
-        return self.search_collection(COLLECTION_GUIDE, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["guide"], query, top_k)
 
     def search_interface(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search interface documentation (editor UI, dialogs, debugger)"""
-        from src.config import COLLECTION_INTERFACE
-        return self.search_collection(COLLECTION_INTERFACE, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["interface"], query, top_k)
 
     def search_project(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search project primitives (events, objects, timelines)"""
-        from src.config import COLLECTION_PROJECT
-        return self.search_collection(COLLECTION_PROJECT, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["project"], query, top_k)
 
     def search_plugins(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search plugin reference documentation"""
-        from src.config import COLLECTION_PLUGINS
-        return self.search_collection(COLLECTION_PLUGINS, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["plugins"], query, top_k)
 
     def search_behaviors(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search behavior reference documentation"""
-        from src.config import COLLECTION_BEHAVIORS
-        return self.search_collection(COLLECTION_BEHAVIORS, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["behaviors"], query, top_k)
 
     def search_scripting(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search scripting API documentation"""
-        from src.config import COLLECTION_SCRIPTING
-        return self.search_collection(COLLECTION_SCRIPTING, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["scripting"], query, top_k)
 
     def search_terms(self, query: str, top_k: int = 10) -> List[SearchResult]:
         """Search translation terms"""
-        from src.config import COLLECTION_TERMS
-        return self.search_collection(COLLECTION_TERMS, query, top_k, score_threshold=0.3)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["terms"], query, top_k, score_threshold=0.3)
 
     def search_examples(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search example projects"""
-        from src.config import COLLECTION_EXAMPLES
-        return self.search_collection(COLLECTION_EXAMPLES, query, top_k)
+        from src.config import COLLECTIONS
+        return self.search_collection(COLLECTIONS["examples"], query, top_k)
 
     def search_all(
         self,
@@ -146,9 +146,15 @@ class HybridRetriever:
         context_parts = []
 
         def format_doc_result(r: SearchResult) -> str:
-            breadcrumb = r.metadata.get("breadcrumb", "")
-            h2 = r.metadata.get("h2_heading", "")
+            # 从 source 推导 breadcrumb: "plugin-reference/sprite.md" → "plugin-reference > sprite"
             source = r.metadata.get("source", "")
+            if source.endswith(".md"):
+                source_path = source[:-3]
+            else:
+                source_path = source
+            breadcrumb = source_path.replace("/", " > ")
+
+            h2 = r.metadata.get("h2_heading", "")
             header = f"[{breadcrumb}"
             if h2:
                 header += f" > {h2}"

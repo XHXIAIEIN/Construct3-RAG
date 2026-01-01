@@ -41,9 +41,9 @@ class MarkdownParser:
             self.base_dir = Path(base_dir)
 
         # Load mappings from config
-        from src.config import DIR_TO_COLLECTION, COLLECTION_GUIDE, SUBCATEGORY_MAPPING
+        from src.config import DIR_TO_COLLECTION, COLLECTIONS, SUBCATEGORY_MAPPING
         self.dir_to_collection = DIR_TO_COLLECTION
-        self.default_collection = COLLECTION_GUIDE
+        self.default_collection = COLLECTIONS["guide"]
         self.subcategory_mapping = SUBCATEGORY_MAPPING
 
     def detect_collection(self, file_path: Path) -> str:
@@ -159,7 +159,7 @@ class MarkdownParser:
 
         return None
 
-    def build_breadcrumb(self, file_path: Path) -> str:
+    def build_breadcrumb(self, file_path: Path) -> list:
         """
         Build navigation breadcrumb from file path.
 
@@ -167,17 +167,16 @@ class MarkdownParser:
             file_path: Path to the markdown file
 
         Returns:
-            Breadcrumb string like "plugin-reference > audio"
+            Breadcrumb list like ["plugin-reference", "audio"]
         """
         try:
             rel_path = file_path.relative_to(self.base_dir)
-            # Remove .md extension and join with >
             parts = list(rel_path.parts)
             if parts and parts[-1].endswith('.md'):
                 parts[-1] = parts[-1][:-3]  # Remove .md
-            return ' > '.join(parts)
+            return parts
         except ValueError:
-            return file_path.stem
+            return [file_path.stem]
 
     def get_category(self, file_path: Path) -> str:
         """
@@ -246,7 +245,7 @@ class MarkdownParser:
                     text=text,
                     metadata={
                         **base_metadata,
-                        'h1_title': h1_title,
+                        'h1_heading': h1_title,
                         'h2_heading': '',
                         'section_type': None,
                     }
@@ -284,7 +283,7 @@ class MarkdownParser:
                 text=chunk_text,
                 metadata={
                     **base_metadata,
-                    'h1_title': h1_title,
+                    'h1_heading': h1_title,  # 统一用 heading
                     'h2_heading': h2_heading,
                     'section_type': section_type,
                 }
@@ -318,14 +317,12 @@ class MarkdownParser:
         frontmatter, body = self.parse_frontmatter(content)
 
         # Build base metadata
+        # 注：category 和 breadcrumb 可从 source 推导，故不存储
         base_metadata = {
             'title': frontmatter.get('title', file_path.stem),
-            'source': frontmatter.get('source', ''),
+            'source': str(file_path.relative_to(self.base_dir)),  # 相对路径，如 "plugin-reference/sprite.md"
             'collection': self.detect_collection(file_path),
-            'category': self.get_category(file_path),
             'subcategory': self.detect_subcategory(file_path),
-            'breadcrumb': self.build_breadcrumb(file_path),
-            'file_path': str(file_path),
         }
 
         # Split by H2 sections
@@ -397,8 +394,9 @@ class MarkdownParser:
             collection = chunk.metadata.get('collection', 'unknown')
             stats['by_collection'][collection] = stats['by_collection'].get(collection, 0) + 1
 
-            # By category
-            category = chunk.metadata.get('category', 'unknown')
+            # By category (从 source 推导)
+            source = chunk.metadata.get('source', '')
+            category = source.split('/')[0] if '/' in source else 'unknown'
             stats['by_category'][category] = stats['by_category'].get(category, 0) + 1
 
             # By subcategory
@@ -445,9 +443,8 @@ if __name__ == "__main__":
     for i, chunk in enumerate(chunks[:3]):
         print(f"\nChunk {i+1}:")
         print(f"  Title: {chunk.metadata.get('title')}")
+        print(f"  Source: {chunk.metadata.get('source')}")
         print(f"  Collection: {chunk.metadata.get('collection')}")
-        print(f"  Category: {chunk.metadata.get('category')}")
-        print(f"  Subcategory: {chunk.metadata.get('subcategory')}")
-        print(f"  Breadcrumb: {chunk.metadata.get('breadcrumb')}")
+        print(f"  H1: {chunk.metadata.get('h1_heading')}")
         print(f"  H2: {chunk.metadata.get('h2_heading')}")
         print(f"  Text preview: {chunk.text[:200]}...")

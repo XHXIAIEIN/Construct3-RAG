@@ -82,13 +82,23 @@ class EventSheetParser:
         obj_class = cond.get("objectClass", "")
         params = cond.get("parameters", {})
 
-        # Check for template
+        # Handle params being a list instead of dict
+        if isinstance(params, list):
+            if params:
+                param_str = ", ".join(str(p) for p in params)
+                return f"{obj_class}.{cond_id}({param_str})"
+            else:
+                return f"{obj_class}.{cond_id}"
+
+        # Check for template (only for dict params)
         if cond_id in self.CONDITION_TEMPLATES:
             template = self.CONDITION_TEMPLATES[cond_id]
             try:
+                # Filter out 'object' from params to avoid conflict with explicit arg
+                filtered_params = {k: v for k, v in params.items() if k != "object"}
                 return template.format(
                     object=obj_class,
-                    **params
+                    **filtered_params
                 )
             except KeyError:
                 pass
@@ -106,13 +116,23 @@ class EventSheetParser:
         obj_class = action.get("objectClass", "")
         params = action.get("parameters", {})
 
-        # Check for template
+        # Handle params being a list instead of dict
+        if isinstance(params, list):
+            if params:
+                param_str = ", ".join(str(p) for p in params)
+                return f"{obj_class}.{action_id}({param_str})"
+            else:
+                return f"{obj_class}.{action_id}()"
+
+        # Check for template (only for dict params)
         if action_id in self.ACTION_TEMPLATES:
             template = self.ACTION_TEMPLATES[action_id]
             try:
+                # Filter out 'object' from params to avoid conflict with explicit arg
+                filtered_params = {k: v for k, v in params.items() if k != "object"}
                 return template.format(
                     object=obj_class,
-                    **params
+                    **filtered_params
                 )
             except KeyError:
                 pass
