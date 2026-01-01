@@ -1,0 +1,718 @@
+{
+  "id": "instantgames",
+  "name": "Instant Games",
+  "description": "允许访问 Facebook Instant Games 的功能。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-available",
+      "name": "是否可用",
+      "description": "检测 Instant Games 是否可以运行。",
+      "display_text": "是否可用",
+      "params": []
+    },
+    {
+      "id": "on-pause",
+      "name": "暂停",
+      "description": "当平台希望暂停游戏，以处理中断事件时触发。如用户来电。",
+      "display_text": "暂停",
+      "params": []
+    },
+    {
+      "id": "on-loaded-player-data",
+      "name": "玩家数据加载完成",
+      "description": "执行 '读取玩家数据' 动作后，若数据加载完成时触发",
+      "display_text": "玩家数据加载完成",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "出现错误",
+      "description": "在 Instant Games 加载发生错误时触发。",
+      "display_text": "出现错误",
+      "params": []
+    },
+    {
+      "id": "on-connected-players-loaded",
+      "name": "当在线玩家被加载",
+      "description": "执行 '获取在线用户列表' 动作后， 玩家列表加载完成时触发。",
+      "display_text": "当在线玩家被加载",
+      "params": []
+    },
+    {
+      "id": "on-score-submitted",
+      "name": "在提交分数",
+      "description": "在发送分数后被调用",
+      "display_text": "在提交分数",
+      "params": []
+    },
+    {
+      "id": "on-player-score-loaded",
+      "name": "当玩家分数读取完成",
+      "description": "在加载分数后被调用",
+      "display_text": "当玩家分数读取完成",
+      "params": []
+    },
+    {
+      "id": "on-leaderboard-loaded",
+      "name": "当计分板加载",
+      "description": "在加载计分板后，有返回值时",
+      "display_text": "当计分板加载",
+      "params": []
+    },
+    {
+      "id": "on-shortcut-created",
+      "name": "创建快捷图标",
+      "description": "当成功创建桌面快捷方式后触发",
+      "display_text": "创建快捷图标",
+      "params": []
+    },
+    {
+      "id": "on-shortcut-failed",
+      "name": "创建快捷方式失败",
+      "description": "执行 '创建主屏幕快捷方式' 动作后，无法创建应用快捷方式时触发。",
+      "display_text": "创建快捷方式失败",
+      "params": []
+    },
+    {
+      "id": "on-load-ad-success",
+      "name": "加载广告成功",
+      "description": "在加载广告后，加载完成时会触发",
+      "display_text": "加载 [i]{0}[/i] 广告成功",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "加载的广告类型",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-load-ad-error",
+      "name": "加载广告错误",
+      "description": "在加载广告后，加载失败时会触发",
+      "display_text": "加载 [i]{0}[/i] 广告错误",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "已加载的广告类型",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-show-ad-success",
+      "name": "显示广告成功",
+      "description": "显示广告后，用户观看广告完成时触发。",
+      "display_text": "显示 [i]{0}[/i] 广告成功",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "显示的广告的类型",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-show-ad-error",
+      "name": "显示广告失败",
+      "description": "在广告加载失败时触发",
+      "display_text": "显示 [i]{0}[/i] 广告失败时触发",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "显示的广告的类型",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-context-changed",
+      "name": "环境发生改变",
+      "description": "在用户改变上下文成功后触发",
+      "display_text": "环境发生改变",
+      "params": []
+    },
+    {
+      "id": "on-context-change-cancelled",
+      "name": "更换环境被取消",
+      "description": "在取消上下文更改后触发",
+      "display_text": "更换环境被取消",
+      "params": []
+    },
+    {
+      "id": "supports-feature",
+      "name": "支持功能",
+      "description": "测试当前平台是否支持 Instant Games  功能。",
+      "display_text": "支持功能 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "feature",
+          "name": "功能",
+          "description": "检查平台是否支持某些功能特性。",
+          "options": [
+            {
+              "id": "switch-game",
+              "label": "切换游戏"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "quit",
+      "name": "退出",
+      "description": "退出游戏",
+      "display_text": "退出",
+      "params": []
+    },
+    {
+      "id": "set-player-data",
+      "name": "设置玩家数据",
+      "description": "在 Instant Games 平台保存玩家的数据。",
+      "display_text": "设置玩家数据为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要为玩家保存的数据，建议使用 JSON 或字典对象储存。"
+        }
+      ]
+    },
+    {
+      "id": "load-player-data",
+      "name": "加载玩家数据",
+      "description": "加载上一次使用的玩家数据，完成后触发 '玩家数据加载完成' 条件。",
+      "display_text": "加载玩家数据",
+      "params": []
+    },
+    {
+      "id": "share",
+      "name": "分享",
+      "description": "在聊天或动态中，进行分享、邀请、发起挑战等行为。",
+      "display_text": "共享 {0}, 文字: [i]{1}[/i], 数据: [i]{2}[/i] (切换视图: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "image",
+          "name": "图片",
+          "description": "在分享时要用来截图的游戏精灵"
+        },
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "在分享时插入的信息"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要加上的字符串 如果是从分享链接启动则可用传入数据 最大100字符"
+        },
+        {
+          "id": "switch-context",
+          "name": "切换视图",
+          "description": "是否将用户切换到共享时创建的新视图。"
+        }
+      ]
+    },
+    {
+      "id": "log-event",
+      "name": "输出日志",
+      "description": "为游戏记录一个分析事件。",
+      "display_text": "日志事件[i]{0}[/i](值为: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "事件名称",
+          "description": "要输出的分析事件"
+        },
+        {
+          "id": "sum",
+          "name": "要求和的数值",
+          "description": "一个可供FB分析 的数字（可选）"
+        }
+      ]
+    },
+    {
+      "id": "load-connected-players",
+      "name": "加载已连接玩家",
+      "description": "获取在线玩家列表，完成后触发 '在线玩家加载完成' 条件。",
+      "display_text": "加载已连接玩家",
+      "params": []
+    },
+    {
+      "id": "set-score",
+      "name": "设置分数",
+      "description": "设置玩家在计分板上的分数",
+      "display_text": "设置分数为[i]{2}[/i] (计分板: [i]{0}[/i], 语境: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "计分板",
+          "description": "要发送数据的计分板的名字"
+        },
+        {
+          "id": "is-contextual",
+          "name": "语境",
+          "description": "设置计分板是否在环境下创建",
+          "options": [
+            {
+              "id": "no",
+              "label": "否"
+            },
+            {
+              "id": "yes",
+              "label": "是"
+            }
+          ]
+        },
+        {
+          "id": "score",
+          "name": "分数",
+          "description": "要设置给玩家的分数"
+        }
+      ]
+    },
+    {
+      "id": "load-player-score",
+      "name": "读取玩家分数",
+      "description": "加载玩家自己的分数和排名，完成后触发 '玩家分数已加载' 条件。",
+      "display_text": "获取排行榜分数 [i]{0}[/i] (上下文: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "计分板",
+          "description": "要加载的计分板名字"
+        },
+        {
+          "id": "is-contextual",
+          "name": "语境",
+          "description": "设置计分板是否在环境下创建",
+          "options": [
+            {
+              "id": "no",
+              "label": "否"
+            },
+            {
+              "id": "yes",
+              "label": "是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-leaderboard",
+      "name": "加载计分板分数",
+      "description": "加载计分板中的分数列表",
+      "display_text": "从[i]{0}[/i]排行榜加载 [i]{2}[/i] 分数 (环境: [i]{1}[/i], 计数: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "计分板",
+          "description": "要加载的计分板名字"
+        },
+        {
+          "id": "is-contextual",
+          "name": "语境",
+          "description": "设置计分板是否在环境下创建",
+          "options": [
+            {
+              "id": "no",
+              "label": "否"
+            },
+            {
+              "id": "yes",
+              "label": "是"
+            }
+          ]
+        },
+        {
+          "id": "count",
+          "name": "计数",
+          "description": "要请求多少条分数"
+        },
+        {
+          "id": "results",
+          "name": "结果",
+          "description": "只为已连接玩家返回数据",
+          "options": [
+            {
+              "id": "all",
+              "label": "所有"
+            },
+            {
+              "id": "connected-players",
+              "label": "已连接玩家"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "create-shortcut",
+      "name": "创建桌面图标",
+      "description": "请求创建桌面快捷方式 (仅限安卓)",
+      "display_text": "创建桌面图标",
+      "params": []
+    },
+    {
+      "id": "load-ad",
+      "name": "加载广告",
+      "description": "加载一个广告，当他已准备好时",
+      "display_text": "加载广告 [b]{0}[/b] 使用ID：[i]{1}[/i]",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "要加载的广告类型",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        },
+        {
+          "id": "placement-id",
+          "name": "广告ID",
+          "description": "要加载的广告投放ID。"
+        }
+      ]
+    },
+    {
+      "id": "show-ad",
+      "name": "显示广告",
+      "description": "显示一个已加载完成的广告",
+      "display_text": "显示[b]{0}[/b]广告",
+      "params": [
+        {
+          "id": "type",
+          "name": "广告类型",
+          "description": "要显示广告的类型。这种广告必须要先加载",
+          "options": [
+            {
+              "id": "interstitial",
+              "label": "插页式广告"
+            },
+            {
+              "id": "rewarded-video",
+              "label": "奖励视频广告"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "custom-update",
+      "name": "自定义更新",
+      "description": "在群聊中发布自定义信息",
+      "display_text": "推送更新 (模板ID:  [i]{0}[/i], CTA: [i]{1}[/i], 图片: {2}, 文本: [i]{3}[/i], 数据: [i]{4}[/i], 更新方式: [i]{5}[/i],  推送通知: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "template-id",
+          "name": "模板ID",
+          "description": "用于自定义更新使用的模板ID，如默认的 fbapp-config.json"
+        },
+        {
+          "id": "cta",
+          "name": "CTA",
+          "description": "可选。引导按钮文字，留空则使用默认的 'play'。"
+        },
+        {
+          "id": "image",
+          "name": "图片",
+          "description": "一个接受更新图片的游戏精灵"
+        },
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "更新时提示的信息"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要附加的数据字符串，如果从更新启动，则作为 EntryPointData 提供。 最多 1000 个字符。"
+        },
+        {
+          "id": "strategy",
+          "name": "推送方式",
+          "description": "发布更新的时间，选择立即发布或等游戏结束时发布。",
+          "options": [
+            {
+              "id": "immediate",
+              "label": "立即"
+            },
+            {
+              "id": "last",
+              "label": "最后"
+            }
+          ]
+        },
+        {
+          "id": "notification",
+          "name": "通知",
+          "description": "是否需要推送自定义更新的通知提醒。只在必要且可立即执行的更新中使用提示。",
+          "options": [
+            {
+              "id": "no-push",
+              "label": "无推送"
+            },
+            {
+              "id": "push",
+              "label": "推送"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "switch-game",
+      "name": "切换游戏",
+      "description": "请求平台切换到不同的游戏内",
+      "display_text": "切换游戏到 [b]{0}[/b] 传递数据 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "app-id",
+          "name": "App ID",
+          "description": "要切换到游戏的AppID。必须是同公司的游戏"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要附加的数据字符串，如果从开关启动，将可以作为EntryPointData 最大1000字符。"
+        }
+      ]
+    },
+    {
+      "id": "change-context",
+      "name": "改变环境",
+      "description": "打开一个对话框，允许玩家切换到不同的上下文",
+      "display_text": "用过滤器 [i]{0}[/i]改变context，最小大小[i]{1}[/i]，最大大小[i]{2}[/i]",
+      "params": [
+        {
+          "id": "filter",
+          "name": "筛选/过滤",
+          "description": "如何过滤推荐的环境",
+          "options": [
+            {
+              "id": "none",
+              "label": "无"
+            },
+            {
+              "id": "new-context-only",
+              "label": "新环境限定"
+            },
+            {
+              "id": "include-existing-challenges",
+              "label": "包含现有挑战"
+            },
+            {
+              "id": "new-players-only",
+              "label": "仅新玩家"
+            }
+          ]
+        },
+        {
+          "id": "min-size",
+          "name": "最小尺寸",
+          "description": "建议的上下文理想情况下应该具有的最小参与者数量。使用-1指定无限制。"
+        },
+        {
+          "id": "max-size",
+          "name": "最大大小",
+          "description": "建议的上下文理想情况下应该具有的最大参与者数量。使用-1指定无限制。"
+        }
+      ]
+    },
+    {
+      "id": "subscribe-bot",
+      "name": "关注机器人",
+      "description": "请求用户订阅与游戏相关的机器人账号。",
+      "display_text": "关注机器人",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "locale",
+      "name": "地区",
+      "description": "当前玩家地区",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "platform",
+      "name": "平台",
+      "description": "用来解释当前游戏平台的文本",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "sdk-version",
+      "name": "开发工具版本",
+      "description": "当前 Instant Games SDK 版本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "context-id",
+      "name": "环境ID",
+      "description": "游戏内容的ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-name",
+      "name": "玩家名称",
+      "description": "当前玩家名",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-photo",
+      "name": "玩家头像链接",
+      "description": "玩家的头像链接",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-id",
+      "name": "玩家ID",
+      "description": "玩家的ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-data",
+      "name": "玩家数据",
+      "description": "当加载完玩家数据后，将返回玩家数据的文本",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "entry-point-data",
+      "name": "入口数据",
+      "description": "当游戏启动时显示的游戏来源，例如来自分享链接启动。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "connected-player-count",
+      "name": "已连接玩家数量",
+      "description": "在 '已连接玩家加载完成' 条件中，返回已连接玩家的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "connected-player-id-at",
+      "name": "已连接编号为X的玩家ID",
+      "description": "编号为X玩家的名字",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "已连接玩家的编号"
+        }
+      ]
+    },
+    {
+      "id": "player-score",
+      "name": "玩家分数",
+      "description": "当加载玩家分数后，将返回玩家目前分数",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-rank",
+      "name": "玩家排名",
+      "description": "当加载玩家分数后，将返回玩家目前排名",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "leaderboard-result-count",
+      "name": "高分榜结果数量",
+      "description": "当加载计分板后，将返回计分板条目数量",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "leaderboard-score-at",
+      "name": "获取高分榜分数",
+      "description": "计分板中编号为X的结果分数",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "结果的索引值。"
+        }
+      ]
+    },
+    {
+      "id": "leaderboard-player-id-at",
+      "name": "排行榜玩家ID索引",
+      "description": "获取比赛结果排行榜的玩家ID。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "结果的索引值。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 17,
+    "actions": 16,
+    "expressions": 16
+  }
+}

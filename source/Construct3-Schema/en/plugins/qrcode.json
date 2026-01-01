@@ -1,0 +1,59 @@
+{
+  "id": "qrcode",
+  "name": "QR code",
+  "description": "Display a QR code in your project.",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-text",
+      "name": "Set text",
+      "description": "Set the text content of the QR code.",
+      "display_text": "Set text to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text content of the QR code."
+        }
+      ]
+    },
+    {
+      "id": "set-correction-level",
+      "name": "Set correction level",
+      "description": "Set the error correction level. Higher levels include more error correction data for reliability.",
+      "display_text": "Set correction level to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "correction-level",
+          "name": "Correction level",
+          "description": "The error correction level. Higher levels include more error correction data for reliability.",
+          "options": [
+            {
+              "id": "l",
+              "label": "Low (7%)"
+            },
+            {
+              "id": "m",
+              "label": "Medium (15%)"
+            },
+            {
+              "id": "q",
+              "label": "Quartile (25%)"
+            },
+            {
+              "id": "h",
+              "label": "High (30%)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 2,
+    "expressions": 0
+  }
+}

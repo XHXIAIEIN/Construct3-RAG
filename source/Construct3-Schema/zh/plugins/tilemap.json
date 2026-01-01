@@ -1,0 +1,1061 @@
+{
+  "id": "tilemap",
+  "name": "瓦片图",
+  "description": "创建基于图块设计的关卡地图，支持导入 TMX 文件。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-tile-at",
+      "name": "比较特定位置的图块ID",
+      "description": "比较某个位置的图块编号。",
+      "display_text": "图块 ({0}, {1}) {2} {3}",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要比较的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要比较的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "tile",
+          "name": "图块编号",
+          "description": "要比较的图块编号。"
+        }
+      ]
+    },
+    {
+      "id": "compare-tile-state-at",
+      "name": "比较图块状态",
+      "description": "比较某个位置的图块的翻转或旋转状态。",
+      "display_text": "图块 ({0}, {1}) 已{2}",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要比较的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要比较的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "检查给定图块是否匹配的状态。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "左右翻转"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "上下翻转"
+            },
+            {
+              "id": "rotated-90",
+              "label": "90°旋转"
+            },
+            {
+              "id": "rotated-180",
+              "label": "180°旋转"
+            },
+            {
+              "id": "rotated-270",
+              "label": "270°旋转"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "旋转90°，上下翻转"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "旋转270°，上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-image-url-loaded",
+      "name": "图像加载完成",
+      "description": "执行 '加载网络图像' 动作后，图像加载完成时触发。",
+      "display_text": "图像加载完成",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "图像加载失败",
+      "description": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "display_text": "图像加载失败",
+      "params": []
+    },
+    {
+      "id": "brush-exists",
+      "name": "笔刷已存在",
+      "description": "检测笔刷是否已存在。",
+      "display_text": "笔刷 [b]{0}[/b] 已存在",
+      "params": [
+        {
+          "id": "brush",
+          "name": "笔刷名称",
+          "description": "要检测的笔刷名称。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "name": "导入",
+      "description": "导入瓦片图数据。",
+      "display_text": "导入图块数据 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "要加载的数据。来自瓦片图对象的 '导出图块数据' 表达式。"
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "下载",
+      "description": "下载瓦片图数据，保存到本地文件。",
+      "display_text": "下载瓦片图数据 (文件名: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "要下载的文件的名称。"
+        }
+      ]
+    },
+    {
+      "id": "erase-tile",
+      "name": "擦除图块",
+      "description": "擦除某个位置的图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要擦除的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要擦除的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile",
+      "name": "设置图块",
+      "description": "更改某个位置的图块。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 图块: [b]{2}[/b], 状态: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile",
+          "name": "瓷砖",
+          "description": "在给定位置设置的图块编号。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择旋转或翻转此图块。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "左右翻转"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "上下翻转"
+            },
+            {
+              "id": "rotated-90",
+              "label": "90°旋转"
+            },
+            {
+              "id": "rotated-180",
+              "label": "180°旋转"
+            },
+            {
+              "id": "rotated-270",
+              "label": "270°旋转"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "旋转90°，上下翻转"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "旋转270°，上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-range",
+      "name": "擦除图块 (范围)",
+      "description": "擦除矩形区域的图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 范围: [i]{2}[/i] x [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要擦除的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要擦除的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "要擦除的横向图块数量。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要擦除的纵向图块数量。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-range",
+      "name": "设置图块 (范围)",
+      "description": "设置矩形区域的图块。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i]),  范围: [i]{2}[/i] x [i]{3}[/i], 图块: [b]{4}[/b], 状态: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "要设置的横向图块数量。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要擦除的纵向图块数量。"
+        },
+        {
+          "id": "tile",
+          "name": "图块",
+          "description": "在给定范围内设置的图块数。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择旋转或翻转图块。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "左右翻转"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "上下翻转"
+            },
+            {
+              "id": "rotated-90",
+              "label": "90°旋转"
+            },
+            {
+              "id": "rotated-180",
+              "label": "180°旋转"
+            },
+            {
+              "id": "rotated-270",
+              "label": "270°旋转"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "旋转90°，上下翻转"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "旋转270°，上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-state",
+      "name": "设置图块状态",
+      "description": "更改图块的翻转或旋转状态。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 状态: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择旋转或翻转此图块。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "左右翻转"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "上下翻转"
+            },
+            {
+              "id": "rotated-90",
+              "label": "90°旋转"
+            },
+            {
+              "id": "rotated-180",
+              "label": "180°旋转"
+            },
+            {
+              "id": "rotated-270",
+              "label": "270°旋转"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "旋转90°, 上下翻转"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "旋转270°, 上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-state-range",
+      "name": "设置图块状态 (范围)",
+      "description": "改变图块的矩形区域的翻转或旋转状态。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 区域 [i]{2}[/i] x [i]{3}[/i], 状态: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "要设置的图块在水平方向的数量。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要设置的图块在垂直方向的数量。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择旋转或翻转图块。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "左右翻转"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "上下翻转"
+            },
+            {
+              "id": "rotated-90",
+              "label": "90°旋转"
+            },
+            {
+              "id": "rotated-180",
+              "label": "180°旋转"
+            },
+            {
+              "id": "rotated-270",
+              "label": "270°旋转"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "旋转90°，上下翻转"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "旋转270°，上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "加载网络图像",
+      "description": "从远程服务器下载图块数据。",
+      "display_text": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "要下载图像或数据的远程服务器地址。"
+        },
+        {
+          "id": "cross-origin",
+          "name": "跨域",
+          "description": "用于网络通信的跨域请求模式。",
+          "options": [
+            {
+              "id": "anonymous",
+              "label": "匿名"
+            },
+            {
+              "id": "none",
+              "label": "无"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-brush",
+      "name": "绘制图块",
+      "description": "使用自动图块笔刷在指定的位置绘制图块。",
+      "display_text": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷 [b]{2}[/b])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要使用的图块笔刷。"
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-brush",
+      "name": "擦除图块 (自动笔刷)",
+      "description": "使用自动图块笔刷擦除指定位置的图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要使用的图块笔刷。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-brush-by-name",
+      "name": "绘制图块 (根据名称)",
+      "description": "使用自动图块笔刷，在指定位置绘制图块。",
+      "display_text": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷名称",
+          "description": "要使用的笔刷名称。"
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-brush-by-name",
+      "name": "擦除图块 (自动笔刷, 根据名称)",
+      "description": "使用自动图块笔刷，擦除指定位置的图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷名称",
+          "description": "要使用的笔刷名称。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-patch-brush",
+      "name": "设置印章笔刷",
+      "description": "使用笔刷在指定位置绘制图块。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要使用的图块笔刷。"
+        },
+        {
+          "id": "mirror",
+          "name": "左右翻转",
+          "description": "笔刷是否左右翻转。"
+        },
+        {
+          "id": "flip",
+          "name": "上下翻转",
+          "description": "笔刷是否上下翻转。"
+        },
+        {
+          "id": "rotation",
+          "name": "旋转图块",
+          "description": "笔刷的旋转角度。",
+          "options": [
+            {
+              "id": "0",
+              "label": "0°"
+            },
+            {
+              "id": "90",
+              "label": "90°"
+            },
+            {
+              "id": "180",
+              "label": "180°"
+            },
+            {
+              "id": "270",
+              "label": "270°"
+            }
+          ]
+        },
+        {
+          "id": "invalid-indexes",
+          "name": "无效索引",
+          "description": "画笔应该如何处理无效的索引。",
+          "options": [
+            {
+              "id": "erase",
+              "label": "擦除"
+            },
+            {
+              "id": "ignore",
+              "label": "忽略"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-patch-brush",
+      "name": "擦除图块 (印章笔刷)",
+      "description": "使用笔刷在指定位置绘制图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要使用的笔刷。"
+        },
+        {
+          "id": "mirror",
+          "name": "左右翻转",
+          "description": "笔刷是否左右翻转。"
+        },
+        {
+          "id": "flip",
+          "name": "上下翻转",
+          "description": "笔刷是否上下翻转。"
+        },
+        {
+          "id": "rotation",
+          "name": "旋转角度",
+          "description": "笔刷的旋转角度。",
+          "options": [
+            {
+              "id": "0",
+              "label": "0°"
+            },
+            {
+              "id": "90",
+              "label": "90°"
+            },
+            {
+              "id": "180",
+              "label": "180°"
+            },
+            {
+              "id": "270",
+              "label": "270°"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-patch-brush-by-name",
+      "name": "设置印章笔刷 (按名称)",
+      "description": "使用笔刷在指定位置绘制图块。",
+      "display_text": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷名称",
+          "description": "要使用的笔刷名称。"
+        },
+        {
+          "id": "mirror",
+          "name": "左右翻转",
+          "description": "笔刷是否左右翻转。"
+        },
+        {
+          "id": "flip",
+          "name": "上下翻转",
+          "description": "笔刷是否上下翻转。"
+        },
+        {
+          "id": "rotation",
+          "name": "旋转角度",
+          "description": "笔刷的旋转角度。",
+          "options": [
+            {
+              "id": "0",
+              "label": "0°"
+            },
+            {
+              "id": "90",
+              "label": "90°"
+            },
+            {
+              "id": "180",
+              "label": "180°"
+            },
+            {
+              "id": "270",
+              "label": "270°"
+            }
+          ]
+        },
+        {
+          "id": "invalid-indexes",
+          "name": "无效索引",
+          "description": "画笔应该如何处理无效的索引。",
+          "options": [
+            {
+              "id": "erase",
+              "label": "擦除"
+            },
+            {
+              "id": "ignore",
+              "label": "忽略"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-patch-brush-by-name",
+      "name": "擦除图块 (印章笔刷, 按名称)",
+      "description": "使用自动图块笔刷，在指定位置绘制图块。",
+      "display_text": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b],  左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "图块X",
+          "description": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "tile-y",
+          "name": "图块Y",
+          "description": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。"
+        },
+        {
+          "id": "brush",
+          "name": "笔刷名称",
+          "description": "要使用的笔刷名称。"
+        },
+        {
+          "id": "mirror",
+          "name": "左右翻转",
+          "description": "笔刷是否左右翻转。"
+        },
+        {
+          "id": "flip",
+          "name": "上下翻转",
+          "description": "笔刷是否上下翻转。"
+        },
+        {
+          "id": "rotation",
+          "name": "旋转角度",
+          "description": "笔刷的旋转角度。",
+          "options": [
+            {
+              "id": "0",
+              "label": "0°"
+            },
+            {
+              "id": "90",
+              "label": "90°"
+            },
+            {
+              "id": "180",
+              "label": "180°"
+            },
+            {
+              "id": "270",
+              "label": "270°"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "tilesjson",
+      "name": "图块数据",
+      "description": "将图块数据导出为 JSON格式的字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tileat",
+      "name": "图块索引",
+      "description": "将图块编号返回到图块中的位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tilex",
+          "name": "图块X",
+          "description": "图块的X位置"
+        },
+        {
+          "id": "tiley",
+          "name": "图块Y",
+          "description": "图块的Y位置"
+        }
+      ]
+    },
+    {
+      "id": "positiontotilex",
+      "name": "坐标转图块X",
+      "description": "将X坐标转换为图块X索引。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X坐标"
+        }
+      ]
+    },
+    {
+      "id": "positiontotiley",
+      "name": "坐标转图块Y",
+      "description": "将Y坐标转换为图块Y索引。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "tiletopositionx",
+      "name": "图块转坐标X",
+      "description": "将图块X索引转换为X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tilex",
+          "name": "图块X",
+          "description": "图块的X位置"
+        }
+      ]
+    },
+    {
+      "id": "tiletopositiony",
+      "name": "图块转坐标Y",
+      "description": "将索引的图块转换为Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tiley",
+          "name": "图块Y",
+          "description": "图块中的Y位置"
+        }
+      ]
+    },
+    {
+      "id": "snapx",
+      "name": "获取位置相邻图块X",
+      "description": "将X坐标与最近的图块X对齐。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X坐标"
+        }
+      ]
+    },
+    {
+      "id": "snapy",
+      "name": "获取位置相邻图块Y",
+      "description": "将Y坐标与最近的图块Y对齐。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "tile-width",
+      "name": "图块宽度",
+      "description": "图块的宽度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-height",
+      "name": "图块高度",
+      "description": "图块的高度，以像素为单位",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "map-display-width",
+      "name": "地图显示宽度",
+      "description": "瓦片地图显示的水平瓦片数",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "map-display-height",
+      "name": "地图显示高度",
+      "description": "瓦片地图显示的垂直瓦片数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "brush-width",
+      "name": "画笔宽度",
+      "description": "获取画笔的图块宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要获取其宽度的笔刷名称。"
+        }
+      ]
+    },
+    {
+      "id": "brush-height",
+      "name": "画笔高度",
+      "description": "获取画笔的图块高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "brush",
+          "name": "笔刷",
+          "description": "要获取其高度的笔刷名称。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 18,
+    "expressions": 14
+  }
+}

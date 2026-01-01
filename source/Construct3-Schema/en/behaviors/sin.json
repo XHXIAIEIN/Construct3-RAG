@@ -1,0 +1,337 @@
+{
+  "id": "sin",
+  "name": "Sine",
+  "description": "Adjust an object's position, size, angle or other properties with an oscillating sine wave.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "compare-movement",
+      "name": "Compare movement",
+      "description": "Compare the current sine movement property.",
+      "display_text": "{my} movement is {0}",
+      "params": [
+        {
+          "id": "movement",
+          "name": "Movement",
+          "description": "Select the movement property to compare to.",
+          "options": [
+            {
+              "id": "horizontal",
+              "label": "Horizontal"
+            },
+            {
+              "id": "vertical",
+              "label": "Vertical"
+            },
+            {
+              "id": "size",
+              "label": "Size"
+            },
+            {
+              "id": "width",
+              "label": "Width"
+            },
+            {
+              "id": "height",
+              "label": "Height"
+            },
+            {
+              "id": "angle",
+              "label": "Angle"
+            },
+            {
+              "id": "opacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "value-only",
+              "label": "Value only"
+            },
+            {
+              "id": "forwardsbackwards",
+              "label": "Forwards/backwards"
+            },
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-period",
+      "name": "Compare period",
+      "description": "Compare the current period of the oscillation, in seconds.",
+      "display_text": "{my} period {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select how to compare the period in seconds."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare the period to, in seconds."
+        }
+      ]
+    },
+    {
+      "id": "compare-magnitude",
+      "name": "Compare magnitude",
+      "description": "Compare the current magnitude of the oscillation.",
+      "display_text": "{my} magnitude {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select how to compare the magnitude."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare the magnitude to."
+        }
+      ]
+    },
+    {
+      "id": "compare-wave",
+      "name": "Compare wave",
+      "description": "Compare the current wave function of the behavior.",
+      "display_text": "{my} is [b]{0}[/b] wave",
+      "params": [
+        {
+          "id": "wave",
+          "name": "Wave",
+          "description": "Select the wave type to compare to.",
+          "options": [
+            {
+              "id": "sine",
+              "label": "Sine"
+            },
+            {
+              "id": "triangle",
+              "label": "Triangle"
+            },
+            {
+              "id": "sawtooth",
+              "label": "Sawtooth"
+            },
+            {
+              "id": "reverse-sawtooth",
+              "label": "Reverse sawtooth"
+            },
+            {
+              "id": "square",
+              "label": "Square"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-active",
+      "name": "Is enabled",
+      "description": "True if the movement is currently enabled.",
+      "display_text": "Is {my} enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-active",
+      "name": "Set enabled",
+      "description": "Enable or disable the movement.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether the movement is enabled or disabled.",
+          "options": [
+            {
+              "id": "inactive",
+              "label": "Disabled"
+            },
+            {
+              "id": "active",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-period",
+      "name": "Set period",
+      "description": "Set the time in seconds for a complete cycle.",
+      "display_text": "Set {my} period to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period",
+          "description": "The time in seconds for a complete cycle."
+        }
+      ]
+    },
+    {
+      "id": "set-magnitude",
+      "name": "Set magnitude",
+      "description": "Set the magnitude of the movement.",
+      "display_text": "Set {my} magnitude to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "magnitude",
+          "name": "Magnitude",
+          "description": "The maximum change in pixels (or degrees for Angle)."
+        }
+      ]
+    },
+    {
+      "id": "set-movement",
+      "name": "Set movement",
+      "description": "Set the type of movement.",
+      "display_text": "Set {my} movement to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "movement",
+          "name": "Movement",
+          "description": "Select the movement property to compare to.",
+          "options": [
+            {
+              "id": "horizontal",
+              "label": "Horizontal"
+            },
+            {
+              "id": "vertical",
+              "label": "Vertical"
+            },
+            {
+              "id": "size",
+              "label": "Size"
+            },
+            {
+              "id": "width",
+              "label": "Width"
+            },
+            {
+              "id": "height",
+              "label": "Height"
+            },
+            {
+              "id": "angle",
+              "label": "Angle"
+            },
+            {
+              "id": "opacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "value-only",
+              "label": "Value only"
+            },
+            {
+              "id": "forwardsbackwards",
+              "label": "Forwards/backwards"
+            },
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-wave",
+      "name": "Set wave",
+      "description": "Set the wave function used to calculate movement.",
+      "display_text": "Set {my} wave function to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "wave",
+          "name": "Wave",
+          "description": "Select the wave function to apply.",
+          "options": [
+            {
+              "id": "sine",
+              "label": "Sine"
+            },
+            {
+              "id": "triangle",
+              "label": "Triangle"
+            },
+            {
+              "id": "sawtooth",
+              "label": "Sawtooth"
+            },
+            {
+              "id": "reverse-sawtooth",
+              "label": "Reverse sawtooth"
+            },
+            {
+              "id": "square",
+              "label": "Square"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-cycle-position",
+      "name": "Set cycle position",
+      "description": "Set the progress through one cycle (the phase).",
+      "display_text": "Set {my} cycle position to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "cycle-position",
+          "name": "Cycle position",
+          "description": "The progress through one cycle (phase) to set, from 0 to 1."
+        }
+      ]
+    },
+    {
+      "id": "update-initial-state",
+      "name": "Update initial state",
+      "description": "Set the initial state to oscillate from to the current state of the object.",
+      "display_text": "Update {my} initial state",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "cycleposition",
+      "name": "CyclePosition",
+      "description": "Return the current position in the cycle (phase) as a number from 0 to 1.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "period",
+      "name": "Period",
+      "description": "Return the current period, in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "magnitude",
+      "name": "Magnitude",
+      "description": "Return the current magnitude of the movement.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "value",
+      "name": "Value",
+      "description": "Return the current oscillating value.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 7,
+    "expressions": 4
+  }
+}

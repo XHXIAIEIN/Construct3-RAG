@@ -1,0 +1,510 @@
+{
+  "id": "advancedrandom",
+  "name": "高级随机",
+  "description": "更高级的随机数生成器，可以生成概率表，或指定随机种子。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "seed",
+      "name": "更新随机种子",
+      "description": "更新随机数生成器种子",
+      "display_text": "更新随机种子为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "seed",
+          "name": "随机数种子",
+          "description": "随机生成的新种子"
+        }
+      ]
+    },
+    {
+      "id": "octaves",
+      "name": "设置分形",
+      "description": "设置柏林噪声模型所使用的分形倍数，在1-16之间。",
+      "display_text": "设置分形为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "count",
+          "name": "数量",
+          "description": "要使用的分型倍数，从1至16。"
+        }
+      ]
+    },
+    {
+      "id": "createGradient",
+      "name": "生成渐变",
+      "description": "生成一个线性渐变。",
+      "display_text": "生成线性渐变 (类型: [b]{1}[/b], 名称: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "渐变的名称，用于后续事件的使用。"
+        },
+        {
+          "id": "isColor",
+          "name": "类型",
+          "description": "设置渐变生成的内容，是数值还是颜色。",
+          "options": [
+            {
+              "id": "number",
+              "label": "数值"
+            },
+            {
+              "id": "color",
+              "label": "颜色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "addStop",
+      "name": "添加经过点",
+      "description": "在当前渐变的位置添加经过点",
+      "display_text": "添加渐变经过点(位置: [b]{0}[/b], 数值: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "position",
+          "name": "终点位置",
+          "description": "要添加的渐变经过点的位置。可以是任何数字，通常建议在 0-1 范围内。"
+        },
+        {
+          "id": "value",
+          "name": "终点数值",
+          "description": "添加到经过点的值。可以是任何数字，或使用 rgbEx 或 rgba 表达式指定颜色。"
+        }
+      ]
+    },
+    {
+      "id": "setGradient",
+      "name": "设置当前渐变",
+      "description": "设置当前的渐变，用于后续的引用。",
+      "display_text": "设置当前渐变为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "渐变的名称"
+        }
+      ]
+    },
+    {
+      "id": "createPermutationTable",
+      "name": "创建序列表",
+      "description": "创建一个随机排序的数字序列。",
+      "display_text": "创建序列表 (起始: {1}, 长度: {0})",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "序列表的长度。"
+        },
+        {
+          "id": "offset",
+          "name": "起始值",
+          "description": "序列表中的首位最小值。"
+        }
+      ]
+    },
+    {
+      "id": "shufflePermutationTable",
+      "name": "打乱序列表",
+      "description": "将当前序列表的位置排列随机打乱。",
+      "display_text": "打乱序列表",
+      "params": []
+    },
+    {
+      "id": "createProbabilityTable",
+      "name": "创建概率表",
+      "description": "创建一个加权概率表，指定每个元素出现的概率。",
+      "display_text": "创建概率表 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "概率表名称"
+        }
+      ]
+    },
+    {
+      "id": "addProbabilityEntry",
+      "name": "增加概率权重",
+      "description": "在当前概率表中添加元素",
+      "display_text": "添加元素 [b]{0}[/b] 权重 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "元素的值"
+        },
+        {
+          "id": "weight",
+          "name": "元素权重",
+          "description": "此在列表中出现的概率权重"
+        }
+      ]
+    },
+    {
+      "id": "setProbabilityTable",
+      "name": "设置当前概率表",
+      "description": "设置当前概率表",
+      "display_text": "设置当前概率表为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "概率表的名称"
+        }
+      ]
+    },
+    {
+      "id": "removeProbabilityEntry",
+      "name": "删除概率元素",
+      "description": "从当前概率表中删除与指定权重相同的元素。填写 0 时指定第 1 项。",
+      "display_text": "移除权重为 [b]{1}[/b] 的 [b]{0}[/b] 元素",
+      "params": [
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "元素的数值"
+        },
+        {
+          "id": "weight",
+          "name": "元素权重",
+          "description": "此元素的权重，只有权重相同的才会被删除。填写 0 则匹配第 1 项。"
+        }
+      ]
+    },
+    {
+      "id": "createProbabilityTableFromJSON",
+      "name": "导入概率表",
+      "description": "从 JSON 字符串创建新的加权概率表。数据结构使用权重和名称组成的数组。",
+      "display_text": "导入概率表[b]{0}[/b] (JSON: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "概率表的名称"
+        },
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "用于序列化概率表的JSON字符串"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "classic2d",
+      "name": "Classic2d",
+      "description": "使用 2D classic noise 算法生成 0-1 之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "classic3d",
+      "name": "Classic3d",
+      "description": "使用 3D classic noise 算法生成 0-1 之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要采样的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "billow2d",
+      "name": "Billow2d",
+      "description": "使用 2D billow noise 算法生成 0-1 之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "billow3d",
+      "name": "Billow3d",
+      "description": "使用 3D billow noise 算法生成 0-1 之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要采样的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "ridged2d",
+      "name": "Ridged2d",
+      "description": "使用 2D ridged noise 算法生成 0-1 之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "ridged3d",
+      "name": "Ridged3d",
+      "description": "使用 3D ridged noise 生成0到1之间的平滑随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要采样的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "seed",
+      "name": "Seed",
+      "description": "目前使用的随机数种子，相同的种子可以生成相同序列的随机数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "octaves",
+      "name": "分型",
+      "description": "目前在柏林噪声中使用的噪声分形。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cellular2d",
+      "name": "Cellular2d",
+      "description": "使用 2D cellular noise 算法生成 0-1 之间的随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "cellular3d",
+      "name": "Cellular3d",
+      "description": "使用 3D cellular noise 算法生成 0-1 之间的随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要采样的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "voronoi2d",
+      "name": "Voronoi2d",
+      "description": "使用 2D voronoi noise 算法生成 0-1 之间的随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "voronoi3d",
+      "name": "Voronoi3d",
+      "description": "使用 3D voronoi noise 算法生成 0-1 之间的随机数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要采样的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "sampleGradient",
+      "name": "获取当前渐变值",
+      "description": "获取当前渐变的指定位置的值",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "位置",
+          "description": "要获取的渐变值的位置"
+        }
+      ]
+    },
+    {
+      "id": "randomSeed",
+      "name": "随机种子",
+      "description": "生成一个随机种子。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "permutation",
+      "name": "序列表",
+      "description": "从当前序列表中获取一个值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在列表中的位置，从 0 开始计数，最大值不超过序列表长度（不包含）。"
+        }
+      ]
+    },
+    {
+      "id": "sampleProbability",
+      "name": "随机抽取元素",
+      "description": "从当前概率表中随机抽取一个值",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "probabilityTableAsJSON",
+      "name": "导出概率表数据",
+      "description": "将当前的概率表序列化为JSON字符串",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "sample-gradient-by-name",
+      "name": "获取指定渐变值",
+      "description": "从已命名的渐变表中，通过指定的位置获取对应的数值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "渐变名称"
+        },
+        {
+          "id": "value",
+          "name": "位置",
+          "description": "要获取渐变值的位置"
+        }
+      ]
+    },
+    {
+      "id": "sample-probability-by-name",
+      "name": "抽取概率表元素",
+      "description": "从指定概率表中随机抽取一个值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "概率表名称"
+        }
+      ]
+    },
+    {
+      "id": "random",
+      "name": "生成随机数",
+      "description": "使用当前随机种子，生成一个随机数，数值在 0 至 1 范围，但结果不包含 1 。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 0,
+    "actions": 12,
+    "expressions": 20
+  }
+}

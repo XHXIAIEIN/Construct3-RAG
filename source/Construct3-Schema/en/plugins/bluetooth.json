@@ -1,0 +1,503 @@
+{
+  "id": "bluetooth",
+  "name": "Bluetooth",
+  "description": "Connect to Bluetooth devices and communicate with them.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "True if the current platform supports Bluetooth features.",
+      "display_text": "Is bluetooth supported",
+      "params": []
+    },
+    {
+      "id": "on-device-connected",
+      "name": "On device connected",
+      "description": "Triggered after 'Request device' successfully connects to a device.",
+      "display_text": "On device connected",
+      "params": []
+    },
+    {
+      "id": "on-device-disconnected",
+      "name": "On device disconnected",
+      "description": "Triggered when a connected device disconnects and is no longer accessible.",
+      "display_text": "On device disconnected",
+      "params": []
+    },
+    {
+      "id": "is-device-connected",
+      "name": "Is device connected",
+      "description": "Test if a given device ID is currently connected.",
+      "display_text": "Is device [b]{0}[/b] connected",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device."
+        }
+      ]
+    },
+    {
+      "id": "on-request-device-failed",
+      "name": "On request device failed",
+      "description": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "display_text": "On request device failed",
+      "params": []
+    },
+    {
+      "id": "on-primary-services-loaded",
+      "name": "On primary services loaded",
+      "description": "Triggered after 'Request primary services' once the services have been loaded successfully.",
+      "display_text": "On primary services loaded",
+      "params": []
+    },
+    {
+      "id": "on-primary-services-error",
+      "name": "On primary services error",
+      "description": "Triggered after 'Request primary services' if the services fail to load.",
+      "display_text": "On primary services error",
+      "params": []
+    },
+    {
+      "id": "on-characteristics-loaded",
+      "name": "On characteristics loaded",
+      "description": "Triggered after 'Request characteristics' once the characteristics have been loaded successfully.",
+      "display_text": "On characteristics loaded",
+      "params": []
+    },
+    {
+      "id": "on-characteristics-error",
+      "name": "On characteristics error",
+      "description": "Triggered after 'Request characteristics' if the characteristics fail to load.",
+      "display_text": "On characteristics error",
+      "params": []
+    },
+    {
+      "id": "on-any-characteristic-read",
+      "name": "On any characteristic read",
+      "description": "Triggered after any read of a characteristic completes successfully.",
+      "display_text": "On any characteristic read",
+      "params": []
+    },
+    {
+      "id": "on-characteristic-read",
+      "name": "On characteristic read",
+      "description": "Triggered after a read of a given characteristic completes successfully.",
+      "display_text": "On characteristic [b]{0}[/b] read",
+      "params": [
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      ]
+    },
+    {
+      "id": "on-characteristic-read-error",
+      "name": "On characteristic read error",
+      "description": "Triggered after any read of a characteristic fails.",
+      "display_text": "On characteristic read error",
+      "params": []
+    },
+    {
+      "id": "on-any-characteristic-written",
+      "name": "On any characteristic written",
+      "description": "Triggered after any write to a characteristic completes successfully.",
+      "display_text": "On any characteristic written",
+      "params": []
+    },
+    {
+      "id": "on-characteristic-written",
+      "name": "On characteristic written",
+      "description": "Triggered after writing to a given characteristic completes successfully.",
+      "display_text": "On characteristic [b]{0}[/b] written",
+      "params": [
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      ]
+    },
+    {
+      "id": "on-characteristic-write-error",
+      "name": "On characteristic write error",
+      "description": "Triggered after any write to a characteristic fails.",
+      "display_text": "On characteristic write error",
+      "params": []
+    },
+    {
+      "id": "on-any-characteristic-notification",
+      "name": "On any characteristic notification",
+      "description": "Triggered when a notification is received from any characteristic.",
+      "display_text": "On any characteristic notification (in {0})",
+      "params": [
+        {
+          "id": "binary-data",
+          "name": "Binary Data",
+          "description": "A Binary Data object to read the notification data in to."
+        }
+      ]
+    },
+    {
+      "id": "on-characteristic-notification",
+      "name": "On characteristic notification",
+      "description": "Triggered when a notification is received from a given characteristic.",
+      "display_text": "On characteristic [b]{0}[/b] notification (in {1})",
+      "params": [
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "binary-data",
+          "name": "Binary Data",
+          "description": "A Binary Data object to read the notification data in to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "name": "Request device",
+      "description": "Request access to a nearby Bluetooth device. Must be used in a user input trigger.",
+      "display_text": "Request device (services [i]{0}[/i], device name [i]{1}[/i], device name prefix [i]{2}[/i], optional services [i]{3}[/i], accept all devices [i]{4}[/i])",
+      "params": [
+        {
+          "id": "services",
+          "name": "Services",
+          "description": "Comma-separated list of bluetooth service names, hexadecimal IDs, or UUIDs to filter by."
+        },
+        {
+          "id": "device-name",
+          "name": "Device name",
+          "description": "Device name to filter by."
+        },
+        {
+          "id": "device-name-prefix",
+          "name": "Device name prefix",
+          "description": "Device name prefix to filter by."
+        },
+        {
+          "id": "optional-services",
+          "name": "Optional services",
+          "description": "Comma-separated list of optional bluetooth service names, hexadecimal IDs, or UUIDs."
+        },
+        {
+          "id": "accept-all-devices",
+          "name": "Accept all devices",
+          "description": "Whether to display all devices, even if they do not match the above filters.",
+          "options": [
+            {
+              "id": "no",
+              "label": "No"
+            },
+            {
+              "id": "yes",
+              "label": "Yes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disconnect-device",
+      "name": "Disconnect device",
+      "description": "Disconnect a currently connected device.",
+      "display_text": "Disconnect device [i]{0}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device to disconnect. Leave empty to disconnect default device."
+        }
+      ]
+    },
+    {
+      "id": "request-primary-services",
+      "name": "Request primary services",
+      "description": "Load a list of available primary services for a device. Triggers 'On primary services loaded' when completed.",
+      "display_text": "Request primary services for device [i]{0}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device to get primary services for. Leave empty for default device."
+        }
+      ]
+    },
+    {
+      "id": "request-characteristics",
+      "name": "Request characteristics",
+      "description": "Load a list of available characteristics for a primary service. Triggers 'On characteristics loaded' when completed.",
+      "display_text": "Request characteristics for device [i]{0}[/i] service [i]{1}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device. Leave empty for default device."
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "The service name, UUID, or hexadecimal ID, to get characteristics for."
+        }
+      ]
+    },
+    {
+      "id": "read-characteristic-binary",
+      "name": "Read binary",
+      "description": "Read data from a Bluetooth characteristic in to a Binary Data object.",
+      "display_text": "Read binary from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i] in to {3}",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device. Leave empty for default device."
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "The service name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "binary-data",
+          "name": "Destination",
+          "description": "A Binary Data object to read the data to."
+        }
+      ]
+    },
+    {
+      "id": "read-characteristic-value",
+      "name": "Read value",
+      "description": "Read text or a number from a Bluetooth characteristic.",
+      "display_text": "Read value from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device. Leave empty for default device."
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "The service name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      ]
+    },
+    {
+      "id": "write-characteristic-binary",
+      "name": "Write binary",
+      "description": "Write data from a Binary Data object to a Bluetooth characteristic.",
+      "display_text": "Write {3} to device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device. Leave empty for default device."
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "The service name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "binary-data",
+          "name": "Data",
+          "description": "A Binary Data object with data to write."
+        }
+      ]
+    },
+    {
+      "id": "start-stop-characteristic-notifications",
+      "name": "Start/stop notifications",
+      "description": "Start or stop notifications for a characteristic.",
+      "display_text": "{3} notifications for device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "Device ID",
+          "description": "The ID of the device. Leave empty for default device."
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "The service name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "characteristic",
+          "name": "Characteristic",
+          "description": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        {
+          "id": "notifications",
+          "name": "Notifications",
+          "description": "Whether to start or stop notifications for this characteristic.",
+          "options": [
+            {
+              "id": "start",
+              "label": "Start"
+            },
+            {
+              "id": "stop",
+              "label": "Stop"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "name": "DeviceID",
+      "description": "In a trigger, the ID of the relevant device.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "device-name",
+      "name": "DeviceName",
+      "description": "In 'On device connected', a string with the name of the device.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characteristic-text",
+      "name": "CharacteristicText",
+      "description": "After 'Read value', the data as a string.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characteristic-signed-int",
+      "name": "CharacteristicSignedInteger",
+      "description": "After 'Read value', the data as a signed integer.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characteristic-unsigned-int",
+      "name": "CharacteristicUnsignedInteger",
+      "description": "After 'Read value', the data as an unsigned integer.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characteristic-float",
+      "name": "CharacteristicFloat",
+      "description": "After 'Read value', the data as a floating point number.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "primary-service-id",
+      "name": "PrimaryServiceID",
+      "description": "In a trigger, the ID of the relevant primary service.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characteristic-id",
+      "name": "CharacteristicID",
+      "description": "In a trigger, the ID of the relevant characteristic.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "primary-service-count",
+      "name": "PrimaryServiceCount",
+      "description": "After 'On primary services loaded', the number of primary services available for a device.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "DeviceID",
+          "description": "Device ID"
+        }
+      ]
+    },
+    {
+      "id": "primary-service-at",
+      "name": "PrimaryServiceAt",
+      "description": "After 'On primary services loaded', the primary service identifier at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "DeviceID",
+          "description": "Device ID"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of primary service"
+        }
+      ]
+    },
+    {
+      "id": "characteristic-count",
+      "name": "CharacteristicCount",
+      "description": "After 'On characteristics loaded', the number of characteristics available for a service.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "DeviceID",
+          "description": "Device ID"
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "Service identifier"
+        }
+      ]
+    },
+    {
+      "id": "characteristic-at",
+      "name": "CharacteristicAt",
+      "description": "After 'On characteristics loaded', the characteristic identifier at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "device-id",
+          "name": "DeviceID",
+          "description": "Device ID"
+        },
+        {
+          "id": "service",
+          "name": "Service",
+          "description": "Service identifier"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of characteristic"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 17,
+    "actions": 8,
+    "expressions": 12
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "wrap",
+  "name": "Wrap",
+  "description": "Make an object leaving the layout reappear on the other side.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-wrap",
+      "name": "On wrap",
+      "description": "Triggered when the object position is changed by wrapping.",
+      "display_text": "On wrap",
+      "params": []
+    }
+  ],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 0,
+    "expressions": 0
+  }
+}

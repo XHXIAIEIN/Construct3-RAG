@@ -1,0 +1,1626 @@
+{
+  "id": "audio",
+  "name": "音频",
+  "description": "播放您导入的文件中的音效和音乐。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-ended",
+      "name": "播放结束",
+      "description": "音频文件播放完成后触发。",
+      "display_text": "{0} 播放结束",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要检测的音频标签。"
+        }
+      ]
+    },
+    {
+      "id": "preloads-complete",
+      "name": "预加载完成",
+      "description": "检测是否所有预加载的音频都准备就绪，随时可播放。",
+      "display_text": "所有预加载完成",
+      "params": []
+    },
+    {
+      "id": "is-silent",
+      "name": "如果已静音",
+      "description": "检测是否已启用静音模式。",
+      "display_text": "如果已静音",
+      "params": []
+    },
+    {
+      "id": "is-any-playing",
+      "name": "任意音频正在播放",
+      "description": "检测当前是否有任何音频正在播放。",
+      "display_text": "任意音频正在播放",
+      "params": []
+    },
+    {
+      "id": "is-tag-playing",
+      "name": "标签正在播放",
+      "description": "检测指定的标签下当前是否有任何音频正在播放。",
+      "display_text": "正在播放音频标签[b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要播放的测试文件的音频标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-fade-ended",
+      "name": "当淡出结束",
+      "description": "执行 '淡出声音' 动作后，声音淡出完成时触发。",
+      "display_text": "{0} 淡出结束",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要检测淡出动作完成的声音标签。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-filter-effect",
+      "name": "添加滤波器",
+      "description": "添加 Biquad Filter 滤波器效果。实现各种频率变化声音。",
+      "display_text": "添加{1}滤波器效果 (音频标签: {0}, 频率: [i]{2}[/i], 失谐: [i]{3}[/i], Q: [i]{4}[/i], 增益: [i]{5}[/i], 混合: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要添加的滤波器类型。",
+          "options": [
+            {
+              "id": "low-pass",
+              "label": "低通"
+            },
+            {
+              "id": "high-pass",
+              "label": "高通"
+            },
+            {
+              "id": "band-pass",
+              "label": "带通"
+            },
+            {
+              "id": "low-shelf",
+              "label": "低频"
+            },
+            {
+              "id": "high-shelf",
+              "label": "高频"
+            },
+            {
+              "id": "peaking",
+              "label": "峰值"
+            },
+            {
+              "id": "notch",
+              "label": "陷波"
+            },
+            {
+              "id": "all-pass",
+              "label": "全通"
+            }
+          ]
+        },
+        {
+          "id": "frequency",
+          "name": "频率",
+          "description": "滤波器的频率，以赫兹为单位。"
+        },
+        {
+          "id": "detune",
+          "name": "失谐",
+          "description": "滤波器的失谐量，以音分为单位。用于调节跑调的效果，或模拟年久失修而走音的乐器。"
+        },
+        {
+          "id": "q",
+          "name": "Q",
+          "description": "滤波器的品质因子, 默认为 1，范围从 0.0001 到 1000。Q值越高，损耗越大，用于模拟随振荡衰减的频率。"
+        },
+        {
+          "id": "gain",
+          "name": "增益",
+          "description": "滤波器的增益，以分贝为单位。如果滤波器使用增益。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "remove-all-effects",
+      "name": "移除所有效果",
+      "description": "移除指定标签的所有音频效果。",
+      "display_text": "移除全部效果 (音频标签: {0})",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要移除所有音频效果的音频标签。"
+        }
+      ]
+    },
+    {
+      "id": "add-delay-effect",
+      "name": "添加延迟效果",
+      "description": "添加 Delay 延迟器效果，实现简单的回声。",
+      "display_text": "添加延迟效果 (音频标签: {0}, 延迟: [i]{1}[/i] 秒, 增益: [i]{2}[/i]dB,  混合: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "delay",
+          "name": "延迟",
+          "description": "延迟时间，以秒为单位。"
+        },
+        {
+          "id": "gain",
+          "name": "增益",
+          "description": "延迟音频的增益，以分贝为单位。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-convolution-effect",
+      "name": "添加混响效果",
+      "description": "添加 Convolution 卷积混响效果，使用另一种声音作为脉冲混响，模拟真实空间中的声学效果。如大型仓库的混响，或产生 '电话质量' 的声音。",
+      "display_text": "添加混响效果 (音频标签: {0}, 声音: [b]{1}[/b],  输出: [i]{2}[/i],  混合: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "audio",
+          "name": "音频",
+          "description": "选择包含用于卷积效果的脉冲响应的音频文件。"
+        },
+        {
+          "id": "level",
+          "name": "级别",
+          "description": "选择对目标音频文件进行标准化处理，或保持其原始状态。",
+          "options": [
+            {
+              "id": "normalize",
+              "label": "标准化"
+            },
+            {
+              "id": "dont-normalize",
+              "label": "非标准化"
+            }
+          ]
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "set-effect-parameter",
+      "name": "设置音效参数",
+      "description": "设置或渐变效果的参数。",
+      "display_text": "设置标签 {0} 的声音效果 [i]{1}[/i] 的第 [b]{2}[/b] 个参数为 [b]{3}[/b] (平滑: [i]{5}[/i], {4}秒)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "添加效果的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "添加的修改效果的从零开始的索引，例如， 第一效果为0，第二效果为1，等等"
+        },
+        {
+          "id": "parameter",
+          "name": "参数",
+          "description": "选择要修改的效果参数。",
+          "options": [
+            {
+              "id": "mix",
+              "label": "混合"
+            },
+            {
+              "id": "filterphaser-frequency",
+              "label": "频率 (滤波器/移相器)"
+            },
+            {
+              "id": "filterphaser-detune",
+              "label": "失谐 (滤波器/相位器)"
+            },
+            {
+              "id": "filterphaser-q",
+              "label": "Q值 (滤波器/移相器)"
+            },
+            {
+              "id": "filterdelaygain-gain",
+              "label": "增益 (滤波器/延迟/增益)"
+            },
+            {
+              "id": "delay-time",
+              "label": "延迟时间"
+            },
+            {
+              "id": "flangerphaser-modulation",
+              "label": "调制 (镶边/相位)"
+            },
+            {
+              "id": "flangerphasertremoloring-modulation-frequency",
+              "label": "调制频率 (镶边/移相/颤音/变调)"
+            },
+            {
+              "id": "flanger-feedback",
+              "label": "镶边反馈"
+            },
+            {
+              "id": "stereo-pan",
+              "label": "声道"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要设置的参数值。"
+        },
+        {
+          "id": "ramp",
+          "name": "过渡",
+          "description": "是立即设置值还是平滑渐变到预期值。",
+          "options": [
+            {
+              "id": "step",
+              "label": "步进"
+            },
+            {
+              "id": "linear",
+              "label": "线性"
+            },
+            {
+              "id": "exponential",
+              "label": "指数"
+            }
+          ]
+        },
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "控制声音频率变化的曲线，让声音过渡更加自然。"
+        }
+      ]
+    },
+    {
+      "id": "add-flanger-effect",
+      "name": "添加镶边效果",
+      "description": "添加 Flanger 镶边效果或类似 Chorus 的多人和声效果，产生更厚实、立体、被强调的声音。",
+      "display_text": "添加镶边效果 (音频标签: {0}, 延迟: [i]{1}[/i]ms,  调制: [i]{2}[/i]ms,  频率: [i]{3}[/i]Hz,  反馈: [i]{4}[/i],  混合: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "delay",
+          "name": "延迟",
+          "description": "延迟时间，以毫秒为单位。"
+        },
+        {
+          "id": "modulation",
+          "name": "调制",
+          "description": "改变延迟时间的幅度，以毫秒为单位。 设置为0表示合唱风格效果。"
+        },
+        {
+          "id": "frequency",
+          "name": "频率",
+          "description": "设置时间延迟的频率，以赫兹为单位。"
+        },
+        {
+          "id": "feedback",
+          "name": "反馈",
+          "description": "反馈量，从0（无）到100（全部）。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-phaser-effect",
+      "name": "添加移相效果",
+      "description": "添加 Phaser 移相效果，产生如涡流般迷幻风格的声音。",
+      "display_text": "添加移相效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz,  失谐: [i]{2}[/i],  Q: [i]{3}[/i],  调制: [i]{4}[/i],  调制频率: [i]{5}[/i],  混合: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "frequency",
+          "name": "频率",
+          "description": "相位转换的中心位置所对应的频率，以赫兹为单位。"
+        },
+        {
+          "id": "detune",
+          "name": "微调",
+          "description": "要应用的音高微调量，以音分为单位。"
+        },
+        {
+          "id": "q",
+          "name": "Q",
+          "description": "过滤器Q因子。"
+        },
+        {
+          "id": "modulation",
+          "name": "调频",
+          "description": "改变频率的强度，以赫兹为单位。"
+        },
+        {
+          "id": "modulation-frequency",
+          "name": "调制频率",
+          "description": "设置调制器周期的频率，以赫兹为单位。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-gain-effect",
+      "name": "添加增益效果",
+      "description": "添加 Gain 增益效果，增强声音的音量。",
+      "display_text": "添加增益效果 (音频标签: {0}, 增益: [i]{1}[/i] dB)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "gain",
+          "name": "增益",
+          "description": "音量调整，以分贝为单位。"
+        }
+      ]
+    },
+    {
+      "id": "add-compressor-effect",
+      "name": "添加压缩效果",
+      "description": "添加 Compressor 压缩器效果，针对各方面的指标对音量进行动态调整，让产生的声音更稳定，具有层次感。",
+      "display_text": "添加压缩器效果 (音频标签: {0}, 阀值: [i]{1}[/i]dB,  转折点: [i]{2}[/i]dB,  压缩比例: [i]{3}[/i],  启动时间: [i]{4}[/i]ms,  施放时间: [i]{5}[/i]ms)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "threshold",
+          "name": "阈值",
+          "description": "高于此阈值的阈值，以dB为单位。"
+        },
+        {
+          "id": "knee",
+          "name": "转折点",
+          "description": "高于阈值的范围，以dB为单位。此范围内的曲线会平滑地过渡到 '比率' 部分。"
+        },
+        {
+          "id": "ratio",
+          "name": "比率",
+          "description": "控制输入与输出的压缩比。例如比率为 4 时，输入每增加 4 dB，输出就会影响 1 dB 。"
+        },
+        {
+          "id": "attack",
+          "name": "起音",
+          "description": "将增益降低 10 分贝所需的时间，以毫秒为单位。"
+        },
+        {
+          "id": "release",
+          "name": "释放",
+          "description": "增益增加到 10dB 所需的时间，以毫秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "add-tremolo-effect",
+      "name": "添加颤音效果",
+      "description": "添加 Tremolo 颤音效果，通过快速上下调节指定频率的音量，产生忽大忽小起伏变化的声音。",
+      "display_text": "添加颤音效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz, 混合: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "frequency",
+          "name": "频率",
+          "description": "幅度调制的频率，以赫兹为单位。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-analyser-effect",
+      "name": "添加分析器效果",
+      "description": "添加音频分析器效果，用于分析音频频谱的信息，如频率、峰值、声音强度等。",
+      "display_text": "添加分析器效果 (音频标签: {0}, FFT大小: [i]{1}[/i], 平滑[i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "fft-size",
+          "name": "FFT 大小",
+          "description": "用于频域分析的 FFT 大小。必须是 2 的幂次方。"
+        },
+        {
+          "id": "smoothing",
+          "name": "平滑",
+          "description": "平滑时间常数，从0（不与最后分析帧平均）到1（平均）。"
+        }
+      ]
+    },
+    {
+      "id": "add-ring-mod-effect",
+      "name": "添加变调效果",
+      "description": "添加 Ring Modulator 环形变调效果，产生更强撕裂感的破音，模拟邪恶外星人或机器人的声音。",
+      "display_text": "添加变调效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz,  混合: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "frequency",
+          "name": "频率",
+          "description": "环形调制器的频率，以赫兹为单位。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-distortion-effect",
+      "name": "添加失真效果",
+      "description": "添加 Distortion 失真效果，产生破碎撕裂、模糊不清、锐利的声音。",
+      "display_text": "添加失真效果 (音频标签: {0}, 阈值: [i]{1}[/i]dB,  净空: [i]{2}[/i]dB,  驱动: [i]{3}[/i]，增益补偿:  [i]{4}[/i]dB,  混合: [i]{5}[/i]）",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "threshold",
+          "name": "阈值",
+          "description": "失真阈值，以dB为单位。"
+        },
+        {
+          "id": "headroom",
+          "name": "动态余量",
+          "description": "信号在临近失真范围的余量，以 dB 为单位。"
+        },
+        {
+          "id": "drive",
+          "name": "驱动",
+          "description": "失真效果的驱动程度，影响信号的饱和度。"
+        },
+        {
+          "id": "make-up-gain",
+          "name": "增益补偿",
+          "description": "效果后的额外音量增加，以dB为单位。"
+        },
+        {
+          "id": "mix",
+          "name": "混合",
+          "description": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+        }
+      ]
+    },
+    {
+      "id": "add-mute-effect",
+      "name": "添加静音效果",
+      "description": "添加 Mute 静音效果，常用于 '音频分析' 效果一起使用。",
+      "display_text": "添加静音效果 (音频标签: {0})",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要静音的音频标签。"
+        }
+      ]
+    },
+    {
+      "id": "play-at-position",
+      "name": "在位置播放",
+      "description": "在场景中的指定位置播放音频。",
+      "display_text": "播放[b]{0}[/b] 位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 音量: {2} dB, 角度: [i]{6}[/i], 内角: [i]{7}[/i], 外角: [i]{8}[/i], 圈外增益: [i]{9}[/i] dB, 音频标签:  [i]{10}[/i], {1}",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "音频",
+          "description": "选择要播放的音频文件。"
+        },
+        {
+          "id": "loop",
+          "name": "循环",
+          "description": "是否循环播放声音，即单曲循环。",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "音量衰减的分贝量(dB)。0 是原始音量,  -10 db 大约是降低原本一半的音量。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "声音在场景的X轴位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "声音在场景的Y轴位置。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "如果是方向源，则以度为单位的角度。"
+        },
+        {
+          "id": "inner-angle",
+          "name": "内角",
+          "description": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。"
+        },
+        {
+          "id": "outer-angle",
+          "name": "外角",
+          "description": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。"
+        },
+        {
+          "id": "outer-gain",
+          "name": "外角增益",
+          "description": "位于声源外角之外时，听到音量会随着距离逐渐减少的分贝量。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，用于方便自己区分不同的音频。用于控制不同标签的音频。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "在场景Z轴位置播放声音。"
+        }
+      ]
+    },
+    {
+      "id": "play-at-object",
+      "name": "在对象播放",
+      "description": "在对象位置播放音频，并跟随其移动。",
+      "display_text": "在对象 {3} 位置播放[b]{0}[/b]{1} (内角: [i]{4}[/i], 外角: [i]{5}[/i], 圈外增益[i]{6}[/i]dB, 音量增益: {2}dB, 音频标签: [i]{7}[/i])",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "音频",
+          "description": "选择要播放的音频文件。"
+        },
+        {
+          "id": "loop",
+          "name": "循环",
+          "description": "是否循环播放声音。(单曲循环)",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "基于原始音量的增益与衰减，以分贝 (dB)为单位。0 是原始音量，-10 dB大约是声音的一半。"
+        },
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "选择要播放声音的对象。"
+        },
+        {
+          "id": "inner-angle",
+          "name": "内角",
+          "description": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。"
+        },
+        {
+          "id": "outer-angle",
+          "name": "外角",
+          "description": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。"
+        },
+        {
+          "id": "outer-gain",
+          "name": "外部增益",
+          "description": "超出外角范围的声音衰减量，要逐渐减小的音量的增益，以分贝 (dB)为单位。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-listener-object",
+      "name": "设置监听器对象",
+      "description": "设置音量和声像定位所相对的对象。",
+      "display_text": "设置监听器对象为 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "选择要表示监听器的对象。"
+        }
+      ]
+    },
+    {
+      "id": "set-listener-z",
+      "name": "设置监听器高度",
+      "description": "设置监听器在场景上方的高度位置。",
+      "display_text": "设置侦听器高度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "监听器位于场景Z轴的高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "play-at-object-by-name",
+      "name": "在对象播放(按名称)",
+      "description": "在对象位置播放指定名称的音频，并跟随其移动。",
+      "display_text": "在对象位置 {4} 播放{0} [b]{1}[/b] (内角: [i]{5}[/i], 外角: [i]{6}[/i], 圈外增益: [i]{7}[/i]dB, 音量增益: {3}, 标签: [i]{8}[/i], 重复: {2})",
+      "params": [
+        {
+          "id": "folder",
+          "name": "文件夹",
+          "description": "选择包含音频文件的文件夹。",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "声音"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "音频文件名",
+          "description": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。"
+        },
+        {
+          "id": "loop",
+          "name": "循环播放",
+          "description": "是否循环播放声音。(单曲循环)",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "基于原始音量的增益与衰减，以分贝 (dB)为单位。0 是原始音量，-10 dB大约是声音的一半。"
+        },
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "选择要播放声音的对象。"
+        },
+        {
+          "id": "inner-angle",
+          "name": "内角",
+          "description": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。"
+        },
+        {
+          "id": "outer-angle",
+          "name": "外角",
+          "description": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。"
+        },
+        {
+          "id": "outer-gain",
+          "name": "外部增益",
+          "description": "超出外角范围的声音衰减量，要逐渐减小的音量的增益，以分贝 (dB)为单位。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "play-at-position-by-name",
+      "name": "在位置播放(按名称)",
+      "description": "在场景中的指定位置播放音频，使用名称来播放。",
+      "display_text": "播放{0} [b]{1}[/b] {2} 位置: ([i]{4}[/i], [i]{5}[/i], [i]{6}[/i]), 音量增益: {3} dB, 角度: [i]{7}[/i], 内角: [i]{8}[/i], 外角: [i]{9}[/i], 圈外增益: [i]{10}[/i] dB, 音频标签: [i]{11}[/i]",
+      "params": [
+        {
+          "id": "folder",
+          "name": "文件夹",
+          "description": "选择包含音频文件的文件夹。",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "声音"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "音频文件名",
+          "description": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。"
+        },
+        {
+          "id": "loop",
+          "name": "循环播放",
+          "description": "是否循环播放声音，即单曲循环。",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "音量衰减的分贝量(dB)。0 是原始音量,  -10 db 大约是降低原本一半的音量。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "声音在场景的X轴位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "声音在场景的Y轴位置。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "如果是方向性的声源，调整播放声音的方向角度。"
+        },
+        {
+          "id": "inner-angle",
+          "name": "内角",
+          "description": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。"
+        },
+        {
+          "id": "outer-angle",
+          "name": "外角",
+          "description": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。"
+        },
+        {
+          "id": "outer-gain",
+          "name": "外角增益",
+          "description": "位于声源外角之外时，听到音量会随着距离逐渐减少的分贝量。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "在场景的Z轴位置播放声音。"
+        }
+      ]
+    },
+    {
+      "id": "play",
+      "name": "播放",
+      "description": "播放音频文件。",
+      "display_text": "播放音频 [b]{0}[/b] (标签: [i]{4}[/i], 增益: {2} dB,  声道: [i]{3}[/i], 重复: {1} )",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "音频",
+          "description": "选择要播放的音频文件。"
+        },
+        {
+          "id": "loop",
+          "name": "循环",
+          "description": "是否循环播放声音。(单曲循环)",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。"
+        },
+        {
+          "id": "stereo-pan",
+          "name": "声道",
+          "description": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+        }
+      ]
+    },
+    {
+      "id": "set-looping",
+      "name": "设置循环",
+      "description": "启用或禁用声音循环。",
+      "display_text": "设置[i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要设置循环的签。留空则指定最后一次播放的声音。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择是打开还是关闭循环。",
+          "options": [
+            {
+              "id": "looping",
+              "label": "循环播放"
+            },
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-muted",
+      "name": "设置静音",
+      "description": "将指定标签的声音静音或取消静音。",
+      "display_text": "设置[i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要设置静音的标签，留空则指定最后一次播放的声音。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择是静音还是取消静音。",
+          "options": [
+            {
+              "id": "muted",
+              "label": "静音"
+            },
+            {
+              "id": "unmuted",
+              "label": "关闭静音"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-volume",
+      "name": "设置音量",
+      "description": "设置声音的音量（响度）。",
+      "display_text": "设置音量为[b]{1}[/b]dB (音频标签:  [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要更改音量的标签。留空则指定最后一次播放的声音。"
+        },
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。"
+        }
+      ]
+    },
+    {
+      "id": "preload",
+      "name": "预加载",
+      "description": "从服务器下载音频文件而不播放它。 这可以确保它立即播放。",
+      "display_text": "预加载[b]{0}[/b]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "音频文件",
+          "description": "选择要预加载的音频文件。 它将从服务器下载但不播放。"
+        }
+      ]
+    },
+    {
+      "id": "set-playback-rate",
+      "name": "设置播放速度",
+      "description": "设置声音播放的速度。1.0是正常速度，0.5半速，2.0倍速等。",
+      "display_text": "设置标签[i]{0}[/i]播放速度为[b]{1}[/b]倍",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要改变播放进度的标签。留空则指定最后一次播放的声音。"
+        },
+        {
+          "id": "playback-rate",
+          "name": "播放速度",
+          "description": "声音的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "停止",
+      "description": "停止播放声音。",
+      "display_text": "停止播放[b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要停止播放的标签。留空则指定最后一次播放的声音。"
+        }
+      ]
+    },
+    {
+      "id": "play-by-name",
+      "name": "播放(按名称)",
+      "description": "使用字符串作为文件名播放音频文件。",
+      "display_text": "播放{0} [b]{1}[/b] (标签: [i]{5}[/i], 增益: {3} dB, 声道: [i]{4}[/i],  重复: {2})",
+      "params": [
+        {
+          "id": "folder",
+          "name": "文件夹",
+          "description": "选择包含音频文件的文件夹。",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "声音"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "音频文件名",
+          "description": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。"
+        },
+        {
+          "id": "loop",
+          "name": "循环",
+          "description": "是否循环播放声音。(单曲循环)",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。"
+        },
+        {
+          "id": "tag-optional",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。"
+        },
+        {
+          "id": "stereo-pan",
+          "name": "声道",
+          "description": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+        }
+      ]
+    },
+    {
+      "id": "set-silent",
+      "name": "设置静音模式",
+      "description": "设置静音模式。 在静音模式下，所有当前声音均被静音，不会播放新声音。",
+      "display_text": "设置 {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "设置是否处于静音模式。",
+          "options": [
+            {
+              "id": "silent",
+              "label": "静音"
+            },
+            {
+              "id": "not-silent",
+              "label": "关闭静音"
+            },
+            {
+              "id": "toggle-silent",
+              "label": "反转静音状态"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preload-by-name",
+      "name": "预加载(按名称)",
+      "description": "从服务器下载一个名称字符串的音频文件，而不播放它。",
+      "display_text": "预加载[b]{1}[/b] (从 [i]{0}[/i])",
+      "params": [
+        {
+          "id": "folder",
+          "name": "文件夹",
+          "description": "选择包含要预加载的音频文件的文件夹。",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "声音"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "音频文件名",
+          "description": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。"
+        }
+      ]
+    },
+    {
+      "id": "set-master-volume",
+      "name": "设置主音量",
+      "description": "设置所有音频的总音量。",
+      "display_text": "设置主音量为[b]{0}[/b]dB",
+      "params": [
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "主衰减以分贝（dB）表示。 0是原始音量，-10 dB大约是声音的一半，等等。"
+        }
+      ]
+    },
+    {
+      "id": "set-paused",
+      "name": "设置暂停",
+      "description": "使用给定标记暂停或恢复音频。",
+      "display_text": "{1} 标签 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要暂停或恢复播放的音频标签。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "要将指定标签的音频暂停或恢复播放。",
+          "options": [
+            {
+              "id": "pause",
+              "label": "暂停"
+            },
+            {
+              "id": "resume",
+              "label": "恢复"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seek-to",
+      "name": "跳转播放位置",
+      "description": "将指定的音频标签，跳转到到指定的位置继续播放。",
+      "display_text": "音频跳转到[i]{1}[/i]秒(标签: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要操作的音频的标签。"
+        },
+        {
+          "id": "position",
+          "name": "位置",
+          "description": "跳转到音频指定的时间位置，以秒为单位。结合 Audio.CurrentTime 表达式使用，可实现快进或后退几秒的效果。"
+        }
+      ]
+    },
+    {
+      "id": "stop-all",
+      "name": "停止所有",
+      "description": "停止所有正在播放的声音。",
+      "display_text": "停止所有",
+      "params": []
+    },
+    {
+      "id": "schedule-next-play",
+      "name": "安排下一首播放",
+      "description": "准确安排下一首播放的时间，避免因帧率变化导致声音播放延时。",
+      "display_text": "在 [i]{0}[/i] 播放下一首",
+      "params": [
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "准确安排下一首播放的时间。通常这是 Audio.CurrentTime + N的形式。"
+        }
+      ]
+    },
+    {
+      "id": "unload-audio",
+      "name": "卸载音频",
+      "description": "从内存中卸载音频文件。后续想再次播放则需要重新加载它。",
+      "display_text": "卸载[b]{0}[/b]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "音频文件",
+          "description": "选择要卸载的音频文件。"
+        }
+      ]
+    },
+    {
+      "id": "unload-audio-by-name",
+      "name": "卸载音频(按名称)",
+      "description": "通过音频文件名称，从内存中卸载音频文件。后续想再次播放则需要重新加载它。",
+      "display_text": "从{0}卸载[b]{1}[/b]",
+      "params": [
+        {
+          "id": "folder",
+          "name": "文件夹",
+          "description": "选择包含音频文件的文件夹。",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "声音"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "音频文件名",
+          "description": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。"
+        }
+      ]
+    },
+    {
+      "id": "unload-all",
+      "name": "卸载全部音频",
+      "description": "从内存中卸载所有音频文件。后续想再次播放则需要重新加载它。",
+      "display_text": "卸载全部音频",
+      "params": []
+    },
+    {
+      "id": "fade-volume",
+      "name": "淡出音量",
+      "description": "随着时间的推移，逐渐改变声音的音量。",
+      "display_text": "在[b]{2}[/b]秒内，淡出 [i]{0}[/i] 的声音至[b]{1}[/b]dB 然后{3}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要设置的音频标签，留空则影响最后播放的声音。"
+        },
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "以分贝(dB)进行衰减淡出。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "在几秒内完全淡出完成。"
+        },
+        {
+          "id": "ending",
+          "name": "淡出完成后",
+          "description": "淡出结束后该做什么。对于淡出效果，在完成后停止声音播放是最有效的。",
+          "options": [
+            {
+              "id": "stop",
+              "label": "停止播放"
+            },
+            {
+              "id": "keep-playing",
+              "label": "保持播放"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "add-remote-url",
+      "name": "加载远程音频",
+      "description": "从指定的链接加载音频，通过指定一个名称，在事件中根据该名称字符串进行播放。",
+      "display_text": "加载远程音频 [b]{0}[/b] (类型: [i]{1}[/i], 别名: [b]{2}[/b])",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "加载音频的远程链接。注意，跨域的请求需要使用CORS。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "在指定链接中加载的音频的格式类型( 也叫MIME类型)。注：WebM Opus 是唯一能保证在所有平台上播放的格式。"
+        },
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "分配此链接的名称。分配后可以使用此名称的字符串进行操作。"
+        }
+      ]
+    },
+    {
+      "id": "add-stereo-pan-effect",
+      "name": "添加立体声效果",
+      "description": "添加 Stereo pan 立体声效果，用于平衡左右声道的声音。",
+      "display_text": "添加立体声效果 (音频标签: {0}, 声道: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要处理的音频标签。"
+        },
+        {
+          "id": "stereo-pan",
+          "name": "声道",
+          "description": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+        }
+      ]
+    },
+    {
+      "id": "set-stereo-pan",
+      "name": "设置声道平衡",
+      "description": "设置一个声音的立体声，左/右声道平移的效果。",
+      "display_text": "设置 [i]{0}[/i] 声道为 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要改变的声音的标签。 留空则影响最后播放的声音。"
+        },
+        {
+          "id": "stereo-pan",
+          "name": "声道",
+          "description": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+        }
+      ]
+    },
+    {
+      "id": "set-listener-orientation",
+      "name": "设置监听器方向",
+      "description": "设置监听器的3D方向",
+      "display_text": "设置监听器方向, 前推 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 升降 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "params": [
+        {
+          "id": "forwardX",
+          "name": "前推X",
+          "description": "前推向量的X分量。"
+        },
+        {
+          "id": "forwardY",
+          "name": "前推Y",
+          "description": "前推向量的Y分量。"
+        },
+        {
+          "id": "forwardZ",
+          "name": "前推Z",
+          "description": "前推向量的Z分量。"
+        },
+        {
+          "id": "upX",
+          "name": "升降X",
+          "description": "升降向量的X分量。"
+        },
+        {
+          "id": "upY",
+          "name": "升降Y",
+          "description": "升降向量的Y分量。"
+        },
+        {
+          "id": "upZ",
+          "name": "升降Z",
+          "description": "升降向量的Z分量。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "effectcount",
+      "name": "效果器数量",
+      "description": "获取音频标签已添加的声音效果的数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音标签。"
+        }
+      ]
+    },
+    {
+      "id": "analyserfreqbincount",
+      "name": "分析采样点数量",
+      "description": "从音频分析器中，获取采样点的数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在分析器中，采样点的索引。"
+        }
+      ]
+    },
+    {
+      "id": "analyserfreqbinat",
+      "name": "分析采样频率",
+      "description": "从音频分析器中，获取采样点的幅度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要应用的声音标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在分析器中，采样点的索引。"
+        },
+        {
+          "id": "bin",
+          "name": "采样点",
+          "description": "在分析器中，采样点的索引。"
+        }
+      ]
+    },
+    {
+      "id": "analyserpeaklevel",
+      "name": "分析采样峰值",
+      "description": "从音频分析器中，获取采样点的峰值水平。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音的标签"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在分析器中，采样点的索引。"
+        }
+      ]
+    },
+    {
+      "id": "analyserrmslevel",
+      "name": "分析采样平均功率",
+      "description": "从音频分析器中，获取采样点的平均功率级别。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音的标签"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在分析器中，采样点的索引。"
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "name": "持续时间",
+      "description": "获取指定标签的声音的持续时间，以秒为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音的标签"
+        }
+      ]
+    },
+    {
+      "id": "playbacktime",
+      "name": "播放时间",
+      "description": "获取指定标签声音的播放位置，以秒为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音的标签"
+        }
+      ]
+    },
+    {
+      "id": "volume",
+      "name": "音量",
+      "description": "获取指定标签的声音的当前音量，以分贝为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的声音的标签"
+        }
+      ]
+    },
+    {
+      "id": "mastervolume",
+      "name": "主音量",
+      "description": "获取当前主音量，以分贝为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "samplerate",
+      "name": "采样率",
+      "description": "获取音频输出采样率，以赫兹为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currenttime",
+      "name": "当前时间",
+      "description": "获取当前音频的真实时间，以秒为单位。常用于安排音频播放的准确时间，对 '安排下一首播放' 动作非常重要。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playbackrate",
+      "name": "播放速度",
+      "description": "设置指定标签的声音的播放速度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的音频的标签"
+        }
+      ]
+    },
+    {
+      "id": "output-latency",
+      "name": "输出延迟",
+      "description": "音频在输出设备上实际播放的延迟，以秒为单位。如果延迟未知，则返回为 -1。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "normalized-volume",
+      "name": "音量转换分贝",
+      "description": "将音量转换为分贝，音量在 0-100 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "要转换的音量百分比，在 0 - 100 范围。"
+        },
+        {
+          "id": "dbThreshold",
+          "name": "分贝阈值",
+          "description": "音量在 10 百分比位置时，低于阈值分贝的声音将线性淡出直到听静音。建议值为 -40。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 43,
+    "expressions": 14
+  }
+}

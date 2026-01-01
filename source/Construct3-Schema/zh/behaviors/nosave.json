@@ -1,0 +1,14 @@
+{
+  "id": "nosave",
+  "name": "不存档",
+  "description": "对于系统存档功能，允许不保存此对象数据，保持场景初始状态。适用于静态的场景物体，有助于减小存档文件占用空间并提升加载速度。",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

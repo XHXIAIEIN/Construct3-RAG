@@ -1,0 +1,728 @@
+{
+  "id": "camera3d",
+  "name": "3D camera",
+  "description": "Move the camera in 3D to view the layout from a different perspective.",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "look-at-position",
+      "name": "Look at position",
+      "description": "Orient the camera by setting the camera position and providing another position to point the camera towards.",
+      "display_text": "Set camera position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), look at ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), up vector ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
+      "params": [
+        {
+          "id": "cam-x",
+          "name": "Camera X",
+          "description": "The X co-ordinate of the camera position."
+        },
+        {
+          "id": "cam-y",
+          "name": "Camera Y",
+          "description": "The Y co-ordinate of the camera position."
+        },
+        {
+          "id": "cam-z",
+          "name": "Camera Z",
+          "description": "The Z co-ordinate of the camera position."
+        },
+        {
+          "id": "look-x",
+          "name": "Look at X",
+          "description": "The X co-ordinate of the position to point the camera at."
+        },
+        {
+          "id": "look-y",
+          "name": "Look at Y",
+          "description": "The Y co-ordinate of the position to point the camera at."
+        },
+        {
+          "id": "look-z",
+          "name": "Look at Z",
+          "description": "The Z co-ordinate of the position to point the camera at."
+        },
+        {
+          "id": "up-x",
+          "name": "Up vector X",
+          "description": "The X component of a 3D vector indicating which way is up."
+        },
+        {
+          "id": "up-y",
+          "name": "Up vector Y",
+          "description": "The Y component of a 3D vector indicating which way is up."
+        },
+        {
+          "id": "up-z",
+          "name": "Up vector Z",
+          "description": "The Z component of a 3D vector indicating which way is up."
+        }
+      ]
+    },
+    {
+      "id": "look-parallel-to-layout",
+      "name": "Look parallel to layout",
+      "description": "A shortcut to orient the camera looking parallel to the layout as opposed to down on to the layout.",
+      "display_text": "Set camera parallel to layout at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) angle [i]{3}[/i]",
+      "params": [
+        {
+          "id": "cam-x",
+          "name": "Camera X",
+          "description": "The X co-ordinate of the camera position."
+        },
+        {
+          "id": "cam-y",
+          "name": "Camera Y",
+          "description": "The Y co-ordinate of the camera position."
+        },
+        {
+          "id": "cam-z",
+          "name": "Camera Z",
+          "description": "The Z co-ordinate of the camera position."
+        },
+        {
+          "id": "look-angle",
+          "name": "Look angle",
+          "description": "The angle in degrees to point the camera."
+        }
+      ]
+    },
+    {
+      "id": "restore-2d-camera",
+      "name": "Restore 2D camera",
+      "description": "Restore the default 2D camera behavior, centering on the scroll position.",
+      "display_text": "Restore 2D camera",
+      "params": []
+    },
+    {
+      "id": "move-along-layout-axis",
+      "name": "Move along layout axis",
+      "description": "Move the camera and/or look position along axes relative to the layout.",
+      "display_text": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis",
+      "params": [
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "Number of units to move along the given axis."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "Which axis, relative to the layout, to move along.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to move the camera, the look position, or both.",
+          "options": [
+            {
+              "id": "both",
+              "label": "Camera & look positions"
+            },
+            {
+              "id": "camera",
+              "label": "Camera position"
+            },
+            {
+              "id": "look",
+              "label": "Look position"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-along-camera-axis",
+      "name": "Move along camera axis",
+      "description": "Move the camera and/or look position along axes relative to the direction the camera is pointing in.",
+      "display_text": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis",
+      "params": [
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "Number of units to move along the given axis."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "Which axis, relative to the direction the camera is pointing in, to move along.",
+          "options": [
+            {
+              "id": "forward",
+              "label": "Forward"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to move the camera, the look position, or both.",
+          "options": [
+            {
+              "id": "both",
+              "label": "Camera & look positions"
+            },
+            {
+              "id": "camera",
+              "label": "Camera position"
+            },
+            {
+              "id": "look",
+              "label": "Look position"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-position",
+      "name": "Set position",
+      "description": "Set the camera or look position.",
+      "display_text": "Set [b]{3}[/b] position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X position to set."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y position to set."
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "Z position to set."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to set the camera or the look position.",
+          "options": [
+            {
+              "id": "camera",
+              "label": "Camera"
+            },
+            {
+              "id": "look",
+              "label": "Look"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rotate-camera",
+      "name": "Rotate camera",
+      "description": "Rotate the camera look direction by an X and Y amount. Useful for mouse look.",
+      "display_text": "Rotate camera by ([i]{0}[/i], [i]{1}[/i]), polar angle range [i]{2}[/i] to [i]{3}[/i]",
+      "params": [
+        {
+          "id": "rotate-x",
+          "name": "Rotate X",
+          "description": "Number of degrees to rotate horizontally."
+        },
+        {
+          "id": "rotate-y",
+          "name": "Rotate Y",
+          "description": "Number of degrees to rotate vertically."
+        },
+        {
+          "id": "min-polar-angle",
+          "name": "Min polar angle",
+          "description": "The minimum angle for Y rotation, limiting how far the camera can look upwards."
+        },
+        {
+          "id": "max-polar-angle",
+          "name": "Max polar angle",
+          "description": "The maximum angle for Y rotation, limiting how far the camera can look downwards."
+        }
+      ]
+    },
+    {
+      "id": "set-field-of-view",
+      "name": "Set field of view",
+      "description": "Set the angle of the visible area in front of the camera. Only applicable with 'regular' Z axis scale.",
+      "display_text": "Set field of view to [i]{0}[/i]°",
+      "params": [
+        {
+          "id": "fov",
+          "name": "Field of view",
+          "description": "Angle of the field of view, in degrees."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "camera-x",
+      "name": "CameraX",
+      "description": "The X co-ordinate of the camera.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-y",
+      "name": "CameraY",
+      "description": "The Y co-ordinate of the camera.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-z",
+      "name": "CameraZ",
+      "description": "The Z co-ordinate of the camera.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-x",
+      "name": "LookX",
+      "description": "The X co-ordinate of the position the camera is pointing at.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-y",
+      "name": "LookY",
+      "description": "The Y co-ordinate of the position the camera is pointing at.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-z",
+      "name": "LookZ",
+      "description": "The Z co-ordinate of the position the camera is pointing at.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-x",
+      "name": "UpX",
+      "description": "The X component of the up vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-y",
+      "name": "UpY",
+      "description": "The Y component of the up vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-z",
+      "name": "UpZ",
+      "description": "The Z component of the up vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-x",
+      "name": "ForwardX",
+      "description": "The X component of the forward unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-y",
+      "name": "ForwardY",
+      "description": "The Y component of the forward unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-z",
+      "name": "ForwardZ",
+      "description": "The Z component of the forward unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-x",
+      "name": "RightX",
+      "description": "The X component of the right (perpendicular) unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-y",
+      "name": "RightY",
+      "description": "The Y component of the right (perpendicular) unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-z",
+      "name": "RightZ",
+      "description": "The Z component of the right (perpendicular) unit vector.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "viewport-top-left-x",
+      "name": "ViewportTopLeftX",
+      "description": "Get the X co-ordinate of the top-left point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-left-y",
+      "name": "ViewportTopLeftY",
+      "description": "Get the Y co-ordinate of the top-left point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-right-x",
+      "name": "ViewportTopRightX",
+      "description": "Get the X co-ordinate of the top-right point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-right-y",
+      "name": "ViewportTopRightY",
+      "description": "Get the Y co-ordinate of the top-right point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-right-x",
+      "name": "ViewportBottomRightX",
+      "description": "Get the X co-ordinate of the bottom-right point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-right-y",
+      "name": "ViewportBottomRightY",
+      "description": "Get the Y co-ordinate of the bottom-right point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-left-x",
+      "name": "ViewportBottomLeftX",
+      "description": "Get the X co-ordinate of the bottom-left point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-left-y",
+      "name": "ViewportBottomLeftY",
+      "description": "Get the Y co-ordinate of the bottom-left point of the visible area on a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "layer-to-canvas-x",
+      "name": "LayerToCanvasX",
+      "description": "Translate a 3D position from layer co-ordinates to canvas CSS co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "Z co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "layer-to-canvas-y",
+      "name": "LayerToCanvasY",
+      "description": "Translate a 3D position from layer co-ordinates to canvas CSS co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "Z co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "canvas-to-layer-x",
+      "name": "CanvasToLayerX",
+      "description": "Translate a position from canvas CSS co-ordinates to layer co-ordinates on a Z plane.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "layer-z",
+          "name": "layerZ",
+          "description": "Z plane on the layer."
+        }
+      ]
+    },
+    {
+      "id": "canvas-to-layer-y",
+      "name": "CanvasToLayerY",
+      "description": "Translate a position from canvas CSS co-ordinates to layer co-ordinates on a Z plane.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "layer-z",
+          "name": "layerZ",
+          "description": "Z plane on the layer."
+        }
+      ]
+    },
+    {
+      "id": "camera-x-rotation",
+      "name": "CameraXRotation",
+      "description": "The X rotation of the camera in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-y-rotation",
+      "name": "CameraYRotation",
+      "description": "The Y rotation of the camera in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "z-scale",
+      "name": "ZScale",
+      "description": "The scale factor for number of pixels per unit on the Z axis.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "default-camera-z",
+      "name": "DefaultCameraZ",
+      "description": "The camera Z position where a 2D view will display at 100% scale.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layer-to-layer-x",
+      "name": "LayerToLayerX",
+      "description": "Translate a 3D position from one layer to another layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "fromLayer",
+          "description": "Layer position is on."
+        },
+        {
+          "id": "to-layer",
+          "name": "toLayer",
+          "description": "Layer to translate position to."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "Z co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "layer-to-layer-y",
+      "name": "LayerToLayerY",
+      "description": "Translate a 3D position from one layer to another layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "fromLayer",
+          "description": "Layer position is on."
+        },
+        {
+          "id": "to-layer",
+          "name": "toLayer",
+          "description": "Layer to translate position to."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "Z co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "look-vector-x",
+      "name": "LookVectorX",
+      "description": "The X component of the vector from the camera to look position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-vector-y",
+      "name": "LookVectorY",
+      "description": "The Y component of the vector from the camera to look position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-vector-z",
+      "name": "LookVectorZ",
+      "description": "The Z component of the vector from the camera to look position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "field-of-view",
+      "name": "FieldOfView",
+      "description": "The current field of view in degrees.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 0,
+    "actions": 8,
+    "expressions": 37
+  }
+}

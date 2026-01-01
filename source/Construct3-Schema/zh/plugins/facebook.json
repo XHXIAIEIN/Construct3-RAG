@@ -1,0 +1,185 @@
+{
+  "id": "facebook",
+  "name": "Facebook",
+  "description": "访问 Facebook API 功能。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-ready",
+      "name": "准备就绪",
+      "description": "检测 Facebook API 是否已加载完成，并随时可以使用。",
+      "display_text": "准备就绪",
+      "params": []
+    },
+    {
+      "id": "is-user-logged-in",
+      "name": "用户已登录",
+      "description": "检测用户是否已登录 Facebook 账号。",
+      "display_text": "用户已登录",
+      "params": []
+    },
+    {
+      "id": "on-user-logged-in",
+      "name": "用户登录成功",
+      "description": "用户成功登录时触发。",
+      "display_text": "用户登录成功",
+      "params": []
+    },
+    {
+      "id": "on-user-logged-out",
+      "name": "用户注销完成",
+      "description": "用户注销完成时触发。",
+      "display_text": "用户注销完成",
+      "params": []
+    },
+    {
+      "id": "on-name-available",
+      "name": "已获取到用户名",
+      "description": "登录后，用户名称可用时触发。",
+      "display_text": "已获取到用户名",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "log-out",
+      "name": "注销",
+      "description": "用户注销登录。",
+      "display_text": "注销",
+      "params": []
+    },
+    {
+      "id": "log-in",
+      "name": "登录",
+      "description": "登录到应用程序，以便访问用户详细信息。",
+      "display_text": "登录 (权限：[i]{0}[/i])",
+      "params": [
+        {
+          "id": "permissions",
+          "name": "权限",
+          "description": "要请求的权限指令，使用逗号分割多个。如 \"public_profile\""
+        }
+      ]
+    },
+    {
+      "id": "prompt-wall-post",
+      "name": "发表到动态",
+      "description": "弹出分享对话框，用户可以输入文字，也可以选择取消。",
+      "display_text": "发表到动态",
+      "params": []
+    },
+    {
+      "id": "prompt-to-share-this-app",
+      "name": "分享此应用",
+      "description": "弹出分享对话框，用户可以共享应用程序的链接，也可以选择取消。",
+      "display_text": "提示分享此应用",
+      "params": []
+    },
+    {
+      "id": "prompt-to-share-link",
+      "name": "分享链接",
+      "description": "弹出分享对话框，用户可以共享指定的链接，也可以选择取消。",
+      "display_text": "提示分享链接[b]{0}[/b]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "分享的链接。"
+        }
+      ]
+    },
+    {
+      "id": "publish-wall-post",
+      "name": "发布动态",
+      "description": "将消息发布到用户的墙上。 用户应明确启动此操作。",
+      "display_text": "发表文字动态: [i]{0}[/i]",
+      "params": [
+        {
+          "id": "message",
+          "name": "消息",
+          "description": "要发布到用户动态中的文本。建议仅在用户发起该操作时才执行此操作。"
+        }
+      ]
+    },
+    {
+      "id": "publish-link",
+      "name": "发布链接",
+      "description": "发布指向用户墙的链接。 用户应明确启动此操作。",
+      "display_text": "发表链接动态 [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "params": [
+        {
+          "id": "message",
+          "name": "消息",
+          "description": "要发布到用户动态消息中的文本内容。建议仅在用户发起操作时才进行此操作。"
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "分享的链接。"
+        },
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "链接文字。"
+        },
+        {
+          "id": "caption",
+          "name": "标题",
+          "description": "标题出现在链接文本下方。"
+        },
+        {
+          "id": "description",
+          "name": "描述",
+          "description": "说明出现在标题下方。"
+        },
+        {
+          "id": "picture-url-optional",
+          "name": "图片URL(可选)",
+          "description": "要在 '分享' 对话框中使用的图像的URL。必须包含 http://"
+        }
+      ]
+    },
+    {
+      "id": "on-cta-click",
+      "name": "点击行动号召按钮",
+      "description": "在 Facebook 可试玩广告中，当用户点击行动号召按钮 (CTA) 时，触发此动作。",
+      "display_text": "点击行动号召按钮",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "fullname",
+      "name": "完整名称",
+      "description": "获取用户的全名，如果用户已登录。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "firstname",
+      "name": "姓氏",
+      "description": "获取用户的名字，如果用户已登录。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lastname",
+      "name": "姓氏",
+      "description": "获取用户的姓氏，如果用户已登录。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "useridstr",
+      "name": "用户ID",
+      "description": "获取用户ID作为字符串，即使对于具有相同名称的用户也是如此。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 8,
+    "expressions": 4
+  }
+}

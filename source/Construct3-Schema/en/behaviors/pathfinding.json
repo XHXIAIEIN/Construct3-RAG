@@ -1,0 +1,497 @@
+{
+  "id": "pathfinding",
+  "name": "Pathfinding",
+  "description": "Find paths around obstacles, and optionally move along them.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-path-found",
+      "name": "On path found",
+      "description": "Triggered after 'Find path' when a path successfully found.",
+      "display_text": "On {my} path found",
+      "params": []
+    },
+    {
+      "id": "on-failed-to-find-path",
+      "name": "On failed to find path",
+      "description": "Triggered after 'Find path' when no path could be found.",
+      "display_text": "On {my} failed to find path",
+      "params": []
+    },
+    {
+      "id": "is-cell-obstacle",
+      "name": "Is cell obstacle",
+      "description": "Test if a cell in the pathfinding map is marked as an obstacle.",
+      "display_text": "Is {my} cell ({0}, {1}) obstacle",
+      "params": [
+        {
+          "id": "cell-x",
+          "name": "Cell X",
+          "description": "The horizontal cell to test if an obstacle (in cells, rather than layout co-ordinates)."
+        },
+        {
+          "id": "cell-y",
+          "name": "Cell Y",
+          "description": "The vertical cell to test if an obstacle (in cells, rather than layout co-ordinates)."
+        }
+      ]
+    },
+    {
+      "id": "is-calculating-path",
+      "name": "Is calculating path",
+      "description": "True if the object is currently searching for a path.",
+      "display_text": "Is {my} calculating path",
+      "params": []
+    },
+    {
+      "id": "is-moving-along-path",
+      "name": "Is moving along path",
+      "description": "True if the object is currently moving along a found path.",
+      "display_text": "Is {my} moving along path",
+      "params": []
+    },
+    {
+      "id": "on-arrived",
+      "name": "On arrived",
+      "description": "Triggered when moving along path and arrived at destination.",
+      "display_text": "On {my} arrived",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current movement speed of the object.",
+      "display_text": "{my} speed {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current movement speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed to compare to, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "diagonals-are-enabled",
+      "name": "Diagonals are enabled",
+      "description": "True if diagonal movement across cells is currently enabled.",
+      "display_text": "{my} diagonals are enabled",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "find-path",
+      "name": "Find path",
+      "description": "Start looking for a path to a destination, later triggering 'On path found' or 'On failed to find path'.",
+      "display_text": "{my}: Find path to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to find a path to."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to find a path to."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the behavior.",
+      "display_text": "Set {my} {0}",
+      "params": [
+        {
+          "id": "set",
+          "name": "Set",
+          "description": "Whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regenerate-obstacle-map",
+      "name": "Regenerate obstacle map",
+      "description": "(Slow) Check every cell to determine if it is an obstacle again, in case obstacles have moved or changed. Completes next tick.",
+      "display_text": "Regenerate {my} obstacle map",
+      "params": []
+    },
+    {
+      "id": "add-obstacle",
+      "name": "Add obstacle",
+      "description": "When using custom obstacles, add a family or object as an obstacle.",
+      "display_text": "Add {my} obstacle {0}",
+      "params": [
+        {
+          "id": "obstacle",
+          "name": "Obstacle",
+          "description": "Choose a family or object to use as obstacles in the pathfinding map."
+        }
+      ]
+    },
+    {
+      "id": "clear-obstacles",
+      "name": "Clear obstacles",
+      "description": "Clear the added custom obstacles.",
+      "display_text": "Clear {my} obstacles",
+      "params": []
+    },
+    {
+      "id": "add-path-cost",
+      "name": "Add path cost",
+      "description": "Increase the path cost for travelling over an object (e.g. to simulate rough terrain).",
+      "display_text": "Add {my} object {0} with path cost [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose an object to increase pathfinding cost."
+        },
+        {
+          "id": "cost",
+          "name": "Cost",
+          "description": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively."
+        }
+      ]
+    },
+    {
+      "id": "clear-cost",
+      "name": "Clear cost",
+      "description": "Clear any additional path cost that was previously added.",
+      "display_text": "Clear {my} additional path costs",
+      "params": []
+    },
+    {
+      "id": "regenerate-region",
+      "name": "Regenerate region",
+      "description": "Regenerate just a rectangular portion of the obstacle map in layout co-ordinates. Completes next tick.",
+      "display_text": "Regenerate {my} obstacle map from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i])",
+      "params": [
+        {
+          "id": "start-x",
+          "name": "Start X",
+          "description": "Start X co-ordinate in layout of rectangle to regenerate."
+        },
+        {
+          "id": "start-y",
+          "name": "Start Y",
+          "description": "Start Y co-ordinate in layout of rectangle to regenerate."
+        },
+        {
+          "id": "end-x",
+          "name": "End X",
+          "description": "End X co-ordinate in layout of rectangle to regenerate."
+        },
+        {
+          "id": "end-y",
+          "name": "End Y",
+          "description": "End Y co-ordinate in layout of rectangle to regenerate."
+        }
+      ]
+    },
+    {
+      "id": "regenerate-region-around-object",
+      "name": "Regenerate region around object",
+      "description": "Regenerate just a rectangular portion of the obstacle map from an object's bounding box. Completes next tick.",
+      "display_text": "Regenerate {my} obstacle map around {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "An object whose bounding box will determine a rectangular portion of the obstacle map to regenerate."
+        }
+      ]
+    },
+    {
+      "id": "move-along-path",
+      "name": "Move along path",
+      "description": "Start moving along a found path after the 'On path found' trigger.",
+      "display_text": "{my}: Move along path",
+      "params": []
+    },
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Stop moving along a path.",
+      "display_text": "{my}: Stop",
+      "params": []
+    },
+    {
+      "id": "set-max-speed",
+      "name": "Set max speed",
+      "description": "Set the maximum speed for moving along paths.",
+      "display_text": "Set {my} maximum speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The maximum speed to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the acceleration for moving along paths.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The acceleration to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "Set deceleration",
+      "description": "Set the deceleration for moving along paths.",
+      "display_text": "Set {my} deceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "Deceleration",
+          "description": "The deceleration to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-rotate-speed",
+      "name": "Set rotate speed",
+      "description": "Set the turn speed for moving along paths.",
+      "display_text": "Set {my} rotate speed to [i]{0}[/i] degrees per second",
+      "params": [
+        {
+          "id": "rotate-speed",
+          "name": "Rotate speed",
+          "description": "The turn speed to set, in degrees per second."
+        }
+      ]
+    },
+    {
+      "id": "set-diagonals-enabled",
+      "name": "Set diagonals enabled",
+      "description": "Enable or disable diagonal movement across cells.",
+      "display_text": "Set {my} diagonals {0}",
+      "params": [
+        {
+          "id": "diagonals",
+          "name": "Diagonals",
+          "description": "Whether to enable or disable diagonal movement across cells.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the current speed for moving along paths.",
+      "display_text": "Set {my} speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-move-cost",
+      "name": "Set move cost",
+      "description": "Set the basic cost for moving to an adjacent cell, which affects the relative effect of other costs.",
+      "display_text": "Set {my} move cost [i]{0}[/i]",
+      "params": [
+        {
+          "id": "move-cost",
+          "name": "Move cost",
+          "description": "The basic cost to move to an adjacent cell while calculating a path."
+        }
+      ]
+    },
+    {
+      "id": "start-path-group",
+      "name": "Start path group",
+      "description": "Spread out paths by adding a temporary extra cost around found paths in the same group.",
+      "display_text": "{my}: Start path group (base cost [i]{0}[/i], cell spread [i]{1}[/i], max workers [i]{2}[/i])",
+      "params": [
+        {
+          "id": "base-cost",
+          "name": "Base cost",
+          "description": "The extra cost to add around found paths, which is multiplied depending on the number of workers used."
+        },
+        {
+          "id": "cell-spread",
+          "name": "Cell spread",
+          "description": "The number of cells around the found path to increase cost for. Prefer to use an odd number."
+        },
+        {
+          "id": "max-workers",
+          "name": "Max workers",
+          "description": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately."
+        }
+      ]
+    },
+    {
+      "id": "end-path-group",
+      "name": "End path group",
+      "description": "End a path group, restoring normal pathfinding.",
+      "display_text": "{my}: End path group",
+      "params": []
+    },
+    {
+      "id": "set-direct-movement",
+      "name": "Set direct movement",
+      "description": "Set where to allow moving directly towards a node when the surrounding area is clear.",
+      "display_text": "Set {my} direct movement [i]{0}[/i]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Direct movement",
+          "description": "Where to allow moving directly towards a node when the surrounding area is clear.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None"
+            },
+            {
+              "id": "to-destination",
+              "label": "To destination"
+            },
+            {
+              "id": "anywhere-along-path",
+              "label": "Anywhere along path"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "nodecount",
+      "name": "NodeCount",
+      "description": "The number of nodes along a found path.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "nodexat",
+      "name": "NodeXAt",
+      "description": "The X co-ordinate of a node at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of node in path."
+        }
+      ]
+    },
+    {
+      "id": "nodeyat",
+      "name": "NodeYAt",
+      "description": "The Y co-ordinate of a node at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of node in path."
+        }
+      ]
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion along a path, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentnode",
+      "name": "CurrentNode",
+      "description": "The current zero-based node index moving towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current speed in pixels per second while moving.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cellsize",
+      "name": "CellSize",
+      "description": "The current cell size property.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "MaxSpeed",
+      "description": "The current maximum speed in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The current acceleration in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "Deceleration",
+      "description": "The current deceleration in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rotatespeed",
+      "name": "RotateSpeed",
+      "description": "The current maximum turn speed in degrees per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 9,
+    "actions": 21,
+    "expressions": 11
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "iframe",
+  "name": "iframe",
+  "description": "Display content from another web page in a frame.",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "navigate-url",
+      "name": "Navigate to URL",
+      "description": "Load a new URL in the iframe.",
+      "display_text": "Navigate to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The URL to load."
+        }
+      ]
+    },
+    {
+      "id": "display-html-string",
+      "name": "Display HTML string",
+      "description": "Load a string of HTML content in the iframe. Enable sandbox if there is any untrusted content.",
+      "display_text": "Display HTML string [b]{0}[/b]",
+      "params": [
+        {
+          "id": "html",
+          "name": "HTML",
+          "description": "A string of HTML content to load. Enable sandbox if there is any untrusted content."
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 2,
+    "expressions": 0
+  }
+}

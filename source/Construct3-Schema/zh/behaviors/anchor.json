@@ -1,0 +1,46 @@
+{
+  "id": "anchor",
+  "name": "锚点",
+  "description": "简单将对象固定在可视区域内，不会随镜头移动。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测当前行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "{0} {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 0
+  }
+}

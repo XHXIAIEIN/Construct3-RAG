@@ -1,0 +1,313 @@
+{
+  "id": "video",
+  "name": "视频",
+  "description": "在游戏中播放视频。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-playing",
+      "name": "正在播放",
+      "description": "检测是否正在播放视频。",
+      "display_text": "正在播放",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "暂停",
+      "description": "检测视频是否已暂停。",
+      "display_text": "暂停",
+      "params": []
+    },
+    {
+      "id": "has-ended",
+      "name": "播放完成",
+      "description": "检测视频是否播放完成。",
+      "display_text": "播放完成",
+      "params": []
+    },
+    {
+      "id": "is-muted",
+      "name": "已静音",
+      "description": "检测视频是否开启静音。",
+      "display_text": "已静音",
+      "params": []
+    },
+    {
+      "id": "on-playback-event",
+      "name": "触发播放事件",
+      "description": "发生指定的播放事件时触发。",
+      "display_text": "视频{0}",
+      "params": [
+        {
+          "id": "event",
+          "name": "事件",
+          "description": "要检查的播放事件。",
+          "options": [
+            {
+              "id": "can-play",
+              "label": "可播放"
+            },
+            {
+              "id": "can-play-through",
+              "label": "可完整播放"
+            },
+            {
+              "id": "ended",
+              "label": "播放完成"
+            },
+            {
+              "id": "error",
+              "label": "出错"
+            },
+            {
+              "id": "started-loading",
+              "label": "开始加载"
+            },
+            {
+              "id": "played",
+              "label": "已播放"
+            },
+            {
+              "id": "paused",
+              "label": "已暂停"
+            },
+            {
+              "id": "stalled",
+              "label": "停顿"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-playback-time",
+      "name": "设置播放时间",
+      "description": "以秒为单位设置当前播放时间。",
+      "display_text": "设置播放时间为[b]{0}[/b]秒",
+      "params": [
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "查找的播放时间，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-looping",
+      "name": "设置循环",
+      "description": "设置视频到达结尾时是否循环。",
+      "display_text": "设置 {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "视频是否应该在到达结尾时循环播放。",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "仅播放一次"
+            },
+            {
+              "id": "looping",
+              "label": "循环播放"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-muted",
+      "name": "设置静音",
+      "description": "设置音频对象是否进入静音模式，这将影响所有的声音。",
+      "display_text": "设置{0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "设置音频对象是否进入静音模式。",
+          "options": [
+            {
+              "id": "not-muted",
+              "label": "关闭静音"
+            },
+            {
+              "id": "muted",
+              "label": "静音"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-volume",
+      "name": "设置音量",
+      "description": "设置声音的音量增益。",
+      "display_text": "设置音量为[b]{0}[/b]dB",
+      "params": [
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "要设置的音频音量，以dB为单位衰减。"
+        }
+      ]
+    },
+    {
+      "id": "pause",
+      "name": "暂停",
+      "description": "暂停当前播放。",
+      "display_text": "暂停",
+      "params": []
+    },
+    {
+      "id": "play",
+      "name": "播放",
+      "description": "如果停止或暂停，则开始播放视频。 在移动设备上，可能只能在用户输入触发器中工作。",
+      "display_text": "播放",
+      "params": []
+    },
+    {
+      "id": "set-playback-rate",
+      "name": "设置播放速度",
+      "description": "设置视频的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+      "display_text": "设置播放速度为[b]{0}[/b]倍",
+      "params": [
+        {
+          "id": "rate",
+          "name": "倍率",
+          "description": "视频播放速度的倍率。1.0是正常速度，0.5半速，2.0倍速等。"
+        }
+      ]
+    },
+    {
+      "id": "set-source-2",
+      "name": "设置播放源",
+      "description": "将视频源切换到其他视频。注意，这不会自动开始播放。",
+      "display_text": "设置视频播放源 [i]{0}[/i] ({1}), 备选播放源: [i]{2}[/i] ({3})",
+      "params": [
+        {
+          "id": "primary-source",
+          "name": "首选播放源",
+          "description": "要播放的视频文件名，包含后缀名，如 video.webm 。若放在文件夹内，需补全文件夹路径，如 Folder/video.mp4"
+        },
+        {
+          "id": "primary-format",
+          "name": "首选格式",
+          "description": "首选的视频格式和视频编码器。若设备不支持播放此格式，将使用备选格式。",
+          "options": [
+            {
+              "id": "webm-vp8",
+              "label": "WebM VP8"
+            },
+            {
+              "id": "webm-vp9",
+              "label": "WebM VP9"
+            },
+            {
+              "id": "webm-av1",
+              "label": "WebM AV1"
+            },
+            {
+              "id": "mp4-h264",
+              "label": "MP4 H.264"
+            },
+            {
+              "id": "mp4-h265",
+              "label": "MP4 H.265"
+            },
+            {
+              "id": "mp4-av1",
+              "label": "MP4 AV1"
+            }
+          ]
+        },
+        {
+          "id": "secondary-source",
+          "name": "备选播放源",
+          "description": "若首选视频格式设备无法播放，则尝试备选视频源。填写要播放的视频文件名，包含后缀名，如 video.mp4。若放在文件夹内，需补全文件夹路径，如 Folder/video.mp4"
+        },
+        {
+          "id": "secondary-format",
+          "name": "备选格式",
+          "description": "备选的视频格式和编解码器，在首选视频格式无法播放的情况使用。",
+          "options": [
+            {
+              "id": "webm-vp8",
+              "label": "WebM VP8"
+            },
+            {
+              "id": "webm-vp9",
+              "label": "WebM VP9"
+            },
+            {
+              "id": "webm-av1",
+              "label": "WebM AV1"
+            },
+            {
+              "id": "mp4-h264",
+              "label": "MP4 H.264"
+            },
+            {
+              "id": "mp4-h265",
+              "label": "MP4 H.265"
+            },
+            {
+              "id": "mp4-av1",
+              "label": "MP4 AV1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "playbacktime",
+      "name": "播放进度",
+      "description": "当前播放时间（秒）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "duration",
+      "name": "持续时间",
+      "description": "获得视频的时长(秒)。需要视频加载到一定进度时可用。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "volume",
+      "name": "音量",
+      "description": "当前视频音量以dB为单位衰减。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videowidth",
+      "name": "视频宽度",
+      "description": "原视频宽度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videoheight",
+      "name": "视频高度",
+      "description": "原视频高度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playbackrate",
+      "name": "播放速度",
+      "description": "当前的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 8,
+    "expressions": 6
+  }
+}

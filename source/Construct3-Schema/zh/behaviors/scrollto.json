@@ -1,0 +1,79 @@
+{
+  "id": "scrollto",
+  "name": "镜头跟随",
+  "description": "始终将画面对焦到此对象的位置。若有多个对象添加此行为，则对准它们的中心点。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测当前行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "shake",
+      "name": "振动",
+      "description": "在一段时间内，持续振动屏幕。注意，如果可视区域和场景大小相同，需要允许镜头滚动超出场景。",
+      "display_text": "{my} 振动[i]{1}[/i]秒, 强度[i]{0}[/i]  ({2})",
+      "params": [
+        {
+          "id": "magnitude",
+          "name": "振动强度",
+          "description": "振动强度，即允许滚动随机偏移的最大像素。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "振动的持续时间，以秒为单位。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "在持续时间内，振动强度是逐渐减弱至零，还是保持不变。",
+          "options": [
+            {
+              "id": "reducing-magnitude",
+              "label": "逐渐减弱"
+            },
+            {
+              "id": "constant-magnitude",
+              "label": "保持不变"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "{0} {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 2,
+    "expressions": 0
+  }
+}

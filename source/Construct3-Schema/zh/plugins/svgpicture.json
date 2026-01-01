@@ -1,0 +1,116 @@
+{
+  "id": "svgpicture",
+  "name": "矢量图",
+  "description": "显示项目中的 SVG 文件。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image",
+      "name": "设置图像",
+      "description": "设置从项目文件中显示的SVG图像。",
+      "display_text": "设置图像为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "file",
+          "name": "文件",
+          "description": "从项目文件中加载SVG图像。"
+        }
+      ]
+    },
+    {
+      "id": "set-image-by-name",
+      "name": "设置图像 (根据名称)",
+      "description": "从字符串对应的项目文件中显示的SVG图像。",
+      "display_text": "设置图像为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "file",
+          "name": "文件",
+          "description": "用于加载SVG图像的项目文件的名称字符串"
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 3,
+    "expressions": 0
+  }
+}

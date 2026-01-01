@@ -1,0 +1,105 @@
+{
+  "id": "csv",
+  "name": "CSV",
+  "description": "逗号分隔值的文件格式，以纯文本形式存储表格数据。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-parse-error",
+      "name": "解析失败",
+      "description": "存在无效数据，无法进行解析时触发。",
+      "display_text": "解析失败",
+      "params": []
+    },
+    {
+      "id": "on-parse-success",
+      "name": "解析成功",
+      "description": "成功解析 JSON 字符串时触发。",
+      "display_text": "解析成功",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "parse-csv",
+      "name": "解析CSV",
+      "description": "从CSV文件中解析数据并将结果存储在数组对象中。",
+      "display_text": "解析CSV(内容: [i]{0}[/i], 数据类型: [i]{3}[/i], 分隔符 [i]{1}[/i], 储存到: {2}）",
+      "params": [
+        {
+          "id": "csv",
+          "name": "CSV",
+          "description": "要解析的一串由逗号分隔的字符串。"
+        },
+        {
+          "id": "array",
+          "name": "数组",
+          "description": "选择一个数组对象来存储转换的数据。"
+        },
+        {
+          "id": "data-type",
+          "name": "数据类型",
+          "description": "选择转换结果的数据类型。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "string",
+              "label": "字符串"
+            },
+            {
+              "id": "number",
+              "label": "数字"
+            }
+          ]
+        },
+        {
+          "id": "delimiter",
+          "name": "分隔符",
+          "description": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+        }
+      ]
+    },
+    {
+      "id": "generate-csv",
+      "name": "生成CSV",
+      "description": "将数组对象中的数据转换为CSV数据，并返回CSV数据的表达式。",
+      "display_text": "生成CSV(来源: [i]{0}[/i], 分隔符为[i]{1}[/i])",
+      "params": [
+        {
+          "id": "array",
+          "name": "数组",
+          "description": "选择一个数组对象。"
+        },
+        {
+          "id": "delimiter",
+          "name": "分隔符",
+          "description": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "generated-csv",
+      "name": "生成CSV",
+      "description": "执行 '生成CSV' 动作后，获取生成的CSV数据字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tab-character",
+      "name": "制表符",
+      "description": "一个制表符，可以作为分隔符，有时非常有用。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 2,
+    "expressions": 2
+  }
+}

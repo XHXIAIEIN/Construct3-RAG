@@ -1,0 +1,2849 @@
+{
+  "eightdir": {
+    "name_zh": "八方向",
+    "name_en": "8 Direction",
+    "description_zh": "允许对象朝上下左右，及对角线方向移动。",
+    "description_en": "Moves an object up, down, left, right and on diagonals.",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "is-allow-sliding",
+        "name_zh": "允许沿边缘滑行",
+        "name_en": "Allows sliding"
+      }
+    ],
+    "actions": [
+      {
+        "id": "stop",
+        "name_zh": "停止移动",
+        "name_en": "Stop"
+      },
+      {
+        "id": "reverse",
+        "name_zh": "转向",
+        "name_en": "Reverse"
+      },
+      {
+        "id": "set-ignoring-input",
+        "name_zh": "屏蔽玩家控制",
+        "name_en": "Set ignoring input"
+      },
+      {
+        "id": "set-speed",
+        "name_zh": "设置移动速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-max-speed",
+        "name_zh": "设置最大移动速度",
+        "name_en": "Set max speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-deceleration",
+        "name_zh": "设置减速度",
+        "name_en": "Set deceleration"
+      },
+      {
+        "id": "simulate-control",
+        "name_zh": "模拟控制",
+        "name_en": "Simulate control"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-vector-x",
+        "name_zh": "设置向量X",
+        "name_en": "Set vector X"
+      },
+      {
+        "id": "set-vector-y",
+        "name_zh": "设置向量Y",
+        "name_en": "Set vector Y"
+      },
+      {
+        "id": "set-default-controls",
+        "name_zh": "启用默认控制方式",
+        "name_en": "Set default controls"
+      },
+      {
+        "id": "set-allow-sliding",
+        "name_zh": "启用沿边缘滑行",
+        "name_en": "Set allow sliding"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "maxspeed",
+        "name_zh": "最大移动速度",
+        "name_en": "MaxSpeed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "deceleration",
+        "name_zh": "减速度",
+        "name_en": "Deceleration"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "vectorx",
+        "name_zh": "向量X",
+        "name_en": "VectorX"
+      },
+      {
+        "id": "vectory",
+        "name_zh": "向量Y",
+        "name_en": "VectorY"
+      }
+    ]
+  },
+  "anchor": {
+    "name_zh": "锚点",
+    "name_en": "Anchor",
+    "description_zh": "简单将对象固定在可视区域内，不会随镜头移动。",
+    "description_en": "Position objects relative to the viewport.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      }
+    ],
+    "expressions": []
+  },
+  "bound": {
+    "name_zh": "边界约束",
+    "name_en": "Bound to layout",
+    "description_zh": "阻止对象超出场景边界范围。",
+    "description_en": "Stop an object leaving the layout.",
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  },
+  "bullet": {
+    "name_zh": "子弹",
+    "name_en": "Bullet",
+    "description_zh": "以当前角度向前移动对象。通常用于子弹和抛射物。",
+    "description_en": "Move an object ahead at its current angle.  Typically used for bullets and projectiles.",
+    "conditions": [
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "compare-distance-travelled",
+        "name_zh": "比较移动距离",
+        "name_en": "Compare distance travelled"
+      },
+      {
+        "id": "on-step",
+        "name_zh": "触发步进",
+        "name_en": "On step"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-speed",
+        "name_zh": "设置移动速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-gravity",
+        "name_zh": "设置重力",
+        "name_en": "Set gravity"
+      },
+      {
+        "id": "set-angle-of-motion",
+        "name_zh": "设置移动角度",
+        "name_en": "Set angle of motion"
+      },
+      {
+        "id": "bounce-off-object",
+        "name_zh": "反弹子弹",
+        "name_en": "Bounce off object"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-distance-travelled",
+        "name_zh": "设置移动距离",
+        "name_en": "Set distance travelled"
+      },
+      {
+        "id": "stop-stepping",
+        "name_zh": "停止步进",
+        "name_en": "Stop stepping"
+      },
+      {
+        "id": "set-bounce-off-solids",
+        "name_zh": "启用撞击实体反弹",
+        "name_en": "Set bounce off solids"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "angleofmotion",
+        "name_zh": "移动角度",
+        "name_en": "AngleOfMotion"
+      },
+      {
+        "id": "distancetravelled",
+        "name_zh": "移动距离",
+        "name_en": "DistanceTravelled"
+      },
+      {
+        "id": "gravity",
+        "name_zh": "重力",
+        "name_en": "Gravity"
+      }
+    ]
+  },
+  "car": {
+    "name_zh": "车辆",
+    "name_en": "Car",
+    "description_zh": "通过方向盘移动对象，模拟驾驶的体验。",
+    "description_en": "Moves an object forwards with steering.",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "stop",
+        "name_zh": "停下",
+        "name_en": "Stop"
+      },
+      {
+        "id": "set-ignoring-input",
+        "name_zh": "屏蔽玩家控制",
+        "name_en": "Set ignoring input"
+      },
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-max-speed",
+        "name_zh": "设置最大移动速度",
+        "name_en": "Set max speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-deceleration",
+        "name_zh": "设置减速度",
+        "name_en": "Set deceleration"
+      },
+      {
+        "id": "simulate-control",
+        "name_zh": "模拟控制",
+        "name_en": "Simulate control"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-steer-speed",
+        "name_zh": "设置转向速度",
+        "name_en": "Set steer speed"
+      },
+      {
+        "id": "set-drift-recover",
+        "name_zh": "设置漂移修正",
+        "name_en": "Set drift recover"
+      },
+      {
+        "id": "set-friction",
+        "name_zh": "设置摩擦力",
+        "name_en": "Set friction"
+      },
+      {
+        "id": "set-default-controls",
+        "name_zh": "启用默认控制方式",
+        "name_en": "Set default controls"
+      },
+      {
+        "id": "set-turn-while-stopped",
+        "name_zh": "设置静止时旋转",
+        "name_en": "Set turn while stopped"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "maxspeed",
+        "name_zh": "最大移动速度",
+        "name_en": "MaxSpeed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "deceleration",
+        "name_zh": "减速度",
+        "name_en": "Deceleration"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "vectorx",
+        "name_zh": "移动向量X",
+        "name_en": "VectorX"
+      },
+      {
+        "id": "vectory",
+        "name_zh": "移动向量Y",
+        "name_en": "VectorY"
+      },
+      {
+        "id": "steerspeed",
+        "name_zh": "转向速度",
+        "name_en": "SteerSpeed"
+      },
+      {
+        "id": "driftrecover",
+        "name_zh": "漂移修正",
+        "name_en": "DriftRecover"
+      },
+      {
+        "id": "friction",
+        "name_zh": "摩檫力",
+        "name_en": "Friction"
+      }
+    ]
+  },
+  "custom": {
+    "name_zh": "自定义移动",
+    "name_en": "Custom",
+    "description_zh": "使用最底层的移动方式，执行自定义移动功能。",
+    "description_en": "Make your own movement using low-level movement functions.",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "on-step",
+        "name_zh": "触发步进",
+        "name_en": "On step"
+      },
+      {
+        "id": "on-horizontal-step",
+        "name_zh": "向水平方向步进",
+        "name_en": "On horizontal step"
+      },
+      {
+        "id": "on-vertical-step",
+        "name_zh": "向垂直方向步进",
+        "name_en": "On vertical step"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-angle-of-motion",
+        "name_zh": "设置移动角度",
+        "name_en": "Set angle of motion"
+      },
+      {
+        "id": "rotate-clockwise",
+        "name_zh": "顺时针旋转",
+        "name_en": "Rotate clockwise"
+      },
+      {
+        "id": "rotate-counter-clockwise",
+        "name_zh": "逆时针旋转",
+        "name_en": "Rotate counter-clockwise"
+      },
+      {
+        "id": "stop",
+        "name_zh": "停止",
+        "name_en": "Stop"
+      },
+      {
+        "id": "reverse",
+        "name_zh": "反转",
+        "name_en": "Reverse"
+      },
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "accelerate",
+        "name_zh": "加速",
+        "name_en": "Accelerate"
+      },
+      {
+        "id": "accelerate-toward-angle",
+        "name_zh": "朝角度加速",
+        "name_en": "Accelerate toward angle"
+      },
+      {
+        "id": "accelerate-toward-position",
+        "name_zh": "朝位置加速",
+        "name_en": "Accelerate toward position"
+      },
+      {
+        "id": "stop-stepping",
+        "name_zh": "停止步进",
+        "name_en": "Stop stepping"
+      },
+      {
+        "id": "push-out-solid",
+        "name_zh": "推开实体",
+        "name_en": "Push out solid"
+      },
+      {
+        "id": "push-out-solid-at-angle",
+        "name_zh": "推开实体 (角度)",
+        "name_en": "Push out solid at angle"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "dx",
+        "name_zh": "移动速度X",
+        "name_en": "dx"
+      },
+      {
+        "id": "dy",
+        "name_zh": "移动速度Y",
+        "name_en": "dy"
+      }
+    ]
+  },
+  "destroy": {
+    "name_zh": "出界销毁",
+    "name_en": "Destroy outside layout",
+    "description_zh": "对象超出场景范围时自动销毁。",
+    "description_en": "Automatically destroy the object if it leaves the layout area.",
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  },
+  "dragndrop": {
+    "name_zh": "拖放",
+    "name_en": "Drag & Drop",
+    "description_zh": "通过鼠标或触摸拖放对象",
+    "description_en": "Drag and drop objects either by mouse or touch.",
+    "conditions": [
+      {
+        "id": "is-dragging",
+        "name_zh": "正在拖动",
+        "name_en": "Is dragging"
+      },
+      {
+        "id": "on-drag-start",
+        "name_zh": "开始拖动",
+        "name_en": "On drag start"
+      },
+      {
+        "id": "on-drop",
+        "name_zh": "结束拖动",
+        "name_en": "On drop"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "drop",
+        "name_zh": "放下",
+        "name_en": "Drop"
+      },
+      {
+        "id": "set-axes",
+        "name_zh": "设置拖动方向",
+        "name_en": "Set axes"
+      }
+    ],
+    "expressions": []
+  },
+  "fade": {
+    "name_zh": "淡入淡出",
+    "name_en": "Fade",
+    "description_zh": "在一段时间内逐渐改变对象的不透明度，适用于让对象逐渐出现/消失。",
+    "description_en": "Change an object's opacity over time.  Useful for making objects gradually disappear.",
+    "conditions": [
+      {
+        "id": "on-fade-out-finished",
+        "name_zh": "淡出完成",
+        "name_en": "On fade-out finished"
+      },
+      {
+        "id": "on-fade-in-finished",
+        "name_zh": "淡入完成",
+        "name_en": "On fade-in finished"
+      },
+      {
+        "id": "on-wait-finished",
+        "name_zh": "等待结束",
+        "name_en": "On wait finished"
+      }
+    ],
+    "actions": [
+      {
+        "id": "restart-fade",
+        "name_zh": "重新播放",
+        "name_en": "Restart fade"
+      },
+      {
+        "id": "start-fade",
+        "name_zh": "开始播放",
+        "name_en": "Start fade"
+      },
+      {
+        "id": "set-fade-in-time",
+        "name_zh": "设置淡入时间",
+        "name_en": "Set fade-in time"
+      },
+      {
+        "id": "set-wait-time",
+        "name_zh": "设置等待时间",
+        "name_en": "Set wait time"
+      },
+      {
+        "id": "set-fade-out-time",
+        "name_zh": "设置淡出时间",
+        "name_en": "Set fade-out time"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "fadeintime",
+        "name_zh": "淡入时间",
+        "name_en": "FadeInTime"
+      },
+      {
+        "id": "waittime",
+        "name_zh": "等待时间",
+        "name_en": "WaitTime"
+      },
+      {
+        "id": "fadeouttime",
+        "name_zh": "淡出时间",
+        "name_en": "FadeOutTime"
+      }
+    ]
+  },
+  "flash": {
+    "name_zh": "闪烁",
+    "name_en": "Flash",
+    "description_zh": "使对象闪烁，不断地出现和隐去",
+    "description_en": "Make an object temporarily flash, alternately becoming visible and invisible.",
+    "conditions": [
+      {
+        "id": "is-flashing",
+        "name_zh": "正在闪烁",
+        "name_en": "Is flashing"
+      },
+      {
+        "id": "on-flash-ended",
+        "name_zh": "闪烁结束",
+        "name_en": "On flash ended"
+      }
+    ],
+    "actions": [
+      {
+        "id": "flash",
+        "name_zh": "闪烁",
+        "name_en": "Flash"
+      },
+      {
+        "id": "stop-flashing",
+        "name_zh": "停止闪烁",
+        "name_en": "Stop flashing"
+      }
+    ],
+    "expressions": []
+  },
+  "jumpthru": {
+    "name_zh": "跳跃穿透",
+    "name_en": "Jump-thru",
+    "description_zh": "让平台行为识别此对象为实体，也允许从上下两端穿透而过。",
+    "description_en": "A solid the Platform behavior can also jump on to from underneath.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      }
+    ],
+    "expressions": []
+  },
+  "los": {
+    "name_zh": "视线",
+    "name_en": "Line of sight",
+    "description_zh": "让对象可以看见某个位置或其他对象。",
+    "description_en": "Test if an object has line of sight to (if it can \"see\") an object or position.",
+    "conditions": [
+      {
+        "id": "has-los-to-object",
+        "name_zh": "发现对象",
+        "name_en": "Has LOS to object"
+      },
+      {
+        "id": "has-los-to-position",
+        "name_zh": "发现位置",
+        "name_en": "Has LOS to position"
+      },
+      {
+        "id": "has-los-between-positions",
+        "name_zh": "发现位置 (范围)",
+        "name_en": "Has LOS between positions"
+      },
+      {
+        "id": "ray-intersected",
+        "name_zh": "发现障碍物",
+        "name_en": "Ray intersected"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-range",
+        "name_zh": "设置视线范围",
+        "name_en": "Set range"
+      },
+      {
+        "id": "set-cone-of-view",
+        "name_zh": "设置视线角度",
+        "name_en": "Set cone of view"
+      },
+      {
+        "id": "add-obstacle",
+        "name_zh": "添加遮挡物",
+        "name_en": "Add obstacle"
+      },
+      {
+        "id": "clear-obstacles",
+        "name_zh": "清空障碍",
+        "name_en": "Clear obstacles"
+      },
+      {
+        "id": "cast-ray",
+        "name_zh": "发出射线",
+        "name_en": "Cast ray"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "range",
+        "name_zh": "视线范围",
+        "name_en": "Range"
+      },
+      {
+        "id": "coneofview",
+        "name_zh": "视线角度",
+        "name_en": "ConeOfView"
+      },
+      {
+        "id": "hitx",
+        "name_zh": "相交点X",
+        "name_en": "HitX"
+      },
+      {
+        "id": "hity",
+        "name_zh": "相交点Y",
+        "name_en": "HitY"
+      },
+      {
+        "id": "hituid",
+        "name_zh": "相交实例UID",
+        "name_en": "HitUID"
+      },
+      {
+        "id": "hitdistance",
+        "name_zh": "相交距离",
+        "name_en": "HitDistance"
+      },
+      {
+        "id": "normalx",
+        "name_zh": "法线X",
+        "name_en": "NormalX"
+      },
+      {
+        "id": "normaly",
+        "name_zh": "法线Y",
+        "name_en": "NormalY"
+      },
+      {
+        "id": "normalangle",
+        "name_zh": "法线角度",
+        "name_en": "NormalAngle"
+      },
+      {
+        "id": "reflectionx",
+        "name_zh": "反射线X",
+        "name_en": "ReflectionX"
+      },
+      {
+        "id": "reflectiony",
+        "name_zh": "反射线Y",
+        "name_en": "ReflectionY"
+      },
+      {
+        "id": "reflectionangle",
+        "name_zh": "反射角度",
+        "name_en": "ReflectionAngle"
+      }
+    ]
+  },
+  "nosave": {
+    "name_zh": "不存档",
+    "name_en": "No save",
+    "description_zh": "对于系统存档功能，允许不保存此对象数据，保持场景初始状态。适用于静态的场景物体，有助于减小存档文件占用空间并提升加载速度。",
+    "description_en": "Don't save or load this object, e.g. for static scenery. Helps make savegames smaller and quicker to load.",
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  },
+  "pathfinding": {
+    "name_zh": "寻路",
+    "name_en": "Pathfinding",
+    "description_zh": "寻找前往某个位置的路线并绕过途径的障碍物。",
+    "description_en": "Find paths around obstacles, and optionally move along them.",
+    "conditions": [
+      {
+        "id": "on-path-found",
+        "name_zh": "找到路线",
+        "name_en": "On path found"
+      },
+      {
+        "id": "on-failed-to-find-path",
+        "name_zh": "寻找路线失败",
+        "name_en": "On failed to find path"
+      },
+      {
+        "id": "is-cell-obstacle",
+        "name_zh": "检查单元格位置存在障碍物",
+        "name_en": "Is cell obstacle"
+      },
+      {
+        "id": "is-calculating-path",
+        "name_zh": "正在计算路线",
+        "name_en": "Is calculating path"
+      },
+      {
+        "id": "is-moving-along-path",
+        "name_zh": "正沿着路线移动",
+        "name_en": "Is moving along path"
+      },
+      {
+        "id": "on-arrived",
+        "name_zh": "到达目的地",
+        "name_en": "On arrived"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "diagonals-are-enabled",
+        "name_zh": "允许斜向移动",
+        "name_en": "Diagonals are enabled"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "find-path",
+        "name_zh": "寻找路线",
+        "name_en": "Find path"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "regenerate-obstacle-map",
+        "name_zh": "重新生成障碍物地图",
+        "name_en": "Regenerate obstacle map"
+      },
+      {
+        "id": "add-obstacle",
+        "name_zh": "添加障碍物",
+        "name_en": "Add obstacle"
+      },
+      {
+        "id": "clear-obstacles",
+        "name_zh": "清除障碍物",
+        "name_en": "Clear obstacles"
+      },
+      {
+        "id": "add-path-cost",
+        "name_zh": "增加路径成本",
+        "name_en": "Add path cost"
+      },
+      {
+        "id": "clear-cost",
+        "name_zh": "清除额外成本",
+        "name_en": "Clear cost"
+      },
+      {
+        "id": "regenerate-region",
+        "name_zh": "重新生成区域",
+        "name_en": "Regenerate region"
+      },
+      {
+        "id": "regenerate-region-around-object",
+        "name_zh": "重新生成物体周围的区域",
+        "name_en": "Regenerate region around object"
+      },
+      {
+        "id": "move-along-path",
+        "name_zh": "沿着路线移动",
+        "name_en": "Move along path"
+      },
+      {
+        "id": "stop",
+        "name_zh": "停止",
+        "name_en": "Stop"
+      },
+      {
+        "id": "set-max-speed",
+        "name_zh": "设置最大移动速度",
+        "name_en": "Set max speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-deceleration",
+        "name_zh": "设置减速度",
+        "name_en": "Set deceleration"
+      },
+      {
+        "id": "set-rotate-speed",
+        "name_zh": "设置转向速度",
+        "name_en": "Set rotate speed"
+      },
+      {
+        "id": "set-diagonals-enabled",
+        "name_zh": "启用对角线移动",
+        "name_en": "Set diagonals enabled"
+      },
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-move-cost",
+        "name_zh": "设置移动成本",
+        "name_en": "Set move cost"
+      },
+      {
+        "id": "start-path-group",
+        "name_zh": "开始路径组",
+        "name_en": "Start path group"
+      },
+      {
+        "id": "end-path-group",
+        "name_zh": "结束路径组",
+        "name_en": "End path group"
+      },
+      {
+        "id": "set-direct-movement",
+        "name_zh": "设置直接移动模式",
+        "name_en": "Set direct movement"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "nodecount",
+        "name_zh": "节点数量",
+        "name_en": "NodeCount"
+      },
+      {
+        "id": "nodexat",
+        "name_zh": "节点坐标X",
+        "name_en": "NodeXAt"
+      },
+      {
+        "id": "nodeyat",
+        "name_zh": "节点坐标Y",
+        "name_en": "NodeYAt"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "currentnode",
+        "name_zh": "当前节点",
+        "name_en": "CurrentNode"
+      },
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "cellsize",
+        "name_zh": "单元格大小",
+        "name_en": "CellSize"
+      },
+      {
+        "id": "maxspeed",
+        "name_zh": "最大移动速度",
+        "name_en": "MaxSpeed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "deceleration",
+        "name_zh": "减速度",
+        "name_en": "Deceleration"
+      },
+      {
+        "id": "rotatespeed",
+        "name_zh": "转向速度",
+        "name_en": "RotateSpeed"
+      }
+    ]
+  },
+  "persist": {
+    "name_zh": "持久化",
+    "name_en": "Persist",
+    "description_zh": "允许此对象的实例对象在场景中保留当前的状态，在重新进入场景时不会重置为初始状态。",
+    "description_en": "Make instances of this object remember their state when returning to the layout, rather than resetting to the initial objects.",
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  },
+  "physics": {
+    "name_zh": "物理",
+    "name_en": "Physics",
+    "description_zh": "模拟真实的物理行为，基于 Box2D 技术驱动。",
+    "description_en": "Simulate realistic object physics, powered by Box2D.",
+    "conditions": [
+      {
+        "id": "is-sleeping",
+        "name_zh": "正在休眠",
+        "name_en": "Is sleeping"
+      },
+      {
+        "id": "compare-velocity",
+        "name_zh": "比较运动速度",
+        "name_en": "Compare velocity"
+      },
+      {
+        "id": "compare-angular-velocity",
+        "name_zh": "比较角速度",
+        "name_en": "Compare angular velocity"
+      },
+      {
+        "id": "compare-mass",
+        "name_zh": "比较质量",
+        "name_en": "Compare mass"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "is-immovable",
+        "name_zh": "不可移动",
+        "name_en": "Is immovable"
+      }
+    ],
+    "actions": [
+      {
+        "id": "apply-force",
+        "name_zh": "施加作用力",
+        "name_en": "Apply force"
+      },
+      {
+        "id": "apply-force-towards-position",
+        "name_zh": "施加作用力 (朝向位置)",
+        "name_en": "Apply force towards position"
+      },
+      {
+        "id": "apply-force-at-angle",
+        "name_zh": "施加作用力 (朝向角度)",
+        "name_en": "Apply force at angle"
+      },
+      {
+        "id": "apply-impulse",
+        "name_zh": "施加脉冲",
+        "name_en": "Apply impulse"
+      },
+      {
+        "id": "apply-impulse-towards-position",
+        "name_zh": "施加脉冲 (朝向位置)",
+        "name_en": "Apply impulse towards position"
+      },
+      {
+        "id": "apply-impulse-at-angle",
+        "name_zh": "施加脉冲 (朝向角度)",
+        "name_en": "Apply impulse at angle"
+      },
+      {
+        "id": "set-velocity",
+        "name_zh": "设置向量",
+        "name_en": "Set velocity"
+      },
+      {
+        "id": "set-world-gravity",
+        "name_zh": "设置地心引力",
+        "name_en": "Set world gravity"
+      },
+      {
+        "id": "set-stepping-mode",
+        "name_zh": "设置步进模式",
+        "name_en": "Set stepping mode"
+      },
+      {
+        "id": "set-stepping-iterations",
+        "name_zh": "设置步进迭代次数",
+        "name_en": "Set stepping iterations"
+      },
+      {
+        "id": "enabledisable-collisions",
+        "name_zh": "启用碰撞",
+        "name_en": "Enable/disable collisions"
+      },
+      {
+        "id": "create-distance-joint",
+        "name_zh": "创建距离关节",
+        "name_en": "Create distance joint"
+      },
+      {
+        "id": "create-revolute-joint",
+        "name_zh": "创建旋转关节",
+        "name_en": "Create revolute joint"
+      },
+      {
+        "id": "create-limited-revolute-joint",
+        "name_zh": "创建有限旋转关节",
+        "name_en": "Create limited revolute joint"
+      },
+      {
+        "id": "remove-all-joints",
+        "name_zh": "移除所有关节",
+        "name_en": "Remove all joints"
+      },
+      {
+        "id": "set-density",
+        "name_zh": "设置密度",
+        "name_en": "Set density"
+      },
+      {
+        "id": "set-friction",
+        "name_zh": "设置摩擦系数",
+        "name_en": "Set friction"
+      },
+      {
+        "id": "set-elasticity",
+        "name_zh": "设置弹性系数",
+        "name_en": "Set elasticity"
+      },
+      {
+        "id": "set-linear-damping",
+        "name_zh": "设置线性阻尼",
+        "name_en": "Set linear damping"
+      },
+      {
+        "id": "set-angular-damping",
+        "name_zh": "设置角度阻尼",
+        "name_en": "Set angular damping"
+      },
+      {
+        "id": "set-immovable",
+        "name_zh": "设置不可移动",
+        "name_en": "Set immovable"
+      },
+      {
+        "id": "set-prevent-rotation",
+        "name_zh": "设置不可旋转",
+        "name_en": "Set prevent rotation"
+      },
+      {
+        "id": "set-bullet",
+        "name_zh": "设置子弹模式",
+        "name_en": "Set bullet"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "apply-torque",
+        "name_zh": "施加力矩",
+        "name_en": "Apply torque"
+      },
+      {
+        "id": "apply-torque-towards-angle",
+        "name_zh": "施加力矩(根据角度)",
+        "name_en": "Apply torque towards angle"
+      },
+      {
+        "id": "apply-torque-towards-position",
+        "name_zh": "施加力矩(根据位置)",
+        "name_en": "Apply torque towards position"
+      },
+      {
+        "id": "set-angular-velocity",
+        "name_zh": "设置角速度",
+        "name_en": "Set angular velocity"
+      },
+      {
+        "id": "create-prismatic-joint",
+        "name_zh": "创建移动关节",
+        "name_en": "Create prismatic joint"
+      },
+      {
+        "id": "teleport",
+        "name_zh": "传送到位置",
+        "name_en": "Teleport"
+      },
+      {
+        "id": "set-awake",
+        "name_zh": "设置唤醒",
+        "name_en": "Set awake"
+      },
+      {
+        "id": "set-collision-filter",
+        "name_zh": "过滤碰撞标签",
+        "name_en": "Set collision filter"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "velocityx",
+        "name_zh": "移动向量X",
+        "name_en": "VelocityX"
+      },
+      {
+        "id": "velocityy",
+        "name_zh": "移动向量Y",
+        "name_en": "VelocityY"
+      },
+      {
+        "id": "angularvelocity",
+        "name_zh": "角速度",
+        "name_en": "AngularVelocity"
+      },
+      {
+        "id": "mass",
+        "name_zh": "质量",
+        "name_en": "Mass"
+      },
+      {
+        "id": "centerofmassx",
+        "name_zh": "质心X",
+        "name_en": "CenterOfMassX"
+      },
+      {
+        "id": "centerofmassy",
+        "name_zh": "质心Y",
+        "name_en": "CenterOfMassY"
+      },
+      {
+        "id": "density",
+        "name_zh": "密度",
+        "name_en": "Density"
+      },
+      {
+        "id": "friction",
+        "name_zh": "摩擦系数",
+        "name_en": "Friction"
+      },
+      {
+        "id": "elasticity",
+        "name_zh": "弹性系数",
+        "name_en": "Elasticity"
+      },
+      {
+        "id": "lineardamping",
+        "name_zh": "线性阻尼",
+        "name_en": "LinearDamping"
+      },
+      {
+        "id": "angulardamping",
+        "name_zh": "角度阻尼",
+        "name_en": "AngularDamping"
+      },
+      {
+        "id": "contact-count",
+        "name_zh": "连接点数量",
+        "name_en": "ContactCount"
+      },
+      {
+        "id": "contact-x-at",
+        "name_zh": "获取连接点X",
+        "name_en": "ContactXAt"
+      },
+      {
+        "id": "contact-y-at",
+        "name_zh": "获取连接点Y",
+        "name_en": "ContactYAt"
+      }
+    ]
+  },
+  "pin": {
+    "name_zh": "固定",
+    "name_en": "Pin",
+    "description_zh": "与另一个对象保持相对的距离和角度。",
+    "description_en": "Stick to another object maintaining a relative distance and angle.",
+    "conditions": [
+      {
+        "id": "is-pinned",
+        "name_zh": "已固定",
+        "name_en": "Is pinned"
+      },
+      {
+        "id": "will-destroy",
+        "name_zh": "与被固定的对象一起被销毁",
+        "name_en": "Will destroy with pinned object"
+      }
+    ],
+    "actions": [
+      {
+        "id": "pin-to-object",
+        "name_zh": "固定在对象",
+        "name_en": "Pin to object"
+      },
+      {
+        "id": "unpin",
+        "name_zh": "解除固定",
+        "name_en": "Unpin"
+      },
+      {
+        "id": "pin-to-object-distance",
+        "name_zh": "固定到距离",
+        "name_en": "Pin at distance"
+      },
+      {
+        "id": "pin-to-object-properties",
+        "name_zh": "固定到对象",
+        "name_en": "Pin to object"
+      },
+      {
+        "id": "pin-to-object-imagepoint",
+        "name_zh": "固定到图像点",
+        "name_en": "Pin to image point"
+      },
+      {
+        "id": "set-pin-distance",
+        "name_zh": "设置固定距离",
+        "name_en": "Set pin distance"
+      },
+      {
+        "id": "set-destroy",
+        "name_zh": "设置与固定的对象一起被销毁",
+        "name_en": "Set destroy with pinned object"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "pinneduid",
+        "name_zh": "固定对象UID",
+        "name_en": "PinnedUID"
+      }
+    ]
+  },
+  "platform": {
+    "name_zh": "平台",
+    "name_en": "Platform",
+    "description_zh": "允许可以在添加了 '实体 / 跳跃穿透行为' 的平台上跳跃和奔跑。",
+    "description_en": "Jump and run along platforms (solid/jump-thru objects).",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "is-on-floor",
+        "name_zh": "接触地面",
+        "name_en": "Is on floor"
+      },
+      {
+        "id": "is-jumping",
+        "name_zh": "正在跳跃",
+        "name_en": "Is jumping"
+      },
+      {
+        "id": "is-falling",
+        "name_zh": "正在下落",
+        "name_en": "Is falling"
+      },
+      {
+        "id": "is-by-wall",
+        "name_zh": "接触墙壁",
+        "name_en": "Is by wall"
+      },
+      {
+        "id": "is-double-jump-enabled",
+        "name_zh": "已启用二段跳",
+        "name_en": "Is double-jump enabled"
+      },
+      {
+        "id": "on-jump",
+        "name_zh": "准备起跳",
+        "name_en": "On jump"
+      },
+      {
+        "id": "on-fall",
+        "name_zh": "准备下落",
+        "name_en": "On fall"
+      },
+      {
+        "id": "on-stopped",
+        "name_zh": "准备停下",
+        "name_en": "On stopped"
+      },
+      {
+        "id": "on-moved",
+        "name_zh": "准备移动",
+        "name_en": "On moved"
+      },
+      {
+        "id": "on-landed",
+        "name_zh": "准备落地",
+        "name_en": "On landed"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-ignoring-input",
+        "name_zh": "屏蔽玩家控制",
+        "name_en": "Set ignoring input"
+      },
+      {
+        "id": "set-max-speed",
+        "name_zh": "设置最大移动速度",
+        "name_en": "Set max speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-deceleration",
+        "name_zh": "设置减速度",
+        "name_en": "Set deceleration"
+      },
+      {
+        "id": "set-jump-strength",
+        "name_zh": "设置跳跃高度",
+        "name_en": "Set jump strength"
+      },
+      {
+        "id": "set-gravity",
+        "name_zh": "设置重力",
+        "name_en": "Set gravity"
+      },
+      {
+        "id": "set-max-fall-speed",
+        "name_zh": "设置最大下落速度",
+        "name_en": "Set max fall speed"
+      },
+      {
+        "id": "simulate-control",
+        "name_zh": "模拟控制",
+        "name_en": "Simulate control"
+      },
+      {
+        "id": "set-vector-x",
+        "name_zh": "设置运动向量 X",
+        "name_en": "Set vector X"
+      },
+      {
+        "id": "set-vector-y",
+        "name_zh": "设置运动向量 Y",
+        "name_en": "Set vector Y"
+      },
+      {
+        "id": "set-angle-of-gravity",
+        "name_zh": "设置重力角度",
+        "name_en": "Set angle of gravity"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "fall-through",
+        "name_zh": "下落穿过",
+        "name_en": "Fall through"
+      },
+      {
+        "id": "set-double-jump",
+        "name_zh": "设置二段跳",
+        "name_en": "Set double-jump"
+      },
+      {
+        "id": "set-jump-sustain",
+        "name_zh": "设置跳跃保持",
+        "name_en": "Set jump sustain"
+      },
+      {
+        "id": "set-ceiling-collision",
+        "name_zh": "碰到天花板",
+        "name_en": "Set ceiling collision"
+      },
+      {
+        "id": "set-default-controls",
+        "name_zh": "启用默认控制方式",
+        "name_en": "Set default controls"
+      },
+      {
+        "id": "reset-double-jump",
+        "name_zh": "重置二段跳",
+        "name_en": "Reset double jump"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "maxspeed",
+        "name_zh": "最大移动速度",
+        "name_en": "MaxSpeed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "deceleration",
+        "name_zh": "减速度",
+        "name_en": "Deceleration"
+      },
+      {
+        "id": "jumpstrength",
+        "name_zh": "跳跃高度",
+        "name_en": "JumpStrength"
+      },
+      {
+        "id": "gravity",
+        "name_zh": "重力",
+        "name_en": "Gravity"
+      },
+      {
+        "id": "maxfallspeed",
+        "name_zh": "最大下落速度",
+        "name_en": "MaxFallSpeed"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "vectorx",
+        "name_zh": "移动向量X",
+        "name_en": "VectorX"
+      },
+      {
+        "id": "vectory",
+        "name_zh": "移动向量Y",
+        "name_en": "VectorY"
+      },
+      {
+        "id": "gravityangle",
+        "name_zh": "重力角度",
+        "name_en": "GravityAngle"
+      },
+      {
+        "id": "jumpsustain",
+        "name_zh": "跳跃保持时间",
+        "name_en": "JumpSustain"
+      }
+    ]
+  },
+  "rotate": {
+    "name_zh": "旋转",
+    "name_en": "Rotate",
+    "description_zh": "使对象旋转",
+    "description_en": "Make an object spin.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "移动速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      }
+    ]
+  },
+  "scrollto": {
+    "name_zh": "镜头跟随",
+    "name_en": "Scroll To",
+    "description_zh": "始终将画面对焦到此对象的位置。若有多个对象添加此行为，则对准它们的中心点。",
+    "description_en": "Always center the view on this object, or at the mid-point of multiple objects.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "shake",
+        "name_zh": "振动",
+        "name_en": "Shake"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      }
+    ],
+    "expressions": []
+  },
+  "shadowcaster": {
+    "name_zh": "投影对象",
+    "name_en": "Shadow caster",
+    "description_zh": "搭配 '投影光' 对象类型使用，让对象能被 '投影光' 对象投射阴影。",
+    "description_en": "Make the object cast a shadow away from a Shadow Light object.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "compare-height",
+        "name_zh": "比较投影高度",
+        "name_en": "Compare height"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-height",
+        "name_zh": "设置投影高度",
+        "name_en": "Set height"
+      },
+      {
+        "id": "set-tag",
+        "name_zh": "设置投影标签",
+        "name_en": "Set tag"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "height",
+        "name_zh": "投影高度",
+        "name_en": "Height"
+      },
+      {
+        "id": "tag",
+        "name_zh": "投影标签",
+        "name_en": "Tag"
+      }
+    ]
+  },
+  "sin": {
+    "name_zh": "正弦运动",
+    "name_en": "Sine",
+    "description_zh": "根据正弦曲线的波形变化，调整对象的相关属性，用来创造一些有趣的视觉效果。",
+    "description_en": "Adjust an object's position, size, angle or other properties with an oscillating sine wave.",
+    "conditions": [
+      {
+        "id": "compare-movement",
+        "name_zh": "比较运动类型",
+        "name_en": "Compare movement"
+      },
+      {
+        "id": "compare-period",
+        "name_zh": "比较周期",
+        "name_en": "Compare period"
+      },
+      {
+        "id": "compare-magnitude",
+        "name_zh": "比较振幅",
+        "name_en": "Compare magnitude"
+      },
+      {
+        "id": "compare-wave",
+        "name_zh": "比较波形",
+        "name_en": "Compare wave"
+      },
+      {
+        "id": "is-active",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-active",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-period",
+        "name_zh": "设置周期",
+        "name_en": "Set period"
+      },
+      {
+        "id": "set-magnitude",
+        "name_zh": "设置振幅",
+        "name_en": "Set magnitude"
+      },
+      {
+        "id": "set-movement",
+        "name_zh": "设置运动类型",
+        "name_en": "Set movement"
+      },
+      {
+        "id": "set-wave",
+        "name_zh": "设置波形",
+        "name_en": "Set wave"
+      },
+      {
+        "id": "set-cycle-position",
+        "name_zh": "设置周期位置",
+        "name_en": "Set cycle position"
+      },
+      {
+        "id": "update-initial-state",
+        "name_zh": "复位周期",
+        "name_en": "Update initial state"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "cycleposition",
+        "name_zh": "周期位置",
+        "name_en": "CyclePosition"
+      },
+      {
+        "id": "period",
+        "name_zh": "周期",
+        "name_en": "Period"
+      },
+      {
+        "id": "magnitude",
+        "name_zh": "振幅",
+        "name_en": "Magnitude"
+      },
+      {
+        "id": "value",
+        "name_zh": "值",
+        "name_en": "Value"
+      }
+    ]
+  },
+  "solid": {
+    "name_zh": "实体",
+    "name_en": "Solid",
+    "description_zh": "使对象不能被其他对象穿透，其他对象在撞击刚体对象时无法移动或者跌落。",
+    "description_en": "Make the object impassable, so other objects cannot move or fall through it.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-tags",
+        "name_zh": "设置实体标签",
+        "name_en": "Set tags"
+      }
+    ],
+    "expressions": []
+  },
+  "timer": {
+    "name_zh": "计时器",
+    "name_en": "Timer",
+    "description_zh": "允许实例管理多个计时器工作。",
+    "description_en": "Manage multiple timers which work per instance.",
+    "conditions": [
+      {
+        "id": "on-timer",
+        "name_zh": "计时结束",
+        "name_en": "On timer"
+      },
+      {
+        "id": "is-timer-running",
+        "name_zh": "正在计时",
+        "name_en": "Is timer running"
+      },
+      {
+        "id": "is-timer-paused",
+        "name_zh": "已暂停",
+        "name_en": "Is timer paused"
+      }
+    ],
+    "actions": [
+      {
+        "id": "start-timer",
+        "name_zh": "开始计时",
+        "name_en": "Start timer"
+      },
+      {
+        "id": "stop-timer",
+        "name_zh": "取消计时",
+        "name_en": "Stop timer"
+      },
+      {
+        "id": "pause-resume-timer",
+        "name_zh": "暂停/恢复计时",
+        "name_en": "Pause/resume timer"
+      },
+      {
+        "id": "stop-all-timers",
+        "name_zh": "停止所有计时",
+        "name_en": "Stop all timers"
+      },
+      {
+        "id": "pause-resume-all-timers",
+        "name_zh": "暂停/恢复所有计时器",
+        "name_en": "Pause/resume all timers"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "currenttime",
+        "name_zh": "当前时间",
+        "name_en": "CurrentTime"
+      },
+      {
+        "id": "totaltime",
+        "name_zh": "总计时间",
+        "name_en": "TotalTime"
+      },
+      {
+        "id": "duration",
+        "name_zh": "持续时间",
+        "name_en": "Duration"
+      },
+      {
+        "id": "normalized-progress",
+        "name_zh": "进度值",
+        "name_en": "NormalizedProgress"
+      }
+    ]
+  },
+  "turret": {
+    "name_zh": "炮台",
+    "name_en": "Turret",
+    "description_zh": "在射程范围内寻找目标，并朝向目标射击。",
+    "description_en": "Detect objects in range, rotating towards them and firing.",
+    "conditions": [
+      {
+        "id": "has-target",
+        "name_zh": "已发现目标",
+        "name_en": "Has target"
+      },
+      {
+        "id": "on-shoot",
+        "name_zh": "执行射击",
+        "name_en": "On shoot"
+      },
+      {
+        "id": "on-target-acquired",
+        "name_zh": "锁定目标",
+        "name_en": "On target acquired"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "acquire-target",
+        "name_zh": "瞄准目标",
+        "name_en": "Acquire target"
+      },
+      {
+        "id": "add-object-to-target",
+        "name_zh": "增加瞄准目标",
+        "name_en": "Add object to target"
+      },
+      {
+        "id": "clear-targets",
+        "name_zh": "解除所有目标",
+        "name_en": "Clear targets"
+      },
+      {
+        "id": "unacquire-target",
+        "name_zh": "解除当前目标",
+        "name_en": "Unacquire target"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用状态",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-range",
+        "name_zh": "设置射程范围",
+        "name_en": "Set range"
+      },
+      {
+        "id": "set-rate-of-fire",
+        "name_zh": "设置发射频率",
+        "name_en": "Set rate of fire"
+      },
+      {
+        "id": "set-rotate",
+        "name_zh": "设置自动转向",
+        "name_en": "Set rotate"
+      },
+      {
+        "id": "set-rotate-speed",
+        "name_zh": "设置转向速度",
+        "name_en": "Set rotate speed"
+      },
+      {
+        "id": "set-target-mode",
+        "name_zh": "设置目标模式",
+        "name_en": "Set target mode"
+      },
+      {
+        "id": "set-predictive-aim",
+        "name_zh": "启用预测瞄准",
+        "name_en": "Set predictive aim"
+      },
+      {
+        "id": "set-projectile-speed",
+        "name_zh": "设置预判速度",
+        "name_en": "Set projectile speed"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "targetuid",
+        "name_zh": "目标UID",
+        "name_en": "TargetUID"
+      },
+      {
+        "id": "range",
+        "name_zh": "发射范围",
+        "name_en": "Range"
+      },
+      {
+        "id": "rateoffire",
+        "name_zh": "发射频率",
+        "name_en": "RateOfFire"
+      },
+      {
+        "id": "rotatespeed",
+        "name_zh": "旋转速度",
+        "name_en": "RotateSpeed"
+      }
+    ]
+  },
+  "wrap": {
+    "name_zh": "边界穿梭",
+    "name_en": "Wrap",
+    "description_zh": "让对象超出场景范围时可以重新出现在另一侧。",
+    "description_en": "Make an object leaving the layout reappear on the other side.",
+    "conditions": [
+      {
+        "id": "on-wrap",
+        "name_zh": "穿过边界",
+        "name_en": "On wrap"
+      }
+    ],
+    "actions": [],
+    "expressions": []
+  },
+  "tilemovement": {
+    "name_zh": "网格移动",
+    "name_en": "Tile movement",
+    "description_zh": "在2D网格中移动对象。",
+    "description_en": "Moves an object around a 2D grid.",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "can-move-to",
+        "name_zh": "可以移动到位置",
+        "name_en": "Can move to"
+      },
+      {
+        "id": "is-moving-direction",
+        "name_zh": "正在朝方向移动",
+        "name_en": "Is moving in direction"
+      },
+      {
+        "id": "can-move-direction",
+        "name_zh": "可移动的方向",
+        "name_en": "Can move in direction"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-ignoring-input",
+        "name_zh": "屏蔽玩家控制",
+        "name_en": "Set ignoring input"
+      },
+      {
+        "id": "simulate-control",
+        "name_zh": "模拟控制",
+        "name_en": "Simulate control"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "set-grid-position",
+        "name_zh": "设置网格位置",
+        "name_en": "Set grid position"
+      },
+      {
+        "id": "set-grid-dimensions",
+        "name_zh": "设置网格尺寸",
+        "name_en": "Set grid dimensions"
+      },
+      {
+        "id": "set-default-controls",
+        "name_zh": "启用默认控制方式",
+        "name_en": "Set default controls"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "grid-x",
+        "name_zh": "网格X",
+        "name_en": "GridX"
+      },
+      {
+        "id": "grid-y",
+        "name_zh": "网格Y",
+        "name_en": "GridY"
+      },
+      {
+        "id": "speed-x",
+        "name_zh": "速度X",
+        "name_en": "SpeedX"
+      },
+      {
+        "id": "speed-y",
+        "name_zh": "速度Y",
+        "name_en": "SpeedY"
+      },
+      {
+        "id": "target-x",
+        "name_zh": "目标X",
+        "name_en": "TargetX"
+      },
+      {
+        "id": "target-y",
+        "name_zh": "目标Y",
+        "name_en": "TargetY"
+      },
+      {
+        "id": "target-grid-x",
+        "name_zh": "网格目标X",
+        "name_en": "GridTargetX"
+      },
+      {
+        "id": "target-grid-y",
+        "name_zh": "网格目标Y",
+        "name_en": "GridTargetY"
+      }
+    ]
+  },
+  "tween": {
+    "name_zh": "补间动画",
+    "name_en": "Tween",
+    "description_zh": "让对象的属性在一段时间内逐渐变化。",
+    "description_en": "Animate the properties of an object over time",
+    "conditions": [
+      {
+        "id": "on-tweens-finished",
+        "name_zh": "播放完成",
+        "name_en": "On finished"
+      },
+      {
+        "id": "on-any-tweens-finished",
+        "name_zh": "任意播放完成",
+        "name_en": "On any finished"
+      },
+      {
+        "id": "is-playing",
+        "name_zh": "正在播放",
+        "name_en": "Is playing"
+      },
+      {
+        "id": "is-any-playing",
+        "name_zh": "任意正在播放",
+        "name_en": "Is any playing"
+      },
+      {
+        "id": "is-paused",
+        "name_zh": "正在暂停",
+        "name_en": "Is paused"
+      },
+      {
+        "id": "is-any-paused",
+        "name_zh": "任意正在暂停",
+        "name_en": "Is any paused"
+      },
+      {
+        "id": "on-any-tween-looped",
+        "name_zh": "任意到达循环",
+        "name_en": "On any looped"
+      },
+      {
+        "id": "on-tweens-looped",
+        "name_zh": "到达循环",
+        "name_en": "On looped"
+      },
+      {
+        "id": "on-any-tween-ping-pong",
+        "name_zh": "任意开始反转",
+        "name_en": "On any ping-pong"
+      },
+      {
+        "id": "on-tweens-ping-pong",
+        "name_zh": "开始反转",
+        "name_en": "On ping-pong"
+      },
+      {
+        "id": "is-ping-pong",
+        "name_zh": "正在反转播放",
+        "name_en": "Is ping-pong"
+      },
+      {
+        "id": "is-any-ping-pong",
+        "name_zh": "任意正在反转",
+        "name_en": "Is any ping-pong"
+      },
+      {
+        "id": "on-tweens-released",
+        "name_zh": "播放中止",
+        "name_en": "On released"
+      },
+      {
+        "id": "on-any-tweens-released",
+        "name_zh": "任意播放中止",
+        "name_en": "On any released"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "tween-one-property",
+        "name_zh": "播放补间 (一个参数)",
+        "name_en": "Tween (one property)"
+      },
+      {
+        "id": "tween-two-properties",
+        "name_zh": "播放补间 (两个参数)",
+        "name_en": "Tween (two properties)"
+      },
+      {
+        "id": "tween-value",
+        "name_zh": "补间动画 (数值)",
+        "name_en": "Tween (value)"
+      },
+      {
+        "id": "pause-tweens",
+        "name_zh": "暂停",
+        "name_en": "Pause"
+      },
+      {
+        "id": "pause-all-tweens",
+        "name_zh": "暂停全部",
+        "name_en": "Pause all"
+      },
+      {
+        "id": "resume-tweens",
+        "name_zh": "恢复",
+        "name_en": "Resume"
+      },
+      {
+        "id": "resume-all-tweens",
+        "name_zh": "恢复全部",
+        "name_en": "Resume all"
+      },
+      {
+        "id": "stop-tweens",
+        "name_zh": "停止",
+        "name_en": "Stop"
+      },
+      {
+        "id": "stop-all-tweens",
+        "name_zh": "停止全部",
+        "name_en": "Stop all"
+      },
+      {
+        "id": "set-tweens-ease",
+        "name_zh": "设置曲线",
+        "name_en": "Set ease"
+      },
+      {
+        "id": "set-all-tweens-ease",
+        "name_zh": "设置曲线 (全部)",
+        "name_en": "Set all eases"
+      },
+      {
+        "id": "set-one-property-tweens-end-value",
+        "name_zh": "设置目标值",
+        "name_en": "Set end value"
+      },
+      {
+        "id": "set-two-properties-tweens-end-value",
+        "name_zh": "设置目标值",
+        "name_en": "Set end values"
+      },
+      {
+        "id": "set-value-property-tweens-start-value",
+        "name_zh": "设置起始值",
+        "name_en": "Set start value"
+      },
+      {
+        "id": "set-value-property-tweens-end-value",
+        "name_zh": "设置目标值",
+        "name_en": "Set end value"
+      },
+      {
+        "id": "set-tweens-time",
+        "name_zh": "设置持续时间",
+        "name_en": "Set time"
+      },
+      {
+        "id": "set-all-tweens-time",
+        "name_zh": "设置持续时间 (全部)",
+        "name_en": "Set all times"
+      },
+      {
+        "id": "set-tweens-playback-rate",
+        "name_zh": "设置播放速度",
+        "name_en": "Set playback rate"
+      },
+      {
+        "id": "set-all-tweens-playback-rate",
+        "name_zh": "设置播放速度 (全部)",
+        "name_en": "Set all playback rates"
+      },
+      {
+        "id": "set-tweens-destroy-on-complete",
+        "name_zh": "设置播放完成时销毁",
+        "name_en": "Set destroy on complete"
+      },
+      {
+        "id": "set-all-tweens-destroy-on-complete",
+        "name_zh": "设置播放完成后销毁 (全部)",
+        "name_en": "Set all destroy on complete"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "time",
+        "name_zh": "时间",
+        "name_en": "Time"
+      },
+      {
+        "id": "progress",
+        "name_zh": "进度",
+        "name_en": "Progress"
+      },
+      {
+        "id": "value",
+        "name_zh": "数值",
+        "name_en": "Value"
+      },
+      {
+        "id": "tags",
+        "name_zh": "标签",
+        "name_en": "Tags"
+      },
+      {
+        "id": "playback-rate",
+        "name_zh": "播放速度",
+        "name_en": "PlaybackRate"
+      }
+    ]
+  },
+  "orbit": {
+    "name_zh": "环绕",
+    "name_en": "Orbit",
+    "description_zh": "使对象环绕一个位置沿椭圆轨迹运动。",
+    "description_en": "Make an object move along an ellipse around a position.",
+    "conditions": [
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-speed",
+        "name_zh": "设置环绕速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-target",
+        "name_zh": "设置环绕位置",
+        "name_en": "Set target"
+      },
+      {
+        "id": "set-rotation",
+        "name_zh": "设置旋转角度",
+        "name_en": "Set rotation"
+      },
+      {
+        "id": "set-offset-angle",
+        "name_zh": "设置偏移角度",
+        "name_en": "Set offset angle"
+      },
+      {
+        "id": "set-radius",
+        "name_zh": "设置半径",
+        "name_en": "Set radius"
+      },
+      {
+        "id": "set-match-rotation",
+        "name_zh": "启用旋转对齐",
+        "name_en": "Set match rotation"
+      },
+      {
+        "id": "pin",
+        "name_zh": "固定",
+        "name_en": "Pin"
+      },
+      {
+        "id": "unpin",
+        "name_zh": "解除固定",
+        "name_en": "Unpin"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "reset-total-rotation",
+        "name_zh": "重置旋转角度",
+        "name_en": "Reset total rotation"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "primary-radius",
+        "name_zh": "主轨半径",
+        "name_en": "PrimaryRadius"
+      },
+      {
+        "id": "secondary-radius",
+        "name_zh": "副轨半径",
+        "name_en": "SecondaryRadius"
+      },
+      {
+        "id": "offset-angle",
+        "name_zh": "偏移角度",
+        "name_en": "OffsetAngle"
+      },
+      {
+        "id": "rotation",
+        "name_zh": "旋转角度",
+        "name_en": "Rotation"
+      },
+      {
+        "id": "target-x",
+        "name_zh": "目标X",
+        "name_en": "TargetX"
+      },
+      {
+        "id": "target-y",
+        "name_zh": "目标Y",
+        "name_en": "TargetY"
+      },
+      {
+        "id": "distance-to-target",
+        "name_zh": "到达目标距离",
+        "name_en": "DistanceToTarget"
+      },
+      {
+        "id": "total-rotation",
+        "name_zh": "总旋转角度",
+        "name_en": "TotalRotation"
+      },
+      {
+        "id": "total-absolute-rotation",
+        "name_zh": "总绝对旋转角度",
+        "name_en": "TotalAbsoluteRotation"
+      }
+    ]
+  },
+  "moveto": {
+    "name_zh": "移动到",
+    "name_en": "Move To",
+    "description_zh": "让对象移动到指定的位置，具有移动速度的属性。",
+    "description_en": "Move an object to a position with an acceleration and deceleration.",
+    "conditions": [
+      {
+        "id": "is-moving",
+        "name_zh": "正在移动",
+        "name_en": "Is moving"
+      },
+      {
+        "id": "compare-speed",
+        "name_zh": "比较移动速度",
+        "name_en": "Compare speed"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "on-arrived",
+        "name_zh": "到达",
+        "name_en": "On arrived"
+      },
+      {
+        "id": "on-hit-solid",
+        "name_zh": "撞击到实体对象",
+        "name_en": "On hit solid"
+      }
+    ],
+    "actions": [
+      {
+        "id": "move-to-position",
+        "name_zh": "移动到位置",
+        "name_en": "Move to position"
+      },
+      {
+        "id": "move-to-object",
+        "name_zh": "移动到对象图层",
+        "name_en": "Move to object"
+      },
+      {
+        "id": "move-along-pathfinding-path",
+        "name_zh": "沿着寻路路径移动",
+        "name_en": "Move along Pathfinding path"
+      },
+      {
+        "id": "move-along-timeline",
+        "name_zh": "沿着时间轴移动",
+        "name_en": "Move along timeline"
+      },
+      {
+        "id": "move-along-timeline-by-name",
+        "name_zh": "沿着时间轴移动(根据名称)",
+        "name_en": "Move along timeline (by name)"
+      },
+      {
+        "id": "stop",
+        "name_zh": "停下",
+        "name_en": "Stop"
+      },
+      {
+        "id": "set-moving-angle",
+        "name_zh": "设置移动角度",
+        "name_en": "Set angle of motion"
+      },
+      {
+        "id": "set-speed",
+        "name_zh": "设置速度",
+        "name_en": "Set speed"
+      },
+      {
+        "id": "set-max-speed",
+        "name_zh": "设置最大移动速度",
+        "name_en": "Set max speed"
+      },
+      {
+        "id": "set-acceleration",
+        "name_zh": "设置加速度",
+        "name_en": "Set acceleration"
+      },
+      {
+        "id": "set-deceleration",
+        "name_zh": "设置减速度",
+        "name_en": "Set deceleration"
+      },
+      {
+        "id": "set-rotate-speed",
+        "name_zh": "设置转向速度",
+        "name_en": "Set rotate speed"
+      },
+      {
+        "id": "set-stop-on-solids",
+        "name_zh": "设置是否被实体阻止",
+        "name_en": "Set stop on solids"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "speed",
+        "name_zh": "速度",
+        "name_en": "Speed"
+      },
+      {
+        "id": "maxspeed",
+        "name_zh": "最大移动速度",
+        "name_en": "MaxSpeed"
+      },
+      {
+        "id": "acceleration",
+        "name_zh": "加速度",
+        "name_en": "Acceleration"
+      },
+      {
+        "id": "deceleration",
+        "name_zh": "减速度",
+        "name_en": "Deceleration"
+      },
+      {
+        "id": "rotatespeed",
+        "name_zh": "转向速度",
+        "name_en": "RotateSpeed"
+      },
+      {
+        "id": "movingangle",
+        "name_zh": "移动角度",
+        "name_en": "MovingAngle"
+      },
+      {
+        "id": "targetx",
+        "name_zh": "目标X",
+        "name_en": "TargetX"
+      },
+      {
+        "id": "targety",
+        "name_zh": "目标Y",
+        "name_en": "TargetY"
+      },
+      {
+        "id": "waypointcount",
+        "name_zh": "路径点数量",
+        "name_en": "WaypointCount"
+      },
+      {
+        "id": "waypointxat",
+        "name_zh": "获取路径点X坐标",
+        "name_en": "WaypointXAt"
+      },
+      {
+        "id": "waypointyat",
+        "name_zh": "获取路径点Y坐标",
+        "name_en": "WaypointYAt"
+      }
+    ]
+  },
+  "follow": {
+    "name_zh": "轨迹跟随",
+    "name_en": "Follow",
+    "description_zh": "根据时间或距离跟踪另一个物体的运动。",
+    "description_en": "Follow the movement of another object, either by time or distance.",
+    "conditions": [
+      {
+        "id": "compare-mode",
+        "name_zh": "比较跟随模式",
+        "name_en": "Compare mode"
+      },
+      {
+        "id": "compare-delay",
+        "name_zh": "比较延迟",
+        "name_en": "Compare delay"
+      },
+      {
+        "id": "compare-max-delay",
+        "name_zh": "比较最大同步时长",
+        "name_en": "Compare max delay"
+      },
+      {
+        "id": "compare-history-rate",
+        "name_zh": "比较同步频率",
+        "name_en": "Compare history rate"
+      },
+      {
+        "id": "is-following-property",
+        "name_zh": "正在跟随属性",
+        "name_en": "Is following property"
+      },
+      {
+        "id": "is-following-custom-property",
+        "name_zh": "正在跟随自定义属性",
+        "name_en": "Is following custom property"
+      },
+      {
+        "id": "is-enabled",
+        "name_zh": "已启用",
+        "name_en": "Is enabled"
+      },
+      {
+        "id": "is-following-object",
+        "name_zh": "正在跟随对象",
+        "name_en": "Is following object"
+      },
+      {
+        "id": "has-follow-data",
+        "name_zh": "存在跟随数据",
+        "name_en": "Has follow data"
+      },
+      {
+        "id": "is-paused",
+        "name_zh": "正在暂停",
+        "name_en": "Is paused"
+      }
+    ],
+    "actions": [
+      {
+        "id": "set-mode",
+        "name_zh": "设置跟随模式",
+        "name_en": "Set mode"
+      },
+      {
+        "id": "set-delay",
+        "name_zh": "设置延迟",
+        "name_en": "Set delay"
+      },
+      {
+        "id": "set-max-delay",
+        "name_zh": "设置最大同步时长",
+        "name_en": "Set max delay"
+      },
+      {
+        "id": "set-history-rate",
+        "name_zh": "设置同步频率",
+        "name_en": "Set history rate"
+      },
+      {
+        "id": "set-following-property",
+        "name_zh": "设置跟随属性",
+        "name_en": "Set following property"
+      },
+      {
+        "id": "set-property-interpolation",
+        "name_zh": "设置属性插值模式",
+        "name_en": "Set property interpolation"
+      },
+      {
+        "id": "start-following-custom-property",
+        "name_zh": "开始跟随属性",
+        "name_en": "Start following custom property"
+      },
+      {
+        "id": "stop-following-custom-property",
+        "name_zh": "停止跟随属性",
+        "name_en": "Stop following custom property"
+      },
+      {
+        "id": "set-custom-property-value",
+        "name_zh": "设置自定义属性值",
+        "name_en": "Set custom property value"
+      },
+      {
+        "id": "set-enabled",
+        "name_zh": "设置启用",
+        "name_en": "Set enabled"
+      },
+      {
+        "id": "follow-object",
+        "name_zh": "跟随对象",
+        "name_en": "Follow object"
+      },
+      {
+        "id": "follow-self",
+        "name_zh": "跟随自己",
+        "name_en": "Follow self"
+      },
+      {
+        "id": "stop-following",
+        "name_zh": "停止跟随",
+        "name_en": "Stop following"
+      },
+      {
+        "id": "clear-history",
+        "name_zh": "清空历史记录",
+        "name_en": "Clear history"
+      },
+      {
+        "id": "rewind-history",
+        "name_zh": "回退历史",
+        "name_en": "Rewind history"
+      },
+      {
+        "id": "set-paused",
+        "name_zh": "设置暂停",
+        "name_en": "Set paused"
+      },
+      {
+        "id": "load-history-json",
+        "name_zh": "读取历史记录",
+        "name_en": "Load history JSON"
+      }
+    ],
+    "expressions": [
+      {
+        "id": "delay",
+        "name_zh": "延迟",
+        "name_en": "Delay"
+      },
+      {
+        "id": "max-delay",
+        "name_zh": "最大同步时长",
+        "name_en": "MaxDelay"
+      },
+      {
+        "id": "history-rate",
+        "name_zh": "同步频率",
+        "name_en": "HistoryRate"
+      },
+      {
+        "id": "follow-uid",
+        "name_zh": "跟随对象UID",
+        "name_en": "FollowUID"
+      },
+      {
+        "id": "delayed-custom-property-value",
+        "name_zh": "自定义属性延迟",
+        "name_en": "DelayedCustomPropertyValue"
+      },
+      {
+        "id": "history-as-json",
+        "name_zh": "导出历史记录",
+        "name_en": "HistoryAsJSON"
+      }
+    ]
+  }
+}

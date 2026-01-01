@@ -1,0 +1,430 @@
+{
+  "id": "shape3d",
+  "name": "3D shape",
+  "description": "A simple 3D shape such as a cube, with custom images for each face.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-shape",
+      "name": "Compare shape",
+      "description": "Test which shape is currently set.",
+      "display_text": "Shape is [i]{0}[/i]",
+      "params": [
+        {
+          "id": "shape",
+          "name": "Shape",
+          "description": "The shape to check.",
+          "options": [
+            {
+              "id": "box",
+              "label": "Box"
+            },
+            {
+              "id": "prism",
+              "label": "Prism"
+            },
+            {
+              "id": "wedge",
+              "label": "Wedge"
+            },
+            {
+              "id": "pyramid",
+              "label": "Pyramid"
+            },
+            {
+              "id": "corner-in",
+              "label": "Corner (in)"
+            },
+            {
+              "id": "corner",
+              "label": "Corner (out)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-z-height",
+      "name": "Compare Z height",
+      "description": "Compare the current Z height of the shape.",
+      "display_text": "Z height {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current Z height."
+        },
+        {
+          "id": "z-height",
+          "name": "Z height",
+          "description": "The Z height to compare to."
+        }
+      ]
+    },
+    {
+      "id": "is-face-visible",
+      "name": "Is face visible",
+      "description": "Test whether one of the six shape faces is currently visible.",
+      "display_text": "[i]{0}[/i] face is visible",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "The face to check.",
+          "options": [
+            {
+              "id": "back",
+              "label": "Back"
+            },
+            {
+              "id": "front",
+              "label": "Front"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-shape",
+      "name": "Set shape",
+      "description": "Change to a different 3D shape type.",
+      "display_text": "Set shape to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "shape",
+          "name": "Shape",
+          "description": "The shape to set.",
+          "options": [
+            {
+              "id": "box",
+              "label": "Box"
+            },
+            {
+              "id": "prism",
+              "label": "Prism"
+            },
+            {
+              "id": "wedge",
+              "label": "Wedge"
+            },
+            {
+              "id": "pyramid",
+              "label": "Pyramid"
+            },
+            {
+              "id": "corner-in",
+              "label": "Corner (in)"
+            },
+            {
+              "id": "corner",
+              "label": "Corner (out)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-z-height",
+      "name": "Set Z height",
+      "description": "Set the current Z height of the shape.",
+      "display_text": "Set Z height to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "z-height",
+          "name": "Z height",
+          "description": "The Z height of the shape to set. The view looks down from a height of 100."
+        }
+      ]
+    },
+    {
+      "id": "set-face-visible",
+      "name": "Set face visible",
+      "description": "Set whether one of the six shape faces is visible.",
+      "display_text": "Set [i]{0}[/i] face visible [b]{1}[/b]",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "The face to check.",
+          "options": [
+            {
+              "id": "back",
+              "label": "Back"
+            },
+            {
+              "id": "front",
+              "label": "Front"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "id": "visible",
+          "name": "Visible",
+          "description": "Whether to show or hide this face of the shape."
+        }
+      ]
+    },
+    {
+      "id": "set-face-image",
+      "name": "Set face image",
+      "description": "Set a face of the shape to use the image of another face.",
+      "display_text": "Set [i]{0}[/i] face to use image of [i]{1}[/i] face",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "The face to change the image for.",
+          "options": [
+            {
+              "id": "back",
+              "label": "Back"
+            },
+            {
+              "id": "front",
+              "label": "Front"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "id": "image",
+          "name": "Image",
+          "description": "The image to use for the chosen face.",
+          "options": [
+            {
+              "id": "back",
+              "label": "Back"
+            },
+            {
+              "id": "front",
+              "label": "Front"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-z-tiling-factor",
+      "name": "Set Z tiling factor",
+      "description": "Set the scale factor to apply for image repetition on the Z axis.",
+      "display_text": "Set Z tiling factor to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "z-tiling-factor",
+          "name": "Z tiling factor",
+          "description": "The Z tiling factor to set."
+        }
+      ]
+    },
+    {
+      "id": "set-face-object",
+      "name": "Set face object",
+      "description": "Set a face of the shape to use the image of another object. An instance of the object must be in the same layout.",
+      "display_text": "Set [i]{0}[/i] face to use image of {1}",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "The face to change the image for.",
+          "options": [
+            {
+              "id": "back",
+              "label": "Back"
+            },
+            {
+              "id": "front",
+              "label": "Front"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to use for the face image."
+        }
+      ]
+    },
+    {
+      "id": "set-back-face-culling",
+      "name": "Set back face culling",
+      "description": "Set whether to automatically hide faces that are pointing away from the camera.",
+      "display_text": "Set back face culling [b]{0}[/b]",
+      "params": [
+        {
+          "id": "back-face-culling",
+          "name": "Back face culling",
+          "description": "Whether to enable back face culling."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "z-height",
+      "name": "ZHeight",
+      "description": "The current Z height of the shape.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "z-tiling-factor",
+      "name": "ZTilingFactor",
+      "description": "The current Z tiling factor for image repetition on the Z axis.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "face-image-point-x",
+      "name": "FaceImagePointX",
+      "description": "The X position of an image point on one of the shape's faces.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "Number of face (0-5)."
+        },
+        {
+          "id": "imagepoint",
+          "name": "ImagePoint",
+          "description": "Name or number of image point to get."
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-y",
+      "name": "FaceImagePointY",
+      "description": "The Y position of an image point on one of the shape's faces.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "Number of face (0-5)."
+        },
+        {
+          "id": "imagepoint",
+          "name": "ImagePoint",
+          "description": "Name or number of image point to get."
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-z",
+      "name": "FaceImagePointZ",
+      "description": "The Z position of an image point on one of the shape's faces.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "Number of face (0-5)."
+        },
+        {
+          "id": "imagepoint",
+          "name": "ImagePoint",
+          "description": "Name or number of image point to get."
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-count",
+      "name": "FaceImagePointCount",
+      "description": "The number of image points on one of the shape's faces.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "Face",
+          "description": "Number of face (0-5)."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 7,
+    "expressions": 6
+  }
+}

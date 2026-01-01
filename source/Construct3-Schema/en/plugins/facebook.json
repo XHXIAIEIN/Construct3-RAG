@@ -1,0 +1,185 @@
+{
+  "id": "facebook",
+  "name": "Facebook",
+  "description": "Access Facebook API features.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-ready",
+      "name": "Is ready",
+      "description": "True when the Facebook API has loaded and is ready to be used.",
+      "display_text": "Is ready",
+      "params": []
+    },
+    {
+      "id": "is-user-logged-in",
+      "name": "Is user logged in",
+      "description": "True if currently being viewed inside Facebook by a logged in user.",
+      "display_text": "Is user logged in",
+      "params": []
+    },
+    {
+      "id": "on-user-logged-in",
+      "name": "On user logged in",
+      "description": "Triggered when the user successfully logs in.",
+      "display_text": "On user logged in",
+      "params": []
+    },
+    {
+      "id": "on-user-logged-out",
+      "name": "On user logged out",
+      "description": "Triggered when the user logs out.",
+      "display_text": "On user logged out",
+      "params": []
+    },
+    {
+      "id": "on-name-available",
+      "name": "On name available",
+      "description": "Triggered after login when the user's name becomes available.",
+      "display_text": "On name available",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "log-out",
+      "name": "Log out",
+      "description": "Log the user out.",
+      "display_text": "Log out",
+      "params": []
+    },
+    {
+      "id": "log-in",
+      "name": "Log in",
+      "description": "Log the user in to the application so their details can be accessed.",
+      "display_text": "Log in (permissions: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "permissions",
+          "name": "Permissions",
+          "description": "Requested permissions, separated by a comma. E.g. \"public_profile\"."
+        }
+      ]
+    },
+    {
+      "id": "prompt-wall-post",
+      "name": "Prompt wall post",
+      "description": "Bring up a dialog where the user can share some text on their wall or choose to cancel.",
+      "display_text": "Prompt wall post",
+      "params": []
+    },
+    {
+      "id": "prompt-to-share-this-app",
+      "name": "Prompt to share this app",
+      "description": "Bring up a dialog where the user can share a link to the app on their wall or choose to cancel.",
+      "display_text": "Prompt to share this app",
+      "params": []
+    },
+    {
+      "id": "prompt-to-share-link",
+      "name": "Prompt to share link",
+      "description": "Bring up a dialog where the user can share a link on their wall or choose to cancel.",
+      "display_text": "Prompt to share link [b]{0}[/b]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The link to share."
+        }
+      ]
+    },
+    {
+      "id": "publish-wall-post",
+      "name": "Publish wall post",
+      "description": "Publish a message to the user's wall.  The user should explicitly initiate this.",
+      "display_text": "Publish wall post with text [i]{0}[/i]",
+      "params": [
+        {
+          "id": "message",
+          "name": "Message",
+          "description": "The text to publish to the user's feed.  It is recommended to only do this when the user initiates the action."
+        }
+      ]
+    },
+    {
+      "id": "publish-link",
+      "name": "Publish link",
+      "description": "Publish a link to the user's wall.  The user should explicitly initiate this.",
+      "display_text": "Publish link [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "params": [
+        {
+          "id": "message",
+          "name": "Message",
+          "description": "The text to publish to the user's feed.  It is recommended to only do this when the user initiates the action."
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The link to share."
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "description": "The link text."
+        },
+        {
+          "id": "caption",
+          "name": "Caption",
+          "description": "The caption appearing beneath the link text."
+        },
+        {
+          "id": "description",
+          "name": "Description",
+          "description": "The description appearing beneath the caption."
+        },
+        {
+          "id": "picture-url-optional",
+          "name": "Picture URL (optional)",
+          "description": "The URL of an image on your server to use on the Share dialog.  Must include the http://"
+        }
+      ]
+    },
+    {
+      "id": "on-cta-click",
+      "name": "On CTA click",
+      "description": "In a Facebook Playable Ad, use this action when the user interacts with the call-to-action (CTA) in the ad.",
+      "display_text": "On CTA click",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "fullname",
+      "name": "FullName",
+      "description": "Get the user's full name, if they are logged in.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "firstname",
+      "name": "FirstName",
+      "description": "Get the user's first name, if they are logged in.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lastname",
+      "name": "LastName",
+      "description": "Get the user's last name, if they are logged in.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "useridstr",
+      "name": "UserIDStr",
+      "description": "Get the user's ID as a string, which is different even for users with the same name.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 8,
+    "expressions": 4
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "id": "cordovaiap",
+  "name": "应用内购",
+  "description": "在 iOS 和 Android 上通过 Cordova 处理应用内购功能 (IAP)。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-purchase-success",
+      "name": "购买成功",
+      "description": "成功购买特定产品ID时触发。",
+      "display_text": "产品 [i]{0}[/i] 购买成功",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "已成功购买的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-purchase-success",
+      "name": "任意产品购买成功",
+      "description": "成功购买任何产品时触发。",
+      "display_text": "任意产品购买成功",
+      "params": []
+    },
+    {
+      "id": "on-purchase-failed",
+      "name": "购买失败",
+      "description": "无法购买特定产品ID时触发。",
+      "display_text": "购买产品 [i]{0}[/i] 失败",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "无法购买的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-purchase-failed",
+      "name": "任意购买失败",
+      "description": "任何产品未能购买时触发。",
+      "display_text": "任意购买失败",
+      "params": []
+    },
+    {
+      "id": "on-registration-success",
+      "name": "商店注册成功",
+      "description": "商店注册成功时触发。",
+      "display_text": "商店注册成功",
+      "params": []
+    },
+    {
+      "id": "on-registration-failure",
+      "name": "商店注册失败",
+      "description": "存储注册失败时触发。",
+      "display_text": "商店注册失败",
+      "params": []
+    },
+    {
+      "id": "product-owned",
+      "name": "产品存在",
+      "description": "检测当前用户是否已经购买了指定的产品ID。",
+      "display_text": "存在产品 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "要检查是否拥有的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "product-available",
+      "name": "产品可购买",
+      "description": "检测是否可以购买指定的产品。",
+      "display_text": "产品 [i]{0}[/i] 可供购买",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "要检查的产品ID是否可用。"
+        }
+      ]
+    },
+    {
+      "id": "store-registered",
+      "name": "商店注册完成",
+      "description": "检测商店是否已注册，并准备好发起购买请求。",
+      "display_text": "商店注册完成",
+      "params": []
+    },
+    {
+      "id": "on-product-available",
+      "name": "产品可购买",
+      "description": "检查产品是否可供购买。",
+      "display_text": "产品 [i]{0}[/i] 可供购买",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "要检查的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-product-available",
+      "name": "任意产品可购买",
+      "description": "产品可供购买时触发。",
+      "display_text": "任意产品可购买",
+      "params": []
+    },
+    {
+      "id": "on-product-owned",
+      "name": "已拥有产品",
+      "description": "当指定的非消耗品被拥有时触发",
+      "display_text": "已拥有产品 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "要检查的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-product-owned",
+      "name": "拥有任意产品",
+      "description": "拥有任意非消耗品的产品时触发。",
+      "display_text": "拥有任意产品",
+      "params": []
+    },
+    {
+      "id": "on-transaction-finished",
+      "name": "交易完成",
+      "description": "执行 '购买产品' 动作后，交易成功时触发，并返回 '订单ID' 表达式。",
+      "display_text": "交易完成",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "register-product",
+      "name": "添加产品",
+      "description": "添加要提供给应用内购买的产品。",
+      "display_text": "添加产品 (类型: [b]{0}[/b], 产品ID: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "您正在注册的产品ID。"
+        },
+        {
+          "id": "product-type",
+          "name": "产品类型",
+          "description": "输入您注册的产品类型。",
+          "options": [
+            {
+              "id": "consumable",
+              "label": "消耗品"
+            },
+            {
+              "id": "non-consumable",
+              "label": "非消耗品"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "purchase-product",
+      "name": "购买产品",
+      "description": "提示用户购买产品。",
+      "display_text": "购买产品 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "要购买的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "restore-purchases",
+      "name": "恢复购买",
+      "description": "从商店恢复购买状态。",
+      "display_text": "恢复购买",
+      "params": []
+    },
+    {
+      "id": "complete-registration",
+      "name": "完成产品注册",
+      "description": "结束产品注册阶段，必须先调用此函数才能购买产品。",
+      "display_text": "完成产品注册",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "product-name",
+      "name": "产品名称",
+      "description": "根据产品 ID 获取产品名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "用于获取名称的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "product-price",
+      "name": "产品价格",
+      "description": "根据产品ID获取产品的格式化价格。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "用于获取价格的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "product-id",
+      "name": "产品ID",
+      "description": "在触发器中，相关的产品ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "error-message",
+      "name": "错误信息",
+      "description": "在触发器中，返回相关的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "product-description",
+      "name": "产品描述",
+      "description": "在触发器中，相关的产品描述。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "产品ID",
+          "description": "用于获取描述的产品ID。"
+        }
+      ]
+    },
+    {
+      "id": "transaction-id",
+      "name": "订单ID",
+      "description": "在 '交易完成' 条件中，完成的订单ID。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 4,
+    "expressions": 6
+  }
+}

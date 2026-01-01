@@ -1,0 +1,318 @@
+{
+  "id": "keyboard",
+  "name": "键盘",
+  "description": "识别键盘的按键输入。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-key-code-pressed",
+      "name": "按下按键码",
+      "description": "按下按键码对应的按键时触发。",
+      "display_text": "按下 [b]{0}[/b] 按键码",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "按键码",
+          "description": "输入要测试的按键码。"
+        }
+      ]
+    },
+    {
+      "id": "key-code-is-down",
+      "name": "按住按键码",
+      "description": "检测按键码对应的按键是否被按住。",
+      "display_text": "按住 [b]{0}[/b] 按键码",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "按键码",
+          "description": "输入要测试的按键码。"
+        }
+      ]
+    },
+    {
+      "id": "on-key-code-released",
+      "name": "松开按键码",
+      "description": "松开按键码对应的按键时触发。",
+      "display_text": "松开 [b]{0}[/b] 按键码",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "按键码",
+          "description": "输入要测试的按键码。"
+        }
+      ]
+    },
+    {
+      "id": "on-key-pressed",
+      "name": "按下按键",
+      "description": "按下键盘按键时触发。",
+      "display_text": "按下 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个键盘上的按键。注意：请避免使用一些不常用的按键。因为在不同的地区、不同操作系统、不同输入设备，用户使用的键盘可能并不相同，可能没有部分按键或按键的位置布局也不一致。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-key-pressed",
+      "name": "按下任意键",
+      "description": "按下键盘上的任意按键时触发。",
+      "display_text": "按下任意键",
+      "params": []
+    },
+    {
+      "id": "on-any-key-released",
+      "name": "松开任意键",
+      "description": "松开键盘上任意按键时触发。",
+      "display_text": "松开任意键",
+      "params": []
+    },
+    {
+      "id": "key-is-down",
+      "name": "按住按键",
+      "description": "检测当前是否按住键盘按键。",
+      "display_text": "按住 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个按键。 请注意，在不同国际、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。"
+        }
+      ]
+    },
+    {
+      "id": "on-key-released",
+      "name": "松开按键",
+      "description": "松开键盘键时触发。",
+      "display_text": "松开 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个按键。 请注意，在不同地区、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。"
+        }
+      ]
+    },
+    {
+      "id": "on-left-right-key-pressed",
+      "name": "按下功能键",
+      "description": "按下指定的功能键时触发，例如左Shift、右Ctrl。",
+      "display_text": "按下 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个按键。",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-left-right-key-released",
+      "name": "松开功能键",
+      "description": "松开指定的功能键时触发，例如左Shift、右Ctrl。",
+      "display_text": "松开 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个按键。",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-left-right-key-down",
+      "name": "按住功能键",
+      "description": "按住功能键时触发，例如左 Shift、右 Ctrl。",
+      "display_text": "按住 [b]{0}[/b] 键",
+      "params": [
+        {
+          "id": "key",
+          "name": "按键",
+          "description": "选择一个按键。",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-keyboard-lock-supported",
+      "name": "支持键盘锁功能",
+      "description": "检查当前浏览器/平台是否支持键盘锁。",
+      "display_text": "支持键盘锁功能",
+      "params": []
+    },
+    {
+      "id": "on-keyboard-locked",
+      "name": "键盘已锁定",
+      "description": "执行 '锁定键盘' 动作后，键盘锁定成功时触发。",
+      "display_text": "键盘已锁定",
+      "params": []
+    },
+    {
+      "id": "on-keyboard-lock-error",
+      "name": "键盘锁定错误",
+      "description": "执行 '锁定键盘' 动作后，键盘锁定失败时触发。",
+      "display_text": "键盘锁定错误",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "lock-keyboard",
+      "name": "锁定键盘",
+      "description": "请求锁定键盘，允许游戏在全屏模式下访问特殊按键或组合键，而不被浏览器/应用程序捕获。注意：仅在全屏模式下生效。",
+      "display_text": "锁定键盘(按键: [i]{0}[/i]))",
+      "params": [
+        {
+          "id": "keys",
+          "name": "按键",
+          "description": "要锁定的按键名，以逗号区分多个按键名。留空默认所有按键。注：按键名使用 keyCode 标准。"
+        }
+      ]
+    },
+    {
+      "id": "unlock-keyboard",
+      "name": "解锁键盘",
+      "description": "解锁的键盘锁，恢复按键的默认处理。",
+      "display_text": "解锁键盘",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastkeycode",
+      "name": "按键码",
+      "description": "获取最后按下的键的键代码。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "stringfromkeycode",
+      "name": "按键码字符串",
+      "description": "获取对应按键码的字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "key-code",
+          "name": "按键码",
+          "description": "用于获取对应字符串的按键码。"
+        }
+      ]
+    },
+    {
+      "id": "typed-key",
+      "name": "功能键",
+      "description": "获取最后按下的按键的类型字符串。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 2,
+    "expressions": 3
+  }
+}

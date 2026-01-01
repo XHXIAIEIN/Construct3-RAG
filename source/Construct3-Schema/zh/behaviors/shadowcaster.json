@@ -1,0 +1,105 @@
+{
+  "id": "shadowcaster",
+  "name": "投影对象",
+  "description": "搭配 '投影光' 对象类型使用，让对象能被 '投影光' 对象投射阴影。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试行为当前是否启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    },
+    {
+      "id": "compare-height",
+      "name": "比较投影高度",
+      "description": "比较对象的高度，用于确定阴影投射的长度。",
+      "display_text": "{my} 投影高度 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "height",
+          "name": "投影高度",
+          "description": "要比较的对象投影高度。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "设置对象是否投射阴影。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-height",
+      "name": "设置投影高度",
+      "description": "设置对象的投影高度，用于确定阴影投射的长度，以像素为单位。",
+      "display_text": "设置 {my}投影高度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "投影高度",
+          "description": "对象的投影高度，用于确定阴影投射的长度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-tag",
+      "name": "设置投影标签",
+      "description": "设置投影标签，用于区分不同的投影光源。",
+      "display_text": "设置 {my}投影标签为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "投影标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的投影光源。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "height",
+      "name": "投影高度",
+      "description": "对象的投影高度，用于确定阴影投射的距离，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "投影标签",
+      "description": "对象的阴影标签。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 3,
+    "expressions": 2
+  }
+}

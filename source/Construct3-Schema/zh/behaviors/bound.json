@@ -1,0 +1,14 @@
+{
+  "id": "bound",
+  "name": "边界约束",
+  "description": "阻止对象超出场景边界范围。",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

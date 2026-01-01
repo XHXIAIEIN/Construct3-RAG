@@ -1,0 +1,212 @@
+{
+  "id": "timer",
+  "name": "计时器",
+  "description": "允许实例管理多个计时器工作。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-timer",
+      "name": "计时结束",
+      "description": "计时结束或开始下一个周期的计时时触发。",
+      "display_text": "{my} [i]{0}[/i]计时结束",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-timer-running",
+      "name": "正在计时",
+      "description": "检测指定标签的计时器当前是否正在运行。",
+      "display_text": "{my} [i]{0}[/i] 正在计时",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器的标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-timer-paused",
+      "name": "已暂停",
+      "description": "检测指定标签的计时器是否处于暂停状态。",
+      "display_text": "{my} [i]{0}[/i] 已暂停",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要检测暂停的计时器的标签。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "start-timer",
+      "name": "开始计时",
+      "description": "开始一个计时器，用于倒计时事件。",
+      "display_text": "{my}开始计时[b]{0}[/b]秒 (标签: [i]{2}[/i], 类型: {1})",
+      "params": [
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "要倒计时的时间，以秒为单位。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "仅计时一次，或按周期计时直到手动停止。",
+          "options": [
+            {
+              "id": "once",
+              "label": "仅一次"
+            },
+            {
+              "id": "regular",
+              "label": "重复"
+            }
+          ]
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的计时器。"
+        }
+      ]
+    },
+    {
+      "id": "stop-timer",
+      "name": "取消计时",
+      "description": "取消某个计时器。不会触发 '计时结束' 事件。",
+      "display_text": "{my} 取消计时 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要停止的计时器的标签。"
+        }
+      ]
+    },
+    {
+      "id": "pause-resume-timer",
+      "name": "暂停/恢复计时",
+      "description": "暂停或恢复当前运行的计时器。",
+      "display_text": "{my} {1} 计时器 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要暂停的计时器的标签。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "暂停或恢复计时器。",
+          "options": [
+            {
+              "id": "paused",
+              "label": "暂停"
+            },
+            {
+              "id": "resumed",
+              "label": "恢复"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-all-timers",
+      "name": "停止所有计时",
+      "description": "停止所有计时器。不会触发 '计时结束' 事件。",
+      "display_text": "{my} 停止所有计时",
+      "params": []
+    },
+    {
+      "id": "pause-resume-all-timers",
+      "name": "暂停/恢复所有计时器",
+      "description": "暂停或恢复所有当前运行的计时器。",
+      "display_text": "[b]{0}[/b] {my} 所有计时器",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "暂停或恢复计时器。",
+          "options": [
+            {
+              "id": "paused",
+              "label": "暂停"
+            },
+            {
+              "id": "resumed",
+              "label": "恢复"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "currenttime",
+      "name": "当前时间",
+      "description": "计时器经过的秒数。对于周期类型计时器，则是自上次 '计时结束' 事件以来经过的秒数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。"
+        }
+      ]
+    },
+    {
+      "id": "totaltime",
+      "name": "总计时间",
+      "description": "对于周期计时器，自上次 '开始计时' 事件以来累计的秒数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。"
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "name": "持续时间",
+      "description": "计时器的持续秒数，到达此时间触发 '计时结束' 事件。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。"
+        }
+      ]
+    },
+    {
+      "id": "normalized-progress",
+      "name": "进度值",
+      "description": "获取计时器当前进度，返回 0 到 1 的值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "计时器名称"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 5,
+    "expressions": 4
+  }
+}

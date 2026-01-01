@@ -1,0 +1,315 @@
+{
+  "id": "internationalization",
+  "name": "Internationalization",
+  "description": "Manage strings to translate an application into different languages.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-current-locale",
+      "name": "Compare to current locale",
+      "description": "Compare a locale string against the locale string of the internationalization object.",
+      "display_text": "current locale {0} {1}",
+      "params": [
+        {
+          "id": "locale",
+          "name": "Locale",
+          "description": "The locale string to compare against the locale string of the internationalization object"
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the locale strings."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-locale",
+      "name": "Set locale",
+      "description": "Sets the locale of the internationalization object.",
+      "display_text": "Set locale [b]{0}[/b]",
+      "params": [
+        {
+          "id": "locale",
+          "name": "Locale",
+          "description": "The locale to use."
+        }
+      ]
+    },
+    {
+      "id": "set-context",
+      "name": "Set context",
+      "description": "Sets the current context of the internationalization object.",
+      "display_text": "Set context [b]{0}[/b]",
+      "params": [
+        {
+          "id": "context",
+          "name": "Context",
+          "description": "The new current context, can be absolute or relative."
+        }
+      ]
+    },
+    {
+      "id": "push-context",
+      "name": "Push context",
+      "description": "Pushes a new context into the internationalization object stack.",
+      "display_text": "Push context [b]{0}[/b]",
+      "params": [
+        {
+          "id": "context",
+          "name": "Context",
+          "description": "The new context to push, can be absolute or relative."
+        }
+      ]
+    },
+    {
+      "id": "pop-context",
+      "name": "Pop context",
+      "description": "Pops the last element of the internationalization's object stack",
+      "display_text": "Pop context",
+      "params": []
+    },
+    {
+      "id": "add-string",
+      "name": "Add string",
+      "description": "Adds a new string for the given context.",
+      "display_text": "Add string [b]{1}[/b] to context [b]{0}[/b]",
+      "params": [
+        {
+          "id": "context",
+          "name": "Context",
+          "description": "The context where the new string will be added, can be absolute or relative."
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "The string that will be added to the internationalization object."
+        }
+      ]
+    },
+    {
+      "id": "load-from-json",
+      "name": "Load from JSON",
+      "description": "Loads translation data from a JSON string.",
+      "display_text": "Load from JSON [b]{0}[/b]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON string",
+          "description": "JSON string with translation data"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "look-up",
+      "name": "Lookup",
+      "description": "Get the internationalized string at the current context.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "context",
+          "name": "Context",
+          "description": "Location within the internationalization object"
+        }
+      ]
+    },
+    {
+      "id": "look-up-plural",
+      "name": "LookupPlural",
+      "description": "Get the internationalized string at the current context using the defined pluralization rules.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "context",
+          "name": "Context",
+          "description": "Location within the internationalization object"
+        },
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "The value used to get the plural form"
+        }
+      ]
+    },
+    {
+      "id": "current-context",
+      "name": "CurrentContext",
+      "description": "Get the current context of the internationalization object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "select-plural",
+      "name": "SelectPlural",
+      "description": "Get the plural category for the provided number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "plural-number",
+          "name": "PluralNumber",
+          "description": "Number to get a plural category for"
+        }
+      ]
+    },
+    {
+      "id": "plural-categorie-count",
+      "name": "PluralCategoryCount",
+      "description": "Get amount of plural categories for the current locale.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "plural-category-at",
+      "name": "PluralCategoryAt",
+      "description": "Get the plural category for the given index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "category-index",
+          "name": "CategoryIndex",
+          "description": "Index of the plural category"
+        }
+      ]
+    },
+    {
+      "id": "save-to-json",
+      "name": "SaveToJSON",
+      "description": "Get the translation strings for the current locale in JSON format.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "locale",
+      "name": "Locale",
+      "description": "Get the current locale of the internationalization object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "default-locale",
+      "name": "DefaultLocale",
+      "description": "Get the default system locale.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "format-number-as-decimal",
+      "name": "FormatNumberAsDecimal",
+      "description": "Format a number as a decimal using the current locale.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "The number to format"
+        }
+      ]
+    },
+    {
+      "id": "format-number-as-percent",
+      "name": "FormatNumberAsPercent",
+      "description": "Format a number as a percentage using the current locale.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "The number to format"
+        }
+      ]
+    },
+    {
+      "id": "format-number-as-currency",
+      "name": "FormatNumberAsCurrency",
+      "description": "Format a number as a currency using the current locale.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "The number to format"
+        },
+        {
+          "id": "currency",
+          "name": "Currency",
+          "description": "The currency code"
+        },
+        {
+          "id": "currency-display",
+          "name": "CurrencyDisplay",
+          "description": "The currency display format. Can be any of 'symbol', 'narrowSymbol', 'code' or 'name'. Defaults to 'symbol'"
+        }
+      ]
+    },
+    {
+      "id": "format-number-with-unit",
+      "name": "FormatNumberWithUnit",
+      "description": "Format a number using a specific unit and the current locale.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "The number to format"
+        },
+        {
+          "id": "unit",
+          "name": "Unit",
+          "description": "The unit to use for formatting"
+        },
+        {
+          "id": "unit-display",
+          "name": "UnitDisplay",
+          "description": "The unit display format. Can be any of 'long', 'short' or 'narrow'. Defaults to 'short'"
+        }
+      ]
+    },
+    {
+      "id": "region-name",
+      "name": "RegionName",
+      "description": "Get the localized name of the provided locale's region",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "RegionLocale",
+          "description": "The region code to the get a localized name for"
+        }
+      ]
+    },
+    {
+      "id": "language-name",
+      "name": "LanguageName",
+      "description": "Get the localized name of a language according to the current locale",
+      "display_text": "",
+      "params": [
+        {
+          "id": "language",
+          "name": "LanguageLocale",
+          "description": "The locale to the get a localized language name for"
+        }
+      ]
+    },
+    {
+      "id": "currency-name",
+      "name": "CurrencyName",
+      "description": "Get the localized name of a currency according to the current locale",
+      "display_text": "",
+      "params": [
+        {
+          "id": "currency",
+          "name": "CurrencyCode",
+          "description": "The currency code to the get a localized currency name for"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 6,
+    "expressions": 16
+  }
+}

@@ -1,0 +1,507 @@
+{
+  "id": "htmlelement",
+  "name": "HTML Element",
+  "description": "A custom HTML element placed on top of the canvas that can display arbitrary HTML content.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when any part of the element is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "on-clicked-id",
+      "name": "On clicked ID",
+      "description": "Triggered when an element with a specific ID is clicked.",
+      "display_text": "On clicked ID [i]{0}[/i]",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The ID of the element that was clicked."
+        }
+      ]
+    },
+    {
+      "id": "on-clicked-class",
+      "name": "On clicked class",
+      "description": "Triggered when an element with a specific class is clicked.",
+      "display_text": "On clicked class [i]{0}[/i]",
+      "params": [
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "The class of the element that was clicked. Use space-separated class names to match multiple classes."
+        }
+      ]
+    },
+    {
+      "id": "on-css-animation-ended",
+      "name": "On CSS animation ended",
+      "description": "Triggered when a CSS animation ends.",
+      "display_text": "On CSS animation [i]{0}[/i] ended",
+      "params": [
+        {
+          "id": "animation-name",
+          "name": "Animation name",
+          "description": "The name of the CSS animation (as defined by the @keyframes rule), case insensitive."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-content",
+      "name": "Set content",
+      "description": "Set the content of the element to a string of HTML, BBcode or plain text. NOTE: escape user-provided values in HTML.",
+      "display_text": "Set [b]{0}[/b] content to [i]{1}[/i] at [i]{2}[/i] ([i]{3}[/i])",
+      "params": [
+        {
+          "id": "content-type",
+          "name": "Content type",
+          "description": "How to interpret the given string.",
+          "options": [
+            {
+              "id": "html",
+              "label": "HTML"
+            },
+            {
+              "id": "bbcode",
+              "label": "BBCode"
+            },
+            {
+              "id": "plain-text",
+              "label": "Plain text"
+            }
+          ]
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "A string to set for the element content. NOTE: escape user-provided values in HTML."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "An optional CSS selector of a child element to set the content for. Leave empty to set content for the entire element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insert-content",
+      "name": "Insert content",
+      "description": "Insert a string of HTML, BBcode or plain text. NOTE: escape user-provided values in HTML.",
+      "display_text": "Insert [b]{0}[/b] content [i]{1}[/i] position [i]{2}[/i] at [i]{3}[/i] ([i]{4}[/i])",
+      "params": [
+        {
+          "id": "content-type",
+          "name": "Content type",
+          "description": "How to interpret the given string.",
+          "options": [
+            {
+              "id": "html",
+              "label": "HTML"
+            },
+            {
+              "id": "bbcode",
+              "label": "BBCode"
+            },
+            {
+              "id": "plain-text",
+              "label": "Plain text"
+            }
+          ]
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "A string to set for the element content. NOTE: escape user-provided values in HTML."
+        },
+        {
+          "id": "position",
+          "name": "Position",
+          "description": "Whether to insert content at the start or end of the element.",
+          "options": [
+            {
+              "id": "start",
+              "label": "start"
+            },
+            {
+              "id": "end",
+              "label": "end"
+            }
+          ]
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "An optional CSS selector of a child element to insert content to. Leave empty to insert content to the main HTML element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "remove-content",
+      "name": "Remove content",
+      "description": "Remove or clear elements matching a CSS selector.",
+      "display_text": "{0} content at [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to entirely remove the matching elements, or clear their contents.",
+          "options": [
+            {
+              "id": "remove",
+              "label": "Remove"
+            },
+            {
+              "id": "clear",
+              "label": "Clear"
+            }
+          ]
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector which will be used to match elements. Leave empty to clear the main HTML element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-class",
+      "name": "Set class",
+      "description": "Add, toggle or remove classes for elements matching a CSS selector.",
+      "display_text": "{0} class [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to add, toggle or remove classes.",
+          "options": [
+            {
+              "id": "add",
+              "label": "Add"
+            },
+            {
+              "id": "toggle",
+              "label": "Toggle"
+            },
+            {
+              "id": "remove",
+              "label": "Remove"
+            }
+          ]
+        },
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "The class name to change. Use space-separated class names to affect multiple classes."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-attribute",
+      "name": "Set attribute",
+      "description": "Set or remove attributes for elements matching a CSS selector.",
+      "display_text": "{0} attribute [b]{1}[/b] to [i]{2}[/i] for [i]{3}[/i] ([i]{4}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to set or remove attributes.",
+          "options": [
+            {
+              "id": "set",
+              "label": "Set"
+            },
+            {
+              "id": "remove",
+              "label": "Remove"
+            }
+          ]
+        },
+        {
+          "id": "attribute",
+          "name": "Attribute",
+          "description": "The attribute to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to set for the attribute (ignored if removing attribute)."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-css-style",
+      "name": "Set CSS style",
+      "description": "Set a CSS style on elements matching a CSS selector.",
+      "display_text": "Set CSS style [b]{0}[/b] to [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])",
+      "params": [
+        {
+          "id": "property-name",
+          "name": "Property name",
+          "description": "A CSS property name to set on the HTML element."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "A string to assign as the value for this CSS property."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to affect one element matching the selector, or all matching elements.",
+          "options": [
+            {
+              "id": "one",
+              "label": "one"
+            },
+            {
+              "id": "all",
+              "label": "all"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "position-object-at-element",
+      "name": "Position object at element",
+      "description": "Set an object's size and position to match an HTML element.",
+      "display_text": "Position {0} at [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to move and resize."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector identifying the element to position the object to."
+        }
+      ]
+    },
+    {
+      "id": "create-sprite-img-element",
+      "name": "Create sprite image element",
+      "description": "Create an <img> element with the image of a Sprite object and insert it.",
+      "display_text": "Create {0} image element at [i]{1}[/i], insert [i]{2}[/i], ID [i]{3}[/i], class [i]{4}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to use an image from."
+        },
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector identifying the parent element the image element will be inserted to. Leave empty to use the main HTML element."
+        },
+        {
+          "id": "insert",
+          "name": "Insert",
+          "description": "Whether to insert the image element at the start, end, or replace the entire content of the parent element.",
+          "options": [
+            {
+              "id": "at-start",
+              "label": "at start"
+            },
+            {
+              "id": "at-end",
+              "label": "at end"
+            },
+            {
+              "id": "replace-content",
+              "label": "replace content"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "An optional ID to set for the created image element."
+        },
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "An optional class to set for the created image element."
+        }
+      ]
+    },
+    {
+      "id": "set-scroll-position",
+      "name": "Set scroll position",
+      "description": "Set the scroll position of a scrollable element.",
+      "display_text": "Set [i]{0}[/i] scroll {1} to [i]{2}[/i]",
+      "params": [
+        {
+          "id": "selector",
+          "name": "Selector",
+          "description": "A CSS selector identifying the element to scroll. Leave empty to use the main HTML element."
+        },
+        {
+          "id": "direction",
+          "name": "Direction",
+          "description": "Whether to set the scroll left or top position.",
+          "options": [
+            {
+              "id": "left",
+              "label": "left"
+            },
+            {
+              "id": "top",
+              "label": "top"
+            }
+          ]
+        },
+        {
+          "id": "position",
+          "name": "Position",
+          "description": "The scroll position to set in CSS pixels."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "html-content",
+      "name": "HTMLContent",
+      "description": "String with HTML content of the element.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "text-content",
+      "name": "TextContent",
+      "description": "String with plain text content of the element.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-id",
+      "name": "TargetID",
+      "description": "In a trigger, the ID of the targeted element.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-class",
+      "name": "TargetClass",
+      "description": "In a trigger, the class of the targeted element.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "escape-html",
+      "name": "EscapeHTML",
+      "description": "Convert HTML tag characters like < to entities like &lt; so text cannot alter HTML.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String of HTML to escape."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 9,
+    "expressions": 5
+  }
+}

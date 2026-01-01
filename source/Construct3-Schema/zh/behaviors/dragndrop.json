@@ -1,0 +1,101 @@
+{
+  "id": "dragndrop",
+  "name": "拖放",
+  "description": "通过鼠标或触摸拖放对象",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-dragging",
+      "name": "正在拖动",
+      "description": "检测对象是否正处于被拖动状态中。",
+      "display_text": "{my} 正在拖动",
+      "params": []
+    },
+    {
+      "id": "on-drag-start",
+      "name": "开始拖动",
+      "description": "当对象处于拖动中触发",
+      "display_text": "{my} 开始拖动",
+      "params": []
+    },
+    {
+      "id": "on-drop",
+      "name": "结束拖动",
+      "description": "当对象被放下时触发，即拖动效果结束，手势或鼠标松开。",
+      "display_text": "{my} 结束拖动",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测此行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用拖放行为。",
+      "display_text": "{0} {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drop",
+      "name": "放下",
+      "description": "如果当前正在拖动，强制放下此对象。",
+      "display_text": "放下 {my}",
+      "params": []
+    },
+    {
+      "id": "set-axes",
+      "name": "设置拖动方向",
+      "description": "设置可被拖动的方向。",
+      "display_text": "设置{my}的拖动方向为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "axes",
+          "name": "拖动方向",
+          "description": "选择可被拖动的方向。",
+          "options": [
+            {
+              "id": "both",
+              "label": "无限制"
+            },
+            {
+              "id": "horizontal-only",
+              "label": "仅水平方向"
+            },
+            {
+              "id": "vertical-only",
+              "label": "仅垂直方向"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 4,
+    "actions": 3,
+    "expressions": 0
+  }
+}

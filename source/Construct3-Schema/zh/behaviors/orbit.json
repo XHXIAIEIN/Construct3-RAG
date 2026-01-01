@@ -1,0 +1,262 @@
+{
+  "id": "orbit",
+  "name": "环绕",
+  "description": "使对象环绕一个位置沿椭圆轨迹运动。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试行为是否已经启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "设置环绕速度",
+      "description": "设置环绕的旋转速度。",
+      "display_text": "设置 {my}环绕速度为{0}",
+      "params": [
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "要设置的速度，以每秒旋转度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-target",
+      "name": "设置环绕位置",
+      "description": "设置环绕的中心点，沿其周围进行环绕运动。",
+      "display_text": "设置 {my}环绕中心为 ({0}, {1})",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要环绕的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要环绕的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "set-rotation",
+      "name": "设置旋转角度",
+      "description": "根据旋转角度，设置当前轨道的位置。",
+      "display_text": "设置 {my}旋转角度{0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "设置当前轨道的旋转角度。"
+        }
+      ]
+    },
+    {
+      "id": "set-offset-angle",
+      "name": "设置偏移角度",
+      "description": "设置椭圆轨道的旋转偏移角度，对于圆形轨道，则影响初始的角度。",
+      "display_text": "设置 {my}偏移角度为{0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "设置轨道和轴的偏移角度，以度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-radius",
+      "name": "设置半径",
+      "description": "设置轨道的半径。",
+      "display_text": "设置 {my}环绕主半径为{0}, 副半径为{1}",
+      "params": [
+        {
+          "id": "primary",
+          "name": "主半径",
+          "description": "主半径的长度，以像素为单位。"
+        },
+        {
+          "id": "secondary",
+          "name": "副半径",
+          "description": "副半径的长度，以像素为单位。圆形轨道应设置和主半径相同。"
+        }
+      ]
+    },
+    {
+      "id": "set-match-rotation",
+      "name": "启用旋转对齐",
+      "description": "对象的角度是否跟随轨道的角度而旋转。",
+      "display_text": "[i]{0}[/i] {my} 旋转对齐",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "是否将对象的角度跟随轨道的角度旋转。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pin",
+      "name": "固定",
+      "description": "将轨道固定到指定对象，与对象的位置同步运行，沿其周围进行环绕运动。",
+      "display_text": "固定 {my} 到 {0}",
+      "params": [
+        {
+          "id": "target",
+          "name": "目标",
+          "description": "要固定到的对象"
+        }
+      ]
+    },
+    {
+      "id": "unpin",
+      "name": "解除固定",
+      "description": "解除对象的固定，不再跟随对象的位置运动。",
+      "display_text": "解除 {my} 固定",
+      "params": []
+    },
+    {
+      "id": "set-acceleration",
+      "name": "设置加速度",
+      "description": "设置轨道旋转的速率变化。",
+      "display_text": "设置 {my}加速度为{0}",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "沿轨道环绕的加速度，以每秒度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reset-total-rotation",
+      "name": "重置旋转角度",
+      "description": "重置总旋转角度和总绝对旋转角度的计数，全部归零。",
+      "display_text": "重置 {my} 总旋转角度",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "速度",
+      "description": "沿轨道环绕的速度，以每秒度数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "加速度",
+      "description": "轨道加速度，以度数/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "primary-radius",
+      "name": "主轨半径",
+      "description": "在主轴轨道上每秒的运动距离，单位是像素每秒。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "secondary-radius",
+      "name": "副轨半径",
+      "description": "次级半径的长度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "offset-angle",
+      "name": "偏移角度",
+      "description": "椭圆的偏移角度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rotation",
+      "name": "旋转角度",
+      "description": "当前轨道的旋转角度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-x",
+      "name": "目标X",
+      "description": "当前X坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-y",
+      "name": "目标Y",
+      "description": "当前目标Y的位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "distance-to-target",
+      "name": "到达目标距离",
+      "description": "当前到目标的距离",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-rotation",
+      "name": "总旋转角度",
+      "description": "当前未被约束的总旋转角度，该值会随着 CCW 旋转而降低。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-absolute-rotation",
+      "name": "总绝对旋转角度",
+      "description": "当前未被约束的总旋转角度。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 11,
+    "expressions": 11
+  }
+}

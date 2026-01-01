@@ -1,0 +1,288 @@
+{
+  "id": "ninepatch",
+  "name": "9-patch",
+  "description": "Create resizable boxes with an image border by splitting an image in to nine tiles.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "name": "On image URL loaded",
+      "description": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_text": "On image URL loaded",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "On image URL failed",
+      "description": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_text": "On image URL failed to load",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-margins",
+      "name": "Set margins",
+      "description": "Set the image margin sizes in pixels.",
+      "display_text": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]",
+      "params": [
+        {
+          "id": "left-margin",
+          "name": "Left margin",
+          "description": "The left margin size in pixels."
+        },
+        {
+          "id": "right-margin",
+          "name": "Right margin",
+          "description": "The right margin size in pixels."
+        },
+        {
+          "id": "top-margin",
+          "name": "Top margin",
+          "description": "The top margin size in pixels."
+        },
+        {
+          "id": "bottom-margin",
+          "name": "Bottom margin",
+          "description": "The bottom margin size in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-edges",
+      "name": "Set edges",
+      "description": "Set the style of the 9-patch edges.",
+      "display_text": "Set edges to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "edges",
+          "name": "Edges",
+          "description": "Choose whether to tile or stretch the edges.",
+          "options": [
+            {
+              "id": "tile",
+              "label": "Tile"
+            },
+            {
+              "id": "stretch",
+              "label": "Stretch"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-fill",
+      "name": "Set fill",
+      "description": "Set the style of the 9-patch fill.",
+      "display_text": "Set fill to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "fill",
+          "name": "Fill",
+          "description": "Choose how to display the inside of the box.",
+          "options": [
+            {
+              "id": "tile",
+              "label": "Tile"
+            },
+            {
+              "id": "stretch",
+              "label": "Stretch"
+            },
+            {
+              "id": "transparent",
+              "label": "Transparent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-x",
+      "name": "Set image X scale",
+      "description": "Set the X scale of the image within the object.",
+      "display_text": "Set image X scale to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-x",
+          "name": "X scale",
+          "description": "The X scale of the image within the object, as a percentage."
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-y",
+      "name": "Set image Y scale",
+      "description": "Set the Y scale of the image within the object.",
+      "display_text": "Set image Y scale to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-y",
+          "name": "Y scale",
+          "description": "The Y scale of the image within the object, as a percentage."
+        }
+      ]
+    },
+    {
+      "id": "set-seams",
+      "name": "Set seams",
+      "description": "Change the 'Seams' property.",
+      "display_text": "Set seams to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "seams",
+          "name": "Seams",
+          "description": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+          "options": [
+            {
+              "id": "exact",
+              "label": "Exact"
+            },
+            {
+              "id": "overlap",
+              "label": "Overlap"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "Load image from URL",
+      "description": "Load an image from a web address or data URI.",
+      "display_text": "Load image from [i]{0}[/i]",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "Enter the URL on the web, or data URI, of an image to load."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "left-margin",
+      "name": "LeftMargin",
+      "description": "Left border margin on the image in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-margin",
+      "name": "RightMargin",
+      "description": "Right border margin on the image in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "top-margin",
+      "name": "TopMargin",
+      "description": "Top border margin on the image in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bottom-margin",
+      "name": "BottomMargin",
+      "description": "Bottom border margin on the image in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-x",
+      "name": "ImageScaleX",
+      "description": "The X scale of the image within the object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-y",
+      "name": "ImageScaleY",
+      "description": "The Y scale of the image within the object.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 8,
+    "expressions": 6
+  }
+}

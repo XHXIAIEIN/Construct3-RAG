@@ -1,0 +1,740 @@
+{
+  "id": "arr",
+  "name": "数组",
+  "description": "允许将数据储存在最多三维的数组空间中，类似表格的作用。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-at-x",
+      "name": "比较X",
+      "description": "比较数组在 X 轴的某个值。",
+      "display_text": "[b]{0}[/b] {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xy",
+      "name": "比较XY",
+      "description": "比较二维数组中的某个值。",
+      "display_text": "([b]{0}[/b], [b]{1}[/b]) {2} [b]{3}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xyz",
+      "name": "比较XYZ",
+      "description": "比较在三维数组中 X，Y，Z 位置的值。",
+      "display_text": "([b]{0}[/b], [b]{1}[/b], [b]{2}[/b]) {3} [b]{4}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要比较的数组值位于 Z 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "contains-value",
+      "name": "如果包含值",
+      "description": "查找整个数组，检测在任何位置是否包含某个值。",
+      "display_text": "数组包含 {0}",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要在数组中查找的值。"
+        }
+      ]
+    },
+    {
+      "id": "is-empty",
+      "name": "如果为空",
+      "description": "检查数组大小是否为 0，且不包含任何元素。",
+      "display_text": "如果为空",
+      "params": []
+    },
+    {
+      "id": "compare-size",
+      "name": "比较大小",
+      "description": "比较数组其中一个维度的大小。",
+      "display_text": "{0}轴大小 {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "选择要比较的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "for-each-element",
+      "name": "遍历数组元素",
+      "description": "遍历数组中的每个元素。",
+      "display_text": "遍历 {0} 轴",
+      "params": [
+        {
+          "id": "axes",
+          "name": "轴",
+          "description": "选择要遍历的轴。",
+          "options": [
+            {
+              "id": "xyz",
+              "label": "XYZ"
+            },
+            {
+              "id": "xy",
+              "label": "XY"
+            },
+            {
+              "id": "x",
+              "label": "X"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-current-value",
+      "name": "比较当前值",
+      "description": "在 '遍历数组' 条件中，比较当前的值。",
+      "display_text": "当前值 {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要进行比较的值。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "clear",
+      "name": "清空",
+      "description": "重置数组每个轴的所有的值，设置为预设值。",
+      "display_text": "清空并填充[i]{0}[/i]",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "用于覆盖整个数组的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name": "设置大小",
+      "description": "设置数组在每个轴上的元素数量。",
+      "display_text": "设置数组大小为([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "width",
+          "name": "X",
+          "description": "数组在X轴的元素数量。"
+        },
+        {
+          "id": "height",
+          "name": "Y",
+          "description": "数组在Y轴的元素数量。"
+        },
+        {
+          "id": "depth",
+          "name": "Z",
+          "description": "数组在Z轴的元素数量。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-x",
+      "name": "设置X",
+      "description": "设置一维数组位于 X 轴位置的值。",
+      "display_text": "设置数组[i]{0}[/i]值为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要设置的值位于数组X轴的位置，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-xy",
+      "name": "设置XY",
+      "description": "设置二维数组位于 X、Y 位置的值。",
+      "display_text": "设置数组([i]{0}[/i], [i]{1}[/i])值为[i]{2}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-xyz",
+      "name": "设置XYZ",
+      "description": "设置三维数组位于 X、Y、Z 位置的值。",
+      "display_text": "设置数组([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])值为[i]{3}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要设置的值位于数组Z轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "name": "从JSON导入",
+      "description": "加载数组文件的 JSON 字符串。",
+      "display_text": "加载对象数据 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "数组文件的 JSON 格式。如果希望导入项目文件夹的数组文件，请先通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式在此处输入。"
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "下载",
+      "description": "将数组内容导出为 JSON 格式的文件并下载至本地。",
+      "display_text": "下载数组文件(保存文件: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "要下载的文件的名称。"
+        }
+      ]
+    },
+    {
+      "id": "push",
+      "name": "推入",
+      "description": "在数组的顶部或末尾，添加一个新元素，并增加其大小。",
+      "display_text": "在{2}轴{0}推入[i]{1}[/i]",
+      "params": [
+        {
+          "id": "where",
+          "name": "位置",
+          "description": "将一个值推入到数组的顶部或末尾。",
+          "options": [
+            {
+              "id": "back",
+              "label": "末尾"
+            },
+            {
+              "id": "front",
+              "label": "顶部"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要推进数组的值。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要插入的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pop",
+      "name": "弹出",
+      "description": "从数组的顶部或末尾，移除一个元素。",
+      "display_text": "从{1}轴{0}弹出元素",
+      "params": [
+        {
+          "id": "where",
+          "name": "位置",
+          "description": "删除数组的顶部或末尾的值。",
+          "options": [
+            {
+              "id": "back",
+              "label": "末尾"
+            },
+            {
+              "id": "front",
+              "label": "顶部"
+            }
+          ]
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要从中移除的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reverse",
+      "name": "反转",
+      "description": "反转轴上元素的顺序。",
+      "display_text": "反转{0}轴",
+      "params": [
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要反转的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "name": "删除",
+      "description": "从轴中删除元素。",
+      "display_text": "从{1}轴删除第{0}项",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要删除的值位于轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要删除的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insert",
+      "name": "插入",
+      "description": "在数组的指定位置，插入一个新元素，并增加其大小。",
+      "display_text": "在{2}轴第[i]{1}[/i]项插入[i]{0}[/i]",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要插入数组的值。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要插入的值位于数组 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要插入的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "split-string",
+      "name": "拆分字符串",
+      "description": "将字符串拆分并导入为一维数组，如 \"1,2,3\"",
+      "display_text": "拆分字符串 [i]{0}[/i] (分隔符:[i]{1}[/i], 类型: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要进行拆分的字符串。"
+        },
+        {
+          "id": "separator",
+          "name": "分隔符",
+          "description": "用于拆分的字符。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "拆分后的值的数据类型。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "string",
+              "label": "字符串"
+            },
+            {
+              "id": "number",
+              "label": "数字"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shuffle",
+      "name": "打乱",
+      "description": "将指定轴的数组元素随机打乱重新排序。实现洗牌的效果。",
+      "display_text": "打乱{0} 轴",
+      "params": [
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "要打乱的轴",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sort2",
+      "name": "排序",
+      "description": "对数组的元素进行排序。",
+      "display_text": "排序{0}",
+      "params": [
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "选择首项排序时，以首项的排序结果应用到其他行/列。选择逐项排序时，则每行/列单独排序。",
+          "options": [
+            {
+              "id": "x-by-col",
+              "label": "X轴 (首列)"
+            },
+            {
+              "id": "x-separate",
+              "label": "X轴 (逐列)"
+            },
+            {
+              "id": "y-by-row",
+              "label": "Y轴 (首行)"
+            },
+            {
+              "id": "y-separate",
+              "label": "Y轴 (逐行)"
+            },
+            {
+              "id": "z",
+              "label": "Z轴"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "at",
+      "name": "读取",
+      "description": "获取数组索引位置的值。可传入多个参数来获取二维或三维数组。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要获取的值位于数组X轴的位置，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "width",
+      "name": "宽度",
+      "description": "获取数组在 X 轴的元素数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "height",
+      "name": "高度",
+      "description": "获取数组在 Y 轴的元素数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "depth",
+      "name": "深度",
+      "description": "获取数组在 Z 轴的元素数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "front",
+      "name": "首项",
+      "description": "获取数组在 X 轴的第一个值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "back",
+      "name": "末尾",
+      "description": "获取数组在 X 轴的最后一个值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "indexof",
+      "name": "查找标题行",
+      "description": "在一维数组查找值，返回匹配到的第一个元素的索引。如果找不到，则返回 -1。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要搜索的值。"
+        }
+      ]
+    },
+    {
+      "id": "lastindexof",
+      "name": "反向查找标题行",
+      "description": "在一维数组查找值，返回最后一个匹配到的元素的索引。如果找不到，则返回 -1。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要搜索的值。"
+        }
+      ]
+    },
+    {
+      "id": "curx",
+      "name": "当前X",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 X 轴索引。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cury",
+      "name": "当前Y",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 Y 轴索引。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "curz",
+      "name": "当前Z",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 Z 轴索引。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "curvalue",
+      "name": "当前值",
+      "description": "在 '遍历数组' 条件中，返回当前循环的值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "asjson",
+      "name": "导出对象数据",
+      "description": "将数组内容为JSON格式的字符串。用于在对象的 '导入数据' 动作中使用。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "join-string",
+      "name": "合并字符串",
+      "description": "将一维数组的内容合并为字符串。仅包含第一个 X 轴。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "separator",
+          "name": "分隔符",
+          "description": "用于拼接字符串的字符。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 8,
+    "actions": 15,
+    "expressions": 14
+  }
+}

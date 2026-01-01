@@ -1,0 +1,59 @@
+{
+  "id": "solid",
+  "name": "实体",
+  "description": "使对象不能被其他对象穿透，其他对象在撞击刚体对象时无法移动或者跌落。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试行为当前是否启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "设置对象启用或禁用实体行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用实体行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tags",
+      "name": "设置实体标签",
+      "description": "设置用于碰撞过滤的实体行为标签。",
+      "display_text": "设置 {my}实体标签为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 2,
+    "expressions": 0
+  }
+}

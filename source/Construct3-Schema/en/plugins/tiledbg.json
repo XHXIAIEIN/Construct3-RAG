@@ -1,0 +1,352 @@
+{
+  "id": "tiledbg",
+  "name": "Tiled Background",
+  "description": "Tile an image over an area. Tiled Backgrounds are faster than tiling Sprites.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "name": "On image URL loaded",
+      "description": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_text": "On image URL loaded",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "On image URL failed",
+      "description": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_text": "On image URL failed to load",
+      "params": []
+    },
+    {
+      "id": "is-tile-randomization-enabled",
+      "name": "Is tile randomization enabled",
+      "description": "True if tile randomization is currently enabled.",
+      "display_text": "Is tile randomization enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "Load image from URL",
+      "description": "Load an image from a web address or data URI.",
+      "display_text": "Load image from [i]{0}[/i] (cross-origin {1})",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "Enter the URL on the web, or data URI, of an image to load."
+        },
+        {
+          "id": "cross-origin",
+          "name": "Cross-origin",
+          "description": "The cross-origin (CORS) mode to use for the request.",
+          "options": [
+            {
+              "id": "anonymous",
+              "label": "anonymous"
+            },
+            {
+              "id": "none",
+              "label": "none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image-offset-x",
+      "name": "Set image X offset",
+      "description": "Set the X offset of the image within the object.",
+      "display_text": "Set image X offset to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "offset-x",
+          "name": "X offset",
+          "description": "The X offset of the image within the object, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-image-offset-y",
+      "name": "Set image Y offset",
+      "description": "Set the Y offset of the image within the object.",
+      "display_text": "Set image Y offset to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "offset-y",
+          "name": "Y offset",
+          "description": "The Y offset of the image within the object, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-x",
+      "name": "Set image X scale",
+      "description": "Set the X scale of the image within the object.",
+      "display_text": "Set image X scale to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-x",
+          "name": "X scale",
+          "description": "The X scale of the image within the object, as a percentage."
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-y",
+      "name": "Set image Y scale",
+      "description": "Set the Y scale of the image within the object.",
+      "display_text": "Set image Y scale to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-y",
+          "name": "Y scale",
+          "description": "The Y scale of the image within the object, as a percentage."
+        }
+      ]
+    },
+    {
+      "id": "set-image-angle",
+      "name": "Set image angle",
+      "description": "Set the angle of the image within the object.",
+      "display_text": "Set image angle to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle of the image within the object, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-randomization-enabled",
+      "name": "Set tile randomization enabled",
+      "description": "Set whether tile randomization is enabled.",
+      "display_text": "Set tile randomization enabled: [b]{0}[/b]",
+      "params": [
+        {
+          "id": "enabled",
+          "name": "Enabled",
+          "description": "Whether to enable or disable tile randomization."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-pos-random",
+      "name": "Set position random",
+      "description": "Set the amount of horizontal and vertical randomness for tile randomization.",
+      "display_text": "Set tile position randomization to [i]{0}[/i], [i]{1}[/i]",
+      "params": [
+        {
+          "id": "x-random",
+          "name": "X random",
+          "description": "Amount of horizontal randomness, from 0 to 100."
+        },
+        {
+          "id": "y-random",
+          "name": "Y random",
+          "description": "Amount of vertical randomness, from 0 to 100."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-angle-random",
+      "name": "Set angle random",
+      "description": "Set the amount of angle randomness for tile randomization.",
+      "display_text": "Set tile angle randomization to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "angle-random",
+          "name": "Angle random",
+          "description": "Amount of angle randomness, from 0 to 100."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-blend-margin",
+      "name": "Set tile blend margin",
+      "description": "Set the percentage of the tile that fades to adjacent tile.",
+      "display_text": "Set tile blend margin to [i]{0}[/i], [i]{1}[/i]",
+      "params": [
+        {
+          "id": "blend-margin-x",
+          "name": "Blend margin X",
+          "description": "Percentage of tile width that fades to adjacent tile, 0-100."
+        },
+        {
+          "id": "blend-margin-y",
+          "name": "Blend margin Y",
+          "description": "Percentage of tile height that fades to adjacent tile, 0-100."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "imagewidth",
+      "name": "ImageWidth",
+      "description": "The width of the current image, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imageheight",
+      "name": "ImageHeight",
+      "description": "The height of the current image, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-offset-x",
+      "name": "ImageOffsetX",
+      "description": "The X offset of the image within the object, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-offset-y",
+      "name": "ImageOffsetY",
+      "description": "The Y offset of the image within the object, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-x",
+      "name": "ImageScaleX",
+      "description": "The X scale of the image within the object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-y",
+      "name": "ImageScaleY",
+      "description": "The Y scale of the image within the object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-angle",
+      "name": "ImageAngle",
+      "description": "The angle of the image within the object, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-x-random",
+      "name": "TileXRandom",
+      "description": "The tile horizontal randomness, 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-y-random",
+      "name": "TileYRandom",
+      "description": "The tile vertical randomness, 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-angle-random",
+      "name": "TileAngleRandom",
+      "description": "The tile angle randomness, 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-blend-margin-x",
+      "name": "TileBlendMarginX",
+      "description": "The tile randomization horizontal blend margin, 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-blend-margin-y",
+      "name": "TileBlendMarginY",
+      "description": "The tile randomization vertical blend margin, 0-100.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 11,
+    "expressions": 12
+  }
+}

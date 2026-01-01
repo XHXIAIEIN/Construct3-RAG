@@ -1,0 +1,859 @@
+{
+  "id": "browser",
+  "name": "浏览器",
+  "description": "访问正在运行 Web 应用程序的浏览器。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "cookies-enabled",
+      "name": "已启用 Cookie",
+      "description": "浏览器已启用Cookie。",
+      "display_text": "已启用 Cookie",
+      "params": []
+    },
+    {
+      "id": "is-online",
+      "name": "网络已连接",
+      "description": "浏览器可正常连接互联网。即不处于离线访问模式。",
+      "display_text": "网络已连接",
+      "params": []
+    },
+    {
+      "id": "on-went-online",
+      "name": "用户上线",
+      "description": "用户处于离线状态，但可以连接互联网时触发。",
+      "display_text": "用户上线",
+      "params": []
+    },
+    {
+      "id": "on-went-offline",
+      "name": "用户离线",
+      "description": "用户处于在线状态，但与互联网连接断开时触发。",
+      "display_text": "用户离线",
+      "params": []
+    },
+    {
+      "id": "on-resized",
+      "name": "调整窗口尺寸",
+      "description": "用户调整浏览器窗口大小时触发。",
+      "display_text": "调整窗口尺寸",
+      "params": []
+    },
+    {
+      "id": "is-portraitlandscape",
+      "name": "检测屏幕方向",
+      "description": "检查设备的当前方向，如横屏、竖屏。",
+      "display_text": "屏幕方向为{0}",
+      "params": [
+        {
+          "id": "orientation",
+          "name": "方向",
+          "description": "选择要测试的方向。",
+          "options": [
+            {
+              "id": "portrait",
+              "label": "竖屏"
+            },
+            {
+              "id": "landscape",
+              "label": "横屏"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-back-button",
+      "name": "按下返回键",
+      "description": "按下手机设备的 '返回' 按键时触发。请注意：并非所有设备都有 '返回/后退' 键。",
+      "display_text": "按下手机的返回键",
+      "params": []
+    },
+    {
+      "id": "is-fullscreen",
+      "name": "已进入全屏",
+      "description": "检测当前页面是否处于全屏模式。",
+      "display_text": "已进入全屏",
+      "params": []
+    },
+    {
+      "id": "on-update-ready-sw",
+      "name": "更新准备完成",
+      "description": "更新在后台完成下载时触发。",
+      "display_text": "更新准备完成",
+      "params": []
+    },
+    {
+      "id": "on-update-found-sw",
+      "name": "发现有更新",
+      "description": "在后台开始下载更新时触发。",
+      "display_text": "发现有更新",
+      "params": []
+    },
+    {
+      "id": "on-offline-ready-sw",
+      "name": "离线版本已就绪",
+      "description": "首次运行时，项目所需的资源已全部保存完成，允许在离线状态下运行时触发。",
+      "display_text": "离线版本已就绪",
+      "params": []
+    },
+    {
+      "id": "on-hash-change",
+      "name": "页面锚点变化",
+      "description": "当前网页地址中以 # 开头的属性发生改变时触发。",
+      "display_text": "页面锚点已变化",
+      "params": []
+    },
+    {
+      "id": "on-install-available",
+      "name": "安装已就绪",
+      "description": "当 PWA 安装可用时触发。",
+      "display_text": "安装已就绪",
+      "params": []
+    },
+    {
+      "id": "is-install-available",
+      "name": "可安装",
+      "description": "在 '安装已就绪' 条件完成后， 激活 PWA 可安装状态。",
+      "display_text": "可安装",
+      "params": []
+    },
+    {
+      "id": "on-install-result",
+      "name": "返回安装结果",
+      "description": "执行 '请求安装' 动作后，返回安装完成结果时触发。",
+      "display_text": "返回安装结果 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "result",
+          "name": "结果",
+          "description": "请求安装的结果。",
+          "options": [
+            {
+              "id": "accepted",
+              "label": "已安装"
+            },
+            {
+              "id": "dismissed",
+              "label": "已卸载"
+            },
+            {
+              "id": "error",
+              "label": "错误"
+            },
+            {
+              "id": "any",
+              "label": "任意结果"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-app-installed",
+      "name": "安装成功",
+      "description": "在请求安装、用户接受提示并且应用程序安装成功完成后触发。",
+      "display_text": "安装成功",
+      "params": []
+    },
+    {
+      "id": "compare-display-mode",
+      "name": "比较显示模式",
+      "description": "比较当前应用程序的显示模式。PWA 通常以 'standalone' (应用程序) 模式显示。",
+      "display_text": "显示模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "display-mode",
+          "name": "显示模式",
+          "description": "要检查的显示模式。",
+          "options": [
+            {
+              "id": "browser",
+              "label": "浏览器"
+            },
+            {
+              "id": "minimal-ui",
+              "label": "精简窗口"
+            },
+            {
+              "id": "standalone",
+              "label": "应用程序"
+            },
+            {
+              "id": "fullscreen",
+              "label": "全屏"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "warn-on-close-enabled",
+      "name": "已启用窗口关闭警告",
+      "description": "检测是否已开启窗口关闭警告。",
+      "display_text": "已启用窗口关闭警告",
+      "params": []
+    },
+    {
+      "id": "on-window-focus",
+      "name": "窗口聚焦",
+      "description": "当窗口成为焦点时触发。",
+      "display_text": "窗口聚焦",
+      "params": []
+    },
+    {
+      "id": "on-window-blur",
+      "name": "窗口失去焦点",
+      "description": "当窗口失去焦点时触发。",
+      "display_text": "窗口失去焦点",
+      "params": []
+    },
+    {
+      "id": "window-has-focus",
+      "name": "窗口已聚焦",
+      "description": "检测窗口当前是否具有焦点。",
+      "display_text": "窗口已聚焦",
+      "params": []
+    },
+    {
+      "id": "on-fullscreen-error",
+      "name": "进入全屏失败",
+      "description": "浏览器拒绝进入全屏模式请求时触发。",
+      "display_text": "进入全屏失败",
+      "params": []
+    },
+    {
+      "id": "on-window-maximized",
+      "name": "窗口最大化",
+      "description": "主程序窗口最大化时触发。",
+      "display_text": "窗口最大化",
+      "params": []
+    },
+    {
+      "id": "on-window-minimized",
+      "name": "窗口最小化",
+      "description": "主程序窗口最小化时触发。",
+      "display_text": "窗口最小化",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "log",
+      "name": "打印日志",
+      "description": "将消息记录到浏览器控制台，这对调试很有用。",
+      "display_text": "在控制台打印{0} : [i]{1}[/i]",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "选择要记录到浏览器控制台的消息类型。",
+          "options": [
+            {
+              "id": "log",
+              "label": "日志"
+            },
+            {
+              "id": "warn",
+              "label": "警告"
+            },
+            {
+              "id": "error",
+              "label": "错误"
+            }
+          ]
+        },
+        {
+          "id": "message",
+          "name": "信息",
+          "description": "输入要在控制台中输出的信息"
+        }
+      ]
+    },
+    {
+      "id": "start-group",
+      "name": "开始分组",
+      "description": "在浏览器控制台中开启一个日志分组，之后的打印信息都会出现在分组。",
+      "display_text": "开始日志分组 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "group-name",
+          "name": "分组名称",
+          "description": "输入分组名称，用于在控制台组织输出信息。"
+        }
+      ]
+    },
+    {
+      "id": "end-group",
+      "name": "结束分组",
+      "description": "在浏览器控制台中结束消息组",
+      "display_text": "结束日志分组",
+      "params": []
+    },
+    {
+      "id": "vibrate",
+      "name": "振动",
+      "description": "若设备支持支持振动相关硬件时，提供用户物理反馈。",
+      "display_text": "发起振动 (模式: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "pattern",
+          "name": "模式",
+          "description": "一组由逗号分割的字符串，表示在振动和停顿周期交替的持续时间，以毫秒为单位。其中 0 表示立即取消振动。"
+        }
+      ]
+    },
+    {
+      "id": "go-back",
+      "name": "返回",
+      "description": "转到浏览器历史记录中的上一页。",
+      "display_text": "返回",
+      "params": []
+    },
+    {
+      "id": "go-forward",
+      "name": "前进",
+      "description": "转到浏览器历史记录中的下一页。",
+      "display_text": "前进",
+      "params": []
+    },
+    {
+      "id": "go-to-url",
+      "name": "跳转到新链接",
+      "description": "要跳转的新链接地址。",
+      "display_text": "跳转到 {0} (目标 [i]{1}[/i])",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "输入要跳转的完整URL"
+        },
+        {
+          "id": "target",
+          "name": "目标",
+          "description": "要跳转的 frame 级别，仅在 Web浏览器环境使用 frame 时有效。",
+          "options": [
+            {
+              "id": "self",
+              "label": "自己"
+            },
+            {
+              "id": "parent",
+              "label": "父级"
+            },
+            {
+              "id": "top",
+              "label": "顶部"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-url-in-new-window",
+      "name": "在新窗口中打开链接",
+      "description": "打开一个新窗口并跳转到目标地址。",
+      "display_text": "在新窗口中打开{0} ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "输入要跳转的完整URL。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于识别此窗口的标签。用于后续通过此标签来重现这个窗口。"
+        }
+      ]
+    },
+    {
+      "id": "reload",
+      "name": "重新加载",
+      "description": "重新加载当前的标签页。",
+      "display_text": "重新加载",
+      "params": []
+    },
+    {
+      "id": "invoke-download",
+      "name": "调用浏览器下载",
+      "description": "将数据下载为一个文件。可以是资源标识符、项目文件路径或任意网站地址。",
+      "display_text": "下载[b]{0}[/b] (文件名:[i]{1}[/i])",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要下载的数据地址。可以是资源标识符、项目文件路径或任意网站地址。"
+        },
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "即将下载的文件的文件名。"
+        }
+      ]
+    },
+    {
+      "id": "invoke-download-of-string",
+      "name": "通过字符串下载",
+      "description": "开始以字符串形式给出的数据的文件下载，例如JSON。",
+      "display_text": "通过字符串下载[b]{0}[/b] (文件名: [i]{2}[/i], MIME类型: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要作为文件下载的一串数据，例如 来自AsJSON表达式的JSON数据。"
+        },
+        {
+          "id": "mime-type",
+          "name": "MIME类型",
+          "description": "给定数据的MIME类型。"
+        },
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "下载文件的文件名"
+        }
+      ]
+    },
+    {
+      "id": "alert",
+      "name": "弹出对话框",
+      "description": "弹出一个带有消息和确定按钮的消息框。",
+      "display_text": "弹出对话框 {0}",
+      "params": [
+        {
+          "id": "message",
+          "name": "信息",
+          "description": "输入要在对话框中显示的消息"
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "name": "关闭",
+      "description": "关闭当前浏览器窗口或选项卡。注意，浏览器可能会提示用户是否要确认关闭。",
+      "display_text": "关闭",
+      "params": []
+    },
+    {
+      "id": "focus",
+      "name": "获得焦点",
+      "description": "获取当前选项卡或窗口的焦点",
+      "display_text": "获得焦点",
+      "params": []
+    },
+    {
+      "id": "blur",
+      "name": "取消焦点",
+      "description": "取消当前选项卡或窗口的焦点",
+      "display_text": "取消焦点",
+      "params": []
+    },
+    {
+      "id": "request-fullscreen",
+      "name": "请求全屏",
+      "description": "请求进入全屏模式。注意，因浏览器安全限制，大多数情况需要用户主动输入时才能生效，如进行点击、按下键盘等操作时触发。",
+      "display_text": "请求全屏 (缩放模式: {0},  状态栏: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "缩放方式",
+          "description": "选择游戏画面如何适应到显示屏的缩放方式。",
+          "options": [
+            {
+              "id": "centered",
+              "label": "居中"
+            },
+            {
+              "id": "stretch-crop",
+              "label": "裁剪"
+            },
+            {
+              "id": "stretch-scale-outer",
+              "label": "外部缩放"
+            },
+            {
+              "id": "stretch-letterbox-scale",
+              "label": "保持纵横比"
+            },
+            {
+              "id": "stretch-integer-letterbox-scale",
+              "label": "整倍缩放"
+            },
+            {
+              "id": "stretch-scale-inner",
+              "label": "内部缩放"
+            }
+          ]
+        },
+        {
+          "id": "navigation-ui",
+          "name": "状态栏",
+          "description": "对于移动设备，是否在全屏模式中仍然显示某些系统级控件，如状态栏、导航栏等。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "hide",
+              "label": "隐藏"
+            },
+            {
+              "id": "show",
+              "label": "显示"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cancel-fullscreen",
+      "name": "取消全屏",
+      "description": "退出全屏",
+      "display_text": "取消全屏",
+      "params": []
+    },
+    {
+      "id": "lock-orientation",
+      "name": "锁定方向",
+      "description": "防止设备的方向改变",
+      "display_text": "锁定方向为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "orientation",
+          "name": "方向",
+          "description": "锁定设备的方向。仅在全屏模式时才会生效。",
+          "options": [
+            {
+              "id": "portrait",
+              "label": "竖屏"
+            },
+            {
+              "id": "landscape",
+              "label": "横屏"
+            },
+            {
+              "id": "primary-portrait",
+              "label": "首选竖屏"
+            },
+            {
+              "id": "secondary-portrait",
+              "label": "备选竖屏"
+            },
+            {
+              "id": "primary-landscape",
+              "label": "首选横屏"
+            },
+            {
+              "id": "secondary-landscape",
+              "label": "备选横屏"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unlock-orientation",
+      "name": "解锁方向",
+      "description": "在解锁后恢复正常方向",
+      "display_text": "解锁方向",
+      "params": []
+    },
+    {
+      "id": "load-stylesheet",
+      "name": "加载CSS样式表",
+      "description": "从网络加载 CSS 样式表，并应用到页面。",
+      "display_text": "加载CSS样式表 (来源: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要加载CSS样式表的文件链接，也可以指定项目内的文件，如 \"mystyle.css\"。若位于文件夹中，则填写文件夹路径，如 \"folder/mystyle.css\""
+        }
+      ]
+    },
+    {
+      "id": "set-hash",
+      "name": "设置页面锚点",
+      "description": "设置网页地址中以 '#' 开头的属性。此操作不会重载页面。通常用于页面内的锚点标记。",
+      "display_text": "设置页面锚点为 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "hash",
+          "name": "页面锚点",
+          "description": "设置网页地址的 '#' 参数。用于页面内的锚点标记。"
+        }
+      ]
+    },
+    {
+      "id": "set-document-css-style",
+      "name": "设置 CSS 样式",
+      "description": "更改 HTML 元素中指定的 CSS 样式。",
+      "display_text": "设置 CSS 样式 [b]{0}[/b]: [i]{1}[/i] (选择器: [i]{2}[/i], 类型: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "property-name",
+          "name": "属性名称",
+          "description": "要修改的 CSS 样式属性名称。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要修改的 CSS 样式属性值的字符串。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "用于匹配元素的 CSS 选择器。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "CSS选择器仅影响单次匹配到的元素，还是影响所有匹配到的元素。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "所有"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "get-document-css-style",
+      "name": "获取 CSS 样式",
+      "description": "获取 HTML 元素中指定的 CSS 样式值。将返回结果保存到 'CSS样式属性值' 表达式。",
+      "display_text": "获取 CSS 样式 [b]{0}[/b] (选择器: [i]{1}[/i], 标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "property-name",
+          "name": "属性名",
+          "description": "要修改的 CSS 样式属性名称。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "用于匹配元素的 CSS 选择器。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于后续检索此属性值的标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-window-size",
+      "name": "设置窗口大小",
+      "description": "设置主窗口的大小。注意，在某些情况下，浏览器可能不允许使用。",
+      "display_text": "设置窗口大小为 [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "要设置的窗口宽度。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要设置的窗口高度。"
+        }
+      ]
+    },
+    {
+      "id": "set-window-position",
+      "name": "设置窗口位置",
+      "description": "设置主窗口的位置。注意，在某些情况下，浏览器可能不允许使用。",
+      "display_text": "设置窗口位置 [i]{0}[/i], [i]{1}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要设置的窗口 X 位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要设置的窗口 Y 位置。"
+        }
+      ]
+    },
+    {
+      "id": "request-install",
+      "name": "请求安装",
+      "description": "当安装可用时，提示用户将游戏页面安装为应用程序。这只能在用户输入事件中被允许。",
+      "display_text": "请求安装",
+      "params": []
+    },
+    {
+      "id": "set-warn-on-close",
+      "name": "禁用窗口关闭警告",
+      "description": "关闭浏览器标签页或窗口时弹出确认提示。",
+      "display_text": "[b]{0}[/b]窗口关闭警告",
+      "params": [
+        {
+          "id": "warn-on-close",
+          "name": "关闭窗口时发出警告",
+          "description": "关闭窗口时，是否启用关闭确认警告。"
+        }
+      ]
+    },
+    {
+      "id": "maximize-window",
+      "name": "最大化窗口",
+      "description": "将主程序窗口最大化至全屏。",
+      "display_text": "最大化窗口",
+      "params": []
+    },
+    {
+      "id": "minimize-window",
+      "name": "最小化窗口",
+      "description": "将主程序窗口最小化。",
+      "display_text": "最小化窗口",
+      "params": []
+    },
+    {
+      "id": "restore-window",
+      "name": "恢复窗口",
+      "description": "如果主程序窗口被最大化或最小化，将其恢复到原始大小和位置。",
+      "display_text": "恢复窗口",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "language",
+      "name": "语言环境",
+      "description": "获取浏览器语言标识。如 en-US,  zh-CN, ja-JP",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "platform",
+      "name": "运行平台",
+      "description": "获取浏览器运行平台。如 Windows 或 Mac",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "useragent",
+      "name": "用户代理",
+      "description": "获取浏览器 User Agent 标识字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "title",
+      "name": "网页标题",
+      "description": "获取页面标题。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "url",
+      "name": "网页链接",
+      "description": "获取浏览器当前访问的网页地址。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "protocol",
+      "name": "网络协议",
+      "description": "获取当前的通信协议，如 http:  ftp:  smtp: 等。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "domain",
+      "name": "域名",
+      "description": "获取当前域名，如 construct.net",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "pathname",
+      "name": "路径名称",
+      "description": "获取相对于域的路径。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hash",
+      "name": "锚点标签",
+      "description": "获取网页地址中的锚点参数，例如 #myAnchor。如果没有该属性，则返回空字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "referrer",
+      "name": "重定向地址",
+      "description": "获取地址的重定向来源。用于分辨用户从哪个页面跳转到此页面。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "querystring",
+      "name": "参数字符串",
+      "description": "获取地址栏完整的参数字符串，包括 ?",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "queryparam",
+      "name": "参数索引",
+      "description": "按名称获取地址栏参数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "要查找的参数的名称。"
+        }
+      ]
+    },
+    {
+      "id": "port",
+      "name": "端口",
+      "description": "获取当前地址的端口(如果有)，例如 443, 8080 等。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "css-style-value",
+      "name": "CSS样式属性值",
+      "description": "执行 '获取 CSS 样式' 动作后，返回的结果。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于获取检索结果的标签。"
+        }
+      ]
+    },
+    {
+      "id": "display-mode",
+      "name": "显示模式",
+      "description": "返回当前应用程序显示模式的字符串，例如 'browser' (浏览器) 或 'standalone' (应用程序)。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "install-result",
+      "name": "安装结果",
+      "description": "在 '安装完成' 条件中，返回的安装结果字符串，例如 'accepted'(已接受) 或 'dismissed' (已拒绝)。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 24,
+    "actions": 30,
+    "expressions": 16
+  }
+}

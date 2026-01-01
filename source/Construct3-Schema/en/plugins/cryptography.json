@@ -1,0 +1,248 @@
+{
+  "id": "cryptography",
+  "name": "Cryptography",
+  "description": "Perform cryptographic tasks like hashing and encryption.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-hash-finished",
+      "name": "On hash finished",
+      "description": "Triggered when a hash action with a matching tag has finished.",
+      "display_text": "On hash [i]{0}[/i] finished",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the hash operation that finished."
+        }
+      ]
+    },
+    {
+      "id": "on-encryption-finished",
+      "name": "On encryption finished",
+      "description": "Triggered when an encryption action with a matching tag has finished.",
+      "display_text": "On encryption [i]{0}[/i] finished",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the encryption operation that finished."
+        }
+      ]
+    },
+    {
+      "id": "on-encryption-failed",
+      "name": "On encryption failed",
+      "description": "Triggered when an encryption action with a matching tag fails to complete.",
+      "display_text": "On encryption [i]{0}[/i] failed",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the encryption operation that failed."
+        }
+      ]
+    },
+    {
+      "id": "on-decryption-finished",
+      "name": "On decryption finished",
+      "description": "Triggered when a decryption action with a matching tag has finished.",
+      "display_text": "On decryption [i]{0}[/i] finished",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the decryption operation that finished."
+        }
+      ]
+    },
+    {
+      "id": "on-decryption-failed",
+      "name": "On decryption failed",
+      "description": "Triggered when a decryption action with a matching tag fails to complete.",
+      "display_text": "On decryption [i]{0}[/i] failed",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the decryption operation that failed."
+        }
+      ]
+    },
+    {
+      "id": "on-any-hash-finished",
+      "name": "On any hash finished",
+      "description": "Triggered when any hash action finishes. The 'Tag' expression identifies the action.",
+      "display_text": "On any hash finished",
+      "params": []
+    },
+    {
+      "id": "on-any-encryption-finished",
+      "name": "On any encryption finished",
+      "description": "Triggered when any encryption action finishes. The 'Tag' expression identifies the action.",
+      "display_text": "On any encryption finished",
+      "params": []
+    },
+    {
+      "id": "on-any-encryption-failed",
+      "name": "On any encryption failed",
+      "description": "Triggered when any encryption action fails. The 'Tag' expression identifies the action.",
+      "display_text": "On any encryption failed",
+      "params": []
+    },
+    {
+      "id": "on-any-decryption-finished",
+      "name": "On any decryption finished",
+      "description": "Triggered when any decryption action finishes. The 'Tag' expression identifies the action.",
+      "display_text": "On any decryption finished",
+      "params": []
+    },
+    {
+      "id": "on-any-decryption-failed",
+      "name": "On any decryption failed",
+      "description": "Triggered when any encryption action fails. The 'Tag' expression identifies the action.",
+      "display_text": "On any decryption failed",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "hash-binary",
+      "name": "Hash binary",
+      "description": "Calculate the hash of the contents of a Binary Data object.",
+      "display_text": "Hash {0} with algorithm [i]{1}[/i] (tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "binary-data",
+          "name": "Binary data",
+          "description": "Choose a Binary Data object to hash the contents of."
+        },
+        {
+          "id": "algorithm",
+          "name": "Algorithm",
+          "description": "The hashing algorithm to use.",
+          "options": [
+            {
+              "id": "sha-256",
+              "label": "SHA-256"
+            },
+            {
+              "id": "sha-384",
+              "label": "SHA-384"
+            },
+            {
+              "id": "sha-512",
+              "label": "SHA-512"
+            }
+          ]
+        },
+        {
+          "id": "tag",
+          "name": "Tag (optional)",
+          "description": "An optional tag to identify different hashing operations."
+        }
+      ]
+    },
+    {
+      "id": "encrypt-binary",
+      "name": "Encrypt binary",
+      "description": "Encrypt the contents of a Binary Data object with a password.",
+      "display_text": "Encrypt {0} with algorithm [i]{1}[/i] password [i]{2}[/i] ([i]{3}[/i] iterations, tag [i]{4}[/i])",
+      "params": [
+        {
+          "id": "binary-data",
+          "name": "Source",
+          "description": "Choose a Binary Data object with the data to encrypt."
+        },
+        {
+          "id": "algorithm",
+          "name": "Algorithm",
+          "description": "The encryption algorithm to use.",
+          "options": [
+            {
+              "id": "aes-gcm",
+              "label": "AES-GCM"
+            }
+          ]
+        },
+        {
+          "id": "password",
+          "name": "Password",
+          "description": "The password to encrypt the data with (case sensitive)."
+        },
+        {
+          "id": "iterations",
+          "name": "Iterations",
+          "description": "Number of times to repeat hash function when generating key. Higher values are slower but more secure."
+        },
+        {
+          "id": "tag",
+          "name": "Tag (optional)",
+          "description": "An optional tag to identify different encryption operations."
+        }
+      ]
+    },
+    {
+      "id": "decrypt-binary",
+      "name": "Decrypt binary",
+      "description": "Decrypt the contents of a Binary Data object with a password.",
+      "display_text": "Decrypt {0} with algorithm [i]{1}[/i] password [i]{2}[/i] (tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "binary-data",
+          "name": "Source",
+          "description": "Choose a Binary Data object with the data to decrypt."
+        },
+        {
+          "id": "algorithm",
+          "name": "Algorithm",
+          "description": "The encryption algorithm to use.",
+          "options": [
+            {
+              "id": "aes-gcm",
+              "label": "AES-GCM"
+            }
+          ]
+        },
+        {
+          "id": "password",
+          "name": "Password",
+          "description": "The password to decrypt the data with (case sensitive)."
+        },
+        {
+          "id": "tag",
+          "name": "Tag (optional)",
+          "description": "An optional tag to identify different decryption operations."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "hash",
+      "name": "Hash",
+      "description": "Hexadecimal string of a resulting hash.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "description": "Tag of a corresponding action in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "random-uuid",
+      "name": "RandomUUID",
+      "description": "Generate a v4 UUID using a cryptographically secure random number generator.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 10,
+    "actions": 3,
+    "expressions": 3
+  }
+}

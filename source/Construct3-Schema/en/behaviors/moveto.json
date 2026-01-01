@@ -1,0 +1,418 @@
+{
+  "id": "moveto",
+  "name": "Move To",
+  "description": "Move an object to a position with an acceleration and deceleration.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} speed {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare the current speed to."
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    },
+    {
+      "id": "on-arrived",
+      "name": "On arrived",
+      "description": "Triggered when arrived at target position.",
+      "display_text": "On {my} arrived",
+      "params": []
+    },
+    {
+      "id": "on-hit-solid",
+      "name": "On hit solid",
+      "description": "Triggered if 'Stop on solids' is enabled and the object hit a solid while moving.",
+      "display_text": "On {my} hit solid",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "move-to-position",
+      "name": "Move to position",
+      "description": "Start moving towards a position in the layout, or add a waypoint to move to next.",
+      "display_text": "{my}: Move to ([i]{0}[/i], [i]{1}[/i]) ({2})",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to move to."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to move to."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements.",
+          "options": [
+            {
+              "id": "direct",
+              "label": "Direct"
+            },
+            {
+              "id": "add-waypoint",
+              "label": "Add waypoint"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-to-object",
+      "name": "Move to object",
+      "description": "Start moving towards an object, or add a waypoint to move to next.",
+      "display_text": "{my}: Move to {0} image point [i]{1}[/i] ({2})",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to move to."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements.",
+          "options": [
+            {
+              "id": "direct",
+              "label": "Direct"
+            },
+            {
+              "id": "add-waypoint",
+              "label": "Add waypoint"
+            }
+          ]
+        },
+        {
+          "id": "image-point",
+          "name": "Image point (optional)",
+          "description": "The name or number of an image point in the object to move to. Leave 0 for object's origin."
+        }
+      ]
+    },
+    {
+      "id": "move-along-pathfinding-path",
+      "name": "Move along Pathfinding path",
+      "description": "Start moving along all the points of a path calculated by a Pathfinding behavior on the same object.",
+      "display_text": "{my}: Move along Pathfinding path ({0})",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "options": [
+            {
+              "id": "direct",
+              "label": "Direct"
+            },
+            {
+              "id": "add-waypoints",
+              "label": "Add waypoints"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-along-timeline",
+      "name": "Move along timeline",
+      "description": "Start moving along all the points of a timeline track with X and Y properties.",
+      "display_text": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "Timeline",
+          "description": "The timeline to use a track from."
+        },
+        {
+          "id": "track",
+          "name": "Track ID",
+          "description": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "options": [
+            {
+              "id": "direct",
+              "label": "Direct"
+            },
+            {
+              "id": "add-waypoints",
+              "label": "Add waypoints"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-along-timeline-by-name",
+      "name": "Move along timeline (by name)",
+      "description": "Start moving along all the points of a timeline track with X and Y properties, using a string for the timeline name.",
+      "display_text": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "Timeline name",
+          "description": "A string with the name of the timeline to use a track from."
+        },
+        {
+          "id": "track",
+          "name": "Track ID",
+          "description": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "options": [
+            {
+              "id": "direct",
+              "label": "Direct"
+            },
+            {
+              "id": "add-waypoints",
+              "label": "Add waypoints"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Stop movement and remove all waypoints.",
+      "display_text": "Stop {my}",
+      "params": []
+    },
+    {
+      "id": "set-moving-angle",
+      "name": "Set angle of motion",
+      "description": "Set the angle the object is moving at.",
+      "display_text": "Set {my} angle of motion to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The new angle of motion, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's current speed.",
+      "display_text": "Set {my} speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-max-speed",
+      "name": "Set max speed",
+      "description": "Set the object's maximum speed.",
+      "display_text": "Set {my} maximum speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-speed",
+          "name": "Max Speed",
+          "description": "The new maximum speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the object's acceleration.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new acceleration of the object to set, in pixels per second per second. Use 0 for instant acceleration."
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "Set deceleration",
+      "description": "Set the object's deceleration.",
+      "display_text": "Set {my} deceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "Deceleration",
+          "description": "The new deceleration of the object to set, in pixels per second per second. Use 0 for instant deceleration."
+        }
+      ]
+    },
+    {
+      "id": "set-rotate-speed",
+      "name": "Set rotate speed",
+      "description": "Set the turn speed for rotating towards the target position.",
+      "display_text": "Set {my} rotate speed to [i]{0}[/i] degrees per second",
+      "params": [
+        {
+          "id": "rotate-speed",
+          "name": "Rotate speed",
+          "description": "The turn speed to set, in degrees per second. Use 0 to disable turning."
+        }
+      ]
+    },
+    {
+      "id": "set-stop-on-solids",
+      "name": "Set stop on solids",
+      "description": "Set whether to automatically stop movement if hitting a solid object.",
+      "display_text": "Set {my} stop on solids [b]{0}[/b]",
+      "params": [
+        {
+          "id": "enabled",
+          "name": "Enabled",
+          "description": "Set whether to stop on solids."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} enabled [b]{0}[/b]",
+      "params": [
+        {
+          "id": "enabled",
+          "name": "Enabled",
+          "description": "Set whether to enable or disable the behavior."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rotatespeed",
+      "name": "RotateSpeed",
+      "description": "The current maximum turn speed in degrees per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "targetx",
+      "name": "TargetX",
+      "description": "The X co-ordinate of the current target position moving towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "targety",
+      "name": "TargetY",
+      "description": "The Y co-ordinate of the current target position moving towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "waypointcount",
+      "name": "WaypointCount",
+      "description": "The number of remaining waypoints to move to.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "waypointxat",
+      "name": "WaypointXAt",
+      "description": "The X co-ordinate of a waypoint at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of waypoint."
+        }
+      ]
+    },
+    {
+      "id": "waypointyat",
+      "name": "WaypointYAt",
+      "description": "The Y co-ordinate of a waypoint at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of waypoint."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 14,
+    "expressions": 11
+  }
+}

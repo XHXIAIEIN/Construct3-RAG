@@ -1,0 +1,320 @@
+{
+  "id": "car",
+  "name": "Car",
+  "description": "Moves an object forwards with steering.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} speed {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare the current speed to."
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Set the speed to zero.",
+      "display_text": "Stop {my}",
+      "params": []
+    },
+    {
+      "id": "set-ignoring-input",
+      "name": "Set ignoring input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "display_text": "{0} {my} user input",
+      "params": [
+        {
+          "id": "input",
+          "name": "Input",
+          "description": "Set whether to ignore the controls for this movement.",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "Stop ignoring"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "Start ignoring"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's current speed.",
+      "display_text": "Set {my} speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-max-speed",
+      "name": "Set max speed",
+      "description": "Set the object's maximum speed.",
+      "display_text": "Set {my} maximum speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-speed",
+          "name": "Max Speed",
+          "description": "The new maximum speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the object's acceleration.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "Set deceleration",
+      "description": "Set the object's deceleration.",
+      "display_text": "Set {my} deceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "Deceleration",
+          "description": "The new deceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "Simulate control",
+      "description": "Control the movement by events.",
+      "display_text": "Simulate {my} pressing {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "Control",
+          "description": "The movement control to simulate pressing.",
+          "options": [
+            {
+              "id": "steer-left",
+              "label": "Steer left"
+            },
+            {
+              "id": "steer-right",
+              "label": "Steer right"
+            },
+            {
+              "id": "accelerate",
+              "label": "Accelerate"
+            },
+            {
+              "id": "brake",
+              "label": "Brake"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-steer-speed",
+      "name": "Set steer speed",
+      "description": "Set the steer speed of the movement.",
+      "display_text": "Set {my} steer speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "steer-speed",
+          "name": "Steer speed",
+          "description": "The turn speed, in degrees per second."
+        }
+      ]
+    },
+    {
+      "id": "set-drift-recover",
+      "name": "Set drift recover",
+      "description": "Set the drift recover rate of the movement.",
+      "display_text": "Set {my} drift recover to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "drift-recover",
+          "name": "Drift recover",
+          "description": "The rate the angle of motion catches up with the object angle.  Lower values cause drifting, higher values cause tighter turns."
+        }
+      ]
+    },
+    {
+      "id": "set-friction",
+      "name": "Set friction",
+      "description": "Set the collision friction of the movement.",
+      "display_text": "Set {my} friction to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "friction",
+          "name": "Friction",
+          "description": "The amount of slowdown when hitting solids, between 0 and 1."
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "Set default controls",
+      "description": "Change the default controls setting.",
+      "display_text": "Set {my} default controls [b]{0}[/b]",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "Default controls",
+          "description": "Whether to enable or disable the behavior default controls."
+        }
+      ]
+    },
+    {
+      "id": "set-turn-while-stopped",
+      "name": "Set turn while stopped",
+      "description": "Change whether turning is allowed while stopped.",
+      "display_text": "Set {my} turn while stopped [b]{0}[/b]",
+      "params": [
+        {
+          "id": "turn-while-stopped",
+          "name": "Turn while stopped",
+          "description": "Whether to enable or disable the ability to turn while stopped."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectorx",
+      "name": "VectorX",
+      "description": "The current X component of motion, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectory",
+      "name": "VectorY",
+      "description": "The current Y component of motion, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "steerspeed",
+      "name": "SteerSpeed",
+      "description": "The current steer speed, in degrees per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "driftrecover",
+      "name": "DriftRecover",
+      "description": "The current drift recover rate.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "friction",
+      "name": "Friction",
+      "description": "The current friction (slowdown when hitting solids).",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 13,
+    "expressions": 10
+  }
+}

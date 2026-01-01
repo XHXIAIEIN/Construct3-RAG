@@ -1,0 +1,488 @@
+{
+  "id": "timeline",
+  "name": "时间轴",
+  "description": "通过事件来控制时间轴动画，例如开始或停止播放。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-any-timeline-started",
+      "name": "任意动画开始播放",
+      "description": "在任何时间轴动画启动时触发。",
+      "display_text": "在 [b]{0}[/b] 任意开始播放",
+      "params": [
+        {
+          "id": "trigger-on",
+          "name": "类型",
+          "description": "此触发器生效时，时间线处于的状态。",
+          "options": [
+            {
+              "id": "any",
+              "label": "任意"
+            },
+            {
+              "id": "start-only",
+              "label": "恢复"
+            },
+            {
+              "id": "resume-only",
+              "label": "恢复状态"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-timeline-finished",
+      "name": "任意动画播放完成",
+      "description": "在任何时间轴动画完成时触发。",
+      "display_text": "任意动画播放完成",
+      "params": []
+    },
+    {
+      "id": "is-any-playing",
+      "name": "任意动画正在播放",
+      "description": "检测任意时间轴动画是否正在播放。",
+      "display_text": "任意动画正在播放",
+      "params": []
+    },
+    {
+      "id": "on-keyframe-reached",
+      "name": "触发关键帧",
+      "description": "在时间轴播放期间，经过指定标签的主关键帧时触发。",
+      "display_text": "触发关键帧 [b]{0}[/b] (匹配[b]{1}[/b])",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于确认是否到达主关键帧。使用空格分隔多个标签。"
+        },
+        {
+          "id": "match",
+          "name": "匹配规则",
+          "description": "触发关键帧的标签列表内，包含任意一个标签即可匹配，或是需要满足所有的标签才可进行匹配。",
+          "options": [
+            {
+              "id": "any-tags",
+              "label": "任意标签"
+            },
+            {
+              "id": "all-tags",
+              "label": "所有标签"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-keyframe-reached",
+      "name": "触发任意关键帧",
+      "description": "在时间轴播放期间，经过任意主关键帧时触发。",
+      "display_text": "触发任意关键帧",
+      "params": []
+    },
+    {
+      "id": "on-timeline-started-by-tags",
+      "name": "开始播放",
+      "description": "在指定的时间轴开始播放时触发。",
+      "display_text": "在 [b]{0}[/b] 开始播放 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的时间轴的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "trigger-on",
+          "name": "类型",
+          "description": "此触发器生效时，时间线处于的状态。",
+          "options": [
+            {
+              "id": "any",
+              "label": "任意"
+            },
+            {
+              "id": "start-only",
+              "label": "起始"
+            },
+            {
+              "id": "resume-only",
+              "label": "恢复"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-timeline-finished-by-tags",
+      "name": "播放完成",
+      "description": "在指定的时间轴播放完成时触发。",
+      "display_text": "[b]{0}[/b] 播放完成",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-playing-by-tags",
+      "name": "正在播放",
+      "description": "测试当前是否正在播放指定的时间轴。",
+      "display_text": "[b]{0}[/b] 正在播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-time-set-by-tags",
+      "name": "播放时间被更改",
+      "description": "当指定的时间轴播放时间被更改时触发。",
+      "display_text": "[b]{0}[/b] 已到达时间",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-paused",
+      "name": "正在暂停",
+      "description": "检测时间轴是否正处于暂停状态。",
+      "display_text": "时间轴 [b]{0}[/b] 正在暂停",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴",
+          "description": "要检测的时间轴。"
+        }
+      ]
+    },
+    {
+      "id": "is-paused-by-name",
+      "name": "正在暂停(根据名字)",
+      "description": "根据指定的时间轴名称，检测该时间轴是否正处于暂停状态。",
+      "display_text": "时间轴 [b]{0}[/b] 正在暂停",
+      "params": [
+        {
+          "id": "timeline-name",
+          "name": "名称",
+          "description": "要检测的时间轴的名称。"
+        }
+      ]
+    },
+    {
+      "id": "is-paused-by-tags",
+      "name": "正在暂停",
+      "description": "检测时间轴是否正处于暂停状态。",
+      "display_text": "时间轴 [b]{0}[/b] 正在暂停",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检测的时间轴标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-any-paused",
+      "name": "任意时间轴正在暂停",
+      "description": "检测是否有任意的时间轴动画正在暂停。",
+      "display_text": "任意时间轴正在暂停",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "play-timeline",
+      "name": "播放",
+      "description": "播放时间轴",
+      "display_text": "播放 [b]{0}[/b] 标签 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴",
+          "description": "开始播放时间轴动画。"
+        },
+        {
+          "id": "tags",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "play-timeline-by-name",
+      "name": "播放(根据名称)",
+      "description": "播放指定时间轴，使用字符串来选择。",
+      "display_text": "播放 [b]{0}[/b] 标签 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "timeline-name",
+          "name": "名称",
+          "description": "要开始播放的时间轴"
+        },
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "可选。填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "play-all-timelines",
+      "name": "播放全部",
+      "description": "播放所有尚未播放的时间轴动画。",
+      "display_text": "播放全部",
+      "params": []
+    },
+    {
+      "id": "pause-all-timelines",
+      "name": "暂停全部",
+      "description": "暂停所有正在运行的时间轴播放。",
+      "display_text": "暂停全部",
+      "params": []
+    },
+    {
+      "id": "resume-all-timelines",
+      "name": "恢复所有",
+      "description": "恢复所有正在运行的时间轴播放。",
+      "display_text": "恢复所有",
+      "params": []
+    },
+    {
+      "id": "stop-all-timelines",
+      "name": "停止所有",
+      "description": "停止所有正在运行的时间轴播放。",
+      "display_text": "停止所有",
+      "params": []
+    },
+    {
+      "id": "set-instance",
+      "name": "设置实例对象",
+      "description": "设置下一个时间轴要执行的实例",
+      "display_text": "设置[b]{0}[/b]在[b]{1}[/b]的下一条时间轴轨道播放",
+      "params": [
+        {
+          "id": "object-class",
+          "name": "设置的对象",
+          "description": "设置在下一个时间轴播放的对象。"
+        },
+        {
+          "id": "track-id",
+          "name": "轨道ID",
+          "description": "设置实例对象的轨道ID。如果为空，将被设置为找到的第一个轨道，以前没有被设置过的。"
+        }
+      ]
+    },
+    {
+      "id": "pause-timeline-by-tags",
+      "name": "停顿",
+      "description": "暂停播放所有指定的时间轴。",
+      "display_text": "暂停 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "resume-timeline-by-tags",
+      "name": "恢复播放",
+      "description": "恢复播放所有指定的时间轴。",
+      "display_text": "恢复 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "stop-timeline-by-tags",
+      "name": "停止",
+      "description": "停止播放所有指定的时间轴。",
+      "display_text": "停止 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的时间轴的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-timeline-time-by-tags",
+      "name": "设置时间",
+      "description": "设置时间轴的播放时间。",
+      "display_text": "设置 [b]{0}[/b] 的时间为 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的时间轴的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "要设置的时间（秒）或带有tag的字符串，来将所有时间轴同步"
+        }
+      ]
+    },
+    {
+      "id": "set-timeline-playback-rate-by-tags",
+      "name": "设置播放速度",
+      "description": "设置时间轴的播放速度。",
+      "display_text": "设置 [b]{0}[/b] 播放速度为 [b]{1}[/b] 倍",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的时间轴的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "rate",
+          "name": "倍速",
+          "description": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。负值则反向回放。"
+        }
+      ]
+    },
+    {
+      "id": "unset-instances",
+      "name": "取消设置实例",
+      "description": "取消设置下一个时间轴在之前设置的所有实例。",
+      "display_text": "取消设置所有实例",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "time",
+      "name": "时间",
+      "description": "时间轴当前的播放时间，以秒为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴名称或标签",
+          "description": "获取时间的时间轴的名称或标记"
+        }
+      ]
+    },
+    {
+      "id": "progress",
+      "name": "进度",
+      "description": "时间轴当前的播放进度，在 0-1 范围内。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴名称或标签",
+          "description": "获取时间轴的名称或标签"
+        }
+      ]
+    },
+    {
+      "id": "keyframe-tags",
+      "name": "关键帧标签",
+      "description": "在触发器中，相关的关键帧标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timeline-name",
+      "name": "时间轴名称",
+      "description": "在触发器中，相关的时间轴名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-time",
+      "name": "总长时间",
+      "description": "时间线已播放总长度",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴名称或标签",
+          "description": "获取时间轴的总时长"
+        }
+      ]
+    },
+    {
+      "id": "timeline-tags",
+      "name": "时间轴标签",
+      "description": "在触发器中，与相关时间轴的标签",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "value",
+      "name": "数值",
+      "description": "作用于指定时间轴内的变量的数值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴名称或标签",
+          "description": "时间轴的名称或者标签。"
+        },
+        {
+          "id": "track",
+          "name": "属性轨道名称或ID",
+          "description": "时间轴的名称或者标签。"
+        }
+      ]
+    },
+    {
+      "id": "ease",
+      "name": "曲线",
+      "description": "获取曲线的值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "ease",
+          "name": "名称",
+          "description": "内置或自定义的曲线名称。"
+        },
+        {
+          "id": "progress",
+          "name": "数值",
+          "description": "数值范围在0-1之间。"
+        }
+      ]
+    },
+    {
+      "id": "keyframe-time",
+      "name": "获取关键帧时间",
+      "description": "获取指定时间轴上关键帧的时间。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeline",
+          "name": "时间轴名称或标签",
+          "description": "时间轴的名称或标签。"
+        },
+        {
+          "id": "keyframe",
+          "name": "关键帧标签",
+          "description": "获取关键帧时间戳的标签"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 13,
+    "expressions": 9
+  }
+}

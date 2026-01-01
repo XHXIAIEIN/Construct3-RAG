@@ -1,0 +1,158 @@
+{
+  "id": "c2websocket",
+  "name": "WebSocket",
+  "description": "发送和接收文本消息到 WebSocket 服务器。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-opened",
+      "name": "连接打开",
+      "description": "与 WebSocket 服务器成功建立连接时触发。",
+      "display_text": "连接打开",
+      "params": []
+    },
+    {
+      "id": "on-closed",
+      "name": "连接关闭",
+      "description": "关闭活动连接时触发。",
+      "display_text": "连接关闭",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "连接错误",
+      "description": "出现连接错误时触发。",
+      "display_text": "连接错误",
+      "params": []
+    },
+    {
+      "id": "is-open",
+      "name": "已开启",
+      "description": "检测连接当前是否已打开。",
+      "display_text": "已开启",
+      "params": []
+    },
+    {
+      "id": "is-connecting",
+      "name": "正在连接",
+      "description": "检测当前是否正在建立连接。",
+      "display_text": "正在连接",
+      "params": []
+    },
+    {
+      "id": "is-supported",
+      "name": "设备受支持",
+      "description": "检测当前运行设备是否支持 WebSocket 连接。",
+      "display_text": "设备受支持",
+      "params": []
+    },
+    {
+      "id": "on-binary-message",
+      "name": "接收到二进制消息",
+      "description": "当服务器收到二进制数据消息时触发。",
+      "display_text": "接受到二进制消息(储存到 {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "接收到",
+          "description": "选择二进制数据对象，将接收到的二进制消息写入其中。"
+        }
+      ]
+    },
+    {
+      "id": "on-message",
+      "name": "收到文字消息",
+      "description": "从服务器收到消息时触发。",
+      "display_text": "收到文字消息",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "connect",
+      "name": "连接",
+      "description": "连接到 WebSocket 服务器。",
+      "display_text": "连接到 [i]{0}[/i] (请求协议: {1})",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "输入要连接的WebSocket服务器。"
+        },
+        {
+          "id": "protocol-optional",
+          "name": "子协议(可选)",
+          "description": "部分服务器必须要求填写子协议才能建立连接。留空表示无需协议要求。"
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "name": "关闭连接",
+      "description": "关闭所有活跃的 WebSocket 连接。",
+      "display_text": "关闭连接",
+      "params": []
+    },
+    {
+      "id": "send-text",
+      "name": "发送文本",
+      "description": "将文本字符串发送到服务器。",
+      "display_text": "发送文本 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要发送到服务器的文本字符串。"
+        }
+      ]
+    },
+    {
+      "id": "send-binary",
+      "name": "发送二进制",
+      "description": "将二进制数据对象的内容发送到服务器。",
+      "display_text": "发送 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "data",
+          "name": "二进制数据",
+          "description": "要作为消息发送的二进制数据对象。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "errormsg",
+      "name": "错误信息",
+      "description": "在触发事件 '连接出错' 中的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "closecode",
+      "name": "错误代码",
+      "description": "触发事件 '已关闭' 的关闭代码。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "closereason",
+      "name": "错误理由",
+      "description": "触发事件 '连接被关闭' 的关闭原因。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "messagetext",
+      "name": "信息文本",
+      "description": "在 '收到文字消息' 条件中，收到的文本内容。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 8,
+    "actions": 4,
+    "expressions": 4
+  }
+}

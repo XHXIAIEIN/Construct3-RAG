@@ -1,0 +1,181 @@
+{
+  "id": "geolocation",
+  "name": "Geolocation",
+  "description": "Access the user's location information such as latitude and longitude.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-watching-location",
+      "name": "Is watching location",
+      "description": "True if the user's location is currently being tracked.",
+      "display_text": "Is watching location",
+      "params": []
+    },
+    {
+      "id": "on-location-update",
+      "name": "On location update",
+      "description": "Triggered when requesting or watching the user's position when the location is updated.",
+      "display_text": "On location update",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered when a geolocation error occurs.",
+      "display_text": "On error",
+      "params": []
+    },
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "True if the current platform supports geolocation.",
+      "display_text": "Is supported",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-location",
+      "name": "Request location",
+      "description": "Make a one-off request to get the user's current location.",
+      "display_text": "Request location ({0} accuracy, timeout {1}, maximum age {2})",
+      "params": [
+        {
+          "id": "accuracy",
+          "name": "Accuracy",
+          "description": "The position accuracy to request. 'High' may take longer to get results and consume more battery.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "high",
+              "label": "High"
+            }
+          ]
+        },
+        {
+          "id": "timeout",
+          "name": "Timeout",
+          "description": "The maximum length of time in seconds that the device can take to return a position."
+        },
+        {
+          "id": "maximum-age",
+          "name": "Maximum age",
+          "description": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
+        }
+      ]
+    },
+    {
+      "id": "watch-location",
+      "name": "Watch location",
+      "description": "Start receiving regular updates of the user's location.",
+      "display_text": "Watch location ({0} accuracy, timeout {1}, maximum age {2})",
+      "params": [
+        {
+          "id": "accuracy",
+          "name": "Accuracy",
+          "description": "The position accuracy to request. 'High' may take longer to get results and consume more battery.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "high",
+              "label": "High"
+            }
+          ]
+        },
+        {
+          "id": "timeout",
+          "name": "Timeout",
+          "description": "The maximum length of time in seconds that the device can take to return a position."
+        },
+        {
+          "id": "maximum-age",
+          "name": "Maximum age",
+          "description": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
+        }
+      ]
+    },
+    {
+      "id": "stop-watching",
+      "name": "Stop watching",
+      "description": "Stop watching a previous 'Watch location' action.",
+      "display_text": "Stop watching location",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "errormessage",
+      "name": "ErrorMessage",
+      "description": "In 'On error', the relevant error message.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timestamp",
+      "name": "Timestamp",
+      "description": "The timestamp at which the current details were retrieved.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "latitude",
+      "name": "Latitude",
+      "description": "The latitude position in decimal degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "longitude",
+      "name": "Longitude",
+      "description": "The longitude position in decimal degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "altitude",
+      "name": "Altitude",
+      "description": "The altitude above sea-level in meters, if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accuracy",
+      "name": "Accuracy",
+      "description": "The estimated accuracy in meters of the latitude and longitude.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "altitudeaccuracy",
+      "name": "AltitudeAccuracy",
+      "description": "The estimated accuracy in meters of the altitude, if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "heading",
+      "name": "Heading",
+      "description": "The direction of travel in degrees relative to due north, if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The speed of travel in meters per second, if available.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 3,
+    "expressions": 9
+  }
+}

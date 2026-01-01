@@ -1,0 +1,150 @@
+{
+  "id": "speechsynthesis",
+  "name": "语音合成",
+  "description": "使用文本转语音引擎自动读出文本",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "supports-speech-synthesis",
+      "name": "支持语音合成",
+      "description": "测试设备是否支持语音合成。",
+      "display_text": "支持语音合成",
+      "params": []
+    },
+    {
+      "id": "is-speaking",
+      "name": "正在讲话",
+      "description": "检测当前是否正在讲话。",
+      "display_text": "正在讲话",
+      "params": []
+    },
+    {
+      "id": "on-speech-ended",
+      "name": "说话结束",
+      "description": "在说完话后被触发",
+      "display_text": "说话结束",
+      "params": []
+    },
+    {
+      "id": "on-speech-error",
+      "name": "发声错误",
+      "description": "在语音合成失败时触发",
+      "display_text": "发声错误",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "speak-text",
+      "name": "说话",
+      "description": "用语音合成读出一些文本。",
+      "display_text": "朗读文本 [b]{0}[/b] (语言: [i]{1}[/i], 声音来源: [i]{2}[/i], 音量: [i]{3}[/i]dB, 速度: [i]{4}[/i], 音高 [i]{5}[/i])",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要说的文字。"
+        },
+        {
+          "id": "language",
+          "name": "语言",
+          "description": "文字的语言代码，如 \"en-US\" 为美式英语，\"zh-CN\"为简体中文。留空则使用设备默认语言。"
+        },
+        {
+          "id": "voice-uri",
+          "name": "声音文件地址",
+          "description": "要使用的声音。 留空以使用默认语音。"
+        },
+        {
+          "id": "volume",
+          "name": "音量",
+          "description": "朗读文本的音量，以分贝为单位。"
+        },
+        {
+          "id": "rate",
+          "name": "速率",
+          "description": "说话的相对速度，例如 1为正常，0.5为一半快。"
+        },
+        {
+          "id": "pitch",
+          "name": "音高",
+          "description": "说话的相对音高，介于0和2之间。"
+        }
+      ]
+    },
+    {
+      "id": "stop-speaking",
+      "name": "停止语音输入",
+      "description": "取消任何活动的语音合成。",
+      "display_text": "停止语音输入",
+      "params": []
+    },
+    {
+      "id": "pause-speaking",
+      "name": "暂停语音输入",
+      "description": "暂停任何活动的语音合成。",
+      "display_text": "暂停语音输入",
+      "params": []
+    },
+    {
+      "id": "resume-speaking",
+      "name": "恢复语音输入",
+      "description": "恢复先前暂停的语音合成。",
+      "display_text": "恢复语音输入",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "voicecount",
+      "name": "声音数量",
+      "description": "返回可用语音的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "voicenameat",
+      "name": "语音名称索引",
+      "description": "返回索引处的语音名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "基于零的语音索引。"
+        }
+      ]
+    },
+    {
+      "id": "voicelangat",
+      "name": "语音语言索引",
+      "description": "在索引处返回语音的语言。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "基于零的语音索引。"
+        }
+      ]
+    },
+    {
+      "id": "voiceuriat",
+      "name": "语音链接索引",
+      "description": "返回索引处语音的URI。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "基于零的语音索引。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 4,
+    "expressions": 4
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "id": "car",
+  "name": "车辆",
+  "description": "通过方向盘移动对象，模拟驾驶的体验。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "正在移动",
+      "description": "检测对象是否正在移动。",
+      "display_text": "{my} 正在移动",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "比较移动速度",
+      "description": "与对象的速度进行比较。",
+      "display_text": "{my}速度 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "速度值，以像素/秒为单位，与对象速度值进行比较。"
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测当前行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop",
+      "name": "停下",
+      "description": "设置速度为 0。",
+      "display_text": "{my} 停下",
+      "params": []
+    },
+    {
+      "id": "set-ignoring-input",
+      "name": "屏蔽玩家控制",
+      "description": "是否屏蔽玩家对该对象移动的控制行为。",
+      "display_text": "{0}控制 {my}",
+      "params": [
+        {
+          "id": "input",
+          "name": "输入",
+          "description": "是否屏蔽玩家对该对象移动的控制行为。",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "结束屏蔽"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "开始屏蔽"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "设置速度",
+      "description": "设置对象当前速度。",
+      "display_text": "设置 {my}移动速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "设置移动速度，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-max-speed",
+      "name": "设置最大移动速度",
+      "description": "设置对象的最大移动速度。",
+      "display_text": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-speed",
+          "name": "最大移动速度",
+          "description": "设置最大移动速度，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "设置加速度",
+      "description": "设置对象的加速度。",
+      "display_text": "设置 {my}加速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "设置减速度",
+      "description": "设置对象的减速度。",
+      "display_text": "设置 {my}减速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "减速度",
+          "description": "从正常移动至完全停止的减速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "模拟控制",
+      "description": "通过事件模拟玩家按下按键来控制角色的行动。",
+      "display_text": "控制 {my} {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "控制",
+          "description": "模拟玩家按下按键来控制角色行动。",
+          "options": [
+            {
+              "id": "steer-left",
+              "label": "左转"
+            },
+            {
+              "id": "steer-right",
+              "label": "右转"
+            },
+            {
+              "id": "accelerate",
+              "label": "加速"
+            },
+            {
+              "id": "brake",
+              "label": "刹车"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-steer-speed",
+      "name": "设置转向速度",
+      "description": "设置车辆行驶时的转向速度。",
+      "display_text": "设置 {my}转向速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "steer-speed",
+          "name": "转向速度",
+          "description": "转向速度，以度数/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-drift-recover",
+      "name": "设置漂移修正",
+      "description": "运动角度追上物体角度的速率。较低的值会导致漂移，较高的值则会造成急转弯。",
+      "display_text": "设置 {my}漂移修正为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "drift-recover",
+          "name": "漂移修正",
+          "description": "运动角度追上物体角度的速率。较低的值会导致漂移，较高的值则会造成急转弯。"
+        }
+      ]
+    },
+    {
+      "id": "set-friction",
+      "name": "设置摩擦力",
+      "description": "设置运动的碰撞摩擦力。",
+      "display_text": "设置 {my}摩擦力为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "friction",
+          "name": "摩檫力",
+          "description": "撞击实体对象时的减速度，介于0到1之间。"
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "启用默认控制方式",
+      "description": "更改默认开启控制的设置。",
+      "display_text": "[b]{0}[/b] {my} 默认控制方式",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "默认的控制方式",
+          "description": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。"
+        }
+      ]
+    },
+    {
+      "id": "set-turn-while-stopped",
+      "name": "设置静止时旋转",
+      "description": "设置静止时禁止旋转，或允许原地旋转。",
+      "display_text": "[b]{0}[/b] {my} 静止时旋转",
+      "params": [
+        {
+          "id": "turn-while-stopped",
+          "name": "静止时旋转",
+          "description": "静止时禁止旋转，或允许原地旋转。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "移动速度",
+      "description": "当前对象的移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "最大移动速度",
+      "description": "设置最大移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "加速度",
+      "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "减速度",
+      "description": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "移动角度",
+      "description": "当前的移动方向，以度数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectorx",
+      "name": "移动向量X",
+      "description": "当前在水平方向移动的X分量，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectory",
+      "name": "移动向量Y",
+      "description": "当前在垂直方向移动的Y分量，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "steerspeed",
+      "name": "转向速度",
+      "description": "当前的转向速度，以度/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "driftrecover",
+      "name": "漂移修正",
+      "description": "当前漂移修正速率。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "friction",
+      "name": "摩檫力",
+      "description": "当前的摩擦力（撞击实体对象时的减速）。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 13,
+    "expressions": 10
+  }
+}

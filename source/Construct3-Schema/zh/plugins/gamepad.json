@@ -1,0 +1,668 @@
+{
+  "id": "gamepad",
+  "name": "手柄",
+  "description": "通过外设游戏手柄接收游戏输入。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-gamepad-connected",
+      "name": "连接成功",
+      "description": "游戏手柄连接到设备时触发。",
+      "display_text": "游戏手柄连接成功",
+      "params": []
+    },
+    {
+      "id": "on-gamepad-disconnected",
+      "name": "断开连接",
+      "description": "游戏手柄与设备断开连接时触发。",
+      "display_text": "游戏手柄断开连接",
+      "params": []
+    },
+    {
+      "id": "has-gamepads",
+      "name": "已连接",
+      "description": "检测游戏手柄是否已连接并处于活动状态。已连接的手柄被视为激活状态前，可能需要按下任意按钮。",
+      "display_text": "游戏手柄已连接",
+      "params": []
+    },
+    {
+      "id": "is-button-down",
+      "name": "按住按钮",
+      "description": "检测对应的手柄是否按住某个按钮。",
+      "display_text": "手柄 {0} 按住 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始)。"
+        },
+        {
+          "id": "button",
+          "name": "按钮",
+          "description": "选择一个游戏手柄按钮进行测试。",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "按钮 A"
+            },
+            {
+              "id": "button-b",
+              "label": "按钮 B"
+            },
+            {
+              "id": "button-x",
+              "label": "按钮 X"
+            },
+            {
+              "id": "button-y",
+              "label": "按钮 Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "左肩 L1 / LB"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "右肩 R1 / RB"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "左肩 L2 / LT"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "右肩 R2 / RT"
+            },
+            {
+              "id": "back-view",
+              "label": "返回 / 查看"
+            },
+            {
+              "id": "start-menu",
+              "label": "开始 / 菜单"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "左摇杆按钮"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "右摇杆按钮"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "十字键上"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "十字键下"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "十字键左"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "十字键右"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-axis",
+      "name": "比较轴",
+      "description": "测试其中一个游戏手柄轴的值。",
+      "display_text": "游戏手柄 {0} [b]{1}[/b] {2} {3}",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始)。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "选择要测试的游戏手柄轴。",
+          "options": [
+            {
+              "id": "left-analog-x-axis",
+              "label": "左摇杆X轴"
+            },
+            {
+              "id": "left-analog-y-axis",
+              "label": "左摇杆Y轴"
+            },
+            {
+              "id": "right-analog-x-axis",
+              "label": "右摇杆X轴"
+            },
+            {
+              "id": "right-analog-y-axis",
+              "label": "右摇杆Y轴"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值，范围从 -100 到 100"
+        }
+      ]
+    },
+    {
+      "id": "on-button-pressed",
+      "name": "按下按钮",
+      "description": "手柄按下指定按钮时触发。",
+      "display_text": "手柄 {0} 按下 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始)。"
+        },
+        {
+          "id": "button",
+          "name": "按钮",
+          "description": "选择一个游戏手柄按钮进行测试。",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "按钮 A"
+            },
+            {
+              "id": "button-b",
+              "label": "按钮 B"
+            },
+            {
+              "id": "button-x",
+              "label": "按钮 X"
+            },
+            {
+              "id": "button-y",
+              "label": "按钮 Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "左肩 L1 / LB"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "右肩 R1 / RB"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "左肩 L2 / LT"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "右肩 R2 / RT"
+            },
+            {
+              "id": "back-view",
+              "label": "返回 / 查看"
+            },
+            {
+              "id": "start-menu",
+              "label": "开始 / 菜单"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "左摇杆按钮"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "右摇杆按钮"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "十字键上"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "十字键下"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "十字键左"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "十字键右"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-button-released",
+      "name": "松开按钮",
+      "description": "释放游戏手柄按钮时触发。",
+      "display_text": "手柄 {0} 松开 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始)。"
+        },
+        {
+          "id": "button",
+          "name": "按钮",
+          "description": "选择要测试的游戏手柄的按钮。",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "按钮 A"
+            },
+            {
+              "id": "button-b",
+              "label": "按钮 B"
+            },
+            {
+              "id": "button-x",
+              "label": "按钮 X"
+            },
+            {
+              "id": "button-y",
+              "label": "按钮 Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "左肩 L1 / LB"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "右肩 R1 / RB"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "左肩 L2 / LT"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "右肩 R2 / RT"
+            },
+            {
+              "id": "back-view",
+              "label": "返回 / 查看"
+            },
+            {
+              "id": "start-menu",
+              "label": "开始 / 菜单"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "左摇杆按钮"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "右摇杆按钮"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "十字键上"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "十字键下"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "十字键左"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "十字键右"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-button-pressed",
+      "name": "按下任意按钮",
+      "description": "手柄按下任意按钮时触发。",
+      "display_text": "手柄 {0} 按下任意按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测的游戏手柄的索引值(从0开始计数，使用 -1 对所有手柄生效)。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-button-released",
+      "name": "松开任意按钮",
+      "description": "指定的游戏手柄松开任意按钮时触发。",
+      "display_text": "手柄 {0} 松开任意按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测的游戏手柄的索引值(从0开始计数，使用 -1 对所有手柄生效)。"
+        }
+      ]
+    },
+    {
+      "id": "is-button-index-down",
+      "name": "按下索引按钮",
+      "description": "检测手柄是否按住索引对应的按钮。",
+      "display_text": "手柄 {0} 按住 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始计数)。"
+        },
+        {
+          "id": "button-index",
+          "name": "按钮索引值",
+          "description": "要检测的按钮索引值(从0开始计数)。"
+        }
+      ]
+    },
+    {
+      "id": "on-button-index-pressed",
+      "name": "按下索引按钮",
+      "description": "手柄按下索引对应的按钮时触发。",
+      "display_text": "手柄 {0} 按下 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始计数)。"
+        },
+        {
+          "id": "button-index",
+          "name": "按钮索引",
+          "description": "按钮的索引值，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "on-button-index-released",
+      "name": "松开索引按钮",
+      "description": "指定的游戏手柄松开索引编号所对应的某个按钮时触发。",
+      "display_text": "手柄 {0} 松开 [b]{1}[/b] 按钮",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "要检测按钮的游戏手柄的索引值(从0开始)。"
+        },
+        {
+          "id": "button-index",
+          "name": "按钮索引",
+          "description": "输入按钮的从零开始的索引以测试是否已松开。"
+        }
+      ]
+    },
+    {
+      "id": "gamepad-supports-vibration-type",
+      "name": "手柄是否支持振动",
+      "description": "检查当前连接的手柄是否支持特定的振动类型。",
+      "display_text": "手柄 {0} 支持[i]{1}[/i]振动",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "要检测的游戏手柄的索引，从 0 开始计数。"
+        },
+        {
+          "id": "vibration-type",
+          "name": "振动类型",
+          "description": "用于检查是否支持的振动类型。",
+          "options": [
+            {
+              "id": "dual-rumble",
+              "label": "双马达"
+            },
+            {
+              "id": "trigger-rumble",
+              "label": "单马达"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "gamepad-vibrate",
+      "name": "振动 (双马达)",
+      "description": "激活游戏手柄内的双振动马达，向用户提供物理触觉反馈。",
+      "display_text": "振动 {0} 手柄 (持续时间: [b]{1}[/b]ms, 弱振幅: [i]{2}[/i], 强振幅: [i]{3}[/i]）",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "已连接的游戏手柄的索引值，从0开始计数。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "振动的时间，以毫秒为单位。"
+        },
+        {
+          "id": "weak-magnitude",
+          "name": "弱振幅",
+          "description": "弱马达的振动强度，范围在 0-100。位于右电机，可提供高频率、低强度的细微振动。"
+        },
+        {
+          "id": "strong-magnitude",
+          "name": "强振幅",
+          "description": "强马达的振动强度，范围在 0-100。位于左电机，可提供低频率、高强度的强烈振动。"
+        }
+      ]
+    },
+    {
+      "id": "reset-vibrate",
+      "name": "重置振动",
+      "description": "取消游戏手柄当前任何的振动效果。",
+      "display_text": "重置 {0} 手柄振动",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄序列",
+          "description": "已连接的游戏手柄的索引值(从0开始)。"
+        }
+      ]
+    },
+    {
+      "id": "gamepad-vibrate-trigger-rumble",
+      "name": "振动 (扳机)",
+      "description": "激活游戏手柄内的振动马达，向用户提供物理触觉反馈。",
+      "display_text": "振动 {0} 手柄 (持续时间: [b]{1}[/b]ms, 弱振幅: [i]{2}[/i], 强振幅: [i]{3}[/i], 左扳机: [i]{4}[/i], 右扳机: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引，从 0 开始计数。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "振动马达的持续时间，以毫秒为单位。"
+        },
+        {
+          "id": "weak-magnitude",
+          "name": "弱振幅",
+          "description": "弱马达的振动强度，范围在 0-100。位于右电机，可提供高频率、低强度的细微振动。"
+        },
+        {
+          "id": "strong-magnitude",
+          "name": "强振幅",
+          "description": "强马达的振动强度，范围在 0-100。位于左电机，可提供低频率、高强度的强烈振动。"
+        },
+        {
+          "id": "left-trigger",
+          "name": "左扳机键",
+          "description": "左扳机键的脉冲强度，位于左手指位置，提供剧烈突发振动，范围在 0-100。"
+        },
+        {
+          "id": "right-trigger",
+          "name": "右扳机键",
+          "description": "右扳机键的脉冲强度，位于右手指位置，提供剧烈突发振动，范围在 0-100。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "gamepadcount",
+      "name": "手柄数量",
+      "description": "当前已连接并处于活动状态的游戏手柄数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gamepadid",
+      "name": "手柄序列号",
+      "description": "用于标识游戏手柄的字符串，例如生产商和型号。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值(从0开始)。"
+        }
+      ]
+    },
+    {
+      "id": "button",
+      "name": "按钮压感",
+      "description": "返回指定按钮的压力状态，返回值在 0 到 100 之间。对于压力不敏感的按钮，0 表示未按下，100 表示已按下。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        },
+        {
+          "id": "index",
+          "name": "按钮索引",
+          "description": "按钮的索引。例如 0 通常对应按钮 A。"
+        }
+      ]
+    },
+    {
+      "id": "axis",
+      "name": "轴",
+      "description": "对于轴索引，返回轴输入从-100到100。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        },
+        {
+          "id": "index",
+          "name": "轴",
+          "description": "轴的索引。"
+        }
+      ]
+    },
+    {
+      "id": "lastbutton",
+      "name": "最后按下的按钮",
+      "description": "最后一次被按下或松开的游戏手柄按钮的索引。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        }
+      ]
+    },
+    {
+      "id": "rawbutton",
+      "name": "原始按钮",
+      "description": "对于按钮索引，返回0到100的原始按钮输入。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        },
+        {
+          "id": "index",
+          "name": "按钮",
+          "description": "原始按钮索引。"
+        }
+      ]
+    },
+    {
+      "id": "rawaxis",
+      "name": "原始轴",
+      "description": "对于轴索引，将原始轴输入从-100返回到100。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        },
+        {
+          "id": "index",
+          "name": "轴",
+          "description": "原始轴的索引。"
+        }
+      ]
+    },
+    {
+      "id": "rawbuttoncount",
+      "name": "原始按钮总数",
+      "description": "返回原始输入中的按钮数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        }
+      ]
+    },
+    {
+      "id": "rawaxiscount",
+      "name": "原始轴总数",
+      "description": "返回原始输入中的轴数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "手柄",
+          "description": "已连接的游戏手柄的索引值。"
+        }
+      ]
+    },
+    {
+      "id": "gamepad-index",
+      "name": "手柄序列",
+      "description": "在手柄相关的条件中，表示对应的手柄索引。在 '手柄连接或断开连接' 的条件，或者使用 '任意按钮按下/松开' 且游戏手柄索引为 -1 时使用。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "buttonindex",
+      "name": "按钮索引",
+      "description": "返回最后一次被按下或松开的手柄按钮的索引值。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 3,
+    "expressions": 11
+  }
+}

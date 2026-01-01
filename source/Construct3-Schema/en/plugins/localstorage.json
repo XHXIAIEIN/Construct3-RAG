@@ -1,0 +1,370 @@
+{
+  "id": "localstorage",
+  "name": "Local storage",
+  "description": "Store data locally on the user's device.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-item-set",
+      "name": "On item set",
+      "description": "Triggered after 'Set item' when the item has been written to local storage.",
+      "display_text": "On item [i]{0}[/i] set",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check for being set."
+        }
+      ]
+    },
+    {
+      "id": "on-item-get",
+      "name": "On item get",
+      "description": "Triggered after 'Get item', when the item value is available.",
+      "display_text": "On item [i]{0}[/i] get",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check for being read."
+        }
+      ]
+    },
+    {
+      "id": "on-item-removed",
+      "name": "On item removed",
+      "description": "Triggered after 'Remove item', after the item has been removed from local storage.",
+      "display_text": "On item [i]{0}[/i] removed",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check for being removed."
+        }
+      ]
+    },
+    {
+      "id": "on-any-item-set",
+      "name": "On any item set",
+      "description": "Triggered after any 'Set item' action when the item has been written to local storage.",
+      "display_text": "On any item set",
+      "params": []
+    },
+    {
+      "id": "on-any-item-get",
+      "name": "On any item get",
+      "description": "Triggered after any 'Get item' action when the item value is available.",
+      "display_text": "On any item get",
+      "params": []
+    },
+    {
+      "id": "on-any-item-removed",
+      "name": "On any item removed",
+      "description": "Triggered after any 'Remove item' action after the item has been removed from local storage.",
+      "display_text": "On any item removed",
+      "params": []
+    },
+    {
+      "id": "on-item-exists",
+      "name": "On item exists",
+      "description": "Triggered after 'Check item exists' if the given item exists in storage.",
+      "display_text": "On item [i]{0}[/i] exists",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check if exists."
+        }
+      ]
+    },
+    {
+      "id": "on-item-missing",
+      "name": "On item missing",
+      "description": "Triggered after 'Check item exists' if the given item does not exist in storage.",
+      "display_text": "On item [i]{0}[/i] missing",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check if missing."
+        }
+      ]
+    },
+    {
+      "id": "on-storage-cleared",
+      "name": "On storage cleared",
+      "description": "Triggered after 'Clear storage', when local storage has finished being cleared.",
+      "display_text": "On storage cleared",
+      "params": []
+    },
+    {
+      "id": "on-all-key-names-loaded",
+      "name": "On all key names loaded",
+      "description": "Triggered after 'Get all key names', when the list of key names is ready.",
+      "display_text": "On all key names loaded",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered if any error occurs while accessing local storage.",
+      "display_text": "On error",
+      "params": []
+    },
+    {
+      "id": "compare-key",
+      "name": "Compare key",
+      "description": "Compare the current key name in a trigger.",
+      "display_text": "Key {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current key."
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to compare the current key to."
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "Compare value",
+      "description": "Compare the current item value in a trigger.",
+      "display_text": "Value {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "String or number to compare the current value to."
+        }
+      ]
+    },
+    {
+      "id": "is-processing-sets",
+      "name": "Is processing sets",
+      "description": "True if currently processing any 'Set item' actions.",
+      "display_text": "Is processing sets",
+      "params": []
+    },
+    {
+      "id": "is-processing-gets",
+      "name": "Is processing gets",
+      "description": "True if currently processing any 'Get item' actions.",
+      "display_text": "Is processing gets",
+      "params": []
+    },
+    {
+      "id": "on-all-sets-complete",
+      "name": "On all sets complete",
+      "description": "Triggered after all currently outstanding 'Set item' actions complete.",
+      "display_text": "On all sets complete",
+      "params": []
+    },
+    {
+      "id": "on-all-gets-complete",
+      "name": "On all gets complete",
+      "description": "Triggered after all currently outstanding 'Get item' actions complete.",
+      "display_text": "On all gets complete",
+      "params": []
+    },
+    {
+      "id": "is-persistent",
+      "name": "Is persistent",
+      "description": "True if the browser has granted persistent storage permission.",
+      "display_text": "Is persistent",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-item",
+      "name": "Set item",
+      "description": "Store a value in local storage, and trigger 'On item set' when done.",
+      "display_text": "Set item [i]{0}[/i] to {1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to associate the value with."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the value to store."
+        }
+      ]
+    },
+    {
+      "id": "get-item",
+      "name": "Get item",
+      "description": "Read a value from local storage, and trigger 'On item get' when ready.",
+      "display_text": "Get item [i]{0}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to get the value for. 'On item get' will trigger when the value is ready."
+        }
+      ]
+    },
+    {
+      "id": "remove-item",
+      "name": "Remove item",
+      "description": "Remove an item from local storage, and trigger 'On item removed' when done.",
+      "display_text": "Remove item [i]{0}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to remove. 'On item removed' will trigger when done."
+        }
+      ]
+    },
+    {
+      "id": "check-item-exists",
+      "name": "Check item exists",
+      "description": "Check if an item exists in local storage, triggering 'On item exists' or 'On item missing'.",
+      "display_text": "Check item [i]{0}[/i] exists",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to check if exists."
+        }
+      ]
+    },
+    {
+      "id": "clear-storage",
+      "name": "Clear storage",
+      "description": "Remove all items from local storage, and trigger 'On storage cleared' when done.",
+      "display_text": "Clear storage",
+      "params": []
+    },
+    {
+      "id": "get-all-key-names",
+      "name": "Get all key names",
+      "description": "Request a list of all key names in local storage, and trigger 'On all key names loaded' when ready.",
+      "display_text": "Get all key names",
+      "params": []
+    },
+    {
+      "id": "set-binary-item",
+      "name": "Set binary item",
+      "description": "Store a Binary Data in local storage, and trigger 'On item set' when done.",
+      "display_text": "Set item [i]{0}[/i] to {1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to associate the value with."
+        },
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "The Binary Data object to store."
+        }
+      ]
+    },
+    {
+      "id": "get-binary-item",
+      "name": "Get binary item",
+      "description": "Read a Binary Data from local storage, and trigger 'On item get' when ready.",
+      "display_text": "Get item [i]{0}[/i] into {1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Enter the name of the key to get the value for. 'On item get' will trigger when the data is ready."
+        },
+        {
+          "id": "destination",
+          "name": "Destination",
+          "description": "The Binary Data object load the value into."
+        }
+      ]
+    },
+    {
+      "id": "request-persistent",
+      "name": "Request persistent storage",
+      "description": "Request permission to persist storage until an explicit user action to clear storage.",
+      "display_text": "Request persistent storage",
+      "params": []
+    },
+    {
+      "id": "load-memory-from-json",
+      "name": "Load memory from JSON",
+      "description": "When using in-memory storage, load the complete state of storage from a JSON string.",
+      "display_text": "Load in-memory storage from JSON string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A string of JSON data to load."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "itemvalue",
+      "name": "ItemValue",
+      "description": "In 'On item get', the item value retrieved.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "description": "The current key name in a storage trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "keycount",
+      "name": "KeyCount",
+      "description": "After 'On all key names loaded', the key count.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "keyat",
+      "name": "KeyAt",
+      "description": "After 'On all key names loaded', the key name at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index"
+        }
+      ]
+    },
+    {
+      "id": "errormessage",
+      "name": "ErrorMessage",
+      "description": "In 'On error', an error message if any available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "memory-storage-as-json",
+      "name": "MemoryStorageAsJSON",
+      "description": "When using in-memory storage, a JSON string representing all stored data.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 18,
+    "actions": 10,
+    "expressions": 6
+  }
+}

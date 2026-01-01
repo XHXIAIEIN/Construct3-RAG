@@ -1,0 +1,556 @@
+{
+  "id": "binarydata",
+  "name": "二进制",
+  "description": "用于读写二进制数据。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-length",
+      "name": "比较长度",
+      "description": "比较缓冲区的长度，以字节为单位。",
+      "display_text": "长度 {0} [b]{1}[/b]字节",
+      "params": [
+        {
+          "id": "cmp",
+          "name": "比较",
+          "description": "用哪种方式比较长度。"
+        },
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要进行比较的长度，以字节为单位。"
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "比较值",
+      "description": "比较缓冲区中偏移量处的值。",
+      "display_text": "{0} 于 [b]{1}[/b] {2} [b]{3}[/b]",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要读取的数值类型。",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "offset",
+          "name": "偏移",
+          "description": "数值的偏移量，以字节为单位。"
+        },
+        {
+          "id": "cmp",
+          "name": "比较",
+          "description": "用哪种方式比较。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "on-compression-finished",
+      "name": "压缩完成",
+      "description": "压缩完成的时候触发。",
+      "display_text": "压缩完成",
+      "params": []
+    },
+    {
+      "id": "on-compression-failed",
+      "name": "压缩失败",
+      "description": "压缩失败的时候触发。",
+      "display_text": "压缩失败",
+      "params": []
+    },
+    {
+      "id": "on-decompression-finished",
+      "name": "解压缩完成",
+      "description": "解压缩完成的时候触发。",
+      "display_text": "解压缩完成",
+      "params": []
+    },
+    {
+      "id": "on-decompression-failed",
+      "name": "解压缩失败",
+      "description": "解压缩失败的时候触发。",
+      "display_text": "解压缩失败",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-endian",
+      "name": "设置字节顺序",
+      "description": "读写数据时，使用的单元顺序。",
+      "display_text": "设置字节顺序: [b]{0}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "字节顺序",
+          "description": "读写数据时，使用的字节顺序。",
+          "options": [
+            {
+              "id": "little",
+              "label": "Little"
+            },
+            {
+              "id": "big",
+              "label": "Big"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-length",
+      "name": "设置长度",
+      "description": "调整缓冲区的大小，并保留内容。",
+      "display_text": "设置缓冲区长度为[i]{0}[/i]字节",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "新缓冲区的字节长度。"
+        }
+      ]
+    },
+    {
+      "id": "set-from-binary-data",
+      "name": "写入二进制",
+      "description": "将二进制对象的数据复制并写入到缓冲区。",
+      "display_text": "写入 {0} 到缓冲区",
+      "params": [
+        {
+          "id": "source",
+          "name": "来源",
+          "description": "要复制的内容"
+        }
+      ]
+    },
+    {
+      "id": "fill",
+      "name": "填充",
+      "description": "用指定值填充范围。",
+      "display_text": "填充 [i]{1}[/i] (类型: {0}, 范围: [i]{2}[/i], 长度: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要插入的数值类型。",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要插入的值"
+        },
+        {
+          "id": "offset",
+          "name": "偏移",
+          "description": "起始位的偏移量，以字节为单位。"
+        },
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要填充的区域长度，以字节为单位。使用 -1 表示尾部。"
+        }
+      ]
+    },
+    {
+      "id": "copy",
+      "name": "复制",
+      "description": "将一段数据从二进制数据对象复制到这个缓冲区的特定位置。",
+      "display_text": "复制 {0} 到 [i]{3}[/i] (范围: [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "source",
+          "name": "来源",
+          "description": "二进制对象，用于复制里面的缓冲区数据。"
+        },
+        {
+          "id": "start",
+          "name": "起始位置",
+          "description": "范围的起始值(包含)，以字节为单位。"
+        },
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "字节范围长度。使用 -1 表示尾部。"
+        },
+        {
+          "id": "target",
+          "name": "目标",
+          "description": "插入范围的位置，以字节为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "写入值",
+      "description": "将一个值写入到缓冲区。",
+      "display_text": "写入 [i]{1}[/i] 到缓冲区 (类型:  {0}, 偏移: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要插入的数值类型。",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要设置的数值"
+        },
+        {
+          "id": "offset",
+          "name": "偏移",
+          "description": "数值在字节中的偏移量。"
+        }
+      ]
+    },
+    {
+      "id": "compress",
+      "name": "压缩",
+      "description": "使用压缩算法对数据进行压缩，尝试减少其数据大小。",
+      "display_text": "压缩数据 (格式: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "格式",
+          "description": "要使用的压缩格式。",
+          "options": [
+            {
+              "id": "deflate",
+              "label": "deflate"
+            },
+            {
+              "id": "gzip",
+              "label": "gzip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "decompress",
+      "name": "解压缩",
+      "description": "对现有的压缩数据进行解压，返回原始数据。",
+      "display_text": "解压缩数据 (格式: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "格式",
+          "description": "使用的压缩格式。",
+          "options": [
+            {
+              "id": "deflate",
+              "label": "deflate"
+            },
+            {
+              "id": "gzip",
+              "label": "gzip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-from-string",
+      "name": "写入字符串",
+      "description": "将字符串写入到缓冲区。字符串可设置为文本(UTF-8)、二进制(base64) 或十六进制类型。",
+      "display_text": "写入字符串到缓冲区 (来源: {1},  内容: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要设置的字符串。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "将字符串设置为文本(UTF-8)、二进制(Base64)、十六进制。",
+          "options": [
+            {
+              "id": "text",
+              "label": "字符串"
+            },
+            {
+              "id": "base64",
+              "label": "二进制"
+            },
+            {
+              "id": "hex",
+              "label": "十六进制"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "get-url",
+      "name": "读取地址",
+      "description": "获取当前数据的 blob URL。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-base64",
+      "name": "读取Base64",
+      "description": "读取当前缓冲区的 Base64 编码的字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bytelength",
+      "name": "字节长度",
+      "description": "读取当前缓冲区的字节长度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-int8",
+      "name": "读取Int8",
+      "description": "读取字节位置的 Int8 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-uint8",
+      "name": "读取Uint8",
+      "description": "读取字节位置的 Uint8 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-int16",
+      "name": "读取Int16",
+      "description": "读取字节位置的 Int16 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-uint16",
+      "name": "读取Uint16",
+      "description": "读取字节位置的 Int16 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-int32",
+      "name": "读取Int32",
+      "description": "读取字节位置的 Int32 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-uint32",
+      "name": "读取Uint32",
+      "description": "读取字节位置的 Uint32 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-float32",
+      "name": "读取Float32",
+      "description": "读取字节位置的 Float32 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-float64",
+      "name": "读取Float64",
+      "description": "读取字节位置的 Float64 值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        }
+      ]
+    },
+    {
+      "id": "get-text",
+      "name": "读取文字",
+      "description": "读取指定范围的 UTF-8 编码的文本。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "字节偏移",
+          "description": "开始读取数据的字节位置。"
+        },
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "读取的文本长度，以字节为单位。"
+        }
+      ]
+    },
+    {
+      "id": "get-all-text",
+      "name": "读取全部文本",
+      "description": "读取整个缓冲区作为 UTF-8 编码的文本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-hex",
+      "name": "读取十六进制",
+      "description": "读取当前缓冲区编码为十六进制字符串。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 9,
+    "expressions": 14
+  }
+}

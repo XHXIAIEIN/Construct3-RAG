@@ -1,0 +1,697 @@
+{
+  "version": "2.0",
+  "source": "zh-CN_R466.csv",
+  "languages": [
+    "zh",
+    "en"
+  ],
+  "files": {
+    "plugins": "plugins.json",
+    "behaviors": "behaviors.json"
+  },
+  "plugins": {
+    "ninepatch": {
+      "name_zh": "九宫图",
+      "name_en": "9-patch",
+      "conditions": 2,
+      "actions": 8,
+      "expressions": 6
+    },
+    "ajax": {
+      "name_zh": "AJAX",
+      "name_en": "AJAX",
+      "conditions": 6,
+      "actions": 9,
+      "expressions": 4
+    },
+    "arr": {
+      "name_zh": "数组",
+      "name_en": "Array",
+      "conditions": 8,
+      "actions": 15,
+      "expressions": 14
+    },
+    "audio": {
+      "name_zh": "音频",
+      "name_en": "Audio",
+      "conditions": 6,
+      "actions": 43,
+      "expressions": 14
+    },
+    "browser": {
+      "name_zh": "浏览器",
+      "name_en": "Browser",
+      "conditions": 24,
+      "actions": 30,
+      "expressions": 16
+    },
+    "button": {
+      "name_zh": "按钮",
+      "name_en": "Button",
+      "conditions": 3,
+      "actions": 4,
+      "expressions": 1
+    },
+    "dictionary": {
+      "name_zh": "字典",
+      "name_en": "Dictionary",
+      "conditions": 5,
+      "actions": 6,
+      "expressions": 6
+    },
+    "facebook": {
+      "name_zh": "Facebook",
+      "name_en": "Facebook",
+      "conditions": 5,
+      "actions": 8,
+      "expressions": 4
+    },
+    "filechooser": {
+      "name_zh": "文件选择",
+      "name_en": "File chooser",
+      "conditions": 1,
+      "actions": 3,
+      "expressions": 5
+    },
+    "gamepad": {
+      "name_zh": "手柄",
+      "name_en": "Gamepad",
+      "conditions": 13,
+      "actions": 3,
+      "expressions": 11
+    },
+    "geolocation": {
+      "name_zh": "地理位置",
+      "name_en": "Geolocation",
+      "conditions": 4,
+      "actions": 3,
+      "expressions": 9
+    },
+    "googleplay": {
+      "name_zh": "Google Play",
+      "name_en": "Google Play",
+      "conditions": 19,
+      "actions": 14,
+      "expressions": 28
+    },
+    "cordovaiap": {
+      "name_zh": "应用内购",
+      "name_en": "Mobile IAP",
+      "conditions": 14,
+      "actions": 4,
+      "expressions": 6
+    },
+    "keyboard": {
+      "name_zh": "键盘",
+      "name_en": "Keyboard",
+      "conditions": 14,
+      "actions": 2,
+      "expressions": 3
+    },
+    "list": {
+      "name_zh": "列表",
+      "name_en": "List",
+      "conditions": 6,
+      "actions": 7,
+      "expressions": 7
+    },
+    "localstorage": {
+      "name_zh": "本地存储",
+      "name_en": "Local storage",
+      "conditions": 18,
+      "actions": 10,
+      "expressions": 6
+    },
+    "mouse": {
+      "name_zh": "鼠标",
+      "name_en": "Mouse",
+      "conditions": 12,
+      "actions": 4,
+      "expressions": 9
+    },
+    "multiplayer": {
+      "name_zh": "多人联机",
+      "name_en": "Multiplayer",
+      "conditions": 26,
+      "actions": 24,
+      "expressions": 53
+    },
+    "nodewebkit": {
+      "name_zh": "NW.js",
+      "name_en": "NW.js",
+      "conditions": 13,
+      "actions": 31,
+      "expressions": 20
+    },
+    "particles": {
+      "name_zh": "粒子",
+      "name_en": "Particles",
+      "conditions": 1,
+      "actions": 22,
+      "expressions": 18
+    },
+    "progressbar": {
+      "name_zh": "进度条",
+      "name_en": "Progress bar",
+      "conditions": 2,
+      "actions": 4,
+      "expressions": 2
+    },
+    "shadowlight": {
+      "name_zh": "投影光",
+      "name_en": "Shadow light",
+      "conditions": 0,
+      "actions": 5,
+      "expressions": 3
+    },
+    "sliderbar": {
+      "name_zh": "滑动条",
+      "name_en": "Slider bar",
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 4
+    },
+    "sprite": {
+      "name_zh": "精灵",
+      "name_en": "Sprite",
+      "conditions": 12,
+      "actions": 16,
+      "expressions": 15
+    },
+    "spritefont2": {
+      "name_zh": "位图字体",
+      "name_en": "Sprite font",
+      "conditions": 4,
+      "actions": 13,
+      "expressions": 15
+    },
+    "system": {
+      "name_zh": "系统",
+      "name_en": "System",
+      "conditions": 56,
+      "actions": 79,
+      "expressions": 132
+    },
+    "text": {
+      "name_zh": "文本",
+      "name_en": "Text",
+      "conditions": 4,
+      "actions": 17,
+      "expressions": 14
+    },
+    "textbox": {
+      "name_zh": "输入框",
+      "name_en": "Text input",
+      "conditions": 4,
+      "actions": 7,
+      "expressions": 2
+    },
+    "tiledbg": {
+      "name_zh": "平铺图",
+      "name_en": "Tiled Background",
+      "conditions": 3,
+      "actions": 11,
+      "expressions": 12
+    },
+    "tilemap": {
+      "name_zh": "瓦片图",
+      "name_en": "Tilemap",
+      "conditions": 5,
+      "actions": 18,
+      "expressions": 14
+    },
+    "touch": {
+      "name_zh": "触控",
+      "name_en": "Touch",
+      "conditions": 19,
+      "actions": 1,
+      "expressions": 32
+    },
+    "usermedia": {
+      "name_zh": "用户媒体",
+      "name_en": "User Media",
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 8
+    },
+    "video": {
+      "name_zh": "视频",
+      "name_en": "Video",
+      "conditions": 5,
+      "actions": 8,
+      "expressions": 6
+    },
+    "c2websocket": {
+      "name_zh": "WebSocket",
+      "name_en": "WebSocket",
+      "conditions": 8,
+      "actions": 4,
+      "expressions": 4
+    },
+    "xml": {
+      "name_zh": "XML",
+      "name_en": "XML",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 3
+    },
+    "_common": {
+      "name_zh": "",
+      "name_en": "",
+      "conditions": 36,
+      "actions": 46,
+      "expressions": 34
+    },
+    "advert": {
+      "name_zh": "激励广告",
+      "name_en": "Mobile advert",
+      "conditions": 29,
+      "actions": 14,
+      "expressions": 7
+    },
+    "platforminfo": {
+      "name_zh": "设备信息",
+      "name_en": "Platform info",
+      "conditions": 18,
+      "actions": 2,
+      "expressions": 26
+    },
+    "instantgames": {
+      "name_zh": "Instant Games",
+      "name_en": "Instant Games",
+      "conditions": 17,
+      "actions": 16,
+      "expressions": 16
+    },
+    "gamerecorder": {
+      "name_zh": "屏幕录制",
+      "name_en": "Video recorder",
+      "conditions": 7,
+      "actions": 4,
+      "expressions": 3
+    },
+    "speechrecognition": {
+      "name_zh": "语音识别",
+      "name_en": "Speech recognition",
+      "conditions": 9,
+      "actions": 4,
+      "expressions": 3
+    },
+    "speechsynthesis": {
+      "name_zh": "语音合成",
+      "name_en": "Speech synthesis",
+      "conditions": 4,
+      "actions": 4,
+      "expressions": 4
+    },
+    "iframe": {
+      "name_zh": "内嵌网页",
+      "name_en": "iframe",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
+    },
+    "json": {
+      "name_zh": "JSON",
+      "name_en": "JSON",
+      "conditions": 7,
+      "actions": 16,
+      "expressions": 13
+    },
+    "share": {
+      "name_zh": "分享",
+      "name_en": "Share",
+      "conditions": 4,
+      "actions": 4,
+      "expressions": 0
+    },
+    "advancedrandom": {
+      "name_zh": "高级随机",
+      "name_en": "Advanced Random",
+      "conditions": 0,
+      "actions": 12,
+      "expressions": 20
+    },
+    "drawingcanvas": {
+      "name_zh": "画布",
+      "name_en": "Drawing canvas",
+      "conditions": 3,
+      "actions": 23,
+      "expressions": 10
+    },
+    "binarydata": {
+      "name_zh": "二进制",
+      "name_en": "Binary Data",
+      "conditions": 6,
+      "actions": 9,
+      "expressions": 14
+    },
+    "timeline": {
+      "name_zh": "时间轴",
+      "name_en": "Timeline controller",
+      "conditions": 13,
+      "actions": 13,
+      "expressions": 9
+    },
+    "bluetooth": {
+      "name_zh": "蓝牙",
+      "name_en": "Bluetooth",
+      "conditions": 17,
+      "actions": 8,
+      "expressions": 12
+    },
+    "svgpicture": {
+      "name_zh": "矢量图",
+      "name_en": "SVG Picture",
+      "conditions": 0,
+      "actions": 3,
+      "expressions": 0
+    },
+    "date": {
+      "name_zh": "日期",
+      "name_en": "Date",
+      "conditions": 4,
+      "actions": 0,
+      "expressions": 54
+    },
+    "shape3d": {
+      "name_zh": "3D形状",
+      "name_en": "3D shape",
+      "conditions": 3,
+      "actions": 7,
+      "expressions": 6
+    },
+    "camera3d": {
+      "name_zh": "3D相机",
+      "name_en": "3D camera",
+      "conditions": 0,
+      "actions": 8,
+      "expressions": 37
+    },
+    "htmlelement": {
+      "name_zh": "HTML",
+      "name_en": "HTML Element",
+      "conditions": 4,
+      "actions": 9,
+      "expressions": 5
+    },
+    "clipboard": {
+      "name_zh": "剪贴板",
+      "name_en": "Clipboard",
+      "conditions": 5,
+      "actions": 4,
+      "expressions": 1
+    },
+    "qrcode": {
+      "name_zh": "二维码",
+      "name_en": "QR code",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
+    },
+    "cryptography": {
+      "name_zh": "密码学",
+      "name_en": "Cryptography",
+      "conditions": 10,
+      "actions": 3,
+      "expressions": 3
+    },
+    "filesystem": {
+      "name_zh": "文件系统",
+      "name_en": "File system",
+      "conditions": 11,
+      "actions": 15,
+      "expressions": 8
+    },
+    "internationalization": {
+      "name_zh": "本地化",
+      "name_en": "Internationalization",
+      "conditions": 1,
+      "actions": 6,
+      "expressions": 16
+    },
+    "csv": {
+      "name_zh": "CSV",
+      "name_en": "CSV",
+      "conditions": 2,
+      "actions": 2,
+      "expressions": 2
+    },
+    "flowchart": {
+      "name_zh": "流程图",
+      "name_en": "Flowchart controller",
+      "conditions": 26,
+      "actions": 12,
+      "expressions": 28
+    },
+    "bbcmicrobit": {
+      "name_zh": "BBC micro:bit",
+      "name_en": "BBC micro:bit",
+      "conditions": 9,
+      "actions": 6,
+      "expressions": 9
+    },
+    "midi": {
+      "name_zh": "MIDI",
+      "name_en": "MIDI",
+      "conditions": 15,
+      "actions": 9,
+      "expressions": 22
+    },
+    "constructgameservices": {
+      "name_zh": "游戏服务",
+      "name_en": "Construct Game Services",
+      "conditions": 10,
+      "actions": 10,
+      "expressions": 16
+    }
+  },
+  "behaviors": {
+    "eightdir": {
+      "name_zh": "八方向",
+      "name_en": "8 Direction",
+      "conditions": 4,
+      "actions": 13,
+      "expressions": 7
+    },
+    "anchor": {
+      "name_zh": "锚点",
+      "name_en": "Anchor",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 0
+    },
+    "bound": {
+      "name_zh": "边界约束",
+      "name_en": "Bound to layout",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
+    },
+    "bullet": {
+      "name_zh": "子弹",
+      "name_en": "Bullet",
+      "conditions": 4,
+      "actions": 9,
+      "expressions": 5
+    },
+    "car": {
+      "name_zh": "车辆",
+      "name_en": "Car",
+      "conditions": 3,
+      "actions": 13,
+      "expressions": 10
+    },
+    "custom": {
+      "name_zh": "自定义移动",
+      "name_en": "Custom",
+      "conditions": 6,
+      "actions": 13,
+      "expressions": 4
+    },
+    "destroy": {
+      "name_zh": "出界销毁",
+      "name_en": "Destroy outside layout",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
+    },
+    "dragndrop": {
+      "name_zh": "拖放",
+      "name_en": "Drag & Drop",
+      "conditions": 4,
+      "actions": 3,
+      "expressions": 0
+    },
+    "fade": {
+      "name_zh": "淡入淡出",
+      "name_en": "Fade",
+      "conditions": 3,
+      "actions": 5,
+      "expressions": 3
+    },
+    "flash": {
+      "name_zh": "闪烁",
+      "name_en": "Flash",
+      "conditions": 2,
+      "actions": 2,
+      "expressions": 0
+    },
+    "jumpthru": {
+      "name_zh": "跳跃穿透",
+      "name_en": "Jump-thru",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 0
+    },
+    "los": {
+      "name_zh": "视线",
+      "name_en": "Line of sight",
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 12
+    },
+    "nosave": {
+      "name_zh": "不存档",
+      "name_en": "No save",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
+    },
+    "pathfinding": {
+      "name_zh": "寻路",
+      "name_en": "Pathfinding",
+      "conditions": 9,
+      "actions": 21,
+      "expressions": 11
+    },
+    "persist": {
+      "name_zh": "持久化",
+      "name_en": "Persist",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
+    },
+    "physics": {
+      "name_zh": "物理",
+      "name_en": "Physics",
+      "conditions": 6,
+      "actions": 32,
+      "expressions": 14
+    },
+    "pin": {
+      "name_zh": "固定",
+      "name_en": "Pin",
+      "conditions": 2,
+      "actions": 7,
+      "expressions": 1
+    },
+    "platform": {
+      "name_zh": "平台",
+      "name_en": "Platform",
+      "conditions": 13,
+      "actions": 18,
+      "expressions": 12
+    },
+    "rotate": {
+      "name_zh": "旋转",
+      "name_en": "Rotate",
+      "conditions": 1,
+      "actions": 3,
+      "expressions": 2
+    },
+    "scrollto": {
+      "name_zh": "镜头跟随",
+      "name_en": "Scroll To",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 0
+    },
+    "shadowcaster": {
+      "name_zh": "投影对象",
+      "name_en": "Shadow caster",
+      "conditions": 2,
+      "actions": 3,
+      "expressions": 2
+    },
+    "sin": {
+      "name_zh": "正弦运动",
+      "name_en": "Sine",
+      "conditions": 5,
+      "actions": 7,
+      "expressions": 4
+    },
+    "solid": {
+      "name_zh": "实体",
+      "name_en": "Solid",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 0
+    },
+    "timer": {
+      "name_zh": "计时器",
+      "name_en": "Timer",
+      "conditions": 3,
+      "actions": 5,
+      "expressions": 4
+    },
+    "turret": {
+      "name_zh": "炮台",
+      "name_en": "Turret",
+      "conditions": 4,
+      "actions": 12,
+      "expressions": 4
+    },
+    "wrap": {
+      "name_zh": "边界穿梭",
+      "name_en": "Wrap",
+      "conditions": 1,
+      "actions": 0,
+      "expressions": 0
+    },
+    "tilemovement": {
+      "name_zh": "网格移动",
+      "name_en": "Tile movement",
+      "conditions": 5,
+      "actions": 7,
+      "expressions": 8
+    },
+    "tween": {
+      "name_zh": "补间动画",
+      "name_en": "Tween",
+      "conditions": 14,
+      "actions": 22,
+      "expressions": 5
+    },
+    "orbit": {
+      "name_zh": "环绕",
+      "name_en": "Orbit",
+      "conditions": 1,
+      "actions": 11,
+      "expressions": 11
+    },
+    "moveto": {
+      "name_zh": "移动到",
+      "name_en": "Move To",
+      "conditions": 5,
+      "actions": 14,
+      "expressions": 11
+    },
+    "follow": {
+      "name_zh": "轨迹跟随",
+      "name_en": "Follow",
+      "conditions": 10,
+      "actions": 17,
+      "expressions": 6
+    }
+  },
+  "stats": {
+    "plugins_count": 65,
+    "behaviors_count": 31,
+    "system_count": 0,
+    "total_conditions": 716,
+    "total_actions": 965,
+    "total_expressions": 1020,
+    "total_aces": 2701
+  }
+}

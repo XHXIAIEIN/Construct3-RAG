@@ -1,0 +1,721 @@
+{
+  "id": "googleplay",
+  "name": "Google Play",
+  "description": "为 Android 游戏访问 Google Play 游戏服务。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-achievement-list-success",
+      "name": "获取成就列表成功",
+      "description": "执行 '获取成就列表' 动作后，接收成功时触发。",
+      "display_text": "获取成就列表成功",
+      "params": []
+    },
+    {
+      "id": "on-achievement-list-fail",
+      "name": "获取成就列表失败",
+      "description": "执行 '获取成就列表' 动作后，接收失败时触发。",
+      "display_text": "获取成就列表失败",
+      "params": []
+    },
+    {
+      "id": "compare-achievement-state",
+      "name": "比较成就状态",
+      "description": "检查索引位置的成就当前的状态，是否隐藏、已揭秘、已达成。",
+      "display_text": "成就[i]{0}[/i]状态为{1}",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "要测试的成就状态。",
+          "options": [
+            {
+              "id": "hidden",
+              "label": "隐藏"
+            },
+            {
+              "id": "revealed",
+              "label": "已揭秘"
+            },
+            {
+              "id": "unlocked",
+              "label": "已达成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-achievement-metadata-success",
+      "name": "获取成就数据成功",
+      "description": "执行 '获取成就数据' 动作后，请求成功时触发。",
+      "display_text": "获取成就数据成功",
+      "params": []
+    },
+    {
+      "id": "on-achievement-metadata-fail",
+      "name": "获取成就数据失败",
+      "description": "执行 '获取成就数据' 动作后，请求失败时触发。",
+      "display_text": "获取成就数据失败",
+      "params": []
+    },
+    {
+      "id": "on-achievement-revealed",
+      "name": "揭秘成就",
+      "description": "执行 '揭秘成就' 动作后，揭示成功时触发。揭秘表示玩家可知道该成就，但尚未解锁。",
+      "display_text": "揭秘成就[b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "已揭秘的成就ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-achievement-unlocked",
+      "name": "达成成就",
+      "description": "执行 '解锁成就' 动作后，或 '成就阶段进度更新' 时触发。",
+      "display_text": "达成成就 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "要达成的成就ID。"
+        }
+      ]
+    },
+    {
+      "id": "is-loaded",
+      "name": "服务已加载",
+      "description": "执行 '加载成功' 动作后，Google Play 游戏服务处于可用状态时触发。",
+      "display_text": "服务已加载",
+      "params": []
+    },
+    {
+      "id": "on-signed-in",
+      "name": "登录成功",
+      "description": "用户成功登录时触发。",
+      "display_text": "登录成功",
+      "params": []
+    },
+    {
+      "id": "is-signed-in",
+      "name": "账户已登录",
+      "description": "检测用户是否已登录账号。",
+      "display_text": "账户已登录",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "服务出错",
+      "description": "在 Google Play 游戏服务发生错误时触发。",
+      "display_text": "服务出错",
+      "params": []
+    },
+    {
+      "id": "on-player-details-received",
+      "name": "收到玩家详细信息",
+      "description": "执行 '请求玩家详细信息' 动作后，成功接收到数据时触发。",
+      "display_text": "收到玩家详细信息",
+      "params": []
+    },
+    {
+      "id": "on-signed-out",
+      "name": "账户已登出",
+      "description": "用户退出登录时触发。",
+      "display_text": "账户已登出",
+      "params": []
+    },
+    {
+      "id": "on-auto-sign-in-failed",
+      "name": "自动登录失败",
+      "description": "如果用户无法自动登录，则在启动时触发失败。需要使用 '登录' 动作。",
+      "display_text": "自动登录失败",
+      "params": []
+    },
+    {
+      "id": "on-score-submit-success",
+      "name": "分数提交成功",
+      "description": "执行 '提交分数' 动作后，提交成功时触发。",
+      "display_text": "分数提交成功",
+      "params": []
+    },
+    {
+      "id": "on-score-submit-fail",
+      "name": "分数提交失败",
+      "description": "执行 '提交分数' 动作后，提交失败时触发。",
+      "display_text": "分数提交失败",
+      "params": []
+    },
+    {
+      "id": "on-hi-score-request-success",
+      "name": "最高得分请求成功",
+      "description": "执行 '请求最高得分' 动作后，请求成功时触发。",
+      "display_text": "最高得分请求成功",
+      "params": []
+    },
+    {
+      "id": "on-hi-score-request-fail",
+      "name": "最高得分请求失败",
+      "description": "执行 '请求最高得分' 动作后，请求失败时触发。",
+      "display_text": "最高得分请求失败",
+      "params": []
+    },
+    {
+      "id": "on-sign-in-fail",
+      "name": "登陆失败",
+      "description": "在用户没有登录Google时触发 有可能是因为用户取消或错误",
+      "display_text": "登陆失败",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "list-achievements",
+      "name": "获取成就列表",
+      "description": "请求当前玩家的成就列表。",
+      "display_text": "获取{0}成就列表 (强制重新加载: {1})",
+      "params": [
+        {
+          "id": "which",
+          "name": "类型",
+          "description": "要请求的成就类型。",
+          "options": [
+            {
+              "id": "all",
+              "label": "所有"
+            },
+            {
+              "id": "hidden",
+              "label": "已隐藏"
+            },
+            {
+              "id": "revealed",
+              "label": "已揭秘"
+            },
+            {
+              "id": "unlocked",
+              "label": "已达成"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "强制重新加载",
+          "description": "确保数据是最新的，而不是来自本地缓存的数据。"
+        }
+      ]
+    },
+    {
+      "id": "get-metadata",
+      "name": "获取元数据",
+      "description": "请求成就元数据（名称，描述等），允许相应的表达式返回正确的值。",
+      "display_text": "请求成就列表元数据。强制重新加载: {0}",
+      "params": [
+        {
+          "id": "reload",
+          "name": "强制重新加载",
+          "description": "确保数据是最新的，而不是之前来自本地缓存的数据。"
+        }
+      ]
+    },
+    {
+      "id": "reveal",
+      "name": "揭示成就",
+      "description": "揭示隐藏的成就。",
+      "display_text": "揭示成就[b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "要揭秘的成就ID。揭秘表示玩家可知道该成就，但尚未解锁。"
+        }
+      ]
+    },
+    {
+      "id": "unlock",
+      "name": "解锁",
+      "description": "解锁成就。玩家在离线状态仍然可以解锁成就，下次联网时通过 Google Play 更新解锁状态。",
+      "display_text": "解锁成就 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "要达成的成就ID。"
+        }
+      ]
+    },
+    {
+      "id": "increment",
+      "name": "增加",
+      "description": "增加分步成就的达成阶段。",
+      "display_text": "增加成就 [b]{0}[/b] 达成 [i]{1}[/i] 阶段",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "要增加步数的成就ID"
+        },
+        {
+          "id": "steps",
+          "name": "步骤",
+          "description": "增加分布成就的步数。"
+        }
+      ]
+    },
+    {
+      "id": "set-steps",
+      "name": "设置步骤",
+      "description": "设置增加成就的步骤进度。",
+      "display_text": "设置成就 [b]{0}[/b] 达成阶段 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "成就ID",
+          "description": "要增加的成就ID"
+        },
+        {
+          "id": "steps",
+          "name": "步骤",
+          "description": "设置成就进度的步骤数。 这些步骤无法减少。"
+        }
+      ]
+    },
+    {
+      "id": "request-player-details",
+      "name": "请求玩家信息",
+      "description": "玩家登录账户后，需要通过此动作请求玩家的详细信息。",
+      "display_text": "请求玩家信息",
+      "params": []
+    },
+    {
+      "id": "sign-in",
+      "name": "登录",
+      "description": "请求玩家登录。",
+      "display_text": "登录",
+      "params": []
+    },
+    {
+      "id": "sign-out",
+      "name": "退出登录",
+      "description": "注销登录，如果用户已经登录。注意：Android 应用程序不支持此功能。",
+      "display_text": "退出登录",
+      "params": []
+    },
+    {
+      "id": "submit-score",
+      "name": "提交分数",
+      "description": "提交分数到排行榜。如果分数低于榜单分数，则会被忽略。",
+      "display_text": "提交分数到排行榜 (分数:  [b]{1}[/b], 排行榜ID: [i]{0}[/i], 标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "排行榜ID",
+          "description": "要提交分数的排行榜ID。"
+        },
+        {
+          "id": "score",
+          "name": "分数",
+          "description": "提交到排行榜的分数。如果分数低于排行榜的分数，则会被忽略。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于后台备注此分数的额外信息，与分数一起提交，最多支持 64 个字符。"
+        }
+      ]
+    },
+    {
+      "id": "request-hi-scores",
+      "name": "请求最高得分",
+      "description": "从排行榜请求分数列表。",
+      "display_text": "从[b]{0}[/b] 请求 {1} {2} 高分榜数据 ([i]{4}[/i][i]{3}[/i]个)。强制重新加载：{5}",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "排行榜ID",
+          "description": "用于请求分数的排行榜ID。"
+        },
+        {
+          "id": "collection",
+          "name": "范围",
+          "description": "要获取分数的范围。获取所有分数，或当前玩家有关的分数。",
+          "options": [
+            {
+              "id": "public",
+              "label": "公共"
+            },
+            {
+              "id": "social",
+              "label": "私人"
+            }
+          ]
+        },
+        {
+          "id": "time-span",
+          "name": "时间",
+          "description": "返回指定时间段的最高得分。",
+          "options": [
+            {
+              "id": "all-time",
+              "label": "全部"
+            },
+            {
+              "id": "weekly",
+              "label": "每周"
+            },
+            {
+              "id": "daily",
+              "label": "每天"
+            }
+          ]
+        },
+        {
+          "id": "results",
+          "name": "数量",
+          "description": "要返回的分数数量，从 1 到 25"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "最高得分的通知类型，用于展示不同的内容。横幅仅包含最高得分，弹窗可展示更多分数。",
+          "options": [
+            {
+              "id": "top",
+              "label": "横幅"
+            },
+            {
+              "id": "window",
+              "label": "弹窗"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "强制重新加载",
+          "description": "确保数据是最新的，而不是之前来自本地缓存的数据。"
+        }
+      ]
+    },
+    {
+      "id": "show-leaderboard",
+      "name": "显示本地排行榜对话框",
+      "description": "显示原生Google Play指定计分板",
+      "display_text": "显示排行榜 {0}",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "排行榜ID",
+          "description": "要显示的排行榜ID"
+        }
+      ]
+    },
+    {
+      "id": "show-leaderboards",
+      "name": "显示原生计分板窗口",
+      "description": "显示原生Google Play所有计分板",
+      "display_text": "显示计分板",
+      "params": []
+    },
+    {
+      "id": "show-achievements",
+      "name": "显示原生成就对话框",
+      "description": "显示 Google Play 原生成就对话框。",
+      "display_text": "显示成就",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "achievementscount",
+      "name": "成就数量",
+      "description": "返回成就列表中的成就数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "achievementidat",
+      "name": "获取成就ID",
+      "description": "获取索引位置的成就ID",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementstepsat",
+      "name": "获取成就进度",
+      "description": "获取索引位置的分步成就的进度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementnameat",
+      "name": "获取成就名称",
+      "description": "获取索引位置的成就名称",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementdescriptionat",
+      "name": "获取成就描述",
+      "description": "获取索引位置的成就描述。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementtypeat",
+      "name": "获取成就类型",
+      "description": "获取索引位置的成就类型。将返回 'standard' (标准) 或者 'incremental' (阶段)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementtotalstepsat",
+      "name": "获取分步成就总步骤",
+      "description": "获取索引位置的分步成就的总步骤数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementrevealediconurlat",
+      "name": "获取已揭秘成就图标",
+      "description": "获取索引位置的已揭秘成就的图标链接。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "achievementunlockediconurlat",
+      "name": "获取已达成成就图标",
+      "description": "获取索引位置的已达成成就的图标链接。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "成就位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "errormessage",
+      "name": "错误信息",
+      "description": "在 '出现错误' 条件中，返回的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoretotalcount",
+      "name": "高分榜总记录",
+      "description": "排行榜中的总分数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybest",
+      "name": "高分榜个人最佳",
+      "description": "当前玩家在返回的排行榜上的最佳得分。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybesttag",
+      "name": "高分榜个人最佳标签",
+      "description": "当前玩家最佳得分的标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscorecount",
+      "name": "高分榜数量",
+      "description": "当前页面返回的分数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscorenameat",
+      "name": "获取高分榜名称",
+      "description": "返回页面中索引处的玩家名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscorerankat",
+      "name": "获取高分榜排名",
+      "description": "在返回页面中的索引处获得排名。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreat",
+      "name": "获取高分榜",
+      "description": "在返回页面中的索引处获得值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引位置，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscoretagat",
+      "name": "获取高分榜标签",
+      "description": "在返回页面中的索引处对分数标记。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreformattedat",
+      "name": "获取格式化高分榜",
+      "description": "返回页面中索引处的格式化分数值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引位置，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreformattedrankat",
+      "name": "获取格式化高分榜排名",
+      "description": "返回索引位置的格式化后的分数等级。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hiscoremyformattedbest",
+      "name": "获取高分榜个人最佳",
+      "description": "当前玩家最佳分数的格式化版本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybestrank",
+      "name": "获取高分榜个人最佳排名",
+      "description": "当前玩家的最好成绩的排名。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybestformattedrank",
+      "name": "获取格式化个人最佳排名",
+      "description": "获取玩家最高得分的格式化后的排名。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myid",
+      "name": "个人ID",
+      "description": "已登录的玩家ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mydisplayname",
+      "name": "个人昵称",
+      "description": "已登录玩家的显示名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myavatarurl",
+      "name": "个人头像链接",
+      "description": "已登录玩家的头像图像的URL。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mygivenname",
+      "name": "个人名字",
+      "description": "已登录玩家的给定名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myfamilyname",
+      "name": "个人家庭名称",
+      "description": "已登录玩家的家族名称。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 19,
+    "actions": 14,
+    "expressions": 28
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "id": "bullet",
+  "name": "Bullet",
+  "description": "Move an object ahead at its current angle.  Typically used for bullets and projectiles.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} speed {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare the current speed to."
+        }
+      ]
+    },
+    {
+      "id": "compare-distance-travelled",
+      "name": "Compare distance travelled",
+      "description": "Compare the distance the object has travelled.",
+      "display_text": "{my} distance travelled {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the distance travelled."
+        },
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "The distance, in pixels, to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-step",
+      "name": "On step",
+      "description": "If stepping is enabled, triggers on each step for additional collision tests.",
+      "display_text": "On {my} step",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's current speed.",
+      "display_text": "Set {my} speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the object's acceleration.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-gravity",
+      "name": "Set gravity",
+      "description": "Set the object's force of gravity.",
+      "display_text": "Set {my} gravity to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "gravity",
+          "name": "Gravity",
+          "description": "The new acceleration caused by gravity, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-angle-of-motion",
+      "name": "Set angle of motion",
+      "description": "Set the angle the object is moving at.",
+      "display_text": "Set {my} angle of motion to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The new angle of motion, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "bounce-off-object",
+      "name": "Bounce off object",
+      "description": "Bounce the object off an object it is currently touching.",
+      "display_text": "Bounce {my} off {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to bounce off."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-distance-travelled",
+      "name": "Set distance travelled",
+      "description": "Change the counter used to track the distance travelled.",
+      "display_text": "Set {my} distance travelled to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "The new distance in pixels to set for the DistanceTravelled expression."
+        }
+      ]
+    },
+    {
+      "id": "stop-stepping",
+      "name": "Stop stepping",
+      "description": "Stop the stepping for this tick.",
+      "display_text": "Stop {my} stepping",
+      "params": []
+    },
+    {
+      "id": "set-bounce-off-solids",
+      "name": "Set bounce off solids",
+      "description": "Set whether the 'Bounce off solids' property is enabled.",
+      "display_text": "Set {my} bounce off solids [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "Bounce off solids",
+          "description": "Set whether to enable or disable bouncing off solids."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "angleofmotion",
+      "name": "AngleOfMotion",
+      "description": "The angle the object is currently moving at, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "distancetravelled",
+      "name": "DistanceTravelled",
+      "description": "The distance, in pixels, the object has travelled so far.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gravity",
+      "name": "Gravity",
+      "description": "The current gravity in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 9,
+    "expressions": 5
+  }
+}

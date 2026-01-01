@@ -1,0 +1,315 @@
+{
+  "id": "internationalization",
+  "name": "本地化",
+  "description": "允许管理字符串，对多语言及区域提供国际化和本地化的支持。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-current-locale",
+      "name": "比较当前区域",
+      "description": "指定一个特定的语言区域标识符，与本地化对象的当前区域设置进行比较。",
+      "display_text": "当前区域 {1} {0}",
+      "params": [
+        {
+          "id": "locale",
+          "name": "区域设置",
+          "description": "与当前区域比较的语言区域标识符。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-locale",
+      "name": "设置区域",
+      "description": "设置本地化对象的区域，以提供不同的本地内容。",
+      "display_text": "设置区域为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "locale",
+          "name": "区域",
+          "description": "要设置的区域。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。"
+        }
+      ]
+    },
+    {
+      "id": "set-context",
+      "name": "设置路径",
+      "description": "设置本地化对象的路径，用于联系上下文。",
+      "display_text": "设置路径为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "context",
+          "name": "路径",
+          "description": "设置本地化对象的路径，可以是绝对路径或是相对路径。"
+        }
+      ]
+    },
+    {
+      "id": "push-context",
+      "name": "追加路径",
+      "description": "将路径推入本地化对象的列表中。",
+      "display_text": "追加路径 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "context",
+          "name": "路径",
+          "description": "要追加的路径，可以是绝对路径或是相对路径。"
+        }
+      ]
+    },
+    {
+      "id": "pop-context",
+      "name": "弹出路径",
+      "description": "弹出本地化对象的列表最后一项元素。",
+      "display_text": "弹出路径",
+      "params": []
+    },
+    {
+      "id": "add-string",
+      "name": "添加文本",
+      "description": "添加一段新的文本到节点列表中。",
+      "display_text": "添加文本 [b]{1}[/b] 到节点 [b]{0}[/b]。",
+      "params": [
+        {
+          "id": "context",
+          "name": "路径",
+          "description": "要添加文本的路径节点，可以是绝对路径或是相对路径。"
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "用于添加到本地化对象的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "load-from-json",
+      "name": "加载翻译数据",
+      "description": "从 JSON 字符串中加载翻译数据。特定格式请阅读文档。",
+      "display_text": "加载翻译数据 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "包含翻译数据的JSON字符串。特定格式请阅读文档。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "look-up",
+      "name": "查找",
+      "description": "获取当前路径中的本地化字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "context",
+          "name": "内容",
+          "description": "本地化对象的路径"
+        }
+      ]
+    },
+    {
+      "id": "look-up-plural",
+      "name": "查找复数",
+      "description": "根据定义的复数形式规则，在当前路径获取本地化字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "context",
+          "name": "内容",
+          "description": "本地化对象的路径"
+        },
+        {
+          "id": "count",
+          "name": "数量",
+          "description": "用于获取复数形式的值。"
+        }
+      ]
+    },
+    {
+      "id": "current-context",
+      "name": "当前路径",
+      "description": "获取本地化对象的当前路径。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "select-plural",
+      "name": "选择复数",
+      "description": "获取指定数字的复数形式。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "plural-number",
+          "name": "复数数词",
+          "description": "获取复数形式的数字。"
+        }
+      ]
+    },
+    {
+      "id": "plural-categorie-count",
+      "name": "复数数量",
+      "description": "获取当前语言环境的复数形式的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "plural-category-at",
+      "name": "获取复数形式类型",
+      "description": "获取指定的复数形式类型",
+      "display_text": "",
+      "params": [
+        {
+          "id": "category-index",
+          "name": "分类索引",
+          "description": "获取复数形式"
+        }
+      ]
+    },
+    {
+      "id": "save-to-json",
+      "name": "导出到JSON",
+      "description": "获取当前语言环境的翻译字符串，返回JSON格式。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "locale",
+      "name": "区域",
+      "description": "获取本地化对象的区域设置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "default-locale",
+      "name": "默认区域",
+      "description": "获取系统默认的区域设置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "format-number-as-decimal",
+      "name": "格式化数字",
+      "description": "将数字格式化为本地区域设置的小数格式。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要格式化的数字。"
+        }
+      ]
+    },
+    {
+      "id": "format-number-as-percent",
+      "name": "格式化百分数",
+      "description": "将数字格式化为本地区域设置的百分比。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要格式化的数字"
+        }
+      ]
+    },
+    {
+      "id": "format-number-as-currency",
+      "name": "转换货币格式",
+      "description": "将数字格式化为本地区域设置的货币。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "数字的格式"
+        },
+        {
+          "id": "currency",
+          "name": "货币",
+          "description": "货币代码"
+        },
+        {
+          "id": "currency-display",
+          "name": "货币符号",
+          "description": "货币的显示格式。可以是 'symbol'、'narrowSymbol'、'code' 或 'name' 中的任意一种。默认为 'symbol'。"
+        }
+      ]
+    },
+    {
+      "id": "format-number-with-unit",
+      "name": "格式化数字单位",
+      "description": "将数字格式化为当前区域的货币格式。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要格式化的数字。"
+        },
+        {
+          "id": "unit",
+          "name": "单位",
+          "description": "用于格式化的单位"
+        },
+        {
+          "id": "unit-display",
+          "name": "单位显示",
+          "description": "单位显示格式。可以是 'long', 'short' or 'narrow'。默认为 'short'。"
+        }
+      ]
+    },
+    {
+      "id": "region-name",
+      "name": "区域名称",
+      "description": "获取指定区域的本地化名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "地区",
+          "description": "区域代码，用于获取对应的本地化名称。"
+        }
+      ]
+    },
+    {
+      "id": "language-name",
+      "name": "语言名称",
+      "description": "根据当前的语言环境，获取语言的名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "language",
+          "name": "语言区域",
+          "description": "根据当前的语言环境，获取语言的区域。"
+        }
+      ]
+    },
+    {
+      "id": "currency-name",
+      "name": "货币名称",
+      "description": "根据当前的语言环境，获取货币的本地化名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "currency",
+          "name": "货币符号",
+          "description": "获取本地区域货币的货币符号。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 6,
+    "expressions": 16
+  }
+}

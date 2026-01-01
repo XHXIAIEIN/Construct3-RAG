@@ -1,0 +1,266 @@
+{
+  "id": "cordovaiap",
+  "name": "Mobile IAP",
+  "description": "Handle in-app purchases (IAP) for Cordova on iOS and Android.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-purchase-success",
+      "name": "On purchase success",
+      "description": "Triggered when a specific product ID has been purchased successfully.",
+      "display_text": "On product [i]{0}[/i] purchase success",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID that has been purchased successfully."
+        }
+      ]
+    },
+    {
+      "id": "on-any-purchase-success",
+      "name": "On any purchase success",
+      "description": "Triggered when any product has been purchased successfully.",
+      "display_text": "On any purchase success",
+      "params": []
+    },
+    {
+      "id": "on-purchase-failed",
+      "name": "On purchase failed",
+      "description": "Triggered when a specific product ID has failed to be purchased.",
+      "display_text": "On product [i]{0}[/i] purchase failed",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID that has failed to purchase."
+        }
+      ]
+    },
+    {
+      "id": "on-any-purchase-failed",
+      "name": "On any purchase failed",
+      "description": "Triggered when any product has failed to be purchased.",
+      "display_text": "On any purchase failed",
+      "params": []
+    },
+    {
+      "id": "on-registration-success",
+      "name": "On store registration success",
+      "description": "Triggered when store registration succeeds.",
+      "display_text": "On store registration success",
+      "params": []
+    },
+    {
+      "id": "on-registration-failure",
+      "name": "On store registration failed",
+      "description": "Triggered when store registration fails.",
+      "display_text": "On store registration failed",
+      "params": []
+    },
+    {
+      "id": "product-owned",
+      "name": "Has product",
+      "description": "True if the current user has purchased a given product ID.",
+      "display_text": "Has product [i]{0}[/i]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID to check if owned."
+        }
+      ]
+    },
+    {
+      "id": "product-available",
+      "name": "Product available",
+      "description": "True if the product can be purchased.",
+      "display_text": "Product [i]{0}[/i] available for purchase",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID to check if available."
+        }
+      ]
+    },
+    {
+      "id": "store-registered",
+      "name": "Is registration complete",
+      "description": "True if the store has been registered and is ready to make purchase requests.",
+      "display_text": "Is registration complete",
+      "params": []
+    },
+    {
+      "id": "on-product-available",
+      "name": "On product available",
+      "description": "Triggered when the product becomes available for purchase.",
+      "display_text": "On product [i]{0}[/i] available for purchase",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID to check if available."
+        }
+      ]
+    },
+    {
+      "id": "on-any-product-available",
+      "name": "On any product available",
+      "description": "Triggered when a product becomes available for purchase.",
+      "display_text": "On any product available for purchase",
+      "params": []
+    },
+    {
+      "id": "on-product-owned",
+      "name": "On product owned",
+      "description": "Triggered when a specified non-consumable product becomes owned.",
+      "display_text": "On product [i]{0}[/i] owned",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "Product ID to check if owned."
+        }
+      ]
+    },
+    {
+      "id": "on-any-product-owned",
+      "name": "On any product owned",
+      "description": "Triggered when a non-consumable product becomes owned.",
+      "display_text": "On any product owned",
+      "params": []
+    },
+    {
+      "id": "on-transaction-finished",
+      "name": "On transaction finished",
+      "description": "Triggered when a transaction finishes. The ID is available in the 'TransactionID' expression.",
+      "display_text": "On transaction finished",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "register-product",
+      "name": "Add product ID",
+      "description": "Add the product IDs that the app will be using for IAP.",
+      "display_text": "Add product ID [b]{0}[/b] with type [b]{1}[/b]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "The product ID you are registering."
+        },
+        {
+          "id": "product-type",
+          "name": "Product Type",
+          "description": "The product type you are registering.",
+          "options": [
+            {
+              "id": "consumable",
+              "label": "Consumable"
+            },
+            {
+              "id": "non-consumable",
+              "label": "Non-consumable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "purchase-product",
+      "name": "Purchase product",
+      "description": "Prompt the user to purchase a product.",
+      "display_text": "Purchase product [b]{0}[/b]",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "Product ID",
+          "description": "The product ID to purchase."
+        }
+      ]
+    },
+    {
+      "id": "restore-purchases",
+      "name": "Restore purchases",
+      "description": "Restore the purchases state from the store.",
+      "display_text": "Restore purchases",
+      "params": []
+    },
+    {
+      "id": "complete-registration",
+      "name": "Complete product registration",
+      "description": "Complete the product registration stage.",
+      "display_text": "Complete product registration",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "product-name",
+      "name": "ProductName",
+      "description": "Return the name of a product from its ID.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "ProductID",
+          "description": "Product ID to get name from"
+        }
+      ]
+    },
+    {
+      "id": "product-price",
+      "name": "ProductPrice",
+      "description": "Return the formatted price of a product from its ID.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "ProductID",
+          "description": "Product ID to get price from"
+        }
+      ]
+    },
+    {
+      "id": "product-id",
+      "name": "ProductID",
+      "description": "In a trigger, the relevant product ID.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "error-message",
+      "name": "ErrorMessage",
+      "description": "In a trigger, an error message if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "product-description",
+      "name": "ProductDescription",
+      "description": "Return the description of a product from its ID.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "product-id",
+          "name": "ProductID",
+          "description": "Product ID to get description from"
+        }
+      ]
+    },
+    {
+      "id": "transaction-id",
+      "name": "TransactionID",
+      "description": "After 'On transaction finished', the ID of the last finished transaction.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 4,
+    "expressions": 6
+  }
+}

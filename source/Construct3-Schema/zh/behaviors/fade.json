@@ -1,0 +1,112 @@
+{
+  "id": "fade",
+  "name": "淡入淡出",
+  "description": "在一段时间内逐渐改变对象的不透明度，适用于让对象逐渐出现/消失。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-fade-out-finished",
+      "name": "淡出完成",
+      "description": "淡出结束时触发。",
+      "display_text": "{my} 淡出完成",
+      "params": []
+    },
+    {
+      "id": "on-fade-in-finished",
+      "name": "淡入完成",
+      "description": "淡入完成时触发。",
+      "display_text": "{my} 淡入完成",
+      "params": []
+    },
+    {
+      "id": "on-wait-finished",
+      "name": "等待结束",
+      "description": "等待结束后触发。",
+      "display_text": "{my} 等待结束",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "restart-fade",
+      "name": "重新播放",
+      "description": "再次运行一次淡入淡出。",
+      "display_text": "{my} 重新播放",
+      "params": []
+    },
+    {
+      "id": "start-fade",
+      "name": "开始播放",
+      "description": "在对象属性中，如果未勾选在创建时自动淡入，则使用此动作开始淡入。",
+      "display_text": "{my} 开始播放",
+      "params": []
+    },
+    {
+      "id": "set-fade-in-time",
+      "name": "设置淡入时间",
+      "description": "设置从不可见状态，逐渐淡入，直至可见的时间。",
+      "display_text": "设置 {my}淡入时间为[i]{0}[/i]秒",
+      "params": [
+        {
+          "id": "fade-in-time",
+          "name": "淡入时间",
+          "description": "淡入阶段的时间，以秒为单位。如果为0，则跳过淡入。"
+        }
+      ]
+    },
+    {
+      "id": "set-wait-time",
+      "name": "设置等待时间",
+      "description": "在淡入完成后，等待淡出的时间。",
+      "display_text": "设置 {my}等待时间为[i]{0}[/i]秒",
+      "params": [
+        {
+          "id": "wait-time",
+          "name": "等待时间",
+          "description": "等待的时间，以秒为单位。如果为0，则跳过等待，立即执行淡出。"
+        }
+      ]
+    },
+    {
+      "id": "set-fade-out-time",
+      "name": "设置淡出时间",
+      "description": "设置从可见状态，逐渐淡出，直至不可见的时间。",
+      "display_text": "设置 {my}淡出时间为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "fade-out-time",
+          "name": "淡出时间",
+          "description": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "fadeintime",
+      "name": "淡入时间",
+      "description": "淡入持续时间，以秒为单位。如果为 0，则跳过淡入。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "waittime",
+      "name": "等待时间",
+      "description": "等待持续时间，以秒为单位。如果为 0，则跳过等待。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fadeouttime",
+      "name": "淡出时间",
+      "description": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 5,
+    "expressions": 3
+  }
+}

@@ -1,0 +1,383 @@
+{
+  "id": "mouse",
+  "name": "Mouse",
+  "description": "Retrieve input from the mouse.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-click",
+      "name": "On click",
+      "description": "Triggered when a mouse button clicked or double-clicked.",
+      "display_text": "On [b]{0}[/b] button [b]{1}[/b]",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "Mouse button",
+          "description": "Select the mouse button to check.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "middle",
+              "label": "Middle"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "button-4",
+              "label": "Button 4"
+            },
+            {
+              "id": "button-5",
+              "label": "Button 5"
+            }
+          ]
+        },
+        {
+          "id": "click-type",
+          "name": "Click type",
+          "description": "Select which kind of click to check for.",
+          "options": [
+            {
+              "id": "clicked",
+              "label": "Clicked"
+            },
+            {
+              "id": "double-clicked",
+              "label": "Double-clicked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-click",
+      "name": "On any click",
+      "description": "Triggered when any mouse button clicked or double-clicked.",
+      "display_text": "On any click",
+      "params": []
+    },
+    {
+      "id": "mouse-button-is-down",
+      "name": "Mouse button is down",
+      "description": "Test if a mouse button is currently held down.",
+      "display_text": "[b]{0}[/b] button is down",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "Mouse button",
+          "description": "Select the mouse button to check.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "middle",
+              "label": "Middle"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "button-4",
+              "label": "Button 4"
+            },
+            {
+              "id": "button-5",
+              "label": "Button 5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-button-released",
+      "name": "On button released",
+      "description": "Triggered when a mouse button released.",
+      "display_text": "On [b]{0}[/b] button released",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "Mouse button",
+          "description": "Select the mouse button to check.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "middle",
+              "label": "Middle"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "button-4",
+              "label": "Button 4"
+            },
+            {
+              "id": "button-5",
+              "label": "Button 5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-object-clicked",
+      "name": "On object clicked",
+      "description": "Triggered when a mouse button clicked or double-clicked on an object.",
+      "display_text": "On [b]{0}[/b] button [b]{1}[/b] on {2}",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "Mouse button",
+          "description": "Select the mouse button to check.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "middle",
+              "label": "Middle"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "button-4",
+              "label": "Button 4"
+            },
+            {
+              "id": "button-5",
+              "label": "Button 5"
+            }
+          ]
+        },
+        {
+          "id": "click-type",
+          "name": "Click type",
+          "description": "Select which kind of click to check for.",
+          "options": [
+            {
+              "id": "clicked",
+              "label": "Clicked"
+            },
+            {
+              "id": "double-clicked",
+              "label": "Double-clicked"
+            }
+          ]
+        },
+        {
+          "id": "object-clicked",
+          "name": "Object clicked",
+          "description": "Choose the object to check for a click on."
+        }
+      ]
+    },
+    {
+      "id": "cursor-is-over-object",
+      "name": "Cursor is over object",
+      "description": "Check if the mouse cursor is over an object.",
+      "display_text": "Cursor is over {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to check for mouse over."
+        }
+      ]
+    },
+    {
+      "id": "on-mouse-wheel",
+      "name": "On mouse wheel",
+      "description": "Triggered when the mouse wheel is scrolled.",
+      "display_text": "On mouse wheel {0}",
+      "params": [
+        {
+          "id": "direction",
+          "name": "Direction",
+          "description": "Select which direction to detect the mouse wheel scrolling.",
+          "options": [
+            {
+              "id": "down",
+              "label": "down"
+            },
+            {
+              "id": "up",
+              "label": "up"
+            },
+            {
+              "id": "any",
+              "label": "any"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-pointer-locked",
+      "name": "On pointer locked",
+      "description": "Triggered after 'Request pointer lock' if the pointer was successfully locked.",
+      "display_text": "On pointer locked",
+      "params": []
+    },
+    {
+      "id": "on-pointer-unlocked",
+      "name": "On pointer unlocked",
+      "description": "Triggered after 'On pointer locked' when the pointer is unlocked.",
+      "display_text": "On pointer unlocked",
+      "params": []
+    },
+    {
+      "id": "on-pointer-lock-error",
+      "name": "On pointer lock error",
+      "description": "Triggered if an error occurs with pointer lock.",
+      "display_text": "On pointer lock error",
+      "params": []
+    },
+    {
+      "id": "has-pointer-lock",
+      "name": "Has pointer lock",
+      "description": "True if the pointer is currently locked.",
+      "display_text": "Has pointer lock",
+      "params": []
+    },
+    {
+      "id": "on-movement",
+      "name": "On movement",
+      "description": "Triggered every time the mouse moves. Note this also works without pointer lock.",
+      "display_text": "On movement",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-cursor-from-sprite",
+      "name": "Set cursor from sprite",
+      "description": "Set the mouse cursor to the same image used by a Sprite.",
+      "display_text": "Set cursor from sprite {0}",
+      "params": [
+        {
+          "id": "sprite",
+          "name": "Sprite",
+          "description": "Choose a Sprite object to use as the cursor image."
+        }
+      ]
+    },
+    {
+      "id": "request-pointer-lock",
+      "name": "Request pointer lock",
+      "description": "Request to lock the mouse pointer in order to use it for camera control. Usually this only works in a user input trigger.",
+      "display_text": "Request pointer lock (unadjusted movement: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "unadjusted-movement",
+          "name": "Unadjusted movement",
+          "description": "Check to disable the system-level adjustment for mouse acceleration, and access raw mouse input instead."
+        }
+      ]
+    },
+    {
+      "id": "release-pointer-lock",
+      "name": "Release pointer lock",
+      "description": "Release any active pointer lock, restoring normal mouse pointer behavior.",
+      "display_text": "Release pointer lock",
+      "params": []
+    },
+    {
+      "id": "set-cursor-style2",
+      "name": "Set cursor style",
+      "description": "Change the style of the mouse cursor.",
+      "display_text": "Set cursor to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "cursor-style",
+          "name": "Cursor style",
+          "description": "Choose the cursor style to set."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "x",
+      "name": "X",
+      "description": "Get the mouse cursor X co-ordinate in the layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "y",
+      "name": "Y",
+      "description": "Get the mouse cursor Y co-ordinate in the layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutex",
+      "name": "AbsoluteX",
+      "description": "Get the mouse cursor X co-ordinate on the canvas.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutey",
+      "name": "AbsoluteY",
+      "description": "Get the mouse cursor Y co-ordinate on the canvas.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movement-x",
+      "name": "MovementX",
+      "description": "Get the horizontal movement when using pointer lock.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movement-y",
+      "name": "MovementY",
+      "description": "Get the vertical movement when using pointer lock.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-x",
+      "name": "WheelDeltaX",
+      "description": "Get the X change in a mouse wheel trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-y",
+      "name": "WheelDeltaY",
+      "description": "Get the Y change in a mouse wheel trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-z",
+      "name": "WheelDeltaZ",
+      "description": "Get the Z change in a mouse wheel trigger.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 12,
+    "actions": 4,
+    "expressions": 9
+  }
+}

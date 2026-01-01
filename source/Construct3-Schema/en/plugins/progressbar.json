@@ -1,0 +1,102 @@
+{
+  "id": "progressbar",
+  "name": "Progress bar",
+  "description": "A browser-styled progress bar to show the amount of completion of a task.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when the progress bar is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "compare-progress",
+      "name": "Compare progress",
+      "description": "Compare the current progress value.",
+      "display_text": "Progress {0} [i]{1}[/i]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current progress."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Progress value to compare to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "name": "Set tooltip",
+      "description": "Set the progress bar's tooltip.",
+      "display_text": "Set tooltip to {0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "description": "The tooltip to set on the progress bar."
+        }
+      ]
+    },
+    {
+      "id": "set-progress",
+      "name": "Set progress",
+      "description": "Set the progress value for the bar.",
+      "display_text": "Set progress to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to set for the progress."
+        }
+      ]
+    },
+    {
+      "id": "set-maximum",
+      "name": "Set maximum",
+      "description": "Set the maximum progress value for the bar.",
+      "display_text": "Set maximum to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "maximum",
+          "name": "Maximum",
+          "description": "The new maximum value for the progress."
+        }
+      ]
+    },
+    {
+      "id": "make-indeterminate",
+      "name": "Make indeterminate",
+      "description": "Make the progress bar show indeterminate (unknown) progress.",
+      "display_text": "Make indeterminate",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "progress",
+      "name": "Progress",
+      "description": "Current progress value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maximum",
+      "name": "Maximum",
+      "description": "Current maximum progress value.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 4,
+    "expressions": 2
+  }
+}

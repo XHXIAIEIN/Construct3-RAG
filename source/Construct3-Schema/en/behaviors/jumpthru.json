@@ -1,0 +1,46 @@
+{
+  "id": "jumpthru",
+  "name": "Jump-thru",
+  "description": "A solid the Platform behavior can also jump on to from underneath.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test whether the behavior is currently enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether the object counts as a platform or not.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether the object counts as a platform or not.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 0
+  }
+}

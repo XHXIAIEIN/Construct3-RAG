@@ -1,0 +1,276 @@
+{
+  "id": "pin",
+  "name": "固定",
+  "description": "与另一个对象保持相对的距离和角度。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-pinned",
+      "name": "已固定",
+      "description": "检查对象当前是否已被固定到另一个对象。",
+      "display_text": "{my} 已固定",
+      "params": []
+    },
+    {
+      "id": "will-destroy",
+      "name": "与被固定的对象一起被销毁",
+      "description": "如果被固定的对象被销毁时，该对象也将被销毁。",
+      "display_text": "{my} 与被固定对象一起销毁",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "pin-to-object",
+      "name": "固定在对象",
+      "description": "把对象固定另一个对象上",
+      "display_text": "固定 {my} 到 {0} ({1})",
+      "params": [
+        {
+          "id": "pin-to",
+          "name": "钉在",
+          "description": "选择固定的对象"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "选择要更改的对象属性。",
+          "options": [
+            {
+              "id": "position-angle",
+              "label": "位置与角度"
+            },
+            {
+              "id": "position-only",
+              "label": "仅位置"
+            },
+            {
+              "id": "angle-only",
+              "label": "仅角度"
+            },
+            {
+              "id": "rope-style",
+              "label": "绳索方式"
+            },
+            {
+              "id": "bar-style",
+              "label": "小节方式"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unpin",
+      "name": "解除固定",
+      "description": "解除固定到其他对象。",
+      "display_text": "{my} 取消固定",
+      "params": []
+    },
+    {
+      "id": "pin-to-object-distance",
+      "name": "固定到距离",
+      "description": "通过限制对象到另一个对象的距离来将该对象固定到另一个对象上。",
+      "display_text": "{my} 固定到 {0} (模式: {1})",
+      "params": [
+        {
+          "id": "pin-to",
+          "name": "固定到",
+          "description": "选择要固定到哪个对象"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "选择一种限制距离的方式",
+          "options": [
+            {
+              "id": "rope-style",
+              "label": "锁链(最大距离)"
+            },
+            {
+              "id": "bar-style",
+              "label": "条形(固定距离)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pin-to-object-properties",
+      "name": "固定到对象",
+      "description": "将对象固定到另一个对象上。",
+      "display_text": "{my} 固定到 {0} (X: [i]{1}[/i], Y: [i]{2}[/i], 角度: [i]{3}[/i], 宽度: [i]{4}[/i], 高度: [i]{5}[/i], Z: [i]{6}[/i])",
+      "params": [
+        {
+          "id": "pin-to",
+          "name": "固定到",
+          "description": "选择要固定到哪个对象"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "固定对象的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "固定对象的Y坐标。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "固定对象的角度。"
+        },
+        {
+          "id": "z",
+          "name": "视距高度",
+          "description": "固定到对象的Z轴视距位置。"
+        },
+        {
+          "id": "width-type",
+          "name": "宽度",
+          "description": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
+          "options": [
+            {
+              "id": "no",
+              "label": "关闭"
+            },
+            {
+              "id": "absolute",
+              "label": "相同"
+            },
+            {
+              "id": "scale",
+              "label": "比例"
+            }
+          ]
+        },
+        {
+          "id": "height-type",
+          "name": "高度",
+          "description": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
+          "options": [
+            {
+              "id": "no",
+              "label": "关闭"
+            },
+            {
+              "id": "absolute",
+              "label": "相同"
+            },
+            {
+              "id": "scale",
+              "label": "比例"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pin-to-object-imagepoint",
+      "name": "固定到图像点",
+      "description": "将对象固定到另一个对象的图像点上。",
+      "display_text": "{my} 固定到 {0} (图像点 [i]{1}[/i], 角度:[i]{2}[/i], 宽度:[i]{3}[/i], 高度: [i]{4}[/i], Z: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "pin-to",
+          "name": "固定到",
+          "description": "选择要固定到哪个对象"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "要定位到的对象的图像点名称或编号。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "固定对象的角度。"
+        },
+        {
+          "id": "z",
+          "name": "视距高度",
+          "description": "固定到对象的视距高度。"
+        },
+        {
+          "id": "width-type",
+          "name": "宽度",
+          "description": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
+          "options": [
+            {
+              "id": "no",
+              "label": "关闭"
+            },
+            {
+              "id": "absolute",
+              "label": "相同"
+            },
+            {
+              "id": "scale",
+              "label": "比例"
+            }
+          ]
+        },
+        {
+          "id": "height-type",
+          "name": "高度",
+          "description": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
+          "options": [
+            {
+              "id": "no",
+              "label": "关闭"
+            },
+            {
+              "id": "absolute",
+              "label": "相同"
+            },
+            {
+              "id": "scale",
+              "label": "比例"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-pin-distance",
+      "name": "设置固定距离",
+      "description": "使用'固定到距离'时，设置距离限制。",
+      "display_text": "设置 {my} 固定距离 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "distance",
+          "name": "距离",
+          "description": "设置的距离限制，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-destroy",
+      "name": "设置与固定的对象一起被销毁",
+      "description": "设置固定的对象被销毁时，是否也将该对象销毁。",
+      "display_text": "设置 {my}与被固定对象一起销毁 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "destroy",
+          "name": "与被固定的对象一起被销毁",
+          "description": "固定的对象被销毁时，是否也将该对象销毁。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pinneduid",
+      "name": "固定对象UID",
+      "description": "获得当前被固定对象的UID，如果没有，则返回 -1",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 7,
+    "expressions": 1
+  }
+}

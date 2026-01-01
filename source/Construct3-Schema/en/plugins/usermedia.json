@@ -1,0 +1,231 @@
+{
+  "id": "usermedia",
+  "name": "User Media",
+  "description": "Get live media from the user using a camera or microphone device.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-media-request-approved",
+      "name": "On media request approved",
+      "description": "Triggered after the user approves the prompt from a media request.",
+      "display_text": "On media request approved",
+      "params": []
+    },
+    {
+      "id": "on-media-request-declined",
+      "name": "On media request declined",
+      "description": "Triggered on an error, or if the user declines the prompt from a media request.",
+      "display_text": "On media request declined",
+      "params": []
+    },
+    {
+      "id": "on-retrieved-media-sources",
+      "name": "On retrieved media sources",
+      "description": "Triggered after 'Get media sources' when the media source list is available.",
+      "display_text": "On retrieved media sources",
+      "params": []
+    },
+    {
+      "id": "on-snapshot",
+      "name": "On snapshot ready",
+      "description": "Triggered after the 'Snapshot' action when the snapshot URL is ready.",
+      "display_text": "On snapshot ready",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-camera",
+      "name": "Request camera",
+      "description": "Prompt the user for access to video input from a camera, if one is present.",
+      "display_text": "Request camera source [i]{0}[/i] (prefer [i]{1}[/i] at {2} x {3}, include mic [i]{4}[/i] source [i]{5}[/i])",
+      "params": [
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "The zero-based index of the camera source to use."
+        },
+        {
+          "id": "preferred-width",
+          "name": "Preferred width",
+          "description": "The preferred horizontal resolution. Leave at 0 for default."
+        },
+        {
+          "id": "preferred-height",
+          "name": "Preferred height",
+          "description": "The preferred vertical resolution. Leave at 0 for default."
+        },
+        {
+          "id": "include-mic",
+          "name": "Include microphone",
+          "description": "Whether to also request audio input from the user's microphone. Useful to allow recording combined video and audio."
+        },
+        {
+          "id": "mic-source",
+          "name": "Microphone source",
+          "description": "The zero-based index of the audio source to use, if microphone is included."
+        },
+        {
+          "id": "preferred-direction",
+          "name": "Preferred direction",
+          "description": "The preferred camera facing mode, if multiple cameras are present. Commonly mobile devices have both user-facing (front) and environment-facing (back) cameras.",
+          "options": [
+            {
+              "id": "any",
+              "label": "Any"
+            },
+            {
+              "id": "user",
+              "label": "User-facing"
+            },
+            {
+              "id": "environment",
+              "label": "Environment-facing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Stop accessing the user media.",
+      "display_text": "Stop",
+      "params": []
+    },
+    {
+      "id": "snapshot",
+      "name": "Snapshot",
+      "description": "Take a snapshot of the current image from the camera.  Use 'SnapshotURL' expression to get result.",
+      "display_text": "Take snapshot ({0}, quality [i]{1}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "Format",
+          "description": "Choose the file format to save the snapshot.  PNG is lossless but JPEG files are smaller.",
+          "options": [
+            {
+              "id": "png",
+              "label": "PNG"
+            },
+            {
+              "id": "jpeg",
+              "label": "JPEG"
+            }
+          ]
+        },
+        {
+          "id": "jpeg-quality",
+          "name": "JPEG quality",
+          "description": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG."
+        }
+      ]
+    },
+    {
+      "id": "request-microphone",
+      "name": "Request microphone",
+      "description": "Prompt the user for access to audio input from a microphone, if one is present. The Audio object must be added to the project.",
+      "display_text": "Request microphone source [i]{1}[/i] and route to Audio tag {0}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag in the Audio object to route the microphone input to."
+        },
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "The zero-based index of the audio source to use."
+        }
+      ]
+    },
+    {
+      "id": "get-media-sources",
+      "name": "Get media sources",
+      "description": "Request a list of the available media sources. 'On retrieved media sources' will trigger shortly after.",
+      "display_text": "Get media sources",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "videowidth",
+      "name": "VideoWidth",
+      "description": "Return the width of the image from the device camera.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videoheight",
+      "name": "VideoHeight",
+      "description": "Return the height of the image from the device camera.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "snapshoturl",
+      "name": "SnapshotURL",
+      "description": "Return a data URI containing image data from a snapshot. Can be set to a Sprite or Tiled Background.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "audiosourcecount",
+      "name": "AudioSourceCount",
+      "description": "Return the number of audio sources available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "audiosourcelabelat",
+      "name": "AudioSourceLabelAt",
+      "description": "Return the label of a given audio source.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the audio source."
+        }
+      ]
+    },
+    {
+      "id": "camerasourcecount",
+      "name": "CameraSourceCount",
+      "description": "Return the number of camera sources available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camerasourcelabelat",
+      "name": "CameraSourceLabelAt",
+      "description": "Return the label of a given camera source.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the camera source."
+        }
+      ]
+    },
+    {
+      "id": "camerasourcefacingat",
+      "name": "CameraSourceFacingAt",
+      "description": "Return the facing (e.g. front/back) of a given camera source.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the camera source."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 8
+  }
+}

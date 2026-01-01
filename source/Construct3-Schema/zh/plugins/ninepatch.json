@@ -1,0 +1,288 @@
+{
+  "id": "ninepatch",
+  "name": "九宫图",
+  "description": "将图像分割为9个部分，使边缘和中间填充部分可以单独拉伸或平铺。对制作气泡型对话框很有帮助。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "name": "远程图像加载完成",
+      "description": "使用 '加载远程图像' 动作后，当图像从远程服务器加载完成时触发。",
+      "display_text": "远程图像加载完成",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "图像加载失败",
+      "description": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "display_text": "网络图像加载失败",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-margins",
+      "name": "设置边距",
+      "description": "设置图像边距大小，使边缘的图像不会被拉伸或平铺。",
+      "display_text": "设置图像边距 (左: [i]{0}[/i], 右: [i]{1}[/i], 上: [i]{2}[/i], 下: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "left-margin",
+          "name": "左边距",
+          "description": "左边距大小，以像素为单位。"
+        },
+        {
+          "id": "right-margin",
+          "name": "右边距",
+          "description": "右边距大小，以像素为单位。"
+        },
+        {
+          "id": "top-margin",
+          "name": "上边距",
+          "description": "顶部边距大小，以像素为单位。"
+        },
+        {
+          "id": "bottom-margin",
+          "name": "下边距",
+          "description": "底部边距大小，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-edges",
+      "name": "设置边缘模式",
+      "description": "设置边缘的显示模式。",
+      "display_text": "设置边缘模式为 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "edges",
+          "name": "边缘",
+          "description": "设置边缘部分的显示方式，选择平铺或拉伸。",
+          "options": [
+            {
+              "id": "tile",
+              "label": "平铺"
+            },
+            {
+              "id": "stretch",
+              "label": "拉伸"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-fill",
+      "name": "设置填充模式",
+      "description": "设置填充部分的显示模式。",
+      "display_text": "设置填充模式为 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "fill",
+          "name": "填充",
+          "description": "设置中间填充部分的显示方式，选择平铺、拉伸或透明。",
+          "options": [
+            {
+              "id": "tile",
+              "label": "平铺"
+            },
+            {
+              "id": "stretch",
+              "label": "拉伸"
+            },
+            {
+              "id": "transparent",
+              "label": "透明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-x",
+      "name": "设置图像缩放比例X",
+      "description": "设置图像在X轴的缩放比例。",
+      "display_text": "设置图像缩放比例X为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-x",
+          "name": "缩放比例 X",
+          "description": "图像在 X 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-y",
+      "name": "设置图像缩放比例Y",
+      "description": "设置图像在Y轴的缩放比例。",
+      "display_text": "设置图像缩放比例Y为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-y",
+          "name": "缩放比例 Y",
+          "description": "图像在 Y 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-seams",
+      "name": "设置边缘衔接",
+      "description": "更改边缘衔接的模式。",
+      "display_text": "设置边缘衔接为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "seams",
+          "name": "模式",
+          "description": "选择边缘衔接的渲染方式，用于实现无缝衔接效果。使用半透明的图像，建议使用 '精准匹配' 模式。",
+          "options": [
+            {
+              "id": "exact",
+              "label": "精确"
+            },
+            {
+              "id": "overlap",
+              "label": "覆盖"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "加载远程图像",
+      "description": "从远程服务器地址下载图像，或从数据地址加载图像。。",
+      "display_text": "加载远程图像(地址: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "填入远程服务器的地址，或图像数据地址的表达式。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "left-margin",
+      "name": "左边距",
+      "description": "图像的左边距，以像素为单位。保持不被拉伸的空间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-margin",
+      "name": "右边距",
+      "description": "图像的右边距，以像素为单位。保持不被拉伸的空间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "top-margin",
+      "name": "上边距",
+      "description": "图像的上边距，以像素为单位。保持不被拉伸的空间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bottom-margin",
+      "name": "下边距",
+      "description": "图像的下边距，以像素为单位。保持不被拉伸的空间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-x",
+      "name": "缩放比例X",
+      "description": "获取图像在X轴的缩放比例。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-y",
+      "name": "缩放比例Y",
+      "description": "获取图像在Y轴的缩放比例。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 8,
+    "expressions": 6
+  }
+}

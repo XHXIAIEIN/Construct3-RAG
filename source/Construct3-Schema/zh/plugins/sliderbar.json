@@ -1,0 +1,149 @@
+{
+  "id": "sliderbar",
+  "name": "滑动条",
+  "description": "一个滑动条，允许用户在两个值之间选择一个值。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "点击",
+      "description": "当滑动条被点击时触发",
+      "display_text": "点击",
+      "params": []
+    },
+    {
+      "id": "compare-value",
+      "name": "比较值",
+      "description": "比较当前值。",
+      "display_text": "滑块值 {0} [i]{1}[/i]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "on-changed",
+      "name": "进度已改变",
+      "description": "滑块数值发生更改时触发。如果在拖动，则在松开后触发。",
+      "display_text": "进度已改变",
+      "params": []
+    },
+    {
+      "id": "on-changing",
+      "name": "被拖动",
+      "description": "滑块数值更改时触发。如果在拖动，则每次步进时触发。",
+      "display_text": "被拖动",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "name": "设置工具提示",
+      "description": "设置滑块的工具提示。",
+      "display_text": "设置工具提示为{0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "提示",
+          "description": "在滑块栏上出现的工具提示信息。"
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "设置值",
+      "description": "设置滑块值。",
+      "display_text": "设置值为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要设置的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-maximum",
+      "name": "设置最大值",
+      "description": "设置滑块的最大值。",
+      "display_text": "设置最大值为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "maximum",
+          "name": "最大值",
+          "description": "滑块的新最大值。"
+        }
+      ]
+    },
+    {
+      "id": "set-minimum",
+      "name": "设置最小值",
+      "description": "设置滑动条的最小值。",
+      "display_text": "设置最小值为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "minimum",
+          "name": "最小值",
+          "description": "滑块的新最小值。"
+        }
+      ]
+    },
+    {
+      "id": "set-step",
+      "name": "设置步长",
+      "description": "设置滑块的步长值。",
+      "display_text": "设置步长为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "step",
+          "name": "步长",
+          "description": "设置滑块步长值。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "value",
+      "name": "值",
+      "description": "当前滑块值",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maximum",
+      "name": "最大值",
+      "description": "当前最大值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "minimum",
+      "name": "最小值",
+      "description": "当前最小值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "step",
+      "name": "步长",
+      "description": "当前步长。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 4
+  }
+}

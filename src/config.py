@@ -39,7 +39,7 @@ EMBEDDING_DIMENSION = 1024
 
 # LLM Configuration (Ollama)
 # Mac M4 24GB 推荐: qwen2.5:7b (速度快) 或 qwen2.5:14b (效果好)
-LLM_MODEL = os.getenv("LLM_MODEL", "qwen3:30b")
+LLM_MODEL = os.getenv("LLM_MODEL", "qwen2.5:7b")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
 
 # Chunking Settings (用于 H2 分块的后备分割)

@@ -1,0 +1,280 @@
+{
+  "id": "los",
+  "name": "Line of sight",
+  "description": "Test if an object has line of sight to (if it can \"see\") an object or position.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "has-los-to-object",
+      "name": "Has LOS to object",
+      "description": "Test if there is line-of-sight to any instance of an object type.",
+      "display_text": "Has {my} to {0} image point [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to test if line-of-sight covers."
+        },
+        {
+          "id": "image-point",
+          "name": "Image point (optional)",
+          "description": "The name or number of an image point in the object to test line-of-sight to. Leave 0 for object's origin."
+        }
+      ]
+    },
+    {
+      "id": "has-los-to-position",
+      "name": "Has LOS to position",
+      "description": "Test if there is line-of-sight to a position in the layout.",
+      "display_text": "Has {my} to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to test line-of-sight to, in pixels."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to test line-of-sight to, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "has-los-between-positions",
+      "name": "Has LOS between positions",
+      "description": "Test if there is line-of-sight between any two positions in the layout.",
+      "display_text": "Has {my} from ([i]{0}[/i], [i]{1}[/i]) angle [i]{2}[/i] to ([i]{3}[/i], [i]{4}[/i])",
+      "params": [
+        {
+          "id": "from-x",
+          "name": "From X",
+          "description": "The X co-ordinate to test line-of-sight from, in pixels."
+        },
+        {
+          "id": "from-y",
+          "name": "From Y",
+          "description": "The Y co-ordinate to test line-of-sight from, in pixels."
+        },
+        {
+          "id": "from-angle",
+          "name": "Angle",
+          "description": "The angle to orient the cone of view with, in degrees."
+        },
+        {
+          "id": "to-x",
+          "name": "To X",
+          "description": "The X co-ordinate to test line-of-sight to, in pixels."
+        },
+        {
+          "id": "to-y",
+          "name": "To Y",
+          "description": "The Y co-ordinate to test line-of-sight to, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "ray-intersected",
+      "name": "Ray intersected",
+      "description": "Test if the last cast ray intersected an obstacle.",
+      "display_text": "{my} ray intersected",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-range",
+      "name": "Set range",
+      "description": "Set the maximum range the line-of-sight can cover.",
+      "display_text": "Set {my} range to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "range",
+          "name": "Range",
+          "description": "The new maximum distance in pixels that line-of-sight can cover."
+        }
+      ]
+    },
+    {
+      "id": "set-cone-of-view",
+      "name": "Set cone of view",
+      "description": "Set the angle range relative to the object angle that line-of-sight can cover.",
+      "display_text": "Set {my} cone of view to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "cone-of-view",
+          "name": "Cone of view",
+          "description": "The new angle range in degrees relative to the object angle that line-of-sight can cover."
+        }
+      ]
+    },
+    {
+      "id": "add-obstacle",
+      "name": "Add obstacle",
+      "description": "Add a custom object as an obstacle to line-of-sight.",
+      "display_text": "Add {my} obstacle {0}",
+      "params": [
+        {
+          "id": "obstacle",
+          "name": "Obstacle",
+          "description": "Choose an object to add as an obstacle, obstructing line-of-sight."
+        }
+      ]
+    },
+    {
+      "id": "clear-obstacles",
+      "name": "Clear obstacles",
+      "description": "Remove all added obstacle objects.",
+      "display_text": "Clear {my} obstacles",
+      "params": []
+    },
+    {
+      "id": "cast-ray",
+      "name": "Cast ray",
+      "description": "Cast a ray between any two positions in the layout, checking for obstructions.",
+      "display_text": "Cast {my} ray from ({0}, {1}) to ({2}, {3}) (use collision cells [i]{4}[/i])",
+      "params": [
+        {
+          "id": "from-x",
+          "name": "From X",
+          "description": "The ray origin X co-ordinate."
+        },
+        {
+          "id": "from-y",
+          "name": "From Y",
+          "description": "The ray origin Y co-ordinate."
+        },
+        {
+          "id": "to-x",
+          "name": "To X",
+          "description": "The ray destination X co-ordinate."
+        },
+        {
+          "id": "to-y",
+          "name": "To Y",
+          "description": "The ray destination Y co-ordinate."
+        },
+        {
+          "id": "use-collision-cells",
+          "name": "Use collision cells",
+          "description": "Enabling usually improves performance, but can be slower over very long distances."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "range",
+      "name": "Range",
+      "description": "Return the current range in pixels that line-of-sight can cover.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "coneofview",
+      "name": "ConeOfView",
+      "description": "Return the current cone of view in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hitx",
+      "name": "HitX",
+      "description": "Return the X position of the hit position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hity",
+      "name": "HitY",
+      "description": "Return the Y position of the hit position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hituid",
+      "name": "HitUID",
+      "description": "Return the UID of the instance that was hit.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hitdistance",
+      "name": "HitDistance",
+      "description": "Return the distance between the ray origin and hit position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "normalx",
+      "name": "NormalX",
+      "description": "Return the X position at a distance along the hit normal.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "length",
+          "description": "Length along the normal"
+        }
+      ]
+    },
+    {
+      "id": "normaly",
+      "name": "NormalY",
+      "description": "Return the Y position at a distance along the hit normal",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "length",
+          "description": "Length along the normal"
+        }
+      ]
+    },
+    {
+      "id": "normalangle",
+      "name": "NormalAngle",
+      "description": "Return the angle for the surface normal at the hit position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reflectionx",
+      "name": "ReflectionX",
+      "description": "Return the X position at a distance along the hit reflection angle.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "length",
+          "description": "Length along the reflection"
+        }
+      ]
+    },
+    {
+      "id": "reflectiony",
+      "name": "ReflectionY",
+      "description": "Return the Y position at a distance along the hit reflection angle.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "length",
+          "description": "Length along the reflection"
+        }
+      ]
+    },
+    {
+      "id": "reflectionangle",
+      "name": "ReflectionAngle",
+      "description": "Return the absolute angle of the ray reflection at the hit position.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 12
+  }
+}

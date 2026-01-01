@@ -1,0 +1,181 @@
+{
+  "id": "geolocation",
+  "name": "地理位置",
+  "description": "访问用户的位置信息，如纬度和经度。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-watching-location",
+      "name": "正在跟踪位置",
+      "description": "检测当前是否正在跟踪用户的地理位置。",
+      "display_text": "正在跟踪位置",
+      "params": []
+    },
+    {
+      "id": "on-location-update",
+      "name": "位置更新时",
+      "description": "在更新位置时请求或观察用户位置时触发。",
+      "display_text": "位置更新时",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "在出错时",
+      "description": "发生地理位置错误时触发。",
+      "display_text": "在出错时",
+      "params": []
+    },
+    {
+      "id": "is-supported",
+      "name": "设备支持功能",
+      "description": "检测当前运行设备是否支持获取地理位置信息。",
+      "display_text": "设备支持访问地理位置",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-location",
+      "name": "请求位置",
+      "description": "获取一次性请求以获取用户的当前位置。",
+      "display_text": "请求位置（{0}准确度，超时{1}，最大年龄{2}）",
+      "params": [
+        {
+          "id": "accuracy",
+          "name": "准确性",
+          "description": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "high",
+              "label": "高度"
+            }
+          ]
+        },
+        {
+          "id": "timeout",
+          "name": "超时",
+          "description": "设备返回位置的最大时长，以秒为单位。"
+        },
+        {
+          "id": "maximum-age",
+          "name": "最长缓存时间",
+          "description": "缓存结果可记录的最大时长，以秒为单位。使用 0 禁用缓存。"
+        }
+      ]
+    },
+    {
+      "id": "watch-location",
+      "name": "监测位置",
+      "description": "开始接收用户位置的定期更新。",
+      "display_text": "监测位置（{0}准确度，超时{1}，最大时长{2}）",
+      "params": [
+        {
+          "id": "accuracy",
+          "name": "准确性",
+          "description": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "普通"
+            },
+            {
+              "id": "high",
+              "label": "高度"
+            }
+          ]
+        },
+        {
+          "id": "timeout",
+          "name": "超时",
+          "description": "设备返回位置的最大时长，以秒为单位。"
+        },
+        {
+          "id": "maximum-age",
+          "name": "最长缓存时间",
+          "description": "缓存结果可保留的最长时间，以秒为单位。 使用 0 禁用缓存。"
+        }
+      ]
+    },
+    {
+      "id": "stop-watching",
+      "name": "停止监测",
+      "description": "停止监测之前的发起的定位",
+      "display_text": "停止监测位置信息",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "errormessage",
+      "name": "错误信息",
+      "description": "在出错时返回的相关的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timestamp",
+      "name": "时间戳",
+      "description": "检索当前详细信息的时间戳。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "latitude",
+      "name": "纬度",
+      "description": "纬度位置以十进制度表示。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "longitude",
+      "name": "经度",
+      "description": "十进制度的经度位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "altitude",
+      "name": "海拔",
+      "description": "海拔高度以米为单位（如果有）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accuracy",
+      "name": "精度",
+      "description": "纬度和经度的估计精度（米）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "altitudeaccuracy",
+      "name": "海拔精度",
+      "description": "如果可用，获取预估的海拔精度，以米为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "heading",
+      "name": "前进方向",
+      "description": "相对于正北方向的行进方向（如果有）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed",
+      "name": "前进速度",
+      "description": "以米为单位的行程速度（如果可用）。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 3,
+    "expressions": 9
+  }
+}

@@ -1,0 +1,383 @@
+{
+  "id": "mouse",
+  "name": "鼠标",
+  "description": "读取用户鼠标的相关操作。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-click",
+      "name": "鼠标点击",
+      "description": "单击或双击鼠标按键时触发。",
+      "display_text": "[b]{1}[/b]鼠标[b]{0}[/b]",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "鼠标键",
+          "description": "选择要检查的鼠标按键。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左键"
+            },
+            {
+              "id": "middle",
+              "label": "中键"
+            },
+            {
+              "id": "right",
+              "label": "右键"
+            },
+            {
+              "id": "button-4",
+              "label": "鼠标键4"
+            },
+            {
+              "id": "button-5",
+              "label": "鼠标键5"
+            }
+          ]
+        },
+        {
+          "id": "click-type",
+          "name": "动作",
+          "description": "选择要检查的点击类型。注意，只有 '左键' 可以触发 '双击' 动作。",
+          "options": [
+            {
+              "id": "clicked",
+              "label": "点击"
+            },
+            {
+              "id": "double-clicked",
+              "label": "双击"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-click",
+      "name": "任意点击",
+      "description": "单击或双击任意鼠标按键时触发。",
+      "display_text": "任意点击",
+      "params": []
+    },
+    {
+      "id": "mouse-button-is-down",
+      "name": "按住鼠标键",
+      "description": "检测当前是否按下鼠标按钮。",
+      "display_text": "按住鼠标[b]{0}[/b]",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "鼠标键",
+          "description": "选择要检查的鼠标按钮。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左键"
+            },
+            {
+              "id": "middle",
+              "label": "中键"
+            },
+            {
+              "id": "right",
+              "label": "右键"
+            },
+            {
+              "id": "button-4",
+              "label": "鼠标键4"
+            },
+            {
+              "id": "button-5",
+              "label": "鼠标键5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-button-released",
+      "name": "松开鼠标键",
+      "description": "释放鼠标按钮时触发。",
+      "display_text": "松开鼠标[b]{0}[/b]",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "鼠标键",
+          "description": "选择要检查的鼠标按钮。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左键"
+            },
+            {
+              "id": "middle",
+              "label": "中键"
+            },
+            {
+              "id": "right",
+              "label": "右键"
+            },
+            {
+              "id": "button-4",
+              "label": "鼠标键4"
+            },
+            {
+              "id": "button-5",
+              "label": "鼠标键5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-object-clicked",
+      "name": "点击对象",
+      "description": "单击或双击对象时触发。",
+      "display_text": "[b]{1}[/b]鼠标[b]{0}[/b] {2}",
+      "params": [
+        {
+          "id": "mouse-button",
+          "name": "鼠标键",
+          "description": "选择要检查的鼠标按钮。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左键"
+            },
+            {
+              "id": "middle",
+              "label": "中键"
+            },
+            {
+              "id": "right",
+              "label": "右键"
+            },
+            {
+              "id": "button-4",
+              "label": "鼠标键4"
+            },
+            {
+              "id": "button-5",
+              "label": "鼠标键5"
+            }
+          ]
+        },
+        {
+          "id": "click-type",
+          "name": "动作",
+          "description": "选择要检查的点击类型。注意，只有 '左键' 可以触发 '双击' 动作。",
+          "options": [
+            {
+              "id": "clicked",
+              "label": "点击"
+            },
+            {
+              "id": "double-clicked",
+              "label": "双击"
+            }
+          ]
+        },
+        {
+          "id": "object-clicked",
+          "name": "被点击的对象",
+          "description": "选择要检查单击的对象。"
+        }
+      ]
+    },
+    {
+      "id": "cursor-is-over-object",
+      "name": "悬停在对象",
+      "description": "检查鼠标光标是否在对象上。",
+      "display_text": "悬停在 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查鼠标悬停的对象。"
+        }
+      ]
+    },
+    {
+      "id": "on-mouse-wheel",
+      "name": "转动滚轮",
+      "description": "滚动鼠标滚轮时触发。",
+      "display_text": "滚轮{0}转动",
+      "params": [
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "选择检测鼠标滚轮滚动的方向。",
+          "options": [
+            {
+              "id": "down",
+              "label": "向下"
+            },
+            {
+              "id": "up",
+              "label": "向上"
+            },
+            {
+              "id": "any",
+              "label": "任意"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-pointer-locked",
+      "name": "光标锁启用",
+      "description": "执行 '锁定光标' 动作后，光标锁定成功时触发。",
+      "display_text": "光标锁启用",
+      "params": []
+    },
+    {
+      "id": "on-pointer-unlocked",
+      "name": "光标锁解除",
+      "description": "在 '启用光标锁' 条件触发后，再次将光标锁解除时触发。",
+      "display_text": "光标锁解除",
+      "params": []
+    },
+    {
+      "id": "on-pointer-lock-error",
+      "name": "光标锁异常",
+      "description": "光标锁出现异常错误时触发。",
+      "display_text": "光标锁异常",
+      "params": []
+    },
+    {
+      "id": "has-pointer-lock",
+      "name": "已启用光标锁",
+      "description": "光标已经被锁定时触发。",
+      "display_text": "已启用光标锁",
+      "params": []
+    },
+    {
+      "id": "on-movement",
+      "name": "移动鼠标",
+      "description": "鼠标每次发生移动时触发。注意，这也适用于没有光标锁的情况。",
+      "display_text": "移动鼠标",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-cursor-from-sprite",
+      "name": "设置指针样式为精灵",
+      "description": "将鼠标指针样式设置为精灵当前播放动画的图像。注意，此精灵对象需要放置在场景中。",
+      "display_text": "设置指针样式为{0}",
+      "params": [
+        {
+          "id": "sprite",
+          "name": "精灵",
+          "description": "选择一个精灵对象作为指针的图像。"
+        }
+      ]
+    },
+    {
+      "id": "request-pointer-lock",
+      "name": "启用光标锁",
+      "description": "请求锁定光标指针，通常用于控制3D相机。",
+      "display_text": "启用光标锁 (禁用指针加速: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "unadjusted-movement",
+          "name": "禁用指针加速",
+          "description": "禁用系统的指针加速调整，以访问原始鼠标输入。"
+        }
+      ]
+    },
+    {
+      "id": "release-pointer-lock",
+      "name": "解除光标锁",
+      "description": "释放光标锁，恢复正常的鼠标光标行为。",
+      "display_text": "解除光标锁",
+      "params": []
+    },
+    {
+      "id": "set-cursor-style2",
+      "name": "设置光标样式",
+      "description": "更改鼠标的光标样式。",
+      "display_text": "设置光标样式为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "cursor-style",
+          "name": "光标样式",
+          "description": "选择要设置的光标样式。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "x",
+      "name": "X",
+      "description": "获取鼠标在场景的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "y",
+      "name": "Y",
+      "description": "获取鼠标在场景中的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutex",
+      "name": "绝对坐标X",
+      "description": "获取鼠标在画布中的绝对坐标X。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutey",
+      "name": "绝对坐标Y",
+      "description": "获取鼠标在画布中的绝对坐标Y。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movement-x",
+      "name": "移动向量X",
+      "description": "开启指针锁定时，获得指针的水平运动量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movement-y",
+      "name": "移动向量Y",
+      "description": "开启指针锁定时，获得指针的垂直运动量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-x",
+      "name": "滚轮增量X",
+      "description": "获取鼠标滚轮在当前触发器的X轴滚动量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-y",
+      "name": "滚轮增量Y",
+      "description": "获取鼠标滚轮在当前触发器的Y轴滚动量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wheel-delta-z",
+      "name": "滚轮增量Z",
+      "description": "获取鼠标滚轮在当前触发器的Z轴滚动量。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 12,
+    "actions": 4,
+    "expressions": 9
+  }
+}

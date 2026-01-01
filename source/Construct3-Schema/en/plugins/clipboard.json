@@ -1,0 +1,115 @@
+{
+  "id": "clipboard",
+  "name": "Clipboard",
+  "description": "Access the system clipboard for copy and paste operations.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-copy-success",
+      "name": "On copy success",
+      "description": "Triggered when a copy to the clipboard is successful.",
+      "display_text": "On copy success",
+      "params": []
+    },
+    {
+      "id": "on-copy-error",
+      "name": "On copy error",
+      "description": "Triggered when a copy to the clipboard fails.",
+      "display_text": "On copy error",
+      "params": []
+    },
+    {
+      "id": "on-paste-text",
+      "name": "On paste text",
+      "description": "Triggered on a successful paste of text.",
+      "display_text": "On paste text",
+      "params": []
+    },
+    {
+      "id": "on-paste-binary",
+      "name": "On paste binary",
+      "description": "Triggered on a successful paste of binary data.",
+      "display_text": "On paste binary (to {0}, type [i]{1}[/i])",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "Binary data",
+          "description": "Choose a Binary Data object to write the pasted binary data to."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The content type (aka MIME type) of the pasted data."
+        }
+      ]
+    },
+    {
+      "id": "on-paste-error",
+      "name": "On paste error",
+      "description": "Triggered when a paste fails.",
+      "display_text": "On paste error",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "copy-text",
+      "name": "Copy text",
+      "description": "Copy some text to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "display_text": "Copy text [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The text to copy to the clipboard."
+        }
+      ]
+    },
+    {
+      "id": "copy-binary",
+      "name": "Copy binary",
+      "description": "Copy some binary data to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "display_text": "Copy binary {0} (type [i]{1}[/i])",
+      "params": [
+        {
+          "id": "data",
+          "name": "Binary data",
+          "description": "A Binary Data object to copy to the clipboard."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The content type (aka MIME type) of the data being copied."
+        }
+      ]
+    },
+    {
+      "id": "request-paste-text",
+      "name": "Request paste text",
+      "description": "Request to read text from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "display_text": "Request paste text",
+      "params": []
+    },
+    {
+      "id": "request-paste-binary",
+      "name": "Request paste binary",
+      "description": "Request to read binary data from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "display_text": "Request paste binary",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pasted-text",
+      "name": "PastedText",
+      "description": "In 'On paste text', the text that was read from the clipboard.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 4,
+    "expressions": 1
+  }
+}

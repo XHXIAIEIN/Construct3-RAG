@@ -1,0 +1,102 @@
+{
+  "id": "progressbar",
+  "name": "进度条",
+  "description": "浏览器基本样式的进度条组件，通常用于跟踪系统级的任务进程。如果你希望显示游戏生命条、进度等，建议改用精灵或平铺图。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "点击",
+      "description": "当进度条被点击时触发",
+      "display_text": "点击",
+      "params": []
+    },
+    {
+      "id": "compare-progress",
+      "name": "比较进度",
+      "description": "比较当前进度值",
+      "display_text": "进度 {0} [i]{1}[/i]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的进度值。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "name": "设置工具提示",
+      "description": "设置进度条的提示信息",
+      "display_text": "设置工具提示为{0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "提示",
+          "description": "要在进度条上设置的工具提示。"
+        }
+      ]
+    },
+    {
+      "id": "set-progress",
+      "name": "设置进度",
+      "description": "设置栏的进度值。",
+      "display_text": "设置进度为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要设置的进度值。"
+        }
+      ]
+    },
+    {
+      "id": "set-maximum",
+      "name": "设置最大值",
+      "description": "设置栏的最大进度值。",
+      "display_text": "设置最大值为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "maximum",
+          "name": "最大值",
+          "description": "进度的新最大值。"
+        }
+      ]
+    },
+    {
+      "id": "make-indeterminate",
+      "name": "使不确定",
+      "description": "使进度条显示不确定（未知）进度。",
+      "display_text": "使不确定",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "progress",
+      "name": "进度",
+      "description": "当前进度值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maximum",
+      "name": "最大值",
+      "description": "当前最大进度值。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 4,
+    "expressions": 2
+  }
+}

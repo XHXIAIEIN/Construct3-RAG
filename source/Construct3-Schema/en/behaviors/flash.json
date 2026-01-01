@@ -1,0 +1,60 @@
+{
+  "id": "flash",
+  "name": "Flash",
+  "description": "Make an object temporarily flash, alternately becoming visible and invisible.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-flashing",
+      "name": "Is flashing",
+      "description": "True if the object is currently flashing.",
+      "display_text": "Is flashing",
+      "params": []
+    },
+    {
+      "id": "on-flash-ended",
+      "name": "On flash ended",
+      "description": "Triggered when the object stops flashing.",
+      "display_text": "On flash ended",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "flash",
+      "name": "Flash",
+      "description": "Make the object flash for a period of time.",
+      "display_text": "{my}: Flash {0} on {1} off for [b]{2}[/b] seconds",
+      "params": [
+        {
+          "id": "on-time",
+          "name": "'On' time",
+          "description": "Duration in seconds the object is visible."
+        },
+        {
+          "id": "off-time",
+          "name": "'Off' time",
+          "description": "Duration in seconds the object is invisible."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "Duration in seconds the object flashes for."
+        }
+      ]
+    },
+    {
+      "id": "stop-flashing",
+      "name": "Stop flashing",
+      "description": "Stop the flashing and set the object visible.",
+      "display_text": "{my}: Stop flashing",
+      "params": []
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 2,
+    "actions": 2,
+    "expressions": 0
+  }
+}

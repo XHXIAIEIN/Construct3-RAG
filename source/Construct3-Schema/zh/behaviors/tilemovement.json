@@ -1,0 +1,341 @@
+{
+  "id": "tilemovement",
+  "name": "网格移动",
+  "description": "在2D网格中移动对象。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "正在移动",
+      "description": "检测对象是否正在移动。",
+      "display_text": "{my} 正在移动",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试行为是否已经启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    },
+    {
+      "id": "can-move-to",
+      "name": "可以移动到位置",
+      "description": "检测对象是否可以移动到网格位置。",
+      "display_text": "{my}可以移动到[b]({0},{1})[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要进行检测的网格列。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要进行检测的网格行。"
+        }
+      ]
+    },
+    {
+      "id": "is-moving-direction",
+      "name": "正在朝方向移动",
+      "description": "检测对象当前是否沿着指定方向移动。",
+      "display_text": "{my} [b]{0}[/b]移动",
+      "params": [
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "移动的方向。",
+          "options": [
+            {
+              "id": "right",
+              "label": "向右"
+            },
+            {
+              "id": "left",
+              "label": "向左"
+            },
+            {
+              "id": "down",
+              "label": "向下"
+            },
+            {
+              "id": "up",
+              "label": "向上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "can-move-direction",
+      "name": "可移动的方向",
+      "description": "测试物体是否能沿着指定方向移动一段距离，并检查沿途是否存在障碍物。",
+      "display_text": "{my} 可以[b]{0}[/b]移动 [b]{1}[/b]格",
+      "params": [
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "移动的方向。",
+          "options": [
+            {
+              "id": "right",
+              "label": "向右"
+            },
+            {
+              "id": "left",
+              "label": "向左"
+            },
+            {
+              "id": "down",
+              "label": "向下"
+            },
+            {
+              "id": "up",
+              "label": "向上"
+            }
+          ]
+        },
+        {
+          "id": "distance",
+          "name": "距离",
+          "description": "移动的距离"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "设置速度",
+      "description": "设置移动速度",
+      "display_text": "设置 {my}移动速度为[i]({0},{1})[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "设置水平方向移动速度，以每秒像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "设置垂直方向移动速度，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-ignoring-input",
+      "name": "屏蔽玩家控制",
+      "description": "是否屏蔽玩家对该对象移动的控制行为。",
+      "display_text": "{0}控制 {my}",
+      "params": [
+        {
+          "id": "input",
+          "name": "输入",
+          "description": "是否屏蔽玩家对该对象移动的控制行为。",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "结束屏蔽"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "开始忽略"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "模拟控制",
+      "description": "通过事件模拟玩家按下按键来控制角色的行动。",
+      "display_text": "控制 {my} {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "控制",
+          "description": "模拟玩家按下按键来控制角色行动。",
+          "options": [
+            {
+              "id": "left",
+              "label": "向左移动"
+            },
+            {
+              "id": "right",
+              "label": "向右移动"
+            },
+            {
+              "id": "up",
+              "label": "向上移动"
+            },
+            {
+              "id": "down",
+              "label": "向下移动"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "设置是否启用或禁用该行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-grid-position",
+      "name": "设置网格位置",
+      "description": "设置对象的网格位置",
+      "display_text": "设置 {my}网格位置 {2} [i]({0},{1})[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要移动到的列。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要移动到的行。"
+        },
+        {
+          "id": "instant",
+          "name": "方式",
+          "description": "选择立即将对象移动到该位置，还是正常移动。",
+          "options": [
+            {
+              "id": "animate",
+              "label": "持续移动"
+            },
+            {
+              "id": "instant",
+              "label": "瞬间到达"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-grid-dimensions",
+      "name": "设置网格尺寸",
+      "description": "设置对象的网格大小和偏移量。",
+      "display_text": "设置 {my}网格尺寸为[b]({0},{1})[/b], 偏移[i]({2},{3})[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "设置每列的宽度。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "设置每行的高度。"
+        },
+        {
+          "id": "x-offset",
+          "name": "X 偏移",
+          "description": "要设置的新X偏移"
+        },
+        {
+          "id": "y-offset",
+          "name": "Y 偏移",
+          "description": "要设置的新Y偏移"
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "启用默认控制方式",
+      "description": "开启后，默认允许通过键盘方向键进行控制。",
+      "display_text": "[b]{0}[/b] {my} 默认控制方式",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "默认的控制方式",
+          "description": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "grid-x",
+      "name": "网格X",
+      "description": "对象当前所在的网格列。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "grid-y",
+      "name": "网格Y",
+      "description": "对象当前所在的网格行。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed-x",
+      "name": "速度X",
+      "description": "当前水平方向的移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed-y",
+      "name": "速度Y",
+      "description": "当前垂直方向的移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-x",
+      "name": "目标X",
+      "description": "对象当前朝向的网格列的场景坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-y",
+      "name": "目标Y",
+      "description": "对象当前朝向的网格行的场景坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-grid-x",
+      "name": "网格目标X",
+      "description": "对象当前朝向的网格列。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-grid-y",
+      "name": "网格目标Y",
+      "description": "对象当前朝向的网格行。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 7,
+    "expressions": 8
+  }
+}

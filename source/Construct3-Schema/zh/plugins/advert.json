@@ -1,0 +1,572 @@
+{
+  "id": "advert",
+  "name": "激励广告",
+  "description": "在 iOS 和 Android 上通过 Cordova 向用户展示激励广告(Google AdMob)。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-banner-ready",
+      "name": "横幅广告准备完成",
+      "description": "横幅广告准备就绪时触发。",
+      "display_text": "横幅广告准备完成",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-ready",
+      "name": "插页式广告准备完成",
+      "description": "插页式广告准备就绪时触发。",
+      "display_text": "插页式广告准备完成",
+      "params": []
+    },
+    {
+      "id": "on-banner-failed-to-load",
+      "name": "横幅广告拉取失败",
+      "description": "拉取横幅广告失败时触发。",
+      "display_text": "横幅广告拉取失败",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-failed-to-load",
+      "name": "插页式广告拉取失败",
+      "description": "插页式广告拉取失败时触发。",
+      "display_text": "插页式广告拉取失败",
+      "params": []
+    },
+    {
+      "id": "on-banner-shown",
+      "name": "横幅广告展示完成",
+      "description": "横幅广告展示完成时触发。",
+      "display_text": "横幅广告展示完成",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-complete",
+      "name": "插页式广告展示完成",
+      "description": "插页式广告展示完成时触发。",
+      "display_text": "插页式广告展示完成",
+      "params": []
+    },
+    {
+      "id": "on-banner-hidden",
+      "name": "横幅广告被隐藏",
+      "description": "横幅广告被隐藏时触发。",
+      "display_text": "横幅广告被隐藏",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-cancelled",
+      "name": "插页式广告被取消",
+      "description": "插页式广告被取消时触发。",
+      "display_text": "插页式广告被取消",
+      "params": []
+    },
+    {
+      "id": "on-configuration-failed",
+      "name": "广告配置失败",
+      "description": "广告插件配置读取失败时触发。",
+      "display_text": "广告配置失败",
+      "params": []
+    },
+    {
+      "id": "on-configuration-complete",
+      "name": "广告配置成功",
+      "description": "广告插件配置成功时触发。",
+      "display_text": "广告配置成功",
+      "params": []
+    },
+    {
+      "id": "is-showing-banner",
+      "name": "正在展示横幅广告",
+      "description": "检测当前是否正在显示横幅广告。",
+      "display_text": "正在展示横幅广告",
+      "params": []
+    },
+    {
+      "id": "is-showing-interstitial",
+      "name": "正在展示插页式广告",
+      "description": "检测当前是否正在展示插页式广告。",
+      "display_text": "正在展示插页式广告",
+      "params": []
+    },
+    {
+      "id": "is-loaded-banner",
+      "name": "横幅广告已加载",
+      "description": "检测横幅广告是否已经加载。",
+      "display_text": "横幅广告已加载",
+      "params": []
+    },
+    {
+      "id": "is-loaded-interstitial",
+      "name": "插页式广告已加载",
+      "description": "检测插页式广告是否已加载",
+      "display_text": "插页式广告已加载",
+      "params": []
+    },
+    {
+      "id": "is-configured",
+      "name": "已配置",
+      "description": "检测应用程序ID是否已设置。",
+      "display_text": "已配置",
+      "params": []
+    },
+    {
+      "id": "is-in-eea-or-unknown",
+      "name": "位于欧洲经济特区或未知地区",
+      "description": "检测设备所在位置，是否处于欧洲经济特区(EEA) 或未知地点。",
+      "display_text": "位于欧洲经济特区或未知地区",
+      "params": []
+    },
+    {
+      "id": "on-idfa-request-complete",
+      "name": "广告标识符请求完成",
+      "description": "执行 '请求广告标识符' 动作后，弹窗提示被关闭时触发。(无论用户是否允许权限)",
+      "display_text": "广告标识符请求完成",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-ready",
+      "name": "激励视频准备完成",
+      "description": "激励广告准备展示时触发",
+      "display_text": "激励视频准备完成",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-ready",
+      "name": "插页式激励广告准备就绪",
+      "description": "当奖励插页式广告准备好展示时触发",
+      "display_text": "插页式激励广告准备就绪",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-failed-to-load",
+      "name": "激励广告加载失败",
+      "description": "当奖励广告加载失败时触发",
+      "display_text": "激励广告加载失败",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-failed-to-load",
+      "name": "插页式激励广告加载失败",
+      "description": "当奖励插页式广告加载失败时触发",
+      "display_text": "插页式激励广告加载失败",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-complete",
+      "name": "激励广告展示完成",
+      "description": "当奖励广告完成时触发",
+      "display_text": "激励广告展示完成",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-complete",
+      "name": "插页式激励广告展示完成",
+      "description": "当奖励插页式广告完成时触发",
+      "display_text": "插页式激励广告展示完成",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-cancelled",
+      "name": "激励广告被取消",
+      "description": "当奖励广告被取消时触发",
+      "display_text": "激励广告被取消",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-cancelled",
+      "name": "插页式激励广告被取消",
+      "description": "当奖励插页式广告被取消时触发",
+      "display_text": "插页式激励广告被取消",
+      "params": []
+    },
+    {
+      "id": "is-showing-rewarded",
+      "name": "正在展示激励广告",
+      "description": "检测当前是否正在展示激励广告。",
+      "display_text": "正在展示激励广告",
+      "params": []
+    },
+    {
+      "id": "is-showing-rewarded-interstitial",
+      "name": "正在展示插页式激励广告",
+      "description": "检测当前是否正在展示插页式激励广告。",
+      "display_text": "正在展示插页式激励广告",
+      "params": []
+    },
+    {
+      "id": "is-loaded-rewarded",
+      "name": "激励视频已加载",
+      "description": "检测激励广告是否已加载。",
+      "display_text": "激励视频已加载",
+      "params": []
+    },
+    {
+      "id": "is-loaded-rewarded-interstitial",
+      "name": "插页式激励广告已加载",
+      "description": "检测插页式激励广告是否已加载。",
+      "display_text": "插页式激励广告已加载",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "create-banner",
+      "name": "创建横幅广告",
+      "description": "创建指定规格尺寸的横幅广告。",
+      "display_text": "创建横幅广告 [b]{0}[/b], 大小: [b]{1}[/b], 位置: [b]{3}[/b], 偏移位置: [b]{5}[/b], 初始显示: [b]{2}[/b], 强制更新: [b]{4}[/b],  覆盖游戏画面: [b]{6}[/b]",
+      "params": [
+        {
+          "id": "banner-size",
+          "name": "横幅尺寸",
+          "description": "广告的显示尺寸，其宽高比大致为 320x50，以 dp 为单位。",
+          "options": [
+            {
+              "id": "portrait",
+              "label": "自适应竖屏"
+            },
+            {
+              "id": "landscape",
+              "label": "自适应宽屏"
+            },
+            {
+              "id": "standard",
+              "label": "标准 (320x50)"
+            },
+            {
+              "id": "large",
+              "label": "大型 (320x100)"
+            },
+            {
+              "id": "medium",
+              "label": "中矩形 (300x250)"
+            },
+            {
+              "id": "full",
+              "label": "全尺寸 (468x60)"
+            },
+            {
+              "id": "leaderboard",
+              "label": "页首 (728x90)"
+            }
+          ]
+        },
+        {
+          "id": "show",
+          "name": "立即展示",
+          "description": "加载后自动显示广告",
+          "options": [
+            {
+              "id": "true",
+              "label": "是"
+            },
+            {
+              "id": "false",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "advert-id",
+          "name": "横幅广告单元ID",
+          "description": "当前广告的 AdMob 广告单元ID。"
+        },
+        {
+          "id": "position",
+          "name": "显示位置",
+          "description": "在屏幕放置横幅的位置。",
+          "options": [
+            {
+              "id": "bottom",
+              "label": "底部"
+            },
+            {
+              "id": "top",
+              "label": "顶部"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "覆盖显示",
+          "description": "如果广告已经存在，使用新的设置重新加载横幅。",
+          "options": [
+            {
+              "id": "true",
+              "label": "是"
+            },
+            {
+              "id": "false",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "offset",
+          "name": "偏移位置",
+          "description": "横幅的偏移位置，以像素为单位。需要 '覆盖显示' 选项为 '覆盖' 时有效。"
+        },
+        {
+          "id": "overlap",
+          "name": "覆盖游戏窗口",
+          "description": "广告横幅是否允许覆盖游戏窗口的内容。若允许覆盖，随后可通过偏移调整出现的位置。",
+          "options": [
+            {
+              "id": "true",
+              "label": "覆盖"
+            },
+            {
+              "id": "false",
+              "label": "不覆盖"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-banner",
+      "name": "展示横幅广告",
+      "description": "展示一个已经加载的横幅广告",
+      "display_text": "展示当前横幅广告",
+      "params": []
+    },
+    {
+      "id": "hide-banner",
+      "name": "隐藏横幅广告",
+      "description": "隐藏横幅广告",
+      "display_text": "隐藏横幅广告",
+      "params": []
+    },
+    {
+      "id": "create-interstitial",
+      "name": "拉取插页式广告",
+      "description": "使用给定标识符创建插页式广告",
+      "display_text": "拉取插页式广告 [b]{0}[/b]  (立即展示: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "show",
+          "name": "立即展示",
+          "description": "加载后自动显示广告",
+          "options": [
+            {
+              "id": "true",
+              "label": "是"
+            },
+            {
+              "id": "false",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "advert-id",
+          "name": "插页式广告单元ID",
+          "description": "此广告的AdMob广告单元ID"
+        }
+      ]
+    },
+    {
+      "id": "show-interstitial",
+      "name": "展示插页式广告",
+      "description": "展示一个已加载的插页式广告",
+      "display_text": "展示插页式广告",
+      "params": []
+    },
+    {
+      "id": "show-consent-dialog",
+      "name": "显示用户同意对话框",
+      "description": "显示用户奖章界面",
+      "display_text": "显示用户同意对话框",
+      "params": []
+    },
+    {
+      "id": "set-max-ad-content-rating",
+      "name": "设置最大广告评级",
+      "description": "根据数字内容标签分类过滤可用的广告。",
+      "display_text": "设置广告最大评级为 {0}",
+      "params": [
+        {
+          "id": "rating",
+          "name": "评级",
+          "description": "您希望展示的广告内容分级的最高级别。仅支持移动端导出。",
+          "options": [
+            {
+              "id": "G",
+              "label": "普通用户"
+            },
+            {
+              "id": "PG",
+              "label": "家长陪同"
+            },
+            {
+              "id": "T",
+              "label": "青少年"
+            },
+            {
+              "id": "MA",
+              "label": "成年人"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tag-for-child-directed-treatment",
+      "name": "标记为儿童",
+      "description": "根据未成年人在线隐私保护法(COPPA) 规定，未达到法定年龄的用户，应展示适用于儿童的内容。",
+      "display_text": "标记为儿童: {0}",
+      "params": [
+        {
+          "id": "option",
+          "name": "标记此用户为儿童",
+          "description": "告知 Admob SDK 此用户为儿童，应返回适用于儿童的广告内容。"
+        }
+      ]
+    },
+    {
+      "id": "tag-for-under-age-of-consent",
+      "name": "标记为未成年人",
+      "description": "根据欧洲经济区(EEA) 通用数据保护法(GDPR) 规定，用户应被视为未达到法定年龄。",
+      "display_text": "标记为未成年人: {0}",
+      "params": [
+        {
+          "id": "option",
+          "name": "标记此用户为未成年人",
+          "description": "告知 Admob SDK 此用户未达到法定年龄。"
+        }
+      ]
+    },
+    {
+      "id": "request-idfa",
+      "name": "请求访问广告标识符",
+      "description": "在 iOS 设备上访问广告标识符(IDFA)，用于广告个性化功能。请求时，用户可能会收到来自应用程序请求的 '允许 App 请求跟踪' 隐私提示。",
+      "display_text": "请求访问广告标识符",
+      "params": []
+    },
+    {
+      "id": "create-rewarded",
+      "name": "拉取激励视频广告",
+      "description": "使用给定的标识符创建奖励广告",
+      "display_text": "拉取激励视频广告 [b]{0}[/b] (立即展示: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "advert-id",
+          "name": "奖励广告单元 ID",
+          "description": "此广告的 AdMob 广告单元 ID"
+        },
+        {
+          "id": "show",
+          "name": "立即展示",
+          "description": "加载后自动显示广告",
+          "options": [
+            {
+              "id": "true",
+              "label": "是"
+            },
+            {
+              "id": "false",
+              "label": "否"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "create-rewarded-interstitial",
+      "name": "拉取插页式激励广告",
+      "description": "使用给定的标识符创建奖励插页式广告",
+      "display_text": "拉取插页式激励广告 [b]{0}[/b] (立即展示: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "advert-id",
+          "name": "奖励插页式广告单元 ID",
+          "description": "此广告的 AdMob 广告单元 ID"
+        },
+        {
+          "id": "show",
+          "name": "立即展示",
+          "description": "加载后自动显示广告",
+          "options": [
+            {
+              "id": "true",
+              "label": "是"
+            },
+            {
+              "id": "false",
+              "label": "否"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-rewarded",
+      "name": "展示激励广告",
+      "description": "展示一个已加载完成的激励广告",
+      "display_text": "展示激励广告",
+      "params": []
+    },
+    {
+      "id": "show-rewarded-interstitial",
+      "name": "展示插页式激励广告",
+      "description": "展示一个已加载完成的插页式激励广告",
+      "display_text": "展示插页式激励广告",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "error-message",
+      "name": "错误信息",
+      "description": "在触发器中的错误消息（如果可用）",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-type",
+      "name": "激励广告类型",
+      "description": "在触发器中的奖励类型（如果可用）",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-value",
+      "name": "激励广告价值",
+      "description": "在触发器中调用，返回值是否可用",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "consent-status",
+      "name": "同意状态",
+      "description": "当前用户同意广告的状态",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "idfa-status",
+      "name": "广告标识状态",
+      "description": "当前用户同意开启广告标识符(IDFA)的状态。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-interstitial-type",
+      "name": "插页式激励广告类型",
+      "description": "广告展示完成时，返回相关的广告激励类型。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-interstitial-value",
+      "name": "插页式激励广告价值",
+      "description": "广告展示完成时，返回相关的广告激励价值。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 29,
+    "actions": 14,
+    "expressions": 7
+  }
+}

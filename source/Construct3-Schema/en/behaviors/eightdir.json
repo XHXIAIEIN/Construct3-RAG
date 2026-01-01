@@ -1,0 +1,300 @@
+{
+  "id": "eightdir",
+  "name": "8 Direction",
+  "description": "Moves an object up, down, left, right and on diagonals.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} speed {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare the current speed to."
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    },
+    {
+      "id": "is-allow-sliding",
+      "name": "Allows sliding",
+      "description": "Test if the behavior allows sliding along solids.",
+      "display_text": "{my} allows sliding",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Set the speed to zero.",
+      "display_text": "Stop {my}",
+      "params": []
+    },
+    {
+      "id": "reverse",
+      "name": "Reverse",
+      "description": "Invert the direction of motion.",
+      "display_text": "Reverse {my}",
+      "params": []
+    },
+    {
+      "id": "set-ignoring-input",
+      "name": "Set ignoring input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "display_text": "{0} {my} user input",
+      "params": [
+        {
+          "id": "input",
+          "name": "Input",
+          "description": "Set whether to ignore the controls for this movement.",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "Stop ignoring"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "Start ignoring"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's current speed.",
+      "display_text": "Set {my} speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-max-speed",
+      "name": "Set max speed",
+      "description": "Set the object's maximum speed.",
+      "display_text": "Set {my} maximum speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-speed",
+          "name": "Max Speed",
+          "description": "The new maximum speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the object's acceleration.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "Set deceleration",
+      "description": "Set the object's deceleration.",
+      "display_text": "Set {my} deceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "Deceleration",
+          "description": "The new deceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "Simulate control",
+      "description": "Control the movement by events.",
+      "display_text": "Simulate {my} pressing {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "Control",
+          "description": "The movement control to simulate pressing.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            },
+            {
+              "id": "down",
+              "label": "Down"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-vector-x",
+      "name": "Set vector X",
+      "description": "Set the X component of motion.",
+      "display_text": "Set {my} vector X to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "vector-x",
+          "name": "Vector X",
+          "description": "The X component of motion to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-vector-y",
+      "name": "Set vector Y",
+      "description": "Set the Y component of motion.",
+      "display_text": "Set {my} vector Y to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "vector-y",
+          "name": "Vector Y",
+          "description": "The Y component of motion to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "Set default controls",
+      "description": "Change the default controls setting.",
+      "display_text": "Set {my} default controls [b]{0}[/b]",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "Default controls",
+          "description": "Whether to enable or disable the behavior default controls."
+        }
+      ]
+    },
+    {
+      "id": "set-allow-sliding",
+      "name": "Set allow sliding",
+      "description": "Set whether the behavior allows sliding along solids.",
+      "display_text": "Set {my} allow sliding [b]{0}[/b]",
+      "params": [
+        {
+          "id": "set-allow-sliding",
+          "name": "Allow sliding",
+          "description": "If enabled, moving along sloped obstacles allows sliding along them rather than stopping."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectorx",
+      "name": "VectorX",
+      "description": "The current X component of motion, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectory",
+      "name": "VectorY",
+      "description": "The current Y component of motion, in pixels per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 13,
+    "expressions": 7
+  }
+}

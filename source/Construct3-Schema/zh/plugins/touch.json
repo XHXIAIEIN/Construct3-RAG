@@ -1,0 +1,670 @@
+{
+  "id": "touch",
+  "name": "触控",
+  "description": "接收触屏设备的输入，以及访问设备的陀螺仪功能，获取其方向和运动。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-hold",
+      "name": "长按屏幕",
+      "description": "按住屏幕任意位置并保持一段时间时触发。",
+      "display_text": "长按屏幕",
+      "params": []
+    },
+    {
+      "id": "on-tap",
+      "name": "点击屏幕",
+      "description": "在屏幕任意位置进行点击手势时触发。（点击手势：在相同位置快速触摸并松开。）",
+      "display_text": "点击屏幕",
+      "params": []
+    },
+    {
+      "id": "on-double-tap",
+      "name": "双击屏幕",
+      "description": "在屏幕任意位置，快速进行两次点击手势时触发。",
+      "display_text": "双击屏幕",
+      "params": []
+    },
+    {
+      "id": "on-hold-over-object",
+      "name": "长按对象",
+      "description": "按住对象，并保持一段时间时触发。",
+      "display_text": "长按 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查的对象。"
+        }
+      ]
+    },
+    {
+      "id": "on-tap-object",
+      "name": "点击对象",
+      "description": "在对象上进行点击手势时触发。（点击手势：在相同位置快速触摸并松开。）",
+      "display_text": "点击 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查的对象。"
+        }
+      ]
+    },
+    {
+      "id": "on-double-tap-object",
+      "name": "双击对象",
+      "description": "在对象上快速进行两次点击手势时触发。",
+      "display_text": "双击 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查的对象。"
+        }
+      ]
+    },
+    {
+      "id": "compare-orientation",
+      "name": "比较设备方向",
+      "description": "比较设备的当前方向，或倾斜角度。",
+      "display_text": "[b]{0}[/b] 方向 {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "orientation",
+          "name": "方向",
+          "description": "要比较的方向。alpha: 水平方向, beta: 前后倾斜, gamma: 左右倾斜。",
+          "options": [
+            {
+              "id": "alpha",
+              "label": "Alpha"
+            },
+            {
+              "id": "beta",
+              "label": "Beta"
+            },
+            {
+              "id": "gamma",
+              "label": "Gamma"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "要比较的角度方向，以度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "compare-acceleration",
+      "name": "比较设备加速度",
+      "description": "比较设备沿轴的加速度。",
+      "display_text": "{0} 加速度 {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "选择要比较加速度的轴，以及测量是否应包括重力。",
+          "options": [
+            {
+              "id": "x-with-gravity",
+              "label": "X (包含重力)"
+            },
+            {
+              "id": "y-with-gravity",
+              "label": "Y (包含重力)"
+            },
+            {
+              "id": "z-with-gravity",
+              "label": "Z (包含重力)"
+            },
+            {
+              "id": "x-without-gravity",
+              "label": "X (不计算重力)"
+            },
+            {
+              "id": "y-without-gravity",
+              "label": "Y (不计算重力)"
+            },
+            {
+              "id": "z-without-gravity",
+              "label": "Z (不计算重力)"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "要比较的加速度，单位为m/s^2。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-touch-start",
+      "name": "任意按住开始",
+      "description": "任何触摸手势输入开始时触发。",
+      "display_text": "任意按住开始",
+      "params": []
+    },
+    {
+      "id": "on-any-touch-end",
+      "name": "任意按住结束",
+      "description": "任何触摸手势输入结束时触发。",
+      "display_text": "任意按住结束",
+      "params": []
+    },
+    {
+      "id": "is-in-touch",
+      "name": "正在按住",
+      "description": "检测当前是否有任意手指正在与设备接触。",
+      "display_text": "正在按住",
+      "params": []
+    },
+    {
+      "id": "on-touched-object",
+      "name": "触摸对象",
+      "description": "当对象被触摸时触发。",
+      "display_text": "触摸{0} ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查触摸的对象。"
+        },
+        {
+          "id": "type",
+          "name": "时机",
+          "description": "在触摸对象开始或结束时触发。",
+          "options": [
+            {
+              "id": "start",
+              "label": "开始"
+            },
+            {
+              "id": "end",
+              "label": "结束"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-touching-object",
+      "name": "正在触摸对象",
+      "description": "处于按住的状态且触摸点在对象上时触发。",
+      "display_text": "正在触摸 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查被触摸的对象。"
+        }
+      ]
+    },
+    {
+      "id": "compare-touch-speed",
+      "name": "比较滑动速度",
+      "description": "比较触控点的速度，用于检测特定的手势，如轻扫、滑动、捏合等。",
+      "display_text": "触控点[b]{0}[/b]滑动速度 {1}[b]{2} [/b]",
+      "params": [
+        {
+          "id": "touch-index",
+          "name": "触控点",
+          "description": "要检测的触控点的索引，从0开始的计数。如第 1 根手指的索引为0，第 2 根手指的索引为1...以此类推。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "要比较的速度，以每秒绝对像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "on-nth-touch-start",
+      "name": "多指按住开始",
+      "description": "用于检测多指手势，是否开始触控。",
+      "display_text": "第 {0} 触控点按下",
+      "params": [
+        {
+          "id": "touch-number",
+          "name": "触控点",
+          "description": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。"
+        }
+      ]
+    },
+    {
+      "id": "on-nth-touch-end",
+      "name": "多指按住结束",
+      "description": "用于检测多指手势，是否结束触控。",
+      "display_text": "第 {0} 触控点松开",
+      "params": [
+        {
+          "id": "touch-number",
+          "name": "触控点",
+          "description": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。"
+        }
+      ]
+    },
+    {
+      "id": "has-nth-touch",
+      "name": "正在多点触控",
+      "description": "用于检测当前是否有多个手指正在接触屏幕。",
+      "display_text": "存在第 {0} 触控点",
+      "params": [
+        {
+          "id": "touch-number",
+          "name": "触控点",
+          "description": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。"
+        }
+      ]
+    },
+    {
+      "id": "on-permission-granted",
+      "name": "权限被允许",
+      "description": "执行 '请求权限' 动作后，权限被允许时触发。",
+      "display_text": "[i]{0}[/i]权限被允许",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "请求的权限类型。",
+          "options": [
+            {
+              "id": "orientation",
+              "label": "方向"
+            },
+            {
+              "id": "motion",
+              "label": "运动"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-permission-denied",
+      "name": "权限被拒绝",
+      "description": "执行 '请求权限' 动作后，权限请求被拒绝时触发。",
+      "display_text": "请求[i]{0}[/i]权限被拒绝",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "请求的权限类型。",
+          "options": [
+            {
+              "id": "orientation",
+              "label": "方向"
+            },
+            {
+              "id": "motion",
+              "label": "运动"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-permission",
+      "name": "请求权限",
+      "description": "请求使用设备倾斜角传感器等的权限",
+      "display_text": "请求[b]{0}[/b]权限",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "权限类型",
+          "options": [
+            {
+              "id": "orientation",
+              "label": "方向"
+            },
+            {
+              "id": "motion",
+              "label": "运动"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "alpha",
+      "name": "Alpha",
+      "description": "相对于设备初始角度的罗盘方向，以角度为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "beta",
+      "name": "Beta",
+      "description": "设备前后倾斜的角度。正数表示向前。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gamma",
+      "name": "Gamma",
+      "description": "设备左右倾斜的角度。正数表示向右。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationxwithg",
+      "name": "重力加速度X",
+      "description": "获取设备在X轴的重力加速度，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationywithg",
+      "name": "重力加速度Y",
+      "description": "获取设备在Y轴的重力加速度，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationzwithg",
+      "name": "重力加速度Z",
+      "description": "获取设备在Z轴的重力加速度，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationx",
+      "name": "加速度X",
+      "description": "获取设备在X轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationy",
+      "name": "加速度Y",
+      "description": "获取设备在Y轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerationz",
+      "name": "加速度Z",
+      "description": "获取设备在Z轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "description": "获取触控点在图层的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "y",
+      "name": "Y",
+      "description": "获取触控点在图层的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutex",
+      "name": "绝对坐标X",
+      "description": "获得触控点在画布的X坐标，不会受缩放或滚动的影响。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "absolutey",
+      "name": "绝对坐标Y",
+      "description": "获得触控点在画布的Y坐标，不会受缩放或滚动的影响。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "touchcount",
+      "name": "触点数量",
+      "description": "获取当前触摸的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "xat",
+      "name": "触点坐标X",
+      "description": "获取触控点位于场景的 X 坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "触控点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "yat",
+      "name": "触点坐标Y",
+      "description": "获取触控点位于场景的 Y 坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "触控点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "absolutexat",
+      "name": "触点绝对坐标X",
+      "description": "获取触控点在画布的 X 坐标。不会受到滚动或缩放的影响。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的触点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "absoluteyat",
+      "name": "触点绝对坐标Y",
+      "description": "获取触控点在画布的 Y 坐标。不会受到滚动或缩放的影响。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的触点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "speedat",
+      "name": "触点速度",
+      "description": "以每秒绝对（屏幕）像素获得触摸速度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的触点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "angleat",
+      "name": "触点角度",
+      "description": "获得触摸的运动角度，以度为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的触点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "touchindex",
+      "name": "触点索引",
+      "description": "获取当前触点的索引。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "touchid",
+      "name": "触点ID",
+      "description": "获取当前触控点的唯一ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "xforid",
+      "name": "触点坐标X",
+      "description": "获取指定触控点在场景的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触点ID。"
+        }
+      ]
+    },
+    {
+      "id": "yforid",
+      "name": "触点坐标Y",
+      "description": "获取指定触控点在场景的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "absolutexforid",
+      "name": "触点绝对坐标X",
+      "description": "获取指定触控点在画布的X坐标，不受缩放和滚动影响。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "absoluteyforid",
+      "name": "触点绝对坐标Y",
+      "description": "获取指定触控点在画布的Y坐标，不受缩放和滚动影响。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "speedforid",
+      "name": "触点速度",
+      "description": "获取指定触摸点的绝对运动速度，以像素每秒为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "angleforid",
+      "name": "触点角度",
+      "description": "获取指定触摸点的运动角度，以角度为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸点ID。"
+        }
+      ]
+    },
+    {
+      "id": "widthforid",
+      "name": "触点宽度",
+      "description": "获取指定触控点触摸区域的宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "heightforid",
+      "name": "触点高度",
+      "description": "获取指定触控点触摸区域的高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "pressureforid",
+      "name": "触点压感",
+      "description": "获取具有特定ID的触摸的压力（从0到1）。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "要获得的触摸ID。"
+        }
+      ]
+    },
+    {
+      "id": "compass-heading",
+      "name": "罗盘方向",
+      "description": "设备相对于正北的罗盘方向，以角度为单位。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 19,
+    "actions": 1,
+    "expressions": 32
+  }
+}

@@ -1,0 +1,1065 @@
+{
+  "id": "date",
+  "name": "Date",
+  "description": "Utilities to work with dates and times.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-timestamps",
+      "name": "Compare time stamps",
+      "description": "Compare two time stamps.",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first",
+          "name": "First time stamp",
+          "description": "The first time stamp to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the time stamps."
+        },
+        {
+          "id": "second",
+          "name": "Second time stamp",
+          "description": "The second time stamp to compare."
+        }
+      ]
+    },
+    {
+      "id": "compare-date-strings",
+      "name": "Compare date strings",
+      "description": "Compare two date strings. The date strings are parsed into UTC time stamps to do the comparison.",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first",
+          "name": "First date string",
+          "description": "The first date string to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the date strings."
+        },
+        {
+          "id": "second",
+          "name": "Second date string",
+          "description": "The second date string to compare."
+        }
+      ]
+    },
+    {
+      "id": "compare-timestamp-parts",
+      "name": "Compare part of time stamps",
+      "description": "Compare a part of two time stamps.",
+      "display_text": "{3} of {0} {1} {3} of {2}",
+      "params": [
+        {
+          "id": "first",
+          "name": "First time stamp",
+          "description": "The first time stamp to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the time stamps."
+        },
+        {
+          "id": "second",
+          "name": "Second time stamp",
+          "description": "The second time stamp to compare."
+        },
+        {
+          "id": "part",
+          "name": "Part",
+          "description": "The part of the time stamps to compare.",
+          "options": [
+            {
+              "id": "year",
+              "label": "Year"
+            },
+            {
+              "id": "month",
+              "label": "Month"
+            },
+            {
+              "id": "date",
+              "label": "Date"
+            },
+            {
+              "id": "day",
+              "label": "Day"
+            },
+            {
+              "id": "hours",
+              "label": "Hours"
+            },
+            {
+              "id": "minutes",
+              "label": "Minutes"
+            },
+            {
+              "id": "seconds",
+              "label": "Seconds"
+            },
+            {
+              "id": "milliseconds",
+              "label": "Milliseconds"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-date-string-parts",
+      "name": "Compare part of date strings",
+      "description": "Compare a part of two date strings.",
+      "display_text": "{3} of {0} {1} {3} of {2} using {4} time",
+      "params": [
+        {
+          "id": "first",
+          "name": "First date string",
+          "description": "The first date string to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the date strings."
+        },
+        {
+          "id": "second",
+          "name": "Second date string",
+          "description": "The second date string to compare."
+        },
+        {
+          "id": "part",
+          "name": "Part",
+          "description": "The part of the date strings to compare.",
+          "options": [
+            {
+              "id": "year",
+              "label": "Year"
+            },
+            {
+              "id": "month",
+              "label": "Month"
+            },
+            {
+              "id": "date",
+              "label": "Date"
+            },
+            {
+              "id": "day",
+              "label": "Day"
+            },
+            {
+              "id": "hours",
+              "label": "Hours"
+            },
+            {
+              "id": "minutes",
+              "label": "Minutes"
+            },
+            {
+              "id": "seconds",
+              "label": "Seconds"
+            },
+            {
+              "id": "milliseconds",
+              "label": "Milliseconds"
+            }
+          ]
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to compare values in local or universal time.",
+          "options": [
+            {
+              "id": "local",
+              "label": "Local"
+            },
+            {
+              "id": "universal",
+              "label": "Universal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [],
+  "expressions": [
+    {
+      "id": "toString",
+      "name": "ToString",
+      "description": "Convert a time stamp to a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a string"
+        }
+      ]
+    },
+    {
+      "id": "toDateString",
+      "name": "ToDateString",
+      "description": "Convert a time stamp to a date string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a date string"
+        }
+      ]
+    },
+    {
+      "id": "toTimeString",
+      "name": "ToTimeString",
+      "description": "Convert a time stamp to a time string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a time string"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleString",
+      "name": "ToLocaleString",
+      "description": "Convert a time stamp to a localized string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a localized string"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleDateString",
+      "name": "ToLocaleDateString",
+      "description": "Convert a time stamp to a localized date string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a localized date string"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleTimeString",
+      "name": "ToLocaleTimeString",
+      "description": "Convert a time stamp to a localized time string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a localized time string"
+        }
+      ]
+    },
+    {
+      "id": "toUTCString",
+      "name": "ToUTCString",
+      "description": "Convert a time stamp to a string using the UTC time zone.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to convert to a string"
+        }
+      ]
+    },
+    {
+      "id": "parse",
+      "name": "Parse",
+      "description": "Convert a date string to a time stamp.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "dateString",
+          "name": "Date string",
+          "description": "The date string to convert to a time stamp"
+        }
+      ]
+    },
+    {
+      "id": "getYear",
+      "name": "GetYear",
+      "description": "Get the year of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCYear",
+      "name": "GetUTCYear",
+      "description": "Get the year of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getMonth",
+      "name": "GetMonth",
+      "description": "Get the month (0–11) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMonth",
+      "name": "GetUTCMonth",
+      "description": "Get the month (0–11) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getDate",
+      "name": "GetDate",
+      "description": "Get the date of the month (1-31) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCDate",
+      "name": "GetUTCDate",
+      "description": "Get the date of the month (1-31) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getDay",
+      "name": "GetDay",
+      "description": "Get the day (0-6) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCDay",
+      "name": "GetUTCDay",
+      "description": "Get the day (0-6) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getHours",
+      "name": "GetHours",
+      "description": "Get the hours (0-23) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCHours",
+      "name": "GetUTCHours",
+      "description": "Get the hours (0-23) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getMinutes",
+      "name": "GetMinutes",
+      "description": "Get the minutes (0-59) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMinutes",
+      "name": "GetUTCMinutes",
+      "description": "Get the minutes (0-59) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getSeconds",
+      "name": "GetSeconds",
+      "description": "Get the seconds (0-59) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCSeconds",
+      "name": "GetUTCSeconds",
+      "description": "Get the seconds (0-59) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getMilliseconds",
+      "name": "GetMilliseconds",
+      "description": "Get the milliseconds (0-999) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMilliseconds",
+      "name": "GetUTCMilliseconds",
+      "description": "Get the milliseconds (0-999) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to extract information from"
+        }
+      ]
+    },
+    {
+      "id": "changeYear",
+      "name": "ChangeYear",
+      "description": "Change the year of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "year",
+          "name": "Year",
+          "description": "The new year"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCYear",
+      "name": "ChangeUTCYear",
+      "description": "Change the year of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "year",
+          "name": "Year",
+          "description": "The new year"
+        }
+      ]
+    },
+    {
+      "id": "changeMonth",
+      "name": "ChangeMonth",
+      "description": "Change the month (0–11) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "month",
+          "name": "Month",
+          "description": "The new month"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMonth",
+      "name": "ChangeUTCMonth",
+      "description": "Change the month (0–11) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "month",
+          "name": "Month",
+          "description": "The new month"
+        }
+      ]
+    },
+    {
+      "id": "changeDate",
+      "name": "ChangeDate",
+      "description": "Change the date of the month (1-31) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "date",
+          "name": "Date",
+          "description": "The new date"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCDate",
+      "name": "ChangeUTCDate",
+      "description": "Change the date of the month (1-31) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "date",
+          "name": "Date",
+          "description": "The new date"
+        }
+      ]
+    },
+    {
+      "id": "changeDay",
+      "name": "ChangeDay",
+      "description": "Change the day (0-6) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "day",
+          "name": "Day",
+          "description": "The new day"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCDay",
+      "name": "ChangeUTCDay",
+      "description": "Change the day (0-6) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "day",
+          "name": "Day",
+          "description": "The new day"
+        }
+      ]
+    },
+    {
+      "id": "changeHours",
+      "name": "ChangeHours",
+      "description": "Change the hours (0-23) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "hours",
+          "name": "Hours",
+          "description": "The new hours"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCHours",
+      "name": "ChangeUTCHours",
+      "description": "Change the hours (0-23) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "hours",
+          "name": "Hours",
+          "description": "The new hours"
+        }
+      ]
+    },
+    {
+      "id": "changeMinutes",
+      "name": "ChangeMinutes",
+      "description": "Change the minutes (0-59) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "minutes",
+          "name": "Minutes",
+          "description": "The new minutes"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMinutes",
+      "name": "ChangeUTCMinutes",
+      "description": "Change the minutes (0-59) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "minutes",
+          "name": "Minutes",
+          "description": "The new minutes"
+        }
+      ]
+    },
+    {
+      "id": "changeSeconds",
+      "name": "ChangeSeconds",
+      "description": "Change the seconds (0-59) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "seconds",
+          "name": "Seconds",
+          "description": "The new seconds"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCSeconds",
+      "name": "ChangeUTCSeconds",
+      "description": "Change the seconds (0-59) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "seconds",
+          "name": "Seconds",
+          "description": "The new seconds"
+        }
+      ]
+    },
+    {
+      "id": "changeMilliseconds",
+      "name": "ChangeMilliseconds",
+      "description": "Change the milliseconds (0-999) of the specified date according to local time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The new milliseconds"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMilliseconds",
+      "name": "ChangeUTCMilliseconds",
+      "description": "Change the milliseconds (0-999) of the specified date according to universal time.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "TimeStamp",
+          "description": "The time stamp to modify"
+        },
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The new milliseconds"
+        }
+      ]
+    },
+    {
+      "id": "difference",
+      "name": "Difference",
+      "description": "The difference between two time stamps.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "firstTimeStamp",
+          "name": "FirstTimeStamp",
+          "description": "The first time stamp"
+        },
+        {
+          "id": "secondTimeStamp",
+          "name": "SecondTimeStamp",
+          "description": "The second time stamp"
+        }
+      ]
+    },
+    {
+      "id": "get",
+      "name": "Get",
+      "description": "Get a universal time stamp from the specified parts of a date.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "year",
+          "name": "Year",
+          "description": "The year of the new time stamp"
+        },
+        {
+          "id": "month",
+          "name": "Month",
+          "description": "The month of the new time stamp (0 - 11)"
+        },
+        {
+          "id": "day",
+          "name": "Day",
+          "description": "The day of the new time stamp (1 - 31)"
+        },
+        {
+          "id": "hours",
+          "name": "Hours",
+          "description": "The hours of the new time stamp (0 - 23)"
+        },
+        {
+          "id": "minutes",
+          "name": "Minutes",
+          "description": "The minutes of the new time stamp (0 - 59)"
+        },
+        {
+          "id": "seconds",
+          "name": "Seconds",
+          "description": "The seconds of the new time stamp (0 - 59)"
+        },
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds of the new time stamp (0 - 999)"
+        }
+      ]
+    },
+    {
+      "id": "now",
+      "name": "Now",
+      "description": "Get a time stamp for the current time.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timezoneOffset",
+      "name": "TimezoneOffset",
+      "description": "The offset, in minutes, from the local host to universal time.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "toTimerHours",
+      "name": "ToTimerHours",
+      "description": "Convert milliseconds to the equivalent elapsed hours count. The result is always a whole number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTimerMinutes",
+      "name": "ToTimerMinutes",
+      "description": "Convert milliseconds to the equivalent elapsed minutes count. The result is always a whole number in the range (0 - 59).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTimerSeconds",
+      "name": "ToTimerSeconds",
+      "description": "Convert milliseconds to the equivalent elapsed seconds count. The result is always a whole number in the range (0 - 59).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTimerMilliseconds",
+      "name": "ToTimerMilliseconds",
+      "description": "Convert milliseconds to the equivalent elapsed milliseconds count. The result is always a whole number in the range (0 - 999).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTotalHours",
+      "name": "ToTotalHours",
+      "description": "Convert milliseconds to the equivalent hours.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTotalMinutes",
+      "name": "ToTotalMinutes",
+      "description": "Convert milliseconds to the equivalent minutes.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "toTotalSeconds",
+      "name": "ToTotalSeconds",
+      "description": "Convert milliseconds to the equivalent seconds.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "Milliseconds",
+          "description": "The milliseconds to convert"
+        }
+      ]
+    },
+    {
+      "id": "format-date-with-styles",
+      "name": "FormatDateWithStyles",
+      "description": "Format a timestamp with a locale and the specified styles",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "Locale",
+          "description": "The locale to use for formatting"
+        },
+        {
+          "id": "time-stamp",
+          "name": "Timestamp",
+          "description": "The UTC timestamp to format"
+        },
+        {
+          "id": "date-style",
+          "name": "Date style",
+          "description": "Optional date style can be any of 'full', 'long', 'medium' or 'short'. Ignore using an empty string"
+        },
+        {
+          "id": "time-style",
+          "name": "Time style",
+          "description": "Optional time style can be any of 'full', 'long', 'medium' or 'short'. Ignore using an empty string"
+        },
+        {
+          "id": "hour-format",
+          "name": "Hour format",
+          "description": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
+        }
+      ]
+    },
+    {
+      "id": "format-date-with-components",
+      "name": "FormatDateWithComponents",
+      "description": "Format a timestamp with a locale and the specified components",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "Locale",
+          "description": "The locale to use for formatting"
+        },
+        {
+          "id": "time-stamp",
+          "name": "Timestamp",
+          "description": "The UTC timestamp to format"
+        },
+        {
+          "id": "weekday",
+          "name": "Weekday",
+          "description": "Optional week day format can be any of 'long', 'short' or 'narrow'. Ignore using an empty string"
+        },
+        {
+          "id": "year",
+          "name": "Year",
+          "description": "Optional year format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
+        },
+        {
+          "id": "month",
+          "name": "Month",
+          "description": "Optional month format can be any of 'numeric', '2-digit', 'long', 'short' or 'narrow'. Ignore using an empty string"
+        },
+        {
+          "id": "day",
+          "name": "Day",
+          "description": "Optional day format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
+        },
+        {
+          "id": "hour",
+          "name": "Hour",
+          "description": "Optional hour format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
+        },
+        {
+          "id": "minute",
+          "name": "Minute",
+          "description": "Optional minute format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
+        },
+        {
+          "id": "second",
+          "name": "Second",
+          "description": "Optional second format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
+        },
+        {
+          "id": "hour-format",
+          "name": "Hour format",
+          "description": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
+        }
+      ]
+    },
+    {
+      "id": "export-timestamp",
+      "name": "ExportTimestamp",
+      "description": "Get the time stamp for when the project was exported from the editor.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 0,
+    "expressions": 54
+  }
+}

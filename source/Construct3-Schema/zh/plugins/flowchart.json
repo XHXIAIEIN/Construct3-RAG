@@ -1,0 +1,899 @@
+{
+  "id": "flowchart",
+  "name": "流程图",
+  "description": "在事件表控制流程图。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-any-node-change",
+      "name": "进入任意节点",
+      "description": "到达任意节点时触发。",
+      "display_text": "进入任意节点",
+      "params": []
+    },
+    {
+      "id": "on-tagged-node-change-in-flowchart",
+      "name": "进入节点",
+      "description": "流程到达特定节点时触发。",
+      "display_text": "进入流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要定位的流程的标签。"
+        },
+        {
+          "id": "node-tag",
+          "name": "节点标签",
+          "description": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-node-change-in-flowchart",
+      "name": "进入任意节点",
+      "description": "流程到达任何节点时触发。",
+      "display_text": "进入流程 [b]{0}[/b] 任意节点",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要定位的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-at-start-node",
+      "name": "是起始节点",
+      "description": "检查当前节点是否为起始节点。",
+      "display_text": "是起始节点",
+      "params": []
+    },
+    {
+      "id": "is-at-start-node-in-flowchart",
+      "name": "是起始节点",
+      "description": "检查当前节点是否位于流程的起始节点。",
+      "display_text": "流程 [b]{0}[/b] 位于起始节点",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要定位的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "has-flow-chart",
+      "name": "存在流程",
+      "description": "检查是否存在指定标签的流程",
+      "display_text": "存在流程 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要检查的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-before-flowchart-change",
+      "name": "退出任意流程",
+      "description": "退出任意流程时触发。",
+      "display_text": "退出任意流程",
+      "params": []
+    },
+    {
+      "id": "on-before-any-node-change",
+      "name": "离开任意节点",
+      "description": "离开任意节点时触发。",
+      "display_text": "离开任意节点",
+      "params": []
+    },
+    {
+      "id": "on-before-tagged-node-change",
+      "name": "离开节点",
+      "description": "离开指定节点时触发。",
+      "display_text": "离开节点 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "node-tag",
+          "name": "节点标签",
+          "description": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。"
+        }
+      ]
+    },
+    {
+      "id": "on-before-any-node-change-in-flowchart",
+      "name": "离开任意节点",
+      "description": "离开指定流程中的任意节点时触发。",
+      "display_text": "离开流程 [b]{0}[/b] 任意节点",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要定位的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-before-tagged-node-change-in-flowchart",
+      "name": "离开节点",
+      "description": "离开指定流程的指定节点时触发。",
+      "display_text": "离开流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要定位的流程的标签。"
+        },
+        {
+          "id": "node-tag",
+          "name": "节点标签",
+          "description": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。"
+        }
+      ]
+    },
+    {
+      "id": "compare-output-count",
+      "name": "比较输出数量",
+      "description": "比较当前节点的输出数量。",
+      "display_text": "输出数量 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "输出",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-output-name",
+      "name": "比较输出名称",
+      "description": "比较当前节点的输出名称。",
+      "display_text": "输出 {0} 名称 {1} {2}",
+      "params": [
+        {
+          "id": "output-index",
+          "name": "输出编号",
+          "description": "要比较输出名称的编号。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "输出",
+          "description": "用于比较的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "compare-output-value",
+      "name": "比较输出值",
+      "description": "比较当前节点中，指定输出名称的输出值。",
+      "display_text": "输出 {0} 值 {1} {2}",
+      "params": [
+        {
+          "id": "output-index-or-name",
+          "name": "编号或名称",
+          "description": "要获取输出值的输出名称或编号，编号从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "输出",
+          "description": "用于比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-node-tag",
+      "name": "比较节点标签",
+      "description": "用于比较当前节点的标签。",
+      "display_text": "节点标签 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "输出",
+          "description": "与当前节点的标签进行比较的值，用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "compare-flowchart-tag",
+      "name": "比较流程标签",
+      "description": "比较当前流程的标签。",
+      "display_text": "流程标签 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择比较值的方法。"
+        },
+        {
+          "id": "value",
+          "name": "输出",
+          "description": "要比较的对应流程标签的值。"
+        }
+      ]
+    },
+    {
+      "id": "has-output",
+      "name": "存在输出",
+      "description": "检查当前节点中，是否存在指定名称或编号的输出。",
+      "display_text": "存在输出 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "output-index-or-name",
+          "name": "编号或名称",
+          "description": "要检查的输出名称或编号，编号从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "output-name-match-regex",
+      "name": "匹配输出名称 (正则表达式)",
+      "description": "通过正则表达式，匹配指定编号的输出名称。",
+      "display_text": "匹配输出名称: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "index",
+          "name": "0",
+          "description": "要检查的输出的编号，从 0 开始计数。"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "用于测试输出名称的正则表达式。"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "正则表达式的修饰符"
+        }
+      ]
+    },
+    {
+      "id": "output-value-match-regex",
+      "name": "匹配输出值 (正则表达式)",
+      "description": "通过正则表达式，匹配指定编号的输出值。",
+      "display_text": "匹配输出值: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "index-or-name",
+          "name": "编号或名称",
+          "description": "要匹配的输出名称或编号，编号从 0 开始计数。"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "用于测试输出值的正则表达式。"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "正则表达式的修饰符"
+        }
+      ]
+    },
+    {
+      "id": "on-flowchart-change",
+      "name": "进入任意流程",
+      "description": "进入新的流程时触发。",
+      "display_text": "进入任意流程",
+      "params": []
+    },
+    {
+      "id": "on-tagged-node-change",
+      "name": "进入节点",
+      "description": "流程到达特定节点时触发。",
+      "display_text": "进入 [b]{0}[/b] 节点",
+      "params": [
+        {
+          "id": "node-tag",
+          "name": "节点标签",
+          "description": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。"
+        }
+      ]
+    },
+    {
+      "id": "for-each-output",
+      "name": "遍历输出",
+      "description": "在当前节点中，对每项输出重复执行一些动作。",
+      "display_text": "遍历输出",
+      "params": []
+    },
+    {
+      "id": "compare-node-tag-count",
+      "name": "比较节点标签数量",
+      "description": "比较当前节点的标签数量。",
+      "display_text": "节点标签数量 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "与节点标签数量进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-output-name-default",
+      "name": "比较默认输出名称",
+      "description": "与当前节点的默认输出名称进行比较。",
+      "display_text": "默认输出名称 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "用于比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-output-value-default",
+      "name": "比较默认输出值",
+      "description": "比较当前节点的默认输出值。",
+      "display_text": "默认输出值 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要与输出进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "has-output-default",
+      "name": "存在默认输出",
+      "description": "检查是否有默认输出。",
+      "display_text": "存在默认输出",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "start-flowchart",
+      "name": "开始流程",
+      "description": "开始新的流程。",
+      "display_text": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "flowchart-name",
+          "name": "流程名称",
+          "description": "要启动的流程。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "用于稍后标识此流程图进程的标签。"
+        },
+        {
+          "id": "set-as-current",
+          "name": "设为当前流程",
+          "description": "将此流程成为创建时的当前流程。"
+        },
+        {
+          "id": "start-node-tag",
+          "name": "起始节点标签",
+          "description": "流程起始的节点标签，用空格分隔多个标签。如果匹配多项结果，则选择第一个。留空则使用默认起始节点。"
+        }
+      ]
+    },
+    {
+      "id": "start-flowchart-by-name",
+      "name": "开始流程 (按名称)",
+      "description": "开始新的流程。",
+      "display_text": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i]))",
+      "params": [
+        {
+          "id": "flowchart-name",
+          "name": "流程名称",
+          "description": "要启动的流程的名称。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "用于稍后标识此流程图进程的标签。"
+        },
+        {
+          "id": "set-as-current",
+          "name": "设为当前流程",
+          "description": "将此流程成为创建时的当前流程。"
+        },
+        {
+          "id": "start-node-tag",
+          "name": "起始节点标签",
+          "description": "流程起始的节点标签，用空格分隔多个标签。如果匹配到多项结果，则选择第一个。留空则使用默认起始节点。"
+        }
+      ]
+    },
+    {
+      "id": "set-flowchart",
+      "name": "设置流程",
+      "description": "设置当前流程，用于后续对节点的操作。",
+      "display_text": "设置当前流程(标签:  [b]{0}[/b])",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要设置为当前流程图的标签。"
+        }
+      ]
+    },
+    {
+      "id": "end-flowchart",
+      "name": "退出流程",
+      "description": "退出当前流程。这将立即结束已创建的流程，不再拥有当前流程图的信息。",
+      "display_text": "退出当前流程",
+      "params": []
+    },
+    {
+      "id": "end-flowchart-by-tag",
+      "name": "退出流程 (按标签)",
+      "description": "通过标签，结束指定流程。",
+      "display_text": "结束流程 (标签: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要结束的流程标签。"
+        }
+      ]
+    },
+    {
+      "id": "reset-flowchart",
+      "name": "重置流程",
+      "description": "重置当前的流程。此操作将当前节点设置回默认起始节点，并清除之前的节点。",
+      "display_text": "重置当前流程",
+      "params": []
+    },
+    {
+      "id": "reset-flowchart-by-tag",
+      "name": "重置流程 (按标签)",
+      "description": "重置指定标签的流程。将当前节点重置到默认开始节点，并清除之前的节点。",
+      "display_text": "重置流程 (标签: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要重置的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "goto-next-flowchart-node",
+      "name": "跳转到下一个节点",
+      "description": "跳转到当前流程中的下一个节点。",
+      "display_text": "跳转到下一个节点(编号: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "index-or-name",
+          "name": "编号或名称",
+          "description": "要跳转到的目标输出名称或编号，编号从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "goto-any-flowchart-node",
+      "name": "跳转到节点",
+      "description": "跳转到当前流程图中的节点。",
+      "display_text": "跳转到节点 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "node-tag",
+          "name": "节点标签",
+          "description": "要跳转到的节点标签。用空格分隔多个标签。如果匹配到多项结果，则选择第一个。"
+        }
+      ]
+    },
+    {
+      "id": "goto-previous-flowchart-node",
+      "name": "跳转到上一个节点",
+      "description": "转到当前流程的上一个节点。",
+      "display_text": "跳转到上一个节点",
+      "params": []
+    },
+    {
+      "id": "goto-parent-flowchart-node",
+      "name": "跳转到父节点",
+      "description": "转到当前流程节点的父节点。",
+      "display_text": "跳转到父节点(编号: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "index-or-tag",
+          "name": "编号或标签",
+          "description": "要跳转到父节点的索引或标签。使用标签时，用空格分隔多个标签。如果匹配到多项结果，则选择第一个。"
+        }
+      ]
+    },
+    {
+      "id": "goto-next-flowchart-node-default",
+      "name": "跳转到默认节点",
+      "description": "通过默认输出转到当前流程图的下一个节点。如果不是默认，则不会发生任何事情。",
+      "display_text": "跳转到默认输出",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "current-flowchart-tag",
+      "name": "流程标签",
+      "description": "获取当前流程的标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-output-name-at",
+      "name": "获取节点输出名称",
+      "description": "获取指定编号的输出名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的输出的名称的编号。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-value",
+      "name": "输出值",
+      "description": "获取当前节点中，指定名称或编号的输出值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index-or-name",
+          "name": "编号或名称",
+          "description": "要获取的输出名称或编号，编号从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-tag-in-flowchart",
+      "name": "获取流程节点标签",
+      "description": "获取指定流程图中，当前节点的完整标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-count-in-flowchart",
+      "name": "获取流程输出数量",
+      "description": "获取指定流程图中，当前节点的输出数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-name-at-in-flowchart",
+      "name": "获取流程输出名称",
+      "description": "获取指定流程中，当前节点的输出名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的输出名称的编号，从 0 开始计数。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-value-in-flowchart",
+      "name": "获取流程输出值",
+      "description": "获取指定流程中，当前节点的输出值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index-or-name",
+          "name": "编号或名称",
+          "description": "要获取的输出值的名称或编号。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "获取流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-parent-count-in-flowchart",
+      "name": "获取流程父节点数量",
+      "description": "获取指定流程中当前节点的父节点数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-parent-tag-in-flowchart",
+      "name": "获取流程父节点标签",
+      "description": "获取指定的流程图中，当前节点的父节点的完整标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "parent-index",
+          "name": "父节点编号",
+          "description": "要获取标签的父节点的索引，从 0 开始计数。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-parent-index-in-flowchart",
+      "name": "获取流程父节点编号",
+      "description": "获取指定流程中当前节点的父节点的编号。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        },
+        {
+          "id": "parent-tag",
+          "name": "父节点标签",
+          "description": "要获取的父节点的标签，使用空格分隔多个标签。如果没有找到匹配的结果，则返回 -1。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-tag",
+      "name": "节点标签",
+      "description": "获取当前节点的完整标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-output-count",
+      "name": "获取节点输出数量",
+      "description": "获取当前节点中，输出的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-parent-count",
+      "name": "父节点数量",
+      "description": "获取当前节点的父节点数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-parent-tag",
+      "name": "父节点标签",
+      "description": "获取当前流程图中，当前节点的父节点的完整标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "parent-index",
+          "name": "父节点编号",
+          "description": "要获取其标签的父节点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-parent-index",
+      "name": "父节点编号",
+      "description": "获取当前节点的父节点的编号。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "parent-tag",
+          "name": "父节点标签",
+          "description": "要获取的父节点的标签，使用空格分隔多个标签。如果没有找到匹配的结果，则返回 -1。"
+        }
+      ]
+    },
+    {
+      "id": "cur-output-name",
+      "name": "当前输出名称",
+      "description": "在 '遍历输出' 条件中，当前循环的输出名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cur-output-value",
+      "name": "当前输出值",
+      "description": "在 '遍历输出' 条件中，当前循环的输出值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-tag-at",
+      "name": "获取节点标签",
+      "description": "获取当前节点指定索引位置的标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的标签的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-tag-count",
+      "name": "节点标签数量",
+      "description": "获取当前节点的标签数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-parent-tag-at",
+      "name": "获取父节点标签",
+      "description": "获取当前节点的父节点标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "parent-index",
+          "name": "父节点索引",
+          "description": "要获取其标签的父节点的索引，从 0 开始计数。"
+        },
+        {
+          "id": "tag-index",
+          "name": "标签索引",
+          "description": "标签的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-tag-at-in-flowchart",
+      "name": "流程节点标签",
+      "description": "获取指定的流程图中，当前节点的某个标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引，从 0 开始计数。",
+          "description": "标签的索引"
+        }
+      ]
+    },
+    {
+      "id": "current-node-tag-count-in-flowchart",
+      "name": "获取流程节点标签数量",
+      "description": "获取指定流程图中，当前节点的标签数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-parent-tag-at-in-flowchart",
+      "name": "获取当前流程父节点标签",
+      "description": "获取指定的流程图中，当前节点的父节点的标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "parent-index",
+          "name": "父节点索引",
+          "description": "要获取其标签的父节点的索引，从 0 开始计数。"
+        },
+        {
+          "id": "tag-index",
+          "name": "标签索引",
+          "description": "标签的索引，从 0 开始计数。"
+        },
+        {
+          "id": "flowchart-tag",
+          "name": "流程标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-name-default",
+      "name": "默认输出名称",
+      "description": "获取当前流程图中当前节点的默认输出的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-output-value-default",
+      "name": "默认输出值",
+      "description": "获取当前流程图中当前节点的默认输出的值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-node-output-name-default-in-flowchart",
+      "name": "流程图默认输出名称",
+      "description": "获取指定流程图中当前节点的默认输出的名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程图标签",
+          "description": "要获取的流程的标签。"
+        }
+      ]
+    },
+    {
+      "id": "current-node-output-value-default-in-flowchart",
+      "name": "默认流程图输出值",
+      "description": "获取特定流程图中当前节点的默认输出值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "flowchart-tag",
+          "name": "流程图标签",
+          "description": "要获取信息的流程图的标签。"
+        }
+      ]
+    },
+    {
+      "id": "cur-output-default",
+      "name": "默认当前输出状态",
+      "description": "在 '遍历输出' 条件中，检查当前是否为默认输出。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 26,
+    "actions": 12,
+    "expressions": 28
+  }
+}

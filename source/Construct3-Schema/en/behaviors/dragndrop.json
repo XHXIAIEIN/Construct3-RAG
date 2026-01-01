@@ -1,0 +1,101 @@
+{
+  "id": "dragndrop",
+  "name": "Drag & Drop",
+  "description": "Drag and drop objects either by mouse or touch.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-dragging",
+      "name": "Is dragging",
+      "description": "True if the object is currently being dragged.",
+      "display_text": "{my} is dragging",
+      "params": []
+    },
+    {
+      "id": "on-drag-start",
+      "name": "On drag start",
+      "description": "Triggered when the object begins to be dragged.",
+      "display_text": "On {my} drag start",
+      "params": []
+    },
+    {
+      "id": "on-drop",
+      "name": "On drop",
+      "description": "Triggered when the object is dropped (the drag stops).",
+      "display_text": "On {my} drop",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "True if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the drag and drop behavior.",
+      "display_text": "Set {my} {0}",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drop",
+      "name": "Drop",
+      "description": "If currently being dragged, force the object to be dropped.",
+      "display_text": "Drop {my}",
+      "params": []
+    },
+    {
+      "id": "set-axes",
+      "name": "Set axes",
+      "description": "Set which ways the object can be dragged.",
+      "display_text": "Set {my} axes [b]{0}[/b]",
+      "params": [
+        {
+          "id": "axes",
+          "name": "Axes",
+          "description": "The ways in which the object can be dragged.",
+          "options": [
+            {
+              "id": "both",
+              "label": "Both"
+            },
+            {
+              "id": "horizontal-only",
+              "label": "Horizontal only"
+            },
+            {
+              "id": "vertical-only",
+              "label": "Vertical only"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 4,
+    "actions": 3,
+    "expressions": 0
+  }
+}

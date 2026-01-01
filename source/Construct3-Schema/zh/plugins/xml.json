@@ -1,0 +1,82 @@
+{
+  "id": "xml",
+  "name": "XML",
+  "description": "从字符串加载XML文件，通过XPath表达式读取XML文档中的数据",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "for-each-node",
+      "name": "遍历节点",
+      "description": "迭代XPath表达式返回的节点",
+      "display_text": "遍历节点 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "要计算的XPath表达式，返回一系列要迭代的节点"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "name": "加载",
+      "description": "从字符串中加载 XML 文档",
+      "display_text": "加载XML数据 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "xml",
+          "name": "XML",
+          "description": "包含待加载的XML文档的字符串"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "numbervalue",
+      "name": "数字值",
+      "description": "从XPath表达式中检索单个数值",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "待解析的XPath表达式"
+        }
+      ]
+    },
+    {
+      "id": "stringvalue",
+      "name": "字符串值",
+      "description": "从XPath表达式中检索单个字符串",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "待解析的XPath表达式"
+        }
+      ]
+    },
+    {
+      "id": "nodecount",
+      "name": "节点数量",
+      "description": "计算XPath表达式返回的节点数",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "待解析的XPath表达式"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 3
+  }
+}

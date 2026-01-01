@@ -1,0 +1,150 @@
+{
+  "id": "speechsynthesis",
+  "name": "Speech synthesis",
+  "description": "Use a text-to-speech engine to automatically read text aloud.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "supports-speech-synthesis",
+      "name": "Supports speech synthesis",
+      "description": "True if the current browser supports speech synthesis.",
+      "display_text": "Supports speech synthesis",
+      "params": []
+    },
+    {
+      "id": "is-speaking",
+      "name": "Is speaking",
+      "description": "True if currently speaking some text.",
+      "display_text": "Is speaking",
+      "params": []
+    },
+    {
+      "id": "on-speech-ended",
+      "name": "On speech ended",
+      "description": "Triggered when a phrase finishes being spoken.",
+      "display_text": "On speech ended",
+      "params": []
+    },
+    {
+      "id": "on-speech-error",
+      "name": "On speech error",
+      "description": "Triggered if an error occurs when trying to speak text.",
+      "display_text": "On speech error",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "speak-text",
+      "name": "Speak text",
+      "description": "Read out some text with speech synthesis.",
+      "display_text": "Speak text [b]{0}[/b] (language [i]{1}[/i], voice URI [i]{2}[/i], volume [i]{3}[/i] dB, rate [i]{4}[/i], pitch [i]{5}[/i])",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The text to be spoken."
+        },
+        {
+          "id": "language",
+          "name": "Language",
+          "description": "The language of the text, e.g. \"en-US\" for US English. Leave empty to use the default language."
+        },
+        {
+          "id": "voice-uri",
+          "name": "Voice URI",
+          "description": "The voice to use. Leave empty to use the default voice."
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The volume to speak the text at, in dB attenuation."
+        },
+        {
+          "id": "rate",
+          "name": "Rate",
+          "description": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast."
+        },
+        {
+          "id": "pitch",
+          "name": "Pitch",
+          "description": "The relative pitch at which to speak, between 0 and 2."
+        }
+      ]
+    },
+    {
+      "id": "stop-speaking",
+      "name": "Stop speaking",
+      "description": "Cancel any active speech synthesis.",
+      "display_text": "Stop speaking",
+      "params": []
+    },
+    {
+      "id": "pause-speaking",
+      "name": "Pause speaking",
+      "description": "Pause any active speech synthesis.",
+      "display_text": "Pause speaking",
+      "params": []
+    },
+    {
+      "id": "resume-speaking",
+      "name": "Resume speaking",
+      "description": "Resume a previously paused speech synthesis.",
+      "display_text": "Resume speaking",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "voicecount",
+      "name": "VoiceCount",
+      "description": "Return the number of available voices.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "voicenameat",
+      "name": "VoiceNameAt",
+      "description": "Return the name of a voice at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the voice."
+        }
+      ]
+    },
+    {
+      "id": "voicelangat",
+      "name": "VoiceLangAt",
+      "description": "Return the language of a voice at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the voice."
+        }
+      ]
+    },
+    {
+      "id": "voiceuriat",
+      "name": "VoiceURIAt",
+      "description": "Return the URI of a voice at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the voice."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 4,
+    "expressions": 4
+  }
+}

@@ -1,0 +1,677 @@
+{
+  "id": "constructgameservices",
+  "name": "Construct Game Services",
+  "description": "Access Construct-hosted game services such as leaderboards.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-success",
+      "name": "On success",
+      "description": "Triggered after various actions upon completing successfully.",
+      "display_text": "On {0} success",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The type of action to check completed successfully.",
+          "options": [
+            {
+              "id": "sign-in-with-provider",
+              "label": "sign in with provider"
+            },
+            {
+              "id": "sign-in-persistent",
+              "label": "sign in persistent"
+            },
+            {
+              "id": "submit-score",
+              "label": "submit score"
+            },
+            {
+              "id": "get-scores",
+              "label": "get scores"
+            },
+            {
+              "id": "set-player-name",
+              "label": "set player name"
+            },
+            {
+              "id": "any-create-cloud-save",
+              "label": "any create cloud save"
+            },
+            {
+              "id": "any-get-cloud-save",
+              "label": "any get cloud save"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered after various actions upon failing to complete.",
+      "display_text": "On {0} error",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The type of action to check if failed.",
+          "options": [
+            {
+              "id": "sign-in-with-provider",
+              "label": "sign in with provider"
+            },
+            {
+              "id": "sign-in-persistent",
+              "label": "sign in persistent"
+            },
+            {
+              "id": "submit-score",
+              "label": "submit score"
+            },
+            {
+              "id": "get-scores",
+              "label": "get scores"
+            },
+            {
+              "id": "set-player-name",
+              "label": "set player name"
+            },
+            {
+              "id": "any-create-cloud-save",
+              "label": "any create cloud save"
+            },
+            {
+              "id": "any-get-cloud-save",
+              "label": "any get cloud save"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-signed-in",
+      "name": "Is signed in",
+      "description": "True if the player is currently signed in.",
+      "display_text": "Is signed in",
+      "params": []
+    },
+    {
+      "id": "can-sign-in-persistent",
+      "name": "Can sign in persistent",
+      "description": "True if a previous sign in which allowed persisting is available.",
+      "display_text": "Can sign in persistent",
+      "params": []
+    },
+    {
+      "id": "on-sign-in-popup-blocked",
+      "name": "On sign in popup blocked",
+      "description": "Triggered when the browser popup blocker prevents the sign in popup window appearing.",
+      "display_text": "On sign in popup blocked",
+      "params": []
+    },
+    {
+      "id": "on-create-cloud-save-success",
+      "name": "On create success",
+      "description": "Triggered when creating a cloud save completes successfully.",
+      "display_text": "On create cloud save [b]{0}[/b] success (bucket [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        }
+      ]
+    },
+    {
+      "id": "on-create-cloud-save-error",
+      "name": "On create error",
+      "description": "Triggered when creating a cloud save fails to complete.",
+      "display_text": "On create cloud save [b]{0}[/b] error (bucket [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-success",
+      "name": "On get success",
+      "description": "Triggered when retrieving a cloud save completes successfully.",
+      "display_text": "On get cloud save [b]{0}[/b] success (bucket [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-binary-success",
+      "name": "On get binary success",
+      "description": "Triggered when retrieving a binary cloud save completes successfully.",
+      "display_text": "On get binary cloud save [b]{0}[/b] to {2} success (bucket [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        },
+        {
+          "id": "data",
+          "name": "Binary Data",
+          "description": "The Binary Data object to receive the cloud save data."
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-error",
+      "name": "On get error",
+      "description": "Triggered when retrieving a cloud save fails to complete.",
+      "display_text": "On get cloud save [b]{0}[/b] error (bucket [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "submit-score",
+      "name": "Submit score",
+      "description": "Submit a score to a leaderboard.",
+      "display_text": "Submit score [b]{0}[/b] to leaderboard [i]{1}[/i]",
+      "params": [
+        {
+          "id": "score",
+          "name": "Score",
+          "description": "The score to submit. Must be an integer."
+        },
+        {
+          "id": "leaderboard-id",
+          "name": "Leaderboard ID",
+          "description": "The ID of the leaderboard to modify. Leave empty for the Construct Arcade."
+        }
+      ]
+    },
+    {
+      "id": "sign-in-with-provider",
+      "name": "Sign in with provider",
+      "description": "Sign in with a third-party identity service.",
+      "display_text": "Sign in with [b]{0}[/b] for game ID [i]{1}[/i] (allow persisting [i]{2}[/i], expiry [i]{3}[/i] minutes, popup window [i]{4}[/i] x [i]{5}[/i])",
+      "params": [
+        {
+          "id": "provider",
+          "name": "Provider",
+          "description": "The third-party service to sign in with.",
+          "options": [
+            {
+              "id": "apple",
+              "label": "Apple"
+            },
+            {
+              "id": "battle-net",
+              "label": "Battle.net"
+            },
+            {
+              "id": "discord",
+              "label": "Discord"
+            },
+            {
+              "id": "facebook",
+              "label": "Facebook"
+            },
+            {
+              "id": "google",
+              "label": "Google"
+            },
+            {
+              "id": "microsoft",
+              "label": "Microsoft"
+            },
+            {
+              "id": "reddit",
+              "label": "Reddit"
+            },
+            {
+              "id": "steam",
+              "label": "Steam"
+            },
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "yandex",
+              "label": "Yandex"
+            },
+            {
+              "id": "github",
+              "label": "GitHub"
+            },
+            {
+              "id": "itch-io",
+              "label": "itch.io"
+            },
+            {
+              "id": "twitch",
+              "label": "Twitch"
+            }
+          ]
+        },
+        {
+          "id": "game-id",
+          "name": "Game ID",
+          "description": "The ID of the game to sign in to."
+        },
+        {
+          "id": "allow-persisting",
+          "name": "Allow persisting",
+          "description": "Allow re-using this sign in session later on."
+        },
+        {
+          "id": "expiry",
+          "name": "Expiry",
+          "description": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+        },
+        {
+          "id": "popup-window-width",
+          "name": "Popup window width",
+          "description": "The width of the authentication popup window."
+        },
+        {
+          "id": "popup-window-height",
+          "name": "Popup window height",
+          "description": "The height of the authentication popup window."
+        }
+      ]
+    },
+    {
+      "id": "sign-in-persistent",
+      "name": "Sign in persistent",
+      "description": "Sign in using a previous session that allowed persisting.",
+      "display_text": "Sign in persistent for game ID [i]{0}[/i]",
+      "params": [
+        {
+          "id": "game-id",
+          "name": "Game ID",
+          "description": "The ID of the game to sign in to."
+        }
+      ]
+    },
+    {
+      "id": "sign-out",
+      "name": "Sign out",
+      "description": "Sign out of any account currently signed in to.",
+      "display_text": "Sign out",
+      "params": []
+    },
+    {
+      "id": "get-leaderboard-scores",
+      "name": "Get leaderboard scores",
+      "description": "Retrieve a list of scores from a leaderboard.",
+      "display_text": "Get leaderboard [b]{0}[/b] scores (results per page [i]{1}[/i], page [i]{2}[/i], country [i]{3}[/i], range [i]{4}[/i], range offset [i]{5}[/i], culture [i]{6}[/i])",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "Leaderboard ID",
+          "description": "The ID of the leaderboard to retrieve scores from."
+        },
+        {
+          "id": "results-per-page",
+          "name": "Results per page",
+          "description": "The number of results to retrieve, from 1 to 500."
+        },
+        {
+          "id": "page",
+          "name": "Page",
+          "description": "The zero-based index of the page number to retrieve."
+        },
+        {
+          "id": "country",
+          "name": "Country",
+          "description": "The ISO 3166-1 alpha-2 country code to filter results by. Leave empty to show all counties."
+        },
+        {
+          "id": "range",
+          "name": "Range",
+          "description": "Filter results according to a time period.",
+          "options": [
+            {
+              "id": "all",
+              "label": "All"
+            },
+            {
+              "id": "daily",
+              "label": "Daily"
+            },
+            {
+              "id": "weekly",
+              "label": "Weekly"
+            },
+            {
+              "id": "monthly",
+              "label": "Monthly"
+            },
+            {
+              "id": "yearly",
+              "label": "Yearly"
+            }
+          ]
+        },
+        {
+          "id": "range-offset",
+          "name": "Range offset",
+          "description": "When filtering to a time period, the offset of the time period. For example a daily time period with an offset of 1 retrieves yesterday's scores."
+        },
+        {
+          "id": "culture",
+          "name": "Culture",
+          "description": "The locale to use for returned values. Leave empty to use the leaderboard's default culture."
+        }
+      ]
+    },
+    {
+      "id": "retry-open-sign-in-popup",
+      "name": "Retry sign in popup",
+      "description": "Make another attempt to open the sign in popup window. This should be used in a user input event like a mouse click or touch.",
+      "display_text": "Retry sign in popup",
+      "params": []
+    },
+    {
+      "id": "set-player-name",
+      "name": "Set player name",
+      "description": "Set the name of the currently signed in player.",
+      "display_text": "Set player name to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "name",
+          "name": "Player name",
+          "description": "The player name to set for the currently signed in player."
+        }
+      ]
+    },
+    {
+      "id": "create-cloud-save-text",
+      "name": "Create (text)",
+      "description": "Create a cloud save storing text data.",
+      "display_text": "Create cloud save [b]{0}[/b] bucket [i]{1}[/i] name [i]{2}[/i] with data [b]{3}[/b]",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        },
+        {
+          "id": "name",
+          "name": "Name (optional)",
+          "description": "An optional name for the data, e.g. a file name."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "A string of the data to save."
+        }
+      ]
+    },
+    {
+      "id": "create-cloud-save-binary",
+      "name": "Create (binary)",
+      "description": "Create a cloud save storing binary data.",
+      "display_text": "Create cloud save [b]{0}[/b] bucket [i]{1}[/i] name [i]{2}[/i] with data {3}",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        },
+        {
+          "id": "name",
+          "name": "Name (optional)",
+          "description": "An optional name for the data, e.g. a file name."
+        },
+        {
+          "id": "data",
+          "name": "Binary Data",
+          "description": "The Binary Data object to use as the data to save."
+        }
+      ]
+    },
+    {
+      "id": "get-cloud-save",
+      "name": "Get",
+      "description": "Retrieve the data of a prior cloud save.",
+      "display_text": "Get cloud save [b]{0}[/b] bucket [i]{1}[/i] (type [i]{2}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        {
+          "id": "bucket-id",
+          "name": "Bucket ID",
+          "description": "The storage bucket ID (optional)."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to download as text or binary data.",
+          "options": [
+            {
+              "id": "text",
+              "label": "text"
+            },
+            {
+              "id": "binary",
+              "label": "binary"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "player-id",
+      "name": "PlayerID",
+      "description": "A unique ID for the currently signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-name",
+      "name": "PlayerName",
+      "description": "The display name for the currently signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "game-id",
+      "name": "GameID",
+      "description": "The ID of the game currently signed in to.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-page-count",
+      "name": "TotalPageCount",
+      "description": "The total number of pages when retrieving scores.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "score-count",
+      "name": "ScoreCount",
+      "description": "The number of scores retrieved.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "score-at",
+      "name": "ScoreAt",
+      "description": "The numerical score value at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-formatted-at",
+      "name": "ScoreFormattedAt",
+      "description": "A string of the formatted score at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-rank-at",
+      "name": "ScoreRankAt",
+      "description": "The numerical score rank at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-formatted-rank-at",
+      "name": "ScoreFormattedRankAt",
+      "description": "A string of the formatted score rank at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-country-at",
+      "name": "ScoreCountryAt",
+      "description": "A string of the ISO 3166-1 alpha-2 country code the score at an index was submitted from.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-player-id-at",
+      "name": "ScorePlayerIDAt",
+      "description": "A string of the player ID that submitted the score at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "score-player-name-at",
+      "name": "ScorePlayerNameAt",
+      "description": "A string of the player display name that submitted the score at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "cloud-save-text",
+      "name": "CloudSaveText",
+      "description": "The text data retrieved for a cloud save.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-key",
+      "name": "CloudSaveKey",
+      "description": "The key of the cloud save.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-bucket-id",
+      "name": "CloudSaveBucketID",
+      "description": "The bucket ID of the cloud save.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-name",
+      "name": "CloudSaveName",
+      "description": "The name of the cloud save (if specified).",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 10,
+    "actions": 10,
+    "expressions": 16
+  }
+}

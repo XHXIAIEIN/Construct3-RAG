@@ -1,0 +1,46 @@
+{
+  "id": "jumpthru",
+  "name": "跳跃穿透",
+  "description": "让平台行为识别此对象为实体，也允许从上下两端穿透而过。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试该行为在当前是否启用",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "该对象是否被视为平台。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "设置对象是否被视为平台",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 0
+  }
+}

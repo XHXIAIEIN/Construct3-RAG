@@ -1,0 +1,4354 @@
+{
+  "id": "system",
+  "name": "System",
+  "description": "The System plugin provides access to the Construct engine.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "name": "Is within angle",
+      "description": "Compare if an angle is within X degrees of another angle.",
+      "display_text": "{0} within {1} degrees of {2}",
+      "params": [
+        {
+          "id": "angle-1",
+          "name": "Angle 1",
+          "description": "Angle in degrees to test."
+        },
+        {
+          "id": "within",
+          "name": "Within",
+          "description": "Number of degrees that angle 1 must be within angle 2."
+        },
+        {
+          "id": "angle-2",
+          "name": "Angle 2",
+          "description": "Angle in degrees to test angle 1 against."
+        }
+      ]
+    },
+    {
+      "id": "is-clockwise-from",
+      "name": "Is clockwise from",
+      "description": "Compare if an angle is clockwise from another angle.",
+      "display_text": "{0} is clockwise from {1}",
+      "params": [
+        {
+          "id": "angle-1",
+          "name": "Angle 1",
+          "description": "Angle in degrees to test."
+        },
+        {
+          "id": "angle-2",
+          "name": "Angle 2",
+          "description": "Angle in degrees to test if angle 1 is clockwise from."
+        }
+      ]
+    },
+    {
+      "id": "is-between-angles",
+      "name": "Is between angles",
+      "description": "Compare if an angle is between two angles.",
+      "display_text": "{0} is between {1} and {2} degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle in degrees to test if between the first and second angles."
+        },
+        {
+          "id": "first-angle",
+          "name": "First angle",
+          "description": "First angle in degrees. Specify in clockwise order."
+        },
+        {
+          "id": "second-angle",
+          "name": "Second angle",
+          "description": "Second angle in degrees. Specify in clockwise order."
+        }
+      ]
+    },
+    {
+      "id": "every-tick",
+      "name": "Every tick",
+      "description": "Run the actions once every tick, a.k.a. 'Always'.",
+      "display_text": "Every tick",
+      "params": []
+    },
+    {
+      "id": "compare-two-values",
+      "name": "Compare two values",
+      "description": "Compare two arbitrary values.  This condition does not pick any objects.",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first-value",
+          "name": "First value",
+          "description": "Enter the first value to compare.  This condition does not pick any objects - it is a simple value comparison."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the values."
+        },
+        {
+          "id": "second-value",
+          "name": "Second value",
+          "description": "Enter the second value to compare.  This condition does not pick any objects - it is a simple value comparison."
+        }
+      ]
+    },
+    {
+      "id": "is-group-active",
+      "name": "Is group active",
+      "description": "Test if an event group is currently active.",
+      "display_text": "Group [b]{0}[/b] is active",
+      "params": [
+        {
+          "id": "group-name",
+          "name": "Group name",
+          "description": "The name of the event group to test if active."
+        }
+      ]
+    },
+    {
+      "id": "is-between-values",
+      "name": "Is between values",
+      "description": "Compare if a number is between two values.",
+      "display_text": "{1} ≤ {0} ≤ {2}",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the value to compare."
+        },
+        {
+          "id": "lower-bound",
+          "name": "Lower bound",
+          "description": "The lower value to compare to."
+        },
+        {
+          "id": "upper-bound",
+          "name": "Upper bound",
+          "description": "The upper value to compare to."
+        }
+      ]
+    },
+    {
+      "id": "object-uid-exists",
+      "name": "Object UID exists",
+      "description": "Check if an object with a given UID currently exists.",
+      "display_text": "Object with UID [b]{0}[/b] exists",
+      "params": [
+        {
+          "id": "uid",
+          "name": "UID",
+          "description": "Enter the UID of an object to check if exists."
+        }
+      ]
+    },
+    {
+      "id": "test-regex",
+      "name": "Test regex",
+      "description": "Test if a string matches a regular expression.",
+      "display_text": "[i]{0}[/i] matches regex [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "Enter a string to test the regular expression against."
+        },
+        {
+          "id": "regex",
+          "name": "Regex",
+          "description": "Enter the regular expression to test the string with."
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "description": "Regular expression flags. i = ignore case, g = global match, m = multiline."
+        }
+      ]
+    },
+    {
+      "id": "is-number-nan",
+      "name": "Is number NaN",
+      "description": "Check if a number is the special NaN (Not A Number) value.",
+      "display_text": "{0} is NaN",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "A number to check if matching the special NaN (Not A Number) value."
+        }
+      ]
+    },
+    {
+      "id": "is-value-type",
+      "name": "Is value type",
+      "description": "Test if a value is a number or a string.",
+      "display_text": "{0} is {1}",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to check the type of."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Check which type the value is.",
+          "options": [
+            {
+              "id": "number",
+              "label": "Number"
+            },
+            {
+              "id": "string",
+              "label": "String"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-eventvar",
+      "name": "Compare variable",
+      "description": "Compare the value of a global or local variable.",
+      "display_text": "[b]{0}[/b] {1} {2}",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the variable."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare to the variable."
+        }
+      ]
+    },
+    {
+      "id": "compare-boolean-eventvar",
+      "name": "Is boolean set",
+      "description": "Test if a boolean global or local variable is true.",
+      "display_text": "Is [b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to test if true."
+        }
+      ]
+    },
+    {
+      "id": "layer-is-visible",
+      "name": "Layer is visible",
+      "description": "Test if a layer is currently visible.",
+      "display_text": "Layer [b]{0}[/b] is visible",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of layer to check visibility for."
+        }
+      ]
+    },
+    {
+      "id": "compare-layer-opacity",
+      "name": "Compare opacity",
+      "description": "Compare the opacity of a layer.",
+      "display_text": "Layer [b]{0}[/b] opacity {1} {2}",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of layer to compare opacity."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select the way to compare the layer opacity."
+        },
+        {
+          "id": "opacity",
+          "name": "Opacity",
+          "description": "The opacity to compare to, from 0 (transparent) to 100 (opaque)."
+        }
+      ]
+    },
+    {
+      "id": "on-canvas-snapshot",
+      "name": "On canvas snapshot",
+      "description": "Triggered after 'Snapshot canvas' when the snapshot is ready.",
+      "display_text": "On canvas snapshot",
+      "params": []
+    },
+    {
+      "id": "effects-are-supported",
+      "name": "Effects are supported",
+      "description": "True if shader effects are supported and can be displayed in the game.",
+      "display_text": "Effects are supported",
+      "params": []
+    },
+    {
+      "id": "layer-is-empty",
+      "name": "Layer is empty",
+      "description": "Test if a layer has no objects on it.",
+      "display_text": "Layer [b]{0}[/b] is empty",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of layer to check if empty."
+        }
+      ]
+    },
+    {
+      "id": "for",
+      "name": "For",
+      "description": "Repeat actions with an index variable.",
+      "display_text": "For [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i]",
+      "params": [
+        {
+          "id": "name",
+          "name": "Name",
+          "description": "Choose the name of the loop.  This can be an empty string."
+        },
+        {
+          "id": "start-index",
+          "name": "Start index",
+          "description": "Start index of the loop range (inclusive)."
+        },
+        {
+          "id": "end-index",
+          "name": "End index",
+          "description": "End index of the loop range (inclusive)."
+        }
+      ]
+    },
+    {
+      "id": "for-each",
+      "name": "For Each",
+      "description": "Repeat actions once for each instance of an object.",
+      "display_text": "For each {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
+        }
+      ]
+    },
+    {
+      "id": "repeat",
+      "name": "Repeat",
+      "description": "Repeat actions a certain number of times.",
+      "display_text": "Repeat [b]{0}[/b] times",
+      "params": [
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "Number of times to repeat the actions."
+        }
+      ]
+    },
+    {
+      "id": "while",
+      "name": "While",
+      "description": "Repeat so long as the rest of the conditions in the event are true.",
+      "display_text": "While",
+      "params": []
+    },
+    {
+      "id": "for-each-ordered",
+      "name": "For Each (ordered)",
+      "description": "Repeat actions once for each instance of an object ordered by an expression.",
+      "display_text": "For each {0} order by [i]{1}[/i] {2}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
+        },
+        {
+          "id": "expression",
+          "name": "Expression",
+          "description": "Enter an expression to order the loop with, e.g. Sprite.X"
+        },
+        {
+          "id": "order",
+          "name": "Order",
+          "description": "Whether to loop in ascending or descending order.",
+          "options": [
+            {
+              "id": "ascending",
+              "label": "ascending"
+            },
+            {
+              "id": "descending",
+              "label": "descending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pick-nth-instance",
+      "name": "Pick nth instance",
+      "description": "Pick just the nth instance from the currently picked instances of an object.",
+      "display_text": "Pick {0} instance {1}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick an instance from."
+        },
+        {
+          "id": "instance",
+          "name": "Instance",
+          "description": "Index of the instance to pick (0-based)."
+        }
+      ]
+    },
+    {
+      "id": "pick-random-instance",
+      "name": "Pick random instance",
+      "description": "Pick a single random instance from the currently picked instances of an object.",
+      "display_text": "Pick a random {0} instance",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick a random instance from."
+        }
+      ]
+    },
+    {
+      "id": "pick-all",
+      "name": "Pick all",
+      "description": "Reset the picked instances to select all of them again.",
+      "display_text": "Pick all {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to reset to pick all instances."
+        }
+      ]
+    },
+    {
+      "id": "pick-by-comparison",
+      "name": "Pick by comparison",
+      "description": "Pick instances of an object that meet a comparison.",
+      "display_text": "Pick {0} where {1} {2} {3}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick by comparing with."
+        },
+        {
+          "id": "expression",
+          "name": "Expression",
+          "description": "Enter an expression referencing the chosen object. Instances that meet the comparison will be picked."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose how to compare the above expression for each object."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter a value to compare the expression to for each instance. It can also reference the chosen object."
+        }
+      ]
+    },
+    {
+      "id": "pick-by-evaluate",
+      "name": "Pick by evaluate",
+      "description": "Pick instances of an object by evaluating an expression.",
+      "display_text": "Pick {0} by evaluating {1}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick by evaluating."
+        },
+        {
+          "id": "expression",
+          "name": "Expression",
+          "description": "Enter an expression referencing the chosen object. If nonzero, the instance will be picked."
+        }
+      ]
+    },
+    {
+      "id": "pick-overlapping-point",
+      "name": "Pick overlapping point",
+      "description": "Pick the instances of an object type overlapping a point in the layout.",
+      "display_text": "Pick {0} overlapping ([i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the objects to pick if overlapping a point."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to test if overlapping."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to test if overlapping."
+        }
+      ]
+    },
+    {
+      "id": "pick-last-created",
+      "name": "Pick last created",
+      "description": "Pick the last created instance of an object type. Useful with 'Create object (by name)'.",
+      "display_text": "Pick last created {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick the last created instance from."
+        }
+      ]
+    },
+    {
+      "id": "on-save-complete",
+      "name": "On save complete",
+      "description": "Triggered after the 'Save' action when the save has completed.",
+      "display_text": "On save complete",
+      "params": []
+    },
+    {
+      "id": "on-save-failed",
+      "name": "On save failed",
+      "description": "Triggered after the 'Save' action if the attempt to save failed.",
+      "display_text": "On save failed",
+      "params": []
+    },
+    {
+      "id": "on-load-complete",
+      "name": "On load complete",
+      "description": "Triggered after the 'Load' action when the load has completed.",
+      "display_text": "On load complete",
+      "params": []
+    },
+    {
+      "id": "on-load-failed",
+      "name": "On load failed",
+      "description": "Triggered after the 'Load' action when the slot failed to load, including if it hasn't been saved to yet.",
+      "display_text": "On load failed",
+      "params": []
+    },
+    {
+      "id": "trigger-once-while-true",
+      "name": "Trigger once while true",
+      "description": "Make a continuously true event trigger once only, when it first becomes true.  Place as the last condition.",
+      "display_text": "Trigger once",
+      "params": []
+    },
+    {
+      "id": "is-in-preview",
+      "name": "Is in preview",
+      "description": "True if the project is running as a preview rather than as an exported project.",
+      "display_text": "Is in preview",
+      "params": []
+    },
+    {
+      "id": "is-on-mobile-device",
+      "name": "Is on mobile device",
+      "description": "True if being viewed on a mobile device.  This is an estimate and may not be perfectly accurate.",
+      "display_text": "Is on mobile device",
+      "params": []
+    },
+    {
+      "id": "else",
+      "name": "Else",
+      "description": "Run if the previous event was not true.  Note this does not pick any instances (logic only).",
+      "display_text": "Else",
+      "params": []
+    },
+    {
+      "id": "is-on-platform",
+      "name": "Is on platform",
+      "description": "Check if currently running on a specific platform, e.g. Android.",
+      "display_text": "Is on platform [b]{0}[/b]",
+      "params": [
+        {
+          "id": "platform",
+          "name": "Platform",
+          "description": "The platform to check. Note multiple options can be true at once (e.g. HTML5 website + Android).",
+          "options": [
+            {
+              "id": "html5-website",
+              "label": "HTML5 website"
+            },
+            {
+              "id": "ios",
+              "label": "iOS"
+            },
+            {
+              "id": "android",
+              "label": "Android"
+            },
+            {
+              "id": "windows-8-app",
+              "label": "Windows 8 app"
+            },
+            {
+              "id": "windows-phone-8-app",
+              "label": "Windows Phone 8 app"
+            },
+            {
+              "id": "blackberry-10-app",
+              "label": "Blackberry 10 app"
+            },
+            {
+              "id": "tizen",
+              "label": "Tizen"
+            },
+            {
+              "id": "cocoonjs",
+              "label": "CocoonJS"
+            },
+            {
+              "id": "cordova",
+              "label": "Cordova"
+            },
+            {
+              "id": "nwjs",
+              "label": "NW.js"
+            },
+            {
+              "id": "crosswalk",
+              "label": "Crosswalk"
+            },
+            {
+              "id": "amazon-web-app",
+              "label": "Amazon web app"
+            },
+            {
+              "id": "windows-10-app",
+              "label": "Windows 10 app"
+            },
+            {
+              "id": "scirra-arcade",
+              "label": "Construct Arcade"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-start-of-layout",
+      "name": "On start of layout",
+      "description": "Triggered at the start of the current layout.",
+      "display_text": "On start of layout",
+      "params": []
+    },
+    {
+      "id": "on-end-of-layout",
+      "name": "On end of layout",
+      "description": "Triggered at the end of the current layout.",
+      "display_text": "On end of layout",
+      "params": []
+    },
+    {
+      "id": "on-loader-layout-complete",
+      "name": "On loader layout complete",
+      "description": "Triggered on a loader layout when loading has finished.",
+      "display_text": "On loader layout complete",
+      "params": []
+    },
+    {
+      "id": "every-x-seconds",
+      "name": "Every X seconds",
+      "description": "Run the actions at a regular time interval.",
+      "display_text": "Every [b]{0}[/b] seconds",
+      "params": [
+        {
+          "id": "interval-seconds",
+          "name": "Interval (seconds)",
+          "description": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick)."
+        }
+      ]
+    },
+    {
+      "id": "compare-time",
+      "name": "Compare time",
+      "description": "Compare the current time (seconds since startup)",
+      "display_text": "Time {0} [b]{1}[/b] seconds",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current time."
+        },
+        {
+          "id": "time-seconds",
+          "name": "Time (seconds)",
+          "description": "The time (seconds since starting) to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-suspend",
+      "name": "On suspended",
+      "description": "Triggered when the app goes in to the background, e.g. when switching browser tab or app.",
+      "display_text": "On suspended",
+      "params": []
+    },
+    {
+      "id": "on-resume",
+      "name": "On resumed",
+      "description": "Triggered when the app is restored to the foreground after being suspended.",
+      "display_text": "On resumed",
+      "params": []
+    },
+    {
+      "id": "is-suspended",
+      "name": "Is suspended",
+      "description": "True if the app is currently suspended.",
+      "display_text": "Is suspended",
+      "params": []
+    },
+    {
+      "id": "on-image-loading-complete",
+      "name": "On image loading complete",
+      "description": "Triggered when images loaded with the memory management actions have finished loading.",
+      "display_text": "On image loading complete",
+      "params": []
+    },
+    {
+      "id": "is-loading-images",
+      "name": "Is loading images",
+      "description": "Test if images loaded with the memory management actions are currently in the process of loading.",
+      "display_text": "Is loading images",
+      "params": []
+    },
+    {
+      "id": "evaluate-expression",
+      "name": "Evaluate expression",
+      "description": "True if a given expression is non-zero, or not an empty string. Useful with boolean expressions.",
+      "display_text": "{0}",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the value to evaluate. The condition is true if this evaluates to a non-zero value or a non-empty string."
+        }
+      ]
+    },
+    {
+      "id": "layer-is-interactive",
+      "name": "Layer is interactive",
+      "description": "Test if a layer is currently responding to mouse and touch input.",
+      "display_text": "Layer [b]{0}[/b] is interactive",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of layer to check if interactive."
+        }
+      ]
+    },
+    {
+      "id": "template-exists",
+      "name": "Template exists",
+      "description": "Check if the provided template name exists.",
+      "display_text": "{0} has template [b]{1}[/b]",
+      "params": [
+        {
+          "id": "object-to-test",
+          "name": "Object to test",
+          "description": "Choose the object type where to look for the template name"
+        },
+        {
+          "id": "template-name",
+          "name": "Template name",
+          "description": "The name of the template to check exists."
+        }
+      ]
+    },
+    {
+      "id": "on-signal",
+      "name": "On signal",
+      "description": "Triggered by the 'Signal' action with a matching tag.",
+      "display_text": "On signal [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag of the 'Signal' action."
+        }
+      ]
+    },
+    {
+      "id": "layer-is-html",
+      "name": "Layer is HTML",
+      "description": "Test if a layer is currently set to be an HTML layer.",
+      "display_text": "Layer [b]{0}[/b] is HTML layer",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of layer to check if an HTML layer."
+        }
+      ]
+    },
+    {
+      "id": "layer-name-exists",
+      "name": "Layer name exists",
+      "description": "Test if a layer with a specific name currently exists.",
+      "display_text": "Layer [b]{0}[/b] exists",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "The name of the layer to check exists."
+        }
+      ]
+    },
+    {
+      "id": "pick-by-highest-lowest-value",
+      "name": "Pick by highest/lowest value",
+      "description": "Pick the instance which evaluates with the highest or lowest expression.",
+      "display_text": "Pick {0} by {1} {2}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to pick."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose whether to pick the instance with the highest or lowest expression.",
+          "options": [
+            {
+              "id": "lowest",
+              "label": "lowest"
+            },
+            {
+              "id": "highest",
+              "label": "highest"
+            }
+          ]
+        },
+        {
+          "id": "expression",
+          "name": "Expression",
+          "description": "Enter an expression referencing the chosen object."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "snapshot-canvas",
+      "name": "Snapshot canvas",
+      "description": "Take a snapshot of the current display.  Use the 'On canvas snapshot' trigger and 'CanvasSnapshot' expression to get the result.",
+      "display_text": "Take snapshot of canvas ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "Format",
+          "description": "Choose the file format to save the snapshot with. PNG is lossless but JPEG files are smaller.",
+          "options": [
+            {
+              "id": "png",
+              "label": "PNG"
+            },
+            {
+              "id": "jpeg",
+              "label": "JPEG"
+            }
+          ]
+        },
+        {
+          "id": "jpeg-quality",
+          "name": "JPEG quality",
+          "description": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X offset of the area to snapshot, in canvas device pixels."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y offset of the area to snapshot, in canvas device pixels."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The width of the area to snapshot, in canvas device pixels. Leave 0 to use the full width."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height."
+        }
+      ]
+    },
+    {
+      "id": "set-canvas-size",
+      "name": "Set canvas size",
+      "description": "Set the size of the canvas (also altering the 'Window size' project property).",
+      "display_text": "Set canvas size to [b]{0}[/b] x [b]{1}[/b]",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The new width of the canvas, in pixels."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The new height of the canvas, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-fullscreen-scaling",
+      "name": "Set fullscreen scaling",
+      "description": "Set the fullscreen scaling quality mode.",
+      "display_text": "Set fullscreen scaling to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "fullscreen-scaling",
+          "name": "Fullscreen scaling",
+          "description": "The new fullscreen scaling quality: whether to scale before (high quality) or after (low quality) rendering.",
+          "options": [
+            {
+              "id": "low-quality",
+              "label": "low quality"
+            },
+            {
+              "id": "high-quality",
+              "label": "high quality"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-pixel-rounding",
+      "name": "Set pixel rounding",
+      "description": "Enable or disable pixel rounding mode at runtime.",
+      "display_text": "Set pixel rounding [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The pixel rounding mode to set.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-to-layout",
+      "name": "Go to layout",
+      "description": "Jump to another layout in the project.",
+      "display_text": "Go to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "layout",
+          "name": "Layout",
+          "description": "Choose the layout to go to."
+        }
+      ]
+    },
+    {
+      "id": "create-object",
+      "name": "Create object",
+      "description": "Create a new instance of an object in the current layout.",
+      "display_text": "Create object {0} on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "object-to-create",
+          "name": "Object to create",
+          "description": "Choose the object type of the new instance to create."
+        },
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to create the instance on."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "Create hierarchy",
+          "description": "Whether to also create all child instances according to the hierarchy in the Layout View."
+        },
+        {
+          "id": "template-name",
+          "name": "Template name",
+          "description": "Use a specific instance as a template when creating a new object."
+        }
+      ]
+    },
+    {
+      "id": "create-object-by-name",
+      "name": "Create object (by name)",
+      "description": "Create a new instance of an object in the current layout, using a string of the object name to create.",
+      "display_text": "Create object [b]{0}[/b] on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "object-name",
+          "name": "Object name",
+          "description": "The name of the object type of the new instance to create."
+        },
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to create the instance on."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "Create hierarchy",
+          "description": "Whether to also create all child instances according to the hierarchy in the Layout View."
+        },
+        {
+          "id": "template-name",
+          "name": "Template name",
+          "description": "Use a specific instance as a template when creating a new object."
+        }
+      ]
+    },
+    {
+      "id": "set-group-active",
+      "name": "Set group active",
+      "description": "Activate or deactivate an event group.",
+      "display_text": "Set group [b]{0}[/b] {1}",
+      "params": [
+        {
+          "id": "group-name",
+          "name": "Group name",
+          "description": "The name of the event group to set active."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose whether to activate or deactivate the group.",
+          "options": [
+            {
+              "id": "deactivated",
+              "label": "Deactivated"
+            },
+            {
+              "id": "activated",
+              "label": "Activated"
+            },
+            {
+              "id": "toggle-active",
+              "label": "Toggle active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-loop",
+      "name": "Stop loop",
+      "description": "Stop any currently running loop (for, for each, repeat).",
+      "display_text": "Stop loop",
+      "params": []
+    },
+    {
+      "id": "go-to-layout-by-name",
+      "name": "Go to layout (by name)",
+      "description": "Jump to another layout in the project, using a string for the layout name.",
+      "display_text": "Go to layout [b]{0}[/b]",
+      "params": [
+        {
+          "id": "layout",
+          "name": "Layout",
+          "description": "The name of the layout to go to."
+        }
+      ]
+    },
+    {
+      "id": "restart-layout",
+      "name": "Restart layout",
+      "description": "Restart the current layout, and also restore any groups to their initial activation state.",
+      "display_text": "Restart layout",
+      "params": []
+    },
+    {
+      "id": "go-to-nextprevious-layout",
+      "name": "Go to next/previous layout",
+      "description": "Go to the next or previous layout.",
+      "display_text": "Go to {0} layout",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to go to the next or the previous layout.",
+          "options": [
+            {
+              "id": "next",
+              "label": "next"
+            },
+            {
+              "id": "previous",
+              "label": "previous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-eventvar-value",
+      "name": "Set value",
+      "description": "Set the value of a global or local variable.",
+      "display_text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to store in this variable."
+        }
+      ]
+    },
+    {
+      "id": "add-to-eventvar",
+      "name": "Add to",
+      "description": "Add to the value of a global or local variable.",
+      "display_text": "Add [i]{1}[/i] to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to add to this variable."
+        }
+      ]
+    },
+    {
+      "id": "subtract-from-eventvar",
+      "name": "Subtract from",
+      "description": "Subtract from the value of a global or local variable.",
+      "display_text": "Subtract [i]{1}[/i] from [b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to subtract from this variable."
+        }
+      ]
+    },
+    {
+      "id": "set-boolean-eventvar",
+      "name": "Set boolean",
+      "description": "Set the value of a boolean global or local variable.",
+      "display_text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to store in this boolean variable.",
+          "options": [
+            {
+              "id": "false",
+              "label": "False"
+            },
+            {
+              "id": "true",
+              "label": "True"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-boolean-eventvar",
+      "name": "Toggle boolean",
+      "description": "Invert the value of a boolean global or local variable.",
+      "display_text": "Toggle [b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to toggle."
+        }
+      ]
+    },
+    {
+      "id": "reset-global-variables",
+      "name": "Reset global variables",
+      "description": "Reset all global variables in the project to their initial values.",
+      "display_text": "Reset global variables to default (include static: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "reset-static",
+          "name": "Reset static",
+          "description": "Check to also reset all static local variables in the project."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-visible",
+      "name": "Set layer visible",
+      "description": "Set the visibility of a layer.",
+      "display_text": "Set layer [b]{0}[/b] [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set visible."
+        },
+        {
+          "id": "visibility",
+          "name": "Visibility",
+          "description": "Choose whether the layer is drawn or not.",
+          "options": [
+            {
+              "id": "invisible",
+              "label": "Invisible"
+            },
+            {
+              "id": "visible",
+              "label": "Visible"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scale",
+      "name": "Set layer scale",
+      "description": "Set an individual layer's scale (or 'zoom') to make it appear larger or smaller.",
+      "display_text": "Set layer [b]{0}[/b] scale to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set the scale for."
+        },
+        {
+          "id": "scale",
+          "name": "Scale",
+          "description": "The layer scale (or 'zoom').  1.0 for original size, 2.0 for double size, etc."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-opacity",
+      "name": "Set layer opacity",
+      "description": "Set an individual layer's opacity.",
+      "display_text": "Set layer [b]{0}[/b] opacity to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set opacity for."
+        },
+        {
+          "id": "opacity",
+          "name": "Opacity",
+          "description": "The layer opacity, from 0 (transparent) to 100 (opaque)."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scale-rate",
+      "name": "Set layer scale rate",
+      "description": "Set an individual layer's scale rate.",
+      "display_text": "Set layer [b]{0}[/b] scale rate to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set the scale rate for."
+        },
+        {
+          "id": "scale-rate",
+          "name": "Scale rate",
+          "description": "The scale rate to set.  1.0 for ordinary zoom, 2.0 for twice as much zoom, 0 for no zoom etc."
+        }
+      ]
+    },
+    {
+      "id": "set-layout-scale",
+      "name": "Set layout scale",
+      "description": "Set the scale of the entire layout.",
+      "display_text": "Set layout scale to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "scale",
+          "name": "Scale",
+          "description": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc."
+        }
+      ]
+    },
+    {
+      "id": "set-layout-angle",
+      "name": "Set layout angle",
+      "description": "Set the angle of the entire layout.",
+      "display_text": "Set layout angle to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle to rotate the canvas view to, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-angle",
+      "name": "Set layer angle",
+      "description": "Set an individual layer's angle.",
+      "display_text": "Set layer [b]{0}[/b] angle to [i]{1}[/i] degrees",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set the angle for."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle to rotate the layer to, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-layout-effect-enabled",
+      "name": "Set layout effect enabled",
+      "description": "Enable or disable an effect on the current layout.",
+      "display_text": "{0} layout effect {1}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to enable or disable the layout effect.",
+          "options": [
+            {
+              "id": "disable",
+              "label": "Disable"
+            },
+            {
+              "id": "enable",
+              "label": "Enable"
+            }
+          ]
+        },
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the layout effect to modify. The effect must be present on the currently running layout."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-effect-enabled",
+      "name": "Set layer effect enabled",
+      "description": "Enable or disable an effect on a layer.",
+      "display_text": "{1} layer {0} effect {2}",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to enable or disable the layer effect.",
+          "options": [
+            {
+              "id": "disable",
+              "label": "Disable"
+            },
+            {
+              "id": "enable",
+              "label": "Enable"
+            }
+          ]
+        },
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the layer effect to modify."
+        }
+      ]
+    },
+    {
+      "id": "set-layout-effect-parameter",
+      "name": "Set layout effect parameter",
+      "description": "Set the value of a parameter in one of the layout's effects.",
+      "display_text": "Set layout effect {0} parameter {1} to [b]{2}[/b]",
+      "params": [
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the layout effect to modify. The effect must be present on the currently running layout."
+        },
+        {
+          "id": "parameter-index",
+          "name": "Parameter index",
+          "description": "Enter the zero-based index of the parameter to change, e.g. 0 = first param, 1 = second param, etc."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the new parameter value."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-effect-parameter",
+      "name": "Set layer effect parameter",
+      "description": "Set the value of a parameter in one of a layer's effects.",
+      "display_text": "Set layer {0} effect {1} parameter {2} to [b]{3}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the layer effect to modify."
+        },
+        {
+          "id": "parameter-index",
+          "name": "Parameter index",
+          "description": "Enter the zero-based index of the parameter to change, e.g. 0 = first param, 1 = second param, etc."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the new parameter value."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-parallax",
+      "name": "Set layer parallax",
+      "description": "Set the parallax rate of a layer.",
+      "display_text": "Set layer {0} parallax to ([b]{1}[/b], [b]{2}[/b])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "parallax-x",
+          "name": "Parallax X",
+          "description": "The horizontal scroll rate as a percentage (e.g. 50 for half speed)."
+        },
+        {
+          "id": "parallax-y",
+          "name": "Parallax Y",
+          "description": "The vertical scroll rate as a percentage (e.g. 50 for half speed)."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-background-color",
+      "name": "Set layer background color",
+      "description": "Set the background color of a layer.",
+      "display_text": "Set layer {0} background color to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "color",
+          "name": "Color",
+          "description": "The color to set the layer background to."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-transparent",
+      "name": "Set layer transparent",
+      "description": "Set a layer background to be transparent or opaque.",
+      "display_text": "Set layer {0} background [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether or not the layer is transparent.",
+          "options": [
+            {
+              "id": "opaque",
+              "label": "Opaque"
+            },
+            {
+              "id": "transparent",
+              "label": "Transparent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-blend-mode",
+      "name": "Set layer blend mode",
+      "description": "Change a layer's blend mode property.",
+      "display_text": "Set layer {0} blend mode to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for the layer.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reset-persisted-objects",
+      "name": "Reset persisted objects",
+      "description": "Reset all objects with the Persist behavior in all layouts to their initial state.",
+      "display_text": "Reset persisted objects",
+      "params": []
+    },
+    {
+      "id": "recreate-initial-objects",
+      "name": "Recreate initial objects",
+      "description": "Recreate the layout's initial objects within a rectangular area.",
+      "display_text": "Recreate initial {0} objects from ([i]{1}[/i], [i]{2}[/i]) to ([i]{3}[/i], [i]{4}[/i]) from layout [i]{5}[/i], source layer [i]{6}[/i], dest layer [i]{7}[/i], offset ([i]{8}[/i], [i]{9}[/i]), create hierarchy: [i]{10}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object type to re-create instances for."
+        },
+        {
+          "id": "from-x",
+          "name": "From X",
+          "description": "X co-ordinate of left edge to re-create."
+        },
+        {
+          "id": "from-y",
+          "name": "From Y",
+          "description": "Y co-ordinate of top edge to re-create."
+        },
+        {
+          "id": "to-x",
+          "name": "To X",
+          "description": "X co-ordinate of right edge to re-create."
+        },
+        {
+          "id": "to-y",
+          "name": "To Y",
+          "description": "Y co-ordinate of bottom edge to re-create."
+        },
+        {
+          "id": "source-layout",
+          "name": "Source layout",
+          "description": "Name of the layout to take objects from. Leave empty to use the current layout."
+        },
+        {
+          "id": "source-layer",
+          "name": "Source layer",
+          "description": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers."
+        },
+        {
+          "id": "offset-x",
+          "name": "Offset X",
+          "description": "Amount to offset the X positions of the created objects."
+        },
+        {
+          "id": "offset-y",
+          "name": "Offset Y",
+          "description": "Amount to offset the Y positions of the created objects."
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "Create hierarchy",
+          "description": "Whether to also create all child instances according to the hierarchy in the Layout View."
+        },
+        {
+          "id": "dest-layer",
+          "name": "Destination layer",
+          "description": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-force-own-texture",
+      "name": "Set layer force own texture",
+      "description": "Set a layer's 'Force own texture' mode.",
+      "display_text": "Set layer {0} force own texture [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether or not to force the layer to render via its own texture.",
+          "options": [
+            {
+              "id": "off",
+              "label": "Off"
+            },
+            {
+              "id": "on",
+              "label": "On"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save",
+      "name": "Save",
+      "description": "Save the full state of the game to the local computer.",
+      "display_text": "Save game to slot [b]{0}[/b]",
+      "params": [
+        {
+          "id": "slot",
+          "name": "Slot",
+          "description": "A string identifying this save game state."
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "name": "Load",
+      "description": "Load the full state of the game from the local computer.",
+      "display_text": "Load game from slot [b]{0}[/b]",
+      "params": [
+        {
+          "id": "slot",
+          "name": "Slot",
+          "description": "The slot that was previously saved to, from which to load from."
+        }
+      ]
+    },
+    {
+      "id": "load-from-json",
+      "name": "Load from JSON",
+      "description": "Load the full state of the game from a JSON string.",
+      "display_text": "Load game from JSON string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A JSON string containing a save game state from which to load from."
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-x",
+      "name": "Scroll to X",
+      "description": "Scroll to an X co-ordinate.",
+      "display_text": "Set scroll X to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate to scroll to, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-y",
+      "name": "Scroll to Y",
+      "description": "Scroll to an Y co-ordinate.",
+      "display_text": "Set scroll Y to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate to scroll to, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-position",
+      "name": "Scroll to position",
+      "description": "Scroll to a co-ordinate.",
+      "display_text": "Scroll to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate to scroll to, in pixels."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate to scroll to, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-object",
+      "name": "Scroll to object",
+      "description": "Scroll to an object.",
+      "display_text": "Scroll to {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Object to scroll to."
+        }
+      ]
+    },
+    {
+      "id": "set-time-scale",
+      "name": "Set time scale",
+      "description": "Change the rate time passes in the game, for slow-motion or pause effects.",
+      "display_text": "Set time scale to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "time-scale",
+          "name": "Time scale",
+          "description": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc."
+        }
+      ]
+    },
+    {
+      "id": "set-object-time-scale",
+      "name": "Set object time scale",
+      "description": "Change the rate time passes for a specific object.  Overrides the game time scale.",
+      "display_text": "Set {0} time scale to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to change timescale for."
+        },
+        {
+          "id": "time-scale",
+          "name": "Time scale",
+          "description": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc)."
+        }
+      ]
+    },
+    {
+      "id": "restore-object-time-scale",
+      "name": "Restore object time scale",
+      "description": "Restore an object's time scale back to game time.",
+      "display_text": "Restore {0} time scale",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to restore timescale for."
+        }
+      ]
+    },
+    {
+      "id": "wait",
+      "name": "Wait",
+      "description": "Wait a number of seconds before running the next action.",
+      "display_text": "Wait [b]{0}[/b] seconds (use time scale: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "seconds",
+          "name": "Seconds",
+          "description": "The number of seconds to wait before running the next action."
+        },
+        {
+          "id": "use-timescale",
+          "name": "Use time scale",
+          "description": "Uncheck to ignore the current time scale and wait in wall-clock time."
+        }
+      ]
+    },
+    {
+      "id": "wait-for-signal",
+      "name": "Wait for signal",
+      "description": "Wait until a corresponding 'Signal' action is used.",
+      "display_text": "Wait for signal [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag of the signal to wait for. This will wait until the corresponding 'Signal' action is used."
+        }
+      ]
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "description": "Trigger 'On signal' and resume any 'Wait for signal' actions.",
+      "display_text": "Signal [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to signal."
+        }
+      ]
+    },
+    {
+      "id": "sort-z-order",
+      "name": "Sort Z order",
+      "description": "Sort an object's instance's Z order according to an instance variable.",
+      "display_text": "Sort {0} Z order by [b]{1}[/b]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object whose instances will have their Z order sorted."
+        },
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "The instance variable to use for sorting Z order by."
+        }
+      ]
+    },
+    {
+      "id": "load-object-images",
+      "name": "Load object images",
+      "description": "Load the images for an object in to memory, if it isn't already loaded.",
+      "display_text": "Load {0} images in to memory",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to load images for."
+        }
+      ]
+    },
+    {
+      "id": "unload-object-images",
+      "name": "Unload object images",
+      "description": "Unload the images for an object from memory, if it is loaded and all its instances are destroyed.",
+      "display_text": "Unload {0} images from memory",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to unload images for."
+        }
+      ]
+    },
+    {
+      "id": "unload-unused-images",
+      "name": "Unload unused images",
+      "description": "Unload the images for objects that are loaded and all instances are destroyed.",
+      "display_text": "Unload unused images from memory",
+      "params": []
+    },
+    {
+      "id": "load-layout-images",
+      "name": "Load layout images",
+      "description": "Load all the images used by a layout in to memory. Note this can result in high memory usage.",
+      "display_text": "Load layout [b]{0}[/b] images in to memory",
+      "params": [
+        {
+          "id": "layout",
+          "name": "Layout",
+          "description": "The layout to load all images for."
+        }
+      ]
+    },
+    {
+      "id": "load-layout-images-by-name",
+      "name": "Load layout images (by name)",
+      "description": "Load all the images used by a layout (by a string of its name) in to memory. Note this can result in high memory usage.",
+      "display_text": "Load layout [b]{0}[/b] images in to memory",
+      "params": [
+        {
+          "id": "layout",
+          "name": "Layout",
+          "description": "The name of the layout to load all images for."
+        }
+      ]
+    },
+    {
+      "id": "load-object-images-by-name",
+      "name": "Load object images (by name)",
+      "description": "Load the images for an object in to memory by a string of the object name.",
+      "display_text": "Load [i]{0}[/i] images in to memory",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object name",
+          "description": "The name of the object to load images for."
+        }
+      ]
+    },
+    {
+      "id": "unload-object-images-by-name",
+      "name": "Unload object images (by name)",
+      "description": "Unload the images for an object from memory by a string of the object name.",
+      "display_text": "Unload [i]{0}[/i] images from memory",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object name",
+          "description": "The name of the object to unload images for."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-z-elevation",
+      "name": "Set layer Z elevation",
+      "description": "Set the Z elevation of a layer.",
+      "display_text": "Set layer {0} Z elevation to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "z-elevation",
+          "name": "Z elevation",
+          "description": "The Z elevation to set for the layer."
+        }
+      ]
+    },
+    {
+      "id": "set-function-return-value",
+      "name": "Set return value",
+      "description": "In a function, set the value returned by the function when used as an expression.",
+      "display_text": "Set return value [i]{0}[/i]",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to return from the function."
+        }
+      ]
+    },
+    {
+      "id": "map-function",
+      "name": "Map function to string",
+      "description": "Associate a function with a string, allowing it to be called by a string.",
+      "display_text": "Map [i]{0}[/i] string [i]{1}[/i] to [b]{2}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "Map name",
+          "description": "Name of the map to add to (case-insensitive). Use this to identify different function maps."
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "A string to associate the function with (case-insensitive)."
+        },
+        {
+          "id": "function",
+          "name": "Function",
+          "description": "A function in this project to associate with the string."
+        }
+      ]
+    },
+    {
+      "id": "map-function-default",
+      "name": "Map default function",
+      "description": "Add a default function to call if a provided string is not found in the map.",
+      "display_text": "Map [i]{0}[/i] default to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "Map name",
+          "description": "Name of the map (case-insensitive)."
+        },
+        {
+          "id": "function",
+          "name": "Function",
+          "description": "A function in this project to call if a string is not found in the map."
+        }
+      ]
+    },
+    {
+      "id": "call-mapped-function",
+      "name": "Call mapped function",
+      "description": "Call a function in a map from its string.",
+      "display_text": "Call function from [i]{0}[/i] map with string [i]{1}[/i] (forward parameters from index [i]{2}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "Map name",
+          "description": "Name of the map (case-insensitive)."
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "The string associated with the function to call (case-insensitive)."
+        },
+        {
+          "id": "forward-params",
+          "name": "Forward parameters",
+          "description": "Parameter index of current function call to forward to this function call. Note all parameters are always forwarded if the default function is called."
+        }
+      ]
+    },
+    {
+      "id": "wait-for-previous-actions",
+      "name": "Wait for previous actions",
+      "description": "Wait until any previous asynchronous actions (shown by an icon) have finished and run any completed or error triggers.",
+      "display_text": "Wait for previous actions to complete",
+      "params": []
+    },
+    {
+      "id": "set-layout-vanishing-point",
+      "name": "Set layout vanishing point",
+      "description": "When using 3D features, set where the vanishing point is relative to the viewport area.",
+      "display_text": "Set layout vanishing point to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "vanishing-point-x",
+          "name": "Vanishing point X",
+          "description": "The vanishing point X in the viewport, from 0-100, with 50 being the middle."
+        },
+        {
+          "id": "vanishing-point-y",
+          "name": "Vanishing point Y",
+          "description": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle."
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scroll",
+      "name": "Set layer scroll",
+      "description": "Scroll a layer independently of the rest of the layout.",
+      "display_text": "Scroll layer {0} to ([b]{1}[/b], [b]{2}[/b])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "scroll-x",
+          "name": "Scroll X",
+          "description": "The X co-ordinate to scroll to on this layer only."
+        },
+        {
+          "id": "scroll-y",
+          "name": "Scroll Y",
+          "description": "The Y co-ordinate to scroll to on this layer only."
+        }
+      ]
+    },
+    {
+      "id": "restore-layer-scroll",
+      "name": "Restore layer scroll",
+      "description": "Restore a layer's scroll position to follow the rest of the layout again.",
+      "display_text": "Restore layer {0} scroll position",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        }
+      ]
+    },
+    {
+      "id": "set-layout-projection",
+      "name": "Set layout projection",
+      "description": "Set whether to render 3D features with perspective, or a flat orthographic projection.",
+      "display_text": "Set layout projection [i]{0}[/i]",
+      "params": [
+        {
+          "id": "projection",
+          "name": "Projection",
+          "description": "The type of projection to use.",
+          "options": [
+            {
+              "id": "perspective",
+              "label": "Perspective"
+            },
+            {
+              "id": "orthographic",
+              "label": "Orthographic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-interactive",
+      "name": "Set layer interactive",
+      "description": "Set whether a layer responds to mouse and touch input.",
+      "display_text": "Set layer [b]{0}[/b] interactive [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to set interactive."
+        },
+        {
+          "id": "interactive",
+          "name": "Interactive",
+          "description": "Choose whether the layer is interactive or not."
+        }
+      ]
+    },
+    {
+      "id": "add-layer",
+      "name": "Add layer",
+      "description": "Create a new layer in the current layout's layer tree.",
+      "display_text": "Add layer name [b]{0}[/b] at [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "Layer name",
+          "description": "The name to assign the new layer. This must be unique on the layout."
+        },
+        {
+          "id": "insert-by",
+          "name": "Insert by",
+          "description": "The name or index of an existing layer indicating where to add the new layer."
+        },
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Where to add the new layer relative to the existing layer.",
+          "options": [
+            {
+              "id": "above",
+              "label": "Above"
+            },
+            {
+              "id": "below",
+              "label": "Below"
+            },
+            {
+              "id": "add-top-sublayer",
+              "label": "Add top sub-layer"
+            },
+            {
+              "id": "add-bottom-sublayer",
+              "label": "Add bottom sub-layer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-layer",
+      "name": "Move layer",
+      "description": "Move an existing layer to a new location in the current layout's layer tree.",
+      "display_text": "Move layer [b]{0}[/b] to [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "The name or index of an existing layer to move."
+        },
+        {
+          "id": "insert-by",
+          "name": "Insert by",
+          "description": "The name or index of another layer indicating where to move the layer to."
+        },
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Where to move the layer relative to the other layer.",
+          "options": [
+            {
+              "id": "above",
+              "label": "Above"
+            },
+            {
+              "id": "below",
+              "label": "Below"
+            },
+            {
+              "id": "top-sublayer",
+              "label": "Top sub-layer"
+            },
+            {
+              "id": "bottom-sublayer",
+              "label": "Bottom sub-layer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "remove-layer",
+      "name": "Remove layer",
+      "description": "Remove a layer on the current layout, also destroying all objects on the layer.",
+      "display_text": "Remove layer [b]{0}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "The name to or index of an existing layer to remove."
+        }
+      ]
+    },
+    {
+      "id": "remove-all-dynamic-layers",
+      "name": "Remove all dynamic layers",
+      "description": "Remove all layers added with the 'Add layer' action.",
+      "display_text": "Remove all dynamic layers",
+      "params": []
+    },
+    {
+      "id": "set-layer-html",
+      "name": "Set layer HTML",
+      "description": "Set whether a layer is an HTML layer.",
+      "display_text": "Set layer [b]{0}[/b] HTML layer [i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to change."
+        },
+        {
+          "id": "html",
+          "name": "HTML layer",
+          "description": "Choose whether the layer is an HTML layer or not."
+        }
+      ]
+    },
+    {
+      "id": "set-collision-cell-size",
+      "name": "Set collision cell size",
+      "description": "Change the performance trade-off between moving objects and testing collisions with the collision cells optimization.",
+      "display_text": "Set collision cell size to [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "Collision cell width to set."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "Collision cell height to set."
+        }
+      ]
+    },
+    {
+      "id": "set-framerate-mode",
+      "name": "Set framerate mode",
+      "description": "Set the current framerate mode.",
+      "display_text": "Set framerate mode to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "framerate-mode",
+          "name": "Framerate mode",
+          "description": "The framerate mode to set (corresponding to the project property).",
+          "options": [
+            {
+              "id": "vsync",
+              "label": "V-synced"
+            },
+            {
+              "id": "unlimited-tick",
+              "label": "Unlimited (ticks only)"
+            },
+            {
+              "id": "unlimited-frame",
+              "label": "Unlimited (full frames)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-min-max-dt",
+      "name": "Set min/max delta-time",
+      "description": "Set the limits on delta-time, causing the project to go in to slow motion or fast forward at extreme framerates.",
+      "display_text": "Set delta-time minimum [b]{0}[/b], maximum [b]{1}[/b]",
+      "params": [
+        {
+          "id": "minimum-dt",
+          "name": "Min delta-time",
+          "description": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases."
+        },
+        {
+          "id": "maximum-dt",
+          "name": "Max delta-time",
+          "description": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases."
+        }
+      ]
+    },
+    {
+      "id": "reset-eventvar",
+      "name": "Reset",
+      "description": "Reset a specific variable in the project to its initial value.",
+      "display_text": "Reset [b]{0}[/b] to default",
+      "params": [
+        {
+          "id": "variable",
+          "name": "Variable",
+          "description": "Choose the variable to reset."
+        }
+      ]
+    },
+    {
+      "id": "save-to-json",
+      "name": "Save to JSON",
+      "description": "Save the full state of the game to a JSON string.",
+      "display_text": "Save game to JSON string",
+      "params": []
+    },
+    {
+      "id": "set-layer-rendering-mode",
+      "name": "Set layer rendering mode",
+      "description": "Set whether to render a layer as 2D or 3D.",
+      "display_text": "Set layer {0} rendering mode [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Name or number of the layer to modify."
+        },
+        {
+          "id": "rendering-mode",
+          "name": "Rendering mode",
+          "description": "The rendering mode to set.",
+          "options": [
+            {
+              "id": "2d",
+              "label": "2D"
+            },
+            {
+              "id": "3d",
+              "label": "3D"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "windowwidth",
+      "name": "WindowWidth",
+      "description": "Width of the window area used to display the game.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowheight",
+      "name": "WindowHeight",
+      "description": "Height of the window area used to display the game.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "originalviewportwidth",
+      "name": "OriginalViewportWidth",
+      "description": "The 'Viewport width' project property value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "originalviewportheight",
+      "name": "OriginalViewportHeight",
+      "description": "The 'Viewport height' project property value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layerscale",
+      "name": "LayerScale",
+      "description": "Get the current scale of a layer (by name or number).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get scale for."
+        }
+      ]
+    },
+    {
+      "id": "layeropacity",
+      "name": "LayerOpacity",
+      "description": "Get the current opacity of a layer (by name or number).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get opacity for."
+        }
+      ]
+    },
+    {
+      "id": "layerscalerate",
+      "name": "LayerScaleRate",
+      "description": "Get the current scale rate of a layer (by name or number).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get scale rate for."
+        }
+      ]
+    },
+    {
+      "id": "layerangle",
+      "name": "LayerAngle",
+      "description": "Get the current angle of a layer in degrees (by name or number).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get angle for."
+        }
+      ]
+    },
+    {
+      "id": "viewportleft",
+      "name": "ViewportLeft",
+      "description": "Get the X co-ordinate of the left edge of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewporttop",
+      "name": "ViewportTop",
+      "description": "Get the Y co-ordinate of the top edge of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewportright",
+      "name": "ViewportRight",
+      "description": "Get the X co-ordinate of the right edge of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewportbottom",
+      "name": "ViewportBottom",
+      "description": "Get the Y co-ordinate of the bottom edge of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasx",
+      "name": "LayerToCanvasX",
+      "description": "Translate a position from layer co-ordinates to canvas CSS co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasy",
+      "name": "LayerToCanvasY",
+      "description": "Translate a position from layer co-ordinates to canvas CSS co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "canvastolayerx",
+      "name": "CanvasToLayerX",
+      "description": "Translate a position from canvas CSS co-ordinates to layer co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "canvastolayery",
+      "name": "CanvasToLayerY",
+      "description": "Translate a position from canvas CSS co-ordinates to layer co-ordinates.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to use."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxx",
+      "name": "LayerParallaxX",
+      "description": "Get the X parallax of a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get parallax for."
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxy",
+      "name": "LayerParallaxY",
+      "description": "Get the Y parallax of a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get parallax for."
+        }
+      ]
+    },
+    {
+      "id": "layerindex",
+      "name": "LayerIndex",
+      "description": "Get the index of a layer from its name.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer name to get index for."
+        }
+      ]
+    },
+    {
+      "id": "scrollx",
+      "name": "ScrollX",
+      "description": "X co-ordinate of current scroll location.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "scrolly",
+      "name": "ScrollY",
+      "description": "Y co-ordinate of current scroll location.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutwidth",
+      "name": "LayoutWidth",
+      "description": "Width of the current layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutheight",
+      "name": "LayoutHeight",
+      "description": "Height of the current layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutscale",
+      "name": "LayoutScale",
+      "description": "Get the current scale of the entire layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutname",
+      "name": "LayoutName",
+      "description": "Get the name of the current layout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutangle",
+      "name": "LayoutAngle",
+      "description": "Get the current angle of the layout, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvassnapshot",
+      "name": "CanvasSnapshot",
+      "description": "In 'On canvas snapshot', the URL of the snapshot image.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "sqrt",
+      "name": "sqrt",
+      "description": "Calculate square root of a number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to take square root of"
+        }
+      ]
+    },
+    {
+      "id": "abs",
+      "name": "abs",
+      "description": "Calculate absolute (positive) value of a number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to determine absolute (positive) value for."
+        }
+      ]
+    },
+    {
+      "id": "round",
+      "name": "round",
+      "description": "Round number to the nearest integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to round to nearest integer."
+        }
+      ]
+    },
+    {
+      "id": "floor",
+      "name": "floor",
+      "description": "Round number down to an integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to round down to integer."
+        }
+      ]
+    },
+    {
+      "id": "ceil",
+      "name": "ceil",
+      "description": "Round number up to an integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to round up to integer."
+        }
+      ]
+    },
+    {
+      "id": "sign",
+      "name": "sign",
+      "description": "Return the sign of a number (-1, 0 or 1).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to find sign of."
+        }
+      ]
+    },
+    {
+      "id": "sin",
+      "name": "sin",
+      "description": "Calculate sine of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate sine of."
+        }
+      ]
+    },
+    {
+      "id": "cos",
+      "name": "cos",
+      "description": "Calculate cosine of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate cosine of."
+        }
+      ]
+    },
+    {
+      "id": "tan",
+      "name": "tan",
+      "description": "Calculate tangent of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate tangent of."
+        }
+      ]
+    },
+    {
+      "id": "asin",
+      "name": "asin",
+      "description": "Calculate arcsine of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate arcsine of."
+        }
+      ]
+    },
+    {
+      "id": "acos",
+      "name": "acos",
+      "description": "Calculate arccosine of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate arccosine of."
+        }
+      ]
+    },
+    {
+      "id": "atan",
+      "name": "atan",
+      "description": "Calculate arctangent of a number (in degrees).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number (degrees) to calculate arctangent of."
+        }
+      ]
+    },
+    {
+      "id": "exp",
+      "name": "exp",
+      "description": "Calculate e raised to the power of a number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to raise e to the power."
+        }
+      ]
+    },
+    {
+      "id": "ln",
+      "name": "ln",
+      "description": "Calculate logarithm to base e of a number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to calculate natural logarithm of."
+        }
+      ]
+    },
+    {
+      "id": "log10",
+      "name": "log10",
+      "description": "Calculate logarithm to base 10 of a number.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to calculate logarithm of."
+        }
+      ]
+    },
+    {
+      "id": "max",
+      "name": "max",
+      "description": "Calculate maximum of a set of numbers.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number1",
+          "name": "Number",
+          "description": "Numbers to calculate maximum from."
+        },
+        {
+          "id": "number2",
+          "name": "Number",
+          "description": "Numbers to calculate maximum from."
+        }
+      ]
+    },
+    {
+      "id": "min",
+      "name": "min",
+      "description": "Calculate minimum of a set of numbers.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number1",
+          "name": "Number",
+          "description": "Numbers to calculate minimum from."
+        },
+        {
+          "id": "number2",
+          "name": "Number",
+          "description": "Numbers to calculate minimum from."
+        }
+      ]
+    },
+    {
+      "id": "distance",
+      "name": "distance",
+      "description": "Calculate the distance between two points.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x1",
+          "name": "x1",
+          "description": "X position of first point."
+        },
+        {
+          "id": "y1",
+          "name": "y1",
+          "description": "Y position of first point."
+        },
+        {
+          "id": "x2",
+          "name": "x2",
+          "description": "X position of second point."
+        },
+        {
+          "id": "y2",
+          "name": "y2",
+          "description": "Y position of second point."
+        }
+      ]
+    },
+    {
+      "id": "angle",
+      "name": "angle",
+      "description": "Calculate the angle, in degrees, between two points.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x1",
+          "name": "x1",
+          "description": "X position of first point."
+        },
+        {
+          "id": "y1",
+          "name": "y1",
+          "description": "Y position of first point."
+        },
+        {
+          "id": "x2",
+          "name": "x2",
+          "description": "X position of second point."
+        },
+        {
+          "id": "y2",
+          "name": "y2",
+          "description": "Y position of second point."
+        }
+      ]
+    },
+    {
+      "id": "lerp",
+      "name": "lerp",
+      "description": "Linearly interpolate a to b by x.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First number."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second number."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Interpolation factor."
+        }
+      ]
+    },
+    {
+      "id": "pi",
+      "name": "pi",
+      "description": "The mathematical constant pi (3.14159...)",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "anglediff",
+      "name": "anglediff",
+      "description": "Get the smallest difference between two angles in degrees.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "angle1",
+          "name": "Angle1",
+          "description": "First angle in degrees."
+        },
+        {
+          "id": "angle2",
+          "name": "Angle2",
+          "description": "Second angle in degrees."
+        }
+      ]
+    },
+    {
+      "id": "anglelerp",
+      "name": "anglelerp",
+      "description": "Linearly interpolate angles a to b (in degrees) by factor x.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First angle in degrees."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second angle in degrees."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Interpolation factor."
+        }
+      ]
+    },
+    {
+      "id": "anglerotate",
+      "name": "anglerotate",
+      "description": "Rotate angle from start to end by 'step' degrees.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "start",
+          "name": "start",
+          "description": "First angle in degrees."
+        },
+        {
+          "id": "end",
+          "name": "end",
+          "description": "Second angle in degrees."
+        },
+        {
+          "id": "step",
+          "name": "step",
+          "description": "Number of degrees to rotate."
+        }
+      ]
+    },
+    {
+      "id": "unlerp",
+      "name": "unlerp",
+      "description": "Calculate interpolation factor given a, b and a lerp result.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First number."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second number."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Result."
+        }
+      ]
+    },
+    {
+      "id": "infinity",
+      "name": "infinity",
+      "description": "Return a float set to positive infinity.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "setbit",
+      "name": "setbit",
+      "description": "Set a bit at an index in a 32-bit integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "number",
+          "description": "Number"
+        },
+        {
+          "id": "bit",
+          "name": "bit",
+          "description": "Bit"
+        },
+        {
+          "id": "value",
+          "name": "value",
+          "description": "Value (0 or 1)"
+        }
+      ]
+    },
+    {
+      "id": "togglebit",
+      "name": "togglebit",
+      "description": "Toggle a bit at an index in a 32-bit integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "number",
+          "description": "Number"
+        },
+        {
+          "id": "bit",
+          "name": "bit",
+          "description": "Bit"
+        }
+      ]
+    },
+    {
+      "id": "getbit",
+      "name": "getbit",
+      "description": "Get a bit at an index in a 32-bit integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "number",
+          "description": "Number"
+        },
+        {
+          "id": "bit",
+          "name": "bit",
+          "description": "Bit"
+        }
+      ]
+    },
+    {
+      "id": "qarp",
+      "name": "qarp",
+      "description": "Quadratic interpolation across a, b and c by x.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First number."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second number."
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "description": "Third number."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Interpolation factor."
+        }
+      ]
+    },
+    {
+      "id": "cubic",
+      "name": "cubic",
+      "description": "Cubic interpolation across a, b, c and d by x.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First number."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second number."
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "description": "Third number."
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "description": "Fourth number."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Interpolation factor."
+        }
+      ]
+    },
+    {
+      "id": "cosp",
+      "name": "cosp",
+      "description": "Cosine interpolation from a to b by x.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "First number."
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "Second number."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Interpolation factor."
+        }
+      ]
+    },
+    {
+      "id": "savestatejson",
+      "name": "SaveStateJSON",
+      "description": "In the 'On save complete' trigger, a JSON string of the save data.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "objectcount",
+      "name": "ObjectCount",
+      "description": "Retrieve the total number of objects in the application.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "loopindex",
+      "name": "LoopIndex",
+      "description": "Retrieve the index of a currently running loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "renderer",
+      "name": "Renderer",
+      "description": "Get a string describing the renderer (returns \"canvas2d\" or \"webgl\").",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectversion",
+      "name": "ProjectVersion",
+      "description": "Return the version from project properties.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "loadingprogress",
+      "name": "LoadingProgress",
+      "description": "Get the loading progress from 0 to 1 on a loading layout or during a background update.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imagememoryusage",
+      "name": "ImageMemoryUsage",
+      "description": "The estimated image (texture) memory usage in megabytes.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectname",
+      "name": "ProjectName",
+      "description": "Return the project name.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rendererdetail",
+      "name": "RendererDetail",
+      "description": "Get a string describing the rendering hardware, if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "len",
+      "name": "len",
+      "description": "Get the number of characters in a text string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to get length from."
+        }
+      ]
+    },
+    {
+      "id": "newline",
+      "name": "newline",
+      "description": "A text string with a line break.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "uppercase",
+      "name": "uppercase",
+      "description": "Convert some text to uppercase (\"TeXt\" -> \"TEXT\").",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to convert to uppercase"
+        }
+      ]
+    },
+    {
+      "id": "lowercase",
+      "name": "lowercase",
+      "description": "Convert some text to lowercase (\"TeXt\" -> \"text\").",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to convert to lowercase"
+        }
+      ]
+    },
+    {
+      "id": "find",
+      "name": "find",
+      "description": "Find the index a string occurs inside another string, case insensitive.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to be searched."
+        },
+        {
+          "id": "find",
+          "name": "Find",
+          "description": "Text to search for."
+        }
+      ]
+    },
+    {
+      "id": "left",
+      "name": "left",
+      "description": "Return the first N characters of a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        },
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "Number of characters at beginning of string to return."
+        }
+      ]
+    },
+    {
+      "id": "right",
+      "name": "right",
+      "description": "Return the last N characters of a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        },
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "Number of characters at end of string to return."
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "mid",
+      "description": "Return N characters starting at an index in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index at which to start substring."
+        },
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "Number of characters to return."
+        }
+      ]
+    },
+    {
+      "id": "tokenat",
+      "name": "tokenat",
+      "description": "Return the Nth token from a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to get a token from."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "0-based index of the token to get."
+        },
+        {
+          "id": "separator",
+          "name": "Separator",
+          "description": "Character or string to separate tokens."
+        }
+      ]
+    },
+    {
+      "id": "tokencount",
+      "name": "tokencount",
+      "description": "Return the number of tokens in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to count tokens in."
+        },
+        {
+          "id": "separator",
+          "name": "Separator",
+          "description": "Character or string to separate tokens."
+        }
+      ]
+    },
+    {
+      "id": "replace",
+      "name": "replace",
+      "description": "Replace all instances of a string within a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        },
+        {
+          "id": "find",
+          "name": "Find",
+          "description": "Text to search for."
+        },
+        {
+          "id": "replace",
+          "name": "Replace",
+          "description": "Text to replace search string with."
+        }
+      ]
+    },
+    {
+      "id": "trim",
+      "name": "trim",
+      "description": "Remove whitespace from the beginning and end of a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        }
+      ]
+    },
+    {
+      "id": "zeropad",
+      "name": "zeropad",
+      "description": "Pad a number with zeroes, e.g. 000045",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "number",
+          "description": "Number to zero-pad."
+        },
+        {
+          "id": "digits",
+          "name": "digits",
+          "description": "Number of digits to show."
+        }
+      ]
+    },
+    {
+      "id": "urlencode",
+      "name": "URLEncode",
+      "description": "Encode a string in a format suitable for POST or GET requests.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to encode."
+        }
+      ]
+    },
+    {
+      "id": "urldecode",
+      "name": "URLDecode",
+      "description": "Decode a URL-encoded string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to decode."
+        }
+      ]
+    },
+    {
+      "id": "regexsearch",
+      "name": "RegexSearch",
+      "description": "Return index of first regex match in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to search"
+        },
+        {
+          "id": "regex",
+          "name": "Regex",
+          "description": "Regular expression to match"
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "description": "Regular expression flags"
+        }
+      ]
+    },
+    {
+      "id": "regexreplace",
+      "name": "RegexReplace",
+      "description": "Return string after replacing regex matches.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to search"
+        },
+        {
+          "id": "regex",
+          "name": "Regex",
+          "description": "Regular expression to match"
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "description": "Regular expression flags"
+        },
+        {
+          "id": "replace",
+          "name": "Replace",
+          "description": "String to replace with"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchcount",
+      "name": "RegexMatchCount",
+      "description": "Return number of regex matches in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to search"
+        },
+        {
+          "id": "regex",
+          "name": "Regex",
+          "description": "Regular expression to match"
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "description": "Regular expression flags"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchat",
+      "name": "RegexMatchAt",
+      "description": "Return Nth regex match in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "String to search"
+        },
+        {
+          "id": "regex",
+          "name": "Regex",
+          "description": "Regular expression to match"
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "description": "Regular expression flags"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Nth match to return."
+        }
+      ]
+    },
+    {
+      "id": "findcase",
+      "name": "findcase",
+      "description": "Find the index a string occurs inside another string, case sensitive.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Text to be searched."
+        },
+        {
+          "id": "find",
+          "name": "Find",
+          "description": "Text to search for."
+        }
+      ]
+    },
+    {
+      "id": "dt",
+      "name": "dt",
+      "description": "Retrieve the time, in seconds, since the last tick (a.k.a. time delta)",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timescale",
+      "name": "timescale",
+      "description": "Retrieve the time scaling factor.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "time",
+      "name": "time",
+      "description": "Time in seconds since the game began, taking in to account the time scale.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tickcount",
+      "name": "tickcount",
+      "description": "Retrieve the number of ticks elapsed since the start of the application.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fps",
+      "name": "fps",
+      "description": "Retrieve the current frames per second rate.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wallclocktime",
+      "name": "wallclocktime",
+      "description": "Real-world time in seconds since the game began (i.e. not affected by the time scale).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cpuutilisation",
+      "name": "cpuutilisation",
+      "description": "Retrieve the time in seconds spent in the application logic during the last second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gpuutilisation",
+      "name": "gpuutilisation",
+      "description": "Retrieve the time in seconds spent in rendering during the last second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "int",
+      "name": "int",
+      "description": "Convert a string or float to an integer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to convert to integer"
+        }
+      ]
+    },
+    {
+      "id": "float",
+      "name": "float",
+      "description": "Convert a string or integer to a float.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to convert to float"
+        }
+      ]
+    },
+    {
+      "id": "str",
+      "name": "str",
+      "description": "Convert an integer or float to a string. You can also use the & operator for concatenation.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to convert to string"
+        }
+      ]
+    },
+    {
+      "id": "random",
+      "name": "random",
+      "description": "Generate a random number.  Pass two numbers to generate within a range.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "range",
+          "name": "Range",
+          "description": "Range of random numbers to generate, from 0 to one less than this value."
+        }
+      ]
+    },
+    {
+      "id": "clamp",
+      "name": "clamp",
+      "description": "Return x if between two numbers, else the upper or lower bound.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "x",
+          "description": "Number to clamp."
+        },
+        {
+          "id": "lower",
+          "name": "lower",
+          "description": "Lower bound."
+        },
+        {
+          "id": "upper",
+          "name": "upper",
+          "description": "Upper bound."
+        }
+      ]
+    },
+    {
+      "id": "choose",
+      "name": "choose",
+      "description": "Randomly choose one of the parameters.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value1",
+          "name": "Value",
+          "description": "A random value to choose from."
+        },
+        {
+          "id": "value2",
+          "name": "Value",
+          "description": "Another random value to choose from."
+        }
+      ]
+    },
+    {
+      "id": "rgb",
+      "name": "rgb",
+      "description": "Generate an RGB value (number representing a color).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "Red",
+          "description": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "description": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "description": "Blue value, 0-255"
+        }
+      ]
+    },
+    {
+      "id": "rgbex",
+      "name": "rgbEx",
+      "description": "Generate an extended-range RGB value (0-100 range).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "Red",
+          "description": "Red value, 0-100"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "description": "Green value, 0-100"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "description": "Blue value, 0-100"
+        }
+      ]
+    },
+    {
+      "id": "imageloadingprogress",
+      "name": "ImageLoadingProgress",
+      "description": "Get the image loading progress from 0 to 1.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rgba",
+      "name": "rgba",
+      "description": "Generate an extended-range RGBA value (0-100 range).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "Red",
+          "description": "Red value, 0-100"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "description": "Green value, 0-100"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "description": "Blue value, 0-100"
+        },
+        {
+          "id": "alpha",
+          "name": "Alpha",
+          "description": "Alpha value, 0-100"
+        }
+      ]
+    },
+    {
+      "id": "viewportwidth",
+      "name": "ViewportWidth",
+      "description": "Get the width of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewportheight",
+      "name": "ViewportHeight",
+      "description": "Get the height of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "rgbex255",
+      "name": "rgbEx255",
+      "description": "Generate an extended-range RGB value (0-255 range).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "Red",
+          "description": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "description": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "description": "Blue value, 0-255"
+        }
+      ]
+    },
+    {
+      "id": "rgba255",
+      "name": "rgba255",
+      "description": "Generate an extended-range RGBA value (0-255 range).",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "Red",
+          "description": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "description": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "description": "Blue value, 0-255"
+        },
+        {
+          "id": "alpha",
+          "name": "Alpha",
+          "description": "Alpha value, 0-255"
+        }
+      ]
+    },
+    {
+      "id": "layer-z-elevation",
+      "name": "LayerZElevation",
+      "description": "Get the Z elevation of a layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get parallax for."
+        }
+      ]
+    },
+    {
+      "id": "currenteventsheetname",
+      "name": "CurrentEventSheetName",
+      "description": "The name of the event sheet the current event belongs to.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currenteventnumber",
+      "name": "CurrentEventNumber",
+      "description": "The current event number.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "call-mapped-function-expression",
+      "name": "CallMapped",
+      "description": "Call a function in a map from its string, and return its value.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "name",
+          "name": "MapName",
+          "description": "Name of the map (case-insensitive)."
+        },
+        {
+          "id": "string",
+          "name": "String",
+          "description": "The string associated with the function to call (case-insensitive)."
+        }
+      ]
+    },
+    {
+      "id": "round-to-dp",
+      "name": "roundToDp",
+      "description": "Round number to a certain number of decimal places.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "Number",
+          "description": "Number to round."
+        },
+        {
+          "id": "digits",
+          "name": "Digits",
+          "description": "Number of decimal places to round to."
+        }
+      ]
+    },
+    {
+      "id": "layerscrollx",
+      "name": "LayerScrollX",
+      "description": "Get the scroll X position of a specific layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get scroll for."
+        }
+      ]
+    },
+    {
+      "id": "layerscrolly",
+      "name": "LayerScrollY",
+      "description": "Get the scroll Y position of a specific layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get scroll for."
+        }
+      ]
+    },
+    {
+      "id": "vanishing-point-x",
+      "name": "VanishingPointX",
+      "description": "Get the current vanishing point X in the viewport from 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vanishing-point-y",
+      "name": "VanishingPointY",
+      "description": "Get the current vanishing point Y in the viewport from 0-100.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "chooseindex",
+      "name": "chooseindex",
+      "description": "Choose one of the parameters by an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "A zero-based index of the parameter to choose."
+        },
+        {
+          "id": "value1",
+          "name": "Value",
+          "description": "A value to select by index."
+        }
+      ]
+    },
+    {
+      "id": "viewportmidx",
+      "name": "ViewportMidX",
+      "description": "Get the X co-ordinate of the middle of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "viewportmidy",
+      "name": "ViewportMidY",
+      "description": "Get the Y co-ordinate of the middle of a layer's viewport.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "layer",
+          "description": "Layer to get viewport for."
+        }
+      ]
+    },
+    {
+      "id": "layertolayerx",
+      "name": "LayerToLayerX",
+      "description": "Translate a position from one layer to another layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "fromLayer",
+          "description": "Layer position is on."
+        },
+        {
+          "id": "to-layer",
+          "name": "toLayer",
+          "description": "Layer to translate position to."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "layertolayery",
+      "name": "LayerToLayerY",
+      "description": "Translate a position from one layer to another layer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "fromLayer",
+          "description": "Layer position is on."
+        },
+        {
+          "id": "to-layer",
+          "name": "toLayer",
+          "description": "Layer to translate position to."
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "X co-ordinate to translate."
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "Y co-ordinate to translate."
+        }
+      ]
+    },
+    {
+      "id": "string-substitute",
+      "name": "StringSub",
+      "description": "Replace placeholders {0}, {1}... in a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Source text."
+        },
+        {
+          "id": "substitution",
+          "name": "Substitution",
+          "description": "Value to replace a placeholder with."
+        }
+      ]
+    },
+    {
+      "id": "wallclockdt",
+      "name": "wallclockdt",
+      "description": "Real-world delta-time, i.e. dt ignoring the time scale.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectid",
+      "name": "ProjectID",
+      "description": "Return the ID from project properties.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectuniqueid",
+      "name": "ProjectUniqueID",
+      "description": "A string of random characters generated for this specific project.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilecount",
+      "name": "ProjectFileCount",
+      "description": "The number of files in this project at preview/export time.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilenameat",
+      "name": "ProjectFileNameAt",
+      "description": "The name of a file in this project at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of the project file."
+        }
+      ]
+    },
+    {
+      "id": "hex-color",
+      "name": "HexColor",
+      "description": "Generate an RGBA value from a CSS-style hexadecimal string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "A CSS-style hexadecimal string, e.g. \"#FF0000\"."
+        }
+      ]
+    },
+    {
+      "id": "color-to-hex-string",
+      "name": "ColorToHexString",
+      "description": "Generate a CSS-style hexadecimal string from an RGBA value.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "color-value",
+          "name": "Color",
+          "description": "An RGBA color value to convert to a hex string."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 56,
+    "actions": 79,
+    "expressions": 132
+  }
+}

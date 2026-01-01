@@ -1,0 +1,572 @@
+{
+  "id": "advert",
+  "name": "Mobile advert",
+  "description": "Handle AdMob adverts for Cordova on iOS and Android.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-banner-ready",
+      "name": "On banner ready",
+      "description": "Trigger when banner advert is ready to display",
+      "display_text": "On banner ready",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-ready",
+      "name": "On interstitial ready",
+      "description": "Triggers when interstitial advert is ready to display",
+      "display_text": "On interstitial ready",
+      "params": []
+    },
+    {
+      "id": "on-banner-failed-to-load",
+      "name": "On banner failed to load",
+      "description": "Triggers when banner advert fails to load",
+      "display_text": "On banner failed to load",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-failed-to-load",
+      "name": "On interstitial failed to load",
+      "description": "Triggers when interstitial advert fails to load",
+      "display_text": "On interstitial failed to load",
+      "params": []
+    },
+    {
+      "id": "on-banner-shown",
+      "name": "On banner shown",
+      "description": "Trigger when banner advert is displayed",
+      "display_text": "On banner shown",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-complete",
+      "name": "On interstitial complete",
+      "description": "Triggers when a interstitial has been dismissed",
+      "display_text": "On interstitial complete",
+      "params": []
+    },
+    {
+      "id": "on-banner-hidden",
+      "name": "On banner hidden",
+      "description": "Triggers when a banner has been hidden",
+      "display_text": "On banner hidden",
+      "params": []
+    },
+    {
+      "id": "on-interstitial-cancelled",
+      "name": "On interstitial cancelled",
+      "description": "Triggers when a interstitial advert is cancelled",
+      "display_text": "On interstitial cancelled",
+      "params": []
+    },
+    {
+      "id": "on-configuration-failed",
+      "name": "On configuration failed",
+      "description": "Triggers when the ad plugin configuration fails",
+      "display_text": "On configuration failed",
+      "params": []
+    },
+    {
+      "id": "on-configuration-complete",
+      "name": "On configuration complete",
+      "description": "Triggers when the ad plugin configuration succeeds",
+      "display_text": "On configuration complete",
+      "params": []
+    },
+    {
+      "id": "is-showing-banner",
+      "name": "Is showing banner",
+      "description": "returns true if a banner advert is currently being displayed",
+      "display_text": "is showing banner",
+      "params": []
+    },
+    {
+      "id": "is-showing-interstitial",
+      "name": "Is showing interstitial",
+      "description": "returns true if a interstitial advert is currently being displayed",
+      "display_text": "is showing interstitial",
+      "params": []
+    },
+    {
+      "id": "is-loaded-banner",
+      "name": "Is banner loaded",
+      "description": "returns true if a banner advert is loaded",
+      "display_text": "is banner loaded",
+      "params": []
+    },
+    {
+      "id": "is-loaded-interstitial",
+      "name": "Is interstitial loaded",
+      "description": "returns true if a interstitial advert is loaded",
+      "display_text": "is interstitial loaded",
+      "params": []
+    },
+    {
+      "id": "is-configured",
+      "name": "Is configured",
+      "description": "returns true if the application ID has been set",
+      "display_text": "is configured",
+      "params": []
+    },
+    {
+      "id": "is-in-eea-or-unknown",
+      "name": "Is in EEA or unknown",
+      "description": "Is true if the device is inside the EEA or the location is unknown",
+      "display_text": "is in EEA or unknown",
+      "params": []
+    },
+    {
+      "id": "on-idfa-request-complete",
+      "name": "On IDFA request complete",
+      "description": "Triggered after the 'Request IDFA' prompt is closed (regardless of outcome).",
+      "display_text": "On IDFA request complete",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-ready",
+      "name": "On rewarded ready",
+      "description": "Triggers when a rewarded advert is ready to display",
+      "display_text": "On rewarded ready",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-ready",
+      "name": "On rewarded interstitial ready",
+      "description": "Triggers when a rewarded interstitial advert is ready to display",
+      "display_text": "On rewarded interstitial ready",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-failed-to-load",
+      "name": "On rewarded failed to load",
+      "description": "Triggers when a rewarded advert fails to load",
+      "display_text": "On rewarded failed to load",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-failed-to-load",
+      "name": "On rewarded interstitial failed to load",
+      "description": "Triggers when a rewarded interstitial advert fails to load",
+      "display_text": "On rewarded interstitial failed to load",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-complete",
+      "name": "On rewarded complete",
+      "description": "Triggers when a rewarded advert has completed",
+      "display_text": "On rewarded complete",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-complete",
+      "name": "On rewarded interstitial complete",
+      "description": "Triggers when a rewarded interstitial advert has completed",
+      "display_text": "On rewarded interstitial complete",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-cancelled",
+      "name": "On rewarded cancelled",
+      "description": "Triggers when a rewarded advert is cancelled",
+      "display_text": "On rewarded cancelled",
+      "params": []
+    },
+    {
+      "id": "on-rewarded-interstitial-cancelled",
+      "name": "On rewarded interstitial cancelled",
+      "description": "Triggers when a rewarded interstitial advert is cancelled",
+      "display_text": "On rewarded interstitial cancelled",
+      "params": []
+    },
+    {
+      "id": "is-showing-rewarded",
+      "name": "Is showing rewarded",
+      "description": "returns true if a rewarded advert is currently being displayed",
+      "display_text": "is showing rewarded",
+      "params": []
+    },
+    {
+      "id": "is-showing-rewarded-interstitial",
+      "name": "Is showing rewarded interstitial",
+      "description": "returns true if a rewarded interstitial advert is currently being displayed",
+      "display_text": "is showing rewarded interstitial",
+      "params": []
+    },
+    {
+      "id": "is-loaded-rewarded",
+      "name": "Is rewarded loaded",
+      "description": "returns true if a rewarded advert is loaded",
+      "display_text": "is rewarded loaded",
+      "params": []
+    },
+    {
+      "id": "is-loaded-rewarded-interstitial",
+      "name": "Is rewarded interstitial loaded",
+      "description": "returns true if a rewarded interstitial advert is loaded",
+      "display_text": "is rewarded interstitial loaded",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "create-banner",
+      "name": "Create banner advert",
+      "description": "Create a banner advert with a given size and identifier",
+      "display_text": "Create banner advert [b]{0}[/b] size: [b]{1}[/b] position: [b]{3}[/b] show: [b]{2}[/b] reload: [b]{4}[/b] offset: [b]{5}[/b] overlap: [b]{6}[/b]",
+      "params": [
+        {
+          "id": "banner-size",
+          "name": "Banner Size",
+          "description": "The display size of the advert",
+          "options": [
+            {
+              "id": "portrait",
+              "label": "Smart portrait"
+            },
+            {
+              "id": "landscape",
+              "label": "Smart landscape"
+            },
+            {
+              "id": "standard",
+              "label": "Standard"
+            },
+            {
+              "id": "large",
+              "label": "Large"
+            },
+            {
+              "id": "medium",
+              "label": "Medium"
+            },
+            {
+              "id": "full",
+              "label": "Full"
+            },
+            {
+              "id": "leaderboard",
+              "label": "Leaderboard"
+            }
+          ]
+        },
+        {
+          "id": "show",
+          "name": "Show",
+          "description": "Automatically show the advert once it has loaded",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        },
+        {
+          "id": "advert-id",
+          "name": "Banner Advert Unit ID",
+          "description": "The AdMob Advert Unit ID for this advert"
+        },
+        {
+          "id": "position",
+          "name": "Position",
+          "description": "Position on the screen where the banner should be placed",
+          "options": [
+            {
+              "id": "bottom",
+              "label": "bottom"
+            },
+            {
+              "id": "top",
+              "label": "top"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "Reload",
+          "description": "Reload the banner with new setting if one already exists",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        },
+        {
+          "id": "offset",
+          "name": "Offset",
+          "description": "Offset the banner by the specified amount. Ignored when 'Overlap' is 'false'"
+        },
+        {
+          "id": "overlap",
+          "name": "Overlap",
+          "description": "Should the banner overlap the main content or not",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-banner",
+      "name": "Show banner advert",
+      "description": "Shows an already loaded banner advert",
+      "display_text": "Show the current banner advert",
+      "params": []
+    },
+    {
+      "id": "hide-banner",
+      "name": "Hide banner advert",
+      "description": "Hides the current banner advert",
+      "display_text": "Hide the current banner advert",
+      "params": []
+    },
+    {
+      "id": "create-interstitial",
+      "name": "Create interstitial advert",
+      "description": "Create a interstitial advert with the given identifier",
+      "display_text": "Create interstitial advert [b]{0}[/b] show: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "show",
+          "name": "Show",
+          "description": "Automatically show the advert once it has loaded",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        },
+        {
+          "id": "advert-id",
+          "name": "Interstitial Advert Unit ID",
+          "description": "The AdMob Advert Unit ID for this advert"
+        }
+      ]
+    },
+    {
+      "id": "show-interstitial",
+      "name": "Show interstitial advert",
+      "description": "Shows an already loaded interstitial advert",
+      "display_text": "Show interstitial advert",
+      "params": []
+    },
+    {
+      "id": "show-consent-dialog",
+      "name": "Show user consent dialog",
+      "description": "Displays the modal user consent dialog",
+      "display_text": "Show user consent dialog",
+      "params": []
+    },
+    {
+      "id": "set-max-ad-content-rating",
+      "name": "Set max advert content rating",
+      "description": "Filter the available adverts based on the digital content label classifications.",
+      "display_text": "Set advert content rating {0}",
+      "params": [
+        {
+          "id": "rating",
+          "name": "Rating",
+          "description": "The maximum digital content rating of adverts you wish to show",
+          "options": [
+            {
+              "id": "G",
+              "label": "General Audiences"
+            },
+            {
+              "id": "PG",
+              "label": "Parental Guidance"
+            },
+            {
+              "id": "T",
+              "label": "Teen"
+            },
+            {
+              "id": "MA",
+              "label": "Mature Audiences"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tag-for-child-directed-treatment",
+      "name": "Tag for child directed treatment",
+      "description": "Request content that is child-directed for the purposes of the Children's Online Privacy Protection Act (COPPA)",
+      "display_text": "Use child directed content {0}",
+      "params": [
+        {
+          "id": "option",
+          "name": "Use child directed content",
+          "description": "Specifies if the Admob SDK should return child directed content"
+        }
+      ]
+    },
+    {
+      "id": "tag-for-under-age-of-consent",
+      "name": "Tag for under age of consent",
+      "description": "Indicate the user should be treated as under the age of consent as per the restrictions in the European Economic Area(EEA) General Data Protection Act(GDPR)",
+      "display_text": "Tag under age of consent {0}",
+      "params": [
+        {
+          "id": "option",
+          "name": "User under age of consent",
+          "description": "Specifies if the user is under the age of consent"
+        }
+      ]
+    },
+    {
+      "id": "request-idfa",
+      "name": "Request IDFA",
+      "description": "Request to use the identifier for advertisers (IDFA) on iOS. This may prompt the user.",
+      "display_text": "Request IDFA",
+      "params": []
+    },
+    {
+      "id": "create-rewarded",
+      "name": "Create rewarded advert",
+      "description": "Create a rewarded advert with the given identifier",
+      "display_text": "Create rewarded advert [b]{0}[/b] show: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "advert-id",
+          "name": "Rewarded Advert Unit ID",
+          "description": "The AdMob Advert Unit ID for this advert"
+        },
+        {
+          "id": "show",
+          "name": "Show",
+          "description": "Automatically show the advert once it has loaded",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "create-rewarded-interstitial",
+      "name": "Create rewarded interstitial advert",
+      "description": "Create a rewarded interstitial advert with the given identifier",
+      "display_text": "Create rewarded interstitial advert [b]{0}[/b] show: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "advert-id",
+          "name": "Rewarded Interstitial Advert Unit ID",
+          "description": "The AdMob Advert Unit ID for this advert"
+        },
+        {
+          "id": "show",
+          "name": "Show",
+          "description": "Automatically show the advert once it has loaded",
+          "options": [
+            {
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-rewarded",
+      "name": "Show rewarded advert",
+      "description": "Shows an already loaded rewarded advert",
+      "display_text": "Show rewarded advert",
+      "params": []
+    },
+    {
+      "id": "show-rewarded-interstitial",
+      "name": "Show rewarded interstitial advert",
+      "description": "Shows an already loaded rewarded interstitial advert",
+      "display_text": "Show rewarded interstitial advert",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "error-message",
+      "name": "ErrorMessage",
+      "description": "In a trigger, an error message if available",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-type",
+      "name": "RewardType",
+      "description": "In a trigger, the reward type if available",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-value",
+      "name": "RewardValue",
+      "description": "In a trigger, the reward value if available",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "consent-status",
+      "name": "ConsentStatus",
+      "description": "The current user consent status for adverts",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "idfa-status",
+      "name": "IDFAStatus",
+      "description": "The current user consent status for the identifier for advertisers (IDFA)",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-interstitial-type",
+      "name": "RewardInterstitialType",
+      "description": "In a trigger, the reward type of an interstitial advert if available",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reward-interstitial-value",
+      "name": "RewardInterstitialValue",
+      "description": "In a trigger, the reward value of an interstitial advert if available",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 29,
+    "actions": 14,
+    "expressions": 7
+  }
+}

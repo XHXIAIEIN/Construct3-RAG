@@ -1,0 +1,432 @@
+{
+  "id": "gamerecorder",
+  "name": "Video recorder",
+  "description": "Record videos of the project or the whole screen in real-time.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-recording-ready",
+      "name": "On recording ready",
+      "description": "Triggered after 'Stop recording' when the recording is available in the RecordingURL expression.",
+      "display_text": "On recording ready",
+      "params": []
+    },
+    {
+      "id": "on-recording-error",
+      "name": "On recording error",
+      "description": "Triggered if an error occurs during recording.",
+      "display_text": "On recording error",
+      "params": []
+    },
+    {
+      "id": "is-recording-supported",
+      "name": "Is recording supported",
+      "description": "True if the current browser supports video recording.",
+      "display_text": "Is recording supported",
+      "params": []
+    },
+    {
+      "id": "is-recording",
+      "name": "Is recording",
+      "description": "True while actively recording a video.",
+      "display_text": "Is recording",
+      "params": []
+    },
+    {
+      "id": "is-screen-recording-supported",
+      "name": "Is screen recording supported",
+      "description": "True if the current browser supports screen recording.",
+      "display_text": "Is screen recording supported",
+      "params": []
+    },
+    {
+      "id": "is-video-format-supported-2",
+      "name": "Is video format supported",
+      "description": "Check if a particular video format is supported for recording.",
+      "display_text": "Is video format [b]{0} {1}[/b] supported",
+      "params": [
+        {
+          "id": "container",
+          "name": "Container",
+          "description": "The container format to test if supported for recording.",
+          "options": [
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "codec",
+          "name": "Video codec",
+          "description": "The video codec to test if supported for recording.",
+          "options": [
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-audio-format-supported-2",
+      "name": "Is audio format supported",
+      "description": "Check if a particular audio format is supported for recording.",
+      "display_text": "Is audio format [b]{0} {1}[/b] supported",
+      "params": [
+        {
+          "id": "container",
+          "name": "Container",
+          "description": "The container format to test if supported for recording.",
+          "options": [
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "codec",
+          "name": "Audio codec",
+          "description": "The audio codec  to test if supported for recording.",
+          "options": [
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop-recording",
+      "name": "Stop recording",
+      "description": "Finish recording a video. Triggers 'On recording ready' when available.",
+      "display_text": "Stop recording",
+      "params": []
+    },
+    {
+      "id": "start-recording-2",
+      "name": "Start recording",
+      "description": "Record a real-time video of the project.",
+      "display_text": "Start recording ([i]{0} {1}[/i] @ [i]{2}[/i] fps, [i]{3}[/i], [i]{4}[/i] kbps)",
+      "params": [
+        {
+          "id": "container",
+          "name": "Container",
+          "description": "The container format to record.",
+          "options": [
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "Video codec",
+          "description": "The video codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no video)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "framerate",
+          "name": "Framerate",
+          "description": "The frames per second to capture in the video (if used). Use 0 for the display rate."
+        },
+        {
+          "id": "audio-codec",
+          "name": "Audio codec",
+          "description": "The audio codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no audio)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "quality-kbps",
+          "name": "Quality (kbps)",
+          "description": "The data rate to encode in kilobits per second (kbps)."
+        }
+      ]
+    },
+    {
+      "id": "start-screen-recording-2",
+      "name": "Start screen recording",
+      "description": "Record a real-time video of the user's screen.",
+      "display_text": "Start screen recording ([i]{0} {1}[/i], [i]{2}[/i], system audio [i]{3}[/i], [i]{4}[/i] kbps)",
+      "params": [
+        {
+          "id": "container",
+          "name": "Container",
+          "description": "The container format to record.",
+          "options": [
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "Video codec",
+          "description": "The video codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no video)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "audio-codec",
+          "name": "Audio codec",
+          "description": "The audio codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no audio)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "system-audio",
+          "name": "System audio",
+          "description": "Check to request recording the entire system's audio output. Otherwise audio may be limited to the tab or Audio object output."
+        },
+        {
+          "id": "quality-kbps",
+          "name": "Quality (kbps)",
+          "description": "The data rate to encode in kilobits per second (kbps)."
+        }
+      ]
+    },
+    {
+      "id": "start-user-media-recording-2",
+      "name": "Start User Media recording",
+      "description": "Record the audio or video from an active User Media object.",
+      "display_text": "Start User Media recording ([i]{0} {1}[/i], [i]{2}[/i], [i]{3}[/i] kbps)",
+      "params": [
+        {
+          "id": "container",
+          "name": "Container",
+          "description": "The container format to record.",
+          "options": [
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "Video codec",
+          "description": "The video codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no video)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "audio-codec",
+          "name": "Audio codec",
+          "description": "The audio codec to encode the recording with.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None (no audio)"
+            },
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "quality-kbps",
+          "name": "Quality (kbps)",
+          "description": "The data rate to encode in kilobits per second (kbps)."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "recordingurl",
+      "name": "RecordingURL",
+      "description": "Return a URL of the recording that can be downloaded with the Browser object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "recording-type",
+      "name": "RecordingType",
+      "description": "Return the MIME type of the recording, e.g. \"video/webm\".",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "recording-file-extension",
+      "name": "RecordingFileExtension",
+      "description": "Return the file extension for the recording, e.g. \".webm\".",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 7,
+    "actions": 4,
+    "expressions": 3
+  }
+}

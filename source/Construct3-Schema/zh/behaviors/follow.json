@@ -1,0 +1,582 @@
+{
+  "id": "follow",
+  "name": "轨迹跟随",
+  "description": "根据时间或距离跟踪另一个物体的运动。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "compare-mode",
+      "name": "比较跟随模式",
+      "description": "比较当前的跟随模式。",
+      "display_text": "设置 {my}跟随模式为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "要比较的模式。",
+          "options": [
+            {
+              "id": "time",
+              "label": "时间"
+            },
+            {
+              "id": "distance",
+              "label": "距离"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-delay",
+      "name": "比较延迟",
+      "description": "比较当前的延迟",
+      "display_text": "{my} 延迟 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "delay",
+          "name": "延迟",
+          "description": "比较当前的延迟"
+        }
+      ]
+    },
+    {
+      "id": "compare-max-delay",
+      "name": "比较最大同步时长",
+      "description": "比较最大同步时长",
+      "display_text": "{my} 最大同步时长 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "max-delay",
+          "name": "最大同步时长",
+          "description": "要比较的最大同步时长"
+        }
+      ]
+    },
+    {
+      "id": "compare-history-rate",
+      "name": "比较同步频率",
+      "description": "比较当前同步频率。",
+      "display_text": "{my} 同步频率 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "history-rate",
+          "name": "同步频率",
+          "description": "要比较的同步频率。"
+        }
+      ]
+    },
+    {
+      "id": "is-following-property",
+      "name": "正在跟随属性",
+      "description": "检测跟随行为是否正在跟随某些属性。",
+      "display_text": "{my} 正在跟随 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "检测跟随行为是否正在跟随以下的属性。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X坐标"
+            },
+            {
+              "id": "y",
+              "label": "Y坐标"
+            },
+            {
+              "id": "z-elevation",
+              "label": "视距高度"
+            },
+            {
+              "id": "width",
+              "label": "宽度"
+            },
+            {
+              "id": "height",
+              "label": "高度"
+            },
+            {
+              "id": "angle",
+              "label": "角度"
+            },
+            {
+              "id": "opacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "visibility",
+              "label": "可见性"
+            },
+            {
+              "id": "destroyed",
+              "label": "销毁状态"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-following-custom-property",
+      "name": "正在跟随自定义属性",
+      "description": "检测跟随行为是否正在跟随自定义属性。",
+      "display_text": "{my} 正在跟随自定义属性 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "自定义属性",
+          "description": "自定义属性的标签"
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "测试行为是否启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    },
+    {
+      "id": "is-following-object",
+      "name": "正在跟随对象",
+      "description": "检测跟随行为是否正在跟随某个对象。",
+      "display_text": "{my} 正在跟随对象",
+      "params": []
+    },
+    {
+      "id": "has-follow-data",
+      "name": "存在跟随数据",
+      "description": "检测当前是否已收集足够的数据以进行跟随。",
+      "display_text": "{my} 存在跟随数据",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "正在暂停",
+      "description": "检测跟随行为是否已暂停。",
+      "display_text": "{my} 正在暂停",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-mode",
+      "name": "设置跟随模式",
+      "description": "设置当前跟随模式。",
+      "display_text": "设置 {my}跟随模式为 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "要设置的模式。",
+          "options": [
+            {
+              "id": "time",
+              "label": "时间"
+            },
+            {
+              "id": "distance",
+              "label": "距离"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-delay",
+      "name": "设置延迟",
+      "description": "设置当前跟随延迟。",
+      "display_text": "设置 {my}跟随延迟为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "delay",
+          "name": "延迟",
+          "description": "延迟跟随的时机，时间(秒)或距离(像素)，取决于跟随模式。"
+        }
+      ]
+    },
+    {
+      "id": "set-max-delay",
+      "name": "设置最大同步时长",
+      "description": "设置当前最大同步时长，具体时间或距离，取决于模式。",
+      "display_text": "设置 {my}最大同步时长为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-delay",
+          "name": "最大同步时长",
+          "description": "最大同步时长，具体时间或距离，取决于模式。"
+        }
+      ]
+    },
+    {
+      "id": "set-history-rate",
+      "name": "设置同步频率",
+      "description": "每秒记录跟随对象属性的次数。",
+      "display_text": "设置 {my}同步频率为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "history-rate",
+          "name": "频率",
+          "description": "每秒记录跟随对象属性的次数。"
+        }
+      ]
+    },
+    {
+      "id": "set-following-property",
+      "name": "设置跟随属性",
+      "description": "设置是否要跟随某些属性。",
+      "display_text": "[i]{1}[/i] {my} 跟随属性[b]{0}[/b]",
+      "params": [
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "设置是否要跟随某些属性。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X坐标"
+            },
+            {
+              "id": "y",
+              "label": "Y坐标"
+            },
+            {
+              "id": "z-elevation",
+              "label": "视距高度"
+            },
+            {
+              "id": "width",
+              "label": "宽度"
+            },
+            {
+              "id": "height",
+              "label": "高度"
+            },
+            {
+              "id": "angle",
+              "label": "角度"
+            },
+            {
+              "id": "opacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "visibility",
+              "label": "可见性"
+            },
+            {
+              "id": "destroyed",
+              "label": "销毁状态"
+            }
+          ]
+        },
+        {
+          "id": "enabled",
+          "name": "启用",
+          "description": "要跟随的属性"
+        }
+      ]
+    },
+    {
+      "id": "set-property-interpolation",
+      "name": "设置属性插值模式",
+      "description": "设置轨迹跟随内置属性其中一项使用的插值模式。",
+      "display_text": "设置 {my}自定义属性[b]{0}[/b]使用[i]{1}[/i]插值模式",
+      "params": [
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "要设置插值的属性。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X坐标"
+            },
+            {
+              "id": "y",
+              "label": "Y坐标"
+            },
+            {
+              "id": "z-elevation",
+              "label": "视距高度"
+            },
+            {
+              "id": "width",
+              "label": "宽度"
+            },
+            {
+              "id": "height",
+              "label": "高度"
+            },
+            {
+              "id": "angle",
+              "label": "角度"
+            },
+            {
+              "id": "opacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "visibility",
+              "label": "可见性"
+            },
+            {
+              "id": "destroyed",
+              "label": "跟随销毁"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "插值",
+          "description": "用于属性的插值模式。",
+          "options": [
+            {
+              "id": "step",
+              "label": "步进"
+            },
+            {
+              "id": "linear",
+              "label": "线性"
+            },
+            {
+              "id": "angular",
+              "label": "角度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "start-following-custom-property",
+      "name": "开始跟随属性",
+      "description": "添加要跟随的自定义属性。",
+      "display_text": "{my} 开始跟随属性[b]{0}[/b] [i]{1}[/i]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "自定义属性",
+          "description": "自定义属性的标签"
+        },
+        {
+          "id": "interpolation",
+          "name": "插值",
+          "description": "用于属性的插值模式。",
+          "options": [
+            {
+              "id": "step",
+              "label": "步进"
+            },
+            {
+              "id": "linear",
+              "label": "线性"
+            },
+            {
+              "id": "angular",
+              "label": "插值"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-following-custom-property",
+      "name": "停止跟随属性",
+      "description": "停止跟随自定义属性。",
+      "display_text": "{my} 停止跟随属性 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "自定义属性",
+          "description": "自定义属性的标签"
+        }
+      ]
+    },
+    {
+      "id": "set-custom-property-value",
+      "name": "设置自定义属性值",
+      "description": "设置要跟随的自定义属性的当前数值。",
+      "display_text": "设置 {my}自定义属性[b]{0}[/b]为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "自定义属性",
+          "description": "自定义属性的标签"
+        },
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "设置自定义属性的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用行为。"
+        }
+      ]
+    },
+    {
+      "id": "follow-object",
+      "name": "跟随对象",
+      "description": "开始跟随另一个对象。",
+      "display_text": "{my}: 跟随 {0} (从当前位置开始: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "要跟随的对象"
+        },
+        {
+          "id": "from-current-position",
+          "name": "从当前位置开始",
+          "description": "启用后，该对象将立即从其当前位置开始跟随。"
+        }
+      ]
+    },
+    {
+      "id": "follow-self",
+      "name": "跟随自己",
+      "description": "开始跟踪目标对象，并储存历史记录。",
+      "display_text": "{my} 跟随自己",
+      "params": []
+    },
+    {
+      "id": "stop-following",
+      "name": "停止跟随",
+      "description": "停止跟随所有对象。",
+      "display_text": "{my} 停止跟随",
+      "params": []
+    },
+    {
+      "id": "clear-history",
+      "name": "清空历史记录",
+      "description": "清空跟随对象的历史记录。",
+      "display_text": "{my} 清空历史记录",
+      "params": []
+    },
+    {
+      "id": "rewind-history",
+      "name": "回退历史",
+      "description": "寻找历史更早的时间点，回到该时间继续记录。",
+      "display_text": "{my} 回退 [b]{0}[/b] 秒历史记录",
+      "params": [
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "倒回历史时间，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-paused",
+      "name": "设置暂停",
+      "description": "设置是否暂停跟随。",
+      "display_text": "{my} 暂停 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "is-paused",
+          "name": "暂停",
+          "description": "是否暂停跟随。"
+        }
+      ]
+    },
+    {
+      "id": "load-history-json",
+      "name": "读取历史记录",
+      "description": "从JSON字符串中加载跟随对象的历史记录。",
+      "display_text": "{my} 读取历史记录 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "包含跟随历史数据的JSON字符串，来自 '导出历史数据' 表达式。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "delay",
+      "name": "延迟",
+      "description": "当前延迟，以秒或像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "max-delay",
+      "name": "最大同步时长",
+      "description": "最大同步时长，以秒或像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "history-rate",
+      "name": "同步频率",
+      "description": "每秒记录跟随对象属性的次数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "follow-uid",
+      "name": "跟随对象UID",
+      "description": "当前跟踪对象的UID，如果没有，则为-1。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "delayed-custom-property-value",
+      "name": "自定义属性延迟",
+      "description": "跟随的自定义属性的延迟值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "自定义属性",
+          "description": "自定义属性的标签"
+        }
+      ]
+    },
+    {
+      "id": "history-as-json",
+      "name": "导出历史记录",
+      "description": "将对象跟随的历史记录保存到 JSON 数据字符串中。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "max-delay",
+          "name": "最大同步时长",
+          "description": "历史记录数据保存的最长时间，以秒为单位。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 10,
+    "actions": 17,
+    "expressions": 6
+  }
+}

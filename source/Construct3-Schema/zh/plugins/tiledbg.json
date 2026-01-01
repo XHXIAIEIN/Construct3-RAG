@@ -1,0 +1,352 @@
+{
+  "id": "tiledbg",
+  "name": "平铺图",
+  "description": "将图像以平铺重复的方式显示，这比堆满精灵工作效率更快。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "name": "网络图像加载完成",
+      "description": "执行 '加载网络图像' 动作后，图像加载完成时触发。",
+      "display_text": "网络图像加载完成",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "当图像链接读取失败",
+      "description": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "display_text": "当图像链接读取失败",
+      "params": []
+    },
+    {
+      "id": "is-tile-randomization-enabled",
+      "name": "已开启纹理混合",
+      "description": "检测纹理混合功能是否已启用。",
+      "display_text": "已开启纹理混合",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "前景覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "加载网络图像",
+      "description": "从远程服务器地址下载图像或图像数据。",
+      "display_text": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "要下载数据的远程服务器地址。"
+        },
+        {
+          "id": "cross-origin",
+          "name": "跨域",
+          "description": "用于请求的跨源（CORS）模式。",
+          "options": [
+            {
+              "id": "anonymous",
+              "label": "匿名"
+            },
+            {
+              "id": "none",
+              "label": "无"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image-offset-x",
+      "name": "设置图像X偏移",
+      "description": "设置图像在X轴的偏移量",
+      "display_text": "设置图像偏移X为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "offset-x",
+          "name": "X偏移值",
+          "description": "图像在X轴的偏移量"
+        }
+      ]
+    },
+    {
+      "id": "set-image-offset-y",
+      "name": "设置图像Y偏移",
+      "description": "设置图片内Y轴偏移量",
+      "display_text": "设置图像偏移Y为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "offset-y",
+          "name": "Y偏移值",
+          "description": "图像在Y轴的偏移量"
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-x",
+      "name": "设置图像X缩放",
+      "description": "设置图片内X轴缩放量",
+      "display_text": "设置图像X缩放为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-x",
+          "name": "X轴比例",
+          "description": "图像在 X 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-y",
+      "name": "设置图像Y缩放",
+      "description": "设置图片内Y轴缩放量",
+      "display_text": "设置图像Y缩放为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale-y",
+          "name": "Y轴比例",
+          "description": "图像在 Y 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-image-angle",
+      "name": "设置图像角度",
+      "description": "设置图片角度",
+      "display_text": "设置图像角度为[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "设置内部图像的角度，以度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-randomization-enabled",
+      "name": "启用纹理混合",
+      "description": "启用或禁用纹理混合功能。",
+      "display_text": "[b]{0}[/b]纹理混合",
+      "params": [
+        {
+          "id": "enabled",
+          "name": "启用",
+          "description": "启用或禁用纹理混合功能。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-pos-random",
+      "name": "设置扰动位置",
+      "description": "设置纹理混合的水平和垂直的随机偏移量。",
+      "display_text": "设置纹理混合(扰动位置: [i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x-random",
+          "name": "扰动X",
+          "description": "在水平方向的随机偏移量，从0到100。"
+        },
+        {
+          "id": "y-random",
+          "name": "扰动Y",
+          "description": "在垂直方向的随机偏移量，从0到100。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-angle-random",
+      "name": "设置扰动角度",
+      "description": "设置图块纹理混合的角度扰动量。",
+      "display_text": "设置纹理混合(扰动角度: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "angle-random",
+          "name": "扰动的角度",
+          "description": "随机角度偏移量，从0到100。"
+        }
+      ]
+    },
+    {
+      "id": "set-tile-blend-margin",
+      "name": "设置边缘混合",
+      "description": "设置纹理淡出到相邻图块边缘的百分比。",
+      "display_text": "设置边缘混合 [i]{0}[/i], [i]{1}[/i]",
+      "params": [
+        {
+          "id": "blend-margin-x",
+          "name": "边界混合X",
+          "description": "图块在水平方向淡出到相邻边缘的百分比，从0到100。"
+        },
+        {
+          "id": "blend-margin-y",
+          "name": "边界混合Y",
+          "description": "图块在垂直方向淡出到相邻边缘的百分比，从0到100。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "imagewidth",
+      "name": "原始图像宽度",
+      "description": "当前图像的宽度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imageheight",
+      "name": "原始图像高度",
+      "description": "当前图像的高度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-offset-x",
+      "name": "图像偏移坐标X",
+      "description": "图像在X轴的偏移值",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-offset-y",
+      "name": "图像偏移坐标Y",
+      "description": "图像在Y轴的偏移量",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-x",
+      "name": "图像缩放比例X",
+      "description": "图像在X轴的缩放",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-scale-y",
+      "name": "图像缩放比例Y",
+      "description": "图像在Y轴的缩放",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "image-angle",
+      "name": "图像角度",
+      "description": "设置内部图像的角度，以度数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-x-random",
+      "name": "图块扰动X",
+      "description": "图块纹理混合的水平方向扰动，从0到100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-y-random",
+      "name": "图块扰动Y",
+      "description": "图块纹理混合的垂直方向扰动，从0到100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-angle-random",
+      "name": "图块扰动角度",
+      "description": "图块纹理混合的角度扰动，从0到100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-blend-margin-x",
+      "name": "图块边缘混合X",
+      "description": "图片在水平方向的边缘混合量，从0到100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-blend-margin-y",
+      "name": "图块边缘混合Y",
+      "description": "图片在垂直方向的边缘混合量，从0到100。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 11,
+    "expressions": 12
+  }
+}

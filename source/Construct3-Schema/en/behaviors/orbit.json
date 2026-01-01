@@ -1,0 +1,262 @@
+{
+  "id": "orbit",
+  "name": "Orbit",
+  "description": "Make an object move along an ellipse around a position.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the speed the object orbits at.",
+      "display_text": "Set {my} speed to {0} degrees per second",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new orbit speed, in degrees per second."
+        }
+      ]
+    },
+    {
+      "id": "set-target",
+      "name": "Set target",
+      "description": "Target a position in the layout to orbit around.",
+      "display_text": "Set {my} target to ({0}, {1})",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X position of target in layout co-ordinates."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y position of target in layout co-ordinates."
+        }
+      ]
+    },
+    {
+      "id": "set-rotation",
+      "name": "Set rotation",
+      "description": "Set the current orbit position by its angle.",
+      "display_text": "Set {my} rotation {0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "New orbit rotation angle, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-offset-angle",
+      "name": "Set offset angle",
+      "description": "Set offset of ellipse angle from axis.",
+      "display_text": "Set {my} offset angle {0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "New offset of ellipse angle from axis, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-radius",
+      "name": "Set radius",
+      "description": "Set the primary and secondary orbit radii.",
+      "display_text": "Set {my} primary radius {0}, secondary radius {1}",
+      "params": [
+        {
+          "id": "primary",
+          "name": "Primary radius",
+          "description": "New primary radius length, in pixels."
+        },
+        {
+          "id": "secondary",
+          "name": "Secondary radius",
+          "description": "New secondary radius length, in pixels. (For a circle make the same as primary)"
+        }
+      ]
+    },
+    {
+      "id": "set-match-rotation",
+      "name": "Set match rotation",
+      "description": "Change the 'Match rotation' property.",
+      "display_text": "Set {my} match rotation [i]{0}[/i]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to match the rotation of the object to the orbit angle.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pin",
+      "name": "Pin",
+      "description": "Set an object as the target location to orbit around.",
+      "display_text": "Pin {my} to {0}",
+      "params": [
+        {
+          "id": "target",
+          "name": "Target",
+          "description": "Object to pin to."
+        }
+      ]
+    },
+    {
+      "id": "unpin",
+      "name": "Unpin",
+      "description": "Unpins from the target object.",
+      "display_text": "Unpin {my} from target",
+      "params": []
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the rate the object's orbital rotation changes.",
+      "display_text": "Set {my} acceleration to {0} degrees per second per second",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new orbit acceleration, in degrees per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reset-total-rotation",
+      "name": "Reset total rotation",
+      "description": "Return the total rotation and total absolute rotation counters to 0",
+      "display_text": "Reset {my} total rotation",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The orbit speed in degrees per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The orbit acceleration in degrees per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "primary-radius",
+      "name": "PrimaryRadius",
+      "description": "The length of the primary radius, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "secondary-radius",
+      "name": "SecondaryRadius",
+      "description": "The length of the secondary radius, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "offset-angle",
+      "name": "OffsetAngle",
+      "description": "The ellipse offset angle, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rotation",
+      "name": "Rotation",
+      "description": "The current orbit rotation, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-x",
+      "name": "TargetX",
+      "description": "The current target X position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-y",
+      "name": "TargetY",
+      "description": "The current target Y position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "distance-to-target",
+      "name": "DistanceToTarget",
+      "description": "The current distance to the target position.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-rotation",
+      "name": "TotalRotation",
+      "description": "The total unclamped rotation so far, in degrees. Value decreases with CCW rotation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-absolute-rotation",
+      "name": "TotalAbsoluteRotation",
+      "description": "The total unclamped rotation so far, in degrees.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 11,
+    "expressions": 11
+  }
+}

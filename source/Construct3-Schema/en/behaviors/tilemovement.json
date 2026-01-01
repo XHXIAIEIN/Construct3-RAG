@@ -1,0 +1,341 @@
+{
+  "id": "tilemovement",
+  "name": "Tile movement",
+  "description": "Moves an object around a 2D grid.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    },
+    {
+      "id": "can-move-to",
+      "name": "Can move to",
+      "description": "Test if the object can move into a cell.",
+      "display_text": "{my} can move to [b]({0},{1})[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The grid column to check."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The grid row to check."
+        }
+      ]
+    },
+    {
+      "id": "is-moving-direction",
+      "name": "Is moving in direction",
+      "description": "True when the object is moving in the specified direction.",
+      "display_text": "{my} is moving [b]{0}[/b]",
+      "params": [
+        {
+          "id": "direction",
+          "name": "Direction",
+          "description": "The direction of movement.",
+          "options": [
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "down",
+              "label": "Down"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "can-move-direction",
+      "name": "Can move in direction",
+      "description": "Test if the object can move a given distance in specified direction, checking for obstacles along the way.",
+      "display_text": "{my} can move [b]{1}[/b] cells [b]{0}[/b]",
+      "params": [
+        {
+          "id": "direction",
+          "name": "Direction",
+          "description": "The direction of movement.",
+          "options": [
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "down",
+              "label": "Down"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            }
+          ]
+        },
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "The distance of movement"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's movement speed.",
+      "display_text": "Set {my} speed to [i]({0},{1})[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The new horizontal speed of the object to set, in pixels per second."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The new vertical speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-ignoring-input",
+      "name": "Set ignoring input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "display_text": "{0} {my} user input",
+      "params": [
+        {
+          "id": "input",
+          "name": "Input",
+          "description": "Set whether to ignore the controls for this movement.",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "Stop ignoring"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "Start ignoring"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "Simulate control",
+      "description": "Control the movement by events.",
+      "display_text": "Simulate {my} pressing {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "Control",
+          "description": "The movement control to simulate pressing.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            },
+            {
+              "id": "down",
+              "label": "Down"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-grid-position",
+      "name": "Set grid position",
+      "description": "Set the objects grid position",
+      "display_text": "Set {my} grid position to {2} to the cell at [i]({0},{1})[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The column to move the object to."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The row to move the object to."
+        },
+        {
+          "id": "instant",
+          "name": "Movement",
+          "description": "Choose whether to move the object instantly to the location, or to animate over normally.",
+          "options": [
+            {
+              "id": "animate",
+              "label": "animate"
+            },
+            {
+              "id": "instant",
+              "label": "instant"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-grid-dimensions",
+      "name": "Set grid dimensions",
+      "description": "Set the object's grid size and offset",
+      "display_text": "Set {my} grid size to [b]({0},{1})[/b] and offset to [i]({2},{3})[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The new width to set for columns."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The new height to set for rows."
+        },
+        {
+          "id": "x-offset",
+          "name": "X offset",
+          "description": "The new X offset to set for the objects grid."
+        },
+        {
+          "id": "y-offset",
+          "name": "Y offset",
+          "description": "The new Y offset to set for the objects grid."
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "Set default controls",
+      "description": "Change the default controls setting.",
+      "display_text": "Set {my} default controls [b]{0}[/b]",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "Default controls",
+          "description": "Whether to enable or disable the behavior default controls."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "grid-x",
+      "name": "GridX",
+      "description": "The grid column the object is currently in.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "grid-y",
+      "name": "GridY",
+      "description": "The grid row the object is currently in.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed-x",
+      "name": "SpeedX",
+      "description": "The current object horizontal speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speed-y",
+      "name": "SpeedY",
+      "description": "The current object vertical speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-x",
+      "name": "TargetX",
+      "description": "The layout co-ordinates of the grid column the object is currently heading towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-y",
+      "name": "TargetY",
+      "description": "The layout co-ordinates of the grid row the object is currently heading towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-grid-x",
+      "name": "GridTargetX",
+      "description": "The grid column the object is currently heading towards.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-grid-y",
+      "name": "GridTargetY",
+      "description": "The grid row the object is currently heading towards.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 7,
+    "expressions": 8
+  }
+}

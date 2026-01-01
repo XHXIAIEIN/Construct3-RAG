@@ -1,0 +1,14 @@
+{
+  "id": "persist",
+  "name": "Persist",
+  "description": "Make instances of this object remember their state when returning to the layout, rather than resetting to the initial objects.",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

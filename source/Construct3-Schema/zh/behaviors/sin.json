@@ -1,0 +1,337 @@
+{
+  "id": "sin",
+  "name": "正弦运动",
+  "description": "根据正弦曲线的波形变化，调整对象的相关属性，用来创造一些有趣的视觉效果。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "compare-movement",
+      "name": "比较运动类型",
+      "description": "比较当前的正弦运动属性",
+      "display_text": "{my} 运动类型是{0}",
+      "params": [
+        {
+          "id": "movement",
+          "name": "运动类型",
+          "description": "选择要比较的运动属性",
+          "options": [
+            {
+              "id": "horizontal",
+              "label": "左右"
+            },
+            {
+              "id": "vertical",
+              "label": "上下"
+            },
+            {
+              "id": "size",
+              "label": "大小"
+            },
+            {
+              "id": "width",
+              "label": "宽度"
+            },
+            {
+              "id": "height",
+              "label": "高度"
+            },
+            {
+              "id": "angle",
+              "label": "角度"
+            },
+            {
+              "id": "opacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "value-only",
+              "label": "数值"
+            },
+            {
+              "id": "forwardsbackwards",
+              "label": "前后"
+            },
+            {
+              "id": "z-elevation",
+              "label": "视距高度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-period",
+      "name": "比较周期",
+      "description": "比较当前的振荡周期，以秒为单位。",
+      "display_text": "{my} 周期 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "用于比较周期的值，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "compare-magnitude",
+      "name": "比较振幅",
+      "description": "比较振幅的强度大小。",
+      "display_text": "{my} 振幅 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "比较振幅的值"
+        }
+      ]
+    },
+    {
+      "id": "compare-wave",
+      "name": "比较波形",
+      "description": "比较当前的波形函数类型。",
+      "display_text": "设置 {my}波形类型为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "wave",
+          "name": "波形",
+          "description": "选择要比较的波形类型",
+          "options": [
+            {
+              "id": "sine",
+              "label": "正弦"
+            },
+            {
+              "id": "triangle",
+              "label": "三角"
+            },
+            {
+              "id": "sawtooth",
+              "label": "锯齿"
+            },
+            {
+              "id": "reverse-sawtooth",
+              "label": "反锯齿"
+            },
+            {
+              "id": "square",
+              "label": "方波"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-active",
+      "name": "已启用",
+      "description": "当前已启用移动方式时触发。",
+      "display_text": "{my}已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-active",
+      "name": "设置启用",
+      "description": "启用或禁用移动",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用移动方式。",
+          "options": [
+            {
+              "id": "inactive",
+              "label": "禁用"
+            },
+            {
+              "id": "active",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-period",
+      "name": "设置周期",
+      "description": "设置完整播放循环一次的时间，以秒为单位。",
+      "display_text": "设置 {my}运动周期为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "period",
+          "name": "周期",
+          "description": "循环一次的周期时间，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-magnitude",
+      "name": "设置振幅",
+      "description": "设置运动的振幅。",
+      "display_text": "设置 {my}运动振幅为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "magnitude",
+          "name": "振幅",
+          "description": "运动的幅度。振幅越大，影响运动的变化越明显。"
+        }
+      ]
+    },
+    {
+      "id": "set-movement",
+      "name": "设置运动类型",
+      "description": "设置运动类型",
+      "display_text": "设置 {my}运动类型为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "movement",
+          "name": "运动",
+          "description": "选择要比较的运动属性",
+          "options": [
+            {
+              "id": "horizontal",
+              "label": "左右"
+            },
+            {
+              "id": "vertical",
+              "label": "上下"
+            },
+            {
+              "id": "size",
+              "label": "大小"
+            },
+            {
+              "id": "width",
+              "label": "宽度"
+            },
+            {
+              "id": "height",
+              "label": "高度"
+            },
+            {
+              "id": "angle",
+              "label": "角度"
+            },
+            {
+              "id": "opacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "value-only",
+              "label": "数值"
+            },
+            {
+              "id": "forwardsbackwards",
+              "label": "前后"
+            },
+            {
+              "id": "z-elevation",
+              "label": "视距高度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-wave",
+      "name": "设置波形",
+      "description": "设置用于计算运动的波形。",
+      "display_text": "设置 {my}波形函数为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "wave",
+          "name": "波形",
+          "description": "选择要应用的波形函数。",
+          "options": [
+            {
+              "id": "sine",
+              "label": "正弦"
+            },
+            {
+              "id": "triangle",
+              "label": "三角"
+            },
+            {
+              "id": "sawtooth",
+              "label": "锯齿"
+            },
+            {
+              "id": "reverse-sawtooth",
+              "label": "反锯齿"
+            },
+            {
+              "id": "square",
+              "label": "方波"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-cycle-position",
+      "name": "设置周期位置",
+      "description": "设置周期的进度。从 0 到 1 表示周期的位置，若 0.5 则为周期一半的位置。",
+      "display_text": "设置 {my}周期位置为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "cycle-position",
+          "name": "周期位置",
+          "description": "设置周期的进度。从 0 到 1 表示周期的位置，若 0.5 则为周期一半的位置。"
+        }
+      ]
+    },
+    {
+      "id": "update-initial-state",
+      "name": "复位周期",
+      "description": "将此行为的状态重置到初始状态。",
+      "display_text": "初始化 {my} 周期状态",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "cycleposition",
+      "name": "周期位置",
+      "description": "当前在周期的进度位置，使用 0 到 1 表示，若 0.5 则为周期一半的位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "period",
+      "name": "周期",
+      "description": "当前的周期持续时间，以秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "magnitude",
+      "name": "振幅",
+      "description": "当前移动的幅度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "value",
+      "name": "值",
+      "description": "当前的波形函数的数值。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 7,
+    "expressions": 4
+  }
+}

@@ -1,0 +1,788 @@
+{
+  "id": "midi",
+  "name": "MIDI",
+  "description": "Interact with connected MIDI devices.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "True if the current platform supports MIDI access.",
+      "display_text": "Is supported",
+      "params": []
+    },
+    {
+      "id": "has-access",
+      "name": "Has access",
+      "description": "True after requesting MIDI access completes successfully.",
+      "display_text": "Has access",
+      "params": []
+    },
+    {
+      "id": "on-request-access-success",
+      "name": "On request access success",
+      "description": "Triggered after a successful request to access MIDI devices.",
+      "display_text": "On request access success",
+      "params": []
+    },
+    {
+      "id": "on-request-access-failed",
+      "name": "On request access failed",
+      "description": "Triggered after a failed request to access MIDI devices.",
+      "display_text": "On request access failed",
+      "params": []
+    },
+    {
+      "id": "on-devices-state-changed",
+      "name": "On devices state changed",
+      "description": "Triggered when the list of MIDI inputs or outputs changes.",
+      "display_text": "On devices state changed",
+      "params": []
+    },
+    {
+      "id": "on-device-opened",
+      "name": "On device opened",
+      "description": "Triggered when a specific MIDI device is successfully opened.",
+      "display_text": "On {0} device [b]{1}[/b] opened",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID."
+        }
+      ]
+    },
+    {
+      "id": "on-device-closed",
+      "name": "On device closed",
+      "description": "Triggered when a specific MIDI device is closed.",
+      "display_text": "On {0} device [b]{1}[/b] closed",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID."
+        }
+      ]
+    },
+    {
+      "id": "on-device-error",
+      "name": "On device error",
+      "description": "Triggered when a specific MIDI device encounters an error.",
+      "display_text": "On {0} device [b]{1}[/b] error",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID."
+        }
+      ]
+    },
+    {
+      "id": "on-any-device-opened",
+      "name": "On any device opened",
+      "description": "Triggered when any MIDI device is successfully opened.",
+      "display_text": "On any {0} device opened",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-device-closed",
+      "name": "On any device closed",
+      "description": "Triggered when any MIDI device is closed.",
+      "display_text": "On any {0} device closed",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-device-error",
+      "name": "On any device error",
+      "description": "Triggered when any MIDI device encounters an error.",
+      "display_text": "On any {0} device error",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-binary-message",
+      "name": "On any binary message",
+      "description": "Triggered when any MIDI message is received, storing the raw message data in a Binary Data object.",
+      "display_text": "On any binary message (in {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "Receive to",
+          "description": "Choose a Binary Data object to write the received binary message to."
+        }
+      ]
+    },
+    {
+      "id": "on-any-message",
+      "name": "On any message",
+      "description": "Triggered when a MIDI message of a specific type is received from any device.",
+      "display_text": "On any [b]{0}[/b] message",
+      "params": [
+        {
+          "id": "message-type",
+          "name": "Message type",
+          "description": "The type of MIDI message received.",
+          "options": [
+            {
+              "id": "note-off",
+              "label": "Note Off"
+            },
+            {
+              "id": "note-on",
+              "label": "Note On"
+            },
+            {
+              "id": "after-touch",
+              "label": "AfterTouch"
+            },
+            {
+              "id": "control-change",
+              "label": "Control Change"
+            },
+            {
+              "id": "program-change",
+              "label": "Program Change"
+            },
+            {
+              "id": "channel-pressure",
+              "label": "Channel Pressure"
+            },
+            {
+              "id": "pitch-wheel",
+              "label": "Pitch Wheel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-message",
+      "name": "On message",
+      "description": "Triggered when a MIDI message of a specific type is received from a specific device.",
+      "display_text": "On [i]{0}[/i] [b]{1}[/b] message",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the last opened input device."
+        },
+        {
+          "id": "message-type",
+          "name": "Message type",
+          "description": "The type of MIDI message received.",
+          "options": [
+            {
+              "id": "note-off",
+              "label": "Note Off"
+            },
+            {
+              "id": "note-on",
+              "label": "Note On"
+            },
+            {
+              "id": "after-touch",
+              "label": "AfterTouch"
+            },
+            {
+              "id": "control-change",
+              "label": "Control Change"
+            },
+            {
+              "id": "program-change",
+              "label": "Program Change"
+            },
+            {
+              "id": "channel-pressure",
+              "label": "Channel Pressure"
+            },
+            {
+              "id": "pitch-wheel",
+              "label": "Pitch Wheel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-parameter",
+      "name": "Compare parameter",
+      "description": "Compare the current value of a parameter like the note number or velocity.",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "parameter",
+          "name": "Parameter",
+          "description": "Choose the parameter to compare.",
+          "options": [
+            {
+              "id": "note-number",
+              "label": "Note number"
+            },
+            {
+              "id": "channel",
+              "label": "Channel"
+            },
+            {
+              "id": "velocity",
+              "label": "Velocity"
+            },
+            {
+              "id": "pressure",
+              "label": "Pressure"
+            },
+            {
+              "id": "controller-number",
+              "label": "Controller number"
+            },
+            {
+              "id": "controller-value",
+              "label": "Controller value"
+            },
+            {
+              "id": "program-number",
+              "label": "Program number"
+            },
+            {
+              "id": "pitch-wheel-value",
+              "label": "Pitch wheel value"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the parameter."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-midi-access",
+      "name": "Request MIDI access",
+      "description": "Request permission to access connected MIDI devices.",
+      "display_text": "Request MIDI access (sysex: {0}, software: {1})",
+      "params": [
+        {
+          "id": "sysex",
+          "name": "System exclusive",
+          "description": "Enable sending and receiving system exclusive (sysex) messages."
+        },
+        {
+          "id": "software",
+          "name": "Software",
+          "description": "Allow the system to utilize any installed software synthesizers."
+        }
+      ]
+    },
+    {
+      "id": "open-device",
+      "name": "Open device",
+      "description": "Open a MIDI input or output to send or receive messages.",
+      "display_text": "Open {0} device [i]{1}[/i]",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the first available device."
+        }
+      ]
+    },
+    {
+      "id": "close-device",
+      "name": "Close device",
+      "description": "Close a MIDI input or output so it is no longer able to send or receive messages.",
+      "display_text": "Close {0} device [i]{1}[/i]",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The device type.",
+          "options": [
+            {
+              "id": "input",
+              "label": "input"
+            },
+            {
+              "id": "output",
+              "label": "output"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to close the last opened device."
+        }
+      ]
+    },
+    {
+      "id": "send-binary-message",
+      "name": "Send binary message",
+      "description": "Send raw binary data as a MIDI message to a device.",
+      "display_text": "Send [i]{0}[/i] binary message {1}",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the last opened output device."
+        },
+        {
+          "id": "binary-data",
+          "name": "Binary data",
+          "description": "Choose a Binary Data object to send as a MIDI message."
+        }
+      ]
+    },
+    {
+      "id": "send-note-message",
+      "name": "Send note message",
+      "description": "Send a note on/off or aftertouch message.",
+      "display_text": "Send [i]{0}[/i] {1} message for note [i]{2}[/i] velocity [i]{3}[/i]",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the last opened output device."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The message type to send.",
+          "options": [
+            {
+              "id": "note-off",
+              "label": "note off"
+            },
+            {
+              "id": "note-on",
+              "label": "note on"
+            },
+            {
+              "id": "aftertouch",
+              "label": "aftertouch"
+            }
+          ]
+        },
+        {
+          "id": "note",
+          "name": "Note",
+          "description": "The MIDI note number, or string of the note name e.g. \"C4\"."
+        },
+        {
+          "id": "velocity",
+          "name": "Velocity",
+          "description": "The velocity, or pressure for aftertouch messages, from 0-127."
+        }
+      ]
+    },
+    {
+      "id": "send-control-change-message",
+      "name": "Send control change message",
+      "description": "Send a note on/off or aftertouch message.",
+      "display_text": "Send [i]{0}[/i] controller [i]{1}[/i] change message with value [i]{2}[/i]",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the last opened output device."
+        },
+        {
+          "id": "controller-number",
+          "name": "Controller number",
+          "description": "The MIDI controller number, e.g. 1 for modulation wheel (coarse)."
+        },
+        {
+          "id": "controller-value",
+          "name": "Controller value",
+          "description": "The controller value to set, from 0-127."
+        }
+      ]
+    },
+    {
+      "id": "send-message",
+      "name": "Send message",
+      "description": "Send a program change, channel pressure or pitch wheel message.",
+      "display_text": "Send [i]{0}[/i] {1} message value [i]{2}[/i]",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "The device ID. Leave empty to use the last opened output device."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The message type to send.",
+          "options": [
+            {
+              "id": "program-change",
+              "label": "program change"
+            },
+            {
+              "id": "channel-pressure",
+              "label": "channel pressure"
+            },
+            {
+              "id": "pitch-wheel",
+              "label": "pitch wheel"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to send, from 0-127 for program change or channel pressure messages, or 0-16383 for pitch wheel messages."
+        }
+      ]
+    },
+    {
+      "id": "schedule-next-message",
+      "name": "Schedule next message",
+      "description": "Schedule the next sent MIDI message to be sent after a delay.",
+      "display_text": "Schedule next message for [i]{0}[/i] seconds",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The time delay for the next message in seconds. Zero means no delay."
+        }
+      ]
+    },
+    {
+      "id": "set-midi-channel",
+      "name": "Set MIDI channel",
+      "description": "Set the MIDI channel to specify for all sent messages.",
+      "display_text": "Set MIDI channel to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "channel",
+          "name": "Channel",
+          "description": "The MIDI channel, from 0-15."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "input-count",
+      "name": "InputCount",
+      "description": "Number of available MIDI input devices.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "input-id-at",
+      "name": "InputIDAt",
+      "description": "Get a MIDI input identifier.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI input."
+        }
+      ]
+    },
+    {
+      "id": "input-manufacturer-at",
+      "name": "InputManufacturerAt",
+      "description": "Get a MIDI input manufacturer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI input."
+        }
+      ]
+    },
+    {
+      "id": "input-name-at",
+      "name": "InputNameAt",
+      "description": "Get a MIDI input name.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI input."
+        }
+      ]
+    },
+    {
+      "id": "output-count",
+      "name": "OutputCount",
+      "description": "Number of available MIDI output devices.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "output-id-at",
+      "name": "OutputIDAt",
+      "description": "Get a MIDI output identifier.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI output."
+        }
+      ]
+    },
+    {
+      "id": "output-manufacturer-at",
+      "name": "OutputManufacturerAt",
+      "description": "Get a MIDI output manufacturer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI output."
+        }
+      ]
+    },
+    {
+      "id": "output-name-at",
+      "name": "OutputNameAt",
+      "description": "Get a MIDI output name.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of MIDI output."
+        }
+      ]
+    },
+    {
+      "id": "current-device-id",
+      "name": "CurrentDeviceID",
+      "description": "In a trigger, the associated device ID.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-device-manufacturer",
+      "name": "CurrentDeviceManufacturer",
+      "description": "In a trigger, the associated device manufacturer.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-device-name",
+      "name": "CurrentDeviceName",
+      "description": "In a trigger, the associated device name.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "note-number",
+      "name": "NoteNumber",
+      "description": "The MIDI note number (0-127, middle C is 60).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "note-name",
+      "name": "NoteName",
+      "description": "The MIDI note name, e.g. \"C4\" for middle C.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "channel",
+      "name": "Channel",
+      "description": "The MIDI channel.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "velocity",
+      "name": "Velocity",
+      "description": "Velocity for note on/off messages (0-127).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "pressure",
+      "name": "Pressure",
+      "description": "Pressure for AfterTouch/Channel Pressure messages (0-127).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "controller-number",
+      "name": "ControllerNumber",
+      "description": "Controller number for a Control Change message (0-127).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "controller-value",
+      "name": "ControllerValue",
+      "description": "Controller value for a Control Change message (0-127).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "program-number",
+      "name": "ProgramNumber",
+      "description": "Program number for a Program Change message (0-127).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "pitch-wheel-value",
+      "name": "PitchWheelValue",
+      "description": "Pitch wheel position for Pitch Wheel messages (0-16383).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "note-number-to-name",
+      "name": "NoteNumberToName",
+      "description": "Convert a note number to a note name, e.g. 60 to \"C4\".",
+      "display_text": "",
+      "params": [
+        {
+          "id": "note-number",
+          "name": "NoteNumber",
+          "description": "MIDI note number"
+        }
+      ]
+    },
+    {
+      "id": "note-name-to-number",
+      "name": "NoteNameToNumber",
+      "description": "Convert a note name to a note number, e.g. \"C4\" to 60.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "note-name",
+          "name": "NoteName",
+          "description": "Note name e.g. \"C4\"."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 15,
+    "actions": 9,
+    "expressions": 22
+  }
+}

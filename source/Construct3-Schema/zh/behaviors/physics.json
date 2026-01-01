@@ -1,0 +1,911 @@
+{
+  "id": "physics",
+  "name": "物理",
+  "description": "模拟真实的物理行为，基于 Box2D 技术驱动。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-sleeping",
+      "name": "正在休眠",
+      "description": "检测物理对象是否处于非活动状态，且不再需要处理运算。",
+      "display_text": "{my} 正在休眠",
+      "params": []
+    },
+    {
+      "id": "compare-velocity",
+      "name": "比较运动速度",
+      "description": "比较物理对象当前的运动速度。",
+      "display_text": "{my} {0} {1} {2}",
+      "params": [
+        {
+          "id": "which",
+          "name": "轴",
+          "description": "是比较某一轴的速度，还是整体速度。",
+          "options": [
+            {
+              "id": "x-velocity",
+              "label": "X轴速度"
+            },
+            {
+              "id": "y-velocity",
+              "label": "Y轴速度"
+            },
+            {
+              "id": "overall-velocity",
+              "label": "整体速度"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "输入要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-angular-velocity",
+      "name": "比较角速度",
+      "description": "比较物理对象当前的角速度。",
+      "display_text": "{my} 角速度 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要与角速度比较的值，以角度/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "compare-mass",
+      "name": "比较质量",
+      "description": "比较物理对象当前的质量。",
+      "display_text": "{my} 质量 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "输入要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检查物理行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    },
+    {
+      "id": "is-immovable",
+      "name": "不可移动",
+      "description": "检测物理对象是否被设置为 '不可移动'（具有无限质量）属性。",
+      "display_text": "{my}不可移动",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "apply-force",
+      "name": "施加作用力",
+      "description": "为对象施加作用力。常用于模拟持续的推力、拉力等效果。",
+      "display_text": "向 {my} 图像点 {2} 施加作用力 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "force-x",
+          "name": "动量 X",
+          "description": "向X轴方向施加的力。"
+        },
+        {
+          "id": "force-y",
+          "name": "动量 Y",
+          "description": "向Y轴方向施加的力。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "apply-force-towards-position",
+      "name": "施加作用力 (朝向位置)",
+      "description": "为对象施加力，使其朝向场景某个位置移动。常用于模拟持续的推力、拉力等效果。",
+      "display_text": "向 {my} 图形点 {3} 施加作用力 (动量: {0}, 朝向位置: [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "force",
+          "name": "动量",
+          "description": "要施加的力。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "向X轴朝向使力"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "向Y轴朝向使力"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "apply-force-at-angle",
+      "name": "施加作用力 (朝向角度)",
+      "description": "将对象沿指定的方向施加作用力，使对象沿力的方向持续运动。常用于模拟环境的重力、风力推动等影响效果。",
+      "display_text": "向 {my} 图像点 {2} 施加作用力 (动量: {0}, 朝向角度: {1})",
+      "params": [
+        {
+          "id": "force",
+          "name": "动量",
+          "description": "要施加的力。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "施加作用力的角度。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "apply-impulse",
+      "name": "施加脉冲",
+      "description": "对物体对象朝一个位置施加瞬间的动量，模拟物体被击飞或吸引的运动。",
+      "display_text": "向 {my} 图像点 {2} 施加脉冲 (动量: [i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "impulse-x",
+          "name": "冲量 X",
+          "description": "在X轴方向上瞬间产生的动量。"
+        },
+        {
+          "id": "implulse-y",
+          "name": "冲量 Y",
+          "description": "在Y轴方向上瞬间产生的动量。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "apply-impulse-towards-position",
+      "name": "施加脉冲 (朝向位置)",
+      "description": "将物体朝指定位置施加脉冲，模拟物体被击飞或吸引的运动。",
+      "display_text": "向 {my} 图像点 {3} 施加脉冲 (动量: {0}, 朝向位置: ([i]{1}[/i], [i]{2}[/i]))",
+      "params": [
+        {
+          "id": "impulse",
+          "name": "冲量",
+          "description": "要施加的冲量。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要朝向其位置施加冲量的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要朝向其位置施加冲量的Y坐标。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "apply-impulse-at-angle",
+      "name": "施加脉冲 (朝向角度)",
+      "description": "将物体朝向指定角度施加脉冲，模拟物体被击飞或吸引的运动。",
+      "display_text": "向 {my} 图像点 {2} 施加脉冲 (动量: {0}, 角度: {1}°)",
+      "params": [
+        {
+          "id": "impulse",
+          "name": "冲量",
+          "description": "要施加的冲量。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "施加冲量的角度。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      ]
+    },
+    {
+      "id": "set-velocity",
+      "name": "设置向量",
+      "description": "设置此物理对象当前在X轴/Y轴上的移动速度。",
+      "display_text": "设置 {my}运动向量为([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x-component",
+          "name": "向量X",
+          "description": "在X轴方向的运动向量，以每秒像素为单位。"
+        },
+        {
+          "id": "y-component",
+          "name": "向量Y",
+          "description": "在Y轴方向的运动向量，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-world-gravity",
+      "name": "设置地心引力",
+      "description": "设置所有物理对象的重力。默认重力为10。",
+      "display_text": "设置 {my}地心引力值为{0}",
+      "params": [
+        {
+          "id": "gravity",
+          "name": "重力",
+          "description": "设置重力值。填负数为反方向重力。"
+        }
+      ]
+    },
+    {
+      "id": "set-stepping-mode",
+      "name": "设置步进模式",
+      "description": "设置物理引擎是否使用 '帧速率' 影响运算，在 '精确结果' 和 '稳定速度' 之间的权衡。",
+      "display_text": "设置 {my}步进模式为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "默认为增量时间模式。选择 '固定值' 可以保证每次运算的结果相同，但在不同刷新率的显示器将呈现不同的运行速度。选择 '增量时间' 可以确保在不同刷新率具有相同的运行速度，但可能因此产生不同的结果。",
+          "options": [
+            {
+              "id": "fixed",
+              "label": "固定步长"
+            },
+            {
+              "id": "framerate-independent",
+              "label": "增量时间"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-stepping-iterations",
+      "name": "设置步进迭代次数",
+      "description": "设置物理引擎在 '性能' 与 '精度' 之间的权衡。",
+      "display_text": "设置 {my} 步进迭代次数 (速度: {0}, 位置: {1})",
+      "params": [
+        {
+          "id": "velocity-iterations",
+          "name": "速度迭代",
+          "description": "较低的值运算速度更快，但结果不准确。较高的值运算更慢，消耗更多性能，但提供更真实的模拟。默认值为 8 。"
+        },
+        {
+          "id": "position-iterations",
+          "name": "位置迭代",
+          "description": "较低的值运算速度更快，但结果不准确。较高的值运算更慢，消耗更多性能，但提供更真实的模拟。默认值为 3。"
+        }
+      ]
+    },
+    {
+      "id": "enabledisable-collisions",
+      "name": "启用碰撞",
+      "description": "禁用或启用与其他对象物理行为的碰撞检测",
+      "display_text": "{1} {my} 与 {0} 碰撞",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择另一个拥有物理行为的对象，对其启用或禁用碰撞。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用某对象类型的碰撞能力",
+          "options": [
+            {
+              "id": "disable",
+              "label": "禁用"
+            },
+            {
+              "id": "enable",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "create-distance-joint",
+      "name": "创建距离关节",
+      "description": "将两个物理对象进行连接，并保持一定的距离。",
+      "display_text": "创建 {my} 距离关节, 从图像点 {0} 连接到 {1} 图像点 {2} (阻尼: {3}，弹性: {4})",
+      "params": [
+        {
+          "id": "this-image-point",
+          "name": "图像点",
+          "description": "要连接对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要附着的对象"
+        },
+        {
+          "id": "that-image-point",
+          "name": "要设置的图像点",
+          "description": "要连接到其他对象上的图像点的名称或编号。"
+        },
+        {
+          "id": "damping-ratio",
+          "name": "阻尼比率",
+          "description": "关节阻尼比，从0（无阻尼）到1（临界阻尼）"
+        },
+        {
+          "id": "spring-frequency",
+          "name": "弹簧频率",
+          "description": "质量 - 弹簧 - 阻尼器频率，以赫兹为单位"
+        }
+      ]
+    },
+    {
+      "id": "create-revolute-joint",
+      "name": "创建旋转关节",
+      "description": "将另一个对象铰接到此对象的某个图像点，允许他们围绕此旋转。",
+      "display_text": "创建 {my} 旋转关节, 在图像点 {0} 连接 {1}",
+      "params": [
+        {
+          "id": "this-image-point",
+          "name": "图像点",
+          "description": "要连接的对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要铰接的对象"
+        }
+      ]
+    },
+    {
+      "id": "create-limited-revolute-joint",
+      "name": "创建有限旋转关节",
+      "description": "将另一个对象铰接到此对象的某个图像点，允许他们围绕在一定范围内旋转。",
+      "display_text": "创建 {my} 旋转关节, 在图像点 {0} 连接 {1} (限制范围: {2}° 到 {3}°)",
+      "params": [
+        {
+          "id": "this-image-point",
+          "name": "图像点",
+          "description": "要连接的对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要铰接的对象"
+        },
+        {
+          "id": "lower-angle",
+          "name": "角度下限",
+          "description": "允许更低的旋转角度"
+        },
+        {
+          "id": "upper-angle",
+          "name": "角度上限",
+          "description": "允许更高的旋转角度"
+        }
+      ]
+    },
+    {
+      "id": "remove-all-joints",
+      "name": "移除所有关节",
+      "description": "移除此对象上所有创建的关节点。",
+      "display_text": "移除 {my} 所有关节",
+      "params": []
+    },
+    {
+      "id": "set-density",
+      "name": "设置密度",
+      "description": "设置此物理对象的密度。",
+      "display_text": "设置 {my}密度为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "density",
+          "name": "密度",
+          "description": "新的对象密度，仅在禁用不可移动属性时生效。"
+        }
+      ]
+    },
+    {
+      "id": "set-friction",
+      "name": "设置摩擦系数",
+      "description": "设置物理对象的摩擦系数。",
+      "display_text": "设置 {my}摩擦系数为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "friction",
+          "name": "摩擦系数",
+          "description": "摩擦力，影响物体接触其他物体时相互运动的阻力，范围值 0-1。"
+        }
+      ]
+    },
+    {
+      "id": "set-elasticity",
+      "name": "设置弹性系数",
+      "description": "设置物理对象的弹性系数。",
+      "display_text": "设置 {my}弹性系数为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "elasticity",
+          "name": "弹性系数",
+          "description": "弹力，影响物体撞击其他物体时反弹的高度。范围值 0-1。"
+        }
+      ]
+    },
+    {
+      "id": "set-linear-damping",
+      "name": "设置线性阻尼",
+      "description": "设置物理对象的线性阻尼。",
+      "display_text": "设置 {my}线性阻尼为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "linear-damping",
+          "name": "线性阻尼",
+          "description": "物体运动时，随时间逐渐减速的系数，介于0到1之间。"
+        }
+      ]
+    },
+    {
+      "id": "set-angular-damping",
+      "name": "设置角度阻尼",
+      "description": "设置物理对象的角度阻尼。",
+      "display_text": "设置 {my}角度阻尼为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "angular-damping",
+          "name": "角度阻尼",
+          "description": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。"
+        }
+      ]
+    },
+    {
+      "id": "set-immovable",
+      "name": "设置不可移动",
+      "description": "让此物体拥有无限的质量，不再受到密度的影响，不会再进行移动。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "setting",
+          "name": "状态",
+          "description": "开启后，此物体将拥有无限的质量，不再受到物体密度的影响，永远不会移动，适用于场景对象，例如坚固的墙体。",
+          "options": [
+            {
+              "id": "movable",
+              "label": "允许移动"
+            },
+            {
+              "id": "immovable",
+              "label": "不可移动"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-prevent-rotation",
+      "name": "设置不可旋转",
+      "description": "锁定对象的角度，受到物理撞击时不会导致它旋转。",
+      "display_text": "[b]{0}[/b]{my}",
+      "params": [
+        {
+          "id": "setting",
+          "name": "设置",
+          "description": "锁定对象的角度，受到物理撞击时不会导致它旋转。",
+          "options": [
+            {
+              "id": "dont-prevent-rotations",
+              "label": "允许旋转"
+            },
+            {
+              "id": "prevent-rotations",
+              "label": "不可旋转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-bullet",
+      "name": "设置子弹模式",
+      "description": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。",
+      "display_text": "{my}[b]{0}[/b]子弹模式",
+      "params": [
+        {
+          "id": "bullet",
+          "name": "子弹",
+          "description": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。注意，这会影响性能，除非需要超高速移动的物理对象，否则不建议启用它。",
+          "options": [
+            {
+              "id": "off",
+              "label": "关闭"
+            },
+            {
+              "id": "on",
+              "label": "开启"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "{0} {my}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "apply-torque",
+      "name": "施加力矩",
+      "description": "向物体施加旋转的作用力（即旋转加速度），使对象朝向场景的位置做旋转运动。",
+      "display_text": "向 {my} 施加扭矩 (动量:  {0})",
+      "params": [
+        {
+          "id": "torque",
+          "name": "力矩",
+          "description": "要施加的力矩。使对象朝向场景的位置做旋转运动。"
+        }
+      ]
+    },
+    {
+      "id": "apply-torque-towards-angle",
+      "name": "施加力矩(根据角度)",
+      "description": "在某个角度，向物体施加旋转的作用力（即旋转加速度）",
+      "display_text": "向 {my} 施加扭矩 (动量:  {0}, 角度: {1}°)",
+      "params": [
+        {
+          "id": "torque",
+          "name": "力矩",
+          "description": "要施加的力矩。使对象朝向场景的位置做旋转运动。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "施加扭矩的角度。"
+        }
+      ]
+    },
+    {
+      "id": "apply-torque-towards-position",
+      "name": "施加力矩(根据位置)",
+      "description": "向物体施加力矩，使对象朝向场景的位置做旋转运动。",
+      "display_text": "向 {my} 施加扭矩 (动量: {0}, 朝向位置: [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "torque",
+          "name": "力矩",
+          "description": "要施加的力矩。对象将朝向场景的位置做旋转运动。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "对象将朝向场景中的X坐标位置做旋转运动。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "对象将朝向场景中的Y坐标位置做旋转运动。"
+        }
+      ]
+    },
+    {
+      "id": "set-angular-velocity",
+      "name": "设置角速度",
+      "description": "设置对象旋转的速率",
+      "display_text": "设置 {my}角速度为{0}",
+      "params": [
+        {
+          "id": "angular-velocity",
+          "name": "角速度",
+          "description": "设置对象每秒旋转的角度向量。"
+        }
+      ]
+    },
+    {
+      "id": "create-prismatic-joint",
+      "name": "创建移动关节",
+      "description": "限制两个对象沿特定轴的移动。",
+      "display_text": "创建 {my} 移动关节 (从图像点 {0} 到 {1}, 角度 [i]{2}[/i], 限制: [i]{3}[/i] 从 [i]{4}[/i] 到 [i]{5}[/i], 马达: [i]{6}[/i], 速度: [i]{7}[/i], 最大作用力 [i]{8}[/i])",
+      "params": [
+        {
+          "id": "this-image-point",
+          "name": "图像点",
+          "description": "要连接的对象的图像点的名称或数量。 使用 0 表示重心，使用 -1 表示对象原点"
+        },
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "要附着的对象"
+        },
+        {
+          "id": "axis-angle",
+          "name": "轴角度",
+          "description": "用于约束运动的轴的角度。"
+        },
+        {
+          "id": "enable-limit",
+          "name": "约束范围",
+          "description": "是否启用移动范围的限制。",
+          "options": [
+            {
+              "id": "no",
+              "label": "禁用"
+            },
+            {
+              "id": "yes",
+              "label": "启用"
+            }
+          ]
+        },
+        {
+          "id": "lower-translation",
+          "name": "移动下限",
+          "description": "允许进行移动的下限距离，相对于起始位置，以像素为单位。"
+        },
+        {
+          "id": "upper-translation",
+          "name": "移动上限",
+          "description": "允许进行移动的上限距离，相对于起始位置，以像素为单位。"
+        },
+        {
+          "id": "enable-motor",
+          "name": "马达",
+          "description": "在关节上开启一个马达。",
+          "options": [
+            {
+              "id": "no",
+              "label": "禁用"
+            },
+            {
+              "id": "yes",
+              "label": "启用"
+            }
+          ]
+        },
+        {
+          "id": "motor-speed",
+          "name": "马达转速",
+          "description": "设置马达的转速，以每秒旋转度数为单位。"
+        },
+        {
+          "id": "max-motor-force",
+          "name": "最大转力",
+          "description": "马达力矩的最大转动速度。"
+        }
+      ]
+    },
+    {
+      "id": "teleport",
+      "name": "传送到位置",
+      "description": "将物理对象的位置设置为新位置，且保持其速度。",
+      "display_text": "传送 {my} 到位置 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要传送到的X位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要传送到的Y位置。"
+        }
+      ]
+    },
+    {
+      "id": "set-awake",
+      "name": "设置唤醒",
+      "description": "设置物理引擎是否主动运算该对象。",
+      "display_text": "[b]{0}[/b] {my} 活跃状态",
+      "params": [
+        {
+          "id": "awake",
+          "name": "唤醒",
+          "description": "设置物理引擎是否要主动运算该对象。"
+        }
+      ]
+    },
+    {
+      "id": "set-collision-filter",
+      "name": "过滤碰撞标签",
+      "description": "要设置的物理碰撞标签，用空格分隔多个标签。",
+      "display_text": "[i]{0}[/i]碰撞过滤标签: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "使用 \"包含\" 选项仅与具有指定标签的物理对象发生碰撞。使用 \"排除\" 选项则忽略具有指定标签的物理对象。",
+          "options": [
+            {
+              "id": "inclusive",
+              "label": "包含"
+            },
+            {
+              "id": "exclusive",
+              "label": "排除"
+            }
+          ]
+        },
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "velocityx",
+      "name": "移动向量X",
+      "description": "当前速度在X轴的移动向量，以像素/每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "velocityy",
+      "name": "移动向量Y",
+      "description": "当前速度在Y轴的移动向量，以像素/每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "angularvelocity",
+      "name": "角速度",
+      "description": "当前的角速度，以度数/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mass",
+      "name": "质量",
+      "description": "物理对象的质量，即对象碰撞面积×密度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "centerofmassx",
+      "name": "质心X",
+      "description": "物体质量中心的X坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "centerofmassy",
+      "name": "质心Y",
+      "description": "物体质量中心的Y坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "density",
+      "name": "密度",
+      "description": "对象的密度，主要用于计算物体的质量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "friction",
+      "name": "摩擦系数",
+      "description": "物体接触其他物体时相互运动的阻力，范围值 0-1。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "elasticity",
+      "name": "弹性系数",
+      "description": "物体撞击其他物体时反弹的高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lineardamping",
+      "name": "线性阻尼",
+      "description": "物体运动时，随时间逐渐减速的系数，介于0到1之间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "angulardamping",
+      "name": "角度阻尼",
+      "description": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "contact-count",
+      "name": "连接点数量",
+      "description": "当前对象碰撞到其他物理对象的接触点数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "contact-x-at",
+      "name": "获取连接点X",
+      "description": "返回与另一个物理对象接触的X坐标位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要返回的第几个连接点，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "contact-y-at",
+      "name": "获取连接点Y",
+      "description": "返回与另一个物理对象接触的Y坐标位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要返回的第几个连接点，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 32,
+    "expressions": 14
+  }
+}

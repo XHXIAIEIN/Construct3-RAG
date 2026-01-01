@@ -1,0 +1,226 @@
+{
+  "id": "dictionary",
+  "name": "字典",
+  "description": "将数据存储在对应的字段里。相比本地变量，字典的数据存储方式更自由。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-value",
+      "name": "比较值",
+      "description": "比较一个字段对应的值。",
+      "display_text": "字段[b]{0}[/b]的值 {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "要检测的字段名称。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "has-key",
+      "name": "字段已存在",
+      "description": "检测指定的字段是否已储存。",
+      "display_text": "字段 [b]{0}[/b] 已存在",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "检测指定的字段名称是否存在。"
+        }
+      ]
+    },
+    {
+      "id": "is-empty",
+      "name": "如果为空",
+      "description": "检测字典是否为空，没有储存任何字段。",
+      "display_text": "如果为空",
+      "params": []
+    },
+    {
+      "id": "for-each-key",
+      "name": "遍历字段",
+      "description": "对当前字典中的所有字段执行一遍动作。",
+      "display_text": "遍历字段",
+      "params": []
+    },
+    {
+      "id": "compare-current-value",
+      "name": "比较当前值",
+      "description": "在循环中遍历当前字段的值。",
+      "display_text": "当前值 {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-key",
+      "name": "添加字段",
+      "description": "添加新的字段到字典中，如果字段已存在，则覆盖旧的字段值。",
+      "display_text": "添加字段[i]{0}[/i]: [i]{1}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "字段的名称。 如果字段已存在，会覆盖旧的字段值。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "存储到字段的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-key",
+      "name": "设置字段",
+      "description": "设置字段的值。如果字段不存在，此操作无效。",
+      "display_text": "设置字段[i]{0}[/i]: [i]{1}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "字段的名称。 如果字段不存在，此操作无效。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "存储到字段的值。"
+        }
+      ]
+    },
+    {
+      "id": "delete-key",
+      "name": "删除字段",
+      "description": "从本地存储中删除字段。",
+      "display_text": "删除字段[i]{0}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "要删除的字段名称。"
+        }
+      ]
+    },
+    {
+      "id": "clear",
+      "name": "清空字典",
+      "description": "从本地存储中删除所有字段和值，返回空白对象。",
+      "display_text": "清空字典",
+      "params": []
+    },
+    {
+      "id": "load",
+      "name": "导入数据",
+      "description": "字典文件的JSON格式。如果想希望导入项目的字典文件，通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式获得数组文件的数据导入。",
+      "display_text": "导入对象数据[i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "字典文件的JSON格式。如果想希望导入项目的字典文件，通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式获得数组文件的数据导入。"
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "下载",
+      "description": "将字典的内容下载为JSON文件。",
+      "display_text": "下载 JSON数据文件 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "要下载的文件的名称。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "get",
+      "name": "读取",
+      "description": "获取指定字段的值。 如果字段不存在，则返回0。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "要获取的字段名称。"
+        }
+      ]
+    },
+    {
+      "id": "keycount",
+      "name": "字段数量",
+      "description": "获取本地存储中已存在的字段总数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentkey",
+      "name": "当前字段",
+      "description": "在循环中获取当前字段的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentvalue",
+      "name": "当前值",
+      "description": "在循环中获取当前字段的值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "asjson",
+      "name": "导出对象数据",
+      "description": "将字典导出为JSON格式的字符串。后续在 '导入数据' 动作中使用，常用于保存在本地存储中。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-default",
+      "name": "安全读取",
+      "description": "获取指定字段的值，或者字段不存在时返回的自定义字符。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "要获取的字段名称。"
+        },
+        {
+          "id": "default",
+          "name": "默认值",
+          "description": "若字段不存在时，默认返回的值。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 6,
+    "expressions": 6
+  }
+}

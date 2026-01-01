@@ -1,0 +1,121 @@
+{
+  "id": "shadowlight",
+  "name": "Shadow light",
+  "description": "Cast shadows from objects with the Shadow Caster behavior.",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-light-height",
+      "name": "Set light height",
+      "description": "Set the height of the light.",
+      "display_text": "Set light height to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The height of the light to set, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-shadow-color",
+      "name": "Set shadow color",
+      "description": "Set the color of shadows cast by the light.",
+      "display_text": "Set shadow color to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "color",
+          "name": "Color",
+          "description": "The color of the shadows cast by this object."
+        }
+      ]
+    },
+    {
+      "id": "set-tag",
+      "name": "Set tag",
+      "description": "Set the tag for the light.",
+      "display_text": "Set shadow tag to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The new tag to set for the light."
+        }
+      ]
+    },
+    {
+      "id": "set-cast-from",
+      "name": "Set cast from",
+      "description": "Set which objects to cast shadows from depending on their tags.",
+      "display_text": "Set cast from [b]{0}[/b]",
+      "params": [
+        {
+          "id": "cast-from",
+          "name": "Cast from",
+          "description": "Decide which objects to cast shadows from depending on their tags.",
+          "options": [
+            {
+              "id": "all",
+              "label": "All"
+            },
+            {
+              "id": "same-tag",
+              "label": "Same tag"
+            },
+            {
+              "id": "different-tag",
+              "label": "Different tag"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-light-position",
+      "name": "Set light position",
+      "description": "Set the position from which shadows are cast from.",
+      "display_text": "Set light position to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "Light X",
+          "description": "The X co-ordinate of the light."
+        },
+        {
+          "id": "y",
+          "name": "Light Y",
+          "description": "The Y co-ordinate of the light."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lightx",
+      "name": "LightX",
+      "description": "The X position of the light source.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lighty",
+      "name": "LightY",
+      "description": "The Y position of the light source.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "description": "The tag of the light.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 0,
+    "actions": 5,
+    "expressions": 3
+  }
+}

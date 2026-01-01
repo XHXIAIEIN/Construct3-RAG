@@ -1,0 +1,122 @@
+{
+  "id": "button",
+  "name": "Button",
+  "description": "A clickable push button or checkbox.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when the button is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "is-checked",
+      "name": "Is checked",
+      "description": "True if the checkbox is checked.",
+      "display_text": "Is checked",
+      "params": []
+    },
+    {
+      "id": "compare-text",
+      "name": "Compare text",
+      "description": "Compare the button's text.",
+      "display_text": "Text is [b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "Text to compare",
+          "description": "Enter the text to compare with the button text."
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "Case sensitivity",
+          "description": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "Ignore case"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "Case sensitive"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "name": "Set text",
+      "description": "Set the button's text.",
+      "display_text": "Set text to {0}",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The text to set in the button."
+        }
+      ]
+    },
+    {
+      "id": "set-tooltip",
+      "name": "Set tooltip",
+      "description": "Set the button's tooltip.",
+      "display_text": "Set tooltip to {0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "description": "The tooltip to set on the button."
+        }
+      ]
+    },
+    {
+      "id": "set-checked",
+      "name": "Set checked",
+      "description": "Check or uncheck a checkbox.",
+      "display_text": "Set [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose the checkbox state.",
+          "options": [
+            {
+              "id": "unchecked",
+              "label": "Unchecked"
+            },
+            {
+              "id": "checked",
+              "label": "Checked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-checked",
+      "name": "Toggle checked",
+      "description": "Toggle a checkbox.",
+      "display_text": "Toggle checked",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "name": "Text",
+      "description": "Get the button text.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 4,
+    "expressions": 1
+  }
+}

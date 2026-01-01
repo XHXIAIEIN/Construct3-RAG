@@ -1,0 +1,742 @@
+{
+  "id": "nodewebkit",
+  "name": "NW.js",
+  "description": "允许通过 NW.js 访问用户计算机本地的文件。仅 NW.js 导出的项目可用。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-open-dialog-ok",
+      "name": "打开对话框被确认",
+      "description": "从打开的对话框中选择文件后触发。",
+      "display_text": "打开对话框被确认",
+      "params": []
+    },
+    {
+      "id": "on-folder-dialog-ok",
+      "name": "文件夹对话框被确认",
+      "description": "从文件夹对话框中选择文件夹后触发。",
+      "display_text": "文件夹对话框被确认",
+      "params": []
+    },
+    {
+      "id": "on-save-dialog-ok",
+      "name": "保存对话框被确认",
+      "description": "从保存对话框中选择文件后触发。",
+      "display_text": "保存对话框被确认",
+      "params": []
+    },
+    {
+      "id": "on-open-dialog-cancel",
+      "name": "打开对话框被取消",
+      "description": "如果取消打开对话框，则触发。",
+      "display_text": "打开对话框被取消",
+      "params": []
+    },
+    {
+      "id": "on-folder-dialog-cancel",
+      "name": "文件夹对话框被取消",
+      "description": "如果取消文件夹对话框，则触发。",
+      "display_text": "文件夹对话框被取消",
+      "params": []
+    },
+    {
+      "id": "on-save-dialog-cancel",
+      "name": "保存对话框被取消",
+      "description": "如果取消保存对话框，则触发。",
+      "display_text": "保存对话框被取消",
+      "params": []
+    },
+    {
+      "id": "path-exists",
+      "name": "路径已存在",
+      "description": "测试磁盘上是否存在文件。",
+      "display_text": "路径 [i]{0}[/i] 已存在",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要检测的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "on-file-dropped",
+      "name": "文件被拖入",
+      "description": "当用户将文件拖放到窗口时触发。",
+      "display_text": "文件被拖入",
+      "params": []
+    },
+    {
+      "id": "on-binary-file-read",
+      "name": "二进制文件读取完成",
+      "description": "当二进制文件读取完成时触发。然后数据在二进制数据对象中可被使用。",
+      "display_text": "[i]{0}[/i] 二进制文件读取完成",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的文件。"
+        }
+      ]
+    },
+    {
+      "id": "on-binary-file-written",
+      "name": "二进制数据写入完成",
+      "description": "当二进制文件写入完成时触发。",
+      "display_text": "二进制数据 [i]{0}[/i] 写入完成",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的文件。"
+        }
+      ]
+    },
+    {
+      "id": "on-file-system-error",
+      "name": "文件系统出现错误",
+      "description": "在文件操作失败时触发",
+      "display_text": "文件系统出现错误",
+      "params": []
+    },
+    {
+      "id": "on-any-binary-file-read",
+      "name": "任意二进制文件读取完成",
+      "description": "任意二进制文件读取完成时触发，并返回 '文件标签' 表达式。",
+      "display_text": "任意二进制文件读取完成",
+      "params": []
+    },
+    {
+      "id": "on-any-binary-file-written",
+      "name": "任意二进制文件写入完成",
+      "description": "任意二进制文件写入完成时触发，并返回 '文件标签' 表达式。",
+      "display_text": "任意二进制文件写入完成",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "show-open-dialog",
+      "name": "显示打开对话框",
+      "description": "显示一个允许用户选择文件的打开文件对话框。",
+      "display_text": "显示打开对话框 (接受 [i]{0}[/i])",
+      "params": [
+        {
+          "id": "accept",
+          "name": "同意",
+          "description": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*\""
+        }
+      ]
+    },
+    {
+      "id": "show-folder-dialog",
+      "name": "显示文件夹对话框",
+      "description": "显示文件夹选择器对话框，允许用户选择文件夹。",
+      "display_text": "显示文件夹对话框",
+      "params": []
+    },
+    {
+      "id": "show-save-dialog",
+      "name": "显示保存对话框",
+      "description": "显示保存文件对话框。",
+      "display_text": "显示保存对话框（接受 [i]{0}[/i]）",
+      "params": [
+        {
+          "id": "accept",
+          "name": "同意",
+          "description": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*\""
+        }
+      ]
+    },
+    {
+      "id": "write-file",
+      "name": "写文件",
+      "description": "写一些文本到一个文件里",
+      "display_text": "写 [b]{1}[/b] 到文件 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要写入的文件路径。注意，此操作会直接覆盖文件！"
+        },
+        {
+          "id": "contents",
+          "name": "内容",
+          "description": "输入要写入文件的文本内容。"
+        }
+      ]
+    },
+    {
+      "id": "rename-file",
+      "name": "重命名文件",
+      "description": "重命名现有文件。",
+      "display_text": "重命名 [i]{0}[/i] 为 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "existing-file",
+          "name": "现有文件",
+          "description": "输入要重命名的现有文件路径。"
+        },
+        {
+          "id": "new-name",
+          "name": "新名称",
+          "description": "输入要重命名为的新文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "delete-file",
+      "name": "删除文件",
+      "description": "删除一个文件",
+      "display_text": "删除 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要删除的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "create-folder",
+      "name": "创建文件夹",
+      "description": "在本地磁盘中创建一个新的文件夹。",
+      "display_text": "创建文件夹 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要创建的文件夹路径。"
+        }
+      ]
+    },
+    {
+      "id": "append-file",
+      "name": "添加文件",
+      "description": "在文档末段添加文本",
+      "display_text": "追加[b]{1}[/b]到文件[i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要操作的文件路径。"
+        },
+        {
+          "id": "contents",
+          "name": "内容",
+          "description": "要附加到文件的文本内容。"
+        }
+      ]
+    },
+    {
+      "id": "list-files",
+      "name": "列表文件",
+      "description": "加载给定文件夹中的文件列表。 在此操作后使用表达式来获取计数和文件名。",
+      "display_text": "从 [i]{0}[/i] 列出文件",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要获取的文件夹路径。"
+        }
+      ]
+    },
+    {
+      "id": "copy-file",
+      "name": "复制文件",
+      "description": "制作相同的文件副本。",
+      "display_text": "复制 [i]{0}[/i] 到 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要复制的文件路径。"
+        },
+        {
+          "id": "destination",
+          "name": "终点",
+          "description": "输入要复制到的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "move-file",
+      "name": "移动文档",
+      "description": "复制文件然后删除原始文件。",
+      "display_text": "移动 [i]{0}[/i] 到 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要移动的文件路径。"
+        },
+        {
+          "id": "destination",
+          "name": "终点",
+          "description": "输入要移动到的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "run-file",
+      "name": "运行文件",
+      "description": "运行一个文件，比如执行另一个程序。",
+      "display_text": "运行 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要执行文件的路径，用空格分隔附加参数。如果路径包含空格，需使用连续2个双引号进行转义，例如 \"\"\"C:\\Program Files\\file.exe\"\"\""
+        }
+      ]
+    },
+    {
+      "id": "open-browser",
+      "name": "打开浏览器",
+      "description": "打开给定URL的默认浏览器。",
+      "display_text": "打开浏览器并跳转至 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要在浏览器中打开的Web地址。"
+        }
+      ]
+    },
+    {
+      "id": "set-x",
+      "name": "设置X坐标",
+      "description": "设置窗口在屏幕中的X坐标位置。",
+      "display_text": "设置窗体位置X为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "将窗口移动到屏幕上的X坐标。"
+        }
+      ]
+    },
+    {
+      "id": "set-y",
+      "name": "设置Y坐标",
+      "description": "设置窗口在屏幕中的Y坐标位置。",
+      "display_text": "设置窗体Y坐标为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "将窗口移动到屏幕上的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "set-width",
+      "name": "设置宽度",
+      "description": "设置窗口的宽度。",
+      "display_text": "设置窗口宽度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "窗口的新宽度。"
+        }
+      ]
+    },
+    {
+      "id": "set-height",
+      "name": "设置高度",
+      "description": "设置窗口的高度。",
+      "display_text": "设置窗口高度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "窗口的新高度。"
+        }
+      ]
+    },
+    {
+      "id": "set-title",
+      "name": "设置标题",
+      "description": "设置窗口标题栏中显示的文本。",
+      "display_text": "设置窗口标题为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "title",
+          "name": "标题",
+          "description": "要在窗口标题栏中显示的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "minimize",
+      "name": "最小化",
+      "description": "最小化窗口",
+      "display_text": "最小化窗口",
+      "params": []
+    },
+    {
+      "id": "maximize",
+      "name": "最大化",
+      "description": "最大化窗口",
+      "display_text": "最大化窗口",
+      "params": []
+    },
+    {
+      "id": "unmaximize",
+      "name": "取消最大化",
+      "description": "取消最大化窗口（即反向最大化）。",
+      "display_text": "取消最大化窗口",
+      "params": []
+    },
+    {
+      "id": "restore",
+      "name": "恢复",
+      "description": "恢复窗口（即在最小化后再次显示）。",
+      "display_text": "恢复窗口",
+      "params": []
+    },
+    {
+      "id": "request-attention",
+      "name": "请求注意",
+      "description": "开始或停止请求用户注意，例如 通过闪烁标题栏（取决于操作系统）。",
+      "display_text": "窗口： {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是否要求注意或取消之前的注意请求。",
+          "options": [
+            {
+              "id": "request-attention",
+              "label": "请求提醒"
+            },
+            {
+              "id": "stop-requesting-attention",
+              "label": "停止提醒"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-maximum-size",
+      "name": "设置最大尺寸",
+      "description": "设置窗口的最大大小。",
+      "display_text": "设置窗口最大尺寸为 [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "max-width",
+          "name": "最大宽度",
+          "description": "要设置的窗口最大宽度，以像素为单位。"
+        },
+        {
+          "id": "max-height",
+          "name": "最大高度",
+          "description": "要设置的窗口最大高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-minimum-size",
+      "name": "设置最小尺寸",
+      "description": "设置窗口的最小大小。",
+      "display_text": "设置窗口最小尺寸为 [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "min-width",
+          "name": "最小宽度",
+          "description": "要设置的窗口最小宽度，以像素为单位。"
+        },
+        {
+          "id": "min-height",
+          "name": "最小高度",
+          "description": "要设置的窗口最小高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-resizable",
+      "name": "设置可调整大小",
+      "description": "启用或禁用窗口上的调整大小控件。",
+      "display_text": "设置窗口化 {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是否在窗口上启用或禁用调整大小。",
+          "options": [
+            {
+              "id": "not-resizable",
+              "label": "不可调整大小"
+            },
+            {
+              "id": "resizable",
+              "label": "可调整大小"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-always-on-top",
+      "name": "始终位于顶部",
+      "description": "启用或禁用始终位于其他窗口之上的窗口。",
+      "display_text": "设置窗口化 {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是否启用或禁用始终位于顶部的窗口。",
+          "options": [
+            {
+              "id": "not-always-on-top",
+              "label": "取消窗口置顶"
+            },
+            {
+              "id": "always-on-top",
+              "label": "窗口置顶"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-dev-tools",
+      "name": "显示开发者工具",
+      "description": "显示浏览器开发者工具，用于调试或检查控制台消息。",
+      "display_text": "显示开发者工具",
+      "params": []
+    },
+    {
+      "id": "shell-open",
+      "name": "使用shell开启",
+      "description": "使用默认方式打开",
+      "display_text": "使用shell开启 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要打开的文件路径。这将会打开与该文件关联的默认应用程序。"
+        }
+      ]
+    },
+    {
+      "id": "read-binary-file",
+      "name": "读取二进制文件",
+      "description": "使用二进制数据对象读取文件。在完成时触发 '二进制文件读取完成' 条件。",
+      "display_text": "读二进制文件[b]{1}[/b]为{2}(标签[i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的文件。"
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要读取的文件路径。"
+        },
+        {
+          "id": "destination",
+          "name": "终点",
+          "description": "要读取的二进制数据"
+        }
+      ]
+    },
+    {
+      "id": "write-binary-file",
+      "name": "写二进制文件",
+      "description": "将二进制数据写到文件",
+      "display_text": "写二进制文件[b]{1}[/b]为{2}(标签[i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的文件。"
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要写入的文件路径。注意，此操作会直接覆盖文件！"
+        },
+        {
+          "id": "source",
+          "name": "来源",
+          "description": "要写入该文件的二进制数据"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "chosenpath",
+      "name": "选择路径",
+      "description": "在文件对话框后返回所选路径。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "appfolder",
+      "name": "应用文件夹",
+      "description": "返回应用程序的文件夹路径。 请注意，它可能没有写入权限。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "appfolderurl",
+      "name": "应用文件夹链接",
+      "description": "将应用程序的文件夹作为文件URL返回。 用于任何URL参数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "userfolder",
+      "name": "用户文件夹",
+      "description": "返回当前用户文件夹",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "readfile",
+      "name": "读取文件",
+      "description": "返回磁盘上文件的文本内容。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要加载的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "filesize",
+      "name": "文件大小",
+      "description": "返回磁盘上文件的大小，以字节为单位。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "要获取的文件路径。"
+        }
+      ]
+    },
+    {
+      "id": "listcount",
+      "name": "列表数量",
+      "description": "在 '获取文件列表完成' 条件中，返回列表的文件数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listat",
+      "name": "列表索引",
+      "description": "在 '获取文件列表完成' 条件中，获取列表中索引位置的文件名。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文件在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "droppedfile",
+      "name": "已拖放文件",
+      "description": "返回放入窗口的文件的文件名。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowx",
+      "name": "窗口X坐标",
+      "description": "屏幕上窗口的X位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowy",
+      "name": "窗口Y坐标",
+      "description": "屏幕上窗口的Y位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowwidth",
+      "name": "窗口宽度",
+      "description": "操作系统中UI窗口的宽度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowheight",
+      "name": "窗口高度",
+      "description": "操作系统中UI窗口的高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowtitle",
+      "name": "窗口标题",
+      "description": "当前窗口标题栏文本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilesfolder",
+      "name": "项目文件夹",
+      "description": "返回项目文件的文件夹根路径，即 index.html 的位置。注意，可能因权限问题而无法写入文件。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilesfolderurl",
+      "name": "项目文件夹链接",
+      "description": "返回项目文件的文件夹路径 URL。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "argument-count",
+      "name": "参数数量",
+      "description": "命令行参数的数量",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "argument-at",
+      "name": "获取参数",
+      "description": "获取命令行索引位置的参数，从 0 开始计数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "参数是从0开始计数的"
+        }
+      ]
+    },
+    {
+      "id": "fileerror",
+      "name": "文件错误信息",
+      "description": "在当文件系统错误时返回的错误信息",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-tag",
+      "name": "文件标签",
+      "description": "在执行动作中相应的标签。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 31,
+    "expressions": 20
+  }
+}

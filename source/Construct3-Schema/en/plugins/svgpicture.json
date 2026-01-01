@@ -1,0 +1,116 @@
+{
+  "id": "svgpicture",
+  "name": "SVG Picture",
+  "description": "Display an SVG file imported to the project.",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-image",
+      "name": "Set image",
+      "description": "Set the SVG image to be displayed from a project file.",
+      "display_text": "Set image to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "file",
+          "name": "File",
+          "description": "A project file to load an SVG image from."
+        }
+      ]
+    },
+    {
+      "id": "set-image-by-name",
+      "name": "Set image (by name)",
+      "description": "Set the SVG image to be displayed from a string of a project file.",
+      "display_text": "Set image to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "file",
+          "name": "File",
+          "description": "A string of the name of a project file to load an SVG image from."
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 3,
+    "expressions": 0
+  }
+}

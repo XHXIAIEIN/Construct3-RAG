@@ -1,0 +1,1626 @@
+{
+  "id": "audio",
+  "name": "Audio",
+  "description": "Play sound effects and music from files you've imported.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-ended",
+      "name": "On ended",
+      "description": "Triggered when an audio file finishes playing.",
+      "display_text": "On {0} ended",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag that finished."
+        }
+      ]
+    },
+    {
+      "id": "preloads-complete",
+      "name": "Preloads complete",
+      "description": "True when all preloaded audio is ready to play.",
+      "display_text": "All preloads complete",
+      "params": []
+    },
+    {
+      "id": "is-silent",
+      "name": "Is silent",
+      "description": "True if silent mode has been enabled.",
+      "display_text": "Is silent",
+      "params": []
+    },
+    {
+      "id": "is-any-playing",
+      "name": "Is any playing",
+      "description": "True if any audio is actively playing.",
+      "display_text": "Is any playing",
+      "params": []
+    },
+    {
+      "id": "is-tag-playing",
+      "name": "Is tag playing",
+      "description": "True if any audio with a given tag is currently playing.",
+      "display_text": "Tag [b]{0}[/b] is playing",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag of the file to test if playing."
+        }
+      ]
+    },
+    {
+      "id": "on-fade-ended",
+      "name": "On fade ended",
+      "description": "Triggered after 'Fade volume' when the fade finishes.",
+      "display_text": "On {0} fade ended",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag that finished a fade."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-filter-effect",
+      "name": "Add filter effect",
+      "description": "Add a bi-quad filter effect to all audio with a given tag.",
+      "display_text": "Add {1} filter to tag {0} (frequency [i]{2}[/i], detune [i]{3}[/i], Q [i]{4}[/i], gain [i]{5}[/i], mix [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Select the kind of filter to use for this effect.",
+          "options": [
+            {
+              "id": "low-pass",
+              "label": "low-pass"
+            },
+            {
+              "id": "high-pass",
+              "label": "high-pass"
+            },
+            {
+              "id": "band-pass",
+              "label": "band-pass"
+            },
+            {
+              "id": "low-shelf",
+              "label": "low shelf"
+            },
+            {
+              "id": "high-shelf",
+              "label": "high shelf"
+            },
+            {
+              "id": "peaking",
+              "label": "peaking"
+            },
+            {
+              "id": "notch",
+              "label": "notch"
+            },
+            {
+              "id": "all-pass",
+              "label": "all-pass"
+            }
+          ]
+        },
+        {
+          "id": "frequency",
+          "name": "Frequency",
+          "description": "The frequency parameter for the chosen filter, in Hertz."
+        },
+        {
+          "id": "detune",
+          "name": "Detune",
+          "description": "The detune to apply, in cents."
+        },
+        {
+          "id": "q",
+          "name": "Q",
+          "description": "The filter Q factor."
+        },
+        {
+          "id": "gain",
+          "name": "Gain",
+          "description": "The filter gain, if applicable, in decibels."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "remove-all-effects",
+      "name": "Remove all effects",
+      "description": "Remove all effects from a given tag.",
+      "display_text": "Remove all effects from tag {0}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to remove effects from."
+        }
+      ]
+    },
+    {
+      "id": "add-delay-effect",
+      "name": "Add delay effect",
+      "description": "Add a delay effect to all audio with a given tag.",
+      "display_text": "Add [i]{1}[/i] second delay effect to tag {0} (gain [i]{2}[/i] dB, mix [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "delay",
+          "name": "Delay",
+          "description": "The delay time in seconds."
+        },
+        {
+          "id": "gain",
+          "name": "Gain",
+          "description": "The gain of the delayed audio in decibels."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-convolution-effect",
+      "name": "Add convolution effect",
+      "description": "Add a convolution effect (using another sound as impulse response) to all audio with a given tag.",
+      "display_text": "Add convolution effect with [b]{1}[/b] to tag {0} ([i]{2}[/i], mix [i]{3}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "audio",
+          "name": "Audio",
+          "description": "Choose an audio file containing an impulse response to use for the convolution effect."
+        },
+        {
+          "id": "level",
+          "name": "Level",
+          "description": "Choose whether to normalize or leave intact the audio file used above.",
+          "options": [
+            {
+              "id": "normalize",
+              "label": "normalize"
+            },
+            {
+              "id": "dont-normalize",
+              "label": "don't normalize"
+            }
+          ]
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "set-effect-parameter",
+      "name": "Set effect parameter",
+      "description": "Set or ramp the parameter of an effect.",
+      "display_text": "Set tag {0} effect [i]{1}[/i] parameter [b]{2}[/b] to [b]{3}[/b] ({4} in [i]{5}[/i] seconds)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag the effect was added for."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the added effect to modify, e.g. 0 for first effect, 1 for second, etc."
+        },
+        {
+          "id": "parameter",
+          "name": "Parameter",
+          "description": "Select the effect parameter to modify.",
+          "options": [
+            {
+              "id": "mix",
+              "label": "Mix"
+            },
+            {
+              "id": "filterphaser-frequency",
+              "label": "Filter/phaser frequency"
+            },
+            {
+              "id": "filterphaser-detune",
+              "label": "Filter/phaser detune"
+            },
+            {
+              "id": "filterphaser-q",
+              "label": "Filter/phaser Q"
+            },
+            {
+              "id": "filterdelaygain-gain",
+              "label": "Filter/delay/gain gain"
+            },
+            {
+              "id": "delay-time",
+              "label": "Delay time"
+            },
+            {
+              "id": "flangerphaser-modulation",
+              "label": "Flanger/phaser modulation"
+            },
+            {
+              "id": "flangerphasertremoloring-modulation-frequency",
+              "label": "Flanger/phaser/tremolo/ring modulation frequency"
+            },
+            {
+              "id": "flanger-feedback",
+              "label": "Flanger feedback"
+            },
+            {
+              "id": "stereo-pan",
+              "label": "Stereo pan"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to set for the parameter."
+        },
+        {
+          "id": "ramp",
+          "name": "Ramp",
+          "description": "Whether to immediately set the value or smoothly ramp to the intended value.",
+          "options": [
+            {
+              "id": "step",
+              "label": "Step"
+            },
+            {
+              "id": "linear",
+              "label": "Linear"
+            },
+            {
+              "id": "exponential",
+              "label": "Exponential"
+            }
+          ]
+        },
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The duration of the ramp in seconds, or the delay before stepping the value."
+        }
+      ]
+    },
+    {
+      "id": "add-flanger-effect",
+      "name": "Add flanger effect",
+      "description": "Add a flanger or chorus style effect to all audio with a given tag.",
+      "display_text": "Add flanger effect to tag {0} (delay [i]{1}[/i] ms, modulation [i]{2}[/i] ms, frequency [i]{3}[/i] Hz, feedback [i]{4}[/i], mix [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "delay",
+          "name": "Delay",
+          "description": "The delay time, in milliseconds."
+        },
+        {
+          "id": "modulation",
+          "name": "Modulation",
+          "description": "The magnitude by which to alter the delay time, in milliseconds. Set to 0 for a chorus style effect."
+        },
+        {
+          "id": "frequency",
+          "name": "Frequency",
+          "description": "The frequency over which to cycle the delay time, in hertz."
+        },
+        {
+          "id": "feedback",
+          "name": "Feedback",
+          "description": "The feedback amount, from 0 (none) to 100 (all)."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-phaser-effect",
+      "name": "Add phaser effect",
+      "description": "Add a phaser effect to all audio with a given tag.",
+      "display_text": "Add phaser effect to tag {0} (frequency [i]{1}[/i] Hz, detune [i]{2}[/i] cents, Q [i]{3}[/i], modulation [i]{4}[/i], modulation frequency [i]{5}[/i], mix [i]{6}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "frequency",
+          "name": "Frequency",
+          "description": "The frequency in Hertz where the center of the phase transition occurs."
+        },
+        {
+          "id": "detune",
+          "name": "Detune",
+          "description": "The detune to apply, in cents."
+        },
+        {
+          "id": "q",
+          "name": "Q",
+          "description": "The filter Q factor."
+        },
+        {
+          "id": "modulation",
+          "name": "Modulation",
+          "description": "The magnitude by which to alter the frequency, in Hertz."
+        },
+        {
+          "id": "modulation-frequency",
+          "name": "Modulation frequency",
+          "description": "The frequency over which to cycle the modulation, in hertz."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-gain-effect",
+      "name": "Add gain effect",
+      "description": "Add a gain (volume adjustment) effect to all audio with a given tag.",
+      "display_text": "Add gain effect to tag {0} ([i]{1}[/i] dB)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "gain",
+          "name": "Gain",
+          "description": "The volume adjustment, in decibels."
+        }
+      ]
+    },
+    {
+      "id": "add-compressor-effect",
+      "name": "Add compressor effect",
+      "description": "Add a dynamics compressor effect to all audio with a given tag.",
+      "display_text": "Add compressor effect to tag {0} (threshold [i]{1}[/i] dB, knee [i]{2}[/i] dB, ratio [i]{3}[/i], attack [i]{4}[/i] ms, release [i]{5}[/i] ms)",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "threshold",
+          "name": "Threshold",
+          "description": "The threshold above which compression occurs, in dB."
+        },
+        {
+          "id": "knee",
+          "name": "Knee",
+          "description": "The range above the threshold where the curve smoothly transitions to the 'ratio' portion, in dB."
+        },
+        {
+          "id": "ratio",
+          "name": "Ratio",
+          "description": "The amount of dB change in input for a 1dB change in output."
+        },
+        {
+          "id": "attack",
+          "name": "Attack",
+          "description": "The time in which to reduce gain by 10dB, in milliseconds."
+        },
+        {
+          "id": "release",
+          "name": "Release",
+          "description": "The time in which to increase gain by 10dB, in milliseconds."
+        }
+      ]
+    },
+    {
+      "id": "add-tremolo-effect",
+      "name": "Add tremolo effect",
+      "description": "Add a tremolo (amplitude modulation) effect to all audio with a given tag.",
+      "display_text": "Add tremolo effect to tag {0} ([i]{1}[/i] Hz, mix [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "frequency",
+          "name": "Frequency",
+          "description": "The frequency of amplitude modulation, in Hertz."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-analyser-effect",
+      "name": "Add analyser effect",
+      "description": "Add an audio analyser in to a tag's effect chain.",
+      "display_text": "Add analyser effect to tag {0} (FFT size [i]{1}[/i], smoothing [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "fft-size",
+          "name": "FFT size",
+          "description": "The size of the FFT used for frequency-domain analysis. Must be a power of two."
+        },
+        {
+          "id": "smoothing",
+          "name": "Smoothing",
+          "description": "The smoothing time constant, from 0 (no averaging with last analysis frame) to 1 (averaging)."
+        }
+      ]
+    },
+    {
+      "id": "add-ring-mod-effect",
+      "name": "Add ring mod effect",
+      "description": "Add a ring modulator effect to all audio with a given tag.",
+      "display_text": "Add ring modulator effect to tag {0} ([i]{1}[/i] Hz, mix [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "frequency",
+          "name": "Frequency",
+          "description": "The frequency of the ring modulator, in Hertz."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-distortion-effect",
+      "name": "Add distortion effect",
+      "description": "Add a distortion effect to all audio with a given tag.",
+      "display_text": "Add distortion effect to tag {0} (threshold [i]{1}[/i] dB, headroom [i]{2}[/i] dB, drive [i]{3}[/i], make-up gain [i]{4}[/i] dB, mix [i]{5}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "threshold",
+          "name": "Threshold",
+          "description": "The distortion threshold, in dB."
+        },
+        {
+          "id": "headroom",
+          "name": "Headroom",
+          "description": "The distortion headroom, in dB."
+        },
+        {
+          "id": "drive",
+          "name": "Drive",
+          "description": "The distortion drive."
+        },
+        {
+          "id": "make-up-gain",
+          "name": "Make-up gain",
+          "description": "The additional volume increase after the effect, in dB."
+        },
+        {
+          "id": "mix",
+          "name": "Mix",
+          "description": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+        }
+      ]
+    },
+    {
+      "id": "add-mute-effect",
+      "name": "Add mute effect",
+      "description": "Add a mute to an effect chain, useful after an analyser.",
+      "display_text": "Add mute effect to tag {0}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to mute."
+        }
+      ]
+    },
+    {
+      "id": "play-at-position",
+      "name": "Play at position",
+      "description": "Play audio at a position in the layout.",
+      "display_text": "Play [b]{0}[/b] {1} at volume {2} dB at position ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), angle [i]{6}[/i] (inner angle [i]{7}[/i], outer angle [i]{8}[/i], outer gain [i]{9}[/i] dB) with tag [i]{10}[/i]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "Audio file",
+          "description": "Choose the audio file to play."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X position in the layout to play the sound at."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y position in the layout to play the sound at."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle in degrees to play at, if a directional source."
+        },
+        {
+          "id": "inner-angle",
+          "name": "Inner angle",
+          "description": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+        },
+        {
+          "id": "outer-angle",
+          "name": "Outer angle",
+          "description": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+        },
+        {
+          "id": "outer-gain",
+          "name": "Outer gain",
+          "description": "The volume reduction in decibels outside the outer angle, for directional sources."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "The Z position in the layout to play the sound at."
+        }
+      ]
+    },
+    {
+      "id": "play-at-object",
+      "name": "Play at object",
+      "description": "Play audio at an object and track its movement.",
+      "display_text": "Play [b]{0}[/b] {1} at volume {2} dB at object {3} (inner angle [i]{4}[/i], outer angle [i]{5}[/i], outer gain [i]{6}[/i] dB) with tag [i]{7}[/i]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "Audio file",
+          "description": "Choose the audio file to play."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to play the sound at."
+        },
+        {
+          "id": "inner-angle",
+          "name": "Inner angle",
+          "description": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+        },
+        {
+          "id": "outer-angle",
+          "name": "Outer angle",
+          "description": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+        },
+        {
+          "id": "outer-gain",
+          "name": "Outer gain",
+          "description": "The volume reduction in decibels outside the outer angle, for directional sources."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        }
+      ]
+    },
+    {
+      "id": "set-listener-object",
+      "name": "Set listener object",
+      "description": "Set the object to which volume and panning are relative.",
+      "display_text": "Set listener object to {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to represent the listener."
+        }
+      ]
+    },
+    {
+      "id": "set-listener-z",
+      "name": "Set listener Z",
+      "description": "Set the listener height above the layout.",
+      "display_text": "Set listener Z to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "The new listener Z (height above the layout), in pixels."
+        }
+      ]
+    },
+    {
+      "id": "play-at-object-by-name",
+      "name": "Play at object (by name)",
+      "description": "Play an audio file by its name at an object and track its movement.",
+      "display_text": "Play [b]{1}[/b] {2} from {0} at volume {3} dB at object {4} (inner angle [i]{5}[/i], outer angle [i]{6}[/i], outer gain [i]{7}[/i] dB) with tag [i]{8}[/i]",
+      "params": [
+        {
+          "id": "folder",
+          "name": "Folder",
+          "description": "Choose the folder which contains the audio file.",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "Sounds"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "Audio file name",
+          "description": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Choose the object to play the sound at."
+        },
+        {
+          "id": "inner-angle",
+          "name": "Inner angle",
+          "description": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+        },
+        {
+          "id": "outer-angle",
+          "name": "Outer angle",
+          "description": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+        },
+        {
+          "id": "outer-gain",
+          "name": "Outer gain",
+          "description": "The volume reduction in decibels outside the outer angle, for directional sources."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        }
+      ]
+    },
+    {
+      "id": "play-at-position-by-name",
+      "name": "Play at position (by name)",
+      "description": "Play an audio file by its name at a position in the layout.",
+      "display_text": "Play [b]{1}[/b] {2} from {0} at volume {3} dB at position ([i]{4}[/i], [i]{5}[/i], [i]{6}[/i]), angle [i]{7}[/i] (inner angle [i]{8}[/i], outer angle [i]{9}[/i], outer gain [i]{10}[/i] dB) with tag [i]{11}[/i]",
+      "params": [
+        {
+          "id": "folder",
+          "name": "Folder",
+          "description": "Choose the folder which contains the audio file.",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "Sounds"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "Audio file name",
+          "description": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X position in the layout to play the sound at."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y position in the layout to play the sound at."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle in degrees to play at, if a directional source."
+        },
+        {
+          "id": "inner-angle",
+          "name": "Inner angle",
+          "description": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+        },
+        {
+          "id": "outer-angle",
+          "name": "Outer angle",
+          "description": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+        },
+        {
+          "id": "outer-gain",
+          "name": "Outer gain",
+          "description": "The volume reduction in decibels outside the outer angle, for directional sources."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "The Z position in the layout to play the sound at."
+        }
+      ]
+    },
+    {
+      "id": "play",
+      "name": "Play",
+      "description": "Play an audio file.",
+      "display_text": "Play [b]{0}[/b] {1} at volume {2} dB (stereo pan [i]{3}[/i], tag [i]{4}[/i])",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "Audio file",
+          "description": "Choose the audio file to play."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        },
+        {
+          "id": "stereo-pan",
+          "name": "Stereo pan",
+          "description": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+        }
+      ]
+    },
+    {
+      "id": "set-looping",
+      "name": "Set looping",
+      "description": "Enable or disable looping on a sound.",
+      "display_text": "Set [i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to loop.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose whether to turn looping on or off.",
+          "options": [
+            {
+              "id": "looping",
+              "label": "looping"
+            },
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-muted",
+      "name": "Set muted",
+      "description": "Mute (make silent) or unmute a sound.",
+      "display_text": "Set [i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to mute.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose whether to mute or unmute the sound.",
+          "options": [
+            {
+              "id": "muted",
+              "label": "muted"
+            },
+            {
+              "id": "unmuted",
+              "label": "unmuted"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-volume",
+      "name": "Set volume",
+      "description": "Set the volume (loudness) of a sound.",
+      "display_text": "Set [i]{0}[/i] volume to [b]{1}[/b] dB",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to change the volume for.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        }
+      ]
+    },
+    {
+      "id": "preload",
+      "name": "Preload",
+      "description": "Download an audio file from the server without playing it.  This ensures it will play immediately.",
+      "display_text": "Preload [b]{0}[/b]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "Audio file",
+          "description": "Choose the audio file to preload.  It will be downloaded from the server but not played."
+        }
+      ]
+    },
+    {
+      "id": "set-playback-rate",
+      "name": "Set playback rate",
+      "description": "Set the speed at which a sound plays at.",
+      "display_text": "Set [i]{0}[/i] playback rate to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to change the playback rate for.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "playback-rate",
+          "name": "Playback rate",
+          "description": "The rate of playback.  1.0 is normal speed, 0.5 half speed, 2.0 double speed, etc."
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Stop a sound from playing.",
+      "display_text": "Stop [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to stop.  Leave empty to affect the last played sound."
+        }
+      ]
+    },
+    {
+      "id": "play-by-name",
+      "name": "Play (by name)",
+      "description": "Play an audio file using a string for the filename.",
+      "display_text": "Play [b]{1}[/b] {2} from {0} at {3} dB (stereo pan [i]{4}[/i], tag [i]{5}[/i])",
+      "params": [
+        {
+          "id": "folder",
+          "name": "Folder",
+          "description": "Choose the folder which contains the audio file.",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "Sounds"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "Audio file name",
+          "description": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether or not to initially play the sound in a loop (repeating).",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        },
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        },
+        {
+          "id": "tag-optional",
+          "name": "Tag (optional)",
+          "description": "A tag, which can be anything you like, to use to reference this sound in future."
+        },
+        {
+          "id": "stereo-pan",
+          "name": "Stereo pan",
+          "description": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+        }
+      ]
+    },
+    {
+      "id": "set-silent",
+      "name": "Set silent",
+      "description": "Set silent mode.  In silent mode all current sounds are muted and no new sounds will play.",
+      "display_text": "Set {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Set whether in silent mode or not.",
+          "options": [
+            {
+              "id": "silent",
+              "label": "silent"
+            },
+            {
+              "id": "not-silent",
+              "label": "not silent"
+            },
+            {
+              "id": "toggle-silent",
+              "label": "toggle silent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preload-by-name",
+      "name": "Preload (by name)",
+      "description": "Download an audio file by a string of its name from the server without playing it.",
+      "display_text": "Preload [b]{1}[/b] (from [i]{0}[/i])",
+      "params": [
+        {
+          "id": "folder",
+          "name": "Folder",
+          "description": "Choose the folder which contains the audio file to preload.",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "Sounds"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "Audio file name",
+          "description": "A string with the name of the audio file to preload, without the file extension.  For example, to load myfile.webm, use only \"myfile\"."
+        }
+      ]
+    },
+    {
+      "id": "set-master-volume",
+      "name": "Set master volume",
+      "description": "Set the overall volume of all audio.",
+      "display_text": "Set master volume to [b]{0}[/b] dB",
+      "params": [
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "The master attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+        }
+      ]
+    },
+    {
+      "id": "set-paused",
+      "name": "Set paused",
+      "description": "Pause or resume audio with a given tag.",
+      "display_text": "{1} tag [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to pause or resume."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to pause or resume the sound with the given tag.",
+          "options": [
+            {
+              "id": "pause",
+              "label": "Pause"
+            },
+            {
+              "id": "resume",
+              "label": "Resume"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seek-to",
+      "name": "Seek to",
+      "description": "Seek to a particular location in a sound with a tag.",
+      "display_text": "Seek tag [i]{0}[/i] to [i]{1}[/i] seconds",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to seek."
+        },
+        {
+          "id": "position",
+          "name": "Position",
+          "description": "The time in the audio to seek to, in seconds."
+        }
+      ]
+    },
+    {
+      "id": "stop-all",
+      "name": "Stop all",
+      "description": "Stop all currently playing sounds.",
+      "display_text": "Stop all",
+      "params": []
+    },
+    {
+      "id": "schedule-next-play",
+      "name": "Schedule next play",
+      "description": "Schedule the next Play action sample-accurately.",
+      "display_text": "Schedule next play for [i]{0}[/i]",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "Time in seconds at which to sample-accurately schedule the next Play. Normally this is of the form Audio.CurrentTime + N."
+        }
+      ]
+    },
+    {
+      "id": "unload-audio",
+      "name": "Unload audio",
+      "description": "Unload an audio file from memory.",
+      "display_text": "Unload [b]{0}[/b]",
+      "params": [
+        {
+          "id": "audio-file",
+          "name": "Audio file",
+          "description": "Choose the audio file to unload."
+        }
+      ]
+    },
+    {
+      "id": "unload-audio-by-name",
+      "name": "Unload audio (by name)",
+      "description": "Unload an audio file from memory by a string of its name.",
+      "display_text": "Unload [b]{1}[/b] from {0}",
+      "params": [
+        {
+          "id": "folder",
+          "name": "Folder",
+          "description": "Choose the folder which contains the audio file.",
+          "options": [
+            {
+              "id": "sounds",
+              "label": "Sounds"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            }
+          ]
+        },
+        {
+          "id": "audio-file-name",
+          "name": "Audio file name",
+          "description": "A string with the name of the audio file to unload, without the file extension.  For example, to unload myfile.webm, use only \"myfile\"."
+        }
+      ]
+    },
+    {
+      "id": "unload-all",
+      "name": "Unload all audio",
+      "description": "Unload all audio files from memory.",
+      "display_text": "Unload all",
+      "params": []
+    },
+    {
+      "id": "fade-volume",
+      "name": "Fade volume",
+      "description": "Gradually change the volume of a sound over time.",
+      "display_text": "Fade [i]{0}[/i] volume to [b]{1}[/b] dB over [b]{2}[/b] seconds, then {3}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to change the volume for.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "db",
+          "name": "dB",
+          "description": "The attenuation in decibels (dB) to fade to."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "The time in seconds to fade over."
+        },
+        {
+          "id": "ending",
+          "name": "On end",
+          "description": "What to do when the fade finishes. For fade-outs, it's useful to stop the sound afterwards.",
+          "options": [
+            {
+              "id": "stop",
+              "label": "stop"
+            },
+            {
+              "id": "keep-playing",
+              "label": "keep playing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "add-remote-url",
+      "name": "Add remote URL",
+      "description": "Play audio from a URL by giving it a name to use with the actions that use a string for the name.",
+      "display_text": "Add remote URL [b]{0}[/b] (type [i]{1}[/i]) as name [b]{2}[/b]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "URL to load the audio from. Note cross-domain requests require CORS."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The content type (aka MIME type) of the audio loaded at the given URL. Note WebM Opus is the only format guaranteed to play on all platforms."
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "description": "The name to assign this URL. This name can then be used in the actions that use a string for the name."
+        }
+      ]
+    },
+    {
+      "id": "add-stereo-pan-effect",
+      "name": "Add stereo pan effect",
+      "description": "Add a stereo left/right pan effect to all audio with a given tag.",
+      "display_text": "Add stereo pan effect to tag {0} ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The audio tag to process."
+        },
+        {
+          "id": "stereo-pan",
+          "name": "Stereo pan",
+          "description": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+        }
+      ]
+    },
+    {
+      "id": "set-stereo-pan",
+      "name": "Set stereo pan",
+      "description": "Set the stereo (left/right) pan of a sound.",
+      "display_text": "Set [i]{0}[/i] stereo pan to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag identifying the sound to change.  Leave empty to affect the last played sound."
+        },
+        {
+          "id": "stereo-pan",
+          "name": "Stereo pan",
+          "description": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+        }
+      ]
+    },
+    {
+      "id": "set-listener-orientation",
+      "name": "Set listener orientation",
+      "description": "Set the 3D orientation of the listener.",
+      "display_text": "Set listener orientation to forward ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), up ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "params": [
+        {
+          "id": "forwardX",
+          "name": "Forward X",
+          "description": "The X component of the forward vector."
+        },
+        {
+          "id": "forwardY",
+          "name": "Forward Y",
+          "description": "The Y component of the forward vector."
+        },
+        {
+          "id": "forwardZ",
+          "name": "Forward Z",
+          "description": "The Z component of the forward vector."
+        },
+        {
+          "id": "upX",
+          "name": "Up X",
+          "description": "The X component of the up vector."
+        },
+        {
+          "id": "upY",
+          "name": "Up Y",
+          "description": "The Y component of the up vector."
+        },
+        {
+          "id": "upZ",
+          "name": "Up Z",
+          "description": "The Z component of the up vector."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "effectcount",
+      "name": "EffectCount",
+      "description": "Get the current number of effects added to a tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        }
+      ]
+    },
+    {
+      "id": "analyserfreqbincount",
+      "name": "AnalyserFreqBinCount",
+      "description": "Get the number of frequency bins returned by an analyser effect.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of the analyser effect"
+        }
+      ]
+    },
+    {
+      "id": "analyserfreqbinat",
+      "name": "AnalyserFreqBinAt",
+      "description": "Get the magnitude of an analyser's Nth frequency bin.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of the analyser effect"
+        },
+        {
+          "id": "bin",
+          "name": "Bin",
+          "description": "Index of the frequency bin"
+        }
+      ]
+    },
+    {
+      "id": "analyserpeaklevel",
+      "name": "AnalyserPeakLevel",
+      "description": "Get the peak level from an analyser.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of the analyser effect"
+        }
+      ]
+    },
+    {
+      "id": "analyserrmslevel",
+      "name": "AnalyserRMSLevel",
+      "description": "Get the RMS level from an analyser.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of the analyser effect"
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "name": "Duration",
+      "description": "Get the duration in seconds of a sound with a tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        }
+      ]
+    },
+    {
+      "id": "playbacktime",
+      "name": "PlaybackTime",
+      "description": "Get the playback position in seconds of a sound with a tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        }
+      ]
+    },
+    {
+      "id": "volume",
+      "name": "Volume",
+      "description": "Get the current volume, in decibels, of a sound with a tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        }
+      ]
+    },
+    {
+      "id": "mastervolume",
+      "name": "MasterVolume",
+      "description": "Get the current master volume, in decibels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "samplerate",
+      "name": "SampleRate",
+      "description": "Get the audio output sample rate in Hz.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currenttime",
+      "name": "CurrentTime",
+      "description": "Get the audio clock time in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playbackrate",
+      "name": "PlaybackRate",
+      "description": "Get the playback rate of a sound with a tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the sound to use"
+        }
+      ]
+    },
+    {
+      "id": "output-latency",
+      "name": "OutputLatency",
+      "description": "Time delay in seconds for audio to actually be played on output device (or -1 if not known).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "normalized-volume",
+      "name": "NormalizedVolume",
+      "description": "Convert a volume in the range 0-100 to dB.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "Volume in range 0-100"
+        },
+        {
+          "id": "dbThreshold",
+          "name": "dbThreshold",
+          "description": "dB level at volume 10, below which it reverts to linear ramp."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 43,
+    "expressions": 14
+  }
+}

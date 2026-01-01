@@ -1,0 +1,370 @@
+{
+  "id": "localstorage",
+  "name": "本地存储",
+  "description": "将数据本地存储在用户的设备中。即使用户关闭游戏，数据仍然储存在设备中。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-item-set",
+      "name": "词条设置完成",
+      "description": "执行 '设置词条' 动作后，数据成功写入本地存储时触发。",
+      "display_text": "词条 [i]{0}[/i] 设置完成",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要检测的词条的名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-item-get",
+      "name": "词条已获取",
+      "description": "执行 '获取词条' 动作后，数据成功从本地存储中获取时触发。",
+      "display_text": "词条 [i]{0}[/i] 已获取",
+      "params": [
+        {
+          "id": "key",
+          "name": "字段",
+          "description": "输入要检查的词条名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-item-removed",
+      "name": "词条已删除",
+      "description": "执行 '删除词条' 动作后，数据成功从本地存储中删除时触发。",
+      "display_text": "词条 [i]{0}[/i] 已删除",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要删除的词条的名称"
+        }
+      ]
+    },
+    {
+      "id": "on-any-item-set",
+      "name": "任意词条设置完成",
+      "description": "执行 '设置词条' 动作后，任意词条成功写入本地存储时触发。",
+      "display_text": "任意词条设置完成",
+      "params": []
+    },
+    {
+      "id": "on-any-item-get",
+      "name": "任意词条获取完成",
+      "description": "执行 '获取词条' 动作后，任意词条成功从本地存储中获取时触发。",
+      "display_text": "任意词条获取完成",
+      "params": []
+    },
+    {
+      "id": "on-any-item-removed",
+      "name": "任意词条已删除",
+      "description": "执行 '删除词条' 动作后，任意词条成功从本地存储中删除时触发。",
+      "display_text": "任意词条已删除",
+      "params": []
+    },
+    {
+      "id": "on-item-exists",
+      "name": "词条已存在",
+      "description": "执行 '检查词条存在' 动作后，已核实词条存储于本地存储时触发。",
+      "display_text": "词条 [i]{0}[/i] 已存在",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "检测词条名称是否于本地存储中存在。"
+        }
+      ]
+    },
+    {
+      "id": "on-item-missing",
+      "name": "词条不存在",
+      "description": "执行 '检查词条存在' 动作后，本地存储不存在该词条数据时触发。",
+      "display_text": "词条 [i]{0}[/i] 不存在",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要检查的词条的名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-storage-cleared",
+      "name": "所有数据已清空",
+      "description": "执行 '清空本地存储' 动作后，数据清空完成时触发。",
+      "display_text": "所有数据已清空",
+      "params": []
+    },
+    {
+      "id": "on-all-key-names-loaded",
+      "name": "所有词条加载完成",
+      "description": "执行 '获取所有词条' 动作后，数据列表准备就绪时触发。",
+      "display_text": "所有词条加载完成",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "发生错误",
+      "description": "访问本地存储过程中，如果发生任何错误，则触发此条件。",
+      "display_text": "发生错误",
+      "params": []
+    },
+    {
+      "id": "compare-key",
+      "name": "比较词条",
+      "description": "要比较的词条的名称",
+      "display_text": "词条名称 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "用于比较词条的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "比较数据",
+      "description": "在触发器中，比较当前词条的数据值。",
+      "display_text": "词条数据 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "用来和当前值进行比较的数字或字符串。"
+        }
+      ]
+    },
+    {
+      "id": "is-processing-sets",
+      "name": "正在设置",
+      "description": "执行任意 '设置词条' 动作时触发。",
+      "display_text": "正在设置",
+      "params": []
+    },
+    {
+      "id": "is-processing-gets",
+      "name": "正在获取",
+      "description": "执行任意 '获取词条' 动作时触发。",
+      "display_text": "正在获取",
+      "params": []
+    },
+    {
+      "id": "on-all-sets-complete",
+      "name": "全部设置完成",
+      "description": "所有 '设置词条' 动作都执行完成时触发。",
+      "display_text": "全部设置完成",
+      "params": []
+    },
+    {
+      "id": "on-all-gets-complete",
+      "name": "全部获取完成",
+      "description": "所有 '获取词条' 动作都执行完成时触发。",
+      "display_text": "全部获取完成",
+      "params": []
+    },
+    {
+      "id": "is-persistent",
+      "name": "已开启持久存储",
+      "description": "检测浏览器是否已授权存储权限。",
+      "display_text": "已开启持久存储",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-item",
+      "name": "设置词条",
+      "description": "将数据存储在本地存储中。完成后触发 '词条设置完成' 条件。",
+      "display_text": "设置词条[i]{0}[/i]为{1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要设置的词条的名称。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要存储的数据。"
+        }
+      ]
+    },
+    {
+      "id": "get-item",
+      "name": "获取词条",
+      "description": "从本地存储中读取词条的数据。完成后触发 '词条获取完成' 条件。",
+      "display_text": "获取词条 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要获取的词条名称。完成后触发 '词条获取完成' 条件。"
+        }
+      ]
+    },
+    {
+      "id": "remove-item",
+      "name": "删除词条",
+      "description": "从本地存储中删除词条。完成后触发 '词条删除完成' 条件。",
+      "display_text": "删除词条 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "输入要删除的词条名称。完成后触发 '词条删除完成' 条件。"
+        }
+      ]
+    },
+    {
+      "id": "check-item-exists",
+      "name": "检查词条存在",
+      "description": "检查本地存储中是否存在某个词条数据。完成后触发 '词条存在' 或 '词条不存在' 条件。",
+      "display_text": "检查词条 [i]{0}[/i] 存在",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要检查的词条的名称。"
+        }
+      ]
+    },
+    {
+      "id": "clear-storage",
+      "name": "清理本地储存",
+      "description": "删除本地存储中的所有词条，完成后触发 '本地存储已清空' 条件。",
+      "display_text": "清理本地储存",
+      "params": []
+    },
+    {
+      "id": "get-all-key-names",
+      "name": "获取所有词条",
+      "description": "请求本地存储中所有词条的名称列表，完成后触发 '所有词条加载完成' 条件。",
+      "display_text": "获取所有词条",
+      "params": []
+    },
+    {
+      "id": "set-binary-item",
+      "name": "设置二进制对象",
+      "description": "将二进制数据记录在本地存储中。完成后触发 '词条设置完成' 条件。",
+      "display_text": "设置词条[i]{0}[/i]为{1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "输入要与值关联的字段的名称。"
+        },
+        {
+          "id": "source",
+          "name": "来源",
+          "description": "要存储的二进制数据对象"
+        }
+      ]
+    },
+    {
+      "id": "get-binary-item",
+      "name": "获取二进制数据",
+      "description": "从本地存储读取二进制数据，完成后触发 '词条获取完成' 条件。",
+      "display_text": "获取词条 [i]{0}[/i] 到 {1}",
+      "params": [
+        {
+          "id": "key",
+          "name": "词条",
+          "description": "要获取的数据的词条名称。完成后将触发 '词条获取完成' 条件。"
+        },
+        {
+          "id": "destination",
+          "name": "目标",
+          "description": "要获取数据的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "request-persistent",
+      "name": "请求持久存储",
+      "description": "请求持久存储的权限，直到用户手动操作清除存储空间。",
+      "display_text": "请求持久存储",
+      "params": []
+    },
+    {
+      "id": "load-memory-from-json",
+      "name": "加载临时内存数据",
+      "description": "当插件属性勾选了 '仅储存在内存' 属性后，可通过 '临时内存数据' 表达式加载所储存的游戏数据。",
+      "display_text": "加载临时内存数据 (JSON: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "要加载的 JSON 数据字符串。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "itemvalue",
+      "name": "词条数据",
+      "description": "在 '词条获取完成' 条件中，返回的词条数据。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "key",
+      "name": "词条",
+      "description": "在触发器中，当前的词条名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "keycount",
+      "name": "词条数量",
+      "description": "在 '所有词条加载完成' 条件中，返回列表的词条数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "keyat",
+      "name": "获取词条",
+      "description": "在 '所有字段加载完成' 条件后，返回词条索引位置的词条名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "从零开始的索引值"
+        }
+      ]
+    },
+    {
+      "id": "errormessage",
+      "name": "错误信息",
+      "description": "在 '发生错误' 条件中，返回的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "memory-storage-as-json",
+      "name": "临时内存数据",
+      "description": "勾选 '仅储存在内存' 属性后，本地储存数据将储存在这个表达式中。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 18,
+    "actions": 10,
+    "expressions": 6
+  }
+}

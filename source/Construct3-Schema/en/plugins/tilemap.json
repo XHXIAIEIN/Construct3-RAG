@@ -1,0 +1,1061 @@
+{
+  "id": "tilemap",
+  "name": "Tilemap",
+  "description": "Create tile-based level designs. TMX maps are also supported.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-tile-at",
+      "name": "Compare tile at",
+      "description": "Compare the tile number at a position.",
+      "display_text": "Tile ({0}, {1}) {2} {3}",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile (in tiles)."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the tile at the given position."
+        },
+        {
+          "id": "tile",
+          "name": "Tile",
+          "description": "The tile number to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-tile-state-at",
+      "name": "Compare tile state at",
+      "description": "Compare the flipped or rotated state of a tile at a position.",
+      "display_text": "Tile ({0}, {1}) is {2}",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile (in tiles)."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state to check if the given tile matches.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "normal"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "flipped horizontal"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "flipped vertical"
+            },
+            {
+              "id": "rotated-90",
+              "label": "rotated 90°"
+            },
+            {
+              "id": "rotated-180",
+              "label": "rotated 180°"
+            },
+            {
+              "id": "rotated-270",
+              "label": "rotated 270°"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "rotated 90°, flipped vertical"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "rotated 270°, flipped vertical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-image-url-loaded",
+      "name": "On image URL loaded",
+      "description": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_text": "On image URL loaded",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "On image URL failed",
+      "description": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_text": "On image URL failed to load",
+      "params": []
+    },
+    {
+      "id": "brush-exists",
+      "name": "Brush exists",
+      "description": "Check if a brush exists.",
+      "display_text": "Brush [b]{0}[/b] exists",
+      "params": [
+        {
+          "id": "brush",
+          "name": "Brush name",
+          "description": "The name of the brush to check for."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "name": "Load",
+      "description": "Load tiles from a JSON string.",
+      "display_text": "Load tilemap from JSON [b]{0}[/b]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A string to load tilemap tiles from in JSON format from a previous use of the TilesJSON expression."
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "Download",
+      "description": "Download the tilemap data as a JSON file.",
+      "display_text": "Download as JSON data with filename [i]{0}[/i]",
+      "params": [
+        {
+          "id": "filename",
+          "name": "Filename",
+          "description": "The name of the file to download."
+        }
+      ]
+    },
+    {
+      "id": "erase-tile",
+      "name": "Erase tile",
+      "description": "Erase a tile at a position.",
+      "display_text": "Erase tile ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to erase (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to erase (in tiles)."
+        }
+      ]
+    },
+    {
+      "id": "set-tile",
+      "name": "Set tile",
+      "description": "Change a tile at a position.",
+      "display_text": "Set tile ([i]{0}[/i], [i]{1}[/i]) to tile [b]{2}[/b] ([i]{3}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile",
+          "name": "Tile",
+          "description": "Tile number to set at the given position."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to rotate or flip this tile.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "normal"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "flipped horizontal"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "flipped vertical"
+            },
+            {
+              "id": "rotated-90",
+              "label": "rotated 90°"
+            },
+            {
+              "id": "rotated-180",
+              "label": "rotated 180°"
+            },
+            {
+              "id": "rotated-270",
+              "label": "rotated 270°"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "rotated 90°, flipped vertical"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "rotated 270°, flipped vertical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-range",
+      "name": "Erase tile range",
+      "description": "Erase a rectangular area of tiles.",
+      "display_text": "Erase tile range ([i]{0}[/i], [i]{1}[/i]) area [i]{2}[/i] x [i]{3}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the first tile to erase (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the first tile to erase (in tiles)."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "Number of tiles across to erase."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "Number of tiles down to erase."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-range",
+      "name": "Set tile range",
+      "description": "Set a rectangular area of tiles.",
+      "display_text": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] to tile [b]{4}[/b] ([i]{5}[/i])",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the first tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the first tile to set (in tiles)."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "Number of tiles across to set."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "Number of tiles down to set."
+        },
+        {
+          "id": "tile",
+          "name": "Tile",
+          "description": "Tile number to set across the given range."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to rotate or flip the tiles.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "normal"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "flipped horizontal"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "flipped vertical"
+            },
+            {
+              "id": "rotated-90",
+              "label": "rotated 90°"
+            },
+            {
+              "id": "rotated-180",
+              "label": "rotated 180°"
+            },
+            {
+              "id": "rotated-270",
+              "label": "rotated 270°"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "rotated 90°, flipped vertical"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "rotated 270°, flipped vertical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-state",
+      "name": "Set tile state",
+      "description": "Change a tile's flipped or rotated state.",
+      "display_text": "Set tile ([i]{0}[/i], [i]{1}[/i]) state [i]{2}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to modify (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to modify (in tiles)."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to rotate or flip this tile.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "normal"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "flipped horizontal"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "flipped vertical"
+            },
+            {
+              "id": "rotated-90",
+              "label": "rotated 90°"
+            },
+            {
+              "id": "rotated-180",
+              "label": "rotated 180°"
+            },
+            {
+              "id": "rotated-270",
+              "label": "rotated 270°"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "rotated 90°, flipped vertical"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "rotated 270°, flipped vertical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-state-range",
+      "name": "Set tile state range",
+      "description": "Change the flipped or rotated state of a rectangular area of tiles.",
+      "display_text": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] state [i]{4}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the first tile to modify (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the first tile to modify (in tiles)."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "Number of tiles across to set."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "Number of tiles down to set."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to rotate or flip the tiles.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "normal"
+            },
+            {
+              "id": "flipped-horizontal",
+              "label": "flipped horizontal"
+            },
+            {
+              "id": "flipped-vertical",
+              "label": "flipped vertical"
+            },
+            {
+              "id": "rotated-90",
+              "label": "rotated 90°"
+            },
+            {
+              "id": "rotated-180",
+              "label": "rotated 180°"
+            },
+            {
+              "id": "rotated-270",
+              "label": "rotated 270°"
+            },
+            {
+              "id": "rotated-90-flipped-vertical",
+              "label": "rotated 90°, flipped vertical"
+            },
+            {
+              "id": "rotated-270-flipped-vertical",
+              "label": "rotated 270°, flipped vertical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "Load image from URL",
+      "description": "Load the tilemap source image from a web address or data URI.",
+      "display_text": "Load image from [i]{0}[/i] (cross-origin {1})",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "Enter the URL on the web, or data URI, of an image to load."
+        },
+        {
+          "id": "cross-origin",
+          "name": "Cross-origin",
+          "description": "The cross-origin (CORS) mode to use for the request.",
+          "options": [
+            {
+              "id": "anonymous",
+              "label": "anonymous"
+            },
+            {
+              "id": "none",
+              "label": "none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-brush",
+      "name": "Set tile with brush",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The brush to use."
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-brush",
+      "name": "Erase tile with brush",
+      "description": "Erase a tile at a position using a brush.",
+      "display_text": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The brush to use."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-brush-by-name",
+      "name": "Set tile with brush (by name)",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush name",
+          "description": "The name of the brush to use."
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-brush-by-name",
+      "name": "Erase tile with brush (by name)",
+      "description": "Erase a tile at a position using a brush.",
+      "display_text": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush name",
+          "description": "The name of the brush to use."
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-patch-brush",
+      "name": "Set tiles with patch brush",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The brush to use."
+        },
+        {
+          "id": "mirror",
+          "name": "Mirror",
+          "description": "Whether to mirror the brush."
+        },
+        {
+          "id": "flip",
+          "name": "Flip",
+          "description": "Whether to flip the brush."
+        },
+        {
+          "id": "rotation",
+          "name": "Rotation",
+          "description": "The rotation of the brush.",
+          "options": [
+            {
+              "id": "0",
+              "label": "0° degrees"
+            },
+            {
+              "id": "90",
+              "label": "90° degrees"
+            },
+            {
+              "id": "180",
+              "label": "180° degrees"
+            },
+            {
+              "id": "270",
+              "label": "270° degrees"
+            }
+          ]
+        },
+        {
+          "id": "invalid-indexes",
+          "name": "Invalid indexes",
+          "description": "What should the brush do with invalid indexes.",
+          "options": [
+            {
+              "id": "erase",
+              "label": "Erase"
+            },
+            {
+              "id": "ignore",
+              "label": "Ignore"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-patch-brush",
+      "name": "Erase tiles with patch brush",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The brush to use."
+        },
+        {
+          "id": "mirror",
+          "name": "Mirror",
+          "description": "Whether to mirror the brush."
+        },
+        {
+          "id": "flip",
+          "name": "Flip",
+          "description": "Whether to flip the brush."
+        },
+        {
+          "id": "rotation",
+          "name": "Rotation",
+          "description": "The rotation of the brush.",
+          "options": [
+            {
+              "id": "0",
+              "label": "0° degrees"
+            },
+            {
+              "id": "90",
+              "label": "90° degrees"
+            },
+            {
+              "id": "180",
+              "label": "180° degrees"
+            },
+            {
+              "id": "270",
+              "label": "270° degrees"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tile-with-patch-brush-by-name",
+      "name": "Set tiles with patch brush (by name)",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush name",
+          "description": "The name of the brush to use."
+        },
+        {
+          "id": "mirror",
+          "name": "Mirror",
+          "description": "Whether to mirror the brush."
+        },
+        {
+          "id": "flip",
+          "name": "Flip",
+          "description": "Whether to flip the brush."
+        },
+        {
+          "id": "rotation",
+          "name": "Rotation",
+          "description": "The rotation of the brush.",
+          "options": [
+            {
+              "id": "0",
+              "label": "0° degrees"
+            },
+            {
+              "id": "90",
+              "label": "90° degrees"
+            },
+            {
+              "id": "180",
+              "label": "180° degrees"
+            },
+            {
+              "id": "270",
+              "label": "270° degrees"
+            }
+          ]
+        },
+        {
+          "id": "invalid-indexes",
+          "name": "Invalid indexes",
+          "description": "What should the brush do with invalid indexes.",
+          "options": [
+            {
+              "id": "erase",
+              "label": "Erase"
+            },
+            {
+              "id": "ignore",
+              "label": "Ignore"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erase-tile-with-patch-brush-by-name",
+      "name": "Erase tiles with patch brush (by name)",
+      "description": "Change a tile at a position using a brush.",
+      "display_text": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "tile-x",
+          "name": "Tile X",
+          "description": "X index of the tile to set (in tiles)."
+        },
+        {
+          "id": "tile-y",
+          "name": "Tile Y",
+          "description": "Y index of the tile to set (in tiles)."
+        },
+        {
+          "id": "brush",
+          "name": "Brush name",
+          "description": "The name of the brush to use."
+        },
+        {
+          "id": "mirror",
+          "name": "Mirror",
+          "description": "Whether to mirror the brush."
+        },
+        {
+          "id": "flip",
+          "name": "Flip",
+          "description": "Whether to flip the brush."
+        },
+        {
+          "id": "rotation",
+          "name": "Rotation",
+          "description": "The rotation of the brush.",
+          "options": [
+            {
+              "id": "0",
+              "label": "0° degrees"
+            },
+            {
+              "id": "90",
+              "label": "90° degrees"
+            },
+            {
+              "id": "180",
+              "label": "180° degrees"
+            },
+            {
+              "id": "270",
+              "label": "270° degrees"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "tilesjson",
+      "name": "TilesJSON",
+      "description": "Get tilemap data as a JSON-formatted string.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tileat",
+      "name": "TileAt",
+      "description": "Return the tile number at a position in tiles.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tilex",
+          "name": "TileX",
+          "description": "X position in tiles"
+        },
+        {
+          "id": "tiley",
+          "name": "TileY",
+          "description": "Y position in tiles"
+        }
+      ]
+    },
+    {
+      "id": "positiontotilex",
+      "name": "PositionToTileX",
+      "description": "Convert an X co-ordinate to a tile X index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate"
+        }
+      ]
+    },
+    {
+      "id": "positiontotiley",
+      "name": "PositionToTileY",
+      "description": "Convert a Y co-ordinate to a tile Y index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate"
+        }
+      ]
+    },
+    {
+      "id": "tiletopositionx",
+      "name": "TileToPositionX",
+      "description": "Convert a tile X index to X co-ordinate.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tilex",
+          "name": "TileX",
+          "description": "X position in tiles"
+        }
+      ]
+    },
+    {
+      "id": "tiletopositiony",
+      "name": "TileToPositionY",
+      "description": "Convert a tile Y index to Y co-ordinate.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tiley",
+          "name": "TileY",
+          "description": "Y position in tiles"
+        }
+      ]
+    },
+    {
+      "id": "snapx",
+      "name": "SnapX",
+      "description": "Snap an X co-ordinate to the nearest tile X.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate"
+        }
+      ]
+    },
+    {
+      "id": "snapy",
+      "name": "SnapY",
+      "description": "Snap a Y co-ordinate to the nearest tile Y.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate"
+        }
+      ]
+    },
+    {
+      "id": "tile-width",
+      "name": "TileWidth",
+      "description": "The width of a tile, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tile-height",
+      "name": "TileHeight",
+      "description": "The height of a tile, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "map-display-width",
+      "name": "MapDisplayWidth",
+      "description": "The horizontal number of tiles shown by the tilemap.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "map-display-height",
+      "name": "MapDisplayHeight",
+      "description": "The vertical number of tiles shown by the tilemap.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "brush-width",
+      "name": "BrushWidth",
+      "description": "The tile width of the specified brush.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The name of the brush to get the width of."
+        }
+      ]
+    },
+    {
+      "id": "brush-height",
+      "name": "BrushHeight",
+      "description": "The tile height of the specified brush.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "brush",
+          "name": "Brush",
+          "description": "The name of the brush to get the height of."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 18,
+    "expressions": 14
+  }
+}

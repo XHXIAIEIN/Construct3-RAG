@@ -1,0 +1,607 @@
+{
+  "id": "text",
+  "name": "文本",
+  "description": "在屏幕中显示一些文本。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-text",
+      "name": "比较文本",
+      "description": "比较此对象中的文本。",
+      "display_text": "文本是[b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "要比较的文字",
+          "description": "输入要与对象内容进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "区分大小写",
+          "description": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "忽略大小写"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "区分大小写"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-running-typewriter-text",
+      "name": "打字机正在运行",
+      "description": "检测打字机当前是否正在运行。",
+      "display_text": "打字机正在运行",
+      "params": []
+    },
+    {
+      "id": "on-typewriter-text-finished",
+      "name": "打字机效果完成",
+      "description": "当文本将所有文字全部显示完成时触发。",
+      "display_text": "打字机效果完成",
+      "params": []
+    },
+    {
+      "id": "has-tag-at-position",
+      "name": "位置存在标签",
+      "description": "检测指定位置是否包含 BBCode Tag 标签。",
+      "display_text": "位置 ([i]{1}[/i], [i]{2}[/i]) 存在标签 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要检测的标签。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要检测的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要检测的Y坐标。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-font-face",
+      "name": "设置字体",
+      "description": "设置用于显示文本的字体。",
+      "display_text": "设置字体为[i]{0}[/i] ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "font-face",
+          "name": "字体",
+          "description": "要设置的新字体名称。"
+        },
+        {
+          "id": "style",
+          "name": "样式",
+          "description": "为指定的字体选择样式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "常规"
+            },
+            {
+              "id": "bold",
+              "label": "粗体"
+            },
+            {
+              "id": "italic",
+              "label": "斜体"
+            },
+            {
+              "id": "bold-and-italic",
+              "label": "粗体和斜体"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-font-size",
+      "name": "设置字号",
+      "description": "设置字号。",
+      "display_text": "设置字号为[i]{0}[/i]px",
+      "params": [
+        {
+          "id": "size-pt",
+          "name": "字号(px)",
+          "description": "设置字号大小。"
+        }
+      ]
+    },
+    {
+      "id": "set-font-color",
+      "name": "设置字体颜色",
+      "description": "设置字体颜色。",
+      "display_text": "设置字体颜色为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "新字体颜色。请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。"
+        }
+      ]
+    },
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "前景覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-text",
+      "name": "设置文本",
+      "description": "设置文本显示的内容。",
+      "display_text": "设置文本内容为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。"
+        }
+      ]
+    },
+    {
+      "id": "append-text",
+      "name": "追加文本",
+      "description": "将文本添加到现有文本的末尾。",
+      "display_text": "追加文本 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "在当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2\""
+        }
+      ]
+    },
+    {
+      "id": "typewriter-text",
+      "name": "逐字显示",
+      "description": "在一段时间内，逐字显示一串文本，直到完全显示。实现打字机效果。",
+      "display_text": "在 [i]{1}[/i] 秒内，逐字显示[i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要逐字显示的文本。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "文本完全显示所需的总时间，以秒为单位。如希望每秒显示字符数，可使用 len(Self.PlainText) / 10 表达式，表示每秒显示 10 个字符。"
+        }
+      ]
+    },
+    {
+      "id": "typewriter-finish",
+      "name": "立即显示完成",
+      "description": "强制将打字机效果立即显示所有文本。",
+      "display_text": "立即显示完成",
+      "params": []
+    },
+    {
+      "id": "set-line-height",
+      "name": "设置行距",
+      "description": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
+      "display_text": "设置行距为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "line-height",
+          "name": "行距",
+          "description": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。"
+        }
+      ]
+    },
+    {
+      "id": "set-horizontal-alignment",
+      "name": "设置水平对齐",
+      "description": "设置文本的水平对齐方式。",
+      "display_text": "将水平对齐设置到 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "horizontal-alignment",
+          "name": "水平对齐",
+          "description": "选择一种水平对齐方式。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左对齐"
+            },
+            {
+              "id": "center",
+              "label": "居中"
+            },
+            {
+              "id": "right",
+              "label": "右对齐"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-vertical-alignment",
+      "name": "设置垂直对齐",
+      "description": "设置文本的垂直对齐方式。",
+      "display_text": "将垂直对齐设置到 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "vertical-alignment",
+          "name": "垂直对齐",
+          "description": "选择一种垂直对齐方式。",
+          "options": [
+            {
+              "id": "top",
+              "label": "顶部"
+            },
+            {
+              "id": "center",
+              "label": "居中"
+            },
+            {
+              "id": "bottom",
+              "label": "底部"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-wrapping",
+      "name": "设置自动换行",
+      "description": "自动换行的规则，是以空格分隔的词组，还是按每个字符。",
+      "display_text": "设置换行规则为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "wrapping",
+          "name": "自动换行",
+          "description": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
+          "options": [
+            {
+              "id": "word",
+              "label": "词组"
+            },
+            {
+              "id": "character",
+              "label": "字符"
+            },
+            {
+              "id": "cjk",
+              "label": "亚洲语言"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-read-aloud",
+      "name": "设置文本朗读",
+      "description": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
+      "display_text": "[i]{0}[/i]朗读内容",
+      "params": [
+        {
+          "id": "enable",
+          "name": "启用",
+          "description": "是否允许朗读"
+        }
+      ]
+    },
+    {
+      "id": "change-icon-set",
+      "name": "更换图标集",
+      "description": "更改用于文本图标的精灵对象。",
+      "display_text": "更换图标集: {0}",
+      "params": [
+        {
+          "id": "icon-set",
+          "name": "图标集",
+          "description": "启用富文本功能时，允许使用 [icon=tag] 标签引用带有动画帧标签的精灵对象的图像，在文本中显示图标。"
+        }
+      ]
+    },
+    {
+      "id": "update-html",
+      "name": "转换HTML",
+      "description": "将当前的文本转换为HTML字符串，并更新 '转换字符串' 表达式的返回内容。",
+      "display_text": "转换HTML",
+      "params": []
+    },
+    {
+      "id": "set-text-direction",
+      "name": "设置书写方向",
+      "description": "设置文本书写方向，如从左到右，还是从右到左。",
+      "display_text": "设置书写方向为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "文本书写的方向。",
+          "options": [
+            {
+              "id": "ltr",
+              "label": "从左向右"
+            },
+            {
+              "id": "rtl",
+              "label": "从右向左"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-resolution-mode",
+      "name": "设置缩放模式",
+      "description": "更改文本的缩放模式。是自适应场景的缩放比例，还是使用固定缩放比例。用于改善文本缩放时产生的模糊感。",
+      "display_text": "设置缩放模式为[b]{0}[/b] ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "设置文本的分辨率渲染方式。选择与当前显示分辨率匹配，或缩放到固定比例。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "fixed",
+              "label": "固定"
+            }
+          ]
+        },
+        {
+          "id": "fixed-scale",
+          "name": "固定比例",
+          "description": "选择固定分辨率时，要使用的缩放比例，默认值为 1 。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "facename",
+      "name": "字体名称",
+      "description": "获取当前的字体名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "facesize",
+      "name": "字体大小",
+      "description": "获取当前的字体大小（pt）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "text",
+      "name": "文本内容",
+      "description": "获取对象的文本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textwidth",
+      "name": "文本宽度",
+      "description": "获取文本的实际内容宽度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textheight",
+      "name": "文本高度",
+      "description": "获取文本的实际内容高度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "plaintext",
+      "name": "纯文本",
+      "description": "获取不带有任何BBcode 标签的的文本内容。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lineheight",
+      "name": "行高",
+      "description": "获取行间距",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag-at-position",
+      "name": "获取标签位置",
+      "description": "获取指定位置的 BBCode Tag 标签，如果没有则返回空字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要检测的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要检测的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "tag-count",
+      "name": "标签数量",
+      "description": "获取指定的 BBCode Tag 标签数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        }
+      ]
+    },
+    {
+      "id": "tag-x",
+      "name": "标签位置X",
+      "description": "获取指定的 BBCode Tag 标签所在位置的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-y",
+      "name": "标签位置Y",
+      "description": "获取指定的 BBCode Tag 标签所在位置的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-width",
+      "name": "标签宽度",
+      "description": "获取指定的 BBCode Tag 标签所在位置的宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-height",
+      "name": "标签高度",
+      "description": "获取指定的 BBCode Tag 标签所在位置的高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "as-html",
+      "name": "导出HTML",
+      "description": "使用 '转换HTML' 动作后，将转换后的文本内容更新到 '转换字符串' 的表达式。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 17,
+    "expressions": 14
+  }
+}

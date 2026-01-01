@@ -1,0 +1,22 @@
+{
+  "id": "wrap",
+  "name": "边界穿梭",
+  "description": "让对象超出场景范围时可以重新出现在另一侧。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-wrap",
+      "name": "穿过边界",
+      "description": "在边界穿梭行为作用生效，对象位置发生改变时触发。",
+      "display_text": "穿过边界",
+      "params": []
+    }
+  ],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 0,
+    "expressions": 0
+  }
+}

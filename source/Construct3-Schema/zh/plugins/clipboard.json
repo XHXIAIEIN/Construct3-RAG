@@ -1,0 +1,115 @@
+{
+  "id": "clipboard",
+  "name": "剪贴板",
+  "description": "访问系统剪贴板功能，进行复制和粘贴操作。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-copy-success",
+      "name": "复制成功",
+      "description": "复制到剪贴板成功时触发。",
+      "display_text": "复制成功",
+      "params": []
+    },
+    {
+      "id": "on-copy-error",
+      "name": "复制失败",
+      "description": "复制到剪贴板失败时触发。",
+      "display_text": "复制失败",
+      "params": []
+    },
+    {
+      "id": "on-paste-text",
+      "name": "粘贴文本",
+      "description": "成功粘贴文本时触发。",
+      "display_text": "粘贴文本",
+      "params": []
+    },
+    {
+      "id": "on-paste-binary",
+      "name": "粘贴二进制",
+      "description": "成功粘贴二进制数据时触发。",
+      "display_text": "粘贴二进制数据 (对象: {0}, 类型: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "二进制数据",
+          "description": "选择 '二进制数据' 对象，将粘贴的二进制数据写入到对象中。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "粘贴数据的类型（又称 MIME 类型）。"
+        }
+      ]
+    },
+    {
+      "id": "on-paste-error",
+      "name": "粘贴失败",
+      "description": "粘贴失败时触发。",
+      "display_text": "粘贴失败",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "copy-text",
+      "name": "复制文本",
+      "description": "复制文本数据到剪贴板。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "display_text": "复制文本 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要复制到剪贴板的文本。"
+        }
+      ]
+    },
+    {
+      "id": "copy-binary",
+      "name": "复制二进制数据",
+      "description": "复制某些二进制数据到剪贴板。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "display_text": "复制二进制数据 {0} (类型: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "data",
+          "name": "二进制数据",
+          "description": "要复制到剪贴板的二进制数据对象。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "被复制的数据类型（又称 MIME 类型）。"
+        }
+      ]
+    },
+    {
+      "id": "request-paste-text",
+      "name": "请求粘贴文本",
+      "description": "请求从剪贴板中读取文本数据。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "display_text": "请求粘贴文本",
+      "params": []
+    },
+    {
+      "id": "request-paste-binary",
+      "name": "请求粘贴二进制数据",
+      "description": "请求从剪贴板中读取二进制数据。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "display_text": "请求粘贴二进制数据",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pasted-text",
+      "name": "剪贴文本",
+      "description": "触发 '粘贴文本' 动作后，从剪贴板中读取到的文本。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 4,
+    "expressions": 1
+  }
+}

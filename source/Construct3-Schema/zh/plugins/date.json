@@ -1,0 +1,1065 @@
+{
+  "id": "date",
+  "name": "日期",
+  "description": "用于处理日期和时间的插件。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-timestamps",
+      "name": "比较时间戳",
+      "description": "比较两个时间戳。",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first",
+          "name": "第一个时间戳",
+          "description": "要进行比较的第一个时间戳。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "second",
+          "name": "第二个时间戳",
+          "description": "要进行比较的第二个时间戳。"
+        }
+      ]
+    },
+    {
+      "id": "compare-date-strings",
+      "name": "比较长日期",
+      "description": "比较两个长日期。将长日期解析为UTC标准时间戳进行比较。",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first",
+          "name": "第一个长日期",
+          "description": "要进行比较的第一个长日期。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "second",
+          "name": "第二个长日期",
+          "description": "要进行比较的第二个长日期。"
+        }
+      ]
+    },
+    {
+      "id": "compare-timestamp-parts",
+      "name": "比较部分时间戳",
+      "description": "比较两个时间戳的一部分。",
+      "display_text": "{0}的{3} {1} {2}的{3}",
+      "params": [
+        {
+          "id": "first",
+          "name": "第一个时间戳",
+          "description": "要进行比较的第一个时间戳。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "second",
+          "name": "第二个时间戳",
+          "description": "要进行比较的第二个时间戳。"
+        },
+        {
+          "id": "part",
+          "name": "部分",
+          "description": "选择时间戳中要比较的部分。",
+          "options": [
+            {
+              "id": "year",
+              "label": "年份"
+            },
+            {
+              "id": "month",
+              "label": "月份"
+            },
+            {
+              "id": "date",
+              "label": "日期"
+            },
+            {
+              "id": "day",
+              "label": "星期"
+            },
+            {
+              "id": "hours",
+              "label": "小时"
+            },
+            {
+              "id": "minutes",
+              "label": "分钟"
+            },
+            {
+              "id": "seconds",
+              "label": "秒数"
+            },
+            {
+              "id": "milliseconds",
+              "label": "毫秒"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-date-string-parts",
+      "name": "比较特定长日期",
+      "description": "比较两个日期字符串的一部分。",
+      "display_text": "{0}的{3} {1} {2}的{3} ({4})",
+      "params": [
+        {
+          "id": "first",
+          "name": "第一个长日期",
+          "description": "要进行比较的第一个长日期。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "second",
+          "name": "第二个长日期",
+          "description": "要进行比较的第二个长日期。"
+        },
+        {
+          "id": "part",
+          "name": "部分",
+          "description": "选择时间戳中要比较的部分。",
+          "options": [
+            {
+              "id": "year",
+              "label": "年份"
+            },
+            {
+              "id": "month",
+              "label": "月份"
+            },
+            {
+              "id": "date",
+              "label": "日期"
+            },
+            {
+              "id": "day",
+              "label": "星期"
+            },
+            {
+              "id": "hours",
+              "label": "小时"
+            },
+            {
+              "id": "minutes",
+              "label": "分钟"
+            },
+            {
+              "id": "seconds",
+              "label": "秒数"
+            },
+            {
+              "id": "milliseconds",
+              "label": "毫秒"
+            }
+          ]
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "比较本地时间还是世界标准时间。",
+          "options": [
+            {
+              "id": "local",
+              "label": "本地时间"
+            },
+            {
+              "id": "universal",
+              "label": "世界标准时间"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [],
+  "expressions": [
+    {
+      "id": "toString",
+      "name": "转换为长日期",
+      "description": "将时间戳转换为包含长日期和长时间的字符串。（星期 月 日 年 时:分:秒）",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为长日期的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "toDateString",
+      "name": "转换为长日期",
+      "description": "将时间戳转换为长日期。（星期 月 日 年）",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为长日期的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "toTimeString",
+      "name": "转换为长时间",
+      "description": "将时间戳转换为长时间。(时:分:秒 时区)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为长时间的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleString",
+      "name": "转换为本地长日期",
+      "description": "将时间戳转换为本地时间的长日期。(年/月/日 上午或下午 时:分:秒)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为本地长日期的时间戳。"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleDateString",
+      "name": "转换为本地日期",
+      "description": "将时间戳转换为本地长日期。（年/月/日 上午或下午 时:分:秒）",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "需要转换为本地长日期的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "toLocaleTimeString",
+      "name": "转换为本地时间",
+      "description": "转换时间戳为本地长时间。(上午或下午 时:分:秒)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为本地长时间的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "toUTCString",
+      "name": "转换为UTC时区长日期",
+      "description": "将UTC时区的时间戳转换为长日期。(星期, 日 月 年 时:分:秒)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要转换为字符串的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "parse",
+      "name": "解析日期",
+      "description": "将日期时间的字符串，转换为时间戳。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "dateString",
+          "name": "日期字符串",
+          "description": "输入日期的字符串，将其转换成时间戳。如：\"2017-04-12 12:00:00\""
+        }
+      ]
+    },
+    {
+      "id": "getYear",
+      "name": "获取年份",
+      "description": "根据本地时间，从时间戳中获取年份。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCYear",
+      "name": "获取UTC时区年份",
+      "description": "根据世界标准时间，从时间戳中获取年份。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getMonth",
+      "name": "获取月份",
+      "description": "根据本地时间，从时间戳中获取月份(0-11)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMonth",
+      "name": "获取UTC时区月份",
+      "description": "根据世界标准时间，从时间戳中获取月份(0-11)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getDate",
+      "name": "获取日期",
+      "description": "根据本地时间，从时间中戳获取日期(1-31)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCDate",
+      "name": "获取UTC时区日期",
+      "description": "根据世界标准时间，从时间戳中获取月份(1-31)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getDay",
+      "name": "获取星期",
+      "description": "根据本地时间，从时间戳中获取星期(0-6)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCDay",
+      "name": "获取UTC时区天数",
+      "description": "根据世界标准时间，从时间戳中获取星期(0-6)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getHours",
+      "name": "获取小时",
+      "description": "根据本地时间，从时间戳中获取小时(0-23)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCHours",
+      "name": "获取UTC时区小时",
+      "description": "根据世界标准时间，从时间戳中获取小时(0-23)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getMinutes",
+      "name": "获取分钟",
+      "description": "根据本地时间，从时间戳中获取分钟(0-59)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMinutes",
+      "name": "获取UTC时区分钟",
+      "description": "根据世界标准时间，从时间戳中获取分钟(0-59)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getSeconds",
+      "name": "获取秒",
+      "description": "根据本地时间，从时间戳中获取秒数(0-59)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCSeconds",
+      "name": "获取UTC时区秒数",
+      "description": "根据世界标准时间，从时间戳中获取秒数(0-59)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getMilliseconds",
+      "name": "获取毫秒",
+      "description": "根据本地时间，从时间戳中获取毫秒(0-999)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "getUTCMilliseconds",
+      "name": "获取UTC时区毫秒",
+      "description": "根据世界标准时间，从时间戳中获取毫秒(0-999)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要提取信息的时间戳"
+        }
+      ]
+    },
+    {
+      "id": "changeYear",
+      "name": "转换年份",
+      "description": "根据本地时间，更改时间戳中的年份。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "year",
+          "name": "年",
+          "description": "新的年份"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCYear",
+      "name": "转换UTC时区年份",
+      "description": "根据世界标准时间，更改时间戳中的年份。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "year",
+          "name": "年",
+          "description": "新的年份"
+        }
+      ]
+    },
+    {
+      "id": "changeMonth",
+      "name": "转换月份",
+      "description": "根据本地时间，更改时间戳中的月份(0-11)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "month",
+          "name": "月",
+          "description": "新的月份"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMonth",
+      "name": "转换UTC时区月份",
+      "description": "根据世界标准时间，更改时间戳中的月份(0-11)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "month",
+          "name": "月",
+          "description": "新的月份"
+        }
+      ]
+    },
+    {
+      "id": "changeDate",
+      "name": "转换日期",
+      "description": "根据本地时间，更改时间戳中的日期(1-31)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "date",
+          "name": "日期",
+          "description": "新的日期"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCDate",
+      "name": "转换UTC时区日期",
+      "description": "根据世界标准时间，更改时间戳中的日期(1-31)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "date",
+          "name": "日期",
+          "description": "新的日期"
+        }
+      ]
+    },
+    {
+      "id": "changeDay",
+      "name": "转换星期",
+      "description": "根据本地时间，更改时间戳中的星期(0-6)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "day",
+          "name": "星期",
+          "description": "新的星期"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCDay",
+      "name": "转换UTC时区星期",
+      "description": "根据世界标准时间，更改时间戳中的星期(0-6)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "day",
+          "name": "星期",
+          "description": "新的星期"
+        }
+      ]
+    },
+    {
+      "id": "changeHours",
+      "name": "转换小时",
+      "description": "根据本地时间，更改时间戳中的小时(0-23)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "hours",
+          "name": "时",
+          "description": "新的小时"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCHours",
+      "name": "转换UTC时区小时",
+      "description": "根据世界标准时间，更改时间戳中的小时(0-23)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "hours",
+          "name": "时",
+          "description": "新的小时"
+        }
+      ]
+    },
+    {
+      "id": "changeMinutes",
+      "name": "转换分钟",
+      "description": "根据本地时间，更改时间戳中的分钟(0-60)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "minutes",
+          "name": "分",
+          "description": "新的分钟"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMinutes",
+      "name": "转换UTC时区分钟",
+      "description": "根据世界标准时间，更改时间戳中的分钟(0-60)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "minutes",
+          "name": "分钟",
+          "description": "新的分钟"
+        }
+      ]
+    },
+    {
+      "id": "changeSeconds",
+      "name": "转换秒",
+      "description": "根本地时间，更改时间戳中的秒数(0-60)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "seconds",
+          "name": "秒",
+          "description": "新的秒数"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCSeconds",
+      "name": "转换UTC时区秒数",
+      "description": "根据世界标准时间，更改时间戳中的秒数(0-60)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "seconds",
+          "name": "秒",
+          "description": "新的秒数"
+        }
+      ]
+    },
+    {
+      "id": "changeMilliseconds",
+      "name": "转换毫秒",
+      "description": "根据本地时间，更改时间戳中的毫秒(0-999)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "新的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "changeUTCMilliseconds",
+      "name": "转换UTC时区毫秒",
+      "description": "根据世界标准时间，更改时间戳中的毫秒(0-999)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "timeStamp",
+          "name": "时间戳",
+          "description": "要进行修改的时间戳"
+        },
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "新的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "difference",
+      "name": "时间差",
+      "description": "计算两个时间戳的差值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "firstTimeStamp",
+          "name": "第一个时间戳",
+          "description": "第一个时间戳"
+        },
+        {
+          "id": "secondTimeStamp",
+          "name": "第二个时间戳",
+          "description": "第二个时间戳"
+        }
+      ]
+    },
+    {
+      "id": "get",
+      "name": "获取时间",
+      "description": "从日期的指定部分来获得通用时间戳。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "year",
+          "name": "年",
+          "description": "新的时间戳的年份"
+        },
+        {
+          "id": "month",
+          "name": "月",
+          "description": "新的时间戳的月份(0-11)"
+        },
+        {
+          "id": "day",
+          "name": "天",
+          "description": "新的时间戳的天数(1-31)"
+        },
+        {
+          "id": "hours",
+          "name": "时",
+          "description": "新的时间戳的小时(0-23)"
+        },
+        {
+          "id": "minutes",
+          "name": "分",
+          "description": "新的时间戳的分钟(0-59)"
+        },
+        {
+          "id": "seconds",
+          "name": "秒",
+          "description": "新的时间戳的秒数(0-59)"
+        },
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "新的时间戳的毫秒(0-999)"
+        }
+      ]
+    },
+    {
+      "id": "now",
+      "name": "当前时间",
+      "description": "获取当前本地时间的时间戳",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timezoneOffset",
+      "name": "地区时差",
+      "description": "从本地时间到世界时间的偏移量，以分钟为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "toTimerHours",
+      "name": "转换计时器小时",
+      "description": "将毫秒转换为时钟经过的小时。返回一个整数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTimerMinutes",
+      "name": "转换计时器分钟",
+      "description": "将毫秒转换为时钟经过的分钟。返回一个(0 - 59)范围内的整数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTimerSeconds",
+      "name": "转换计时器秒",
+      "description": "将毫秒转换为时钟经过的秒数。返回一个(0 - 59)范围内的整数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTimerMilliseconds",
+      "name": "转换计时器毫秒",
+      "description": "将毫秒转换为时钟经过的毫秒。返回一个(0 - 999)范围内的整数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTotalHours",
+      "name": "转换小时",
+      "description": "将毫秒转换为相应的小时。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTotalMinutes",
+      "name": "转换分钟",
+      "description": "将毫秒转换为相应的分钟。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "toTotalSeconds",
+      "name": "转换秒",
+      "description": "将毫秒转换为相应的秒数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "milliseconds",
+          "name": "毫秒",
+          "description": "要转换的毫秒"
+        }
+      ]
+    },
+    {
+      "id": "format-date-with-styles",
+      "name": "样式格式化",
+      "description": "转换指定语言环境的标准日期时间显示格式。如: '2017年12月4日 星期三 下午2:30'",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "区域",
+          "description": "用于格式化的区域设置。"
+        },
+        {
+          "id": "time-stamp",
+          "name": "时间戳",
+          "description": "格式化UTC时间戳"
+        },
+        {
+          "id": "date-style",
+          "name": "日期格式",
+          "description": "可选的日期样式，可以是 'full'、'long'、'medium'或'short'。忽略则使用空字符串。"
+        },
+        {
+          "id": "time-style",
+          "name": "时间格式",
+          "description": "可选的时间样式，可以是'full'、'long'、'medium' 或 'short' ，忽略则使用空字符串。"
+        },
+        {
+          "id": "hour-format",
+          "name": "小时制",
+          "description": "可选的小时制格式，可以是 '12' 或 '24' 。空字符串为用户设备默认的格式。"
+        }
+      ]
+    },
+    {
+      "id": "format-date-with-components",
+      "name": "组件格式化",
+      "description": "转换指定语言环境的时间自定义格式。如: '周三 12月04日 14:30'",
+      "display_text": "",
+      "params": [
+        {
+          "id": "locale",
+          "name": "区域",
+          "description": "用于格式化的区域设置。"
+        },
+        {
+          "id": "time-stamp",
+          "name": "时间戳",
+          "description": "格式化UTC时间戳"
+        },
+        {
+          "id": "weekday",
+          "name": "星期",
+          "description": "可选的星期格式，可以是'long'、'short' 或 'narrow' 之一。忽略则使用空字符串。"
+        },
+        {
+          "id": "year",
+          "name": "年",
+          "description": "可选的年份格式，可以是 'numeric' 或 '2-digit'。忽略则使用空字符串。"
+        },
+        {
+          "id": "month",
+          "name": "月",
+          "description": "可选的月份格式，可以是'numeric'、'2-digit'、'long'、'short' 或 'narrow'。忽略则使用空字符串。"
+        },
+        {
+          "id": "day",
+          "name": "日",
+          "description": "可选的日期格式，可以是 'numeric' 或 '2-digit' 。忽略则使用空字符串。"
+        },
+        {
+          "id": "hour",
+          "name": "时",
+          "description": "可选的小时格式可以是 'numeric' 或 '2-digit' 。忽略则使用空字符串。"
+        },
+        {
+          "id": "minute",
+          "name": "分",
+          "description": "可选的分钟格式，可以是'numeric' 或 '2-digit'。忽略则使用空字符串。"
+        },
+        {
+          "id": "second",
+          "name": "秒",
+          "description": "可选的秒格式，可以是 'numeric' 或 '2-digit'。忽略则使用空字符串。"
+        },
+        {
+          "id": "hour-format",
+          "name": "小时制",
+          "description": "可选的小时格式，可以是 '12' 或 '24'。空字符串为用户设备默认的格式。"
+        }
+      ]
+    },
+    {
+      "id": "export-timestamp",
+      "name": "项目导出时间",
+      "description": "获取项目从编辑器导出的时间戳。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 0,
+    "expressions": 54
+  }
+}

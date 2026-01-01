@@ -1,0 +1,432 @@
+{
+  "id": "gamerecorder",
+  "name": "屏幕录制",
+  "description": "录制游戏画面或整个屏幕的视频。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-recording-ready",
+      "name": "录制完成",
+      "description": "执行 '停止录制' 动作后，返回的 '录屏文件地址' 表达式可用时触发。",
+      "display_text": "录制完成",
+      "params": []
+    },
+    {
+      "id": "on-recording-error",
+      "name": "录制失败",
+      "description": "如果在录制期间发生了错误，则触发此条件。",
+      "display_text": "录制失败",
+      "params": []
+    },
+    {
+      "id": "is-recording-supported",
+      "name": "支持屏幕录制",
+      "description": "检测运行设备是否支持屏幕录制。",
+      "display_text": "设备支持屏幕录制",
+      "params": []
+    },
+    {
+      "id": "is-recording",
+      "name": "正在录制",
+      "description": "检测目前是否正处于录制状态。",
+      "display_text": "正在录制",
+      "params": []
+    },
+    {
+      "id": "is-screen-recording-supported",
+      "name": "设备支持录制",
+      "description": "检测浏览器是否支持使用屏幕录制功能。",
+      "display_text": "设备支持屏幕录制",
+      "params": []
+    },
+    {
+      "id": "is-video-format-supported-2",
+      "name": "支持视频格式",
+      "description": "测试指定的视频格式是否受支持。",
+      "display_text": "支持视频格式 [b]{0} {1}[/b]",
+      "params": [
+        {
+          "id": "container",
+          "name": "格式",
+          "description": "要使用的视频格式。",
+          "options": [
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "codec",
+          "name": "视频编解码器",
+          "description": "要使用的视频编解码器。",
+          "options": [
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-audio-format-supported-2",
+      "name": "支持音频格式",
+      "description": "检查音频格式录制是否受支持。",
+      "display_text": "支持音频格式 [b]{0} {1}[/b]",
+      "params": [
+        {
+          "id": "container",
+          "name": "视频格式",
+          "description": "要保存的视频格式。",
+          "options": [
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "codec",
+          "name": "音频编解码器",
+          "description": "录制使用的音频编解码器。",
+          "options": [
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop-recording",
+      "name": "停止录制",
+      "description": "结束视频录制。处理完成后将触发 '录制完成' 条件。",
+      "display_text": "停止录制",
+      "params": []
+    },
+    {
+      "id": "start-recording-2",
+      "name": "开始实时录制",
+      "description": "实时录制项目，保存为视频。",
+      "display_text": "开始录制 ([i]{0} {1}[/i] @ [i]{2}[/i] fps, [i]{3}[/i], [i]{4}[/i] kbps)",
+      "params": [
+        {
+          "id": "container",
+          "name": "格式",
+          "description": "要保存的视频格式",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "视频编解码器",
+          "description": "要使用的视频编解码器。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有画面)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "framerate",
+          "name": "帧率",
+          "description": "录制每秒捕获的帧数(如果可用)，使用 0 默认使用显示器的帧率。"
+        },
+        {
+          "id": "audio-codec",
+          "name": "音频编解码器",
+          "description": "要使用的音频编解码器",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有音频)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "quality-kbps",
+          "name": "质量(kbps)",
+          "description": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+        }
+      ]
+    },
+    {
+      "id": "start-screen-recording-2",
+      "name": "开始屏幕录制",
+      "description": "实时录制用户画面，保存为视频。",
+      "display_text": "开始录制 ([i]{0} {1}[/i], [i]{2}[/i], [i]{4}[/i] kbps, 使用电脑音频: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "container",
+          "name": "格式",
+          "description": "要保存的视频格式。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "视频编解码器",
+          "description": "要使用的视频编解码器。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有画面)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "audio-codec",
+          "name": "音频编解码器",
+          "description": "要使用的音频编解码器。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有音频)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "system-audio",
+          "name": "系统音频",
+          "description": "勾选后，请求录制系统音频。否则，仅录制浏览器标签页或音频对象的声音。"
+        },
+        {
+          "id": "quality-kbps",
+          "name": "质量(kbps)",
+          "description": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+        }
+      ]
+    },
+    {
+      "id": "start-user-media-recording-2",
+      "name": "媒体录制",
+      "description": "录制来自用户媒体对象的音频或视频。",
+      "display_text": "开始录制 ([i]{0} {1}[/i], [i]{2}[/i], [i]{3}[/i] kbps)",
+      "params": [
+        {
+          "id": "container",
+          "name": "格式",
+          "description": "要保存的视频格式。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "webm",
+              "label": "WebM"
+            },
+            {
+              "id": "mp4",
+              "label": "MP4"
+            }
+          ]
+        },
+        {
+          "id": "video-codec",
+          "name": "视频编解码器",
+          "description": "要使用的视频编解码器。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有画面)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "vp8",
+              "label": "VP8"
+            },
+            {
+              "id": "vp9",
+              "label": "VP9"
+            },
+            {
+              "id": "h264",
+              "label": "H.264"
+            },
+            {
+              "id": "h265",
+              "label": "H.265"
+            }
+          ]
+        },
+        {
+          "id": "audio-codec",
+          "name": "音频编解码器",
+          "description": "要使用的音频编解码器。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无(没有音频)"
+            },
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "opus",
+              "label": "Opus"
+            },
+            {
+              "id": "aac",
+              "label": "AAC"
+            }
+          ]
+        },
+        {
+          "id": "quality-kbps",
+          "name": "质量(kbps)",
+          "description": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "recordingurl",
+      "name": "录制文件地址",
+      "description": "返回可被浏览器对象下载使用的录像文件URL。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "recording-type",
+      "name": "录制类型",
+      "description": "返回录制结果的MIME类型，如：\"video/webm\"",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "recording-file-extension",
+      "name": "录制文件扩展名",
+      "description": "返回录制结果的文件扩展名，如：\".webm\"",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 7,
+    "actions": 4,
+    "expressions": 3
+  }
+}

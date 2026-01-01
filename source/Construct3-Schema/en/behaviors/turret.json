@@ -1,0 +1,257 @@
+{
+  "id": "turret",
+  "name": "Turret",
+  "description": "Detect objects in range, rotating towards them and firing.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "has-target",
+      "name": "Has target",
+      "description": "True if the turret currently has a target to aim at.",
+      "display_text": "{my} has target",
+      "params": []
+    },
+    {
+      "id": "on-shoot",
+      "name": "On shoot",
+      "description": "Triggered when the turret can shoot at its target.",
+      "display_text": "On {my} shoot",
+      "params": []
+    },
+    {
+      "id": "on-target-acquired",
+      "name": "On target acquired",
+      "description": "Triggered upon the turret finding a new target within range.",
+      "display_text": "On {my} target acquired",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "acquire-target",
+      "name": "Acquire target",
+      "description": "Target a specific object if in range.",
+      "display_text": "{my} acquire target {0}",
+      "params": [
+        {
+          "id": "target",
+          "name": "Target",
+          "description": "Choose an object for the turret to specifically target if in range."
+        }
+      ]
+    },
+    {
+      "id": "add-object-to-target",
+      "name": "Add object to target",
+      "description": "Add an object or family to target automatically.",
+      "display_text": "Add {my} target {0}",
+      "params": [
+        {
+          "id": "target",
+          "name": "Target",
+          "description": "Choose an object or family for the turret to automatically detect as targets."
+        }
+      ]
+    },
+    {
+      "id": "clear-targets",
+      "name": "Clear targets",
+      "description": "Remove all objects to target automatically.",
+      "display_text": "Clear {my} targets",
+      "params": []
+    },
+    {
+      "id": "unacquire-target",
+      "name": "Unacquire target",
+      "description": "Unacquire current target so another target can be acquired.",
+      "display_text": "Unacquire {my} target",
+      "params": []
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the behavior.",
+      "display_text": "Set {my} {0}",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Choose whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-range",
+      "name": "Set range",
+      "description": "Set the turret range.",
+      "display_text": "Set {my} range to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "range",
+          "name": "Range",
+          "description": "The range to set, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-rate-of-fire",
+      "name": "Set rate of fire",
+      "description": "Set the turret rate of fire.",
+      "display_text": "Set {my} rate of fire to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "rate-of-fire",
+          "name": "Rate of fire",
+          "description": "The rate of fire to set, in seconds."
+        }
+      ]
+    },
+    {
+      "id": "set-rotate",
+      "name": "Set rotate",
+      "description": "Enable or disable rotating to targets.",
+      "display_text": "Set {my} rotate {0}",
+      "params": [
+        {
+          "id": "rotate",
+          "name": "Rotate",
+          "description": "Choose whether to automatically rotate towards targets.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-rotate-speed",
+      "name": "Set rotate speed",
+      "description": "Set the rotation speed.",
+      "display_text": "Set {my} rotate speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "rotate-speed",
+          "name": "Rotate speed",
+          "description": "The rotation speed to set, in degrees per second."
+        }
+      ]
+    },
+    {
+      "id": "set-target-mode",
+      "name": "Set target mode",
+      "description": "Set how to deal with multiple targets.",
+      "display_text": "Set {my} target mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "target",
+          "name": "Target",
+          "description": "Choose how to deal with multiple targets.",
+          "options": [
+            {
+              "id": "first-in-range",
+              "label": "first in range"
+            },
+            {
+              "id": "nearest",
+              "label": "nearest"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-predictive-aim",
+      "name": "Set predictive aim",
+      "description": "Set whether to use predictive aim.",
+      "display_text": "Set {my} predictive aim {0}",
+      "params": [
+        {
+          "id": "predictive-aim",
+          "name": "Predictive aim",
+          "description": "Choose whether or not to use predictive aim.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-projectile-speed",
+      "name": "Set projectile speed",
+      "description": "Set the projectile speed for predictive aim to work.",
+      "display_text": "Set {my} projectile speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "projectile-speed",
+          "name": "Projectile speed",
+          "description": "The projectile speed to set for predictive aim, in pixels per second."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "targetuid",
+      "name": "TargetUID",
+      "description": "Get the unique ID (UID) of the current target object.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "range",
+      "name": "Range",
+      "description": "Get the current range in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rateoffire",
+      "name": "RateOfFire",
+      "description": "Get the current rate of fire in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rotatespeed",
+      "name": "RotateSpeed",
+      "description": "Get the current rotate speed in degrees per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 12,
+    "expressions": 4
+  }
+}

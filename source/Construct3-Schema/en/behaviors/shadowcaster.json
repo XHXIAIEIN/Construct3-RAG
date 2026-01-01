@@ -1,0 +1,105 @@
+{
+  "id": "shadowcaster",
+  "name": "Shadow caster",
+  "description": "Make the object cast a shadow away from a Shadow Light object.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test whether the behavior is currently enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    },
+    {
+      "id": "compare-height",
+      "name": "Compare height",
+      "description": "Compare the height of the object.",
+      "display_text": "{my} height {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the height."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The object height to compare to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether the object casts a shadow or not.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether the object casts a shadow or not.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-height",
+      "name": "Set height",
+      "description": "Set the height of the object for determining the length shadow it casts.",
+      "display_text": "Set {my} height to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The height to set the object for determining the length of the shadow it casts."
+        }
+      ]
+    },
+    {
+      "id": "set-tag",
+      "name": "Set tag",
+      "description": "Set the tag for the shadow caster.",
+      "display_text": "Set {my} tag to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The new tag to set for the shadow caster."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "height",
+      "name": "Height",
+      "description": "The shadow caster object height.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "description": "The tag of the object.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 2,
+    "actions": 3,
+    "expressions": 2
+  }
+}

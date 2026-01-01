@@ -1,0 +1,60 @@
+{
+  "id": "flash",
+  "name": "闪烁",
+  "description": "使对象闪烁，不断地出现和隐去",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-flashing",
+      "name": "正在闪烁",
+      "description": "检测对象当前是否处于闪烁状态中。",
+      "display_text": "正在闪烁",
+      "params": []
+    },
+    {
+      "id": "on-flash-ended",
+      "name": "闪烁结束",
+      "description": "当闪烁结束时执行",
+      "display_text": "闪烁结束",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "flash",
+      "name": "闪烁",
+      "description": "使对象仅在一段时间内闪烁",
+      "display_text": "{my} 开始闪烁 (持续: [b]{2}[/b]秒, 显示: {0}秒, 隐去: {1}秒)",
+      "params": [
+        {
+          "id": "on-time",
+          "name": "可见时间",
+          "description": "在持续时间内使对象可见"
+        },
+        {
+          "id": "off-time",
+          "name": "隐去时间",
+          "description": "在持续时间内使对象不可见"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "在持续时间内使对象闪烁"
+        }
+      ]
+    },
+    {
+      "id": "stop-flashing",
+      "name": "停止闪烁",
+      "description": "停止闪烁并使对象可见",
+      "display_text": "{my} 停止闪烁",
+      "params": []
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 2,
+    "actions": 2,
+    "expressions": 0
+  }
+}

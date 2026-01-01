@@ -1,0 +1,556 @@
+{
+  "id": "binarydata",
+  "name": "Binary Data",
+  "description": "Read and write Binary Data.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-length",
+      "name": "Compare length",
+      "description": "Compare the length of the buffer in bytes.",
+      "display_text": "Length {0} [b]{1}[/b] bytes",
+      "params": [
+        {
+          "id": "cmp",
+          "name": "Comparison",
+          "description": "How to compare the length."
+        },
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "Length to compare in bytes."
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "Compare value",
+      "description": "Compare the value at an offset in the buffer.",
+      "display_text": "{0} at [b]{1}[/b] {2} [b]{3}[/b]",
+      "params": [
+        {
+          "id": "type",
+          "name": "Value type",
+          "description": "Value type to read.",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "offset",
+          "name": "Offset",
+          "description": "Offset of the value in bytes."
+        },
+        {
+          "id": "cmp",
+          "name": "Comparison",
+          "description": "How to compare the value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare."
+        }
+      ]
+    },
+    {
+      "id": "on-compression-finished",
+      "name": "On compression finished",
+      "description": "Triggered when compression completes successfully.",
+      "display_text": "On compression finished",
+      "params": []
+    },
+    {
+      "id": "on-compression-failed",
+      "name": "On compression failed",
+      "description": "Triggered when compression fails to complete.",
+      "display_text": "On compression failed",
+      "params": []
+    },
+    {
+      "id": "on-decompression-finished",
+      "name": "On decompression finished",
+      "description": "Triggered when decompression completes successfully.",
+      "display_text": "On decompression finished",
+      "params": []
+    },
+    {
+      "id": "on-decompression-failed",
+      "name": "On decompression failed",
+      "description": "Triggered when decompression fails to complete.",
+      "display_text": "On decompression failed",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-endian",
+      "name": "Set endian",
+      "description": "Set endian used for reading and writing values.",
+      "display_text": "Set [b]{0}[/b] endian",
+      "params": [
+        {
+          "id": "value",
+          "name": "Endian",
+          "description": "New endian to use.",
+          "options": [
+            {
+              "id": "little",
+              "label": "Little"
+            },
+            {
+              "id": "big",
+              "label": "Big"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-length",
+      "name": "Set length",
+      "description": "Resize buffer, preserving the content.",
+      "display_text": "Set buffer length to [i]{0}[/i] bytes",
+      "params": [
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "New length for buffer in bytes."
+        }
+      ]
+    },
+    {
+      "id": "set-from-binary-data",
+      "name": "Set from Binary Data",
+      "description": "Set buffer to a copy of another Binary Data object.",
+      "display_text": "Set buffer to copy of {0}",
+      "params": [
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "Content to copy buffer from."
+        }
+      ]
+    },
+    {
+      "id": "fill",
+      "name": "Fill",
+      "description": "Fill the specified range with the given value.",
+      "display_text": "Fill with {0} [i]{1}[/i] from ([i]{2}[/i], [i]{3}[/i])",
+      "params": [
+        {
+          "id": "type",
+          "name": "Value type",
+          "description": "Value type to insert.",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to insert."
+        },
+        {
+          "id": "offset",
+          "name": "Offset",
+          "description": "Offset of start in bytes."
+        },
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "Length of area to fill in bytes. Use -1 for end."
+        }
+      ]
+    },
+    {
+      "id": "copy",
+      "name": "Copy",
+      "description": "Copy a range of data from a Binary Data object to a specific location in this buffer.",
+      "display_text": "Copy {0} range ([i]{1}[/i], [i]{2}[/i]) to [i]{3}[/i]",
+      "params": [
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "Binary Data object to copy data from"
+        },
+        {
+          "id": "start",
+          "name": "Start",
+          "description": "Start of range in bytes (inclusive)."
+        },
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "Length of range in bytes. Use -1 for end."
+        },
+        {
+          "id": "target",
+          "name": "Target",
+          "description": "Location to insert range in bytes."
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "Set value",
+      "description": "Set a value within the buffer.",
+      "display_text": "Set {0} [i]{1}[/i] at offset [i]{2}[/i]",
+      "params": [
+        {
+          "id": "type",
+          "name": "Value type",
+          "description": "Value type to insert.",
+          "options": [
+            {
+              "id": "uint8",
+              "label": "Uint8"
+            },
+            {
+              "id": "int8",
+              "label": "Int8"
+            },
+            {
+              "id": "uint16",
+              "label": "Uint16"
+            },
+            {
+              "id": "int16",
+              "label": "Int16"
+            },
+            {
+              "id": "uint32",
+              "label": "Uint32"
+            },
+            {
+              "id": "int32",
+              "label": "Int32"
+            },
+            {
+              "id": "float32",
+              "label": "Float32"
+            },
+            {
+              "id": "float64",
+              "label": "Float64"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to set."
+        },
+        {
+          "id": "offset",
+          "name": "Offset",
+          "description": "Offset of value in bytes."
+        }
+      ]
+    },
+    {
+      "id": "compress",
+      "name": "Compress",
+      "description": "Compress the stored data with a compression algorithm to try to reduce its data size.",
+      "display_text": "Compress data with [i]{0}[/i]",
+      "params": [
+        {
+          "id": "format",
+          "name": "Format",
+          "description": "The compression format to use.",
+          "options": [
+            {
+              "id": "deflate",
+              "label": "deflate"
+            },
+            {
+              "id": "gzip",
+              "label": "gzip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "decompress",
+      "name": "Decompress",
+      "description": "Decompress some existing compressed data to return the original data.",
+      "display_text": "Decompress data with [i]{0}[/i]",
+      "params": [
+        {
+          "id": "format",
+          "name": "Format",
+          "description": "The compression format to use.",
+          "options": [
+            {
+              "id": "deflate",
+              "label": "deflate"
+            },
+            {
+              "id": "gzip",
+              "label": "gzip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-from-string",
+      "name": "Set from string",
+      "description": "Set the buffer from a string of text (UTF-8), base64, or hexadecimal.",
+      "display_text": "Set buffer from {1} string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "The string to set."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to set the string as text (with UTF-8 encoding), base64, or hexadecimal.",
+          "options": [
+            {
+              "id": "text",
+              "label": "text"
+            },
+            {
+              "id": "base64",
+              "label": "base64"
+            },
+            {
+              "id": "hex",
+              "label": "hex"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "get-url",
+      "name": "GetURL",
+      "description": "Get a blob URL for the current data.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-base64",
+      "name": "GetBase64",
+      "description": "Get the current buffer encoded as a base64 string.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bytelength",
+      "name": "ByteLength",
+      "description": "Get the length of the current buffer in bytes.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-int8",
+      "name": "GetInt8",
+      "description": "Get an Int8 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-uint8",
+      "name": "GetUint8",
+      "description": "Get a Uint8 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-int16",
+      "name": "GetInt16",
+      "description": "Get an Int16 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-uint16",
+      "name": "GetUint16",
+      "description": "Get a Uint16 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-int32",
+      "name": "GetInt32",
+      "description": "Get an Int32 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-uint32",
+      "name": "GetUint32",
+      "description": "Get a Uint32 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-float32",
+      "name": "GetFloat32",
+      "description": "Get a Float32 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-float64",
+      "name": "GetFloat64",
+      "description": "Get a Float64 value at a byte offset.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        }
+      ]
+    },
+    {
+      "id": "get-text",
+      "name": "GetText",
+      "description": "Get UTF-8 text from a given range.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "offset",
+          "name": "ByteOffset",
+          "description": "Position to read the value from, in bytes from the start."
+        },
+        {
+          "id": "length",
+          "name": "Length",
+          "description": "Length of the text to read, in bytes."
+        }
+      ]
+    },
+    {
+      "id": "get-all-text",
+      "name": "GetAllText",
+      "description": "Get the entire buffer as UTF-8 encoded text.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-hex",
+      "name": "GetHex",
+      "description": "Get the current buffer encoded as a hexadecimal string.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 9,
+    "expressions": 14
+  }
+}

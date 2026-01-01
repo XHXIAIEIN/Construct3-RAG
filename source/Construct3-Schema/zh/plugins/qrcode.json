@@ -1,0 +1,59 @@
+{
+  "id": "qrcode",
+  "name": "二维码",
+  "description": "在游戏中生成一个二维码。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-text",
+      "name": "设置文本",
+      "description": "设置二维码的文本内容。",
+      "display_text": "设置文本内容为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "二维码的文本内容。"
+        }
+      ]
+    },
+    {
+      "id": "set-correction-level",
+      "name": "设置容错率",
+      "description": "设置二维码的容错等级。容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+      "display_text": "设置容错率为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "correction-level",
+          "name": "容错率",
+          "description": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+          "options": [
+            {
+              "id": "l",
+              "label": "7%"
+            },
+            {
+              "id": "m",
+              "label": "15%"
+            },
+            {
+              "id": "q",
+              "label": "25%"
+            },
+            {
+              "id": "h",
+              "label": "30%"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 2,
+    "expressions": 0
+  }
+}

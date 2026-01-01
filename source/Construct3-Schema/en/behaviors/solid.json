@@ -1,0 +1,59 @@
+{
+  "id": "solid",
+  "name": "Solid",
+  "description": "Make the object impassable, so other objects cannot move or fall through it.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test whether the behavior is currently enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether the object counts as solid or not.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether the object counts as solid or not.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-tags",
+      "name": "Set tags",
+      "description": "Set the Solid behavior tags used for collision filtering.",
+      "display_text": "Set {my} tags [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "A space-separated list of tags to use for collision filtering with this solid."
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 2,
+    "expressions": 0
+  }
+}

@@ -1,0 +1,1451 @@
+{
+  "id": "multiplayer",
+  "name": "Multiplayer",
+  "description": "Create real-time multiplayer online games using WebRTC DataChannels.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-host",
+      "name": "Is host",
+      "description": "True if host of the current room.",
+      "display_text": "Is host",
+      "params": []
+    },
+    {
+      "id": "on-peer-connected",
+      "name": "On peer connected",
+      "description": "Triggered when connected to a peer (either to host or a peer joining the host).",
+      "display_text": "On peer connected",
+      "params": []
+    },
+    {
+      "id": "on-peer-disconnected",
+      "name": "On peer disconnected",
+      "description": "Triggered when disconnected from a peer (either from host or a peer leaving the host).",
+      "display_text": "On peer disconnected",
+      "params": []
+    },
+    {
+      "id": "on-kicked",
+      "name": "On kicked",
+      "description": "Triggered when kicked from a room.",
+      "display_text": "On kicked",
+      "params": []
+    },
+    {
+      "id": "on-peer-message",
+      "name": "On peer message",
+      "description": "Triggered when received a message with a specific tag from a peer.",
+      "display_text": "On peer message [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to identify the message type."
+        }
+      ]
+    },
+    {
+      "id": "on-any-peer-message",
+      "name": "On any peer message",
+      "description": "Triggered when received any message from a peer.",
+      "display_text": "On any peer message",
+      "params": []
+    },
+    {
+      "id": "compare-peer-count",
+      "name": "Compare peer count",
+      "description": "Compare the number of peers currently in the room.",
+      "display_text": "Peer count {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the peer count."
+        },
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "Number of peers to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-client-update",
+      "name": "On client update",
+      "description": "Triggered when sending the new client state to the host.",
+      "display_text": "On client update",
+      "params": []
+    },
+    {
+      "id": "is-ready-for-input",
+      "name": "Is ready for input",
+      "description": "True when ready to send input to the host. Don't move the local player until this is true.",
+      "display_text": "Is ready for input",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered if an error occurs with the server list or signalling server.",
+      "display_text": "On signalling error",
+      "params": []
+    },
+    {
+      "id": "on-connected",
+      "name": "On connected",
+      "description": "Triggered when successfully connected to the signalling server.",
+      "display_text": "On signalling connected",
+      "params": []
+    },
+    {
+      "id": "on-disconnected",
+      "name": "On disconnected",
+      "description": "Triggered when disconnected from the signalling server.",
+      "display_text": "On signalling disconnected",
+      "params": []
+    },
+    {
+      "id": "on-logged-in",
+      "name": "On logged in",
+      "description": "Triggered when successfully logged in to the signalling server.",
+      "display_text": "On signalling logged in",
+      "params": []
+    },
+    {
+      "id": "on-joined-room",
+      "name": "On joined room",
+      "description": "Triggered upon successfully joining a room.",
+      "display_text": "On signalling joined room",
+      "params": []
+    },
+    {
+      "id": "on-left-room",
+      "name": "On left room",
+      "description": "Triggered upon successfully leaving a room.",
+      "display_text": "On signalling left room",
+      "params": []
+    },
+    {
+      "id": "is-connected",
+      "name": "Is connected",
+      "description": "True if currently connected to a signalling server.",
+      "display_text": "Is connected to signalling server",
+      "params": []
+    },
+    {
+      "id": "is-logged-in",
+      "name": "Is logged in",
+      "description": "True if currently logged in to a signalling server.",
+      "display_text": "Is logged in to signalling server",
+      "params": []
+    },
+    {
+      "id": "is-in-room",
+      "name": "Is in room",
+      "description": "True if currently in a room on the signalling server.",
+      "display_text": "Is in room",
+      "params": []
+    },
+    {
+      "id": "on-game-instance-list",
+      "name": "On game instance list",
+      "description": "Triggered after 'Request game instance list' when the list has been received from the server.",
+      "display_text": "On game instance list received",
+      "params": []
+    },
+    {
+      "id": "on-room-list",
+      "name": "On room list",
+      "description": "Triggered after 'Request room list' when the list has been received from the server.",
+      "display_text": "On room list received",
+      "params": []
+    },
+    {
+      "id": "on-host-disconnected",
+      "name": "On host disconnected",
+      "description": "Triggered when a peer gets disconnected from the host.",
+      "display_text": "On host disconnected",
+      "params": []
+    },
+    {
+      "id": "on-binary-transfer-complete",
+      "name": "On complete",
+      "description": "Triggered when a binary transfer with a specific tag has successfully been received.",
+      "display_text": "On binary transfer [i]{0}[/i] complete (in {1})",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the binary transfer."
+        },
+        {
+          "id": "receive-to",
+          "name": "Receive to",
+          "description": "Choose a Binary Data object to write the received binary data to."
+        }
+      ]
+    },
+    {
+      "id": "on-any-binary-transfer-complete",
+      "name": "On any complete",
+      "description": "Triggered when any binary transfer has successfully been received.",
+      "display_text": "On any binary transfer complete (in {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "Receive to",
+          "description": "Choose a Binary Data object to write the received binary data to."
+        }
+      ]
+    },
+    {
+      "id": "on-binary-transfer-event",
+      "name": "On event",
+      "description": "Triggered when various binary transfer events happen like a receive starting, or cancellation, for a specific transfer.",
+      "display_text": "On binary transfer [i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Tag of the binary transfer."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The binary transfer event.",
+          "options": [
+            {
+              "id": "receive-started",
+              "label": "receive started"
+            },
+            {
+              "id": "progress",
+              "label": "progress"
+            },
+            {
+              "id": "cancelled",
+              "label": "cancelled"
+            },
+            {
+              "id": "send-complete",
+              "label": "send complete"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-binary-transfer-event",
+      "name": "On any event",
+      "description": "Triggered when various binary transfer events happen like a receive starting, or cancellation, for any transfer.",
+      "display_text": "On any binary transfer {0}",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The binary transfer event.",
+          "options": [
+            {
+              "id": "receive-started",
+              "label": "receive started"
+            },
+            {
+              "id": "progress",
+              "label": "progress"
+            },
+            {
+              "id": "cancelled",
+              "label": "cancelled"
+            },
+            {
+              "id": "send-complete",
+              "label": "send complete"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-peer-binary-message",
+      "name": "On peer binary message",
+      "description": "Triggered when received a binary message from a peer.",
+      "display_text": "On peer binary message (in {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "Receive to",
+          "description": "Choose a Binary Data object to write the received binary data to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "disconnect-room",
+      "name": "Disconnect",
+      "description": "Disconnect from peers in the current room, and also leave the room on the signalling server.",
+      "display_text": "Disconnect from room",
+      "params": []
+    },
+    {
+      "id": "send-message",
+      "name": "Send message",
+      "description": "Send a message to a specific peer.",
+      "display_text": "Send to peer [i]{0}[/i] tag [i]{1}[/i] message [b]{2}[/b] (mode [i]{3}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to send the message to. Leave empty to send to host."
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to identify this kind of message."
+        },
+        {
+          "id": "message",
+          "name": "Message",
+          "description": "The message data to send."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The transmission mode to send this message with.",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "Reliable ordered"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "Reliable unordered"
+            },
+            {
+              "id": "unreliable",
+              "label": "Unreliable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "simulate-latency",
+      "name": "Simulate latency",
+      "description": "Simulate a delay and packet loss in sending/receiving messages. Useful for testing lag performance locally.",
+      "display_text": "Simulate latency [i]{0}[/i] seconds with variance [i]{1}[/i] and packet loss [i]{2}[/i]",
+      "params": [
+        {
+          "id": "latency",
+          "name": "Latency",
+          "description": "Enter a latency in seconds to simulate. Sent and received messages will be artificially delayed."
+        },
+        {
+          "id": "pdv",
+          "name": "PDV",
+          "description": "Enter a packet delay variance in seconds to simulate. Sent and received messages will be artificially delayed."
+        },
+        {
+          "id": "packet-loss",
+          "name": "Packet loss",
+          "description": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed."
+        }
+      ]
+    },
+    {
+      "id": "sync-instance-variable",
+      "name": "Sync instance variable",
+      "description": "Add a synced object's instance variable to also sync over the network.",
+      "display_text": "Sync {0} variable [b]{1}[/b] (precision [i]{2}[/i], interpolation: [i]{3}[/i], client value tag: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "An object type already being synced. The chosen instance variable will also be synced."
+        },
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable in the above object to sync."
+        },
+        {
+          "id": "precision",
+          "name": "Precision",
+          "description": "Choose the precision of the value to sync.",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "High (double, 8 bytes)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "Normal (float, 4 bytes)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "Low (int16, 2 bytes)"
+            },
+            {
+              "id": "very-low-uint8-1-byte",
+              "label": "Very low (uint8, 1 byte)"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "Interpolation",
+          "description": "Choose the interpolation for clients to use between received values.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None"
+            },
+            {
+              "id": "linear",
+              "label": "Linear"
+            },
+            {
+              "id": "angular",
+              "label": "Angular"
+            }
+          ]
+        },
+        {
+          "id": "client-value-tag",
+          "name": "Client value tag",
+          "description": "If this value corresponds to a client input value, the tag for the value. This allows the host to sync the value between peers with less latency."
+        }
+      ]
+    },
+    {
+      "id": "associate-object-with-peer",
+      "name": "Associate object with peer",
+      "description": "Indicate an object which represents a connected peer.",
+      "display_text": "Associate {0} with peer [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "An object to associate with a peer. There must be exactly one of this object per connected peer."
+        },
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to associate the chosen object with."
+        }
+      ]
+    },
+    {
+      "id": "add-client-input-value",
+      "name": "Add client input value",
+      "description": "Add a value to send to the host representing the client input state.",
+      "display_text": "Add client input value tag [b]{0}[/b], precision [i]{1}[/i], interpolation [i]{2}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to identify this client input value."
+        },
+        {
+          "id": "precision",
+          "name": "Precision",
+          "description": "Choose the precision of the client input value.",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "High (double, 8 bytes)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "Normal (float, 4 bytes)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "Low (int16, 2 bytes)"
+            },
+            {
+              "id": "very-low-uint8-1-byte",
+              "label": "Very low (uint8, 1 byte)"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "Interpolation",
+          "description": "Choose the interpolation for the host to use between values.",
+          "options": [
+            {
+              "id": "none",
+              "label": "None"
+            },
+            {
+              "id": "linear",
+              "label": "Linear"
+            },
+            {
+              "id": "angular",
+              "label": "Angular"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-bandwidth-profile",
+      "name": "Set bandwidth profile",
+      "description": "Before joining a room, set Internet or LAN mode to adapt the use of the network.",
+      "display_text": "Set bandwidth profile to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "profile",
+          "name": "Profile",
+          "description": "The bandwidth profile to use. Do not use LAN mode over the Internet. However Internet mode is still suitable for LANs.",
+          "options": [
+            {
+              "id": "internet-30-hz-updates-80ms-buffer",
+              "label": "Internet (30 Hz updates, 80ms buffer)"
+            },
+            {
+              "id": "lan-60-hz-updates-40ms-buffer",
+              "label": "LAN (60 Hz updates, 40ms buffer)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "broadcast-message",
+      "name": "Broadcast message",
+      "description": "Send a message from the host to every peer in the room.",
+      "display_text": "Broadcast tag [i]{1}[/i] message [b]{2}[/b] (from [i]{0}[/i], mode [i]{3}[/i])",
+      "params": [
+        {
+          "id": "from-id",
+          "name": "From ID",
+          "description": "Peer ID message originates from, if relaying a peer message. Leave blank to indicate from host."
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to identify this kind of message."
+        },
+        {
+          "id": "message",
+          "name": "Message",
+          "description": "The message data to send."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The transmission mode to send this message with.",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "Reliable ordered"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "Reliable unordered"
+            },
+            {
+              "id": "unreliable",
+              "label": "Unreliable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kick-peer",
+      "name": "Kick peer",
+      "description": "Forcibly remove a peer from the room when host.",
+      "display_text": "Kick peer [i]{0}[/i] (reason: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to forcibly remove. Only works when host."
+        },
+        {
+          "id": "reason",
+          "name": "Reason",
+          "description": "A string of the reason to give for kicking (optional)."
+        }
+      ]
+    },
+    {
+      "id": "set-client-state",
+      "name": "Set client state",
+      "description": "Set the client input state for a peer to indicate to the host their controls.",
+      "display_text": "Set client input state [i]{0}[/i] to value [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to identify the client input value to set. It must have been added previously."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "A number representing the client input state."
+        }
+      ]
+    },
+    {
+      "id": "enable-local-input-prediction",
+      "name": "Enable local input prediction",
+      "description": "Enable local input prediction for an object representing the local player.",
+      "display_text": "Enable local input prediction for {0} (avoid solids: [i]{1}[/i], platform mode: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "An object representing the local player to enable local input prediction for."
+        },
+        {
+          "id": "avoid-solids",
+          "name": "Avoid solids",
+          "description": "Check to avoid input predicting into solid objects."
+        },
+        {
+          "id": "platform-mode",
+          "name": "Platform mode",
+          "description": "Check when using the Platform behavior to avoid input predicting on the Y axis when standing on the floor."
+        }
+      ]
+    },
+    {
+      "id": "connect",
+      "name": "Connect",
+      "description": "Connect to a signalling server to be able to join rooms.",
+      "display_text": "Connect to signalling server [b]{0}[/b]",
+      "params": [
+        {
+          "id": "server",
+          "name": "Server",
+          "description": "The signalling server URL to connect to."
+        }
+      ]
+    },
+    {
+      "id": "disconnect-signalling",
+      "name": "Disconnect",
+      "description": "Disconnect from the current signalling server.",
+      "display_text": "Disconnect from signalling server",
+      "params": []
+    },
+    {
+      "id": "add-ice-server",
+      "name": "Add ICE server",
+      "description": "Add another ICE server to help establish connectivity. Several defaults are built-in.",
+      "display_text": "Add ICE server [b]{0}[/b] (username [i]{1}[/i], credential [i]{2}[/i])",
+      "params": [
+        {
+          "id": "ice-server",
+          "name": "ICE server",
+          "description": "A custom ICE server, e.g. STUN or TURN, to help establish connectivity."
+        },
+        {
+          "id": "username-optional",
+          "name": "Username (optional)",
+          "description": "If a TURN server, then the username to use with that server."
+        },
+        {
+          "id": "credential-optional",
+          "name": "Credential (optional)",
+          "description": "If a TURN server, then the credential to use with that server."
+        }
+      ]
+    },
+    {
+      "id": "log-in",
+      "name": "Log in",
+      "description": "Once connected, log in to the signalling server with an alias.",
+      "display_text": "Log in with alias [b]{0}[/b]",
+      "params": [
+        {
+          "id": "alias",
+          "name": "Alias",
+          "description": "The desired alias to use on the server. The server may assign you a different alias if it is taken."
+        }
+      ]
+    },
+    {
+      "id": "join-room",
+      "name": "Join room",
+      "description": "Once logged in, join a room to meet other peers.",
+      "display_text": "Join room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "game",
+          "name": "Game",
+          "description": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+        },
+        {
+          "id": "instance",
+          "name": "Instance",
+          "description": "A string identifying an instance of the game, in case you wish to run separate instances."
+        },
+        {
+          "id": "room",
+          "name": "Room",
+          "description": "The name of the room to request joining."
+        },
+        {
+          "id": "max-peers",
+          "name": "Max peers",
+          "description": "The maximum number of peers that can join this room. Only the host's value is used. Leave 0 for unlimited."
+        }
+      ]
+    },
+    {
+      "id": "leave-room",
+      "name": "Leave room",
+      "description": "Request to leave the current room on the signalling server. Peer connections are not affected.",
+      "display_text": "Leave room",
+      "params": []
+    },
+    {
+      "id": "request-game-instance-list",
+      "name": "Request game instance list",
+      "description": "Request the list of game instances currently on the server.",
+      "display_text": "Request game [b]{0}[/b] instance list",
+      "params": [
+        {
+          "id": "game",
+          "name": "Game",
+          "description": "The game on the server to list instances for."
+        }
+      ]
+    },
+    {
+      "id": "auto-join-room",
+      "name": "Auto-join room",
+      "description": "Join the first room which is not full.",
+      "display_text": "Auto-join from room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i], {4})",
+      "params": [
+        {
+          "id": "game",
+          "name": "Game",
+          "description": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+        },
+        {
+          "id": "instance",
+          "name": "Instance",
+          "description": "A string identifying an instance of the game, in case you wish to run separate instances."
+        },
+        {
+          "id": "first-room",
+          "name": "First room",
+          "description": "The name of the first room to request joining. If the room is full, subsequent rooms will be checked (\"room\", \"room2\", \"room3\"...)."
+        },
+        {
+          "id": "max-peers",
+          "name": "Max peers",
+          "description": "The number of peers per room. Once full, later peers will be sent to the next room."
+        },
+        {
+          "id": "locking",
+          "name": "Locking",
+          "description": "Locking the room prevents other peers joining again even after other peers leave.",
+          "options": [
+            {
+              "id": "lock-when-full",
+              "label": "lock when full"
+            },
+            {
+              "id": "dont-lock",
+              "label": "don't lock"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "request-room-list",
+      "name": "Request room list",
+      "description": "Request the list of rooms in a game instance currently on the server.",
+      "display_text": "Request game [b]{0}[/b] instance [b]{1}[/b] room list ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "game",
+          "name": "Game",
+          "description": "The game on the server to list rooms from."
+        },
+        {
+          "id": "instance",
+          "name": "Instance",
+          "description": "The game instance on the server to list rooms for."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Optionally filter the returned rooms by their state.",
+          "options": [
+            {
+              "id": "all",
+              "label": "all"
+            },
+            {
+              "id": "unlocked",
+              "label": "unlocked"
+            },
+            {
+              "id": "available",
+              "label": "available"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sync-object-2",
+      "name": "Sync object",
+      "description": "Automatically synchronise an object type over the network.",
+      "display_text": "Sync {0} ([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]angle[/b]: [i]{3}[/i], precision [i]{4}[/i] at [i]{5}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "An object type to sync over the network."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "Whether to sync the X position of the object."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Whether to sync the Y position of the object."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Whether to sync the angle of the object."
+        },
+        {
+          "id": "precision",
+          "name": "Precision",
+          "description": "Choose the precision of the above data to sync. Higher precision requires more bandwidth.",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "High (double, 8 bytes)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "Normal (float, 4 bytes)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "Low (int16, 2 bytes)"
+            }
+          ]
+        },
+        {
+          "id": "bandwidth",
+          "name": "Bandwidth",
+          "description": "Choose the bandwidth setting for this object. Only choose 'Low' for highly predictable movement (e.g. linear constant speed).",
+          "options": [
+            {
+              "id": "normal-bandwidth-unpredictable",
+              "label": "Normal bandwidth (unpredictable)"
+            },
+            {
+              "id": "low-bandwidth-highly-predictable",
+              "label": "Low bandwidth (highly predictable)"
+            },
+            {
+              "id": "very-low-bandwidth-essentially-static",
+              "label": "Very low bandwidth (essentially static)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transfer-peer-binary",
+      "name": "Transfer peer binary",
+      "description": "Transfer the content of a Binary Data object to a peer.",
+      "display_text": "Transfer peer [b]{0}[/b] binary {1} tag [i]{2}[/i] (filename [i]{3}[/i], MIME type [i]{4}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to send data to. Leave empty to send to host."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "A Binary Data object with the data to send."
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to identify this transfer."
+        },
+        {
+          "id": "filename",
+          "name": "Filename",
+          "description": "An optional string with a filename for this transfer."
+        },
+        {
+          "id": "mime-type",
+          "name": "MIME type",
+          "description": "An optional string with a MIME type for this transfer, e.g. \"image/png\" for a PNG image."
+        }
+      ]
+    },
+    {
+      "id": "cancel-binary-transfer",
+      "name": "Cancel binary transfer",
+      "description": "Cancel an active binary data transfer.",
+      "display_text": "Cancel binary transfer for peer [b]{0}[/b] tag [i]{1}[/i]",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to cancel the transfer for."
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag of the transfer to cancel."
+        }
+      ]
+    },
+    {
+      "id": "send-binary-message",
+      "name": "Send binary message",
+      "description": "Send binary data to a specific peer.",
+      "display_text": "Send to peer [i]{0}[/i] binary message {1} (mode [i]{2}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "Peer ID",
+          "description": "The ID of the peer to send the message to. Leave empty to send to host."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "A Binary Data object with the data to send."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The transmission mode to send this message with.",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "Reliable ordered"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "Reliable unordered"
+            },
+            {
+              "id": "unreliable",
+              "label": "Unreliable"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "listinstancecount",
+      "name": "ListInstanceCount",
+      "description": "The number of game instances available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listinstancename",
+      "name": "ListInstanceName",
+      "description": "The name of a game instance at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "listinstancepeercount",
+      "name": "ListInstancePeerCount",
+      "description": "The total number of peers in a game instance at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "listroomcount",
+      "name": "ListRoomCount",
+      "description": "The number of rooms returned.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listroomname",
+      "name": "ListRoomName",
+      "description": "The name of a room at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "listroompeercount",
+      "name": "ListRoomPeerCount",
+      "description": "The total number of peers in a room at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "listroommaxpeercount",
+      "name": "ListRoomMaxPeerCount",
+      "description": "The maximum number of peers for a room at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "listroomstate",
+      "name": "ListRoomState",
+      "description": "The room state at an index (\"available\", \"locked\" or \"full\").",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index"
+        }
+      ]
+    },
+    {
+      "id": "peerid",
+      "name": "PeerID",
+      "description": "The ID of relevant peer in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeralias",
+      "name": "PeerAlias",
+      "description": "The alias of relevant peer in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostid",
+      "name": "HostID",
+      "description": "The ID of the room host.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostalias",
+      "name": "HostAlias",
+      "description": "The alias of the room host.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "message",
+      "name": "Message",
+      "description": "The message received in a message trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "description": "The tag of the message or binary transfer in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fromid",
+      "name": "FromID",
+      "description": "The ID of the user the message is from in a message trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fromalias",
+      "name": "FromAlias",
+      "description": "The alias of the user the message is from in a message trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeraliasfromid",
+      "name": "PeerAliasFromID",
+      "description": "Get a peer's alias for a given peer ID.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "Peer ID"
+        }
+      ]
+    },
+    {
+      "id": "peerlatency",
+      "name": "PeerLatency",
+      "description": "Get the latency (ping time) for a peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "Peer ID"
+        }
+      ]
+    },
+    {
+      "id": "peerpdv",
+      "name": "PeerPDV",
+      "description": "Get the packet delay variation for a peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "Peer ID"
+        }
+      ]
+    },
+    {
+      "id": "peercount",
+      "name": "PeerCount",
+      "description": "The number of connected peers in the current room.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "leavereason",
+      "name": "LeaveReason",
+      "description": "In 'On peer disconnected', the leave reason if known.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeridat",
+      "name": "PeerIDAt",
+      "description": "The ID of the nth connected peer in the room.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Peer index"
+        }
+      ]
+    },
+    {
+      "id": "peeraliasat",
+      "name": "PeerAliasAt",
+      "description": "The alias of the nth connected peer in the room.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Peer index"
+        }
+      ]
+    },
+    {
+      "id": "peerstate",
+      "name": "PeerState",
+      "description": "When host, get the client input state of a peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "Peer ID"
+        },
+        {
+          "id": "tag",
+          "name": "tag",
+          "description": "Client value tag"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensatex",
+      "name": "LagCompensateX",
+      "description": "The X position of a moving peer as it appears to another peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "movingPeerID",
+          "description": "Peer ID to move"
+        },
+        {
+          "id": "frompeerid",
+          "name": "fromPeerID",
+          "description": "Peer ID to compensate for"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensatey",
+      "name": "LagCompensateY",
+      "description": "The Y position of a moving peer as it appears to another peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "movingPeerID",
+          "description": "Peer ID to move"
+        },
+        {
+          "id": "frompeerid",
+          "name": "fromPeerID",
+          "description": "Peer ID to compensate for"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensateangle",
+      "name": "LagCompensateAngle",
+      "description": "The angle of a moving peer as it appears to another peer.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "movingPeerID",
+          "description": "Peer ID to move"
+        },
+        {
+          "id": "frompeerid",
+          "name": "fromPeerID",
+          "description": "Peer ID to compensate for"
+        }
+      ]
+    },
+    {
+      "id": "signallingurl",
+      "name": "SignallingURL",
+      "description": "The URL of the current signalling server.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingversion",
+      "name": "SignallingVersion",
+      "description": "The version of the current signalling server.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingname",
+      "name": "SignallingName",
+      "description": "The name of the current signalling server.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingoperator",
+      "name": "SignallingOperator",
+      "description": "The operator of the current signalling server.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingmotd",
+      "name": "SignallingMOTD",
+      "description": "The 'message of the day' for the current signalling server.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myalias",
+      "name": "MyAlias",
+      "description": "The alias for the current user.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentgame",
+      "name": "CurrentGame",
+      "description": "The current game name joined.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentinstance",
+      "name": "CurrentInstance",
+      "description": "The current game instance joined.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentroom",
+      "name": "CurrentRoom",
+      "description": "The current room joined.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "errormessage",
+      "name": "ErrorMessage",
+      "description": "In 'on signalling error', the error message.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myid",
+      "name": "MyID",
+      "description": "The ID for the current user.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutboundcount",
+      "name": "StatOutboundCount",
+      "description": "Number of outbound messages per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutboundbandwidth",
+      "name": "StatOutboundBandwidth",
+      "description": "Network uploaded bytes per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinboundcount",
+      "name": "StatInboundCount",
+      "description": "Number of inbound messages per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinboundbandwidth",
+      "name": "StatInboundBandwidth",
+      "description": "Network downloaded bytes per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "clientxerror",
+      "name": "ClientXError",
+      "description": "Client-side input prediction X error from host, for debugging.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "clientyerror",
+      "name": "ClientYError",
+      "description": "Client-side input prediction Y error from host, for debugging.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostx",
+      "name": "HostX",
+      "description": "Host X position for debugging input prediction.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hosty",
+      "name": "HostY",
+      "description": "Host Y position for debugging input prediction.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutbounddecompressedbandwidth",
+      "name": "StatOutboundDecompressedBandwidth",
+      "description": "Decompressed data sent in bytes per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinbounddecompressedbandwidth",
+      "name": "StatInboundDecompressedBandwidth",
+      "description": "Decompressed data received in bytes per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeridfromalias",
+      "name": "PeerIDFromAlias",
+      "description": "Get a peer's ID from their alias.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "alias",
+          "name": "alias",
+          "description": "Peer alias"
+        }
+      ]
+    },
+    {
+      "id": "filename",
+      "name": "Filename",
+      "description": "Filename of a binary data transfer, if specified.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mime-type",
+      "name": "MIMEType",
+      "description": "MIME type of a binary data transfer, if specified.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "transfer-progress",
+      "name": "TransferProgress",
+      "description": "In a binary transfer progress trigger, the transfer progress in the range 0-1.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "transfer-size",
+      "name": "TransferSize",
+      "description": "In a binary transfer start trigger, the size in bytes of the data being transmitted.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 26,
+    "actions": 24,
+    "expressions": 53
+  }
+}

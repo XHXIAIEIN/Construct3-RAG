@@ -1,0 +1,573 @@
+{
+  "id": "json",
+  "name": "JSON",
+  "description": "Read and write data in JSON format.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "has-key",
+      "name": "Has key",
+      "description": "Test if a key exists in the JSON data.",
+      "display_text": "Has key [b]{0}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "compare-type",
+      "name": "Compare type",
+      "description": "Test the type of a value in the JSON data.",
+      "display_text": "Key [b]{0}[/b] type is [b]{1}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The type of the value to test for.",
+          "options": [
+            {
+              "id": "null",
+              "label": "null"
+            },
+            {
+              "id": "boolean",
+              "label": "boolean"
+            },
+            {
+              "id": "number",
+              "label": "number"
+            },
+            {
+              "id": "string",
+              "label": "string"
+            },
+            {
+              "id": "object",
+              "label": "object"
+            },
+            {
+              "id": "array",
+              "label": "array"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "Compare value",
+      "description": "Compare the value at a key in the JSON data.",
+      "display_text": "Key [b]{0}[/b] value {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "cmp",
+          "name": "Comparison",
+          "description": "How to compare the value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare to."
+        }
+      ]
+    },
+    {
+      "id": "for-each",
+      "name": "For each",
+      "description": "Repeat the event for each key/value under a key in the JSON data.",
+      "display_text": "For each entry in [b]{0}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "on-parse-error",
+      "name": "On parse error",
+      "description": "Triggered when parsing a JSON string fails.",
+      "display_text": "On parse error",
+      "params": []
+    },
+    {
+      "id": "is-boolean-set",
+      "name": "Is boolean set",
+      "description": "Test if a given value is the boolean value true",
+      "display_text": "Is [b]{0}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "on-parse-success",
+      "name": "On parse success",
+      "description": "Triggered when parsing a JSON string completes successfully.",
+      "display_text": "On parse success",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "parse",
+      "name": "Parse",
+      "description": "Parse a JSON string and load its contents in to the object.",
+      "display_text": "Parse JSON string [b]{0}[/b]",
+      "params": [
+        {
+          "id": "data",
+          "name": "JSON string",
+          "description": "A string of JSON data to parse."
+        }
+      ]
+    },
+    {
+      "id": "set-path",
+      "name": "Set path",
+      "description": "Set the current path that relative paths refer to.",
+      "display_text": "Set path to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "Set value",
+      "description": "Set the value at a key in the JSON data.",
+      "display_text": "Set [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to set at the given key."
+        }
+      ]
+    },
+    {
+      "id": "set-array",
+      "name": "Set array",
+      "description": "Set an array at a key, or resize an existing array if already present.",
+      "display_text": "Set [i]{0}[/i] to array size [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "size",
+          "name": "Size",
+          "description": "The number of elements in the array."
+        }
+      ]
+    },
+    {
+      "id": "set-object",
+      "name": "Set object",
+      "description": "Set an empty object at a key.",
+      "display_text": "Set [i]{0}[/i] to new object",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "set-null",
+      "name": "Set null",
+      "description": "Set the special value 'null' at a key.",
+      "display_text": "Set [i]{0}[/i] to null",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "set-boolean",
+      "name": "Set boolean",
+      "description": "Set a true or false value at a key.",
+      "display_text": "Set [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The boolean value to set.",
+          "options": [
+            {
+              "id": "false",
+              "label": "false"
+            },
+            {
+              "id": "true",
+              "label": "true"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delete-key",
+      "name": "Delete key",
+      "description": "Delete a key from the JSON data.",
+      "display_text": "Delete key [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "push-value",
+      "name": "Push value",
+      "description": "Add a value to the front or back of an array located at the key in the JSON data.",
+      "display_text": "Push {0} [i]{2}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Whether to insert at the beginning or the end of the array.",
+          "options": [
+            {
+              "id": "back",
+              "label": "back"
+            },
+            {
+              "id": "front",
+              "label": "front"
+            }
+          ]
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to add at the given key."
+        }
+      ]
+    },
+    {
+      "id": "pop-value",
+      "name": "Pop value",
+      "description": "Remove a value to the front or back of an array located at the key in the JSON data.",
+      "display_text": "Pop {0} from [i]{1}[/i]",
+      "params": [
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Whether to insert at the beginning or the end of the array.",
+          "options": [
+            {
+              "id": "back",
+              "label": "back"
+            },
+            {
+              "id": "front",
+              "label": "front"
+            }
+          ]
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "set-json",
+      "name": "Set JSON",
+      "description": "Set a value from a JSON string at a key.",
+      "display_text": "Set [i]{0}[/i] to JSON [b]{1}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "json",
+          "name": "JSON string",
+          "description": "The value to set at the location, as a JSON string."
+        }
+      ]
+    },
+    {
+      "id": "toggle-boolean",
+      "name": "Toggle boolean",
+      "description": "Invert the value of a boolean field at a given key.",
+      "display_text": "Toggle boolean [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        }
+      ]
+    },
+    {
+      "id": "subtract-from",
+      "name": "Subtract from",
+      "description": "Subtract from the value of a numerical field at a given key.",
+      "display_text": "Subtract [i]{1}[/i] from [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to subtract from this field."
+        }
+      ]
+    },
+    {
+      "id": "add-to",
+      "name": "Add to",
+      "description": "Add to the value of a numerical field at a given key.",
+      "display_text": "Add [i]{1}[/i] to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to add to this field."
+        }
+      ]
+    },
+    {
+      "id": "insert-value",
+      "name": "Insert value",
+      "description": "Modifies an array by inserting a value between existing elements",
+      "display_text": "Insert {0} into {1} at {2}",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to add to the array."
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location of the array within the JSON data."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index to insert the value into the array."
+        }
+      ]
+    },
+    {
+      "id": "remove-values",
+      "name": "Remove values",
+      "description": "Modifies an array by removing elements from a given location",
+      "display_text": "Remove {0} values at {1} starting {2}",
+      "params": [
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "Number of elements to remove"
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location of the array within the JSON data."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index to start removing elements from the array."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "to-compact-string",
+      "name": "ToCompactString",
+      "description": "Return the current JSON data as a minimal string with no additional whitespace.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "to-beautified-string",
+      "name": "ToBeautifiedString",
+      "description": "Return the current JSON data as a formatted string with line breaks and indentation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-value",
+      "name": "Get",
+      "description": "Get a value from a key in the JSON data.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "get-type",
+      "name": "Type",
+      "description": "Get the type of a value at a key.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "array-size",
+      "name": "ArraySize",
+      "description": "Get the size of an array at a key.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "path",
+      "name": "Path",
+      "description": "Get the currently set path.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-key",
+      "name": "CurrentKey",
+      "description": "The current key during a for each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-value",
+      "name": "CurrentValue",
+      "description": "The current value during a for each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-type",
+      "name": "CurrentType",
+      "description": "The type of the current value during a for each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "back",
+      "name": "Back",
+      "description": "Get the last value from an array located at the key in the JSON data.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "front",
+      "name": "Front",
+      "description": "Get the first value from an array located at the key in the JSON data.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "get-as-compact-string",
+      "name": "GetAsCompactString",
+      "description": "Get a value from a key in the JSON data and return it as a minimal string with no additional whitespace.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    },
+    {
+      "id": "get-as-beautified-string",
+      "name": "GetAsBeautifiedString",
+      "description": "Get a value from a key in the JSON data and return it as a formatted string with line breaks and indentation.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Location within the JSON data"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 7,
+    "actions": 16,
+    "expressions": 13
+  }
+}

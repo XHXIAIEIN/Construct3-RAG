@@ -1,0 +1,235 @@
+{
+  "id": "speechrecognition",
+  "name": "语音识别",
+  "description": "使用语音识别来读取用户通过麦克风说话的文字。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "supports-speech-recognition",
+      "name": "支持语音识别",
+      "description": "测试设备是否支持语音识别。",
+      "display_text": "支持语音识别",
+      "params": []
+    },
+    {
+      "id": "on-start",
+      "name": "开始识别",
+      "description": "语音识别开始时触发。",
+      "display_text": "开始语音识别",
+      "params": []
+    },
+    {
+      "id": "on-end",
+      "name": "识别完成",
+      "description": "在语音识别完成后被触发",
+      "display_text": "语音识别结束了",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "在出错时",
+      "description": "启动语音识别出现错误时触发，例如没有权限。",
+      "display_text": "语音识别错误",
+      "params": []
+    },
+    {
+      "id": "on-result",
+      "name": "在结果",
+      "description": "在语音识别完成，有文本返回时触发",
+      "display_text": "识别结果完成",
+      "params": []
+    },
+    {
+      "id": "is-recognising-speech",
+      "name": "正在识别语音",
+      "description": "测试当前语音识别功能是否活跃。",
+      "display_text": "正在识别语音",
+      "params": []
+    },
+    {
+      "id": "supports-on-device-recongition",
+      "name": "支持本地处理",
+      "description": "检测当前浏览器是否支持处理设备端语音识别（本地处理）。注意，即使支持，仍可能需要安装语言包。",
+      "display_text": "支持本地处理",
+      "params": []
+    },
+    {
+      "id": "on-check-language-available-result",
+      "name": "可用语言检查完成",
+      "description": "在执行 \"检查语言可用状态\" 动作后，返回的各种结果的触发条件。",
+      "display_text": "可用语言检查结果为 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "result",
+          "name": "结果",
+          "description": "要检查的结果。",
+          "options": [
+            {
+              "id": "available",
+              "label": "可用"
+            },
+            {
+              "id": "downloading",
+              "label": "正在下载"
+            },
+            {
+              "id": "downloadable",
+              "label": "可下载"
+            },
+            {
+              "id": "unavailable",
+              "label": "不可使用"
+            },
+            {
+              "id": "unknown",
+              "label": "未知"
+            },
+            {
+              "id": "error",
+              "label": "错误"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-install-on-device-recongition-result",
+      "name": "语言包安装完成",
+      "description": "执行 '安装语言包' 动作后，根据安装结果返回的触发事件。",
+      "display_text": "语言包安装[b]{0}[/b]",
+      "params": [
+        {
+          "id": "result",
+          "name": "结果",
+          "description": "要检查的安装结果。",
+          "options": [
+            {
+              "id": "success",
+              "label": "完成"
+            },
+            {
+              "id": "error",
+              "label": "失败"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-speech-recognition",
+      "name": "请求语音识别",
+      "description": "提示用户从麦克风输入语音识别（如果存在）。",
+      "display_text": "请求语音识别 (语言: [i]{0}[/i], 本地处理: [i]{1}[/i], 模式: {2}, 结果: {3})",
+      "params": [
+        {
+          "id": "language",
+          "name": "语言",
+          "description": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是否在停止前一直检测说话，或者在检测到说完话时自动停止",
+          "options": [
+            {
+              "id": "continuous",
+              "label": "持续"
+            },
+            {
+              "id": "single-phrase",
+              "label": "单个短语"
+            }
+          ]
+        },
+        {
+          "id": "results",
+          "name": "结果",
+          "description": "是否允许不确定（临时）结果，或仅允许最终结果。",
+          "options": [
+            {
+              "id": "interim",
+              "label": "临时结果"
+            },
+            {
+              "id": "final",
+              "label": "最终"
+            }
+          ]
+        },
+        {
+          "id": "process-locally",
+          "name": "本地处理",
+          "description": "使用设备端的语音识别功能。使用前，可能需要先安装语言包。"
+        }
+      ]
+    },
+    {
+      "id": "stop-speech-recognition",
+      "name": "停止语音识别",
+      "description": "停止任何语音识别",
+      "display_text": "停止语音识别",
+      "params": []
+    },
+    {
+      "id": "check-language-available",
+      "name": "检查语言可用状态",
+      "description": "检查特定语言是否可用于语音识别，包括设备端识别。完成后触发 \"可用语言检查完成\" 条件，并返回结果。",
+      "display_text": "检查语言 [b]{0}[/b] 可用状态 (本地处理: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "language",
+          "name": "语言环境",
+          "description": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        },
+        {
+          "id": "process-locally",
+          "name": "本地端处理",
+          "description": "检查该语言是否可用本机设备端的语音识别功能。"
+        }
+      ]
+    },
+    {
+      "id": "install-on-device-recognition",
+      "name": "安装语言包",
+      "description": "安装特定语言的设备端语音识别功能，完成后触发 \"语言包安装完成\" 条件。",
+      "display_text": "安装语言包(语言: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "language",
+          "name": "语言环境",
+          "description": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "finaltranscript",
+      "name": "最终记录结果",
+      "description": "返回最终识别的语音内容。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "interimtranscript",
+      "name": "缓存记录",
+      "description": "返回临时猜测的语音内容，会根据上下文随时变化 。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "speecherror",
+      "name": "言语误差",
+      "description": "返回一个字符串，描述'在出错'中的错误类型。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 9,
+    "actions": 4,
+    "expressions": 3
+  }
+}

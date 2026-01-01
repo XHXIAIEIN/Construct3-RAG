@@ -1,0 +1,507 @@
+{
+  "id": "htmlelement",
+  "name": "HTML",
+  "description": "在 Canvas 顶部创建自定义 HTML元素，可以显示任意 HTML 内容。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "被点击",
+      "description": "次元素的任意部分被点击时触发。",
+      "display_text": "被点击",
+      "params": []
+    },
+    {
+      "id": "on-clicked-id",
+      "name": "ID元素被点击",
+      "description": "指定 id 的元素被点击时触发。",
+      "display_text": "ID元素 [i]{0}[/i] 被点击",
+      "params": [
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "指定的ID。"
+        }
+      ]
+    },
+    {
+      "id": "on-clicked-class",
+      "name": "Class元素被点击",
+      "description": "具有指定 class 的元素被点击时触发。",
+      "display_text": "Class类名 [i]{0}[/i] 被点击",
+      "params": [
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "指定的Class类名。 使用空格匹配多个类名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-css-animation-ended",
+      "name": "CSS动画播放结束",
+      "description": "CSS动画播放结束时触发。",
+      "display_text": "CSS 动画 [i]{0}[/i] 播放结束",
+      "params": [
+        {
+          "id": "animation-name",
+          "name": "动画名称",
+          "description": "CSS动画的名称，不区分大小写。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-content",
+      "name": "设置内容",
+      "description": "将该元素的内容解析为HTML、或BBCode、纯文本的字符串。注意: 在HTML中将转义为用户提供的值。",
+      "display_text": "设置 [b]{0}[/b] 内容为 [i]{1}[/i] (选择器: [i]{2}[/i], 类型: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "content-type",
+          "name": "内容类型",
+          "description": "使用哪种方式解析内容。",
+          "options": [
+            {
+              "id": "html",
+              "label": "HTML"
+            },
+            {
+              "id": "bbcode",
+              "label": "富文本"
+            },
+            {
+              "id": "plain-text",
+              "label": "纯文本"
+            }
+          ]
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "将该元素的内容解析为特定的字符串。注意: 在HTML中将转义为用户提供的值。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "影响子元素的CSS选择器的匹配规则。 匹配单次或是匹配所有元素。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insert-content",
+      "name": "插入内容",
+      "description": "插入HTML、BBcode 或纯文本字符串。注意: 在 HTML 中将转义用户提供的值。",
+      "display_text": "在[i]{2}[/i]插入[b]{0}[/b]内容 [i]{1}[/i] (选择器: [i]{3}[/i], 类型: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "content-type",
+          "name": "类型",
+          "description": "使用哪种方式解析内容。",
+          "options": [
+            {
+              "id": "html",
+              "label": "HTML"
+            },
+            {
+              "id": "bbcode",
+              "label": "富文本"
+            },
+            {
+              "id": "plain-text",
+              "label": "纯文本"
+            }
+          ]
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "将该元素的内容解析为特定的字符串。注意：在HTML中将转义为用户提供的值。"
+        },
+        {
+          "id": "position",
+          "name": "定位",
+          "description": "在元素的顶部或底部位置插入内容。",
+          "options": [
+            {
+              "id": "start",
+              "label": "顶部"
+            },
+            {
+              "id": "end",
+              "label": "底部"
+            }
+          ]
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "可选，用于子元素的CSS选择器。留空以向主体HTML元素插入内容。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "remove-content",
+      "name": "移除内容",
+      "description": "移除或清空匹配的CSS选择器的元素。",
+      "display_text": "{0}内容, 选择器: [i]{1}[/i], ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "选择移除匹配的元素，或是全部清空内容。",
+          "options": [
+            {
+              "id": "remove",
+              "label": "移除"
+            },
+            {
+              "id": "clear",
+              "label": "清空"
+            }
+          ]
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "用于匹配的CSS选择器。留空以清除主体HTML元素。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-class",
+      "name": "设置Class元素",
+      "description": "为匹配的CSS选择器的元素添加、切换或删除类。",
+      "display_text": "{0} class [i]{1}[/i] 到 [i]{2}[/i] ([i]{3}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是否添加、切换或删除类。",
+          "options": [
+            {
+              "id": "add",
+              "label": "添加"
+            },
+            {
+              "id": "toggle",
+              "label": "反转"
+            },
+            {
+              "id": "remove",
+              "label": "移除"
+            }
+          ]
+        },
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "要更改的元素类名。 使用空格分隔的多个类。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "用于匹配元素的 CSS 选择器。 留空以使用主体HTML元素。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-attribute",
+      "name": "设置特性",
+      "description": "设置或删除与 CSS 选择器匹配的元素的属性。",
+      "display_text": "{0}属性 [b]{1}[/b] 为 [i]{2}[/i], 选择器: [i]{3}[/i] ([i]{4}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "设置或删除属性。",
+          "options": [
+            {
+              "id": "set",
+              "label": "设置"
+            },
+            {
+              "id": "remove",
+              "label": "移除"
+            }
+          ]
+        },
+        {
+          "id": "attribute",
+          "name": "特性",
+          "description": "要更改的属性。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "设置新属性的值（如果是删除属性则忽略）"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "用于匹配元素的CSS选择器。 留空以使用主体HTML元素。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-content-css-style",
+      "name": "设置CSS样式",
+      "description": "为匹配CSS选择器的元素设置CSS样式。",
+      "display_text": "设置CSS样式 [b]{0}[/b]: [i]{1}[/i] (选择器: [i]{2}[/i], 范围: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "property-name",
+          "name": "属性名称",
+          "description": "填写CSS样式属性名称。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要指定为此CSS属性的值的字符串。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "一个CSS选择器，用于匹配元素。留空则使用主体HTML元素。"
+        },
+        {
+          "id": "type",
+          "name": "范围",
+          "description": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "options": [
+            {
+              "id": "one",
+              "label": "单次"
+            },
+            {
+              "id": "all",
+              "label": "全选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "position-object-at-element",
+      "name": "将对象定位到元素",
+      "description": "设置对象大小和位置以匹配HTML元素。",
+      "display_text": "定位 {0} 到 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要移动和调整大小的对象"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "CSS 选择器，用于标识要将对象定位到的HTML元素。"
+        }
+      ]
+    },
+    {
+      "id": "create-sprite-img-element",
+      "name": "在元素位置创建图片",
+      "description": "使用对象的图像创建一个 <img> 元素并将其插入到HTML元素。",
+      "display_text": "创建 {0} 图片元素到 [i]{1}[/i],  位置: [i]{2}[/i], ID [i]{3}[/i], class [i]{4}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "使用图像的对象。"
+        },
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "CSS 选择器，用于标识父元素的位置，图像元素将会被插入到这个地方。留空则使用父级的 HTML 元素。"
+        },
+        {
+          "id": "insert",
+          "name": "插入到",
+          "description": "选择在标签的开头、结尾位置插入元素，也可以整个替换元素的内容。",
+          "options": [
+            {
+              "id": "at-start",
+              "label": "顶部"
+            },
+            {
+              "id": "at-end",
+              "label": "底部"
+            },
+            {
+              "id": "replace-content",
+              "label": "替换内容"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "ID",
+          "description": "可选项，为新创建的图像元素设置 ID。"
+        },
+        {
+          "id": "class",
+          "name": "Class",
+          "description": "(可选) 为新创建的图像元素设置 class。"
+        }
+      ]
+    },
+    {
+      "id": "set-scroll-position",
+      "name": "设置滚动位置",
+      "description": "设置元素的滚动位置。",
+      "display_text": "设置 [i]{0}[/i] 元素 {1} 滚动到 [i]{2}[/i]",
+      "params": [
+        {
+          "id": "selector",
+          "name": "选择器",
+          "description": "标识要滚动的元素的 CSS 选择器。留空则使用主HTML 元素。"
+        },
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "将滚动设置为左侧或顶部的位置。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左右"
+            },
+            {
+              "id": "top",
+              "label": "上下"
+            }
+          ]
+        },
+        {
+          "id": "position",
+          "name": "位置",
+          "description": "设置滚动到的位置，以CSS像素为单位。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "html-content",
+      "name": "HTML内容",
+      "description": "包含HTML元素内容的字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "text-content",
+      "name": "文本内容",
+      "description": "包含HTML元素的纯文本内容的字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-id",
+      "name": "目标ID",
+      "description": "在触发器中，目标元素的ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "target-class",
+      "name": "目标Class",
+      "description": "在触发器中，目标元素的类。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "escape-html",
+      "name": "转义HTML",
+      "description": "将HTML的标签字符(如 < ) 转换为实体(如 &lt; )， 所以文本不能改变HTML。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要转义的HTML字符串"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 9,
+    "expressions": 5
+  }
+}

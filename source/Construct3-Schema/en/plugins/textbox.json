@@ -1,0 +1,175 @@
+{
+  "id": "textbox",
+  "name": "Text input",
+  "description": "A text field form control for the user to type text in to. For simply displaying text, use the 'Text' object instead.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-text",
+      "name": "Compare text",
+      "description": "Compare the text currently entered in to the text input.",
+      "display_text": "Text is {0} ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The text to compare the text input's text to."
+        },
+        {
+          "id": "case",
+          "name": "Case",
+          "description": "Choose whether the comparison is case sensitive (FOO different to Foo) or case insensitive (FOO same as Foo).",
+          "options": [
+            {
+              "id": "case-insensitive",
+              "label": "case insensitive"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "case sensitive"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-text-changed",
+      "name": "On text changed",
+      "description": "Triggered when the text in the text input changes.",
+      "display_text": "On text changed",
+      "params": []
+    },
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when the text input is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "on-double-clicked",
+      "name": "On double-clicked",
+      "description": "Triggered when the text input is double-clicked.",
+      "display_text": "On double-clicked",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "name": "Set text",
+      "description": "Set the text input's text.",
+      "display_text": "Set text to {0}",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The text to set in the text input."
+        }
+      ]
+    },
+    {
+      "id": "set-placeholder",
+      "name": "Set placeholder",
+      "description": "Set the text input's placeholder.",
+      "display_text": "Set placeholder to {0}",
+      "params": [
+        {
+          "id": "placeholder",
+          "name": "Placeholder",
+          "description": "The new text input placeholder."
+        }
+      ]
+    },
+    {
+      "id": "set-tooltip",
+      "name": "Set tooltip",
+      "description": "Set the text input's tooltip.",
+      "display_text": "Set tooltip to {0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "description": "The tooltip to set on the text input."
+        }
+      ]
+    },
+    {
+      "id": "set-read-only",
+      "name": "Set read-only",
+      "description": "Turn read-only on or off.",
+      "display_text": "Set [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Choose whether to enable or disable read-only mode.",
+          "options": [
+            {
+              "id": "read-only",
+              "label": "Read-only"
+            },
+            {
+              "id": "not-read-only",
+              "label": "Not read-only"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-bottom",
+      "name": "Scroll to bottom",
+      "description": "Scroll to the bottom of the text input if a textarea.",
+      "display_text": "Scroll to bottom",
+      "params": []
+    },
+    {
+      "id": "append-text",
+      "name": "Append text",
+      "description": "Add text to the end of the existing text.",
+      "display_text": "Append [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Enter the text to append to the object's content."
+        }
+      ]
+    },
+    {
+      "id": "set-max-length",
+      "name": "Set max length",
+      "description": "Set the maximum number of characters that can be entered.",
+      "display_text": "Set max length to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-length",
+          "name": "Max length",
+          "description": "The maximum number of characters that can be entered. Use -1 for unlimited."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "name": "Text",
+      "description": "Get the text input's current text.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "max-length",
+      "name": "MaxLength",
+      "description": "Get the maximum number of characters that can be entered, or -1 for unlimited.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 7,
+    "expressions": 2
+  }
+}

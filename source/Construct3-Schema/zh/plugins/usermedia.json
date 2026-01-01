@@ -1,0 +1,231 @@
+{
+  "id": "usermedia",
+  "name": "用户媒体",
+  "description": "访问摄像头或麦克风设备，获取用户设备的实时媒体信息。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-media-request-approved",
+      "name": "权限被允许",
+      "description": "用户批准媒体请求提示时触发。",
+      "display_text": "权限被允许",
+      "params": []
+    },
+    {
+      "id": "on-media-request-declined",
+      "name": "权限被拒绝",
+      "description": "用户拒绝媒体请求提示，或遇到了错误时触发。",
+      "display_text": "权限被拒绝",
+      "params": []
+    },
+    {
+      "id": "on-retrieved-media-sources",
+      "name": "获取设备列表成功",
+      "description": "执行 '获取设备列表' 动作后，成功获取到设备列表时触发。",
+      "display_text": "获取设备列表成功",
+      "params": []
+    },
+    {
+      "id": "on-snapshot",
+      "name": "截屏完成",
+      "description": "执行 '截屏' 动作后，成功返回 '截屏文件地址' 表达式时触发。",
+      "display_text": "截屏完成",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-camera",
+      "name": "请求使用摄像头",
+      "description": "向用户请求访问相机的权限作为视频输入。（如果设备支持）",
+      "display_text": "请求使用摄像头权限 (设备源: [i]{0}[/i],  摄像头: [i]{1}[/i],  预设分辨率: {2}x{3}, 麦克风: [i]{4}[/i], 麦克风设备源: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "source",
+          "name": "设备源",
+          "description": "要使用的相机源的从0开始的索引。"
+        },
+        {
+          "id": "preferred-width",
+          "name": "预设宽度",
+          "description": "预设的水平分辨率。 默认值为0。"
+        },
+        {
+          "id": "preferred-height",
+          "name": "预设高度",
+          "description": "预设的垂直分辨率。 默认值为0。"
+        },
+        {
+          "id": "include-mic",
+          "name": "包含麦克风",
+          "description": "是否请求麦克风作为音频输入的权限，有助于同时录制视频和音频。"
+        },
+        {
+          "id": "mic-source",
+          "name": "麦克风源",
+          "description": "使用麦克风时，指定麦克风设备源的索引，从 0 开始计数。"
+        },
+        {
+          "id": "preferred-direction",
+          "name": "摄像头",
+          "description": "如果存在多个摄像头，优先选择的摄像头朝向。移动设备通常包含多个摄像头。",
+          "options": [
+            {
+              "id": "any",
+              "label": "任意"
+            },
+            {
+              "id": "user",
+              "label": "前置"
+            },
+            {
+              "id": "environment",
+              "label": "后置"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "结束",
+      "description": "结束访问用户媒体。",
+      "display_text": "结束",
+      "params": []
+    },
+    {
+      "id": "snapshot",
+      "name": "截屏",
+      "description": "保存摄像头当前拍摄的画面快照。完成后触发 '截屏完成' 条件。",
+      "display_text": "截屏 (格式: {0}, 质量: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "格式",
+          "description": "选择快照保存的文件格式。PNG为无损图像，但JPEG文件小。",
+          "options": [
+            {
+              "id": "png",
+              "label": "PNG"
+            },
+            {
+              "id": "jpeg",
+              "label": "JPEG"
+            }
+          ]
+        },
+        {
+          "id": "jpeg-quality",
+          "name": "JPEG品质",
+          "description": "仅适用于 'JPEG' 格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        }
+      ]
+    },
+    {
+      "id": "request-microphone",
+      "name": "请求使用麦克风",
+      "description": "提示用户访问麦克风的音频输入（如果有）。 必须将Audio对象添加到项目中。",
+      "display_text": "请求麦克风源 [i]{1}[/i] 并路由到音频标签{0}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于在音频对象中，关联麦克风输入的标签。"
+        },
+        {
+          "id": "source",
+          "name": "设备源",
+          "description": "要使用的音频源的从零开始的索引。"
+        }
+      ]
+    },
+    {
+      "id": "get-media-sources",
+      "name": "获取设备源列表",
+      "description": "请求当前可用的媒体设备列表。完成后触发 '获取设备列表成功' 条件。",
+      "display_text": "获取设备源列表",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "videowidth",
+      "name": "视频宽度",
+      "description": "获取相机设备返回图像宽度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videoheight",
+      "name": "视频高度",
+      "description": "获取相机设备返回图像高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "snapshoturl",
+      "name": "截屏快照",
+      "description": "在 '截屏完成' 条件中，返回的图像文件地址。可用于精灵或平铺图的加载远程图像动作。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "audiosourcecount",
+      "name": "获取音频源数量",
+      "description": "获取音频源的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "audiosourcelabelat",
+      "name": "获取音频源标签",
+      "description": "获取音频源的标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "音频源的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "camerasourcecount",
+      "name": "获取相机源数量",
+      "description": "获取可用的摄像机源的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camerasourcelabelat",
+      "name": "获取相机源标签",
+      "description": "获取摄像头的标签。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "相机源的索引，从 0 开始的计数。"
+        }
+      ]
+    },
+    {
+      "id": "camerasourcefacingat",
+      "name": "获取相机源朝向",
+      "description": "获取摄像机源的朝向，例如前置/后置摄像头。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "多个摄像头设备的索引，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 8
+  }
+}

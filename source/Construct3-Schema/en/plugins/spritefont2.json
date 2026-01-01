@@ -1,0 +1,531 @@
+{
+  "id": "spritefont2",
+  "name": "Sprite font",
+  "description": "Displays some text on the screen using a sprite sheet.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-text",
+      "name": "Compare text",
+      "description": "Compare the text in this object.",
+      "display_text": "Text is [b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "Text to compare",
+          "description": "Enter the text to compare with the object's content."
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "Case sensitivity",
+          "description": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "Ignore case"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "Case sensitive"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-running-typewriter-text",
+      "name": "Is running typewriter text",
+      "description": "True if currently writing out typewriter text.",
+      "display_text": "Is running typewriter text",
+      "params": []
+    },
+    {
+      "id": "on-typewriter-text-finished",
+      "name": "On typewriter text finished",
+      "description": "Triggered when typewriter text finishes writing out all the text.",
+      "display_text": "On typewriter text finished",
+      "params": []
+    },
+    {
+      "id": "has-tag-at-position",
+      "name": "Has tag at position",
+      "description": "Check if a BBcode tag style is set at a given position.",
+      "display_text": "Has tag [b]{0}[/b] at ([i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to check for."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to check."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to check."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-text",
+      "name": "Set text",
+      "description": "Set the text of this object.",
+      "display_text": "Set text to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Enter the text to set the object's content to."
+        }
+      ]
+    },
+    {
+      "id": "append-text",
+      "name": "Append text",
+      "description": "Add text to the end of the existing text.",
+      "display_text": "Append [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Enter the text to append to the object's content."
+        }
+      ]
+    },
+    {
+      "id": "set-scale",
+      "name": "Set scale",
+      "description": "Set the scale of the spritefont image.",
+      "display_text": "Set scale [i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale",
+          "name": "Scale",
+          "description": "Enter the scale of the spritefont image."
+        }
+      ]
+    },
+    {
+      "id": "set-character-spacing",
+      "name": "Set character spacing",
+      "description": "Set the spacing between each character.",
+      "display_text": "Set spacing [i]{0}[/i]",
+      "params": [
+        {
+          "id": "character-spacing",
+          "name": "Character spacing",
+          "description": "Enter the number of pixels for the spacing between characters."
+        }
+      ]
+    },
+    {
+      "id": "set-line-height",
+      "name": "Set line height",
+      "description": "Set the spacing between each line.",
+      "display_text": "Set line height to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "line-height",
+          "name": "Line height",
+          "description": "Enter the number of pixels for the spacing between lines."
+        }
+      ]
+    },
+    {
+      "id": "set-character-width",
+      "name": "Set character width",
+      "description": "Change the width of some characters.",
+      "display_text": "Set character width to [i]{1}[/i] for [i]{0}[/i]",
+      "params": [
+        {
+          "id": "character",
+          "name": "Character",
+          "description": "Enter one or more characters to change the width for (e.g. \"abcd\")."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "Enter the number of pixels width you want the character(s) to occupy. This should be less than the cell width."
+        }
+      ]
+    },
+    {
+      "id": "set-horizontal-alignment",
+      "name": "Set horizontal alignment",
+      "description": "Set the horizontal alignment of the text.",
+      "display_text": "Set horizontal alignment to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "horizontal-alignment",
+          "name": "Horizontal alignment",
+          "description": "Choose the new horizontal alignment for the text.",
+          "options": [
+            {
+              "id": "left",
+              "label": "left"
+            },
+            {
+              "id": "center",
+              "label": "center"
+            },
+            {
+              "id": "right",
+              "label": "right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-vertical-alignment",
+      "name": "Set vertical alignment",
+      "description": "Set the vertical alignment of the text.",
+      "display_text": "Set vertical alignment to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "vertical-alignment",
+          "name": "Vertical alignment",
+          "description": "Choose the new vertical alignment for the text.",
+          "options": [
+            {
+              "id": "top",
+              "label": "top"
+            },
+            {
+              "id": "center",
+              "label": "center"
+            },
+            {
+              "id": "bottom",
+              "label": "bottom"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "typewriter-text",
+      "name": "Typewriter text",
+      "description": "Set the text over time by starting with an empty string and gradually adding characters.",
+      "display_text": "Typewriter text [i]{0}[/i] over [i]{1}[/i] seconds",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "Enter the text to set the object's content to over time."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "The time in seconds to write out the text."
+        }
+      ]
+    },
+    {
+      "id": "typewriter-finish",
+      "name": "Finish typewriter",
+      "description": "Force a typewriter text effect to finish immediately.",
+      "display_text": "Finish typewriter",
+      "params": []
+    },
+    {
+      "id": "set-wrapping",
+      "name": "Set wrapping",
+      "description": "Set whether to wrap text by space-separated words or by character.",
+      "display_text": "Set text wrapping to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "wrapping",
+          "name": "Wrapping",
+          "description": "Wrap text by space-separated words or by character.",
+          "options": [
+            {
+              "id": "word",
+              "label": "Word"
+            },
+            {
+              "id": "character",
+              "label": "Character"
+            },
+            {
+              "id": "cjk",
+              "label": "CJK"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-read-aloud",
+      "name": "Set read aloud",
+      "description": "Set whether the text is read aloud while using a screen reader.",
+      "display_text": "Set read aloud [i]{0}[/i]",
+      "params": [
+        {
+          "id": "enable",
+          "name": "Enable",
+          "description": "Whether to enable reading aloud."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "characterwidth",
+      "name": "CharacterWidth",
+      "description": "Get the width of a character.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "character",
+          "name": "Character",
+          "description": "Character to get width for (empty for default)"
+        }
+      ]
+    },
+    {
+      "id": "characterheight",
+      "name": "CharacterHeight",
+      "description": "Get the height of a character.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characterscale",
+      "name": "CharacterScale",
+      "description": "Get the scale of the characters.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characterspacing",
+      "name": "CharacterSpacing",
+      "description": "Get the spacing between characters.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lineheight",
+      "name": "LineHeight",
+      "description": "Get the line height.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "description": "Get the object's text.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textwidth",
+      "name": "TextWidth",
+      "description": "Get the width extent of the text in the object in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textheight",
+      "name": "TextHeight",
+      "description": "Get the height extent of the text in the object in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "plaintext",
+      "name": "PlainText",
+      "description": "Get the object's text with any BBcode tags stripped out.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag-at-position",
+      "name": "TagAtPosition",
+      "description": "Get the BBcode tag style at a given position, or an empty string if none.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to check."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to check."
+        }
+      ]
+    },
+    {
+      "id": "tag-count",
+      "name": "TagCount",
+      "description": "Get the number of BBcode style tags for a specific tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to use."
+        }
+      ]
+    },
+    {
+      "id": "tag-x",
+      "name": "TagX",
+      "description": "Get X co-ordinate of a BBcode style tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to use."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The tag index, in case there are multiple."
+        }
+      ]
+    },
+    {
+      "id": "tag-y",
+      "name": "TagY",
+      "description": "Get Y co-ordinate of a BBcode style tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to use."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The tag index, in case there are multiple."
+        }
+      ]
+    },
+    {
+      "id": "tag-width",
+      "name": "TagWidth",
+      "description": "Get width of a BBcode style tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to use."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The tag index, in case there are multiple."
+        }
+      ]
+    },
+    {
+      "id": "tag-height",
+      "name": "TagHeight",
+      "description": "Get height of a BBcode style tag.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to use."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The tag index, in case there are multiple."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 13,
+    "expressions": 15
+  }
+}

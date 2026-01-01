@@ -1,0 +1,279 @@
+{
+  "id": "list",
+  "name": "List",
+  "description": "A list box or dropdown list for choosing an option from.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-selection",
+      "name": "Compare selection",
+      "description": "Compare the index of the currently selected item.",
+      "display_text": "Selected item {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Select how to compare the current selection."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The index of the selected item to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-selection-changed",
+      "name": "On selection changed",
+      "description": "Triggered when the selected item changes.",
+      "display_text": "On selection changed",
+      "params": []
+    },
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when the list is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "on-double-clicked",
+      "name": "On double-clicked",
+      "description": "Triggered when the list is double-clicked.",
+      "display_text": "On double-clicked",
+      "params": []
+    },
+    {
+      "id": "compare-selected-item-text",
+      "name": "Compare selected item text",
+      "description": "Compare the text of the currently selected item.",
+      "display_text": "Selected item text is [b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "Text to compare",
+          "description": "Enter the text to compare with the selected item's text."
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "Case sensitivity",
+          "description": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "Ignore case"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "Case sensitive"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-item-text-at",
+      "name": "Compare item text at",
+      "description": "Compare the text of an item in the list.",
+      "display_text": "Item [b]{0}[/b] text is [b]{1}[/b] [i]({2})[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the item text to compare with."
+        },
+        {
+          "id": "text-to-compare",
+          "name": "Text to compare",
+          "description": "Enter the text to compare with the item's text."
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "Case sensitivity",
+          "description": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "Ignore case"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "Case sensitive"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-selection",
+      "name": "Set selection",
+      "description": "Select an item in the list.",
+      "display_text": "Select item [i]{0}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the item to select."
+        }
+      ]
+    },
+    {
+      "id": "add-item",
+      "name": "Add item",
+      "description": "Append a new item to the list.",
+      "display_text": "Add item [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The item text to add."
+        }
+      ]
+    },
+    {
+      "id": "add-item-at",
+      "name": "Add item at",
+      "description": "Append a new item to a specific place in the list.",
+      "display_text": "Add item [i]{1}[/i] at index [i]{0}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the item to insert before."
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The item text to add."
+        }
+      ]
+    },
+    {
+      "id": "remove",
+      "name": "Remove",
+      "description": "Remove an item from the list.",
+      "display_text": "Remove item [i]{0}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the item to remove."
+        }
+      ]
+    },
+    {
+      "id": "set-item-text",
+      "name": "Set item text",
+      "description": "Set the text of an item in the list.",
+      "display_text": "Set item [i]{0}[/i] text to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index of the item to change."
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The item text to set."
+        }
+      ]
+    },
+    {
+      "id": "clear",
+      "name": "Clear",
+      "description": "Remove all items from the list.",
+      "display_text": "Clear all items",
+      "params": []
+    },
+    {
+      "id": "set-tooltip",
+      "name": "Set tooltip",
+      "description": "Set the list's tooltip.",
+      "display_text": "Set tooltip to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "description": "The tooltip to set on the list."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "itemcount",
+      "name": "ItemCount",
+      "description": "The number of items in the list.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedindex",
+      "name": "SelectedIndex",
+      "description": "The zero-based index of the currently selected item.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedtext",
+      "name": "SelectedText",
+      "description": "The text of the currently selected item.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedcount",
+      "name": "SelectedCount",
+      "description": "In a multi-select list box, the number of currently selected items.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedindexat",
+      "name": "SelectedIndexAt",
+      "description": "In a multi-select list box, the index of the Nth selected item.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Selected item number to get index from."
+        }
+      ]
+    },
+    {
+      "id": "selectedtextat",
+      "name": "SelectedTextAt",
+      "description": "In a multi-select list box, the text of the Nth selected item.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Selected item number to get text from."
+        }
+      ]
+    },
+    {
+      "id": "itemtextat",
+      "name": "ItemTextAt",
+      "description": "The text of the Nth item in the list.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Item number to get text from."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 7,
+    "expressions": 7
+  }
+}

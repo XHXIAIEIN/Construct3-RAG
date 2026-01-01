@@ -1,0 +1,4354 @@
+{
+  "id": "system",
+  "name": "系统",
+  "description": "提供对 Construc 引擎的生命周期的访问。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "name": "在相差角度内",
+      "description": "检测某个角度是否位于另一个角度的相差范围内，例如某个角度可能与90度相差0.5度。",
+      "display_text": "{0} 位于 {1} 相差 {2} 范围内",
+      "params": [
+        {
+          "id": "angle-1",
+          "name": "角度1",
+          "description": "要用于比较的角度。"
+        },
+        {
+          "id": "within",
+          "name": "相差",
+          "description": "检查角度1是否位于角度2的相差范围内。"
+        },
+        {
+          "id": "angle-2",
+          "name": "角度2",
+          "description": "检查角度1是否接近这个角度。"
+        }
+      ]
+    },
+    {
+      "id": "is-clockwise-from",
+      "name": "在顺时针方向",
+      "description": "比较角度是否是从另一个角度顺时针方向。",
+      "display_text": "{0} 在 {1} 顺时针方向",
+      "params": [
+        {
+          "id": "angle-1",
+          "name": "角度1",
+          "description": "需要测试的角度，以度为单位。"
+        },
+        {
+          "id": "angle-2",
+          "name": "角度2",
+          "description": "用于测试是否在角度1的顺时针方向的角度。"
+        }
+      ]
+    },
+    {
+      "id": "is-between-angles",
+      "name": "在角度范围内",
+      "description": "比较角度是否位于两角度之间。",
+      "display_text": "{0} 角度在 {1}° 与 {2}° 之间",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "检测角度是否在其他两个顺时针角度之间。"
+        },
+        {
+          "id": "first-angle",
+          "name": "角度1",
+          "description": "第一个角度，按顺时针方向顺序。"
+        },
+        {
+          "id": "second-angle",
+          "name": "角度2",
+          "description": "第二个角度，按顺时针方向顺序。"
+        }
+      ]
+    },
+    {
+      "id": "every-tick",
+      "name": "每一帧",
+      "description": "在事件表运行的每帧执行一次，相当于 '总是执行'。与空白事件块的作用相同。",
+      "display_text": "每一帧",
+      "params": []
+    },
+    {
+      "id": "compare-two-values",
+      "name": "比较两值",
+      "description": "比较两个任意值。此条件不会选择任何对象。",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "first-value",
+          "name": "a",
+          "description": "输入要比较的第一个值。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "second-value",
+          "name": "b",
+          "description": "输入要比较的第二个值。"
+        }
+      ]
+    },
+    {
+      "id": "is-group-active",
+      "name": "事件组已激活",
+      "description": "检查事件组当前是否处于活动状态。",
+      "display_text": "事件组 [b]{0}[/b] 已激活",
+      "params": [
+        {
+          "id": "group-name",
+          "name": "名称",
+          "description": "要检查的事件组的名称。"
+        }
+      ]
+    },
+    {
+      "id": "is-between-values",
+      "name": "在两值之间",
+      "description": "比较一个数字是否介于两个值之间。",
+      "display_text": "{1} ≤ {0} ≤ {2}",
+      "params": [
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "输入要比较的值。"
+        },
+        {
+          "id": "lower-bound",
+          "name": "下限",
+          "description": "要比较的下限值。"
+        },
+        {
+          "id": "upper-bound",
+          "name": "上限",
+          "description": "要比较的上限值。"
+        }
+      ]
+    },
+    {
+      "id": "object-uid-exists",
+      "name": "检测UID对象存在",
+      "description": "检查指定的UID对象当前是否存在。",
+      "display_text": "存在UID为[b]{0}[/b]的对象",
+      "params": [
+        {
+          "id": "uid",
+          "name": "UID",
+          "description": "输入对象的UID以检查是否存在。"
+        }
+      ]
+    },
+    {
+      "id": "test-regex",
+      "name": "比较字符串 (正则表达式)",
+      "description": "测试字符串是否与正则表达式匹配。",
+      "display_text": "[i]{0}[/i] 匹配正则表达式 [i]{1}[/i] ([i]{2}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要匹配的字符串。"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "输入正则表达式以测试字符串。"
+        },
+        {
+          "id": "flags",
+          "name": "标志",
+          "description": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行"
+        }
+      ]
+    },
+    {
+      "id": "is-number-nan",
+      "name": "检测非数字(NaN)",
+      "description": "检查数字是否为特殊的 NaN (非数字)值。",
+      "display_text": "{0} 非数字类型",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "一个数字，用于检查是否匹配特殊的NaN（非数字）值。"
+        }
+      ]
+    },
+    {
+      "id": "is-value-type",
+      "name": "检测数值类型",
+      "description": "分辨一个值是数字还是字符串。",
+      "display_text": "{0} 是 {1}",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要检查类型的值。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "检查值的类型。",
+          "options": [
+            {
+              "id": "number",
+              "label": "数字"
+            },
+            {
+              "id": "string",
+              "label": "字符串"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-eventvar",
+      "name": "比较变量",
+      "description": "比较全局变量或局部变量的值。",
+      "display_text": "[b]{0}[/b] {1} {2}",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要比较的变量。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要与变量进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-boolean-eventvar",
+      "name": "判断布尔值",
+      "description": "检测布尔值是否为真。",
+      "display_text": "如果[b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要检测的布尔值。"
+        }
+      ]
+    },
+    {
+      "id": "layer-is-visible",
+      "name": "检查图层可见",
+      "description": "测试图层当前在场景是否可见。",
+      "display_text": "图层[b]{0}[/b]可见",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要检查可见性的图层的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "compare-layer-opacity",
+      "name": "比较图层不透明度",
+      "description": "比较图层的不透明度。",
+      "display_text": "图层[b]{0}[/b]不透明度 {1} {2}",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要比较不透明度的图层的名称或数量。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "opacity",
+          "name": "不透明度",
+          "description": "要比较的不透明度，从0（透明）到100（不透明）。"
+        }
+      ]
+    },
+    {
+      "id": "on-canvas-snapshot",
+      "name": "截屏完成",
+      "description": "执行 '截屏' 动作后，成功截屏时触发。",
+      "display_text": "截屏完成",
+      "params": []
+    },
+    {
+      "id": "effects-are-supported",
+      "name": "设备支持滤镜",
+      "description": "检测当前设备是否支持着色器效果并且可以在游戏中显示。",
+      "display_text": "设备支持滤镜",
+      "params": []
+    },
+    {
+      "id": "layer-is-empty",
+      "name": "图层为空",
+      "description": "测试图层是否不存在任何实例对象。",
+      "display_text": "图层[b]{0}[/b]是空的",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要检查的图层的名称或层数是否为空。"
+        }
+      ]
+    },
+    {
+      "id": "for",
+      "name": "循环",
+      "description": "根据数值区间的范围，重复执行多次动作。使用 loopindex 表达式获取当前索引（基于 0 开始计数）。",
+      "display_text": "循环 [b]{0}[/b] 从 [i]{1}[/i] 到 [i]{2}[/i]",
+      "params": [
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "用于区分不同循环的名称，并通过 loopindex(\"\") 表达式获取循环的索引。留空则表示当前事件块范围的循环索引。"
+        },
+        {
+          "id": "start-index",
+          "name": "初始值",
+          "description": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。"
+        },
+        {
+          "id": "end-index",
+          "name": "结束值",
+          "description": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。"
+        }
+      ]
+    },
+    {
+      "id": "for-each",
+      "name": "遍历对象",
+      "description": "对每个实例对象重复执行一次动作。",
+      "display_text": "遍历 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择循环的对象。 对于对象的每个实例，操作将重复一次。"
+        }
+      ]
+    },
+    {
+      "id": "repeat",
+      "name": "重复 X 次",
+      "description": "将动作重复执行多次。使用 loopindex 表达式获取每次循环的索引（基于0开始计数）。",
+      "display_text": "重复[b]{0}[/b]次",
+      "params": [
+        {
+          "id": "count",
+          "name": "次数",
+          "description": "要重复执行的次数。"
+        }
+      ]
+    },
+    {
+      "id": "while",
+      "name": "重复",
+      "description": "只要事件块的条件满足，就无限重复执行动作。",
+      "display_text": "重复",
+      "params": []
+    },
+    {
+      "id": "for-each-ordered",
+      "name": "遍历对象 (排序)",
+      "description": "根据表达式的结果排序，将指定对象的每个实例都重复一次动作。",
+      "display_text": "遍历 {0} 根据 [i]{1}[/i] {2}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要遍历的对象，对此对象的每个实例都执行一次动作。"
+        },
+        {
+          "id": "expression",
+          "name": "表达式",
+          "description": "输入一个表达式来对循环进行排序，例如：Sprite.X"
+        },
+        {
+          "id": "order",
+          "name": "排序",
+          "description": "使用升序或者降序。",
+          "options": [
+            {
+              "id": "ascending",
+              "label": "升序"
+            },
+            {
+              "id": "descending",
+              "label": "降序"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pick-nth-instance",
+      "name": "按顺序选择",
+      "description": "从当前已选取的实例中，选择第n个实例。",
+      "display_text": "选择第 {1} 个 {0} 实例对象",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要选择的对象。"
+        },
+        {
+          "id": "instance",
+          "name": "实例",
+          "description": "要选择的实例的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "pick-random-instance",
+      "name": "随机选择一个",
+      "description": "从当前已选择的对象实例中随机选择一个实例。",
+      "display_text": "随机选择一个 {0} 实例",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要从中选择随机实例的对象。"
+        }
+      ]
+    },
+    {
+      "id": "pick-all",
+      "name": "再次选择全部",
+      "description": "重置当前已选取的实例，再次选择所有实例。",
+      "display_text": "再次选择全部 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要重置的对象以选择所有实例。"
+        }
+      ]
+    },
+    {
+      "id": "pick-by-comparison",
+      "name": "按条件选择",
+      "description": "选择满足比较的对象的实例。",
+      "display_text": "选择 {1} {2} {3} 的 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "通过比较选择要选择的对象。"
+        },
+        {
+          "id": "expression",
+          "name": "表达式",
+          "description": "输入引用所选对象的表达式。 将挑选符合比较的实例。"
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "通过表达式筛选出满足条件的实例对象。可以引用要选择的对象。"
+        }
+      ]
+    },
+    {
+      "id": "pick-by-evaluate",
+      "name": "按表达式选择",
+      "description": "通过计算表达式来选择对象的实例。",
+      "display_text": "选择 {0} 根据 {1}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "通过评估选择要选择的对象"
+        },
+        {
+          "id": "expression",
+          "name": "表达式",
+          "description": "通过表达式的结果选择实例对象，如果结果非零，将选择实例。"
+        }
+      ]
+    },
+    {
+      "id": "pick-overlapping-point",
+      "name": "选择在位置重叠的",
+      "description": "选取在场景中的重叠在一起的一类对象实例。",
+      "display_text": "选择在位置([i]{1}[/i], [i]{2}[/i])重叠的 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "如果重叠点，请选择要拾取的对象。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X坐标测试是否重叠。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y坐标测试是否重叠。"
+        }
+      ]
+    },
+    {
+      "id": "pick-last-created",
+      "name": "选择最后创建的",
+      "description": "选择对象类型最后一个创建的实例对象，用于 '创建对象 (按名称)' 一起使用。",
+      "display_text": "选择最后创建的{0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择最后创建的对象实例。"
+        }
+      ]
+    },
+    {
+      "id": "on-save-complete",
+      "name": "保存完成",
+      "description": "执行 '保存游戏' 动作后，返回的 '游戏保存数据' 表达式可用时触发。",
+      "display_text": "保存完成",
+      "params": []
+    },
+    {
+      "id": "on-save-failed",
+      "name": "保存失败",
+      "description": "执行 '保存游戏' 动作后，游戏保存失败时触发。",
+      "display_text": "保存失败",
+      "params": []
+    },
+    {
+      "id": "on-load-complete",
+      "name": "加载完成",
+      "description": "执行 '加载游戏' 动作后，游戏加载完成时触发。",
+      "display_text": "加载完成",
+      "params": []
+    },
+    {
+      "id": "on-load-failed",
+      "name": "加载失败",
+      "description": "执行 '加载游戏' 动作后，当插槽无法加载时触发，包括尚未保存的。",
+      "display_text": "加载失败",
+      "params": []
+    },
+    {
+      "id": "trigger-once-while-true",
+      "name": "仅触发一次",
+      "description": "当持续条件第一次触发时，添加此特殊条件仅触发一次。需注意，此条件需要放在其他条件的最后一个。",
+      "display_text": "仅触发一次",
+      "params": []
+    },
+    {
+      "id": "is-in-preview",
+      "name": "在预览模式中",
+      "description": "如果在预览模式中，则触发此条件。导出项目后此条件将失效。",
+      "display_text": "在预览模式中",
+      "params": []
+    },
+    {
+      "id": "is-on-mobile-device",
+      "name": "在移动设备运行",
+      "description": "如果在移动设备上观看，则为True。 这是一个估计，可能不完全准确。",
+      "display_text": "在移动设备运行",
+      "params": []
+    },
+    {
+      "id": "else",
+      "name": "否则",
+      "description": "当上一个事件的触发条件不满足时，运行此条件的动作。需注意，此条件需要放在其他条件的第一个。且不会选择任何实例对象。",
+      "display_text": "否则",
+      "params": []
+    },
+    {
+      "id": "is-on-platform",
+      "name": "在运行平台",
+      "description": "检查当前是否在特定平台上运行，例如Android系统。",
+      "display_text": "运行在[b]{0}[/b]平台",
+      "params": [
+        {
+          "id": "platform",
+          "name": "运行平台",
+          "description": "要检查的运行平台。 请注意，多个选项可以同时触发（例如HTML5 + Android）。",
+          "options": [
+            {
+              "id": "html5-website",
+              "label": "HTML5 网站"
+            },
+            {
+              "id": "ios",
+              "label": "IOS"
+            },
+            {
+              "id": "android",
+              "label": "Android"
+            },
+            {
+              "id": "windows-8-app",
+              "label": "Windows 8 app"
+            },
+            {
+              "id": "windows-phone-8-app",
+              "label": "Windows Phone 8 app"
+            },
+            {
+              "id": "blackberry-10-app",
+              "label": "Blackberry 10 app"
+            },
+            {
+              "id": "tizen",
+              "label": "Tizen"
+            },
+            {
+              "id": "cocoonjs",
+              "label": "CocoonJS"
+            },
+            {
+              "id": "cordova",
+              "label": "Cordova"
+            },
+            {
+              "id": "nwjs",
+              "label": "NW.js"
+            },
+            {
+              "id": "crosswalk",
+              "label": "Crosswalk"
+            },
+            {
+              "id": "amazon-web-app",
+              "label": "Amazon web app"
+            },
+            {
+              "id": "windows-10-app",
+              "label": "Windows 10 app"
+            },
+            {
+              "id": "scirra-arcade",
+              "label": "Construct Arcade"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-start-of-layout",
+      "name": "场景开始",
+      "description": "当前场景开始时触发。",
+      "display_text": "场景开始",
+      "params": []
+    },
+    {
+      "id": "on-end-of-layout",
+      "name": "场景结束",
+      "description": "在当前场景结束时触发。",
+      "display_text": "场景结束",
+      "params": []
+    },
+    {
+      "id": "on-loader-layout-complete",
+      "name": "加载页加载完成",
+      "description": "在加载器场景加载完成后触发。",
+      "display_text": "加载页加载完成",
+      "params": []
+    },
+    {
+      "id": "every-x-seconds",
+      "name": "每隔 X 秒",
+      "description": "以固定的时间间隔运行操作。",
+      "display_text": "每 [b]{0}[/b] 秒",
+      "params": [
+        {
+          "id": "interval-seconds",
+          "name": "间隔（秒）",
+          "description": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。"
+        }
+      ]
+    },
+    {
+      "id": "compare-time",
+      "name": "比较时间",
+      "description": "比较当前时间（启动后的秒数）",
+      "display_text": "时间 {0} [b]{1}[/b] 秒",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "time-seconds",
+          "name": "秒",
+          "description": "比较自游戏运行以来累计的秒数。"
+        }
+      ]
+    },
+    {
+      "id": "on-suspend",
+      "name": "窗口暂停",
+      "description": "当窗口进入后台时触发，如切换浏览器标签页、或切换到其他应用程序。",
+      "display_text": "窗口暂停",
+      "params": []
+    },
+    {
+      "id": "on-resume",
+      "name": "窗口恢复",
+      "description": "当游戏窗口已失去焦点正处于暂停状态，并恢复到前台运行前触发。",
+      "display_text": "窗口恢复",
+      "params": []
+    },
+    {
+      "id": "is-suspended",
+      "name": "正在暂停",
+      "description": "检测应用程序当前是否正处于暂停状态。",
+      "display_text": "正在暂停",
+      "params": []
+    },
+    {
+      "id": "on-image-loading-complete",
+      "name": "图像加载完成",
+      "description": "使用内存管理操作后，当图像加载完成时触发。",
+      "display_text": "图像加载完成",
+      "params": []
+    },
+    {
+      "id": "is-loading-images",
+      "name": "图像正在加载",
+      "description": "使用内存管理操作后，用于检测当前是否正在加载图像的过程中。",
+      "display_text": "图像正在加载",
+      "params": []
+    },
+    {
+      "id": "evaluate-expression",
+      "name": "比较表达式",
+      "description": "检测表达式是否有效，即为非零、非空的字符串。对布尔值的判断非常有帮助！",
+      "display_text": "{0}",
+      "params": [
+        {
+          "id": "value",
+          "name": "表达式",
+          "description": "要检测的表达式。仅在该表达式返回的结果为非零或非空的字符串时有效。"
+        }
+      ]
+    },
+    {
+      "id": "layer-is-interactive",
+      "name": "图层可交互",
+      "description": "检查指定的图层是否可以响应鼠标和触控的输入。",
+      "display_text": "图层 [b]{0}[/b] 可交互",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "检查指定的图层是否允许响应用户的交互。"
+        }
+      ]
+    },
+    {
+      "id": "template-exists",
+      "name": "检测对象模版存在",
+      "description": "检测指定的对象模版名称是否存在。",
+      "display_text": "{0} 存在模版对象 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "object-to-test",
+          "name": "要检测的对象",
+          "description": "检测此对象是否存在模版名称"
+        },
+        {
+          "id": "template-name",
+          "name": "模版名称",
+          "description": "要检查是否已存在的模板对象的名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-signal",
+      "name": "收到信号",
+      "description": "在执行 '发送信号' 动作后，接收对应的标签的信号。",
+      "display_text": "收到信号[i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，用于接收 '发送信号' 动作中对应的标签。"
+        }
+      ]
+    },
+    {
+      "id": "layer-is-html",
+      "name": "图层为HTML层",
+      "description": "检测图层是否为 HTML 图层。",
+      "display_text": "图层 [b]{0}[/b] 是 HTML 图层",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "填写图层名称或编号，用于检查此图层是否为 HTML 层。"
+        }
+      ]
+    },
+    {
+      "id": "layer-name-exists",
+      "name": "存在图层名称",
+      "description": "检测指定名称的图层是否已经存在。",
+      "display_text": "图层 [b]{0}[/b] 已存在",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要检查是否存在的图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "pick-by-highest-lowest-value",
+      "name": "按最高/最低值选择",
+      "description": "根据表达式计算结果，选中数值最高或最低的实例对象。",
+      "display_text": "选择 {2} {1}的 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要选取的对象。"
+        },
+        {
+          "id": "which",
+          "name": "选择",
+          "description": "选择表达式所对应具有最高或最低值的实例。",
+          "options": [
+            {
+              "id": "lowest",
+              "label": "最低"
+            },
+            {
+              "id": "highest",
+              "label": "最高"
+            }
+          ]
+        },
+        {
+          "id": "expression",
+          "name": "表达式",
+          "description": "引用所选对象的表达式。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "snapshot-canvas",
+      "name": "截屏",
+      "description": "在 '截图完成' 条件中，返回的图像地址结果。",
+      "display_text": "保存画布快照 (格式: {0}, 品质: [i]{1}[/i], 偏移: [i]{2}[/i], [i]{3}[/i], 大小:[i]{4}[/i] x [i]{5}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "格式",
+          "description": "选择用于保存截图的文件格式。PNG是无损的，JPEG文件更小。",
+          "options": [
+            {
+              "id": "png",
+              "label": "PNG"
+            },
+            {
+              "id": "jpeg",
+              "label": "JPEG"
+            }
+          ]
+        },
+        {
+          "id": "jpeg-quality",
+          "name": "JPEG品质",
+          "description": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "截取快照区域的X偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "截取快照区域的Y偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "截屏区域的宽度，以画布设备像素为单位，使用 0 则使用完整宽度。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。"
+        }
+      ]
+    },
+    {
+      "id": "set-canvas-size",
+      "name": "设置画布大小",
+      "description": "设置画布大小，同时也会改变项目属性的窗口大小。",
+      "display_text": "设置画布大小为[b]{0}[/b] x [b]{1}[/b]",
+      "params": [
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "设置画布宽度，以像素为单位。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "设置画布高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-fullscreen-scaling",
+      "name": "设置全屏质量",
+      "description": "设置全屏缩放的质量。",
+      "display_text": "设置全屏质量为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "fullscreen-scaling",
+          "name": "全屏质量",
+          "description": "高质量的缩放在高分辨率可以获得更好的视觉表现，低像素的缩放有助于改善低端设备的性能，也适用于临近采样的像素风格游戏。",
+          "options": [
+            {
+              "id": "low-quality",
+              "label": "低像素"
+            },
+            {
+              "id": "high-quality",
+              "label": "高质量"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-pixel-rounding",
+      "name": "设置像素对齐",
+      "description": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 \"临近采样\" 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+      "display_text": "[b]{0}[/b]像素对齐",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 '临近采样' 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-to-layout",
+      "name": "跳转到场景",
+      "description": "跳转到项目中的另一个场景。",
+      "display_text": "跳转到[b]{0}[/b]",
+      "params": [
+        {
+          "id": "layout",
+          "name": "场景",
+          "description": "选择跳转的场景"
+        }
+      ]
+    },
+    {
+      "id": "create-object",
+      "name": "创建对象",
+      "description": "在当前场景创建对象的实例。如果选择 '家族' 将从中随机创建一个成员。",
+      "display_text": "创建对象 {0}, 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "object-to-create",
+          "name": "对象",
+          "description": "选择要创建的新实例的对象类型。"
+        },
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要在其上创建实例的图层的名称或编号。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X坐标，用于放置创建的实例。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y坐标，用于放置创建的实例。"
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "创建子对象",
+          "description": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        {
+          "id": "template-name",
+          "name": "模版名称",
+          "description": "创建对象时，指定模版对象的名称，继承其所有属性。"
+        }
+      ]
+    },
+    {
+      "id": "create-object-by-name",
+      "name": "创建对象(按名称)",
+      "description": "使用字符串创建对应名称的对象实例，然后在下方添加 '选择最后创建的' 条件选择此对象。对于包含不同的对象类型，建议使用 '家族' 进行选择。",
+      "display_text": "创建对象 [b]{0}[/b], 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "object-name",
+          "name": "对象名称",
+          "description": "要创建的新实例的对象类型的名称。"
+        },
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要在其上创建实例的图层的名称或编号。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X坐标，用于放置创建的实例。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y坐标，用于放置创建的实例。"
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "创建子对象",
+          "description": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        {
+          "id": "template-name",
+          "name": "模版名称",
+          "description": "创建对象时，指定模版对象的名称，继承其所有属性。"
+        }
+      ]
+    },
+    {
+      "id": "set-group-active",
+      "name": "启用事件组",
+      "description": "启用或禁用事件组。",
+      "display_text": "{1}事件组 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "group-name",
+          "name": "名称",
+          "description": "要设置的事件组的名称。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "激活或冻结分组，还可以切换激活状态。",
+          "options": [
+            {
+              "id": "deactivated",
+              "label": "禁用"
+            },
+            {
+              "id": "activated",
+              "label": "启用"
+            },
+            {
+              "id": "toggle-active",
+              "label": "反转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-loop",
+      "name": "停止循环",
+      "description": "停止当前正在运行的循环，仅对 '系统' 对象中的循环、重复条件有效。",
+      "display_text": "停止循环",
+      "params": []
+    },
+    {
+      "id": "go-to-layout-by-name",
+      "name": "跳转到场景(根据名称)",
+      "description": "跳转到项目中的另一个场景，使用字符串作为场景名称。",
+      "display_text": "跳转到场景[b]{0}[/b]",
+      "params": [
+        {
+          "id": "layout",
+          "name": "场景",
+          "description": "要跳转的场景的名称。"
+        }
+      ]
+    },
+    {
+      "id": "restart-layout",
+      "name": "重载场景",
+      "description": "重新进入当前场景，并将任何事件分组还原到初始激活状态。",
+      "display_text": "重载场景",
+      "params": []
+    },
+    {
+      "id": "go-to-nextprevious-layout",
+      "name": "跳转下一个/上一个场景",
+      "description": "跳转下一个或上一个场景。",
+      "display_text": "跳转到{0}场景",
+      "params": [
+        {
+          "id": "which",
+          "name": "跳转到",
+          "description": "是否转到下一个或上一个场景。",
+          "options": [
+            {
+              "id": "next",
+              "label": "下一个"
+            },
+            {
+              "id": "previous",
+              "label": "上一个"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-eventvar-value",
+      "name": "设置值",
+      "description": "设置全局或本地变量的数值。",
+      "display_text": "设置变量[b]{0}[/b]为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要更改的变量。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "存储在此变量中的值。"
+        }
+      ]
+    },
+    {
+      "id": "add-to-eventvar",
+      "name": "增加值",
+      "description": "增加全局变量或局部变量的数值。",
+      "display_text": "变量[b]{0}[/b]增加[i]{1}[/i]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要更改的变量。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要增加到此变量的值。"
+        }
+      ]
+    },
+    {
+      "id": "subtract-from-eventvar",
+      "name": "减少值",
+      "description": "减去全局变量或局部变量的值。",
+      "display_text": "变量[b]{0}[/b]减少[i]{1}[/i]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要更改的变量。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要从此变量中减去的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-boolean-eventvar",
+      "name": "设置布尔值",
+      "description": "设置全局或局部布尔值变量的状态。",
+      "display_text": "设置[i]{0}[/i]为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要更改的变量。"
+        },
+        {
+          "id": "value",
+          "name": "状态",
+          "description": "更改布尔值的状态。",
+          "options": [
+            {
+              "id": "false",
+              "label": "否"
+            },
+            {
+              "id": "true",
+              "label": "是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-boolean-eventvar",
+      "name": "反转布尔值",
+      "description": "反转布尔值。如果为是，则变成否。",
+      "display_text": "反转[b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要切换状态的布尔值。"
+        }
+      ]
+    },
+    {
+      "id": "reset-global-variables",
+      "name": "重置全局变量",
+      "description": "将项目中的所有全局变量重置为其初始值。",
+      "display_text": "重置全局变量 (包含静态类型: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "reset-static",
+          "name": "包含静态变量",
+          "description": "勾选后，项目中的所有静态局部变量也会重置。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-visible",
+      "name": "设置图层可见",
+      "description": "设置图层的可见性。",
+      "display_text": "设置图层[b]{0}[/b][i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层的名称或编号。"
+        },
+        {
+          "id": "visibility",
+          "name": "可见性",
+          "description": "选择是否绘制图层。",
+          "options": [
+            {
+              "id": "invisible",
+              "label": "不可见"
+            },
+            {
+              "id": "visible",
+              "label": "可见"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scale",
+      "name": "设置图层缩放倍数",
+      "description": "设置图层的缩放倍数，使其看起来更大或更小。",
+      "display_text": "设置图层[b]{0}[/b]缩放为[i]{1}[/i]倍",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层名称或编号。"
+        },
+        {
+          "id": "scale",
+          "name": "大小",
+          "description": "图层的缩放倍数。1.0 为原始尺寸，2.0为双倍尺寸。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-opacity",
+      "name": "设置图层不透明度",
+      "description": "设置单个图层的不透明度。",
+      "display_text": "设置图层 [b]{0}[/b] 不透明度为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要为其设置不透明度的图层的名称或编号。"
+        },
+        {
+          "id": "opacity",
+          "name": "不透明度",
+          "description": "图层不透明度，从0（透明）到100（不透明）。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scale-rate",
+      "name": "设置图层缩放同步比例",
+      "description": "设置图层的缩放比例，使其在场景缩放时容易变得更大，或更难被放大，或者不缩放。",
+      "display_text": "设置图层[b]{0}[/b]缩放比例为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层名称或编号。"
+        },
+        {
+          "id": "scale-rate",
+          "name": "同步比例",
+          "description": "跟随场景缩放的同步比例。1.0 为正常缩放。2.0为双倍缩放，0为不缩放。"
+        }
+      ]
+    },
+    {
+      "id": "set-layout-scale",
+      "name": "设置场景缩放倍数",
+      "description": "设置场景的缩放比例。",
+      "display_text": "设置场景缩放为[b]{0}[/b]倍",
+      "params": [
+        {
+          "id": "scale",
+          "name": "大小",
+          "description": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。"
+        }
+      ]
+    },
+    {
+      "id": "set-layout-angle",
+      "name": "设置场景角度",
+      "description": "设置整个场景的角度。",
+      "display_text": "设置场景角度为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "旋转画布到指定的角度，以度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-angle",
+      "name": "设置图层角度",
+      "description": "设置单个图层的角度。",
+      "display_text": "设置图层 [b]{0}[/b] 角度为[i]{1}[/i]°",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要为其设置角度的图层的名称或编号。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "将图层旋转到指定的角度，以度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-layout-effect-enabled",
+      "name": "启用场景滤镜",
+      "description": "启用或禁用当前场景的滤镜。",
+      "display_text": "{0}场景滤镜{1}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "启用或禁用场景的滤镜。",
+          "options": [
+            {
+              "id": "disable",
+              "label": "禁用"
+            },
+            {
+              "id": "enable",
+              "label": "启用"
+            }
+          ]
+        },
+        {
+          "id": "effect",
+          "name": "滤镜",
+          "description": "要修改的场景滤镜。 此滤镜必须先添加到场景的滤镜列表中。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-effect-enabled",
+      "name": "启用图层滤镜",
+      "description": "启用或禁用图层上的滤镜。",
+      "display_text": "{1}图层{0}滤镜{2}",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "启用或禁用图层的滤镜。",
+          "options": [
+            {
+              "id": "disable",
+              "label": "禁用"
+            },
+            {
+              "id": "enable",
+              "label": "启用"
+            }
+          ]
+        },
+        {
+          "id": "effect",
+          "name": "滤镜",
+          "description": "要修改的图层滤镜。 此滤镜必须先添加到图层的滤镜列表中。"
+        }
+      ]
+    },
+    {
+      "id": "set-layout-effect-parameter",
+      "name": "设置场景滤镜参数",
+      "description": "设置场景的滤镜参数。",
+      "display_text": "设置场景滤镜{0}第{1}个参数为[b]{2}[/b]",
+      "params": [
+        {
+          "id": "effect",
+          "name": "滤镜",
+          "description": "要设置的滤镜名称。此滤镜必须先添加到场景的滤镜列表中。"
+        },
+        {
+          "id": "parameter-index",
+          "name": "参数索引",
+          "description": "要更改的第几个参数，从 0 开始索引。例如 0 = 第1个参数，1 = 第2个参数等。"
+        },
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "要设置的数值。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-effect-parameter",
+      "name": "设置图层滤镜参数",
+      "description": "设置图层的滤镜参数。",
+      "display_text": "设置图层{0}滤镜{1}第{2}个参数为[b]{3}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "effect",
+          "name": "滤镜名称",
+          "description": "要修改的图层滤镜。"
+        },
+        {
+          "id": "parameter-index",
+          "name": "参数索引",
+          "description": "要更改的第几个参数，从 0 开始索引。例如 0 = 第1个参数，1 = 第2个参数等。"
+        },
+        {
+          "id": "value",
+          "name": "数值",
+          "description": "要设置的数值。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-parallax",
+      "name": "设置图层视差滚动",
+      "description": "设置图层的视差比例。",
+      "display_text": "设置图层{0}滚动视差为 ([b]{1}[/b], [b]{2}[/b])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "parallax-x",
+          "name": "滚动视差X",
+          "description": "图层在水平方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+        },
+        {
+          "id": "parallax-y",
+          "name": "滚动视差Y",
+          "description": "图层在垂直方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-background-color",
+      "name": "设置图层背景颜色",
+      "description": "设置图层的背景颜色。",
+      "display_text": "设置图层{0}背景颜色为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于设置图层背景的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-transparent",
+      "name": "启用图层透明化",
+      "description": "设置图层背景为透明或不透明。",
+      "display_text": "设置图层{0}背景[b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "该图层是否为透明。",
+          "options": [
+            {
+              "id": "opaque",
+              "label": "不透明"
+            },
+            {
+              "id": "transparent",
+              "label": "透明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-blend-mode",
+      "name": "设置图层混合模式",
+      "description": "将图层与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "display_text": "设置图层{0}混合模式为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为图层选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reset-persisted-objects",
+      "name": "重置持久化对象",
+      "description": "重置所有场景具有持久化行为的对象，恢复到初始状态。",
+      "display_text": "重置持久化对象",
+      "params": []
+    },
+    {
+      "id": "recreate-initial-objects",
+      "name": "初始化场景对象",
+      "description": "在矩形区域内，重新创建场景中的对象并初始化。",
+      "display_text": "初始化对象 {0}, 原始场景: [i]{5}[/i], 原始位置: [i]{1}[/i], [i]{2}[/i]) 到 ([i]{3}[/i], [i]{4}[/i]), 原始图层: [i]{6}[/i], 目标图层: [i]{7}[/i], 位置偏移: ([i]{8}[/i], [i]{9}[/i]), 创建对象层级: [i]{10}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要重新创建实例的对象类型。"
+        },
+        {
+          "id": "from-x",
+          "name": "起始 X",
+          "description": "要重新创建的左边缘的X坐标"
+        },
+        {
+          "id": "from-y",
+          "name": "起始 Y",
+          "description": "要重新创建的上边缘的Y坐标"
+        },
+        {
+          "id": "to-x",
+          "name": "目标 X",
+          "description": "要重新创建的右边缘的X坐标"
+        },
+        {
+          "id": "to-y",
+          "name": "目标 Y",
+          "description": "准备重新创建区域的右下角Y坐标。"
+        },
+        {
+          "id": "source-layout",
+          "name": "源场景",
+          "description": "目标物体的所在场景 留空来选择当前场景"
+        },
+        {
+          "id": "source-layer",
+          "name": "源图层",
+          "description": "目标物体的所在图层名或零基编号 留空来选择当前层"
+        },
+        {
+          "id": "offset-x",
+          "name": "X 偏移",
+          "description": "在指定位置进行偏移的X坐标。"
+        },
+        {
+          "id": "offset-y",
+          "name": "Y 偏移",
+          "description": "在指定位置进行偏移的Y坐标。"
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "创建子对象",
+          "description": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        {
+          "id": "dest-layer",
+          "name": "目标图层",
+          "description": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-force-own-texture",
+      "name": "启用图层纹理缓冲",
+      "description": "设置图层的 '纹理缓冲' 模式。",
+      "display_text": "[b]{1}[/b]图层{0}纹理缓冲",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "启用后，图层将强制渲染到中间纹理层，而不是直接渲染到屏幕。适用于处理混合模式和部分滤镜。禁用可提升渲染性能。",
+          "options": [
+            {
+              "id": "off",
+              "label": "禁用"
+            },
+            {
+              "id": "on",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save",
+      "name": "保存",
+      "description": "将完整的游戏状态保存到本地计算机。",
+      "display_text": "保存游戏(插槽: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "slot",
+          "name": "插槽",
+          "description": "标识此保存游戏状态的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "name": "加载",
+      "description": "从本地存储中加载先前保存的游戏状态。",
+      "display_text": "加载游戏(插槽: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "slot",
+          "name": "插槽",
+          "description": "先前保存游戏时填写的插槽字符串。"
+        }
+      ]
+    },
+    {
+      "id": "load-from-json",
+      "name": "加载游戏数据",
+      "description": "从先前导出的游戏状态数据加载游戏。",
+      "display_text": "加载游戏数据 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "填写先前通过系统 '游戏保存数据' 表达式保存的JSON字符串。"
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-x",
+      "name": "滚动到X",
+      "description": "滚动到X坐标。",
+      "display_text": "设置视角位置到X坐标 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要滚动到的X坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-y",
+      "name": "滚动到Y",
+      "description": "滚动到Y坐标。",
+      "display_text": "设置视角位置到Y坐标 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要滚动到的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-position",
+      "name": "滚动到位置",
+      "description": "滚动到坐标。",
+      "display_text": "设置视角位置到坐标 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要滚动到的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要滚动到的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "scroll-to-object",
+      "name": "滚动到对象",
+      "description": "将镜头位置滚动到对象",
+      "display_text": "设置镜头位置到对象 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "要将视角滚动到的对象"
+        }
+      ]
+    },
+    {
+      "id": "set-time-scale",
+      "name": "设置时间速率",
+      "description": "更改游戏中的时间流逝速率，实现慢动作或暂停效果。",
+      "display_text": "设置全局时间速率为[i]{0}[/i]倍",
+      "params": [
+        {
+          "id": "time-scale",
+          "name": "时间速率",
+          "description": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+        }
+      ]
+    },
+    {
+      "id": "set-object-time-scale",
+      "name": "设置对象速率",
+      "description": "更改特定对象的时间流逝速度，将覆盖全局时间速率。",
+      "display_text": "设置 {0} 时间速率为[i]{1}[/i]倍",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要更改时间速率的对象。"
+        },
+        {
+          "id": "time-scale",
+          "name": "时间速率",
+          "description": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+        }
+      ]
+    },
+    {
+      "id": "restore-object-time-scale",
+      "name": "恢复对象速率",
+      "description": "将对象的时间刻度恢复为游戏时间。",
+      "display_text": "恢复 {0} 时间速率",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要恢复正常时间速率的对象。"
+        }
+      ]
+    },
+    {
+      "id": "wait",
+      "name": "等待",
+      "description": "等待几秒钟后再继续运行下一个动作。",
+      "display_text": "等待[b]{0}[/b]秒 (使用时间倍速: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "seconds",
+          "name": "秒",
+          "description": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数"
+        },
+        {
+          "id": "use-timescale",
+          "name": "使用时间倍数",
+          "description": "是否使用当前的时间倍数。取消则使用真实时间速度。"
+        }
+      ]
+    },
+    {
+      "id": "wait-for-signal",
+      "name": "等待信号",
+      "description": "暂停后续动作，直到对应标签的 '发送信号' 动作触发后，再继续执行。",
+      "display_text": "等待信号[b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，用于区分要等待的信号标签。添加该动作后，当前事件块后面的其他动作将暂停运行，直至此标签对应的 '发送信号' 动作触发后继续执行。"
+        }
+      ]
+    },
+    {
+      "id": "signal",
+      "name": "发送信号",
+      "description": "发送一个信号，触发对应标签的 '收到信号' 条件和 '等待信号' 动作。",
+      "display_text": "发送信号[b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "在 \"双引号\" 里填写一个字符串。根据此标签触发对应的 '收到信号' 和 '等待信号' 动作。"
+        }
+      ]
+    },
+    {
+      "id": "sort-z-order",
+      "name": "排序显示顺序",
+      "description": "根据对象的实例变量，调整在Z轴的显示顺序。",
+      "display_text": "排序{0}显示顺序(根据[b]{1}[/b])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要进行排序的对象，建议使用家族。"
+        },
+        {
+          "id": "instance-variable",
+          "name": "实例变量",
+          "description": "指定一个实例变量，作为排序顺序的参考。通常会将此值设为实例对象的 Y 坐标或图像点。"
+        }
+      ]
+    },
+    {
+      "id": "load-object-images",
+      "name": "加载对象图像",
+      "description": "将对象的图像资源加载到内存中(如果它还没有被加载)。",
+      "display_text": "加载 {0} 图像资源到内存",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "需要加载图像的对象。"
+        }
+      ]
+    },
+    {
+      "id": "unload-object-images",
+      "name": "挂载对象图像",
+      "description": "从内存中挂载对象的图像资源(如果该对象已经加载，将会销毁它所有的实例)。",
+      "display_text": "挂载 {0} 图像资源",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要挂载图像的对象。"
+        }
+      ]
+    },
+    {
+      "id": "unload-unused-images",
+      "name": "挂载未使用的图像",
+      "description": "挂载已加载的对象的图像，并销毁所有实例。",
+      "display_text": "挂载未使用的图像资源",
+      "params": []
+    },
+    {
+      "id": "load-layout-images",
+      "name": "加载场景图像",
+      "description": "将场景使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "display_text": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "params": [
+        {
+          "id": "layout",
+          "name": "场景",
+          "description": "需要加载所有图像的场景。"
+        }
+      ]
+    },
+    {
+      "id": "load-layout-images-by-name",
+      "name": "加载场景图片(根据名称)",
+      "description": "将指定名称的场景所使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "display_text": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "params": [
+        {
+          "id": "layout",
+          "name": "场景",
+          "description": "需要加载所有图像的场景名称。"
+        }
+      ]
+    },
+    {
+      "id": "load-object-images-by-name",
+      "name": "加载对象图像(根据名称)",
+      "description": "将指定名称的对象使用的图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "display_text": "加载 [i]{0}[/i] 图像资源到内存",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "需要加载图像的对象名称。"
+        }
+      ]
+    },
+    {
+      "id": "unload-object-images-by-name",
+      "name": "挂载对象图像(根据名称)",
+      "description": "从内存中挂载指定对象名称的图像资源。",
+      "display_text": "挂载 [i]{0}[/i] 图像资源",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "需要挂载图像的对象名称。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-z-elevation",
+      "name": "设置图层视距高度",
+      "description": "设置图层在Z轴上的视距高度。",
+      "display_text": "设置图层{0}视距高度为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        },
+        {
+          "id": "z-elevation",
+          "name": "视距高度",
+          "description": "设置图层在Z轴上的视距高度。"
+        }
+      ]
+    },
+    {
+      "id": "set-function-return-value",
+      "name": "设置返回值",
+      "description": "将动作组作为表达式使用时可以返回的值，需要动作组的属性有设置返回值。注意，设置返回值不会中断执行。",
+      "display_text": "设置返回值 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "value",
+          "name": "返回值",
+          "description": "要从动作组中返回的值。"
+        }
+      ]
+    },
+    {
+      "id": "map-function",
+      "name": "映射动作组",
+      "description": "将字符串和动作组关联，通过字符串执行动作组。",
+      "display_text": "映射动作组 [b]{2}[/b] 到字符串 [i]{0}[/i] (名称: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "映射名称",
+          "description": "要进行映射的名称，用于识别不同的映射，不区分大小写。"
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要关联到动作组的字符串，不区分大小写。使用此映射的名称中，找到相应字符串来调用动作组。"
+        },
+        {
+          "id": "function",
+          "name": "动作组",
+          "description": "要关联到字符串的动作组。"
+        }
+      ]
+    },
+    {
+      "id": "map-function-default",
+      "name": "映射默认动作组",
+      "description": "在映射名称中，找不到相应的字符串时，默认调用这个动作组。",
+      "display_text": "映射 [i]{0}[/i] 到[b]{1}[/b]",
+      "params": [
+        {
+          "id": "name",
+          "name": "映射名称",
+          "description": "要映射的名称，不区分大小写。"
+        },
+        {
+          "id": "function",
+          "name": "动作组",
+          "description": "在映射的名称中，找不到相应的字符串时，默认调用这个动作组。"
+        }
+      ]
+    },
+    {
+      "id": "call-mapped-function",
+      "name": "执行映射动作组",
+      "description": "从映射中的字符串调用动作组。",
+      "display_text": "使用动作组映射(映射名称:  [i]{0}[/i], 关联字符串:  [i]{1}[/i]，起始参数: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "name",
+          "name": "映射名称",
+          "description": "映射的名称（不区分大小写)。"
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "与动作组关联的字符串，不区分大小写。"
+        },
+        {
+          "id": "forward-params",
+          "name": "起始参数",
+          "description": "从另一个带有参数的动作组中，使用动作组映射时，其参数也会传递到关联的动作组中，并通过此值来跳过前面的参数。注意，如果关联的字符串不存在，则默认动作组将转发所有参数。"
+        }
+      ]
+    },
+    {
+      "id": "wait-for-previous-actions",
+      "name": "等待前面异步动作完成",
+      "description": "等待之前的异步动作运行完成，触发任意完成或失败都会返回。(异步动作在右侧有特殊的时间图标显示，它们往往需要一些时间才能处理完成)",
+      "display_text": "等待前面异步动作完成",
+      "params": []
+    },
+    {
+      "id": "set-layout-vanishing-point",
+      "name": "设置场景透视中心",
+      "description": "使用3D布局功能时，设置视区透视中心点的位置。",
+      "display_text": "设置场景透视点为 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "vanishing-point-x",
+          "name": "透视点X",
+          "description": "透视点的X坐标，数值从 0-100，中间位置是50。"
+        },
+        {
+          "id": "vanishing-point-y",
+          "name": "透视点Y",
+          "description": "透视点的Y坐标，数值从 0-100，中间位置是50。"
+        }
+      ]
+    },
+    {
+      "id": "set-layer-scroll",
+      "name": "设置图层滚动",
+      "description": "单独滚动图层镜头到指定位置，而不跟随场景的滚动。直到执行 '复位图层滚动' 动作。",
+      "display_text": "设置图层{0}滚动到位置([b]{1}[/b], [b]{2}[/b])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层的名称或编号。"
+        },
+        {
+          "id": "scroll-x",
+          "name": "位置 X",
+          "description": "将此图层滚动到指定的 X 坐标。"
+        },
+        {
+          "id": "scroll-y",
+          "name": "位置 Y",
+          "description": "将此图层滚动到指定的 Y 坐标。"
+        }
+      ]
+    },
+    {
+      "id": "restore-layer-scroll",
+      "name": "复位图层滚动",
+      "description": "复位图层滚动位置，还原到场景当前的滚动位置。",
+      "display_text": "复位图层{0}滚动位置",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要修改的图层的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "set-layout-projection",
+      "name": "设置场景投影类型",
+      "description": "对于3D场景，相机视角使用透视投影，还是正交投影。",
+      "display_text": "设置场景投影类型为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "projection",
+          "name": "投影类型",
+          "description": "要使用的投影类型",
+          "options": [
+            {
+              "id": "perspective",
+              "label": "透视投影"
+            },
+            {
+              "id": "orthographic",
+              "label": "正交投影"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-layer-interactive",
+      "name": "启用图层交互响应",
+      "description": "设置图层是否响应鼠标和触控的输入。",
+      "display_text": "启用图层[i]{0}[/i]交互: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "设置交互的图层编号或名称。"
+        },
+        {
+          "id": "interactive",
+          "name": "交互",
+          "description": "选择图层是否允许与用户交互，响应鼠标或触控的输入。"
+        }
+      ]
+    },
+    {
+      "id": "add-layer",
+      "name": "添加图层",
+      "description": "在当前场景的图层列表中创建一个新图层。",
+      "display_text": "添加图层 [b]{0}[/b] 到 [i]{1}[/i] [i]{2}[/i]",
+      "params": [
+        {
+          "id": "name",
+          "name": "图层名称",
+          "description": "新图层的名称。在当前场景中必须是唯一的。"
+        },
+        {
+          "id": "insert-by",
+          "name": "插入到",
+          "description": "添加新图层的相对位置，指定另一个图层的名称或编号。"
+        },
+        {
+          "id": "where",
+          "name": "位置",
+          "description": "在另一个图层的相对位置添加新图层。",
+          "options": [
+            {
+              "id": "above",
+              "label": "上方"
+            },
+            {
+              "id": "below",
+              "label": "下方"
+            },
+            {
+              "id": "add-top-sublayer",
+              "label": "添加子图层到顶部"
+            },
+            {
+              "id": "add-bottom-sublayer",
+              "label": "添加子图层到底部"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-layer",
+      "name": "移动图层顺序",
+      "description": "将图层移动到当前场景图层列表的新位置。",
+      "display_text": "移动图层[b]{0}[/b]到[i]{1}[/i][i]{2}[/i]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要移动的图层的名称或编号。"
+        },
+        {
+          "id": "insert-by",
+          "name": "插入到",
+          "description": "要将图层移动到的相对位置，指定另一图层的名称或编号。"
+        },
+        {
+          "id": "where",
+          "name": "位置",
+          "description": "移动到另一个图层的相对位置。",
+          "options": [
+            {
+              "id": "above",
+              "label": "上方"
+            },
+            {
+              "id": "below",
+              "label": "下方"
+            },
+            {
+              "id": "top-sublayer",
+              "label": "子图层顶部"
+            },
+            {
+              "id": "bottom-sublayer",
+              "label": "子图层底部"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "remove-layer",
+      "name": "移除图层",
+      "description": "移除当前场景的某个图层，并同时销毁位于该图层的所有实例对象。",
+      "display_text": "移除图层 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要删除的图层名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "remove-all-dynamic-layers",
+      "name": "移除所有动态图层",
+      "description": "移除所有通过 '添加图层' 生成的动态图层。",
+      "display_text": "移除所有动态图层",
+      "params": []
+    },
+    {
+      "id": "set-layer-html",
+      "name": "设置 HTML 图层",
+      "description": "设置当前图层是否为 HTML 图层。",
+      "display_text": "设置 HTML 图层 (图层: [b]{0}[/b], 启用: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层的名称或编号。"
+        },
+        {
+          "id": "html",
+          "name": "HTML 图层",
+          "description": "设置当前图层是否为 HTML 图层。"
+        }
+      ]
+    },
+    {
+      "id": "set-collision-cell-size",
+      "name": "设置碰撞单元大小",
+      "description": "通过碰撞单元优化更改移动对象和测试碰撞之间的性能权衡。",
+      "display_text": "设置碰撞单元大小 [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "要设置的碰撞单元格宽度。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要设置的碰撞单元格高度。"
+        }
+      ]
+    },
+    {
+      "id": "set-framerate-mode",
+      "name": "设置帧率模式",
+      "description": "设置当前帧率模式。",
+      "display_text": "设置帧率模式为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "framerate-mode",
+          "name": "帧率模式",
+          "description": "要设置的帧率模式。",
+          "options": [
+            {
+              "id": "vsync",
+              "label": "垂直同步"
+            },
+            {
+              "id": "unlimited-tick",
+              "label": "无上限(仅每帧)"
+            },
+            {
+              "id": "unlimited-frame",
+              "label": "无上限"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-min-max-dt",
+      "name": "设置增量时间",
+      "description": "设置增量时间限制，若帧率低于最小值将进入慢速状态，若高于最大值则进入加速状态。",
+      "display_text": "设置增量时间：最小值[b]{0}[/b]，最大值[b]{1}[/b]",
+      "params": [
+        {
+          "id": "minimum-dt",
+          "name": "最小增量时间",
+          "description": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。"
+        },
+        {
+          "id": "maximum-dt",
+          "name": "最大增量时间",
+          "description": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。"
+        }
+      ]
+    },
+    {
+      "id": "reset-eventvar",
+      "name": "重置变量",
+      "description": "将指定的变量恢复为项目中的初始值。",
+      "display_text": "重置变量 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "variable",
+          "name": "变量",
+          "description": "选择要重置的变量。"
+        }
+      ]
+    },
+    {
+      "id": "save-to-json",
+      "name": "保存为 JSON",
+      "description": "将游戏的完整状态保存到 JSON 字符串。随后在 '保存完成' 条件中使用 '游戏储存数据' 表达式，并将其传输到其他地方，如本地存储。",
+      "display_text": "保存游戏数据",
+      "params": []
+    },
+    {
+      "id": "set-layer-rendering-mode",
+      "name": "设置图层渲染模式",
+      "description": "设置指定图层的渲染模式为 2D 或 3D。",
+      "display_text": "设置图层{0}渲染模式为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层的名称或编号。"
+        },
+        {
+          "id": "rendering-mode",
+          "name": "渲染模式",
+          "description": "要设置的渲染模式",
+          "options": [
+            {
+              "id": "2d",
+              "label": "2D"
+            },
+            {
+              "id": "3d",
+              "label": "3D"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "windowwidth",
+      "name": "窗口宽度",
+      "description": "窗口宽度，用于显示游戏窗口区域的宽度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowheight",
+      "name": "窗口高度",
+      "description": "窗口高度，用于显示游戏窗口区域的高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "originalviewportwidth",
+      "name": "原始视区宽度",
+      "description": "获取项目属性中填写的 '视区宽度' 值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "originalviewportheight",
+      "name": "原始视区高度",
+      "description": "获取项目属性中填写的 '视区高度' 值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layerscale",
+      "name": "图层缩放倍数",
+      "description": "获取图层的缩放倍数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要设置的图层的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "layeropacity",
+      "name": "图层不透明度",
+      "description": "图层不透明度，获取指定图层当前的不透明度。(通过名称或编号指定)",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layerscalerate",
+      "name": "图层缩放同步比例",
+      "description": "获取图层的缩放倍率。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layerangle",
+      "name": "图层角度",
+      "description": "获取图层的角度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewportleft",
+      "name": "视区左侧",
+      "description": "视区左边缘，获取指定图层视区左边缘的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "viewporttop",
+      "name": "视区顶部",
+      "description": "视区顶部，获取指定图层视区顶部的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "viewportright",
+      "name": "视区右侧",
+      "description": "视区右边缘，获取指定图层视区右边缘的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "viewportbottom",
+      "name": "视区底部",
+      "description": "视区底部，获取指定图层视区底部的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasx",
+      "name": "图层转换画布坐标X",
+      "description": "将指定位置从图层坐标转换为Canvas层的CSS坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要转化的X坐标"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要转化的Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasy",
+      "name": "图层转换画布坐标Y",
+      "description": "将指定位置从图层坐标转换为画布CSS坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转化的X坐标"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转化的Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "canvastolayerx",
+      "name": "画布转换图层坐标X",
+      "description": "将指定位置从Canvas层的CSS坐标转换为图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转化的X坐标"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转化的Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "canvastolayery",
+      "name": "画布转换图层坐标Y",
+      "description": "将指定位置从Canvas层的CSS坐标转换为图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要转化的X坐标"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要转化的Y坐标"
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxx",
+      "name": "图层滚动视差X",
+      "description": "获取指定图层的 X 轴滚动视差比例。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxy",
+      "name": "图层滚动视差Y",
+      "description": "获取指定图层的 Y 轴滚动视差比例。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layerindex",
+      "name": "图层编号",
+      "description": "获取指定名称的图层编号。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "scrollx",
+      "name": "镜头位置X",
+      "description": "当前镜头位置的X坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "scrolly",
+      "name": "镜头位置Y",
+      "description": "当前镜头位置的Y坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutwidth",
+      "name": "场景宽度",
+      "description": "获取当前场景的宽度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutheight",
+      "name": "场景高度",
+      "description": "获取当前场景的高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutscale",
+      "name": "场景缩放倍数",
+      "description": "获取场景当前的缩放倍数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutname",
+      "name": "场景名称",
+      "description": "获取当前场景的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layoutangle",
+      "name": "场景角度",
+      "description": "获取场景当前的角度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvassnapshot",
+      "name": "截屏快照",
+      "description": "在 '截图完成' 条件中，返回的画布快照图像。可用于精灵或平铺图加载远程图像。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "sqrt",
+      "name": "sqrt",
+      "description": "计算平方根。sqrt(9) = 3",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "取平方根的数"
+        }
+      ]
+    },
+    {
+      "id": "abs",
+      "name": "abs",
+      "description": "计算绝对值，即去除正负符号后的值。abs(-5) = 5",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要取绝对值的数字。"
+        }
+      ]
+    },
+    {
+      "id": "round",
+      "name": "round",
+      "description": "四舍五入，取最接近的整数。round(5.6) = 6",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要进行四舍五入到整数的数字。"
+        }
+      ]
+    },
+    {
+      "id": "floor",
+      "name": "floor",
+      "description": "向下取整。floor(5.9) = 5",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要进行向下取整的数字。"
+        }
+      ]
+    },
+    {
+      "id": "ceil",
+      "name": "ceil",
+      "description": "向上取整。ceil(5.1) = 6",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要进行向上取整的数字。"
+        }
+      ]
+    },
+    {
+      "id": "sign",
+      "name": "sign",
+      "description": "判断数是正数、负数或零。若大于 0 返回 1；小于 0 返回 -1；等于 0 返回 0。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要返回正负符号的数字。若数字大于 0 则返回 1，等于 0 返回 0，小于 0 返回 -1。"
+        }
+      ]
+    },
+    {
+      "id": "sin",
+      "name": "sin",
+      "description": "三角函数，计算角度的正弦值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "用于计算正弦值的角度。"
+        }
+      ]
+    },
+    {
+      "id": "cos",
+      "name": "cos",
+      "description": "三角函数，计算角度的余弦值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "用于计算余弦值的角度。"
+        }
+      ]
+    },
+    {
+      "id": "tan",
+      "name": "tan",
+      "description": "三角函数，计算角度的正切值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "用于计算正切值的角度。"
+        }
+      ]
+    },
+    {
+      "id": "asin",
+      "name": "asin",
+      "description": "三角函数，计算角度的反正弦值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "用于计算角度的正弦值，取值区间为 [-1, 1] 。将返回正弦值为 n 的角度。"
+        }
+      ]
+    },
+    {
+      "id": "acos",
+      "name": "acos",
+      "description": "三角函数，计算角度的反余弦值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "用于计算角度的余弦值，取值区间为 [-1, 1] 。将返回余弦值为 n 的角度。"
+        }
+      ]
+    },
+    {
+      "id": "atan",
+      "name": "atan",
+      "description": "三角函数，计算角度的反正切值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "三角函数，计算角度的反正切值。"
+        }
+      ]
+    },
+    {
+      "id": "exp",
+      "name": "exp",
+      "description": "计算 e 的 n 次幂。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "计算以 e 为底数时，此数字作为 e 的指数的结果。"
+        }
+      ]
+    },
+    {
+      "id": "ln",
+      "name": "In",
+      "description": "计算 n 在以 e 为底数的自然对数。是 exp 的反函数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "计算以 e 为底数时，此数字的自然对数。"
+        }
+      ]
+    },
+    {
+      "id": "log10",
+      "name": "log10",
+      "description": "计算以 10 为底数的对数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "计算以 10 为底时，此数字的对数。"
+        }
+      ]
+    },
+    {
+      "id": "max",
+      "name": "max",
+      "description": "计算一组数字的最大值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number1",
+          "name": "数字",
+          "description": "用于计算最大值的数字。"
+        },
+        {
+          "id": "number2",
+          "name": "数字",
+          "description": "用于计算最大值的数字。"
+        }
+      ]
+    },
+    {
+      "id": "min",
+      "name": "min",
+      "description": "计算一组数字的最小值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number1",
+          "name": "数字",
+          "description": "用于计算最小值的数字。"
+        },
+        {
+          "id": "number2",
+          "name": "数字",
+          "description": "用于计算最小值的数字。"
+        }
+      ]
+    },
+    {
+      "id": "distance",
+      "name": "distance",
+      "description": "计算两点之间的距离。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x1",
+          "name": "x1",
+          "description": "第一个坐标点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "name": "y1",
+          "description": "第一个坐标点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "name": "x2",
+          "description": "第二个坐标点的X坐标。"
+        },
+        {
+          "id": "y2",
+          "name": "y2",
+          "description": "第二个坐标点的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "angle",
+      "name": "angle",
+      "description": "计算两点之间的角度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x1",
+          "name": "x1",
+          "description": "第一个坐标点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "name": "y1",
+          "description": "第一个坐标点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "name": "x2",
+          "description": "第二点的X位置。"
+        },
+        {
+          "id": "y2",
+          "name": "y2",
+          "description": "第二点的Y位置。"
+        }
+      ]
+    },
+    {
+      "id": "lerp",
+      "name": "lerp",
+      "description": "在两个数之间，按比例取值。如 lerp(0, 100, 0.5) = 50。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个数字。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个数字。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "插值因子，表示两个数字范围内的一个位置。"
+        }
+      ]
+    },
+    {
+      "id": "pi",
+      "name": "pi",
+      "description": "返回圆周率的数学常数，近似值约 3.14159265",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "anglediff",
+      "name": "anglediff",
+      "description": "计算两个角度之间，最小度数差。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "angle1",
+          "name": "角度1",
+          "description": "第一个角度。"
+        },
+        {
+          "id": "angle2",
+          "name": "角度2",
+          "description": "第二个角度。"
+        }
+      ]
+    },
+    {
+      "id": "anglelerp",
+      "name": "anglelerp",
+      "description": "在两个角度之间，按比例取值。与标准 lerp 不同，会考虑角度的周期性。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个角度。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个角度。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "插值因子，表示两个角度范围之间的位置。"
+        }
+      ]
+    },
+    {
+      "id": "anglerotate",
+      "name": "anglerotate",
+      "description": "从开始到结束的'步进'的旋转角度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "start",
+          "name": "起始角度",
+          "description": "第一个角度。"
+        },
+        {
+          "id": "end",
+          "name": "结束角度",
+          "description": "第二个角度。"
+        },
+        {
+          "id": "step",
+          "name": "步数",
+          "description": "要旋转的度数。"
+        }
+      ]
+    },
+    {
+      "id": "unlerp",
+      "name": "unlerp",
+      "description": "在两个数之间，按数值求比例。如 unlerp(0, 100, 50) = 0.5",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个数字。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个数字。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要计算的数字，将返回此数字在范围的位置。"
+        }
+      ]
+    },
+    {
+      "id": "infinity",
+      "name": "infinity",
+      "description": "返回一个正无穷大的浮点数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "setbit",
+      "name": "setbit",
+      "description": "元字节操作。设置索引位置的字节位，在 32 位整数的范围之间。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "数字"
+        },
+        {
+          "id": "bit",
+          "name": "字节",
+          "description": "字节"
+        },
+        {
+          "id": "value",
+          "name": "状态值",
+          "description": "状态值 (0或1)"
+        }
+      ]
+    },
+    {
+      "id": "togglebit",
+      "name": "togglebit",
+      "description": "元字节操作。切换索引位置的字节位，在 32 位整数的范围之间。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "数字"
+        },
+        {
+          "id": "bit",
+          "name": "字节",
+          "description": "字节"
+        }
+      ]
+    },
+    {
+      "id": "getbit",
+      "name": "getbit",
+      "description": "元字节操作。获取索引位置的字节位，在 32 位整数的范围之间。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "数字"
+        },
+        {
+          "id": "bit",
+          "name": "字节",
+          "description": "字节"
+        }
+      ]
+    },
+    {
+      "id": "qarp",
+      "name": "qarp",
+      "description": "在 a，b, c 之间，通过 x 进行二次插值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个数字。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个数字。"
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "description": "第三个数字。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "插值因子。"
+        }
+      ]
+    },
+    {
+      "id": "cubic",
+      "name": "cubic",
+      "description": "在 a，b，c，d 之间，通过 x 进行三次插值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个数字。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个数字。"
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "description": "第三个数字。"
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "description": "第四个数字。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "插值因子。"
+        }
+      ]
+    },
+    {
+      "id": "cosp",
+      "name": "cosp",
+      "description": "在 a, b 之间，通过 x 进行余弦插值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "a",
+          "name": "a",
+          "description": "第一个数字。"
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "description": "第二个数字。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "插值因子。"
+        }
+      ]
+    },
+    {
+      "id": "savestatejson",
+      "name": "游戏保存数据",
+      "description": "在 '保存完成' 条件中，返回的游戏数据的 JSON 字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "objectcount",
+      "name": "对象数量",
+      "description": "获取当前已创建的所有对象总数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "loopindex",
+      "name": "当前循环索引值",
+      "description": "返回当前事件块范围正在运行的循环事件的索引值，从0开始计数。仅在 '系统' 对象的各循环类型条件。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "renderer",
+      "name": "渲染器",
+      "description": "获取当前渲染器的名称。返回 'canvas2d' 或 'webgl' 或 'webgpu'。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectversion",
+      "name": "项目版本",
+      "description": "从项目属性返回项目版本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "loadingprogress",
+      "name": "加载进度",
+      "description": "在加载场景中或后台更新期间，获取从0到1的加载进度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imagememoryusage",
+      "name": "图像内存使用量",
+      "description": "预估的图像内存使用量，以 MB 为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectname",
+      "name": "项目名称",
+      "description": "返回项目名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rendererdetail",
+      "name": "渲染器详情",
+      "description": "获取描述渲染硬件的字符串（如果有）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "len",
+      "name": "统计字数",
+      "description": "获取文本字符串中的字符数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "获取字符串的长度。"
+        }
+      ]
+    },
+    {
+      "id": "newline",
+      "name": "换行",
+      "description": "带换行符的字符串。用 & 连接其他的字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "uppercase",
+      "name": "转换大写",
+      "description": "将文本转换为大写。如 TeXt -> TEXT",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要转换为大写的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "lowercase",
+      "name": "转换小写",
+      "description": "将文本转换为小写。 如 TeXt -> text",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要转换为小写的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "find",
+      "name": "查找",
+      "description": "查找字符串在另一个字符串中，首次出现的第一个字符的位置，不区分大小写。找不到则返回 -1。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "原始字符串。"
+        },
+        {
+          "id": "find",
+          "name": "查找",
+          "description": "要查找的字符串。如果找到将返回第一个字符在文本中的位置，否则返回 -1。"
+        }
+      ]
+    },
+    {
+      "id": "left",
+      "name": "截断文字",
+      "description": "截取字符串。从左侧第一个字符开始，截取特定数量的字符。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要处理的字符串。"
+        },
+        {
+          "id": "count",
+          "name": "数量",
+          "description": "返回的字符数。"
+        }
+      ]
+    },
+    {
+      "id": "right",
+      "name": "反向截断文字",
+      "description": "截取字符串。从末尾最后一个字符开始，截取特定数量的字符。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要提取字符的原始文本。"
+        },
+        {
+          "id": "count",
+          "name": "数量",
+          "description": "要截取的字符数量。"
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "截取文字",
+      "description": "截取字符串。从指定位置开始，截取特定数量的字符。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要截取的原始文本。"
+        },
+        {
+          "id": "index",
+          "name": "起始位置",
+          "description": "要截取的字符起始位置，从 0 开始计数。"
+        },
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要截取的文本数量。"
+        }
+      ]
+    },
+    {
+      "id": "tokenat",
+      "name": "词组提取",
+      "description": "根据分隔符，从字符串提取被分隔的词组。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "包含特定的分隔符的原始字符串。如 \"A|B|C\""
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要提取第几个被分隔的词组，从 0 开始计数。"
+        },
+        {
+          "id": "separator",
+          "name": "分隔符",
+          "description": "要识别的分隔符。可以是某个字符，或者字符串。"
+        }
+      ]
+    },
+    {
+      "id": "tokencount",
+      "name": "词组统计",
+      "description": "根据分隔符，统计有多少组被分隔的字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "包含特定的分隔符的原始字符串。如 \"A|B|C\"，将返回 3。"
+        },
+        {
+          "id": "separator",
+          "name": "分隔符",
+          "description": "要识别的分隔符。可以是某个字符，或者字符串。"
+        }
+      ]
+    },
+    {
+      "id": "replace",
+      "name": "替换",
+      "description": "替换字符串中出现的所有关键词。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "准备被替换的原始文本。"
+        },
+        {
+          "id": "find",
+          "name": "查找",
+          "description": "要搜索的文字。"
+        },
+        {
+          "id": "replace",
+          "name": "替换",
+          "description": "用于替换搜索字符串的文本。"
+        }
+      ]
+    },
+    {
+      "id": "trim",
+      "name": "清除首尾空格",
+      "description": "删除首尾的空白字符，如空格、制表符。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "源文本"
+        }
+      ]
+    },
+    {
+      "id": "zeropad",
+      "name": "补零",
+      "description": "对位数不足的数字在前面加 0 填充，如 0045",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要被补零的数字。"
+        },
+        {
+          "id": "digits",
+          "name": "位数",
+          "description": "要显示的位数。"
+        }
+      ]
+    },
+    {
+      "id": "urlencode",
+      "name": "网络链接编码",
+      "description": "将字符串进行编码。可用于 AJAX 网络请求的 URL 地址。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要编码的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "urldecode",
+      "name": "网络链接解码",
+      "description": "将 URL 网络地址解码。转换成可被读取的字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要解码的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "regexsearch",
+      "name": "正则匹配查找",
+      "description": "通过正则表达式，返回第一个匹配结果位于原始字符串的索引位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要搜索的字符串"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "正则表达式匹配"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "正则表达式的修饰符。如 \"g\" 表示全局匹配，查找所有匹配项。留空则在匹配到第一个后停止。"
+        }
+      ]
+    },
+    {
+      "id": "regexreplace",
+      "name": "正则匹配替换",
+      "description": "通过正则表达式，替换第一个匹配结果。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要搜索的字符串"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "要匹配的正则表达式"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "正则表达式的修饰符"
+        },
+        {
+          "id": "replace",
+          "name": "要替换的内容",
+          "description": "将匹配的内容替换为"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchcount",
+      "name": "正则匹配数量",
+      "description": "通过正则表达式，返回匹配到的结果数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要搜索的字符串"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "用于匹配的正则表达式。"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "用于指定额外匹配策略的标记符。"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchat",
+      "name": "正则匹配提取",
+      "description": "通过正则表达式，返回第N个匹配结果的字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "要搜索的字符串"
+        },
+        {
+          "id": "regex",
+          "name": "正则表达式",
+          "description": "要用于匹配的正则表达式"
+        },
+        {
+          "id": "flags",
+          "name": "修饰符",
+          "description": "正则表达式的修饰符"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "返回第 n 个匹配项。"
+        }
+      ]
+    },
+    {
+      "id": "findcase",
+      "name": "精确查找",
+      "description": "查找字符串在另一个字符串中，首次出现的第一个字符的位置，区分大小写。找不到则返回 -1。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "原始字符串。"
+        },
+        {
+          "id": "find",
+          "name": "查找",
+          "description": "要查找的字符串。如果找到将返回第一个字符在文本中的位置，否则返回 -1。"
+        }
+      ]
+    },
+    {
+      "id": "dt",
+      "name": "dt",
+      "description": "时间增量，从上一帧到这一帧的时间差 (delta-time)。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timescale",
+      "name": "时间速率",
+      "description": "时间速率，用于加快或减慢游戏整体运行速度。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "time",
+      "name": "游戏运行时间",
+      "description": "自游戏启动后，累计运行的秒数。受到时间速率的影响。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tickcount",
+      "name": "累计帧数",
+      "description": "自游戏启动后，累计的帧数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fps",
+      "name": "fps",
+      "description": "预估的每秒刷新帧数速率。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "wallclocktime",
+      "name": "真实运行时间",
+      "description": "自游戏启动后，累计运行的真实世界秒数。不受到时间速率的影响。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cpuutilisation",
+      "name": "预估CPU利用率",
+      "description": "预估上一秒在运算逻辑所花费的时间，以秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gpuutilisation",
+      "name": "预估GPU利用率",
+      "description": "预估上一秒在渲染所花费的时间，以秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "int",
+      "name": "转换整数",
+      "description": "将字符串或浮点数转换为整数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要转换为整数的值"
+        }
+      ]
+    },
+    {
+      "id": "float",
+      "name": "转换浮点数",
+      "description": "将字符串或整数转换为浮点数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要转换为浮点数的值"
+        }
+      ]
+    },
+    {
+      "id": "str",
+      "name": "转换字符串",
+      "description": "将整数或浮点数转换为字符串。 您还可以使用＆运算符进行连接。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要转换为字符串的值"
+        }
+      ]
+    },
+    {
+      "id": "random",
+      "name": "生成随机数",
+      "description": "从 0 到小于 X 之间随机生成一个浮点数。如果传入 2 个参数，随机数在包含 a 但不包含 b 范围之间。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "range",
+          "name": "范围",
+          "description": "要生成的随机浮点数范围，从 0 到小于此值。"
+        }
+      ]
+    },
+    {
+      "id": "clamp",
+      "name": "约束范围",
+      "description": "约束数值在一个范围内。若小于最小值，则返回最小值。若大于最大值，则返回最大值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "当前值",
+          "description": "被约束在范围的数值。"
+        },
+        {
+          "id": "lower",
+          "name": "最小值",
+          "description": "若数值小于最小值，则返回最小值。"
+        },
+        {
+          "id": "upper",
+          "name": "最大值",
+          "description": "若数值大于最大值，则返回最大值。"
+        }
+      ]
+    },
+    {
+      "id": "choose",
+      "name": "选择随机项",
+      "description": "从提供的参数中，随机选择一个值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value1",
+          "name": "值",
+          "description": "要被随机选择的值。"
+        },
+        {
+          "id": "value2",
+          "name": "值",
+          "description": "另一个可以随机选择的值。"
+        }
+      ]
+    },
+    {
+      "id": "rgb",
+      "name": "rgb",
+      "description": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "红",
+          "description": "红色值，0-255"
+        },
+        {
+          "id": "green",
+          "name": "绿",
+          "description": "绿色值，0-255"
+        },
+        {
+          "id": "blue",
+          "name": "蓝",
+          "description": "蓝色值，0-255"
+        }
+      ]
+    },
+    {
+      "id": "rgbex",
+      "name": "rgbEx",
+      "description": "生成RGB颜色值，数值在 0 - 100 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "红",
+          "description": "红色值, 0-100"
+        },
+        {
+          "id": "green",
+          "name": "绿",
+          "description": "绿色值, 0-100"
+        },
+        {
+          "id": "blue",
+          "name": "蓝",
+          "description": "蓝色值, 0-100"
+        }
+      ]
+    },
+    {
+      "id": "imageloadingprogress",
+      "name": "图像加载进度",
+      "description": "获取从0到1的图像加载进度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rgba",
+      "name": "rgba",
+      "description": "生成RGBA颜色值，数值在 0 - 100 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "红",
+          "description": "红色值, 0-100"
+        },
+        {
+          "id": "green",
+          "name": "绿",
+          "description": "绿色值, 0-100"
+        },
+        {
+          "id": "blue",
+          "name": "蓝",
+          "description": "蓝色值, 0-100"
+        },
+        {
+          "id": "alpha",
+          "name": "不透明度",
+          "description": "不透明度值，0-100"
+        }
+      ]
+    },
+    {
+      "id": "viewportwidth",
+      "name": "视区宽度",
+      "description": "获取指定图层的可视区域宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "viewportheight",
+      "name": "视区高度",
+      "description": "获取指定图层的可视区域高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或图层名称。"
+        }
+      ]
+    },
+    {
+      "id": "rgbex255",
+      "name": "rgbEx255",
+      "description": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "红",
+          "description": "红色值，0-255"
+        },
+        {
+          "id": "green",
+          "name": "绿",
+          "description": "绿色值，0-255"
+        },
+        {
+          "id": "blue",
+          "name": "蓝",
+          "description": "蓝色值，0-255"
+        }
+      ]
+    },
+    {
+      "id": "rgba255",
+      "name": "rgba255",
+      "description": "生成RGBA颜色值，数值在 0 - 255 范围。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "red",
+          "name": "红",
+          "description": "红色值，0-255"
+        },
+        {
+          "id": "green",
+          "name": "绿",
+          "description": "绿色值，0-255"
+        },
+        {
+          "id": "blue",
+          "name": "蓝",
+          "description": "蓝色值，0-255"
+        },
+        {
+          "id": "alpha",
+          "name": "不透明度",
+          "description": "不透明度的值，0-255"
+        }
+      ]
+    },
+    {
+      "id": "layer-z-elevation",
+      "name": "图层视距高度",
+      "description": "获取指定图层的视距高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "currenteventsheetname",
+      "name": "当前事件表名称",
+      "description": "当前事件所属的事件表的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currenteventnumber",
+      "name": "当前事件表行号",
+      "description": "当前事件所在事件表的行号。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "call-mapped-function-expression",
+      "name": "映射动作组",
+      "description": "通过字符串调用关联的动作组，并具有返回值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "name",
+          "name": "映射名称",
+          "description": "通过映射名称关联字符串，通过此字符串调用动作组，不区分大小写。"
+        },
+        {
+          "id": "string",
+          "name": "字符串",
+          "description": "使用字符串调用已关联的动作组，不区分大小写。"
+        }
+      ]
+    },
+    {
+      "id": "round-to-dp",
+      "name": "roundToDp",
+      "description": "四舍五入到小数位。roundToDp(3.141592, 2) = 3.14",
+      "display_text": "",
+      "params": [
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要进行四舍五入并保留小数的数字。"
+        },
+        {
+          "id": "digits",
+          "name": "保留小数位",
+          "description": "保留到第几位小数位。"
+        }
+      ]
+    },
+    {
+      "id": "layerscrollx",
+      "name": "图层位置X",
+      "description": "获取指定图层的镜头X位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layerscrolly",
+      "name": "图层位置Y",
+      "description": "获取指定图层的镜头Y位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "vanishing-point-x",
+      "name": "透视点X",
+      "description": "获取当前视区的透视消失点X，从 0 - 100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vanishing-point-y",
+      "name": "透视点Y",
+      "description": "获取当前视区的透视消失点Y，从 0 - 100。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "chooseindex",
+      "name": "选择索引项",
+      "description": "从提供的参数中，根据索引选择对应值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "选择第几个参数，从 0 开始计数。"
+        },
+        {
+          "id": "value1",
+          "name": "值",
+          "description": "用于被索引选择的值。"
+        }
+      ]
+    },
+    {
+      "id": "viewportmidx",
+      "name": "视区中心X",
+      "description": "获取指定图层视区中心的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewportmidy",
+      "name": "视区中心Y",
+      "description": "获取指定图层视区中心的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layertolayerx",
+      "name": "图层转换图层坐标X",
+      "description": "将指定位置从当前图层转换到另一个图层的坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "原始图层",
+          "description": "当前所在的位置。"
+        },
+        {
+          "id": "to-layer",
+          "name": "目标图层",
+          "description": "要转换到的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "layertolayery",
+      "name": "图层转换图层坐标Y",
+      "description": "将指定位置从当前图层转换到另一个图层的坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "原始图层",
+          "description": "当前所在的位置。"
+        },
+        {
+          "id": "to-layer",
+          "name": "目标图层",
+          "description": "要转换的目标位置。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "string-substitute",
+      "name": "模板字符串",
+      "description": "替换字符串中的占位符为表达式。占位符类似 {0}, {1}... 的标签，使用以 0 起始的数字。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "包含占位符的字符串。"
+        },
+        {
+          "id": "substitution",
+          "name": "替换",
+          "description": "用于替换占位符的值。"
+        }
+      ]
+    },
+    {
+      "id": "wallclockdt",
+      "name": "真实时间增量",
+      "description": "真实时间增量，即不受时间倍速影响的 dt 值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectid",
+      "name": "项目ID",
+      "description": "返回项目属性ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectuniqueid",
+      "name": "项目唯一识别码",
+      "description": "为此特定项目生成的随机字符字符串。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilecount",
+      "name": "项目文件总数",
+      "description": "获取项目预览/导出时包含的文件数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilenameat",
+      "name": "项目文件名称",
+      "description": "获取指定索引的项目文件名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的第几个文件，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "hex-color",
+      "name": "转换颜色值",
+      "description": "将十六进制颜色值转换为 RGBA 颜色值格式。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "string",
+          "name": "十六进制颜色值",
+          "description": "十六进制字符串，例如 \"#FF0000\"。"
+        }
+      ]
+    },
+    {
+      "id": "color-to-hex-string",
+      "name": "转换颜色值",
+      "description": "将 RGBA 值生成 CSS 样式的十六进制字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "color-value",
+          "name": "颜色",
+          "description": "要转换为十六进制字符串的 RGBA 颜色值。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 56,
+    "actions": 79,
+    "expressions": 132
+  }
+}

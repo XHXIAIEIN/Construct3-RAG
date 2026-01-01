@@ -1,0 +1,573 @@
+{
+  "id": "json",
+  "name": "JSON",
+  "description": "读写JSON格式的数据。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "has-key",
+      "name": "字段已存在",
+      "description": "检测JSON数据中是否存在指定的字段。",
+      "display_text": "字段[b]{0}[/b]已存在",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name\""
+        }
+      ]
+    },
+    {
+      "id": "compare-type",
+      "name": "比较类型",
+      "description": "测试JSON数据中指定值的类型。",
+      "display_text": "字段[b]{0}[/b]类型为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name\""
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要测试的值的类型。",
+          "options": [
+            {
+              "id": "null",
+              "label": "空"
+            },
+            {
+              "id": "boolean",
+              "label": "布尔值"
+            },
+            {
+              "id": "number",
+              "label": "数字"
+            },
+            {
+              "id": "string",
+              "label": "字符串"
+            },
+            {
+              "id": "object",
+              "label": "对象"
+            },
+            {
+              "id": "array",
+              "label": "数组"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name": "比较值",
+      "description": "比较JSON数据中字段的值。",
+      "display_text": "字段[b]{0}[/b]值为{1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name\""
+        },
+        {
+          "id": "cmp",
+          "name": "比较",
+          "description": "如何比较值。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "for-each",
+      "name": "遍历路径",
+      "description": "在 JSON 指定的路径位置，遍历其中的每项字段。",
+      "display_text": "遍历路径 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name\""
+        }
+      ]
+    },
+    {
+      "id": "on-parse-error",
+      "name": "解析失败",
+      "description": "解析JSON字符串失败时触发。",
+      "display_text": "解析失败",
+      "params": []
+    },
+    {
+      "id": "is-boolean-set",
+      "name": "判断布尔值",
+      "description": "判断布尔值变量的状态，是打开还是关闭。",
+      "display_text": "如果[b]{0}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        }
+      ]
+    },
+    {
+      "id": "on-parse-success",
+      "name": "解析成功",
+      "description": "成功解析 JSON 字符串时触发。",
+      "display_text": "解析成功",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "parse",
+      "name": "解析JSON",
+      "description": "解析JSON字符串并将其内容加载到对象中。",
+      "display_text": "解析[b]{0}[/b]为JSON",
+      "params": [
+        {
+          "id": "data",
+          "name": "JSON字符串",
+          "description": "要解析的JSON数据字符串。"
+        }
+      ]
+    },
+    {
+      "id": "set-path",
+      "name": "设置路径",
+      "description": "设置当前路径，允许从相对路径继续引用。",
+      "display_text": "设置路径为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。绝对路径需使用完整路径，如 \"items.data\"。若包含数组则使用下标表示其位置，如 \"items.0\""
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "设置值",
+      "description": "在JSON数据中的指定的字段位置设置值。",
+      "display_text": "设置 [i]{0}[/i] 为 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name\""
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "在指定的字段的位置设置值。"
+        }
+      ]
+    },
+    {
+      "id": "set-array",
+      "name": "设置数组类型",
+      "description": "设置路径为数组类型，如果已经存在数组，则调整现有数组的大小。",
+      "display_text": "设置 [i]{0}[/i] 类型为数组，大小为 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".items\"。数组元素则使用下标表示其位置，如 \"items.0\""
+        },
+        {
+          "id": "size",
+          "name": "大小",
+          "description": "数组中元素的数量。"
+        }
+      ]
+    },
+    {
+      "id": "set-object",
+      "name": "设置字典类型",
+      "description": "设置路径为字典类型。",
+      "display_text": "设置 [i]{0}[/i] 类型为字典",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"items.0\""
+        }
+      ]
+    },
+    {
+      "id": "set-null",
+      "name": "设置空值",
+      "description": "设置字段的值为特殊值 'null' 。",
+      "display_text": "设置 [i]{0}[/i] 的值为 null",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0\""
+        }
+      ]
+    },
+    {
+      "id": "set-boolean",
+      "name": "设置布尔值",
+      "description": "设置字段的布尔值状态。",
+      "display_text": "设置 [i]{0}[/i] 为 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0\""
+        },
+        {
+          "id": "value",
+          "name": "状态",
+          "description": "要设置的布尔值。",
+          "options": [
+            {
+              "id": "false",
+              "label": "否"
+            },
+            {
+              "id": "true",
+              "label": "是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delete-key",
+      "name": "删除字段",
+      "description": "从JSON数据中删除一个字段。",
+      "display_text": "删除字段[i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0\""
+        }
+      ]
+    },
+    {
+      "id": "push-value",
+      "name": "推进值",
+      "description": "在JSON数据对应的字段位置，向数组的前面或后面添加一个值。",
+      "display_text": "在 [i]{1}[/i][i]{2}[/i] 推进值 {0}",
+      "params": [
+        {
+          "id": "where",
+          "name": "方式",
+          "description": "将值插入到数组的顶部或末尾。",
+          "options": [
+            {
+              "id": "back",
+              "label": "后面"
+            },
+            {
+              "id": "front",
+              "label": "前面"
+            }
+          ]
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name\""
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "在指定字段的位置添加的值"
+        }
+      ]
+    },
+    {
+      "id": "pop-value",
+      "name": "弹出值",
+      "description": "从数组的前面或后面删除值，在JSON数据对应的Key的位置。",
+      "display_text": "从 [i]{1}[/i] 弹出值 {0}",
+      "params": [
+        {
+          "id": "where",
+          "name": "方式",
+          "description": "删除数组的顶部或末尾的值。",
+          "options": [
+            {
+              "id": "back",
+              "label": "后面"
+            },
+            {
+              "id": "front",
+              "label": "前面"
+            }
+          ]
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name\""
+        }
+      ]
+    },
+    {
+      "id": "set-json",
+      "name": "设置JSON",
+      "description": "设置字段的值为一段 JSON 数据。",
+      "display_text": "设置 JSON [i]{0}[/i] 内容为 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        },
+        {
+          "id": "json",
+          "name": "JSON字符串",
+          "description": "要设置的 JSON 字符串。如果希望在字符串中显示双引号，可使用 2 个双引号进行转义。"
+        }
+      ]
+    },
+    {
+      "id": "toggle-boolean",
+      "name": "反转布尔值",
+      "description": "在指定的键值位置，反转该字段的布尔值。",
+      "display_text": "反转[i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        }
+      ]
+    },
+    {
+      "id": "subtract-from",
+      "name": "减少值",
+      "description": "减掉一个数字值（从指定键中）",
+      "display_text": "从 [i]{0}[/i] 减去 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要减少的值。"
+        }
+      ]
+    },
+    {
+      "id": "add-to",
+      "name": "增加值",
+      "description": "添加数值到指定字段的数值。",
+      "display_text": "从 [i]{0}[/i] 增加 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要增加的值"
+        }
+      ]
+    },
+    {
+      "id": "insert-value",
+      "name": "插入值",
+      "description": "在数组的指定位置插入元素",
+      "display_text": "从 {1} 第 {2} 项插入值{0}",
+      "params": [
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要添加的值"
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "数组的索引，将值插入到此位置。"
+        }
+      ]
+    },
+    {
+      "id": "remove-values",
+      "name": "删除元素",
+      "description": "从指定路径的数组中删除指定数量的元素。",
+      "display_text": "从路径{1}删除第{2}项后的{0}个元素",
+      "params": [
+        {
+          "id": "count",
+          "name": "数量",
+          "description": "要删除的元素数量"
+        },
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "删除数组在索引位置的元素，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "to-compact-string",
+      "name": "导出紧凑型字符串",
+      "description": "返回当前 JSON 对象的精简字符串，没有额外的换行和缩进。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "to-beautified-string",
+      "name": "导出格式化字符串",
+      "description": "返回当前 JSON 对象的格式化字符串，包含换行符和缩进。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-value",
+      "name": "获取",
+      "description": "根据JSON数据中的指定字段获取值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0\""
+        }
+      ]
+    },
+    {
+      "id": "get-type",
+      "name": "类型",
+      "description": "获取字段的值的类型。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0\""
+        }
+      ]
+    },
+    {
+      "id": "array-size",
+      "name": "数组大小",
+      "description": "在字段位置获取数组的大小。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径，此路径需先使用 '设置数组类型' 动作转换为数组对象。"
+        }
+      ]
+    },
+    {
+      "id": "path",
+      "name": "路径",
+      "description": "获取当前 JSON 的路径。此路径内的元素，可以使用以 \".\" 开头来引用相对路径。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-key",
+      "name": "当前字段",
+      "description": "当前循环遍历的字段",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-value",
+      "name": "当前值",
+      "description": "当前循环遍历的值",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "current-type",
+      "name": "当前类型",
+      "description": "每次循环的当前值的类型。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "back",
+      "name": "末尾",
+      "description": "在JSON数据对应的字段的位置，获取数组的最后一个值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name\""
+        }
+      ]
+    },
+    {
+      "id": "front",
+      "name": "首项",
+      "description": "在JSON数据对应的字段的位置，获取数组的第一个值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name\""
+        }
+      ]
+    },
+    {
+      "id": "get-as-compact-string",
+      "name": "导出紧凑型字符串",
+      "description": "获取字段的 JSON 值，并导出精简字符串，不包含额外的空格。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        }
+      ]
+    },
+    {
+      "id": "get-as-beautified-string",
+      "name": "导出格式化字符串",
+      "description": "获取字段的 JSON 值，并导出格式化字符串，带有换行符和缩进。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "路径",
+          "description": "在 JSON 的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0\""
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 7,
+    "actions": 16,
+    "expressions": 13
+  }
+}

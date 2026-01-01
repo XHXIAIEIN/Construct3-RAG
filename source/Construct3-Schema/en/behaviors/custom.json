@@ -1,0 +1,393 @@
+{
+  "id": "custom",
+  "name": "Custom",
+  "description": "Make your own movement using low-level movement functions.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} {0} speed {1} {2}",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose the speed to compare.",
+          "options": [
+            {
+              "id": "overall",
+              "label": "Overall"
+            },
+            {
+              "id": "horizontal",
+              "label": "Horizontal"
+            },
+            {
+              "id": "vertical",
+              "label": "Vertical"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-step",
+      "name": "On step",
+      "description": "Triggered when stepping the object for motion.",
+      "display_text": "On {my} step",
+      "params": []
+    },
+    {
+      "id": "on-horizontal-step",
+      "name": "On horizontal step",
+      "description": "Triggered when stepping the object horizontally for motion.",
+      "display_text": "On {my} horizontal step",
+      "params": []
+    },
+    {
+      "id": "on-vertical-step",
+      "name": "On vertical step",
+      "description": "Triggered when stepping the object vertically for motion.",
+      "display_text": "On {my} vertical step",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-angle-of-motion",
+      "name": "Set angle of motion",
+      "description": "Set the angle the object is currently moving at.",
+      "display_text": "Set {my} angle of motion to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The new angle of motion, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "rotate-clockwise",
+      "name": "Rotate clockwise",
+      "description": "Rotate the angle of motion in a clockwise direction.",
+      "display_text": "Rotate {my} angle of motion clockwise [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Amount to rotate clockwise, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "rotate-counter-clockwise",
+      "name": "Rotate counter-clockwise",
+      "description": "Rotate the angle of motion in a counter-clockwise direction.",
+      "display_text": "Rotate {my} angle of motion counter-clockwise [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Amount to rotate counter-clockwise, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "Stop",
+      "description": "Set the speed to zero.",
+      "display_text": "Stop {my}",
+      "params": []
+    },
+    {
+      "id": "reverse",
+      "name": "Reverse",
+      "description": "Invert the direction of motion.",
+      "display_text": "Reverse {my} ({0})",
+      "params": [
+        {
+          "id": "axes",
+          "name": "Axes",
+          "description": "Choose which axes to reverse on.",
+          "options": [
+            {
+              "id": "both",
+              "label": "Both"
+            },
+            {
+              "id": "horizontally",
+              "label": "Horizontally"
+            },
+            {
+              "id": "vertically",
+              "label": "Vertically"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the object's current speed.",
+      "display_text": "Set {my} {0} speed to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose the speed to set.",
+          "options": [
+            {
+              "id": "overall",
+              "label": "Overall"
+            },
+            {
+              "id": "horizontal",
+              "label": "Horizontal"
+            },
+            {
+              "id": "vertical",
+              "label": "Vertical"
+            }
+          ]
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The new speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "accelerate",
+      "name": "Accelerate",
+      "description": "Accelerate the object forwards or on an axis.",
+      "display_text": "Accelerate {my} {0} [i]{1}[/i]",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose which way to accelerate.",
+          "options": [
+            {
+              "id": "forwards",
+              "label": "Forwards"
+            },
+            {
+              "id": "horizontally",
+              "label": "Horizontally"
+            },
+            {
+              "id": "vertically",
+              "label": "Vertically"
+            }
+          ]
+        },
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The acceleration, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "accelerate-toward-angle",
+      "name": "Accelerate toward angle",
+      "description": "Accelerate the object at an angle.",
+      "display_text": "Accelerate {my} [i]{0}[/i] at angle [i]{1}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The acceleration, in pixels per second per second."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle, in degrees, to accelerate toward."
+        }
+      ]
+    },
+    {
+      "id": "accelerate-toward-position",
+      "name": "Accelerate toward position",
+      "description": "Accelerate the object toward a position.",
+      "display_text": "Accelerate {my} [i]{0}[/i] toward ([i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The acceleration, in pixels per second per second."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate in the layout to accelerate toward."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate in the layout to accelerate toward."
+        }
+      ]
+    },
+    {
+      "id": "stop-stepping",
+      "name": "Stop stepping",
+      "description": "Stop the current stepping, preventing any more step triggers firing this tick.",
+      "display_text": "Stop {my} stepping ({0})",
+      "params": [
+        {
+          "id": "position",
+          "name": "Position",
+          "description": "Choose the resulting object position.",
+          "options": [
+            {
+              "id": "go-back-a-step",
+              "label": "Go back a step"
+            },
+            {
+              "id": "stay-at-current-position",
+              "label": "Stay at current position"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "push-out-solid",
+      "name": "Push out solid",
+      "description": "Push the object to a space if it is overlapping a solid.",
+      "display_text": "Push {my} out of solid ({0})",
+      "params": [
+        {
+          "id": "direction",
+          "name": "Direction",
+          "description": "Choose the method of push out.",
+          "options": [
+            {
+              "id": "opposite-angle",
+              "label": "Opposite angle"
+            },
+            {
+              "id": "nearest",
+              "label": "Nearest"
+            },
+            {
+              "id": "up",
+              "label": "Up"
+            },
+            {
+              "id": "down",
+              "label": "Down"
+            },
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "push-out-solid-at-angle",
+      "name": "Push out solid at angle",
+      "description": "Push the object to a space at an angle if it is overlapping a solid.",
+      "display_text": "Push {my} out of solid at angle {0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle, in degrees, to push the object out at."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "dx",
+      "name": "dx",
+      "description": "The current X component of motion, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "dy",
+      "name": "dy",
+      "description": "The current Y component of motion, in pixels per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 13,
+    "expressions": 4
+  }
+}

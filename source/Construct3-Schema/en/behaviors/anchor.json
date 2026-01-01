@@ -1,0 +1,46 @@
+{
+  "id": "anchor",
+  "name": "Anchor",
+  "description": "Position objects relative to the viewport.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the behavior.",
+      "display_text": "Set {my} {0}",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 0
+  }
+}

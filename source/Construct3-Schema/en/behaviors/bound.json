@@ -1,0 +1,14 @@
+{
+  "id": "bound",
+  "name": "Bound to layout",
+  "description": "Stop an object leaving the layout.",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

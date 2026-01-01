@@ -1,0 +1,502 @@
+{
+  "id": "particles",
+  "name": "粒子",
+  "description": "新建一个颗粒喷雾。一种装饰性的视觉效果。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-spraying",
+      "name": "正在喷射",
+      "description": "检测粒子的发射模式是否为持续发射。",
+      "display_text": "正在喷射",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "设置速度",
+      "description": "设置初始粒子速度。",
+      "display_text": "设置粒子初始速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "初始粒子速度，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name": "设置大小",
+      "description": "设置每个粒子的初始大小。",
+      "display_text": "设置粒子初始大小为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "size",
+          "name": "大小",
+          "description": "每个粒子的初始大小，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-init-opacity",
+      "name": "设置不透明度",
+      "description": "设置初始粒子不透明度。",
+      "display_text": "设置粒子初始不透明度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "opacity",
+          "name": "不透明度",
+          "description": "每个粒子初始不透明度，从0到100，数值越大越不透明。"
+        }
+      ]
+    },
+    {
+      "id": "set-grow-rate",
+      "name": "设置增长率",
+      "description": "设置初始粒子生长速率。",
+      "display_text": "设置粒子增长率为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "grow-rate",
+          "name": "增长率",
+          "description": "评估大小随时间的变化，以每秒像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-x-randomiser",
+      "name": "设置X轴分散",
+      "description": "设置粒子在X轴初始位置的随机值。",
+      "display_text": "设置粒子初始X随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "x-randomiser",
+          "name": "X轴分散",
+          "description": "粒子在X轴初始位置的随机值。"
+        }
+      ]
+    },
+    {
+      "id": "set-y-randomiser",
+      "name": "设置Y轴分散",
+      "description": "设置粒子在Y轴初始位置的随机偏移值。",
+      "display_text": "设置粒子初始Y随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "y-randomiser",
+          "name": "Y轴分散",
+          "description": "粒子在Y轴初始位置的随机偏移值。"
+        }
+      ]
+    },
+    {
+      "id": "set-initial-speed-randomiser",
+      "name": "设置速度分散",
+      "description": "设置粒子初始速度的随机偏移值。",
+      "display_text": "设置粒子初始速度随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed-randomiser",
+          "name": "速度分散",
+          "description": "在创建时随机添加粒子速度。"
+        }
+      ]
+    },
+    {
+      "id": "set-size-randomiser",
+      "name": "设置大小分散",
+      "description": "在创建时将随机添加设置为粒度。",
+      "display_text": "设置粒子初始大小随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "size-randomiser",
+          "name": "大小分散",
+          "description": "在创建时随机添加粒度。"
+        }
+      ]
+    },
+    {
+      "id": "set-grow-rate-randomiser",
+      "name": "设置增长率分散",
+      "description": "在创建时将随机添加设置为粒子增长率。",
+      "display_text": "设置粒子初始生长率随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "grow-rate-randomiser",
+          "name": "增长率分散",
+          "description": "在创建时随机添加粒子生长率。"
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "设置加速度",
+      "description": "设置粒子加速度。",
+      "display_text": "设置粒子加速度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "粒子加速度，以像素/每秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-gravity",
+      "name": "设置重力",
+      "description": "设置重力。",
+      "display_text": "设置粒子重力为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "gravity",
+          "name": "重力",
+          "description": "重力，以每秒像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-angle-randomiser",
+      "name": "设置角度分散",
+      "description": "设置每秒的最大随机角度偏差。",
+      "display_text": "设置粒子角度随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "angle-randomiser",
+          "name": "角度分散",
+          "description": "调整随机偏移角度，以度数/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-life-speed-randomiser",
+      "name": "设置速度分散",
+      "description": "调整随机偏移速度，以像素/秒为单位。",
+      "display_text": "设置粒子速度随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed-randomiser",
+          "name": "速度分散",
+          "description": "调整随机偏移速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-opacity-randomiser",
+      "name": "设置不透明度分散",
+      "description": "调整随机偏移不透明度。",
+      "display_text": "设置粒子不透明度随机数为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "opacity-randomiser",
+          "name": "不透明度分散",
+          "description": "根据时间变化随机调整不透明度。"
+        }
+      ]
+    },
+    {
+      "id": "set-timeout",
+      "name": "持续时间",
+      "description": "将销毁超时或淡入淡出设置为不可见时间。",
+      "display_text": "设置粒子持续时间为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "timeout",
+          "name": "持续时间",
+          "description": "超时或淡出至不可见的时间，以秒为单位。(取决于销毁模式)。"
+        }
+      ]
+    },
+    {
+      "id": "set-spraying",
+      "name": "启用粒子",
+      "description": "启用或禁用粒子。",
+      "display_text": "{0}粒子",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "设置粒子是否持续喷雾。",
+          "options": [
+            {
+              "id": "not-spraying",
+              "label": "关闭"
+            },
+            {
+              "id": "spraying",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-rate",
+      "name": "设置喷射频率",
+      "description": "设置每秒创建的粒子数。",
+      "display_text": "设置粒子喷射频率为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "rate",
+          "name": "频率",
+          "description": "每秒创建的粒子数。"
+        }
+      ]
+    },
+    {
+      "id": "set-spray-cone",
+      "name": "设置喷射角度范围",
+      "description": "粒子创建时的发射角度范围。",
+      "display_text": "设置粒子喷射范围为[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "spray-cone",
+          "name": "喷射角度",
+          "description": "粒子被创建时发射角度范围。"
+        }
+      ]
+    },
+    {
+      "id": "set-particle-object",
+      "name": "设置粒子对象",
+      "description": "可选择指定一个对象作为粒子图像，而不是绘制粒子本身的图像。",
+      "display_text": "设置粒子对象为 {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "粒子对象",
+          "description": "要将图像作为粒子生成的对象。"
+        }
+      ]
+    },
+    {
+      "id": "unset-particle-object",
+      "name": "取消粒子对象",
+      "description": "取消已设置成粒子图像的对象，重新启用粒子本身的图像。",
+      "display_text": "取消设置粒子对象",
+      "params": []
+    },
+    {
+      "id": "fast-forward",
+      "name": "预热",
+      "description": "在粒子准备播放之前，预先加速粒子的流动状态，适用于初始化。",
+      "display_text": "预热 [i]{0}[/i] 秒",
+      "params": [
+        {
+          "id": "time",
+          "name": "时间",
+          "description": "粒子预热的时间，以秒为单位。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "initspeed",
+      "name": "初始速度",
+      "description": "每秒每像素的粒子初始速度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initsize",
+      "name": "初始大小",
+      "description": "以像素增长的粒子初始大小",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initopacity",
+      "name": "初始不透明度",
+      "description": "从0到100透明度的粒子初始透明度",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initgrowrate",
+      "name": "初始生长率",
+      "description": "每秒每像素增长的粒子初始增长率",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "xrandom",
+      "name": "X扰动",
+      "description": "粒子在X轴初始位置的随机值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "yrandom",
+      "name": "Y扰动",
+      "description": "粒子在Y轴初始位置的随机值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initspeedrandom",
+      "name": "初始角度扰动",
+      "description": "在创建时随机添加粒子速度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initsizerandom",
+      "name": "初始大小扰动",
+      "description": "在粒子创建时，对大小增加一个随机值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initgrowrandom",
+      "name": "初始生长率扰动",
+      "description": "在粒子创建时，对增长率增加一个随机值。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleacceleration",
+      "name": "粒子加速度",
+      "description": "粒子加速度，以每秒每秒的像素数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gravity",
+      "name": "重力",
+      "description": "重力，以每秒每秒的像素数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleanglerandom",
+      "name": "粒子角度扰动",
+      "description": "粒子的最大随机角度偏差，以角度每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particlespeedrandom",
+      "name": "粒子速度扰动",
+      "description": "粒子的最大随机速度偏差，以像素每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleopacityrandom",
+      "name": "粒子不透明度扰动",
+      "description": "每秒不透明度的最大变化。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timeout",
+      "name": "生命周期",
+      "description": "破坏或淡化到隐形超时。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particlecount",
+      "name": "粒子数量",
+      "description": "返回粒子对象的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rate",
+      "name": "生长率",
+      "description": "每秒创建的粒子数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "spraycone",
+      "name": "喷射角度",
+      "description": "创建粒子的度数。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 22,
+    "expressions": 18
+  }
+}

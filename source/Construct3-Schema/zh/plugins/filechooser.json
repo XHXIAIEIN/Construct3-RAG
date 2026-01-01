@@ -1,0 +1,110 @@
+{
+  "id": "filechooser",
+  "name": "文件选择",
+  "description": "允许用户从其设备中选择文件，并访问所选文件。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-changed",
+      "name": "选择新文件",
+      "description": "在进行文件选择时触发。",
+      "display_text": "选择新文件",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "release-file",
+      "name": "释放文件",
+      "description": "释放文件，使其不再使用内存。",
+      "display_text": "释放文件 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "file-url",
+          "name": "文件URL",
+          "description": "要释放的文件的URL。"
+        }
+      ]
+    },
+    {
+      "id": "click",
+      "name": "点击",
+      "description": "激活文件选择器，就像点击了文件选择器按钮一样。注意，这可能只在用户输入触发器中有效。",
+      "display_text": "点击(激活文件选择器)",
+      "params": []
+    },
+    {
+      "id": "clear",
+      "name": "清空",
+      "description": "清除当前所有已选择的文件，恢复为初始状态。",
+      "display_text": "清空",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "filecount",
+      "name": "文件数量",
+      "description": "所选文件的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "filenameat",
+      "name": "获取文件名称",
+      "description": "索引中所选文件的名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文件在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "filesizeat",
+      "name": "获取文件大小",
+      "description": "索引处所选文件的大小。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文件在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "filetypeat",
+      "name": "获取文件类型",
+      "description": "索引中所选文件的MIME类型。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文件在列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "fileurlat",
+      "name": "获取文件链接",
+      "description": "用于在索引处访问所选文件数据的URL。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文件在列表的索引，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 3,
+    "expressions": 5
+  }
+}

@@ -1,0 +1,970 @@
+{
+  "id": "tween",
+  "name": "补间动画",
+  "description": "让对象的属性在一段时间内逐渐变化。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-tweens-finished",
+      "name": "播放完成",
+      "description": "指定标签的补间动画播放完成时触发。",
+      "display_text": "{my} [b]{0}[/b]播放完成",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-tweens-finished",
+      "name": "任意播放完成",
+      "description": "任意补间动画播放完成时触发。",
+      "display_text": "{my} 任意播放完成",
+      "params": []
+    },
+    {
+      "id": "is-playing",
+      "name": "正在播放",
+      "description": "检查指定标签的补间动画当前是否正在播放。",
+      "display_text": "{my} 正在播放 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-any-playing",
+      "name": "任意正在播放",
+      "description": "检测当前是否正在播放任意补间动画。",
+      "display_text": "{my} 正在播放任意动画",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "正在暂停",
+      "description": "检测含有匹配标签的补间动画当前是否暂停。",
+      "display_text": "{my} [b]{0}[/b] 正在暂停",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-any-paused",
+      "name": "任意正在暂停",
+      "description": "检测任意补间动画当前是否暂停。",
+      "display_text": "任意 {my} 正在暂停",
+      "params": []
+    },
+    {
+      "id": "on-any-tween-looped",
+      "name": "任意到达循环",
+      "description": "任意补间动画到达循环时触发。",
+      "display_text": "任意 {my} 动画到达循环",
+      "params": []
+    },
+    {
+      "id": "on-tweens-looped",
+      "name": "到达循环",
+      "description": "指定标签的补间动画进入循环播放时触发。",
+      "display_text": "{my} [b]{0}[/b]到达循环",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-tween-ping-pong",
+      "name": "任意开始反转",
+      "description": "任意补间动画进入反转播放状态时触发。",
+      "display_text": "任意 {my} [b]{0}[/b]反转播放",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "反转播放的状态",
+          "options": [
+            {
+              "id": "start",
+              "label": "开始"
+            },
+            {
+              "id": "end",
+              "label": "结束"
+            },
+            {
+              "id": "either",
+              "label": "任意"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-tweens-ping-pong",
+      "name": "开始反转",
+      "description": "指定标签的补间动画进行返程播放时触发。",
+      "display_text": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "检查动画反转播放的状态",
+          "options": [
+            {
+              "id": "start",
+              "label": "开始"
+            },
+            {
+              "id": "end",
+              "label": "结束"
+            },
+            {
+              "id": "either",
+              "label": "任意"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-ping-pong",
+      "name": "正在反转播放",
+      "description": "检测指定标签的补间动画是否正在返程播放，需要开启 '反转播放' 属性。",
+      "display_text": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "检查动画反转播放的状态",
+          "options": [
+            {
+              "id": "start",
+              "label": "开始"
+            },
+            {
+              "id": "end",
+              "label": "结束"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-any-ping-pong",
+      "name": "任意正在反转",
+      "description": "检测任意补间动画的返程状态，需要开启 '反转播放' 属性。",
+      "display_text": "任意 {my} [b]{0}[/b]反转",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "检查动画反转播放的状态",
+          "options": [
+            {
+              "id": "start",
+              "label": "开始"
+            },
+            {
+              "id": "end",
+              "label": "结束"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-tweens-released",
+      "name": "播放中止",
+      "description": "当具有匹配标签的补间动画被释放时触发。如对象在播放动画期间删除或取消。",
+      "display_text": "{my} [b]{0}[/b] 播放中止",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要检查的补间动画的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-tweens-released",
+      "name": "任意播放中止",
+      "description": "任意的补间动画被释放时触发。如在播放动画期间被停止。",
+      "display_text": "{my} 任意播放中止",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。禁用时，将不会影响任何参数属性。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "要设置的状态",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tween-one-property",
+      "name": "播放补间 (一个参数)",
+      "description": "补间一个属性，如 X 坐标。",
+      "display_text": "{my} 在[b]{3}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数: [i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放结束后销毁: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+        },
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "要进行补间的属性",
+          "options": [
+            {
+              "id": "offsetX",
+              "label": "X坐标"
+            },
+            {
+              "id": "offsetY",
+              "label": "Y坐标"
+            },
+            {
+              "id": "size",
+              "label": "大小"
+            },
+            {
+              "id": "offsetWidth",
+              "label": "宽度"
+            },
+            {
+              "id": "offsetHeight",
+              "label": "高度"
+            },
+            {
+              "id": "offsetAngle",
+              "label": "角度"
+            },
+            {
+              "id": "offsetOpacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "offsetColor",
+              "label": "颜色"
+            },
+            {
+              "id": "offsetZElevation",
+              "label": "视距高度"
+            },
+            {
+              "id": "offsetScaleX",
+              "label": "缩放比例 X"
+            },
+            {
+              "id": "offsetScaleY",
+              "label": "缩放比例 Y"
+            }
+          ]
+        },
+        {
+          "id": "end-value",
+          "name": "目标值",
+          "description": "补间动画的目标值。若设置颜色，请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。"
+        },
+        {
+          "id": "time",
+          "name": "持续时间",
+          "description": "补间动画的持续时间，以秒为单位。"
+        },
+        {
+          "id": "ease",
+          "name": "曲线",
+          "description": "要使用的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。"
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "播放完成后销毁",
+          "description": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "loop",
+          "name": "循环播放",
+          "description": "是否循环播放补间动画。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "反转播放",
+          "description": "动画播放结束时，是否反转播放。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "重复次数",
+          "description": "动画重复播放的次数。"
+        }
+      ]
+    },
+    {
+      "id": "tween-two-properties",
+      "name": "播放补间 (两个参数)",
+      "description": "使两个值同时平滑运动（如坐标：X和Y）",
+      "display_text": "{my} 在[b]{4}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}[/b], 曲线: [i]{5}[/i], 标签: [b]{0}[/b], 重复次数: [i]{9}[/i], 循环播放: [i]{7}[/i], 反转播放: [i]{8}[/i], 播放完成后销毁: [i]{6}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+        },
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "要进行补间的属性。",
+          "options": [
+            {
+              "id": "position",
+              "label": "位置"
+            },
+            {
+              "id": "size",
+              "label": "大小"
+            },
+            {
+              "id": "scale",
+              "label": "比例"
+            }
+          ]
+        },
+        {
+          "id": "time",
+          "name": "持续时间",
+          "description": "补间动画的持续时间，以秒为单位。"
+        },
+        {
+          "id": "ease",
+          "name": "曲线",
+          "description": "要使用的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。"
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "播放完成后销毁",
+          "description": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "end-x",
+          "name": "结束 X",
+          "description": "第一个属性的结束值"
+        },
+        {
+          "id": "end-y",
+          "name": "结束 Y",
+          "description": "第二个属性的结束值"
+        },
+        {
+          "id": "loop",
+          "name": "循环播放",
+          "description": "是否循环播放补间动画。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "反转播放",
+          "description": "动画播放结束时，是否反转播放。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "重复次数",
+          "description": "动画重复播放的次数。"
+        }
+      ]
+    },
+    {
+      "id": "tween-value",
+      "name": "补间动画 (数值)",
+      "description": "针对一个数值进行补间，不同与对象的属性。",
+      "display_text": "{my} 在[b]{3}[/b]秒内, 将数值从[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数:[i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放完成后销毁: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签(可选)",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+        },
+        {
+          "id": "start-value",
+          "name": "起始值",
+          "description": "补间的起始值。"
+        },
+        {
+          "id": "end-value",
+          "name": "目标值",
+          "description": "补间的结束值。"
+        },
+        {
+          "id": "time",
+          "name": "持续时间",
+          "description": "补间动画的持续时间，以秒为单位。"
+        },
+        {
+          "id": "ease",
+          "name": "曲线",
+          "description": "要使用的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。"
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "播放完成后销毁",
+          "description": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "loop",
+          "name": "循环播放",
+          "description": "是否循环播放补间动画。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "反转播放",
+          "description": "动画播放结束时，是否反转播放。",
+          "options": [
+            {
+              "id": "yes",
+              "label": "是"
+            },
+            {
+              "id": "no",
+              "label": "否"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "重复次数",
+          "description": "动画重复播放的次数。"
+        }
+      ]
+    },
+    {
+      "id": "pause-tweens",
+      "name": "暂停",
+      "description": "暂停播放指定的补间动画。",
+      "display_text": "暂停{my}[b]{0}[/b] 播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要暂停播放的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "pause-all-tweens",
+      "name": "暂停全部",
+      "description": "暂停播放所有补间动画。",
+      "display_text": "{my} 暂停全部",
+      "params": []
+    },
+    {
+      "id": "resume-tweens",
+      "name": "恢复",
+      "description": "恢复播放指定的补间动画。",
+      "display_text": "恢复{my}[b]{0}[/b] 播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要恢复播放的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "resume-all-tweens",
+      "name": "恢复全部",
+      "description": "恢复播放所有的补间动画。",
+      "display_text": "{my} 恢复全部",
+      "params": []
+    },
+    {
+      "id": "stop-tweens",
+      "name": "停止",
+      "description": "停止播放指定的补间动画。注意，停止后将不能再次恢复。",
+      "display_text": "停止{my}[b]{0}[/b] 播放",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要停止播放的补间动画的标签。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "stop-all-tweens",
+      "name": "停止全部",
+      "description": "停止播放所有补间动画。注意，停止后将不能再次恢复。",
+      "display_text": "{my} 停止全部",
+      "params": []
+    },
+    {
+      "id": "set-tweens-ease",
+      "name": "设置曲线",
+      "description": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
+      "display_text": "设置 {my} [b]{0}[/b]曲线为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "ease",
+          "name": "曲线",
+          "description": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。"
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-ease",
+      "name": "设置曲线 (全部)",
+      "description": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
+      "display_text": "设置 {my}全部曲线为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "ease",
+          "name": "曲线",
+          "description": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。"
+        }
+      ]
+    },
+    {
+      "id": "set-one-property-tweens-end-value",
+      "name": "设置目标值",
+      "description": "要设置的目标值。",
+      "display_text": "设置 {my} [b]{0}{1}[/b]目标值为[b]{2}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "要更改的属性。",
+          "options": [
+            {
+              "id": "offsetX",
+              "label": "X坐标"
+            },
+            {
+              "id": "offsetY",
+              "label": "Y坐标"
+            },
+            {
+              "id": "offsetWidth",
+              "label": "宽度"
+            },
+            {
+              "id": "offsetHeight",
+              "label": "高度"
+            },
+            {
+              "id": "offsetAngle",
+              "label": "角度"
+            },
+            {
+              "id": "offsetOpacity",
+              "label": "不透明度"
+            },
+            {
+              "id": "offsetColor",
+              "label": "颜色"
+            },
+            {
+              "id": "offsetZElevation",
+              "label": "视距高度"
+            },
+            {
+              "id": "offsetScaleX",
+              "label": "缩放比例 X"
+            },
+            {
+              "id": "offsetScaleY",
+              "label": "缩放比例 Y"
+            }
+          ]
+        },
+        {
+          "id": "end-value",
+          "name": "目标值",
+          "description": "要设置的目标值。若设置颜色，请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。"
+        }
+      ]
+    },
+    {
+      "id": "set-two-properties-tweens-end-value",
+      "name": "设置目标值",
+      "description": "通过指定的标签，设置补间动画的目标值。",
+      "display_text": "设置 {my} [b]{0}{1}[/b]目标值为[b]{2}, {3}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "property",
+          "name": "属性",
+          "description": "要更改的属性。",
+          "options": [
+            {
+              "id": "position",
+              "label": "位置"
+            },
+            {
+              "id": "size",
+              "label": "大小"
+            },
+            {
+              "id": "scale",
+              "label": "缩放比例"
+            }
+          ]
+        },
+        {
+          "id": "end-x",
+          "name": "结束 X",
+          "description": "在第一个属性中设置的结束值"
+        },
+        {
+          "id": "end-y",
+          "name": "结束 Y",
+          "description": "在第二个属性中设置的结束值"
+        }
+      ]
+    },
+    {
+      "id": "set-value-property-tweens-start-value",
+      "name": "设置起始值",
+      "description": "要设置的起始值。",
+      "display_text": "设置 {my} [b]{0}[/b] 起始值为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "start-value",
+          "name": "起始值",
+          "description": "设置起始值"
+        }
+      ]
+    },
+    {
+      "id": "set-value-property-tweens-end-value",
+      "name": "设置目标值",
+      "description": "要设置的目标值。",
+      "display_text": "设置 {my} [b]{0}[/b]目标值为[b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "end-value",
+          "name": "目标值",
+          "description": "设置目标值"
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-time",
+      "name": "设置持续时间",
+      "description": "要设置的持续时间。",
+      "display_text": "设置 {my} [b]{0}[/b]持续时间为[b]{1}[/b]秒",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "time",
+          "name": "持续时间",
+          "description": "要设置的持续时间，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-time",
+      "name": "设置持续时间 (全部)",
+      "description": "设置所有动画的持续时间。",
+      "display_text": "设置 {my}全部持续时间为[b]{0}[/b]秒",
+      "params": [
+        {
+          "id": "time",
+          "name": "持续时间",
+          "description": "要设置的持续时间，以秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-playback-rate",
+      "name": "设置播放速度",
+      "description": "要设置的播放倍速。",
+      "display_text": "设置 {my} [b]{0}[/b]播放速度为[b]{1}[/b]倍",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "rate",
+          "name": "倍数",
+          "description": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-playback-rate",
+      "name": "设置播放速度 (全部)",
+      "description": "设置全部动画的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+      "display_text": "设置 {my}全部播放速度为[b]{0}[/b]倍",
+      "params": [
+        {
+          "id": "rate",
+          "name": "倍速",
+          "description": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-destroy-on-complete",
+      "name": "设置播放完成时销毁",
+      "description": "设置是否要在补间动画完成后，销毁这个对象。",
+      "display_text": "[b]{1}[/b]{my}[b]{0}[/b]播放完成后销毁",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要操作的补间动画的标签。使用空格分隔多个标签。"
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "播放完成后销毁",
+          "description": "补间动画播放完成后，是否销毁此对象。",
+          "options": [
+            {
+              "id": "no",
+              "label": "否"
+            },
+            {
+              "id": "yes",
+              "label": "是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-destroy-on-complete",
+      "name": "设置播放完成后销毁 (全部)",
+      "description": "设置所有补间的 '播放完成时销毁' 属性。",
+      "display_text": "设置 {my}全部播放完成后销毁: [b]{0}[/b]",
+      "params": [
+        {
+          "id": "destroy-on-complete",
+          "name": "播放完成后销毁",
+          "description": "补间动画播放完成后，是否销毁此对象。",
+          "options": [
+            {
+              "id": "no",
+              "label": "否"
+            },
+            {
+              "id": "yes",
+              "label": "是"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "time",
+      "name": "时间",
+      "description": "补间的当前时间",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+        }
+      ]
+    },
+    {
+      "id": "progress",
+      "name": "进度",
+      "description": "补间的进度在0-1范围内",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+        }
+      ]
+    },
+    {
+      "id": "value",
+      "name": "数值",
+      "description": "在 '补间正在播放' 条件中，补间的当前值。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+        }
+      ]
+    },
+    {
+      "id": "tags",
+      "name": "标签",
+      "description": "用于触发补间完成、到达循环、反复时使用的补间标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playback-rate",
+      "name": "播放速度",
+      "description": "补间动画的播放速度。1 为正常速度，0.5 为慢动作，2为双倍加速。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "要获取的补间动画的标签。留空则指定第一个播放的动画。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 22,
+    "expressions": 5
+  }
+}

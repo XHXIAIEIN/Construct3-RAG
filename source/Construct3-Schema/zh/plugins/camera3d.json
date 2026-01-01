@@ -1,0 +1,728 @@
+{
+  "id": "camera3d",
+  "name": "3D相机",
+  "description": "在3D场景移动相机视角，从不同的角度观察场景。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "look-at-position",
+      "name": "注视位置",
+      "description": "设置相机的位置，并将相机镜头朝向另一个位置，观察不同的方向。",
+      "display_text": "设置相机位置 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 注视位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 上升向量 ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
+      "params": [
+        {
+          "id": "cam-x",
+          "name": "相机X",
+          "description": "相机位置的X坐标。"
+        },
+        {
+          "id": "cam-y",
+          "name": "相机Y",
+          "description": "相机位置的Y坐标。"
+        },
+        {
+          "id": "cam-z",
+          "name": "相机Z",
+          "description": "相机位置的Z坐标。"
+        },
+        {
+          "id": "look-x",
+          "name": "注视X",
+          "description": "相机镜头要朝向位置注视的X坐标。"
+        },
+        {
+          "id": "look-y",
+          "name": "注视Y",
+          "description": "相机镜头要朝向位置注视的Y坐标。"
+        },
+        {
+          "id": "look-z",
+          "name": "注视Z",
+          "description": "相机镜头要朝向位置注视的Z坐标。"
+        },
+        {
+          "id": "up-x",
+          "name": "上升向量X",
+          "description": "一个三维矢量的X向量，表示哪一边的方向朝上。"
+        },
+        {
+          "id": "up-y",
+          "name": "上升向量Y",
+          "description": "一个三维矢量的Y向量，表示哪一边的方向朝上。"
+        },
+        {
+          "id": "up-z",
+          "name": "上升向量Z",
+          "description": "一个三维矢量的Z向量，表示哪一边的方向朝上。"
+        }
+      ]
+    },
+    {
+      "id": "look-parallel-to-layout",
+      "name": "注视场景水平方向",
+      "description": "使相机注视的方向与场景平行，而不是在场景上向下注视。",
+      "display_text": "设置相机注视平面 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) 朝向 [i]{3}[/i]",
+      "params": [
+        {
+          "id": "cam-x",
+          "name": "相机X",
+          "description": "相机位置的X坐标。"
+        },
+        {
+          "id": "cam-y",
+          "name": "相机Y",
+          "description": "相机位置的Y坐标。"
+        },
+        {
+          "id": "cam-z",
+          "name": "相机Z",
+          "description": "相机位置的Z坐标。"
+        },
+        {
+          "id": "look-angle",
+          "name": "注视角度",
+          "description": "相机镜头朝向的角度。"
+        }
+      ]
+    },
+    {
+      "id": "restore-2d-camera",
+      "name": "切换2D相机",
+      "description": "恢复默认的2D相机行为，以当前滚动位置为中心。",
+      "display_text": "切换2D相机",
+      "params": []
+    },
+    {
+      "id": "move-along-layout-axis",
+      "name": "沿着场景轴移动",
+      "description": "使相机位置或注视位置沿着相对于场景的轴线移动。",
+      "display_text": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "distance",
+          "name": "距离",
+          "description": "移动的距离。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "相对于场景的轴。",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        },
+        {
+          "id": "which",
+          "name": "方式",
+          "description": "移动相机位置，或注视位置，或者同时移动。",
+          "options": [
+            {
+              "id": "both",
+              "label": "相机和注视位置"
+            },
+            {
+              "id": "camera",
+              "label": "相机位置"
+            },
+            {
+              "id": "look",
+              "label": "注视位置"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "move-along-camera-axis",
+      "name": "沿着相机轴移动",
+      "description": "沿着相对于相机注视位置的轴移动相机位置或朝向位置。",
+      "display_text": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "distance",
+          "name": "距离",
+          "description": "沿着轴移动的距离。"
+        },
+        {
+          "id": "axis",
+          "name": "轴",
+          "description": "相对于相机朝向的位置，沿着哪个轴移动。",
+          "options": [
+            {
+              "id": "forward",
+              "label": "前推"
+            },
+            {
+              "id": "up",
+              "label": "升降"
+            },
+            {
+              "id": "right",
+              "label": "平移"
+            }
+          ]
+        },
+        {
+          "id": "which",
+          "name": "方式",
+          "description": "要移动相机位置，还是注视位置，或者同时移动。",
+          "options": [
+            {
+              "id": "both",
+              "label": "相机和注视位置"
+            },
+            {
+              "id": "camera",
+              "label": "相机位置"
+            },
+            {
+              "id": "look",
+              "label": "注视位置"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-position",
+      "name": "设置位置",
+      "description": "设置相机注视位置",
+      "display_text": "设置 [b]{3}[/b] 到 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要设置的X轴位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要设置的Y轴位置。"
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "要设置的Z轴位置。"
+        },
+        {
+          "id": "which",
+          "name": "应用于",
+          "description": "设置相机位置或相机注视位置。",
+          "options": [
+            {
+              "id": "camera",
+              "label": "相机位置"
+            },
+            {
+              "id": "look",
+              "label": "注视位置"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rotate-camera",
+      "name": "旋转相机",
+      "description": "旋转相机的X轴和Y轴注视方向。适用于鼠标。",
+      "display_text": "旋转相机 ([i]{0}[/i], [i]{1}[/i]), 极角范围 [i]{2}[/i] 到 [i]{3}[/i]",
+      "params": [
+        {
+          "id": "rotate-x",
+          "name": "旋转 X",
+          "description": "水平方向旋转角度。"
+        },
+        {
+          "id": "rotate-y",
+          "name": "旋转 Y",
+          "description": "垂直方向旋转角度。"
+        },
+        {
+          "id": "min-polar-angle",
+          "name": "最小极角",
+          "description": "在Y轴旋转的最小角度，限制相机可以向上看的距离。"
+        },
+        {
+          "id": "max-polar-angle",
+          "name": "最大极角",
+          "description": "在Y轴旋转的最大角度，限制相机可以向下看的距离。"
+        }
+      ]
+    },
+    {
+      "id": "set-field-of-view",
+      "name": "设置视区角度",
+      "description": "3D相机前方可见区域的角度，也被称为 FOV。仅适用于 '常规' Z轴刻度。",
+      "display_text": "设置视区角度为[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "fov",
+          "name": "视区角度",
+          "description": "3D相机前方可见区域的角度，也被称为 FOV。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "camera-x",
+      "name": "相机X",
+      "description": "相机的X坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-y",
+      "name": "相机Y",
+      "description": "相机的Y坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-z",
+      "name": "相机Z",
+      "description": "相机的Z坐标",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-x",
+      "name": "注视X",
+      "description": "相机注视位置的X坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-y",
+      "name": "注视Y",
+      "description": "相机注视位置的Y坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-z",
+      "name": "注视Z",
+      "description": "相机注视位置的Z坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-x",
+      "name": "升降X",
+      "description": "相机升降的X分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-y",
+      "name": "升降Y",
+      "description": "相机升降的Y分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "up-z",
+      "name": "升降Z",
+      "description": "相机升降的Z分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-x",
+      "name": "前推X",
+      "description": "向前推进的X分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-y",
+      "name": "前推Y",
+      "description": "向前推进的Y分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "forward-z",
+      "name": "前推Z",
+      "description": "向前推进的Z分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-x",
+      "name": "平移X",
+      "description": "相机沿水平方向平移的X分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-y",
+      "name": "平移Y",
+      "description": "相机沿水平方向平移的Y分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "right-z",
+      "name": "平移Z",
+      "description": "相机沿水平方向平移的Z分量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "viewport-top-left-x",
+      "name": "ViewportTopLeftX",
+      "description": "获取图层可视区域左上角的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-left-y",
+      "name": "ViewportTopLeftY",
+      "description": "获取图层可视区域左上角的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-right-x",
+      "name": "ViewportTopRightX",
+      "description": "获取图层可视区域右上角的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-top-right-y",
+      "name": "ViewportTopRightY",
+      "description": "获取图层可视区域右上角的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-right-x",
+      "name": "ViewportBottomRightX",
+      "description": "获取图层可视区域右下角的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-right-y",
+      "name": "ViewportBottomRightY",
+      "description": "获取图层可视区域右下角的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-left-x",
+      "name": "ViewportBottomLeftX",
+      "description": "获取图层可视区域左下角的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "viewport-bottom-left-y",
+      "name": "ViewportBottomLeftY",
+      "description": "获取图层可视区域左下角的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要获取的图层。可以是编号或者名字。"
+        }
+      ]
+    },
+    {
+      "id": "layer-to-canvas-x",
+      "name": "图层转画布坐标X",
+      "description": "将3D图层坐标转换为画布CSS坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "要转换的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "layer-to-canvas-y",
+      "name": "图层转画布坐标Y",
+      "description": "将图层坐标转换为画布CSS坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "要转换的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "canvas-to-layer-x",
+      "name": "画布转图层坐标X",
+      "description": "将画布CSS坐标转换为3D图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "layer-z",
+          "name": "图层",
+          "description": "图层的平面Z。"
+        }
+      ]
+    },
+    {
+      "id": "canvas-to-layer-y",
+      "name": "画布转图层坐标Y",
+      "description": "将画布CSS坐标转换为3D图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "要使用的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "layer-z",
+          "name": "图层Z",
+          "description": "图层的平面Z。"
+        }
+      ]
+    },
+    {
+      "id": "camera-x-rotation",
+      "name": "相机角度X",
+      "description": "相机在X轴的旋转角度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "camera-y-rotation",
+      "name": "相机角度Y",
+      "description": "相机在Y轴的旋转角度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "z-scale",
+      "name": "Z轴倍率",
+      "description": "影响在Z轴方向中，每个像素的缩放比例。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "default-camera-z",
+      "name": "默认相机Z",
+      "description": "2D视图中，相机在100%缩放比中的相机位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layer-to-layer-x",
+      "name": "图层转换图层坐标X",
+      "description": "将3D位置从当前图层转换到另一个图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "原始图层",
+          "description": "当前所在的位置。"
+        },
+        {
+          "id": "to-layer",
+          "name": "目标图层",
+          "description": "要转换到的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "要转换的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "layer-to-layer-y",
+      "name": "图层转换图层坐标Y",
+      "description": "将3D位置从当前图层转换到另一个图层坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "from-layer",
+          "name": "原始图层",
+          "description": "当前所在的位置。"
+        },
+        {
+          "id": "to-layer",
+          "name": "目标图层",
+          "description": "要转换到的图层。"
+        },
+        {
+          "id": "x",
+          "name": "x",
+          "description": "要转换的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "description": "要转换的Y坐标。"
+        },
+        {
+          "id": "z",
+          "name": "z",
+          "description": "要转换的Z坐标。"
+        }
+      ]
+    },
+    {
+      "id": "look-vector-x",
+      "name": "注视向量X",
+      "description": "从相机到注视位置的运动向量X。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-vector-y",
+      "name": "注视向量Y",
+      "description": "从相机到注视位置的运动向量Y。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "look-vector-z",
+      "name": "注视向量Z",
+      "description": "从相机到注视位置的运动向量Z。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "field-of-view",
+      "name": "视区角度",
+      "description": "3D相机前方可见区域的角度，也被称为 FOV。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 0,
+    "actions": 8,
+    "expressions": 37
+  }
+}

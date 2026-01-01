@@ -1,0 +1,121 @@
+{
+  "id": "shadowlight",
+  "name": "投影光",
+  "description": "让拥有 '投影对象' 行为的实例对象能被投射阴影。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-light-height",
+      "name": "设置光源高度",
+      "description": "设置光源的位置高度。",
+      "display_text": "设置光源高度为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "要设置的光源的高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-shadow-color",
+      "name": "设置光源颜色",
+      "description": "设置光源投射的阴影颜色。",
+      "display_text": "设置光源颜色为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "此对象投射的阴影的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "set-tag",
+      "name": "设置投影标签",
+      "description": "设置光源的投影标签，以区分不同的投影对象。",
+      "display_text": "设置投影标签为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的投影对象。"
+        }
+      ]
+    },
+    {
+      "id": "set-cast-from",
+      "name": "设置投影目标",
+      "description": "根据投影对象的投影标签，决定哪些对象能被投射。",
+      "display_text": "设置投影目标为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "cast-from",
+          "name": "目标",
+          "description": "设置光源的投影标签，以区分不同的投影对象。",
+          "options": [
+            {
+              "id": "all",
+              "label": "所有标签"
+            },
+            {
+              "id": "same-tag",
+              "label": "相同标签"
+            },
+            {
+              "id": "different-tag",
+              "label": "不同标签"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-light-position",
+      "name": "设置光源位置",
+      "description": "设置阴影投射的位置。",
+      "display_text": "设置光源位置 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "灯光 X",
+          "description": "光源的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "光源Y",
+          "description": "光源的Y坐标。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lightx",
+      "name": "光源X",
+      "description": "光源的X位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lighty",
+      "name": "光源Y",
+      "description": "光源的Y位置。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "投影标签",
+      "description": "光源的投影标签。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 0,
+    "actions": 5,
+    "expressions": 3
+  }
+}

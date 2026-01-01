@@ -1,0 +1,430 @@
+{
+  "id": "shape3d",
+  "name": "3D形状",
+  "description": "简单的 3D 形状支持，如创建一个立方体，每个面都可以自定义图像。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-shape",
+      "name": "比较形状",
+      "description": "测试当前设置的形状。",
+      "display_text": "形状为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "shape",
+          "name": "形状",
+          "description": "要检查的形状。",
+          "options": [
+            {
+              "id": "box",
+              "label": "方盒"
+            },
+            {
+              "id": "prism",
+              "label": "棱镜"
+            },
+            {
+              "id": "wedge",
+              "label": "斜坡"
+            },
+            {
+              "id": "pyramid",
+              "label": "金字塔"
+            },
+            {
+              "id": "corner-in",
+              "label": "尖角(内)"
+            },
+            {
+              "id": "corner",
+              "label": "尖角(外)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-z-height",
+      "name": "比较形状高度",
+      "description": "比较形状在Z轴方向的高度。",
+      "display_text": "形状高度 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "z-height",
+          "name": "形状高度",
+          "description": "比较形状在Z轴方向的高度。"
+        }
+      ]
+    },
+    {
+      "id": "is-face-visible",
+      "name": "朝面可见",
+      "description": "检测对象某个朝面是否可见。",
+      "display_text": "[i]{0}[/i] 朝面可见",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "要检查的朝面。",
+          "options": [
+            {
+              "id": "back",
+              "label": "背面"
+            },
+            {
+              "id": "front",
+              "label": "正面"
+            },
+            {
+              "id": "left",
+              "label": "左面"
+            },
+            {
+              "id": "right",
+              "label": "右面"
+            },
+            {
+              "id": "top",
+              "label": "顶面"
+            },
+            {
+              "id": "bottom",
+              "label": "底面"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-shape",
+      "name": "设置形状",
+      "description": "更改为不同的 3D 形状类型。",
+      "display_text": "设置形状为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "shape",
+          "name": "形状",
+          "description": "要设置的形状。",
+          "options": [
+            {
+              "id": "box",
+              "label": "方盒"
+            },
+            {
+              "id": "prism",
+              "label": "棱镜"
+            },
+            {
+              "id": "wedge",
+              "label": "斜坡"
+            },
+            {
+              "id": "pyramid",
+              "label": "金字塔"
+            },
+            {
+              "id": "corner-in",
+              "label": "尖角(内)"
+            },
+            {
+              "id": "corner",
+              "label": "尖角(外)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-z-height",
+      "name": "设置形状高度",
+      "description": "设置形状在Z轴方向的高度。",
+      "display_text": "设置形状高度为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "z-height",
+          "name": "形状高度",
+          "description": "设置形状在 Z 轴上的高度。视角从 100 的高度向下看。"
+        }
+      ]
+    },
+    {
+      "id": "set-face-visible",
+      "name": "设置朝面可见",
+      "description": "设置形状的某个朝面是否可见。",
+      "display_text": "[b]{1}[/b][i]{0}[/i]可见",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "要检查的朝面。",
+          "options": [
+            {
+              "id": "back",
+              "label": "背面"
+            },
+            {
+              "id": "front",
+              "label": "正面"
+            },
+            {
+              "id": "left",
+              "label": "左面"
+            },
+            {
+              "id": "right",
+              "label": "右面"
+            },
+            {
+              "id": "top",
+              "label": "顶面"
+            },
+            {
+              "id": "bottom",
+              "label": "底面"
+            }
+          ]
+        },
+        {
+          "id": "visible",
+          "name": "可见",
+          "description": "显示或隐藏形状的朝面。"
+        }
+      ]
+    },
+    {
+      "id": "set-face-image",
+      "name": "设置朝面图像",
+      "description": "设置形状朝面使用的对象图像。",
+      "display_text": "设置朝面图像 (朝面: [i]{0}[/i], 图像:[i]{1}[/i])",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "要更改图像的朝面。",
+          "options": [
+            {
+              "id": "back",
+              "label": "背面"
+            },
+            {
+              "id": "front",
+              "label": "正面"
+            },
+            {
+              "id": "left",
+              "label": "左面"
+            },
+            {
+              "id": "right",
+              "label": "右面"
+            },
+            {
+              "id": "top",
+              "label": "顶面"
+            },
+            {
+              "id": "bottom",
+              "label": "底面"
+            }
+          ]
+        },
+        {
+          "id": "image",
+          "name": "图像",
+          "description": "用于朝面的图像。",
+          "options": [
+            {
+              "id": "back",
+              "label": "背面"
+            },
+            {
+              "id": "front",
+              "label": "正面"
+            },
+            {
+              "id": "left",
+              "label": "左面"
+            },
+            {
+              "id": "right",
+              "label": "右面"
+            },
+            {
+              "id": "top",
+              "label": "顶面"
+            },
+            {
+              "id": "bottom",
+              "label": "底面"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-z-tiling-factor",
+      "name": "设置平铺系数",
+      "description": "设置应用于Z轴上的纹理平铺系数。数值越大，图像重复越密集。",
+      "display_text": "设置平铺系数为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "z-tiling-factor",
+          "name": "平铺系数",
+          "description": "要设置的平铺系数。"
+        }
+      ]
+    },
+    {
+      "id": "set-face-object",
+      "name": "设置朝面对象",
+      "description": "选择一个对象，使用其图像作为3D形状朝向面的图像。注意，对象的实例必须放置在相同的场景中。后续想要操作此对象时，需先选择该3D形状对象。",
+      "display_text": "设置朝面图像 (朝面: [i]{0}[/i], 对象:{1})",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "要更改哪个朝面的图像。",
+          "options": [
+            {
+              "id": "back",
+              "label": "背面"
+            },
+            {
+              "id": "front",
+              "label": "正面"
+            },
+            {
+              "id": "left",
+              "label": "左面"
+            },
+            {
+              "id": "right",
+              "label": "右面"
+            },
+            {
+              "id": "top",
+              "label": "顶面"
+            },
+            {
+              "id": "bottom",
+              "label": "底面"
+            }
+          ]
+        },
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "用于朝向显示的对象。"
+        }
+      ]
+    },
+    {
+      "id": "set-back-face-culling",
+      "name": "启用背面剔除",
+      "description": "设置是否自动隐藏背对镜头的面部。",
+      "display_text": "设置背面剔除(启用: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "back-face-culling",
+          "name": "背面剔除",
+          "description": "是否启用背面剔除。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "z-height",
+      "name": "形状高度",
+      "description": "形状在 Z 轴上的高度。视角从 100 的高度向下看。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "z-tiling-factor",
+      "name": "平铺系数",
+      "description": "应用于Z轴的纹理平铺系数。数值越大，图像重复越密集。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "face-image-point-x",
+      "name": "朝面图像点X",
+      "description": "在3D形状朝面的一个图像点的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "朝面的数字编号(0-5)"
+        },
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-y",
+      "name": "朝面图像点Y",
+      "description": "在3D形状朝面的一个图像点的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "朝面的数字编号(0-5)"
+        },
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-z",
+      "name": "朝面图像点Z",
+      "description": "在3D形状朝面的一个图像点的Z轴位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "朝面的数字编号(0-5)"
+        },
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "face-image-point-count",
+      "name": "朝面图像点数量",
+      "description": "在3D形状朝面的图像点数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "face",
+          "name": "朝面",
+          "description": "朝面的数字编号(0-5)"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 7,
+    "expressions": 6
+  }
+}

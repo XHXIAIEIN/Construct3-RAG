@@ -1,0 +1,122 @@
+{
+  "id": "button",
+  "name": "按钮",
+  "description": "浏览器基本样式的按钮或复选框组件，通常用于系统级的点击交互。如果你希望显示游戏按钮，建议使用精灵图，并通过鼠标、触控进行交互。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "点击按钮",
+      "description": "单击按钮时触发。",
+      "display_text": "点击按钮",
+      "params": []
+    },
+    {
+      "id": "is-checked",
+      "name": "已勾选",
+      "description": "检测复选框是否已被勾选。",
+      "display_text": "已勾选",
+      "params": []
+    },
+    {
+      "id": "compare-text",
+      "name": "比较文本",
+      "description": "比较按钮的文本。",
+      "display_text": "按钮文本是[b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "要比较的文本",
+          "description": "与按钮文本进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "区分大小写",
+          "description": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "忽略大小写"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "区分大小写"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "name": "设置按钮文字",
+      "description": "设置按钮的文字。",
+      "display_text": "设置按钮文字为{0}",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "在按钮上显示的文本。"
+        }
+      ]
+    },
+    {
+      "id": "set-tooltip",
+      "name": "设置工具提示",
+      "description": "设置按钮的工具提示。",
+      "display_text": "设置工具提示为{0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "提示",
+          "description": "在按钮上设置的工具提示。"
+        }
+      ]
+    },
+    {
+      "id": "set-checked",
+      "name": "设置勾选状态",
+      "description": "勾选或取消选中一个复选框。",
+      "display_text": "设置[b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择复选框状态。",
+          "options": [
+            {
+              "id": "unchecked",
+              "label": "待勾选"
+            },
+            {
+              "id": "checked",
+              "label": "已勾选"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-checked",
+      "name": "反转勾选",
+      "description": "切换复选框",
+      "display_text": "反转勾选",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "name": "文本",
+      "description": "获取按钮文字",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 4,
+    "expressions": 1
+  }
+}

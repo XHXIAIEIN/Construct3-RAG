@@ -1,0 +1,112 @@
+{
+  "id": "fade",
+  "name": "Fade",
+  "description": "Change an object's opacity over time.  Useful for making objects gradually disappear.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-fade-out-finished",
+      "name": "On fade-out finished",
+      "description": "Triggered when the fade-out has finished.",
+      "display_text": "On {my} fade-out finished",
+      "params": []
+    },
+    {
+      "id": "on-fade-in-finished",
+      "name": "On fade-in finished",
+      "description": "Triggered when the fade-in has finished.",
+      "display_text": "On {my} fade-in finished",
+      "params": []
+    },
+    {
+      "id": "on-wait-finished",
+      "name": "On wait finished",
+      "description": "Triggered when the wait has finished.",
+      "display_text": "On {my} wait finished",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "restart-fade",
+      "name": "Restart fade",
+      "description": "Run the fade again.",
+      "display_text": "{my}: restart fade",
+      "params": []
+    },
+    {
+      "id": "start-fade",
+      "name": "Start fade",
+      "description": "Start the fade, if not active on start.",
+      "display_text": "{my}: start fade",
+      "params": []
+    },
+    {
+      "id": "set-fade-in-time",
+      "name": "Set fade-in time",
+      "description": "Set the fade-in time property.",
+      "display_text": "{my}: set fade-in time to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "fade-in-time",
+          "name": "Fade-in time",
+          "description": "Time in seconds to spend in the fade-in phase."
+        }
+      ]
+    },
+    {
+      "id": "set-wait-time",
+      "name": "Set wait time",
+      "description": "Set the wait time property.",
+      "display_text": "{my}: set wait time to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "wait-time",
+          "name": "Wait time",
+          "description": "Time in seconds to spend in the wait phase."
+        }
+      ]
+    },
+    {
+      "id": "set-fade-out-time",
+      "name": "Set fade-out time",
+      "description": "Set the fade-out time property.",
+      "display_text": "{my}: set fade-out time to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "fade-out-time",
+          "name": "Fade-out time",
+          "description": "Time in seconds to spend in the fade-out phase."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "fadeintime",
+      "name": "FadeInTime",
+      "description": "The fade-in time in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "waittime",
+      "name": "WaitTime",
+      "description": "The wait time in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fadeouttime",
+      "name": "FadeOutTime",
+      "description": "The fade-out time in seconds.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 5,
+    "expressions": 3
+  }
+}

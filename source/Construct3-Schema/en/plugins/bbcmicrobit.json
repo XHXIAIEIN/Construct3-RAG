@@ -1,0 +1,242 @@
+{
+  "id": "bbcmicrobit",
+  "name": "BBC micro:bit",
+  "description": "Connect to a BBC micro:bit device over Bluetooth and access its features.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "True if the current platform supports Bluetooth features.",
+      "display_text": "Is supported",
+      "params": []
+    },
+    {
+      "id": "on-device-connected",
+      "name": "On device connected",
+      "description": "Triggered after 'Request device' successfully connects to a device.",
+      "display_text": "On device connected",
+      "params": []
+    },
+    {
+      "id": "on-device-disconnected",
+      "name": "On device disconnected",
+      "description": "Triggered when a connected device disconnects and is no longer accessible.",
+      "display_text": "On device disconnected",
+      "params": []
+    },
+    {
+      "id": "is-device-connected",
+      "name": "Is device connected",
+      "description": "Test if any device is currently connected.",
+      "display_text": "Is device connected",
+      "params": []
+    },
+    {
+      "id": "on-request-device-failed",
+      "name": "On request device failed",
+      "description": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "display_text": "On request device failed",
+      "params": []
+    },
+    {
+      "id": "on-accelerometer-reading",
+      "name": "On accelerometer reading",
+      "description": "Triggered when an accelerometer reading is received from the device.",
+      "display_text": "On accelerometer reading",
+      "params": []
+    },
+    {
+      "id": "on-button-pressed",
+      "name": "On button pressed",
+      "description": "Triggered when one of the buttons on the device is pressed.",
+      "display_text": "On button [b]{0}[/b] {1}",
+      "params": [
+        {
+          "id": "button",
+          "name": "Button",
+          "description": "Which button to detect input from.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A"
+            },
+            {
+              "id": "b",
+              "label": "B"
+            }
+          ]
+        },
+        {
+          "id": "input",
+          "name": "Input",
+          "description": "The type of input to detect.",
+          "options": [
+            {
+              "id": "pressed",
+              "label": "pressed"
+            },
+            {
+              "id": "long-pressed",
+              "label": "long pressed"
+            },
+            {
+              "id": "released",
+              "label": "released"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-bearing-reading",
+      "name": "On bearing reading",
+      "description": "Triggered when a bearing reading is received from the device.",
+      "display_text": "On bearing reading",
+      "params": []
+    },
+    {
+      "id": "on-temperature-reading",
+      "name": "On temperature reading",
+      "description": "Triggered when a temperature reading is received from the device.",
+      "display_text": "On temperature reading",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "name": "Request device",
+      "description": "Request access to a BBC micro:bit device over Bluetooth. Must be used in a user input trigger.",
+      "display_text": "Request device",
+      "params": []
+    },
+    {
+      "id": "disconnect-device",
+      "name": "Disconnect device",
+      "description": "Disconnect a currently connected device.",
+      "display_text": "Disconnect device",
+      "params": []
+    },
+    {
+      "id": "clear-led-state",
+      "name": "Clear LED state",
+      "description": "Reset the stored LED state, so all LEDs are off.",
+      "display_text": "Clear LED state",
+      "params": []
+    },
+    {
+      "id": "set-led-state",
+      "name": "Set LED state",
+      "description": "Set whether an individual LED is on or off in the stored LED state.",
+      "display_text": "Set LED ([i]{0}[/i], [i]{1}[/i]) state [b]{2}[/b]",
+      "params": [
+        {
+          "id": "col",
+          "name": "Column",
+          "description": "The zero-based column of the LED, from 0-4."
+        },
+        {
+          "id": "row",
+          "name": "Row",
+          "description": "The zero-based row of the LED, from 0-4."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether the LED is on or off."
+        }
+      ]
+    },
+    {
+      "id": "update-leds",
+      "name": "Update LEDs",
+      "description": "Update the LEDs on the device to the stored LED state.",
+      "display_text": "Update LEDs",
+      "params": []
+    },
+    {
+      "id": "scroll-text",
+      "name": "Scroll text",
+      "description": "Show a message on the LED display.",
+      "display_text": "Scroll text [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The message to display, up to 20 characters."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "name": "DeviceID",
+      "description": "The ID of a connected device (if any).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-x",
+      "name": "AccelerometerRawX",
+      "description": "The raw accelerometer X reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-y",
+      "name": "AccelerometerRawY",
+      "description": "The raw accelerometer Y reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-z",
+      "name": "AccelerometerRawZ",
+      "description": "The raw accelerometer Z reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-x",
+      "name": "AccelerometerSmoothedX",
+      "description": "The smoothed accelerometer X reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-y",
+      "name": "AccelerometerSmoothedY",
+      "description": "The smoothed accelerometer Y reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-z",
+      "name": "AccelerometerSmoothedZ",
+      "description": "The smoothed accelerometer Z reading.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bearing",
+      "name": "Bearing",
+      "description": "The magnetometer bearing reading, in degrees from due north.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "temperature",
+      "name": "Temperature",
+      "description": "The temperature reading, in degrees celcius.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 9,
+    "actions": 6,
+    "expressions": 9
+  }
+}

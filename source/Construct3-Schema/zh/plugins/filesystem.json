@@ -1,0 +1,743 @@
+{
+  "id": "filesystem",
+  "name": "文件系统",
+  "description": "访问本地设备文件或文件夹，进行读取、写入等操作。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "设备支持功能",
+      "description": "检测当前运行设备是否支持访问文件系统。",
+      "display_text": "设备支持访问文件系统",
+      "params": []
+    },
+    {
+      "id": "on-picker-complete",
+      "name": "选取完成",
+      "description": "执行 '打开文件' 动作后，用户成功选择文件时触发。",
+      "display_text": "文件 [b]{0}[/b] 选取完成",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "在 '打开文件' 动作中，填写的选取器标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-picker-error",
+      "name": "选取失败",
+      "description": "执行 '打开文件' 动作后，用户没有选择文件或取消选择窗口时触发。",
+      "display_text": "文件 [b]{0}[/b] 选取失败",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "在 '打开文件' 动作中，填写的选取器标签。"
+        }
+      ]
+    },
+    {
+      "id": "has-picker-tag",
+      "name": "包含选取器标签",
+      "description": "检查拾取器标签是否可用。这包括最近打开的选取器。",
+      "display_text": "包含选取器标签 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "在 '打开文件' 动作中，填写的选取器标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-file-operation-complete",
+      "name": "文件操作完成",
+      "description": "对文件的操作完成时触发。",
+      "display_text": "文件 [b]{0}[/b] 操作完成",
+      "params": [
+        {
+          "id": "file-tag",
+          "name": "文件标签",
+          "description": "对应文件操作的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-file-operation-error",
+      "name": "文件操作失败",
+      "description": "在文件操作失败时触发。",
+      "display_text": "文件 [b]{0}[/b] 操作失败",
+      "params": [
+        {
+          "id": "file-tag",
+          "name": "文件标签",
+          "description": "对应文件操作的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-file-operation-complete",
+      "name": "任意二进制文件操作完成",
+      "description": "任意二进制文件操作完成时触发，并返回 '文件标签' 表达式。",
+      "display_text": "任意二进制文件操作完成",
+      "params": []
+    },
+    {
+      "id": "on-any-file-operation-error",
+      "name": "任意二进制文件操作错误",
+      "description": "任意文件操作失败时触发，并返回 '文件标签' 表达式。",
+      "display_text": "任意二进制文件操作错误",
+      "params": []
+    },
+    {
+      "id": "desktop-features-supported",
+      "name": "支持客户端功能",
+      "description": "检查当前运行环境是否支持使用桌面端功能，支持文件夹选择器。仅在使用桌面端导出时有效。",
+      "display_text": "支持客户端功能",
+      "params": []
+    },
+    {
+      "id": "has-file-or-folder",
+      "name": "存在文件/文件夹",
+      "description": "执行 '列出所有文件' 动作后，检查列表中是否存在文件或文件夹名称。",
+      "display_text": "存在{0}[b]{1}[/b] (区分大小写: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "要检查文件或文件夹。",
+          "options": [
+            {
+              "id": "file",
+              "label": "文件"
+            },
+            {
+              "id": "folder",
+              "label": "文件夹"
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "要检查的文件或文件夹名称。"
+        },
+        {
+          "id": "case-sensitive",
+          "name": "区分大小写",
+          "description": "检查名称时是否区分大小写。请注意，某些文件系统必须区分大小写。"
+        }
+      ]
+    },
+    {
+      "id": "on-dropped-files",
+      "name": "拖入文件",
+      "description": "检测到有文件拖入到窗口时触发。被拖入的文件，会被视为位于带有 <dropped-files> 标签的文件夹中。",
+      "display_text": "拖入文件",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-accept-type",
+      "name": "添加文件类型筛选",
+      "description": "在下次打开文件选取器时，限定可选的文件类型。",
+      "display_text": "添加文件类型筛选 (媒体类型: [i]{0}[/i], 文件扩展名: [i]{1}[/i], 文件描述: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "mime-type",
+          "name": "媒体类型",
+          "description": "指定文件的媒体类型(MIME)。例如 \"image/png\", \"image/*\" 等。"
+        },
+        {
+          "id": "file-extensions",
+          "name": "文件扩展名",
+          "description": "指定文件的文件扩展名，多个类型使用分号隔开。例如: \".png;.jpg\" 等。"
+        },
+        {
+          "id": "description",
+          "name": "类型描述",
+          "description": "显示在打开对话框右下角的文件类型的描述信息，用于提示用户。例如: 图像文件。"
+        }
+      ]
+    },
+    {
+      "id": "show-save-file-picker",
+      "name": "保存文件",
+      "description": "显示一个保存文件的选取器，允许用户选择一个要写入的文件。",
+      "display_text": "保存文件 (选取器标签: [b]{0}[/b], 初始文件名: [i]{2}[/i],  初始位置: [i]{4}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "show-accept-all",
+          "name": "接受所有文件类型",
+          "description": "是否显示所有文件类型"
+        },
+        {
+          "id": "suggested-name",
+          "name": "默认文件名",
+          "description": "保存文件时，提供默认的文件名称。"
+        },
+        {
+          "id": "id",
+          "name": "文件标签(可选)",
+          "description": "文件选取结果的标签，用于记住选择器选择的文件。"
+        },
+        {
+          "id": "start-in",
+          "name": "初始位置",
+          "description": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "options": [
+            {
+              "id": "default",
+              "label": "(默认)"
+            },
+            {
+              "id": "desktop",
+              "label": "桌面"
+            },
+            {
+              "id": "documents",
+              "label": "文档"
+            },
+            {
+              "id": "downloads",
+              "label": "下载"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            },
+            {
+              "id": "pictures",
+              "label": "图片"
+            },
+            {
+              "id": "videos",
+              "label": "视频"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-open-file-picker",
+      "name": "打开文件 (文件选择器)",
+      "description": "显示保存文件的选取器，允许用户选择一个要操作的文件。",
+      "display_text": "打开文件 (选取器标签: [b]{0}[/b], 初始位置: [i]{4}[/i], 允许多选: [i]{2}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "show-accept-all",
+          "name": "接受所有文件类型",
+          "description": "是否显示所有文件类型"
+        },
+        {
+          "id": "multiple",
+          "name": "允许多选",
+          "description": "是否允许选取多个文件。"
+        },
+        {
+          "id": "id",
+          "name": "文件标签(可选)",
+          "description": "文件选取结果的标签，用于记住选择器选择的文件。"
+        },
+        {
+          "id": "start-in",
+          "name": "初始位置",
+          "description": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "options": [
+            {
+              "id": "default",
+              "label": "(默认)"
+            },
+            {
+              "id": "desktop",
+              "label": "桌面"
+            },
+            {
+              "id": "documents",
+              "label": "文档"
+            },
+            {
+              "id": "downloads",
+              "label": "下载"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            },
+            {
+              "id": "pictures",
+              "label": "图片"
+            },
+            {
+              "id": "videos",
+              "label": "视频"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-folder-picker",
+      "name": "打开文件夹",
+      "description": "显示一个保存文件的选取器，允许用户选择一个要写入的文件。",
+      "display_text": "打开文件夹 (选取器标签: [b]{0}[/b], 模式: [i]{1}[/i], 文件标签: [i]{2}[/i], 初始位置: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "mode",
+          "name": "权限类型",
+          "description": "为文件夹申请的访问权限的种类。",
+          "options": [
+            {
+              "id": "read-only",
+              "label": "只读"
+            },
+            {
+              "id": "read-write",
+              "label": "读写"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "文件标签(可选)",
+          "description": "文件选取结果的标签，用于记住选择器选择的文件。"
+        },
+        {
+          "id": "start-in",
+          "name": "初始位置",
+          "description": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "options": [
+            {
+              "id": "default",
+              "label": "(默认)"
+            },
+            {
+              "id": "desktop",
+              "label": "桌面"
+            },
+            {
+              "id": "documents",
+              "label": "文档"
+            },
+            {
+              "id": "downloads",
+              "label": "下载"
+            },
+            {
+              "id": "music",
+              "label": "音乐"
+            },
+            {
+              "id": "pictures",
+              "label": "图片"
+            },
+            {
+              "id": "videos",
+              "label": "视频"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "write-text-file",
+      "name": "写入文本",
+      "description": "在指定的文件或文件夹路径，写入一个文本文件。",
+      "display_text": "写入文本文件 (选取器标签: [b]{0}[/b], 内容: [i]{3}[/i], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i], 模式: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径(可选)",
+          "description": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "可选的字符串标签，用于识别这个特定文件的操作状态。"
+        },
+        {
+          "id": "text",
+          "name": "内容",
+          "description": "要写入的文本字符串。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "是覆盖文件内容，或是追加内容到现有文件中。",
+          "options": [
+            {
+              "id": "overwrite",
+              "label": "覆盖"
+            },
+            {
+              "id": "append",
+              "label": "追加"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "write-binary-file",
+      "name": "写入二进制数据文件",
+      "description": "将二进制数据写入之前选取的文件或文件夹。",
+      "display_text": "写入二进制数据文件 (选取器标签: [b]{0}[/b], 内容来源: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径(可选)",
+          "description": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个文件的操作状态。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要写入文件的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "read-text-file",
+      "name": "读取文件",
+      "description": "请求读取一个文本文件。",
+      "display_text": "读取文件 (选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径(可选)",
+          "description": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "read-binary-file",
+      "name": "读取二进制数据文件",
+      "description": "在选取器窗口的文件夹中，请求读取二进制数据文件，并储存到二进制数据对象中。",
+      "display_text": "读取二进制数据文件 (选取器标签: [b]{0}[/b], 目标对象: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "选取器窗口的标签，用于记住选取器的选择路径、筛选类型等设置。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径(可选)",
+          "description": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要读取文件内容的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "create-folder",
+      "name": "创建文件夹",
+      "description": "在选取器窗口的文件夹中，请求创建一个新的文件夹。",
+      "display_text": "创建文件夹(选取器标签: [b]{0}[/b], 创建位置: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器标签。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径",
+          "description": "要创建的文件夹的路径。可以包括多个子文件夹，例如，\"folder/subfolder\"。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "copy-file",
+      "name": "复制文件",
+      "description": "在选取器窗口的文件夹中，请求复制一个文件。",
+      "display_text": "复制文件 (选取器标签:  [b]{0}[/b], 来源文件: [i]{1}[/i], 目标位置: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器标签。"
+        },
+        {
+          "id": "src-folder-path",
+          "name": "来源文件",
+          "description": "要复制的源文件的路径。"
+        },
+        {
+          "id": "dest-folder-path",
+          "name": "目标位置",
+          "description": "创建副本的目标文件的路径。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "name": "删除文件",
+      "description": "在选取器窗口的文件夹中，请求删除一个文件或文件夹。",
+      "display_text": "删除文件 (选取器标签: [b]{0}[/b], 路径: [i]{1}[/i], 包括子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器标签。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径",
+          "description": "要删除的文件或文件夹的路径。"
+        },
+        {
+          "id": "recursive",
+          "name": "包括子文件夹",
+          "description": "指定删除文件夹时，是否删除该路径的所有子文件夹和文件。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "list-content",
+      "name": "获取文件列表",
+      "description": "检索指定文件夹路径的所有文件和文件夹的列表。",
+      "display_text": "列出文件列表(选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 包含子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器标签。"
+        },
+        {
+          "id": "folder-path",
+          "name": "文件夹路径",
+          "description": "要检索的文件夹的路径。留空则列出当前所选文件夹的内容。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "文件标签，用于识别这个特定文件的操作状态。"
+        },
+        {
+          "id": "recursive",
+          "name": "包含子文件夹",
+          "description": "是否同时列出子文件夹的内容。"
+        }
+      ]
+    },
+    {
+      "id": "shell-open",
+      "name": "打开文件 (外部应用程序)",
+      "description": "通过文件关联的默认关联应用程序，打开一个文件。",
+      "display_text": "通过外部应用程序打开文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器的标签。"
+        },
+        {
+          "id": "file-path",
+          "name": "文件路径",
+          "description": "要打开的文件路径。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "可选的字符串标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "run-file",
+      "name": "运行文件",
+      "description": "运行一个文件，例如执行另一个应用程序。",
+      "display_text": "运行文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 参数: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器的标签。留空则指定系统内置路径。(如用于 \"cmd.exe\")。"
+        },
+        {
+          "id": "file-path",
+          "name": "文件路径",
+          "description": "要执行的文件的路径。"
+        },
+        {
+          "id": "arguments",
+          "name": "参数",
+          "description": "要传递给应用程序的命令行参数的字符串。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "可选的字符串标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    },
+    {
+      "id": "move-file",
+      "name": "移动文件",
+      "description": "移动（或重命名）指定文件夹中的文件。",
+      "display_text": "移动文件 (选取器: [b]{0}[/b],  原始路径: [i]{1}[/i], 目标路径: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "选取器标签",
+          "description": "要使用的文件夹选择器的标签。"
+        },
+        {
+          "id": "src-folder-path",
+          "name": "原始路径",
+          "description": "要移动的文件的路径。"
+        },
+        {
+          "id": "dest-folder-path",
+          "name": "目标路径",
+          "description": "文件即将移动到的目标路径。"
+        },
+        {
+          "id": "file-tag",
+          "name": "文件标签(可选)",
+          "description": "可选的字符串标签，用于识别这个特定文件的操作状态。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "file-name-at",
+      "name": "文件名称索引",
+      "description": "执行 '获取文件列表' 动作后，根据指定的索引值，获取对应的文件名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在文件列表中的索引值，从0开始计算。"
+        }
+      ]
+    },
+    {
+      "id": "file-count",
+      "name": "文件数量",
+      "description": "执行 '获取文件列表' 动作后，获得的文件数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "folder-name-at",
+      "name": "文件夹名称索引",
+      "description": "执行 '获取文件列表' 动作后，根据指定的索引值，获取对应的文件夹名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "在文件列表中的索引值，从0开始计算。"
+        }
+      ]
+    },
+    {
+      "id": "folder-count",
+      "name": "文件夹数量",
+      "description": "文件夹的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-text",
+      "name": "文本内容",
+      "description": "文件读取成功后，返回的文本内容。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-tag",
+      "name": "文件标签",
+      "description": "在执行动作中相应的文件系统的文件标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "picker-tag",
+      "name": "选择器标签",
+      "description": "在事件触发器中相关的选择器标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "folder-path",
+      "name": "文件夹路径",
+      "description": "在触发文件或文件夹的动作中，相关的文件夹路径。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 11,
+    "actions": 15,
+    "expressions": 8
+  }
+}

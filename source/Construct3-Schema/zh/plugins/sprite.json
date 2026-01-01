@@ -1,0 +1,700 @@
+{
+  "id": "sprite",
+  "name": "精灵",
+  "description": "可以添加多张图片组成动画的对象，它是大多数项目的重要组成部分。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-animation-playing",
+      "name": "正在播放",
+      "description": "检测当前正在播放哪个的动画。",
+      "display_text": "正在播放 {0} 动画",
+      "params": [
+        {
+          "id": "animation",
+          "name": "动画",
+          "description": "要检测的动画名称。"
+        }
+      ]
+    },
+    {
+      "id": "compare-animation-frame",
+      "name": "比较帧数",
+      "description": "测试当前显示的动画帧。",
+      "display_text": "动画帧 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要比较的动画帧编号（从0开始计数）。"
+        }
+      ]
+    },
+    {
+      "id": "on-animation-finished",
+      "name": "动画播放完成",
+      "description": "动画播放结束时触发。",
+      "display_text": "动画 {0} 播放完成",
+      "params": [
+        {
+          "id": "animation",
+          "name": "动画",
+          "description": "要检测的动画名称。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-animation-finished",
+      "name": "任意动画播放完成",
+      "description": "任意动画播放完成时触发",
+      "display_text": "任意动画播放完成",
+      "params": []
+    },
+    {
+      "id": "on-animation-frame-changed",
+      "name": "切换动画帧",
+      "description": "动画帧切换时触发",
+      "display_text": "切换动画帧",
+      "params": []
+    },
+    {
+      "id": "compare-animation-speed",
+      "name": "比较播放速度",
+      "description": "比较当前动画帧播放速度",
+      "display_text": "动画播放速度 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "number",
+          "name": "数字",
+          "description": "要比较的动画速度。"
+        }
+      ]
+    },
+    {
+      "id": "is-mirrored",
+      "name": "已左右翻转",
+      "description": "测试对象是否已被设置 '左右翻转' 动作。",
+      "display_text": "已左右翻转",
+      "params": []
+    },
+    {
+      "id": "is-flipped",
+      "name": "已上下翻转",
+      "description": "测试对象是否已被设置 上下翻转' 操作。",
+      "display_text": "已上下翻转",
+      "params": []
+    },
+    {
+      "id": "collisions-enabled",
+      "name": "已启用碰撞",
+      "description": "检测对象的碰撞功能是否已启用，并且允许触发碰撞事件。",
+      "display_text": "已启用碰撞",
+      "params": []
+    },
+    {
+      "id": "on-image-url-loaded",
+      "name": "网络图像加载完成",
+      "description": "执行 '加载远程图像' 动作，图像加载完成时触发。",
+      "display_text": "网络图像加载完成",
+      "params": []
+    },
+    {
+      "id": "on-image-url-failed",
+      "name": "网络图像加载失败",
+      "description": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "display_text": "网络图像加载失败",
+      "params": []
+    },
+    {
+      "id": "compare-animation-frame-tag",
+      "name": "比较动画帧标签",
+      "description": "与当前动画帧的标签进行比较。",
+      "display_text": "动画帧标签 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于比较的动画帧标签。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop-animation",
+      "name": "停止播放",
+      "description": "停止播放当前动画。",
+      "display_text": "停止播放动画",
+      "params": []
+    },
+    {
+      "id": "start-animation",
+      "name": "开始播放",
+      "description": "如果已停止，则启动当前动画。",
+      "display_text": "从{0}开始播放动画",
+      "params": [
+        {
+          "id": "from",
+          "name": "从",
+          "description": "选择是否将动画恢复或倒回到第一帧。",
+          "options": [
+            {
+              "id": "current-frame",
+              "label": "当前帧"
+            },
+            {
+              "id": "beginning",
+              "label": "起始帧"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-animation",
+      "name": "设置动画",
+      "description": "设置当前动画",
+      "display_text": "设置动画为[b]{0}[/b](从{1}播放)",
+      "params": [
+        {
+          "id": "animation",
+          "name": "动画",
+          "description": "要设置的动画的名称。"
+        },
+        {
+          "id": "from",
+          "name": "开始",
+          "description": "选择从当前帧开始播放，或是从动画第一帧播放。",
+          "options": [
+            {
+              "id": "current-frame",
+              "label": "当前帧"
+            },
+            {
+              "id": "beginning",
+              "label": "起始帧"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-animation-frame",
+      "name": "设置动画帧",
+      "description": "通过动画帧的编号或标签，设置当前动画帧。",
+      "display_text": "设置动画帧为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "frame-number",
+          "name": "编号",
+          "description": "要设置的动画帧编号（从0开始），或标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-animation-speed",
+      "name": "设置播放速度",
+      "description": "设置当前动画速度。",
+      "display_text": "设置动画播放速度为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "新动画速度，每秒动画帧数。"
+        }
+      ]
+    },
+    {
+      "id": "set-repeat-to-frame",
+      "name": "设置重复帧",
+      "description": "设置要从哪一帧开始重复播放，仅在循环播放的动画表中生效。",
+      "display_text": "设置重复起始帧为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "frame-number",
+          "name": "编号",
+          "description": "要重复的动画帧编号（从0开始）。"
+        }
+      ]
+    },
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-mirrored",
+      "name": "设置左右翻转",
+      "description": "将对象设置为左右翻转，或恢复正常。",
+      "display_text": "[b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择将对象左右翻转，或恢复正常。",
+          "options": [
+            {
+              "id": "mirrored",
+              "label": "左右翻转"
+            },
+            {
+              "id": "not-mirrored",
+              "label": "关闭左右翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-flipped",
+      "name": "设置上下翻转",
+      "description": "将对象垂直翻转，或恢复正常。",
+      "display_text": "[b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "选择将对象垂直翻转，或恢复正常。",
+          "options": [
+            {
+              "id": "flipped",
+              "label": "上下翻转"
+            },
+            {
+              "id": "not-flipped",
+              "label": "关闭上下翻转"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spawn-another-object",
+      "name": "生成其他对象",
+      "description": "在此对象上创建另一个对象。新对象将继承此对象的角度。",
+      "display_text": "生成对象 {0} 到图像点 [i]{2}[/i] (图层: [b]{1}[/b], 对象层级: [i]{3}[/i], 继承模板: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要创建的对象类型。"
+        },
+        {
+          "id": "layer",
+          "name": "图层",
+          "description": "新实例对象要创建到的图层名称或编号。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点",
+          "description": "输入图像点的名称或编号，对象原点的图像点编号是 0"
+        },
+        {
+          "id": "create-hierarchy",
+          "name": "创建子对象",
+          "description": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        {
+          "id": "template-name",
+          "name": "模板名称",
+          "description": "在生成对象时，继承特定的模板对象。模板可在实例对象的属性栏中定义。"
+        }
+      ]
+    },
+    {
+      "id": "set-collisions-enabled",
+      "name": "启用碰撞",
+      "description": "对象是否能触发碰撞相关的事件。",
+      "display_text": "[b]{0}[/b]碰撞",
+      "params": [
+        {
+          "id": "collisions",
+          "name": "碰撞",
+          "description": "启用或禁用此对象的碰撞。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-scale",
+      "name": "设置缩放比例",
+      "description": "将宽度和高度设置为其原始大小的倍数。",
+      "display_text": "设置缩放比例为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "scale",
+          "name": "大小",
+          "description": "设置对象整体尺寸的倍数，1：原始尺寸，2：扩大两倍，0.5：缩小一半"
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name": "加载远程图像",
+      "description": "将当前显示的动画帧替换为从远程地址加载的图像，也可通过 AJAX 对象请求项目文件夹的本地文件。",
+      "display_text": "加载远程图像 [i]{0}[/i] ({1}, 跨域 {2})",
+      "params": [
+        {
+          "id": "uri",
+          "name": "URI",
+          "description": "要导入的远程图像地址或通过表达式返回的数据地址。"
+        },
+        {
+          "id": "size",
+          "name": "缩放",
+          "description": "使用新图像的尺寸大小，或保持当前精灵的尺寸。",
+          "options": [
+            {
+              "id": "resize-to-image-size",
+              "label": "缩放至新图片尺寸"
+            },
+            {
+              "id": "keep-current-size",
+              "label": "保持当前尺寸"
+            }
+          ]
+        },
+        {
+          "id": "cross-origin",
+          "name": "跨域",
+          "description": "如何处理请求的跨域（CORS）模式。",
+          "options": [
+            {
+              "id": "anonymous",
+              "label": "匿名"
+            },
+            {
+              "id": "none",
+              "label": "无"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-solid-collision-filter",
+      "name": "设置实体碰撞过滤",
+      "description": "启用或禁用与其他带有实体行为对象的碰撞。使用空格分隔多个标签。",
+      "display_text": "设置实体碰撞过滤 (模式: [i]{0}[/i], 实体标签: [b]{1}[/b])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "若使用 '包含' 模式，只能与带有相同标签的实体行为对象发生碰撞。使用 '排除' 模式则会忽略带有该标签的实体行为对象的碰撞。",
+          "options": [
+            {
+              "id": "inclusive",
+              "label": "包含"
+            },
+            {
+              "id": "exclusive",
+              "label": "排除"
+            }
+          ]
+        },
+        {
+          "id": "tags",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "add-remove-animation",
+      "name": "添加/删除动画",
+      "description": "添加或删除对象的动画。",
+      "display_text": "{0} 动画 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "which",
+          "name": "方式",
+          "description": "添加新动画或删除现有动画。",
+          "options": [
+            {
+              "id": "add",
+              "label": "添加"
+            },
+            {
+              "id": "remove",
+              "label": "移除"
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "name": "名称",
+          "description": "添加或删除的动画名称。"
+        }
+      ]
+    },
+    {
+      "id": "add-remove-animation-frame",
+      "name": "添加/删除动画帧",
+      "description": "在当前动画中添加或删除动画帧。",
+      "display_text": "{0} 动画帧 [b]{1}[/b] 到 [i]{2}[/i]",
+      "params": [
+        {
+          "id": "which",
+          "name": "方式",
+          "description": "添加或删除现有的动画帧。",
+          "options": [
+            {
+              "id": "add",
+              "label": "添加"
+            },
+            {
+              "id": "remove",
+              "label": "移除"
+            }
+          ]
+        },
+        {
+          "id": "animation",
+          "name": "动画",
+          "description": "要修改的动画的名称。"
+        },
+        {
+          "id": "where",
+          "name": "位置",
+          "description": "要插入或删除动画帧的编号或标签。使用 -1 指定最后一帧。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "animationframe",
+      "name": "动画帧",
+      "description": "当前动画帧编号（从0开始计数）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "animationframecount",
+      "name": "动画帧数量",
+      "description": "当前动画中的动画帧数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "animationname",
+      "name": "动画名称",
+      "description": "当前动画的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "animationspeed",
+      "name": "动画播放速度",
+      "description": "当前动画的播放速度，以每秒动画帧数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imagewidth",
+      "name": "原始图像宽度",
+      "description": "当前动画帧的图像原始宽度，不受缩放影响。以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imageheight",
+      "name": "原始图像高度",
+      "description": "当前动画帧的图像原始高度，不受缩放影响。以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imagepointx",
+      "name": "图像点X",
+      "description": "对象的图像点的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "imagepointy",
+      "name": "图像点Y",
+      "description": "对象的图像点的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "imagepointcount",
+      "name": "图像点数量",
+      "description": "当前动画帧存在图像点的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "originalanimationspeed",
+      "name": "原始动画速度",
+      "description": "在动画编辑器中设置的原始动画播放速度，单位为每秒播放的动画帧数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "poly-point-x-at",
+      "name": "获取多边形顶点X坐标",
+      "description": "获取碰撞多边形点的X位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的碰撞多边形点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "poly-point-y-at",
+      "name": "获取多边形顶点Y坐标",
+      "description": "获取碰撞多边形点的Y位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要获取的碰撞多边形点的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "poly-point-count",
+      "name": "多边形顶点数量",
+      "description": "当前帧的碰撞多边形顶点的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "imagepointz",
+      "name": "图像点Z",
+      "description": "对象图像点的Z轴位置。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "imagepoint",
+          "name": "图像点",
+          "description": "要获取的图像点的名称或编号。"
+        }
+      ]
+    },
+    {
+      "id": "animationframetag",
+      "name": "动画帧标签",
+      "description": "用于标识动画帧的标签。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 12,
+    "actions": 16,
+    "expressions": 15
+  }
+}

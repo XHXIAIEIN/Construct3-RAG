@@ -1,0 +1,947 @@
+{
+  "id": "drawingcanvas",
+  "name": "画布",
+  "description": "可以进行自由绘画的特殊画布。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-saved-image",
+      "name": "图像保存完成",
+      "description": "执行 '保存图像' 动作后，图像保存完成时触发。",
+      "display_text": "图像保存完成",
+      "params": []
+    },
+    {
+      "id": "on-snapshot",
+      "name": "快照完成",
+      "description": "在 '保存快照' 动作执行后，返回的 '保存快照地址' 表达式数据可用时触发。",
+      "display_text": "截屏完成",
+      "params": []
+    },
+    {
+      "id": "on-resolution-changed",
+      "name": "分辨率发生更改",
+      "description": "当画布的分辨率被更改时触发。 重新绘制内容以在新的分辨率下显示。",
+      "display_text": "分辨率发生更改",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "设置此对象的背景混合模式。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "为此对象选择新的混合模式。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save-image",
+      "name": "保存图像",
+      "description": "保存当前画布的图像。完成后触发 '图像保存完成' 条件，并使用 '图像保存地址' 表达式获取图像的地址。",
+      "display_text": "保存图像 ({0}, 品质: [i]{1}[/i] 偏移: [i]{2}[/i], [i]{3}[/i] 大小: [i]{4}[/i] x [i]{5}[/i])",
+      "params": [
+        {
+          "id": "format",
+          "name": "图像格式",
+          "description": "选择要保存图像的文件格式。PNG是无损的，但JPEG文件更小。",
+          "options": [
+            {
+              "id": "png",
+              "label": "PNG"
+            },
+            {
+              "id": "jpeg",
+              "label": "JPEG"
+            }
+          ]
+        },
+        {
+          "id": "jpeg-quality",
+          "name": "JPEG品质",
+          "description": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "截取快照区域的X偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "截取快照区域的Y偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "截屏区域的宽度，以画布设备像素为单位，使用 0 则使用完整宽度。"
+        },
+        {
+          "id": "height",
+          "name": "高度",
+          "description": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。"
+        }
+      ]
+    },
+    {
+      "id": "save-snapshot",
+      "name": "保存快照",
+      "description": "保存当前画布的图像副本，用于读取画布的像素颜色。",
+      "display_text": "保存快照",
+      "params": []
+    },
+    {
+      "id": "clear-snapshot",
+      "name": "清理快照",
+      "description": "释放内存中已保存的画布快照。",
+      "display_text": "清理快照",
+      "params": []
+    },
+    {
+      "id": "snapshot-set-pixel",
+      "name": "设置快照像素颜色",
+      "description": "设置快照的图像某个像素点的颜色。",
+      "display_text": "设置像素颜色 (位置: [i]{0}[/i], [i]{1}[/i], 颜色: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "要设置的像素颜色。"
+        }
+      ]
+    },
+    {
+      "id": "load-snapshot",
+      "name": "加载快照",
+      "description": "将快照重新加载到画布，覆盖当前的图像。",
+      "display_text": "加载快照",
+      "params": []
+    },
+    {
+      "id": "clear-canvas",
+      "name": "清空画布",
+      "description": "使用颜色填充整个画布，覆盖当前的图像。",
+      "display_text": "清空画布(填充: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "clear-rect",
+      "name": "清空区域",
+      "description": "使用颜色填充矩形区域，覆盖当前的图像。",
+      "display_text": "清空区域 (位置: 从[i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "left",
+          "name": "左",
+          "description": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "name": "顶部",
+          "description": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "name": "右",
+          "description": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "name": "底部",
+          "description": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "fill-rect",
+      "name": "填充区域",
+      "description": "使用颜色填充矩形区域。",
+      "display_text": "填充区域 (位置: 从 [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "left",
+          "name": "左",
+          "description": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "name": "顶部",
+          "description": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "name": "右",
+          "description": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "name": "底部",
+          "description": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "fill-linear-gradient",
+      "name": "填充渐变",
+      "description": "使用两种颜色的渐变填充矩形区域，覆盖当前的图像。",
+      "display_text": "填充渐变(方向: [i]{6}[/i], 位置: [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i] 到 [i]{5}[/i])",
+      "params": [
+        {
+          "id": "left",
+          "name": "左",
+          "description": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "name": "顶部",
+          "description": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "name": "右",
+          "description": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "name": "底部",
+          "description": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color1",
+          "name": "开始颜色",
+          "description": "渐变开始的颜色。"
+        },
+        {
+          "id": "color2",
+          "name": "结束颜色",
+          "description": "渐变结束的颜色。"
+        },
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "渐变的方向",
+          "options": [
+            {
+              "id": "horizontal",
+              "label": "水平"
+            },
+            {
+              "id": "vertical",
+              "label": "垂直"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fill-ellipse",
+      "name": "填充椭圆",
+      "description": "用颜色填充椭圆区域。",
+      "display_text": "填充椭圆 位置: ([i]{0}[/i], [i]{1}[/i]), 半径: ([i]{2}[/i], [i]{3}[/i]), 填充色: [i]{4}[/i], 描线: [i]{5}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "圆心X",
+          "description": "椭圆中心原点的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "圆心Y",
+          "description": "椭圆中心原点的Y坐标。"
+        },
+        {
+          "id": "radius-x",
+          "name": "半径X",
+          "description": "椭圆在X轴的半径。"
+        },
+        {
+          "id": "radius-y",
+          "name": "半径Y",
+          "description": "Y轴上的椭圆半径"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        },
+        {
+          "id": "edge",
+          "name": "边缘",
+          "description": "使用硬边(像素化)还是平滑(抗锯齿)描线。",
+          "options": [
+            {
+              "id": "hard",
+              "label": "硬边"
+            },
+            {
+              "id": "smooth",
+              "label": "平滑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outline-ellipse",
+      "name": "绘制椭圆边框",
+      "description": "用颜色勾勒出一个椭圆区域。",
+      "display_text": "绘制椭圆边框 位置: ([i]{0}[/i], [i]{1}[/i]), 半径: ([i]{2}[/i], [i]{3}[/i]), 填充色: [i]{4}[/i], 边框: [i]{5}[/i], 描线: [i]{6}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "椭圆中心原点的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "椭圆中心原点的Y坐标。"
+        },
+        {
+          "id": "radius-x",
+          "name": "半径X",
+          "description": "椭圆在X轴的半径。"
+        },
+        {
+          "id": "radius-y",
+          "name": "半径Y",
+          "description": "Y轴上的椭圆半径"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "边框的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        },
+        {
+          "id": "edge",
+          "name": "边缘",
+          "description": "使用硬边描线(像素化)还是平滑描线(抗锯齿)。",
+          "options": [
+            {
+              "id": "hard",
+              "label": "硬边"
+            },
+            {
+              "id": "smooth",
+              "label": "平滑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outline-rect",
+      "name": "绘制边框",
+      "description": "围绕矩形区域绘制轮廓线条。",
+      "display_text": "绘制边框(位置: [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 颜色: [i]{4}[/i], 大小: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "left",
+          "name": "左",
+          "description": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "name": "顶部",
+          "description": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "name": "右",
+          "description": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "name": "底部",
+          "description": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        }
+      ]
+    },
+    {
+      "id": "line",
+      "name": "绘制线条",
+      "description": "在两点之间绘制一条实线。",
+      "display_text": "绘制线条 位置: ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i]), 颜色: [i]{4}[/i], 边框: [i]{5}[/i], 边角: [i]{6}[/i]",
+      "params": [
+        {
+          "id": "x1",
+          "name": "X1",
+          "description": "起点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "name": "Y1",
+          "description": "起点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "name": "X2",
+          "description": "终点的X坐标。"
+        },
+        {
+          "id": "y2",
+          "name": "Y2",
+          "description": "终点的Y坐标。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        },
+        {
+          "id": "line-cap",
+          "name": "边角",
+          "description": "以哪种方式绘制线条两端的样式。",
+          "options": [
+            {
+              "id": "butt",
+              "label": "圆角"
+            },
+            {
+              "id": "square",
+              "label": "直角"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "line-dashed",
+      "name": "绘制虚线",
+      "description": "在两点之间绘制一条虚线。",
+      "display_text": "绘制虚线 位置: ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i]), 颜色: [i]{4}[/i], 边框: [i]{5}[/i], 虚线长度: [i]{6}[/i], 端点: [i]{7}[/i]",
+      "params": [
+        {
+          "id": "x1",
+          "name": "X1",
+          "description": "起点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "name": "Y1",
+          "description": "起点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "name": "X2",
+          "description": "终点的X坐标。"
+        },
+        {
+          "id": "y2",
+          "name": "Y2",
+          "description": "终点的Y坐标。"
+        },
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        },
+        {
+          "id": "dash-length",
+          "name": "虚线长度",
+          "description": "线条上每个线段的长度。"
+        },
+        {
+          "id": "line-cap",
+          "name": "边角",
+          "description": "以哪种方式绘制线条两端的样式。",
+          "options": [
+            {
+              "id": "butt",
+              "label": "圆角"
+            },
+            {
+              "id": "square",
+              "label": "直角"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "add-poly-point",
+      "name": "添加多边形顶点",
+      "description": "在多边形上添加一个顶点以进行绘制。",
+      "display_text": "添加多边形顶点 ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "顶点的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "顶点的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "reset-poly",
+      "name": "重置多边形",
+      "description": "清除已添加的所有多边形顶点。",
+      "display_text": "重置多边形",
+      "params": []
+    },
+    {
+      "id": "line-poly",
+      "name": "绘制多边形轮廓",
+      "description": "在当前多边形的轮廓周围绘制线条。",
+      "display_text": "绘制轮廓 (颜色: [i]{0}[/i], 边框: [i]{1}[/i], 端点: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        },
+        {
+          "id": "line-cap",
+          "name": "边角",
+          "description": "以哪种方式绘制线条两端的样式。",
+          "options": [
+            {
+              "id": "butt",
+              "label": "圆角"
+            },
+            {
+              "id": "square",
+              "label": "直角"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "line-dashed-poly",
+      "name": "绘制多边形虚线轮廓",
+      "description": "在当前多边形的轮廓周围绘制虚线。",
+      "display_text": "绘制虚线轮廓(颜色: [i]{0}[/i], 边框: [i]{1}[/i], 虚线长度: [i]{2}[/i], 端点: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "name": "粗细",
+          "description": "线条的粗细。"
+        },
+        {
+          "id": "dash-length",
+          "name": "虚线长度",
+          "description": "线条上每个线段的长度。"
+        },
+        {
+          "id": "line-cap",
+          "name": "边角",
+          "description": "以哪种方式绘制线条两端的样式。",
+          "options": [
+            {
+              "id": "butt",
+              "label": "圆角"
+            },
+            {
+              "id": "square",
+              "label": "直角"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fill-poly",
+      "name": "填充多边形",
+      "description": "用颜色填充当前的多边形区域。",
+      "display_text": "填充多边形颜色 [i]{0}[/i] (检查凸边: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "color",
+          "name": "颜色",
+          "description": "用于填充的颜色。"
+        },
+        {
+          "id": "convex",
+          "name": "检查凸边",
+          "description": "检查多边形的形状是否凸起，这样可以更可靠地进行渲染。"
+        }
+      ]
+    },
+    {
+      "id": "paste-object",
+      "name": "粘贴对象",
+      "description": "在画布绘制一个与对象相同的图像。",
+      "display_text": "粘贴对象 {0} ({1})",
+      "params": [
+        {
+          "id": "object",
+          "name": "目标",
+          "description": "要粘贴到画布上的对象。"
+        },
+        {
+          "id": "effects",
+          "name": "滤镜",
+          "description": "绘制对象时，是否应用滤镜效果。",
+          "options": [
+            {
+              "id": "without-effects",
+              "label": "排除滤镜"
+            },
+            {
+              "id": "with-effects",
+              "label": "包含滤镜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-drawing-blend",
+      "name": "设置画布混合模式",
+      "description": "设置用于绘制操作的混合模式(粘贴对象除外)。",
+      "display_text": "设置画布混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "用于画布的混合模式",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-resolution-mode",
+      "name": "设置缩放模式",
+      "description": "更改画布的缩放模式。是自适应场景的缩放比例，还是使用固定缩放比例。用于改善文本缩放时产生的模糊感。",
+      "display_text": "设置缩放模式为[b]{0}[/b] ([i]{1}[/i] x [i]{2}[/i])",
+      "params": [
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "画布的自动匹配成项目的分辨率，还是始终使用固定的分辨率。",
+          "options": [
+            {
+              "id": "auto",
+              "label": "自动"
+            },
+            {
+              "id": "fixed",
+              "label": "固定"
+            }
+          ]
+        },
+        {
+          "id": "fixed-width",
+          "name": "固定宽度",
+          "description": "固定分辨率时，使用的水平分辨率，以像素为单位。"
+        },
+        {
+          "id": "fixed-height",
+          "name": "固定高度",
+          "description": "固定分辨率时，使用的垂直分辨率，以像素为单位。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "saved-image-url",
+      "name": "图像保存地址",
+      "description": "在 '图像保存完成' 条件中 ，返回的图像地址结果。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "snapshot-red-at",
+      "name": "获取红通道",
+      "description": "从屏幕快照中获取像素的红色通道。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "snapshot-green-at",
+      "name": "获取绿通道",
+      "description": "从屏幕快照中获取像素的绿色通道。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "snapshot-blue-at",
+      "name": "获取蓝通道",
+      "description": "从屏幕快照中获取像素的蓝色通道。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "snapshot-alpha-at",
+      "name": "获取不透明度通道",
+      "description": "从屏幕快照中获取像素的不透明度通道。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "snapshot-width",
+      "name": "快照宽度",
+      "description": "获取快照的分辨率宽度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "snapshot-height",
+      "name": "快照高度",
+      "description": "获取快照的分辨率高度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "pixel-scale",
+      "name": "像素尺寸",
+      "description": "影响画布对象的坐标中，单个像素的大小。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "surface-device-width",
+      "name": "设备像素宽度",
+      "description": "返回设备实际的画布宽度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "surface-device-height",
+      "name": "设备像素高度",
+      "description": "返回设备实际的画布高度。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 3,
+    "actions": 23,
+    "expressions": 10
+  }
+}

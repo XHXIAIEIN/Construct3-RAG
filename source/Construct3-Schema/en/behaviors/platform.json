@@ -1,0 +1,501 @@
+{
+  "id": "platform",
+  "name": "Platform",
+  "description": "Jump and run along platforms (solid/jump-thru objects).",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "Is moving",
+      "description": "True when the object is moving.",
+      "display_text": "{my} is moving",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "Compare speed",
+      "description": "Compare the current speed of the object.",
+      "display_text": "{my} speed {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "Choose the way to compare the current speed."
+        },
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "The speed, in pixels per second, to compare the current speed to."
+        }
+      ]
+    },
+    {
+      "id": "is-on-floor",
+      "name": "Is on floor",
+      "description": "True when the object is on top of a solid or platform.",
+      "display_text": "{my} is on floor",
+      "params": []
+    },
+    {
+      "id": "is-jumping",
+      "name": "Is jumping",
+      "description": "True when the object is moving upwards (i.e. jumping).",
+      "display_text": "{my} is jumping",
+      "params": []
+    },
+    {
+      "id": "is-falling",
+      "name": "Is falling",
+      "description": "True when the object is moving downwards (i.e. falling).",
+      "display_text": "{my} is falling",
+      "params": []
+    },
+    {
+      "id": "is-by-wall",
+      "name": "Is by wall",
+      "description": "Test if the object has a wall to the left or right.",
+      "display_text": "{my} has wall to {0}",
+      "params": [
+        {
+          "id": "side",
+          "name": "Side",
+          "description": "Select the side to test for a wall.",
+          "options": [
+            {
+              "id": "left",
+              "label": "left"
+            },
+            {
+              "id": "right",
+              "label": "right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-double-jump-enabled",
+      "name": "Is double-jump enabled",
+      "description": "True if double-jump is currently enabled.",
+      "display_text": "{my} double-jump is enabled",
+      "params": []
+    },
+    {
+      "id": "on-jump",
+      "name": "On jump",
+      "description": "Triggered when jumping.",
+      "display_text": "{my} On jump",
+      "params": []
+    },
+    {
+      "id": "on-fall",
+      "name": "On fall",
+      "description": "Triggered when falling.",
+      "display_text": "{my} On fall",
+      "params": []
+    },
+    {
+      "id": "on-stopped",
+      "name": "On stopped",
+      "description": "Triggered when stopped moving.",
+      "display_text": "{my} On stopped",
+      "params": []
+    },
+    {
+      "id": "on-moved",
+      "name": "On moved",
+      "description": "Triggered when starting to move.",
+      "display_text": "{my} On moved",
+      "params": []
+    },
+    {
+      "id": "on-landed",
+      "name": "On landed",
+      "description": "Triggered when first hitting the floor.",
+      "display_text": "{my} On landed",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-ignoring-input",
+      "name": "Set ignoring input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "display_text": "{0} {my} user input",
+      "params": [
+        {
+          "id": "input",
+          "name": "Input",
+          "description": "Set whether to ignore the controls for this movement.",
+          "options": [
+            {
+              "id": "stop-ignoring",
+              "label": "Stop ignoring"
+            },
+            {
+              "id": "start-ignoring",
+              "label": "Start ignoring"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-max-speed",
+      "name": "Set max speed",
+      "description": "Set the object's maximum speed.",
+      "display_text": "Set {my} maximum speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-speed",
+          "name": "Max Speed",
+          "description": "The new maximum speed of the object to set, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the object's acceleration.",
+      "display_text": "Set {my} acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-deceleration",
+      "name": "Set deceleration",
+      "description": "Set the object's deceleration.",
+      "display_text": "Set {my} deceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "deceleration",
+          "name": "Deceleration",
+          "description": "The new deceleration of the object to set, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-jump-strength",
+      "name": "Set jump strength",
+      "description": "Set the object's jump strength.",
+      "display_text": "Set {my} jump strength to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "jump-strength",
+          "name": "Jump strength",
+          "description": "The new speed at which jumps start, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-gravity",
+      "name": "Set gravity",
+      "description": "Set the object's gravity.",
+      "display_text": "Set {my} gravity to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "gravity",
+          "name": "Gravity",
+          "description": "The new acceleration from gravity, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-max-fall-speed",
+      "name": "Set max fall speed",
+      "description": "Set the object's maximum fall speed.",
+      "display_text": "Set {my} max fall speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-fall-speed",
+          "name": "Max fall speed",
+          "description": "The new maximum speed object can reach in freefall, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "simulate-control",
+      "name": "Simulate control",
+      "description": "Control the movement by events.",
+      "display_text": "Simulate {my} pressing {0}",
+      "params": [
+        {
+          "id": "control",
+          "name": "Control",
+          "description": "The movement control to simulate pressing.",
+          "options": [
+            {
+              "id": "left",
+              "label": "Left"
+            },
+            {
+              "id": "right",
+              "label": "Right"
+            },
+            {
+              "id": "jump",
+              "label": "Jump"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-vector-x",
+      "name": "Set vector X",
+      "description": "Set the X component of motion.",
+      "display_text": "Set {my} vector X to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "vector-x",
+          "name": "Vector X",
+          "description": "The new horizontal movement vector, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-vector-y",
+      "name": "Set vector Y",
+      "description": "Set the Y component of motion.",
+      "display_text": "Set {my} vector Y to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "vector-y",
+          "name": "Vector Y",
+          "description": "The new vertical movement vector, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-angle-of-gravity",
+      "name": "Set angle of gravity",
+      "description": "Change the angle the player falls at.",
+      "display_text": "Set {my} angle of gravity to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "The angle of gravity in degrees."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fall-through",
+      "name": "Fall through",
+      "description": "Fall through a jump-thru platform.",
+      "display_text": "Fall {my} down through jump-thru",
+      "params": []
+    },
+    {
+      "id": "set-double-jump",
+      "name": "Set double-jump",
+      "description": "Set whether double-jump is enabled.",
+      "display_text": "Set {my} double-jump [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable double jumps.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-jump-sustain",
+      "name": "Set jump sustain",
+      "description": "Set the jump sustain property.",
+      "display_text": "Set {my} jump sustain to [b]{0}[/b] ms",
+      "params": [
+        {
+          "id": "jump-sustain",
+          "name": "Jump sustain",
+          "description": "The new jump sustain, in milliseconds to sustain jump velocity for."
+        }
+      ]
+    },
+    {
+      "id": "set-ceiling-collision",
+      "name": "Set ceiling collision",
+      "description": "Set how ceiling collisions are handled (stop or preserve momentum)",
+      "display_text": "Set {my} ceiling collision mode to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Set how to handle collisions with the ceiling.",
+          "options": [
+            {
+              "id": "stop",
+              "label": "Stop"
+            },
+            {
+              "id": "preserve-momentum",
+              "label": "Preserve momentum"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-default-controls",
+      "name": "Set default controls",
+      "description": "Change the default controls setting.",
+      "display_text": "Set {my} default controls [b]{0}[/b]",
+      "params": [
+        {
+          "id": "default-controls",
+          "name": "Default controls",
+          "description": "Whether to enable or disable the behavior default controls."
+        }
+      ]
+    },
+    {
+      "id": "reset-double-jump",
+      "name": "Reset double jump",
+      "description": "Change whether a double jump is allowed during a jump.",
+      "display_text": "Reset {my} double jump allowed [b]{0}[/b]",
+      "params": [
+        {
+          "id": "double-jump-allowed",
+          "name": "Double jump allowed",
+          "description": "Whether a double jump is allowed during the current jump."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxspeed",
+      "name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "deceleration",
+      "name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "jumpstrength",
+      "name": "JumpStrength",
+      "description": "The jump strength setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gravity",
+      "name": "Gravity",
+      "description": "The gravity setting, in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maxfallspeed",
+      "name": "MaxFallSpeed",
+      "description": "The maximum fall speed setting, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectorx",
+      "name": "VectorX",
+      "description": "The current X component of motion, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "vectory",
+      "name": "VectorY",
+      "description": "The current Y component of motion, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gravityangle",
+      "name": "GravityAngle",
+      "description": "The angle of gravity, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "jumpsustain",
+      "name": "JumpSustain",
+      "description": "The jump sustain property, in milliseconds.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 18,
+    "expressions": 12
+  }
+}

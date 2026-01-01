@@ -1,0 +1,393 @@
+{
+  "id": "custom",
+  "name": "自定义移动",
+  "description": "使用最底层的移动方式，执行自定义移动功能。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-moving",
+      "name": "正在移动",
+      "description": "检测对象是否正在移动。",
+      "display_text": "{my} 正在移动",
+      "params": []
+    },
+    {
+      "id": "compare-speed",
+      "name": "比较移动速度",
+      "description": "比较对象的当前速度。",
+      "display_text": "{my} {0}速度 {1} {2}",
+      "params": [
+        {
+          "id": "which",
+          "name": "比较",
+          "description": "选择要进行比较的速度",
+          "options": [
+            {
+              "id": "overall",
+              "label": "总体"
+            },
+            {
+              "id": "horizontal",
+              "label": "水平方向"
+            },
+            {
+              "id": "vertical",
+              "label": "垂直方向"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "要进行比较的速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "on-step",
+      "name": "触发步进",
+      "description": "对象进行步进运动时触发。",
+      "display_text": "{my} 触发步进",
+      "params": []
+    },
+    {
+      "id": "on-horizontal-step",
+      "name": "向水平方向步进",
+      "description": "对象在水平方向进行步进移动时触发。",
+      "display_text": "{my} 向水平方向步进",
+      "params": []
+    },
+    {
+      "id": "on-vertical-step",
+      "name": "向垂直方向步进",
+      "description": "对象在垂直方向进行步进移动时触发。",
+      "display_text": "{my} 向垂直方向步进",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测当前行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-angle-of-motion",
+      "name": "设置移动角度",
+      "description": "设置对象当前正在移动的角度的角度。",
+      "display_text": "设置 {my}移动角度为[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "设置移动角度，以角度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "rotate-clockwise",
+      "name": "顺时针旋转",
+      "description": "将运动角度进行顺时针旋转",
+      "display_text": "{my} 顺时针旋转[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "顺时针旋转角度，以度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "rotate-counter-clockwise",
+      "name": "逆时针旋转",
+      "description": "将运动角度进行逆时针旋转",
+      "display_text": "{my} 逆时针旋转[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "逆时针旋转的角度，以度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "停止",
+      "description": "设置速度为0",
+      "display_text": "停止 {my}",
+      "params": []
+    },
+    {
+      "id": "reverse",
+      "name": "反转",
+      "description": "进行反向移动",
+      "display_text": "反转{my} ({0})",
+      "params": [
+        {
+          "id": "axes",
+          "name": "坐标轴",
+          "description": "选择要翻转的坐标轴",
+          "options": [
+            {
+              "id": "both",
+              "label": "全部"
+            },
+            {
+              "id": "horizontally",
+              "label": "水平"
+            },
+            {
+              "id": "vertically",
+              "label": "垂直"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "设置速度",
+      "description": "设置对象当前运动速度",
+      "display_text": "设置 {my}{0}速度为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "which",
+          "name": "选择",
+          "description": "选择要设置的速度",
+          "options": [
+            {
+              "id": "overall",
+              "label": "整体"
+            },
+            {
+              "id": "horizontal",
+              "label": "水平方向"
+            },
+            {
+              "id": "vertical",
+              "label": "垂直方向"
+            }
+          ]
+        },
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "设置对象的新速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "accelerate",
+      "name": "加速",
+      "description": "让对象向前或沿轴方向加速。",
+      "display_text": "{my}{0}加速 (加速度: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "which",
+          "name": "选择",
+          "description": "选择加速的方式",
+          "options": [
+            {
+              "id": "forwards",
+              "label": "向前"
+            },
+            {
+              "id": "horizontally",
+              "label": "水平方向"
+            },
+            {
+              "id": "vertically",
+              "label": "垂直方向"
+            }
+          ]
+        },
+        {
+          "id": "acceleration",
+          "name": "加速",
+          "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        }
+      ]
+    },
+    {
+      "id": "accelerate-toward-angle",
+      "name": "朝角度加速",
+      "description": "使对象向指定角度的方向加速移动。",
+      "display_text": "{my} 朝角度加速 (加速度: [i]{0}[/i], 角度: [i]{1}[/i]°)",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "向前加速移动的角度，以度数为单位。"
+        }
+      ]
+    },
+    {
+      "id": "accelerate-toward-position",
+      "name": "朝位置加速",
+      "description": "使对象向指定位置加速移动。",
+      "display_text": "{my} 朝位置加速 (加速度: [i]{0}[/i], 目标: [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "朝向场景X轴方向加速。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "朝向场景Y轴方向加速。"
+        }
+      ]
+    },
+    {
+      "id": "stop-stepping",
+      "name": "停止步进",
+      "description": "停止当前的步进模式，防止在这一帧触发更多的步进。",
+      "display_text": "{my} 停止步进 ({0})",
+      "params": [
+        {
+          "id": "position",
+          "name": "位置",
+          "description": "选择生成的对象位置",
+          "options": [
+            {
+              "id": "go-back-a-step",
+              "label": "上一次步进位置"
+            },
+            {
+              "id": "stay-at-current-position",
+              "label": "停留在当前位置"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "push-out-solid",
+      "name": "推开实体",
+      "description": "此对象与具有 '实体' 的对象发生重叠时，将此对象朝向指定的方向推开。",
+      "display_text": "撞击到 {0} 后推开 {my}",
+      "params": [
+        {
+          "id": "direction",
+          "name": "方向",
+          "description": "选择推开的方式",
+          "options": [
+            {
+              "id": "opposite-angle",
+              "label": "相反的角度"
+            },
+            {
+              "id": "nearest",
+              "label": "最近的方向"
+            },
+            {
+              "id": "up",
+              "label": "向上"
+            },
+            {
+              "id": "down",
+              "label": "向下"
+            },
+            {
+              "id": "left",
+              "label": "向左"
+            },
+            {
+              "id": "right",
+              "label": "向右"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "push-out-solid-at-angle",
+      "name": "推开实体 (角度)",
+      "description": "此对象与具有 '实体' 的对象发生重叠时，将此对象朝向指定的角度方向推开。",
+      "display_text": "撞击到实体时朝 {0}° 推开{my}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "将对象反弹的角度。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "移动速度",
+      "description": "当前对象的移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "movingangle",
+      "name": "移动角度",
+      "description": "当前的移动方向，以度数为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "dx",
+      "name": "移动速度X",
+      "description": "当前在水平方向移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "dy",
+      "name": "移动速度Y",
+      "description": "当前在垂直方向的移动速度，以像素/秒为单位。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 13,
+    "expressions": 4
+  }
+}

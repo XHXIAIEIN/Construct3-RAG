@@ -1,0 +1,531 @@
+{
+  "id": "spritefont2",
+  "name": "位图字体",
+  "description": "使用位图的方式，在画面显示由精灵组成的文字。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-text",
+      "name": "比较文本",
+      "description": "比较此对象的文本内容。",
+      "display_text": "文本内容是[b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "要比较的文字",
+          "description": "输入要与对象内容进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "区分大小写",
+          "description": "是否区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "忽略大小写"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "区分大小写"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-running-typewriter-text",
+      "name": "打字机正在运行",
+      "description": "检测打字机当前是否正在运行。",
+      "display_text": "打字机正在运行",
+      "params": []
+    },
+    {
+      "id": "on-typewriter-text-finished",
+      "name": "打字机效果完成",
+      "description": "当文本将所有文字全部显示完成时触发。",
+      "display_text": "打字机效果完成",
+      "params": []
+    },
+    {
+      "id": "has-tag-at-position",
+      "name": "位置存在标签",
+      "description": "检测指定位置是否包含指定的标签。",
+      "display_text": "位置 ([i]{1}[/i], [i]{2}[/i]) 存在标签 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要检测的标签。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要检测的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要检测的Y坐标。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "设置混合模式",
+      "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "display_text": "设置混合模式为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "混合模式",
+          "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "options": [
+            {
+              "id": "normal",
+              "label": "正常"
+            },
+            {
+              "id": "additive",
+              "label": "叠加"
+            },
+            {
+              "id": "xor",
+              "label": "重叠消除"
+            },
+            {
+              "id": "copy",
+              "label": "覆盖"
+            },
+            {
+              "id": "destination-over",
+              "label": "背景穿透"
+            },
+            {
+              "id": "source-in",
+              "label": "前景剪贴"
+            },
+            {
+              "id": "destination-in",
+              "label": "背景剪贴"
+            },
+            {
+              "id": "source-out",
+              "label": "前景剔除"
+            },
+            {
+              "id": "destination-out",
+              "label": "背景剔除"
+            },
+            {
+              "id": "source-atop",
+              "label": "前景混合"
+            },
+            {
+              "id": "destination-atop",
+              "label": "背景混合"
+            },
+            {
+              "id": "lighten",
+              "label": "变亮"
+            },
+            {
+              "id": "darken",
+              "label": "变暗"
+            },
+            {
+              "id": "multiply",
+              "label": "正片叠底"
+            },
+            {
+              "id": "screen",
+              "label": "滤色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-text",
+      "name": "设置文本",
+      "description": "设置文本显示的内容。",
+      "display_text": "设置文本内容为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。"
+        }
+      ]
+    },
+    {
+      "id": "append-text",
+      "name": "追加文本",
+      "description": "将文本添加到现有文本的末尾。",
+      "display_text": "追加文本 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2\""
+        }
+      ]
+    },
+    {
+      "id": "set-scale",
+      "name": "设置缩放倍数",
+      "description": "设置位图字体的缩放比例，使其看起来更大或更小。",
+      "display_text": "设置缩放倍数为[i]{0}[/i]倍",
+      "params": [
+        {
+          "id": "scale",
+          "name": "大小",
+          "description": "位图字体的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。"
+        }
+      ]
+    },
+    {
+      "id": "set-character-spacing",
+      "name": "设置字符间距",
+      "description": "设置每个字符之间的间距。",
+      "display_text": "设置字符间距 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "character-spacing",
+          "name": "字符间距",
+          "description": "输入字符间距的像素数。"
+        }
+      ]
+    },
+    {
+      "id": "set-line-height",
+      "name": "设置行距",
+      "description": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
+      "display_text": "设置行距为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "line-height",
+          "name": "行距",
+          "description": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。"
+        }
+      ]
+    },
+    {
+      "id": "set-character-width",
+      "name": "设置字符宽度",
+      "description": "更改部分字符的宽度。",
+      "display_text": "设置[i]{0}[/i]字符宽度为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "character",
+          "name": "字符",
+          "description": "输入一个或多个字符以更改宽度，如 \"abcd\"。"
+        },
+        {
+          "id": "width",
+          "name": "宽度",
+          "description": "输入您希望字符占据的像素宽度数。 这应该小于单元格宽度。"
+        }
+      ]
+    },
+    {
+      "id": "set-horizontal-alignment",
+      "name": "设置水平对齐",
+      "description": "设置文本的水平对齐方式。",
+      "display_text": "设置水平对齐为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "horizontal-alignment",
+          "name": "水平对齐",
+          "description": "为文本选择新的水平对齐方式。",
+          "options": [
+            {
+              "id": "left",
+              "label": "左对齐"
+            },
+            {
+              "id": "center",
+              "label": "居中"
+            },
+            {
+              "id": "right",
+              "label": "右对齐"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-vertical-alignment",
+      "name": "设置垂直对齐",
+      "description": "设置文本的垂直对齐方式。",
+      "display_text": "设置垂直对齐为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "vertical-alignment",
+          "name": "垂直对齐",
+          "description": "选择文本的新垂直对齐方式。",
+          "options": [
+            {
+              "id": "top",
+              "label": "顶部"
+            },
+            {
+              "id": "center",
+              "label": "居中"
+            },
+            {
+              "id": "bottom",
+              "label": "底部"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "typewriter-text",
+      "name": "逐字显示",
+      "description": "在一段时间内，逐字显示一串文本，直到完全显示。实现打字机效果。",
+      "display_text": "在 [i]{1}[/i] 秒内，逐字显示[i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要逐字显示的文本。"
+        },
+        {
+          "id": "duration",
+          "name": "持续时间",
+          "description": "文本完全显示所需的总时间，以秒为单位。如希望每秒显示字符数，可使用 len(Self.PlainText) / 10 表达式，表示每秒显示 10 个字符。"
+        }
+      ]
+    },
+    {
+      "id": "typewriter-finish",
+      "name": "立即显示完成",
+      "description": "强制将打字机效果立即显示所有文本。",
+      "display_text": "立即显示完成",
+      "params": []
+    },
+    {
+      "id": "set-wrapping",
+      "name": "设置自动换行",
+      "description": "换行规则，是以空格所分隔的词组，还是按每个字符。",
+      "display_text": "设置换行规则为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "wrapping",
+          "name": "自动换行",
+          "description": "换行规则，换行时保留按空格分隔的词组，或是单个字符。",
+          "options": [
+            {
+              "id": "word",
+              "label": "词组"
+            },
+            {
+              "id": "character",
+              "label": "字符"
+            },
+            {
+              "id": "cjk",
+              "label": "亚洲语言"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-read-aloud",
+      "name": "设置文本朗读",
+      "description": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
+      "display_text": "[i]{0}[/i]朗读内容",
+      "params": [
+        {
+          "id": "enable",
+          "name": "启用",
+          "description": "是否允许朗读内容。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "characterwidth",
+      "name": "字符宽度",
+      "description": "获取字符的宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "character",
+          "name": "字符",
+          "description": "要获取其宽度的字符。默认为空，如果字符串包含多个字符，仅获取第 1 个字符。"
+        }
+      ]
+    },
+    {
+      "id": "characterheight",
+      "name": "字符高度",
+      "description": "获取字符的高度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characterscale",
+      "name": "字符缩放倍数",
+      "description": "获取字符的缩放比例。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "characterspacing",
+      "name": "字符间距",
+      "description": "获取字符之间的间距。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "lineheight",
+      "name": "行距",
+      "description": "获取行高",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "text",
+      "name": "文本内容",
+      "description": "获取对象的文本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textwidth",
+      "name": "文本宽度",
+      "description": "获取文本的实际内容宽度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "textheight",
+      "name": "文本高度",
+      "description": "获取文本的实际内容高度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "plaintext",
+      "name": "纯文本",
+      "description": "获取带有任何BBcode标记的对象的文本",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag-at-position",
+      "name": "获取标签",
+      "description": "获取指定位置的BBcode的标签，如果没有则返回空字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要检测的X坐标。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要检测的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "tag-count",
+      "name": "标签数量",
+      "description": "获取指定的标签的数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        }
+      ]
+    },
+    {
+      "id": "tag-x",
+      "name": "标签位置X",
+      "description": "获取指定标签的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-y",
+      "name": "标签位置Y",
+      "description": "获取指定标签的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-width",
+      "name": "标签宽度",
+      "description": "获取指定的标签的宽度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从0开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "tag-height",
+      "name": "标签高度",
+      "description": "获取指定的标签的高度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要使用的标签。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "标签的索引编号，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 13,
+    "expressions": 15
+  }
+}

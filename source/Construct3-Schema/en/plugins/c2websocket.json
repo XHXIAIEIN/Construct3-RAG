@@ -1,0 +1,158 @@
+{
+  "id": "c2websocket",
+  "name": "WebSocket",
+  "description": "Send and receive text messages to a WebSocket server.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-opened",
+      "name": "On opened",
+      "description": "Triggered when the connection to the WebSocket server is successfully established.",
+      "display_text": "On connection opened",
+      "params": []
+    },
+    {
+      "id": "on-closed",
+      "name": "On closed",
+      "description": "Triggered when an active connection is closed.",
+      "display_text": "On connection closed",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered when there is a connection error.",
+      "display_text": "On connection error",
+      "params": []
+    },
+    {
+      "id": "is-open",
+      "name": "Is open",
+      "description": "True if the connection is currently open.",
+      "display_text": "Is connection open",
+      "params": []
+    },
+    {
+      "id": "is-connecting",
+      "name": "Is connecting",
+      "description": "True if the connection is currently being established.",
+      "display_text": "Is connecting",
+      "params": []
+    },
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "True if the user's client supports WebSocket connections.",
+      "display_text": "Is WebSocket supported",
+      "params": []
+    },
+    {
+      "id": "on-binary-message",
+      "name": "On binary message",
+      "description": "Triggered when a message is received from the server in binary format.",
+      "display_text": "On binary message (in {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "Receive to",
+          "description": "Choose a Binary Data object to write the received binary message to."
+        }
+      ]
+    },
+    {
+      "id": "on-message",
+      "name": "On text message",
+      "description": "Triggered when a message is received from the server in text format.",
+      "display_text": "On text message",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "connect",
+      "name": "Connect",
+      "description": "Connect to a WebSocket server.",
+      "display_text": "Connect to [i]{0}[/i] (require protocol {1})",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "Enter the WebSocket server to connect to."
+        },
+        {
+          "id": "protocol-optional",
+          "name": "Protocol (optional)",
+          "description": "Enter a required sub-protocol the server must support in order to establish a connection.  Leave empty for no protocol requirement."
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "name": "Close",
+      "description": "Close any active WebSocket connection.",
+      "display_text": "Close connection",
+      "params": []
+    },
+    {
+      "id": "send-text",
+      "name": "Send text",
+      "description": "Send a text string to the server.",
+      "display_text": "Send text [i]{0}[/i]",
+      "params": [
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "A text string to send to the server."
+        }
+      ]
+    },
+    {
+      "id": "send-binary",
+      "name": "Send binary",
+      "description": "Send the contents of a Binary Data object to the server.",
+      "display_text": "Send [i]{0}[/i]",
+      "params": [
+        {
+          "id": "data",
+          "name": "Binary data",
+          "description": "A Binary Data object to send as a message."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "errormsg",
+      "name": "ErrorMsg",
+      "description": "The error message in 'On error'.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "closecode",
+      "name": "CloseCode",
+      "description": "The close code in 'On closed'.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "closereason",
+      "name": "CloseReason",
+      "description": "The reason for closing in 'On closed'.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "messagetext",
+      "name": "MessageText",
+      "description": "The text content of the message in 'On message'.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 8,
+    "actions": 4,
+    "expressions": 4
+  }
+}

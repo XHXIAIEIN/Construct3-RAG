@@ -1,0 +1,14 @@
+{
+  "id": "destroy",
+  "name": "出界销毁",
+  "description": "对象超出场景范围时自动销毁。",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

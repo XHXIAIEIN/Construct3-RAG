@@ -1,0 +1,279 @@
+{
+  "id": "list",
+  "name": "列表",
+  "description": "用于从中选择选项的列表框或下拉列表。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-selection",
+      "name": "比较当前选择项索引",
+      "description": "要比较的选项的索引。",
+      "display_text": "当前选择项索引 {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要比较的所选项的索引。"
+        }
+      ]
+    },
+    {
+      "id": "on-selection-changed",
+      "name": "选择项变更",
+      "description": "当前的选择项发生变化时触发。注意，这不包括重复点击相同的选项。",
+      "display_text": "选择项变更",
+      "params": []
+    },
+    {
+      "id": "on-clicked",
+      "name": "点击列表",
+      "description": "单击列表控件时触发。",
+      "display_text": "点击列表",
+      "params": []
+    },
+    {
+      "id": "on-double-clicked",
+      "name": "双击列表",
+      "description": "双击列表控件时触发。",
+      "display_text": "双击列表",
+      "params": []
+    },
+    {
+      "id": "compare-selected-item-text",
+      "name": "比较当前选择项内容",
+      "description": "比较当前已选择项的文本。",
+      "display_text": "当前选择项内容为[b]{0}[/b] [i]({1})[/i]",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "name": "要比较的内容",
+          "description": "要进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "区分大小写",
+          "description": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "忽略大小写"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "区分大小写"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-item-text-at",
+      "name": "比较选项文本",
+      "description": "比较列表中选项的文本。",
+      "display_text": "选项[b]{0}[/b]是[b]{1}[/b] [i]({2})[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要比较的选项在列表的索引位置，从 0 开始计数。"
+        },
+        {
+          "id": "text-to-compare",
+          "name": "要比较的文字",
+          "description": "输入要与项目文本进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "name": "区分大小写",
+          "description": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "options": [
+            {
+              "id": "ignore-case",
+              "label": "忽略大小写"
+            },
+            {
+              "id": "case-sensitive",
+              "label": "区分大小写"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-selection",
+      "name": "选择项目",
+      "description": "在列表中选择一个选项。",
+      "display_text": "选择列表第 [i]{0}[/i] 项",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要选择的选项在列表的索引位置，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "add-item",
+      "name": "添加选项",
+      "description": "添加选项到列表中。",
+      "display_text": "添加选项 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要添加的项目文本。"
+        }
+      ]
+    },
+    {
+      "id": "add-item-at",
+      "name": "添加选项到位置",
+      "description": "添加待选项到列表指定位置。",
+      "display_text": "添加选项 [i]{0}[/i] 到位置 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "将选项添加到列表的索引位置，从0开始计数。"
+        },
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要添加的待选项的文本。"
+        }
+      ]
+    },
+    {
+      "id": "remove",
+      "name": "移除",
+      "description": "从列表中删除选项。",
+      "display_text": "删除选项 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要删除的项的从零开始的索引。"
+        }
+      ]
+    },
+    {
+      "id": "set-item-text",
+      "name": "设置选项文本",
+      "description": "设置列表中选项的文本。",
+      "display_text": "设置列表选项[i]{0}[/i]文本为[i]{1}[/i]",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "要更改的项的从零开始的索引。"
+        },
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要设置的选项文本。"
+        }
+      ]
+    },
+    {
+      "id": "clear",
+      "name": "清空列表",
+      "description": "删除列表中的所有待选项。",
+      "display_text": "清空列表",
+      "params": []
+    },
+    {
+      "id": "set-tooltip",
+      "name": "设置工具提示",
+      "description": "设置列表的工具提示。",
+      "display_text": "设置工具提示为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "工具提示",
+          "description": "要弹出的工具提示信息。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "itemcount",
+      "name": "列表项数量",
+      "description": "列表中的选项数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedindex",
+      "name": "已选项索引",
+      "description": "当前所选项目的从零开始的索引。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedtext",
+      "name": "已选项文本",
+      "description": "当前选项的文本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedcount",
+      "name": "已选项数量",
+      "description": "在多选列表框中，当前所选项目的数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "selectedindexat",
+      "name": "获取已选项索引",
+      "description": "在多选列表框中，当前选中的第N个项目的索引。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文本在已选项的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "selectedtextat",
+      "name": "获取已选项文本",
+      "description": "在多选列表框中，当前选中的第N个项目的文本。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文本在已选项的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "itemtextat",
+      "name": "获取选项文本",
+      "description": "获取列表中第n个项目的文本。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "文本在列表选项的索引，从 0 开始计数。"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 7,
+    "expressions": 7
+  }
+}

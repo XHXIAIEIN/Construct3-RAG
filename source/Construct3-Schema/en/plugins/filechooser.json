@@ -1,0 +1,110 @@
+{
+  "id": "filechooser",
+  "name": "File chooser",
+  "description": "Allow a user to pick a file from their device, and access the chosen file.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-changed",
+      "name": "On changed",
+      "description": "Triggered when a file selection is made.",
+      "display_text": "On changed",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "release-file",
+      "name": "Release file",
+      "description": "Release a file so it is no longer using memory.",
+      "display_text": "Release file [i]{0}[/i]",
+      "params": [
+        {
+          "id": "file-url",
+          "name": "File URL",
+          "description": "The URL of the file to release."
+        }
+      ]
+    },
+    {
+      "id": "click",
+      "name": "Click",
+      "description": "Activate the file picker as if the file chooser button was clicked. Note this may only work in a user input trigger.",
+      "display_text": "Click (activate file picker)",
+      "params": []
+    },
+    {
+      "id": "clear",
+      "name": "Clear",
+      "description": "Clear any existing file selection from the file picker, restoring it to its initial state.",
+      "display_text": "Clear",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "filecount",
+      "name": "FileCount",
+      "description": "The number of chosen files.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "filenameat",
+      "name": "FileNameAt",
+      "description": "Name of chosen file at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of file"
+        }
+      ]
+    },
+    {
+      "id": "filesizeat",
+      "name": "FileSizeAt",
+      "description": "Size of chosen file at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of file"
+        }
+      ]
+    },
+    {
+      "id": "filetypeat",
+      "name": "FileTypeAt",
+      "description": "MIME type of chosen file at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of file"
+        }
+      ]
+    },
+    {
+      "id": "fileurlat",
+      "name": "FileURLAt",
+      "description": "A URL to access the data of the chosen file at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of file"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 3,
+    "expressions": 5
+  }
+}

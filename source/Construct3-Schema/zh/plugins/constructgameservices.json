@@ -1,0 +1,677 @@
+{
+  "id": "constructgameservices",
+  "name": "游戏服务",
+  "description": "访问由 Construct 托管的游戏服务，如排行榜，账号系统，云存档。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-success",
+      "name": "成功事件",
+      "description": "包含各个事件的成功回调。",
+      "display_text": "{0}成功",
+      "params": [
+        {
+          "id": "type",
+          "name": "事件",
+          "description": "选择要检查的事件。",
+          "options": [
+            {
+              "id": "sign-in-with-provider",
+              "label": "第三方登录"
+            },
+            {
+              "id": "sign-in-persistent",
+              "label": "保持登录"
+            },
+            {
+              "id": "submit-score",
+              "label": "提交分数"
+            },
+            {
+              "id": "get-scores",
+              "label": "获取分数"
+            },
+            {
+              "id": "set-player-name",
+              "label": "设置玩家名称"
+            },
+            {
+              "id": "any-create-cloud-save",
+              "label": "任意创建完成"
+            },
+            {
+              "id": "any-get-cloud-save",
+              "label": "任意读取完成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-error",
+      "name": "失败事件",
+      "description": "包含各个事件的失败回调。",
+      "display_text": "{0}失败",
+      "params": [
+        {
+          "id": "type",
+          "name": "事件",
+          "description": "选择要检查的事件。",
+          "options": [
+            {
+              "id": "sign-in-with-provider",
+              "label": "第三方登录"
+            },
+            {
+              "id": "sign-in-persistent",
+              "label": "保持登录"
+            },
+            {
+              "id": "submit-score",
+              "label": "提交分数"
+            },
+            {
+              "id": "get-scores",
+              "label": "获取分数"
+            },
+            {
+              "id": "set-player-name",
+              "label": "设置玩家名称"
+            },
+            {
+              "id": "any-create-cloud-save",
+              "label": "任意保存完成"
+            },
+            {
+              "id": "any-get-cloud-save",
+              "label": "任意获取完成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-signed-in",
+      "name": "已登录",
+      "description": "检查玩家当前是否已登录。",
+      "display_text": "已登录",
+      "params": []
+    },
+    {
+      "id": "can-sign-in-persistent",
+      "name": "可保持登录状态",
+      "description": "如果上次登录时勾选了保持登录且状态仍然有效，则触发此条件。",
+      "display_text": "可保持登录状态",
+      "params": []
+    },
+    {
+      "id": "on-sign-in-popup-blocked",
+      "name": "登录弹窗被阻止",
+      "description": "当浏览器弹窗拦截器阻止登录弹窗显示时触发。",
+      "display_text": "登录弹窗被阻止",
+      "params": []
+    },
+    {
+      "id": "on-create-cloud-save-success",
+      "name": "创建完成",
+      "description": "当云保存创建完成时触发。",
+      "display_text": "云存档创建完成 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        }
+      ]
+    },
+    {
+      "id": "on-create-cloud-save-error",
+      "name": "创建失败",
+      "description": "当云保存创建失败时触发。",
+      "display_text": "云存档创建失败 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-success",
+      "name": "获取成功",
+      "description": "当云保存的数据获取成功时触发。",
+      "display_text": "云存档获取成功 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-binary-success",
+      "name": "获取二进制完成",
+      "description": "获取二进制云存档数据成功时触发。",
+      "display_text": "云存档创建成功 (密钥:[b]{0}[/b],  存储容器: [i]{1}[/i], 二进制: {2})",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        },
+        {
+          "id": "data",
+          "name": "二进制",
+          "description": "用于接收云端存储数据的二进制对象。"
+        }
+      ]
+    },
+    {
+      "id": "on-get-cloud-save-error",
+      "name": "获取失败",
+      "description": "获取云存档数据失败时触发。",
+      "display_text": "云存档获取失败 (密钥:[b]{0}[/b],  存储容器: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "submit-score",
+      "name": "提交分数",
+      "description": "提交分数到排行榜。",
+      "display_text": "提交分数 [b]{0}[/b] 到排行榜 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "score",
+          "name": "分数",
+          "description": "要提交的分数。必须是整数。"
+        },
+        {
+          "id": "leaderboard-id",
+          "name": "排行榜ID",
+          "description": "要提交的排行榜的 ID。留空则默认选择 Construct Arcade。"
+        }
+      ]
+    },
+    {
+      "id": "sign-in-with-provider",
+      "name": "使用第三方登录",
+      "description": "使用到第三方平台账号登录。",
+      "display_text": "跳转第三方授权登录 (账号平台: [b]{0}[/b], 游戏ID: [i]{1}[/i], 保持登录: [i]{2}[/i], 保持时长: [i]{3}[/i] 分钟, 弹窗尺寸: [i]{4}[/i] x [i]{5}[/i])",
+      "params": [
+        {
+          "id": "provider",
+          "name": "平台",
+          "description": "用于登录的第三方账号平台。",
+          "options": [
+            {
+              "id": "apple",
+              "label": "Apple"
+            },
+            {
+              "id": "battle-net",
+              "label": "Battle.net"
+            },
+            {
+              "id": "discord",
+              "label": "Discord"
+            },
+            {
+              "id": "facebook",
+              "label": "Facebook"
+            },
+            {
+              "id": "google",
+              "label": "Google"
+            },
+            {
+              "id": "microsoft",
+              "label": "Microsoft"
+            },
+            {
+              "id": "reddit",
+              "label": "Reddit"
+            },
+            {
+              "id": "steam",
+              "label": "Steam"
+            },
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "yandex",
+              "label": "Yandex"
+            },
+            {
+              "id": "github",
+              "label": "GitHub"
+            },
+            {
+              "id": "itch-io",
+              "label": "itch.io"
+            },
+            {
+              "id": "twitch",
+              "label": "Twitch"
+            }
+          ]
+        },
+        {
+          "id": "game-id",
+          "name": "游戏ID",
+          "description": "要登录的游戏 ID。需要开发者前往 Construct Game Services 创建应用。"
+        },
+        {
+          "id": "allow-persisting",
+          "name": "保持登录",
+          "description": "保持当前登录状态，允许下次直接登录。"
+        },
+        {
+          "id": "expiry",
+          "name": "保持时长",
+          "description": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。"
+        },
+        {
+          "id": "popup-window-width",
+          "name": "弹窗宽度",
+          "description": "登录弹窗的宽度，以像素为单位。"
+        },
+        {
+          "id": "popup-window-height",
+          "name": "弹窗高度",
+          "description": "登录弹窗的高度，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "sign-in-persistent",
+      "name": "恢复登录状态",
+      "description": "如果上次登录时勾选了 '保持登录'，恢复登录状态。若登录状态失效，则触发 '恢复登录失败' 错误。",
+      "display_text": "恢复上次登录状态 (游戏ID: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "game-id",
+          "name": "游戏ID",
+          "description": "要登录的游戏 ID。需要开发者前往 Construct Game Services 创建应用。"
+        }
+      ]
+    },
+    {
+      "id": "sign-out",
+      "name": "退出登录",
+      "description": "退出当前已登录的任何账户。",
+      "display_text": "退出登录",
+      "params": []
+    },
+    {
+      "id": "get-leaderboard-scores",
+      "name": "获取排行榜分数",
+      "description": "检索指定排行榜的分数列表。",
+      "display_text": "获取排行榜 [b]{0}[/b]  (每页包含: [i]{1}[/i], 页码: [i]{2}[/i], 国家: [i]{3}[/i], 地区: [i]{6}[/i], 周期: [i]{4}[/i], 时间偏移: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "排行榜ID",
+          "description": "要检索的排行榜ID。"
+        },
+        {
+          "id": "results-per-page",
+          "name": "每页结果",
+          "description": "每次检索结果的数量，从 1 到 500。"
+        },
+        {
+          "id": "page",
+          "name": "分页",
+          "description": "要获取的分页，从 0 开始计数。"
+        },
+        {
+          "id": "country",
+          "name": "地区代码",
+          "description": "符合 ISO 3166-1 alpha-2 标准的国家或地区代码，由 2 个大写字母组成。如 US、CN、TW、HK... 留空则展示所有国家或地区。"
+        },
+        {
+          "id": "range",
+          "name": "周期",
+          "description": "根据时间段筛选结果。",
+          "options": [
+            {
+              "id": "all",
+              "label": "全部"
+            },
+            {
+              "id": "daily",
+              "label": "天"
+            },
+            {
+              "id": "weekly",
+              "label": "周"
+            },
+            {
+              "id": "monthly",
+              "label": "月"
+            },
+            {
+              "id": "yearly",
+              "label": "年"
+            }
+          ]
+        },
+        {
+          "id": "range-offset",
+          "name": "时间偏移",
+          "description": "在筛选时间范围基础上增加偏移天数。例如，在每日统计中偏移 1 天，将获取到昨天的分数。"
+        },
+        {
+          "id": "culture",
+          "name": "语言环境",
+          "description": "本地语言环境，影响本地化的显示格式。如 zh-CN, zh-HK, zh-TW... 留空则使用预设的文化环境。"
+        }
+      ]
+    },
+    {
+      "id": "retry-open-sign-in-popup",
+      "name": "重试登录弹窗",
+      "description": "再尝试打开登录弹窗。此动作需要触发在用户主动交互事件，如鼠标点击或触摸。",
+      "display_text": "重试登录弹窗",
+      "params": []
+    },
+    {
+      "id": "set-player-name",
+      "name": "设置玩家名称",
+      "description": "设置当前登录玩家的名称。",
+      "display_text": "设置玩家名称为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "name",
+          "name": "玩家名称",
+          "description": "要设置的玩家名称。"
+        }
+      ]
+    },
+    {
+      "id": "create-cloud-save-text",
+      "name": "新建数据 (文本)",
+      "description": "在云服务中创建并存储文本数据。",
+      "display_text": "创建云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 名称: [i]{2}[/i],  数据: [b]{3}[/b])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        },
+        {
+          "id": "name",
+          "name": "名称 (可选)",
+          "description": "用于标记这段数据的名称，例如文件名。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要保存到云端的文本数据。"
+        }
+      ]
+    },
+    {
+      "id": "create-cloud-save-binary",
+      "name": "新建数据 (二进制)",
+      "description": "在云存储中创建并存储二进制数据。",
+      "display_text": "创建云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 名称: [i]{2}[/i],  数据: {3})",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        },
+        {
+          "id": "name",
+          "name": "名称 (可选)",
+          "description": "用于标记这段数据的名称，例如文件名。"
+        },
+        {
+          "id": "data",
+          "name": "二进制",
+          "description": "选择要将保存的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "get-cloud-save",
+      "name": "获取数据",
+      "description": "获取云储存的数据。",
+      "display_text": "获取云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 类型: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "key",
+          "name": "密钥",
+          "description": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        {
+          "id": "bucket-id",
+          "name": "容器 (可选)",
+          "description": "存储桶的 Bucket ID。用于指定数据保存的存储容器。"
+        },
+        {
+          "id": "type",
+          "name": "类型",
+          "description": "数据使用哪种方式下载，选择文本或二进制数据。",
+          "options": [
+            {
+              "id": "text",
+              "label": "文本"
+            },
+            {
+              "id": "binary",
+              "label": "二进制"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "player-id",
+      "name": "玩家ID",
+      "description": "当前登录玩家的唯一用户ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "player-name",
+      "name": "玩家名称",
+      "description": "当前登录玩家的昵称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "game-id",
+      "name": "游戏ID",
+      "description": "当前登录的游戏ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-page-count",
+      "name": "页数",
+      "description": "获取分数列表的分页数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "score-count",
+      "name": "分数数量",
+      "description": "获取分数列表的记录数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "score-at",
+      "name": "获取分数",
+      "description": "获取分数列表中，指定位置的分数，返回一个数字。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-formatted-at",
+      "name": "获取分数文本",
+      "description": "获取分数列表中，指定位置的格式化分数，返回一个字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-rank-at",
+      "name": "获取排名",
+      "description": "获取分数列表中，指定位置的分数排名，返回一个数字。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-formatted-rank-at",
+      "name": "获取排名文本",
+      "description": "获取分数列表中，指定位置的格式化排名，返回一个字符串。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-country-at",
+      "name": "获取排名地区",
+      "description": "获取分数列表中，玩家提交分数时的所在地区码 (由 2 个大写字母组成)。 如 US、CN、HK、TW...",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-player-id-at",
+      "name": "获取提交者ID",
+      "description": "获取分数列表中，指定位置的分数其提交者的用户ID。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "score-player-name-at",
+      "name": "获取提交者昵称",
+      "description": "获取分数列表中，指定位置的分数其提交者的用户昵称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "分数位于列表的索引，从 0 开始计数。"
+        }
+      ]
+    },
+    {
+      "id": "cloud-save-text",
+      "name": "云储存文本",
+      "description": "在 '获取成功' 条件中，返回云端下载的文本数据。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-key",
+      "name": "云储存密钥",
+      "description": "云储存的密钥。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-bucket-id",
+      "name": "云储存容器ID",
+      "description": "云保存的存储桶ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cloud-save-name",
+      "name": "云储存名称",
+      "description": "可选，云储存的名称。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 10,
+    "actions": 10,
+    "expressions": 16
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "xml",
+  "name": "XML",
+  "description": "Load XML files from strings and read the data in the XML document using XPath expressions.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "for-each-node",
+      "name": "For each node",
+      "description": "Iterate the nodes returned by an XPath expression.",
+      "display_text": "For each node [i]{0}[/i]",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "The XPath expression to evaluate, returning a series of nodes to iterate."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "name": "Load",
+      "description": "Load an XML document from a string.",
+      "display_text": "Load XML document from string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "xml",
+          "name": "XML",
+          "description": "A string containing the XML document to load."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "numbervalue",
+      "name": "NumberValue",
+      "description": "Retrieve a single number value from an XPath expression.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "The XPath expression to evaluate."
+        }
+      ]
+    },
+    {
+      "id": "stringvalue",
+      "name": "StringValue",
+      "description": "Retrieve a single string from an XPath expression.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "The XPath expression to evaluate."
+        }
+      ]
+    },
+    {
+      "id": "nodecount",
+      "name": "NodeCount",
+      "description": "Count the number of nodes returned by an XPath expression.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "xpath",
+          "name": "XPath",
+          "description": "The XPath expression to evaluate."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 1,
+    "expressions": 3
+  }
+}

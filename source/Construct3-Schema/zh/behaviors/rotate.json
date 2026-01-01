@@ -1,0 +1,87 @@
+{
+  "id": "rotate",
+  "name": "旋转",
+  "description": "使对象旋转",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "已启用",
+      "description": "检测当前行为是否已启用。",
+      "display_text": "{my} 已启用",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "name": "设置速度",
+      "description": "设置对象旋转的速率",
+      "display_text": "设置 {my}每秒旋转速度为{0}°",
+      "params": [
+        {
+          "id": "speed",
+          "name": "速度",
+          "description": "设置旋转速度，以每秒角度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "设置加速度",
+      "description": "设置每秒旋转角度变化的速率，正数则顺时针加速，负数逆时针加速。",
+      "display_text": "设置 {my}加速度为{0}",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "加速度",
+          "description": "设置旋转加速度，以每秒角度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "设置启用",
+      "description": "启用或禁用此行为。",
+      "display_text": "[b]{0}[/b] {my}",
+      "params": [
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "启用或禁用此行为。",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "禁用"
+            },
+            {
+              "id": "enabled",
+              "label": "启用"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "name": "移动速度",
+      "description": "当前旋转速度，以度数/每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "acceleration",
+      "name": "加速度",
+      "description": "当前的旋转加速度，以度数/秒为单位。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 3,
+    "expressions": 2
+  }
+}

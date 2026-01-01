@@ -1,0 +1,743 @@
+{
+  "id": "filesystem",
+  "name": "File system",
+  "description": "Read and write local files and folders.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "Test whether file system operations are supported on the current browser/platform.",
+      "display_text": "Is supported",
+      "params": []
+    },
+    {
+      "id": "on-picker-complete",
+      "name": "On picker complete",
+      "description": "Triggered after showing a file/folder picker when the user successfully made a selection.",
+      "display_text": "On picker [b]{0}[/b] complete",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "Tag of the corresponding picker."
+        }
+      ]
+    },
+    {
+      "id": "on-picker-error",
+      "name": "On picker error",
+      "description": "Triggered after showing a file/folder picker when the user did not make a selection (including cancelling).",
+      "display_text": "On picker [b]{0}[/b] error",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "Tag of the corresponding picker."
+        }
+      ]
+    },
+    {
+      "id": "has-picker-tag",
+      "name": "Has picker tag",
+      "description": "Check if a picker tag is available. This includes pickers remembered from prior sessions.",
+      "display_text": "Has picker tag [b]{0}[/b]",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "Tag of the corresponding picker."
+        }
+      ]
+    },
+    {
+      "id": "on-file-operation-complete",
+      "name": "On file operation complete",
+      "description": "Triggered upon successfully completing a file operation.",
+      "display_text": "On file operation [b]{0}[/b] complete",
+      "params": [
+        {
+          "id": "file-tag",
+          "name": "File tag",
+          "description": "Tag of the corresponding file operation."
+        }
+      ]
+    },
+    {
+      "id": "on-file-operation-error",
+      "name": "On file operation error",
+      "description": "Triggered when a file operation fails.",
+      "display_text": "On file operation [b]{0}[/b] error",
+      "params": [
+        {
+          "id": "file-tag",
+          "name": "File tag",
+          "description": "Tag of the corresponding file operation."
+        }
+      ]
+    },
+    {
+      "id": "on-any-file-operation-complete",
+      "name": "On any file operation complete",
+      "description": "Triggered upon successfully completing any file operation. The 'FileTag' expression identifies the operation.",
+      "display_text": "On any file operation complete",
+      "params": []
+    },
+    {
+      "id": "on-any-file-operation-error",
+      "name": "On any file operation error",
+      "description": "Triggered when any file operation fails. The 'FileTag' expression identifies the operation.",
+      "display_text": "On any file operation error",
+      "params": []
+    },
+    {
+      "id": "desktop-features-supported",
+      "name": "Desktop features supported",
+      "description": "True when running on a platform which supports known folder picker tags and desktop-only actions.",
+      "display_text": "Desktop features supported",
+      "params": []
+    },
+    {
+      "id": "has-file-or-folder",
+      "name": "Has file/folder",
+      "description": "After the 'List content' action completes, check if a name exists in the file or folder lists.",
+      "display_text": "Has {0} [b]{1}[/b] (case sensitive: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Whether to check for a file or folder.",
+          "options": [
+            {
+              "id": "file",
+              "label": "file"
+            },
+            {
+              "id": "folder",
+              "label": "folder"
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "description": "The file or folder name to check for."
+        },
+        {
+          "id": "case-sensitive",
+          "name": "Case-sensitive",
+          "description": "Whether to check the name case-sensitively. Note some file systems are case-sensitive."
+        }
+      ]
+    },
+    {
+      "id": "on-dropped-files",
+      "name": "On dropped files",
+      "description": "Triggered when files are dragged and dropped in to the window.",
+      "display_text": "On dropped files",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-accept-type",
+      "name": "Add accept type",
+      "description": "Add a category of files allowed to be accepted by the next file picker.",
+      "display_text": "Add accept type [i]{0}[/i] with file extensions [i]{1}[/i] description [i]{2}[/i]",
+      "params": [
+        {
+          "id": "mime-type",
+          "name": "MIME type",
+          "description": "A MIME type for this category of files, such as \"image/png\", \"image/*\", or \"application/octet-stream\"."
+        },
+        {
+          "id": "file-extensions",
+          "name": "File extensions",
+          "description": "A list of file extensions allowed in this category separated by semicolons, e.g. \".png;.jpg\"."
+        },
+        {
+          "id": "description",
+          "name": "Description",
+          "description": "A description to show to the user for this category, e.g. \"Image files\"."
+        }
+      ]
+    },
+    {
+      "id": "show-save-file-picker",
+      "name": "Show save file picker",
+      "description": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_text": "Show save file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], suggested name [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "A string to identify this particular file picker."
+        },
+        {
+          "id": "show-accept-all",
+          "name": "Show accept all",
+          "description": "Whether to show an accept type that shows all files."
+        },
+        {
+          "id": "suggested-name",
+          "name": "Suggested name",
+          "description": "A default filename to suggest saving as."
+        },
+        {
+          "id": "id",
+          "name": "Picker ID (optional)",
+          "description": "An optional string to identify this picker for remembering its settings."
+        },
+        {
+          "id": "start-in",
+          "name": "Start in",
+          "description": "The default folder to show when there are no prior remembered settings.",
+          "options": [
+            {
+              "id": "default",
+              "label": "(default)"
+            },
+            {
+              "id": "desktop",
+              "label": "Desktop"
+            },
+            {
+              "id": "documents",
+              "label": "Documents"
+            },
+            {
+              "id": "downloads",
+              "label": "Downloads"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            },
+            {
+              "id": "pictures",
+              "label": "Pictures"
+            },
+            {
+              "id": "videos",
+              "label": "Videos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-open-file-picker",
+      "name": "Show open file picker",
+      "description": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_text": "Show open file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], multiple [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "A string to identify this particular file picker."
+        },
+        {
+          "id": "show-accept-all",
+          "name": "Show accept all",
+          "description": "Whether to show an accept type that shows all files."
+        },
+        {
+          "id": "multiple",
+          "name": "Multiple",
+          "description": "Whether to allow selecting multiple files to open."
+        },
+        {
+          "id": "id",
+          "name": "Picker ID (optional)",
+          "description": "An optional string to identify this picker for remembering its settings."
+        },
+        {
+          "id": "start-in",
+          "name": "Start in",
+          "description": "The default folder to show when there are no prior remembered settings.",
+          "options": [
+            {
+              "id": "default",
+              "label": "(default)"
+            },
+            {
+              "id": "desktop",
+              "label": "Desktop"
+            },
+            {
+              "id": "documents",
+              "label": "Documents"
+            },
+            {
+              "id": "downloads",
+              "label": "Downloads"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            },
+            {
+              "id": "pictures",
+              "label": "Pictures"
+            },
+            {
+              "id": "videos",
+              "label": "Videos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-folder-picker",
+      "name": "Show folder picker",
+      "description": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_text": "Show folder picker tag [b]{0}[/b] mode [i]{1}[/i] (ID [i]{2}[/i], start in [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "A string to identify this particular folder picker."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The kind of access permission to request for the folder.",
+          "options": [
+            {
+              "id": "read-only",
+              "label": "Read-only"
+            },
+            {
+              "id": "read-write",
+              "label": "Read & write"
+            }
+          ]
+        },
+        {
+          "id": "id",
+          "name": "Picker ID (optional)",
+          "description": "An optional string to identify this picker for remembering its settings."
+        },
+        {
+          "id": "start-in",
+          "name": "Start in",
+          "description": "The default folder to show when there are no prior remembered settings.",
+          "options": [
+            {
+              "id": "default",
+              "label": "(default)"
+            },
+            {
+              "id": "desktop",
+              "label": "Desktop"
+            },
+            {
+              "id": "documents",
+              "label": "Documents"
+            },
+            {
+              "id": "downloads",
+              "label": "Downloads"
+            },
+            {
+              "id": "music",
+              "label": "Music"
+            },
+            {
+              "id": "pictures",
+              "label": "Pictures"
+            },
+            {
+              "id": "videos",
+              "label": "Videos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "write-text-file",
+      "name": "Write text file",
+      "description": "Write a text file to a previously picked file or folder.",
+      "display_text": "Write text file for picker tag [b]{0}[/b] with content [i]{3}[/i] (folder path [i]{1}[/i], file tag [i]{2}[/i], [i]{4}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the file picker identifying where to write a file."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path (optional)",
+          "description": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"folder/file.txt\"."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "String of the text to write to the file."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to overwrite the file contents or append to the existing file.",
+          "options": [
+            {
+              "id": "overwrite",
+              "label": "overwrite"
+            },
+            {
+              "id": "append",
+              "label": "append"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "write-binary-file",
+      "name": "Write binary file",
+      "description": "Write binary data to a previously picked file or folder.",
+      "display_text": "Write binary file for picker tag [b]{0}[/b] with content {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the file picker identifying where to write a file."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path (optional)",
+          "description": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"folder/file.txt\"."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "The Binary Data object to write to the file."
+        }
+      ]
+    },
+    {
+      "id": "read-text-file",
+      "name": "Read text file",
+      "description": "Read a text file from a previously picked file or folder.",
+      "display_text": "Read text file for picker tag [b]{0}[/b] (folder path [i]{1}[/i], file tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the file picker identifying where to read a file."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path (optional)",
+          "description": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"folder/file.txt\"."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "read-binary-file",
+      "name": "Read binary file",
+      "description": "Read binary data from a previously picked file or folder.",
+      "display_text": "Read binary file for picker tag [b]{0}[/b] to {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the file picker identifying where to read a file."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path (optional)",
+          "description": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"folder/file.txt\"."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "The Binary Data object to read the content of the file in to."
+        }
+      ]
+    },
+    {
+      "id": "create-folder",
+      "name": "Create folder",
+      "description": "Create a new folder within a picked folder.",
+      "display_text": "Create folder for picker tag [b]{0}[/b] at [i]{1}[/i] (file tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path",
+          "description": "The path of the folder to create. This can include multiple subfolders, e.g. \"folder\\subfolder\"."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "copy-file",
+      "name": "Copy file",
+      "description": "Copy a file within a picked folder.",
+      "display_text": "Copy file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "src-folder-path",
+          "name": "Source path",
+          "description": "The path of the source file to copy."
+        },
+        {
+          "id": "dest-folder-path",
+          "name": "Destination path",
+          "description": "The path of the destination file where a copy is created."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "name": "Delete",
+      "description": "Delete a file or folder within a picked folder.",
+      "display_text": "Delete from picker tag [b]{0}[/b] path [i]{1}[/i] (recursive [i]{2}[/i], file tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path",
+          "description": "The path of the file or folder to delete."
+        },
+        {
+          "id": "recursive",
+          "name": "Recursive",
+          "description": "When specifying a folder, whether to recursively delete the folder's content as well."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "list-content",
+      "name": "List content",
+      "description": "Retrieve a list of the files and folders at a given path in a folder.",
+      "display_text": "List content for picker tag [b]{0}[/b] path [i]{1}[/i] (recursive: [i]{2}[/i], file tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "folder-path",
+          "name": "Folder path",
+          "description": "The path of the folder to list the contents for. This can be an empty string to list the contents of the picked folder."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        },
+        {
+          "id": "recursive",
+          "name": "Recursive",
+          "description": "Whether to list the content of all subfolders as well."
+        }
+      ]
+    },
+    {
+      "id": "shell-open",
+      "name": "Shell open",
+      "description": "Open the default associated app for a file.",
+      "display_text": "Shell open picker tag [b]{0}[/b] path [i]{1}[/i] (file tag [i]{2}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "file-path",
+          "name": "File path",
+          "description": "The path of the file to open."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "run-file",
+      "name": "Run file",
+      "description": "Run a file, such as executing another program.",
+      "display_text": "Run file picker tag [b]{0}[/b] path [i]{1}[/i] arguments [i]{2}[/i] (file tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in. For this action specifically, this can be left empty to specify a path that can be found on the system (e.g. \"cmd.exe\")."
+        },
+        {
+          "id": "file-path",
+          "name": "File path",
+          "description": "The path of the file to execute."
+        },
+        {
+          "id": "arguments",
+          "name": "Arguments",
+          "description": "A string of any command-line arguments to pass to the executed program."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    },
+    {
+      "id": "move-file",
+      "name": "Move file",
+      "description": "Move (or rename) a file within a picked folder.",
+      "display_text": "Move file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])",
+      "params": [
+        {
+          "id": "picker-tag",
+          "name": "Picker tag",
+          "description": "The tag of the folder picker to work in."
+        },
+        {
+          "id": "src-folder-path",
+          "name": "Source path",
+          "description": "The path of the source file to move."
+        },
+        {
+          "id": "dest-folder-path",
+          "name": "Destination path",
+          "description": "The path of the destination to move the file to."
+        },
+        {
+          "id": "file-tag",
+          "name": "File tag (optional)",
+          "description": "An optional tag to identify this specific file operation."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "file-name-at",
+      "name": "FileNameAt",
+      "description": "The name of a file at a given index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of file."
+        }
+      ]
+    },
+    {
+      "id": "file-count",
+      "name": "FileCount",
+      "description": "The number of files.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "folder-name-at",
+      "name": "FolderNameAt",
+      "description": "The name of a folder at a given index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of folder."
+        }
+      ]
+    },
+    {
+      "id": "folder-count",
+      "name": "FolderCount",
+      "description": "The number of folders.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-text",
+      "name": "FileText",
+      "description": "The text content of a file after a successful read.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-tag",
+      "name": "FileTag",
+      "description": "Get the tag for a file system operation in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "picker-tag",
+      "name": "PickerTag",
+      "description": "The associated picker tag in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "folder-path",
+      "name": "FolderPath",
+      "description": "The associated path to the file/folder in a trigger for a folder operation.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 11,
+    "actions": 15,
+    "expressions": 8
+  }
+}

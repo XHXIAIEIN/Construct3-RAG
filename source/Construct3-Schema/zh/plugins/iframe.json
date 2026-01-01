@@ -1,0 +1,41 @@
+{
+  "id": "iframe",
+  "name": "内嵌网页",
+  "description": "在框架中显示另一个站点的网页内容。",
+  "type": "plugin",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "navigate-url",
+      "name": "跳转到链接",
+      "description": "在框架中加载新链接",
+      "display_text": "跳转到 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要加载的链接"
+        }
+      ]
+    },
+    {
+      "id": "display-html-string",
+      "name": "显示HTML内容",
+      "description": "在框架中加载HTML 如有不受信任的内容请启用沙盒",
+      "display_text": "显示HTML内容 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "html",
+          "name": "HTML",
+          "description": "要加载的HTML内容字符串。如果有任何不可信任的内容，请启用沙盒模式。"
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 2,
+    "expressions": 0
+  }
+}

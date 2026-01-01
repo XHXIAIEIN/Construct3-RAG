@@ -158,6 +158,154 @@ class Indexer:
         ]
 
 
+def index_scripting_api(indexer: "Indexer", collection: str):
+    """Index Scripting API reference from d.ts files"""
+    from src.config import DATA_DIR
+
+    api_json = DATA_DIR / "scripting-api-reference.json"
+    if not api_json.exists():
+        print("  Scripting API reference not found, skipping...")
+        return
+
+    import json
+    data = json.loads(api_json.read_text(encoding='utf-8'))
+
+    docs = []
+
+    for class_name, cls in data.items():
+        # 创建类的概述文档
+        props = cls.get("properties", [])
+        methods = cls.get("methods", [])
+
+        overview = f"脚本接口 {class_name}"
+        if cls.get("extends"):
+            overview += f" (继承自 {cls['extends']})"
+        overview += f": {len(props)} 个属性, {len(methods)} 个方法。\n"
+
+        # 属性列表
+        if props:
+            prop_names = [f"{p['name']}: {p['type']}" for p in props[:10]]
+            overview += "属性: " + ", ".join(prop_names)
+            if len(props) > 10:
+                overview += f" ... 等 {len(props)} 个"
+            overview += "\n"
+
+        # 方法列表
+        if methods:
+            method_sigs = []
+            for m in methods[:10]:
+                params = ", ".join([f"{p['name']}: {p['type']}" for p in m.get('params', [])])
+                method_sigs.append(f"{m['name']}({params})")
+            overview += "方法: " + ", ".join(method_sigs)
+            if len(methods) > 10:
+                overview += f" ... 等 {len(methods)} 个"
+
+        docs.append({
+            "id": f"api_{class_name}",
+            "text": overview,
+            "metadata": {
+                "source": "scripting-api",
+                "class_name": class_name,
+                "extends": cls.get("extends", ""),
+                "properties_count": len(props),
+                "methods_count": len(methods)
+            }
+        })
+
+    print(f"  Found {len(docs)} API classes")
+    if docs:
+        indexer.index_documents(collection, docs)
+
+
+def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = False):
+    """Index ACE reference document"""
+    from src.config import DATA_DIR
+
+    ace_json = DATA_DIR / "ace-reference.json"
+    if not ace_json.exists():
+        print("  ACE reference not found, skipping...")
+        return
+
+    import json
+    data = json.loads(ace_json.read_text(encoding='utf-8'))
+
+    docs = []
+
+    # Process plugins
+    for name, obj in data.get("plugins", {}).items():
+        # Create overview doc
+        c_count = len(obj.get("conditions", []))
+        a_count = len(obj.get("actions", []))
+        e_count = len(obj.get("expressions", []))
+
+        overview = f"插件 {name}: {c_count} 个条件, {a_count} 个动作, {e_count} 个表达式。"
+
+        # Conditions
+        if obj.get("conditions"):
+            cond_text = "条件: " + ", ".join([c["name"] for c in obj["conditions"]])
+            overview += "\n" + cond_text
+
+        # Actions
+        if obj.get("actions"):
+            act_text = "动作: " + ", ".join([a["name"] for a in obj["actions"]])
+            overview += "\n" + act_text
+
+        # Expressions
+        if obj.get("expressions"):
+            expr_text = "表达式: " + ", ".join([e["name"] for e in obj["expressions"]])
+            overview += "\n" + expr_text
+
+        docs.append({
+            "id": f"ace_plugin_{name}",
+            "text": overview,
+            "metadata": {
+                "source": "ace-reference",
+                "object_name": name,
+                "object_type": "plugin",
+                "conditions_count": c_count,
+                "actions_count": a_count,
+                "expressions_count": e_count
+            }
+        })
+
+    # Process behaviors
+    for name, obj in data.get("behaviors", {}).items():
+        c_count = len(obj.get("conditions", []))
+        a_count = len(obj.get("actions", []))
+        e_count = len(obj.get("expressions", []))
+
+        overview = f"行为 {name}: {c_count} 个条件, {a_count} 个动作, {e_count} 个表达式。"
+
+        if obj.get("conditions"):
+            cond_text = "条件: " + ", ".join([c["name"] for c in obj["conditions"]])
+            overview += "\n" + cond_text
+
+        if obj.get("actions"):
+            act_text = "动作: " + ", ".join([a["name"] for a in obj["actions"]])
+            overview += "\n" + act_text
+
+        if obj.get("expressions"):
+            expr_text = "表达式: " + ", ".join([e["name"] for e in obj["expressions"]])
+            overview += "\n" + expr_text
+
+        docs.append({
+            "id": f"ace_behavior_{name}",
+            "text": overview,
+            "metadata": {
+                "source": "ace-reference",
+                "object_name": name,
+                "object_type": "behavior",
+                "conditions_count": c_count,
+                "actions_count": a_count,
+                "expressions_count": e_count
+            }
+        })
+
+    print(f"  Found {len(docs)} ACE entries")
+    if docs:
+        indexer.index_documents(collection, docs)
+
+
 def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant"""
     from src.config import (
@@ -231,6 +379,10 @@ def index_all_data(rebuild: bool = False):
     if project_parser:
         docs = project_parser.export_for_vectordb()
         indexer.index_documents(COLLECTIONS["examples"], docs)
+
+    # Index ACE reference (add to plugins/behaviors collections)
+    print("\n=== Indexing ACE Reference ===")
+    index_ace_reference(indexer, COLLECTIONS["plugins"], rebuild)
 
     print("\n=== Indexing Complete ===")
 

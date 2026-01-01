@@ -1,0 +1,131 @@
+{
+  "id": "share",
+  "name": "分享",
+  "description": "使用当前运行系统的分享功能，分享到另一个应用程序。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "设备支持分享",
+      "description": "检测当前运行设备是否支持分享功能。",
+      "display_text": "设备支持分享功能",
+      "params": []
+    },
+    {
+      "id": "on-share-completed",
+      "name": "分享完成",
+      "description": "用户完成分享动作后触发。注意，这并不一定意味着用户实际分享了任何内容。",
+      "display_text": "分享完成",
+      "params": []
+    },
+    {
+      "id": "on-share-failed",
+      "name": "分享失败",
+      "description": "如果共享未成功或发生错误，则触发。",
+      "display_text": "分享失败",
+      "params": []
+    },
+    {
+      "id": "is-sharing-files-supported",
+      "name": "设备支持分享",
+      "description": "检测当前运行的平台是否支持 '附加文件' 操作分享文件。",
+      "display_text": "设备支持分享功能",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "share-text",
+      "name": "分享",
+      "description": "调起系统的分享功能，可以带有标题、内容、网页信息，以及来自二进制数据的文件内容。",
+      "display_text": "分享信息(标题: [i]{1}[/i], 内容: [i]{0}[/i], 链接: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要分享的信息，留空则忽略。"
+        },
+        {
+          "id": "title",
+          "name": "标题",
+          "description": "分享时显示的标题，留空则忽略。"
+        },
+        {
+          "id": "url",
+          "name": "链接",
+          "description": "要分享的链接，留空则忽略。"
+        }
+      ]
+    },
+    {
+      "id": "add-file",
+      "name": "附加文件 (二进制)",
+      "description": "在 '分享' 动作前使用，允许将二进制数据附加到分享内容中。注意，这需要设备支持文件共享功能。",
+      "display_text": "附加文件(文件名: [i]{0}[/i], 类型: [i]{1}[/i], 数据: {2})",
+      "params": [
+        {
+          "id": "filename",
+          "name": "文件名",
+          "description": "要添加的文件的名称。"
+        },
+        {
+          "id": "type",
+          "name": "文件类型",
+          "description": "要添加的文件的内容类型，也称为MIME类型。"
+        },
+        {
+          "id": "data",
+          "name": "数据来源",
+          "description": "要使用的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "rate-app",
+      "name": "请求应用评分页面",
+      "description": "弹出请求为你应用评分的窗口",
+      "display_text": "弹出请求评分窗口 (正文: [i]{0}[/i], 确认按钮: [i]{1}[/i], 取消按钮: [i]{2}[/i],  AppID: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "dialogText",
+          "name": "正文内容",
+          "description": "请求评价对话框的正文。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        {
+          "id": "confirmButtonText",
+          "name": "确认按钮",
+          "description": "确认按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        {
+          "id": "cancelButtonText",
+          "name": "取消按钮",
+          "description": "取消按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        {
+          "id": "appIdentifier",
+          "name": "App ID",
+          "description": "请求评分的应用程序ID。留空则使用在项目属性中填写的应用程序ID。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        }
+      ]
+    },
+    {
+      "id": "open-store",
+      "name": "显示商店页面",
+      "description": "打开App的评分页面",
+      "display_text": "显示商店页面 (AppID: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "appIdentifier",
+          "name": "App ID",
+          "description": "要打开商店页面的应用程序ID。留空则使用项目设置中的应用程序ID。"
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 4,
+    "actions": 4,
+    "expressions": 0
+  }
+}

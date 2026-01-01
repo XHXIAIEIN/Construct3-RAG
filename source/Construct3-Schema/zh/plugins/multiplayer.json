@@ -1,0 +1,1451 @@
+{
+  "id": "multiplayer",
+  "name": "多人联机",
+  "description": "基于 WebRTC 数据通信服务创建实时多人在线游戏。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-host",
+      "name": "身份为主机",
+      "description": "检测玩家是否为当前房间的主机(Host)。",
+      "display_text": "身份为主机",
+      "params": []
+    },
+    {
+      "id": "on-peer-connected",
+      "name": "玩家连接成功",
+      "description": "当任意玩家连接到服务器时触发。(包括主机，或连接主机的其他玩家)",
+      "display_text": "玩家连接成功",
+      "params": []
+    },
+    {
+      "id": "on-peer-disconnected",
+      "name": "玩家断开连接",
+      "description": "与对等设备断开连接时触发（从主机或对等设备离开主机）。",
+      "display_text": "玩家断开连接",
+      "params": []
+    },
+    {
+      "id": "on-kicked",
+      "name": "被踢出",
+      "description": "从房间踢出时触发。",
+      "display_text": "被踢出",
+      "params": []
+    },
+    {
+      "id": "on-peer-message",
+      "name": "收到玩家消息",
+      "description": "收到其他玩家发送的包含特定标签消息时触发。",
+      "display_text": "收到玩家消息 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于区分不同的消息类型的标签。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-peer-message",
+      "name": "收到任意玩家消息",
+      "description": "收到玩家发送的任意消息时触发。",
+      "display_text": "收到任意玩家消息",
+      "params": []
+    },
+    {
+      "id": "compare-peer-count",
+      "name": "比较玩家数量",
+      "description": "比较当前房间内的玩家人数。",
+      "display_text": "玩家数量 {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "比较",
+          "description": "选择一种比较方式。"
+        },
+        {
+          "id": "count",
+          "name": "计数",
+          "description": "要比较的数量。"
+        }
+      ]
+    },
+    {
+      "id": "on-client-update",
+      "name": "客户端更新",
+      "description": "向主机发送新的客户端状态时触发。",
+      "display_text": "客户端更新",
+      "params": []
+    },
+    {
+      "id": "is-ready-for-input",
+      "name": "准备输入",
+      "description": "检测是否已准备好向主机发送输入事件。 在此结果完成前不要移动本地玩家。",
+      "display_text": "准备输入",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "发生错误",
+      "description": "服务器列表或信令服务器发生错误时触发。",
+      "display_text": "信令发生错误",
+      "params": []
+    },
+    {
+      "id": "on-connected",
+      "name": "连接成功",
+      "description": "信令成功连接服务器时触发。",
+      "display_text": "信令连接成功",
+      "params": []
+    },
+    {
+      "id": "on-disconnected",
+      "name": "断开连接",
+      "description": "信令连接服务器失败时触发。",
+      "display_text": "信令断开连接",
+      "params": []
+    },
+    {
+      "id": "on-logged-in",
+      "name": "登录完成",
+      "description": "信令成功登录服务器时触发。",
+      "display_text": "信令已登录",
+      "params": []
+    },
+    {
+      "id": "on-joined-room",
+      "name": "加入房间",
+      "description": "信令加入房间时触发。",
+      "display_text": "信令加入房间",
+      "params": []
+    },
+    {
+      "id": "on-left-room",
+      "name": "离开房间",
+      "description": "信令离开房间时触发。",
+      "display_text": "信令离开房间",
+      "params": []
+    },
+    {
+      "id": "is-connected",
+      "name": "已连接",
+      "description": "检测是否已连接信令服务器。",
+      "display_text": "已连接到信令服务器",
+      "params": []
+    },
+    {
+      "id": "is-logged-in",
+      "name": "已登录",
+      "description": "检测是否已登录信令服务器。",
+      "display_text": "已登录到信令服务器",
+      "params": []
+    },
+    {
+      "id": "is-in-room",
+      "name": "在房间内",
+      "description": "检测当前是否已进入信号服务器上的房间。",
+      "display_text": "在房间内",
+      "params": []
+    },
+    {
+      "id": "on-game-instance-list",
+      "name": "接收大厅列表",
+      "description": "执行 '请求游戏大厅列表' 动作后，收到服务器返回的游戏大厅列表时触发。",
+      "display_text": "接收大厅列表",
+      "params": []
+    },
+    {
+      "id": "on-room-list",
+      "name": "接收到房间列表",
+      "description": "执行 '请求房间列表' 动作后，收到服务器返回的房间列表时触发。",
+      "display_text": "接收到房间列表",
+      "params": []
+    },
+    {
+      "id": "on-host-disconnected",
+      "name": "主机已断开",
+      "description": "当玩家与主机断开连接时触发。",
+      "display_text": "主机已断开",
+      "params": []
+    },
+    {
+      "id": "on-binary-transfer-complete",
+      "name": "传输完成",
+      "description": "当带有特定标签的二进制数据传输成功时触发。",
+      "display_text": "传输完成(标签: [i]{0}[/i],  接收到:{1})",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "二进制传输的标签。"
+        },
+        {
+          "id": "receive-to",
+          "name": "接收到",
+          "description": "选择一个二进制数据对象来接收数据。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-binary-transfer-complete",
+      "name": "任意传输完成",
+      "description": "当任意二进制数据传输完成时触发。",
+      "display_text": "任意传输完成(接收到:{0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "接收到",
+          "description": "选择一个二进制数据对象来接收数据。"
+        }
+      ]
+    },
+    {
+      "id": "on-binary-transfer-event",
+      "name": "触发事件",
+      "description": "监听指定标签的各种二进制传输事件时触发，例如传输完成、开始接收或被取消。",
+      "display_text": "二进制传输 [i]{0}[/i] {1}",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "二进制传输的标签。"
+        },
+        {
+          "id": "type",
+          "name": "事件",
+          "description": "二进制传输事件。",
+          "options": [
+            {
+              "id": "receive-started",
+              "label": "开始接收"
+            },
+            {
+              "id": "progress",
+              "label": "进度更新"
+            },
+            {
+              "id": "cancelled",
+              "label": "取消传输"
+            },
+            {
+              "id": "send-complete",
+              "label": "发送完成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-binary-transfer-event",
+      "name": "触发任意事件",
+      "description": "监听任意二进制传输事件的触发，例如任意传输完成、开始接收或被取消。",
+      "display_text": "任意二进制传输{0}",
+      "params": [
+        {
+          "id": "type",
+          "name": "事件",
+          "description": "二进制传输事件",
+          "options": [
+            {
+              "id": "receive-started",
+              "label": "开始接收"
+            },
+            {
+              "id": "progress",
+              "label": "进度更新"
+            },
+            {
+              "id": "cancelled",
+              "label": "取消传输"
+            },
+            {
+              "id": "send-complete",
+              "label": "发送完成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-peer-binary-message",
+      "name": "收到二进制消息",
+      "description": "收到玩家的二进制消息时触发。",
+      "display_text": "收到二进制消息 (接收到 {0})",
+      "params": [
+        {
+          "id": "receive-to",
+          "name": "接收到",
+          "description": "选择一个二进制数据对象来接收数据。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "disconnect-room",
+      "name": "离开房间",
+      "description": "断开与房间的连接。若主机离开则房间内所有玩家都将被踢出。",
+      "display_text": "离开房间",
+      "params": []
+    },
+    {
+      "id": "send-message",
+      "name": "发送消息",
+      "description": "向指定的玩家发送消息。",
+      "display_text": "向玩家 [i]{0}[/i] 发送消息 [b]{2}[/b] (标签 [i]{1}[/i], 模式 [i]{3}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "要将消息发送到的玩家ID。 留空则发送给主机。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的信息类型。"
+        },
+        {
+          "id": "message",
+          "name": "消息",
+          "description": "要发送的消息。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "发送此消息的传输模式。",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "有序可靠"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "无序可靠"
+            },
+            {
+              "id": "unreliable",
+              "label": "不可靠"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "simulate-latency",
+      "name": "模拟网络延迟",
+      "description": "模拟发送与接收消息时产生的延迟和数据丢失的过程。用于在本地的房主端测试，模拟遇到现实中的网络延迟时可能出现的影响。",
+      "display_text": "模拟网络延迟 [i]{0}[/i]秒 (随机波动:[i]{1}[/i], 丢包概率: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "latency",
+          "name": "延迟",
+          "description": "要模拟的网络延迟，以秒为单位。这将导致发送和接收的消息都被人为进行延迟。"
+        },
+        {
+          "id": "pdv",
+          "name": "延迟波动",
+          "description": "在标准网络延迟的基础上，增加一个从 0 到目标值之间的随机秒数 (PDV)，用于模拟真实环境中，玩家与本机发送或接受消息时的延迟。"
+        },
+        {
+          "id": "packet-loss",
+          "name": "丢包概率",
+          "description": "模拟数据包丢失的百分比概率，数值范围从 0 到 1，如 0.05 表示有 5％ 的几率丢失数据。用于模拟在发送和接收的消息可能被人为的忽略或进一步延迟。"
+        }
+      ]
+    },
+    {
+      "id": "sync-instance-variable",
+      "name": "同步实例变量",
+      "description": "添加同步对象的实例变量以通过网络同步。",
+      "display_text": "同步 {0} 实例变量 [b]{1}[/b] (客户端标签: [i]{4}[/i], 精度: [i]{2}[/i], 插值: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要同步的对象类型，指定该对象的实例变量。"
+        },
+        {
+          "id": "instance-variable",
+          "name": "实例变量",
+          "description": "选择要同步的实例变量。"
+        },
+        {
+          "id": "precision",
+          "name": "精度",
+          "description": "选择要同步的值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "高 (双精度, 8字节)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "常规 (单精度, 4字节)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "低 (16位整数, 2字节)"
+            },
+            {
+              "id": "very-low-uint8-1-byte",
+              "label": "非常低 (uint8, 1 byte)"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "插值",
+          "description": "选择客户端处理接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无"
+            },
+            {
+              "id": "linear",
+              "label": "线性"
+            },
+            {
+              "id": "angular",
+              "label": "角度"
+            }
+          ]
+        },
+        {
+          "id": "client-value-tag",
+          "name": "客户端值标签",
+          "description": "与相应的客户端输入值相应的标签(如果有)，用于帮助房主能以更小的延迟处理客户端实例变量的延迟同步。"
+        }
+      ]
+    },
+    {
+      "id": "associate-object-with-peer",
+      "name": "关联实例对象",
+      "description": "将实例对象与已连接的玩家关联。玩家离开房间时，对应的实例对象也会销毁。",
+      "display_text": "关联 {0} 到 [i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "与玩家关联的对象。每个已连接的玩家必须有且仅有一个此对象。"
+        },
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "与所选对象关联的玩家ID。"
+        }
+      ]
+    },
+    {
+      "id": "add-client-input-value",
+      "name": "注册客户端输入值",
+      "description": "向主机注册一个值，用于表示玩家本地的输入状态，并通过标签来指示不同的输入。",
+      "display_text": "注册客户端输入值 (标签: [b]{0}[/b], 精度: [i]{1}[/i], 插值: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的客户端输入值。"
+        },
+        {
+          "id": "precision",
+          "name": "精度",
+          "description": "选择客户端输入状态值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "高 (双精度, 8字节)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "正常 (单精度, 4字节)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "低 (16位整数, 2字节)"
+            },
+            {
+              "id": "very-low-uint8-1-byte",
+              "label": "非常低 (uint8, 1 byte)"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "插值",
+          "description": "房主在接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
+          "options": [
+            {
+              "id": "none",
+              "label": "无"
+            },
+            {
+              "id": "linear",
+              "label": "线性"
+            },
+            {
+              "id": "angular",
+              "label": "角度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-bandwidth-profile",
+      "name": "设置宽带配置",
+      "description": "加入房间前设置，设置宽带配置为互联网(Internet)或局域网(LAN) 模式。",
+      "display_text": "设置宽带配置为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "profile",
+          "name": "配置",
+          "description": "要使用的带宽配置。不要在互联网使用局域网，但局域网中可以连接互联网。",
+          "options": [
+            {
+              "id": "internet-30-hz-updates-80ms-buffer",
+              "label": "互联网 (30Hz 更新, 80ms 缓冲)"
+            },
+            {
+              "id": "lan-60-hz-updates-40ms-buffer",
+              "label": "局域网 (60Hz 更新, 40ms 缓冲)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "broadcast-message",
+      "name": "广播消息",
+      "description": "通过主机向房间中的所有玩家发送消息。",
+      "display_text": "广播消息: [b]{2}[/b] (标签: [i]{1}[/i], 发送方: [i]{0}[/i], 模式: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "from-id",
+          "name": "发送方ID",
+          "description": "消息来源的玩家ID。留空则由主机发送。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的消息类型。"
+        },
+        {
+          "id": "message",
+          "name": "消息",
+          "description": "要发送的消息数据。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "有序可靠"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "无序可靠"
+            },
+            {
+              "id": "unreliable",
+              "label": "不可靠"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kick-peer",
+      "name": "踢出玩家",
+      "description": "强制将玩家从房间中移除。仅主机使用有效。",
+      "display_text": "踢出玩家 [i]{0}[/i] (原因: [i]{1}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "要强制踢出的玩家ID。仅主机使用有效。"
+        },
+        {
+          "id": "reason",
+          "name": "原因(可选)",
+          "description": "移除用户的理由。"
+        }
+      ]
+    },
+    {
+      "id": "set-client-state",
+      "name": "设置客户端状态",
+      "description": "设置玩家的本地输入状态，用于向主机指示它们的控制器。",
+      "display_text": "设置客户端输入状态 [i]{0}[/i] 为 [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "用于区分客户端输入状态的标签。在设置前必须先添加标签。"
+        },
+        {
+          "id": "value",
+          "name": "状态值",
+          "description": "用于表示客户端的输入状态，必须是数字。"
+        }
+      ]
+    },
+    {
+      "id": "enable-local-input-prediction",
+      "name": "启用本地输入预测",
+      "description": "为代表本地玩家的对象启用本地输入预测。",
+      "display_text": "启用 {0} 本地输入预测 (忽略实体: [i]{1}[/i], 平台行为: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "为本地玩家启用本地输入预测的对象。"
+        },
+        {
+          "id": "avoid-solids",
+          "name": "忽略实体",
+          "description": "勾选此选项后，避免对实体对象进行不必要的输入预测。"
+        },
+        {
+          "id": "platform-mode",
+          "name": "平台行为",
+          "description": "使用平台行为时请勾选此选项，避免对象站在地板时仍然对 Y 轴进行不必要的输入预测。"
+        }
+      ]
+    },
+    {
+      "id": "connect",
+      "name": "连接服务器",
+      "description": "连接信令服务器，用于加入房间。",
+      "display_text": "连接服务器 [b]{0}[/b]",
+      "params": [
+        {
+          "id": "server",
+          "name": "服务器",
+          "description": "要连接的信令服务器URL。"
+        }
+      ]
+    },
+    {
+      "id": "disconnect-signalling",
+      "name": "断开连接",
+      "description": "从当前的信令服务器断开连接。",
+      "display_text": "断开连接",
+      "params": []
+    },
+    {
+      "id": "add-ice-server",
+      "name": "添加 ICE 服务器",
+      "description": "添加另一个ICE服务器以帮助建立连接。 内置了几个默认值。",
+      "display_text": "添加 ICE 服务器 [b]{0}[/b] (用户名: [i]{1}[/i], 证书: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "ice-server",
+          "name": "ICE 服务器",
+          "description": "自定义ICE服务器，例如 STUN或TURN，帮助建立连接。"
+        },
+        {
+          "id": "username-optional",
+          "name": "用户名(可选)",
+          "description": "如果是 TURN 服务器，该服务器的用户名。"
+        },
+        {
+          "id": "credential-optional",
+          "name": "证书(可选)",
+          "description": "用于 TURN 服务器，该服务器使用的凭据证书。"
+        }
+      ]
+    },
+    {
+      "id": "log-in",
+      "name": "登录",
+      "description": "与信令服务器连接后，可登录信令服务器。",
+      "display_text": "登录服务器 (昵称: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "alias",
+          "name": "昵称",
+          "description": "在服务器上使用的名称，如果名称被占用，服务器会分配不同的别名。"
+        }
+      ]
+    },
+    {
+      "id": "join-room",
+      "name": "加入房间",
+      "description": "登录信令服务器后，加入房间即可与其他玩家会面。",
+      "display_text": "加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 最多人数: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "game",
+          "name": "游戏",
+          "description": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您公司的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。"
+        },
+        {
+          "id": "instance",
+          "name": "大厅",
+          "description": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。"
+        },
+        {
+          "id": "room",
+          "name": "房间",
+          "description": "请求加入的房间名称。"
+        },
+        {
+          "id": "max-peers",
+          "name": "人数",
+          "description": "此房间可容纳的最大玩家数量。仅房主设置有效，保留 0 则无限制。"
+        }
+      ]
+    },
+    {
+      "id": "leave-room",
+      "name": "离开房间",
+      "description": "向信令服务器请求离开当前房间。",
+      "display_text": "离开房间",
+      "params": []
+    },
+    {
+      "id": "request-game-instance-list",
+      "name": "请求大厅列表",
+      "description": "请求当前服务器上，活跃的游戏大厅。",
+      "display_text": "请求大厅列表(游戏: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "game",
+          "name": "游戏",
+          "description": "要请求的游戏。"
+        }
+      ]
+    },
+    {
+      "id": "auto-join-room",
+      "name": "自动加入房间",
+      "description": "自动加入第一个未满员的房间。",
+      "display_text": "自动加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 房间最多人数: [i]{3}[/i], {4})",
+      "params": [
+        {
+          "id": "game",
+          "name": "游戏",
+          "description": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您团队的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。"
+        },
+        {
+          "id": "instance",
+          "name": "大厅",
+          "description": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。"
+        },
+        {
+          "id": "first-room",
+          "name": "首选房间",
+          "description": "首次请求加入的房间名称。如果房间已满，则检查后序房间号，如 room', 'room2', 'room3'..."
+        },
+        {
+          "id": "max-peers",
+          "name": "房间人数",
+          "description": "房间最大可容纳的用户数量。 若房间满员，后面的用户将被送到下一个房间。"
+        },
+        {
+          "id": "locking",
+          "name": "锁定房间",
+          "description": "锁定房间将阻止其他用户再次加入。即使从房间离开也无法再次进入。",
+          "options": [
+            {
+              "id": "lock-when-full",
+              "label": "人满时锁定"
+            },
+            {
+              "id": "dont-lock",
+              "label": "不锁定"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "request-room-list",
+      "name": "请求房间列表",
+      "description": "从当前服务器中，获取指定的游戏大厅的房间列表。",
+      "display_text": "请求房间列表 (游戏:[b]{0}[/b], 大厅: [b]{1}[/b], 状态: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "game",
+          "name": "游戏",
+          "description": "要请求的游戏名。"
+        },
+        {
+          "id": "instance",
+          "name": "大厅",
+          "description": "要请求的游戏实例。"
+        },
+        {
+          "id": "which",
+          "name": "方式",
+          "description": "筛选房间的状态。",
+          "options": [
+            {
+              "id": "all",
+              "label": "全部"
+            },
+            {
+              "id": "unlocked",
+              "label": "已解锁"
+            },
+            {
+              "id": "available",
+              "label": "可加入"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sync-object-2",
+      "name": "同步对象",
+      "description": "通过网络自动同步对象类型。",
+      "display_text": "同步对象 {0}([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]角度[/b]: [i]{3}[/i], 精度 [i]{4}[/i], 带宽: [i]{5}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "要通过网络同步的对象类型。"
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "是否同步对象的X位置。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "是否同步对象的Y位置。"
+        },
+        {
+          "id": "angle",
+          "name": "角度",
+          "description": "是否同步对象的角度。"
+        },
+        {
+          "id": "precision",
+          "name": "精度",
+          "description": "选择要同步的上述数据的精度，更高的精度需要使用更多的带宽。",
+          "options": [
+            {
+              "id": "high-double-8-bytes",
+              "label": "高 (双精度, 8字节)"
+            },
+            {
+              "id": "normal-float-4-bytes",
+              "label": "常规 (单精度, 4字节)"
+            },
+            {
+              "id": "low-int16-2-bytes",
+              "label": "低 (16位整数, 2字节)"
+            }
+          ]
+        },
+        {
+          "id": "bandwidth",
+          "name": "带宽",
+          "description": "选择此对象的带宽同步设置。建议只在运动峰值可预测的情况下选择 '低带宽' 模式 (例如匀速直线运动) 。",
+          "options": [
+            {
+              "id": "normal-bandwidth-unpredictable",
+              "label": "正常 (不可预测)"
+            },
+            {
+              "id": "low-bandwidth-highly-predictable",
+              "label": "低 (峰值可预测)"
+            },
+            {
+              "id": "very-low-bandwidth-essentially-static",
+              "label": "非常低 (几乎静态)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transfer-peer-binary",
+      "name": "传输数据",
+      "description": "将二进制数据对象的内容传输给对方。",
+      "display_text": "传输二进制数据 (接收方: [b]{0}[/b], 数据: {1},  标签: [i]{2}[/i], 文件名: [i]{3}[/i], 媒体类型: [i]{4}[/i]))",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "接收此消息的玩家ID。 留空则发送给主机。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "包含要发送的数据的二进制数据对象。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "传输标签，用于识别此次传输事件。"
+        },
+        {
+          "id": "filename",
+          "name": "文件名(可选)",
+          "description": "指定本次传输的文件名。"
+        },
+        {
+          "id": "mime-type",
+          "name": "媒体类型(可选)",
+          "description": "指定本次传输的媒体类型(MIME)。例如 PNG 表示为 \"image/png\""
+        }
+      ]
+    },
+    {
+      "id": "cancel-binary-transfer",
+      "name": "取消传输",
+      "description": "取消包含指定标签的二进制数据传输任务。",
+      "display_text": "取消传输任务 (标签: [i]{1}[/i], 玩家: [b]{0}[/b])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "要取消传输的玩家ID。"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "要取消传输的标签。"
+        }
+      ]
+    },
+    {
+      "id": "send-binary-message",
+      "name": "发送二进制消息",
+      "description": "发送二进制数据给指定玩家。",
+      "display_text": "发送二进制消息 {1} (接收方: [i]{0}[/i], 模式: [i]{2}[/i])",
+      "params": [
+        {
+          "id": "peer-id",
+          "name": "玩家ID",
+          "description": "接收此消息的玩家ID。 留空则发送给主机。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "包含要发送的数据的二进制数据对象。"
+        },
+        {
+          "id": "mode",
+          "name": "模式",
+          "description": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
+          "options": [
+            {
+              "id": "reliable-ordered",
+              "label": "有序可靠"
+            },
+            {
+              "id": "reliable-unordered",
+              "label": "无序可靠"
+            },
+            {
+              "id": "unreliable",
+              "label": "不可靠"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "listinstancecount",
+      "name": "获取大厅数量",
+      "description": "获取当前可用的游戏大厅数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listinstancename",
+      "name": "列表实例名称",
+      "description": "索引处的游戏大厅的名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "listinstancepeercount",
+      "name": "获取大厅玩家数量",
+      "description": "索引中游戏大厅中的人数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "listroomcount",
+      "name": "列表房间数量",
+      "description": "返回的房间数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listroomname",
+      "name": "列表房间名称",
+      "description": "索引中房间的名称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "listroompeercount",
+      "name": "玩家房间玩家数量",
+      "description": "获取指定房间中的玩家数量。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "listroommaxpeercount",
+      "name": "列表房间最多人数",
+      "description": "列表索引的房间最多容纳的人数。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "listroomstate",
+      "name": "列表房间状态",
+      "description": "在 '接收房间列表' 条件中，获取索引位置的房间状态。返回 available(可用),  locked(锁定),  full(已满)。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "索引"
+        }
+      ]
+    },
+    {
+      "id": "peerid",
+      "name": "玩家ID",
+      "description": "在触发器中，相关的玩家ID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeralias",
+      "name": "玩家昵称",
+      "description": "在触发器中，相关的玩家昵称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostid",
+      "name": "主机ID",
+      "description": "房间主机的ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostalias",
+      "name": "主机昵称",
+      "description": "房间主机的别名",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "message",
+      "name": "消息",
+      "description": "收到消息时，接收到的内容。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "消息标签",
+      "description": "收到消息或数据时，获取此事件的标签。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fromid",
+      "name": "消息发送方ID",
+      "description": "收到消息时，消息发送方的用户ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "fromalias",
+      "name": "消息发送方昵称",
+      "description": "收到消息时，消息发送方的用户昵称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeraliasfromid",
+      "name": "获取玩家昵称",
+      "description": "获取指定的玩家昵称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "玩家ID"
+        }
+      ]
+    },
+    {
+      "id": "peerlatency",
+      "name": "获取玩家延迟",
+      "description": "获取玩家的网络延迟，即与主机的 Ping 值。主机可获取所有玩家的延迟，而玩家只能获取主机的延迟。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "玩家ID"
+        }
+      ]
+    },
+    {
+      "id": "peerpdv",
+      "name": "获取玩家延迟波动",
+      "description": "获取玩家的网络丢包延迟，用于确定网络连接的稳定性。即最大延迟与最小延迟的时间差(PDV)。如最大延迟是20毫秒，最小延迟为5毫秒，那么网络波动就是15毫秒。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "玩家ID"
+        }
+      ]
+    },
+    {
+      "id": "peercount",
+      "name": "玩家数量",
+      "description": "当前房间已连接的玩家数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "leavereason",
+      "name": "离开原因",
+      "description": "在 '玩家断开连接' 条件中，获取玩家离开的原因。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeridat",
+      "name": "获取玩家ID",
+      "description": "获取房间中第n个玩家的ID。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "玩家索引"
+        }
+      ]
+    },
+    {
+      "id": "peeraliasat",
+      "name": "获取玩家昵称",
+      "description": "获取房间中第n个玩家的昵称。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "索引",
+          "description": "玩家索引"
+        }
+      ]
+    },
+    {
+      "id": "peerstate",
+      "name": "玩家状态",
+      "description": "作为主机时，获取对手客户端的输入状态。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "id",
+          "name": "id",
+          "description": "玩家ID"
+        },
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "客户端值标签"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensatex",
+      "name": "延迟补偿X",
+      "description": "获取在其他玩家视角中，目标玩家当前的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "目标ID",
+          "description": "要获取位置的玩家ID"
+        },
+        {
+          "id": "frompeerid",
+          "name": "观察者ID",
+          "description": "要补偿延迟的玩家ID。"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensatey",
+      "name": "延迟补偿Y",
+      "description": "获取在其他玩家视角中，目标玩家当前的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "目标ID",
+          "description": "要获取位置的玩家ID"
+        },
+        {
+          "id": "frompeerid",
+          "name": "观察者ID",
+          "description": "要补偿延迟的玩家ID。"
+        }
+      ]
+    },
+    {
+      "id": "lagcompensateangle",
+      "name": "延迟补偿角度",
+      "description": "获取在其他玩家的视角中，目标玩家当前的角度。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "movingpeerid",
+          "name": "玩家ID",
+          "description": "要移动的玩家ID"
+        },
+        {
+          "id": "frompeerid",
+          "name": "观察者ID",
+          "description": "要补偿延迟的玩家ID"
+        }
+      ]
+    },
+    {
+      "id": "signallingurl",
+      "name": "信令地址",
+      "description": "获取信令服务器的地址。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingversion",
+      "name": "信令版本",
+      "description": "获取信令服务器的版本。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingname",
+      "name": "信令名称",
+      "description": "获取信令服务器的名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingoperator",
+      "name": "信令运营商",
+      "description": "获取信令服务器的运营商。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "signallingmotd",
+      "name": "信令每日消息",
+      "description": "在 '信令连接成功' 条件中，获取信令服务器的 '每日消息' (MOTD) 内容。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myalias",
+      "name": "个人昵称",
+      "description": "当前用户的个人昵称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentgame",
+      "name": "当前游戏",
+      "description": "当前已加入的游戏名称。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentinstance",
+      "name": "当前实例",
+      "description": "当前已加入的游戏实例。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "currentroom",
+      "name": "当前房间",
+      "description": "当前已加入的游戏房间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "errormessage",
+      "name": "错误信息",
+      "description": "在 '信令发生错误' 条件中，返回的错误消息。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myid",
+      "name": "个人ID",
+      "description": "当前用户的ID",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutboundcount",
+      "name": "出站带宽数量",
+      "description": "每秒出站的信息数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutboundbandwidth",
+      "name": "出站带宽使用量",
+      "description": "每秒上传数据，以字节每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinboundcount",
+      "name": "入站带宽数量",
+      "description": "每秒入站的信息数量。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinboundbandwidth",
+      "name": "入站带宽使用量",
+      "description": "每秒下载数据，以字节每秒为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "clientxerror",
+      "name": "客户端X误差",
+      "description": "用于测试目的。对于主机的视角，预测客户端的输入误差X。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "clientyerror",
+      "name": "客户端Y误差",
+      "description": "用于测试目的。对于主机的视角，预测客户端的输入误差Y。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hostx",
+      "name": "主机X",
+      "description": "用于测试目的。预估在玩家视角中，主机当前的X坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hosty",
+      "name": "主机Y",
+      "description": "用于测试目的。预估在玩家视角中，主机当前的Y坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statoutbounddecompressedbandwidth",
+      "name": "出站解压缩带宽使用量",
+      "description": "每秒发送的解压缩数据的大小。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "statinbounddecompressedbandwidth",
+      "name": "入站解压缩带宽使用量",
+      "description": "每秒接收到的解压缩数据的大小。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "peeridfromalias",
+      "name": "获取玩家昵称ID",
+      "description": "通过昵称获取玩家ID。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "alias",
+          "name": "昵称",
+          "description": "玩家昵称"
+        }
+      ]
+    },
+    {
+      "id": "filename",
+      "name": "文件名",
+      "description": "可选。可指定二进制数据传输的文件名。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mime-type",
+      "name": "媒体类型",
+      "description": "可选。可指定二进制数据传输的 MIME 类型。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "transfer-progress",
+      "name": "传输进度",
+      "description": "在 '传输进度更新' 条件中，获取当前的传输进度。范围在 0 - 1 之间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "transfer-size",
+      "name": "传输大小",
+      "description": "在 '二进制传输开始' 条件中，正在传输的数据的大小，以字节为单位。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 26,
+    "actions": 24,
+    "expressions": 53
+  }
+}

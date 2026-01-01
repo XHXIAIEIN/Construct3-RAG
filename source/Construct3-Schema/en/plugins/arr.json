@@ -1,0 +1,740 @@
+{
+  "id": "arr",
+  "name": "Array",
+  "description": "Store an array of values in up to 3 dimensions.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "compare-at-x",
+      "name": "Compare at X",
+      "description": "Compare the value at an X position (1D) in the array.",
+      "display_text": "Value at [b]{0}[/b] {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X index (0-based) of array value to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare the array value to."
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xy",
+      "name": "Compare at XY",
+      "description": "Compare the value at an X,Y position (2D) in the array.",
+      "display_text": "Value at ([b]{0}[/b], [b]{1}[/b]) {2} [b]{3}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X index (0-based) of array value to compare."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y index (0-based) of array value to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare the array value to."
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xyz",
+      "name": "Compare at XYZ",
+      "description": "Compare the value at an X,Y,Z position (3D) in the array.",
+      "display_text": "Value at ([b]{0}[/b], [b]{1}[/b], [b]{2}[/b]) {3} [b]{4}[/b]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X index (0-based) of array value to compare."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y index (0-based) of array value to compare."
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "Z index (0-based) of array value to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare the array value to."
+        }
+      ]
+    },
+    {
+      "id": "contains-value",
+      "name": "Contains value",
+      "description": "Test if the array contains a value (at any element).",
+      "display_text": "Contains value {0}",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to test if in the array."
+        }
+      ]
+    },
+    {
+      "id": "is-empty",
+      "name": "Is empty",
+      "description": "Test if the array is empty and contains no elements.",
+      "display_text": "Is empty",
+      "params": []
+    },
+    {
+      "id": "compare-size",
+      "name": "Compare size",
+      "description": "Compare the size of one of the array dimensions.",
+      "display_text": "{0} size {1} [b]{2}[/b]",
+      "params": [
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "Select the axis to compare.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the size of the given axis."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare to."
+        }
+      ]
+    },
+    {
+      "id": "for-each-element",
+      "name": "For each element",
+      "description": "Repeat the event for each element in the array.",
+      "display_text": "For each {0} element",
+      "params": [
+        {
+          "id": "axes",
+          "name": "Axes",
+          "description": "Select which dimensions to iterate.  For example, if you have a 3D array, but only want to iterate in 2D, choose 'XY'.",
+          "options": [
+            {
+              "id": "xyz",
+              "label": "XYZ"
+            },
+            {
+              "id": "xy",
+              "label": "XY"
+            },
+            {
+              "id": "x",
+              "label": "X"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-current-value",
+      "name": "Compare current value",
+      "description": "Compare the value of the current element in a for-each loop.",
+      "display_text": "Current value {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current value in the for-each loop."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare the array value to."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "clear",
+      "name": "Clear",
+      "description": "Reset all values.",
+      "display_text": "Clear to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to clear the entire array with."
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name": "Set size",
+      "description": "Set the number of elements on each axis of the array.",
+      "display_text": "Set size to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The new number of elements on the X axis."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The new number of elements on the Y axis."
+        },
+        {
+          "id": "depth",
+          "name": "Depth",
+          "description": "The new number of elements on the Z axis."
+        }
+      ]
+    },
+    {
+      "id": "set-at-x",
+      "name": "Set at X",
+      "description": "Set the value at an X position (1D) in the array.",
+      "display_text": "Set value at [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X index (0-based) of the array value to set."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to store in the array."
+        }
+      ]
+    },
+    {
+      "id": "set-at-xy",
+      "name": "Set at XY",
+      "description": "Set the value at an X,Y position (2D) in the array.",
+      "display_text": "Set value at ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X index (0-based) of the array value to set."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y index (0-based) of the array value to set."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to store in the array."
+        }
+      ]
+    },
+    {
+      "id": "set-at-xyz",
+      "name": "Set at XYZ",
+      "description": "Set the value at an X,Y,Z position (3D) in the array.",
+      "display_text": "Set value at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) to [i]{3}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X index (0-based) of the array value to set."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y index (0-based) of the array value to set."
+        },
+        {
+          "id": "z",
+          "name": "Z",
+          "description": "The Z index (0-based) of the array value to set."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to store in the array."
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "name": "Load",
+      "description": "Load from an array previously encoded in JSON format.",
+      "display_text": "Load from JSON string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A string of the JSON data to load."
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "Download",
+      "description": "Download the contents of the array as a JSON file.",
+      "display_text": "Download as JSON data with filename [i]{0}[/i]",
+      "params": [
+        {
+          "id": "filename",
+          "name": "Filename",
+          "description": "The name of the file to download."
+        }
+      ]
+    },
+    {
+      "id": "push",
+      "name": "Push",
+      "description": "Add a new element to the front or back of an axis.",
+      "display_text": "Push {0} [i]{1}[/i] on {2} axis",
+      "params": [
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Whether to insert at the beginning or the end of the array.",
+          "options": [
+            {
+              "id": "back",
+              "label": "back"
+            },
+            {
+              "id": "front",
+              "label": "front"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to insert to the array."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to insert on.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pop",
+      "name": "Pop",
+      "description": "Remove an element from the front or back of an axis.",
+      "display_text": "Pop {0} on {1} axis",
+      "params": [
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Whether to remove at the beginning or the end of the array.",
+          "options": [
+            {
+              "id": "back",
+              "label": "back"
+            },
+            {
+              "id": "front",
+              "label": "front"
+            }
+          ]
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to remove from.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reverse",
+      "name": "Reverse",
+      "description": "Reverse the order of elements on an axis.",
+      "display_text": "Reverse {0} axis",
+      "params": [
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to reverse.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "name": "Delete",
+      "description": "Delete an element from an axis.",
+      "display_text": "Delete index {0} from {1} axis",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index to delete."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to delete from.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insert",
+      "name": "Insert",
+      "description": "Insert a new element at an index on an axis.",
+      "display_text": "Insert [i]{0}[/i] at index [i]{1}[/i] on {2} axis",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to insert to the array."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "The zero-based index to insert to."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to insert to.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "split-string",
+      "name": "Split string",
+      "description": "Set to a one-dimensional array based on splitting a string, e.g. \"1,2,3\".",
+      "display_text": "Split string [i]{0}[/i] with separator [i]{1}[/i] (type [i]{2}[/i])",
+      "params": [
+        {
+          "id": "string",
+          "name": "String",
+          "description": "The string to split."
+        },
+        {
+          "id": "separator",
+          "name": "Separator",
+          "description": "The character to use to split the string."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "The data type of the values to set.",
+          "options": [
+            {
+              "id": "auto",
+              "label": "Auto"
+            },
+            {
+              "id": "string",
+              "label": "String"
+            },
+            {
+              "id": "number",
+              "label": "Number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shuffle",
+      "name": "Shuffle",
+      "description": "Sort the elements on an axis in to a random ordering.",
+      "display_text": "Shuffle {0} axis",
+      "params": [
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to shuffle.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z",
+              "label": "Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sort2",
+      "name": "Sort",
+      "description": "Sort the elements on an axis.",
+      "display_text": "Sort {0}",
+      "params": [
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "The axis to sort.",
+          "options": [
+            {
+              "id": "x-by-col",
+              "label": "X axis (by column)"
+            },
+            {
+              "id": "x-separate",
+              "label": "X axis (separately)"
+            },
+            {
+              "id": "y-by-row",
+              "label": "Y axis (by row)"
+            },
+            {
+              "id": "y-separate",
+              "label": "Y axis (separately)"
+            },
+            {
+              "id": "z",
+              "label": "Z axis"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "at",
+      "name": "At",
+      "description": "Get value from the array.  Add second or third parameters to specify Y and Z indices.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X index (0-based) of the array value to get."
+        }
+      ]
+    },
+    {
+      "id": "width",
+      "name": "Width",
+      "description": "Get the number of elements on the X axis of the array.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "height",
+      "name": "Height",
+      "description": "Get the number of elements on the Y axis of the array.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "depth",
+      "name": "Depth",
+      "description": "Get the number of elements on the Z axis of the array.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "front",
+      "name": "Front",
+      "description": "Get the front value on the X axis (at 0, 0, 0).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "back",
+      "name": "Back",
+      "description": "Get the back value on the X axis (at w-1, 0, 0).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "indexof",
+      "name": "IndexOf",
+      "description": "Find first X index of matching value, or -1 if not found.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to search for."
+        }
+      ]
+    },
+    {
+      "id": "lastindexof",
+      "name": "LastIndexOf",
+      "description": "Find last X index of matching value, or -1 if not found.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to search for."
+        }
+      ]
+    },
+    {
+      "id": "curx",
+      "name": "CurX",
+      "description": "Get the current X index in a For Each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "cury",
+      "name": "CurY",
+      "description": "Get the current Y index in a For Each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "curz",
+      "name": "CurZ",
+      "description": "Get the current Z index in a For Each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "curvalue",
+      "name": "CurValue",
+      "description": "Get the current value in a For Each loop.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "asjson",
+      "name": "AsJSON",
+      "description": "Return the contents of the array in JSON format.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "join-string",
+      "name": "JoinString",
+      "description": "Combine a one-dimensional array back in to a string.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "separator",
+          "name": "Separator",
+          "description": "The character to use to join the string."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 8,
+    "actions": 15,
+    "expressions": 14
+  }
+}

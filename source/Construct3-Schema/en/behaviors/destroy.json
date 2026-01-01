@@ -1,0 +1,14 @@
+{
+  "id": "destroy",
+  "name": "Destroy outside layout",
+  "description": "Automatically destroy the object if it leaves the layout area.",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

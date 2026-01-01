@@ -1,0 +1,668 @@
+{
+  "id": "gamepad",
+  "name": "Gamepad",
+  "description": "Receive input from a gamepad device, e.g. console controllers.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-gamepad-connected",
+      "name": "On gamepad connected",
+      "description": "Triggered when a gamepad device is connected to the computer.",
+      "display_text": "On gamepad connected",
+      "params": []
+    },
+    {
+      "id": "on-gamepad-disconnected",
+      "name": "On gamepad disconnected",
+      "description": "Triggered when a gamepad device is disconnected from the computer.",
+      "display_text": "On gamepad disconnected",
+      "params": []
+    },
+    {
+      "id": "has-gamepads",
+      "name": "Has gamepads",
+      "description": "Test if any gamepad is connected and active. A button may need to be pressed before a gamepad counts as active.",
+      "display_text": "Has gamepads",
+      "params": []
+    },
+    {
+      "id": "is-button-down",
+      "name": "Is button down",
+      "description": "Test if a gamepad button is currently held down.",
+      "display_text": "Gamepad {0} [b]{1}[/b] is down",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button",
+          "name": "Button",
+          "description": "Choose a gamepad button to test.",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "Button A"
+            },
+            {
+              "id": "button-b",
+              "label": "Button B"
+            },
+            {
+              "id": "button-x",
+              "label": "Button X"
+            },
+            {
+              "id": "button-y",
+              "label": "Button Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "Left shoulder button"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "Right shoulder button"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "Left shoulder trigger"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "Right shoulder trigger"
+            },
+            {
+              "id": "back-view",
+              "label": "Back / View"
+            },
+            {
+              "id": "start-menu",
+              "label": "Start / Menu"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "Left analog button"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "Right analog button"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "D-pad up"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "D-pad down"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "D-pad left"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "D-pad right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-axis",
+      "name": "Compare axis",
+      "description": "Test the value of one of the gamepad's axes.",
+      "display_text": "Gamepad {0} [b]{1}[/b] {2} {3}",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "axis",
+          "name": "Axis",
+          "description": "Select the gamepad axis to test.",
+          "options": [
+            {
+              "id": "left-analog-x-axis",
+              "label": "Left analog X axis"
+            },
+            {
+              "id": "left-analog-y-axis",
+              "label": "Left analog Y axis"
+            },
+            {
+              "id": "right-analog-x-axis",
+              "label": "Right analog X axis"
+            },
+            {
+              "id": "right-analog-y-axis",
+              "label": "Right analog Y axis"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to select the axis value (ranging from -100 to 100)."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to compare to, from -100 to 100."
+        }
+      ]
+    },
+    {
+      "id": "on-button-pressed",
+      "name": "On button pressed",
+      "description": "Triggered when a gamepad button is pressed.",
+      "display_text": "On gamepad {0} [b]{1}[/b] pressed",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button",
+          "name": "Button",
+          "description": "Choose a gamepad button to test.",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "Button A"
+            },
+            {
+              "id": "button-b",
+              "label": "Button B"
+            },
+            {
+              "id": "button-x",
+              "label": "Button X"
+            },
+            {
+              "id": "button-y",
+              "label": "Button Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "Left shoulder button"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "Right shoulder button"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "Left shoulder trigger"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "Right shoulder trigger"
+            },
+            {
+              "id": "back-view",
+              "label": "Back / View"
+            },
+            {
+              "id": "start-menu",
+              "label": "Start / Menu"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "Left analog button"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "Right analog button"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "D-pad up"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "D-pad down"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "D-pad left"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "D-pad right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-button-released",
+      "name": "On button released",
+      "description": "Triggered when a gamepad button is released.",
+      "display_text": "On gamepad {0} [b]{1}[/b] released",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button",
+          "name": "Button",
+          "description": "Choose a gamepad button to test.",
+          "options": [
+            {
+              "id": "button-a",
+              "label": "Button A"
+            },
+            {
+              "id": "button-b",
+              "label": "Button B"
+            },
+            {
+              "id": "button-x",
+              "label": "Button X"
+            },
+            {
+              "id": "button-y",
+              "label": "Button Y"
+            },
+            {
+              "id": "left-shoulder-button",
+              "label": "Left shoulder button"
+            },
+            {
+              "id": "right-shoulder-button",
+              "label": "Right shoulder button"
+            },
+            {
+              "id": "left-shoulder-trigger",
+              "label": "Left shoulder trigger"
+            },
+            {
+              "id": "right-shoulder-trigger",
+              "label": "Right shoulder trigger"
+            },
+            {
+              "id": "back-view",
+              "label": "Back / View"
+            },
+            {
+              "id": "start-menu",
+              "label": "Start / Menu"
+            },
+            {
+              "id": "left-analog-button",
+              "label": "Left analog button"
+            },
+            {
+              "id": "right-analog-button",
+              "label": "Right analog button"
+            },
+            {
+              "id": "d-pad-up",
+              "label": "D-pad up"
+            },
+            {
+              "id": "d-pad-down",
+              "label": "D-pad down"
+            },
+            {
+              "id": "d-pad-left",
+              "label": "D-pad left"
+            },
+            {
+              "id": "d-pad-right",
+              "label": "D-pad right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-any-button-pressed",
+      "name": "On any button pressed",
+      "description": "Triggered when any button on a gamepad is pressed.",
+      "display_text": "On gamepad {0} any button pressed",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test. Use -1 for any gamepad."
+        }
+      ]
+    },
+    {
+      "id": "on-any-button-released",
+      "name": "On any button released",
+      "description": "Triggered when any button on a gamepad is released.",
+      "display_text": "On gamepad {0} any button released",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test. Use -1 for any gamepad."
+        }
+      ]
+    },
+    {
+      "id": "is-button-index-down",
+      "name": "Is button index down",
+      "description": "Test if a gamepad button is currently held down, by its numerical index.",
+      "display_text": "Gamepad {0} button [b]{1}[/b] is down",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button-index",
+          "name": "Button index",
+          "description": "Enter the zero-based index of the button to test if down."
+        }
+      ]
+    },
+    {
+      "id": "on-button-index-pressed",
+      "name": "On button index pressed",
+      "description": "Triggered when a gamepad button is pressed, by its numerical index.",
+      "display_text": "On gamepad {0} button [b]{1}[/b] pressed",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button-index",
+          "name": "Button index",
+          "description": "Enter the zero-based index of the button to test if pressed."
+        }
+      ]
+    },
+    {
+      "id": "on-button-index-released",
+      "name": "On button index released",
+      "description": "Triggered when a gamepad button is released, by its numerical index.",
+      "display_text": "On gamepad {0} button [b]{1}[/b] released",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "button-index",
+          "name": "Button index",
+          "description": "Enter the zero-based index of the button to test if released."
+        }
+      ]
+    },
+    {
+      "id": "gamepad-supports-vibration-type",
+      "name": "Gamepad supports vibration type",
+      "description": "Check if a currently connected gamepad supports a specific vibration type.",
+      "display_text": "Gamepad {0} supports vibration type [i]{1}[/i]",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to test."
+        },
+        {
+          "id": "vibration-type",
+          "name": "Vibration type",
+          "description": "The vibration type to check if supported.",
+          "options": [
+            {
+              "id": "dual-rumble",
+              "label": "Dual rumble"
+            },
+            {
+              "id": "trigger-rumble",
+              "label": "Trigger rumble"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "gamepad-vibrate",
+      "name": "Vibrate (dual rumble)",
+      "description": "Rumble a gamepad using its dual rumble vibration motors, where supported.",
+      "display_text": "Vibrate (dual rumble) gamepad {0} for [b]{1}[/b] ms (weak magnitude [i]{2}[/i], strong magnitude [i]{3}[/i])",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to vibrate."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "Time in milliseconds to vibrate for."
+        },
+        {
+          "id": "weak-magnitude",
+          "name": "Weak magnitude",
+          "description": "The magnitude of the weak rumble motor from 0-100."
+        },
+        {
+          "id": "strong-magnitude",
+          "name": "Strong magnitude",
+          "description": "The magnitude of the strong rumble motor from 0-100."
+        }
+      ]
+    },
+    {
+      "id": "reset-vibrate",
+      "name": "Reset vibration",
+      "description": "Cancel any current rumble effect on a gamepad.",
+      "display_text": "Reset vibration for gamepad {0}",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad."
+        }
+      ]
+    },
+    {
+      "id": "gamepad-vibrate-trigger-rumble",
+      "name": "Vibrate (trigger rumble)",
+      "description": "Rumble a gamepad using its trigger rumble vibration motors, where supported.",
+      "display_text": "Vibrate (trigger rumble) gamepad {0} for [b]{1}[/b] ms (weak magnitude [i]{2}[/i], strong magnitude [i]{3}[/i], left trigger [i]{4}[/i], right trigger [i]{5}[/i])",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Enter the zero-based index of the gamepad to vibrate."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "Time in milliseconds to vibrate for."
+        },
+        {
+          "id": "weak-magnitude",
+          "name": "Weak magnitude",
+          "description": "The magnitude of the weak rumble motor from 0-100."
+        },
+        {
+          "id": "strong-magnitude",
+          "name": "Strong magnitude",
+          "description": "The magnitude of the strong rumble motor from 0-100."
+        },
+        {
+          "id": "left-trigger",
+          "name": "Left trigger",
+          "description": "The magnitude of the rumble for the left trigger from 0-100."
+        },
+        {
+          "id": "right-trigger",
+          "name": "Right trigger",
+          "description": "The magnitude of the rumble for the right trigger from 0-100."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "gamepadcount",
+      "name": "GamepadCount",
+      "description": "The number of currently connected and active gamepads.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gamepadid",
+      "name": "GamepadID",
+      "description": "A string identifying the gamepad, e.g. manufacturer and model.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        }
+      ]
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "description": "Return button input from 0 to 100 for a button index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Button index."
+        }
+      ]
+    },
+    {
+      "id": "axis",
+      "name": "Axis",
+      "description": "Return axis input from -100 to 100 for an axis index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Axis index."
+        }
+      ]
+    },
+    {
+      "id": "lastbutton",
+      "name": "LastButton",
+      "description": "Return index of last gamepad button pressed or released.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        }
+      ]
+    },
+    {
+      "id": "rawbutton",
+      "name": "RawButton",
+      "description": "Return raw button input from 0 to 100 for a button index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Raw button index."
+        }
+      ]
+    },
+    {
+      "id": "rawaxis",
+      "name": "RawAxis",
+      "description": "Return raw axis input from -100 to 100 for an axis index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        },
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Raw axis index."
+        }
+      ]
+    },
+    {
+      "id": "rawbuttoncount",
+      "name": "RawButtonCount",
+      "description": "Return number of buttons in raw input.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        }
+      ]
+    },
+    {
+      "id": "rawaxiscount",
+      "name": "RawAxisCount",
+      "description": "Return number of axes in raw input.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "gamepad",
+          "name": "Gamepad",
+          "description": "Index of the gamepad."
+        }
+      ]
+    },
+    {
+      "id": "gamepad-index",
+      "name": "GamepadIndex",
+      "description": "In an On gamepad connected/disconnected trigger, or when using On any button pressed/released with a gamepad of -1, this expression indicates the index of the corresponding gamepad.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "buttonindex",
+      "name": "ButtonIndex",
+      "description": "Return index of last gamepad button pressed or released.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 3,
+    "expressions": 11
+  }
+}

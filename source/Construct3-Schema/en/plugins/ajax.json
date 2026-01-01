@@ -1,0 +1,273 @@
+{
+  "id": "ajax",
+  "name": "AJAX",
+  "description": "Request and receive other web pages. Note for cross-domain requests (including in preview mode), CORS must be set up on the server.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-completed",
+      "name": "On completed",
+      "description": "Triggered when an AJAX request completes successfully.",
+      "display_text": "On [b]{0}[/b] completed",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      ]
+    },
+    {
+      "id": "on-any-completed",
+      "name": "On any completed",
+      "description": "Triggered when any AJAX request completes successfully. The 'Tag' expression identifies the request.",
+      "display_text": "On any completed",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered when an AJAX request fails.",
+      "display_text": "On [b]{0}[/b] error",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      ]
+    },
+    {
+      "id": "on-any-error",
+      "name": "On any error",
+      "description": "Triggered when any AJAX request fails. The 'Tag' expression identifies the request.",
+      "display_text": "On any error",
+      "params": []
+    },
+    {
+      "id": "on-progress",
+      "name": "On progress",
+      "description": "Triggered when an AJAX request has a progress update.",
+      "display_text": "On [b]{0}[/b] progress",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      ]
+    },
+    {
+      "id": "on-upload-progress",
+      "name": "On upload progress",
+      "description": "Triggered when an AJAX request which is uploading data has a progress update.",
+      "display_text": "On [b]{0}[/b] upload progress",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-url",
+      "name": "Request URL",
+      "description": "Request a URL by a GET request and retrieve the server response.",
+      "display_text": "Request [b]{1}[/b] (tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The URL to request.  Note: most browsers prevent cross-domain requests."
+        }
+      ]
+    },
+    {
+      "id": "request-project-file",
+      "name": "Request project file",
+      "description": "Request a file in the project and retrieve its contents.",
+      "display_text": "Request [b]{1}[/b] (tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        {
+          "id": "file",
+          "name": "File",
+          "description": "Select a project file to request."
+        }
+      ]
+    },
+    {
+      "id": "post-to-url",
+      "name": "Post to URL",
+      "description": "Send data with a request to a URL and retrieve the server response.",
+      "display_text": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The URL to post to.  Note: most browsers prevent cross-domain posts."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "The data to post, in query string form.  Be sure to URLEncode any user-entered data."
+        },
+        {
+          "id": "method",
+          "name": "Method",
+          "description": "The HTTP method to use, typically \"POST\"."
+        }
+      ]
+    },
+    {
+      "id": "set-timeout",
+      "name": "Set timeout",
+      "description": "Set the maximum time before a request is considered to have failed.",
+      "display_text": "Set timeout to [i]{0}[/i] seconds",
+      "params": [
+        {
+          "id": "timeout",
+          "name": "Timeout",
+          "description": "The timeout for AJAX requests in seconds. Use -1 for no timeout."
+        }
+      ]
+    },
+    {
+      "id": "set-request-header",
+      "name": "Set request header",
+      "description": "Set an HTTP header on the next request that is made.",
+      "display_text": "Set request header [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "header",
+          "name": "Header",
+          "description": "The HTTP header name to set on the request."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "A string of the value to set the header to."
+        }
+      ]
+    },
+    {
+      "id": "override-mime-type",
+      "name": "Override MIME type",
+      "description": "In the next request, override the MIME type indicated by the response.",
+      "display_text": "Override MIME type with [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mime-type",
+          "name": "MIME type",
+          "description": "The MIME type to interpret the response as."
+        }
+      ]
+    },
+    {
+      "id": "post-binary",
+      "name": "Post binary to URL",
+      "description": "Send binary data with a request to a URL and retrieve the server response.",
+      "display_text": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The URL to post to. Note: most browsers prevent cross-domain posts."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "The data to post, from a Binary Data object."
+        },
+        {
+          "id": "method",
+          "name": "Method",
+          "description": "The HTTP method to use, typically \"POST\"."
+        }
+      ]
+    },
+    {
+      "id": "set-response-binary",
+      "name": "Set response binary",
+      "description": "Set a Binary Data object to receive the binary response of the next request.",
+      "display_text": "Set response binary to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "destination",
+          "name": "Destination",
+          "description": "The Binary Data object to receive the response in to."
+        }
+      ]
+    },
+    {
+      "id": "set-with-credentials",
+      "name": "Set with credentials",
+      "description": "Set whether the next request is sent with credentials such as cookies and authorization headers.",
+      "display_text": "Set with credentials [b]{0}[/b]",
+      "params": [
+        {
+          "id": "with-credentials",
+          "name": "With credentials",
+          "description": "Whether the next request is sent with credentials."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastdata",
+      "name": "LastData",
+      "description": "Get the data returned by the last successful request.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "progress",
+      "name": "Progress",
+      "description": "Get the progress, from 0 to 1, of the request in 'On progress'.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "description": "Get the tag for the request in a trigger.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "laststatuscode",
+      "name": "LastStatusCode",
+      "description": "Get the HTTP status code of the last request.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 9,
+    "expressions": 4
+  }
+}

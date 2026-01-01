@@ -1,0 +1,131 @@
+{
+  "id": "share",
+  "name": "Share",
+  "description": "Use the system's share functionality to share something via another app.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "Is supported",
+      "description": "Test if the sharing actions are supported on this platform.",
+      "display_text": "Is sharing supported",
+      "params": []
+    },
+    {
+      "id": "on-share-completed",
+      "name": "On share completed",
+      "description": "Triggered after the user completes a share. Note this does not necessarily mean anything was shared.",
+      "display_text": "On share completed",
+      "params": []
+    },
+    {
+      "id": "on-share-failed",
+      "name": "On share failed",
+      "description": "Triggered if a share is not completed successfully or an error occurs.",
+      "display_text": "On share failed",
+      "params": []
+    },
+    {
+      "id": "is-sharing-files-supported",
+      "name": "Is sharing files supported",
+      "description": "Test if sharing files via the 'Add file' action is supported on this platform.",
+      "display_text": "Is sharing files supported",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "share-text",
+      "name": "Share",
+      "description": "Share some text with an optional title and URL, and any files that were previously added.",
+      "display_text": "Share text [i]{0}[/i] (title [i]{1}[/i], URL [i]{2}[/i])",
+      "params": [
+        {
+          "id": "text",
+          "name": "Text",
+          "description": "The message to share. Leave empty to omit."
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "description": "The title or subject of the share. Leave empty to omit."
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "A URL to share. Leave empty to omit."
+        }
+      ]
+    },
+    {
+      "id": "add-file",
+      "name": "Add file",
+      "description": "Add the contents of a Binary Data object as a file to attach to the next share. Note only works if 'Is sharing files supported' is true.",
+      "display_text": "Add file [i]{0}[/i] type [i]{1}[/i] from {2}",
+      "params": [
+        {
+          "id": "filename",
+          "name": "Filename",
+          "description": "Name of the file to add."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Content type (also known as MIME type) of the file to add."
+        },
+        {
+          "id": "data",
+          "name": "Data",
+          "description": "A Binary Data object to use as the content of the file."
+        }
+      ]
+    },
+    {
+      "id": "rate-app",
+      "name": "Request app rating",
+      "description": "Display a dialog requesting the user to rate your application.",
+      "display_text": "Request app rating (body: [i]{0}[/i], confirm: [i]{1}[/i], cancel: [i]{2}[/i], app ID: [i]{3}[/i])",
+      "params": [
+        {
+          "id": "dialogText",
+          "name": "Dialog Text",
+          "description": "The body text of the request review dialog (Android with no Google Play Store App only)."
+        },
+        {
+          "id": "confirmButtonText",
+          "name": "Confirm Button Text",
+          "description": "The text of the \"confirm\" button on the request review dialog (Android with no Google Play Store App only)."
+        },
+        {
+          "id": "cancelButtonText",
+          "name": "Cancel Button Text",
+          "description": "The text of the \"cancel\" button on the request review dialog (Android with no Google Play Store App only)."
+        },
+        {
+          "id": "appIdentifier",
+          "name": "App ID",
+          "description": "The app ID to request a rating for (Android with no Google Play Store App only). Leave empty to use the project's app ID."
+        }
+      ]
+    },
+    {
+      "id": "open-store",
+      "name": "Display store page",
+      "description": "Open the 'rate app' store page for an app.",
+      "display_text": "Display store page for app ID [i]{0}[/i]",
+      "params": [
+        {
+          "id": "appIdentifier",
+          "name": "App ID",
+          "description": "The app ID of the store page to open. Leave empty to use the project's app ID."
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 4,
+    "actions": 4,
+    "expressions": 0
+  }
+}

@@ -1,0 +1,318 @@
+{
+  "id": "keyboard",
+  "name": "Keyboard",
+  "description": "Retrieve input from the keyboard.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-key-code-pressed",
+      "name": "On key code pressed",
+      "description": "Test for a key pressed by its numeric key code.",
+      "display_text": "On key code [b]{0}[/b] pressed",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "Keycode",
+          "description": "Choose a numeric key code to test."
+        }
+      ]
+    },
+    {
+      "id": "key-code-is-down",
+      "name": "Key code is down",
+      "description": "Test if a keyboard key is currently held down by its numeric key code.",
+      "display_text": "Key code [b]{0}[/b] is down",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "Keycode",
+          "description": "Choose a numeric key code to test."
+        }
+      ]
+    },
+    {
+      "id": "on-key-code-released",
+      "name": "On key code released",
+      "description": "Test for a key released by its numeric key code.",
+      "display_text": "On key code [b]{0}[/b] released",
+      "params": [
+        {
+          "id": "keycode",
+          "name": "Keycode",
+          "description": "Choose a numeric key code to test."
+        }
+      ]
+    },
+    {
+      "id": "on-key-pressed",
+      "name": "On key pressed",
+      "description": "Triggered when a keyboard key is pressed.",
+      "display_text": "On [b]{0}[/b] pressed",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
+        }
+      ]
+    },
+    {
+      "id": "on-any-key-pressed",
+      "name": "On any key pressed",
+      "description": "Triggered when any keyboard key is pressed.",
+      "display_text": "On any key pressed",
+      "params": []
+    },
+    {
+      "id": "on-any-key-released",
+      "name": "On any key released",
+      "description": "Triggered when any keyboard key is released.",
+      "display_text": "On any key released",
+      "params": []
+    },
+    {
+      "id": "key-is-down",
+      "name": "Key is down",
+      "description": "Test if a keyboard key is currently held down.",
+      "display_text": "[b]{0}[/b] is down",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
+        }
+      ]
+    },
+    {
+      "id": "on-key-released",
+      "name": "On key released",
+      "description": "Triggered when a keyboard key is released.",
+      "display_text": "On [b]{0}[/b] released",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
+        }
+      ]
+    },
+    {
+      "id": "on-left-right-key-pressed",
+      "name": "On left/right key pressed",
+      "description": "Triggered when a specific left or right keyboard key is pressed, e.g. left shift.",
+      "display_text": "On [b]{0}[/b] pressed",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-left-right-key-released",
+      "name": "On left/right key released",
+      "description": "Triggered when a specific left or right keyboard key is released, e.g. left shift.",
+      "display_text": "On [b]{0}[/b] released",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-left-right-key-down",
+      "name": "Left/right key is down",
+      "description": "Test if a specific left or right keyboard key is currently held down, e.g. left shift.",
+      "display_text": "[b]{0}[/b] is down",
+      "params": [
+        {
+          "id": "key",
+          "name": "Key",
+          "description": "Choose a key.",
+          "options": [
+            {
+              "id": "left-shift",
+              "label": "Left shift"
+            },
+            {
+              "id": "right-shift",
+              "label": "Right shift"
+            },
+            {
+              "id": "left-control",
+              "label": "Left control"
+            },
+            {
+              "id": "right-control",
+              "label": "Right control"
+            },
+            {
+              "id": "left-alt",
+              "label": "Left alt"
+            },
+            {
+              "id": "right-alt",
+              "label": "Right alt"
+            },
+            {
+              "id": "left-meta",
+              "label": "Left meta"
+            },
+            {
+              "id": "right-meta",
+              "label": "Right meta"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-keyboard-lock-supported",
+      "name": "Is keyboard lock supported",
+      "description": "True if the current browser/platform supports using keyboard lock.",
+      "display_text": "Is keyboard lock supported",
+      "params": []
+    },
+    {
+      "id": "on-keyboard-locked",
+      "name": "On keyboard locked",
+      "description": "Triggered after the 'Lock keyboard' action after successfully locking the keyboard.",
+      "display_text": "On keyboard locked",
+      "params": []
+    },
+    {
+      "id": "on-keyboard-lock-error",
+      "name": "On keyboard lock error",
+      "description": "Triggered after the 'Lock keyboard' action after failing to lock the keyboard.",
+      "display_text": "On keyboard lock error",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "lock-keyboard",
+      "name": "Lock keyboard",
+      "description": "Request to lock the keyboard so keypresses are always received by the project rather than the browser/application. NOTE: this only takes effect in fullscreen mode.",
+      "display_text": "Lock keyboard (keys: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "keys",
+          "name": "Keys",
+          "description": "A comma-separated array of keys to lock. Leave empty to request to lock all keys."
+        }
+      ]
+    },
+    {
+      "id": "unlock-keyboard",
+      "name": "Unlock keyboard",
+      "description": "Unlock a previous keyboard lock, restoring the default handling of key presses.",
+      "display_text": "Unlock keyboard",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastkeycode",
+      "name": "LastKeyCode",
+      "description": "Get the key code for the last pressed key.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "stringfromkeycode",
+      "name": "StringFromKeyCode",
+      "description": "Get a character string representing a key code.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "key-code",
+          "name": "Key code",
+          "description": "The key code to get a string from"
+        }
+      ]
+    },
+    {
+      "id": "typed-key",
+      "name": "TypedKey",
+      "description": "Get the typed key string for the last pressed key.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 2,
+    "expressions": 3
+  }
+}

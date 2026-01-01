@@ -1,0 +1,273 @@
+{
+  "id": "ajax",
+  "name": "AJAX",
+  "description": "用于向远程服务器通信，发送或接收数据。也可用于请求项目本地文件。注意，访问远程网络请求时，请确保目标服务器正确设置了 CORS 跨域权限，包括在预览模式中。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-completed",
+      "name": "请求完成",
+      "description": "AJAX请求成功完成时触发。",
+      "display_text": "[b]{0}[/b]请求完成",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写在 AJAX 请求动作中的标签，用于区分不同的AJAX请求。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-completed",
+      "name": "任意请求完成",
+      "description": "任意 AJAX 请求完成时触发。在事件中可使用表达式 'AJAX.请求标签' 来区分不同的请求。",
+      "display_text": "任意请求完成",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "请求失败",
+      "description": "AJAX请求失败时触发。",
+      "display_text": "[b]{0}[/b]请求失败",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。"
+        }
+      ]
+    },
+    {
+      "id": "on-any-error",
+      "name": "任意请求失败",
+      "description": "任意AJAX请求失败时触发。使用'标签'表达式区分不同的请求。",
+      "display_text": "任意请求失败",
+      "params": []
+    },
+    {
+      "id": "on-progress",
+      "name": "请求进度更新",
+      "description": "使用 AJAX 处理请求时，进度发生变化时触发。",
+      "display_text": "[b]{0}[/b]进度更新",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。"
+        }
+      ]
+    },
+    {
+      "id": "on-upload-progress",
+      "name": "上传进度更新",
+      "description": "使用 AJAX 上传数据，且进度有更新时触发。",
+      "display_text": "[b]{0}[/b]进度更新",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-url",
+      "name": "获取请求",
+      "description": "向远程地址发送 GET 请求，并返回服务器的响应数据。",
+      "display_text": "获取请求 [b]{1}[/b] (标签 [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的 AJAX 请求。"
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要请求的远程服务器地址，或本地项目文件路径。注意，大多数浏览器会阻止跨域请求，请确保服务器有正确设置 CORS 权限。或本地测试环境是否启用HTTPS"
+        }
+      ]
+    },
+    {
+      "id": "request-project-file",
+      "name": "请求项目文件",
+      "description": "请求项目中的文件，并返回文件内容到 AJAX.LastData 表达式。注意，这是一个异步操作，请添加 '请求完成' 触发器获取返回内容，或在下方使用 '等待前面异步完成' 动作。",
+      "display_text": "请求文件[b]{1}[/b] (标签 [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的 AJAX 请求。"
+        },
+        {
+          "id": "file",
+          "name": "文件",
+          "description": "选择要请求的项目文件。"
+        }
+      ]
+    },
+    {
+      "id": "post-to-url",
+      "name": "发送请求",
+      "description": "将带有请求的数据发送到远程服务器，并检索服务器响应。",
+      "display_text": "发送 [b]{2}[/b] 到服务器 [b]{1}[/b] ([i]{3}[/i]方法, 标签: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的AJAX请求。"
+        },
+        {
+          "id": "url",
+          "name": "地址",
+          "description": "目标服务器的地址。注意，由于安全限制，浏览器通常会拦截跨域请求，请查询目标服务器 CORS 相关配置。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要以查询字符串形式发布的数据。 确保URLEncode任何用户输入的数据。"
+        },
+        {
+          "id": "method",
+          "name": "请求方法",
+          "description": "要使用的HTTP请求方法。通常是 \"Get\" 或 \"POST\"。"
+        }
+      ]
+    },
+    {
+      "id": "set-timeout",
+      "name": "设置超时时间",
+      "description": "设置AJAX请求的超时时间，超时后视为请求失败。",
+      "display_text": "设置超时时间为[i]{0}[/i]秒",
+      "params": [
+        {
+          "id": "timeout",
+          "name": "超时",
+          "description": "AJAX请求的超时时间，以秒为单位。使用 -1 表示没有超时。"
+        }
+      ]
+    },
+    {
+      "id": "set-request-header",
+      "name": "设置请求标头",
+      "description": "指定下一个请求，要使用的 HTTP 标头。",
+      "display_text": "设置请求标头 [i]{0}[/i]: [i]{1}[/i]",
+      "params": [
+        {
+          "id": "header",
+          "name": "标头",
+          "description": "要在请求上设置的HTTP标头名称。"
+        },
+        {
+          "id": "value",
+          "name": "值",
+          "description": "要设置的标头值。"
+        }
+      ]
+    },
+    {
+      "id": "override-mime-type",
+      "name": "设置媒体类型 (MIME)",
+      "description": "指定下一个 AJAX 请求中，要发送的数据的 MIME 类型。",
+      "display_text": "设置媒体类型为[b]{0}[/b]",
+      "params": [
+        {
+          "id": "mime-type",
+          "name": "MIME类型",
+          "description": "要设置的媒体类型。如 \"text/plain;charset=UTF-8\",  \"image/png\",   \"application/json\""
+        }
+      ]
+    },
+    {
+      "id": "post-binary",
+      "name": "发送二进制到地址",
+      "description": "将二进制数据连同请求一起发送到地址，并检索服务器响应。",
+      "display_text": "发送 [b]{2}[/b] 到地址 [b]{1}[/b] (方法: [i]{3}[/i], 标签: [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "标签",
+          "description": "填写一个字符串，可以是任意内容，用于区分不同的AJAX请求。"
+        },
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "要接受数据的远程服务器地址。提示：多数浏览器不允许跨域提交数据。"
+        },
+        {
+          "id": "data",
+          "name": "数据",
+          "description": "要提交的数据，来自二进制的对象。"
+        },
+        {
+          "id": "method",
+          "name": "方法",
+          "description": "要使用的HTTP请求方法，通常是 \"Get\" 或 \"POST\"。"
+        }
+      ]
+    },
+    {
+      "id": "set-response-binary",
+      "name": "设置请求响应容器",
+      "description": "指定下一个请求，使用二进制对象接收服务器返回数据。",
+      "display_text": "设置 [i]{0}[/i] 接收请求数据",
+      "params": [
+        {
+          "id": "destination",
+          "name": "目标",
+          "description": "要发送的二进制数据对象"
+        }
+      ]
+    },
+    {
+      "id": "set-with-credentials",
+      "name": "设置凭证请求",
+      "description": "设置下一次请求是否发送凭证信息，例如Cookies或请求头。",
+      "display_text": "设置发送凭证请求: [b]{0}[/b]",
+      "params": [
+        {
+          "id": "with-credentials",
+          "name": "凭证信息",
+          "description": "设置下次请求是否发送凭证信息。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastdata",
+      "name": "请求数据",
+      "description": "获取上次成功请求返回的数据。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "progress",
+      "name": "请求进度",
+      "description": "在 '进度更新' 条件中，返回当前的请求进度，范围在 0 到 1 之间。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "tag",
+      "name": "请求标签",
+      "description": "要获取的 AJAX 对应标签的请求数据。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "laststatuscode",
+      "name": "状态码",
+      "description": "获取上一次 HTTP 请求返回的状态码。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 6,
+    "actions": 9,
+    "expressions": 4
+  }
+}

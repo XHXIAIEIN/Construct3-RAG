@@ -1,0 +1,14 @@
+{
+  "id": "persist",
+  "name": "持久化",
+  "description": "允许此对象的实例对象在场景中保留当前的状态，在重新进入场景时不会重置为初始状态。",
+  "type": "behavior",
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "stats": {
+    "conditions": 0,
+    "actions": 0,
+    "expressions": 0
+  }
+}

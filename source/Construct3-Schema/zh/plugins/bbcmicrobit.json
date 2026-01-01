@@ -1,0 +1,242 @@
+{
+  "id": "bbcmicrobit",
+  "name": "BBC micro:bit",
+  "description": "通过蓝牙连接到 BBC micro:bit 设备并访问其功能。",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name": "设备受支持",
+      "description": "检测当前运行设备是否支持蓝牙连接。",
+      "display_text": "设备受支持",
+      "params": []
+    },
+    {
+      "id": "on-device-connected",
+      "name": "设备连接成功",
+      "description": "执行 '请求连接设备' 动作后，成功连接到设备时触发。",
+      "display_text": "设备连接成功",
+      "params": []
+    },
+    {
+      "id": "on-device-disconnected",
+      "name": "设备断开连接",
+      "description": "已连接的设备断开，无法继续访问时触发。",
+      "display_text": "设备断开连接",
+      "params": []
+    },
+    {
+      "id": "is-device-connected",
+      "name": "设备已连接",
+      "description": "检测目前是否已连接到任意设备。",
+      "display_text": "设备已连接",
+      "params": []
+    },
+    {
+      "id": "on-request-device-failed",
+      "name": "请求连接失败",
+      "description": "执行 '请求连接设备' 后，如果用户取消或连接失败时触发。",
+      "display_text": "请求连接失败",
+      "params": []
+    },
+    {
+      "id": "on-accelerometer-reading",
+      "name": "加速度计读数更新",
+      "description": "设备接收到加速度计读数时触发。",
+      "display_text": "加速度计读数更新",
+      "params": []
+    },
+    {
+      "id": "on-button-pressed",
+      "name": "按下按钮",
+      "description": "按下设备上的任意按钮时触发。",
+      "display_text": "{1}按钮[b]{0}[/b]",
+      "params": [
+        {
+          "id": "button",
+          "name": "按钮",
+          "description": "检测哪个按钮被按下",
+          "options": [
+            {
+              "id": "a",
+              "label": "A"
+            },
+            {
+              "id": "b",
+              "label": "B"
+            }
+          ]
+        },
+        {
+          "id": "input",
+          "name": "输入",
+          "description": "要检测的输入类型。",
+          "options": [
+            {
+              "id": "pressed",
+              "label": "按下"
+            },
+            {
+              "id": "long-pressed",
+              "label": "长按"
+            },
+            {
+              "id": "released",
+              "label": "松开"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-bearing-reading",
+      "name": "指南针读数更新",
+      "description": "当设备接收到指南针读数时触发。",
+      "display_text": "指南针读数更新",
+      "params": []
+    },
+    {
+      "id": "on-temperature-reading",
+      "name": "温度计读数更新",
+      "description": "当设备接收到温度读数时触发。",
+      "display_text": "温度计读数更新",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "name": "请求连接",
+      "description": "请求通过蓝牙访问 BBC micro:bit 设备。必须在用户输入后才能使用。",
+      "display_text": "请求连接",
+      "params": []
+    },
+    {
+      "id": "disconnect-device",
+      "name": "断开设备",
+      "description": "断开当前连接的设备。",
+      "display_text": "断开设备",
+      "params": []
+    },
+    {
+      "id": "clear-led-state",
+      "name": "清除 LED 状态",
+      "description": "重置所有 LED 状态，使所有 LED 熄灭。",
+      "display_text": "清除 LED 状态",
+      "params": []
+    },
+    {
+      "id": "set-led-state",
+      "name": "设置 LED 状态",
+      "description": "设置单个 LED 是打开或关闭。",
+      "display_text": "设置 LED ([i]{0}[/i], [i]{1}[/i]) 状态 [b]{2}[/b]",
+      "params": [
+        {
+          "id": "col",
+          "name": "列",
+          "description": "单个 LED 灯所在的列，0-4。(从0开始)"
+        },
+        {
+          "id": "row",
+          "name": "行",
+          "description": "单个 LED 灯所在的行，0-4。(从0开始)"
+        },
+        {
+          "id": "state",
+          "name": "状态",
+          "description": "打开或关闭 LED"
+        }
+      ]
+    },
+    {
+      "id": "update-leds",
+      "name": "更新LED",
+      "description": "将设备上的 LED 更新为存储的 LED 状态。",
+      "display_text": "更新LED",
+      "params": []
+    },
+    {
+      "id": "scroll-text",
+      "name": "显示滚动文字",
+      "description": "在 LED 显示屏上显示一条消息。",
+      "display_text": "显示滚动文字 [i]{0}[/i]",
+      "params": [
+        {
+          "id": "text",
+          "name": "文本",
+          "description": "要显示的消息，最多 20 个字符。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "name": "设备ID",
+      "description": "连接的设备ID（如果有）。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-x",
+      "name": "原始加速度X",
+      "description": "加速度计原始 X 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-y",
+      "name": "原始加速度Y",
+      "description": "加速度计原始 Y 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-raw-z",
+      "name": "原始加速度Z",
+      "description": "加速度计原始 Z 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-x",
+      "name": "平滑加速度X",
+      "description": "加速度计平滑后的 X 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-y",
+      "name": "平滑加速度Y",
+      "description": "加速度计平滑后的 Y 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "accelerometer-smoothed-z",
+      "name": "平滑加速度Z",
+      "description": "加速度计平滑后的 Z 读数。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bearing",
+      "name": "轴承",
+      "description": "磁力计的方位读数，以距离正北的度数相差为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "temperature",
+      "name": "温度",
+      "description": "温度计的读数，以摄氏度为单位。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 9,
+    "actions": 6,
+    "expressions": 9
+  }
+}

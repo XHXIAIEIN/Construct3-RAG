@@ -1,0 +1,742 @@
+{
+  "id": "nodewebkit",
+  "name": "NW.js",
+  "description": "Access features only available when exported with NW.js, like accessing files on disk.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-open-dialog-ok",
+      "name": "On open dialog OK",
+      "description": "Triggered after a file chosen from an open dialog.",
+      "display_text": "On open dialog OK",
+      "params": []
+    },
+    {
+      "id": "on-folder-dialog-ok",
+      "name": "On folder dialog OK",
+      "description": "Triggered after a folder chosen from a folder dialog.",
+      "display_text": "On folder dialog OK",
+      "params": []
+    },
+    {
+      "id": "on-save-dialog-ok",
+      "name": "On save dialog OK",
+      "description": "Triggered after a file chosen from a save dialog.",
+      "display_text": "On save dialog OK",
+      "params": []
+    },
+    {
+      "id": "on-open-dialog-cancel",
+      "name": "On open dialog cancel",
+      "description": "Triggered if the open dialog is cancelled.",
+      "display_text": "On open dialog cancel",
+      "params": []
+    },
+    {
+      "id": "on-folder-dialog-cancel",
+      "name": "On folder dialog cancel",
+      "description": "Triggered if the folder dialog is cancelled.",
+      "display_text": "On folder dialog cancel",
+      "params": []
+    },
+    {
+      "id": "on-save-dialog-cancel",
+      "name": "On save dialog cancel",
+      "description": "Triggered if the save dialog is cancelled.",
+      "display_text": "On save dialog cancel",
+      "params": []
+    },
+    {
+      "id": "path-exists",
+      "name": "Path exists",
+      "description": "Test if a file exists on disk.",
+      "display_text": "Path [i]{0}[/i] exists",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter a file path to test if exists."
+        }
+      ]
+    },
+    {
+      "id": "on-file-dropped",
+      "name": "On file dropped",
+      "description": "Triggered when the user drag-and-drops a file in to the window.",
+      "display_text": "On file dropped",
+      "params": []
+    },
+    {
+      "id": "on-binary-file-read",
+      "name": "On binary file read",
+      "description": "Triggered when binary file read completes. The data is then available in the Binary Data object.",
+      "display_text": "On [i]{0}[/i] binary file read",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to distinguish between different file actions."
+        }
+      ]
+    },
+    {
+      "id": "on-binary-file-written",
+      "name": "On binary file written",
+      "description": "Triggered when a binary file write completes.",
+      "display_text": "On [i]{0}[/i] binary file written",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to distinguish between different file actions."
+        }
+      ]
+    },
+    {
+      "id": "on-file-system-error",
+      "name": "On file system error",
+      "description": "Triggered when a file operation fails.",
+      "display_text": "On file system error",
+      "params": []
+    },
+    {
+      "id": "on-any-binary-file-read",
+      "name": "On any binary file read",
+      "description": "Triggered when any binary file read completes. The 'FileTag' expression identifies the action.",
+      "display_text": "On any binary file read",
+      "params": []
+    },
+    {
+      "id": "on-any-binary-file-written",
+      "name": "On any binary file written",
+      "description": "Triggered when any binary file write completes. The 'FileTag' expression identifies the action.",
+      "display_text": "On any binary file written",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "show-open-dialog",
+      "name": "Show open dialog",
+      "description": "Show an open file dialog allowing the user to pick a file.",
+      "display_text": "Show open dialog (accept [i]{0}[/i])",
+      "params": [
+        {
+          "id": "accept",
+          "name": "Accept",
+          "description": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*\""
+        }
+      ]
+    },
+    {
+      "id": "show-folder-dialog",
+      "name": "Show folder dialog",
+      "description": "Show a folder picker dialog allowing the user to pick a folder.",
+      "display_text": "Show folder dialog",
+      "params": []
+    },
+    {
+      "id": "show-save-dialog",
+      "name": "Show save dialog",
+      "description": "Show a save file dialog.",
+      "display_text": "Show save dialog (accept [i]{0}[/i])",
+      "params": [
+        {
+          "id": "accept",
+          "name": "Accept",
+          "description": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*\""
+        }
+      ]
+    },
+    {
+      "id": "write-file",
+      "name": "Write text file",
+      "description": "Write some text to a file.",
+      "display_text": "Write text [b]{1}[/b] to file [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to write to. The file will be overwritten!"
+        },
+        {
+          "id": "contents",
+          "name": "Contents",
+          "description": "Enter the text content to write to the file."
+        }
+      ]
+    },
+    {
+      "id": "rename-file",
+      "name": "Rename file",
+      "description": "Rename an existing file.",
+      "display_text": "Rename [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "existing-file",
+          "name": "Existing file",
+          "description": "Enter the existing file path to be renamed."
+        },
+        {
+          "id": "new-name",
+          "name": "New name",
+          "description": "Enter the new file path to rename to."
+        }
+      ]
+    },
+    {
+      "id": "delete-file",
+      "name": "Delete file",
+      "description": "Delete a file.",
+      "display_text": "Delete [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to delete."
+        }
+      ]
+    },
+    {
+      "id": "create-folder",
+      "name": "Create folder",
+      "description": "Create a new folder on disk.",
+      "display_text": "Create folder [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the folder path to create."
+        }
+      ]
+    },
+    {
+      "id": "append-file",
+      "name": "Append file",
+      "description": "Add some text to the end of a file.",
+      "display_text": "Append [b]{1}[/b] to file [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to append to."
+        },
+        {
+          "id": "contents",
+          "name": "Contents",
+          "description": "Enter the text content to append to the file."
+        }
+      ]
+    },
+    {
+      "id": "list-files",
+      "name": "List files",
+      "description": "Load a list of files in a given folder. Use expressions after this action to get the count and file names.",
+      "display_text": "List files from [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the folder path to list files from."
+        }
+      ]
+    },
+    {
+      "id": "copy-file",
+      "name": "Copy file",
+      "description": "Make an identical copy of a file.",
+      "display_text": "Copy [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to copy."
+        },
+        {
+          "id": "destination",
+          "name": "Destination",
+          "description": "Enter the file path to copy to."
+        }
+      ]
+    },
+    {
+      "id": "move-file",
+      "name": "Move file",
+      "description": "Copy a file then delete the original.",
+      "display_text": "Move [i]{0}[/i] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to move."
+        },
+        {
+          "id": "destination",
+          "name": "Destination",
+          "description": "Enter the file path to move to."
+        }
+      ]
+    },
+    {
+      "id": "run-file",
+      "name": "Run file",
+      "description": "Run a file, such as executing another program.",
+      "display_text": "Run [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the path of the file to execute. This can also include space-separated arguments. To execute a path with spaces in it, wrap in double-quotes (e.g. \"\"\"C:\\Program Files\\file.exe\"\"\")."
+        }
+      ]
+    },
+    {
+      "id": "open-browser",
+      "name": "Open browser",
+      "description": "Open the default browser to a given URL.",
+      "display_text": "Open browser to URL [i]{0}[/i]",
+      "params": [
+        {
+          "id": "url",
+          "name": "URL",
+          "description": "The web address to open in a browser."
+        }
+      ]
+    },
+    {
+      "id": "set-x",
+      "name": "Set X",
+      "description": "Set the X position of the window on the screen.",
+      "display_text": "Set window X to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "The X co-ordinate to move the window to on the screen."
+        }
+      ]
+    },
+    {
+      "id": "set-y",
+      "name": "Set Y",
+      "description": "Set the Y position of the window on the screen.",
+      "display_text": "Set window Y to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "The Y co-ordinate to move the window to on the screen."
+        }
+      ]
+    },
+    {
+      "id": "set-width",
+      "name": "Set width",
+      "description": "Set the width of the window.",
+      "display_text": "Set window width to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The new width of the window."
+        }
+      ]
+    },
+    {
+      "id": "set-height",
+      "name": "Set height",
+      "description": "Set the height of the window.",
+      "display_text": "Set window height to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The new height of the window."
+        }
+      ]
+    },
+    {
+      "id": "set-title",
+      "name": "Set title",
+      "description": "Set the text appearing in the window title bar.",
+      "display_text": "Set window title to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "title",
+          "name": "Title",
+          "description": "A string to display in the window title bar."
+        }
+      ]
+    },
+    {
+      "id": "minimize",
+      "name": "Minimize",
+      "description": "Minimize the window.",
+      "display_text": "Minimize window",
+      "params": []
+    },
+    {
+      "id": "maximize",
+      "name": "Maximize",
+      "description": "Maximize the window.",
+      "display_text": "Maximize window",
+      "params": []
+    },
+    {
+      "id": "unmaximize",
+      "name": "Unmaximize",
+      "description": "Unmaximize the window (i.e. the reverse of maximizing).",
+      "display_text": "Unmaximize window",
+      "params": []
+    },
+    {
+      "id": "restore",
+      "name": "Restore",
+      "description": "Restore the window (i.e. show again after minimizing).",
+      "display_text": "Restore window",
+      "params": []
+    },
+    {
+      "id": "request-attention",
+      "name": "Request attention",
+      "description": "Start or stop requesting attention from the user, e.g. by flashing the title bar (depends on OS).",
+      "display_text": "Window: {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to request attention or cancel a previous request for attention.",
+          "options": [
+            {
+              "id": "request-attention",
+              "label": "Request attention"
+            },
+            {
+              "id": "stop-requesting-attention",
+              "label": "Stop requesting attention"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-maximum-size",
+      "name": "Set maximum size",
+      "description": "Set the maximum size of the window.",
+      "display_text": "Set window maximum size to [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "max-width",
+          "name": "Max width",
+          "description": "The maximum window width to set, in pixels."
+        },
+        {
+          "id": "max-height",
+          "name": "Max height",
+          "description": "The maximum window height to set, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-minimum-size",
+      "name": "Set minimum size",
+      "description": "Set the minimum size of the window.",
+      "display_text": "Set window minimum size to [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "min-width",
+          "name": "Min width",
+          "description": "The minimum window width to set, in pixels."
+        },
+        {
+          "id": "min-height",
+          "name": "Min height",
+          "description": "The minimum window height to set, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-resizable",
+      "name": "Set resizable",
+      "description": "Enable or disable resize controls on the window.",
+      "display_text": "Set window {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to enable or disable resizing on the window.",
+          "options": [
+            {
+              "id": "not-resizable",
+              "label": "not resizable"
+            },
+            {
+              "id": "resizable",
+              "label": "resizable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-always-on-top",
+      "name": "Set always on top",
+      "description": "Enable or disable the window always being on top of other windows.",
+      "display_text": "Set window {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to enable or disable the window always being on top.",
+          "options": [
+            {
+              "id": "not-always-on-top",
+              "label": "not always on top"
+            },
+            {
+              "id": "always-on-top",
+              "label": "always on top"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "show-dev-tools",
+      "name": "Show dev tools",
+      "description": "Display the web developer tools e.g. for Javascript debugging or inspecting console messages.",
+      "display_text": "Show dev tools",
+      "params": []
+    },
+    {
+      "id": "shell-open",
+      "name": "Shell open",
+      "description": "Open the default associated app for a file.",
+      "display_text": "Shell open [i]{0}[/i]",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "File path to open. The default app associated with the file will be opened."
+        }
+      ]
+    },
+    {
+      "id": "read-binary-file",
+      "name": "Read binary file",
+      "description": "Read a file into a Binary Data object. Triggers 'On binary file read' when completed.",
+      "display_text": "Read binary file [b]{1}[/b] into {2} (tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to distinguish between different file operations."
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to read from."
+        },
+        {
+          "id": "destination",
+          "name": "Destination",
+          "description": "The Binary Data object to read data in to."
+        }
+      ]
+    },
+    {
+      "id": "write-binary-file",
+      "name": "Write binary file",
+      "description": "Write a BinaryData object to a file.",
+      "display_text": "Write {2} to binary file [b]{1}[/b] (tag [i]{0}[/i])",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "A tag to distinguish between different file actions."
+        },
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "Enter the file path to write to. The file will be overwritten!"
+        },
+        {
+          "id": "source",
+          "name": "Source",
+          "description": "The Binary Data object to write into the file."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "chosenpath",
+      "name": "ChosenPath",
+      "description": "Return the chosen path after a file dialog.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "appfolder",
+      "name": "AppFolder",
+      "description": "Return the application's folder path. Note it may not have write permission.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "appfolderurl",
+      "name": "AppFolderURL",
+      "description": "Return the application's folder as a file URL. Use this for any URL parameters.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "userfolder",
+      "name": "UserFolder",
+      "description": "Return the current user's folder.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "readfile",
+      "name": "ReadFile",
+      "description": "Return the text content of a file on disk.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "The file path to load."
+        }
+      ]
+    },
+    {
+      "id": "filesize",
+      "name": "FileSize",
+      "description": "Return the size of a file on disk, in bytes.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "path",
+          "name": "Path",
+          "description": "The file path to get the size of."
+        }
+      ]
+    },
+    {
+      "id": "listcount",
+      "name": "ListCount",
+      "description": "Return the number of files after 'List files'.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "listat",
+      "name": "ListAt",
+      "description": "Return the filename at an index after 'List files'.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of file to retrieve."
+        }
+      ]
+    },
+    {
+      "id": "droppedfile",
+      "name": "DroppedFile",
+      "description": "Return the filename of a file dropped in to the window.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowx",
+      "name": "WindowX",
+      "description": "The X position of the window on the screen.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowy",
+      "name": "WindowY",
+      "description": "The Y position of the window on the screen.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowwidth",
+      "name": "WindowWidth",
+      "description": "The width of the UI window in the operating system.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowheight",
+      "name": "WindowHeight",
+      "description": "The height of the UI window in the operating system.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "windowtitle",
+      "name": "WindowTitle",
+      "description": "The current window title bar text.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilesfolder",
+      "name": "ProjectFilesFolder",
+      "description": "Return the folder path to project files (i.e. where index.html is). Note it may not have write permission.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "projectfilesfolderurl",
+      "name": "ProjectFilesFolderURL",
+      "description": "Return the folder path to project files as a file URL. Use this for any URL parameters.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "argument-count",
+      "name": "ArgumentCount",
+      "description": "The number of command-line arguments.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "argument-at",
+      "name": "ArgumentAt",
+      "description": "The command-line argument at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Zero-based index of argument"
+        }
+      ]
+    },
+    {
+      "id": "fileerror",
+      "name": "FileError",
+      "description": "In 'On file system error', the related error message.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "file-tag",
+      "name": "FileTag",
+      "description": "Tag of a corresponding action in a trigger.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 13,
+    "actions": 31,
+    "expressions": 20
+  }
+}

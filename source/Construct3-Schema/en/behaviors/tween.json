@@ -1,0 +1,970 @@
+{
+  "id": "tween",
+  "name": "Tween",
+  "description": "Animate the properties of an object over time",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "on-tweens-finished",
+      "name": "On finished",
+      "description": "Triggered when a tween with a matching tag finishes.",
+      "display_text": "On {my} [b]{0}[/b] finished",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the finished tweens."
+        }
+      ]
+    },
+    {
+      "id": "on-any-tweens-finished",
+      "name": "On any finished",
+      "description": "Triggered when any tween finishes.",
+      "display_text": "On any {my} finished",
+      "params": []
+    },
+    {
+      "id": "is-playing",
+      "name": "Is playing",
+      "description": "Test if a tween with a matching tag is playing.",
+      "display_text": "Is {my} [b]{0}[/b] playing",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to check."
+        }
+      ]
+    },
+    {
+      "id": "is-any-playing",
+      "name": "Is any playing",
+      "description": "Test if any tween is currently playing.",
+      "display_text": "Is any {my} playing",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "Is paused",
+      "description": "Test if a tween with a matching tag is paused.",
+      "display_text": "Is {my} [b]{0}[/b] paused",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to check."
+        }
+      ]
+    },
+    {
+      "id": "is-any-paused",
+      "name": "Is any paused",
+      "description": "Test if any tween is currently paused.",
+      "display_text": "Is any {my} paused",
+      "params": []
+    },
+    {
+      "id": "on-any-tween-looped",
+      "name": "On any looped",
+      "description": "Triggered when any tween loops for any reason.",
+      "display_text": "On any {my} looped",
+      "params": []
+    },
+    {
+      "id": "on-tweens-looped",
+      "name": "On looped",
+      "description": "Triggered when a tween with a matching tag loops for any reason.",
+      "display_text": "On {my} [b]{0}[/b] looped",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the looped tweens."
+        }
+      ]
+    },
+    {
+      "id": "on-any-tween-ping-pong",
+      "name": "On any ping-pong",
+      "description": "Triggered when any tween ping-pongs.",
+      "display_text": "On any {my} [b]{0}[/b] ping-pong",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state of ping-pong to check for.",
+          "options": [
+            {
+              "id": "start",
+              "label": "start"
+            },
+            {
+              "id": "end",
+              "label": "end"
+            },
+            {
+              "id": "either",
+              "label": "either"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-tweens-ping-pong",
+      "name": "On ping-pong",
+      "description": "Triggered when a tween with a matching tag ping-pongs.",
+      "display_text": "On {my} [b]{0}[/b] [i]{1}[/i] ping-pong",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the ping-ponged tweens."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state of ping-pong to check for.",
+          "options": [
+            {
+              "id": "start",
+              "label": "start"
+            },
+            {
+              "id": "end",
+              "label": "end"
+            },
+            {
+              "id": "either",
+              "label": "either"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-ping-pong",
+      "name": "Is ping-pong",
+      "description": "Test for the ping-pong state of the tweens with the matching tag. If a tween is not set to ping-pong, the condition is always false.",
+      "display_text": "Is {my} [b]{0}[/b] in ping-pong [i]{1}[/i] state",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the ping-ponged tweens."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state of ping-pong to check for.",
+          "options": [
+            {
+              "id": "start",
+              "label": "start"
+            },
+            {
+              "id": "end",
+              "label": "end"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-any-ping-pong",
+      "name": "Is any ping-pong",
+      "description": "Test for the ping-pong state of any tween. If a tween is not set to ping-pong, the condition is always false.",
+      "display_text": "Is any {my} in ping-pong [b]{0}[/b] state",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state of ping-pong to check for.",
+          "options": [
+            {
+              "id": "start",
+              "label": "start"
+            },
+            {
+              "id": "end",
+              "label": "end"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-tweens-released",
+      "name": "On released",
+      "description": "Triggered when a tween with a matching tag is released.",
+      "display_text": "On {my} [b]{0}[/b] released",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the released tweens."
+        }
+      ]
+    },
+    {
+      "id": "on-any-tweens-released",
+      "name": "On any released",
+      "description": "Triggered when any tween is released.",
+      "display_text": "On any {my} released",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether the behavior is enabled or disabled. When disabled the behavior will not affect any properties.",
+      "display_text": "Set {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The state to set",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tween-one-property",
+      "name": "Tween (one property)",
+      "description": "Tween one property such as the X co-ordinate.",
+      "display_text": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "A space-separated list of tags to identify a tween (optional)."
+        },
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to tween.",
+          "options": [
+            {
+              "id": "offsetX",
+              "label": "X"
+            },
+            {
+              "id": "offsetY",
+              "label": "Y"
+            },
+            {
+              "id": "size",
+              "label": "Size"
+            },
+            {
+              "id": "offsetWidth",
+              "label": "Width"
+            },
+            {
+              "id": "offsetHeight",
+              "label": "Height"
+            },
+            {
+              "id": "offsetAngle",
+              "label": "Angle"
+            },
+            {
+              "id": "offsetOpacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "offsetColor",
+              "label": "Color"
+            },
+            {
+              "id": "offsetZElevation",
+              "label": "Z Elevation"
+            },
+            {
+              "id": "offsetScaleX",
+              "label": "X Scale"
+            },
+            {
+              "id": "offsetScaleY",
+              "label": "Y Scale"
+            }
+          ]
+        },
+        {
+          "id": "end-value",
+          "name": "End value",
+          "description": "The end value of the tween. Specify colors with the rgbEx() expression."
+        },
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The duration of the tween, in seconds."
+        },
+        {
+          "id": "ease",
+          "name": "Ease",
+          "description": "The easing function to use."
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "Destroy on complete",
+          "description": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether to loop the tween or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "Ping pong",
+          "description": "Whether to tween back and forth or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "Repeat count",
+          "description": "The amount of times to repeat the animation"
+        }
+      ]
+    },
+    {
+      "id": "tween-two-properties",
+      "name": "Tween (two properties)",
+      "description": "Tween two properties, such as the position (consisting of an X and Y co-ordinate).",
+      "display_text": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}[/b] in [b]{4}[/b] seconds ([i]{5}[/i], destroy: [i]{6}[/i], loop: [i]{7}[/i], ping pong: [i]{8}[/i], repeat count: [i]{9}[/i])",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "Optional space-separated list of many tags to identify a tween."
+        },
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The properties to tween.",
+          "options": [
+            {
+              "id": "position",
+              "label": "Position"
+            },
+            {
+              "id": "size",
+              "label": "Size"
+            },
+            {
+              "id": "scale",
+              "label": "Scale"
+            }
+          ]
+        },
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The duration of the tween, in seconds."
+        },
+        {
+          "id": "ease",
+          "name": "Ease",
+          "description": "The easing function to use."
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "Destroy on complete",
+          "description": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "end-x",
+          "name": "End X",
+          "description": "The end value of the first property."
+        },
+        {
+          "id": "end-y",
+          "name": "End Y",
+          "description": "The end value of the second property."
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether to loop the tween or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "Ping pong",
+          "description": "Whether to tween back and forth or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "Repeat count",
+          "description": "The amount of times to repeat the animation"
+        }
+      ]
+    },
+    {
+      "id": "tween-value",
+      "name": "Tween (value)",
+      "description": "Tween a number value, independent of any properties.",
+      "display_text": "{my} [b]{0}[/b] value from [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "A space-separated list of tags to identify a tween (optional)."
+        },
+        {
+          "id": "start-value",
+          "name": "Start value",
+          "description": "The start value of the tween."
+        },
+        {
+          "id": "end-value",
+          "name": "End value",
+          "description": "The end value of the tween."
+        },
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The duration of the tween, in seconds."
+        },
+        {
+          "id": "ease",
+          "name": "Ease",
+          "description": "The easing function to use."
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "Destroy on complete",
+          "description": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "loop",
+          "name": "Loop",
+          "description": "Whether to loop the tween or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "ping-pong",
+          "name": "Ping pong",
+          "description": "Whether to tween back and forth or not.",
+          "options": [
+            {
+              "id": "yes",
+              "label": "Yes"
+            },
+            {
+              "id": "no",
+              "label": "No"
+            }
+          ]
+        },
+        {
+          "id": "repeat-count",
+          "name": "Repeat count",
+          "description": "The amount of times to repeat the animation"
+        }
+      ]
+    },
+    {
+      "id": "pause-tweens",
+      "name": "Pause",
+      "description": "Pause tweens with the given tags.",
+      "display_text": "Pause {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to pause."
+        }
+      ]
+    },
+    {
+      "id": "pause-all-tweens",
+      "name": "Pause all",
+      "description": "Pause all tweens.",
+      "display_text": "{my}: Pause all",
+      "params": []
+    },
+    {
+      "id": "resume-tweens",
+      "name": "Resume",
+      "description": "Resume any paused tweens with the given tags.",
+      "display_text": "Resume {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the paused tweens to resume."
+        }
+      ]
+    },
+    {
+      "id": "resume-all-tweens",
+      "name": "Resume all",
+      "description": "Resume all paused tweens.",
+      "display_text": "{my}: Resume all",
+      "params": []
+    },
+    {
+      "id": "stop-tweens",
+      "name": "Stop",
+      "description": "Stop the tweens with the given tags. Tweens can no longer be referenced after stopping them.",
+      "display_text": "Stop {my} [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to stop."
+        }
+      ]
+    },
+    {
+      "id": "stop-all-tweens",
+      "name": "Stop all",
+      "description": "Stop all tweens. Tweens can no longer be referenced by tag after stopping them.",
+      "display_text": "{my}: Stop all",
+      "params": []
+    },
+    {
+      "id": "set-tweens-ease",
+      "name": "Set ease",
+      "description": "Set the easing function of the tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}[/b] ease function to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the easing function for."
+        },
+        {
+          "id": "ease",
+          "name": "Ease",
+          "description": "The ease function to set."
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-ease",
+      "name": "Set all eases",
+      "description": "Set the ease function of all tweens.",
+      "display_text": "Set all {my} ease functions to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "ease",
+          "name": "Ease",
+          "description": "The easing function to set."
+        }
+      ]
+    },
+    {
+      "id": "set-one-property-tweens-end-value",
+      "name": "Set end value",
+      "description": "Set the end value of tweens with the given tags.",
+      "display_text": "Set {my} [b]{0} {1}[/b] end value to [b]{2}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the end value for."
+        },
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to change.",
+          "options": [
+            {
+              "id": "offsetX",
+              "label": "X"
+            },
+            {
+              "id": "offsetY",
+              "label": "Y"
+            },
+            {
+              "id": "offsetWidth",
+              "label": "Width"
+            },
+            {
+              "id": "offsetHeight",
+              "label": "Height"
+            },
+            {
+              "id": "offsetAngle",
+              "label": "Angle"
+            },
+            {
+              "id": "offsetOpacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "offsetColor",
+              "label": "Color"
+            },
+            {
+              "id": "offsetZElevation",
+              "label": "Z Elevation"
+            },
+            {
+              "id": "offsetScaleX",
+              "label": "X Scale"
+            },
+            {
+              "id": "offsetScaleY",
+              "label": "Y Scale"
+            }
+          ]
+        },
+        {
+          "id": "end-value",
+          "name": "End value",
+          "description": "The end value to set. Specify colors with the rgbEx() expression."
+        }
+      ]
+    },
+    {
+      "id": "set-two-properties-tweens-end-value",
+      "name": "Set end values",
+      "description": "Set the end value of the tweens with the given tags.",
+      "display_text": "Set {my} [b]{0} {1}[/b] end value to [b]{2}, {3}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the end value of."
+        },
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to change",
+          "options": [
+            {
+              "id": "position",
+              "label": "Position"
+            },
+            {
+              "id": "size",
+              "label": "Size"
+            },
+            {
+              "id": "scale",
+              "label": "Scale"
+            }
+          ]
+        },
+        {
+          "id": "end-x",
+          "name": "End X",
+          "description": "The end value to set in the first property."
+        },
+        {
+          "id": "end-y",
+          "name": "End Y",
+          "description": "The end value to set in the second property."
+        }
+      ]
+    },
+    {
+      "id": "set-value-property-tweens-start-value",
+      "name": "Set start value",
+      "description": "Set the start value of any value tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}, Value[/b] start value to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the start value for."
+        },
+        {
+          "id": "start-value",
+          "name": "Start value",
+          "description": "The start value to set."
+        }
+      ]
+    },
+    {
+      "id": "set-value-property-tweens-end-value",
+      "name": "Set end value",
+      "description": "Set the end value of any value tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}, Value[/b] end value to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the end value for."
+        },
+        {
+          "id": "end-value",
+          "name": "End value",
+          "description": "The end value to set."
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-time",
+      "name": "Set time",
+      "description": "Set the time of the tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}[/b] time to [b]{1}[/b] seconds",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the time of."
+        },
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The time to set, in seconds."
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-time",
+      "name": "Set all times",
+      "description": "Set the time of all tweens.",
+      "display_text": "Set all {my} times to [b]{0}[/b] seconds",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The time to set, in seconds."
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-playback-rate",
+      "name": "Set playback rate",
+      "description": "Set the playback rate of the tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}[/b] playback rate to [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the playback rate of."
+        },
+        {
+          "id": "rate",
+          "name": "Rate",
+          "description": "The playback rate to set."
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-playback-rate",
+      "name": "Set all playback rates",
+      "description": "Set the playback rate of all tweens.",
+      "display_text": "Set all {my} playback rates to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "rate",
+          "name": "Rate",
+          "description": "The playback rate to set."
+        }
+      ]
+    },
+    {
+      "id": "set-tweens-destroy-on-complete",
+      "name": "Set destroy on complete",
+      "description": "Set the 'destroy on complete' property of the tweens with the given tags.",
+      "display_text": "Set {my} [b]{0}[/b] to destroy on complete: [b]{1}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag or tags of the tweens to set the property of."
+        },
+        {
+          "id": "destroy-on-complete",
+          "name": "Destroy on complete",
+          "description": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "options": [
+            {
+              "id": "no",
+              "label": "No"
+            },
+            {
+              "id": "yes",
+              "label": "Yes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-all-tweens-destroy-on-complete",
+      "name": "Set all destroy on complete",
+      "description": "Set the 'destroy on complete' property of all tweens.",
+      "display_text": "Set all {my} to destroy on complete: [b]{0}[/b]",
+      "params": [
+        {
+          "id": "destroy-on-complete",
+          "name": "Destroy on complete",
+          "description": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "options": [
+            {
+              "id": "no",
+              "label": "No"
+            },
+            {
+              "id": "yes",
+              "label": "Yes"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "time",
+      "name": "Time",
+      "description": "The current time of the tween.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag of the tween to get the time from. Leave empty for the first tween."
+        }
+      ]
+    },
+    {
+      "id": "progress",
+      "name": "Progress",
+      "description": "The progress of the tween in the range 0-1.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag of the tween to get the progress from. Leave empty for the first tween."
+        }
+      ]
+    },
+    {
+      "id": "value",
+      "name": "Value",
+      "description": "The current value of a 'Value' tween",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag of the tween to get the value from. Leave empty for the first 'Value' tween."
+        }
+      ]
+    },
+    {
+      "id": "tags",
+      "name": "Tags",
+      "description": "The tags of a tween in 'On any tween finished', 'On any tween looped' and 'On any tween ping pong' triggers.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playback-rate",
+      "name": "PlaybackRate",
+      "description": "The playback rate of the tween.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tag",
+          "description": "The tag of the tween to get the playback rate from. Leave empty for the first tween."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 14,
+    "actions": 22,
+    "expressions": 5
+  }
+}

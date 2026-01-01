@@ -1,0 +1,339 @@
+{
+  "id": "platforminfo",
+  "name": "Platform info",
+  "description": "Retrieve information about the device and platform the app is running on.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-on-mobile",
+      "name": "Is on mobile",
+      "description": "True if the current device is a mobile device like a phone or tablet. This detection may not always be accurate and does not always imply certain input methods will be used.",
+      "display_text": "Is on mobile",
+      "params": []
+    },
+    {
+      "id": "on-network-change",
+      "name": "On network change",
+      "description": "Triggered when the network connection changes, e.g. when moving from Wifi to cellular data.",
+      "display_text": "On network change",
+      "params": []
+    },
+    {
+      "id": "is-on-windows",
+      "name": "Is on Windows",
+      "description": "True when on a device running Windows.",
+      "display_text": "Is on Windows",
+      "params": []
+    },
+    {
+      "id": "is-on-macos",
+      "name": "Is on macOS",
+      "description": "True when on a device running macOS / OS X.",
+      "display_text": "Is on macOS",
+      "params": []
+    },
+    {
+      "id": "is-on-linux",
+      "name": "Is on Linux",
+      "description": "True when on a device running Linux.",
+      "display_text": "Is on Linux",
+      "params": []
+    },
+    {
+      "id": "is-on-chromeos",
+      "name": "Is on Chrome OS",
+      "description": "True when on a device running Chrome OS.",
+      "display_text": "Is on Chrome OS",
+      "params": []
+    },
+    {
+      "id": "is-on-android",
+      "name": "Is on Android",
+      "description": "True when on a device running Android.",
+      "display_text": "Is on Android",
+      "params": []
+    },
+    {
+      "id": "is-on-ios",
+      "name": "Is on iOS",
+      "description": "True when on a device running iOS.",
+      "display_text": "Is on iOS",
+      "params": []
+    },
+    {
+      "id": "is-web-export",
+      "name": "Is web export",
+      "description": "True when running after a web-based export. Also true in preview mode.",
+      "display_text": "Is web export",
+      "params": []
+    },
+    {
+      "id": "is-cordova-export",
+      "name": "Is Cordova export",
+      "description": "True when running after a Cordova-based export (Android/iOS).",
+      "display_text": "Is Cordova export",
+      "params": []
+    },
+    {
+      "id": "on-wake-lock-acquired",
+      "name": "On wake lock acquired",
+      "description": "Triggered after 'Request wake lock' if the lock was successfully acquired.",
+      "display_text": "On wake lock acquired",
+      "params": []
+    },
+    {
+      "id": "on-wake-lock-error",
+      "name": "On wake lock error",
+      "description": "Triggered after 'Request wake lock' if a lock failed to be acquired.",
+      "display_text": "On wake lock error",
+      "params": []
+    },
+    {
+      "id": "on-wake-lock-released",
+      "name": "On wake lock released",
+      "description": "Triggered when an active wake lock is released. Note in some cases this may be done automatically.",
+      "display_text": "On wake lock released",
+      "params": []
+    },
+    {
+      "id": "is-wake-lock-active",
+      "name": "Is wake lock active",
+      "description": "True if a wake lock has been successfully acquired and has not yet been released.",
+      "display_text": "Is wake lock active",
+      "params": []
+    },
+    {
+      "id": "is-wake-lock-supported",
+      "name": "Is wake lock supported",
+      "description": "True if the 'Request wake lock' action is supported and can be used.",
+      "display_text": "Is wake lock supported",
+      "params": []
+    },
+    {
+      "id": "is-windows-webview2-export",
+      "name": "Is Windows wrapper export",
+      "description": "True when running after a Windows wrapper (WebView2) export.",
+      "display_text": "Is Windows wrapper (WebView2) export",
+      "params": []
+    },
+    {
+      "id": "is-macos-wkwebview-export",
+      "name": "Is macOS wrapper export",
+      "description": "True when running after a macOS wrapper (WKWebView) export.",
+      "display_text": "Is macOS wrapper (WKWebView) export",
+      "params": []
+    },
+    {
+      "id": "is-linux-cef-export",
+      "name": "Is Linux wrapper export",
+      "description": "True when running after a Linux wrapper (CEF) export.",
+      "display_text": "Is Linux wrapper (CEF) export",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-wake-lock",
+      "name": "Request wake lock",
+      "description": "Request a wake lock to keep the screen on permanently. Note this increases power usage so will drain battery faster.",
+      "display_text": "Request wake lock",
+      "params": []
+    },
+    {
+      "id": "release-wake-lock",
+      "name": "Release wake lock",
+      "description": "Release any active wake lock so the screen can turn off to save power again.",
+      "display_text": "Release wake lock",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "renderer",
+      "name": "Renderer",
+      "description": "The graphics rendering technology in use, e.g. \"webgl2\".",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "renderer-detail",
+      "name": "RendererDetail",
+      "description": "A string describing the graphics hardware, if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "device-pixel-ratio",
+      "name": "DevicePixelRatio",
+      "description": "The number of device (hardware) pixels per CSS pixel.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "screen-width",
+      "name": "ScreenWidth",
+      "description": "The width of the screen in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "screen-height",
+      "name": "ScreenHeight",
+      "description": "The height of the screen in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "window-inner-width",
+      "name": "WindowInnerWidth",
+      "description": "The width of the window client area in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "window-inner-height",
+      "name": "WindowInnerHeight",
+      "description": "The height of the window client area in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "window-outer-width",
+      "name": "WindowOuterWidth",
+      "description": "The width of the entire window area in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "window-outer-height",
+      "name": "WindowOuterHeight",
+      "description": "The height of the entire window area in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "downlink",
+      "name": "Downlink",
+      "description": "An estimated effective bandwidth measurement in megabits per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "downlink-max",
+      "name": "DownlinkMax",
+      "description": "The maximum downlink speed in megabits per second of the underlying connection technology.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "connection-type",
+      "name": "ConnectionType",
+      "description": "The type of connection technology in use, e.g. \"cellular\", \"wifi\" or \"ethernet\".",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "connection-effective-type",
+      "name": "ConnectionEffectiveType",
+      "description": "A connection rating compared to cellular data connections, e.g. \"2g\", \"3g\", \"4g\".",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "connection-rtt",
+      "name": "ConnectionRTT",
+      "description": "The estimated effective round-trip time (latency) of the connection, in milliseconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hardware-concurrency",
+      "name": "HardwareConcurrency",
+      "description": "The number of hardware threads supported by the device CPU. 0 if cannot detect.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "device-memory",
+      "name": "DeviceMemory",
+      "description": "The approximate amount of device memory in gigabytes. 0 if cannot detect.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvas-css-width",
+      "name": "CanvasCssWidth",
+      "description": "The width of the main display canvas in CSS pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvas-css-height",
+      "name": "CanvasCssHeight",
+      "description": "The height of the main display canvas in CSS pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvas-device-width",
+      "name": "CanvasDeviceWidth",
+      "description": "The width of the main display canvas in device pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "canvas-device-height",
+      "name": "CanvasDeviceHeight",
+      "description": "The height of the main display canvas in device pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "safe-area-inset-top",
+      "name": "SafeAreaInsetTop",
+      "description": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "safe-area-inset-right",
+      "name": "SafeAreaInsetRight",
+      "description": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "safe-area-inset-bottom",
+      "name": "SafeAreaInsetBottom",
+      "description": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "safe-area-inset-left",
+      "name": "SafeAreaInsetLeft",
+      "description": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "frames-per-second",
+      "name": "FramesPerSecond",
+      "description": "Number of frames rendered per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "ticks-per-second",
+      "name": "TicksPerSecond",
+      "description": "Number of ticks processed per second.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 18,
+    "actions": 2,
+    "expressions": 26
+  }
+}

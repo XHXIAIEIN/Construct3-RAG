@@ -1,0 +1,280 @@
+{
+  "id": "los",
+  "name": "视线",
+  "description": "让对象可以看见某个位置或其他对象。",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "has-los-to-object",
+      "name": "发现对象",
+      "description": "测试在视线范围内，可否看到某个对象。",
+      "display_text": "{my} 可发现 {0} 图像点[i]{1}[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "对象",
+          "description": "选择要检查能否被视线看到的对象。"
+        },
+        {
+          "id": "image-point",
+          "name": "图像点 (可选)",
+          "description": "检查视线对象是否能发现另一个对象的图像点，可指定图像点的名称或编号。保留 0 为对象的图像原点。"
+        }
+      ]
+    },
+    {
+      "id": "has-los-to-position",
+      "name": "发现位置",
+      "description": "检测对象是否拥有场景的某个位置的视线。",
+      "display_text": "{my} 可发现位置 (目标: [i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "要检查是否拥有视线的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "要检查是否拥有视线的Y坐标，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "has-los-between-positions",
+      "name": "发现位置 (范围)",
+      "description": "检测在场景任意 2 个位置之间，是否存在视线。",
+      "display_text": "{my} 可发现位置 (起始: ([i]{0}[/i], [i]{1}[/i]),  方向: [i]{2}[/i], 终点: [i]{3}[/i], [i]{4}[/i])",
+      "params": [
+        {
+          "id": "from-x",
+          "name": "起始 X",
+          "description": "用于检测视线的第1个X坐标。"
+        },
+        {
+          "id": "from-y",
+          "name": "起始 Y",
+          "description": "用于检测视线的第1个Y坐标。"
+        },
+        {
+          "id": "from-angle",
+          "name": "角度",
+          "description": "用来确定视线方向的角度。"
+        },
+        {
+          "id": "to-x",
+          "name": "终点 X",
+          "description": "用于检测视线的第2个X坐标。"
+        },
+        {
+          "id": "to-y",
+          "name": "终点 Y",
+          "description": "用于检测视线的第2个Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "ray-intersected",
+      "name": "发现障碍物",
+      "description": "检查上次发出的射线是否命中障碍物。",
+      "display_text": "{my}发现障碍",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-range",
+      "name": "设置视线范围",
+      "description": "设置视线能覆盖的最远距离，以像素为单位。",
+      "display_text": "设置 {my}视线范围为[i]{0}[/i]",
+      "params": [
+        {
+          "id": "range",
+          "name": "范围",
+          "description": "视线能覆盖的最远距离，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-cone-of-view",
+      "name": "设置视线角度",
+      "description": "设置视线在当前朝向能够覆盖的角度范围，以角度为单位。",
+      "display_text": "设置 {my}视线角度为[i]{0}[/i]°",
+      "params": [
+        {
+          "id": "cone-of-view",
+          "name": "角度",
+          "description": "视线在朝向能够覆盖的角度范围，以角度为单位。"
+        }
+      ]
+    },
+    {
+      "id": "add-obstacle",
+      "name": "添加遮挡物",
+      "description": "添加自定义对象作为视线遮挡物。",
+      "display_text": "{my}添加 {0} 视为遮挡物",
+      "params": [
+        {
+          "id": "obstacle",
+          "name": "遮挡物",
+          "description": "选择一个对象视为遮挡物，阻挡视线。"
+        }
+      ]
+    },
+    {
+      "id": "clear-obstacles",
+      "name": "清空障碍",
+      "description": "删除所有已添加的障碍。",
+      "display_text": "{my} 清空全部障碍",
+      "params": []
+    },
+    {
+      "id": "cast-ray",
+      "name": "发出射线",
+      "description": "在任意两个坐标位置之间投出射线，检查是否有障碍物。",
+      "display_text": "{my} 发出射线 (起始位置: ({0}, {1}), 目标位置: ({2}, {3}), 使用碰撞单元: [i]{4}[/i])",
+      "params": [
+        {
+          "id": "from-x",
+          "name": "起始 X",
+          "description": "用于检测视线的第1个X坐标。"
+        },
+        {
+          "id": "from-y",
+          "name": "起始 Y",
+          "description": "用于检测视线的第1个Y坐标。"
+        },
+        {
+          "id": "to-x",
+          "name": "目标 X",
+          "description": "用于检测视线的第2个X坐标。"
+        },
+        {
+          "id": "to-y",
+          "name": "目标 Y",
+          "description": "用于检测视线的第2个Y坐标。"
+        },
+        {
+          "id": "use-collision-cells",
+          "name": "使用碰撞单元",
+          "description": "启用此选项通常可以提升性能，但在检查较远的距离时，反而导致性能变慢。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "range",
+      "name": "视线范围",
+      "description": "返回视线当前的范围，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "coneofview",
+      "name": "视线角度",
+      "description": "返回视线当前的覆盖角度，以像素为单位。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hitx",
+      "name": "相交点X",
+      "description": "视线击中目标时，返回相交位置的X坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hity",
+      "name": "相交点Y",
+      "description": "视线击中目标时，返回相交位置的Y坐标。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hituid",
+      "name": "相交实例UID",
+      "description": "视线击中目标时，返回相交的实例对象UID。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hitdistance",
+      "name": "相交距离",
+      "description": "视线击中目标时，返回视线原点和相交位置的距离。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "normalx",
+      "name": "法线X",
+      "description": "视线击中目标后，返回命中沿法线延长指定距离位置的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要沿法线延长的距离。"
+        }
+      ]
+    },
+    {
+      "id": "normaly",
+      "name": "法线Y",
+      "description": "视线击中目标后，返回命中沿法线延长指定距离位置的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要沿法线延长的距离。"
+        }
+      ]
+    },
+    {
+      "id": "normalangle",
+      "name": "法线角度",
+      "description": "视线击中目标后，返回命中位置表面法线的角度。",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "reflectionx",
+      "name": "反射线X",
+      "description": "视线击中目标后，返回沿法线反射角度指定距离位置的X坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要沿反射法线延长的距离。"
+        }
+      ]
+    },
+    {
+      "id": "reflectiony",
+      "name": "反射线Y",
+      "description": "视线击中目标后，返回沿法线反射角度指定距离位置的Y坐标。",
+      "display_text": "",
+      "params": [
+        {
+          "id": "length",
+          "name": "长度",
+          "description": "要沿反射法线延长的距离。"
+        }
+      ]
+    },
+    {
+      "id": "reflectionangle",
+      "name": "反射角度",
+      "description": "视线击中目标后，返回命中位置反射的绝对角度。",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 12
+  }
+}

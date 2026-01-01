@@ -1,0 +1,582 @@
+{
+  "id": "follow",
+  "name": "Follow",
+  "description": "Follow the movement of another object, either by time or distance.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "compare-mode",
+      "name": "Compare mode",
+      "description": "Compare the current follow mode.",
+      "display_text": "{my} mode is [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The mode to compare to.",
+          "options": [
+            {
+              "id": "time",
+              "label": "Time"
+            },
+            {
+              "id": "distance",
+              "label": "Distance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-delay",
+      "name": "Compare delay",
+      "description": "Compare the current delay.",
+      "display_text": "{my} delay {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "The comparison to use."
+        },
+        {
+          "id": "delay",
+          "name": "Delay",
+          "description": "The delay to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-max-delay",
+      "name": "Compare max delay",
+      "description": "Compare the current maximum delay.",
+      "display_text": "{my} max delay {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "The comparison to use."
+        },
+        {
+          "id": "max-delay",
+          "name": "Max delay",
+          "description": "The maximum delay to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-history-rate",
+      "name": "Compare history rate",
+      "description": "Compare the current history rate.",
+      "display_text": "{my} history rate {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "The comparison to use."
+        },
+        {
+          "id": "history-rate",
+          "name": "History rate",
+          "description": "The history rate to compare to."
+        }
+      ]
+    },
+    {
+      "id": "is-following-property",
+      "name": "Is following property",
+      "description": "Test if a particular property is enabled for following.",
+      "display_text": "{my} is following [b]{0}[/b]",
+      "params": [
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to test if enabled for following.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            },
+            {
+              "id": "width",
+              "label": "Width"
+            },
+            {
+              "id": "height",
+              "label": "Height"
+            },
+            {
+              "id": "angle",
+              "label": "Angle"
+            },
+            {
+              "id": "opacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "visibility",
+              "label": "Visibility"
+            },
+            {
+              "id": "destroyed",
+              "label": "Destroyed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is-following-custom-property",
+      "name": "Is following custom property",
+      "description": "Test if a particular custom property is enabled for following.",
+      "display_text": "{my} is following custom property [b]{0}[/b]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "Custom property",
+          "description": "A string identifying the custom property."
+        }
+      ]
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is currently enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    },
+    {
+      "id": "is-following-object",
+      "name": "Is following object",
+      "description": "Test if currently actively following an object.",
+      "display_text": "{my} is following object",
+      "params": []
+    },
+    {
+      "id": "has-follow-data",
+      "name": "Has follow data",
+      "description": "Test if enough data has been recorded for the object to start following.",
+      "display_text": "{my} has follow data",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "Is paused",
+      "description": "Test if following is currently paused.",
+      "display_text": "{my} is paused",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-mode",
+      "name": "Set mode",
+      "description": "Set the current follow mode.",
+      "display_text": "{my}: Set mode [i]{0}[/i]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "The mode to set.",
+          "options": [
+            {
+              "id": "time",
+              "label": "Time"
+            },
+            {
+              "id": "distance",
+              "label": "Distance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-delay",
+      "name": "Set delay",
+      "description": "Set the current follow delay (time or distance, depending on the mode).",
+      "display_text": "{my}: Set delay [i]{0}[/i]",
+      "params": [
+        {
+          "id": "delay",
+          "name": "Delay",
+          "description": "The time in seconds, or distance in pixels, to follow (depending on the mode)."
+        }
+      ]
+    },
+    {
+      "id": "set-max-delay",
+      "name": "Set max delay",
+      "description": "Set the current maximum delay (time or distance, depending on the mode).",
+      "display_text": "{my}: Set max delay [i]{0}[/i]",
+      "params": [
+        {
+          "id": "max-delay",
+          "name": "Max delay",
+          "description": "The maximum time/distance data to remember."
+        }
+      ]
+    },
+    {
+      "id": "set-history-rate",
+      "name": "Set history rate",
+      "description": "Set the rate at which the followed object properties are saved.",
+      "display_text": "{my}: Set history rate [i]{0}[/i]",
+      "params": [
+        {
+          "id": "history-rate",
+          "name": "History rate",
+          "description": "The rate in entries per second at which to remember changes in the followed object."
+        }
+      ]
+    },
+    {
+      "id": "set-following-property",
+      "name": "Set following property",
+      "description": "Set whether a property is being followed.",
+      "display_text": "{my}: Set following [b]{0}[/b] [i]{1}[/i]",
+      "params": [
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to set whether being followed.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            },
+            {
+              "id": "width",
+              "label": "Width"
+            },
+            {
+              "id": "height",
+              "label": "Height"
+            },
+            {
+              "id": "angle",
+              "label": "Angle"
+            },
+            {
+              "id": "opacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "visibility",
+              "label": "Visibility"
+            },
+            {
+              "id": "destroyed",
+              "label": "Destroyed"
+            }
+          ]
+        },
+        {
+          "id": "enabled",
+          "name": "Enabled",
+          "description": "Whether to follow the chosen property."
+        }
+      ]
+    },
+    {
+      "id": "set-property-interpolation",
+      "name": "Set property interpolation",
+      "description": "Set the type of interpolation used between history entries.",
+      "display_text": "{my}: Set property [b]{0}[/b] interpolation [i]{1}[/i]",
+      "params": [
+        {
+          "id": "property",
+          "name": "Property",
+          "description": "The property to set interpolation for.",
+          "options": [
+            {
+              "id": "x",
+              "label": "X"
+            },
+            {
+              "id": "y",
+              "label": "Y"
+            },
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            },
+            {
+              "id": "width",
+              "label": "Width"
+            },
+            {
+              "id": "height",
+              "label": "Height"
+            },
+            {
+              "id": "angle",
+              "label": "Angle"
+            },
+            {
+              "id": "opacity",
+              "label": "Opacity"
+            },
+            {
+              "id": "visibility",
+              "label": "Visibility"
+            },
+            {
+              "id": "destroyed",
+              "label": "Destroyed"
+            }
+          ]
+        },
+        {
+          "id": "interpolation",
+          "name": "Interpolation",
+          "description": "The interpolation mode to use for the property.",
+          "options": [
+            {
+              "id": "step",
+              "label": "Step"
+            },
+            {
+              "id": "linear",
+              "label": "Linear"
+            },
+            {
+              "id": "angular",
+              "label": "Angular"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "start-following-custom-property",
+      "name": "Start following custom property",
+      "description": "Add a custom property to be followed.",
+      "display_text": "{my}: Start following custom property [b]{0}[/b] [i]{1}[/i]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "Custom property",
+          "description": "A string identifying the custom property."
+        },
+        {
+          "id": "interpolation",
+          "name": "Interpolation",
+          "description": "The interpolation mode to use for the property.",
+          "options": [
+            {
+              "id": "step",
+              "label": "Step"
+            },
+            {
+              "id": "linear",
+              "label": "Linear"
+            },
+            {
+              "id": "angular",
+              "label": "Angular"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-following-custom-property",
+      "name": "Stop following custom property",
+      "description": "Stop following a custom property.",
+      "display_text": "{my}: Stop following custom property [b]{0}[/b]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "Custom property",
+          "description": "A string identifying the custom property."
+        }
+      ]
+    },
+    {
+      "id": "set-custom-property-value",
+      "name": "Set custom property value",
+      "description": "Set the current value of a custom property being followed.",
+      "display_text": "{my}: Set custom property [b]{0}[/b] value [i]{1}[/i]",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "Custom property",
+          "description": "A string identifying the custom property."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "A number or string to set as the current value of this custom property."
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Set whether this behavior is enabled.",
+      "display_text": "Set {my} enabled [b]{0}[/b]",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Set whether to enable or disable the behavior."
+        }
+      ]
+    },
+    {
+      "id": "follow-object",
+      "name": "Follow object",
+      "description": "Start following another object.",
+      "display_text": "{my}: Follow {0} (from current position [i]{1}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to follow."
+        },
+        {
+          "id": "from-current-position",
+          "name": "From current position",
+          "description": "If enabled, this object will immediately follow starting from its current position."
+        }
+      ]
+    },
+    {
+      "id": "follow-self",
+      "name": "Follow self",
+      "description": "Start remembering the history of the object this behavior belongs to.",
+      "display_text": "{my}: Follow self",
+      "params": []
+    },
+    {
+      "id": "stop-following",
+      "name": "Stop following",
+      "description": "Stop following any currently followed object.",
+      "display_text": "{my}: Stop following",
+      "params": []
+    },
+    {
+      "id": "clear-history",
+      "name": "Clear history",
+      "description": "Clear the remembered history of the object being followed, starting over from scratch.",
+      "display_text": "{my}: Clear history",
+      "params": []
+    },
+    {
+      "id": "rewind-history",
+      "name": "Rewind history",
+      "description": "Seek to an earlier time in history to continue recording from there.",
+      "display_text": "{my}: Rewind history by [b]{0}[/b] seconds",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The time in seconds to rewind through history."
+        }
+      ]
+    },
+    {
+      "id": "set-paused",
+      "name": "Set paused",
+      "description": "Set whether to pause following.",
+      "display_text": "Set {my} paused [i]{0}[/i]",
+      "params": [
+        {
+          "id": "is-paused",
+          "name": "Paused",
+          "description": "Whether to pause following."
+        }
+      ]
+    },
+    {
+      "id": "load-history-json",
+      "name": "Load history JSON",
+      "description": "Load the saved history of the followed object from a JSON string.",
+      "display_text": "Load {my} history JSON [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A string of history JSON data, from the 'HistoryAsJSON' expression."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "delay",
+      "name": "Delay",
+      "description": "The current delay in seconds or pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "max-delay",
+      "name": "MaxDelay",
+      "description": "The current maximum delay in seconds or pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "history-rate",
+      "name": "HistoryRate",
+      "description": "The current history rate in entries per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "follow-uid",
+      "name": "FollowUID",
+      "description": "The UID of the currently followed object (or -1 if none).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "delayed-custom-property-value",
+      "name": "DelayedCustomPropertyValue",
+      "description": "The delayed value of a custom property being followed.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "custom-property",
+          "name": "CustomProperty",
+          "description": "A string identifying the custom property."
+        }
+      ]
+    },
+    {
+      "id": "history-as-json",
+      "name": "HistoryAsJSON",
+      "description": "Save the history of the followed object to a string of JSON data.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "max-delay",
+          "name": "MaxDelay",
+          "description": "Max time in seconds of history to save."
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 10,
+    "actions": 17,
+    "expressions": 6
+  }
+}

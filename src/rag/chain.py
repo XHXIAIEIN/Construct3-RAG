@@ -65,6 +65,29 @@ class LLMClient:
         except Exception as e:
             return f"LLM error: {str(e)}"
 
+    def generate_stream(self, prompt: str, system: str = ""):
+        """Generate response from LLM with streaming"""
+        if self.client is None:
+            yield "LLM client not available. Please install ollama."
+            return
+
+        try:
+            messages = []
+            if system:
+                messages.append({"role": "system", "content": system})
+            messages.append({"role": "user", "content": prompt})
+
+            stream = self.client.chat(
+                model=self.model,
+                messages=messages,
+                stream=True
+            )
+            for chunk in stream:
+                if "message" in chunk and "content" in chunk["message"]:
+                    yield chunk["message"]["content"]
+        except Exception as e:
+            yield f"LLM error: {str(e)}"
+
     def chat(self, messages: List[Dict[str, str]]) -> str:
         """Multi-turn chat"""
         if self.client is None:
@@ -194,6 +217,51 @@ class RAGChain:
             return self.answer_code(query)
         else:
             return self.answer_qa(query)
+
+    def answer_stream(self, query: str):
+        """
+        Streaming version of answer - yields chunks as they're generated
+        """
+        query_type = self.classify_query(query)
+
+        # Retrieve context first
+        if query_type == "translation":
+            results = self.retriever.search_terms(query, top_k=10)
+            matched_terms = "\n".join([
+                f"- {r.metadata.get('zh', '')} = {r.metadata.get('en', '')}"
+                for r in results
+            ])
+            is_chinese = any('\u4e00' <= c <= '\u9fff' for c in query)
+            target_lang = "英文" if is_chinese else "中文"
+            from .prompts import TRANSLATION_PROMPT
+            prompt = TRANSLATION_PROMPT.format(
+                matched_terms=matched_terms,
+                source_text=query,
+                target_lang=target_lang
+            )
+            system = ""
+        elif query_type == "code":
+            results = self.retriever.search_examples(query, top_k=5)
+            examples = "\n\n".join([
+                f"### {r.metadata.get('project', 'Example')}\n{r.text}"
+                for r in results
+            ])
+            from .prompts import EVENT_GENERATION_PROMPT
+            prompt = EVENT_GENERATION_PROMPT.format(
+                similar_examples=examples,
+                user_requirement=query
+            )
+            system = ""
+        else:
+            results = self.retriever.search_all(query, top_k_per_collection=3)
+            context = self.retriever.format_context(results)
+            from .prompts import QA_PROMPT
+            prompt = QA_PROMPT.format(context=context, question=query)
+            system = SYSTEM_MESSAGE
+
+        # Stream the response
+        for chunk in self.llm.generate_stream(prompt, system=system):
+            yield chunk
 
     def chat(self, messages: List[Dict[str, str]]) -> str:
         """

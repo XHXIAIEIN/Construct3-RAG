@@ -1,0 +1,79 @@
+{
+  "id": "scrollto",
+  "name": "Scroll To",
+  "description": "Always center the view on this object, or at the mid-point of multiple objects.",
+  "type": "behavior",
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "Test if the behavior is enabled.",
+      "display_text": "{my} is enabled",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "shake",
+      "name": "Shake",
+      "description": "Shake the screen for a duration of time.",
+      "display_text": "Shake {my} with magnitude [i]{0}[/i] for [i]{1}[/i] seconds ({2})",
+      "params": [
+        {
+          "id": "magnitude",
+          "name": "Magnitude",
+          "description": "The strength of the shake, in maximum pixels to scroll away."
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "description": "The time the shake should last, in seconds."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Select whether the magnitude gradually reduces to zero over the duration, or stays constant.",
+          "options": [
+            {
+              "id": "reducing-magnitude",
+              "label": "Reducing magnitude"
+            },
+            {
+              "id": "constant-magnitude",
+              "label": "Constant magnitude"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the behavior.",
+      "display_text": "Set {my} {0}",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether to enable or disable the behavior.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "enabled"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "stats": {
+    "conditions": 1,
+    "actions": 2,
+    "expressions": 0
+  }
+}

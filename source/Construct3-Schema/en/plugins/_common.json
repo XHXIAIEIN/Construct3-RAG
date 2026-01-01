@@ -1,0 +1,1687 @@
+{
+  "id": "_common",
+  "name": "",
+  "description": "",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "name": "Is within angle",
+      "description": "Compare if the object's angle is within X degrees of another angle.",
+      "display_text": "Within {0} degrees of {1}",
+      "params": [
+        {
+          "id": "within",
+          "name": "Within",
+          "description": "Number of degrees that object must be within."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle, in degrees, to compare if object facing towards."
+        }
+      ]
+    },
+    {
+      "id": "is-clockwise-from",
+      "name": "Is clockwise from",
+      "description": "Compare if the object's angle is clockwise from another angle.",
+      "display_text": "Is clockwise from {0}",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle, in degrees, to test if object's angle is clockwise from."
+        }
+      ]
+    },
+    {
+      "id": "is-between-angles",
+      "name": "Is between angles",
+      "description": "Compare if the object's angle is between two angles.",
+      "display_text": "Is between {0} and {1} degrees",
+      "params": [
+        {
+          "id": "first-angle",
+          "name": "First angle",
+          "description": "First angle, in degrees.  Specify in clockwise order."
+        },
+        {
+          "id": "second-angle",
+          "name": "Second angle",
+          "description": "Second angle, in degrees.  Specify in clockwise order."
+        }
+      ]
+    },
+    {
+      "id": "is-visible",
+      "name": "Is visible",
+      "description": "Test if the object is currently visible.",
+      "display_text": "Is visible",
+      "params": []
+    },
+    {
+      "id": "compare-opacity",
+      "name": "Compare opacity",
+      "description": "Compare the object's current opacity.",
+      "display_text": "Opacity {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the opacity."
+        },
+        {
+          "id": "opacity",
+          "name": "Opacity",
+          "description": "The opacity (0-100) to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-instance-variable",
+      "name": "Compare instance variable",
+      "description": "Compare the value of an instance variable.",
+      "display_text": "[b]{0}[/b] {1} {2}",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to compare."
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the instance variable."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare to the instance variable."
+        }
+      ]
+    },
+    {
+      "id": "is-boolean-instance-variable-set",
+      "name": "Is boolean instance variable set",
+      "description": "Test if a boolean instance variable is true.",
+      "display_text": "Is [b]{0}[/b]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to test."
+        }
+      ]
+    },
+    {
+      "id": "pick-highestlowest",
+      "name": "Pick highest/lowest",
+      "description": "Pick the instance with the highest or lowest instance variable value.",
+      "display_text": "Pick instance with {0} [b]{1}[/b]",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose whether to pick the instance with the highest or lowest variable.",
+          "options": [
+            {
+              "id": "lowest",
+              "label": "lowest"
+            },
+            {
+              "id": "highest",
+              "label": "highest"
+            }
+          ]
+        },
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to compare."
+        }
+      ]
+    },
+    {
+      "id": "pick-by-unique-id",
+      "name": "Pick by unique ID",
+      "description": "Pick a specific instance by its unique ID (UID).",
+      "display_text": "Pick instance with UID [b]{0}[/b]",
+      "params": [
+        {
+          "id": "unique-id",
+          "name": "Unique ID",
+          "description": "The unique ID (UID) of the instance to pick."
+        }
+      ]
+    },
+    {
+      "id": "on-created",
+      "name": "On created",
+      "description": "Triggered when a new instance is created.",
+      "display_text": "On created",
+      "params": []
+    },
+    {
+      "id": "on-destroyed",
+      "name": "On destroyed",
+      "description": "Triggered when an instance is destroyed.",
+      "display_text": "On destroyed",
+      "params": []
+    },
+    {
+      "id": "compare-x",
+      "name": "Compare X",
+      "description": "Compare the X co-ordinate to a value.",
+      "display_text": "X {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the X co-ordinate."
+        },
+        {
+          "id": "x-co-ordinate",
+          "name": "X co-ordinate",
+          "description": "The X co-ordinate to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-y",
+      "name": "Compare Y",
+      "description": "Compare the Y co-ordinate to a value.",
+      "display_text": "Y {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the Y co-ordinate."
+        },
+        {
+          "id": "y-co-ordinate",
+          "name": "Y co-ordinate",
+          "description": "The Y co-ordinate to compare to."
+        }
+      ]
+    },
+    {
+      "id": "is-on-screen",
+      "name": "Is on-screen",
+      "description": "Test if the object is currently in the visible screen.",
+      "display_text": "Is on-screen",
+      "params": []
+    },
+    {
+      "id": "is-outside-layout",
+      "name": "Is outside layout",
+      "description": "Test if the object is outside the layout boundary.",
+      "display_text": "Is outside layout",
+      "params": []
+    },
+    {
+      "id": "pick-nearestfurthest",
+      "name": "Pick nearest/furthest",
+      "description": "Pick the instance nearest to or furthest from a point in the layout.",
+      "display_text": "Pick {0} to ({1}, {2})",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose whether to pick the nearest or furthest instance to the point.",
+          "options": [
+            {
+              "id": "nearest",
+              "label": "nearest"
+            },
+            {
+              "id": "furthest",
+              "label": "furthest"
+            }
+          ]
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X co-ordinate of position to compare distance to."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y co-ordinate of position to compare distance to."
+        }
+      ]
+    },
+    {
+      "id": "compare-width",
+      "name": "Compare width",
+      "description": "Compare the width to a value.",
+      "display_text": "Width {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the width."
+        },
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "The width to compare to."
+        }
+      ]
+    },
+    {
+      "id": "compare-height",
+      "name": "Compare height",
+      "description": "Compare the height to a value.",
+      "display_text": "Height {0} {1}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the height."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "The height to compare to."
+        }
+      ]
+    },
+    {
+      "id": "is-on-layer",
+      "name": "Is on layer",
+      "description": "Pick all objects on a given layer.",
+      "display_text": "Is on layer {0}",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Layer name or number to test if the object is on."
+        }
+      ]
+    },
+    {
+      "id": "pick-topbottom",
+      "name": "Pick top/bottom",
+      "description": "Pick either the top-most or bottom-most object in Z order.",
+      "display_text": "Pick {0} instance",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Choose whether to pick the top-most or bottom-most instance in Z order.",
+          "options": [
+            {
+              "id": "top",
+              "label": "top"
+            },
+            {
+              "id": "bottom",
+              "label": "bottom"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-z-elevation",
+      "name": "Compare Z elevation",
+      "description": "Compare the Z elevation to a value.",
+      "display_text": "{0} {1} {2}",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Compare either the Z elevation (relative to its own layer), or the total Z elevation (taking in to account the layer Z elevation).",
+          "options": [
+            {
+              "id": "z-elevation",
+              "label": "Z elevation"
+            },
+            {
+              "id": "total-z-elevation",
+              "label": "Total Z elevation"
+            }
+          ]
+        },
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the Z elevation."
+        },
+        {
+          "id": "z-elevation",
+          "name": "Z elevation",
+          "description": "The Z elevation to compare to."
+        }
+      ]
+    },
+    {
+      "id": "is-focused",
+      "name": "Is focused",
+      "description": "True if the element currently has focus.",
+      "display_text": "Is focused",
+      "params": []
+    },
+    {
+      "id": "is-enabled",
+      "name": "Is enabled",
+      "description": "True if the element is currently enabled.",
+      "display_text": "Is enabled",
+      "params": []
+    },
+    {
+      "id": "has-parent",
+      "name": "Has parent",
+      "description": "True if the instance is connected to a parent in its hierarchy.",
+      "display_text": "Has parent",
+      "params": []
+    },
+    {
+      "id": "has-children",
+      "name": "Has children",
+      "description": "True if the instance is connected to any children in its hierarchy.",
+      "display_text": "Has children",
+      "params": []
+    },
+    {
+      "id": "pick-parent",
+      "name": "Pick parent",
+      "description": "Pick the parents of the picked instances, according to their hierarchy.",
+      "display_text": "Pick [i]{1}[/i] parent {0}",
+      "params": [
+        {
+          "id": "parent",
+          "name": "Parent",
+          "description": "The object type or family of the parent to pick."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to pick the object's own parent, all parents to the top, or the parent at the top of the hierarchy.",
+          "options": [
+            {
+              "id": "own",
+              "label": "Own"
+            },
+            {
+              "id": "all",
+              "label": "All"
+            },
+            {
+              "id": "top",
+              "label": "Top"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pick-children",
+      "name": "Pick children",
+      "description": "Pick all the children of the picked instances, according to their hierarchy.",
+      "display_text": "Pick [i]{1}[/i] children {0}",
+      "params": [
+        {
+          "id": "child",
+          "name": "Child",
+          "description": "The object type or family of the children to pick."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to pick the object's own children, all children to the bottom, or the children at the bottom of the hierarchy.",
+          "options": [
+            {
+              "id": "own",
+              "label": "Own"
+            },
+            {
+              "id": "all",
+              "label": "All"
+            },
+            {
+              "id": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pick-nth-child",
+      "name": "Pick nth child",
+      "description": "Pick just the nth child instance, according to their hierarchy.",
+      "display_text": "Pick child {0} instance {2} ([i]{1}[/i])",
+      "params": [
+        {
+          "id": "child",
+          "name": "Child",
+          "description": "The object type or family of the children to pick."
+        },
+        {
+          "id": "instance",
+          "name": "Instance",
+          "description": "Index of the child instance to pick (0-based, either in all children or just the children of the provided object)."
+        },
+        {
+          "id": "index-type",
+          "name": "Index type",
+          "description": "Whether the provided index is in to the list of all children, or just the children of the provided object.",
+          "options": [
+            {
+              "id": "all",
+              "label": "all"
+            },
+            {
+              "id": "filtered",
+              "label": "filtered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compare-child-count",
+      "name": "Compare child count",
+      "description": "Compare the number of connected children in the hierarchy.",
+      "display_text": "{0} child count {1} {2}",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the number of children."
+        },
+        {
+          "id": "count",
+          "name": "Count",
+          "description": "The number to compare to."
+        },
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Whether to count the instance's own immediate children or all children to the bottom of the hierarchy.",
+          "options": [
+            {
+              "id": "own",
+              "label": "Own"
+            },
+            {
+              "id": "all",
+              "label": "All"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-collision-with-another-object",
+      "name": "On collision with another object",
+      "description": "Triggered when the object collides with another object.",
+      "display_text": "On collision with {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Select the object to test for a collision with."
+        }
+      ]
+    },
+    {
+      "id": "is-overlapping-another-object",
+      "name": "Is overlapping another object",
+      "description": "Test if the object is overlapping another object.",
+      "display_text": "Is overlapping {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Select the object to test for overlap with."
+        }
+      ]
+    },
+    {
+      "id": "is-overlapping-at-offset",
+      "name": "Is overlapping at offset",
+      "description": "Test if the object is overlapping another object at an offset position.",
+      "display_text": "Is overlapping {0} at offset ([i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Select the object to test for overlap with."
+        },
+        {
+          "id": "offset-x",
+          "name": "Offset X",
+          "description": "The amount to offset the X co-ordinate (in pixels) before checking for a collision."
+        },
+        {
+          "id": "offset-y",
+          "name": "Offset Y",
+          "description": "The amount to offset the Y co-ordinate (in pixels) before checking for a collision."
+        }
+      ]
+    },
+    {
+      "id": "is-effect-enabled",
+      "name": "Is effect enabled",
+      "description": "Test whether an effect is currently enabled.",
+      "display_text": "Effect {0} is enabled",
+      "params": [
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the object effect to test if enabled."
+        }
+      ]
+    },
+    {
+      "id": "has-tags",
+      "name": "Has tags",
+      "description": "Check if an instance matches the provided tags.",
+      "display_text": "Instance has tags [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "A space separated list of tags"
+        }
+      ]
+    },
+    {
+      "id": "on-instance-signal",
+      "name": "On signal",
+      "description": "Triggered by the 'Signal' action with a matching tag.",
+      "display_text": "On signal [i]{0}[/i]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag of the 'Signal' action."
+        }
+      ]
+    },
+    {
+      "id": "on-hierarchy-ready",
+      "name": "On hierarchy ready",
+      "description": "Triggered for the root of a hierarchy after creation, when all childen have finished creating.",
+      "display_text": "On hierarchy ready",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-angle",
+      "name": "Set angle",
+      "description": "Set the angle the object is oriented at.",
+      "display_text": "Set angle to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "New object angle, in degrees."
+        }
+      ]
+    },
+    {
+      "id": "rotate-clockwise",
+      "name": "Rotate clockwise",
+      "description": "Rotate the object's angle clockwise by a number of degrees.",
+      "display_text": "Rotate [i]{0}[/i] degrees clockwise",
+      "params": [
+        {
+          "id": "degrees",
+          "name": "Degrees",
+          "description": "Number of degrees to rotate the object clockwise."
+        }
+      ]
+    },
+    {
+      "id": "rotate-counter-clockwise",
+      "name": "Rotate counter-clockwise",
+      "description": "Rotate the object's angle counter-clockwise by a number of degrees.",
+      "display_text": "Rotate [i]{0}[/i] degrees counter-clockwise",
+      "params": [
+        {
+          "id": "degrees",
+          "name": "Degrees",
+          "description": "Number of degrees to rotate the object counter-clockwise."
+        }
+      ]
+    },
+    {
+      "id": "rotate-toward-angle",
+      "name": "Rotate toward angle",
+      "description": "Rotate the object towards another angle.",
+      "display_text": "Rotate [i]{0}[/i] degrees toward [i]{1}[/i]",
+      "params": [
+        {
+          "id": "degrees",
+          "name": "Degrees",
+          "description": "Number of degrees to rotate towards the target angle."
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle, in degrees, to rotate towards."
+        }
+      ]
+    },
+    {
+      "id": "rotate-toward-position",
+      "name": "Rotate toward position",
+      "description": "Rotate the object towards a position.",
+      "display_text": "Rotate [i]{0}[/i] degrees toward ([i]{1}[/i], [i]{2}[/i])",
+      "params": [
+        {
+          "id": "degrees",
+          "name": "Degrees",
+          "description": "Number of degrees to rotate towards the target position."
+        },
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X position to rotate toward."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y position to rotate toward."
+        }
+      ]
+    },
+    {
+      "id": "set-angle-toward-position",
+      "name": "Set angle toward position",
+      "description": "Set the object's angle towards a position.",
+      "display_text": "Set angle toward ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "X position to set angle toward."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "Y position to set angle toward."
+        }
+      ]
+    },
+    {
+      "id": "set-visible",
+      "name": "Set visible",
+      "description": "Set whether the object is hidden or shown.",
+      "display_text": "Set visibility [b]{0}[/b]",
+      "params": [
+        {
+          "id": "visibility",
+          "name": "Visibility",
+          "description": "Choose whether the object is hidden, shown, or toggled.",
+          "options": [
+            {
+              "id": "invisible",
+              "label": "Invisible"
+            },
+            {
+              "id": "visible",
+              "label": "Visible"
+            },
+            {
+              "id": "toggle",
+              "label": "Toggle"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-opacity",
+      "name": "Set opacity",
+      "description": "Set how transparent the object appears.",
+      "display_text": "Set opacity to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "opacity",
+          "name": "Opacity",
+          "description": "Choose the object opacity, from 0 (transparent) to 100 (opaque)."
+        }
+      ]
+    },
+    {
+      "id": "set-effect-enabled",
+      "name": "Set effect enabled",
+      "description": "Enable or disable an effect on the object layout.",
+      "display_text": "{0} effect {1}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to enable or disable the effect.",
+          "options": [
+            {
+              "id": "disable",
+              "label": "Disable"
+            },
+            {
+              "id": "enable",
+              "label": "Enable"
+            }
+          ]
+        },
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the object effect to modify."
+        }
+      ]
+    },
+    {
+      "id": "set-effect-parameter",
+      "name": "Set effect parameter",
+      "description": "Set the value of a parameter in one of the object's effects.",
+      "display_text": "Set effect {0} parameter {1} to [b]{2}[/b]",
+      "params": [
+        {
+          "id": "effect",
+          "name": "Effect",
+          "description": "Choose the effect to modify."
+        },
+        {
+          "id": "parameter-index",
+          "name": "Parameter index",
+          "description": "Enter the zero-based index of the parameter to change, e.g. 0 = first param, 1 = second param, etc."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Enter the new parameter value."
+        }
+      ]
+    },
+    {
+      "id": "set-instvar-value",
+      "name": "Set value",
+      "description": "Set the value of an instance variable.",
+      "display_text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to store in this instance variable."
+        }
+      ]
+    },
+    {
+      "id": "add-to-instvar",
+      "name": "Add to",
+      "description": "Add to the value of an instance variable.",
+      "display_text": "Add [i]{1}[/i] to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to add to this instance variable."
+        }
+      ]
+    },
+    {
+      "id": "subtract-from-instvar",
+      "name": "Subtract from",
+      "description": "Subtract from the value of an instance variable.",
+      "display_text": "Subtract [i]{1}[/i] from [b]{0}[/b]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to subtract from this instance variable."
+        }
+      ]
+    },
+    {
+      "id": "set-boolean-instvar",
+      "name": "Set boolean",
+      "description": "Set the value of a boolean instance variable.",
+      "display_text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to change."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to store in this instance variable.",
+          "options": [
+            {
+              "id": "false",
+              "label": "False"
+            },
+            {
+              "id": "true",
+              "label": "True"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-boolean-instvar",
+      "name": "Toggle boolean",
+      "description": "Invert the value of a boolean instance variable.",
+      "display_text": "Toggle [b]{0}[/b]",
+      "params": [
+        {
+          "id": "instance-variable",
+          "name": "Instance variable",
+          "description": "Choose the instance variable to toggle."
+        }
+      ]
+    },
+    {
+      "id": "destroy",
+      "name": "Destroy",
+      "description": "Destroy the object.",
+      "display_text": "Destroy",
+      "params": []
+    },
+    {
+      "id": "set-from-json",
+      "name": "Set from JSON",
+      "description": "Load the state of the object from a JSON string.",
+      "display_text": "Set from JSON string [i]{0}[/i]",
+      "params": [
+        {
+          "id": "json",
+          "name": "JSON",
+          "description": "A string of JSON data from a previous AsJSON expression to load the object state from."
+        }
+      ]
+    },
+    {
+      "id": "set-x",
+      "name": "Set X",
+      "description": "Set the object's X co-ordinate.",
+      "display_text": "Set X to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "New X co-ordinate, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-y",
+      "name": "Set Y",
+      "description": "Set the object's Y co-ordinate.",
+      "display_text": "Set Y to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "New Y co-ordinate, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-position",
+      "name": "Set position",
+      "description": "Set the object's X and Y co-ordinates at the same time.",
+      "display_text": "Set position to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "x",
+          "name": "X",
+          "description": "New X co-ordinate, in pixels."
+        },
+        {
+          "id": "y",
+          "name": "Y",
+          "description": "New Y co-ordinate, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-position-to-another-object",
+      "name": "Set position to another object",
+      "description": "Position object relative to another object.",
+      "display_text": "Set position to {0} [i](image point {1})[/i]",
+      "params": [
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "Object to position by."
+        },
+        {
+          "id": "image-point-optional",
+          "name": "Image point (optional)",
+          "description": "The name or number of an image point in the object to position by.  Leave 0 for object's origin."
+        }
+      ]
+    },
+    {
+      "id": "move-forward",
+      "name": "Move forward",
+      "description": "Move object forwards a number of pixels at its current angle.",
+      "display_text": "Move forward [i]{0}[/i] pixels",
+      "params": [
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "Distance, in pixels, to move the object forwards at its current angle."
+        }
+      ]
+    },
+    {
+      "id": "move-at-angle",
+      "name": "Move at angle",
+      "description": "Move object a number of pixels at a given angle.",
+      "display_text": "Move [i]{1}[/i] pixels at angle [i]{0}[/i]",
+      "params": [
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": "Angle, in degrees, at which to move the object."
+        },
+        {
+          "id": "distance",
+          "name": "Distance",
+          "description": "Distance, in pixels, to move the object at the given angle."
+        }
+      ]
+    },
+    {
+      "id": "set-width",
+      "name": "Set width",
+      "description": "Set the object's width.",
+      "display_text": "Set width to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "New object width, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-height",
+      "name": "Set height",
+      "description": "Set the object's height.",
+      "display_text": "Set height to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "New object height, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name": "Set size",
+      "description": "Set the object's width and height at the same time.",
+      "display_text": "Set size to ([i]{0}[/i], [i]{1}[/i])",
+      "params": [
+        {
+          "id": "width",
+          "name": "Width",
+          "description": "New object width, in pixels."
+        },
+        {
+          "id": "height",
+          "name": "Height",
+          "description": "New object height, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "move-to-top",
+      "name": "Move to top",
+      "description": "Place the object at the top of its layer.",
+      "display_text": "Move to top of layer",
+      "params": []
+    },
+    {
+      "id": "move-to-bottom",
+      "name": "Move to bottom",
+      "description": "Place the object at the bottom of its layer.",
+      "display_text": "Move to bottom of layer",
+      "params": []
+    },
+    {
+      "id": "move-to-layer",
+      "name": "Move to layer",
+      "description": "Change the object's layer.",
+      "display_text": "Move to layer [b]{0}[/b]",
+      "params": [
+        {
+          "id": "layer",
+          "name": "Layer",
+          "description": "Layer name or number to move this object to.  The object will be placed at the top of this layer."
+        }
+      ]
+    },
+    {
+      "id": "move-to-object",
+      "name": "Move to object",
+      "description": "Move the object next to another object in the Z order.",
+      "display_text": "Move {0} {1}",
+      "params": [
+        {
+          "id": "where",
+          "name": "Where",
+          "description": "Choose whether to position just in front, or just behind, the other object.",
+          "options": [
+            {
+              "id": "in-front",
+              "label": "in front"
+            },
+            {
+              "id": "behind",
+              "label": "behind"
+            }
+          ]
+        },
+        {
+          "id": "object",
+          "name": "Object",
+          "description": "The object to move next to in the Z order."
+        }
+      ]
+    },
+    {
+      "id": "set-default-color",
+      "name": "Set color",
+      "description": "Set the color to apply to the object.",
+      "display_text": "Set color to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "color",
+          "name": "Color",
+          "description": "Choose the color to apply using an expression like rgbEx(100, 0, 0) for red."
+        }
+      ]
+    },
+    {
+      "id": "set-z-elevation",
+      "name": "Set Z elevation",
+      "description": "Set the object's Z elevation.",
+      "display_text": "Set Z elevation to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "z",
+          "name": "Z elevation",
+          "description": "New Z elevation. The camera starts at Z 100 looking down to Z 0."
+        }
+      ]
+    },
+    {
+      "id": "set-css-style",
+      "name": "Set CSS style",
+      "description": "Set a CSS style on the HTML element.",
+      "display_text": "Set CSS style [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "property-name",
+          "name": "Property name",
+          "description": "A CSS property name to set on the HTML element."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "A string to assign as the value for this CSS property."
+        }
+      ]
+    },
+    {
+      "id": "set-elem-attribute",
+      "name": "Set attribute",
+      "description": "Set the value of an attribute on the HTML element.",
+      "display_text": "Set attribute [b]{0}[/b] to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "attribute-name",
+          "name": "Attribute",
+          "description": "The name of the attribute to set."
+        },
+        {
+          "id": "attribute-value",
+          "name": "Value",
+          "description": "The value to set the attribute to."
+        }
+      ]
+    },
+    {
+      "id": "remove-elem-attribute",
+      "name": "Remove attribute",
+      "description": "Remove an attribute from the HTML element.",
+      "display_text": "Remove attribute [b]{0}[/b]",
+      "params": [
+        {
+          "id": "attribute-name",
+          "name": "Attribute",
+          "description": "The name of the attribute to set."
+        }
+      ]
+    },
+    {
+      "id": "set-focused",
+      "name": "Set focused",
+      "description": "Set the input focus to the element.",
+      "display_text": "Set focused",
+      "params": []
+    },
+    {
+      "id": "set-unfocused",
+      "name": "Set unfocused",
+      "description": "Remove the input focus from the element.",
+      "display_text": "Set unfocused",
+      "params": []
+    },
+    {
+      "id": "set-enabled",
+      "name": "Set enabled",
+      "description": "Enable or disable the element.",
+      "display_text": "Set [b]{0}[/b]",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Choose whether to enable or disable the element.",
+          "options": [
+            {
+              "id": "disabled",
+              "label": "Disabled"
+            },
+            {
+              "id": "enabled",
+              "label": "Enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "add-child",
+      "name": "Add child",
+      "description": "Add a child to this object, making it follow the movement of this object.",
+      "display_text": "Add child {0} (X: [i]{1}[/i], Y: [i]{2}[/i], width: [i]{3}[/i], height: [i]{4}[/i], angle: [i]{5}[/i], opacity: [i]{6}[/i], Z elevation: [i]{7}[/i], visibility: [i]{8}[/i], destroy with parent: [i]{9}[/i])",
+      "params": [
+        {
+          "id": "child",
+          "name": "Child",
+          "description": "The object to set as a child."
+        },
+        {
+          "id": "destroy-with-parent",
+          "name": "Destroy with parent",
+          "description": "Whether to also destroy this instance when its parent is destroyed."
+        },
+        {
+          "id": "transform-x",
+          "name": "X",
+          "description": "Transform with the parent's X position."
+        },
+        {
+          "id": "transform-y",
+          "name": "Y",
+          "description": "Transform with the parent's Y position."
+        },
+        {
+          "id": "transform-w",
+          "name": "Width",
+          "description": "Transform with the parent's width."
+        },
+        {
+          "id": "transform-h",
+          "name": "Height",
+          "description": "Transform with the parent's height."
+        },
+        {
+          "id": "transform-a",
+          "name": "Angle",
+          "description": "Transform with the parent's angle."
+        },
+        {
+          "id": "transform-z-elevation",
+          "name": "Z elevation",
+          "description": "Transform with the parent's Z elevation."
+        },
+        {
+          "id": "transform-o",
+          "name": "Opacity",
+          "description": "Transform with the parent's opacity."
+        },
+        {
+          "id": "transform-visibility",
+          "name": "Visibility",
+          "description": "Transform with the parent's visibility."
+        }
+      ]
+    },
+    {
+      "id": "remove-child",
+      "name": "Remove child",
+      "description": "Remove a child from this object, detaching it so it no longer follows this object.",
+      "display_text": "Remove child {0}",
+      "params": [
+        {
+          "id": "child",
+          "name": "Child",
+          "description": "The object to remove from the parent."
+        }
+      ]
+    },
+    {
+      "id": "remove-from-parent",
+      "name": "Remove from parent",
+      "description": "Remove from the parent object (if any), detaching it so it no longer follows the parent.",
+      "display_text": "Remove from parent",
+      "params": []
+    },
+    {
+      "id": "set-mesh-size",
+      "name": "Set mesh size",
+      "description": "Create or remove a mesh of points across the object. A mesh allows for distortion by moving the points.",
+      "display_text": "Set mesh [i]{0}[/i] x [i]{1}[/i]",
+      "params": [
+        {
+          "id": "cols",
+          "name": "Columns",
+          "description": "Number of mesh points horizontally. Use at least 2 to create a mesh, or 0 to remove the mesh."
+        },
+        {
+          "id": "rows",
+          "name": "Rows",
+          "description": "Number of mesh points vertically. Use at least 2 to create a mesh, or 0 to remove the mesh."
+        }
+      ]
+    },
+    {
+      "id": "set-mesh-point",
+      "name": "Set mesh point",
+      "description": "Set the position and texture co-ordinates of a point on the object's mesh.",
+      "display_text": "Set mesh point ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i] position ([i]{3}[/i], [i]{4}[/i]), Z elevation [i]{5}[/i], texture ([i]{6}[/i], [i]{7}[/i])",
+      "params": [
+        {
+          "id": "col",
+          "name": "Column",
+          "description": "Zero-based column number of the mesh point to set."
+        },
+        {
+          "id": "row",
+          "name": "Row",
+          "description": "Zero-based row number of the mesh point to set."
+        },
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether to set points using absolute values within the object's box, or apply a relative displacement from its default position.",
+          "options": [
+            {
+              "id": "absolute",
+              "label": "Absolute"
+            },
+            {
+              "id": "relative",
+              "label": "Relative"
+            }
+          ]
+        },
+        {
+          "id": "posx",
+          "name": "Position X",
+          "description": "X position of the mesh point, from 0-1 within to the object's box."
+        },
+        {
+          "id": "posy",
+          "name": "Position Y",
+          "description": "Y position of the mesh point, from 0-1 within to the object's box."
+        },
+        {
+          "id": "texx",
+          "name": "Texture X",
+          "description": "X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+        },
+        {
+          "id": "texy",
+          "name": "Texture Y",
+          "description": "Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+        },
+        {
+          "id": "z-elevation",
+          "name": "Z elevation",
+          "description": "Z elevation of the mesh point, as an absolute value (relative mode does not apply). Negative Z elevations are not allowed."
+        }
+      ]
+    },
+    {
+      "id": "change-tags",
+      "name": "Change tags",
+      "description": "Add, remove or replace tags for this instance.",
+      "display_text": "{0} tags [i]{1}[/i]",
+      "params": [
+        {
+          "id": "tags",
+          "name": "Tags",
+          "description": "A space separated list of tags to add, remove or replace."
+        },
+        {
+          "id": "action",
+          "name": "Action",
+          "description": "What to do with the passed in tags.",
+          "options": [
+            {
+              "id": "add",
+              "label": "Add"
+            },
+            {
+              "id": "remove",
+              "label": "Remove"
+            },
+            {
+              "id": "replace",
+              "label": "Replace"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "instance-wait-for-signal",
+      "name": "Wait for signal",
+      "description": "Wait until a corresponding 'Signal' action is used.",
+      "display_text": "Wait for signal [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag of the signal to wait for. This will wait until the corresponding 'Signal' action is used."
+        }
+      ]
+    },
+    {
+      "id": "instance-signal",
+      "name": "Signal",
+      "description": "Trigger 'On signal' and resume any 'Wait for signal' actions.",
+      "display_text": "Signal [b]{0}[/b]",
+      "params": [
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "The tag to signal."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "angle",
+      "name": "Angle",
+      "description": "Get the object's current angle, in degrees.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "opacity",
+      "name": "Opacity",
+      "description": "Get the object's current opacity, from 0 (transparent) to 100 (opaque).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "count",
+      "name": "Count",
+      "description": "Get the total number of instances of this object type.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "pickedcount",
+      "name": "PickedCount",
+      "description": "Get the number of instances matching the event's conditions.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "uid",
+      "name": "UID",
+      "description": "Get the instance's unique ID (UID).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "iid",
+      "name": "IID",
+      "description": "Get the instance's index ID (IID).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "asjson",
+      "name": "AsJSON",
+      "description": "Save the object state to a string in JSON format.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "description": "Get the object's X co-ordinate, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "y",
+      "name": "Y",
+      "description": "Get the object's Y co-ordinate, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "width",
+      "name": "Width",
+      "description": "Get the object's width, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "height",
+      "name": "Height",
+      "description": "Get the object's height, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxleft",
+      "name": "BBoxLeft",
+      "description": "Get the left edge of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxtop",
+      "name": "BBoxTop",
+      "description": "Get the top edge of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxright",
+      "name": "BBoxRight",
+      "description": "Get the right edge of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxbottom",
+      "name": "BBoxBottom",
+      "description": "Get the bottom edge of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "dt",
+      "name": "dt",
+      "description": "Get delta-time for this object (in case it has its own timescale).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layernumber",
+      "name": "LayerNumber",
+      "description": "Get the layer number this object is on.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "layername",
+      "name": "LayerName",
+      "description": "Get the name of the layer this object is on.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "zindex",
+      "name": "ZIndex",
+      "description": "Get the Z index of this object on its current layer.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "z-elevation",
+      "name": "ZElevation",
+      "description": "Get the Z elevation relative to its layer.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "total-z-elevation",
+      "name": "TotalZElevation",
+      "description": "Get the total Z elevation taking in to account the layer Z elevation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "objecttypename",
+      "name": "ObjectTypeName",
+      "description": "Get the name of the object type the instance belongs to.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "color-value",
+      "name": "ColorValue",
+      "description": "Get the object's current color.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "child-count",
+      "name": "ChildCount",
+      "description": "Get the number of children connected to this object in the hierarchy.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mesh-columns",
+      "name": "MeshColumns",
+      "description": "Get the number of columns on the object's mesh, or 0 if no mesh in use.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mesh-rows",
+      "name": "MeshRows",
+      "description": "Get the number of rows on the object's mesh, or 0 if no mesh in use.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "all-child-count",
+      "name": "AllChildCount",
+      "description": "Get the number of children connected to this object in the hierarchy, including all descendants.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "template-name",
+      "name": "TemplateName",
+      "description": "Get the name of the template used to create an instance.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxmidx",
+      "name": "BBoxMidX",
+      "description": "Get the X co-ordinate of the middle of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "bboxmidy",
+      "name": "BBoxMidY",
+      "description": "Get the Y co-ordinate of the middle of the object's bounding box, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-tags",
+      "name": "Tags",
+      "description": "Get the tags of an instance.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-tags-count",
+      "name": "TagsCount",
+      "description": "Get the amount of tags of an instance.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "get-tag-at",
+      "name": "TagAt",
+      "description": "Get the tag at the given index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "0 based index of a tag."
+        }
+      ]
+    },
+    {
+      "id": "parent-uid",
+      "name": "ParentUID",
+      "description": "The UID of this object's parent in the hierarchy, or -1 if none.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 36,
+    "actions": 46,
+    "expressions": 34
+  }
+}

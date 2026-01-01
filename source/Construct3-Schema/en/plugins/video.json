@@ -1,0 +1,313 @@
+{
+  "id": "video",
+  "name": "Video",
+  "description": "Play back a video in the project.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-playing",
+      "name": "Is playing",
+      "description": "True if video is currently playing.",
+      "display_text": "Is playing",
+      "params": []
+    },
+    {
+      "id": "is-paused",
+      "name": "Is paused",
+      "description": "True if video is currently paused.",
+      "display_text": "Is paused",
+      "params": []
+    },
+    {
+      "id": "has-ended",
+      "name": "Has ended",
+      "description": "True if video has finished playing.",
+      "display_text": "Has ended",
+      "params": []
+    },
+    {
+      "id": "is-muted",
+      "name": "Is muted",
+      "description": "True if video sound is muted.",
+      "display_text": "Is muted",
+      "params": []
+    },
+    {
+      "id": "on-playback-event",
+      "name": "On playback event",
+      "description": "Triggered when a playback event occurs.",
+      "display_text": "On {0}",
+      "params": [
+        {
+          "id": "event",
+          "name": "Event",
+          "description": "The playback event to check for.",
+          "options": [
+            {
+              "id": "can-play",
+              "label": "Can play"
+            },
+            {
+              "id": "can-play-through",
+              "label": "Can play through"
+            },
+            {
+              "id": "ended",
+              "label": "Ended"
+            },
+            {
+              "id": "error",
+              "label": "Error"
+            },
+            {
+              "id": "started-loading",
+              "label": "Started loading"
+            },
+            {
+              "id": "played",
+              "label": "Played"
+            },
+            {
+              "id": "paused",
+              "label": "Paused"
+            },
+            {
+              "id": "stalled",
+              "label": "Stalled"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-playback-time",
+      "name": "Set playback time",
+      "description": "Set the current playback time in seconds.",
+      "display_text": "Set playback time to [b]{0}[/b] seconds",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "Playback time in seconds to seek to."
+        }
+      ]
+    },
+    {
+      "id": "set-looping",
+      "name": "Set looping",
+      "description": "Set whether the video loops when it reaches the end.",
+      "display_text": "Set {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether or not the video should loop when it reaches the end.",
+          "options": [
+            {
+              "id": "not-looping",
+              "label": "not looping"
+            },
+            {
+              "id": "looping",
+              "label": "looping"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-muted",
+      "name": "Set muted",
+      "description": "Set whether the audio is muted.",
+      "display_text": "Set {0}",
+      "params": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "description": "Whether or not the audio should be muted.",
+          "options": [
+            {
+              "id": "not-muted",
+              "label": "not muted"
+            },
+            {
+              "id": "muted",
+              "label": "muted"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-volume",
+      "name": "Set volume",
+      "description": "Set the volume of the accompanying audio.",
+      "display_text": "Set volume to [b]{0}[/b] dB",
+      "params": [
+        {
+          "id": "volume",
+          "name": "Volume",
+          "description": "The volume of the audio to set, in dB attenuation."
+        }
+      ]
+    },
+    {
+      "id": "pause",
+      "name": "Pause",
+      "description": "Pause the current playback.",
+      "display_text": "Pause",
+      "params": []
+    },
+    {
+      "id": "play",
+      "name": "Play",
+      "description": "Start playing the video if stopped or paused. On mobile, may only work in a user input trigger.",
+      "display_text": "Play",
+      "params": []
+    },
+    {
+      "id": "set-playback-rate",
+      "name": "Set playback rate",
+      "description": "Set how fast the video plays, as a multiplier of its original speed.",
+      "display_text": "Set playback rate to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "rate",
+          "name": "Rate",
+          "description": "The playback rate to set. 1 is original speed, 2 is double speed, etc."
+        }
+      ]
+    },
+    {
+      "id": "set-source-2",
+      "name": "Set source",
+      "description": "Switch to a different video. This does not automatically start playing it.",
+      "display_text": "Set video primary source [i]{0}[/i] ({1}), secondary source [i]{2}[/i] ({3})",
+      "params": [
+        {
+          "id": "primary-source",
+          "name": "Primary source",
+          "description": "File name of primary video source to use if supported."
+        },
+        {
+          "id": "primary-format",
+          "name": "Primary format",
+          "description": "The container format and video codec of the primary source.",
+          "options": [
+            {
+              "id": "webm-vp8",
+              "label": "WebM VP8"
+            },
+            {
+              "id": "webm-vp9",
+              "label": "WebM VP9"
+            },
+            {
+              "id": "webm-av1",
+              "label": "WebM AV1"
+            },
+            {
+              "id": "mp4-h264",
+              "label": "MP4 H.264"
+            },
+            {
+              "id": "mp4-h265",
+              "label": "MP4 H.265"
+            },
+            {
+              "id": "mp4-av1",
+              "label": "MP4 AV1"
+            }
+          ]
+        },
+        {
+          "id": "secondary-source",
+          "name": "Secondary source",
+          "description": "File name of secondary video source to use if the primary format is not supported."
+        },
+        {
+          "id": "secondary-format",
+          "name": "Secondary format",
+          "description": "The container format and video codec of the secondary source.",
+          "options": [
+            {
+              "id": "webm-vp8",
+              "label": "WebM VP8"
+            },
+            {
+              "id": "webm-vp9",
+              "label": "WebM VP9"
+            },
+            {
+              "id": "webm-av1",
+              "label": "WebM AV1"
+            },
+            {
+              "id": "mp4-h264",
+              "label": "MP4 H.264"
+            },
+            {
+              "id": "mp4-h265",
+              "label": "MP4 H.265"
+            },
+            {
+              "id": "mp4-av1",
+              "label": "MP4 AV1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "playbacktime",
+      "name": "PlaybackTime",
+      "description": "Current playback time in seconds.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "duration",
+      "name": "Duration",
+      "description": "Video duration in seconds, if known.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "volume",
+      "name": "Volume",
+      "description": "Current video volume in dB attenuation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videowidth",
+      "name": "VideoWidth",
+      "description": "The width of the source video.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "videoheight",
+      "name": "VideoHeight",
+      "description": "The height of the source video.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "playbackrate",
+      "name": "PlaybackRate",
+      "description": "Current playback rate, 1 being normal speed.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 5,
+    "actions": 8,
+    "expressions": 6
+  }
+}

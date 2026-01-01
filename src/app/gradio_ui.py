@@ -42,10 +42,16 @@ def get_rag():
     return _rag
 
 
-def ask(question: str) -> str:
+def ask_stream(question: str):
+    """流式生成回答"""
     if not question.strip():
-        return ""
-    return get_rag().answer(question).answer
+        yield ""
+        return
+    rag = get_rag()
+    response = ""
+    for chunk in rag.answer_stream(question):
+        response += chunk
+        yield response
 
 
 def main():
@@ -65,15 +71,10 @@ def main():
                 elem_classes="input-box"
             )
             btn = gr.Button("提交", elem_classes="submit-btn")
-            out = gr.HTML(elem_classes="output-box")
+            out = gr.Markdown(elem_classes="output-box")
 
-        def format_output(q):
-            answer = ask(q)
-            # 转换换行为 <br>，保留格式
-            return answer.replace("\n", "<br>") if answer else ""
-
-        btn.click(format_output, inp, out)
-        inp.submit(format_output, inp, out)
+        btn.click(ask_stream, inp, out)
+        inp.submit(ask_stream, inp, out)
 
     demo.launch(
         server_name="127.0.0.1",

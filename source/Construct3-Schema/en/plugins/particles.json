@@ -1,0 +1,502 @@
+{
+  "id": "particles",
+  "name": "Particles",
+  "description": "Create a spray of particles.  Useful for visual effects.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "is-spraying",
+      "name": "Is spraying",
+      "description": "True if the continuous spray is currently enabled.",
+      "display_text": "Is spraying",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name": "Set blend mode",
+      "description": "Set the background blend mode for this object.",
+      "display_text": "Set blend mode to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "blend-mode",
+          "name": "Blend mode",
+          "description": "Choose the new blend mode for this object.",
+          "options": [
+            {
+              "id": "normal",
+              "label": "Normal"
+            },
+            {
+              "id": "additive",
+              "label": "Additive"
+            },
+            {
+              "id": "xor",
+              "label": "XOR"
+            },
+            {
+              "id": "copy",
+              "label": "Copy"
+            },
+            {
+              "id": "destination-over",
+              "label": "Destination over"
+            },
+            {
+              "id": "source-in",
+              "label": "Source in"
+            },
+            {
+              "id": "destination-in",
+              "label": "Destination in"
+            },
+            {
+              "id": "source-out",
+              "label": "Source out"
+            },
+            {
+              "id": "destination-out",
+              "label": "Destination out"
+            },
+            {
+              "id": "source-atop",
+              "label": "Source atop"
+            },
+            {
+              "id": "destination-atop",
+              "label": "Destination atop"
+            },
+            {
+              "id": "lighten",
+              "label": "Lighten"
+            },
+            {
+              "id": "darken",
+              "label": "Darken"
+            },
+            {
+              "id": "multiply",
+              "label": "Multiply"
+            },
+            {
+              "id": "screen",
+              "label": "Screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-speed",
+      "name": "Set speed",
+      "description": "Set the initial particle speed.",
+      "display_text": "Set initial particle speed to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed",
+          "name": "Speed",
+          "description": "Initial particle speed, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name": "Set size",
+      "description": "Set the initial size of each particle.",
+      "display_text": "Set initial particle size to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "size",
+          "name": "Size",
+          "description": "Initial size of each particle, in pixels."
+        }
+      ]
+    },
+    {
+      "id": "set-init-opacity",
+      "name": "Set opacity",
+      "description": "Set the initial particle opacity.",
+      "display_text": "Set initial particle opacity to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "opacity",
+          "name": "Opacity",
+          "description": "Initial opacity of each particle, from 0 (transparent) to 100 (opaque)."
+        }
+      ]
+    },
+    {
+      "id": "set-grow-rate",
+      "name": "Set grow rate",
+      "description": "Set the initial particle grow rate.",
+      "display_text": "Set grow rate to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "grow-rate",
+          "name": "Grow rate",
+          "description": "Rate the size changes over time, in pixels per second."
+        }
+      ]
+    },
+    {
+      "id": "set-x-randomiser",
+      "name": "Set X randomiser",
+      "description": "Set the initial particle X randomiser.",
+      "display_text": "Set initial particle X randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "x-randomiser",
+          "name": "X randomiser",
+          "description": "Random X co-ordinate offset on creation."
+        }
+      ]
+    },
+    {
+      "id": "set-y-randomiser",
+      "name": "Set Y randomiser",
+      "description": "Set the initial particle Y randomiser.",
+      "display_text": "Set initial particle Y randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "y-randomiser",
+          "name": "Y randomiser",
+          "description": "Random Y co-ordinate offset on creation."
+        }
+      ]
+    },
+    {
+      "id": "set-initial-speed-randomiser",
+      "name": "Set speed randomiser",
+      "description": "Set the random addition to particle speed on creation.",
+      "display_text": "Set initial particle speed randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed-randomiser",
+          "name": "Speed randomiser",
+          "description": "Random addition to particle speed on creation."
+        }
+      ]
+    },
+    {
+      "id": "set-size-randomiser",
+      "name": "Set size randomiser",
+      "description": "Set the random addition to particle size on creation.",
+      "display_text": "Set initial particle size randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "size-randomiser",
+          "name": "Size randomiser",
+          "description": "Random addition to particle size on creation."
+        }
+      ]
+    },
+    {
+      "id": "set-grow-rate-randomiser",
+      "name": "Set grow rate randomiser",
+      "description": "Set the random addition to particle grow rate on creation.",
+      "display_text": "Set initial particle grow rate randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "grow-rate-randomiser",
+          "name": "Grow rate randomiser",
+          "description": "Random addition to particle grow rate on creation."
+        }
+      ]
+    },
+    {
+      "id": "set-acceleration",
+      "name": "Set acceleration",
+      "description": "Set the particle acceleration.",
+      "display_text": "Set particle acceleration to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "acceleration",
+          "name": "Acceleration",
+          "description": "Particle acceleration, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-gravity",
+      "name": "Set gravity",
+      "description": "Set the force of gravity.",
+      "display_text": "Set particle gravity to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "gravity",
+          "name": "Gravity",
+          "description": "Force of gravity, in pixels per second per second."
+        }
+      ]
+    },
+    {
+      "id": "set-angle-randomiser",
+      "name": "Set angle randomiser",
+      "description": "Set the random angle deflection over time.",
+      "display_text": "Set particle angle randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "angle-randomiser",
+          "name": "Angle randomiser",
+          "description": "Random angle deflection over time."
+        }
+      ]
+    },
+    {
+      "id": "set-life-speed-randomiser",
+      "name": "Set speed randomiser",
+      "description": "Set the random speed adjustment over time.",
+      "display_text": "Set particle speed randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "speed-randomiser",
+          "name": "Speed randomiser",
+          "description": "Random speed adjustment over time."
+        }
+      ]
+    },
+    {
+      "id": "set-opacity-randomiser",
+      "name": "Set opacity randomiser",
+      "description": "Set the random opacity adjustment over time.",
+      "display_text": "Set particle opacity randomiser to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "opacity-randomiser",
+          "name": "Opacity randomiser",
+          "description": "Random opacity adjustment over time."
+        }
+      ]
+    },
+    {
+      "id": "set-timeout",
+      "name": "Set timeout",
+      "description": "Set the destroy timeout or fade to invisible time.",
+      "display_text": "Set particle timeout to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "timeout",
+          "name": "Timeout",
+          "description": "Time in seconds for timeout or fade to invisible (depending on destroy mode)."
+        }
+      ]
+    },
+    {
+      "id": "set-spraying",
+      "name": "Set spraying",
+      "description": "Enable or disable the continuous spray.",
+      "display_text": "Set {0}",
+      "params": [
+        {
+          "id": "state",
+          "name": "State",
+          "description": "Whether or not the spray is currently enabled.",
+          "options": [
+            {
+              "id": "not-spraying",
+              "label": "not spraying"
+            },
+            {
+              "id": "spraying",
+              "label": "spraying"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set-rate",
+      "name": "Set rate",
+      "description": "Set the number of particles created per second.",
+      "display_text": "Set rate to [i]{0}[/i]",
+      "params": [
+        {
+          "id": "rate",
+          "name": "Rate",
+          "description": "Number of particles to create per second."
+        }
+      ]
+    },
+    {
+      "id": "set-spray-cone",
+      "name": "Set spray cone",
+      "description": "Set the number of degrees through which particles are created.",
+      "display_text": "Set spray cone to [i]{0}[/i] degrees",
+      "params": [
+        {
+          "id": "spray-cone",
+          "name": "Spray cone",
+          "description": "Number of degrees through which particles are created."
+        }
+      ]
+    },
+    {
+      "id": "set-particle-object",
+      "name": "Set particle object",
+      "description": "Set an object to spawn as particles instead of using the particle image.",
+      "display_text": "Set particle object to {0}",
+      "params": [
+        {
+          "id": "object",
+          "name": "Particle object",
+          "description": "The object to spawn as particles."
+        }
+      ]
+    },
+    {
+      "id": "unset-particle-object",
+      "name": "Unset particle object",
+      "description": "Remove any object set to spawn as particles, reverting back to using the particle image.",
+      "display_text": "Unset particle object",
+      "params": []
+    },
+    {
+      "id": "fast-forward",
+      "name": "Fast-forward",
+      "description": "Skip the particle effect forwards in time. Useful for preparing an initial particle effect.",
+      "display_text": "Fast-forward [i]{0}[/i] seconds",
+      "params": [
+        {
+          "id": "time",
+          "name": "Time",
+          "description": "The amount of time in seconds to advance the particle effect by."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "initspeed",
+      "name": "InitSpeed",
+      "description": "The initial particle speed, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initsize",
+      "name": "InitSize",
+      "description": "The initial particle size, in pixels.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initopacity",
+      "name": "InitOpacity",
+      "description": "The initial particle opacity, from 0 (transparent) to 100 (opaque).",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initgrowrate",
+      "name": "InitGrowRate",
+      "description": "The initial particle grow rate, in pixels per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "xrandom",
+      "name": "XRandom",
+      "description": "The random X offset on creation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "yrandom",
+      "name": "YRandom",
+      "description": "The random Y offset on creation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initspeedrandom",
+      "name": "InitSpeedRandom",
+      "description": "The random addition to particle speed on creation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initsizerandom",
+      "name": "InitSizeRandom",
+      "description": "The random addition to particle size on creation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "initgrowrandom",
+      "name": "InitGrowRandom",
+      "description": "The random addition to particle grow rate on creation.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleacceleration",
+      "name": "ParticleAcceleration",
+      "description": "The particle acceleration in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "gravity",
+      "name": "Gravity",
+      "description": "The force of gravity in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleanglerandom",
+      "name": "ParticleAngleRandom",
+      "description": "The maximum random angle deflection in degrees per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particlespeedrandom",
+      "name": "ParticleSpeedRandom",
+      "description": "The maximum random change in speed in pixels per second per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particleopacityrandom",
+      "name": "ParticleOpacityRandom",
+      "description": "The maximum change in opacity per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "timeout",
+      "name": "Timeout",
+      "description": "The destroy or fade to invisible timeout.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "particlecount",
+      "name": "ParticleCount",
+      "description": "Return the number of particles.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "rate",
+      "name": "Rate",
+      "description": "The number of particles created per second.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "spraycone",
+      "name": "SprayCone",
+      "description": "The number of degrees through which particles are created.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 1,
+    "actions": 22,
+    "expressions": 18
+  }
+}

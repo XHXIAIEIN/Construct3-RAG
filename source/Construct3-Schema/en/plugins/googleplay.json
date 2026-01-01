@@ -1,0 +1,721 @@
+{
+  "id": "googleplay",
+  "name": "Google Play",
+  "description": "Access Google Play Game Services.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-achievement-list-success",
+      "name": "On achievement list success",
+      "description": "Triggered after a 'List achievements' action if the list received successfully.",
+      "display_text": "On achievement list success",
+      "params": []
+    },
+    {
+      "id": "on-achievement-list-fail",
+      "name": "On achievement list fail",
+      "description": "Triggered after a 'List achievements' action if the request failed.",
+      "display_text": "On achievement list fail",
+      "params": []
+    },
+    {
+      "id": "compare-achievement-state",
+      "name": "Compare achievement state",
+      "description": "Test if an achievement at an index is hidden, revealed or unlocked.",
+      "display_text": "Achievement [i]{0}[/i] is {1}",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Index of the achievement."
+        },
+        {
+          "id": "state",
+          "name": "State",
+          "description": "The state of the achievement to test.",
+          "options": [
+            {
+              "id": "hidden",
+              "label": "hidden"
+            },
+            {
+              "id": "revealed",
+              "label": "revealed"
+            },
+            {
+              "id": "unlocked",
+              "label": "unlocked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on-achievement-metadata-success",
+      "name": "On achievement metadata success",
+      "description": "Triggered after a 'Get metadata' action if the data received successfully.",
+      "display_text": "On achievement metadata success",
+      "params": []
+    },
+    {
+      "id": "on-achievement-metadata-fail",
+      "name": "On achievement metadata fail",
+      "description": "Triggered after a 'Get metadata' action if the request failed.",
+      "display_text": "On achievement metadata fail",
+      "params": []
+    },
+    {
+      "id": "on-achievement-revealed",
+      "name": "On achievement revealed",
+      "description": "Triggered after 'Reveal' when the achievement has been successfully revealed.",
+      "display_text": "On achievement [b]{0}[/b] revealed",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "ID of the achievement that was revealed."
+        }
+      ]
+    },
+    {
+      "id": "on-achievement-unlocked",
+      "name": "On achievement unlocked",
+      "description": "Triggered after 'Unlock' or when an incremental achievement's steps have been fulfilled.",
+      "display_text": "On achievement [b]{0}[/b] unlocked",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "ID of the achievement that was unlocked."
+        }
+      ]
+    },
+    {
+      "id": "is-loaded",
+      "name": "Is loaded",
+      "description": "True if 'On loaded' has fired and the plugin is ready to use.",
+      "display_text": "Is loaded",
+      "params": []
+    },
+    {
+      "id": "on-signed-in",
+      "name": "On signed in",
+      "description": "Triggered when the user successfully signs in.",
+      "display_text": "On signed in",
+      "params": []
+    },
+    {
+      "id": "is-signed-in",
+      "name": "Is signed in",
+      "description": "True if the user is currently signed in.",
+      "display_text": "Is signed in",
+      "params": []
+    },
+    {
+      "id": "on-error",
+      "name": "On error",
+      "description": "Triggered if an error occurs in the game services.",
+      "display_text": "On error",
+      "params": []
+    },
+    {
+      "id": "on-player-details-received",
+      "name": "On player details received",
+      "description": "Triggered after 'Request player details', when the response has been received.",
+      "display_text": "On player details received",
+      "params": []
+    },
+    {
+      "id": "on-signed-out",
+      "name": "On signed out",
+      "description": "Triggered when the user signs out.",
+      "display_text": "On signed out",
+      "params": []
+    },
+    {
+      "id": "on-auto-sign-in-failed",
+      "name": "On auto-sign in failed",
+      "description": "Triggered on startup if the user could not be automatically logged in. It will be necessary to use the 'Sign in' action.",
+      "display_text": "On auto-sign in failed",
+      "params": []
+    },
+    {
+      "id": "on-score-submit-success",
+      "name": "On score submit success",
+      "description": "Triggered after a 'Submit score' action if the score was submitted successfully.",
+      "display_text": "On score submit success",
+      "params": []
+    },
+    {
+      "id": "on-score-submit-fail",
+      "name": "On score submit fail",
+      "description": "Triggered after a 'Submit score' action if the score failed to submitted successfully.",
+      "display_text": "On score submit fail",
+      "params": []
+    },
+    {
+      "id": "on-hi-score-request-success",
+      "name": "On hi-score request success",
+      "description": "Triggered after a 'Request hi-scores' action if the scores were received successfully.",
+      "display_text": "On hi-score request success",
+      "params": []
+    },
+    {
+      "id": "on-hi-score-request-fail",
+      "name": "On hi-score request fail",
+      "description": "Triggered after a 'Request hi-scores' action if the request failed.",
+      "display_text": "On hi-score request fail",
+      "params": []
+    },
+    {
+      "id": "on-sign-in-fail",
+      "name": "On sign in failed",
+      "description": "Triggered when the user did not sign in. This might be because the user cancelled or due to an error.",
+      "display_text": "On sign in failed",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "list-achievements",
+      "name": "List achievements",
+      "description": "Request a list of achievements for the current player.",
+      "display_text": "Request list of {0} achievements. Force reload: {1}",
+      "params": [
+        {
+          "id": "which",
+          "name": "Which",
+          "description": "Which achievements to request a list of.",
+          "options": [
+            {
+              "id": "all",
+              "label": "all"
+            },
+            {
+              "id": "hidden",
+              "label": "hidden"
+            },
+            {
+              "id": "revealed",
+              "label": "revealed"
+            },
+            {
+              "id": "unlocked",
+              "label": "unlocked"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "Force reload",
+          "description": "Ensure that the results are up to date, and not from the cache."
+        }
+      ]
+    },
+    {
+      "id": "get-metadata",
+      "name": "Get metadata",
+      "description": "Request achievements metadata (name, description etc.) allowing the corresponding expressions to return the correct values.",
+      "display_text": "Request achievements metadata. Force reload: {0}",
+      "params": [
+        {
+          "id": "reload",
+          "name": "Force reload",
+          "description": "Ensure that the results are up to date, and not from the cache."
+        }
+      ]
+    },
+    {
+      "id": "reveal",
+      "name": "Reveal",
+      "description": "Reveal a hidden achievement.",
+      "display_text": "Reveal achievement [b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "Achievement ID to reveal."
+        }
+      ]
+    },
+    {
+      "id": "unlock",
+      "name": "Unlock",
+      "description": "Unlock an achievement.",
+      "display_text": "Unlock achievement [b]{0}[/b]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "Achievement ID to unlock."
+        }
+      ]
+    },
+    {
+      "id": "increment",
+      "name": "Increment",
+      "description": "Add steps to an incremental achievement.",
+      "display_text": "Increment achievement [b]{0}[/b] by [i]{1}[/i] steps",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "Achievement ID to increment."
+        },
+        {
+          "id": "steps",
+          "name": "Steps",
+          "description": "Number of steps to increment the achievement by."
+        }
+      ]
+    },
+    {
+      "id": "set-steps",
+      "name": "Set steps",
+      "description": "Set the steps progress of an incremental achievement.",
+      "display_text": "Set achievement [b]{0}[/b] steps to [i]{1}[/i]",
+      "params": [
+        {
+          "id": "achievement-id",
+          "name": "Achievement ID",
+          "description": "Achievement ID to increment."
+        },
+        {
+          "id": "steps",
+          "name": "Steps",
+          "description": "Number of steps to set the achievement progress to. The steps cannot be reduced."
+        }
+      ]
+    },
+    {
+      "id": "request-player-details",
+      "name": "Request player details",
+      "description": "If signed in, request the details of the signed in player.",
+      "display_text": "Request player details",
+      "params": []
+    },
+    {
+      "id": "sign-in",
+      "name": "Sign in",
+      "description": "Request the player to sign in.",
+      "display_text": "Sign in",
+      "params": []
+    },
+    {
+      "id": "sign-out",
+      "name": "Sign out",
+      "description": "Sign out if already signed in. NOTE: not supported in Android apps.",
+      "display_text": "Sign out",
+      "params": []
+    },
+    {
+      "id": "submit-score",
+      "name": "Submit score",
+      "description": "Submit a score to a leaderboard.",
+      "display_text": "Submit score [b]{1}[/b] (tag [i]{2}[/i]) to leaderboard [i]{0}[/i]",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "Leaderboard ID",
+          "description": "Leaderboard ID to submit the score to."
+        },
+        {
+          "id": "score",
+          "name": "Score",
+          "description": "The score to submit to the leaderboard."
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "description": "Up to 64 extra characters to submit along with this score."
+        }
+      ]
+    },
+    {
+      "id": "request-hi-scores",
+      "name": "Request hi-scores",
+      "description": "Request a list of scores from a leaderboard.",
+      "display_text": "Request {1} {2} hi-scores from [b]{0}[/b] ([i]{3}[/i] results, [i]{4}[/i]). Force reload: {5}",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "Leaderboard ID",
+          "description": "Leaderboard ID to request scores from."
+        },
+        {
+          "id": "collection",
+          "name": "Collection",
+          "description": "Whether to return all scores, or scores relating to the current player.",
+          "options": [
+            {
+              "id": "public",
+              "label": "public"
+            },
+            {
+              "id": "social",
+              "label": "social"
+            }
+          ]
+        },
+        {
+          "id": "time-span",
+          "name": "Time span",
+          "description": "Return the top scores in the given time span.",
+          "options": [
+            {
+              "id": "all-time",
+              "label": "all-time"
+            },
+            {
+              "id": "weekly",
+              "label": "weekly"
+            },
+            {
+              "id": "daily",
+              "label": "daily"
+            }
+          ]
+        },
+        {
+          "id": "results",
+          "name": "Results",
+          "description": "The number of score results to return, from 1 to 25."
+        },
+        {
+          "id": "type",
+          "name": "Type",
+          "description": "Return the top scores, or a window of the scores around the current player's best score.",
+          "options": [
+            {
+              "id": "top",
+              "label": "top"
+            },
+            {
+              "id": "window",
+              "label": "window"
+            }
+          ]
+        },
+        {
+          "id": "reload",
+          "name": "Force reload",
+          "description": "Ensure that the results are up to date, and not from the cache."
+        }
+      ]
+    },
+    {
+      "id": "show-leaderboard",
+      "name": "Show native leaderboard dialog",
+      "description": "Display the native google play games dialog for a specific leaderboard (only works in Android app).",
+      "display_text": "Display leaderboard {0}",
+      "params": [
+        {
+          "id": "leaderboard-id",
+          "name": "Leaderboard ID",
+          "description": "Leaderboard ID to display."
+        }
+      ]
+    },
+    {
+      "id": "show-leaderboards",
+      "name": "Show native leaderboards dialog",
+      "description": "Display the native google play games dialog for all leaderboards (only works in Android app).",
+      "display_text": "Display leaderboards",
+      "params": []
+    },
+    {
+      "id": "show-achievements",
+      "name": "Show native achievements dialog",
+      "description": "Display the native google play games dialog for all achievements (only works in Android app).",
+      "display_text": "Display achievements",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "achievementscount",
+      "name": "AchievementsCount",
+      "description": "The number of returned achievements in the list.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "achievementidat",
+      "name": "AchievementIDAt",
+      "description": "The ID of an achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementstepsat",
+      "name": "AchievementStepsAt",
+      "description": "The current steps for an incremental achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementnameat",
+      "name": "AchievementNameAt",
+      "description": "The metadata name of an achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementdescriptionat",
+      "name": "AchievementDescriptionAt",
+      "description": "The metadata description of an achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementtypeat",
+      "name": "AchievementTypeAt",
+      "description": "The metadata type (\"standard\" or \"incremental\") of an achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementtotalstepsat",
+      "name": "AchievementTotalStepsAt",
+      "description": "The metadata total steps of an incremental achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementrevealediconurlat",
+      "name": "AchievementRevealedIconURLAt",
+      "description": "The metadata icon image URL of a revealed achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "achievementunlockediconurlat",
+      "name": "AchievementUnlockedIconURLAt",
+      "description": "The metadata icon image URL of an unlocked achievement at an index.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Achievement index"
+        }
+      ]
+    },
+    {
+      "id": "errormessage",
+      "name": "ErrorMessage",
+      "description": "In 'On error', return the error message if available.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoretotalcount",
+      "name": "HiScoreTotalCount",
+      "description": "The total number of scores in the leaderboard.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybest",
+      "name": "HiScoreMyBest",
+      "description": "The current player's best score on the returned leaderboard.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybesttag",
+      "name": "HiScoreMyBestTag",
+      "description": "The tag for the current player's best score.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscorecount",
+      "name": "HiScoreCount",
+      "description": "The number of scores returned for the current page.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscorenameat",
+      "name": "HiScoreNameAt",
+      "description": "Player name at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscorerankat",
+      "name": "HiScoreRankAt",
+      "description": "Score rank at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreat",
+      "name": "HiScoreAt",
+      "description": "Score value at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscoretagat",
+      "name": "HiScoreTagAt",
+      "description": "Score tag at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreformattedat",
+      "name": "HiScoreFormattedAt",
+      "description": "Formatted score value at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscoreformattedrankat",
+      "name": "HiScoreFormattedRankAt",
+      "description": "Formatted score rank (e.g. \"1st\") at an index in the returned page.",
+      "display_text": "",
+      "params": [
+        {
+          "id": "index",
+          "name": "Index",
+          "description": "Score index"
+        }
+      ]
+    },
+    {
+      "id": "hiscoremyformattedbest",
+      "name": "HiScoreMyFormattedBest",
+      "description": "The formatted version of the current player's best score.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybestrank",
+      "name": "HiScoreMyBestRank",
+      "description": "The rank of the current player's best score.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "hiscoremybestformattedrank",
+      "name": "HiScoreMyBestFormattedRank",
+      "description": "The formatted rank (e.g. \"1st\") of the current player's best score.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myid",
+      "name": "MyID",
+      "description": "The ID of the signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mydisplayname",
+      "name": "MyDisplayName",
+      "description": "The display name of the signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myavatarurl",
+      "name": "MyAvatarURL",
+      "description": "The URL to the avatar image of the signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "mygivenname",
+      "name": "MyGivenName",
+      "description": "The given name of the signed in player.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "myfamilyname",
+      "name": "MyFamilyName",
+      "description": "The family name of the signed in player.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 19,
+    "actions": 14,
+    "expressions": 28
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "id": "sliderbar",
+  "name": "Slider bar",
+  "description": "A slider bar allowing the user to pick a value between two values.",
+  "type": "plugin",
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name": "On clicked",
+      "description": "Triggered when the slider bar is clicked.",
+      "display_text": "On clicked",
+      "params": []
+    },
+    {
+      "id": "compare-value",
+      "name": "Compare value",
+      "description": "Compare the current value.",
+      "display_text": "Slider value {0} [i]{1}[/i]",
+      "params": [
+        {
+          "id": "comparison",
+          "name": "Comparison",
+          "description": "How to compare the current value."
+        },
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "Value to compare to."
+        }
+      ]
+    },
+    {
+      "id": "on-changed",
+      "name": "On changed",
+      "description": "Triggered when the slider bar value is changed.",
+      "display_text": "On changed",
+      "params": []
+    },
+    {
+      "id": "on-changing",
+      "name": "On changing",
+      "description": "Triggered during the slider bar value being changed, such as while it is dragged.",
+      "display_text": "On changing",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "name": "Set tooltip",
+      "description": "Set the slider bar's tooltip.",
+      "display_text": "Set tooltip to {0}",
+      "params": [
+        {
+          "id": "tooltip",
+          "name": "Tooltip",
+          "description": "The tooltip to set on the slider bar."
+        }
+      ]
+    },
+    {
+      "id": "set-value",
+      "name": "Set value",
+      "description": "Set the value for the bar.",
+      "display_text": "Set value to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "value",
+          "name": "Value",
+          "description": "The value to set for the slider."
+        }
+      ]
+    },
+    {
+      "id": "set-maximum",
+      "name": "Set maximum",
+      "description": "Set the maximum slider value for the bar.",
+      "display_text": "Set maximum to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "maximum",
+          "name": "Maximum",
+          "description": "The new maximum value for the slider bar."
+        }
+      ]
+    },
+    {
+      "id": "set-minimum",
+      "name": "Set minimum",
+      "description": "Set the minimum slider value for the bar.",
+      "display_text": "Set minimum to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "minimum",
+          "name": "Minimum",
+          "description": "The new minimum value for the slider bar."
+        }
+      ]
+    },
+    {
+      "id": "set-step",
+      "name": "Set step",
+      "description": "Set the slider value step for the bar.",
+      "display_text": "Set step to [b]{0}[/b]",
+      "params": [
+        {
+          "id": "step",
+          "name": "Step",
+          "description": "The new stepping value for the slider bar."
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "value",
+      "name": "Value",
+      "description": "Current slider value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "maximum",
+      "name": "Maximum",
+      "description": "Current maximum value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "minimum",
+      "name": "Minimum",
+      "description": "Current minimum value.",
+      "display_text": "",
+      "params": []
+    },
+    {
+      "id": "step",
+      "name": "Step",
+      "description": "Current step value.",
+      "display_text": "",
+      "params": []
+    }
+  ],
+  "stats": {
+    "conditions": 4,
+    "actions": 5,
+    "expressions": 4
+  }
+}
