@@ -307,46 +307,51 @@ def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = Fal
 
 
 def index_ace_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index ACE schema from allAces.json (新版本，更详细)"""
-    from src.data_processing.ace_parser import ACEParser
+    """Index ACE schema from Construct3-Schema (使用 Schema 数据)"""
+    from src.data_processing.schema_parser import SchemaParser
 
-    print(f"  Parsing ACE schema from construct-source/r466...")
-    parser = ACEParser()
-    entries = parser.parse_all()
+    print(f"  Parsing ACE schema from Construct3-Schema...")
+    parser = SchemaParser()
+    entries = parser.parse_ace_entries()
 
     if not entries:
         print("  No ACE entries found, skipping...")
         return
 
     stats = parser.get_stats(entries)
-    print(f"  Found {stats['total']} ACE entries:")
+    print(f"  Found {stats['total_aces']} ACE entries:")
     print(f"    - Conditions: {stats['by_type']['condition']}")
     print(f"    - Actions: {stats['by_type']['action']}")
     print(f"    - Expressions: {stats['by_type']['expression']}")
     print(f"    - Plugins: {stats['plugins']}, Behaviors: {stats['behaviors']}")
 
-    docs = parser.export_for_vectordb(entries)
+    docs = parser.export_ace_for_vectordb(entries)
     indexer.index_documents(collection, docs)
 
 
 def index_effects_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index effects schema from allEffects.json"""
-    from src.data_processing.effects_parser import EffectsParser
+    """Index effects schema from Construct3-Schema (使用 Schema 数据)"""
+    from src.data_processing.schema_parser import SchemaParser
 
-    print(f"  Parsing Effects schema from construct-source/r466...")
-    parser = EffectsParser()
-    entries = parser.parse_all()
+    print(f"  Parsing Effects schema from Construct3-Schema...")
+    parser = SchemaParser()
+    entries = parser.parse_effects()
 
     if not entries:
         print("  No effect entries found, skipping...")
         return
 
-    stats = parser.get_stats(entries)
-    print(f"  Found {stats['total']} effects:")
-    for cat, count in sorted(stats["by_category"].items()):
+    # 按分类统计
+    by_category = {}
+    for entry in entries:
+        cat = entry.category or "other"
+        by_category[cat] = by_category.get(cat, 0) + 1
+
+    print(f"  Found {len(entries)} effects:")
+    for cat, count in sorted(by_category.items()):
         print(f"    - {cat}: {count}")
 
-    docs = parser.export_for_vectordb(entries)
+    docs = parser.export_effects_for_vectordb(entries)
     indexer.index_documents(collection, docs)
 
 
@@ -424,17 +429,13 @@ def index_all_data(rebuild: bool = False):
         docs = project_parser.export_for_vectordb()
         indexer.index_documents(COLLECTIONS["examples"], docs)
 
-    # Index ACE reference (legacy, add to plugins collection)
-    print("\n=== Indexing ACE Reference (Legacy) ===")
-    index_ace_reference(indexer, COLLECTIONS["plugins"], rebuild)
-
-    # Index ACE Schema (new, detailed ACE data)
-    print("\n=== Indexing ACE Schema ===")
+    # Index ACE Schema (from Construct3-Schema - 完整双语数据)
+    print("\n=== Indexing ACE Schema (from Construct3-Schema) ===")
     indexer.create_collection(COLLECTIONS["ace"], recreate=rebuild)
     index_ace_schema(indexer, COLLECTIONS["ace"], rebuild)
 
-    # Index Effects Schema
-    print("\n=== Indexing Effects Schema ===")
+    # Index Effects Schema (from Construct3-Schema)
+    print("\n=== Indexing Effects Schema (from Construct3-Schema) ===")
     indexer.create_collection(COLLECTIONS["effects"], recreate=rebuild)
     index_effects_schema(indexer, COLLECTIONS["effects"], rebuild)
 
