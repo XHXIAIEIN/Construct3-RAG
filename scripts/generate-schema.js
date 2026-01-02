@@ -33,7 +33,7 @@ const ROOT_DIR = path.join(__dirname, '..');
 
 // 外部资料
 const SOURCE_DIR = path.join(ROOT_DIR, 'source');
-const TRANSLATION_CSV = 'zh-CN_R466.csv';  // 从 C3 编辑器导出: 菜单 → 语言 → 导出翻译
+const TRANSLATION_CSV = 'zh-CN_R466.csv';  // 来自 POEditor
 
 // 本地开发资源 (不纳入版本控制)
 const LOCAL_DIR = path.join(ROOT_DIR, '.local');

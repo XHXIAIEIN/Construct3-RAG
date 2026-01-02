@@ -111,7 +111,7 @@ RAG 就像给 AI 配了一个**即时查阅资料库的能力**。
 Parent Directory/
 ├── Construct3-LLM/                    # 本项目
 │   ├── source/
-│   │   └── zh-CN_R466.csv             # 官方翻译文件 (从 Construct 3 导出)
+│   │   └── zh-CN_R466.csv             # 官方翻译文件 (来自 POEditor)
 │   └── data/
 │       └── schemas/                   # ACE Schema (自动生成)
 │
@@ -125,7 +125,7 @@ Parent Directory/
 
 | 数据源 | 获取方式 | 用途 |
 |--------|----------|------|
-| `zh-CN_R466.csv` | Construct 3 编辑器 → 菜单 → 语言 → 导出翻译 | 术语翻译 + ACE Schema 生成 |
+| `zh-CN_R466.csv` | POEditor | 术语翻译 + ACE Schema 生成 |
 | `Construct3-Manual` | [Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
 | `Construct-Example-Projects` | [Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
@@ -237,7 +237,7 @@ ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 # 5. 生成 ACE Schema (可选，已包含在仓库中)
 node scripts/generate-schema.js
 
-# 6. 索引数据 (首次约需 5 分钟)
+# 6. 索引数据 (首次约需 15 分钟)
 python -m src.data_processing.indexer --rebuild
 
 # 7. 启动 Web 界面
