@@ -218,7 +218,7 @@ def index_scripting_api(indexer: "Indexer", collection: str):
 
 
 def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index ACE reference document"""
+    """Index ACE reference document (legacy)"""
     from src.config import DATA_DIR
 
     ace_json = DATA_DIR / "ace-reference.json"
@@ -306,6 +306,50 @@ def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = Fal
         indexer.index_documents(collection, docs)
 
 
+def index_ace_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
+    """Index ACE schema from allAces.json (新版本，更详细)"""
+    from src.data_processing.ace_parser import ACEParser
+
+    print(f"  Parsing ACE schema from construct-source/r466...")
+    parser = ACEParser()
+    entries = parser.parse_all()
+
+    if not entries:
+        print("  No ACE entries found, skipping...")
+        return
+
+    stats = parser.get_stats(entries)
+    print(f"  Found {stats['total']} ACE entries:")
+    print(f"    - Conditions: {stats['by_type']['condition']}")
+    print(f"    - Actions: {stats['by_type']['action']}")
+    print(f"    - Expressions: {stats['by_type']['expression']}")
+    print(f"    - Plugins: {stats['plugins']}, Behaviors: {stats['behaviors']}")
+
+    docs = parser.export_for_vectordb(entries)
+    indexer.index_documents(collection, docs)
+
+
+def index_effects_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
+    """Index effects schema from allEffects.json"""
+    from src.data_processing.effects_parser import EffectsParser
+
+    print(f"  Parsing Effects schema from construct-source/r466...")
+    parser = EffectsParser()
+    entries = parser.parse_all()
+
+    if not entries:
+        print("  No effect entries found, skipping...")
+        return
+
+    stats = parser.get_stats(entries)
+    print(f"  Found {stats['total']} effects:")
+    for cat, count in sorted(stats["by_category"].items()):
+        print(f"    - {cat}: {count}")
+
+    docs = parser.export_for_vectordb(entries)
+    indexer.index_documents(collection, docs)
+
+
 def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant"""
     from src.config import (
@@ -380,9 +424,19 @@ def index_all_data(rebuild: bool = False):
         docs = project_parser.export_for_vectordb()
         indexer.index_documents(COLLECTIONS["examples"], docs)
 
-    # Index ACE reference (add to plugins/behaviors collections)
-    print("\n=== Indexing ACE Reference ===")
+    # Index ACE reference (legacy, add to plugins collection)
+    print("\n=== Indexing ACE Reference (Legacy) ===")
     index_ace_reference(indexer, COLLECTIONS["plugins"], rebuild)
+
+    # Index ACE Schema (new, detailed ACE data)
+    print("\n=== Indexing ACE Schema ===")
+    indexer.create_collection(COLLECTIONS["ace"], recreate=rebuild)
+    index_ace_schema(indexer, COLLECTIONS["ace"], rebuild)
+
+    # Index Effects Schema
+    print("\n=== Indexing Effects Schema ===")
+    indexer.create_collection(COLLECTIONS["effects"], recreate=rebuild)
+    index_effects_schema(indexer, COLLECTIONS["effects"], rebuild)
 
     print("\n=== Indexing Complete ===")
 
