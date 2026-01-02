@@ -515,3 +515,49 @@ Call: `Functions.RuleOfThree(100, 50, 200)` → returns 100
   ]}
 ]}
 ```
+
+---
+
+## 实测验证说明
+
+以下内容经过在 Construct 3 编辑器中实际粘贴验证（2026-01-02）。
+
+### 关键发现
+
+1. **variable 的 `comment` 字段必填**
+   - 即使为空也需要 `"comment": ""`
+   - 缺少此字段会导致粘贴失败
+
+2. **剪贴板格式 vs 项目文件格式**
+   | 特性 | 剪贴板格式 | 项目文件格式 |
+   |------|------------|--------------|
+   | sid | 不需要 | 必须（15位唯一数字） |
+   | 标记 | `"is-c3-clipboard-data": true` | 无 |
+   | 用途 | 复制粘贴 | .c3proj 内部存储 |
+
+3. **type 字段区分**
+   - 复制整个事件块（从边距选中）：`"type": "events"`
+   - 仅复制条件单元格：`"type": "conditions"`
+   - 仅复制动作单元格：`"type": "actions"`
+
+### 已验证的最小示例
+
+**注释** ✅
+```json
+{"is-c3-clipboard-data":true,"type":"events","items":[{"eventType":"comment","text":"测试注释"}]}
+```
+
+**变量**（注意 comment 字段）✅
+```json
+{"is-c3-clipboard-data":true,"type":"events","items":[{"eventType":"variable","name":"Score","type":"number","initialValue":"0","comment":"","isStatic":false,"isConstant":false}]}
+```
+
+**事件块（无动作）** ✅
+```json
+{"is-c3-clipboard-data":true,"type":"events","items":[{"eventType":"block","conditions":[{"id":"every-tick","objectClass":"System"}],"actions":[]}]}
+```
+
+**事件块（带动作）** ✅
+```json
+{"is-c3-clipboard-data":true,"type":"events","items":[{"eventType":"block","conditions":[{"id":"on-start-of-layout","objectClass":"System"}],"actions":[{"id":"set-eventvar-value","objectClass":"System","parameters":{"variable":"Score","value":"100"}}]}]}
+```

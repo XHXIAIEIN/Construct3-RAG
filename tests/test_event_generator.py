@@ -86,11 +86,17 @@ def test_json_validation():
         # Simple comment
         ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "comment", "text": "Hello"}]}', "简单注释"),
 
-        # Variable
-        ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "variable", "name": "Score", "type": "number", "initialValue": "0", "isStatic": false, "isConstant": false}]}', "变量定义"),
+        # Variable (note: comment field is required)
+        ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "variable", "name": "Score", "type": "number", "initialValue": "0", "comment": "", "isStatic": false, "isConstant": false}]}', "变量定义"),
 
         # Event block
         ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "block", "conditions": [{"id": "every-tick", "objectClass": "System"}], "actions": []}]}', "事件块"),
+
+        # Variable + event block in same items (variable defined before use)
+        ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "variable", "name": "Score", "type": "number", "initialValue": "0", "comment": "", "isStatic": false, "isConstant": false}, {"eventType": "block", "conditions": [{"id": "on-start-of-layout", "objectClass": "System"}], "actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "Score", "value": "100"}}]}]}', "变量+事件块"),
+
+        # Variable as child of block
+        ('{"is-c3-clipboard-data": true, "type": "events", "items": [{"eventType": "block", "conditions": [{"id": "on-start-of-layout", "objectClass": "System"}], "actions": [], "children": [{"eventType": "variable", "name": "Score", "type": "number", "initialValue": "0", "comment": "", "isStatic": false, "isConstant": false}, {"eventType": "block", "conditions": [], "actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "Score", "value": "100"}}]}]}]}', "变量作为子事件"),
     ]
 
     print("\n有效 JSON 测试:")

@@ -1,4 +1,4 @@
-# event_generator.py
+# eventsheet_generator.py
 """
 Construct 3 Event Sheet JSON Generator
 
@@ -7,11 +7,14 @@ Zero-hallucination event sheet generation with:
 2. Structured JSON output (clipboard format)
 3. Copy-paste ready for Construct 3
 
-剪贴板格式说明：
+剪贴板格式详细参考：doc/knowledge/eventsheet/clipboard-format.md
+
+关键要点：
 - 无需 sid（与项目文件格式不同）
 - 所有参数值为字符串格式
 - objectClass 对应项目中的对象类型名称
 - behaviorType 对应行为的 name 字段
+- variable 的 comment 字段必填（可为空字符串）
 """
 
 from __future__ import annotations
@@ -386,6 +389,12 @@ class ClipboardValidator:
         if "initialValue" not in var:
             self.warnings.append(f"{path}: variable 建议设置 'initialValue'")
 
+        # comment field is required by C3 (can be empty string)
+        if "comment" not in var:
+            self.warnings.append(
+                f"{path}: variable 建议添加 'comment' 字段 (可为空字符串)"
+            )
+
     def _validate_group(self, group: Dict, path: str):
         """Validate event group"""
         if "title" not in group:
@@ -483,17 +492,39 @@ def extract_json_from_response(response: str) -> Optional[str]:
             except json.JSONDecodeError:
                 continue
 
-    # Try to find raw JSON (starting with { and ending with })
-    json_pattern = r'(\{"is-c3-clipboard-data"[\s\S]*?\}\s*\]?\s*\})'
-    matches = re.findall(json_pattern, response)
+    # Try to find raw JSON starting with {"is-c3-clipboard-data"
+    # Use bracket counting for reliable extraction
+    start_marker = '{"is-c3-clipboard-data"'
+    start_idx = response.find(start_marker)
 
-    if matches:
-        for match in matches:
-            try:
-                json.loads(match)
-                return match
-            except json.JSONDecodeError:
+    if start_idx != -1:
+        # Count brackets to find the end of JSON
+        depth = 0
+        in_string = False
+        escape_next = False
+
+        for i, char in enumerate(response[start_idx:], start_idx):
+            if escape_next:
+                escape_next = False
                 continue
+            if char == "\\" and in_string:
+                escape_next = True
+                continue
+            if char == '"' and not escape_next:
+                in_string = not in_string
+                continue
+            if not in_string:
+                if char == "{":
+                    depth += 1
+                elif char == "}":
+                    depth -= 1
+                    if depth == 0:
+                        json_str = response[start_idx : i + 1]
+                        try:
+                            json.loads(json_str)
+                            return json_str
+                        except json.JSONDecodeError:
+                            break
 
     return None
 
