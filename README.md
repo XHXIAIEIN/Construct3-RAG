@@ -258,9 +258,7 @@ Construct3-LLM/
 ├── data/                      # 生成的数据
 │   └── schemas/               # ACE Schema (72 插件 + 31 行为)
 ├── scripts/                   # Schema 生成脚本
-│   ├── generate-schema.js           # 核心 Schema 生成
-│   ├── generate-enhanced-schema.js  # 增强版 Schema 生成
-│   └── generate-editor-schema.js    # 编辑器 Schema 生成
+│   └── generate-schema.js     # Schema 生成 (插件/行为/特效/编辑器)
 ├── src/
 │   ├── config.py              # 全局配置 (统一管理所有路径)
 │   ├── collections.py         # 集合定义 + 目录映射 + 子分类

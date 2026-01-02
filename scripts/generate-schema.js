@@ -178,7 +178,9 @@ function getAceTranslation(type, pluginId, aceType, aceId) {
     name_zh: translations[`${prefix}.list-name`]?.zh || '',
     name_en: translations[`${prefix}.list-name`]?.en || '',
     description_zh: translations[`${prefix}.description`]?.zh || '',
-    description_en: translations[`${prefix}.description`]?.en || ''
+    description_en: translations[`${prefix}.description`]?.en || '',
+    display_zh: translations[`${prefix}.display-text`]?.zh || '',
+    display_en: translations[`${prefix}.display-text`]?.en || ''
   };
 }
 
@@ -191,7 +193,9 @@ function getParamTranslation(type, pluginId, aceType, aceId, paramId) {
 
   const result = {
     name_zh: translations[`${prefix}.name`]?.zh || '',
-    name_en: translations[`${prefix}.name`]?.en || ''
+    name_en: translations[`${prefix}.name`]?.en || '',
+    desc_zh: translations[`${prefix}.desc`]?.zh || '',
+    desc_en: translations[`${prefix}.desc`]?.en || ''
   };
 
   // 获取 combo items 翻译
@@ -223,12 +227,21 @@ function processAceItem(type, pluginId, aceType, item, category) {
     description_en: translation.description_en
   };
 
+  // 添加 display-text 翻译 (如果有)
+  if (translation.display_zh) result.display_zh = translation.display_zh;
+  if (translation.display_en) result.display_en = translation.display_en;
+
+  // 技术属性
   if (item.scriptName) result.scriptName = item.scriptName;
   if (item.expressionName) result.expressionName = item.expressionName;
   if (item.returnType) result.returnType = item.returnType;
   if (item.isTrigger) result.isTrigger = true;
   if (item.isAsync) result.isAsync = true;
   if (item.isDeprecated) result.isDeprecated = true;
+  if (item.canDebug) result.canDebug = true;
+  if (item.isStatic) result.isStatic = true;
+  if (item.highlight) result.highlight = true;
+  if (item.isVariadicParameters) result.isVariadicParameters = true;
   if (category) result.category = category;
 
   if (item.params && item.params.length > 0) {
@@ -240,6 +253,9 @@ function processAceItem(type, pluginId, aceType, item, category) {
         name_zh: paramTrans.name_zh,
         name_en: paramTrans.name_en
       };
+      // 添加参数描述翻译 (如果有)
+      if (paramTrans.desc_zh) p.desc_zh = paramTrans.desc_zh;
+      if (paramTrans.desc_en) p.desc_en = paramTrans.desc_en;
       if (param.initialValue !== undefined) p.initialValue = param.initialValue;
       if (param.items) {
         p.items = param.items;
@@ -457,14 +473,15 @@ function generateEffects() {
       supportedRenderers: json['supported-renderers'],
       blendsBackground: json['blends-background'],
       preservesOpaqueness: json['preserves-opaqueness'],
-      animated: json.animated
+      animated: json.animated,
+      extendBox: json['extend-box']
     };
 
     if (json.parameters && json.parameters.length > 0) {
       effectData.parameters = json.parameters.map(param => {
         const paramNameKey = `text.effects.${id}.params.${param.id}.name`;
         const paramDescKey = `text.effects.${id}.params.${param.id}.description`;
-        return {
+        const p = {
           id: param.id,
           type: param.type,
           name_zh: translations[paramNameKey]?.zh || param.id,
@@ -472,6 +489,14 @@ function generateEffects() {
           initialValue: param['initial-value'],
           interpolatable: param.interpolatable
         };
+        // 添加描述翻译
+        const descZh = translations[paramDescKey]?.zh;
+        const descEn = translations[paramDescKey]?.en;
+        if (descZh) p.desc_zh = descZh;
+        if (descEn) p.desc_en = descEn;
+        // 添加 uniform 属性
+        if (param.uniform !== undefined) p.uniform = param.uniform;
+        return p;
       });
     }
 
@@ -535,7 +560,7 @@ function generateEditor() {
   ensureDir(viewsDir);
 
   const translations = parseTranslationCSV();
-  const index = { version: '1.0', bars: {}, dialogs: {}, views: {} };
+  const index = { version: '1.0', bars: {}, dialogs: {}, views: {}, mainMenu: {}, features: [], projectProperties: {} };
 
   // ---- Bars ----
   const barIds = [
@@ -691,14 +716,97 @@ function generateEditor() {
     index.views[id] = { name_en: view.name_en };
   }
 
+  // ---- Main Menu ----
+  for (const [key, value] of Object.entries(translations)) {
+    if (key.startsWith('text.main-menu.')) {
+      const parts = key.split('.');
+      if (parts.length >= 4) {
+        const category = parts[2];
+        const itemPath = parts.slice(3).join('.');
+
+        if (!index.mainMenu[category]) {
+          index.mainMenu[category] = {
+            id: category,
+            name_zh: '',
+            name_en: '',
+            items: []
+          };
+        }
+
+        if (parts.length === 4 && parts[3] === 'name') {
+          index.mainMenu[category].name_zh = value.zh;
+          index.mainMenu[category].name_en = value.en;
+        } else if (!itemPath.includes('.items.')) {
+          index.mainMenu[category].items.push({
+            id: itemPath,
+            name_zh: value.zh,
+            name_en: value.en
+          });
+        }
+      }
+    }
+  }
+
+  // ---- Features (从 Manual 目录收集 interface_* 文件) ----
+  if (fs.existsSync(MANUAL_DIR)) {
+    const files = fs.readdirSync(MANUAL_DIR).filter(f => f.startsWith('interface_'));
+    for (const file of files) {
+      const filePath = path.join(MANUAL_DIR, file);
+      const manual = extractManualContent(filePath);
+      if (manual && manual.title) {
+        index.features.push({
+          id: file.replace('.json', '').replace('interface_', ''),
+          name_en: manual.title,
+          url: manual.url,
+          sections: manual.toc.map(t => t.text)
+        });
+      }
+    }
+  }
+
+  // ---- Project Properties ----
+  for (const [key, value] of Object.entries(translations)) {
+    if (key.startsWith('text.model.project.') || key.startsWith('text.model.layout.')) {
+      const parts = key.split('.');
+      const category = parts[2]; // project or layout
+      const propName = parts.slice(3).join('.');
+
+      if (!index.projectProperties[category]) {
+        index.projectProperties[category] = [];
+      }
+
+      if (propName.endsWith('.name') || propName.endsWith('.desc')) {
+        const propId = propName.replace(/\.(name|desc)$/, '');
+        const type = propName.endsWith('.name') ? 'name' : 'desc';
+
+        let prop = index.projectProperties[category].find(p => p.id === propId);
+        if (!prop) {
+          prop = { id: propId };
+          index.projectProperties[category].push(prop);
+        }
+
+        if (type === 'name') {
+          prop.name_zh = value.zh;
+          prop.name_en = value.en;
+        } else {
+          prop.desc_zh = value.zh;
+          prop.desc_en = value.en;
+        }
+      }
+    }
+  }
+
   index.stats = {
     bars: Object.keys(index.bars).length,
     dialogs: Object.keys(index.dialogs).length,
-    views: Object.keys(index.views).length
+    views: Object.keys(index.views).length,
+    mainMenu: Object.keys(index.mainMenu).length,
+    features: index.features.length,
+    projectProperties: Object.keys(index.projectProperties).reduce((sum, k) => sum + index.projectProperties[k].length, 0)
   };
 
   writeJson(path.join(editorDir, 'index.json'), index);
-  console.log(`  ✓ ${index.stats.bars} 栏目, ${index.stats.dialogs} 对话框, ${index.stats.views} 视图`);
+  console.log(`  ✓ ${index.stats.bars} 栏目, ${index.stats.dialogs} 对话框, ${index.stats.views} 视图, ${index.stats.mainMenu} 菜单, ${index.stats.features} 功能, ${index.stats.projectProperties} 属性`);
 
   return index.stats;
 }
@@ -766,7 +874,7 @@ function main() {
   console.log(`插件: ${pluginStats.count} (${pluginStats.conditions}C/${pluginStats.actions}A/${pluginStats.expressions}E)`);
   console.log(`行为: ${behaviorStats.count} (${behaviorStats.conditions}C/${behaviorStats.actions}A/${behaviorStats.expressions}E)`);
   console.log(`特效: ${effectStats.count}`);
-  console.log(`编辑器: ${editorStats.bars} 栏目, ${editorStats.dialogs} 对话框, ${editorStats.views} 视图`);
+  console.log(`编辑器: ${editorStats.bars} 栏目, ${editorStats.dialogs} 对话框, ${editorStats.views} 视图, ${editorStats.mainMenu} 菜单, ${editorStats.features} 功能, ${editorStats.projectProperties} 属性`);
   console.log('\n生成完成!');
 }
 
