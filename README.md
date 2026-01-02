@@ -110,9 +110,10 @@ RAG 就像给 AI 配了一个**即时查阅资料库的能力**。
 ```
 Parent Directory/
 ├── Construct3-LLM/                    # 本项目
-│   └── source/
-│       ├── zh-CN_R466.csv             # 官方翻译文件 (从 Construct 3 导出)
-│       └── Construct3-Schema/         # ACE Schema (自动生成)
+│   ├── source/
+│   │   └── zh-CN_R466.csv             # 官方翻译文件 (从 Construct 3 导出)
+│   └── data/
+│       └── schemas/                   # ACE Schema (自动生成)
 │
 ├── Construct3-Manual/                 # 官方手册 Markdown 版
 │   ├── Construct3-Manual/             # 手册文档 (334 文件)
@@ -125,8 +126,8 @@ Parent Directory/
 | 数据源 | 获取方式 | 用途 |
 |--------|----------|------|
 | `zh-CN_R466.csv` | Construct 3 编辑器 → 菜单 → 语言 → 导出翻译 | 术语翻译 + ACE Schema 生成 |
-| `Construct3-Manual` | [Construct-3-Manual](https://github.com/AshleyScirra/Construct-3-Manual) | 官方手册 Markdown |
-| `Construct-Example-Projects` | [Construct-Example-Projects](https://github.com/AshleyScirra/Construct-Example-Projects) | 官方示例项目 |
+| `Construct3-Manual` | [Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
+| `Construct-Example-Projects` | [Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
 ---
 
@@ -180,20 +181,23 @@ Parent Directory/
 
 ### ACE Schema
 
-从 `zh-CN_R466.csv` 自动生成的结构化 ACE 数据：
+结构化 ACE 数据（双语）：
 
 ```
-source/Construct3-Schema/
+data/schemas/
 ├── index.json          # 概要索引
-├── plugins.json        # 65 插件 ACE 列表
-├── behaviors.json      # 31 行为 ACE 列表
-├── zh/plugins/*.json   # 中文完整文件 (含参数)
-├── zh/behaviors/*.json
-├── en/plugins/*.json   # 英文完整文件
-└── en/behaviors/*.json
+├── plugins/            # 72 插件 (677 条件, 776 动作, 957 表达式)
+│   ├── sprite.json
+│   ├── keyboard.json
+│   └── ...
+├── behaviors/          # 31 行为 (115 条件, 248 动作, 138 表达式)
+│   ├── platform.json
+│   └── ...
+├── effects/            # 89 特效
+└── editor/             # 编辑器配置
 ```
 
-**统计**: 2,701 ACE (716 条件 + 965 动作 + 1,020 表达式)
+**统计**: 2,911 ACE (792 条件 + 1,024 动作 + 1,095 表达式)
 
 ---
 
@@ -215,13 +219,13 @@ source/Construct3-Schema/
 ```bash
 # 1. 克隆相关仓库 (放在同级目录，见「数据源」章节)
 git clone https://github.com/<your-fork>/Construct3-LLM.git
-git clone https://github.com/AshleyScirra/Construct-3-Manual.git Construct3-Manual
-git clone https://github.com/AshleyScirra/Construct-Example-Projects.git Construct-Example-Projects-main
+git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
+git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Example-Projects-main
 
 # 2. 安装依赖
 cd Construct3-LLM
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # 3. 启动 Qdrant (Docker)
@@ -231,7 +235,7 @@ docker run -d -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 
 # 5. 生成 ACE Schema (可选，已包含在仓库中)
-python -m src.data_processing.csv_schema_generator
+node scripts/generate-schema.js
 
 # 6. 索引数据 (首次约需 5 分钟)
 python -m src.data_processing.indexer --rebuild
@@ -249,24 +253,34 @@ python -m src.app.gradio_ui
 
 ```
 Construct3-LLM/
+├── source/                    # 外部资料 (需手动获取)
+│   └── zh-CN_R466.csv         # 官方翻译文件
+├── data/                      # 生成的数据
+│   └── schemas/               # ACE Schema (72 插件 + 31 行为)
+├── scripts/                   # Schema 生成脚本
+│   ├── generate-schema.js           # 核心 Schema 生成
+│   ├── generate-enhanced-schema.js  # 增强版 Schema 生成
+│   └── generate-editor-schema.js    # 编辑器 Schema 生成
 ├── src/
-│   ├── config.py              # 全局配置
+│   ├── config.py              # 全局配置 (统一管理所有路径)
 │   ├── collections.py         # 集合定义 + 目录映射 + 子分类
 │   ├── data_processing/
+│   │   ├── csv_parser.py      # CSV 术语解析 (RAG 检索用)
 │   │   ├── markdown_parser.py # Markdown 解析 + H2 分块
-│   │   ├── csv_parser.py      # 术语表解析
 │   │   ├── project_parser.py  # 示例项目解析
-│   │   ├── csv_schema_generator.py  # ACE Schema 生成器
-│   │   └── indexer.py         # 向量索引
+│   │   ├── schema_parser.py   # Schema 解析器
+│   │   ├── indexer.py         # 向量索引
+│   │   └── _archive/          # 已归档的旧脚本
 │   ├── rag/
 │   │   ├── retriever.py       # 多集合检索
 │   │   ├── chain.py           # RAG 链
-│   │   └── prompts.py         # 提示词模板
+│   │   ├── prompts.py         # 提示词模板
+│   │   └── eventsheet_generator.py  # 事件表 JSON 生成
 │   └── app/
 │       └── gradio_ui.py       # Web 界面
+├── tests/                     # 测试文件
 ├── doc/guides/
 │   └── rag-introduction.md    # RAG 详细原理讲解
-├── source/                    # 数据文件 (见「数据源」章节)
 └── requirements.txt
 ```
 
@@ -277,10 +291,11 @@ Construct3-LLM/
 | 配置 | `config.py` | 模型路径、数据库地址 |
 | 集合定义 | `collections.py` | 向量集合名称、目录映射、子分类 |
 | 解析器 | `markdown_parser.py` | Markdown → 小块文本 |
-| Schema 生成 | `csv_schema_generator.py` | CSV → ACE Schema JSON |
+| Schema 解析 | `schema_parser.py` | 读取 ACE Schema 用于向量索引 |
 | 索引器 | `indexer.py` | 文本 → 向量 → 存入 Qdrant |
 | 检索器 | `retriever.py` | 问题 → 向量 → 搜索相似文档 |
 | 生成链 | `chain.py` | 组合检索结果 + LLM 生成回答 |
+| 事件生成 | `eventsheet_generator.py` | 生成 C3 剪贴板格式 JSON |
 | 界面 | `gradio_ui.py` | Web 交互界面 |
 
 ### 向量数据库统计

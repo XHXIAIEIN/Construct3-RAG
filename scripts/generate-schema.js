@@ -2,7 +2,7 @@
  * 从 r466 源码生成 Construct3 Schema（分目录分文件结构）
  *
  * 输出结构：
- * source/Construct3-Schema/
+ * data/schemas/
  * ├── index.json
  * ├── plugins/
  * │   ├── index.json
@@ -26,12 +26,26 @@
 const fs = require('fs');
 const path = require('path');
 
-// 路径配置
+// =============================================================================
+// 路径配置 (所有外部资源路径统一在此定义)
+// =============================================================================
 const ROOT_DIR = path.join(__dirname, '..');
-const R466_DIR = path.join(ROOT_DIR, '.local/construct-source/r466');
+
+// 外部资料
 const SOURCE_DIR = path.join(ROOT_DIR, 'source');
-const MANUAL_DIR = path.join(ROOT_DIR, '.local/manual-data/data/construct-3');
-const OUTPUT_DIR = path.join(SOURCE_DIR, 'Construct3-Schema');
+const TRANSLATION_CSV = 'zh-CN_R466.csv';  // 从 C3 编辑器导出: 菜单 → 语言 → 导出翻译
+
+// 本地开发资源 (不纳入版本控制)
+const LOCAL_DIR = path.join(ROOT_DIR, '.local');
+const R466_SOURCE = 'construct-source/r466';  // Construct 3 r466 源码
+const MANUAL_DATA = 'manual-data/data/construct-3';  // 手册数据
+
+const R466_DIR = path.join(LOCAL_DIR, R466_SOURCE);
+const MANUAL_DIR = path.join(LOCAL_DIR, MANUAL_DATA);
+
+// 输出目录
+const DATA_DIR = path.join(ROOT_DIR, 'data');
+const OUTPUT_DIR = path.join(DATA_DIR, 'schemas');
 
 // CSV 翻译缓存
 let translationCache = null;
@@ -70,7 +84,7 @@ function writeJson(filePath, data) {
 function parseTranslationCSV() {
   if (translationCache) return translationCache;
 
-  const csvPath = path.join(SOURCE_DIR, 'zh-CN_R466.csv');
+  const csvPath = path.join(SOURCE_DIR, TRANSLATION_CSV);
   const content = fs.readFileSync(csvPath, 'utf-8');
   const lines = content.split('\n');
 

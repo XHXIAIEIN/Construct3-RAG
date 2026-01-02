@@ -8,7 +8,10 @@ from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 
 from .retriever import HybridRetriever, SearchResult
-from .prompts import QA_PROMPT, TRANSLATION_PROMPT, EVENT_GENERATION_PROMPT, SYSTEM_MESSAGE
+from .prompts import (
+    QA_PROMPT, EVENT_GENERATION_PROMPT, SYSTEM_MESSAGE,
+    LOW_RELEVANCE_PROMPT, NO_RESULTS_RESPONSE, QUERY_REWRITE_PROMPT
+)
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -108,42 +111,109 @@ class RAGChain:
     RAG Chain for Construct 3 Q&A
     """
 
+    # 检索结果阈值配置
+    MIN_RESULTS_THRESHOLD = 3  # 低于此数量视为低相关度
+    HIGH_SCORE_THRESHOLD = 0.7  # 高置信度分数阈值
+
     def __init__(
         self,
         qdrant_host: str = "localhost",
         qdrant_port: int = 6333,
         llm_model: str = "qwen2.5:14b",
-        llm_base_url: str = "http://localhost:11434"
+        llm_base_url: str = "http://localhost:11434",
+        enable_query_rewrite: bool = True
     ):
         self.retriever = HybridRetriever(qdrant_host, qdrant_port)
         self.llm = LLMClient(model=llm_model, base_url=llm_base_url)
+        self.enable_query_rewrite = enable_query_rewrite
+
+    def _count_results(self, results: Dict[str, List[SearchResult]]) -> int:
+        """统计检索结果总数"""
+        return sum(len(items) for items in results.values())
+
+    def _get_max_score(self, results: Dict[str, List[SearchResult]]) -> float:
+        """获取最高相关度分数"""
+        max_score = 0.0
+        for items in results.values():
+            for item in items:
+                if item.score > max_score:
+                    max_score = item.score
+        return max_score
+
+    def _rewrite_query(self, query: str) -> List[str]:
+        """使用 LLM 改写查询以提高检索效果"""
+        prompt = QUERY_REWRITE_PROMPT.format(original_query=query)
+        response = self.llm.generate(prompt)
+        # 解析改写结果，每行一个查询
+        rewritten = [q.strip() for q in response.strip().split('\n') if q.strip()]
+        return rewritten[:3]  # 最多返回 3 个改写
 
     def classify_query(self, query: str) -> str:
-        """Classify query type (qa/translation/code)"""
+        """Classify query type (qa/code)"""
         query_lower = query.lower()
 
         # Simple rule-based classification
-        if any(kw in query_lower for kw in ["翻译", "translate", "怎么说", "英文", "中文"]):
-            return "translation"
-        elif any(kw in query_lower for kw in ["生成", "写一个", "帮我写", "事件表", "代码"]):
+        if any(kw in query_lower for kw in ["生成", "写一个", "帮我写", "事件表", "代码"]):
             return "code"
         else:
             return "qa"
 
-    def answer_qa(self, query: str) -> RAGResponse:
-        """Answer general Q&A queries"""
+    def answer_qa(self, query: str, retry_count: int = 0) -> RAGResponse:
+        """Answer general Q&A queries with fallback handling"""
         # Retrieve relevant context
         logger.info(f"[1/3] 检索相关文档... 查询: {query[:50]}...")
         t0 = time.time()
         results = self.retriever.search_all(query, top_k_per_collection=3)
         logger.info(f"[1/3] 检索完成 ({time.time()-t0:.1f}s)")
 
+        # 统计检索结果
+        result_count = self._count_results(results)
+        max_score = self._get_max_score(results)
+        logger.info(f"[1/3] 找到 {result_count} 条结果，最高分: {max_score:.2f}")
+
+        # 情况1: 完全没有结果 - 尝试改写查询
+        if result_count == 0:
+            if self.enable_query_rewrite and retry_count == 0:
+                logger.info("[1/3] 未找到结果，尝试改写查询...")
+                rewritten_queries = self._rewrite_query(query)
+                logger.info(f"[1/3] 改写查询: {rewritten_queries}")
+
+                # 用改写后的查询重新搜索
+                for rq in rewritten_queries:
+                    retry_results = self.retriever.search_all(rq, top_k_per_collection=3)
+                    if self._count_results(retry_results) > 0:
+                        logger.info(f"[1/3] 改写查询 '{rq}' 找到结果")
+                        results = retry_results
+                        result_count = self._count_results(results)
+                        max_score = self._get_max_score(results)
+                        break
+
+            # 改写后仍然没有结果
+            if self._count_results(results) == 0:
+                logger.info("[1/3] 改写后仍无结果，返回无结果提示")
+                return RAGResponse(
+                    answer=NO_RESULTS_RESPONSE,
+                    sources=[],
+                    query_type="qa_no_results"
+                )
+
         context = self.retriever.format_context(results)
+
+        # 情况2: 结果较少或分数较低 - 使用谨慎回答模式
+        if result_count < self.MIN_RESULTS_THRESHOLD or max_score < self.HIGH_SCORE_THRESHOLD:
+            logger.info(f"[2/3] 结果较少/分数较低，使用谨慎回答模式")
+            prompt = LOW_RELEVANCE_PROMPT.format(
+                context=context,
+                question=query,
+                result_count=result_count
+            )
+        else:
+            # 情况3: 正常结果 - 使用标准回答模式
+            prompt = QA_PROMPT.format(context=context, question=query)
 
         # Generate answer
         logger.info(f"[2/3] LLM 生成回答...")
         t0 = time.time()
-        prompt = QA_PROMPT.format(context=context, question=query)
         answer = self.llm.generate(prompt, system=SYSTEM_MESSAGE)
         logger.info(f"[2/3] 生成完成 ({time.time()-t0:.1f}s)")
 
@@ -158,32 +228,11 @@ class RAGChain:
                     "metadata": item.metadata
                 })
 
-        return RAGResponse(answer=answer, sources=sources, query_type="qa")
+        query_type = "qa"
+        if result_count < self.MIN_RESULTS_THRESHOLD:
+            query_type = "qa_low_relevance"
 
-    def answer_translation(self, query: str) -> RAGResponse:
-        """Handle translation queries"""
-        # Search terms collection
-        results = self.retriever.search_terms(query, top_k=10)
-
-        # Format matched terms
-        matched_terms = "\n".join([
-            f"- {r.metadata.get('zh', '')} = {r.metadata.get('en', '')}"
-            for r in results
-        ])
-
-        # Detect source language and target
-        is_chinese = any('\u4e00' <= c <= '\u9fff' for c in query)
-        target_lang = "英文" if is_chinese else "中文"
-
-        prompt = TRANSLATION_PROMPT.format(
-            matched_terms=matched_terms,
-            source_text=query,
-            target_lang=target_lang
-        )
-        answer = self.llm.generate(prompt)
-
-        sources = [{"type": "terms", "text": r.text, "score": r.score} for r in results]
-        return RAGResponse(answer=answer, sources=sources, query_type="translation")
+        return RAGResponse(answer=answer, sources=sources, query_type=query_type)
 
     def answer_code(self, query: str) -> RAGResponse:
         """Handle code/event generation queries"""
@@ -211,9 +260,7 @@ class RAGChain:
         """
         query_type = self.classify_query(query)
 
-        if query_type == "translation":
-            return self.answer_translation(query)
-        elif query_type == "code":
+        if query_type == "code":
             return self.answer_code(query)
         else:
             return self.answer_qa(query)
@@ -225,38 +272,50 @@ class RAGChain:
         query_type = self.classify_query(query)
 
         # Retrieve context first
-        if query_type == "translation":
-            results = self.retriever.search_terms(query, top_k=10)
-            matched_terms = "\n".join([
-                f"- {r.metadata.get('zh', '')} = {r.metadata.get('en', '')}"
-                for r in results
-            ])
-            is_chinese = any('\u4e00' <= c <= '\u9fff' for c in query)
-            target_lang = "英文" if is_chinese else "中文"
-            from .prompts import TRANSLATION_PROMPT
-            prompt = TRANSLATION_PROMPT.format(
-                matched_terms=matched_terms,
-                source_text=query,
-                target_lang=target_lang
-            )
-            system = ""
-        elif query_type == "code":
+        if query_type == "code":
             results = self.retriever.search_examples(query, top_k=5)
             examples = "\n\n".join([
                 f"### {r.metadata.get('project', 'Example')}\n{r.text}"
                 for r in results
             ])
-            from .prompts import EVENT_GENERATION_PROMPT
             prompt = EVENT_GENERATION_PROMPT.format(
                 similar_examples=examples,
                 user_requirement=query
             )
             system = ""
         else:
+            # QA with fallback handling
             results = self.retriever.search_all(query, top_k_per_collection=3)
+            result_count = self._count_results(results)
+            max_score = self._get_max_score(results)
+
+            # 尝试改写查询
+            if result_count == 0 and self.enable_query_rewrite:
+                rewritten_queries = self._rewrite_query(query)
+                for rq in rewritten_queries:
+                    retry_results = self.retriever.search_all(rq, top_k_per_collection=3)
+                    if self._count_results(retry_results) > 0:
+                        results = retry_results
+                        result_count = self._count_results(results)
+                        max_score = self._get_max_score(results)
+                        break
+
+            # 无结果时直接返回提示
+            if result_count == 0:
+                yield NO_RESULTS_RESPONSE
+                return
+
             context = self.retriever.format_context(results)
-            from .prompts import QA_PROMPT
-            prompt = QA_PROMPT.format(context=context, question=query)
+
+            # 选择合适的 prompt
+            if result_count < self.MIN_RESULTS_THRESHOLD or max_score < self.HIGH_SCORE_THRESHOLD:
+                prompt = LOW_RELEVANCE_PROMPT.format(
+                    context=context,
+                    question=query,
+                    result_count=result_count
+                )
+            else:
+                prompt = QA_PROMPT.format(context=context, question=query)
             system = SYSTEM_MESSAGE
 
         # Stream the response

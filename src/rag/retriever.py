@@ -85,42 +85,42 @@ class HybridRetriever:
 
     def search_guide(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search guide documentation (getting started, tips, overview)"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["guide"], query, top_k)
 
     def search_interface(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search interface documentation (editor UI, dialogs, debugger)"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["interface"], query, top_k)
 
     def search_project(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search project primitives (events, objects, timelines)"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["project"], query, top_k)
 
     def search_plugins(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search plugin reference documentation"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["plugins"], query, top_k)
 
     def search_behaviors(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search behavior reference documentation"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["behaviors"], query, top_k)
 
     def search_scripting(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search scripting API documentation"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["scripting"], query, top_k)
 
     def search_terms(self, query: str, top_k: int = 10) -> List[SearchResult]:
         """Search translation terms"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["terms"], query, top_k, score_threshold=0.3)
 
     def search_examples(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search example projects"""
-        from src.config import COLLECTIONS
+        from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["examples"], query, top_k)
 
     def search_all(

@@ -10,6 +10,6 @@
 外部仓库路径已在 `src/config.py` 中配置：
 
 ```python
-MANUAL_REPO = BASE_DIR.parent / "Construct3-Manual"
-MANUAL_PDF_REPO = BASE_DIR.parent / "Construct3-Manual-PDF"
+# https://github.com/XHXIAIEIN/Construct3-Manual
+MANUAL_REPO = "Construct3-Manual"
 ```

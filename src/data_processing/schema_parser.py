@@ -1,7 +1,7 @@
 """
 Schema Parser - 从 Construct3-Schema 读取数据用于向量索引
 
-数据来源: source/Construct3-Schema/
+数据来源: data/schemas/
 包含: plugins, behaviors, effects, editor 的完整双语数据
 """
 import json
@@ -62,7 +62,8 @@ class SchemaParser:
 
     def __init__(self, schema_dir: Optional[Path] = None):
         if schema_dir is None:
-            schema_dir = Path(__file__).parent.parent.parent / "source" / "Construct3-Schema"
+            from src.config import SCHEMA_DIR
+            schema_dir = SCHEMA_DIR
         self.schema_dir = schema_dir
 
     def _read_json(self, path: Path) -> Dict:

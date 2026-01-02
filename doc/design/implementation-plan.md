@@ -31,9 +31,9 @@
 
 ```bash
 # 1. 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# venv\Scripts\activate   # Windows
+python -m venv .venv
+source .venv/bin/activate  # macOS/Linux
+# .venv\Scripts\activate   # Windows
 
 # 2. 安装依赖
 pip install -r requirements.txt
@@ -56,26 +56,20 @@ ollama pull nomic-embed-text  # 备选嵌入模型
 
 ### 任务清单
 
-- [ ] PDF 解析脚本
-- [ ] CSV 术语表处理脚本
-- [ ] 示例项目遍历脚本
-- [ ] 事件表语义化转换
-- [ ] 批量向量化入库
+- [x] Markdown 文档解析脚本
+- [x] CSV 术语表处理脚本
+- [x] Schema 生成脚本 (JS)
+- [x] 示例项目遍历脚本
+- [x] 批量向量化入库
 
 ### 执行顺序
 
 ```bash
-# 1. 处理 PDF 手册
-python -m src.data_processing.pdf_parser
+# 1. 生成 ACE Schema (可选，已包含在仓库中)
+node scripts/generate-schema.js
 
-# 2. 处理术语表
-python -m src.data_processing.csv_parser
-
-# 3. 处理示例项目
-python -m src.data_processing.project_parser
-
-# 4. 向量化入库
-python -m src.data_processing.indexer
+# 2. 向量化入库 (包含 Markdown、术语、示例项目)
+python -m src.data_processing.indexer --rebuild
 ```
 
 ## 阶段三：RAG 系统开发
@@ -91,10 +85,10 @@ python -m src.data_processing.indexer
 
 ```
 src/rag/
-├── retriever.py    # 检索器
-├── chain.py        # RAG 链
-├── prompts.py      # Prompt 模板
-└── reranker.py     # 重排序器
+├── retriever.py              # 检索器
+├── chain.py                  # RAG 链
+├── prompts.py                # Prompt 模板
+└── eventsheet_generator.py   # 事件表生成器
 ```
 
 ## 阶段四：API 与界面

@@ -416,7 +416,7 @@ RAG = 搜索引擎 + AI 写作
 | LLM | qwen2.5:7b | 本地运行，通过 Ollama |
 | Embedding | BAAI/bge-m3 | 多语言嵌入模型，1024 维 |
 | 向量数据库 | Qdrant | 高性能向量搜索 |
-| 文档解析 | BeautifulSoup, pypdf | HTML/PDF 解析 |
+| 文档解析 | Markdown | H2 语义分块 |
 | 分块策略 | H2 语义分块 | 按文档结构切分 |
 | 数据处理 | pandas, numpy | 数据清洗和处理 |
 | 框架 | LangChain | RAG 编排框架 |

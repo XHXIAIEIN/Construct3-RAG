@@ -210,12 +210,13 @@ class CSVParser:
 
 def process_terms():
     """Process Construct 3 translation terms"""
-    from src.config import CSV_TERMS
+    from src.config import SOURCE_DIR, TRANSLATION_CSV
 
+    csv_path = SOURCE_DIR / TRANSLATION_CSV
     parser = CSVParser()
 
-    if CSV_TERMS.exists():
-        entries = parser.parse_file(CSV_TERMS)
+    if csv_path.exists():
+        entries = parser.parse_file(csv_path)
 
         # Print statistics
         stats = parser.get_statistics()
@@ -232,7 +233,7 @@ def process_terms():
 
         return entries
     else:
-        print(f"Error: CSV file not found: {CSV_TERMS}")
+        print(f"Error: CSV file not found: {csv_path}")
         return []
 
 

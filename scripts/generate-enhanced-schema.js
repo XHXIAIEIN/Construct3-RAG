@@ -18,11 +18,23 @@ function readJsonFile(filePath) {
   return JSON.parse(content);
 }
 
+// =============================================================================
 // 路径配置
+// =============================================================================
 const ROOT_DIR = path.join(__dirname, '..');
-const R466_DIR = path.join(ROOT_DIR, '.local/construct-source/r466');
+
+// 外部资料
 const SOURCE_DIR = path.join(ROOT_DIR, 'source');
-const OUTPUT_DIR = path.join(SOURCE_DIR, 'Construct3-Schema');
+const TRANSLATION_CSV = 'zh-CN_R466.csv';
+
+// 本地开发资源
+const LOCAL_DIR = path.join(ROOT_DIR, '.local');
+const R466_SOURCE = 'construct-source/r466';
+const R466_DIR = path.join(LOCAL_DIR, R466_SOURCE);
+
+// 输出目录
+const DATA_DIR = path.join(ROOT_DIR, 'data');
+const OUTPUT_DIR = path.join(DATA_DIR, 'schemas');
 
 // CSV 翻译缓存
 let translationCache = null;
@@ -33,7 +45,7 @@ let translationCache = null;
 function parseTranslationCSV() {
   if (translationCache) return translationCache;
 
-  const csvPath = path.join(SOURCE_DIR, 'zh-CN_R466.csv');
+  const csvPath = path.join(SOURCE_DIR, TRANSLATION_CSV);
   const content = fs.readFileSync(csvPath, 'utf-8');
   const lines = content.split('\n');
 

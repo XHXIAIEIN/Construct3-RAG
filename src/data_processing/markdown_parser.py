@@ -35,13 +35,13 @@ class MarkdownParser:
             base_dir: Base directory for markdown files. If None, uses config.
         """
         if base_dir is None:
-            from src.config import MARKDOWN_DIR
-            self.base_dir = MARKDOWN_DIR
+            from src.config import BASE_DIR, MANUAL_REPO
+            self.base_dir = BASE_DIR.parent / MANUAL_REPO / "Construct3-Manual"
         else:
             self.base_dir = Path(base_dir)
 
-        # Load mappings from config
-        from src.config import DIR_TO_COLLECTION, COLLECTIONS, SUBCATEGORY_MAPPING
+        # Load mappings from collections
+        from src.collections import DIR_TO_COLLECTION, COLLECTIONS, SUBCATEGORY_MAPPING
         self.dir_to_collection = DIR_TO_COLLECTION
         self.default_collection = COLLECTIONS["guide"]
         self.subcategory_mapping = SUBCATEGORY_MAPPING

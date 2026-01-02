@@ -2,38 +2,33 @@
 
 ## 数据源概览
 
-| 数据源 | 大小 | 格式 | 用途 |
-|--------|------|------|------|
-| construct3-manual.pdf | 34.5MB | PDF | 主手册文档 |
-| construct3-Addon-SDK.pdf | 2.7MB | PDF | 插件开发文档 |
-| zh-CN_R466.csv | 2.8MB | CSV | 23,513 条中英翻译 |
-| example-projects/ | 616MB | C3 项目 | 490 个示例项目 |
+| 数据源 | 格式 | 用途 |
+|--------|------|------|
+| Construct3-Manual/ | Markdown | 主手册文档 (334 文件) |
+| Construct3-Addon-SDK/ | Markdown | 插件开发文档 (62 文件) |
+| zh-CN_R466.csv | CSV | 23,513 条中英翻译 |
+| example-projects/ | C3 项目 | 490 个示例项目 |
 
-## 1. PDF 手册处理
+## 1. Markdown 手册处理
 
 ### 处理流程
 
 ```
-PDF 文件
+Markdown 文件
     │
     ▼
 ┌─────────────────┐
-│ PyMuPDF 提取    │  提取文本和页码信息
+│ 目录遍历        │  按 collections.py 映射
 └─────────────────┘
     │
     ▼
 ┌─────────────────┐
-│ 章节结构识别     │  识别标题层级
+│ H2 语义分块     │  按 H2 标题切分
 └─────────────────┘
     │
     ▼
 ┌─────────────────┐
-│ 语义分块        │  chunk_size: 1000, overlap: 200
-└─────────────────┘
-    │
-    ▼
-┌─────────────────┐
-│ 元数据添加      │  来源、页码、章节路径
+│ 元数据添加      │  来源文件、集合、分类
 └─────────────────┘
     │
     ▼
@@ -48,10 +43,10 @@ PDF 文件
 {
   "text": "The Sprite object is used to display...",
   "metadata": {
-    "source": "construct3-manual.pdf",
-    "page": 42,
-    "chapter": "Plugin reference",
-    "section": "Sprite"
+    "source": "plugin-reference/sprite.md",
+    "collection": "c3_plugins",
+    "category": "general",
+    "title": "Sprite"
   }
 }
 ```
@@ -190,8 +185,14 @@ example-projects/
 
 ```
 src/data_processing/
-├── pdf_parser.py      # PDF 解析
-├── csv_parser.py      # 术语表解析
+├── markdown_parser.py # Markdown 解析 + H2 分块
+├── csv_parser.py      # CSV 术语解析 (RAG 检索用)
+├── schema_parser.py   # ACE Schema 解析
 ├── project_parser.py  # 示例项目解析
 └── indexer.py         # 向量化入库
+
+scripts/
+├── generate-schema.js           # 核心 Schema 生成
+├── generate-enhanced-schema.js  # 增强版 Schema 生成
+└── generate-editor-schema.js    # 编辑器 Schema 生成
 ```

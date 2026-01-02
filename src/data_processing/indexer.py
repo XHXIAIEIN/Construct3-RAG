@@ -358,9 +358,10 @@ def index_effects_schema(indexer: "Indexer", collection: str, rebuild: bool = Fa
 def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant"""
     from src.config import (
-        QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL, CSV_TERMS,
-        DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS,
+        QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL,
+        SOURCE_DIR, TRANSLATION_CSV,
     )
+    from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.data_processing.markdown_parser import MarkdownParser
     from src.data_processing.csv_parser import CSVParser
     from src.data_processing.project_parser import process_example_projects
@@ -403,8 +404,9 @@ def index_all_data(rebuild: bool = False):
     print("\n=== Indexing Translation Terms ===")
     indexer.create_collection(COLLECTIONS["terms"], recreate=rebuild)
     csv_parser = CSVParser()
-    if CSV_TERMS.exists():
-        entries = csv_parser.parse_file(CSV_TERMS)
+    csv_path = SOURCE_DIR / TRANSLATION_CSV
+    if csv_path.exists():
+        entries = csv_parser.parse_file(csv_path)
         docs = [
             {
                 "id": f"term_{i}",
