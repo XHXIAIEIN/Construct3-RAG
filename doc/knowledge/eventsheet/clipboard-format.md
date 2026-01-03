@@ -24,23 +24,53 @@
 
 ---
 
-## 查找 ID 和参数
+## 获取正确格式的方法
 
-**Schema 文件是权威来源：**
+### 方法1：复制现有项目（推荐）
+在 C3 编辑器中复制已有的事件/对象，然后用 JS 读取剪贴板：
+```javascript
+// 在 C3 编辑器控制台执行
+navigator.clipboard.readText().then(t => console.log(t))
+```
+
+### 方法2：查询 Schema 文件
+Schema 文件是权威来源：
 - 插件：`data/schemas/plugins/*.json`
 - 行为：`data/schemas/behaviors/*.json`
 
-**查询示例：**
 ```bash
-# 查找 System 条件/动作/表达式
+# 查找条件/动作 ID
 grep -n "every-x-seconds\|create-object" data/schemas/plugins/system.json
 
-# 查找 8Direction 行为的动作
+# 查找行为动作
 grep -n "simulate-control" data/schemas/behaviors/eightdir.json
-
-# 查找视口表达式
-grep -n "viewport" data/schemas/plugins/system.json
 ```
+
+### 常用 ID 映射
+| 显示名 | plugin-id / behaviorId |
+|--------|------------------------|
+| Sprite | `Sprite` |
+| Text | `Text` |
+| Keyboard | `Keyboard` |
+| Mouse | `Mouse` |
+| Array | `Arr` |
+| Dictionary | `Dictionary` |
+| 8 Direction | `EightDir` |
+| Platform | `Platform` |
+| Solid | `solid` |
+| Tween | `Tween` |
+| Timer | `Timer` |
+
+### 常用键码
+| 键 | 键码 |
+|----|------|
+| W/A/S/D | 87/65/83/68 |
+| ↑/←/↓/→ | 38/37/40/39 |
+| Space | 32 |
+| Enter | 13 |
+| Escape | 27 |
+| Shift | 16 |
+| Ctrl | 17 |
 
 ---
 
@@ -229,6 +259,37 @@ await navigator.clipboard.write([new ClipboardItem({'text/plain': blob})]);
 - `behaviors` 是对象格式：`{"行为名": {"properties": {...}}}`
 - `instanceFolderItem.sid` 可以是任意数字
 - 粘贴后光标变为放置模式，点击场景确认位置
+
+---
+
+## 调试与常见错误
+
+### 验证剪贴板内容
+```javascript
+// 读取并格式化输出
+navigator.clipboard.readText().then(t => console.log(JSON.stringify(JSON.parse(t), null, 2)))
+```
+
+### 常见错误及解决
+
+| 现象 | 原因 | 解决 |
+|------|------|------|
+| 粘贴无反应 | 用了 `writeText()` | 改用 `ClipboardItem + Blob` |
+| 粘贴无反应 | 焦点不在目标区域 | 先点击目标区域再粘贴 |
+| world-instances 无预览 | 缺少 `object-types` 或 `imageData` | 必须包含完整定义和图像数据 |
+| 动作/条件报错 | ID 错误 | 从 Schema 查找正确 ID |
+| 字符串参数失败 | 缺少内嵌引号 | 用 `"\"value\""` 格式 |
+| 行为动作失败 | 缺少 `behaviorType` | 添加行为名称字段 |
+
+### 粘贴位置要求
+
+| type | 必须在此位置粘贴 |
+|------|-----------------|
+| `events` | 事件表空白边距区域 |
+| `conditions` | 选中已有条件后 |
+| `actions` | 选中已有动作后 |
+| `object-types` | Project Bar → Object types |
+| `world-instances` | Layout 视图（粘贴后点击放置） |
 
 ---
 
