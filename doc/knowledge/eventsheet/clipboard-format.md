@@ -46,32 +46,6 @@ grep -n "every-x-seconds\|create-object" data/schemas/plugins/system.json
 grep -n "simulate-control" data/schemas/behaviors/eightdir.json
 ```
 
-### 常用 ID 映射
-| 显示名 | plugin-id / behaviorId |
-|--------|------------------------|
-| Sprite | `Sprite` |
-| Text | `Text` |
-| Keyboard | `Keyboard` |
-| Mouse | `Mouse` |
-| Array | `Arr` |
-| Dictionary | `Dictionary` |
-| 8 Direction | `EightDir` |
-| Platform | `Platform` |
-| Solid | `solid` |
-| Tween | `Tween` |
-| Timer | `Timer` |
-
-### 常用键码
-| 键 | 键码 |
-|----|------|
-| W/A/S/D | 87/65/83/68 |
-| ↑/←/↓/→ | 38/37/40/39 |
-| Space | 32 |
-| Enter | 13 |
-| Escape | 27 |
-| Shift | 16 |
-| Ctrl | 17 |
-
 ---
 
 ## 关键注意事项
