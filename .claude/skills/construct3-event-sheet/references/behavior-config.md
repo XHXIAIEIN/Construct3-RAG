@@ -2,6 +2,15 @@
 
 行为属性配置，基于 490 个官方示例项目分析。
 
+## Contents
+
+- [数据源](#数据源)
+- [Top 10 行为](#top-10-行为)
+- [行为配置详解](#行为配置详解) - Tween, Platform, EightDir, Bullet, Timer, Sin, solid, Physics, Fade, Flash
+- [行为组合模式](#行为组合模式) - 平台角色、俯视角、子弹、UI元素
+
+---
+
 ## 数据源
 
 - 完整行为知识：`data/project_analysis/behaviors_knowledge.json`

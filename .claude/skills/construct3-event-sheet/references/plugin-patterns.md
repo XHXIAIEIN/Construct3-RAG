@@ -2,6 +2,15 @@
 
 常用插件使用模式，基于 490 个官方示例项目分析。
 
+## Contents
+
+- [数据源](#数据源)
+- [Top 10 插件及常用行为](#top-10-插件及常用行为)
+- [插件类型](#插件类型) - 世界对象、单例、数据对象
+- [常用插件模式](#常用插件模式) - Sprite, Keyboard, Mouse, Touch, Gamepad, Audio, Text, Array, Dictionary, AJAX, LocalStorage, Camera3D
+
+---
+
 ## 数据源
 
 - 完整插件知识：`data/project_analysis/plugins_knowledge.json`

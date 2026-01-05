@@ -2,6 +2,14 @@
 
 基于 490 个官方示例项目的动作使用频率统计。
 
+## Contents
+
+- [数据源](#数据源)
+- [Top 20 动作](#top-20-动作)
+- [动作详解](#动作详解)
+
+---
+
 ## 数据源
 
 完整数据：`data/project_analysis/sorted_indexes.json` → `top_50_actions`

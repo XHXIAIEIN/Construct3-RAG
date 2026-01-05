@@ -2,6 +2,14 @@
 
 基于 490 个官方示例项目的条件使用频率统计。
 
+## Contents
+
+- [数据源](#数据源)
+- [Top 20 条件](#top-20-条件)
+- [条件详解](#条件详解)
+
+---
+
 ## 数据源
 
 完整数据：`data/project_analysis/sorted_indexes.json` → `top_50_conditions`
