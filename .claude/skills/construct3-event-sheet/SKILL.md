@@ -9,8 +9,6 @@ description: >
 
 # Construct 3 Event Sheet Code Generation Guide
 
-本指南提供生成 Construct 3 事件表 JSON 代码所需的完整知识。基于 490 个官方示例项目分析。
-
 ## 快速开始
 
 ### 剪贴板 JSON 基本结构
@@ -92,127 +90,94 @@ await navigator.clipboard.write([new ClipboardItem({'text/plain': blob})]);
 
 详见 [parameter-types.md](references/parameter-types.md#comparison-cmp---比较运算符)
 
-## 关键参考索引
+## 参考文档
 
-根据需求查阅详细参考文档：
+| 文档 | 用途 |
+|------|------|
+| [clipboard-format.md](references/clipboard-format.md) | 完整 JSON 格式、Object Types、World Instances |
+| [parameter-types.md](references/parameter-types.md) | 参数类型、键码、比较运算符 |
+| [id-mappings.md](references/id-mappings.md) | behaviorId ↔ behaviorType 转换 |
+| [system-reference.md](references/system-reference.md) | System 对象 ACE |
+| [plugin-patterns.md](references/plugin-patterns.md) | Sprite/Keyboard/Audio 等插件用法 |
+| [behavior-config.md](references/behavior-config.md) | Platform/Tween/Timer 等行为配置 |
+| [deprecated-features.md](references/deprecated-features.md) | 废弃功能警告 |
 
-### 格式与 ID
-- **[clipboard-format.md](references/clipboard-format.md)** - 剪贴板 JSON 完整格式
-- **[parameter-types.md](references/parameter-types.md)** - 参数类型详解
-- **[id-mappings.md](references/id-mappings.md)** - ID 格式转换表
+## 代码模板
 
-### ACE 参考
-- **[system-reference.md](references/system-reference.md)** - System 完整 ACE (56条件+81动作)
-- **[top-conditions.md](references/top-conditions.md)** - Top 50 常用条件
-- **[top-actions.md](references/top-actions.md)** - Top 50 常用动作
+生成事件表时，直接复制并修改以下模板。将 `{占位符}` 替换为实际值。
 
-### 插件与行为
-- **[plugin-patterns.md](references/plugin-patterns.md)** - 常用插件使用模式
-- **[behavior-config.md](references/behavior-config.md)** - 行为属性配置表
-
-### 其他
-- **[deprecated-features.md](references/deprecated-features.md)** - 废弃/取代功能警告
-
-## Top 10 常用模式
-
-### 1. WASD 控制 (8Direction)
-
+### WASD 键盘控制
+用于：8Direction 移动。替换 `{Object}` 为对象名。
 ```json
 {"is-c3-clipboard-data":true,"type":"events","items":[
-  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":87}}],"actions":[{"id":"simulate-control","objectClass":"Player","behaviorType":"8Direction","parameters":{"control":"up"}}]},
-  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":65}}],"actions":[{"id":"simulate-control","objectClass":"Player","behaviorType":"8Direction","parameters":{"control":"left"}}]},
-  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":83}}],"actions":[{"id":"simulate-control","objectClass":"Player","behaviorType":"8Direction","parameters":{"control":"down"}}]},
-  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":68}}],"actions":[{"id":"simulate-control","objectClass":"Player","behaviorType":"8Direction","parameters":{"control":"right"}}]}
+  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":87}}],"actions":[{"id":"simulate-control","objectClass":"{Object}","behaviorType":"8Direction","parameters":{"control":"up"}}]},
+  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":65}}],"actions":[{"id":"simulate-control","objectClass":"{Object}","behaviorType":"8Direction","parameters":{"control":"left"}}]},
+  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":83}}],"actions":[{"id":"simulate-control","objectClass":"{Object}","behaviorType":"8Direction","parameters":{"control":"down"}}]},
+  {"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":68}}],"actions":[{"id":"simulate-control","objectClass":"{Object}","behaviorType":"8Direction","parameters":{"control":"right"}}]}
 ]}
 ```
 
-### 2. 平台跳跃控制 (Platform)
-
+### 平台跳跃
+用于：Platform 行为跳跃。Space=32。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":32}}],
- "actions":[{"id":"simulate-control","objectClass":"Player","behaviorType":"Platform","parameters":{"control":"jump"}}]}
+{"eventType":"block","conditions":[{"id":"key-is-down","objectClass":"Keyboard","parameters":{"key":32}}],"actions":[{"id":"simulate-control","objectClass":"{Object}","behaviorType":"Platform","parameters":{"control":"jump"}}]}
 ```
 
-### 3. 碰撞检测
-
+### 碰撞检测
+用于：两对象碰撞时触发。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"on-collision-with-another-object","objectClass":"Player","parameters":{"object":"Enemy"}}],
- "actions":[{"id":"destroy","objectClass":"Enemy","parameters":{}}]}
+{"eventType":"block","conditions":[{"id":"on-collision-with-another-object","objectClass":"{Object1}","parameters":{"object":"{Object2}"}}],"actions":[{"id":"destroy","objectClass":"{Object2}","parameters":{}}]}
 ```
 
-### 4. 定时器
-
+### 定时执行
+用于：每隔 N 秒执行。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"every-x-seconds","objectClass":"System","parameters":{"interval-seconds":"1"}}],
- "actions":[{"id":"add-to-eventvar","objectClass":"System","parameters":{"variable":"Timer","value":"1"}}]}
+{"eventType":"block","conditions":[{"id":"every-x-seconds","objectClass":"System","parameters":{"interval-seconds":"{N}"}}],"actions":[...]}
 ```
 
-### 5. 场景开始初始化
-
+### 场景初始化
+用于：场景开始时执行。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"on-start-of-layout","objectClass":"System","parameters":{}}],
- "actions":[
-   {"id":"set-eventvar-value","objectClass":"System","parameters":{"variable":"Score","value":"0"}},
-   {"id":"create-object","objectClass":"System","parameters":{"object-to-create":"Player","layer":"0","x":"400","y":"300"}}
- ]}
+{"eventType":"block","conditions":[{"id":"on-start-of-layout","objectClass":"System","parameters":{}}],"actions":[{"id":"set-eventvar-value","objectClass":"System","parameters":{"variable":"{VarName}","value":"0"}}]}
 ```
 
-### 6. 变量定义
-
+### 变量定义
+用于：定义事件变量。**必须包含 comment 字段**。
 ```json
-{"eventType":"variable","name":"Score","type":"number","initialValue":"0","comment":"","isStatic":false,"isConstant":false}
+{"eventType":"variable","name":"{VarName}","type":"number","initialValue":"0","comment":""}
 ```
 
-### 7. 条件分支 (Else)
-
+### 条件分支
+用于：if/else 逻辑。comparison: 0=等于, 4=大于。
 ```json
-{"eventType":"block","conditions":[{"id":"compare-eventvar","objectClass":"System","parameters":{"variable":"Health","comparison":4,"value":"0"}}],"actions":[...]},
+{"eventType":"block","conditions":[{"id":"compare-eventvar","objectClass":"System","parameters":{"variable":"{VarName}","comparison":4,"value":"0"}}],"actions":[...]},
 {"eventType":"block","conditions":[{"id":"else","objectClass":"System","parameters":{}}],"actions":[...]}
 ```
 
-### 8. 循环遍历
-
+### 循环遍历
+用于：遍历所有实例。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"for-each","objectClass":"System","parameters":{"object":"Enemy"}}],
- "actions":[{"id":"set-instvar-value","objectClass":"Enemy","parameters":{"instance-variable":"Health","value":"100"}}]}
+{"eventType":"block","conditions":[{"id":"for-each","objectClass":"System","parameters":{"object":"{ObjectType}"}}],"actions":[...]}
 ```
 
-### 9. 函数调用
-
+### 函数调用
+用于：调用自定义函数。
 ```json
-// 调用无返回值函数
-{"callFunction":"MyFunction","parameters":["param1","param2"]}
-
-// 调用有返回值函数（在表达式中）
-"value": "Functions.Calculate(10, 20)"
+{"callFunction":"{FunctionName}","parameters":["{param1}","{param2}"]}
 ```
+有返回值时用表达式：`"Functions.{FunctionName}({params})"`
 
-### 10. Tween 动画
-
+### Tween 动画
+用于：属性补间动画。property: x/y/width/height/angle/opacity。
 ```json
-{"eventType":"block",
- "conditions":[{"id":"on-start-of-layout","objectClass":"System","parameters":{}}],
- "actions":[{"id":"tween-one-property","objectClass":"Sprite","behaviorType":"Tween","parameters":{
-   "tags":"\"fade\"","property":"opacity","end-value":"0","time":"1","ease":"in-out-sine",
-   "destroy-on-complete":"no","loop":"no","ping-pong":"no","repeat-count":"1"
- }}]}
+{"id":"tween-one-property","objectClass":"{Object}","behaviorType":"Tween","parameters":{"tags":"\"{tag}\"","property":"{property}","end-value":"{value}","time":"{seconds}","ease":"in-out-sine","destroy-on-complete":"no","loop":"no","ping-pong":"no","repeat-count":"1"}}
 ```
 
 ## 最佳实践
 
 ### 避免废弃功能
 
-| 废弃功能 | 替代方案 |
-|----------|----------|
-| `Function` 插件 | 内置 `Functions` 系统 |
-| `Pin` 行为 | Hierarchies (Add child) |
-| `Fade` 行为 | `Tween` 行为 |
-| `solid.tags` 属性 | Instance tags |
+详见 [deprecated-features.md](references/deprecated-features.md)
 
 ### ID 命名规范
 
