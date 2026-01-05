@@ -1,13 +1,10 @@
 ---
 name: construct3-event-sheet
-description: |
-  Construct 3 事件表代码生成完整指南。Use when:
-  (1) 生成可粘贴到 C3 编辑器的事件表 JSON
-  (2) 查询条件/动作 ID 和参数格式
-  (3) 了解常用游戏逻辑实现模式 (移动控制、碰撞、定时器等)
-  (4) 需要 System 对象完整 ACE 参考
-  (5) 转换 ID 格式 (Schema ↔ 编辑器)
-  (6) 查询行为属性配置
+description: >
+  Generates Construct 3 event sheet JSON that can be pasted into the C3 editor.
+  Invoked when generating clipboard-ready event blocks, querying ACE IDs and
+  parameter formats, implementing game logic patterns (movement, collision, timers),
+  or converting between Schema and editor ID formats. Based on 490 official examples.
 ---
 
 # Construct 3 Event Sheet Code Generation Guide
@@ -91,14 +88,9 @@ await navigator.clipboard.write([new ClipboardItem({'text/plain': blob})]);
 | 键码 | 数字 | `"key": 87` (W键) |
 
 ### 比较运算符值
-| 值 | 运算符 |
-|----|--------|
-| 0 | = |
-| 1 | ≠ |
-| 2 | < |
-| 3 | ≤ |
-| 4 | > |
-| 5 | ≥ |
+0=等于, 1=不等于, 2=小于, 3=小于等于, 4=大于, 5=大于等于
+
+详见 [parameter-types.md](references/parameter-types.md#comparison-cmp---比较运算符)
 
 ## 关键参考索引
 
