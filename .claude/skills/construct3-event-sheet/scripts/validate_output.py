@@ -22,7 +22,7 @@ class ValidationError(Exception):
 class C3ClipboardValidator:
     """Validates Construct 3 clipboard JSON format"""
 
-    VALID_TYPES = {"events", "conditions", "actions"}  # Only these 3 are valid for clipboard paste
+    VALID_TYPES = {"events", "conditions", "actions", "object-types", "world-instances", "layouts", "event-sheets"}
     VALID_EVENT_TYPES = {"block", "variable", "comment", "group", "function-block"}
     COMPARISON_OPERATORS = {0, 1, 2, 3, 4, 5}  # =, ≠, <, ≤, >, ≥
 
@@ -67,6 +67,14 @@ class C3ClipboardValidator:
             self._validate_conditions(data["items"])
         elif data["type"] == "actions":
             self._validate_actions(data["items"])
+        elif data["type"] == "object-types":
+            self._validate_object_types(data)
+        elif data["type"] == "world-instances":
+            self._validate_world_instances(data)
+        elif data["type"] == "layouts":
+            self._validate_layouts(data)
+        elif data["type"] == "event-sheets":
+            self._validate_event_sheets(data)
 
         return len(self.errors) == 0
 
@@ -182,6 +190,72 @@ class C3ClipboardValidator:
             # Check parameters
             if "parameters" in action and isinstance(action["parameters"], dict):
                 self._validate_parameters(action["parameters"], action_prefix)
+
+    def _validate_object_types(self, data: dict):
+        """Validate object-types format"""
+        items = data.get("items", [])
+        for i, item in enumerate(items):
+            prefix = f"object-types[{i}]"
+            if "name" not in item:
+                self.errors.append(f"{prefix}: missing 'name'")
+            if "plugin-id" not in item:
+                self.errors.append(f"{prefix}: missing 'plugin-id'")
+
+        # Check imageData for sprites
+        if "imageData" in data:
+            if not isinstance(data["imageData"], list):
+                self.errors.append("'imageData' must be an array")
+
+    def _validate_world_instances(self, data: dict):
+        """Validate world-instances format"""
+        items = data.get("items", [])
+        for i, item in enumerate(items):
+            prefix = f"world-instances[{i}]"
+            if "type" not in item:
+                self.errors.append(f"{prefix}: missing 'type'")
+            if "world" not in item:
+                self.errors.append(f"{prefix}: missing 'world' (position data)")
+            elif isinstance(item.get("world"), dict):
+                world = item["world"]
+                if "x" not in world or "y" not in world:
+                    self.errors.append(f"{prefix}: world missing 'x' or 'y'")
+
+        if "object-types" not in data:
+            self.warnings.append("world-instances should include 'object-types' array")
+
+    def _validate_layouts(self, data: dict):
+        """Validate layouts format"""
+        items = data.get("items", [])
+        for i, layout in enumerate(items):
+            prefix = f"layouts[{i}]"
+            if "name" not in layout:
+                self.errors.append(f"{prefix}: missing 'name'")
+            if "layers" not in layout:
+                self.errors.append(f"{prefix}: missing 'layers' array")
+            elif isinstance(layout.get("layers"), list):
+                for j, layer in enumerate(layout["layers"]):
+                    layer_prefix = f"{prefix}.layers[{j}]"
+                    if "name" not in layer:
+                        self.errors.append(f"{layer_prefix}: missing 'name'")
+                    if "instances" not in layer:
+                        self.warnings.append(f"{layer_prefix}: missing 'instances' array")
+
+        if "object-types" not in data:
+            self.warnings.append("layouts should include 'object-types' array")
+        if "imageData" not in data:
+            self.warnings.append("layouts may need 'imageData' array for sprites")
+
+    def _validate_event_sheets(self, data: dict):
+        """Validate event-sheets format"""
+        items = data.get("items", [])
+        for i, sheet in enumerate(items):
+            prefix = f"event-sheets[{i}]"
+            if "name" not in sheet:
+                self.errors.append(f"{prefix}: missing 'name'")
+            if "events" not in sheet:
+                self.errors.append(f"{prefix}: missing 'events' array")
+            elif isinstance(sheet.get("events"), list):
+                self._validate_events(sheet["events"])
 
     def _validate_ace_id(self, ace_id: str, prefix: str):
         """Validate ACE ID format"""

@@ -19,6 +19,9 @@ description: >
 |------|----------------|
 | `"events"` | Event sheet margin |
 | `"object-types"` | Project Bar → Object types |
+| `"world-instances"` | Layout view (with positions) |
+| `"layouts"` | Project Bar → Layouts (complete layout) |
+| `"event-sheets"` | Project Bar → Event sheets (complete sheet) |
 
 ## 2. Use This Structure
 
@@ -48,14 +51,20 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 4. **Variable must have comment field**: `"comment": ""`
 5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
 
-## 5. Provide Dependencies as JSON
+## 5. Choose Output Format
 
-Before events JSON, output object-types JSON for required objects.
+**Option A: Separate JSONs** (more control)
+1. Object types JSON → paste to Project Bar → Object types
+2. Events JSON → paste to Event sheet margin
 
-**Step 1**: Object types JSON (paste to Project Bar)
-**Step 2**: Events JSON (paste to Event sheet)
+**Option B: Complete Layout** (one paste)
+- `layouts` type JSON → paste to Project Bar → Layouts
+- Includes objects + instances + positions
 
-Get templates from [clipboard-format.md](references/clipboard-format.md) → Object Types section.
+**Option C: Complete Event Sheet** (one paste)
+- `event-sheets` type JSON → paste to Project Bar → Event sheets
+
+Get templates from [layout-templates.md](references/layout-templates.md).
 
 ## 6. Validate Before Output
 
@@ -92,8 +101,9 @@ python3 scripts/query_examples.py action create-object
 
 | When | File |
 |------|------|
-| Need object-types JSON | [clipboard-format.md](references/clipboard-format.md) → Object Types |
-| Need event templates | [clipboard-format.md](references/clipboard-format.md) → Templates |
+| Need object-types JSON | [object-templates.md](references/object-templates.md) |
+| Need complete layout JSON | [layout-templates.md](references/layout-templates.md) |
+| Need event templates | [clipboard-format.md](references/clipboard-format.md) |
 | Chinese user input | [zh-cn.md](references/zh-cn.md) |
 | Unsure behavior name | [behavior-names.md](references/behavior-names.md) |
 | Check deprecated APIs | [deprecated-features.md](references/deprecated-features.md) |

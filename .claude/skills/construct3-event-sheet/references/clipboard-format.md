@@ -13,6 +13,9 @@
 | `"conditions"` | Conditions only | After selecting condition |
 | `"actions"` | Actions only | After selecting action |
 | `"object-types"` | Object definitions | Project Bar → Object types |
+| `"world-instances"` | Object instances with position | Layout view |
+| `"layouts"` | Complete layout (layers + instances + objects) | Project Bar → Layouts |
+| `"event-sheets"` | Complete event sheet | Project Bar → Event sheets |
 
 ### Write to Clipboard (MUST use Blob)
 ```javascript
@@ -230,75 +233,189 @@ ease: linear, in-sine, out-sine, in-out-sine, in-back, out-back, in-elastic, out
 
 ---
 
-## Object Types (paste to Project Bar → Object types)
+## Object Types
 
-### Single-Global Plugins (no imageData needed)
+See [object-templates.md](object-templates.md) for complete object type templates with imageData.
 
-**Keyboard**
+---
+
+## World Instances
+
+Paste instances directly to Layout view with positions.
+
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Keyboard","plugin-id":"Keyboard","singleglobal-inst":{"type":"Keyboard","properties":{},"tags":""}}],"folders":[]}
+{
+  "is-c3-clipboard-data": true,
+  "type": "world-instances",
+  "items": [...],           // Instance data with positions
+  "object-types": [...],    // Object type definitions
+  "imageData": [...]        // Shared base64 images
+}
 ```
 
-**Mouse**
+### Instance Structure
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Mouse","plugin-id":"Mouse","singleglobal-inst":{"type":"Mouse","properties":{},"tags":""}}],"folders":[]}
+{
+  "type": "{ObjectName}",
+  "properties": {...},      // Plugin-specific properties
+  "tags": "",
+  "instanceVariables": {},  // {"Health": 100}
+  "behaviors": {},          // Behavior instance properties
+  "showing": true,
+  "locked": false,
+  "world": {
+    "x": 100, "y": 200,
+    "width": 32, "height": 32,
+    "originX": 0.5, "originY": 0.5,
+    "color": [1,1,1,1],
+    "angle": 0,
+    "zElevation": 0
+  }
+}
 ```
 
-**Touch**
+### Sprite Instance Properties
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Touch","plugin-id":"Touch","singleglobal-inst":{"type":"Touch","properties":{},"tags":""}}],"folders":[]}
+"properties": {
+  "initially-visible": true,
+  "initial-animation": "Default",
+  "initial-frame": 0,
+  "enable-collisions": true,
+  "live-preview": false
+}
 ```
 
-**Audio**
+### TiledBackground Instance Properties
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Audio","plugin-id":"Audio","singleglobal-inst":{"type":"Audio","properties":{"timescale-audio":false,"playback-rate-clamp-lo":0.5,"playback-rate-clamp-hi":4,"panning-model":"HRTF","distance-model":"inverse","ref-distance":600,"max-distance":10000,"rolloff-factor":1,"speed-of-sound":5000},"tags":""}}],"folders":[]}
+"properties": {
+  "initially-visible": true,
+  "origin": "top-left",
+  "wrap-horizontal": "repeat",
+  "wrap-vertical": "repeat",
+  "image-offset-x": 0,
+  "image-offset-y": 0,
+  "image-scale-x": 1,
+  "image-scale-y": 1,
+  "image-angle": 0,
+  "enable-tile-randomization": false
+}
 ```
 
-### Non-World Objects (no imageData needed)
-
-**Array**
+### Text Instance Properties
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Array","plugin-id":"Arr","isGlobal":true,"nonworld-inst":{"type":"Array","properties":{"width":10,"height":1,"depth":1},"tags":""}}],"folders":[]}
+"properties": {
+  "text": "Hello World",
+  "enable-bbcode": false,
+  "font": "Arial",
+  "size": 24,
+  "line-height": 0,
+  "bold": false,
+  "italic": false,
+  "color": [1,1,1,1],
+  "horizontal-alignment": "left",
+  "vertical-alignment": "top",
+  "wrapping": "word",
+  "initially-visible": true,
+  "origin": "top-left"
+}
 ```
 
-**Dictionary**
+### Behavior Instance Properties
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Dictionary","plugin-id":"Dictionary","isGlobal":true,"nonworld-inst":{"type":"Dictionary","properties":{},"tags":""}}],"folders":[]}
+"behaviors": {
+  "Platform": {
+    "properties": {
+      "max-speed": 330,
+      "acceleration": 1500,
+      "deceleration": 1500,
+      "jump-strength": 650,
+      "gravity": 1500,
+      "max-fall-speed": 1000,
+      "default-controls": true,
+      "enabled": true
+    }
+  },
+  "8Direction": {
+    "properties": {
+      "max-speed": 200,
+      "acceleration": 600,
+      "deceleration": 500,
+      "directions": "dir-8",
+      "set-angle": "no",
+      "default-controls": true,
+      "enabled": true
+    }
+  },
+  "Bullet": {
+    "properties": {
+      "speed": 400,
+      "acceleration": 0,
+      "gravity": 0,
+      "bounce-off-solids": false,
+      "set-angle": true,
+      "enabled": true
+    }
+  },
+  "Solid": {
+    "properties": {"enabled": true}
+  }
+}
 ```
 
-**Text (no imageData needed)**
+---
+
+## Layouts
+
+Complete layout with layers, instances, and object definitions. Paste to Project Bar → Layouts.
+
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Text","plugin-id":"Text","isGlobal":false,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[]}],"folders":[]}
+{
+  "is-c3-clipboard-data": true,
+  "type": "layouts",
+  "families": [],
+  "object-types": [...],    // All object type definitions
+  "items": [{               // Layout definitions
+    "name": "Layout 1",
+    "layers": [...],        // Layer array
+    "width": 1280,
+    "height": 1024,
+    "eventSheet": "Event sheet 1"
+  }],
+  "imageData": [...]
+}
 ```
 
-### Sprite with Behaviors (requires imageData)
-
-Sprite frame must include all fields from C3 clipboard format.
-
-**Player (Sprite + Platform)**
+### Layer Structure
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"Platform","name":"Platform"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+{
+  "name": "Game",
+  "instances": [...],       // World instances on this layer
+  "effectTypes": [],
+  "isInitiallyVisible": true,
+  "isInitiallyInteractive": true,
+  "isHTMLElementsLayer": false,
+  "color": [1,1,1,1],
+  "backgroundColor": [1,1,1,1],
+  "isTransparent": false,
+  "parallaxX": 1,
+  "parallaxY": 1,
+  "blendMode": "normal",
+  "zElevation": 0
+}
 ```
 
-**Player (Sprite + 8Direction)**
+### UI Layer (fixed position)
 ```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"EightDir","name":"8Direction"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+{
+  "name": "UI",
+  "instances": [...],
+  "isTransparent": true,
+  "parallaxX": 0,           // Fixed position
+  "parallaxY": 0
+}
 ```
 
-**Enemy (Sprite only)**
-```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Enemy","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
-```
-
-**Ground (Sprite + Solid)**
-```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Ground","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"solid","name":"Solid"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
-```
-
-**Bullet (Sprite + Bullet + DestroyOutsideLayout)**
-```json
-{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Bullet","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"Bullet","name":"Bullet"},{"behaviorId":"destroy","name":"DestroyOutsideLayout"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":16,"height":16,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVR4AWMY/IAJSjMQCxhBNAPxgImaLmAE0gwEAEYsBjGMmjFqxhAAACQIAQFmGfSVAAAAAElFTkSuQmCC"]}
-```
+See [layout-templates.md](layout-templates.md) for complete layout templates.
 
 ---
 
