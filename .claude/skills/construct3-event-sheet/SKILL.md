@@ -1,10 +1,10 @@
 ---
 name: construct3-event-sheet
 description: >
-  Generates Construct 3 event sheet JSON that can be pasted into the C3 editor.
-  Invoked when generating clipboard-ready event blocks, querying ACE IDs and
-  parameter formats, implementing game logic patterns (movement, collision, timers),
-  or converting between Schema and editor ID formats. Based on 490 official examples.
+  生成可粘贴到 Construct 3 编辑器的事件表 JSON。当用户提到 Construct 3、C3、
+  事件表、游戏逻辑、移动控制、碰撞检测、键盘输入、Tween 动画时使用此 Skill。
+  Generates Construct 3 event sheet JSON for clipboard paste. Use when user mentions
+  Construct 3, C3, event sheets, game logic, movement, collision, keyboard, or tween.
 ---
 
 # Construct 3 Event Sheet Code Generation
@@ -66,37 +66,36 @@ Behavior ACE: add `"behaviorType": "{BehaviorName}"` field.
 
 ## Critical Rules
 
-1. **String parameters need nested quotes**: `"animation": "\"Walk\""`
+1. **String params need nested quotes**: `"animation": "\"Walk\""`
 2. **Behavior ACE needs behaviorType**: `"behaviorType": "8Direction"` (display name, not ID)
-3. **Comparison is number**: `"comparison": 4` not `"comparison": ">"`
-4. **Variable needs comment field**: `"comment": ""` (can be empty)
+3. **Comparison is number**: `"comparison": 4` not `">"`
+4. **Variable needs comment field**: `"comment": ""`
+
+## Workflow
+
+1. Generate JSON from templates
+2. Validate: `python scripts/validate_output.py '<json>'`
+3. Fix errors and re-validate
+4. Copy to clipboard when passed
 
 ## Query Scripts
 
-When reference files lack detail, query the full data:
-
 ```bash
-# Query ACE schema definitions
+# Query ACE schema
 python scripts/query_schema.py plugin sprite set-animation
 python scripts/query_schema.py behavior platform
-python scripts/query_schema.py search simulate-control
 
-# Query usage examples from 490 projects
+# Query usage examples
 python scripts/query_examples.py action create-object
-python scripts/query_examples.py behavior tween
 python scripts/query_examples.py top actions 20
 ```
 
 ## References
 
-Load on-demand when needed:
-
 | File | Purpose |
 |------|---------|
-| [templates.md](references/templates.md) | Copy-paste code patterns |
-| [ace-reference.md](references/ace-reference.md) | ACE ID lookup |
-| [object-patterns.md](references/object-patterns.md) | Behavior names and ACE |
-| [parameter-types.md](references/parameter-types.md) | Format rules, key codes |
-| [clipboard-format.md](references/clipboard-format.md) | JSON structure |
+| [zh-cn.md](references/zh-cn.md) | 中文术语查询 |
+| [templates.md](references/templates.md) | Code patterns |
+| [behavior-names.md](references/behavior-names.md) | behaviorId → behaviorType |
+| [deprecated-features.md](references/deprecated-features.md) | What NOT to use |
 | [troubleshooting.md](references/troubleshooting.md) | Error fixes |
-| [deprecated-features.md](references/deprecated-features.md) | What to avoid |

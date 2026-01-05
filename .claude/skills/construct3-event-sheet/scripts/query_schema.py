@@ -32,7 +32,8 @@ def load_schema(schema_type: str, name: str) -> dict:
         return json.load(f)
 
 def list_aces(schema: dict):
-    print(f"\n📦 {schema.get('name', '?')}\n")
+    name = schema.get('name_en', schema.get('name', schema.get('id', '?')))
+    print(f"\n📦 {name}\n")
     for ace_type in ['conditions', 'actions', 'expressions']:
         aces = schema.get(ace_type, [])
         if aces:

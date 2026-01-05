@@ -47,36 +47,49 @@ def query(data_type: str, search: str):
 
     print(f"\n🔍 Found {len(matches)} matches\n")
     for key, info in matches[:5]:
-        print(f"### `{key}` (used {info.get('count', 0)} times)\n")
+        count = info.get('usage_count', info.get('count', 0))
+        print(f"### `{key}` (used {count} times)\n")
 
-        examples = info.get('examples', [])
-        if examples:
+        # Show raw samples as examples
+        samples = info.get('raw_samples', info.get('examples', []))
+        if samples:
             print("```json")
-            for ex in examples[:2]:
+            for ex in samples[:2]:
                 print(json.dumps(ex, ensure_ascii=False))
             print("```\n")
 
-        params = info.get('common_params', {})
-        if params:
-            print("Common values:")
-            for param, values in list(params.items())[:3]:
-                if isinstance(values, list):
-                    print(f"  `{param}`: {values[:3]}")
+        # Show parameter info
+        params = info.get('params', info.get('common_params', {}))
+        if params and isinstance(params, dict):
+            unique_vals = []
+            for param_id, param_info in list(params.items())[:3]:
+                if isinstance(param_info, dict) and 'unique_values' in param_info:
+                    vals = param_info['unique_values'][:5]
+                    unique_vals.append(f"  `{param_id}`: {vals}")
+            if unique_vals:
+                print("Common values:")
+                print('\n'.join(unique_vals))
+
+        # Show behavior-specific info: attached plugins
+        attached = info.get('attached_to_plugins', {})
+        if attached:
+            top_plugins = sorted(attached.items(), key=lambda x: x[1], reverse=True)[:5]
+            print(f"\nCommonly attached to: {', '.join(p[0] for p in top_plugins)}")
 
 def show_top(ace_type: str, count: int = 10):
     data = load_json("sorted_indexes.json")
-    key = f"top_50_{ace_type}"
+    index_key = f"top_50_{ace_type}"
 
-    if key not in data:
+    if index_key not in data:
         print(f"❌ Unknown: {ace_type}\n   Valid: actions, conditions, behaviors, plugins")
         return
 
     print(f"\n📊 Top {count} {ace_type}\n")
     print("| # | ID | Count |")
     print("|---|-----|-------|")
-    for i, item in enumerate(data[key][:count], 1):
-        name = item.get('id', item.get('name', '?'))
-        cnt = item.get('count', 0)
+    for i, item in enumerate(data[index_key][:count], 1):
+        name = item.get('key', item.get('id', item.get('name', '?')))
+        cnt = item.get('usage_count', item.get('count', 0))
         print(f"| {i} | `{name}` | {cnt} |")
 
 if __name__ == "__main__":
