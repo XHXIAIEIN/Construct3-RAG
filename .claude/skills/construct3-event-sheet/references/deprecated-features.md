@@ -1,59 +1,59 @@
 # Deprecated and Superseded Features
 
-废弃和被取代的功能警告。新项目应避免使用这些功能。
+Deprecated and superseded feature warnings. Avoid using these in new projects.
 
 ---
 
-## 已弃用 (Deprecated)
+## Deprecated
 
-以下功能已被弃用，应避免在新项目中使用：
+The following features are deprecated and should be avoided in new projects:
 
-### Function 插件
+### Function Plugin
 
-| 状态 | 已弃用 |
-|------|--------|
-| 替代方案 | 内置 `Functions` 系统 |
-| 说明 | 旧的 Function 插件使用 `callFunction` 动作，新的内置 Functions 系统更强大 |
+| Status | Deprecated |
+|--------|------------|
+| Replacement | Built-in `Functions` system |
+| Note | Old Function plugin uses `callFunction` action, new built-in Functions system is more powerful |
 
-**旧方式（避免）**:
+**Old way (avoid)**:
 ```json
 {"callFunction": "MyFunction", "parameters": ["param1"]}
 ```
 
-**新方式（推荐）**:
+**New way (recommended)**:
 ```json
-// 在事件表中定义函数
+// Define function in event sheet
 {"eventType": "function-block", "functionName": "MyFunction", "functionReturnType": "number",
  "functionParameters": [{"name": "param1", "type": "number"}],
  "conditions": [], "actions": [...]}
 
-// 调用函数（动作）
+// Call function (action)
 {"callFunction": "MyFunction", "parameters": ["100"]}
 
-// 调用函数（表达式中）
+// Call function (in expression)
 "value": "Functions.MyFunction(100)"
 ```
 
 ---
 
-## 被取代 (Superseded)
+## Superseded
 
-以下功能已被更好的替代方案取代，建议新项目使用替代方案：
+The following features have been superseded by better alternatives. New projects should use the alternatives:
 
-### Pin 行为 → Hierarchies
+### Pin Behavior → Hierarchies
 
-| 旧功能 | Pin 行为 |
-|--------|----------|
-| 替代方案 | Hierarchies (Add child) |
-| 说明 | 层级系统更可靠，支持对象链，可通过 `add-child` 动作实现 |
+| Old Feature | Pin behavior |
+|-------------|--------------|
+| Replacement | Hierarchies (Add child) |
+| Note | Hierarchy system is more reliable, supports object chains, use `add-child` action |
 
-**旧方式（Pin）**:
+**Old way (Pin)**:
 ```json
 {"id": "pin-to-object", "objectClass": "Weapon", "behaviorType": "Pin",
  "parameters": {"pin-to": "Player", "mode": "position-angle"}}
 ```
 
-**新方式（Hierarchies）**:
+**New way (Hierarchies)**:
 ```json
 {"id": "add-child", "objectClass": "Player",
  "parameters": {
@@ -65,16 +65,16 @@
  }}
 ```
 
-### Fade 行为 → Tween 行为
+### Fade Behavior → Tween Behavior
 
-| 旧功能 | Fade 行为 |
-|--------|----------|
-| 替代方案 | Tween 行为 |
-| 说明 | Tween 更通用，可控制任意属性，不仅限于透明度 |
+| Old Feature | Fade behavior |
+|-------------|---------------|
+| Replacement | Tween behavior |
+| Note | Tween is more versatile, can control any property, not just opacity |
 
-**旧方式（Fade）**:
+**Old way (Fade)**:
 ```json
-// 需要在对象上添加 Fade 行为，通过属性配置
+// Need to add Fade behavior to object, configure via properties
 "behaviors": {
   "Fade": {
     "properties": {
@@ -87,7 +87,7 @@
 }
 ```
 
-**新方式（Tween）**:
+**New way (Tween)**:
 ```json
 {"id": "tween-one-property", "objectClass": "Sprite", "behaviorType": "Tween",
  "parameters": {
@@ -100,49 +100,49 @@
  }}
 ```
 
-### solid 行为的 tags 属性 → Instance tags
+### solid Behavior tags Property → Instance Tags
 
-| 旧功能 | solid 行为的 `tags` 属性 |
-|--------|--------------------------|
-| 替代方案 | Instance tags (实例标签系统) |
-| 说明 | 使用实例标签系统更灵活 |
+| Old Feature | solid behavior's `tags` property |
+|-------------|----------------------------------|
+| Replacement | Instance tags system |
+| Note | Instance tags system is more flexible |
 
 ---
 
-## 使用检测
+## Detection Patterns
 
-如果在生成的代码中检测到以下模式，应发出警告：
+Warn if the following patterns are detected in generated code:
 
 ```json
-// 检测 Function 插件（已弃用）
+// Detect Function plugin (deprecated)
 "objectClass": "Function"
 
-// 检测 Pin 行为（被取代）
+// Detect Pin behavior (superseded)
 "behaviorType": "Pin"
 "id": "pin-to-object"
 
-// 检测 Fade 行为（被取代）
+// Detect Fade behavior (superseded)
 "behaviorType": "Fade"
 ```
 
 ---
 
-## 迁移建议
+## Migration Guide
 
 ### Function → Functions
 
-1. 创建新的函数定义块
-2. 迁移函数逻辑
-3. 更新所有调用点
+1. Create new function definition block
+2. Migrate function logic
+3. Update all call sites
 
 ### Pin → Hierarchies
 
-1. 移除 Pin 行为
-2. 使用 `add-child` 动作建立父子关系
-3. 配置适当的变换选项
+1. Remove Pin behavior
+2. Use `add-child` action to establish parent-child relationship
+3. Configure appropriate transform options
 
 ### Fade → Tween
 
-1. 添加 Tween 行为
-2. 使用 `tween-one-property` 动作控制 `opacity`
-3. 配置 `destroy-on-complete` 如需销毁
+1. Add Tween behavior
+2. Use `tween-one-property` action to control `opacity`
+3. Configure `destroy-on-complete` if destruction needed

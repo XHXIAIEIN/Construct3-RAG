@@ -1,132 +1,122 @@
 # Parameter Types Reference
 
-参数类型详解，用于正确构造 ACE 参数。
+How to correctly format ACE parameters.
 
 ## Contents
 
-- [基本类型](#基本类型) - number, string, any
-- [对象类型](#对象类型) - object, layer, layout
-- [比较与选择](#比较与选择) - comparison, combo
-- [键盘按键](#键盘按键) - key codes
-- [变量类型](#变量类型) - eventvar, instancevar
-- [行为特定参数](#行为特定参数) - simulate-control, Tween, Timer
-- [特殊格式](#特殊格式) - 视口、对象、系统表达式
-- [常见错误](#常见错误)
+- [Basic Types](#basic-types) - number, string, any
+- [Object Types](#object-types) - object, layer, layout
+- [Comparison & Selection](#comparison--selection) - comparison, combo
+- [Key Codes](#key-codes)
+- [Variable Types](#variable-types) - eventvar, instancevar
+- [Behavior Parameters](#behavior-parameters) - simulate-control, Tween, Timer
+- [Expressions](#expressions) - viewport, object, system
+- [Common Errors](#common-errors)
 
 ---
 
-## 基本类型
+## Basic Types
 
-### number - 数字
+### number
 ```json
 "x": "400"
 "speed": "200"
 "interval-seconds": "2.5"
 ```
-- 直接写数字字符串
-- 支持表达式：`"Player.X + 100"`
-- 支持系统表达式：`"random(0, 100)"`
+- Direct number string
+- Supports expressions: `"Player.X + 100"`
+- Supports system expressions: `"random(0, 100)"`
 
-### string - 字符串
+### string
 ```json
 "text": "\"Hello World\""
 "animation": "\"Walk\""
 "tag": "\"player\""
 ```
-- **必须有内嵌引号**
-- 支持拼接：`"\"Score: \" & Score"`
-- 支持表达式：`"\"HP: \" & Player.Health`
+- **Must have nested quotes**
+- Concatenation: `"\"Score: \" & Score"`
+- With expression: `"\"HP: \" & Player.Health"`
 
-### any - 任意类型
+### any
 ```json
-"value": "100"              // 数字
-"value": "\"text\""         // 字符串
-"value": "Player.X"         // 表达式
+"value": "100"              // number
+"value": "\"text\""         // string
+"value": "Player.X"         // expression
 ```
 
 ---
 
-## 对象类型
+## Object Types
 
-### object - 对象选择器
+### object
 ```json
 "object": "Player"
 "object-to-create": "Bullet"
 ```
-- 使用对象名（objectClass）
+Uses objectClass name.
 
-### layer - 图层
+### layer
 ```json
-"layer": "0"                // 按索引
-"layer": "\"Background\""   // 按名称（需要引号）
+"layer": "0"                // by index
+"layer": "\"Background\""   // by name (needs quotes)
 ```
 
-### layout - 布局
+### layout
 ```json
-"layout": "\"Game\""        // 布局名称
+"layout": "\"Game\""        // layout name
 ```
 
 ---
 
-## 比较与选择
+## Comparison & Selection
 
-### comparison (cmp) - 比较运算符
+### comparison
 ```json
-"comparison": 0   // =  等于
-"comparison": 1   // ≠  不等于
-"comparison": 2   // <  小于
-"comparison": 3   // ≤  小于等于
-"comparison": 4   // >  大于
-"comparison": 5   // ≥  大于等于
+"comparison": 0   // =  Equal
+"comparison": 1   // ≠  Not equal
+"comparison": 2   // <  Less than
+"comparison": 3   // ≤  Less or equal
+"comparison": 4   // >  Greater than
+"comparison": 5   // ≥  Greater or equal
 ```
 
-### combo - 下拉选择
+### combo
 ```json
-// 布尔类型
+// Boolean
 "state": "yes"
 "state": "no"
 
-// 方向类型
+// Direction
 "control": "up"
 "control": "down"
 "control": "left"
 "control": "right"
 "control": "jump"
 
-// 循环类型
+// Loop
 "loop": "no"
 "loop": "loop"
 
-// 排序
+// Order
 "order": "ascending"
 "order": "descending"
 ```
 
 ---
 
-## 键盘按键
+## Key Codes
 
-### key - 键码
-常用键码：
-| 键 | 码 |
-|----|-----|
-| W | 87 |
-| A | 65 |
-| S | 83 |
-| D | 68 |
-| Space | 32 |
-| Enter | 13 |
-| Shift | 16 |
-| Ctrl | 17 |
-| Alt | 18 |
-| Esc | 27 |
-| ↑ | 38 |
-| ↓ | 40 |
-| ← | 37 |
-| → | 39 |
-| 0-9 | 48-57 |
-| A-Z | 65-90 |
-| F1-F12 | 112-123 |
+| Key | Code | Key | Code |
+|-----|------|-----|------|
+| W | 87 | ↑ | 38 |
+| A | 65 | ← | 37 |
+| S | 83 | ↓ | 40 |
+| D | 68 | → | 39 |
+| Space | 32 | Enter | 13 |
+| Shift | 16 | Ctrl | 17 |
+| Alt | 18 | Esc | 27 |
+| 0-9 | 48-57 | A-Z | 65-90 |
+| F1-F12 | 112-123 | | |
 
 ```json
 {"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}
@@ -134,16 +124,16 @@
 
 ---
 
-## 变量类型
+## Variable Types
 
-### eventvar - 事件变量
+### eventvar
 ```json
 "variable": "Score"
 "variable": "PlayerHealth"
 ```
-- 使用变量名，不需要引号
+Use variable name without quotes.
 
-### instancevar - 实例变量
+### instancevar
 ```json
 "instance-variable": "Health"
 "instance-variable": "Speed"
@@ -151,11 +141,11 @@
 
 ---
 
-## 行为特定参数
+## Behavior Parameters
 
-### simulate-control 控制值
+### simulate-control
 
-**8Direction 行为**:
+**8Direction**:
 ```json
 "control": "up"
 "control": "down"
@@ -163,22 +153,22 @@
 "control": "right"
 ```
 
-**Platform 行为**:
+**Platform**:
 ```json
 "control": "left"
 "control": "right"
 "control": "jump"
 ```
 
-### Tween 参数
+### Tween
 
 ```json
 {
   "tags": "\"mytween\"",
-  "property": "x",           // x, y, width, height, angle, opacity, etc.
+  "property": "x",           // x, y, width, height, angle, opacity, z-elevation
   "end-value": "500",
   "time": "1",
-  "ease": "in-out-sine",     // linear, in-sine, out-sine, in-out-sine, etc.
+  "ease": "in-out-sine",     // linear, in-sine, out-sine, in-out-sine, in-back, out-back, in-elastic, out-elastic, in-bounce, out-bounce
   "destroy-on-complete": "no",
   "loop": "no",
   "ping-pong": "no",
@@ -186,7 +176,7 @@
 }
 ```
 
-### Timer 参数
+### Timer
 
 ```json
 {
@@ -198,9 +188,9 @@
 
 ---
 
-## 特殊格式
+## Expressions
 
-### 视口表达式
+### Viewport
 ```json
 "x": "viewportleft(0)"
 "x": "viewportright(0)"
@@ -209,7 +199,7 @@
 "x": "random(viewportleft(0), viewportright(0))"
 ```
 
-### 对象表达式
+### Object
 ```json
 "x": "Player.X"
 "y": "Player.Y + 50"
@@ -217,7 +207,7 @@
 "distance": "distance(Self.X, Self.Y, Player.X, Player.Y)"
 ```
 
-### 系统表达式
+### System
 ```json
 "value": "random(1, 100)"
 "value": "choose(1, 2, 3)"
@@ -225,39 +215,39 @@
 "value": "clamp(value, 0, 100)"
 "value": "lerp(a, b, 0.5)"
 "value": "dt"                  // delta time
-"value": "time"                // 运行时间
-"value": "loopindex"           // 循环索引
+"value": "time"                // runtime
+"value": "loopindex"           // loop index
 ```
 
 ---
 
-## 常见错误
+## Common Errors
 
-### 字符串缺少引号
+### Missing nested quotes for string
 ```json
-// ❌ 错误
+// ❌ Wrong
 "animation": "Walk"
 
-// ✅ 正确
+// ✅ Correct
 "animation": "\"Walk\""
 ```
 
-### 数字用了引号
+### Quoted number for key code
 ```json
-// ❌ 错误（除非是表达式）
+// ❌ Wrong
 "key": "\"87\""
 
-// ✅ 正确
+// ✅ Correct
 "key": 87
-// 或
+// or
 "key": "87"
 ```
 
-### 比较符用字符串
+### String comparison operator
 ```json
-// ❌ 错误
+// ❌ Wrong
 "comparison": "="
 
-// ✅ 正确
+// ✅ Correct
 "comparison": 0
 ```

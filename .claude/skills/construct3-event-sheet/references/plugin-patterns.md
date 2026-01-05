@@ -1,26 +1,26 @@
 # Plugin Patterns Reference
 
-常用插件使用模式，基于 490 个官方示例项目分析。
+Common plugin usage patterns based on 490 official example projects.
 
 ## Contents
 
-- [数据源](#数据源)
-- [Top 10 插件及常用行为](#top-10-插件及常用行为)
-- [插件类型](#插件类型) - 世界对象、单例、数据对象
-- [常用插件模式](#常用插件模式) - Sprite, Keyboard, Mouse, Touch, Gamepad, Audio, Text, Array, Dictionary, AJAX, LocalStorage, Camera3D
+- [Data Source](#data-source)
+- [Top 10 Plugins](#top-10-plugins)
+- [Plugin Types](#plugin-types)
+- [Common Plugin Patterns](#common-plugin-patterns)
 
 ---
 
-## 数据源
+## Data Source
 
-- 完整插件知识：`data/project_analysis/plugins_knowledge.json`
-- 使用排名：`data/project_analysis/sorted_indexes.json` → `top_20_plugins`
-- Schema 定义：`data/schemas/plugins/*.json`
+- Full plugin knowledge: `data/project_analysis/plugins_knowledge.json`
+- Usage ranking: `data/project_analysis/sorted_indexes.json` → `top_20_plugins`
+- Schema definitions: `data/schemas/plugins/*.json`
 
-## Top 10 插件及常用行为
+## Top 10 Plugins
 
-| # | 插件 | 使用次数 | 常用行为 |
-|---|------|---------|----------|
+| # | Plugin | Usage Count | Common Behaviors |
+|---|--------|-------------|------------------|
 | 1 | Sprite | 3404 | Tween, Platform, EightDir, Bullet, Fade, Sin |
 | 2 | Shape3D | 831 | Tween, solid, MoveTo, Sin |
 | 3 | TiledBg | 704 | Sin, Tween, solid, Fade |
@@ -32,45 +32,45 @@
 | 9 | Tilemap | 142 | Physics, solid |
 | 10 | Mouse | 111 | - |
 
-## 插件类型
+## Plugin Types
 
-### 世界对象 (World Objects)
-需要放置在 Layout 中，有位置、大小等属性。
+### World Objects
+Placed in Layout, have position, size, etc.
 
 ```json
-// Object Type 定义
+// Object Type definition
 {"name": "Player", "plugin-id": "Sprite", "isGlobal": false, "behaviorTypes": [...]}
 ```
 
-### 单例插件 (Singleton)
-全局唯一，无需放置。
+### Singleton Plugins
+Global unique, no placement needed.
 
 ```json
-// Object Type 定义
+// Object Type definition
 {"name": "Keyboard", "plugin-id": "Keyboard", "singleglobal-inst": {"type": "Keyboard"}}
 ```
 
-常见单例：`Keyboard`, `Mouse`, `Touch`, `Gamepad`, `Audio`, `Browser`, `AJAX`
+Common singletons: `Keyboard`, `Mouse`, `Touch`, `Gamepad`, `Audio`, `Browser`, `AJAX`
 
-### 数据对象 (Non-World)
-不可见，用于存储数据。
+### Data Objects (Non-World)
+Invisible, used for data storage.
 
 ```json
 {"name": "GameData", "plugin-id": "Arr", "isGlobal": true, "nonworld-inst": {"type": "Array", "properties": {"width": 10}}}
 ```
 
-常见：`Array`, `Dictionary`, `JSON`, `LocalStorage`
+Common: `Array`, `Dictionary`, `JSON`, `LocalStorage`
 
-## 常用插件模式
+## Common Plugin Patterns
 
-### Sprite - 可视对象
+### Sprite - Visual Object
 ```json
-// 条件
+// Conditions
 {"id": "on-collision-with-another-object", "objectClass": "Player", "parameters": {"object": "Enemy"}}
 {"id": "is-overlapping-another-object", "objectClass": "Player", "parameters": {"object": "Coin"}}
 {"id": "on-created", "objectClass": "Bullet", "parameters": {}}
 
-// 动作
+// Actions
 {"id": "set-animation", "objectClass": "Player", "parameters": {"animation": "\"Walk\"", "from": "beginning"}}
 {"id": "set-mirrored", "objectClass": "Player", "parameters": {"state": "mirrored"}}
 {"id": "spawn-another-object", "objectClass": "Player", "parameters": {"object": "Bullet", "layer": "0", "image-point": "0"}}
@@ -78,111 +78,111 @@
 {"id": "set-position", "objectClass": "Player", "parameters": {"x": "400", "y": "300"}}
 ```
 
-### Keyboard - 键盘输入
+### Keyboard - Keyboard Input
 ```json
-// 条件
+// Conditions
 {"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}
 {"id": "on-key-pressed", "objectClass": "Keyboard", "parameters": {"key": 32}}
 {"id": "on-key-released", "objectClass": "Keyboard", "parameters": {"key": 27}}
 ```
 
-### Mouse - 鼠标输入
+### Mouse - Mouse Input
 ```json
-// 条件
+// Conditions
 {"id": "on-click", "objectClass": "Mouse", "parameters": {"mouse-button": "left", "click-type": "clicked"}}
 {"id": "on-object-clicked", "objectClass": "Mouse", "parameters": {"mouse-button": "left", "click-type": "clicked", "object-clicked": "Button"}}
 {"id": "cursor-is-over-object", "objectClass": "Mouse", "parameters": {"object": "Button"}}
 {"id": "mouse-button-is-down", "objectClass": "Mouse", "parameters": {"mouse-button": "left"}}
 ```
 
-### Touch - 触摸输入
+### Touch - Touch Input
 ```json
-// 条件
+// Conditions
 {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Button", "type": "touch"}}
 {"id": "on-tap-object", "objectClass": "Touch", "parameters": {"object": "Button"}}
 {"id": "is-touching-object", "objectClass": "Touch", "parameters": {"object": "Joystick"}}
 {"id": "on-any-touch-start", "objectClass": "Touch", "parameters": {}}
 ```
 
-### Gamepad - 手柄输入
+### Gamepad - Controller Input
 ```json
-// 条件
+// Conditions
 {"id": "is-button-down", "objectClass": "Gamepad", "parameters": {"gamepad": 0, "button": 0}}
 {"id": "on-button-pressed", "objectClass": "Gamepad", "parameters": {"gamepad": 0, "button": 0}}
 {"id": "compare-axis", "objectClass": "Gamepad", "parameters": {"gamepad": 0, "axis": "left-x", "comparison": 4, "value": "0.5"}}
 ```
 
-### Audio - 音频
+### Audio - Audio
 ```json
-// 动作
+// Actions
 {"id": "play", "objectClass": "Audio", "parameters": {"audio-file": "Jump", "loop": "not-looping", "volume": "0", "tag-optional": "\"\""}}
 {"id": "play-by-name", "objectClass": "Audio", "parameters": {"folder": "\"Sounds\"", "audio-file-name": "\"explosion\"", "loop": "not-looping", "volume": "0"}}
 {"id": "fade-volume", "objectClass": "Audio", "parameters": {"tag": "\"bgm\"", "db": "-60", "duration": "1"}}
 {"id": "stop", "objectClass": "Audio", "parameters": {"tag": "\"bgm\""}}
 ```
 
-### Text - 文本显示
+### Text - Text Display
 ```json
-// 动作
+// Actions
 {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "\"Score: \" & Score"}}
 {"id": "append-text", "objectClass": "LogText", "parameters": {"text": "\"\\nNew line\""}}
 ```
 
-### Array - 数组
+### Array - Array
 ```json
-// 动作
+// Actions
 {"id": "push-back", "objectClass": "Inventory", "parameters": {"where": "back", "value": "\"sword\"", "axis": "x"}}
 {"id": "set-at-xy", "objectClass": "Grid", "parameters": {"x": "0", "y": "0", "value": "1"}}
 
-// 表达式
+// Expressions
 "value": "Inventory.At(0)"
 "value": "Grid.At(x, y)"
 "value": "Inventory.Width"
 ```
 
-### Dictionary - 字典
+### Dictionary - Dictionary
 ```json
-// 动作
+// Actions
 {"id": "add-key", "objectClass": "Settings", "parameters": {"key": "\"volume\"", "value": "0.8"}}
 {"id": "set-key", "objectClass": "Settings", "parameters": {"key": "\"volume\"", "value": "0.5"}}
 
-// 条件
+// Conditions
 {"id": "has-key", "objectClass": "Settings", "parameters": {"key": "\"volume\""}}
 {"id": "compare-value", "objectClass": "Settings", "parameters": {"key": "\"volume\"", "comparison": 4, "value": "0"}}
 
-// 表达式
+// Expressions
 "value": "Settings.Get(\"volume\")"
 ```
 
-### AJAX - 网络请求
+### AJAX - Network Requests
 ```json
-// 动作
+// Actions
 {"id": "request-project-file", "objectClass": "AJAX", "parameters": {"tag": "\"data\"", "file": "\"data.json\""}}
 {"id": "request-url", "objectClass": "AJAX", "parameters": {"tag": "\"api\"", "url": "\"https://api.example.com\""}}
 
-// 条件
+// Conditions
 {"id": "on-completed", "objectClass": "AJAX", "parameters": {"tag": "\"data\""}}
 
-// 表达式
+// Expressions
 "value": "AJAX.LastData"
 ```
 
-### LocalStorage - 本地存储
+### LocalStorage - Local Storage
 ```json
-// 动作
+// Actions
 {"id": "set-item", "objectClass": "LocalStorage", "parameters": {"key": "\"highscore\"", "value": "Score"}}
 
-// 条件
+// Conditions
 {"id": "on-item-get", "objectClass": "LocalStorage", "parameters": {"key": "\"highscore\""}}
 {"id": "on-item-exists", "objectClass": "LocalStorage", "parameters": {"key": "\"highscore\""}}
 
-// 表达式（在 on-item-get 后）
+// Expressions (after on-item-get)
 "value": "LocalStorage.ItemValue"
 ```
 
-### Camera3D - 3D 相机
+### Camera3D - 3D Camera
 ```json
-// 动作
+// Actions
 {"id": "look-at-position", "objectClass": "Camera3D", "parameters": {
   "cam-x": "Player.X", "cam-y": "Player.Y - 200", "cam-z": "500",
   "look-x": "Player.X", "look-y": "Player.Y", "look-z": "0"

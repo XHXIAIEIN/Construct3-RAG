@@ -1,46 +1,46 @@
 # Behavior Configuration Reference
 
-行为属性配置，基于 490 个官方示例项目分析。
+Behavior property configuration based on 490 official example projects.
 
 ## Contents
 
-- [数据源](#数据源)
-- [Top 10 行为](#top-10-行为)
-- [行为配置详解](#行为配置详解) - Tween, Platform, EightDir, Bullet, Timer, Sin, solid, Physics, Fade, Flash
-- [行为组合模式](#行为组合模式) - 平台角色、俯视角、子弹、UI元素
+- [Data Source](#data-source)
+- [Top 10 Behaviors](#top-10-behaviors)
+- [Behavior Details](#behavior-details)
+- [Behavior Combinations](#behavior-combinations)
 
 ---
 
-## 数据源
+## Data Source
 
-- 完整行为知识：`data/project_analysis/behaviors_knowledge.json`
-- 使用排名：`data/project_analysis/sorted_indexes.json` → `top_20_behaviors`
-- Schema 定义：`data/schemas/behaviors/*.json`
+- Full behavior knowledge: `data/project_analysis/behaviors_knowledge.json`
+- Usage ranking: `data/project_analysis/sorted_indexes.json` → `top_20_behaviors`
+- Schema definitions: `data/schemas/behaviors/*.json`
 
-## Top 10 行为
+## Top 10 Behaviors
 
-| # | 行为 ID | 使用次数 | 主要用途 |
-|---|---------|---------|----------|
-| 1 | Tween | 1018 | 属性动画 |
-| 2 | solid | 310 | 固体碰撞 |
-| 3 | Timer | 238 | 定时器 |
-| 4 | Sin | 214 | 正弦运动 |
-| 5 | Fade | 183 | 淡入淡出 |
-| 6 | Bullet | 181 | 子弹运动 |
-| 7 | Flash | 97 | 闪烁效果 |
-| 8 | Platform | 81 | 平台跳跃 |
-| 9 | Physics | 78 | 物理模拟 |
-| 10 | EightDir | 66 | 八方向移动 |
+| # | Behavior ID | Usage Count | Main Purpose |
+|---|-------------|-------------|--------------|
+| 1 | Tween | 1018 | Property animation |
+| 2 | solid | 310 | Solid collision |
+| 3 | Timer | 238 | Timer |
+| 4 | Sin | 214 | Sine motion |
+| 5 | Fade | 183 | Fade in/out |
+| 6 | Bullet | 181 | Bullet movement |
+| 7 | Flash | 97 | Flash effect |
+| 8 | Platform | 81 | Platform jumping |
+| 9 | Physics | 78 | Physics simulation |
+| 10 | EightDir | 66 | 8-directional movement |
 
-## 行为配置详解
+## Behavior Details
 
-### Tween - 属性动画
+### Tween - Property Animation
 ```json
 "behaviorTypes": [{"behaviorId": "Tween", "name": "Tween"}]
 ```
-属性：`enabled`
+Properties: `enabled`
 
-常用动作：
+Common actions:
 ```json
 {"id": "tween-one-property", "objectClass": "Sprite", "behaviorType": "Tween", "parameters": {
   "tags": "\"fade\"",
@@ -55,140 +55,140 @@
 }}
 ```
 
-### Platform - 平台跳跃
+### Platform - Platform Jumping
 ```json
 "behaviorTypes": [{"behaviorId": "Platform", "name": "Platform"}]
 ```
-属性：
-| 属性 | 常用值 | 说明 |
-|------|--------|------|
-| `max-speed` | 330-480 | 最大移动速度 |
-| `acceleration` | 1024-2048 | 加速度 |
-| `deceleration` | 1024-1600 | 减速度 |
-| `jump-strength` | 768-1200 | 跳跃力度 |
-| `gravity` | 1000-2048 | 重力 |
-| `max-fall-speed` | 1000-5000 | 最大下落速度 |
-| `double-jump` | true/false | 二段跳 |
-| `default-controls` | true/false | 默认键盘控制 |
+Properties:
+| Property | Common Values | Description |
+|----------|---------------|-------------|
+| `max-speed` | 330-480 | Max move speed |
+| `acceleration` | 1024-2048 | Acceleration |
+| `deceleration` | 1024-1600 | Deceleration |
+| `jump-strength` | 768-1200 | Jump strength |
+| `gravity` | 1000-2048 | Gravity |
+| `max-fall-speed` | 1000-5000 | Max fall speed |
+| `double-jump` | true/false | Double jump |
+| `default-controls` | true/false | Default keyboard control |
 
-常用 ACE：
+Common ACE:
 ```json
-// 条件
+// Conditions
 {"id": "is-on-floor", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 {"id": "is-jumping", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 {"id": "is-falling", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 {"id": "on-landed", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 
-// 动作
+// Actions
 {"id": "simulate-control", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"control": "jump"}}
 {"id": "set-vector-y", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"vector-y": "-800"}}
 {"id": "set-max-speed", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"max-speed": "400"}}
 ```
 
-### EightDir - 八方向移动
+### EightDir - 8-Directional Movement
 ```json
 "behaviorTypes": [{"behaviorId": "EightDir", "name": "8Direction"}]
 ```
-属性：
-| 属性 | 常用值 | 说明 |
-|------|--------|------|
-| `max-speed` | 200-400 | 最大速度 |
-| `acceleration` | 600-1500 | 加速度 |
-| `deceleration` | 500-1000 | 减速度 |
-| `directions` | dir-8, dir-4 | 方向数 |
-| `set-angle` | no, smooth | 角度设置 |
-| `default-controls` | true/false | 默认控制 |
+Properties:
+| Property | Common Values | Description |
+|----------|---------------|-------------|
+| `max-speed` | 200-400 | Max speed |
+| `acceleration` | 600-1500 | Acceleration |
+| `deceleration` | 500-1000 | Deceleration |
+| `directions` | dir-8, dir-4 | Direction count |
+| `set-angle` | no, smooth | Angle setting |
+| `default-controls` | true/false | Default control |
 
-常用 ACE：
+Common ACE:
 ```json
-// 动作
+// Actions
 {"id": "simulate-control", "objectClass": "Player", "behaviorType": "8Direction", "parameters": {"control": "up"}}
 {"id": "set-max-speed", "objectClass": "Player", "behaviorType": "8Direction", "parameters": {"max-speed": "300"}}
 {"id": "set-enabled", "objectClass": "Player", "behaviorType": "8Direction", "parameters": {"state": "disabled"}}
 
-// 条件
+// Conditions
 {"id": "is-moving", "objectClass": "Player", "behaviorType": "8Direction", "parameters": {}}
 ```
 
-### Bullet - 子弹运动
+### Bullet - Bullet Movement
 ```json
 "behaviorTypes": [{"behaviorId": "Bullet", "name": "Bullet"}]
 ```
-属性：
-| 属性 | 常用值 | 说明 |
-|------|--------|------|
-| `speed` | 200-1200 | 速度 |
-| `acceleration` | 0 或负值 | 加速度 |
-| `gravity` | 0-2048 | 重力 |
-| `bounce-off-solids` | true/false | 碰撞反弹 |
-| `set-angle` | true/false | 设置角度 |
+Properties:
+| Property | Common Values | Description |
+|----------|---------------|-------------|
+| `speed` | 200-1200 | Speed |
+| `acceleration` | 0 or negative | Acceleration |
+| `gravity` | 0-2048 | Gravity |
+| `bounce-off-solids` | true/false | Bounce off solids |
+| `set-angle` | true/false | Set angle |
 
-### Timer - 定时器
+### Timer - Timer
 ```json
 "behaviorTypes": [{"behaviorId": "Timer", "name": "Timer"}]
 ```
-常用 ACE：
+Common ACE:
 ```json
-// 动作
+// Actions
 {"id": "start-timer", "objectClass": "GameManager", "behaviorType": "Timer", "parameters": {
   "duration": "2",
   "type": "once",      // once, regular
   "tag": "\"spawn\""
 }}
 
-// 条件
+// Conditions
 {"id": "on-timer", "objectClass": "GameManager", "behaviorType": "Timer", "parameters": {"tag": "\"spawn\""}}
 ```
 
-### Sin - 正弦运动
+### Sin - Sine Motion
 ```json
 "behaviorTypes": [{"behaviorId": "Sin", "name": "Sine"}]
 ```
-属性：
-| 属性 | 常用值 | 说明 |
-|------|--------|------|
-| `movement` | size, width, angle, x, y | 运动类型 |
-| `wave` | sine, sawtooth, triangle | 波形 |
-| `period` | 1-4 | 周期(秒) |
-| `magnitude` | 1-50 | 幅度 |
+Properties:
+| Property | Common Values | Description |
+|----------|---------------|-------------|
+| `movement` | size, width, angle, x, y | Movement type |
+| `wave` | sine, sawtooth, triangle | Wave shape |
+| `period` | 1-4 | Period (seconds) |
+| `magnitude` | 1-50 | Magnitude |
 
-### solid - 固体碰撞
+### solid - Solid Collision
 ```json
 "behaviorTypes": [{"behaviorId": "solid", "name": "Solid"}]
 ```
-属性：`enabled`, `tags`
+Properties: `enabled`, `tags`
 
-### Physics - 物理引擎
+### Physics - Physics Engine
 ```json
 "behaviorTypes": [{"behaviorId": "Physics", "name": "Physics"}]
 ```
-属性：
-| 属性 | 常用值 | 说明 |
-|------|--------|------|
-| `immovable` | true/false | 不可移动 |
-| `collision-mask` | circle, bounding-box | 碰撞形状 |
-| `density` | 1-100 | 密度 |
-| `friction` | 0.1-1 | 摩擦力 |
-| `elasticity` | 0.1-0.5 | 弹性 |
+Properties:
+| Property | Common Values | Description |
+|----------|---------------|-------------|
+| `immovable` | true/false | Immovable |
+| `collision-mask` | circle, bounding-box | Collision shape |
+| `density` | 1-100 | Density |
+| `friction` | 0.1-1 | Friction |
+| `elasticity` | 0.1-0.5 | Elasticity |
 
-### Fade - 淡入淡出 (已被 Tween 取代)
+### Fade - Fade In/Out (Superseded by Tween)
 ```json
 "behaviorTypes": [{"behaviorId": "Fade", "name": "Fade"}]
 ```
-属性：`fade-in-time`, `wait-time`, `fade-out-time`, `destroy`
+Properties: `fade-in-time`, `wait-time`, `fade-out-time`, `destroy`
 
-### Flash - 闪烁
+### Flash - Flash Effect
 ```json
 "behaviorTypes": [{"behaviorId": "Flash", "name": "Flash"}]
 ```
-动作：
+Action:
 ```json
 {"id": "flash", "objectClass": "Player", "behaviorType": "Flash", "parameters": {"on-time": "0.1", "off-time": "0.1", "duration": "1"}}
 ```
 
-## 行为组合模式
+## Behavior Combinations
 
-### 平台游戏角色
+### Platform Game Character
 ```json
 "behaviorTypes": [
   {"behaviorId": "Platform", "name": "Platform"},
@@ -197,7 +197,7 @@
 ]
 ```
 
-### 俯视角角色
+### Top-Down Character
 ```json
 "behaviorTypes": [
   {"behaviorId": "EightDir", "name": "8Direction"},
@@ -206,7 +206,7 @@
 ]
 ```
 
-### 子弹/投射物
+### Bullet/Projectile
 ```json
 "behaviorTypes": [
   {"behaviorId": "Bullet", "name": "Bullet"},
@@ -214,7 +214,7 @@
 ]
 ```
 
-### 带动画的 UI 元素
+### Animated UI Element
 ```json
 "behaviorTypes": [
   {"behaviorId": "Tween", "name": "Tween"},
