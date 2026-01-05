@@ -128,5 +128,5 @@
       ]
     }
   ],
-  "validation_script": "scripts/validate_skill.py"
+  "validation_script": "scripts/validate_output.py"
 }

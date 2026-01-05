@@ -92,6 +92,16 @@ await navigator.clipboard.write([new ClipboardItem({'text/plain': blob})])
 
 See [parameter-types.md](references/parameter-types.md) for details.
 
+## Directory Structure
+
+```
+construct3-event-sheet/
+├── SKILL.md              # This file
+├── references/           # Documentation files
+├── scripts/              # Executable validation tools
+└── assets/               # Test data and lookup tables
+```
+
 ## Reference Documents
 
 | Document | Purpose |
@@ -104,6 +114,20 @@ See [parameter-types.md](references/parameter-types.md) for details.
 | [plugin-patterns.md](references/plugin-patterns.md) | Sprite/Keyboard/Audio plugin usage |
 | [behavior-config.md](references/behavior-config.md) | Platform/Tween/Timer behavior config |
 | [deprecated-features.md](references/deprecated-features.md) | Deprecated feature warnings |
+| [top-actions.md](references/top-actions.md) | Top 20 most used actions |
+| [top-conditions.md](references/top-conditions.md) | Top 20 most used conditions |
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| [validate_output.py](scripts/validate_output.py) | Validate generated JSON before pasting |
+
+## Assets
+
+| File | Purpose |
+|------|---------|
+| [evaluations.json](assets/evaluations.json) | Test cases for skill evaluation |
 
 ## Code Templates
 
