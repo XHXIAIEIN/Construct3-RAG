@@ -12,10 +12,13 @@ description: >
 ## 1. Output This Format
 
 ```json
-{"is-c3-clipboard-data": true, "type": "events", "items": [...]}
+{"is-c3-clipboard-data": true, "type": "TYPE", "items": [...]}
 ```
 
-`type`: `"events"` | `"conditions"` | `"actions"`
+| type | Paste Location |
+|------|----------------|
+| `"events"` | Event sheet margin |
+| `"object-types"` | Project Bar → Object types |
 
 ## 2. Use This Structure
 
@@ -45,15 +48,14 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 4. **Variable must have comment field**: `"comment": ""`
 5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
 
-## 5. Handle Dependencies First
+## 5. Provide Dependencies as JSON
 
-Before outputting JSON, check if user mentioned object names:
-- **Yes** → Use their names
-- **No** → Output dependency line first:
+Before events JSON, output object-types JSON for required objects.
 
-```
-Required: Keyboard(plugin), Player(Sprite+Platform), Enemy(Sprite)
-```
+**Step 1**: Object types JSON (paste to Project Bar)
+**Step 2**: Events JSON (paste to Event sheet)
+
+Get templates from [clipboard-format.md](references/clipboard-format.md) → Object Types section.
 
 ## 6. Validate Before Output
 
@@ -90,7 +92,8 @@ python3 scripts/query_examples.py action create-object
 
 | When | File |
 |------|------|
-| Need more templates | [clipboard-format.md](references/clipboard-format.md) |
+| Need object-types JSON | [clipboard-format.md](references/clipboard-format.md) → Object Types |
+| Need event templates | [clipboard-format.md](references/clipboard-format.md) → Templates |
 | Chinese user input | [zh-cn.md](references/zh-cn.md) |
 | Unsure behavior name | [behavior-names.md](references/behavior-names.md) |
 | Check deprecated APIs | [deprecated-features.md](references/deprecated-features.md) |

@@ -12,6 +12,7 @@
 | `"events"` | Event blocks | Event sheet margin |
 | `"conditions"` | Conditions only | After selecting condition |
 | `"actions"` | Actions only | After selecting action |
+| `"object-types"` | Object definitions | Project Bar → Object types |
 
 ### Write to Clipboard (MUST use Blob)
 ```javascript
@@ -225,6 +226,78 @@ ease: linear, in-sine, out-sine, in-out-sine, in-back, out-back, in-elastic, out
 {"id":"play","objectClass":"Audio","parameters":{"audio-file":"{MusicName}","loop":"looping","volume":"0","tag-optional":"\"bgm\""}}
 {"id":"stop","objectClass":"Audio","parameters":{"tag":"\"bgm\""}}
 {"id":"fade-volume","objectClass":"Audio","parameters":{"tag":"\"bgm\"","db":"-60","duration":"1"}}
+```
+
+---
+
+## Object Types (paste to Project Bar → Object types)
+
+### Single-Global Plugins (no imageData needed)
+
+**Keyboard**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Keyboard","plugin-id":"Keyboard","singleglobal-inst":{"type":"Keyboard","properties":{},"tags":""}}],"folders":[]}
+```
+
+**Mouse**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Mouse","plugin-id":"Mouse","singleglobal-inst":{"type":"Mouse","properties":{},"tags":""}}],"folders":[]}
+```
+
+**Touch**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Touch","plugin-id":"Touch","singleglobal-inst":{"type":"Touch","properties":{},"tags":""}}],"folders":[]}
+```
+
+**Audio**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Audio","plugin-id":"Audio","singleglobal-inst":{"type":"Audio","properties":{"timescale-audio":false,"playback-rate-clamp-lo":0.5,"playback-rate-clamp-hi":4,"panning-model":"HRTF","distance-model":"inverse","ref-distance":600,"max-distance":10000,"rolloff-factor":1,"speed-of-sound":5000},"tags":""}}],"folders":[]}
+```
+
+### Non-World Objects (no imageData needed)
+
+**Array**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Array","plugin-id":"Arr","isGlobal":true,"nonworld-inst":{"type":"Array","properties":{"width":10,"height":1,"depth":1},"tags":""}}],"folders":[]}
+```
+
+**Dictionary**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Dictionary","plugin-id":"Dictionary","isGlobal":true,"nonworld-inst":{"type":"Dictionary","properties":{},"tags":""}}],"folders":[]}
+```
+
+**Text (no imageData needed)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Text","plugin-id":"Text","isGlobal":false,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[]}],"folders":[]}
+```
+
+### Sprite with Behaviors (requires imageData)
+
+Sprite frame must include all fields from C3 clipboard format.
+
+**Player (Sprite + Platform)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"Platform","name":"Platform"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+```
+
+**Player (Sprite + 8Direction)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"EightDir","name":"8Direction"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+```
+
+**Enemy (Sprite only)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Enemy","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+```
+
+**Ground (Sprite + Solid)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Ground","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"solid","name":"Solid"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANklEQVR4AezXsQkAAAgDsOL/P+sJjoKk0L1ka3XSl60cxwACBAgQIECAAAECBAgQIPBfYDvfAwAA//8qNtUGAAAABklEQVQDAEfKQAGr52fvAAAAAElFTkSuQmCC"]}
+```
+
+**Bullet (Sprite + Bullet + DestroyOutsideLayout)**
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"Bullet","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[{"behaviorId":"Bullet","name":"Bullet"},{"behaviorId":"destroy","name":"DestroyOutsideLayout"}],"effectTypes":[],"animations":{"items":[{"frames":[{"width":16,"height":16,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}],"folders":[],"imageData":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVR4AWMY/IAJSjMQCxhBNAPxgImaLmAE0gwEAEYsBjGMmjFqxhAAACQIAQFmGfSVAAAAAElFTkSuQmCC"]}
 ```
 
 ---
