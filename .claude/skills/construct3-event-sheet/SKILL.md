@@ -73,15 +73,14 @@ Behavior ACE: add `"behaviorType": "{BehaviorName}"` field.
 
 ## References
 
-Load on-demand for detailed information:
+Load on-demand when needed:
 
-| File | When to Load |
-|------|--------------|
-| [templates.md](references/templates.md) | Need more code patterns |
-| [ace-reference.md](references/ace-reference.md) | ACE ID lookup (conditions, actions, expressions) |
-| [object-patterns.md](references/object-patterns.md) | Plugin and behavior patterns |
-| [parameter-types.md](references/parameter-types.md) | Parameter format details |
-| [id-mappings.md](references/id-mappings.md) | behaviorId ↔ behaviorType conversion |
-| [clipboard-format.md](references/clipboard-format.md) | Full JSON format specification |
-| [troubleshooting.md](references/troubleshooting.md) | Errors and solutions |
-| [deprecated-features.md](references/deprecated-features.md) | Features to avoid |
+| File | Purpose |
+|------|---------|
+| [templates.md](references/templates.md) | Copy-paste code patterns |
+| [ace-reference.md](references/ace-reference.md) | ACE ID lookup |
+| [object-patterns.md](references/object-patterns.md) | Behavior names and ACE |
+| [parameter-types.md](references/parameter-types.md) | Format rules, key codes |
+| [clipboard-format.md](references/clipboard-format.md) | JSON structure |
+| [troubleshooting.md](references/troubleshooting.md) | Error fixes |
+| [deprecated-features.md](references/deprecated-features.md) | What to avoid |

@@ -1,172 +1,65 @@
-# Object & Behavior Patterns
+# Object & Behavior Lookup
 
-Plugin and behavior usage patterns based on 490 official examples.
+Use this to find correct behaviorType names and property names.
 
-## Contents
+## Behavior Name Mapping
 
-- [Top Plugins](#top-plugins)
-- [Top Behaviors](#top-behaviors)
-- [Behavior Configurations](#behavior-configurations)
-- [Plugin Patterns](#plugin-patterns)
-- [Common Combinations](#common-combinations)
+**CRITICAL**: In event JSON, use Display Name (behaviorType), NOT behaviorId.
 
----
+| behaviorId | behaviorType (use this) |
+|------------|------------------------|
+| EightDir | 8Direction |
+| Platform | Platform |
+| Bullet | Bullet |
+| Tween | Tween |
+| Timer | Timer |
+| solid | Solid |
+| Sin | Sine |
+| Physics | Physics |
+| LOS | Line of sight |
+| DragnDrop | Drag & Drop |
+| destroy | DestroyOutsideLayout |
 
-## Top Plugins
-
-| # | Plugin | Usage | Common Behaviors |
-|---|--------|-------|------------------|
-| 1 | Sprite | 3404 | Tween, Platform, 8Direction, Bullet |
-| 2 | Text | 573 | Tween, Anchor |
-| 3 | Keyboard | 252 | - (singleton) |
-| 4 | Audio | - | - (singleton) |
-| 5 | Mouse | 111 | - (singleton) |
-| 6 | Touch | - | - (singleton) |
-| 7 | Array | - | - (data object) |
-
----
-
-## Top Behaviors
-
-| # | behaviorId | Display Name | Usage |
-|---|------------|--------------|-------|
-| 1 | Tween | Tween | 1018 |
-| 2 | solid | Solid | 310 |
-| 3 | Timer | Timer | 238 |
-| 4 | Sin | Sine | 214 |
-| 5 | Bullet | Bullet | 181 |
-| 6 | Platform | Platform | 81 |
-| 7 | EightDir | 8Direction | 66 |
-| 8 | Physics | Physics | 78 |
-
-**Note**: In event sheet JSON, use display name (`behaviorType: "8Direction"`), not behaviorId.
-
----
-
-## Behavior Configurations
+## Behavior ACE Quick Lookup
 
 ### Platform
-
-Properties: `max-speed`, `acceleration`, `deceleration`, `jump-strength`, `gravity`, `double-jump`, `default-controls`
-
-| Condition | Parameters |
-|-----------|------------|
-| `is-on-floor` | - |
-| `is-jumping` | - |
-| `is-falling` | - |
-| `on-landed` | - |
-
-| Action | Parameters |
-|--------|------------|
-| `simulate-control` | `control`: `left`/`right`/`jump` |
-| `set-vector-y` | `vector-y` |
-| `set-max-speed` | `max-speed` |
+- Conditions: `is-on-floor`, `is-jumping`, `is-falling`, `on-landed`
+- Actions: `simulate-control` (control: `left`/`right`/`jump`), `set-vector-y`, `set-max-speed`
 
 ### 8Direction
-
-Properties: `max-speed`, `acceleration`, `deceleration`, `directions` (dir-8/dir-4), `default-controls`
-
-| Condition | Parameters |
-|-----------|------------|
-| `is-moving` | - |
-
-| Action | Parameters |
-|--------|------------|
-| `simulate-control` | `control`: `up`/`down`/`left`/`right` |
-| `set-max-speed` | `max-speed` |
-| `set-enabled` | `state` |
+- Conditions: `is-moving`
+- Actions: `simulate-control` (control: `up`/`down`/`left`/`right`), `set-max-speed`, `set-enabled`
 
 ### Tween
-
-| Action | Parameters |
-|--------|------------|
-| `tween-one-property` | `tags`, `property`, `end-value`, `time`, `ease`, `destroy-on-complete`, `loop`, `ping-pong` |
-| `tween-value` | `tags`, `start-value`, `end-value`, `time`, `ease` |
-
-Properties: `x`, `y`, `width`, `height`, `angle`, `opacity`, `z-elevation`
-
-Easing: `linear`, `in-sine`, `out-sine`, `in-out-sine`, `in-back`, `out-back`, `in-elastic`, `out-elastic`, `in-bounce`, `out-bounce`
+- Actions: `tween-one-property`
+  - property: `x`, `y`, `width`, `height`, `angle`, `opacity`, `z-elevation`
+  - ease: `linear`, `in-out-sine`, `out-back`, `out-elastic`, `out-bounce`
+- Conditions: `is-playing`, `on-tween-end`
 
 ### Timer
-
-| Action | Parameters |
-|--------|------------|
-| `start-timer` | `duration`, `type` (`once`/`regular`), `tag` |
-
-| Condition | Parameters |
-|-----------|------------|
-| `on-timer` | `tag` |
+- Actions: `start-timer` (type: `once`/`regular`)
+- Conditions: `on-timer`
 
 ### Bullet
+- Properties: `speed`, `acceleration`, `gravity`, `bounce-off-solids`
 
-Properties: `speed`, `acceleration`, `gravity`, `bounce-off-solids`, `set-angle`
-
----
-
-## Plugin Patterns
+## Plugin ACE Quick Lookup
 
 ### Keyboard
-
-```json
-{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}
-{"id": "on-key-pressed", "objectClass": "Keyboard", "parameters": {"key": 32}}
-```
-
-Key codes: W=87, A=65, S=83, D=68, Space=32, Enter=13, Arrows=37-40
+- Conditions: `key-is-down`, `on-key-pressed`, `on-key-released`
+- Parameter: `key` (number)
 
 ### Mouse
-
-```json
-{"id": "on-click", "objectClass": "Mouse", "parameters": {"mouse-button": "left", "click-type": "clicked"}}
-{"id": "cursor-is-over-object", "objectClass": "Mouse", "parameters": {"object": "Button"}}
-```
+- Conditions: `on-click`, `cursor-is-over-object`, `mouse-button-is-down`
+- Parameter: `mouse-button` (`left`/`right`/`middle`)
 
 ### Audio
-
-```json
-{"id": "play", "objectClass": "Audio", "parameters": {"audio-file": "Jump", "loop": "not-looping", "volume": "0"}}
-{"id": "fade-volume", "objectClass": "Audio", "parameters": {"tag": "\"bgm\"", "db": "-60", "duration": "1"}}
-```
+- Actions: `play`, `stop`, `fade-volume`
+- Parameter: `loop` (`not-looping`/`looping`)
 
 ### Text
+- Actions: `set-text`, `append-text`
 
-```json
-{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "\"Score: \" & Score"}}
-```
-
-### Array
-
-```json
-{"id": "push-back", "objectClass": "Inventory", "parameters": {"where": "back", "value": "\"item\"", "axis": "x"}}
-```
-
-Expression: `Array.At(index)`, `Array.Width`
-
----
-
-## Common Combinations
-
-### Platform Character
-```json
-"behaviorTypes": [
-  {"behaviorId": "Platform", "name": "Platform"},
-  {"behaviorId": "Tween", "name": "Tween"},
-  {"behaviorId": "Flash", "name": "Flash"}
-]
-```
-
-### Top-Down Character
-```json
-"behaviorTypes": [
-  {"behaviorId": "EightDir", "name": "8Direction"},
-  {"behaviorId": "Tween", "name": "Tween"}
-]
-```
-
-### Projectile
-```json
-"behaviorTypes": [
-  {"behaviorId": "Bullet", "name": "Bullet"},
-  {"behaviorId": "destroy", "name": "DestroyOutsideLayout"}
-]
-```
+### Sprite
+- Conditions: `on-collision-with-another-object`, `is-overlapping-another-object`, `on-created`
+- Actions: `set-animation`, `set-mirrored`, `spawn-another-object`, `destroy`, `set-position`
