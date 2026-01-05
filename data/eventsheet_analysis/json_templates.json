@@ -1,0 +1,2968 @@
+{
+  "conditions": {
+    "System.else": {
+      "template": {
+        "id": "else",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 1260
+    },
+    "System.evaluate-expression": {
+      "template": {
+        "id": "evaluate-expression",
+        "objectClass": "System",
+        "parameters": {
+          "value": "InstructionsAreVisible = 1"
+        }
+      },
+      "param_types": {
+        "value": "any"
+      },
+      "usage_count": 1195
+    },
+    "Keyboard.key-is-down": {
+      "template": {
+        "id": "key-is-down",
+        "objectClass": "Keyboard",
+        "parameters": {
+          "key": 90
+        }
+      },
+      "param_types": {
+        "key": "keyb"
+      },
+      "usage_count": 618
+    },
+    "System.for-each": {
+      "template": {
+        "id": "for-each",
+        "objectClass": "System",
+        "parameters": {
+          "object": "guard"
+        }
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 496
+    },
+    "Keyboard.on-key-pressed": {
+      "template": {
+        "id": "on-key-pressed",
+        "objectClass": "Keyboard",
+        "parameters": {
+          "key": 37
+        }
+      },
+      "param_types": {
+        "key": "keyb"
+      },
+      "usage_count": 488
+    },
+    "System.on-start-of-layout": {
+      "template": {
+        "id": "on-start-of-layout",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 476
+    },
+    "System.compare-eventvar": {
+      "template": {
+        "id": "compare-eventvar",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "EnemySpawnTime",
+          "comparison": 4,
+          "value": "0.5"
+        }
+      },
+      "param_types": {
+        "variable": "eventvar",
+        "comparison": "cmp",
+        "value": "any"
+      },
+      "usage_count": 469
+    },
+    "System.compare-two-values": {
+      "template": {
+        "id": "compare-two-values",
+        "objectClass": "System",
+        "parameters": {
+          "first-value": "distance(gX,gY,guard.X,guard.Y)",
+          "comparison": 3,
+          "second-value": "512"
+        }
+      },
+      "param_types": {
+        "first-value": "any",
+        "comparison": "cmp",
+        "second-value": "any"
+      },
+      "usage_count": 402
+    },
+    "System.every-tick": {
+      "template": {
+        "id": "every-tick",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 391
+    },
+    "Gamepad.is-button-down": {
+      "template": {
+        "id": "is-button-down",
+        "objectClass": "Gamepad",
+        "parameters": {
+          "gamepad": "0",
+          "button": "button-a"
+        }
+      },
+      "param_types": {
+        "gamepad": "number",
+        "button": "combo"
+      },
+      "usage_count": 370
+    },
+    "System.compare-boolean-eventvar": {
+      "template": {
+        "id": "compare-boolean-eventvar",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "inGame"
+        }
+      },
+      "param_types": {
+        "variable": "eventvarbool"
+      },
+      "usage_count": 360
+    },
+    "Gamepad.on-button-pressed": {
+      "template": {
+        "id": "on-button-pressed",
+        "objectClass": "Gamepad",
+        "parameters": {
+          "gamepad": "0",
+          "button": "d-pad-left"
+        }
+      },
+      "param_types": {
+        "gamepad": "number",
+        "button": "combo"
+      },
+      "usage_count": 268
+    },
+    "System.for": {
+      "template": {
+        "id": "for",
+        "objectClass": "System",
+        "parameters": {
+          "name": "\"points\"",
+          "start-index": "(guard.LineOfSight.ConeOfView/2)*-1",
+          "end-index": "guard.LineOfSight.ConeOfView/2"
+        }
+      },
+      "param_types": {
+        "name": "string",
+        "start-index": "number",
+        "end-index": "number"
+      },
+      "usage_count": 261
+    },
+    "System.pick-by-evaluate": {
+      "template": {
+        "id": "pick-by-evaluate",
+        "objectClass": "System",
+        "parameters": {
+          "object": "Life",
+          "expression": "Life.lifeID > lives"
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "expression": "number"
+      },
+      "usage_count": 237
+    },
+    "System.every-x-seconds": {
+      "template": {
+        "id": "every-x-seconds",
+        "objectClass": "System",
+        "parameters": {
+          "interval-seconds": "0.25"
+        }
+      },
+      "param_types": {
+        "interval-seconds": "number"
+      },
+      "usage_count": 216
+    },
+    "System.repeat": {
+      "template": {
+        "id": "repeat",
+        "objectClass": "System",
+        "parameters": {
+          "count": "4"
+        }
+      },
+      "param_types": {
+        "count": "number"
+      },
+      "usage_count": 183
+    },
+    "System.pick-by-comparison": {
+      "template": {
+        "id": "pick-by-comparison",
+        "objectClass": "System",
+        "parameters": {
+          "object": "Pixel",
+          "expression": "Pixel.AnimationName",
+          "comparison": 0,
+          "value": "\"On\""
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "expression": "any",
+        "comparison": "cmp",
+        "value": "any"
+      },
+      "usage_count": 161
+    },
+    "PlayerCollision:Platform.is-on-floor": {
+      "template": {
+        "id": "is-on-floor",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 106
+    },
+    "System.trigger-once-while-true": {
+      "template": {
+        "id": "trigger-once-while-true",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 103
+    },
+    "PlayerCollision.on-collision-with-another-object": {
+      "template": {
+        "id": "on-collision-with-another-object",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "object": "Ghost"
+        }
+      },
+      "param_types": {
+        "object": null
+      },
+      "usage_count": 103
+    },
+    "PlayerCollision:Platform.is-moving": {
+      "template": {
+        "id": "is-moving",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 92
+    },
+    "GameManager:Timer.on-timer": {
+      "template": {
+        "id": "on-timer",
+        "objectClass": "GameManager",
+        "behaviorType": "Timer",
+        "parameters": {
+          "tag": "\"StartAutoFire\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 76
+    },
+    "Touch.is-touching-object": {
+      "template": {
+        "id": "is-touching-object",
+        "objectClass": "Touch",
+        "parameters": {
+          "object": "SideWindow"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 67
+    },
+    "Player.is-boolean-instance-variable-set": {
+      "template": {
+        "id": "is-boolean-instance-variable-set",
+        "objectClass": "Player",
+        "parameters": {
+          "instance-variable": "underwater"
+        }
+      },
+      "param_types": {
+        "instance-variable": null
+      },
+      "usage_count": 64
+    },
+    "Player.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "Player",
+        "parameters": {
+          "instance-variable": "hurting",
+          "comparison": 3,
+          "value": "0"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 59
+    },
+    "PlayerGraphics.on-created": {
+      "template": {
+        "id": "on-created",
+        "objectClass": "PlayerGraphics"
+      },
+      "param_types": {},
+      "usage_count": 58
+    },
+    "System.while": {
+      "template": {
+        "id": "while",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 56
+    },
+    "PlayerCollision.is-overlapping-another-object": {
+      "template": {
+        "id": "is-overlapping-another-object",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "object": "Platform"
+        }
+      },
+      "param_types": {
+        "object": null
+      },
+      "usage_count": 55
+    },
+    "PlayerCollision:Platform.is-falling": {
+      "template": {
+        "id": "is-falling",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 51
+    },
+    "Player.is-overlapping-another-object": {
+      "template": {
+        "id": "is-overlapping-another-object",
+        "objectClass": "Player",
+        "parameters": {
+          "object": "Spikes"
+        }
+      },
+      "param_types": {
+        "object": null
+      },
+      "usage_count": 49
+    },
+    "PlayerCollision:Platform.is-jumping": {
+      "template": {
+        "id": "is-jumping",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 48
+    },
+    "GameManager:Tween.is-playing": {
+      "template": {
+        "id": "is-playing",
+        "objectClass": "GameManager",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"ScreenShake\""
+        }
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 47
+    },
+    "Mouse.cursor-is-over-object": {
+      "template": {
+        "id": "cursor-is-over-object",
+        "objectClass": "Mouse",
+        "parameters": {
+          "object": "Frame"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 46
+    },
+    "Touch.on-touched-object": {
+      "template": {
+        "id": "on-touched-object",
+        "objectClass": "Touch",
+        "parameters": {
+          "object": "ClearButton"
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "type": "combo"
+      },
+      "usage_count": 42
+    },
+    "System.pick-all": {
+      "template": {
+        "id": "pick-all",
+        "objectClass": "System",
+        "parameters": {
+          "object": "waypoint"
+        }
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 40
+    },
+    "System.for-each-ordered": {
+      "template": {
+        "id": "for-each-ordered",
+        "objectClass": "System",
+        "parameters": {
+          "object": "PlayerSegment",
+          "expression": "PlayerSegment.SegmentIndex",
+          "order": "ascending"
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "expression": "any",
+        "order": "combo"
+      },
+      "usage_count": 39
+    },
+    "System.pick-random-instance": {
+      "template": {
+        "id": "pick-random-instance",
+        "objectClass": "System",
+        "parameters": {
+          "object": "Turret"
+        }
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 37
+    },
+    "Gamepad.compare-axis": {
+      "template": {
+        "id": "compare-axis",
+        "objectClass": "Gamepad",
+        "parameters": {
+          "gamepad": "0",
+          "axis": "left-analog-x-axis",
+          "comparison": 2,
+          "value": "-GamepadDeadzone"
+        }
+      },
+      "param_types": {
+        "gamepad": "number",
+        "axis": "combo",
+        "comparison": "cmp",
+        "value": "number"
+      },
+      "usage_count": 36
+    },
+    "Block.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "Block",
+        "parameters": {
+          "instance-variable": "DestroyBrightness",
+          "comparison": 3,
+          "value": "-100"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 36
+    },
+    "Touch.on-tap-object": {
+      "template": {
+        "id": "on-tap-object",
+        "objectClass": "Touch",
+        "parameters": {
+          "object": "ResetButton"
+        }
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 35
+    },
+    "Touch.on-any-touch-start": {
+      "template": {
+        "id": "on-any-touch-start",
+        "objectClass": "Touch"
+      },
+      "param_types": {},
+      "usage_count": 35
+    },
+    "PlayerCollision:Platform.on-landed": {
+      "template": {
+        "id": "on-landed",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 35
+    },
+    "Mouse.on-object-clicked": {
+      "template": {
+        "id": "on-object-clicked",
+        "objectClass": "Mouse",
+        "parameters": {
+          "mouse-button": "left",
+          "click-type": "clicked",
+          "object-clicked": "Piggy"
+        }
+      },
+      "param_types": {
+        "mouse-button": "combo",
+        "click-type": "combo",
+        "object-clicked": "object"
+      },
+      "usage_count": 32
+    },
+    "PlayerCollision:Platform.on-jump": {
+      "template": {
+        "id": "on-jump",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 32
+    },
+    "Bullet.on-collision-with-another-object": {
+      "template": {
+        "id": "on-collision-with-another-object",
+        "objectClass": "Bullet",
+        "parameters": {
+          "object": "Enemy"
+        }
+      },
+      "param_types": {
+        "object": null
+      },
+      "usage_count": 31
+    },
+    "PlayerCollision:Tween.is-playing": {
+      "template": {
+        "id": "is-playing",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"DashForward\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 31
+    },
+    "Mouse.on-click": {
+      "template": {
+        "id": "on-click",
+        "objectClass": "Mouse",
+        "parameters": {
+          "mouse-button": "left",
+          "click-type": "clicked"
+        }
+      },
+      "param_types": {
+        "mouse-button": "combo",
+        "click-type": "combo"
+      },
+      "usage_count": 30
+    },
+    "Player.on-collision-with-another-object": {
+      "template": {
+        "id": "on-collision-with-another-object",
+        "objectClass": "Player",
+        "parameters": {
+          "object": "Sprite2"
+        }
+      },
+      "param_types": {
+        "object": null
+      },
+      "usage_count": 29
+    },
+    "Mouse.mouse-button-is-down": {
+      "template": {
+        "id": "mouse-button-is-down",
+        "objectClass": "Mouse",
+        "parameters": {
+          "mouse-button": "left"
+        }
+      },
+      "param_types": {
+        "mouse-button": "combo"
+      },
+      "usage_count": 28
+    },
+    "Dictionary.compare-value": {
+      "template": {
+        "id": "compare-value",
+        "objectClass": "Dictionary",
+        "parameters": {
+          "key": "\"Health\"",
+          "comparison": 4,
+          "value": "0"
+        }
+      },
+      "param_types": {
+        "key": "string",
+        "comparison": "cmp",
+        "value": "any"
+      },
+      "usage_count": 27
+    },
+    "Flow.has-output": {
+      "template": {
+        "id": "has-output",
+        "objectClass": "Flow",
+        "parameters": {
+          "output-index-or-name": "\"ImageSpecial\""
+        }
+      },
+      "param_types": {
+        "output-index-or-name": null
+      },
+      "usage_count": 27
+    },
+    "Touch.on-tap": {
+      "template": {
+        "id": "on-tap",
+        "objectClass": "Touch"
+      },
+      "param_types": {},
+      "usage_count": 26
+    },
+    "SpriteFonts.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "SpriteFonts",
+        "parameters": {
+          "instance-variable": "ID",
+          "comparison": 0,
+          "value": "\"EndCredits\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 26
+    },
+    "System.is-within-angle": {
+      "template": {
+        "id": "is-within-angle",
+        "objectClass": "System",
+        "parameters": {
+          "angle-1": "angle(InitialX, InitialY, Touch.X, Touch.Y) - 90",
+          "within": "30",
+          "angle-2": "180"
+        }
+      },
+      "param_types": {
+        "angle-1": "number",
+        "within": "number",
+        "angle-2": "number"
+      },
+      "usage_count": 26
+    },
+    "Fader:Tween.is-any-playing": {
+      "template": {
+        "id": "is-any-playing",
+        "objectClass": "Fader",
+        "behaviorType": "Tween",
+        "isInverted": true
+      },
+      "param_types": {},
+      "usage_count": 25
+    },
+    "PlayerCollision:Tween.on-tweens-finished": {
+      "template": {
+        "id": "on-tweens-finished",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"DashForward\""
+        }
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 25
+    },
+    "Player.compare-y": {
+      "template": {
+        "id": "compare-y",
+        "objectClass": "Player",
+        "parameters": {
+          "comparison": 4,
+          "y-co-ordinate": "LayoutHeight"
+        }
+      },
+      "param_types": {
+        "comparison": null,
+        "y-co-ordinate": null
+      },
+      "usage_count": 23
+    },
+    "DictProfile.compare-value": {
+      "template": {
+        "id": "compare-value",
+        "objectClass": "DictProfile",
+        "parameters": {
+          "key": "\"Sound\"",
+          "comparison": 0,
+          "value": "0"
+        }
+      },
+      "param_types": {
+        "key": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 23
+    },
+    "Audio.is-tag-playing": {
+      "template": {
+        "id": "is-tag-playing",
+        "objectClass": "Audio",
+        "parameters": {
+          "tag": "\"music\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 22
+    },
+    "LocalStorage.on-item-exists": {
+      "template": {
+        "id": "on-item-exists",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"numOfBuildings\""
+        }
+      },
+      "param_types": {
+        "key": "string"
+      },
+      "usage_count": 22
+    },
+    "Player:Timer.is-timer-running": {
+      "template": {
+        "id": "is-timer-running",
+        "objectClass": "Player",
+        "behaviorType": "Timer",
+        "parameters": {
+          "tag": "\"SeedsCooldown\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 22
+    },
+    "Player.compare-z-elevation": {
+      "template": {
+        "id": "compare-z-elevation",
+        "objectClass": "Player",
+        "parameters": {
+          "which": "z-elevation",
+          "comparison": 3,
+          "z-elevation": "Ground.ZElevation"
+        }
+      },
+      "param_types": {
+        "which": null,
+        "comparison": null,
+        "z-elevation": null
+      },
+      "usage_count": 22
+    },
+    "Touch.on-nth-touch-start": {
+      "template": {
+        "id": "on-nth-touch-start",
+        "objectClass": "Touch",
+        "parameters": {
+          "touch-number": "0"
+        }
+      },
+      "param_types": {
+        "touch-number": "number"
+      },
+      "usage_count": 21
+    },
+    "PlayerCollision.is-boolean-instance-variable-set": {
+      "template": {
+        "id": "is-boolean-instance-variable-set",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "instance-variable": "Dead"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "instance-variable": null
+      },
+      "usage_count": 21
+    },
+    "LocalStorage.on-item-get": {
+      "template": {
+        "id": "on-item-get",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"numOfBuildings\""
+        }
+      },
+      "param_types": {
+        "key": "string"
+      },
+      "usage_count": 21
+    },
+    "Keyboard.on-any-key-pressed": {
+      "template": {
+        "id": "on-any-key-pressed",
+        "objectClass": "Keyboard"
+      },
+      "param_types": {},
+      "usage_count": 21
+    },
+    "AJAX.on-completed": {
+      "template": {
+        "id": "on-completed",
+        "objectClass": "AJAX",
+        "parameters": {
+          "tag": "\"arpeggios\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 21
+    },
+    "Player.compare-x": {
+      "template": {
+        "id": "compare-x",
+        "objectClass": "Player",
+        "parameters": {
+          "comparison": 2,
+          "x-co-ordinate": "ViewportRight(\"Objects\") - 16"
+        }
+      },
+      "param_types": {
+        "comparison": null,
+        "x-co-ordinate": null
+      },
+      "usage_count": 21
+    },
+    "Block.is-boolean-instance-variable-set": {
+      "template": {
+        "id": "is-boolean-instance-variable-set",
+        "objectClass": "Block",
+        "parameters": {
+          "instance-variable": "Picked"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "instance-variable": null
+      },
+      "usage_count": 21
+    },
+    "PlatformInfo.is-on-mobile": {
+      "template": {
+        "id": "is-on-mobile",
+        "objectClass": "PlatformInfo",
+        "isInverted": true
+      },
+      "param_types": {},
+      "usage_count": 20
+    },
+    "SkillUpgradeIcon.is-animation-playing": {
+      "template": {
+        "id": "is-animation-playing",
+        "objectClass": "SkillUpgradeIcon",
+        "parameters": {
+          "animation": "\"AncientBlast\""
+        }
+      },
+      "param_types": {
+        "animation": null
+      },
+      "usage_count": 20
+    },
+    "Mouse.on-mouse-wheel": {
+      "template": {
+        "id": "on-mouse-wheel",
+        "objectClass": "Mouse",
+        "parameters": {
+          "direction": "any"
+        }
+      },
+      "param_types": {
+        "direction": "combo"
+      },
+      "usage_count": 19
+    },
+    "System.is-between-values": {
+      "template": {
+        "id": "is-between-values",
+        "objectClass": "System",
+        "parameters": {
+          "value": "CursorIsOverLevelBlock - LEVELBLOCKSPERROW",
+          "lower-bound": "LOWESTIDNUMBER",
+          "upper-bound": "HIGHESTIDNUMBER"
+        }
+      },
+      "param_types": {
+        "value": "number",
+        "lower-bound": "number",
+        "upper-bound": "number"
+      },
+      "usage_count": 19
+    },
+    "GameManager:Timer.is-timer-running": {
+      "template": {
+        "id": "is-timer-running",
+        "objectClass": "GameManager",
+        "behaviorType": "Timer",
+        "parameters": {
+          "tag": "\"MovingCooldown\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 18
+    },
+    "LocalStorage.on-item-missing": {
+      "template": {
+        "id": "on-item-missing",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"savedSound\""
+        }
+      },
+      "param_types": {
+        "key": "string"
+      },
+      "usage_count": 18
+    },
+    "guard.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "guard",
+        "parameters": {
+          "instance-variable": "state",
+          "comparison": 0,
+          "value": "\"patrol\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 17
+    },
+    "PlayerCollision.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "instance-variable": "currentMode",
+          "comparison": 0,
+          "value": "\"wolf\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 17
+    },
+    "TimelineController.on-keyframe-reached": {
+      "template": {
+        "id": "on-keyframe-reached",
+        "objectClass": "TimelineController",
+        "parameters": {
+          "tags": "\"RightFootDust\"",
+          "match": "any-tags"
+        }
+      },
+      "param_types": {
+        "tags": null,
+        "match": null
+      },
+      "usage_count": 17
+    },
+    "Peer.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "Peer",
+        "parameters": {
+          "instance-variable": "peerid",
+          "comparison": 0,
+          "value": "Multiplayer.MyID"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 17
+    },
+    "Touch.on-nth-touch-end": {
+      "template": {
+        "id": "on-nth-touch-end",
+        "objectClass": "Touch",
+        "parameters": {
+          "touch-number": "0"
+        }
+      },
+      "param_types": {
+        "touch-number": "number"
+      },
+      "usage_count": 16
+    },
+    "PlayerCollision:8Direction.is-moving": {
+      "template": {
+        "id": "is-moving",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "8Direction"
+      },
+      "param_types": {},
+      "usage_count": 15
+    },
+    "System.pick-last-created": {
+      "template": {
+        "id": "pick-last-created",
+        "objectClass": "System",
+        "parameters": {
+          "object": "PathLine"
+        }
+      },
+      "param_types": {
+        "object": "object"
+      },
+      "usage_count": 15
+    },
+    "Touch.on-any-touch-end": {
+      "template": {
+        "id": "on-any-touch-end",
+        "objectClass": "Touch"
+      },
+      "param_types": {},
+      "usage_count": 15
+    },
+    "Touch.is-in-touch": {
+      "template": {
+        "id": "is-in-touch",
+        "objectClass": "Touch"
+      },
+      "param_types": {},
+      "usage_count": 15
+    },
+    "Boss.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "Boss",
+        "parameters": {
+          "instance-variable": "State",
+          "comparison": 1,
+          "value": "\"\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 15
+    },
+    "System.compare-time": {
+      "template": {
+        "id": "compare-time",
+        "objectClass": "System",
+        "parameters": {
+          "comparison": 2,
+          "time-seconds": "startTime + 2"
+        }
+      },
+      "param_types": {
+        "comparison": "cmp",
+        "time-seconds": "number"
+      },
+      "usage_count": 15
+    },
+    "PlayerCollision.is-overlapping-at-offset": {
+      "template": {
+        "id": "is-overlapping-at-offset",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "object": "Buildings",
+          "offset-x": "cos(Cars.Angle - 90) * MINCARDISTANCE",
+          "offset-y": "sin(Cars.Angle - 90) * MINCARDISTANCE"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "object": null,
+        "offset-x": null,
+        "offset-y": null
+      },
+      "usage_count": 15
+    },
+    "Player:Tween.is-playing": {
+      "template": {
+        "id": "is-playing",
+        "objectClass": "Player",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"Move\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 14
+    },
+    "PlayerCollision:Platform.is-enabled": {
+      "template": {
+        "id": "is-enabled",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform"
+      },
+      "param_types": {},
+      "usage_count": 14
+    },
+    "9patch2.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "9patch2",
+        "parameters": {
+          "instance-variable": "effect",
+          "comparison": 0,
+          "value": "\"lowpass\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 14
+    },
+    "Player:Timer.on-timer": {
+      "template": {
+        "id": "on-timer",
+        "objectClass": "Player",
+        "behaviorType": "Timer",
+        "parameters": {
+          "tag": "\"ResetAnimation\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 13
+    },
+    "Mouse.on-any-click": {
+      "template": {
+        "id": "on-any-click",
+        "objectClass": "Mouse"
+      },
+      "param_types": {},
+      "usage_count": 13
+    },
+    "Character.is-animation-playing": {
+      "template": {
+        "id": "is-animation-playing",
+        "objectClass": "Character",
+        "parameters": {
+          "animation": "\"kick\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "animation": null
+      },
+      "usage_count": 13
+    },
+    "ePos.is-boolean-instance-variable-set": {
+      "template": {
+        "id": "is-boolean-instance-variable-set",
+        "objectClass": "ePos",
+        "parameters": {
+          "instance-variable": "Hit"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "instance-variable": null
+      },
+      "usage_count": 13
+    },
+    "Flash:Tween.on-tweens-finished": {
+      "template": {
+        "id": "on-tweens-finished",
+        "objectClass": "Flash",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"IncreaseHeight\""
+        }
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 13
+    },
+    "PlayerSprite.is-animation-playing": {
+      "template": {
+        "id": "is-animation-playing",
+        "objectClass": "PlayerSprite",
+        "parameters": {
+          "animation": "\"0_0\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "animation": null
+      },
+      "usage_count": 13
+    },
+    "Player_Mask.is-boolean-instance-variable-set": {
+      "template": {
+        "id": "is-boolean-instance-variable-set",
+        "objectClass": "Player_Mask",
+        "parameters": {
+          "instance-variable": "Dashing"
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "instance-variable": null
+      },
+      "usage_count": 13
+    },
+    "Enemy.compare-instance-variable": {
+      "template": {
+        "id": "compare-instance-variable",
+        "objectClass": "Enemy",
+        "parameters": {
+          "instance-variable": "health",
+          "comparison": 3,
+          "value": "0"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "comparison": null,
+        "value": null
+      },
+      "usage_count": 12
+    },
+    "ButtonText.compare-text": {
+      "template": {
+        "id": "compare-text",
+        "objectClass": "ButtonText",
+        "parameters": {
+          "text-to-compare": "\"CE\"",
+          "case-sensitivity": "ignore-case"
+        }
+      },
+      "param_types": {
+        "text-to-compare": null,
+        "case-sensitivity": null
+      },
+      "usage_count": 12
+    },
+    "TextError:Tween.is-playing": {
+      "template": {
+        "id": "is-playing",
+        "objectClass": "TextError",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"ErrorOpacity\""
+        },
+        "isInverted": true
+      },
+      "param_types": {
+        "tags": "string"
+      },
+      "usage_count": 12
+    }
+  },
+  "actions": {
+    "Unknown.callFunction": {
+      "template": {
+        "callFunction": "setAggro",
+        "parameters": [
+          "guard.UID",
+          "1"
+        ]
+      },
+      "param_types": {},
+      "usage_count": 1948
+    },
+    "System.set-eventvar-value": {
+      "template": {
+        "id": "set-eventvar-value",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "gX",
+          "value": "guard.X"
+        }
+      },
+      "param_types": {
+        "variable": "eventvar",
+        "value": "any"
+      },
+      "usage_count": 1715
+    },
+    "System.create-object": {
+      "template": {
+        "id": "create-object",
+        "objectClass": "System",
+        "parameters": {
+          "object-to-create": "Firework",
+          "layer": "\"World\"",
+          "x": "DestinationX + random(-16, 16)",
+          "y": "LayoutHeight",
+          "create-hierarchy": false,
+          "template-name": "\"\""
+        }
+      },
+      "param_types": {
+        "object-to-create": "object",
+        "layer": "layer",
+        "x": "number",
+        "y": "number",
+        "create-hierarchy": "boolean",
+        "template-name": "template"
+      },
+      "usage_count": 780
+    },
+    "System.wait": {
+      "template": {
+        "id": "wait",
+        "objectClass": "System",
+        "parameters": {
+          "seconds": "PlayerSegment.SegmentIndex  / 10"
+        }
+      },
+      "param_types": {
+        "seconds": "number",
+        "use-timescale": "boolean"
+      },
+      "usage_count": 411
+    },
+    "System.set-boolean-eventvar": {
+      "template": {
+        "id": "set-boolean-eventvar",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "switch",
+          "value": "true"
+        }
+      },
+      "param_types": {
+        "variable": "eventvarbool",
+        "value": "combo"
+      },
+      "usage_count": 403
+    },
+    "System.wait-for-previous-actions": {
+      "template": {
+        "id": "wait-for-previous-actions",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 267
+    },
+    "PlayerGraphics.set-animation": {
+      "template": {
+        "id": "set-animation",
+        "objectClass": "PlayerGraphics",
+        "parameters": {
+          "animation": "\"Move\"&PlayerCollision.AngleOfMotion",
+          "from": "beginning"
+        }
+      },
+      "param_types": {
+        "animation": null,
+        "from": null
+      },
+      "usage_count": 243
+    },
+    "Audio.play": {
+      "template": {
+        "id": "play",
+        "objectClass": "Audio",
+        "parameters": {
+          "audio-file": "Boulder",
+          "loop": "not-looping",
+          "volume": "0",
+          "stereo-pan": "0",
+          "tag-optional": "\"SFX\""
+        }
+      },
+      "param_types": {
+        "audio-file": "audiofile",
+        "loop": "combo",
+        "volume": "number",
+        "stereo-pan": "number",
+        "tag-optional": "string"
+      },
+      "usage_count": 226
+    },
+    "System.restart-layout": {
+      "template": {
+        "id": "restart-layout",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 225
+    },
+    "System.set-group-active": {
+      "template": {
+        "id": "set-group-active",
+        "objectClass": "System",
+        "parameters": {
+          "group-name": "\"Next level\"",
+          "state": "deactivated"
+        }
+      },
+      "param_types": {
+        "group-name": "groupname",
+        "state": "combo"
+      },
+      "usage_count": 212
+    },
+    "System.add-to-eventvar": {
+      "template": {
+        "id": "add-to-eventvar",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "diffSpotted",
+          "value": "1"
+        }
+      },
+      "param_types": {
+        "variable": "eventvar",
+        "value": "any"
+      },
+      "usage_count": 199
+    },
+    "Fader:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "Fader",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"HideFader\"",
+          "property": "offsetOpacity",
+          "end-value": "0",
+          "time": "1",
+          "ease": "easeinoutsine",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no",
+          "repeat-count": "1"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 174
+    },
+    "PlayerCollision:Platform.simulate-control": {
+      "template": {
+        "id": "simulate-control",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform",
+        "parameters": {
+          "control": "left"
+        }
+      },
+      "param_types": {
+        "control": "combo"
+      },
+      "usage_count": 157
+    },
+    "Functions.set-function-return-value": {
+      "template": {
+        "id": "set-function-return-value",
+        "objectClass": "Functions",
+        "parameters": {
+          "value": "aOrder.At(order)"
+        }
+      },
+      "param_types": {
+        "value": null
+      },
+      "usage_count": 144
+    },
+    "System.reset-global-variables": {
+      "template": {
+        "id": "reset-global-variables",
+        "objectClass": "System"
+      },
+      "param_types": {
+        "reset-static": "boolean"
+      },
+      "usage_count": 116
+    },
+    "GameManager:Timer.start-timer": {
+      "template": {
+        "id": "start-timer",
+        "objectClass": "GameManager",
+        "behaviorType": "Timer",
+        "parameters": {
+          "duration": "5",
+          "type": "once",
+          "tag": "\"StartAutoFire\""
+        }
+      },
+      "param_types": {
+        "duration": "number",
+        "type": "combo",
+        "tag": "string"
+      },
+      "usage_count": 103
+    },
+    "PlayerGraphics.spawn-another-object": {
+      "template": {
+        "id": "spawn-another-object",
+        "objectClass": "PlayerGraphics",
+        "parameters": {
+          "object": "PlayerTrail",
+          "layer": "\"World\"",
+          "image-point": "0",
+          "create-hierarchy": false
+        }
+      },
+      "param_types": {
+        "object": null,
+        "layer": null,
+        "image-point": null,
+        "create-hierarchy": null,
+        "template-name": null
+      },
+      "usage_count": 97
+    },
+    "System.go-to-layout": {
+      "template": {
+        "id": "go-to-layout",
+        "objectClass": "System",
+        "parameters": {
+          "layout": "Level1"
+        }
+      },
+      "param_types": {
+        "layout": "layout"
+      },
+      "usage_count": 87
+    },
+    "Text.set-text": {
+      "template": {
+        "id": "set-text",
+        "objectClass": "Text",
+        "parameters": {
+          "text": "\"Testing bbox updates - \" & Sprite.Count & \" sprites - \" & fps & \" FPS - \" & renderer & \" - \" & round(cpuutilisation * 100) & \"% CPU - \" & round(gpuutilisation * 100) & \"% GPU - \" & State"
+        }
+      },
+      "param_types": {
+        "text": "any"
+      },
+      "usage_count": 80
+    },
+    "Audio.fade-volume": {
+      "template": {
+        "id": "fade-volume",
+        "objectClass": "Audio",
+        "parameters": {
+          "tag": "\"underwater\"",
+          "db": "-Infinity",
+          "duration": "fadeTime",
+          "ending": "keep-playing"
+        }
+      },
+      "param_types": {
+        "tag": "string",
+        "db": "number",
+        "duration": "number",
+        "ending": "combo"
+      },
+      "usage_count": 76
+    },
+    "3DCamera.look-at-position": {
+      "template": {
+        "id": "look-at-position",
+        "objectClass": "3DCamera",
+        "parameters": {
+          "cam-x": "1504",
+          "cam-y": "240",
+          "cam-z": "512",
+          "look-x": "Car.X",
+          "look-y": "Car.Y",
+          "look-z": "32",
+          "up-x": "0",
+          "up-y": "0",
+          "up-z": "1"
+        }
+      },
+      "param_types": {
+        "cam-x": null,
+        "cam-y": null,
+        "cam-z": null,
+        "look-x": null,
+        "look-y": null,
+        "look-z": null,
+        "up-x": null,
+        "up-y": null,
+        "up-z": null
+      },
+      "usage_count": 73
+    },
+    "PlayerCollision.add-child": {
+      "template": {
+        "id": "add-child",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "child": "PlayerGraphics",
+          "transform-x": true,
+          "transform-y": true,
+          "transform-w": false,
+          "transform-h": false,
+          "transform-a": false,
+          "transform-z-elevation": false,
+          "destroy-with-parent": true
+        }
+      },
+      "param_types": {
+        "child": null,
+        "transform-x": null,
+        "transform-y": null,
+        "transform-w": null,
+        "transform-h": null,
+        "transform-a": null,
+        "transform-z-elevation": null,
+        "destroy-with-parent": null,
+        "transform-o": null,
+        "transform-visibility": null
+      },
+      "usage_count": 70
+    },
+    "PlayerGraphics.set-mirrored": {
+      "template": {
+        "id": "set-mirrored",
+        "objectClass": "PlayerGraphics",
+        "parameters": {
+          "state": "mirrored"
+        }
+      },
+      "param_types": {
+        "state": null
+      },
+      "usage_count": 66
+    },
+    "PlayerCollision:Platform.set-vector-y": {
+      "template": {
+        "id": "set-vector-y",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform",
+        "parameters": {
+          "vector-y": "Self.Platform.VectorY / 2"
+        }
+      },
+      "param_types": {
+        "vector-y": "number"
+      },
+      "usage_count": 63
+    },
+    "PlayerCollision.spawn-another-object": {
+      "template": {
+        "id": "spawn-another-object",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "object": "JumpDust",
+          "layer": "\"World\"",
+          "image-point": "0",
+          "create-hierarchy": false
+        }
+      },
+      "param_types": {
+        "object": null,
+        "layer": null,
+        "image-point": null,
+        "create-hierarchy": null,
+        "template-name": null
+      },
+      "usage_count": 61
+    },
+    "Player.set-animation": {
+      "template": {
+        "id": "set-animation",
+        "objectClass": "Player",
+        "parameters": {
+          "animation": "\"Hit\"",
+          "from": "beginning"
+        }
+      },
+      "param_types": {
+        "animation": null,
+        "from": null
+      },
+      "usage_count": 59
+    },
+    "GameManager:Tween.tween-value": {
+      "template": {
+        "id": "tween-value",
+        "objectClass": "GameManager",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"ScreenShake\"",
+          "start-value": "Strength",
+          "end-value": "0",
+          "time": "Duration",
+          "ease": "default",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "start-value": "number",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 58
+    },
+    "AJAX.request-project-file": {
+      "template": {
+        "id": "request-project-file",
+        "objectClass": "AJAX",
+        "parameters": {
+          "tag": "\"arpeggios\"",
+          "file": "arpeggios.json"
+        }
+      },
+      "param_types": {
+        "tag": "string",
+        "file": "projectfile"
+      },
+      "usage_count": 58
+    },
+    "System.set-layer-visible": {
+      "template": {
+        "id": "set-layer-visible",
+        "objectClass": "System",
+        "parameters": {
+          "layer": "\"Touch controls\"",
+          "visibility": "invisible"
+        }
+      },
+      "param_types": {
+        "layer": "layer",
+        "visibility": "combo"
+      },
+      "usage_count": 57
+    },
+    "PlayerGraphics.set-position-to-another-object": {
+      "template": {
+        "id": "set-position-to-another-object",
+        "objectClass": "PlayerGraphics",
+        "parameters": {
+          "object": "PlayerCollision",
+          "image-point-optional": "0"
+        }
+      },
+      "param_types": {
+        "object": null,
+        "image-point-optional": null
+      },
+      "usage_count": 56
+    },
+    "PlayerCollision:Platform.set-vector-x": {
+      "template": {
+        "id": "set-vector-x",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform",
+        "parameters": {
+          "vector-x": "0"
+        }
+      },
+      "param_types": {
+        "vector-x": "number"
+      },
+      "usage_count": 53
+    },
+    "PlayerCollision:Platform.set-enabled": {
+      "template": {
+        "id": "set-enabled",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Platform",
+        "parameters": {
+          "state": "disabled"
+        }
+      },
+      "param_types": {
+        "state": "combo"
+      },
+      "usage_count": 53
+    },
+    "System.set-time-scale": {
+      "template": {
+        "id": "set-time-scale",
+        "objectClass": "System",
+        "parameters": {
+          "time-scale": "10"
+        }
+      },
+      "param_types": {
+        "time-scale": "number"
+      },
+      "usage_count": 53
+    },
+    "Player.set-boolean-instvar": {
+      "template": {
+        "id": "set-boolean-instvar",
+        "objectClass": "Player",
+        "parameters": {
+          "instance-variable": "underwater",
+          "value": "false"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 53
+    },
+    "Player.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Player",
+        "parameters": {
+          "instance-variable": "hurting",
+          "value": "min(Self.hurting + 300 * dt, 100)"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 53
+    },
+    "StatusText.set-text": {
+      "template": {
+        "id": "set-text",
+        "objectClass": "StatusText",
+        "parameters": {
+          "text": "\"MIDI is supported. Click [i]Request MIDI access[/i] to use MIDI input.\""
+        }
+      },
+      "param_types": {
+        "text": null
+      },
+      "usage_count": 48
+    },
+    "System.stop-loop": {
+      "template": {
+        "id": "stop-loop",
+        "objectClass": "System"
+      },
+      "param_types": {},
+      "usage_count": 47
+    },
+    "Dictionary.add-key": {
+      "template": {
+        "id": "add-key",
+        "objectClass": "Dictionary",
+        "parameters": {
+          "key": "\"Health\"",
+          "value": "2"
+        }
+      },
+      "param_types": {
+        "key": "string",
+        "value": "any"
+      },
+      "usage_count": 46
+    },
+    "DictProfile.set-key": {
+      "template": {
+        "id": "set-key",
+        "objectClass": "DictProfile",
+        "parameters": {
+          "key": "\"Sound\"",
+          "value": "1"
+        }
+      },
+      "param_types": {
+        "key": null,
+        "value": null
+      },
+      "usage_count": 46
+    },
+    "System.set-object-time-scale": {
+      "template": {
+        "id": "set-object-time-scale",
+        "objectClass": "System",
+        "parameters": {
+          "object": "Enemies",
+          "time-scale": "0"
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "time-scale": "number"
+      },
+      "usage_count": 45
+    },
+    "System.scroll-to-position": {
+      "template": {
+        "id": "scroll-to-position",
+        "objectClass": "System",
+        "parameters": {
+          "x": "lerp(scrollx, PlayerCollision.X, 0.1 * 60 * dt)",
+          "y": "lerp(scrolly, PlayerCollision.Y, 0.1 * 60 * dt)"
+        }
+      },
+      "param_types": {
+        "x": "number",
+        "y": "number"
+      },
+      "usage_count": 43
+    },
+    "System.set-layer-scale": {
+      "template": {
+        "id": "set-layer-scale",
+        "objectClass": "System",
+        "parameters": {
+          "layer": "\"World\"",
+          "scale": "lerp(LayerScale(\"World\"), 1 - CameraScale / 2, 0.025 * 60 * dt)"
+        }
+      },
+      "param_types": {
+        "layer": "layer",
+        "scale": "number"
+      },
+      "usage_count": 41
+    },
+    "LocalStorage.set-item": {
+      "template": {
+        "id": "set-item",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"buildingsArr\"",
+          "value": "BuildingsArr.AsJSON"
+        }
+      },
+      "param_types": {
+        "key": "string",
+        "value": "any"
+      },
+      "usage_count": 41
+    },
+    "Peer.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Peer",
+        "parameters": {
+          "instance-variable": "peerid",
+          "value": "Multiplayer.MyID"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 41
+    },
+    "System.subtract-from-eventvar": {
+      "template": {
+        "id": "subtract-from-eventvar",
+        "objectClass": "System",
+        "parameters": {
+          "variable": "EnemySpawnTime",
+          "value": "0.01"
+        }
+      },
+      "param_types": {
+        "variable": "eventvar",
+        "value": "any"
+      },
+      "usage_count": 40
+    },
+    "System.set-layer-effect-parameter": {
+      "template": {
+        "id": "set-layer-effect-parameter",
+        "objectClass": "System",
+        "parameters": {
+          "layer": "\"Effects\"",
+          "effect": "\"Pixellate\"",
+          "parameter-index": "0",
+          "value": "PlatformInfo.CanvasDeviceWidth / OriginalViewportWidth"
+        }
+      },
+      "param_types": {
+        "layer": "layer",
+        "effect": "layereffect",
+        "parameter-index": "number",
+        "value": "number"
+      },
+      "usage_count": 39
+    },
+    "Audio.play-by-name": {
+      "template": {
+        "id": "play-by-name",
+        "objectClass": "Audio",
+        "parameters": {
+          "folder": "sounds",
+          "audio-file-name": "TextMusicName.Text",
+          "loop": "not-looping",
+          "volume": "0",
+          "stereo-pan": "0",
+          "tag-optional": "\"music\""
+        }
+      },
+      "param_types": {
+        "folder": "combo",
+        "audio-file-name": "string",
+        "loop": "combo",
+        "volume": "number",
+        "stereo-pan": "number",
+        "tag-optional": "string"
+      },
+      "usage_count": 37
+    },
+    "System.set-layout-scale": {
+      "template": {
+        "id": "set-layout-scale",
+        "objectClass": "System",
+        "parameters": {
+          "scale": "DEFAULTLAYOUTSCALE"
+        }
+      },
+      "param_types": {
+        "scale": "number"
+      },
+      "usage_count": 37
+    },
+    "Player:8Direction.simulate-control": {
+      "template": {
+        "id": "simulate-control",
+        "objectClass": "Player",
+        "behaviorType": "8Direction",
+        "parameters": {
+          "control": "right"
+        }
+      },
+      "param_types": {
+        "control": null
+      },
+      "usage_count": 36
+    },
+    "Block.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Block",
+        "parameters": {
+          "instance-variable": "InitialX",
+          "value": "Self.X"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 35
+    },
+    "PlayerCollision:8Direction.simulate-control": {
+      "template": {
+        "id": "simulate-control",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "8Direction",
+        "parameters": {
+          "control": "left"
+        }
+      },
+      "param_types": {
+        "control": null
+      },
+      "usage_count": 34
+    },
+    "Audio.set-playback-rate": {
+      "template": {
+        "id": "set-playback-rate",
+        "objectClass": "Audio",
+        "parameters": {
+          "tag": "\"\"",
+          "playback-rate": "MenuResetSymbol.AnimationFrame/10 + 1"
+        }
+      },
+      "param_types": {
+        "tag": "string",
+        "playback-rate": "number"
+      },
+      "usage_count": 33
+    },
+    "Fade:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "Fade",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"FadeOut\"",
+          "property": "offsetOpacity",
+          "end-value": "0",
+          "time": "0.25",
+          "ease": "noease",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no",
+          "repeat-count": "1"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 31
+    },
+    "PlayerCollision.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "instance-variable": "AngleOfMotion",
+          "value": "round(Self.8Direction.MovingAngle / 90) * 90"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 30
+    },
+    "Player_Mask.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Player_Mask",
+        "parameters": {
+          "instance-variable": "KnockBackTimer",
+          "value": "0.4"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 30
+    },
+    "Player:Timer.start-timer": {
+      "template": {
+        "id": "start-timer",
+        "objectClass": "Player",
+        "behaviorType": "Timer",
+        "parameters": {
+          "duration": "0.1",
+          "type": "once",
+          "tag": "\"ResetAnimation\""
+        }
+      },
+      "param_types": {
+        "duration": "number",
+        "type": "combo",
+        "tag": "string"
+      },
+      "usage_count": 29
+    },
+    "TextTutorial:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "TextTutorial",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"HideTutorial\"",
+          "property": "offsetOpacity",
+          "end-value": "0",
+          "time": "0.5",
+          "ease": "easeinoutsine",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no",
+          "repeat-count": "1"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 29
+    },
+    "Player.spawn-another-object": {
+      "template": {
+        "id": "spawn-another-object",
+        "objectClass": "Player",
+        "parameters": {
+          "object": "Thunder",
+          "layer": "\"World\"",
+          "image-point": "0",
+          "create-hierarchy": false
+        }
+      },
+      "param_types": {
+        "object": null,
+        "layer": null,
+        "image-point": null,
+        "create-hierarchy": null,
+        "template-name": null
+      },
+      "usage_count": 29
+    },
+    "Bullet.destroy": {
+      "template": {
+        "id": "destroy",
+        "objectClass": "Bullet"
+      },
+      "param_types": {},
+      "usage_count": 28
+    },
+    "Flash:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "Flash",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"IncreaseHeight\"",
+          "property": "offsetHeight",
+          "end-value": "Self.LineOfSight.HitDistance",
+          "time": "0.25",
+          "ease": "easeinoutsine",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 28
+    },
+    "PlayerSprite.set-animation": {
+      "template": {
+        "id": "set-animation",
+        "objectClass": "PlayerSprite",
+        "parameters": {
+          "animation": "Player.crouching ? \"CreatingCrouching\" : \"Creating\"",
+          "from": "beginning"
+        }
+      },
+      "param_types": {
+        "animation": null,
+        "from": null
+      },
+      "usage_count": 27
+    },
+    "PlayerTextures.set-animation": {
+      "template": {
+        "id": "set-animation",
+        "objectClass": "PlayerTextures",
+        "parameters": {
+          "animation": "\"Jumping\"&AngleOfMotion",
+          "from": "beginning"
+        }
+      },
+      "param_types": {
+        "animation": null,
+        "from": null
+      },
+      "usage_count": 27
+    },
+    "Camera.set-position": {
+      "template": {
+        "id": "set-position",
+        "objectClass": "Camera",
+        "parameters": {
+          "x": "lerp(Self.X, PathLine.X, 0.1 * 60 * dt)",
+          "y": "lerp(Self.Y, PathLine.Y, 0.1 * 60 * dt)"
+        }
+      },
+      "param_types": {
+        "x": null,
+        "y": null
+      },
+      "usage_count": 26
+    },
+    "System.go-to-layout-by-name": {
+      "template": {
+        "id": "go-to-layout-by-name",
+        "objectClass": "System",
+        "parameters": {
+          "layout": "FinishLine.ToLayout"
+        }
+      },
+      "param_types": {
+        "layout": "string"
+      },
+      "usage_count": 26
+    },
+    "Player_Mask.set-boolean-instvar": {
+      "template": {
+        "id": "set-boolean-instvar",
+        "objectClass": "Player_Mask",
+        "parameters": {
+          "instance-variable": "Attacking",
+          "value": "false"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 26
+    },
+    "Text:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "Text",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"SelfDestroy\"",
+          "property": "offsetY",
+          "end-value": "Self.Y - 128",
+          "time": "2",
+          "ease": "easeinsine",
+          "destroy-on-complete": "yes",
+          "loop": "no",
+          "ping-pong": "no"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 24
+    },
+    "Player.set-mirrored": {
+      "template": {
+        "id": "set-mirrored",
+        "objectClass": "Player",
+        "parameters": {
+          "state": "mirrored"
+        }
+      },
+      "param_types": {
+        "state": null
+      },
+      "usage_count": 24
+    },
+    "System.set-layer-opacity": {
+      "template": {
+        "id": "set-layer-opacity",
+        "objectClass": "System",
+        "parameters": {
+          "layer": "\"TransitionOut\"",
+          "opacity": "0"
+        }
+      },
+      "param_types": {
+        "layer": "layer",
+        "opacity": "number"
+      },
+      "usage_count": 24
+    },
+    "Cursor.set-position": {
+      "template": {
+        "id": "set-position",
+        "objectClass": "Cursor",
+        "parameters": {
+          "x": "lerp(Self.X, Mouse.X, 0.25 * 60 * dt)",
+          "y": "lerp(Self.Y, Mouse.Y, 0.25 * 60 * dt)"
+        }
+      },
+      "param_types": {
+        "x": null,
+        "y": null
+      },
+      "usage_count": 23
+    },
+    "Player.set-position": {
+      "template": {
+        "id": "set-position",
+        "objectClass": "Player",
+        "parameters": {
+          "x": "985",
+          "y": "145"
+        }
+      },
+      "param_types": {
+        "x": null,
+        "y": null
+      },
+      "usage_count": 23
+    },
+    "System.scroll-to-y": {
+      "template": {
+        "id": "scroll-to-y",
+        "objectClass": "System",
+        "parameters": {
+          "y": "LayoutHeight / 2"
+        }
+      },
+      "param_types": {
+        "y": "number"
+      },
+      "usage_count": 22
+    },
+    "System.set-layout-angle": {
+      "template": {
+        "id": "set-layout-angle",
+        "objectClass": "System",
+        "parameters": {
+          "angle": "random(-GameManager.Tween.Value(\"ScreenShake\"), GameManager.Tween.Value(\"ScreenShake\"))"
+        }
+      },
+      "param_types": {
+        "angle": "number"
+      },
+      "usage_count": 22
+    },
+    "LocalStorage.check-item-exists": {
+      "template": {
+        "id": "check-item-exists",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"numOfBuildings\""
+        }
+      },
+      "param_types": {
+        "key": "string"
+      },
+      "usage_count": 22
+    },
+    "LocalStorage.get-item": {
+      "template": {
+        "id": "get-item",
+        "objectClass": "LocalStorage",
+        "parameters": {
+          "key": "\"buildingsArr\""
+        }
+      },
+      "param_types": {
+        "key": "string"
+      },
+      "usage_count": 22
+    },
+    "Audio.stop-all": {
+      "template": {
+        "id": "stop-all",
+        "objectClass": "Audio"
+      },
+      "param_types": {},
+      "usage_count": 22
+    },
+    "Player:Platform.simulate-control": {
+      "template": {
+        "id": "simulate-control",
+        "objectClass": "Player",
+        "behaviorType": "Platform",
+        "parameters": {
+          "control": "left"
+        }
+      },
+      "param_types": {
+        "control": "combo"
+      },
+      "usage_count": 22
+    },
+    "SpriteFonts.set-text": {
+      "template": {
+        "id": "set-text",
+        "objectClass": "SpriteFonts",
+        "parameters": {
+          "text": "\"ARCADE\""
+        }
+      },
+      "param_types": {
+        "text": null
+      },
+      "usage_count": 22
+    },
+    "TextGameOver:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "TextGameOver",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"ShowGameOverText\"",
+          "property": "offsetOpacity",
+          "end-value": "100",
+          "time": "0.5",
+          "ease": "easeinoutsine",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no",
+          "repeat-count": "1"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 21
+    },
+    "Audio.set-volume": {
+      "template": {
+        "id": "set-volume",
+        "objectClass": "Audio",
+        "parameters": {
+          "tag": "\"music\"",
+          "db": "Functions.scale2dB(volumeLevel)"
+        }
+      },
+      "param_types": {
+        "tag": "string",
+        "db": "number"
+      },
+      "usage_count": 21
+    },
+    "Audio.stop": {
+      "template": {
+        "id": "stop",
+        "objectClass": "Audio",
+        "parameters": {
+          "tag": "\"music\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 21
+    },
+    "PlayerCollision:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "PlayerCollision",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"DashForward\"",
+          "property": "offsetX",
+          "end-value": "Self.X + sign(PlayerGraphics.Width) * 64",
+          "time": "0.25",
+          "ease": "easeoutsine",
+          "destroy-on-complete": "no",
+          "loop": "no",
+          "ping-pong": "no"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo",
+        "repeat-count": "number"
+      },
+      "usage_count": 21
+    },
+    "Player_Mask.set-animation": {
+      "template": {
+        "id": "set-animation",
+        "objectClass": "Player_Mask",
+        "parameters": {
+          "animation": "\"Idle\"",
+          "from": "beginning"
+        }
+      },
+      "param_types": {
+        "animation": null,
+        "from": null
+      },
+      "usage_count": 21
+    },
+    "System.set-layout-effect-parameter": {
+      "template": {
+        "id": "set-layout-effect-parameter",
+        "objectClass": "System",
+        "parameters": {
+          "effect": "\"Inverse\"",
+          "parameter-index": "0",
+          "value": "100"
+        }
+      },
+      "param_types": {
+        "effect": "layouteffect",
+        "parameter-index": "number",
+        "value": "number"
+      },
+      "usage_count": 21
+    },
+    "ePos.set-boolean-instvar": {
+      "template": {
+        "id": "set-boolean-instvar",
+        "objectClass": "ePos",
+        "parameters": {
+          "instance-variable": "Walking",
+          "value": "true"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 21
+    },
+    "System.scroll-to-x": {
+      "template": {
+        "id": "scroll-to-x",
+        "objectClass": "System",
+        "parameters": {
+          "x": "PlayerSegment.X"
+        }
+      },
+      "param_types": {
+        "x": "number"
+      },
+      "usage_count": 20
+    },
+    "PlayerCollision.set-boolean-instvar": {
+      "template": {
+        "id": "set-boolean-instvar",
+        "objectClass": "PlayerCollision",
+        "parameters": {
+          "instance-variable": "Dead",
+          "value": "true"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 20
+    },
+    "Bullet.spawn-another-object": {
+      "template": {
+        "id": "spawn-another-object",
+        "objectClass": "Bullet",
+        "parameters": {
+          "object": "BulletImpactParticles",
+          "layer": "\"Game\"",
+          "image-point": "1"
+        }
+      },
+      "param_types": {
+        "object": null,
+        "layer": null,
+        "image-point": null,
+        "create-hierarchy": null
+      },
+      "usage_count": 20
+    },
+    "Player.set-x": {
+      "template": {
+        "id": "set-x",
+        "objectClass": "Player",
+        "parameters": {
+          "x": "LayoutWidth / 2 + Side * 264"
+        }
+      },
+      "param_types": {
+        "x": null
+      },
+      "usage_count": 20
+    },
+    "Audio.preload": {
+      "template": {
+        "id": "preload",
+        "objectClass": "Audio",
+        "parameters": {
+          "audio-file": "RhythmSquare"
+        }
+      },
+      "param_types": {
+        "audio-file": "audiofile"
+      },
+      "usage_count": 20
+    },
+    "Wall.set-face-object": {
+      "template": {
+        "id": "set-face-object",
+        "objectClass": "Wall",
+        "parameters": {
+          "face": "left",
+          "object": "WallTexture1"
+        }
+      },
+      "param_types": {
+        "face": null,
+        "object": null
+      },
+      "usage_count": 20
+    },
+    "Boss.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Boss",
+        "parameters": {
+          "instance-variable": "State",
+          "value": "\"Cross\""
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 20
+    },
+    "EnemyCombat.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "EnemyCombat",
+        "parameters": {
+          "instance-variable": "enemyID",
+          "value": "0"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 20
+    },
+    "GameManager:Timer.stop-timer": {
+      "template": {
+        "id": "stop-timer",
+        "objectClass": "GameManager",
+        "behaviorType": "Timer",
+        "parameters": {
+          "tag": "\"AutoFire\""
+        }
+      },
+      "param_types": {
+        "tag": "string"
+      },
+      "usage_count": 19
+    },
+    "DrawingCanvas.paste-object": {
+      "template": {
+        "id": "paste-object",
+        "objectClass": "DrawingCanvas",
+        "parameters": {
+          "object": "Platform",
+          "effects": "with-effects"
+        }
+      },
+      "param_types": {
+        "object": "object",
+        "effects": "combo"
+      },
+      "usage_count": 19
+    },
+    "Flash.set-size": {
+      "template": {
+        "id": "set-size",
+        "objectClass": "Flash",
+        "parameters": {
+          "width": "Card.ImageWidth",
+          "height": "LayoutHeight"
+        }
+      },
+      "param_types": {
+        "width": null,
+        "height": null
+      },
+      "usage_count": 19
+    },
+    "TimelineController.play-timeline": {
+      "template": {
+        "id": "play-timeline",
+        "objectClass": "TimelineController",
+        "parameters": {
+          "timeline": "RunCycle",
+          "tags": "\"Main\""
+        }
+      },
+      "param_types": {
+        "timeline": null,
+        "tags": null
+      },
+      "usage_count": 19
+    },
+    "ArrTemp.push": {
+      "template": {
+        "id": "push",
+        "objectClass": "ArrTemp",
+        "parameters": {
+          "where": "back",
+          "value": "\"AncientBlast\"",
+          "axis": "x"
+        }
+      },
+      "param_types": {
+        "where": null,
+        "value": null,
+        "axis": null
+      },
+      "usage_count": 19
+    },
+    "Enemy.set-instvar-value": {
+      "template": {
+        "id": "set-instvar-value",
+        "objectClass": "Enemy",
+        "parameters": {
+          "instance-variable": "hpMax",
+          "value": "5"
+        }
+      },
+      "param_types": {
+        "instance-variable": null,
+        "value": null
+      },
+      "usage_count": 18
+    },
+    "System.set-layout-effect-enabled": {
+      "template": {
+        "id": "set-layout-effect-enabled",
+        "objectClass": "System",
+        "parameters": {
+          "mode": "disable",
+          "effect": "\"RadialBlur\""
+        }
+      },
+      "param_types": {
+        "mode": "combo",
+        "effect": "layouteffect"
+      },
+      "usage_count": 18
+    },
+    "Tutorial:Tween.tween-one-property": {
+      "template": {
+        "id": "tween-one-property",
+        "objectClass": "Tutorial",
+        "behaviorType": "Tween",
+        "parameters": {
+          "tags": "\"SelfDestroy\"",
+          "property": "offsetX",
+          "end-value": "Self.X - 224",
+          "time": "1",
+          "ease": "easeinsine",
+          "destroy-on-complete": "yes",
+          "loop": "no",
+          "ping-pong": "no"
+        }
+      },
+      "param_types": {
+        "tags": "string",
+        "property": "combo",
+        "end-value": "number",
+        "time": "number",
+        "ease": "ease",
+        "destroy-on-complete": "combo",
+        "loop": "combo",
+        "ping-pong": "combo"
+      },
+      "usage_count": 17
+    }
+  }
+}

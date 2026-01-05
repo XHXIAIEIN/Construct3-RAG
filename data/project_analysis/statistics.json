@@ -1,0 +1,17 @@
+{
+  "files_analyzed": 9491,
+  "plugins": 56,
+  "behaviors": 30,
+  "conditions": 2493,
+  "actions": 6204,
+  "stats": {
+    "projects": 490,
+    "object_types": 7656,
+    "instances": 26777,
+    "layouts": 841,
+    "events": 14003,
+    "conditions": 15205,
+    "actions": 26259,
+    "event_sheets": 504
+  }
+}

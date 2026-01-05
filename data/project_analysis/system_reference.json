@@ -1,0 +1,4366 @@
+{
+  "id": "System",
+  "name_zh": "系统",
+  "name_en": "System",
+  "description": "系统对象提供引擎核心功能，无需添加到项目中即可使用",
+  "categories": [
+    "angles",
+    "display",
+    "general",
+    "global-local-variables",
+    "layers",
+    "function-maps",
+    "layout",
+    "loops",
+    "math",
+    "memory-management",
+    "pick-instances",
+    "save-load",
+    "scrolling",
+    "special-conditions",
+    "start-end",
+    "system",
+    "text",
+    "time",
+    "values",
+    "templates"
+  ],
+  "conditions": [
+    {
+      "id": "else",
+      "name_en": "Else",
+      "name_zh": "否则",
+      "category": "special-conditions",
+      "params": [],
+      "usage_count": 1261
+    },
+    {
+      "id": "evaluate-expression",
+      "name_en": "Evaluate expression",
+      "name_zh": "比较表达式",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 1195
+    },
+    {
+      "id": "for-each",
+      "name_en": "For Each",
+      "name_zh": "遍历对象",
+      "category": "loops",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 497
+    },
+    {
+      "id": "on-start-of-layout",
+      "name_en": "On start of layout",
+      "name_zh": "场景开始",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 477
+    },
+    {
+      "id": "compare-eventvar",
+      "name_en": "Compare variable",
+      "name_zh": "比较变量",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvar",
+          "name_en": "Variable"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 469
+    },
+    {
+      "id": "compare-two-values",
+      "name_en": "Compare two values",
+      "name_zh": "比较两值",
+      "category": "general",
+      "params": [
+        {
+          "id": "first-value",
+          "type": "any",
+          "name_en": "First value"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison"
+        },
+        {
+          "id": "second-value",
+          "type": "any",
+          "name_en": "Second value"
+        }
+      ],
+      "usage_count": 402
+    },
+    {
+      "id": "every-tick",
+      "name_en": "Every tick",
+      "name_zh": "每一帧",
+      "category": "general",
+      "params": [],
+      "usage_count": 391
+    },
+    {
+      "id": "compare-boolean-eventvar",
+      "name_en": "Is boolean set",
+      "name_zh": "判断布尔值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvarbool",
+          "name_en": "Variable"
+        }
+      ],
+      "usage_count": 361
+    },
+    {
+      "id": "for",
+      "name_en": "For",
+      "name_zh": "循环",
+      "category": "loops",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name"
+        },
+        {
+          "id": "start-index",
+          "type": "number",
+          "name_en": "Start index"
+        },
+        {
+          "id": "end-index",
+          "type": "number",
+          "name_en": "End index"
+        }
+      ],
+      "usage_count": 261
+    },
+    {
+      "id": "pick-by-evaluate",
+      "name_en": "Pick by evaluate",
+      "name_zh": "按表达式选择",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "expression",
+          "type": "number",
+          "name_en": "Expression"
+        }
+      ],
+      "usage_count": 237
+    },
+    {
+      "id": "every-x-seconds",
+      "name_en": "Every X seconds",
+      "name_zh": "每隔 X 秒",
+      "category": "time",
+      "params": [
+        {
+          "id": "interval-seconds",
+          "type": "number",
+          "name_en": "Interval (seconds)"
+        }
+      ],
+      "usage_count": 216
+    },
+    {
+      "id": "repeat",
+      "name_en": "Repeat",
+      "name_zh": "重复 X 次",
+      "category": "loops",
+      "params": [
+        {
+          "id": "count",
+          "type": "number",
+          "name_en": "Count"
+        }
+      ],
+      "usage_count": 183
+    },
+    {
+      "id": "pick-by-comparison",
+      "name_en": "Pick by comparison",
+      "name_zh": "按条件选择",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "expression",
+          "type": "any",
+          "name_en": "Expression"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 161
+    },
+    {
+      "id": "trigger-once-while-true",
+      "name_en": "Trigger once while true",
+      "name_zh": "仅触发一次",
+      "category": "special-conditions",
+      "params": [],
+      "usage_count": 103
+    },
+    {
+      "id": "while",
+      "name_en": "While",
+      "name_zh": "重复",
+      "category": "loops",
+      "params": [],
+      "usage_count": 56
+    },
+    {
+      "id": "pick-all",
+      "name_en": "Pick all",
+      "name_zh": "再次选择全部",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 40
+    },
+    {
+      "id": "for-each-ordered",
+      "name_en": "For Each (ordered)",
+      "name_zh": "遍历对象 (排序)",
+      "category": "loops",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "expression",
+          "type": "any",
+          "name_en": "Expression"
+        },
+        {
+          "id": "order",
+          "type": "combo",
+          "name_en": "Order"
+        }
+      ],
+      "usage_count": 39
+    },
+    {
+      "id": "pick-random-instance",
+      "name_en": "Pick random instance",
+      "name_zh": "随机选择一个",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 37
+    },
+    {
+      "id": "is-within-angle",
+      "name_en": "Is within angle",
+      "name_zh": "在相差角度内",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle-1",
+          "type": "number",
+          "name_en": "Angle 1"
+        },
+        {
+          "id": "within",
+          "type": "number",
+          "name_en": "Within"
+        },
+        {
+          "id": "angle-2",
+          "type": "number",
+          "name_en": "Angle 2"
+        }
+      ],
+      "usage_count": 26
+    },
+    {
+      "id": "is-between-values",
+      "name_en": "Is between values",
+      "name_zh": "在两值之间",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value"
+        },
+        {
+          "id": "lower-bound",
+          "type": "number",
+          "name_en": "Lower bound"
+        },
+        {
+          "id": "upper-bound",
+          "type": "number",
+          "name_en": "Upper bound"
+        }
+      ],
+      "usage_count": 19
+    },
+    {
+      "id": "pick-last-created",
+      "name_en": "Pick last created",
+      "name_zh": "选择最后创建的",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 15
+    },
+    {
+      "id": "compare-time",
+      "name_en": "Compare time",
+      "name_zh": "比较时间",
+      "category": "time",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison"
+        },
+        {
+          "id": "time-seconds",
+          "type": "number",
+          "name_en": "Time (seconds)"
+        }
+      ],
+      "usage_count": 15
+    },
+    {
+      "id": "effects-are-supported",
+      "name_en": "Effects are supported",
+      "name_zh": "设备支持滤镜",
+      "category": "layout",
+      "params": [],
+      "usage_count": 12
+    },
+    {
+      "id": "pick-nth-instance",
+      "name_en": "Pick nth instance",
+      "name_zh": "按顺序选择",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "instance",
+          "type": "number",
+          "name_en": "Instance"
+        }
+      ],
+      "usage_count": 11
+    },
+    {
+      "id": "pick-by-highest-lowest-value",
+      "name_en": "Pick by highest/lowest value",
+      "name_zh": "按最高/最低值选择",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "which",
+          "type": "combo",
+          "name_en": "Which"
+        },
+        {
+          "id": "expression",
+          "type": "number",
+          "name_en": "Expression"
+        }
+      ],
+      "usage_count": 10
+    },
+    {
+      "id": "is-group-active",
+      "name_en": "Is group active",
+      "name_zh": "事件组已激活",
+      "category": "general",
+      "params": [
+        {
+          "id": "group-name",
+          "type": "groupname",
+          "name_en": "Group name"
+        }
+      ],
+      "usage_count": 9
+    },
+    {
+      "id": "is-between-angles",
+      "name_en": "Is between angles",
+      "name_zh": "在角度范围内",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle",
+          "type": "number",
+          "name_en": "Angle"
+        },
+        {
+          "id": "first-angle",
+          "type": "number",
+          "name_en": "First angle"
+        },
+        {
+          "id": "second-angle",
+          "type": "number",
+          "name_en": "Second angle"
+        }
+      ],
+      "usage_count": 7
+    },
+    {
+      "id": "pick-overlapping-point",
+      "name_en": "Pick overlapping point",
+      "name_zh": "选择在位置重叠的",
+      "category": "pick-instances",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        }
+      ],
+      "usage_count": 7
+    },
+    {
+      "id": "layer-is-visible",
+      "name_en": "Layer is visible",
+      "name_zh": "检查图层可见",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "on-save-complete",
+      "name_en": "On save complete",
+      "name_zh": "保存完成",
+      "category": "save-load",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "on-load-complete",
+      "name_en": "On load complete",
+      "name_zh": "加载完成",
+      "category": "save-load",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "on-load-failed",
+      "name_en": "On load failed",
+      "name_zh": "加载失败",
+      "category": "save-load",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "is-in-preview",
+      "name_en": "Is in preview",
+      "name_zh": "在预览模式中",
+      "category": "special-conditions",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "on-suspend",
+      "name_en": "On suspended",
+      "name_zh": "窗口暂停",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "on-resume",
+      "name_en": "On resumed",
+      "name_zh": "窗口恢复",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 1
+    },
+    {
+      "id": "on-signal",
+      "name_en": "On signal",
+      "name_zh": "收到信号",
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_en": "Tag"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "is-clockwise-from",
+      "name_en": "Is clockwise from",
+      "name_zh": "在顺时针方向",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle-1",
+          "type": "number",
+          "name_en": "Angle 1"
+        },
+        {
+          "id": "angle-2",
+          "type": "number",
+          "name_en": "Angle 2"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "object-uid-exists",
+      "name_en": "Object UID exists",
+      "name_zh": "检测UID对象存在",
+      "category": "general",
+      "params": [
+        {
+          "id": "uid",
+          "type": "number",
+          "name_en": "UID"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "test-regex",
+      "name_en": "Test regex",
+      "name_zh": "比较字符串 (正则表达式)",
+      "category": "general",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_en": "Regex"
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_en": "Flags"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "is-number-nan",
+      "name_en": "Is number NaN",
+      "name_zh": "检测非数字(NaN)",
+      "category": "general",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "is-value-type",
+      "name_en": "Is value type",
+      "name_zh": "检测数值类型",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        },
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "layer-is-interactive",
+      "name_en": "Layer is interactive",
+      "name_zh": "图层可交互",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "layer-is-html",
+      "name_en": "Layer is HTML",
+      "name_zh": "图层为HTML层",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "layer-name-exists",
+      "name_en": "Layer name exists",
+      "name_zh": "存在图层名称",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "string",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "compare-layer-opacity",
+      "name_en": "Compare opacity",
+      "name_zh": "比较图层不透明度",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison"
+        },
+        {
+          "id": "opacity",
+          "type": "number",
+          "name_en": "Opacity"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "layer-is-empty",
+      "name_en": "Layer is empty",
+      "name_zh": "图层为空",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "on-canvas-snapshot",
+      "name_en": "On canvas snapshot",
+      "name_zh": "截屏完成",
+      "category": "layout",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "on-image-loading-complete",
+      "name_en": "On image loading complete",
+      "name_zh": "图像加载完成",
+      "category": "memory-management",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "is-loading-images",
+      "name_en": "Is loading images",
+      "name_zh": "图像正在加载",
+      "category": "memory-management",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "on-save-failed",
+      "name_en": "On save failed",
+      "name_zh": "保存失败",
+      "category": "save-load",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "is-on-mobile-device",
+      "name_en": "Is on mobile device",
+      "name_zh": "在移动设备运行",
+      "category": "special-conditions",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "is-on-platform",
+      "name_en": "Is on platform",
+      "name_zh": "在运行平台",
+      "category": "special-conditions",
+      "params": [
+        {
+          "id": "platform",
+          "type": "combo",
+          "name_en": "Platform"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "on-end-of-layout",
+      "name_en": "On end of layout",
+      "name_zh": "场景结束",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "on-loader-layout-complete",
+      "name_en": "On loader layout complete",
+      "name_zh": "加载页加载完成",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "is-suspended",
+      "name_en": "Is suspended",
+      "name_zh": "正在暂停",
+      "category": "start-end",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "template-exists",
+      "name_en": "Template exists",
+      "name_zh": "检测对象模版存在",
+      "category": "templates",
+      "params": [
+        {
+          "id": "object-to-test",
+          "type": "object",
+          "name_en": "Object to test"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_en": "Template name"
+        }
+      ],
+      "usage_count": 0
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-eventvar-value",
+      "name_en": "Set value",
+      "name_zh": "设置值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvar",
+          "name_en": "Variable"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 1726
+    },
+    {
+      "id": "create-object",
+      "name_en": "Create object",
+      "name_zh": "创建对象",
+      "category": "general",
+      "params": [
+        {
+          "id": "object-to-create",
+          "type": "object",
+          "name_en": "Object to create"
+        },
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_en": "Create hierarchy"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_en": "Template name"
+        }
+      ],
+      "usage_count": 781
+    },
+    {
+      "id": "wait",
+      "name_en": "Wait",
+      "name_zh": "等待",
+      "category": "time",
+      "params": [
+        {
+          "id": "seconds",
+          "type": "number",
+          "name_en": "Seconds"
+        },
+        {
+          "id": "use-timescale",
+          "type": "boolean",
+          "name_en": "Use time scale"
+        }
+      ],
+      "usage_count": 411
+    },
+    {
+      "id": "set-boolean-eventvar",
+      "name_en": "Set boolean",
+      "name_zh": "设置布尔值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvarbool",
+          "name_en": "Variable"
+        },
+        {
+          "id": "value",
+          "type": "combo",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 405
+    },
+    {
+      "id": "wait-for-previous-actions",
+      "name_en": "Wait for previous actions",
+      "name_zh": "等待前面异步动作完成",
+      "category": "time",
+      "params": [],
+      "usage_count": 267
+    },
+    {
+      "id": "restart-layout",
+      "name_en": "Restart layout",
+      "name_zh": "重载场景",
+      "category": "layout",
+      "params": [],
+      "usage_count": 225
+    },
+    {
+      "id": "set-group-active",
+      "name_en": "Set group active",
+      "name_zh": "启用事件组",
+      "category": "general",
+      "params": [
+        {
+          "id": "group-name",
+          "type": "groupname",
+          "name_en": "Group name"
+        },
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State"
+        }
+      ],
+      "usage_count": 212
+    },
+    {
+      "id": "add-to-eventvar",
+      "name_en": "Add to",
+      "name_zh": "增加值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvar",
+          "name_en": "Variable"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 199
+    },
+    {
+      "id": "reset-global-variables",
+      "name_en": "Reset global variables",
+      "name_zh": "重置全局变量",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "reset-static",
+          "type": "boolean",
+          "name_en": "Reset static"
+        }
+      ],
+      "usage_count": 116
+    },
+    {
+      "id": "go-to-layout",
+      "name_en": "Go to layout",
+      "name_zh": "跳转到场景",
+      "category": "layout",
+      "params": [
+        {
+          "id": "layout",
+          "type": "layout",
+          "name_en": "Layout"
+        }
+      ],
+      "usage_count": 87
+    },
+    {
+      "id": "set-layer-visible",
+      "name_en": "Set layer visible",
+      "name_zh": "设置图层可见",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "visibility",
+          "type": "combo",
+          "name_en": "Visibility"
+        }
+      ],
+      "usage_count": 57
+    },
+    {
+      "id": "set-time-scale",
+      "name_en": "Set time scale",
+      "name_zh": "设置时间速率",
+      "category": "time",
+      "params": [
+        {
+          "id": "time-scale",
+          "type": "number",
+          "name_en": "Time scale"
+        }
+      ],
+      "usage_count": 53
+    },
+    {
+      "id": "stop-loop",
+      "name_en": "Stop loop",
+      "name_zh": "停止循环",
+      "category": "general",
+      "params": [],
+      "usage_count": 47
+    },
+    {
+      "id": "set-object-time-scale",
+      "name_en": "Set object time scale",
+      "name_zh": "设置对象速率",
+      "category": "time",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "time-scale",
+          "type": "number",
+          "name_en": "Time scale"
+        }
+      ],
+      "usage_count": 45
+    },
+    {
+      "id": "scroll-to-position",
+      "name_en": "Scroll to position",
+      "name_zh": "滚动到位置",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        }
+      ],
+      "usage_count": 43
+    },
+    {
+      "id": "set-layer-scale",
+      "name_en": "Set layer scale",
+      "name_zh": "设置图层缩放倍数",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "scale",
+          "type": "number",
+          "name_en": "Scale"
+        }
+      ],
+      "usage_count": 41
+    },
+    {
+      "id": "subtract-from-eventvar",
+      "name_en": "Subtract from",
+      "name_zh": "减少值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvar",
+          "name_en": "Variable"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 40
+    },
+    {
+      "id": "set-layer-effect-parameter",
+      "name_en": "Set layer effect parameter",
+      "name_zh": "设置图层滤镜参数",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "effect",
+          "type": "layereffect",
+          "name_en": "Effect"
+        },
+        {
+          "id": "parameter-index",
+          "type": "number",
+          "name_en": "Parameter index"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 39
+    },
+    {
+      "id": "set-layout-scale",
+      "name_en": "Set layout scale",
+      "name_zh": "设置场景缩放倍数",
+      "category": "layout",
+      "params": [
+        {
+          "id": "scale",
+          "type": "number",
+          "name_en": "Scale"
+        }
+      ],
+      "usage_count": 37
+    },
+    {
+      "id": "go-to-layout-by-name",
+      "name_en": "Go to layout (by name)",
+      "name_zh": "跳转到场景(根据名称)",
+      "category": "layout",
+      "params": [
+        {
+          "id": "layout",
+          "type": "string",
+          "name_en": "Layout"
+        }
+      ],
+      "usage_count": 26
+    },
+    {
+      "id": "set-layer-opacity",
+      "name_en": "Set layer opacity",
+      "name_zh": "设置图层不透明度",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "opacity",
+          "type": "number",
+          "name_en": "Opacity"
+        }
+      ],
+      "usage_count": 24
+    },
+    {
+      "id": "set-layout-angle",
+      "name_en": "Set layout angle",
+      "name_zh": "设置场景角度",
+      "category": "layout",
+      "params": [
+        {
+          "id": "angle",
+          "type": "number",
+          "name_en": "Angle"
+        }
+      ],
+      "usage_count": 22
+    },
+    {
+      "id": "scroll-to-y",
+      "name_en": "Scroll to Y",
+      "name_zh": "滚动到Y",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        }
+      ],
+      "usage_count": 22
+    },
+    {
+      "id": "set-layout-effect-parameter",
+      "name_en": "Set layout effect parameter",
+      "name_zh": "设置场景滤镜参数",
+      "category": "layout",
+      "params": [
+        {
+          "id": "effect",
+          "type": "layouteffect",
+          "name_en": "Effect"
+        },
+        {
+          "id": "parameter-index",
+          "type": "number",
+          "name_en": "Parameter index"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 21
+    },
+    {
+      "id": "scroll-to-x",
+      "name_en": "Scroll to X",
+      "name_zh": "滚动到X",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        }
+      ],
+      "usage_count": 20
+    },
+    {
+      "id": "set-layout-effect-enabled",
+      "name_en": "Set layout effect enabled",
+      "name_zh": "启用场景滤镜",
+      "category": "layout",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode"
+        },
+        {
+          "id": "effect",
+          "type": "layouteffect",
+          "name_en": "Effect"
+        }
+      ],
+      "usage_count": 18
+    },
+    {
+      "id": "sort-z-order",
+      "name_en": "Sort Z order",
+      "name_zh": "排序显示顺序",
+      "category": "general",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "instance-variable",
+          "type": "objinstancevar",
+          "name_en": "Instance variable"
+        }
+      ],
+      "usage_count": 16
+    },
+    {
+      "id": "reset-eventvar",
+      "name_en": "Reset",
+      "name_zh": "重置变量",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvarany",
+          "name_en": "Variable"
+        }
+      ],
+      "usage_count": 13
+    },
+    {
+      "id": "go-to-nextprevious-layout",
+      "name_en": "Go to next/previous layout",
+      "name_zh": "跳转下一个/上一个场景",
+      "category": "layout",
+      "params": [
+        {
+          "id": "which",
+          "type": "combo",
+          "name_en": "Which"
+        }
+      ],
+      "usage_count": 12
+    },
+    {
+      "id": "create-object-by-name",
+      "name_en": "Create object (by name)",
+      "name_zh": "创建对象(按名称)",
+      "category": "general",
+      "params": [
+        {
+          "id": "object-name",
+          "type": "objectname",
+          "name_en": "Object name"
+        },
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_en": "Create hierarchy"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_en": "Template name"
+        }
+      ],
+      "usage_count": 10
+    },
+    {
+      "id": "wait-for-signal",
+      "name_en": "Wait for signal",
+      "name_zh": "等待信号",
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_en": "Tag"
+        }
+      ],
+      "usage_count": 10
+    },
+    {
+      "id": "toggle-boolean-eventvar",
+      "name_en": "Toggle boolean",
+      "name_zh": "反转布尔值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "variable",
+          "type": "eventvarbool",
+          "name_en": "Variable"
+        }
+      ],
+      "usage_count": 9
+    },
+    {
+      "id": "scroll-to-object",
+      "name_en": "Scroll to object",
+      "name_zh": "滚动到对象",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 8
+    },
+    {
+      "id": "set-layer-scroll",
+      "name_en": "Set layer scroll",
+      "name_zh": "设置图层滚动",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "scroll-x",
+          "type": "number",
+          "name_en": "Scroll X"
+        },
+        {
+          "id": "scroll-y",
+          "type": "number",
+          "name_en": "Scroll Y"
+        }
+      ],
+      "usage_count": 6
+    },
+    {
+      "id": "snapshot-canvas",
+      "name_en": "Snapshot canvas",
+      "name_zh": "截屏",
+      "category": "display",
+      "params": [
+        {
+          "id": "format",
+          "type": "combo",
+          "name_en": "Format"
+        },
+        {
+          "id": "jpeg-quality",
+          "type": "number",
+          "name_en": "JPEG quality"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y"
+        },
+        {
+          "id": "width",
+          "type": "number",
+          "name_en": "Width"
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_en": "Height"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "set-layer-angle",
+      "name_en": "Set layer angle",
+      "name_zh": "设置图层角度",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "angle",
+          "type": "number",
+          "name_en": "Angle"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "set-layout-projection",
+      "name_en": "Set layout projection",
+      "name_zh": "设置场景投影类型",
+      "category": "layout",
+      "params": [
+        {
+          "id": "projection",
+          "type": "combo",
+          "name_en": "Projection"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "signal",
+      "name_en": "Signal",
+      "name_zh": "发送信号",
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_en": "Tag"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "set-min-max-dt",
+      "name_en": "Set min/max delta-time",
+      "name_zh": "设置增量时间",
+      "category": "time",
+      "params": [
+        {
+          "id": "minimum-dt",
+          "type": "number",
+          "name_en": "Min delta-time"
+        },
+        {
+          "id": "maximum-dt",
+          "type": "number",
+          "name_en": "Max delta-time"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "set-framerate-mode",
+      "name_en": "Set framerate mode",
+      "name_zh": "设置帧率模式",
+      "category": "time",
+      "params": [
+        {
+          "id": "framerate-mode",
+          "type": "combo",
+          "name_en": "Framerate mode"
+        }
+      ],
+      "usage_count": 4
+    },
+    {
+      "id": "set-minimum-framerate",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "params": [
+        {
+          "id": "minimum-fps",
+          "type": "number",
+          "name_en": ""
+        },
+        {
+          "id": "maximum-fps",
+          "type": "number",
+          "name_en": ""
+        }
+      ],
+      "usage_count": 3
+    },
+    {
+      "id": "set-layer-effect-enabled",
+      "name_en": "Set layer effect enabled",
+      "name_zh": "启用图层滤镜",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode"
+        },
+        {
+          "id": "effect",
+          "type": "layereffect",
+          "name_en": "Effect"
+        }
+      ],
+      "usage_count": 2
+    },
+    {
+      "id": "set-layer-background-color",
+      "name_en": "Set layer background color",
+      "name_zh": "设置图层背景颜色",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color"
+        }
+      ],
+      "usage_count": 2
+    },
+    {
+      "id": "recreate-initial-objects",
+      "name_en": "Recreate initial objects",
+      "name_zh": "初始化场景对象",
+      "category": "layout",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        },
+        {
+          "id": "from-x",
+          "type": "number",
+          "name_en": "From X"
+        },
+        {
+          "id": "from-y",
+          "type": "number",
+          "name_en": "From Y"
+        },
+        {
+          "id": "to-x",
+          "type": "number",
+          "name_en": "To X"
+        },
+        {
+          "id": "to-y",
+          "type": "number",
+          "name_en": "To Y"
+        },
+        {
+          "id": "source-layout",
+          "type": "string",
+          "name_en": "Source layout"
+        },
+        {
+          "id": "source-layer",
+          "type": "any",
+          "name_en": "Source layer"
+        },
+        {
+          "id": "dest-layer",
+          "type": "any",
+          "name_en": "Destination layer"
+        },
+        {
+          "id": "offset-x",
+          "type": "number",
+          "name_en": "Offset X"
+        },
+        {
+          "id": "offset-y",
+          "type": "number",
+          "name_en": "Offset Y"
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_en": "Create hierarchy"
+        }
+      ],
+      "usage_count": 2
+    },
+    {
+      "id": "add-layer",
+      "name_en": "Add layer",
+      "name_zh": "添加图层",
+      "category": "layers",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Layer name"
+        },
+        {
+          "id": "insert-by",
+          "type": "layer",
+          "name_en": "Insert by"
+        },
+        {
+          "id": "where",
+          "type": "combo",
+          "name_en": "Where"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "load-object-images",
+      "name_en": "Load object images",
+      "name_zh": "加载对象图像",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "load-layout-images",
+      "name_en": "Load layout images",
+      "name_zh": "加载场景图像",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "layout",
+          "type": "layout",
+          "name_en": "Layout"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "save",
+      "name_en": "Save",
+      "name_zh": "保存",
+      "category": "save-load",
+      "params": [
+        {
+          "id": "slot",
+          "type": "string",
+          "name_en": "Slot"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "load",
+      "name_en": "Load",
+      "name_zh": "加载",
+      "category": "save-load",
+      "params": [
+        {
+          "id": "slot",
+          "type": "string",
+          "name_en": "Slot"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "restore-object-time-scale",
+      "name_en": "Restore object time scale",
+      "name_zh": "恢复对象速率",
+      "category": "time",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 1
+    },
+    {
+      "id": "set-canvas-size",
+      "name_en": "Set canvas size",
+      "name_zh": "设置画布大小",
+      "category": "display",
+      "params": [
+        {
+          "id": "width",
+          "type": "number",
+          "name_en": "Width"
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_en": "Height"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-half-framerate-mode",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": ""
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-fullscreen-scaling",
+      "name_en": "Set fullscreen scaling",
+      "name_zh": "设置全屏质量",
+      "category": "display",
+      "params": [
+        {
+          "id": "fullscreen-scaling",
+          "type": "combo",
+          "name_en": "Fullscreen scaling"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-pixel-rounding",
+      "name_en": "Set pixel rounding",
+      "name_zh": "设置像素对齐",
+      "category": "display",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "reset-persisted-objects",
+      "name_en": "Reset persisted objects",
+      "name_zh": "重置持久化对象",
+      "category": "general",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "set-collision-cell-size",
+      "name_en": "Set collision cell size",
+      "name_zh": "设置碰撞单元大小",
+      "category": "general",
+      "params": [
+        {
+          "id": "width",
+          "type": "number",
+          "name_en": "Width"
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_en": "Height"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-function-return-value",
+      "name_en": "Set return value",
+      "name_zh": "设置返回值",
+      "category": "global-local-variables",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-interactive",
+      "name_en": "Set layer interactive",
+      "name_zh": "启用图层交互响应",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "interactive",
+          "type": "boolean",
+          "name_en": "Interactive"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-html",
+      "name_en": "Set layer HTML",
+      "name_zh": "设置 HTML 图层",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "html",
+          "type": "boolean",
+          "name_en": "HTML layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-scale-rate",
+      "name_en": "Set layer scale rate",
+      "name_zh": "设置图层缩放同步比例",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "scale-rate",
+          "type": "number",
+          "name_en": "Scale rate"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "restore-layer-scroll",
+      "name_en": "Restore layer scroll",
+      "name_zh": "复位图层滚动",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-parallax",
+      "name_en": "Set layer parallax",
+      "name_zh": "设置图层视差滚动",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "parallax-x",
+          "type": "number",
+          "name_en": "Parallax X"
+        },
+        {
+          "id": "parallax-y",
+          "type": "number",
+          "name_en": "Parallax Y"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-transparent",
+      "name_en": "Set layer transparent",
+      "name_zh": "启用图层透明化",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-blend-mode",
+      "name_en": "Set layer blend mode",
+      "name_zh": "设置图层混合模式",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-force-own-texture",
+      "name_en": "Set layer force own texture",
+      "name_zh": "启用图层纹理缓冲",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-z-elevation",
+      "name_en": "Set layer Z elevation",
+      "name_zh": "设置图层视距高度",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "z-elevation",
+          "type": "number",
+          "name_en": "Z elevation"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layer-rendering-mode",
+      "name_en": "Set layer rendering mode",
+      "name_zh": "设置图层渲染模式",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "rendering-mode",
+          "type": "combo",
+          "name_en": "Rendering mode"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "move-layer",
+      "name_en": "Move layer",
+      "name_zh": "移动图层顺序",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        },
+        {
+          "id": "insert-by",
+          "type": "layer",
+          "name_en": "Insert by"
+        },
+        {
+          "id": "where",
+          "type": "combo",
+          "name_en": "Where"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "remove-layer",
+      "name_en": "Remove layer",
+      "name_zh": "移除图层",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "remove-all-dynamic-layers",
+      "name_en": "Remove all dynamic layers",
+      "name_zh": "移除所有动态图层",
+      "category": "layers",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "map-function",
+      "name_en": "Map function to string",
+      "name_zh": "映射动作组",
+      "category": "function-maps",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Map name"
+        },
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "function",
+          "type": "function",
+          "name_en": "Function"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "map-function-default",
+      "name_en": "Map default function",
+      "name_zh": "映射默认动作组",
+      "category": "function-maps",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Map name"
+        },
+        {
+          "id": "function",
+          "type": "function",
+          "name_en": "Function"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "call-mapped-function",
+      "name_en": "Call mapped function",
+      "name_zh": "执行映射动作组",
+      "category": "function-maps",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Map name"
+        },
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "forward-params",
+          "type": "number",
+          "name_en": "Forward parameters"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "set-layout-vanishing-point",
+      "name_en": "Set layout vanishing point",
+      "name_zh": "设置场景透视中心",
+      "category": "layout",
+      "params": [
+        {
+          "id": "vanishing-point-x",
+          "type": "number",
+          "name_en": "Vanishing point X"
+        },
+        {
+          "id": "vanishing-point-y",
+          "type": "number",
+          "name_en": "Vanishing point Y"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "load-object-images-by-name",
+      "name_en": "Load object images (by name)",
+      "name_zh": "加载对象图像(根据名称)",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "objectname",
+          "name_en": "Object name"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "unload-object-images",
+      "name_en": "Unload object images",
+      "name_zh": "挂载对象图像",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "unload-object-images-by-name",
+      "name_en": "Unload object images (by name)",
+      "name_zh": "挂载对象图像(根据名称)",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "objectname",
+          "name_en": "Object name"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "unload-unused-images",
+      "name_en": "Unload unused images",
+      "name_zh": "挂载未使用的图像",
+      "category": "memory-management",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "load-layout-images-by-name",
+      "name_en": "Load layout images (by name)",
+      "name_zh": "加载场景图片(根据名称)",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "layout",
+          "type": "string",
+          "name_en": "Layout"
+        }
+      ],
+      "usage_count": 0
+    },
+    {
+      "id": "save-to-json",
+      "name_en": "Save to JSON",
+      "name_zh": "保存为 JSON",
+      "category": "save-load",
+      "params": [],
+      "usage_count": 0
+    },
+    {
+      "id": "load-from-json",
+      "name_en": "Load from JSON",
+      "name_zh": "加载游戏数据",
+      "category": "save-load",
+      "params": [
+        {
+          "id": "json",
+          "type": "string",
+          "name_en": "JSON"
+        }
+      ],
+      "usage_count": 0
+    }
+  ],
+  "expressions": [
+    {
+      "id": "windowwidth",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "windowheight",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "originalwindowwidth",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "originalwindowheight",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "originalviewportwidth",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "originalviewportheight",
+      "name_en": "",
+      "name_zh": "",
+      "category": "display",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "layerscale",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layeropacity",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerscalerate",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerangle",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportleft",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewporttop",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportright",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportbottom",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportwidth",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportheight",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportmidx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "viewportmidy",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "layertocanvasy",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "canvastolayerx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "canvastolayery",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "layertolayerx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "from-layer",
+          "type": "layer",
+          "name_en": "fromLayer"
+        },
+        {
+          "id": "to-layer",
+          "type": "layer",
+          "name_en": "toLayer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "layertolayery",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "from-layer",
+          "type": "layer",
+          "name_en": "fromLayer"
+        },
+        {
+          "id": "to-layer",
+          "type": "layer",
+          "name_en": "toLayer"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "layerscrollx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerscrolly",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerparallaxy",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layerindex",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "layer-z-elevation",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layers",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "layer"
+        }
+      ]
+    },
+    {
+      "id": "call-mapped-function-expression",
+      "name_en": "",
+      "name_zh": "",
+      "category": "function-maps",
+      "returnType": "any",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "MapName"
+        },
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        }
+      ]
+    },
+    {
+      "id": "scrollx",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "scrolly",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "layoutwidth",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "layoutheight",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "layoutscale",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "layoutname",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "layoutangle",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "canvassnapshot",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "vanishing-point-x",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "vanishing-point-y",
+      "name_en": "",
+      "name_zh": "",
+      "category": "layout",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "sqrt",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "abs",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "round",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "round-to-dp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        },
+        {
+          "id": "digits",
+          "type": "number",
+          "name_en": "Digits"
+        }
+      ]
+    },
+    {
+      "id": "floor",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "ceil",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "sign",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "sin",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "cos",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "tan",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "asin",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "acos",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "atan",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "exp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "ln",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "log10",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "max",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number1",
+          "type": "number",
+          "name_en": "Number"
+        },
+        {
+          "id": "number2",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "min",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number1",
+          "type": "number",
+          "name_en": "Number"
+        },
+        {
+          "id": "number2",
+          "type": "number",
+          "name_en": "Number"
+        }
+      ]
+    },
+    {
+      "id": "distance",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "x1",
+          "type": "number",
+          "name_en": "x1"
+        },
+        {
+          "id": "y1",
+          "type": "number",
+          "name_en": "y1"
+        },
+        {
+          "id": "x2",
+          "type": "number",
+          "name_en": "x2"
+        },
+        {
+          "id": "y2",
+          "type": "number",
+          "name_en": "y2"
+        }
+      ]
+    },
+    {
+      "id": "angle",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "x1",
+          "type": "number",
+          "name_en": "x1"
+        },
+        {
+          "id": "y1",
+          "type": "number",
+          "name_en": "y1"
+        },
+        {
+          "id": "x2",
+          "type": "number",
+          "name_en": "x2"
+        },
+        {
+          "id": "y2",
+          "type": "number",
+          "name_en": "y2"
+        }
+      ]
+    },
+    {
+      "id": "lerp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        }
+      ]
+    },
+    {
+      "id": "pi",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "anglediff",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "angle1",
+          "type": "number",
+          "name_en": "Angle1"
+        },
+        {
+          "id": "angle2",
+          "type": "number",
+          "name_en": "Angle2"
+        }
+      ]
+    },
+    {
+      "id": "anglelerp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        }
+      ]
+    },
+    {
+      "id": "anglerotate",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "start",
+          "type": "number",
+          "name_en": "start"
+        },
+        {
+          "id": "end",
+          "type": "number",
+          "name_en": "end"
+        },
+        {
+          "id": "step",
+          "type": "number",
+          "name_en": "step"
+        }
+      ]
+    },
+    {
+      "id": "unlerp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "y"
+        }
+      ]
+    },
+    {
+      "id": "infinity",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "setbit",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "number"
+        },
+        {
+          "id": "bit",
+          "type": "number",
+          "name_en": "bit"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "value"
+        }
+      ]
+    },
+    {
+      "id": "togglebit",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "number"
+        },
+        {
+          "id": "bit",
+          "type": "number",
+          "name_en": "bit"
+        }
+      ]
+    },
+    {
+      "id": "getbit",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "number"
+        },
+        {
+          "id": "bit",
+          "type": "number",
+          "name_en": "bit"
+        }
+      ]
+    },
+    {
+      "id": "qarp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "c",
+          "type": "number",
+          "name_en": "c"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        }
+      ]
+    },
+    {
+      "id": "cubic",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "c",
+          "type": "number",
+          "name_en": "c"
+        },
+        {
+          "id": "d",
+          "type": "number",
+          "name_en": "d"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        }
+      ]
+    },
+    {
+      "id": "cosp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "math",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "a",
+          "type": "number",
+          "name_en": "a"
+        },
+        {
+          "id": "b",
+          "type": "number",
+          "name_en": "b"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        }
+      ]
+    },
+    {
+      "id": "imageloadingprogress",
+      "name_en": "",
+      "name_zh": "",
+      "category": "memory-management",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "savestatejson",
+      "name_en": "",
+      "name_zh": "",
+      "category": "save-load",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "objectcount",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "loopindex",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "renderer",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "projectversion",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "projectid",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "projectuniqueid",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "loadingprogress",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "imagememoryusage",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "projectname",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "rendererdetail",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "currenteventsheetname",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "currenteventnumber",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "projectfilecount",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "projectfilenameat",
+      "name_en": "",
+      "name_zh": "",
+      "category": "system",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index"
+        }
+      ]
+    },
+    {
+      "id": "len",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        }
+      ]
+    },
+    {
+      "id": "newline",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": []
+    },
+    {
+      "id": "uppercase",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        }
+      ]
+    },
+    {
+      "id": "lowercase",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        }
+      ]
+    },
+    {
+      "id": "find",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "find",
+          "type": "string",
+          "name_en": "Find"
+        }
+      ]
+    },
+    {
+      "id": "left",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "count",
+          "type": "number",
+          "name_en": "Count"
+        }
+      ]
+    },
+    {
+      "id": "right",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "count",
+          "type": "number",
+          "name_en": "Count"
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index"
+        },
+        {
+          "id": "length",
+          "type": "number",
+          "name_en": "Length"
+        }
+      ]
+    },
+    {
+      "id": "tokenat",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index"
+        },
+        {
+          "id": "separator",
+          "type": "string",
+          "name_en": "Separator"
+        }
+      ]
+    },
+    {
+      "id": "tokencount",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "separator",
+          "type": "string",
+          "name_en": "Separator"
+        }
+      ]
+    },
+    {
+      "id": "replace",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "find",
+          "type": "string",
+          "name_en": "Find"
+        },
+        {
+          "id": "replace",
+          "type": "string",
+          "name_en": "Replace"
+        }
+      ]
+    },
+    {
+      "id": "string-substitute",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "substitution",
+          "type": "any",
+          "name_en": "Substitution"
+        }
+      ]
+    },
+    {
+      "id": "trim",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        }
+      ]
+    },
+    {
+      "id": "zeropad",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "number"
+        },
+        {
+          "id": "digits",
+          "type": "number",
+          "name_en": "digits"
+        }
+      ]
+    },
+    {
+      "id": "urlencode",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        }
+      ]
+    },
+    {
+      "id": "urldecode",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        }
+      ]
+    },
+    {
+      "id": "regexsearch",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_en": "Regex"
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_en": "Flags"
+        }
+      ]
+    },
+    {
+      "id": "regexreplace",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_en": "Regex"
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_en": "Flags"
+        },
+        {
+          "id": "replace",
+          "type": "string",
+          "name_en": "Replace"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchcount",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_en": "Regex"
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_en": "Flags"
+        }
+      ]
+    },
+    {
+      "id": "regexmatchat",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_en": "Regex"
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_en": "Flags"
+        },
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index"
+        }
+      ]
+    },
+    {
+      "id": "findcase",
+      "name_en": "",
+      "name_zh": "",
+      "category": "text",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text"
+        },
+        {
+          "id": "find",
+          "type": "string",
+          "name_en": "Find"
+        }
+      ]
+    },
+    {
+      "id": "dt",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "wallclockdt",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "timescale",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "time",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "tickcount",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "fps",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "wallclocktime",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "cpuutilisation",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "gpuutilisation",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "unixtime",
+      "name_en": "",
+      "name_zh": "",
+      "category": "time",
+      "returnType": "number",
+      "params": []
+    },
+    {
+      "id": "int",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ]
+    },
+    {
+      "id": "float",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ]
+    },
+    {
+      "id": "str",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ]
+    },
+    {
+      "id": "random",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "range",
+          "type": "number",
+          "name_en": "Range"
+        }
+      ]
+    },
+    {
+      "id": "clamp",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "x"
+        },
+        {
+          "id": "lower",
+          "type": "number",
+          "name_en": "lower"
+        },
+        {
+          "id": "upper",
+          "type": "number",
+          "name_en": "upper"
+        }
+      ]
+    },
+    {
+      "id": "choose",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "any",
+      "params": [
+        {
+          "id": "value1",
+          "type": "any",
+          "name_en": "Value"
+        },
+        {
+          "id": "value2",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ]
+    },
+    {
+      "id": "chooseindex",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "any",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index"
+        },
+        {
+          "id": "value1",
+          "type": "any",
+          "name_en": "Value"
+        }
+      ]
+    },
+    {
+      "id": "rgb",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_en": "Red"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_en": "Green"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_en": "Blue"
+        }
+      ]
+    },
+    {
+      "id": "rgbex",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_en": "Red"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_en": "Green"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_en": "Blue"
+        }
+      ]
+    },
+    {
+      "id": "rgba",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_en": "Red"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_en": "Green"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_en": "Blue"
+        },
+        {
+          "id": "alpha",
+          "type": "number",
+          "name_en": "Alpha"
+        }
+      ]
+    },
+    {
+      "id": "rgbex255",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_en": "Red"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_en": "Green"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_en": "Blue"
+        }
+      ]
+    },
+    {
+      "id": "rgba255",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_en": "Red"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_en": "Green"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_en": "Blue"
+        },
+        {
+          "id": "alpha",
+          "type": "number",
+          "name_en": "Alpha"
+        }
+      ]
+    },
+    {
+      "id": "hex-color",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "number",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String"
+        }
+      ]
+    },
+    {
+      "id": "color-to-hex-string",
+      "name_en": "",
+      "name_zh": "",
+      "category": "values",
+      "returnType": "string",
+      "params": [
+        {
+          "id": "color-value",
+          "type": "number",
+          "name_en": "Color"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "conditions": 56,
+    "actions": 81,
+    "expressions": 135
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "number": {
+    "var_type": "number",
+    "usage_count": 946,
+    "names": [
+      "Step",
+      "defaultHeight",
+      "LevelNumber",
+      "torchID",
+      "removeTip",
+      "maxWidth",
+      "AimAngle",
+      "camZ",
+      "ClickCount",
+      "period",
+      "row",
+      "specialProbability",
+      "batID",
+      "SellingPrice",
+      "InitialY",
+      "PreviousX",
+      "colOffset",
+      "RotationSpeed",
+      "wptNum",
+      "oldX",
+      "tableauY",
+      "option",
+      "IDGuard",
+      "shaC",
+      "Row",
+      "Lives",
+      "mag",
+      "enemyID",
+      "kills",
+      "NextMoveDelay",
+      "GridBlockUID",
+      "Health",
+      "maxFloor",
+      "orderTimer",
+      "midX",
+      "PositionX",
+      "CurrentLink",
+      "PointBX",
+      "MonetaryValue",
+      "Piercing",
+      "HitCount",
+      "crYoffset",
+      "deaths",
+      "SpeedDelta",
+      "CellX",
+      "moveTime",
+      "ItemSelectDelay",
+      "Iterations",
+      "camLookZ",
+      "spacing"
+    ],
+    "initial_values": {
+      "number": {
+        "prop_id": "number",
+        "unique_values": [
+          ""
+        ],
+        "unique_count": 1,
+        "total_count": 946,
+        "samples": [
+          {
+            "value": "",
+            "source": "stealth-example/guard"
+          }
+        ]
+      }
+    }
+  },
+  "string": {
+    "var_type": "string",
+    "usage_count": 162,
+    "names": [
+      "name",
+      "Identification",
+      "enemyType",
+      "floorDirection",
+      "whichEye",
+      "FontID",
+      "CurrentPoint",
+      "SwapDirection",
+      "linkedWith",
+      "moveBG",
+      "PointA",
+      "drop",
+      "waypoints",
+      "SeedType",
+      "NextPositions",
+      "currentMode",
+      "Room",
+      "collisionMode",
+      "capturedBy",
+      "fxname",
+      "downPress",
+      "word",
+      "Text",
+      "Coordinates",
+      "wheelPosition",
+      "waveEnemy",
+      "direction",
+      "Side",
+      "whichArm",
+      "key",
+      "Menu",
+      "fullText",
+      "Ingredient",
+      "text",
+      "visionConeColor",
+      "focus",
+      "tech",
+      "Name",
+      "Type",
+      "ballAnim",
+      "Cutscene",
+      "Group",
+      "NPCName",
+      "SweepDirection",
+      "flowchartTag",
+      "whooseHead",
+      "description",
+      "Tag",
+      "dashing",
+      "currentButton"
+    ],
+    "initial_values": {
+      "string": {
+        "prop_id": "string",
+        "unique_values": [
+          ""
+        ],
+        "unique_count": 1,
+        "total_count": 162,
+        "samples": [
+          {
+            "value": "",
+            "source": "stealth-example/guard"
+          }
+        ]
+      }
+    }
+  },
+  "boolean": {
+    "var_type": "boolean",
+    "usage_count": 302,
+    "names": [
+      "IsFull",
+      "hasLettuce",
+      "playedSound",
+      "used",
+      "DamageEnemy",
+      "recovering",
+      "stopping",
+      "underwater",
+      "HasBeenOpened",
+      "taken",
+      "Mirror",
+      "dragging",
+      "linearBullet",
+      "open",
+      "Active",
+      "shooting",
+      "dropped",
+      "orbiting",
+      "BadGameOver",
+      "IsCurrentMenu",
+      "bucketFull",
+      "isActive",
+      "IsMoving",
+      "hasCheese",
+      "Crashed",
+      "Shooting",
+      "HasBeenTouched",
+      "Rotate",
+      "isAttacking",
+      "alreadyOnScreen",
+      "dead",
+      "Ready",
+      "invertRot",
+      "alreadyCollided",
+      "BeamSide",
+      "UpdatePhysics",
+      "movable",
+      "Alive",
+      "over",
+      "onStage",
+      "IsText",
+      "caught",
+      "resultSlot",
+      "Filling",
+      "playerOnTop",
+      "attackInCooldown",
+      "targetingPlayer",
+      "startMirrored",
+      "Void",
+      "Dragging"
+    ],
+    "initial_values": {
+      "boolean": {
+        "prop_id": "boolean",
+        "unique_values": [
+          ""
+        ],
+        "unique_count": 1,
+        "total_count": 302,
+        "samples": [
+          {
+            "value": "",
+            "source": "fireworks-designer/Pixel"
+          }
+        ]
+      }
+    }
+  }
+}

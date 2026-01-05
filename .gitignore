@@ -26,7 +26,9 @@ qdrant_storage/
 *.log
 
 # Claude Code
-.claude/
+.claude/**
+!.claude/skills/
+!.claude/skills/**
 .claude.json
 .local/
 .history/

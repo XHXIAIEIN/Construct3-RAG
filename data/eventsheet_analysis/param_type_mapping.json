@@ -1,0 +1,1547 @@
+{
+  "animationframe": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 2
+    },
+    "sample_values": [
+      "loopindex",
+      "ColorFrame"
+    ],
+    "total_occurrences": 2,
+    "ace_usage_examples": [
+      {
+        "ace": "Sprite.set-animation-frame",
+        "param": "frame-number",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：loopindex, ColorFrame"
+  },
+  "any": {
+    "dominant_pattern": "expression_dot",
+    "value_patterns": {
+      "expression_call": 640,
+      "expression_dot": 1365,
+      "plain_string": 1282,
+      "number_string": 1344,
+      "quoted_string": 465
+    },
+    "sample_values": [
+      "distance(ZombieCollision.X, ZombieCollision.Y, PlayerCollision.X, PlayerCollision.Y)",
+      "MainBuilding.Count",
+      "Dot.Count",
+      "getbit(Peer.inputs, 0)",
+      "Mask.Count",
+      "0",
+      "\"3_Temple\"",
+      "\"Inspecting\"",
+      "SongArray.Height - 1",
+      "MAXCHARGETIME / 4",
+      "lowercase(trim(currentInput)) = \"restart\"",
+      "CurrentTile = 4",
+      "int(tokenat(upgradeLevels, loopindex, \",\")) = 1",
+      "Button.TemplateName = \"PlayPause\"",
+      "loopindex > Player.numOfSlots - 1",
+      "round(SliderButton.Y)",
+      "SolidModel.CoveredInGrass",
+      "Solid.AnimationName",
+      "PowerMeter.PlayerID",
+      "NodeLine.UIDofParent"
+    ],
+    "total_occurrences": 5096,
+    "ace_usage_examples": [
+      {
+        "ace": "System.compare-two-values",
+        "param": "first-value",
+        "type": "condition"
+      },
+      {
+        "ace": "System.compare-two-values",
+        "param": "second-value",
+        "type": "condition"
+      },
+      {
+        "ace": "System.evaluate-expression",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-comparison",
+        "param": "expression",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-comparison",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "System.for-each-ordered",
+        "param": "expression",
+        "type": "condition"
+      },
+      {
+        "ace": "System.compare-eventvar",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "Dictionary.compare-value",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "Dictionary.compare-current-value",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "LocalStorage.compare-value",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "Browser.log",
+        "param": "message",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-eventvar-value",
+        "param": "value",
+        "type": "action"
+      },
+      {
+        "ace": "System.subtract-from-eventvar",
+        "param": "value",
+        "type": "action"
+      },
+      {
+        "ace": "System.add-to-eventvar",
+        "param": "value",
+        "type": "action"
+      },
+      {
+        "ace": "Flowchart.goto-next-flowchart-node",
+        "param": "index-or-name",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "任意值，通常是字符串或数字表达式"
+  },
+  "audiofile": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 254
+    },
+    "sample_values": [
+      "fanfare",
+      "RetroLaser1",
+      "BossLaser",
+      "EnemyCharge",
+      "Kiwi_Hurt",
+      "keyboard2",
+      "bruteforce",
+      "drums2",
+      "GameplayIntro",
+      "RhythmSquare",
+      "impulsewarehouse",
+      "impulsedensehall",
+      "impulsetelephone",
+      "impulsespring",
+      "LaserLoop2",
+      "JetLoop1",
+      "SFX5",
+      "Explosion 3"
+    ],
+    "total_occurrences": 254,
+    "ace_usage_examples": [
+      {
+        "ace": "Audio.play",
+        "param": "audio-file",
+        "type": "action"
+      },
+      {
+        "ace": "Audio.preload",
+        "param": "audio-file",
+        "type": "action"
+      },
+      {
+        "ace": "Audio.add-convolution-effect",
+        "param": "audio",
+        "type": "action"
+      },
+      {
+        "ace": "Audio.play-at-object",
+        "param": "audio-file",
+        "type": "action"
+      },
+      {
+        "ace": "Audio.play-at-position",
+        "param": "audio-file",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：fanfare, RetroLaser1, BossLaser"
+  },
+  "boolean": {
+    "dominant_pattern": "boolean",
+    "value_patterns": {
+      "boolean": 794
+    },
+    "sample_values": [
+      "True",
+      "False"
+    ],
+    "total_occurrences": 794,
+    "ace_usage_examples": [
+      {
+        "ace": "guardIcon:Pin.pin-to-object-properties",
+        "param": "x",
+        "type": "action"
+      },
+      {
+        "ace": "guardIcon:Pin.pin-to-object-properties",
+        "param": "y",
+        "type": "action"
+      },
+      {
+        "ace": "guardIcon:Pin.pin-to-object-properties",
+        "param": "angle",
+        "type": "action"
+      },
+      {
+        "ace": "guardIcon:Pin.pin-to-object-properties",
+        "param": "z",
+        "type": "action"
+      },
+      {
+        "ace": "System.create-object",
+        "param": "create-hierarchy",
+        "type": "action"
+      },
+      {
+        "ace": "MIDI.request-midi-access",
+        "param": "sysex",
+        "type": "action"
+      },
+      {
+        "ace": "MIDI.request-midi-access",
+        "param": "software",
+        "type": "action"
+      },
+      {
+        "ace": "System.wait",
+        "param": "use-timescale",
+        "type": "action"
+      },
+      {
+        "ace": "System.reset-global-variables",
+        "param": "reset-static",
+        "type": "action"
+      },
+      {
+        "ace": "Flowchart.start-flowchart",
+        "param": "set-as-current",
+        "type": "action"
+      },
+      {
+        "ace": "FileSystem.show-open-file-picker",
+        "param": "show-accept-all",
+        "type": "action"
+      },
+      {
+        "ace": "FileSystem.show-open-file-picker",
+        "param": "multiple",
+        "type": "action"
+      },
+      {
+        "ace": "FileSystem.show-save-file-picker",
+        "param": "show-accept-all",
+        "type": "action"
+      },
+      {
+        "ace": "System.create-object-by-name",
+        "param": "create-hierarchy",
+        "type": "action"
+      },
+      {
+        "ace": "Gun:Pin.pin-to-object-imagepoint",
+        "param": "angle",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "布尔值或字符串 \"true\"/\"false\""
+  },
+  "cmp": {
+    "dominant_pattern": "number_native",
+    "value_patterns": {
+      "number_native": 1174
+    },
+    "sample_values": [
+      "0",
+      "1",
+      "4",
+      "3",
+      "5",
+      "2"
+    ],
+    "total_occurrences": 1174,
+    "ace_usage_examples": [
+      {
+        "ace": "System.compare-two-values",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-comparison",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "System.compare-eventvar",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Bullet:Bullet.compare-distance-travelled",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Flowchart.compare-node-tag",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Flowchart.compare-output-name",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Sprite.compare-animation-frame",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Dictionary.compare-value",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Gamepad.compare-axis",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "MaskProjectile:Bullet.compare-distance-travelled",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Particle_Debris:Bullet.compare-speed",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Particle_Smoke:Bullet.compare-speed",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Enemy_Blue:Bullet.compare-speed",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "Boss:Bullet.compare-speed",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "System.compare-time",
+        "param": "comparison",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "比较运算符索引：0(=) 1(≠) 2(<) 3(≤) 4(>) 5(≥)"
+  },
+  "combo": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 8049,
+      "combo_kebab": 1095,
+      "boolean_string": 403
+    },
+    "sample_values": [
+      "down",
+      "right",
+      "up",
+      "left",
+      "start",
+      "input",
+      "output",
+      "note-off",
+      "note-on",
+      "descending",
+      "ascending",
+      "button-a",
+      "start-menu",
+      "left-shoulder-trigger",
+      "right-shoulder-trigger",
+      "button-y",
+      "button-x",
+      "d-pad-left",
+      "left-shoulder-button",
+      "any"
+    ],
+    "total_occurrences": 9547,
+    "ace_usage_examples": [
+      {
+        "ace": "char:TileMovement.is-moving-direction",
+        "param": "direction",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.on-touched-object",
+        "param": "type",
+        "type": "condition"
+      },
+      {
+        "ace": "MIDI.on-any-device-opened",
+        "param": "type",
+        "type": "condition"
+      },
+      {
+        "ace": "MIDI.on-any-device-closed",
+        "param": "type",
+        "type": "condition"
+      },
+      {
+        "ace": "MIDI.on-any-device-error",
+        "param": "type",
+        "type": "condition"
+      },
+      {
+        "ace": "MIDI.on-any-message",
+        "param": "message-type",
+        "type": "condition"
+      },
+      {
+        "ace": "System.for-each-ordered",
+        "param": "order",
+        "type": "condition"
+      },
+      {
+        "ace": "Gamepad.on-button-pressed",
+        "param": "button",
+        "type": "condition"
+      },
+      {
+        "ace": "Gamepad.is-button-down",
+        "param": "button",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.mouse-button-is-down",
+        "param": "mouse-button",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-mouse-wheel",
+        "param": "direction",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-click",
+        "param": "mouse-button",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-click",
+        "param": "click-type",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-object-clicked",
+        "param": "mouse-button",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-object-clicked",
+        "param": "click-type",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "使用 Schema 中定义的 items 值（kebab-case 字符串）"
+  },
+  "ease": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 1612
+    },
+    "sample_values": [
+      "easeinsine",
+      "easeoutsine",
+      "easeoutbounce",
+      "default",
+      "noease",
+      "easeinoutsine",
+      "easeinback",
+      "easeoutback",
+      "easeoutquint",
+      "easeoutelastic",
+      "easeoutquad",
+      "easeoutcubic",
+      "easeinquad",
+      "easeinoutcubic",
+      "easeoutquart",
+      "easeinexpo",
+      "easeoutexpo",
+      "easeincubic",
+      "easeinoutquart",
+      "easeinoutback"
+    ],
+    "total_occurrences": 1612,
+    "ace_usage_examples": [
+      {
+        "ace": "Firework:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Spark:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "PlayerSegment:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "PlayerSegment:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "FlashShock:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Platform:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Platform:Tween.tween-value",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Light:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "PlayerGraphics:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "GameManager:Tween.tween-value",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "RainDrop:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "RainDrop:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Fader:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "Person:Tween.tween-two-properties",
+        "param": "ease",
+        "type": "action"
+      },
+      {
+        "ace": "TextTips:Tween.tween-one-property",
+        "param": "ease",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：easeinsine, easeoutsine, easeoutbounce"
+  },
+  "eventvar": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 2423
+    },
+    "sample_values": [
+      "CurrentAngle",
+      "RemainingGroundBlocks",
+      "health",
+      "direction",
+      "inputFocus",
+      "CoordinateX",
+      "RoomName",
+      "meanX",
+      "UpInput",
+      "bestFruit",
+      "VectorZ",
+      "rTime",
+      "Xaxis",
+      "SpawnTime",
+      "objCounter",
+      "BlueHits",
+      "newEnemyID",
+      "pInputX"
+    ],
+    "total_occurrences": 2423,
+    "ace_usage_examples": [
+      {
+        "ace": "System.compare-eventvar",
+        "param": "variable",
+        "type": "condition"
+      },
+      {
+        "ace": "System.set-eventvar-value",
+        "param": "variable",
+        "type": "action"
+      },
+      {
+        "ace": "System.subtract-from-eventvar",
+        "param": "variable",
+        "type": "action"
+      },
+      {
+        "ace": "System.add-to-eventvar",
+        "param": "variable",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：CurrentAngle, RemainingGroundBlocks, health"
+  },
+  "eventvarany": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 13
+    },
+    "sample_values": [
+      "CaptureStatus",
+      "playerWon",
+      "playerFailed",
+      "TotalMoves",
+      "NormalizedDifficulty"
+    ],
+    "total_occurrences": 13,
+    "ace_usage_examples": [
+      {
+        "ace": "System.reset-eventvar",
+        "param": "variable",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：CaptureStatus, playerWon, playerFailed"
+  },
+  "eventvarbool": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 772
+    },
+    "sample_values": [
+      "areYouSureMenu",
+      "UpsideDown",
+      "Switch",
+      "Scrolling",
+      "DebugUI",
+      "LevelHasStarted",
+      "WalkDown",
+      "readyToAnswer",
+      "InitialUIUpdate",
+      "DebugLines",
+      "ShowCards",
+      "IsFirstPerson",
+      "topdownCamera",
+      "EnableAutoPilot"
+    ],
+    "total_occurrences": 772,
+    "ace_usage_examples": [
+      {
+        "ace": "System.compare-boolean-eventvar",
+        "param": "variable",
+        "type": "condition"
+      },
+      {
+        "ace": "System.set-boolean-eventvar",
+        "param": "variable",
+        "type": "action"
+      },
+      {
+        "ace": "System.toggle-boolean-eventvar",
+        "param": "variable",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：areYouSureMenu, UpsideDown, Switch"
+  },
+  "flowchart": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 1
+    },
+    "sample_values": [
+      "GameLogic"
+    ],
+    "total_occurrences": 1,
+    "ace_usage_examples": [
+      {
+        "ace": "Flowchart.start-flowchart",
+        "param": "flowchart-name",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：GameLogic"
+  },
+  "groupname": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 221
+    },
+    "sample_values": [
+      "\"Player\"",
+      "\"Game Over\"",
+      "\"Player Events\"",
+      "\"Player Controls (Elevator)\"",
+      "\"Player Input\"",
+      "\"Host\"",
+      "\"Requirements\"",
+      "\"Menu navigation\"",
+      "\"PlayerAnimations\"",
+      "\"Not using stepping\""
+    ],
+    "total_occurrences": 221,
+    "ace_usage_examples": [
+      {
+        "ace": "System.is-group-active",
+        "param": "group-name",
+        "type": "condition"
+      },
+      {
+        "ace": "System.set-group-active",
+        "param": "group-name",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "带内嵌引号的字符串值"
+  },
+  "keyb": {
+    "dominant_pattern": "number_native",
+    "value_patterns": {
+      "number_native": 1114
+    },
+    "sample_values": [
+      "32",
+      "86",
+      "52",
+      "83",
+      "38",
+      "107",
+      "39",
+      "88",
+      "16",
+      "8"
+    ],
+    "total_occurrences": 1114,
+    "ace_usage_examples": [
+      {
+        "ace": "Keyboard.on-key-pressed",
+        "param": "key",
+        "type": "condition"
+      },
+      {
+        "ace": "Keyboard.key-is-down",
+        "param": "key",
+        "type": "condition"
+      },
+      {
+        "ace": "Keyboard.on-key-released",
+        "param": "key",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "参考样例值：32, 86, 52"
+  },
+  "layer": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 894,
+      "number_string": 55,
+      "expression_dot": 22
+    },
+    "sample_values": [
+      "\"Map\"",
+      "0",
+      "\"Cups\"",
+      "\"Text\"",
+      "\"KeyboardHint\"",
+      "\"Credits\"",
+      "\"World\"",
+      "\"Effects\"",
+      "\"Entities\"",
+      "\"Boss\"",
+      "\"Track\"",
+      "\"Floor0\"",
+      "\"RoverLights\"",
+      "\"Sky\"",
+      "\"Game\"",
+      "\"Parallax2\"",
+      "\"Road\"",
+      "\"Parallax1\"",
+      "\"Pause Menu\"",
+      "\"LayFadeT\""
+    ],
+    "total_occurrences": 971,
+    "ace_usage_examples": [
+      {
+        "ace": "System.layer-is-visible",
+        "param": "layer",
+        "type": "condition"
+      },
+      {
+        "ace": "System.create-object",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-effect-parameter",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-scale",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-background-color",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.create-object-by-name",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-visible",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-opacity",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "Sprite.spawn-another-object",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-effect-enabled",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-angle",
+        "param": "layer",
+        "type": "action"
+      },
+      {
+        "ace": "System.add-layer",
+        "param": "insert-by",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-scroll",
+        "param": "layer",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "图层索引字符串 \"0\" 或带引号的名称 \"\\\"UI\\\"\""
+  },
+  "layereffect": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 41
+    },
+    "sample_values": [
+      "\"Swirl\"",
+      "\"BlurHorizontal\"",
+      "\"AdjustHSL\"",
+      "\"BlurVertical\"",
+      "\"Pixellate\""
+    ],
+    "total_occurrences": 41,
+    "ace_usage_examples": [
+      {
+        "ace": "System.set-layer-effect-parameter",
+        "param": "effect",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layer-effect-enabled",
+        "param": "effect",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "带内嵌引号的字符串值"
+  },
+  "layout": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 88
+    },
+    "sample_values": [
+      "1_Forest",
+      "TestMapping",
+      "Main",
+      "NonPersistLayout",
+      "PersistLayout",
+      "Game"
+    ],
+    "total_occurrences": 88,
+    "ace_usage_examples": [
+      {
+        "ace": "System.go-to-layout",
+        "param": "layout",
+        "type": "action"
+      },
+      {
+        "ace": "System.load-layout-images",
+        "param": "layout",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：1_Forest, TestMapping, Main"
+  },
+  "layouteffect": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 39
+    },
+    "sample_values": [
+      "\"Swirl\"",
+      "\"Water\"",
+      "\"WarpRipple\"",
+      "\"Tint\"",
+      "\"AdjustHSL\"",
+      "\"Pixellate\""
+    ],
+    "total_occurrences": 39,
+    "ace_usage_examples": [
+      {
+        "ace": "System.set-layout-effect-parameter",
+        "param": "effect",
+        "type": "action"
+      },
+      {
+        "ace": "System.set-layout-effect-enabled",
+        "param": "effect",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "带内嵌引号的字符串值"
+  },
+  "number": {
+    "dominant_pattern": "number_string",
+    "value_patterns": {
+      "plain_string": 1462,
+      "number_string": 7384,
+      "expression_dot": 2471,
+      "expression_call": 657
+    },
+    "sample_values": [
+      "Game.row-1",
+      "NumBlocks - 6",
+      "0",
+      "1",
+      "3",
+      "14",
+      "COLUMNS - 1",
+      "DEFAULTMESHWIDTH - 1",
+      "600 / Sprite.Pathfinding.CellSize",
+      "Gun.Angle",
+      "angle(guard.X, guard.Y, aPoints.At(Functions.getOrder(1),0), aPoints.At(Functions.getOrder(1),1))",
+      "angle(guard.X, guard.Y, aPoints.At(Functions.getOrder(2),0), aPoints.At(Functions.getOrder(2),1))",
+      "LeftStickAngle",
+      "RightStickAngle",
+      "guard.Angle - (guard.LineOfSight.ConeOfView) / 2",
+      "-90",
+      "-180",
+      "90",
+      "guard.Angle + (guard.LineOfSight.ConeOfView) / 2",
+      "PeerList.ItemCount"
+    ],
+    "total_occurrences": 11974,
+    "ace_usage_examples": [
+      {
+        "ace": "System.for",
+        "param": "start-index",
+        "type": "condition"
+      },
+      {
+        "ace": "System.for",
+        "param": "end-index",
+        "type": "condition"
+      },
+      {
+        "ace": "System.is-between-angles",
+        "param": "angle",
+        "type": "condition"
+      },
+      {
+        "ace": "System.is-between-angles",
+        "param": "first-angle",
+        "type": "condition"
+      },
+      {
+        "ace": "System.is-between-angles",
+        "param": "second-angle",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.on-nth-touch-start",
+        "param": "touch-number",
+        "type": "condition"
+      },
+      {
+        "ace": "System.repeat",
+        "param": "count",
+        "type": "condition"
+      },
+      {
+        "ace": "Gamepad.on-button-pressed",
+        "param": "gamepad",
+        "type": "condition"
+      },
+      {
+        "ace": "System.every-x-seconds",
+        "param": "interval-seconds",
+        "type": "condition"
+      },
+      {
+        "ace": "Gamepad.is-button-down",
+        "param": "gamepad",
+        "type": "condition"
+      },
+      {
+        "ace": "Bullet:Bullet.compare-distance-travelled",
+        "param": "distance",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-evaluate",
+        "param": "expression",
+        "type": "condition"
+      },
+      {
+        "ace": "Flowchart.compare-output-name",
+        "param": "output-index",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.on-nth-touch-end",
+        "param": "touch-number",
+        "type": "condition"
+      },
+      {
+        "ace": "Sprite.compare-animation-frame",
+        "param": "number",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "数字字符串或表达式，如 \"100\" 或 \"Player.X\""
+  },
+  "object": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 2308
+    },
+    "sample_values": [
+      "Enemy_Red",
+      "Pixel",
+      "TutorialText",
+      "Terrain",
+      "IngredientSlot",
+      "Collider",
+      "SpriteFont_Dialogue",
+      "DashOrb",
+      "Mask",
+      "GridCell",
+      "GPTipObjects",
+      "ButtonLink",
+      "UIScreenChangeLeft",
+      "TrashBin",
+      "Trigger",
+      "TitleFrogEyeExternal",
+      "Answer",
+      "SolidModel",
+      "ShootingSpot",
+      "Pipe"
+    ],
+    "total_occurrences": 2308,
+    "ace_usage_examples": [
+      {
+        "ace": "System.for-each",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-all",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.is-touching-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.on-touched-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-comparison",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.for-each-ordered",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-random-instance",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-by-evaluate",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.cursor-is-over-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "Mouse.on-object-clicked",
+        "param": "object-clicked",
+        "type": "condition"
+      },
+      {
+        "ace": "Touch.on-tap-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-last-created",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "Multiplayer.on-binary-transfer-complete",
+        "param": "receive-to",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-nth-instance",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "System.pick-overlapping-point",
+        "param": "object",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "对象类型名称，如 \"Sprite\" 或 \"Player\""
+  },
+  "objectname": {
+    "dominant_pattern": "expression_dot",
+    "value_patterns": {
+      "plain_string": 4,
+      "expression_dot": 6
+    },
+    "sample_values": [
+      "otherPortalType = 0 ? \"PortalLizard\" : \"PortalBird\"",
+      "Base.TemplateName = \"Wood\" ? \"PropWoodenBase\" : \"PropObsidianBase\"",
+      "ArrScenery.At(4, level)",
+      "otherPortalType = 0 ? \"PortalLizard\" : \"PortalWolf\"",
+      "type"
+    ],
+    "total_occurrences": 10,
+    "ace_usage_examples": [
+      {
+        "ace": "System.create-object-by-name",
+        "param": "object-name",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "对象属性表达式，如 \"Object.Property\""
+  },
+  "objinstancevar": {
+    "dominant_pattern": "other:dict",
+    "value_patterns": {
+      "other:dict": 25
+    },
+    "sample_values": [
+      "{\"name\": \"ZOrder\", \"objectClass\": \"Tower\"}",
+      "{\"name\": \"zOrderIndex\", \"objectClass\": \"ZOrderables\"}",
+      "{\"name\": \"YPos\", \"objectClass\": \"GPZOrderables\"}",
+      "{\"name\": \"ZOrder\", \"objectClass\": \"ZOrderPlatforms\"}",
+      "{\"name\": \"generation\", \"objectClass\": \"Branch\"}",
+      "{\"name\": \"colorAnim\", \"objectClass\": \"Peer\"}",
+      "{\"name\": \"health\", \"objectClass\": \"Peer\"}",
+      "{\"name\": \"kills\", \"objectClass\": \"Peer\"}",
+      "{\"name\": \"deaths\", \"objectClass\": \"Peer\"}",
+      "{\"name\": \"points\", \"objectClass\": \"Paddle\"}"
+    ],
+    "total_occurrences": 25,
+    "ace_usage_examples": [
+      {
+        "ace": "System.sort-z-order",
+        "param": "instance-variable",
+        "type": "action"
+      },
+      {
+        "ace": "Multiplayer.sync-instance-variable",
+        "param": "instance-variable",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：{\"name\": \"ZOrder\", \"objectClass\": \"Tower\"}, {\"name\": \"zOrderIndex\", \"objectClass\": \"ZOrderables\"}, {\"name\": \"YPos\", \"objectClass\": \"GPZOrderables\"}"
+  },
+  "projectfile": {
+    "dominant_pattern": "expression_dot",
+    "value_patterns": {
+      "expression_dot": 43,
+      "plain_string": 15
+    },
+    "sample_values": [
+      "Scenery.json",
+      "EVARealizations.json",
+      "info.json",
+      "JSONLanguageData.json",
+      "QuestNames.json"
+    ],
+    "total_occurrences": 58,
+    "ace_usage_examples": [
+      {
+        "ace": "AJAX.request-project-file",
+        "param": "file",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "对象属性表达式，如 \"Object.Property\""
+  },
+  "string": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 4312,
+      "plain_string": 113,
+      "expression_dot": 95,
+      "expression_call": 5
+    },
+    "sample_values": [
+      "\"guardAggro\"",
+      "\"guardSearch\"",
+      "\"DarkFog\"",
+      "\"ZElevation\"",
+      "\"0DegreesOriginY\"",
+      "\"laps\"",
+      "\"options\"",
+      "\"Trail\"",
+      "\"MovementY\"",
+      "\"Position\"",
+      "\"FadeIn\"",
+      "\"CupIsDoneMoving\"",
+      "\"FadeOut\"",
+      "\"Wrong\"",
+      "\"Step\"",
+      "\"FallingCooldown\"",
+      "\"MovingCooldown\"",
+      "\"LoadInformation\"",
+      "\"Bonus\"",
+      "\"Ending\""
+    ],
+    "total_occurrences": 4525,
+    "ace_usage_examples": [
+      {
+        "ace": "guard:Timer.on-timer",
+        "param": "tag",
+        "type": "condition"
+      },
+      {
+        "ace": "System.for",
+        "param": "name",
+        "type": "condition"
+      },
+      {
+        "ace": "Firework:Timer.on-timer",
+        "param": "tag",
+        "type": "condition"
+      },
+      {
+        "ace": "Firework:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "Spark:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "GameManager:Timer.on-timer",
+        "param": "tag",
+        "type": "condition"
+      },
+      {
+        "ace": "GameManager:Timer.is-timer-running",
+        "param": "tag",
+        "type": "condition"
+      },
+      {
+        "ace": "PlayerSegment:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "Platform:Tween.is-playing",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "PlayerGraphics:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "GameManager:Tween.is-playing",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "HTMLElement.on-clicked-class",
+        "param": "class",
+        "type": "condition"
+      },
+      {
+        "ace": "Fader:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "Person:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      },
+      {
+        "ace": "TextSuccess:Tween.on-tweens-finished",
+        "param": "tags",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "带内嵌引号的字符串，如 \"\\\"Hello\\\"\" 或表达式"
+  },
+  "template": {
+    "dominant_pattern": "quoted_string",
+    "value_patterns": {
+      "quoted_string": 373,
+      "expression_call": 4,
+      "plain_string": 19,
+      "expression_dot": 14
+    },
+    "sample_values": [
+      "int(DictComplexity.Get(ArrayGameplay.At(iSpawnedCounter))) < 2 ? ArrayGameplay.At(iSpawnedCounter) : \"none\"",
+      "\"Floor0\"",
+      "\"bush\" & floor(random(10))",
+      "\"Turret\" & type",
+      "\"Short\" & choose(0, 1, 2, 3)",
+      "\"\""
+    ],
+    "total_occurrences": 410,
+    "ace_usage_examples": [
+      {
+        "ace": "System.create-object",
+        "param": "template-name",
+        "type": "action"
+      },
+      {
+        "ace": "System.create-object-by-name",
+        "param": "template-name",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "带内嵌引号的字符串值"
+  },
+  "timeline": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 19
+    },
+    "sample_values": [
+      "FireBall",
+      "Walk",
+      "RightPunch",
+      "Death",
+      "RebuildBridge",
+      "Path"
+    ],
+    "total_occurrences": 19,
+    "ace_usage_examples": [
+      {
+        "ace": "Timeline.play-timeline",
+        "param": "timeline",
+        "type": "action"
+      },
+      {
+        "ace": "Sprite:MoveTo.move-along-timeline",
+        "param": "timeline",
+        "type": "action"
+      }
+    ],
+    "rule_hint": "参考样例值：FireBall, Walk, RightPunch"
+  },
+  "unknown": {
+    "dominant_pattern": "plain_string",
+    "value_patterns": {
+      "plain_string": 8855,
+      "number_native": 1222,
+      "expression_dot": 3098,
+      "quoted_string": 3122,
+      "number_string": 3438,
+      "expression_call": 1365,
+      "combo_kebab": 302,
+      "boolean_string": 422,
+      "boolean": 2386,
+      "other:dict": 6
+    },
+    "sample_values": [
+      "ID",
+      "IDGuard",
+      "0",
+      "guard.nxtWaypointID",
+      "guard.ID",
+      "curWaypointID",
+      "state",
+      "1",
+      "2",
+      "\"patrol\"",
+      "\"back\"",
+      "guard.waypointMax - 1",
+      "\"search\"",
+      "\"aggro\"",
+      "waypoint",
+      "5",
+      "3",
+      "waypoint.X - 16",
+      "waypoint.X + 16",
+      "waypoint.Y - 16"
+    ],
+    "total_occurrences": 24216,
+    "ace_usage_examples": [
+      {
+        "ace": "waypoint.compare-instance-variable",
+        "param": "instance-variable",
+        "type": "condition"
+      },
+      {
+        "ace": "waypoint.compare-instance-variable",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "waypoint.compare-instance-variable",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-instance-variable",
+        "param": "instance-variable",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-instance-variable",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-instance-variable",
+        "param": "value",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.is-overlapping-another-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-x",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-x",
+        "param": "x-co-ordinate",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-y",
+        "param": "comparison",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.compare-y",
+        "param": "y-co-ordinate",
+        "type": "condition"
+      },
+      {
+        "ace": "guard:LineOfSight.has-los-to-object",
+        "param": "object",
+        "type": "condition"
+      },
+      {
+        "ace": "guard:LineOfSight.has-los-to-object",
+        "param": "image-point",
+        "type": "condition"
+      },
+      {
+        "ace": "guard.pick-by-unique-id",
+        "param": "unique-id",
+        "type": "condition"
+      },
+      {
+        "ace": "wall.is-overlapping-another-object",
+        "param": "object",
+        "type": "condition"
+      }
+    ],
+    "rule_hint": "参考样例值：ID, IDGuard, 0"
+  }
+}

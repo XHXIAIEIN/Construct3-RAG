@@ -1,0 +1,645 @@
+{
+  "plugins": {
+    "nodewebkit": {
+      "schema_id": "nodewebkit",
+      "kb_id": "NodeWebkit",
+      "name_en": "NW.js",
+      "name_zh": "NW.js"
+    },
+    "progressbar": {
+      "schema_id": "progressbar",
+      "kb_id": "progressbar",
+      "name_en": "Progress bar",
+      "name_zh": "进度条"
+    },
+    "share": {
+      "schema_id": "share",
+      "kb_id": "Share",
+      "name_en": "Share",
+      "name_zh": "分享"
+    },
+    "speechsynthesis": {
+      "schema_id": "speechsynthesis",
+      "kb_id": "SpeechSynthesis",
+      "name_en": "Speech synthesis",
+      "name_zh": "语音合成"
+    },
+    "touch": {
+      "schema_id": "touch",
+      "kb_id": "Touch",
+      "name_en": "Touch",
+      "name_zh": "触控"
+    },
+    "constructgameservices": {
+      "schema_id": "constructgameservices",
+      "kb_id": "ConstructGameServices",
+      "name_en": "Construct Game Services",
+      "name_zh": "游戏服务"
+    },
+    "multiplayer": {
+      "schema_id": "multiplayer",
+      "kb_id": "Multiplayer",
+      "name_en": "Multiplayer",
+      "name_zh": "多人联机"
+    },
+    "function": {
+      "schema_id": "function",
+      "kb_id": "Function",
+      "name_en": "",
+      "name_zh": ""
+    },
+    "csv": {
+      "schema_id": "csv",
+      "kb_id": null,
+      "name_en": "CSV",
+      "name_zh": "CSV"
+    },
+    "date": {
+      "schema_id": "date",
+      "kb_id": "Date",
+      "name_en": "Date",
+      "name_zh": "日期"
+    },
+    "instantgames": {
+      "schema_id": "instantgames",
+      "kb_id": null,
+      "name_en": "Instant Games",
+      "name_zh": "Instant Games"
+    },
+    "camera3d": {
+      "schema_id": "camera3d",
+      "kb_id": "Camera3D",
+      "name_en": "3D camera",
+      "name_zh": "3D相机"
+    },
+    "speechrecognition": {
+      "schema_id": "speechrecognition",
+      "kb_id": "SpeechRecognition",
+      "name_en": "Speech recognition",
+      "name_zh": "语音识别"
+    },
+    "shape3d": {
+      "schema_id": "shape3d",
+      "kb_id": "Shape3D",
+      "name_en": "3D shape",
+      "name_zh": "3D形状"
+    },
+    "scirraarcadev4": {
+      "schema_id": "scirraarcadev4",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "gamecenter": {
+      "schema_id": "gamecenter",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "geolocation": {
+      "schema_id": "geolocation",
+      "kb_id": "Geolocation",
+      "name_en": "Geolocation",
+      "name_zh": "地理位置"
+    },
+    "shadowlight": {
+      "schema_id": "shadowlight",
+      "kb_id": "shadowlight",
+      "name_en": "Shadow light",
+      "name_zh": "投影光"
+    },
+    "ninepatch": {
+      "schema_id": "ninepatch",
+      "kb_id": "NinePatch",
+      "name_en": "9-patch",
+      "name_zh": "九宫图"
+    },
+    "xboxlive": {
+      "schema_id": "xboxlive",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "xml": {
+      "schema_id": "xml",
+      "kb_id": "XML",
+      "name_en": "XML",
+      "name_zh": "XML"
+    },
+    "ajax": {
+      "schema_id": "ajax",
+      "kb_id": "AJAX",
+      "name_en": "AJAX",
+      "name_zh": "AJAX"
+    },
+    "dictionary": {
+      "schema_id": "dictionary",
+      "kb_id": "Dictionary",
+      "name_en": "Dictionary",
+      "name_zh": "字典"
+    },
+    "spritefont2": {
+      "schema_id": "spritefont2",
+      "kb_id": "Spritefont2",
+      "name_en": "Sprite font",
+      "name_zh": "位图字体"
+    },
+    "cryptography": {
+      "schema_id": "cryptography",
+      "kb_id": "Cryptography",
+      "name_en": "Cryptography",
+      "name_zh": "密码学"
+    },
+    "model3d": {
+      "schema_id": "model3d",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "bluetooth": {
+      "schema_id": "bluetooth",
+      "kb_id": "Bluetooth",
+      "name_en": "Bluetooth",
+      "name_zh": "蓝牙"
+    },
+    "drawingcanvas": {
+      "schema_id": "drawingcanvas",
+      "kb_id": "DrawingCanvas",
+      "name_en": "Drawing canvas",
+      "name_zh": "画布"
+    },
+    "keyboard": {
+      "schema_id": "keyboard",
+      "kb_id": "Keyboard",
+      "name_en": "Keyboard",
+      "name_zh": "键盘"
+    },
+    "sliderbar": {
+      "schema_id": "sliderbar",
+      "kb_id": "sliderbar",
+      "name_en": "Slider bar",
+      "name_zh": "滑动条"
+    },
+    "bbcmicrobit": {
+      "schema_id": "bbcmicrobit",
+      "kb_id": "BBCMicroBit",
+      "name_en": "BBC micro:bit",
+      "name_zh": "BBC micro:bit"
+    },
+    "particles": {
+      "schema_id": "particles",
+      "kb_id": "Particles",
+      "name_en": "Particles",
+      "name_zh": "粒子"
+    },
+    "internationalization": {
+      "schema_id": "internationalization",
+      "kb_id": "Internationalization",
+      "name_en": "Internationalization",
+      "name_zh": "本地化"
+    },
+    "clipboard": {
+      "schema_id": "clipboard",
+      "kb_id": "Clipboard",
+      "name_en": "Clipboard",
+      "name_zh": "剪贴板"
+    },
+    "cordovaiap": {
+      "schema_id": "cordovaiap",
+      "kb_id": null,
+      "name_en": "Mobile IAP",
+      "name_zh": "应用内购"
+    },
+    "timeline": {
+      "schema_id": "timeline",
+      "kb_id": "Timeline",
+      "name_en": "Timeline controller",
+      "name_zh": "时间轴"
+    },
+    "tilemap": {
+      "schema_id": "tilemap",
+      "kb_id": "Tilemap",
+      "name_en": "Tilemap",
+      "name_zh": "瓦片图"
+    },
+    "advancedrandom": {
+      "schema_id": "advancedrandom",
+      "kb_id": "AdvancedRandom",
+      "name_en": "Advanced Random",
+      "name_zh": "高级随机"
+    },
+    "button": {
+      "schema_id": "button",
+      "kb_id": "Button",
+      "name_en": "Button",
+      "name_zh": "按钮"
+    },
+    "c2websocket": {
+      "schema_id": "c2websocket",
+      "kb_id": null,
+      "name_en": "WebSocket",
+      "name_zh": "WebSocket"
+    },
+    "facebook": {
+      "schema_id": "facebook",
+      "kb_id": null,
+      "name_en": "Facebook",
+      "name_zh": "Facebook"
+    },
+    "list": {
+      "schema_id": "list",
+      "kb_id": "List",
+      "name_en": "List",
+      "name_zh": "列表"
+    },
+    "iframe": {
+      "schema_id": "iframe",
+      "kb_id": "iframe",
+      "name_en": "iframe",
+      "name_zh": "内嵌网页"
+    },
+    "googleplay": {
+      "schema_id": "googleplay",
+      "kb_id": null,
+      "name_en": "Google Play",
+      "name_zh": "Google Play"
+    },
+    "htmlelement": {
+      "schema_id": "htmlelement",
+      "kb_id": "HTMLElement",
+      "name_en": "HTML Element",
+      "name_zh": "HTML"
+    },
+    "json": {
+      "schema_id": "json",
+      "kb_id": "Json",
+      "name_en": "JSON",
+      "name_zh": "JSON"
+    },
+    "video": {
+      "schema_id": "video",
+      "kb_id": null,
+      "name_en": "Video",
+      "name_zh": "视频"
+    },
+    "pubcenter": {
+      "schema_id": "pubcenter",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "gamepad": {
+      "schema_id": "gamepad",
+      "kb_id": "gamepad",
+      "name_en": "Gamepad",
+      "name_zh": "手柄"
+    },
+    "binarydata": {
+      "schema_id": "binarydata",
+      "kb_id": "BinaryData",
+      "name_en": "Binary Data",
+      "name_zh": "二进制"
+    },
+    "audio": {
+      "schema_id": "audio",
+      "kb_id": "Audio",
+      "name_en": "Audio",
+      "name_zh": "音频"
+    },
+    "sprite": {
+      "schema_id": "sprite",
+      "kb_id": "Sprite",
+      "name_en": "Sprite",
+      "name_zh": "精灵"
+    },
+    "gamerecorder": {
+      "schema_id": "gamerecorder",
+      "kb_id": "GameRecorder",
+      "name_en": "Video recorder",
+      "name_zh": "屏幕录制"
+    },
+    "twitter": {
+      "schema_id": "twitter",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "usermedia": {
+      "schema_id": "usermedia",
+      "kb_id": "UserMedia",
+      "name_en": "User Media",
+      "name_zh": "用户媒体"
+    },
+    "win8": {
+      "schema_id": "win8",
+      "kb_id": null,
+      "name_en": "",
+      "name_zh": ""
+    },
+    "platforminfo": {
+      "schema_id": "platforminfo",
+      "kb_id": "PlatformInfo",
+      "name_en": "Platform info",
+      "name_zh": "设备信息"
+    },
+    "text": {
+      "schema_id": "text",
+      "kb_id": "Text",
+      "name_en": "Text",
+      "name_zh": "文本"
+    },
+    "tiledbg": {
+      "schema_id": "tiledbg",
+      "kb_id": "TiledBg",
+      "name_en": "Tiled Background",
+      "name_zh": "平铺图"
+    },
+    "arr": {
+      "schema_id": "arr",
+      "kb_id": "Arr",
+      "name_en": "Array",
+      "name_zh": "数组"
+    },
+    "browser": {
+      "schema_id": "browser",
+      "kb_id": "Browser",
+      "name_en": "Browser",
+      "name_zh": "浏览器"
+    },
+    "mouse": {
+      "schema_id": "mouse",
+      "kb_id": "Mouse",
+      "name_en": "Mouse",
+      "name_zh": "鼠标"
+    },
+    "localstorage": {
+      "schema_id": "localstorage",
+      "kb_id": "LocalStorage",
+      "name_en": "Local storage",
+      "name_zh": "本地存储"
+    },
+    "textbox": {
+      "schema_id": "textbox",
+      "kb_id": "TextBox",
+      "name_en": "Text input",
+      "name_zh": "输入框"
+    },
+    "filesystem": {
+      "schema_id": "filesystem",
+      "kb_id": "FileSystem",
+      "name_en": "File system",
+      "name_zh": "文件系统"
+    },
+    "qrcode": {
+      "schema_id": "qrcode",
+      "kb_id": "qrcode",
+      "name_en": "QR code",
+      "name_zh": "二维码"
+    },
+    "system": {
+      "schema_id": "system",
+      "kb_id": null,
+      "name_en": "System",
+      "name_zh": "系统"
+    },
+    "flowchart": {
+      "schema_id": "flowchart",
+      "kb_id": "Flowchart",
+      "name_en": "Flowchart controller",
+      "name_zh": "流程图"
+    },
+    "svgpicture": {
+      "schema_id": "svgpicture",
+      "kb_id": "SVGPicture",
+      "name_en": "SVG Picture",
+      "name_zh": "矢量图"
+    },
+    "midi": {
+      "schema_id": "midi",
+      "kb_id": "MIDI",
+      "name_en": "MIDI",
+      "name_zh": "MIDI"
+    },
+    "filechooser": {
+      "schema_id": "filechooser",
+      "kb_id": "filechooser",
+      "name_en": "File chooser",
+      "name_zh": "文件选择"
+    },
+    "advert": {
+      "schema_id": "advert",
+      "kb_id": null,
+      "name_en": "Mobile advert",
+      "name_zh": "激励广告"
+    }
+  },
+  "behaviors": {
+    "anchor": {
+      "schema_id": "anchor",
+      "kb_id": "Anchor",
+      "name_en": "Anchor",
+      "name_zh": "锚点"
+    },
+    "tilemovement": {
+      "schema_id": "tilemovement",
+      "kb_id": "TileMovement",
+      "name_en": "Tile movement",
+      "name_zh": "网格移动"
+    },
+    "sin": {
+      "schema_id": "sin",
+      "kb_id": "Sin",
+      "name_en": "Sine",
+      "name_zh": "正弦运动"
+    },
+    "car": {
+      "schema_id": "car",
+      "kb_id": "Car",
+      "name_en": "Car",
+      "name_zh": "车辆"
+    },
+    "orbit": {
+      "schema_id": "orbit",
+      "kb_id": "Orbit",
+      "name_en": "Orbit",
+      "name_zh": "环绕"
+    },
+    "follow": {
+      "schema_id": "follow",
+      "kb_id": "Follow",
+      "name_en": "Follow",
+      "name_zh": "轨迹跟随"
+    },
+    "solid": {
+      "schema_id": "solid",
+      "kb_id": "solid",
+      "name_en": "Solid",
+      "name_zh": "实体"
+    },
+    "bound": {
+      "schema_id": "bound",
+      "kb_id": "bound",
+      "name_en": "Bound to layout",
+      "name_zh": "边界约束"
+    },
+    "moveto": {
+      "schema_id": "moveto",
+      "kb_id": "MoveTo",
+      "name_en": "Move To",
+      "name_zh": "移动到"
+    },
+    "nosave": {
+      "schema_id": "nosave",
+      "kb_id": null,
+      "name_en": "No save",
+      "name_zh": "不存档"
+    },
+    "destroy": {
+      "schema_id": "destroy",
+      "kb_id": "destroy",
+      "name_en": "Destroy outside layout",
+      "name_zh": "出界销毁"
+    },
+    "persist": {
+      "schema_id": "persist",
+      "kb_id": "Persist",
+      "name_en": "Persist",
+      "name_zh": "持久化"
+    },
+    "dragndrop": {
+      "schema_id": "dragndrop",
+      "kb_id": "DragnDrop",
+      "name_en": "Drag & Drop",
+      "name_zh": "拖放"
+    },
+    "los": {
+      "schema_id": "los",
+      "kb_id": "LOS",
+      "name_en": "Line of sight",
+      "name_zh": "视线"
+    },
+    "platform": {
+      "schema_id": "platform",
+      "kb_id": "Platform",
+      "name_en": "Platform",
+      "name_zh": "平台"
+    },
+    "rotate": {
+      "schema_id": "rotate",
+      "kb_id": "Rotate",
+      "name_en": "Rotate",
+      "name_zh": "旋转"
+    },
+    "timer": {
+      "schema_id": "timer",
+      "kb_id": "Timer",
+      "name_en": "Timer",
+      "name_zh": "计时器"
+    },
+    "bullet": {
+      "schema_id": "bullet",
+      "kb_id": "Bullet",
+      "name_en": "Bullet",
+      "name_zh": "子弹"
+    },
+    "scrollto": {
+      "schema_id": "scrollto",
+      "kb_id": "scrollto",
+      "name_en": "Scroll To",
+      "name_zh": "镜头跟随"
+    },
+    "flash": {
+      "schema_id": "flash",
+      "kb_id": "Flash",
+      "name_en": "Flash",
+      "name_zh": "闪烁"
+    },
+    "eightdir": {
+      "schema_id": "eightdir",
+      "kb_id": "EightDir",
+      "name_en": "8 Direction",
+      "name_zh": "八方向"
+    },
+    "wrap": {
+      "schema_id": "wrap",
+      "kb_id": "wrap",
+      "name_en": "Wrap",
+      "name_zh": "边界穿梭"
+    },
+    "turret": {
+      "schema_id": "turret",
+      "kb_id": "Turret",
+      "name_en": "Turret",
+      "name_zh": "炮台"
+    },
+    "pin": {
+      "schema_id": "pin",
+      "kb_id": "Pin",
+      "name_en": "Pin",
+      "name_zh": "固定"
+    },
+    "physics": {
+      "schema_id": "physics",
+      "kb_id": "Physics",
+      "name_en": "Physics",
+      "name_zh": "物理"
+    },
+    "custom": {
+      "schema_id": "custom",
+      "kb_id": "custom",
+      "name_en": "Custom",
+      "name_zh": "自定义移动"
+    },
+    "tween": {
+      "schema_id": "tween",
+      "kb_id": "Tween",
+      "name_en": "Tween",
+      "name_zh": "补间动画"
+    },
+    "jumpthru": {
+      "schema_id": "jumpthru",
+      "kb_id": "jumpthru",
+      "name_en": "Jump-thru",
+      "name_zh": "跳跃穿透"
+    },
+    "pathfinding": {
+      "schema_id": "pathfinding",
+      "kb_id": "Pathfinding",
+      "name_en": "Pathfinding",
+      "name_zh": "寻路"
+    },
+    "shadowcaster": {
+      "schema_id": "shadowcaster",
+      "kb_id": "shadowcaster",
+      "name_en": "Shadow caster",
+      "name_zh": "投影对象"
+    },
+    "fade": {
+      "schema_id": "fade",
+      "kb_id": "Fade",
+      "name_en": "Fade",
+      "name_zh": "淡入淡出"
+    }
+  },
+  "aliases": {
+    "behaviors": {
+      "8Direction": "EightDir",
+      "EightDirection": "EightDir",
+      "Solid": "solid",
+      "ScrollTo": "scrollto",
+      "LineOfSight": "LOS",
+      "DragDrop": "DragnDrop",
+      "DestroyOutsideLayout": "destroy",
+      "BoundToLayout": "bound",
+      "Wrap": "wrap",
+      "ShadowCaster": "shadowcaster",
+      "Jumpthru": "jumpthru",
+      "Custom": "custom",
+      "CustomMovement": "custom",
+      "Sine": "Sin",
+      "SineFlash": "Sin",
+      "SineVertical": "Sin",
+      "SineHorizontal": "Sin"
+    }
+  }
+}

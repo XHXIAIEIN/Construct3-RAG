@@ -1,0 +1,5212 @@
+{
+  "Tween": {
+    "behavior_id": "Tween",
+    "usage_count": 1018,
+    "properties": {
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 4041,
+        "samples": [
+          {
+            "value": true,
+            "source": "fireworks-designer/Spark/Tween"
+          },
+          {
+            "value": false,
+            "source": "rhythm-square-js/SquareSpawn/Tween"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 510,
+      "Shape3D": 113,
+      "TiledBg": 125,
+      "Spritefont2": 155,
+      "Text": 72,
+      "Particles": 3,
+      "NinePatch": 33,
+      "DrawingCanvas": 4,
+      "Tilemap": 2,
+      "SVGPicture": 1
+    },
+    "source_projects": [
+      "Entities",
+      "Gameplay",
+      "minefield",
+      "catch-the-rats",
+      "top-down-jump",
+      "manual-gps",
+      "wall-creature",
+      "kitty-katcher",
+      "magic-feather",
+      "ancient-watcher-fortress-ts",
+      "rally-drifting-ts",
+      "block-breaking",
+      "disintegration-effect",
+      "manual-elevator",
+      "laser-turret",
+      "toggle-camera-perspective",
+      "raycast-teleport",
+      "archery-range-js",
+      "3d-castle-maze",
+      "farming-lines"
+    ]
+  },
+  "solid": {
+    "behavior_id": "solid",
+    "usage_count": 310,
+    "properties": {
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 4157,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/wall/Solid"
+          },
+          {
+            "value": false,
+            "source": "train-navigation-js/Wall/Solid"
+          }
+        ]
+      },
+      "tags": {
+        "prop_id": "tags",
+        "unique_values": [
+          "",
+          "TeleportPlatform",
+          "geometry",
+          "Hole",
+          "Target",
+          "geometry limit",
+          "Wall",
+          "Ground"
+        ],
+        "unique_count": 8,
+        "total_count": 4157,
+        "samples": [
+          {
+            "value": "",
+            "source": "stealth-example/wall/Solid"
+          },
+          {
+            "value": "Hole",
+            "source": "top-down-hook/Hole/Solid"
+          },
+          {
+            "value": "Wall",
+            "source": "top-down-hook/Wall/Solid"
+          },
+          {
+            "value": "geometry",
+            "source": "bucket-warrior/Ground/Solid"
+          },
+          {
+            "value": "geometry limit",
+            "source": "bucket-warrior/Collider/Solid"
+          },
+          {
+            "value": "Ground",
+            "source": "run-n-gun-weapons/LevelCollision/Solid"
+          },
+          {
+            "value": "TeleportPlatform",
+            "source": "run-n-gun-weapons/TeleportPlatform/Solid"
+          },
+          {
+            "value": "Target",
+            "source": "run-n-gun-weapons/Target/Solid"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 103,
+      "Shape3D": 101,
+      "TiledBg": 25,
+      "Tilemap": 78,
+      "NinePatch": 3
+    },
+    "source_projects": [
+      "template-invert-gravity",
+      "infinite-dash",
+      "catch-the-rats",
+      "orthographic-projection",
+      "wall-creature",
+      "pathfinding-groups",
+      "lava-pillars",
+      "magic-feather",
+      "switch-block",
+      "rally-drifting-ts",
+      "block-breaking",
+      "disintegration-effect",
+      "run-n-gun-weapons",
+      "manual-elevator",
+      "laser-turret",
+      "toggle-camera-perspective",
+      "raycast-teleport",
+      "raycast-reflections",
+      "template-falling-shapes",
+      "3d-castle-maze"
+    ]
+  },
+  "Timer": {
+    "behavior_id": "Timer",
+    "usage_count": 238,
+    "properties": {},
+    "attached_to_plugins": {
+      "Sprite": 193,
+      "Particles": 11,
+      "Shape3D": 19,
+      "Spritefont2": 3,
+      "NinePatch": 5,
+      "TiledBg": 4,
+      "Text": 2,
+      "DrawingCanvas": 1
+    },
+    "source_projects": [
+      "Entities",
+      "marble-spiral-clash",
+      "template-invert-gravity",
+      "UI",
+      "Gameplay",
+      "minefield",
+      "catch-the-rats",
+      "wall-creature",
+      "lava-pillars",
+      "kitty-katcher",
+      "magic-feather",
+      "layout-transition",
+      "ancient-watcher-fortress-ts",
+      "block-breaking",
+      "disintegration-effect",
+      "run-n-gun-weapons",
+      "manual-elevator",
+      "laser-turret",
+      "template-quiz",
+      "template-falling-shapes"
+    ]
+  },
+  "Sin": {
+    "behavior_id": "Sin",
+    "usage_count": 214,
+    "properties": {
+      "movement": {
+        "prop_id": "movement",
+        "unique_values": [
+          "size",
+          "width",
+          "angle",
+          "opacity",
+          "value-only",
+          "forwards-backwards",
+          "height",
+          "horizontal",
+          "vertical",
+          "z-elevation"
+        ],
+        "unique_count": 10,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": "size",
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": "value-only",
+            "source": "snake-shape/GameManager/Sine"
+          },
+          {
+            "value": "opacity",
+            "source": "snake-shape/LavaGlow/Sine"
+          },
+          {
+            "value": "vertical",
+            "source": "hexagonal-movement-js/Fly/Sine"
+          },
+          {
+            "value": "z-elevation",
+            "source": "license-test/ObjectiveArrow/Sine"
+          },
+          {
+            "value": "angle",
+            "source": "living-card/CardHolder/Sine"
+          },
+          {
+            "value": "horizontal",
+            "source": "kiwi-story/Leaf/Sine"
+          },
+          {
+            "value": "width",
+            "source": "sine-behavior-types/Sprite/Sin"
+          },
+          {
+            "value": "height",
+            "source": "sine-behavior-types/Sprite/Sin"
+          },
+          {
+            "value": "forwards-backwards",
+            "source": "sine-behavior-types/Sprite/Sin"
+          }
+        ]
+      },
+      "wave": {
+        "prop_id": "wave",
+        "unique_values": [
+          "sine",
+          "sawtooth",
+          "triangle"
+        ],
+        "unique_count": 3,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": "sine",
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": "sawtooth",
+            "source": "skyscraper-builder/Car/Sine"
+          },
+          {
+            "value": "triangle",
+            "source": "tile-matcher/Tile/Sine"
+          }
+        ]
+      },
+      "period": {
+        "prop_id": "period",
+        "unique_values": [
+          "1",
+          "2",
+          "4.1",
+          "0.4",
+          "1.5",
+          "0.1",
+          "0",
+          "8",
+          "3",
+          "16",
+          "0.25",
+          "3.7",
+          "6",
+          "10",
+          "0.33",
+          "0.5",
+          "0.125",
+          "3.1",
+          "2.3",
+          "24",
+          "4",
+          "3.3",
+          "12",
+          "0.15",
+          "0.2",
+          "5"
+        ],
+        "unique_count": 26,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 4,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 1,
+            "source": "snake-shape/LavaGlow/Sine"
+          },
+          {
+            "value": 2,
+            "source": "gemstone-forger-ts/GemLight/Sine"
+          },
+          {
+            "value": 0.5,
+            "source": "hexagonal-movement-js/Fly/Sine"
+          },
+          {
+            "value": 0.1,
+            "source": "license-test/Car/Sine"
+          },
+          {
+            "value": 10,
+            "source": "river-jump-ts/River/Sine"
+          },
+          {
+            "value": 3,
+            "source": "river-jump-ts/Platform/Sine"
+          },
+          {
+            "value": 1.5,
+            "source": "kiwi-story/Collectibles/Sine"
+          },
+          {
+            "value": 8,
+            "source": "kiwi-story/Leaf/Sine"
+          },
+          {
+            "value": 0.15,
+            "source": "car-selection-screen/Cars/Sine"
+          }
+        ]
+      },
+      "period-random": {
+        "prop_id": "period-random",
+        "unique_values": [
+          "0.25",
+          "0.35",
+          "1",
+          "4",
+          "2",
+          "0.15",
+          "0"
+        ],
+        "unique_count": 7,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 1,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 0,
+            "source": "snake-shape/GameManager/Sine"
+          },
+          {
+            "value": 0.15,
+            "source": "hexagonal-movement-js/Fly/Sine"
+          },
+          {
+            "value": 0.35,
+            "source": "hexagonal-movement-js/Fly/Sine"
+          },
+          {
+            "value": 4,
+            "source": "kiwi-story/Leaf/Sine"
+          },
+          {
+            "value": 2,
+            "source": "avalanche/WaterTex/SineY"
+          },
+          {
+            "value": 0.25,
+            "source": "top-down-jump/JetGlow/Sine"
+          }
+        ]
+      },
+      "period-offset": {
+        "prop_id": "period-offset",
+        "unique_values": [
+          "0.85",
+          "1",
+          "2",
+          "0.4",
+          "1.5",
+          "0.1",
+          "0",
+          "2.5",
+          "0.6",
+          "3.5",
+          "3",
+          "0.8",
+          "0.25",
+          "0.33",
+          "0.5",
+          "0.125",
+          "4",
+          "0.15",
+          "0.2"
+        ],
+        "unique_count": 19,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 0,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 0.25,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.15,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.33,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.2,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.85,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.1,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.5,
+            "source": "script-raycasting-js/YellowLine/Sine"
+          },
+          {
+            "value": 1,
+            "source": "script-raycasting-js/YellowLine/Sine"
+          },
+          {
+            "value": 1.5,
+            "source": "script-raycasting-js/YellowLine/Sine"
+          }
+        ]
+      },
+      "period-offset-random": {
+        "prop_id": "period-offset-random",
+        "unique_values": [
+          "0.25",
+          "1",
+          "4",
+          "8",
+          "2",
+          "0.5",
+          "0.75",
+          "0.4",
+          "0"
+        ],
+        "unique_count": 9,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 4,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 0,
+            "source": "snake-shape/GameManager/Sine"
+          },
+          {
+            "value": 8,
+            "source": "air-combat/HostileVTOL/Sine"
+          },
+          {
+            "value": 2,
+            "source": "spinning-stick/Light/Sine"
+          },
+          {
+            "value": 1,
+            "source": "gravitational-field/Player/Sine"
+          },
+          {
+            "value": 0.4,
+            "source": "neon-escape/Signs/Sine"
+          },
+          {
+            "value": 0.5,
+            "source": "segmented-boss-fight/FireBall/Sine"
+          },
+          {
+            "value": 0.25,
+            "source": "relic-hunter/Flare/Sine"
+          },
+          {
+            "value": 0.75,
+            "source": "top-down-jump/JetGlow/Sine"
+          }
+        ]
+      },
+      "magnitude": {
+        "prop_id": "magnitude",
+        "unique_values": [
+          "1",
+          "25",
+          "1.5",
+          "0.1",
+          "0",
+          "2.5",
+          "64",
+          "8",
+          "80",
+          "3",
+          "30",
+          "20",
+          "16",
+          "5",
+          "0.25",
+          "32",
+          "128",
+          "50",
+          "0.5",
+          "15",
+          "45",
+          "0.125",
+          "48",
+          "22",
+          "-32",
+          "0.05",
+          "35",
+          "60",
+          "496",
+          "188"
+        ],
+        "unique_count": 30,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 8,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 1,
+            "source": "snake-shape/GameManager/Sine"
+          },
+          {
+            "value": 10,
+            "source": "snake-shape/LavaGlow/Sine"
+          },
+          {
+            "value": 5,
+            "source": "snake-shape/PortalGlow/Sine"
+          },
+          {
+            "value": 20,
+            "source": "gemstone-forger-ts/GemLight/Sine"
+          },
+          {
+            "value": 32,
+            "source": "air-combat/HostileVTOL/Sine"
+          },
+          {
+            "value": 25,
+            "source": "air-combat/FrontierLimits/Sine"
+          },
+          {
+            "value": 2,
+            "source": "balloon-blower/Balloon/Sine"
+          },
+          {
+            "value": 0.1,
+            "source": "license-test/Car/Sine"
+          },
+          {
+            "value": 3,
+            "source": "river-jump-ts/River/Sine"
+          }
+        ]
+      },
+      "magnitude-random": {
+        "prop_id": "magnitude-random",
+        "unique_values": [
+          "4",
+          "50",
+          "0"
+        ],
+        "unique_count": 3,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": 4,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": 0,
+            "source": "snake-shape/GameManager/Sine"
+          },
+          {
+            "value": 50,
+            "source": "kiwi-story/Leaf/Sine"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": true,
+            "source": "snake-shape/DistortionMask/Sine"
+          },
+          {
+            "value": false,
+            "source": "license-test/ObjectiveArrow/Sine"
+          }
+        ]
+      },
+      "live-preview": {
+        "prop_id": "live-preview",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 1335,
+        "samples": [
+          {
+            "value": false,
+            "source": "snake-shape/DistortionMask/Sine"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 164,
+      "TiledBg": 16,
+      "Shape3D": 26,
+      "NinePatch": 6,
+      "Text": 2
+    },
+    "source_projects": [
+      "shooting-cube",
+      "Entities",
+      "template-invert-gravity",
+      "Gameplay",
+      "boxing-club-js",
+      "ghost-chaser",
+      "catch-the-rats",
+      "glokar",
+      "top-down-jump",
+      "wall-creature",
+      "lava-pillars",
+      "kitty-katcher",
+      "magic-feather",
+      "Level Objects",
+      "run-n-gun-weapons",
+      "exfiltration-js",
+      "laser-turret",
+      "archery-range-js",
+      "world-builder-ts",
+      "farming-lines"
+    ]
+  },
+  "Fade": {
+    "behavior_id": "Fade",
+    "usage_count": 183,
+    "properties": {
+      "fade-in-time": {
+        "prop_id": "fade-in-time",
+        "unique_values": [
+          "0.25",
+          "1",
+          "2",
+          "0.15",
+          "0.5",
+          "0.1",
+          "0"
+        ],
+        "unique_count": 7,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": 0.5,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          },
+          {
+            "value": 0,
+            "source": "snake-shape/Flash/Fade"
+          },
+          {
+            "value": 0.1,
+            "source": "snake-shape/FlashGlow/Fade"
+          },
+          {
+            "value": 0.25,
+            "source": "spider-solitaire-js/TextTutorial/Fade"
+          },
+          {
+            "value": 1,
+            "source": "8-sided-billboard/Sprite/Fade"
+          },
+          {
+            "value": 0.15,
+            "source": "disintegration-effect/SecundaryLight/Fade"
+          },
+          {
+            "value": 2,
+            "source": "traffic-jam/TextWin/Fade"
+          }
+        ]
+      },
+      "wait-time": {
+        "prop_id": "wait-time",
+        "unique_values": [
+          "1",
+          "2",
+          "1.5",
+          "0.1",
+          "0",
+          "2.5",
+          "8",
+          "3",
+          "4.25",
+          "0.25",
+          "6",
+          "10",
+          "0.5",
+          "15",
+          "7",
+          "0.05",
+          "12",
+          "0.2",
+          "0.75",
+          "5"
+        ],
+        "unique_count": 20,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": 15,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          },
+          {
+            "value": 0,
+            "source": "snake-shape/Flash/Fade"
+          },
+          {
+            "value": 5,
+            "source": "snake-shape/TextFont/Fade"
+          },
+          {
+            "value": 0.05,
+            "source": "air-combat/MuzzleFlash/Fade"
+          },
+          {
+            "value": 0.25,
+            "source": "concussive-blast/PlayerTrail/Fade"
+          },
+          {
+            "value": 8,
+            "source": "template-gamepad-twin-stick-shooter/Tutorial/Fade"
+          },
+          {
+            "value": 1,
+            "source": "bbc-micro-bit-raw/ButtonPressMessage/Fade"
+          },
+          {
+            "value": 10,
+            "source": "level-chunk-swap/TextFont/Fade"
+          },
+          {
+            "value": 2,
+            "source": "8-sided-billboard/Sprite/Fade"
+          },
+          {
+            "value": 2.5,
+            "source": "ghost-shooter-rain-demo/ScirraLetter/Fade"
+          }
+        ]
+      },
+      "fade-out-time": {
+        "prop_id": "fade-out-time",
+        "unique_values": [
+          "1.75",
+          "0.25",
+          "1",
+          "0.05",
+          "2",
+          "0.15",
+          "0.5",
+          "0.75",
+          "0.2",
+          "0.4",
+          "1.5",
+          "0.1",
+          "0",
+          "5"
+        ],
+        "unique_count": 14,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": 5,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          },
+          {
+            "value": 0.5,
+            "source": "snake-shape/Flash/Fade"
+          },
+          {
+            "value": 0.4,
+            "source": "snake-shape/FlashGlow/Fade"
+          },
+          {
+            "value": 1,
+            "source": "snake-shape/TextFont/Fade"
+          },
+          {
+            "value": 0.25,
+            "source": "air-combat/JetTrail/Fade"
+          },
+          {
+            "value": 0.05,
+            "source": "air-combat/MuzzleFlash/Fade"
+          },
+          {
+            "value": 0,
+            "source": "hidden-objects/TextFont/Fade"
+          },
+          {
+            "value": 2,
+            "source": "template-monk-fight/Character/Fade"
+          },
+          {
+            "value": 1.75,
+            "source": "kitchen-frenzy-js/TutorialText/Fade"
+          },
+          {
+            "value": 0.75,
+            "source": "ghost-shooter-rain-demo/ScirraLetter/Fade"
+          }
+        ]
+      },
+      "destroy": {
+        "prop_id": "destroy",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": true,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          },
+          {
+            "value": false,
+            "source": "hidden-objects/TextFont/Fade"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": true,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          },
+          {
+            "value": false,
+            "source": "hidden-objects/TextFont/Fade"
+          }
+        ]
+      },
+      "live-preview": {
+        "prop_id": "live-preview",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 227,
+        "samples": [
+          {
+            "value": false,
+            "source": "land-the-rocket-js/TutorialText/Fade"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Spritefont2": 100,
+      "Sprite": 55,
+      "TiledBg": 12,
+      "DrawingCanvas": 3,
+      "Text": 12,
+      "Shape3D": 1
+    },
+    "source_projects": [
+      "template-invert-gravity",
+      "vehicle-switching",
+      "boxing-club-js",
+      "infinite-dash",
+      "minefield",
+      "top-down-jump",
+      "wall-creature",
+      "lava-pillars",
+      "magic-feather",
+      "switch-block",
+      "rally-drifting-ts",
+      "block-breaking",
+      "disintegration-effect",
+      "run-n-gun-weapons",
+      "manual-elevator",
+      "laser-turret",
+      "raycast-teleport",
+      "guided-platforms",
+      "archery-range-js",
+      "3d-castle-maze"
+    ]
+  },
+  "Bullet": {
+    "behavior_id": "Bullet",
+    "usage_count": 181,
+    "properties": {
+      "speed": {
+        "prop_id": "speed",
+        "unique_values": [
+          "512",
+          "1200",
+          "0",
+          "1000",
+          "192",
+          "350",
+          "8",
+          "120",
+          "130",
+          "80",
+          "160",
+          "20",
+          "600",
+          "2048",
+          "400",
+          "32",
+          "500",
+          "128",
+          "384",
+          "50",
+          "15",
+          "48",
+          "150",
+          "12",
+          "4000",
+          "256",
+          "700",
+          "320",
+          "60",
+          "650"
+        ],
+        "unique_count": 30,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": 400,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": 64,
+            "source": "air-combat/HostileVTOL/Bullet"
+          },
+          {
+            "value": 0,
+            "source": "air-combat/Missile/Bullet"
+          },
+          {
+            "value": 256,
+            "source": "air-combat/ExplosionGuide/Bullet"
+          },
+          {
+            "value": 128,
+            "source": "template-invert-gravity/Arrow/Bullet"
+          },
+          {
+            "value": 150,
+            "source": "kiwi-story/En_Stalactite/Bullet"
+          },
+          {
+            "value": 60,
+            "source": "kiwi-story/Leaf/Bullet"
+          },
+          {
+            "value": 120,
+            "source": "kiwi-story/GenericParticle/Bullet"
+          },
+          {
+            "value": 50,
+            "source": "kiwi-story/Droplet/Bullet"
+          },
+          {
+            "value": 200,
+            "source": "kiwi-story/En_Fish/Bullet"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "-32",
+          "512",
+          "-50",
+          "500",
+          "10",
+          "128",
+          "1500",
+          "300",
+          "-200",
+          "-256",
+          "-500",
+          "-150",
+          "0"
+        ],
+        "unique_count": 13,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": 0,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": 512,
+            "source": "air-combat/Missile/Bullet"
+          },
+          {
+            "value": -256,
+            "source": "template-invert-gravity/Arrow/Bullet"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Stalactite/Bullet"
+          },
+          {
+            "value": -150,
+            "source": "kiwi-story/GenericParticle/Bullet"
+          },
+          {
+            "value": 300,
+            "source": "kiwi-story/Droplet/Bullet"
+          },
+          {
+            "value": -200,
+            "source": "glokar/Enemy_Blue/Bullet"
+          },
+          {
+            "value": -50,
+            "source": "glokar/Boss/Bullet"
+          },
+          {
+            "value": 128,
+            "source": "run-n-gun-weapons/Target/Bullet"
+          },
+          {
+            "value": 10,
+            "source": "space-blaster/BladeEnemy/Bullet"
+          }
+        ]
+      },
+      "gravity": {
+        "prop_id": "gravity",
+        "unique_values": [
+          "2048",
+          "1024",
+          "512",
+          "400",
+          "200",
+          "500",
+          "128",
+          "384",
+          "256",
+          "1440",
+          "0",
+          "250"
+        ],
+        "unique_count": 12,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": 0,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": 256,
+            "source": "air-combat/ExplosionGuide/Bullet"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Acorn/Bullet"
+          },
+          {
+            "value": 250,
+            "source": "kiwi-story/En_Fish/Bullet"
+          },
+          {
+            "value": 512,
+            "source": "template-gamepad-twin-stick-shooter/Shell/Bullet"
+          },
+          {
+            "value": 128,
+            "source": "mask-effect-puzzle/Coin/Bullet"
+          },
+          {
+            "value": 1440,
+            "source": "lava-pillars/Orb/Bullet"
+          },
+          {
+            "value": 1024,
+            "source": "arcade-shooter/Shell/Bullet"
+          },
+          {
+            "value": 200,
+            "source": "fireworks/RocketParticles/Bullet"
+          },
+          {
+            "value": 2048,
+            "source": "pusha-pusha/Confetto/Bullet"
+          }
+        ]
+      },
+      "bounce-off-solids": {
+        "prop_id": "bounce-off-solids",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": false,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": true,
+            "source": "multiplayer-pong/Ball/Bullet"
+          }
+        ]
+      },
+      "set-angle": {
+        "prop_id": "set-angle",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": false,
+            "source": "air-combat/HostileVTOL/Bullet"
+          }
+        ]
+      },
+      "step": {
+        "prop_id": "step",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": false,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": true,
+            "source": "template-gamepad-twin-stick-shooter/Bullet/Bullet"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 345,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Bullet/Bullet"
+          },
+          {
+            "value": false,
+            "source": "kiwi-story/En_Stalactite/Bullet"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 165,
+      "Text": 3,
+      "Shape3D": 6,
+      "TiledBg": 5,
+      "Particles": 1,
+      "Spritefont2": 1
+    },
+    "source_projects": [
+      "shooting-cube",
+      "Entities",
+      "marble-spiral-clash",
+      "template-invert-gravity",
+      "minefield",
+      "glokar",
+      "top-down-jump",
+      "lava-pillars",
+      "catch-up-time",
+      "cannon-launch",
+      "magic-feather",
+      "dynamic-camera-system",
+      "rhythm-game",
+      "template-golf",
+      "Level Objects",
+      "block-breaking",
+      "run-n-gun-weapons",
+      "manual-elevator",
+      "ground-shift",
+      "light-gun"
+    ]
+  },
+  "Flash": {
+    "behavior_id": "Flash",
+    "usage_count": 97,
+    "properties": {},
+    "attached_to_plugins": {
+      "Spritefont2": 29,
+      "Sprite": 39,
+      "Text": 23,
+      "Shape3D": 5,
+      "TiledBg": 1
+    },
+    "source_projects": [
+      "demonoire",
+      "template-monk-fight",
+      "morph-runner",
+      "ghost-chaser",
+      "gravitational-field",
+      "rock-and-rush",
+      "memory-cube",
+      "glokar",
+      "pathfinding-groups",
+      "kitty-katcher",
+      "MainMenu",
+      "template-4-direction-bomb",
+      "point-and-click",
+      "Menu",
+      "alien-battle",
+      "turret-predictive-aim",
+      "egg-catcher",
+      "template-falling-shapes",
+      "simple-snake-game",
+      "follow-record-replay"
+    ]
+  },
+  "Platform": {
+    "behavior_id": "Platform",
+    "usage_count": 81,
+    "properties": {
+      "max-speed": {
+        "prop_id": "max-speed",
+        "unique_values": [
+          "480",
+          "330",
+          "450",
+          "0",
+          "1000",
+          "64",
+          "120",
+          "300",
+          "80",
+          "180",
+          "96",
+          "400",
+          "128",
+          "384",
+          "40",
+          "100",
+          "45",
+          "125",
+          "150"
+        ],
+        "unique_count": 19,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 330,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 128,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 40,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 120,
+            "source": "kiwi-story/Player_Base/Platform"
+          },
+          {
+            "value": 45,
+            "source": "kiwi-story/En_Boulder/Platform"
+          },
+          {
+            "value": 96,
+            "source": "ground-shift/PlayerCollision/Platform"
+          },
+          {
+            "value": 64,
+            "source": "level-chunk-swap/PlayerCollision/Platform"
+          },
+          {
+            "value": 180,
+            "source": "random-cave-ts/Player/Platform"
+          },
+          {
+            "value": 300,
+            "source": "mesh-platforms/Player/Platform"
+          },
+          {
+            "value": 80,
+            "source": "neon-escape/Player/Platform"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "999999",
+          "2048",
+          "1024",
+          "512",
+          "9999",
+          "1800",
+          "500",
+          "256",
+          "128",
+          "99999",
+          "4000",
+          "1500",
+          "300",
+          "2000",
+          "0",
+          "10000"
+        ],
+        "unique_count": 16,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 1500,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 1024,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 512,
+            "source": "gamepad-local-multiplayer/PlayerCollision/Platform"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 256,
+            "source": "level-chunk-swap/PlayerCollision/Platform"
+          },
+          {
+            "value": 10000,
+            "source": "mesh-platforms/Player/Platform"
+          },
+          {
+            "value": 99999,
+            "source": "neon-escape/Player/Platform"
+          },
+          {
+            "value": 0,
+            "source": "neon-escape/Enemy/Platform"
+          },
+          {
+            "value": 1800,
+            "source": "bumble-beep/Player/Platform"
+          },
+          {
+            "value": 9999,
+            "source": "bucket-warrior/Flame/Platform"
+          }
+        ]
+      },
+      "deceleration": {
+        "prop_id": "deceleration",
+        "unique_values": [
+          "999999",
+          "1024",
+          "1600",
+          "9999",
+          "1800",
+          "500",
+          "256",
+          "128",
+          "99999",
+          "1500",
+          "512",
+          "3000",
+          "2000",
+          "0",
+          "10000"
+        ],
+        "unique_count": 15,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 1500,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 1024,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 512,
+            "source": "gamepad-local-multiplayer/PlayerCollision/Platform"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 256,
+            "source": "level-chunk-swap/PlayerCollision/Platform"
+          },
+          {
+            "value": 10000,
+            "source": "mesh-platforms/Player/Platform"
+          },
+          {
+            "value": 99999,
+            "source": "neon-escape/Player/Platform"
+          },
+          {
+            "value": 0,
+            "source": "neon-escape/Enemy/Platform"
+          },
+          {
+            "value": 1800,
+            "source": "bumble-beep/Player/Platform"
+          },
+          {
+            "value": 9999,
+            "source": "bucket-warrior/Flame/Platform"
+          }
+        ]
+      },
+      "jump-strength": {
+        "prop_id": "jump-strength",
+        "unique_values": [
+          "480",
+          "768",
+          "1200",
+          "1800",
+          "420",
+          "0",
+          "250",
+          "192",
+          "200",
+          "120",
+          "224",
+          "800",
+          "96",
+          "900",
+          "500",
+          "128",
+          "384",
+          "360",
+          "256",
+          "650"
+        ],
+        "unique_count": 20,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 650,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 192,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 128,
+            "source": "template-invert-gravity/PlayerCollision/Platform"
+          },
+          {
+            "value": 250,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Hedgehog/Platform"
+          },
+          {
+            "value": 120,
+            "source": "kiwi-story/En_Boulder/Platform"
+          },
+          {
+            "value": 96,
+            "source": "ground-shift/PlayerCollision/Platform"
+          },
+          {
+            "value": 480,
+            "source": "random-cave-ts/Player/Platform"
+          },
+          {
+            "value": 256,
+            "source": "switch-block/PlayerCollision/Platform"
+          },
+          {
+            "value": 200,
+            "source": "neon-escape/Player/Platform"
+          }
+        ]
+      },
+      "gravity": {
+        "prop_id": "gravity",
+        "unique_values": [
+          "2048",
+          "1000",
+          "1024",
+          "1600",
+          "1350",
+          "1800",
+          "2400",
+          "500",
+          "768",
+          "1300",
+          "384",
+          "1500",
+          "300",
+          "3200",
+          "512",
+          "600"
+        ],
+        "unique_count": 16,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 1500,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 512,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 384,
+            "source": "gamepad-local-multiplayer/PlayerCollision/Platform"
+          },
+          {
+            "value": 600,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Hedgehog/Platform"
+          },
+          {
+            "value": 300,
+            "source": "kiwi-story/En_Boulder/Platform"
+          },
+          {
+            "value": 1300,
+            "source": "mesh-platforms/Player/Platform"
+          },
+          {
+            "value": 1000,
+            "source": "neon-escape/Player/Platform"
+          },
+          {
+            "value": 3200,
+            "source": "bumble-beep/Player/Platform"
+          },
+          {
+            "value": 1350,
+            "source": "template-infinite-jumping/Player/Platform"
+          }
+        ]
+      },
+      "max-fall-speed": {
+        "prop_id": "max-fall-speed",
+        "unique_values": [
+          "5000",
+          "1000",
+          "1024",
+          "192",
+          "1400",
+          "512",
+          "500",
+          "256"
+        ],
+        "unique_count": 8,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 1000,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 512,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          },
+          {
+            "value": 192,
+            "source": "gamepad-local-multiplayer/PlayerCollision/Platform"
+          },
+          {
+            "value": 256,
+            "source": "template-invert-gravity/PlayerCollision/Platform"
+          },
+          {
+            "value": 500,
+            "source": "kiwi-story/En_Beetle/Platform"
+          },
+          {
+            "value": 5000,
+            "source": "bumble-beep/Player/Platform"
+          },
+          {
+            "value": 1024,
+            "source": "relic-hunter/PlayerCollider/Platform"
+          },
+          {
+            "value": 1400,
+            "source": "fuji-leaper/Frog/Platform"
+          }
+        ]
+      },
+      "double-jump": {
+        "prop_id": "double-jump",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": false,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": true,
+            "source": "tilemap-destruction/PlayerCollision/Platform"
+          }
+        ]
+      },
+      "jump-sustain": {
+        "prop_id": "jump-sustain",
+        "unique_values": [
+          "100",
+          "0",
+          "150"
+        ],
+        "unique_count": 3,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": 0,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": 150,
+            "source": "ground-shift/PlayerCollision/Platform"
+          },
+          {
+            "value": 100,
+            "source": "procedural-terrain-generation/PlayerBase/Platform"
+          }
+        ]
+      },
+      "default-controls": {
+        "prop_id": "default-controls",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": true,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": false,
+            "source": "shy-ghost/PlayerCollision/Platform"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 117,
+        "samples": [
+          {
+            "value": true,
+            "source": "3d-platforms/Player/Platform"
+          },
+          {
+            "value": false,
+            "source": "neon-escape/Enemy/Platform"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 79,
+      "Shape3D": 2
+    },
+    "source_projects": [
+      "keyboard-mapping",
+      "mesh-platforms",
+      "wall-creature",
+      "concussive-blast",
+      "magic-feather",
+      "switch-block",
+      "rotating-platformer",
+      "retractable-bridge",
+      "disintegration-effect",
+      "block-breaking",
+      "manual-elevator",
+      "time-rewind",
+      "shockwave-spell",
+      "fire-bars",
+      "hatch-room-transition",
+      "raycast-teleport",
+      "mask-effect-puzzle",
+      "follow-rewind-time",
+      "random-cave-ts",
+      "patrolling-traps"
+    ]
+  },
+  "Physics": {
+    "behavior_id": "Physics",
+    "usage_count": 78,
+    "properties": {
+      "immovable": {
+        "prop_id": "immovable",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": true,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": false,
+            "source": "land-the-rocket-js/Rocket/Physics"
+          }
+        ]
+      },
+      "collision-mask": {
+        "prop_id": "collision-mask",
+        "unique_values": [
+          "circle",
+          "use-collision-polygon",
+          "bounding-box"
+        ],
+        "unique_count": 3,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": "use-collision-polygon",
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": "bounding-box",
+            "source": "physics-revolute-joint/Ground/Physics"
+          },
+          {
+            "value": "circle",
+            "source": "physics-revolute-joint/Logo/Physics"
+          }
+        ]
+      },
+      "prevent-rotation": {
+        "prop_id": "prevent-rotation",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": false,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": true,
+            "source": "eventide/Enemy/Physics"
+          }
+        ]
+      },
+      "density": {
+        "prop_id": "density",
+        "unique_values": [
+          "2",
+          "1",
+          "100",
+          "0.4"
+        ],
+        "unique_count": 4,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": 1,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": 2,
+            "source": "template-physics-catapult/Pig/Physics"
+          },
+          {
+            "value": 0.4,
+            "source": "template-physics-catapult/Sprite/Physics"
+          },
+          {
+            "value": 100,
+            "source": "dig-the-way/Fan/Physics"
+          }
+        ]
+      },
+      "friction": {
+        "prop_id": "friction",
+        "unique_values": [
+          "0.1",
+          "1",
+          "0.5",
+          "0"
+        ],
+        "unique_count": 4,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": 0.5,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": 0,
+            "source": "eventide/Enemy/Physics"
+          },
+          {
+            "value": 1,
+            "source": "rotating-maze/BallCol/Physics"
+          },
+          {
+            "value": 0.1,
+            "source": "pinball/BallPhysics/Physics"
+          }
+        ]
+      },
+      "elasticity": {
+        "prop_id": "elasticity",
+        "unique_values": [
+          "0.5",
+          "0.2",
+          "0.1",
+          "0",
+          "0.8"
+        ],
+        "unique_count": 5,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": 0.2,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": 0,
+            "source": "eventide/Enemy/Physics"
+          },
+          {
+            "value": 0.8,
+            "source": "blackball-billiard/Ball/Physics"
+          },
+          {
+            "value": 0.5,
+            "source": "rotating-maze/Wall/Physics"
+          },
+          {
+            "value": 0.1,
+            "source": "rotating-maze/BallCol/Physics"
+          }
+        ]
+      },
+      "linear-damping": {
+        "prop_id": "linear-damping",
+        "unique_values": [
+          "0.9",
+          "0"
+        ],
+        "unique_count": 2,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": 0,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": 0.9,
+            "source": "blackball-billiard/Ball/Physics"
+          }
+        ]
+      },
+      "angular-damping": {
+        "prop_id": "angular-damping",
+        "unique_values": [
+          "1",
+          "0.01",
+          "0"
+        ],
+        "unique_count": 3,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": 0.01,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": 0,
+            "source": "eventide/Enemy/Physics"
+          },
+          {
+            "value": 1,
+            "source": "blackball-billiard/Ball/Physics"
+          }
+        ]
+      },
+      "bullet": {
+        "prop_id": "bullet",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": false,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": true,
+            "source": "blackball-billiard/Ball/Physics"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 409,
+        "samples": [
+          {
+            "value": true,
+            "source": "land-the-rocket-js/Terrain/Physics"
+          },
+          {
+            "value": false,
+            "source": "blackball-billiard/CueBall/Physics"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 65,
+      "Tilemap": 7,
+      "TiledBg": 6
+    },
+    "source_projects": [
+      "physics-scripting-ts",
+      "pinball",
+      "physics-vehicle",
+      "Props",
+      "object-time-freezing",
+      "physics-force-point",
+      "rotating-maze",
+      "template-physics-catapult",
+      "random-cave-js",
+      "fruit-merger",
+      "land-the-rocket-js",
+      "template-golf",
+      "template-physics-puzzle",
+      "physics-basics",
+      "physics-scripting-js",
+      "physics-revolute-joint",
+      "physics-rolling-platformer",
+      "physics-ragdoll",
+      "random-cave-ts",
+      "blackball-billiard"
+    ]
+  },
+  "scrollto": {
+    "behavior_id": "scrollto",
+    "usage_count": 74,
+    "properties": {
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 75,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/char/ScrollTo"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 74
+    },
+    "source_projects": [
+      "template-driving",
+      "channel-striker-js",
+      "template-top-down-shooter",
+      "wall-creature",
+      "concussive-blast",
+      "magic-feather",
+      "switch-block",
+      "languages-from-json",
+      "stealth-example",
+      "retractable-bridge",
+      "surface-jump",
+      "disintegration-effect",
+      "block-breaking",
+      "manual-elevator",
+      "time-rewind",
+      "shockwave-spell",
+      "fire-bars",
+      "mask-effect-puzzle",
+      "template-tile-based-game",
+      "patrolling-traps"
+    ]
+  },
+  "Rotate": {
+    "behavior_id": "Rotate",
+    "usage_count": 74,
+    "properties": {
+      "speed": {
+        "prop_id": "speed",
+        "unique_values": [
+          "-30",
+          "0",
+          "1000",
+          "-92",
+          "-20",
+          "30",
+          "20",
+          "-60",
+          "180",
+          "240",
+          "400",
+          "720",
+          "10",
+          "15",
+          "45",
+          "-90",
+          "360",
+          "90",
+          "640",
+          "60"
+        ],
+        "unique_count": 20,
+        "total_count": 158,
+        "samples": [
+          {
+            "value": 720,
+            "source": "air-combat/FireBall/Rotate"
+          },
+          {
+            "value": 180,
+            "source": "bboxperf/Spinner/Rotate"
+          },
+          {
+            "value": 30,
+            "source": "spinning-stick/PlayerPole/Rotate"
+          },
+          {
+            "value": 360,
+            "source": "ancient-watcher-fortress-ts/BossFloorBlast/Rotate"
+          },
+          {
+            "value": 0,
+            "source": "orbiting-platforms/PlatformChain/Rotate"
+          },
+          {
+            "value": 90,
+            "source": "top-down-shooter-3d/Beam/Rotate"
+          },
+          {
+            "value": -90,
+            "source": "laser-turret/LaserTurret/Rotate"
+          },
+          {
+            "value": -30,
+            "source": "audio-positioning/Ship/Rotate"
+          },
+          {
+            "value": 240,
+            "source": "rock-and-rush/InstrumentShape/Rotate"
+          },
+          {
+            "value": 1000,
+            "source": "channel-striker-js/EnemyHelicopterRotor/Rotate"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "0"
+        ],
+        "unique_count": 1,
+        "total_count": 158,
+        "samples": [
+          {
+            "value": 0,
+            "source": "air-combat/FireBall/Rotate"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 158,
+        "samples": [
+          {
+            "value": true,
+            "source": "air-combat/FireBall/Rotate"
+          },
+          {
+            "value": false,
+            "source": "laser-turret/LaserTurret/Rotate"
+          }
+        ]
+      },
+      "live-preview": {
+        "prop_id": "live-preview",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 158,
+        "samples": [
+          {
+            "value": false,
+            "source": "air-combat/FireBall/Rotate"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 61,
+      "Shape3D": 10,
+      "TiledBg": 2,
+      "NinePatch": 1
+    },
+    "source_projects": [
+      "channel-striker-js",
+      "Entities",
+      "magic-hammer",
+      "basic-hierarchy",
+      "segmented-boss-fight",
+      "template-gamepad-twin-stick-shooter",
+      "minefield",
+      "top-down-shooter-3d",
+      "rock-and-rush",
+      "top-down-jump",
+      "manual-gps",
+      "ancient-watcher-fortress-ts",
+      "cell-linking",
+      "quadissueperf",
+      "laser-turret",
+      "mesh-relative-displacement",
+      "alien-battle",
+      "snowboard-3d-js",
+      "audio-positioning",
+      "world-builder-ts"
+    ]
+  },
+  "EightDir": {
+    "behavior_id": "EightDir",
+    "usage_count": 66,
+    "properties": {
+      "max-speed": {
+        "prop_id": "max-speed",
+        "unique_values": [
+          "96",
+          "64",
+          "1024",
+          "240",
+          "400",
+          "192",
+          "200",
+          "90",
+          "128",
+          "256",
+          "50",
+          "100",
+          "350",
+          "150",
+          "300",
+          "80",
+          "48",
+          "250"
+        ],
+        "unique_count": 18,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": 100,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": 64,
+            "source": "shifting-dungeon/PlayerCollision/8Direction"
+          },
+          {
+            "value": 200,
+            "source": "mesh-z-elevation/Player/8Direction"
+          },
+          {
+            "value": 96,
+            "source": "spinning-stick/PlayerCenter/8Direction"
+          },
+          {
+            "value": 192,
+            "source": "concussive-blast/Bomb/8Direction"
+          },
+          {
+            "value": 400,
+            "source": "template-monk-fight/charPos/8Direction"
+          },
+          {
+            "value": 240,
+            "source": "glokar/Player/8Direction"
+          },
+          {
+            "value": 150,
+            "source": "time-travel-3d-js/Player/EightDirection"
+          },
+          {
+            "value": 128,
+            "source": "laser-turret/PlayerCollision/8Direction"
+          },
+          {
+            "value": 50,
+            "source": "coral-savior/Player/8Direction"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "1000",
+          "512",
+          "1024",
+          "9999",
+          "500",
+          "256",
+          "384",
+          "50",
+          "3000",
+          "600",
+          "6000",
+          "8192",
+          "0",
+          "800"
+        ],
+        "unique_count": 14,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": 600,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": 512,
+            "source": "shifting-dungeon/PlayerCollision/8Direction"
+          },
+          {
+            "value": 384,
+            "source": "spinning-stick/PlayerCenter/8Direction"
+          },
+          {
+            "value": 1024,
+            "source": "template-gamepad-twin-stick-shooter/PlayerCollision/8Direction"
+          },
+          {
+            "value": 800,
+            "source": "template-monk-fight/charPos/8Direction"
+          },
+          {
+            "value": 256,
+            "source": "top-down-shooter-3d/PlayerCollision/8Direction"
+          },
+          {
+            "value": 3000,
+            "source": "glokar/Player/8Direction"
+          },
+          {
+            "value": 9999,
+            "source": "time-travel-3d-js/Player/EightDirection"
+          },
+          {
+            "value": 50,
+            "source": "coral-savior/Player/8Direction"
+          },
+          {
+            "value": 1000,
+            "source": "ghost-shooter-rain-demo/Player/8Direction"
+          }
+        ]
+      },
+      "deceleration": {
+        "prop_id": "deceleration",
+        "unique_values": [
+          "5000",
+          "1000",
+          "1024",
+          "512",
+          "9999",
+          "500",
+          "256",
+          "25",
+          "384",
+          "100",
+          "700",
+          "3000",
+          "300",
+          "600",
+          "8192",
+          "2000",
+          "750",
+          "0"
+        ],
+        "unique_count": 18,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": 500,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": 512,
+            "source": "shifting-dungeon/PlayerCollision/8Direction"
+          },
+          {
+            "value": 384,
+            "source": "spinning-stick/PlayerCenter/8Direction"
+          },
+          {
+            "value": 1024,
+            "source": "template-gamepad-twin-stick-shooter/PlayerCollision/8Direction"
+          },
+          {
+            "value": 700,
+            "source": "template-monk-fight/charPos/8Direction"
+          },
+          {
+            "value": 256,
+            "source": "top-down-shooter-3d/PlayerCollision/8Direction"
+          },
+          {
+            "value": 3000,
+            "source": "glokar/Player/8Direction"
+          },
+          {
+            "value": 9999,
+            "source": "time-travel-3d-js/Player/EightDirection"
+          },
+          {
+            "value": 25,
+            "source": "coral-savior/Player/8Direction"
+          },
+          {
+            "value": 750,
+            "source": "ghost-shooter-rain-demo/Player/8Direction"
+          }
+        ]
+      },
+      "directions": {
+        "prop_id": "directions",
+        "unique_values": [
+          "left-right",
+          "dir-8",
+          "up-down",
+          "dir-4"
+        ],
+        "unique_count": 4,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": "dir-8",
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": "up-down",
+            "source": "concussive-blast/Bomb/8Direction"
+          },
+          {
+            "value": "dir-4",
+            "source": "top-down-hook/Player/8Direction"
+          },
+          {
+            "value": "left-right",
+            "source": "template-alien-invasion/PlayerSpaceship/8Direction"
+          }
+        ]
+      },
+      "set-angle": {
+        "prop_id": "set-angle",
+        "unique_values": [
+          "smooth",
+          "interval-90",
+          "no"
+        ],
+        "unique_count": 3,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": "no",
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": "smooth",
+            "source": "bouncing-bullets/player/8Direction"
+          },
+          {
+            "value": "interval-90",
+            "source": "top-down-hook/Player/8Direction"
+          }
+        ]
+      },
+      "allow-sliding": {
+        "prop_id": "allow-sliding",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 20,
+        "samples": [
+          {
+            "value": true,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": false,
+            "source": "ghost-shooter-rain-demo/Player/8Direction"
+          }
+        ]
+      },
+      "default-controls": {
+        "prop_id": "default-controls",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": false,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": true,
+            "source": "mesh-z-elevation/Player/8Direction"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 91,
+        "samples": [
+          {
+            "value": true,
+            "source": "train-navigation-js/Player/EightDirection"
+          },
+          {
+            "value": false,
+            "source": "template-ladder-climbing/PlayerCollision/8Direction"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Shape3D": 7,
+      "Sprite": 59
+    },
+    "source_projects": [
+      "collect-the-pages-js",
+      "demonoire",
+      "template-monk-fight",
+      "simple-lighting",
+      "ghost-shooter-rain-demo",
+      "pin-chain-style",
+      "top-down-shooter-3d",
+      "template-top-down-shooter",
+      "top-down-jump",
+      "orthographic-projection",
+      "concussive-blast",
+      "pin-rope-style",
+      "train-navigation-js",
+      "laser-turret",
+      "toggle-camera-perspective",
+      "turret-predictive-aim",
+      "complex-terrain-js",
+      "template-falling-shapes",
+      "instant-hit-laser",
+      "time-travel-3d-js"
+    ]
+  },
+  "destroy": {
+    "behavior_id": "destroy",
+    "usage_count": 65,
+    "properties": {},
+    "attached_to_plugins": {
+      "Sprite": 61,
+      "Shape3D": 3,
+      "Text": 1
+    },
+    "source_projects": [
+      "Entities",
+      "marble-spiral-clash",
+      "segmented-boss-fight",
+      "top-down-shooter-3d",
+      "template-top-down-shooter",
+      "rotating-maze",
+      "tower-defense-game",
+      "box-breaker",
+      "ice-beam",
+      "bbc-micro-bit-controller",
+      "template-vertical-space-shooter",
+      "bullet-stepping",
+      "spell-caster",
+      "custom-movement-asteroids",
+      "input-sequence",
+      "shockwave-spell",
+      "alien-battle",
+      "turret-predictive-aim",
+      "random-cave-ts",
+      "template-falling-shapes"
+    ]
+  },
+  "Pin": {
+    "behavior_id": "Pin",
+    "usage_count": 64,
+    "properties": {
+      "destroy": {
+        "prop_id": "destroy",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 50,
+        "samples": [
+          {
+            "value": false,
+            "source": "stealth-example/guardIcon/Pin"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 51,
+      "Particles": 12,
+      "TiledBg": 1
+    },
+    "source_projects": [
+      "demonoire",
+      "template-monk-fight",
+      "template-gamepad-twin-stick-shooter",
+      "ghost-shooter-rain-demo",
+      "pin-chain-style",
+      "glokar",
+      "switch-block",
+      "stealth-example",
+      "pin-rope-style",
+      "tilemap-destruction",
+      "tilemap-switching",
+      "surface-jump",
+      "run-n-gun-weapons",
+      "manual-elevator",
+      "time-rewind",
+      "fire-bars",
+      "hatch-room-transition",
+      "alien-battle",
+      "mask-effect-puzzle",
+      "template-tile-based-game"
+    ]
+  },
+  "LOS": {
+    "behavior_id": "LOS",
+    "usage_count": 50,
+    "properties": {
+      "obstacles": {
+        "prop_id": "obstacles",
+        "unique_values": [
+          "custom",
+          "solids"
+        ],
+        "unique_count": 2,
+        "total_count": 137,
+        "samples": [
+          {
+            "value": "solids",
+            "source": "stealth-example/guard/LineOfSight"
+          },
+          {
+            "value": "custom",
+            "source": "ghost-chaser/GhostCollision/LineOfSight"
+          }
+        ]
+      },
+      "range": {
+        "prop_id": "range",
+        "unique_values": [
+          "1024",
+          "512",
+          "4096",
+          "256",
+          "128",
+          "8192",
+          "600",
+          "16",
+          "10000"
+        ],
+        "unique_count": 9,
+        "total_count": 137,
+        "samples": [
+          {
+            "value": 256,
+            "source": "stealth-example/guard/LineOfSight"
+          },
+          {
+            "value": 10000,
+            "source": "land-the-rocket-js/Rocket/LineOfSight"
+          },
+          {
+            "value": 512,
+            "source": "air-combat/Missile/LineOfSight"
+          },
+          {
+            "value": 1024,
+            "source": "top-down-shooter-3d/Monster/LineOfSight"
+          },
+          {
+            "value": 8192,
+            "source": "laser-turret/LaserTurret/LineOfSight"
+          },
+          {
+            "value": 600,
+            "source": "line-of-sight/Player/LineOfSight"
+          },
+          {
+            "value": 4096,
+            "source": "object-time-freezing/Crate/LineOfSight"
+          },
+          {
+            "value": 16,
+            "source": "wall-walking/PlayerCollision/LineOfSight"
+          },
+          {
+            "value": 128,
+            "source": "pinball/BallPhysics/LineOfSight"
+          }
+        ]
+      },
+      "cone-of-view": {
+        "prop_id": "cone-of-view",
+        "unique_values": [
+          "90",
+          "145",
+          "120",
+          "360"
+        ],
+        "unique_count": 4,
+        "total_count": 137,
+        "samples": [
+          {
+            "value": 145,
+            "source": "stealth-example/guard/LineOfSight"
+          },
+          {
+            "value": 360,
+            "source": "land-the-rocket-js/Rocket/LineOfSight"
+          },
+          {
+            "value": 90,
+            "source": "air-combat/Missile/LineOfSight"
+          },
+          {
+            "value": 120,
+            "source": "line-of-sight/Player/LineOfSight"
+          }
+        ]
+      },
+      "use-collision-cells": {
+        "prop_id": "use-collision-cells",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 137,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/guard/LineOfSight"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 29,
+      "Shape3D": 2,
+      "TiledBg": 19
+    },
+    "source_projects": [
+      "ledge-climb",
+      "top-down-shooter-3d",
+      "magic-feather",
+      "script-raycasting-ts",
+      "stealth-example",
+      "line-of-sight",
+      "retractable-bridge",
+      "surface-jump",
+      "disintegration-effect",
+      "block-breaking",
+      "manual-elevator",
+      "time-rewind",
+      "shockwave-spell",
+      "laser-turret",
+      "raycast-teleport",
+      "mask-effect-puzzle",
+      "raycast-reflections",
+      "complex-terrain-js",
+      "patrolling-traps",
+      "instant-hit-laser"
+    ]
+  },
+  "MoveTo": {
+    "behavior_id": "MoveTo",
+    "usage_count": 34,
+    "properties": {
+      "max-speed": {
+        "prop_id": "max-speed",
+        "unique_values": [
+          "512",
+          "25",
+          "250",
+          "1000",
+          "64",
+          "200",
+          "300",
+          "160",
+          "600",
+          "800",
+          "180",
+          "400",
+          "900",
+          "50",
+          "1300",
+          "100",
+          "40",
+          "125",
+          "65",
+          "150",
+          "256"
+        ],
+        "unique_count": 21,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": 200,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": 100,
+            "source": "hexagonal-movement-js/Fly/MoveTo"
+          },
+          {
+            "value": 400,
+            "source": "balloon-blower/Balloon/MoveTo"
+          },
+          {
+            "value": 1300,
+            "source": "gallery-swipe-gesture/Sprite/MoveTo"
+          },
+          {
+            "value": 65,
+            "source": "coral-savior/Piranha/MoveTo"
+          },
+          {
+            "value": 900,
+            "source": "template-slide-puzzle/piece/MoveTo"
+          },
+          {
+            "value": 800,
+            "source": "bumble-beep/ShockwaveChargeBall/MoveTo"
+          },
+          {
+            "value": 512,
+            "source": "template-gravityless-labyrinth/PlayerCollision/MoveTo"
+          },
+          {
+            "value": 64,
+            "source": "arcade-shooter/EnemyCollision/MoveTo"
+          },
+          {
+            "value": 25,
+            "source": "channel-striker-js/EnemyJet/MoveTo"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "999999",
+          "1000",
+          "1024",
+          "2048",
+          "400",
+          "9999",
+          "2400",
+          "99999",
+          "1500",
+          "1300",
+          "900",
+          "320",
+          "600",
+          "0"
+        ],
+        "unique_count": 14,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": 600,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": 9999,
+            "source": "hexagonal-movement-js/Fly/MoveTo"
+          },
+          {
+            "value": 1300,
+            "source": "gallery-swipe-gesture/Sprite/MoveTo"
+          },
+          {
+            "value": 99999,
+            "source": "coral-savior/Piranha/MoveTo"
+          },
+          {
+            "value": 900,
+            "source": "template-slide-puzzle/piece/MoveTo"
+          },
+          {
+            "value": 2400,
+            "source": "bumble-beep/ShockwaveChargeBall/MoveTo"
+          },
+          {
+            "value": 2048,
+            "source": "template-gravityless-labyrinth/PlayerCollision/MoveTo"
+          },
+          {
+            "value": 0,
+            "source": "dash-slash/PlayerCollision/MoveTo"
+          },
+          {
+            "value": 1000,
+            "source": "fuji-leaper/FlyPatrol/MoveTo"
+          },
+          {
+            "value": 320,
+            "source": "tesla-twist/Drone/MoveTo"
+          }
+        ]
+      },
+      "deceleration": {
+        "prop_id": "deceleration",
+        "unique_values": [
+          "999999",
+          "1000",
+          "1024",
+          "2048",
+          "400",
+          "9999",
+          "2400",
+          "99999",
+          "1500",
+          "1300",
+          "900",
+          "320",
+          "600",
+          "0"
+        ],
+        "unique_count": 14,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": 600,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": 9999,
+            "source": "hexagonal-movement-js/Fly/MoveTo"
+          },
+          {
+            "value": 1300,
+            "source": "gallery-swipe-gesture/Sprite/MoveTo"
+          },
+          {
+            "value": 99999,
+            "source": "coral-savior/Piranha/MoveTo"
+          },
+          {
+            "value": 900,
+            "source": "template-slide-puzzle/piece/MoveTo"
+          },
+          {
+            "value": 2400,
+            "source": "bumble-beep/ShockwaveChargeBall/MoveTo"
+          },
+          {
+            "value": 2048,
+            "source": "template-gravityless-labyrinth/PlayerCollision/MoveTo"
+          },
+          {
+            "value": 0,
+            "source": "dash-slash/PlayerCollision/MoveTo"
+          },
+          {
+            "value": 1000,
+            "source": "fuji-leaper/FlyPatrol/MoveTo"
+          },
+          {
+            "value": 320,
+            "source": "tesla-twist/Drone/MoveTo"
+          }
+        ]
+      },
+      "rotate-speed": {
+        "prop_id": "rotate-speed",
+        "unique_values": [
+          "350",
+          "360",
+          "1080",
+          "220",
+          "0",
+          "180"
+        ],
+        "unique_count": 6,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": 0,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": 360,
+            "source": "move-to/Sprite/MoveTo"
+          },
+          {
+            "value": 1080,
+            "source": "move-along-path/Sprite/MoveTo"
+          },
+          {
+            "value": 180,
+            "source": "tesla-twist/Drone/MoveTo"
+          },
+          {
+            "value": 220,
+            "source": "tesla-twist/Drone/MoveTo"
+          },
+          {
+            "value": 350,
+            "source": "traffic-jam/CarBase/MoveTo"
+          }
+        ]
+      },
+      "set-angle": {
+        "prop_id": "set-angle",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": false,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": true,
+            "source": "move-to/Sprite/MoveTo"
+          }
+        ]
+      },
+      "stop-on-solids": {
+        "prop_id": "stop-on-solids",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": false,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": true,
+            "source": "template-gravityless-labyrinth/PlayerCollision/MoveTo"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": true,
+            "source": "train-navigation-js/TrainBase/MoveTo"
+          },
+          {
+            "value": false,
+            "source": "balloon-blower/Balloon/MoveTo"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Shape3D": 1,
+      "Sprite": 32,
+      "DrawingCanvas": 1
+    },
+    "source_projects": [
+      "traffic-jam",
+      "move-to",
+      "channel-striker-js",
+      "Entities",
+      "marble-spiral-clash",
+      "dock-fishing",
+      "template-gravityless-labyrinth",
+      "bewitched-torches",
+      "channel-striker-ts",
+      "layout-transition",
+      "hexagonal-movement-js",
+      "train-navigation-js",
+      "jungle-master",
+      "tesla-twist",
+      "guided-platforms",
+      "dash-slash",
+      "move-along-curved-path",
+      "tile-based-pathfinding",
+      "template-slide-puzzle",
+      "arcade-shooter"
+    ]
+  },
+  "bound": {
+    "behavior_id": "bound",
+    "usage_count": 32,
+    "properties": {
+      "bound-by": {
+        "prop_id": "bound-by",
+        "unique_values": [
+          "origin",
+          "edge"
+        ],
+        "unique_count": 2,
+        "total_count": 58,
+        "samples": [
+          {
+            "value": "edge",
+            "source": "graphing-calculator-js/Titlebar/BoundToLayout"
+          },
+          {
+            "value": "origin",
+            "source": "ghost-shooter-rain-demo/Player/BoundToLayout"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 32
+    },
+    "source_projects": [
+      "keyboard-mapping",
+      "space-blaster",
+      "savegames",
+      "template-monk-fight",
+      "ghost-shooter-rain-demo",
+      "sudoku-js",
+      "template-top-down-shooter",
+      "dig-the-way",
+      "neon-escape",
+      "bbc-micro-bit-controller",
+      "template-vertical-space-shooter",
+      "bullet-stepping",
+      "relic-hunter",
+      "spell-caster",
+      "world-builder-ts",
+      "arcade-shooter",
+      "detecting-input-method",
+      "blackball-billiard",
+      "rpg-encounter",
+      "instant-hit-laser"
+    ]
+  },
+  "DragnDrop": {
+    "behavior_id": "DragnDrop",
+    "usage_count": 27,
+    "properties": {
+      "axes": {
+        "prop_id": "axes",
+        "unique_values": [
+          "horizontal-only",
+          "both"
+        ],
+        "unique_count": 2,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": "both",
+            "source": "family-tree/Person/DragDrop"
+          },
+          {
+            "value": "horizontal-only",
+            "source": "audio-player/slider/DragDrop"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 116,
+        "samples": [
+          {
+            "value": true,
+            "source": "family-tree/Person/DragDrop"
+          },
+          {
+            "value": false,
+            "source": "family-tree/Person/DragDrop"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 23,
+      "TiledBg": 1,
+      "DrawingCanvas": 1,
+      "Particles": 2
+    },
+    "source_projects": [
+      "graphing-calculator-js",
+      "taking-screenshots",
+      "template-jigsaw-puzzle",
+      "particles",
+      "family-tree",
+      "mesh-distortion",
+      "place-stickers",
+      "collision-methods-js",
+      "effects-glass",
+      "effects-oldtv",
+      "audio-player",
+      "palette-sorting",
+      "collision-methods-ts",
+      "point-and-click",
+      "alchemist",
+      "blacksmith-forge",
+      "html-dialog",
+      "persistent-inventory",
+      "light-gun",
+      "screen-recording"
+    ]
+  },
+  "TileMovement": {
+    "behavior_id": "TileMovement",
+    "usage_count": 15,
+    "properties": {
+      "grid-width": {
+        "prop_id": "grid-width",
+        "unique_values": [
+          "24",
+          "16",
+          "32"
+        ],
+        "unique_count": 3,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 32,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 16,
+            "source": "template-4-direction-bomb/Player/TileMovement"
+          },
+          {
+            "value": 24,
+            "source": "bewitched-torches/Player/TileMovement"
+          }
+        ]
+      },
+      "grid-height": {
+        "prop_id": "grid-height",
+        "unique_values": [
+          "24",
+          "16",
+          "32"
+        ],
+        "unique_count": 3,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 32,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 16,
+            "source": "template-4-direction-bomb/Player/TileMovement"
+          },
+          {
+            "value": 24,
+            "source": "bewitched-torches/Player/TileMovement"
+          }
+        ]
+      },
+      "grid-offset-x": {
+        "prop_id": "grid-offset-x",
+        "unique_values": [
+          "8",
+          "0",
+          "16"
+        ],
+        "unique_count": 3,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 0,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 8,
+            "source": "shooting-cube/CubeCollision/TileMovement"
+          },
+          {
+            "value": 16,
+            "source": "dynamic-camera-system/PlayerCollision/TileMovement"
+          }
+        ]
+      },
+      "grid-offset-y": {
+        "prop_id": "grid-offset-y",
+        "unique_values": [
+          "8",
+          "0",
+          "16",
+          "12"
+        ],
+        "unique_count": 4,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 0,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 8,
+            "source": "template-4-direction-bomb/Player/TileMovement"
+          },
+          {
+            "value": 12,
+            "source": "bewitched-torches/Player/TileMovement"
+          },
+          {
+            "value": 16,
+            "source": "dynamic-camera-system/PlayerCollision/TileMovement"
+          }
+        ]
+      },
+      "speed-x": {
+        "prop_id": "speed-x",
+        "unique_values": [
+          "64",
+          "32",
+          "256",
+          "128",
+          "100",
+          "320",
+          "48",
+          "160",
+          "0"
+        ],
+        "unique_count": 9,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 100,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 0,
+            "source": "stealth-example/waypoint/TileMovement"
+          },
+          {
+            "value": 320,
+            "source": "stealth-example/guard/TileMovement"
+          },
+          {
+            "value": 256,
+            "source": "stealth-example/char/TileMovement"
+          },
+          {
+            "value": 32,
+            "source": "template-4-direction-bomb/Enemy/TileMovement"
+          },
+          {
+            "value": 128,
+            "source": "shooting-cube/CubeCollision/TileMovement"
+          },
+          {
+            "value": 64,
+            "source": "bewitched-torches/Player/TileMovement"
+          },
+          {
+            "value": 48,
+            "source": "tile-based-pathfinding/PlayerCollision/TileMovement"
+          },
+          {
+            "value": 160,
+            "source": "box-breaker/Player/TileMovement"
+          }
+        ]
+      },
+      "speed-y": {
+        "prop_id": "speed-y",
+        "unique_values": [
+          "64",
+          "32",
+          "256",
+          "128",
+          "100",
+          "320",
+          "48",
+          "160",
+          "0"
+        ],
+        "unique_count": 9,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": 100,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": 0,
+            "source": "stealth-example/waypoint/TileMovement"
+          },
+          {
+            "value": 320,
+            "source": "stealth-example/guard/TileMovement"
+          },
+          {
+            "value": 256,
+            "source": "stealth-example/char/TileMovement"
+          },
+          {
+            "value": 32,
+            "source": "template-4-direction-bomb/Enemy/TileMovement"
+          },
+          {
+            "value": 128,
+            "source": "shooting-cube/CubeCollision/TileMovement"
+          },
+          {
+            "value": 64,
+            "source": "bewitched-torches/Player/TileMovement"
+          },
+          {
+            "value": 48,
+            "source": "tile-based-pathfinding/PlayerCollision/TileMovement"
+          },
+          {
+            "value": 160,
+            "source": "box-breaker/Player/TileMovement"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": false,
+            "source": "pusha-pusha/PlayerCollision/TileMovement"
+          }
+        ]
+      },
+      "default-controls": {
+        "prop_id": "default-controls",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": false,
+            "source": "stealth-example/goal/TileMovement"
+          },
+          {
+            "value": true,
+            "source": "stealth-example/char/TileMovement"
+          }
+        ]
+      },
+      "isometric": {
+        "prop_id": "isometric",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 67,
+        "samples": [
+          {
+            "value": false,
+            "source": "stealth-example/goal/TileMovement"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 15
+    },
+    "source_projects": [
+      "template-4-direction-bomb",
+      "stealth-example",
+      "template-tile-based-game",
+      "shooting-cube",
+      "template-snake",
+      "bewitched-torches",
+      "objectTypes",
+      "tile-based-pathfinding",
+      "box-breaker",
+      "rpg-encounter",
+      "dynamic-camera-system"
+    ]
+  },
+  "Pathfinding": {
+    "behavior_id": "Pathfinding",
+    "usage_count": 14,
+    "properties": {
+      "cell-size": {
+        "prop_id": "cell-size",
+        "unique_values": [
+          "24",
+          "32",
+          "8",
+          "30",
+          "16"
+        ],
+        "unique_count": 5,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": 30,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 32,
+            "source": "template-turret-defense/Enemy/Pathfinding"
+          },
+          {
+            "value": 16,
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": 8,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          },
+          {
+            "value": 24,
+            "source": "catch-the-rats/Rat/Pathfinding"
+          }
+        ]
+      },
+      "cell-border": {
+        "prop_id": "cell-border",
+        "unique_values": [
+          "6",
+          "8",
+          "-1",
+          "0",
+          "16"
+        ],
+        "unique_count": 5,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": -1,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 6,
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": 8,
+            "source": "pathfinding-path-cost/Sprite/Pathfinding"
+          },
+          {
+            "value": 16,
+            "source": "template-real-time-strategy/Tank1Base/Pathfinding"
+          },
+          {
+            "value": 0,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          }
+        ]
+      },
+      "obstacles": {
+        "prop_id": "obstacles",
+        "unique_values": [
+          "custom",
+          "solids"
+        ],
+        "unique_count": 2,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": "solids",
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": "custom",
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          }
+        ]
+      },
+      "max-speed": {
+        "prop_id": "max-speed",
+        "unique_values": [
+          "96",
+          "32",
+          "200",
+          "128",
+          "50",
+          "320",
+          "35",
+          "60"
+        ],
+        "unique_count": 8,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": 320,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 60,
+            "source": "template-turret-defense/Enemy/Pathfinding"
+          },
+          {
+            "value": 200,
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": 50,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          },
+          {
+            "value": 35,
+            "source": "avalanche/EnemyRanged/Pathfinding"
+          },
+          {
+            "value": 32,
+            "source": "light-gun/Player/Pathfinding"
+          },
+          {
+            "value": 96,
+            "source": "tile-based-pathfinding/Chicken/Pathfinding"
+          },
+          {
+            "value": 128,
+            "source": "pixel-data-reader/PlayerCollision/Pathfinding"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "1000",
+          "1000000",
+          "1024",
+          "9999",
+          "100000000000",
+          "200",
+          "50",
+          "600"
+        ],
+        "unique_count": 8,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": 1000,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 9999,
+            "source": "template-turret-defense/Enemy/Pathfinding"
+          },
+          {
+            "value": 200,
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": 50,
+            "source": "template-real-time-strategy/Tank1Base/Pathfinding"
+          },
+          {
+            "value": 600,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          },
+          {
+            "value": 1024,
+            "source": "light-gun/Player/Pathfinding"
+          },
+          {
+            "value": 100000000000,
+            "source": "tile-based-pathfinding/Chicken/Pathfinding"
+          },
+          {
+            "value": 1000000,
+            "source": "pixel-data-reader/PlayerCollision/Pathfinding"
+          }
+        ]
+      },
+      "deceleration": {
+        "prop_id": "deceleration",
+        "unique_values": [
+          "2048",
+          "100000000000",
+          "1000000",
+          "9999",
+          "100",
+          "300",
+          "2000",
+          "600"
+        ],
+        "unique_count": 8,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": 2000,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 9999,
+            "source": "template-turret-defense/Enemy/Pathfinding"
+          },
+          {
+            "value": 300,
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": 100,
+            "source": "template-real-time-strategy/Tank1Base/Pathfinding"
+          },
+          {
+            "value": 600,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          },
+          {
+            "value": 2048,
+            "source": "light-gun/Player/Pathfinding"
+          },
+          {
+            "value": 100000000000,
+            "source": "tile-based-pathfinding/Chicken/Pathfinding"
+          },
+          {
+            "value": 1000000,
+            "source": "pixel-data-reader/PlayerCollision/Pathfinding"
+          }
+        ]
+      },
+      "rotate-speed": {
+        "prop_id": "rotate-speed",
+        "unique_values": [
+          "100000000000",
+          "1000000",
+          "360",
+          "9999",
+          "240",
+          "90",
+          "135",
+          "140"
+        ],
+        "unique_count": 8,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": 135,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": 140,
+            "source": "template-turret-defense/Enemy/Pathfinding"
+          },
+          {
+            "value": 90,
+            "source": "template-real-time-strategy/Tank1Base/Pathfinding"
+          },
+          {
+            "value": 9999,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          },
+          {
+            "value": 240,
+            "source": "light-gun/Player/Pathfinding"
+          },
+          {
+            "value": 360,
+            "source": "catch-the-rats/Rat/Pathfinding"
+          },
+          {
+            "value": 100000000000,
+            "source": "tile-based-pathfinding/Chicken/Pathfinding"
+          },
+          {
+            "value": 1000000,
+            "source": "pixel-data-reader/PlayerCollision/Pathfinding"
+          }
+        ]
+      },
+      "rotate-object": {
+        "prop_id": "rotate-object",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": false,
+            "source": "avalanche/EnemyMelee/Pathfinding"
+          }
+        ]
+      },
+      "diagonals": {
+        "prop_id": "diagonals",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/guard/Pathfinding"
+          },
+          {
+            "value": false,
+            "source": "tile-based-pathfinding/Chicken/Pathfinding"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 118,
+        "samples": [
+          {
+            "value": true,
+            "source": "stealth-example/guard/Pathfinding"
+          }
+        ]
+      },
+      "direct-movement": {
+        "prop_id": "direct-movement",
+        "unique_values": [
+          "anywhere-along-path",
+          "to-destination"
+        ],
+        "unique_count": 2,
+        "total_count": 83,
+        "samples": [
+          {
+            "value": "anywhere-along-path",
+            "source": "pathfinding-direct-movement/Sprite/Pathfinding"
+          },
+          {
+            "value": "to-destination",
+            "source": "scripting-pathfinding-ts/Sprite/Pathfinding"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 13,
+      "Shape3D": 1
+    },
+    "source_projects": [
+      "catch-the-rats",
+      "stealth-example",
+      "pixel-data-reader",
+      "template-turret-defense",
+      "scripting-pathfinding-js",
+      "pathfinding-groups",
+      "pathfinding-direct-movement",
+      "tile-based-pathfinding",
+      "Enemies",
+      "light-gun",
+      "pathfinding",
+      "pathfinding-path-cost",
+      "scripting-pathfinding-ts"
+    ]
+  },
+  "wrap": {
+    "behavior_id": "wrap",
+    "usage_count": 12,
+    "properties": {
+      "wrap-to": {
+        "prop_id": "wrap-to",
+        "unique_values": [
+          "layout"
+        ],
+        "unique_count": 1,
+        "total_count": 31,
+        "samples": [
+          {
+            "value": "layout",
+            "source": "gamepad-local-multiplayer/PlayerCollision/Wrap"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 12
+    },
+    "source_projects": [
+      "particle-thruster",
+      "bbc-micro-bit-controller",
+      "template-alien-invasion",
+      "template-vertical-space-shooter",
+      "glokar",
+      "level-editor-template",
+      "gamepad-local-multiplayer",
+      "Level Objects",
+      "template-asteroid-shooter",
+      "template-invert-gravity",
+      "custom-movement-asteroids",
+      "ghost-shooter-rain-demo"
+    ]
+  },
+  "custom": {
+    "behavior_id": "custom",
+    "usage_count": 11,
+    "properties": {
+      "stepping-mode": {
+        "prop_id": "stepping-mode",
+        "unique_values": [
+          "none",
+          "linear"
+        ],
+        "unique_count": 2,
+        "total_count": 18,
+        "samples": [
+          {
+            "value": "none",
+            "source": "air-combat/JetCollision/Custom"
+          },
+          {
+            "value": "linear",
+            "source": "airborne-explorer/Bomb/Custom"
+          }
+        ]
+      },
+      "pixels-per-step": {
+        "prop_id": "pixels-per-step",
+        "unique_values": [
+          "5"
+        ],
+        "unique_count": 1,
+        "total_count": 18,
+        "samples": [
+          {
+            "value": 5,
+            "source": "air-combat/JetCollision/Custom"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 18,
+        "samples": [
+          {
+            "value": true,
+            "source": "air-combat/JetCollision/Custom"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 11
+    },
+    "source_projects": [
+      "particle-thruster",
+      "shy-ghost",
+      "air-combat",
+      "space-bricks",
+      "objectTypes",
+      "jungle-master",
+      "template-asteroid-shooter",
+      "custom-movement-asteroids",
+      "first-person-platformer",
+      "template-flying-along"
+    ]
+  },
+  "shadowcaster": {
+    "behavior_id": "shadowcaster",
+    "usage_count": 11,
+    "properties": {
+      "height": {
+        "prop_id": "height",
+        "unique_values": [
+          "50",
+          "100",
+          "150"
+        ],
+        "unique_count": 3,
+        "total_count": 26,
+        "samples": [
+          {
+            "value": 100,
+            "source": "shadows-soft-penumbras/TiledBackground/ShadowCaster"
+          },
+          {
+            "value": 150,
+            "source": "shadows-colors/Sprite6/ShadowCaster"
+          },
+          {
+            "value": 50,
+            "source": "shadows-colors/Sprite6/ShadowCaster"
+          }
+        ]
+      },
+      "tag": {
+        "prop_id": "tag",
+        "unique_values": [
+          ""
+        ],
+        "unique_count": 1,
+        "total_count": 26,
+        "samples": [
+          {
+            "value": "",
+            "source": "shadows-soft-penumbras/TiledBackground/ShadowCaster"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 26,
+        "samples": [
+          {
+            "value": true,
+            "source": "shadows-soft-penumbras/TiledBackground/ShadowCaster"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "TiledBg": 1,
+      "Sprite": 10
+    },
+    "source_projects": [
+      "shadows-colors",
+      "shadows-blending-multiple",
+      "shadows-light-height",
+      "shadows-soft-penumbras"
+    ]
+  },
+  "Anchor": {
+    "behavior_id": "Anchor",
+    "usage_count": 9,
+    "properties": {
+      "left-edge": {
+        "prop_id": "left-edge",
+        "unique_values": [
+          "window-left"
+        ],
+        "unique_count": 1,
+        "total_count": 9,
+        "samples": [
+          {
+            "value": "window-left",
+            "source": "particle-fountain/Text/Anchor"
+          }
+        ]
+      },
+      "top-edge": {
+        "prop_id": "top-edge",
+        "unique_values": [
+          "window-bottom",
+          "window-top"
+        ],
+        "unique_count": 2,
+        "total_count": 9,
+        "samples": [
+          {
+            "value": "window-top",
+            "source": "particle-fountain/Text/Anchor"
+          },
+          {
+            "value": "window-bottom",
+            "source": "space-blaster/RocketButton/Anchor"
+          }
+        ]
+      },
+      "right-edge": {
+        "prop_id": "right-edge",
+        "unique_values": [
+          "none"
+        ],
+        "unique_count": 1,
+        "total_count": 9,
+        "samples": [
+          {
+            "value": "none",
+            "source": "particle-fountain/Text/Anchor"
+          }
+        ]
+      },
+      "bottom-edge": {
+        "prop_id": "bottom-edge",
+        "unique_values": [
+          "none"
+        ],
+        "unique_count": 1,
+        "total_count": 9,
+        "samples": [
+          {
+            "value": "none",
+            "source": "particle-fountain/Text/Anchor"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 9,
+        "samples": [
+          {
+            "value": true,
+            "source": "particle-fountain/Text/Anchor"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Text": 5,
+      "TiledBg": 3,
+      "Sprite": 1
+    },
+    "source_projects": [
+      "space-blaster",
+      "particle-fountain",
+      "particles",
+      "particle-explosions",
+      "screen-recording"
+    ]
+  },
+  "Car": {
+    "behavior_id": "Car",
+    "usage_count": 8,
+    "properties": {
+      "max-speed": {
+        "prop_id": "max-speed",
+        "unique_values": [
+          "550",
+          "280",
+          "200",
+          "500",
+          "128",
+          "100",
+          "300",
+          "600"
+        ],
+        "unique_count": 8,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 300,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 280,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 200,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 128,
+            "source": "vehicle-switching/Car/Car"
+          },
+          {
+            "value": 100,
+            "source": "multiplayer-time-attack/Peer/Car"
+          },
+          {
+            "value": 500,
+            "source": "template-driving/Car/Car"
+          },
+          {
+            "value": 600,
+            "source": "template-race-track/Car/Car"
+          },
+          {
+            "value": 550,
+            "source": "template-race-track/Car/Car"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "999999",
+          "64",
+          "200",
+          "128",
+          "25",
+          "50",
+          "100",
+          "150"
+        ],
+        "unique_count": 8,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 100,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 50,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 999999,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 128,
+            "source": "vehicle-switching/Car/Car"
+          },
+          {
+            "value": 25,
+            "source": "multiplayer-time-attack/Peer/Car"
+          },
+          {
+            "value": 64,
+            "source": "ghost-racer/PlayerCollision/Car"
+          },
+          {
+            "value": 150,
+            "source": "template-driving/Car/Car"
+          },
+          {
+            "value": 200,
+            "source": "template-race-track/Car/Car"
+          }
+        ]
+      },
+      "deceleration": {
+        "prop_id": "deceleration",
+        "unique_values": [
+          "999999",
+          "128",
+          "25",
+          "120",
+          "300"
+        ],
+        "unique_count": 5,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 300,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 120,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 999999,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 128,
+            "source": "vehicle-switching/Car/Car"
+          },
+          {
+            "value": 25,
+            "source": "multiplayer-time-attack/Peer/Car"
+          }
+        ]
+      },
+      "steer-speed": {
+        "prop_id": "steer-speed",
+        "unique_values": [
+          "110",
+          "225",
+          "90",
+          "270",
+          "140",
+          "125",
+          "160",
+          "180"
+        ],
+        "unique_count": 8,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 140,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 125,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 180,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 160,
+            "source": "vehicle-switching/Car/Car"
+          },
+          {
+            "value": 110,
+            "source": "multiplayer-time-attack/Peer/Car"
+          },
+          {
+            "value": 90,
+            "source": "ghost-racer/PlayerCollision/Car"
+          },
+          {
+            "value": 270,
+            "source": "template-driving/Car/Car"
+          },
+          {
+            "value": 225,
+            "source": "template-race-track/Car/Car"
+          }
+        ]
+      },
+      "drift-recover": {
+        "prop_id": "drift-recover",
+        "unique_values": [
+          "999999",
+          "225",
+          "185",
+          "120",
+          "100",
+          "45",
+          "160",
+          "60"
+        ],
+        "unique_count": 8,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 100,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 45,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 999999,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 160,
+            "source": "vehicle-switching/Car/Car"
+          },
+          {
+            "value": 120,
+            "source": "multiplayer-time-attack/Peer/Car"
+          },
+          {
+            "value": 60,
+            "source": "ghost-racer/PlayerCollision/Car"
+          },
+          {
+            "value": 225,
+            "source": "template-driving/Car/Car"
+          },
+          {
+            "value": 185,
+            "source": "template-race-track/Car/Car"
+          }
+        ]
+      },
+      "friction": {
+        "prop_id": "friction",
+        "unique_values": [
+          "0.4",
+          "1",
+          "0.5",
+          "0.99"
+        ],
+        "unique_count": 4,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": 0.5,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": 0.99,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          },
+          {
+            "value": 0.4,
+            "source": "template-first-person-shooter/Player/Car"
+          },
+          {
+            "value": 1,
+            "source": "multiplayer-time-attack/Peer/Car"
+          }
+        ]
+      },
+      "turn-while-stopped": {
+        "prop_id": "turn-while-stopped",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 7,
+        "samples": [
+          {
+            "value": false,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": true,
+            "source": "template-first-person-shooter/Player/Car"
+          }
+        ]
+      },
+      "set-angle": {
+        "prop_id": "set-angle",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": true,
+            "source": "license-test/Car/Car"
+          }
+        ]
+      },
+      "default-controls": {
+        "prop_id": "default-controls",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": false,
+            "source": "license-test/Car/Car"
+          },
+          {
+            "value": true,
+            "source": "rally-drifting-js/PlayerCar/Car"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 13,
+        "samples": [
+          {
+            "value": true,
+            "source": "license-test/Car/Car"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Shape3D": 3,
+      "Sprite": 5
+    },
+    "source_projects": [
+      "rally-drifting-ts",
+      "template-driving",
+      "objectTypes",
+      "ghost-racer",
+      "template-race-track",
+      "template-first-person-shooter",
+      "license-test",
+      "rally-drifting-js"
+    ]
+  },
+  "jumpthru": {
+    "behavior_id": "jumpthru",
+    "usage_count": 8,
+    "properties": {
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 231,
+        "samples": [
+          {
+            "value": false,
+            "source": "kiwi-story/Collisions/Jumpthru"
+          },
+          {
+            "value": true,
+            "source": "kiwi-story/JumpThru/Jumpthru"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 7,
+      "TiledBg": 1
+    },
+    "source_projects": [
+      "mask-effect-puzzle",
+      "orbiting-platforms",
+      "template-platformer",
+      "hook-shot",
+      "template-physics-soccer",
+      "tank-pilot",
+      "template-infinite-jumping",
+      "ceiling-trap"
+    ]
+  },
+  "Turret": {
+    "behavior_id": "Turret",
+    "usage_count": 6,
+    "properties": {
+      "range": {
+        "prop_id": "range",
+        "unique_values": [
+          "1000",
+          "1024",
+          "100",
+          "300",
+          "8000"
+        ],
+        "unique_count": 5,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": 100,
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": 1024,
+            "source": "run-n-gun-weapons/Missile/Turret"
+          },
+          {
+            "value": 300,
+            "source": "template-real-time-strategy/Tank1Turret/Turret"
+          },
+          {
+            "value": 1000,
+            "source": "turret-predictive-aim/Turret/Turret"
+          },
+          {
+            "value": 8000,
+            "source": "grukkle-onslaught/GPTowerTurret/Turret"
+          }
+        ]
+      },
+      "rate-of-fire": {
+        "prop_id": "rate-of-fire",
+        "unique_values": [
+          "0.3",
+          "1",
+          "0.5",
+          "0"
+        ],
+        "unique_count": 4,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": 0.3,
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": 0,
+            "source": "run-n-gun-weapons/Missile/Turret"
+          },
+          {
+            "value": 1,
+            "source": "template-real-time-strategy/Tank1Turret/Turret"
+          },
+          {
+            "value": 0.5,
+            "source": "turret-predictive-aim/Turret/Turret"
+          }
+        ]
+      },
+      "rotate": {
+        "prop_id": "rotate",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Turret/Turret"
+          }
+        ]
+      },
+      "rotate-speed": {
+        "prop_id": "rotate-speed",
+        "unique_values": [
+          "135",
+          "60",
+          "360",
+          "9999"
+        ],
+        "unique_count": 4,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": 360,
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": 60,
+            "source": "template-real-time-strategy/Tank1Turret/Turret"
+          },
+          {
+            "value": 135,
+            "source": "turret-predictive-aim/Turret/Turret"
+          },
+          {
+            "value": 9999,
+            "source": "grukkle-onslaught/GPTowerTurret/Turret"
+          }
+        ]
+      },
+      "target-mode": {
+        "prop_id": "target-mode",
+        "unique_values": [
+          "nearest",
+          "first-in-range"
+        ],
+        "unique_count": 2,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": "first-in-range",
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": "nearest",
+            "source": "run-n-gun-weapons/Missile/Turret"
+          }
+        ]
+      },
+      "predictive-aim": {
+        "prop_id": "predictive-aim",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": false,
+            "source": "run-n-gun-weapons/Missile/Turret"
+          }
+        ]
+      },
+      "projectile-speed": {
+        "prop_id": "projectile-speed",
+        "unique_values": [
+          "500",
+          "400",
+          "700"
+        ],
+        "unique_count": 3,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": 400,
+            "source": "template-turret-defense/Turret/Turret"
+          },
+          {
+            "value": 500,
+            "source": "run-n-gun-weapons/Missile/Turret"
+          },
+          {
+            "value": 700,
+            "source": "grukkle-onslaught/GPTowerTurret/Turret"
+          }
+        ]
+      },
+      "use-collision-cells": {
+        "prop_id": "use-collision-cells",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Turret/Turret"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 36,
+        "samples": [
+          {
+            "value": true,
+            "source": "template-turret-defense/Turret/Turret"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 6
+    },
+    "source_projects": [
+      "turret-predictive-aim",
+      "turret-behavior",
+      "template-turret-defense",
+      "Entities",
+      "run-n-gun-weapons"
+    ]
+  },
+  "Follow": {
+    "behavior_id": "Follow",
+    "usage_count": 6,
+    "properties": {
+      "mode": {
+        "prop_id": "mode",
+        "unique_values": [
+          "distance",
+          "time"
+        ],
+        "unique_count": 2,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": "time",
+            "source": "follow-record-replay/Player/Follow"
+          },
+          {
+            "value": "distance",
+            "source": "simple-snake-game/SnakeBody/Follow"
+          }
+        ]
+      },
+      "delay": {
+        "prop_id": "delay",
+        "unique_values": [
+          "10",
+          "1",
+          "0",
+          "16"
+        ],
+        "unique_count": 4,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": 10,
+            "source": "follow-record-replay/Player/Follow"
+          },
+          {
+            "value": 1,
+            "source": "follow-behavior/PlayerFollower/Follow"
+          },
+          {
+            "value": 16,
+            "source": "simple-snake-game/SnakeBody/Follow"
+          },
+          {
+            "value": 0,
+            "source": "follow-rewind-time/Player/Follow"
+          }
+        ]
+      },
+      "max-delay": {
+        "prop_id": "max-delay",
+        "unique_values": [
+          "10",
+          "1",
+          "30",
+          "32"
+        ],
+        "unique_count": 4,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": 10,
+            "source": "follow-record-replay/Player/Follow"
+          },
+          {
+            "value": 1,
+            "source": "follow-behavior/PlayerFollower/Follow"
+          },
+          {
+            "value": 32,
+            "source": "simple-snake-game/SnakeBody/Follow"
+          },
+          {
+            "value": 30,
+            "source": "follow-rewind-time/Player/Follow"
+          }
+        ]
+      },
+      "history-rate": {
+        "prop_id": "history-rate",
+        "unique_values": [
+          "30"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": 30,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-x": {
+        "prop_id": "follow-x",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": true,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-y": {
+        "prop_id": "follow-y",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": true,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-z-elevation": {
+        "prop_id": "follow-z-elevation",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-width": {
+        "prop_id": "follow-width",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": true,
+            "source": "follow-record-replay/Player/Follow"
+          },
+          {
+            "value": false,
+            "source": "relic-hunter/Ghost/Follow"
+          }
+        ]
+      },
+      "follow-height": {
+        "prop_id": "follow-height",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-angle": {
+        "prop_id": "follow-angle",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-opacity": {
+        "prop_id": "follow-opacity",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-visibility": {
+        "prop_id": "follow-visibility",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      },
+      "follow-destroyed": {
+        "prop_id": "follow-destroyed",
+        "unique_values": [
+          "True",
+          "False"
+        ],
+        "unique_count": 2,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": false,
+            "source": "follow-record-replay/Player/Follow"
+          },
+          {
+            "value": true,
+            "source": "follow-behavior/PlayerFollower/Follow"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 6,
+        "samples": [
+          {
+            "value": true,
+            "source": "follow-record-replay/Player/Follow"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 6
+    },
+    "source_projects": [
+      "follow-rewind-time",
+      "relic-hunter",
+      "simple-snake-game",
+      "follow-behavior",
+      "follow-custom-properties",
+      "follow-record-replay"
+    ]
+  },
+  "Orbit": {
+    "behavior_id": "Orbit",
+    "usage_count": 3,
+    "properties": {
+      "speed": {
+        "prop_id": "speed",
+        "unique_values": [
+          "120",
+          "0"
+        ],
+        "unique_count": 2,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": 0,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          },
+          {
+            "value": 120,
+            "source": "grukkle-onslaught/MMPlanet/Orbit"
+          }
+        ]
+      },
+      "acceleration": {
+        "prop_id": "acceleration",
+        "unique_values": [
+          "0"
+        ],
+        "unique_count": 1,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": 0,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          }
+        ]
+      },
+      "primary-axis": {
+        "prop_id": "primary-axis",
+        "unique_values": [
+          "100",
+          "0"
+        ],
+        "unique_count": 2,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": 0,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          },
+          {
+            "value": 100,
+            "source": "grukkle-onslaught/MMPlanet/Orbit"
+          }
+        ]
+      },
+      "secondary-axis": {
+        "prop_id": "secondary-axis",
+        "unique_values": [
+          "100",
+          "0"
+        ],
+        "unique_count": 2,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": 0,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          },
+          {
+            "value": 100,
+            "source": "grukkle-onslaught/MMPlanet/Orbit"
+          }
+        ]
+      },
+      "offset-angle": {
+        "prop_id": "offset-angle",
+        "unique_values": [
+          "0"
+        ],
+        "unique_count": 1,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": 0,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          }
+        ]
+      },
+      "match-rotation": {
+        "prop_id": "match-rotation",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": false,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          }
+        ]
+      },
+      "enabled": {
+        "prop_id": "enabled",
+        "unique_values": [
+          "True"
+        ],
+        "unique_count": 1,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": true,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          }
+        ]
+      },
+      "live-preview": {
+        "prop_id": "live-preview",
+        "unique_values": [
+          "False"
+        ],
+        "unique_count": 1,
+        "total_count": 3,
+        "samples": [
+          {
+            "value": false,
+            "source": "orbiting-platforms/OrbitingPlatform/Orbit"
+          }
+        ]
+      }
+    },
+    "attached_to_plugins": {
+      "Sprite": 3
+    },
+    "source_projects": [
+      "orbiting-platforms",
+      "MainMenu",
+      "fire-bars"
+    ]
+  },
+  "Persist": {
+    "behavior_id": "Persist",
+    "usage_count": 1,
+    "properties": {},
+    "attached_to_plugins": {
+      "Sprite": 1
+    },
+    "source_projects": [
+      "persistent-layouts"
+    ]
+  }
+}

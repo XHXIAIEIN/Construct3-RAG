@@ -1,0 +1,1089 @@
+{
+  "top_conditions": [
+    {
+      "key": "System.else",
+      "ace_id": "else",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 1260,
+      "params": []
+    },
+    {
+      "key": "System.evaluate-expression",
+      "ace_id": "evaluate-expression",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 1195,
+      "params": [
+        "value"
+      ]
+    },
+    {
+      "key": "Keyboard.key-is-down",
+      "ace_id": "key-is-down",
+      "object_class": "Keyboard",
+      "behavior_type": null,
+      "usage_count": 618,
+      "params": [
+        "key"
+      ]
+    },
+    {
+      "key": "System.for-each",
+      "ace_id": "for-each",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 496,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Keyboard.on-key-pressed",
+      "ace_id": "on-key-pressed",
+      "object_class": "Keyboard",
+      "behavior_type": null,
+      "usage_count": 488,
+      "params": [
+        "key"
+      ]
+    },
+    {
+      "key": "System.on-start-of-layout",
+      "ace_id": "on-start-of-layout",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 476,
+      "params": []
+    },
+    {
+      "key": "System.compare-eventvar",
+      "ace_id": "compare-eventvar",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 469,
+      "params": [
+        "variable",
+        "comparison",
+        "value"
+      ]
+    },
+    {
+      "key": "System.compare-two-values",
+      "ace_id": "compare-two-values",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 402,
+      "params": [
+        "first-value",
+        "comparison",
+        "second-value"
+      ]
+    },
+    {
+      "key": "System.every-tick",
+      "ace_id": "every-tick",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 391,
+      "params": []
+    },
+    {
+      "key": "Gamepad.is-button-down",
+      "ace_id": "is-button-down",
+      "object_class": "Gamepad",
+      "behavior_type": null,
+      "usage_count": 370,
+      "params": [
+        "gamepad",
+        "button"
+      ]
+    },
+    {
+      "key": "System.compare-boolean-eventvar",
+      "ace_id": "compare-boolean-eventvar",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 360,
+      "params": [
+        "variable"
+      ]
+    },
+    {
+      "key": "Gamepad.on-button-pressed",
+      "ace_id": "on-button-pressed",
+      "object_class": "Gamepad",
+      "behavior_type": null,
+      "usage_count": 268,
+      "params": [
+        "gamepad",
+        "button"
+      ]
+    },
+    {
+      "key": "System.for",
+      "ace_id": "for",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 261,
+      "params": [
+        "name",
+        "start-index",
+        "end-index"
+      ]
+    },
+    {
+      "key": "System.pick-by-evaluate",
+      "ace_id": "pick-by-evaluate",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 237,
+      "params": [
+        "object",
+        "expression"
+      ]
+    },
+    {
+      "key": "System.every-x-seconds",
+      "ace_id": "every-x-seconds",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 216,
+      "params": [
+        "interval-seconds"
+      ]
+    },
+    {
+      "key": "System.repeat",
+      "ace_id": "repeat",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 183,
+      "params": [
+        "count"
+      ]
+    },
+    {
+      "key": "System.pick-by-comparison",
+      "ace_id": "pick-by-comparison",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 161,
+      "params": [
+        "object",
+        "expression",
+        "comparison",
+        "value"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.is-on-floor",
+      "ace_id": "is-on-floor",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 106,
+      "params": []
+    },
+    {
+      "key": "System.trigger-once-while-true",
+      "ace_id": "trigger-once-while-true",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 103,
+      "params": []
+    },
+    {
+      "key": "PlayerCollision.on-collision-with-another-object",
+      "ace_id": "on-collision-with-another-object",
+      "object_class": "PlayerCollision",
+      "behavior_type": null,
+      "usage_count": 103,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.is-moving",
+      "ace_id": "is-moving",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 92,
+      "params": []
+    },
+    {
+      "key": "GameManager:Timer.on-timer",
+      "ace_id": "on-timer",
+      "object_class": "GameManager",
+      "behavior_type": "Timer",
+      "usage_count": 76,
+      "params": [
+        "tag"
+      ]
+    },
+    {
+      "key": "Touch.is-touching-object",
+      "ace_id": "is-touching-object",
+      "object_class": "Touch",
+      "behavior_type": null,
+      "usage_count": 67,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Player.is-boolean-instance-variable-set",
+      "ace_id": "is-boolean-instance-variable-set",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 64,
+      "params": [
+        "instance-variable"
+      ]
+    },
+    {
+      "key": "Player.compare-instance-variable",
+      "ace_id": "compare-instance-variable",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 59,
+      "params": [
+        "instance-variable",
+        "comparison",
+        "value"
+      ]
+    },
+    {
+      "key": "PlayerGraphics.on-created",
+      "ace_id": "on-created",
+      "object_class": "PlayerGraphics",
+      "behavior_type": null,
+      "usage_count": 58,
+      "params": []
+    },
+    {
+      "key": "System.while",
+      "ace_id": "while",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 56,
+      "params": []
+    },
+    {
+      "key": "PlayerCollision.is-overlapping-another-object",
+      "ace_id": "is-overlapping-another-object",
+      "object_class": "PlayerCollision",
+      "behavior_type": null,
+      "usage_count": 55,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.is-falling",
+      "ace_id": "is-falling",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 51,
+      "params": []
+    },
+    {
+      "key": "Player.is-overlapping-another-object",
+      "ace_id": "is-overlapping-another-object",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 49,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.is-jumping",
+      "ace_id": "is-jumping",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 48,
+      "params": []
+    },
+    {
+      "key": "GameManager:Tween.is-playing",
+      "ace_id": "is-playing",
+      "object_class": "GameManager",
+      "behavior_type": "Tween",
+      "usage_count": 47,
+      "params": [
+        "tags"
+      ]
+    },
+    {
+      "key": "Mouse.cursor-is-over-object",
+      "ace_id": "cursor-is-over-object",
+      "object_class": "Mouse",
+      "behavior_type": null,
+      "usage_count": 46,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Touch.on-touched-object",
+      "ace_id": "on-touched-object",
+      "object_class": "Touch",
+      "behavior_type": null,
+      "usage_count": 42,
+      "params": [
+        "object",
+        "type"
+      ]
+    },
+    {
+      "key": "System.pick-all",
+      "ace_id": "pick-all",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 40,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "System.for-each-ordered",
+      "ace_id": "for-each-ordered",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 39,
+      "params": [
+        "object",
+        "expression",
+        "order"
+      ]
+    },
+    {
+      "key": "System.pick-random-instance",
+      "ace_id": "pick-random-instance",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 37,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Gamepad.compare-axis",
+      "ace_id": "compare-axis",
+      "object_class": "Gamepad",
+      "behavior_type": null,
+      "usage_count": 36,
+      "params": [
+        "gamepad",
+        "axis",
+        "comparison",
+        "value"
+      ]
+    },
+    {
+      "key": "Block.compare-instance-variable",
+      "ace_id": "compare-instance-variable",
+      "object_class": "Block",
+      "behavior_type": null,
+      "usage_count": 36,
+      "params": [
+        "instance-variable",
+        "comparison",
+        "value"
+      ]
+    },
+    {
+      "key": "Touch.on-tap-object",
+      "ace_id": "on-tap-object",
+      "object_class": "Touch",
+      "behavior_type": null,
+      "usage_count": 35,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Touch.on-any-touch-start",
+      "ace_id": "on-any-touch-start",
+      "object_class": "Touch",
+      "behavior_type": null,
+      "usage_count": 35,
+      "params": []
+    },
+    {
+      "key": "PlayerCollision:Platform.on-landed",
+      "ace_id": "on-landed",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 35,
+      "params": []
+    },
+    {
+      "key": "Mouse.on-object-clicked",
+      "ace_id": "on-object-clicked",
+      "object_class": "Mouse",
+      "behavior_type": null,
+      "usage_count": 32,
+      "params": [
+        "mouse-button",
+        "click-type",
+        "object-clicked"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.on-jump",
+      "ace_id": "on-jump",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 32,
+      "params": []
+    },
+    {
+      "key": "Bullet.on-collision-with-another-object",
+      "ace_id": "on-collision-with-another-object",
+      "object_class": "Bullet",
+      "behavior_type": null,
+      "usage_count": 31,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Tween.is-playing",
+      "ace_id": "is-playing",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Tween",
+      "usage_count": 31,
+      "params": [
+        "tags"
+      ]
+    },
+    {
+      "key": "Mouse.on-click",
+      "ace_id": "on-click",
+      "object_class": "Mouse",
+      "behavior_type": null,
+      "usage_count": 30,
+      "params": [
+        "mouse-button",
+        "click-type"
+      ]
+    },
+    {
+      "key": "Player.on-collision-with-another-object",
+      "ace_id": "on-collision-with-another-object",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 29,
+      "params": [
+        "object"
+      ]
+    },
+    {
+      "key": "Mouse.mouse-button-is-down",
+      "ace_id": "mouse-button-is-down",
+      "object_class": "Mouse",
+      "behavior_type": null,
+      "usage_count": 28,
+      "params": [
+        "mouse-button"
+      ]
+    },
+    {
+      "key": "Dictionary.compare-value",
+      "ace_id": "compare-value",
+      "object_class": "Dictionary",
+      "behavior_type": null,
+      "usage_count": 27,
+      "params": [
+        "key",
+        "comparison",
+        "value"
+      ]
+    }
+  ],
+  "top_actions": [
+    {
+      "key": "Unknown.callFunction",
+      "ace_id": "callFunction",
+      "object_class": "Unknown",
+      "behavior_type": null,
+      "usage_count": 1948,
+      "params": []
+    },
+    {
+      "key": "System.set-eventvar-value",
+      "ace_id": "set-eventvar-value",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 1715,
+      "params": [
+        "variable",
+        "value"
+      ]
+    },
+    {
+      "key": "System.create-object",
+      "ace_id": "create-object",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 780,
+      "params": [
+        "object-to-create",
+        "layer",
+        "x",
+        "y",
+        "create-hierarchy",
+        "template-name"
+      ]
+    },
+    {
+      "key": "System.wait",
+      "ace_id": "wait",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 411,
+      "params": [
+        "seconds",
+        "use-timescale"
+      ]
+    },
+    {
+      "key": "System.set-boolean-eventvar",
+      "ace_id": "set-boolean-eventvar",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 403,
+      "params": [
+        "variable",
+        "value"
+      ]
+    },
+    {
+      "key": "System.wait-for-previous-actions",
+      "ace_id": "wait-for-previous-actions",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 267,
+      "params": []
+    },
+    {
+      "key": "PlayerGraphics.set-animation",
+      "ace_id": "set-animation",
+      "object_class": "PlayerGraphics",
+      "behavior_type": null,
+      "usage_count": 243,
+      "params": [
+        "animation",
+        "from"
+      ]
+    },
+    {
+      "key": "Audio.play",
+      "ace_id": "play",
+      "object_class": "Audio",
+      "behavior_type": null,
+      "usage_count": 226,
+      "params": [
+        "audio-file",
+        "loop",
+        "volume",
+        "stereo-pan",
+        "tag-optional"
+      ]
+    },
+    {
+      "key": "System.restart-layout",
+      "ace_id": "restart-layout",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 225,
+      "params": []
+    },
+    {
+      "key": "System.set-group-active",
+      "ace_id": "set-group-active",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 212,
+      "params": [
+        "group-name",
+        "state"
+      ]
+    },
+    {
+      "key": "System.add-to-eventvar",
+      "ace_id": "add-to-eventvar",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 199,
+      "params": [
+        "variable",
+        "value"
+      ]
+    },
+    {
+      "key": "Fader:Tween.tween-one-property",
+      "ace_id": "tween-one-property",
+      "object_class": "Fader",
+      "behavior_type": "Tween",
+      "usage_count": 174,
+      "params": [
+        "tags",
+        "property",
+        "end-value",
+        "time",
+        "ease",
+        "destroy-on-complete",
+        "loop",
+        "ping-pong",
+        "repeat-count"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.simulate-control",
+      "ace_id": "simulate-control",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 157,
+      "params": [
+        "control"
+      ]
+    },
+    {
+      "key": "Functions.set-function-return-value",
+      "ace_id": "set-function-return-value",
+      "object_class": "Functions",
+      "behavior_type": null,
+      "usage_count": 144,
+      "params": [
+        "value"
+      ]
+    },
+    {
+      "key": "System.reset-global-variables",
+      "ace_id": "reset-global-variables",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 116,
+      "params": [
+        "reset-static"
+      ]
+    },
+    {
+      "key": "GameManager:Timer.start-timer",
+      "ace_id": "start-timer",
+      "object_class": "GameManager",
+      "behavior_type": "Timer",
+      "usage_count": 103,
+      "params": [
+        "duration",
+        "type",
+        "tag"
+      ]
+    },
+    {
+      "key": "PlayerGraphics.spawn-another-object",
+      "ace_id": "spawn-another-object",
+      "object_class": "PlayerGraphics",
+      "behavior_type": null,
+      "usage_count": 97,
+      "params": [
+        "object",
+        "layer",
+        "image-point",
+        "create-hierarchy",
+        "template-name"
+      ]
+    },
+    {
+      "key": "System.go-to-layout",
+      "ace_id": "go-to-layout",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 87,
+      "params": [
+        "layout"
+      ]
+    },
+    {
+      "key": "Text.set-text",
+      "ace_id": "set-text",
+      "object_class": "Text",
+      "behavior_type": null,
+      "usage_count": 80,
+      "params": [
+        "text"
+      ]
+    },
+    {
+      "key": "Audio.fade-volume",
+      "ace_id": "fade-volume",
+      "object_class": "Audio",
+      "behavior_type": null,
+      "usage_count": 76,
+      "params": [
+        "tag",
+        "db",
+        "duration",
+        "ending"
+      ]
+    },
+    {
+      "key": "3DCamera.look-at-position",
+      "ace_id": "look-at-position",
+      "object_class": "3DCamera",
+      "behavior_type": null,
+      "usage_count": 73,
+      "params": [
+        "cam-x",
+        "cam-y",
+        "cam-z",
+        "look-x",
+        "look-y",
+        "look-z",
+        "up-x",
+        "up-y",
+        "up-z"
+      ]
+    },
+    {
+      "key": "PlayerCollision.add-child",
+      "ace_id": "add-child",
+      "object_class": "PlayerCollision",
+      "behavior_type": null,
+      "usage_count": 70,
+      "params": [
+        "child",
+        "transform-x",
+        "transform-y",
+        "transform-w",
+        "transform-h",
+        "transform-a",
+        "transform-z-elevation",
+        "destroy-with-parent",
+        "transform-o",
+        "transform-visibility"
+      ]
+    },
+    {
+      "key": "PlayerGraphics.set-mirrored",
+      "ace_id": "set-mirrored",
+      "object_class": "PlayerGraphics",
+      "behavior_type": null,
+      "usage_count": 66,
+      "params": [
+        "state"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.set-vector-y",
+      "ace_id": "set-vector-y",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 63,
+      "params": [
+        "vector-y"
+      ]
+    },
+    {
+      "key": "PlayerCollision.spawn-another-object",
+      "ace_id": "spawn-another-object",
+      "object_class": "PlayerCollision",
+      "behavior_type": null,
+      "usage_count": 61,
+      "params": [
+        "object",
+        "layer",
+        "image-point",
+        "create-hierarchy",
+        "template-name"
+      ]
+    },
+    {
+      "key": "Player.set-animation",
+      "ace_id": "set-animation",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 59,
+      "params": [
+        "animation",
+        "from"
+      ]
+    },
+    {
+      "key": "GameManager:Tween.tween-value",
+      "ace_id": "tween-value",
+      "object_class": "GameManager",
+      "behavior_type": "Tween",
+      "usage_count": 58,
+      "params": [
+        "tags",
+        "start-value",
+        "end-value",
+        "time",
+        "ease",
+        "destroy-on-complete",
+        "loop",
+        "ping-pong",
+        "repeat-count"
+      ]
+    },
+    {
+      "key": "AJAX.request-project-file",
+      "ace_id": "request-project-file",
+      "object_class": "AJAX",
+      "behavior_type": null,
+      "usage_count": 58,
+      "params": [
+        "tag",
+        "file"
+      ]
+    },
+    {
+      "key": "System.set-layer-visible",
+      "ace_id": "set-layer-visible",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 57,
+      "params": [
+        "layer",
+        "visibility"
+      ]
+    },
+    {
+      "key": "PlayerGraphics.set-position-to-another-object",
+      "ace_id": "set-position-to-another-object",
+      "object_class": "PlayerGraphics",
+      "behavior_type": null,
+      "usage_count": 56,
+      "params": [
+        "object",
+        "image-point-optional"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.set-vector-x",
+      "ace_id": "set-vector-x",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 53,
+      "params": [
+        "vector-x"
+      ]
+    },
+    {
+      "key": "PlayerCollision:Platform.set-enabled",
+      "ace_id": "set-enabled",
+      "object_class": "PlayerCollision",
+      "behavior_type": "Platform",
+      "usage_count": 53,
+      "params": [
+        "state"
+      ]
+    },
+    {
+      "key": "System.set-time-scale",
+      "ace_id": "set-time-scale",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 53,
+      "params": [
+        "time-scale"
+      ]
+    },
+    {
+      "key": "Player.set-boolean-instvar",
+      "ace_id": "set-boolean-instvar",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 53,
+      "params": [
+        "instance-variable",
+        "value"
+      ]
+    },
+    {
+      "key": "Player.set-instvar-value",
+      "ace_id": "set-instvar-value",
+      "object_class": "Player",
+      "behavior_type": null,
+      "usage_count": 53,
+      "params": [
+        "instance-variable",
+        "value"
+      ]
+    },
+    {
+      "key": "StatusText.set-text",
+      "ace_id": "set-text",
+      "object_class": "StatusText",
+      "behavior_type": null,
+      "usage_count": 48,
+      "params": [
+        "text"
+      ]
+    },
+    {
+      "key": "System.stop-loop",
+      "ace_id": "stop-loop",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 47,
+      "params": []
+    },
+    {
+      "key": "Dictionary.add-key",
+      "ace_id": "add-key",
+      "object_class": "Dictionary",
+      "behavior_type": null,
+      "usage_count": 46,
+      "params": [
+        "key",
+        "value"
+      ]
+    },
+    {
+      "key": "DictProfile.set-key",
+      "ace_id": "set-key",
+      "object_class": "DictProfile",
+      "behavior_type": null,
+      "usage_count": 46,
+      "params": [
+        "key",
+        "value"
+      ]
+    },
+    {
+      "key": "System.set-object-time-scale",
+      "ace_id": "set-object-time-scale",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 45,
+      "params": [
+        "object",
+        "time-scale"
+      ]
+    },
+    {
+      "key": "System.scroll-to-position",
+      "ace_id": "scroll-to-position",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 43,
+      "params": [
+        "x",
+        "y"
+      ]
+    },
+    {
+      "key": "System.set-layer-scale",
+      "ace_id": "set-layer-scale",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 41,
+      "params": [
+        "layer",
+        "scale"
+      ]
+    },
+    {
+      "key": "LocalStorage.set-item",
+      "ace_id": "set-item",
+      "object_class": "LocalStorage",
+      "behavior_type": null,
+      "usage_count": 41,
+      "params": [
+        "key",
+        "value"
+      ]
+    },
+    {
+      "key": "Peer.set-instvar-value",
+      "ace_id": "set-instvar-value",
+      "object_class": "Peer",
+      "behavior_type": null,
+      "usage_count": 41,
+      "params": [
+        "instance-variable",
+        "value"
+      ]
+    },
+    {
+      "key": "System.subtract-from-eventvar",
+      "ace_id": "subtract-from-eventvar",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 40,
+      "params": [
+        "variable",
+        "value"
+      ]
+    },
+    {
+      "key": "System.set-layer-effect-parameter",
+      "ace_id": "set-layer-effect-parameter",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 39,
+      "params": [
+        "layer",
+        "effect",
+        "parameter-index",
+        "value"
+      ]
+    },
+    {
+      "key": "Audio.play-by-name",
+      "ace_id": "play-by-name",
+      "object_class": "Audio",
+      "behavior_type": null,
+      "usage_count": 37,
+      "params": [
+        "folder",
+        "audio-file-name",
+        "loop",
+        "volume",
+        "stereo-pan",
+        "tag-optional"
+      ]
+    },
+    {
+      "key": "System.set-layout-scale",
+      "ace_id": "set-layout-scale",
+      "object_class": "System",
+      "behavior_type": null,
+      "usage_count": 37,
+      "params": [
+        "scale"
+      ]
+    },
+    {
+      "key": "Player:8Direction.simulate-control",
+      "ace_id": "simulate-control",
+      "object_class": "Player",
+      "behavior_type": "8Direction",
+      "usage_count": 36,
+      "params": [
+        "control"
+      ]
+    },
+    {
+      "key": "Block.set-instvar-value",
+      "ace_id": "set-instvar-value",
+      "object_class": "Block",
+      "behavior_type": null,
+      "usage_count": 35,
+      "params": [
+        "instance-variable",
+        "value"
+      ]
+    }
+  ],
+  "statistics": {
+    "unique_conditions": 2491,
+    "unique_actions": 6199,
+    "total_events": 11424,
+    "files_analyzed": 497
+  }
+}
