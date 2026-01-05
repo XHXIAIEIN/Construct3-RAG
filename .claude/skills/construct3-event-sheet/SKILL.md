@@ -255,48 +255,6 @@ await navigator.clipboard.write([new ClipboardItem({'text/plain': blob})]);
 | 缺少内嵌引号 | 用 `"\"value\""` 格式 |
 | 特殊字符 | 正确转义 |
 
-## 统计概览
+## 数据来源
 
-基于 490 个官方示例项目分析：
-
-| 类别 | 数量 |
-|------|------|
-| 分析文件数 | 9,491 |
-| 插件类型 | 56 |
-| 行为类型 | 30 |
-| 条件定义 | 2,493 |
-| 动作定义 | 6,204 |
-
-### Top 5 常用插件
-1. **Sprite** (3,404次) - 核心可视对象
-2. **Shape3D** (831次) - 3D 形状
-3. **TiledBg** (704次) - 平铺背景
-4. **Text** (573次) - 文本显示
-5. **Keyboard** (252次) - 键盘输入
-
-### Top 5 常用行为
-1. **Tween** (1,018次) - 属性动画
-2. **solid** (310次) - 固体碰撞
-3. **Timer** (238次) - 定时器
-4. **Sin** (214次) - 正弦运动
-5. **Fade** (183次) - 淡入淡出
-
-### Top 5 常用条件
-1. **System.else** (1,261次) - 否则
-2. **System.evaluate-expression** (1,195次) - 表达式求值
-3. **Keyboard.key-is-down** (618次) - 按键检测
-4. **System.for-each** (497次) - 遍历对象
-5. **Keyboard.on-key-pressed** (488次) - 按键触发
-
-### Top 5 常用动作
-1. **System.set-eventvar-value** (1,726次) - 设置变量
-2. **System.create-object** (781次) - 创建对象
-3. **System.wait** (411次) - 等待
-4. **System.set-boolean-eventvar** (405次) - 设置布尔变量
-5. **System.wait-for-previous-actions** (267次) - 等待前置动作
-
-## 相关资源
-
-- **Schema 文件**: `data/schemas/plugins/*.json`, `data/schemas/behaviors/*.json`
-- **完整知识库**: `data/project_analysis/complete_knowledge_base.json`
-- **官方文档**: https://www.construct.net/en/make-games/manuals/construct-3
+基于 490 个官方示例项目分析。详细统计见 `data/project_analysis/sorted_indexes.json`。
