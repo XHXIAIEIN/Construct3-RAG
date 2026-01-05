@@ -76,19 +76,15 @@ Behavior ACE: add `"behaviorType": "{BehaviorName}"` field.
 When reference files lack detail, query the full data:
 
 ```bash
-# Query ACE schema
-python scripts/query.py schema plugin sprite set-animation
-python scripts/query.py schema behavior platform
+# Query ACE schema definitions
+python scripts/query_schema.py plugin sprite set-animation
+python scripts/query_schema.py behavior platform
+python scripts/query_schema.py search simulate-control
 
 # Query usage examples from 490 projects
-python scripts/query.py example action create-object
-python scripts/query.py example behavior tween
-
-# Search across all data
-python scripts/query.py search simulate-control
-
-# Show top N by usage
-python scripts/query.py top actions 20
+python scripts/query_examples.py action create-object
+python scripts/query_examples.py behavior tween
+python scripts/query_examples.py top actions 20
 ```
 
 ## References
