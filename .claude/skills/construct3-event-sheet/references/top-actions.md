@@ -1,23 +1,23 @@
 # Top Actions Reference
 
-基于 490 个官方示例项目的动作使用频率统计。
+Action usage frequency based on 490 official example projects.
 
 ## Contents
 
-- [数据源](#数据源)
-- [Top 20 动作](#top-20-动作)
-- [动作详解](#动作详解)
+- [Data Source](#data-source)
+- [Top 20 Actions](#top-20-actions)
+- [Actions by Category](#actions-by-category)
 
 ---
 
-## 数据源
+## Data Source
 
-完整数据：`data/project_analysis/sorted_indexes.json` → `top_50_actions`
+Full data: `data/project_analysis/sorted_indexes.json` → `top_50_actions`
 
-## Top 20 动作
+## Top 20 Actions
 
-| # | ID | 使用次数 | 参数 |
-|---|-----|---------|------|
+| # | ID | Usage Count | Parameters |
+|---|-----|-------------|------------|
 | 1 | `System.set-eventvar-value` | 1726 | `variable`, `value` |
 | 2 | `System.create-object` | 781 | `object-to-create`, `layer`, `x`, `y` |
 | 3 | `System.wait` | 411 | `seconds` |
@@ -39,56 +39,56 @@
 | 19 | `Audio.fade-volume` | 76 | `tag`, `db`, `duration` |
 | 20 | `Camera3D.look-at-position` | 73 | `cam-x/y/z`, `look-x/y/z` |
 
-## 按类型分类
+## Actions by Category
 
-### 变量操作
+### Variable Operations
 ```json
-// 设置变量
+// Set variable
 {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "Score", "value": "100"}}
 
-// 增加变量
+// Add to variable
 {"id": "add-to-eventvar", "objectClass": "System", "parameters": {"variable": "Score", "value": "10"}}
 
-// 设置布尔
+// Set boolean
 {"id": "set-boolean-eventvar", "objectClass": "System", "parameters": {"variable": "IsAlive", "value": "true"}}
 
-// 设置实例变量
+// Set instance variable
 {"id": "set-instvar-value", "objectClass": "Player", "parameters": {"instance-variable": "Health", "value": "100"}}
 ```
 
-### 对象创建/销毁
+### Object Creation/Destruction
 ```json
-// 创建对象
+// Create object
 {"id": "create-object", "objectClass": "System", "parameters": {"object-to-create": "Bullet", "layer": "0", "x": "Player.X", "y": "Player.Y"}}
 
-// 生成对象
+// Spawn object
 {"id": "spawn-another-object", "objectClass": "Player", "parameters": {"object": "Particle", "layer": "0", "image-point": "0"}}
 
-// 销毁对象
+// Destroy object
 {"id": "destroy", "objectClass": "Enemy", "parameters": {}}
 ```
 
-### 场景控制
+### Layout Control
 ```json
-// 切换场景
+// Go to layout
 {"id": "go-to-layout", "objectClass": "System", "parameters": {"layout": "\"Game\""}}
 
-// 重载场景
+// Restart layout
 {"id": "restart-layout", "objectClass": "System", "parameters": {}}
 ```
 
-### 动画
+### Animation
 ```json
-// 设置动画
+// Set animation
 {"id": "set-animation", "objectClass": "Player", "parameters": {"animation": "\"Walk\"", "from": "beginning"}}
 
-// 设置镜像
+// Set mirrored
 {"id": "set-mirrored", "objectClass": "Player", "parameters": {"state": "mirrored"}}
 ```
 
-### Tween 动画
+### Tween Animation
 ```json
-// 属性补间
+// Property tween
 {"id": "tween-one-property", "objectClass": "Sprite", "behaviorType": "Tween", "parameters": {
   "tags": "\"fade\"",
   "property": "opacity",
@@ -101,7 +101,7 @@
   "repeat-count": "1"
 }}
 
-// 值补间
+// Value tween
 {"id": "tween-value", "objectClass": "GameManager", "behaviorType": "Tween", "parameters": {
   "tags": "\"counter\"",
   "start-value": "0",
@@ -111,33 +111,33 @@
 }}
 ```
 
-### 音频
+### Audio
 ```json
-// 播放音效
+// Play sound
 {"id": "play", "objectClass": "Audio", "parameters": {"audio-file": "Jump", "loop": "not-looping", "volume": "0"}}
 
-// 淡出音量
+// Fade volume
 {"id": "fade-volume", "objectClass": "Audio", "parameters": {"tag": "\"bgm\"", "db": "-60", "duration": "1"}}
 ```
 
-### 行为控制
+### Behavior Control
 ```json
-// Platform 模拟控制
+// Platform simulate control
 {"id": "simulate-control", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"control": "jump"}}
 
-// 8Direction 模拟控制
+// 8Direction simulate control
 {"id": "simulate-control", "objectClass": "Player", "behaviorType": "8Direction", "parameters": {"control": "up"}}
 
-// 设置向量
+// Set vector
 {"id": "set-vector-y", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"vector-y": "-500"}}
 
-// 启动定时器
+// Start timer
 {"id": "start-timer", "objectClass": "GameManager", "behaviorType": "Timer", "parameters": {"duration": "2", "type": "once", "tag": "\"spawn\""}}
 ```
 
-### 层级系统
+### Hierarchy System
 ```json
-// 添加子对象
+// Add child
 {"id": "add-child", "objectClass": "Player", "parameters": {
   "child": "Weapon",
   "transform-x": "yes",
@@ -147,11 +147,11 @@
 }}
 ```
 
-### 等待/异步
+### Wait/Async
 ```json
-// 等待秒数
+// Wait seconds
 {"id": "wait", "objectClass": "System", "parameters": {"seconds": "1"}}
 
-// 等待前置动作
+// Wait for previous actions
 {"id": "wait-for-previous-actions", "objectClass": "System", "parameters": {}}
 ```

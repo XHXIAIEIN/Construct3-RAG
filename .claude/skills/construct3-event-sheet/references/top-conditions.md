@@ -1,23 +1,23 @@
 # Top Conditions Reference
 
-基于 490 个官方示例项目的条件使用频率统计。
+Condition usage frequency based on 490 official example projects.
 
 ## Contents
 
-- [数据源](#数据源)
-- [Top 20 条件](#top-20-条件)
-- [条件详解](#条件详解)
+- [Data Source](#data-source)
+- [Top 20 Conditions](#top-20-conditions)
+- [Conditions by Category](#conditions-by-category)
 
 ---
 
-## 数据源
+## Data Source
 
-完整数据：`data/project_analysis/sorted_indexes.json` → `top_50_conditions`
+Full data: `data/project_analysis/sorted_indexes.json` → `top_50_conditions`
 
-## Top 20 条件
+## Top 20 Conditions
 
-| # | ID | 使用次数 | 参数 |
-|---|-----|---------|------|
+| # | ID | Usage Count | Parameters |
+|---|-----|-------------|------------|
 | 1 | `System.else` | 1261 | - |
 | 2 | `System.evaluate-expression` | 1195 | `value` |
 | 3 | `Keyboard.key-is-down` | 618 | `key` |
@@ -39,79 +39,79 @@
 | 19 | `System.trigger-once-while-true` | 103 | - |
 | 20 | `Sprite.on-collision-with-another-object` | 103 | `object` |
 
-## 按类型分类
+## Conditions by Category
 
-### 输入检测
+### Input Detection
 ```json
-// 键盘按住
+// Keyboard key down
 {"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}
 
-// 键盘按下瞬间
+// Keyboard key pressed
 {"id": "on-key-pressed", "objectClass": "Keyboard", "parameters": {"key": 32}}
 
-// 手柄按钮
+// Gamepad button
 {"id": "is-button-down", "objectClass": "Gamepad", "parameters": {"gamepad": 0, "button": 0}}
 
-// 鼠标悬停
+// Mouse hover
 {"id": "cursor-is-over-object", "objectClass": "Mouse", "parameters": {"object": "Button"}}
 
-// 触摸对象
+// Touch object
 {"id": "is-touching-object", "objectClass": "Touch", "parameters": {"object": "Button"}}
 ```
 
-### 碰撞检测
+### Collision Detection
 ```json
-// 碰撞触发
+// Collision trigger
 {"id": "on-collision-with-another-object", "objectClass": "Player", "parameters": {"object": "Enemy"}}
 
-// 重叠检测
+// Overlap check
 {"id": "is-overlapping-another-object", "objectClass": "Player", "parameters": {"object": "Coin"}}
 ```
 
-### 生命周期
+### Lifecycle
 ```json
-// 场景开始
+// Layout start
 {"id": "on-start-of-layout", "objectClass": "System", "parameters": {}}
 
-// 对象创建
+// Object created
 {"id": "on-created", "objectClass": "Bullet", "parameters": {}}
 ```
 
-### 循环
+### Loops
 ```json
 // For Each
 {"id": "for-each", "objectClass": "System", "parameters": {"object": "Enemy"}}
 
-// For 循环
+// For loop
 {"id": "for", "objectClass": "System", "parameters": {"name": "\"i\"", "start-index": "0", "end-index": "10"}}
 
-// 重复
+// Repeat
 {"id": "repeat", "objectClass": "System", "parameters": {"count": "5"}}
 ```
 
-### 比较
+### Comparison
 ```json
-// 比较变量
+// Compare variable
 {"id": "compare-eventvar", "objectClass": "System", "parameters": {"variable": "Score", "comparison": 4, "value": "100"}}
 
-// 比较两值
+// Compare two values
 {"id": "compare-two-values", "objectClass": "System", "parameters": {"first-value": "Player.X", "comparison": 4, "second-value": "400"}}
 
-// 布尔判断
+// Boolean check
 {"id": "compare-boolean-eventvar", "objectClass": "System", "parameters": {"variable": "IsAlive"}}
 ```
 
-### 行为状态
+### Behavior State
 ```json
-// Platform 在地面
+// Platform on floor
 {"id": "is-on-floor", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 
-// Platform 跳跃中
+// Platform jumping
 {"id": "is-jumping", "objectClass": "Player", "behaviorType": "Platform", "parameters": {}}
 
-// Tween 播放中
+// Tween playing
 {"id": "is-playing", "objectClass": "Sprite", "behaviorType": "Tween", "parameters": {"tags": "\"fade\""}}
 
-// Timer 触发
+// Timer trigger
 {"id": "on-timer", "objectClass": "GameManager", "behaviorType": "Timer", "parameters": {"tag": "\"spawn\""}}
 ```
