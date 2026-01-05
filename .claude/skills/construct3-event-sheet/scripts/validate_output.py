@@ -22,7 +22,7 @@ class ValidationError(Exception):
 class C3ClipboardValidator:
     """Validates Construct 3 clipboard JSON format"""
 
-    VALID_TYPES = {"events", "conditions", "actions", "object-types", "world-instances", "layouts", "event-sheets"}
+    VALID_TYPES = {"events", "conditions", "actions"}  # Only these 3 are valid for clipboard paste
     VALID_EVENT_TYPES = {"block", "variable", "comment", "group", "function-block"}
     COMPARISON_OPERATORS = {0, 1, 2, 3, 4, 5}  # =, ≠, <, ≤, >, ≥
 
