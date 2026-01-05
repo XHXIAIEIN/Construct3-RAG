@@ -71,6 +71,26 @@ Behavior ACE: add `"behaviorType": "{BehaviorName}"` field.
 3. **Comparison is number**: `"comparison": 4` not `"comparison": ">"`
 4. **Variable needs comment field**: `"comment": ""` (can be empty)
 
+## Query Scripts
+
+When reference files lack detail, query the full data:
+
+```bash
+# Query ACE schema
+python scripts/query.py schema plugin sprite set-animation
+python scripts/query.py schema behavior platform
+
+# Query usage examples from 490 projects
+python scripts/query.py example action create-object
+python scripts/query.py example behavior tween
+
+# Search across all data
+python scripts/query.py search simulate-control
+
+# Show top N by usage
+python scripts/query.py top actions 20
+```
+
 ## References
 
 Load on-demand when needed:
