@@ -24,14 +24,11 @@ qdrant_storage/
 
 # 日志
 *.log
-
-# Claude Code
-.claude/**
-!.claude/skills/
-!.claude/skills/**
-.claude.json
 .local/
 .history/
+
+# Claude Code
+# .claude
 
 # Gradio / MCP
 .gradio/

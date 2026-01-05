@@ -7,17 +7,17 @@ description: >
   平台、子弹、补间动画、计时器、实体、物理、寻路、淡入淡出、闪烁、旋转。
 ---
 
-# Construct 3 Event Sheet Generator
+# Generate C3 Event Sheet JSON
 
-## Output Format
+## 1. Output This Format
 
 ```json
 {"is-c3-clipboard-data": true, "type": "events", "items": [...]}
 ```
 
-Valid types: `events`, `conditions`, `actions`
+`type`: `"events"` | `"conditions"` | `"actions"`
 
-## Event Block
+## 2. Use This Structure
 
 ```json
 {"eventType": "block",
@@ -25,19 +25,51 @@ Valid types: `events`, `conditions`, `actions`
  "actions": [{"id": "{ace-id}", "objectClass": "{Object}", "parameters": {...}}]}
 ```
 
-Behavior ACE: add `"behaviorType": "{BehaviorName}"`.
+For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 
-## Parameters
+## 3. Format Parameters Correctly
 
 | Type | Format | Example |
 |------|--------|---------|
 | Number | Direct | `"x": "400"` |
-| String | Nested quotes | `"text": "\"Hello\""` |
+| String | **Nested quotes** | `"text": "\"Hello\""` |
 | Expression | Direct | `"x": "Player.X + 100"` |
 | Comparison | 0-5 | `0`=, `1`≠, `2`<, `3`≤, `4`>, `5`≥ |
 | Key code | Number | `87`=W, `65`=A, `83`=S, `68`=D, `32`=Space |
 
-## Templates
+## 4. Apply These Rules
+
+1. **String params must have nested quotes**: `"animation": "\"Walk\""`
+2. **Behavior ACE requires behaviorType**: `"behaviorType": "8Direction"`
+3. **Comparison must be number**: `4` not `">"`
+4. **Variable must have comment field**: `"comment": ""`
+5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
+
+## 5. Handle Dependencies First
+
+Before outputting JSON, check if user mentioned object names:
+- **Yes** → Use their names
+- **No** → Output dependency line first:
+
+```
+Required: Keyboard(plugin), Player(Sprite+Platform), Enemy(Sprite)
+```
+
+## 6. Validate Before Output
+
+```bash
+python3 scripts/validate_output.py '<json>'
+```
+
+## 7. Query Schema When Unsure
+
+```bash
+python3 scripts/query_schema.py plugin sprite set-animation
+python3 scripts/query_schema.py behavior platform simulate-control
+python3 scripts/query_examples.py action create-object
+```
+
+## Quick Templates
 
 **Variable** (comment required):
 ```json
@@ -54,53 +86,12 @@ Behavior ACE: add `"behaviorType": "{BehaviorName}"`.
 {"conditions": [{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}], "actions": [...]}
 ```
 
-More: [clipboard-format.md](references/clipboard-format.md)
+## References (consult when needed)
 
-## Critical Rules
-
-1. String params: `"animation": "\"Walk\""`
-2. Behavior ACE: `"behaviorType": "8Direction"` (display name)
-3. Comparison: number `4` not string `">"`
-4. Variable: `"comment": ""` required
-5. behavior-id differs: EightDir→8Direction, Sin→Sine, LOS→Line of sight, DragnDrop→Drag & Drop
-
-## Dependencies
-
-Events reference objects that must exist in project. Before outputting JSON:
-
-1. **Check user context** for object names → use them
-2. **If not mentioned** → output dependency line first:
-
-```
-Required: Keyboard(plugin), Player(Sprite+Platform), Enemy(Sprite), Ground(Sprite+Solid)
-```
-
-Format: `{Name}({Type}+{Behavior})` or `{Name}(plugin)`
-
-## Workflow
-
-1. Query schema if needed: `python3 scripts/query_schema.py behavior platform`
-2. Generate JSON
-3. Validate: `python3 scripts/validate_output.py '<json>'`
-4. Fix errors if any
-
-## Query
-
-```bash
-python3 scripts/query_schema.py plugin sprite set-animation
-python3 scripts/query_schema.py behavior platform simulate-control
-python3 scripts/query_examples.py action create-object
-```
-
-## References
-
-- [clipboard-format.md](references/clipboard-format.md) - Format spec & templates
-- [zh-cn.md](references/zh-cn.md) - Chinese context
-- [behavior-names.md](references/behavior-names.md) - ID mapping
-- [deprecated-features.md](references/deprecated-features.md) - Avoid these
-- [troubleshooting.md](references/troubleshooting.md) - Error fixes
-
-## Advanced (project root)
-
-- `src/rag/eventsheet_generator.py` - SchemaLoader, ClipboardValidator, EventGenerator
-- `src/rag/prompts.py` - LLM prompt templates
+| When | File |
+|------|------|
+| Need more templates | [clipboard-format.md](references/clipboard-format.md) |
+| Chinese user input | [zh-cn.md](references/zh-cn.md) |
+| Unsure behavior name | [behavior-names.md](references/behavior-names.md) |
+| Check deprecated APIs | [deprecated-features.md](references/deprecated-features.md) |
+| Debug paste errors | [troubleshooting.md](references/troubleshooting.md) |
