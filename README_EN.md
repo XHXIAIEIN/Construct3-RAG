@@ -183,6 +183,8 @@ python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite 
 
 ### ACE Schema
 
+Generated from `source/zh-CN_R466.csv` via `scripts/generate-schema.js`:
+
 ```
 data/schemas/
 ├── index.json          # Summary index
