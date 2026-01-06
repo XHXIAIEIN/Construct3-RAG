@@ -19,16 +19,16 @@ All data should be placed in sibling directories:
 
 ```
 Parent Directory/
-├── Construct3-Copilot/                    # This project
+├── Construct3-Copilot/                # This project
 ├── Construct3-Manual/                 # Official manual Markdown version
-└── Construct-Example-Projects-main/   # Official example projects
+└── Construct-Example-Projects/        # Official example projects
 ```
 
 ```bash
 # Clone related repositories
 git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
-git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Example-Projects-main
+git clone https://github.com/Scirra/Construct-Example-Projects.git
 ```
 
 | Data Source | How to Get | Purpose |

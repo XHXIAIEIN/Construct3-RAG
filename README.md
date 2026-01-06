@@ -19,16 +19,16 @@
 
 ```
 Parent Directory/
-├── Construct3-Copilot/                    # 本项目
+├── Construct3-Copilot/                # 本项目
 ├── Construct3-Manual/                 # 官方手册 Markdown 版
-└── Construct-Example-Projects-main/   # 官方示例项目
+└── Construct-Example-Projects/        # 官方示例项目
 ```
 
 ```bash
 # 克隆相关仓库
 git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
-git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Example-Projects-main
+git clone https://github.com/Scirra/Construct-Example-Projects.git
 ```
 
 | 数据源 | 获取方式 | 用途 |
