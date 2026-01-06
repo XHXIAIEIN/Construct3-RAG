@@ -7,8 +7,7 @@ An AI assistant for Construct 3 game development powered by RAG, supporting docu
 ## Features
 
 - **Documentation Q&A**: Answer Construct 3 questions with source citations
-- **Code Generation**: Generate Construct 3 event sheet code from requirements
-- **Construct3-Copilot**: Generate JSON that can be directly pasted into the C3 editor
+- **Event Sheet Generation**: Describe requirements in natural language, generate JSON for direct paste into editor
 
 ---
 
