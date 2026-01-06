@@ -134,19 +134,6 @@ AI generates events JSON → Paste to event sheet margin
 | Generate Layouts | Complete scenes (objects + instances + positions) |
 | Generate Images | Valid PNG base64 imageData |
 
-### Available Scripts
-
-```bash
-# Generate imageData
-python3 .claude/skills/construct3-copilot/scripts/generate_imagedata.py --color red -W 32 -H 32
-
-# Generate complete layout
-python3 .claude/skills/construct3-copilot/scripts/generate_layout.py --preset breakout -o layout.json
-
-# Query ACE Schema
-python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite set-animation
-```
-
 ---
 
 ## Tech Stack

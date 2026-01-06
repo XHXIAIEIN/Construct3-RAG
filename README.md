@@ -59,7 +59,7 @@ ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 ### 4. 索引数据
 
 ```bash
-# 生成 ACE Schema (可选，已包含在仓库中)
+# 生成 ACE Schema (可选，已包含在仓库中。依赖文件: source/zh-CN_R466.csv )
 node scripts/generate-schema.js
 
 # 索引数据 (首次约需 15 分钟)
@@ -133,19 +133,6 @@ AI 会生成事件 JSON → 粘贴到事件表边缘
 | 生成对象 | Sprite、Text、TiledBackground 等 |
 | 生成布局 | 完整场景（对象 + 实例 + 位置） |
 | 生成图像 | 有效的 PNG base64 imageData |
-
-### 可用脚本
-
-```bash
-# 生成 imageData
-python3 .claude/skills/construct3-copilot/scripts/generate_imagedata.py --color red -W 32 -H 32
-
-# 生成完整布局
-python3 .claude/skills/construct3-copilot/scripts/generate_layout.py --preset breakout -o layout.json
-
-# 查询 ACE Schema
-python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite set-animation
-```
 
 ---
 
