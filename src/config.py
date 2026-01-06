@@ -23,7 +23,7 @@ TRANSLATION_CSV = "zh-CN_R466.csv"
 
 # 外部仓库 (位于父目录的兄弟仓库)
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual
-EXAMPLE_REPO = "Construct-Example-Projects-main"  # https://github.com/Scirra/Construct-Example-Projects
+EXAMPLE_REPO = "Construct-Example-Projects"  # https://github.com/Scirra/Construct-Example-Projects
 
 # =============================================================================
 # Vector Database
