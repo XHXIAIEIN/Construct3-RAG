@@ -308,6 +308,256 @@ def generate_icon_x(width: int, height: int, color: tuple, thickness: int = 3) -
     return img
 
 
+# ============== Kenney Style ==============
+
+def darken(color: tuple, factor: float = 0.7) -> tuple:
+    """Darken a color"""
+    return (int(color[0] * factor), int(color[1] * factor), int(color[2] * factor), color[3])
+
+
+def lighten(color: tuple, factor: float = 0.3) -> tuple:
+    """Lighten a color (add white)"""
+    return (
+        min(255, int(color[0] + (255 - color[0]) * factor)),
+        min(255, int(color[1] + (255 - color[1]) * factor)),
+        min(255, int(color[2] + (255 - color[2]) * factor)),
+        color[3]
+    )
+
+
+def kenney_box(width: int, height: int, color: tuple, outline_width: int = 2) -> Image.Image:
+    """Kenney-style box with rounded corners, outline and highlight"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    radius = min(width, height) // 4
+    outline = darken(color, 0.5)
+    highlight = lighten(color, 0.4)
+    shadow = darken(color, 0.8)
+
+    # Shadow/outline layer
+    draw.rounded_rectangle([0, 0, width - 1, height - 1], radius=radius, fill=outline)
+
+    # Main color
+    m = outline_width
+    draw.rounded_rectangle([m, m, width - 1 - m, height - 1 - m], radius=radius - m, fill=color)
+
+    # Bottom shadow
+    draw.rounded_rectangle([m, height // 2, width - 1 - m, height - 1 - m], radius=radius - m, fill=shadow)
+
+    # Top highlight
+    draw.rounded_rectangle([m, m, width - 1 - m, height // 3], radius=radius - m, fill=highlight)
+
+    return img
+
+
+def kenney_circle(width: int, height: int, color: tuple, outline_width: int = 2) -> Image.Image:
+    """Kenney-style circle with outline and highlight"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.5)
+    highlight = lighten(color, 0.4)
+    shadow = darken(color, 0.8)
+
+    # Outline
+    draw.ellipse([0, 0, width - 1, height - 1], fill=outline)
+
+    # Main
+    m = outline_width
+    draw.ellipse([m, m, width - 1 - m, height - 1 - m], fill=color)
+
+    # Shadow (bottom half)
+    draw.chord([m, m, width - 1 - m, height - 1 - m], start=0, end=180, fill=shadow)
+
+    # Highlight (top portion)
+    hl_size = min(width, height) // 3
+    draw.ellipse([width // 4, height // 6, width // 4 + hl_size, height // 6 + hl_size // 2], fill=highlight)
+
+    return img
+
+
+def kenney_player(width: int, height: int, color: tuple) -> Image.Image:
+    """Kenney-style player character (simple humanoid)"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+    eye_color = (255, 255, 255, 255)
+    pupil = (40, 40, 40, 255)
+
+    cx, cy = width // 2, height // 2
+
+    # Body (rounded rect)
+    body_w, body_h = width * 2 // 3, height // 2
+    body_x = cx - body_w // 2
+    body_y = cy
+
+    draw.rounded_rectangle([body_x - 1, body_y - 1, body_x + body_w, body_y + body_h],
+                          radius=body_w // 4, fill=outline)
+    draw.rounded_rectangle([body_x + 1, body_y + 1, body_x + body_w - 2, body_y + body_h - 2],
+                          radius=body_w // 4, fill=color)
+
+    # Head (circle)
+    head_r = width // 3
+    head_x, head_y = cx, cy - head_r // 3
+
+    draw.ellipse([head_x - head_r - 1, head_y - head_r - 1, head_x + head_r, head_y + head_r], fill=outline)
+    draw.ellipse([head_x - head_r + 1, head_y - head_r + 1, head_x + head_r - 2, head_y + head_r - 2], fill=color)
+
+    # Highlight on head
+    draw.ellipse([head_x - head_r // 2, head_y - head_r + 2, head_x + head_r // 3, head_y - head_r // 3], fill=highlight)
+
+    # Eyes
+    eye_w = head_r // 2
+    eye_h = head_r // 2
+    left_eye_x = head_x - head_r // 2
+    right_eye_x = head_x + head_r // 6
+    eye_y = head_y - head_r // 4
+
+    draw.ellipse([left_eye_x, eye_y, left_eye_x + eye_w, eye_y + eye_h], fill=eye_color)
+    draw.ellipse([right_eye_x, eye_y, right_eye_x + eye_w, eye_y + eye_h], fill=eye_color)
+
+    # Pupils
+    p_size = eye_w // 2
+    draw.ellipse([left_eye_x + eye_w // 3, eye_y + eye_h // 4, left_eye_x + eye_w // 3 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+    draw.ellipse([right_eye_x + eye_w // 3, eye_y + eye_h // 4, right_eye_x + eye_w // 3 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+
+    return img
+
+
+def kenney_enemy(width: int, height: int, color: tuple) -> Image.Image:
+    """Kenney-style enemy (angry slime/blob)"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+    eye_color = (255, 255, 255, 255)
+    pupil = (40, 40, 40, 255)
+
+    cx, cy = width // 2, height // 2
+
+    # Body (ellipse, wider than tall)
+    body_w, body_h = width - 4, height * 2 // 3
+    body_y = height - body_h - 1
+
+    draw.ellipse([1, body_y, width - 2, height - 2], fill=outline)
+    draw.ellipse([3, body_y + 2, width - 4, height - 4], fill=color)
+
+    # Highlight
+    draw.ellipse([width // 4, body_y + 4, width * 3 // 4, body_y + body_h // 3], fill=highlight)
+
+    # Angry eyes
+    eye_w = width // 4
+    eye_h = height // 5
+    left_x = cx - eye_w - 2
+    right_x = cx + 2
+    eye_y = body_y + body_h // 3
+
+    # Eye whites
+    draw.ellipse([left_x, eye_y, left_x + eye_w, eye_y + eye_h], fill=eye_color)
+    draw.ellipse([right_x, eye_y, right_x + eye_w, eye_y + eye_h], fill=eye_color)
+
+    # Angry eyebrows (triangles)
+    draw.polygon([(left_x, eye_y - 2), (left_x + eye_w, eye_y + 2), (left_x + eye_w, eye_y - 2)], fill=outline)
+    draw.polygon([(right_x, eye_y + 2), (right_x + eye_w, eye_y - 2), (right_x, eye_y - 2)], fill=outline)
+
+    # Pupils
+    p_size = eye_w // 2
+    draw.ellipse([left_x + eye_w // 4, eye_y + eye_h // 4, left_x + eye_w // 4 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+    draw.ellipse([right_x + eye_w // 4, eye_y + eye_h // 4, right_x + eye_w // 4 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+
+    return img
+
+
+def kenney_coin(width: int, height: int, color: tuple) -> Image.Image:
+    """Kenney-style coin with shine"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.5)
+    highlight = lighten(color, 0.5)
+    inner = darken(color, 0.85)
+
+    # Outer circle (outline)
+    draw.ellipse([0, 0, width - 1, height - 1], fill=outline)
+
+    # Main coin
+    m = 2
+    draw.ellipse([m, m, width - 1 - m, height - 1 - m], fill=color)
+
+    # Inner circle
+    m2 = width // 6
+    draw.ellipse([m2, m2, width - 1 - m2, height - 1 - m2], fill=inner)
+
+    # Shine highlight
+    shine_w = width // 3
+    shine_h = height // 4
+    draw.ellipse([width // 5, height // 6, width // 5 + shine_w, height // 6 + shine_h], fill=highlight)
+
+    return img
+
+
+def kenney_platform(width: int, height: int, color: tuple) -> Image.Image:
+    """Kenney-style platform tile"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+    shadow = darken(color, 0.75)
+
+    # Base with outline
+    draw.rectangle([0, 0, width - 1, height - 1], fill=outline)
+
+    # Main fill
+    m = 2
+    draw.rectangle([m, m, width - 1 - m, height - 1 - m], fill=color)
+
+    # Top highlight stripe
+    draw.rectangle([m, m, width - 1 - m, height // 4], fill=highlight)
+
+    # Bottom shadow stripe
+    draw.rectangle([m, height * 3 // 4, width - 1 - m, height - 1 - m], fill=shadow)
+
+    # Grass/detail on top (optional green tufts)
+    grass = (100, 200, 80, 255)
+    grass_dark = darken(grass, 0.7)
+    for x in range(4, width - 4, 8):
+        # Grass blade
+        draw.polygon([(x, m), (x + 3, -4), (x + 6, m)], fill=grass)
+        draw.line([(x + 3, -4), (x + 3, m)], fill=grass_dark, width=1)
+
+    return img
+
+
+def kenney_spike(width: int, height: int, color: tuple) -> Image.Image:
+    """Kenney-style spike/hazard"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+
+    # Triangle spike
+    points = [(width // 2, 2), (2, height - 2), (width - 3, height - 2)]
+
+    # Outline
+    draw.polygon(points, fill=outline)
+
+    # Inner fill
+    inner_points = [(width // 2, 6), (6, height - 4), (width - 7, height - 4)]
+    draw.polygon(inner_points, fill=color)
+
+    # Highlight on left edge
+    hl_points = [(width // 2, 6), (6, height - 4), (width // 4, height // 2)]
+    draw.polygon(hl_points, fill=highlight)
+
+    return img
+
+
 def image_to_base64(img: Image.Image) -> str:
     """Convert PIL Image to base64 data URI"""
     buffer = io.BytesIO()
@@ -363,6 +613,11 @@ def main():
         choices=["arrow", "arrow-up", "arrow-down", "arrow-left", "star", "heart", "cross", "x"],
         help="Icon type")
 
+    # Kenney style
+    parser.add_argument("--kenney", "-k",
+        choices=["box", "circle", "player", "enemy", "coin", "platform", "spike"],
+        help="Kenney-style preset")
+
     # Output
     parser.add_argument("--json", "-j", action="store_true", help="Output as JSON array element")
 
@@ -371,6 +626,24 @@ def main():
     # Generate image
     if args.file:
         img = load_image_file(args.file)
+    elif args.kenney:
+        color = parse_color(args.color)
+        if args.kenney == "box":
+            img = kenney_box(args.width, args.height, color)
+        elif args.kenney == "circle":
+            img = kenney_circle(args.width, args.height, color)
+        elif args.kenney == "player":
+            img = kenney_player(args.width, args.height, color)
+        elif args.kenney == "enemy":
+            img = kenney_enemy(args.width, args.height, color)
+        elif args.kenney == "coin":
+            img = kenney_coin(args.width, args.height, color)
+        elif args.kenney == "platform":
+            img = kenney_platform(args.width, args.height, color)
+        elif args.kenney == "spike":
+            img = kenney_spike(args.width, args.height, color)
+        else:
+            img = kenney_box(args.width, args.height, color)
     elif args.icon:
         color = parse_color(args.color)
         if args.icon.startswith("arrow"):
