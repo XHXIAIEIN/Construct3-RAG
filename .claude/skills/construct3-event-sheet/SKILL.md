@@ -50,6 +50,7 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 3. **Comparison must be number**: `4` not `">"`
 4. **Variable must have comment field**: `"comment": ""`
 5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
+6. **NEVER generate new imageData** - MUST copy from [object-templates.md](references/object-templates.md)
 
 ## 5. Choose Output Format
 

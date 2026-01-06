@@ -1,5 +1,30 @@
 # Object Type Templates
 
+**IMPORTANT**: These templates contain validated imageData. NEVER generate new imageData - always copy from these templates.
+
+## Quick Reference
+
+| Need | Use Template | Rename to |
+|------|--------------|-----------|
+| Player (platformer) | Player (Platform) | - |
+| Player (top-down) | Player (8Direction) | - |
+| Enemy/Obstacle | Enemy | Brick, Obstacle, etc. |
+| Bullet/Ball | Bullet | Ball, Projectile, etc. |
+| Ground/Wall | Ground | Wall, Floor, etc. |
+| Moving Platform | Platform | - |
+| Collectible | Coin | Star, Gem, etc. |
+| Hazard | Spike | Trap, Lava, etc. |
+| UI Text | Text | ScoreText, TitleText, etc. |
+
+## How to Customize
+
+1. Copy the entire JSON template
+2. Change `"name"` to your object name
+3. Modify `behaviorTypes` as needed
+4. Keep `imageData` unchanged
+
+---
+
 Ready-to-paste JSON for creating objects. Paste to **Project Bar → Object types**.
 
 ## Single-Global Plugins (no imageData)
