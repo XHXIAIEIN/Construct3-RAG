@@ -558,6 +558,215 @@ def kenney_spike(width: int, height: int, color: tuple) -> Image.Image:
     return img
 
 
+# ============== Animations ==============
+
+def anim_coin_spin(width: int, height: int, color: tuple, frames: int = 4) -> list:
+    """Generate coin spin animation frames"""
+    images = []
+    outline = darken(color, 0.5)
+    highlight = lighten(color, 0.5)
+    inner = darken(color, 0.85)
+
+    for i in range(frames):
+        # Calculate width scaling for spin effect
+        scale = abs(math.cos(i * math.pi / frames))
+        scaled_w = max(4, int(width * scale))
+        offset_x = (width - scaled_w) // 2
+
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        # Outer ellipse
+        draw.ellipse([offset_x, 0, offset_x + scaled_w - 1, height - 1], fill=outline)
+
+        if scaled_w > 6:
+            m = 2
+            draw.ellipse([offset_x + m, m, offset_x + scaled_w - 1 - m, height - 1 - m], fill=color)
+
+            # Inner circle (if wide enough)
+            if scaled_w > 12:
+                m2 = scaled_w // 6
+                draw.ellipse([offset_x + m2, height // 6, offset_x + scaled_w - 1 - m2, height - 1 - height // 6], fill=inner)
+
+            # Highlight
+            if scaled_w > 8:
+                hl_w = scaled_w // 3
+                draw.ellipse([offset_x + scaled_w // 5, height // 6, offset_x + scaled_w // 5 + hl_w, height // 3], fill=highlight)
+
+        images.append(img)
+
+    return images
+
+
+def anim_player_walk(width: int, height: int, color: tuple, frames: int = 4) -> list:
+    """Generate simple walk animation frames"""
+    images = []
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+    eye_color = (255, 255, 255, 255)
+    pupil = (40, 40, 40, 255)
+
+    for i in range(frames):
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        cx, cy = width // 2, height // 2
+
+        # Body bounce
+        bounce = int(2 * math.sin(i * math.pi * 2 / frames))
+
+        # Body
+        body_w, body_h = width * 2 // 3, height // 2
+        body_x = cx - body_w // 2
+        body_y = cy + bounce
+
+        draw.rounded_rectangle([body_x - 1, body_y - 1, body_x + body_w, body_y + body_h],
+                              radius=body_w // 4, fill=outline)
+        draw.rounded_rectangle([body_x + 1, body_y + 1, body_x + body_w - 2, body_y + body_h - 2],
+                              radius=body_w // 4, fill=color)
+
+        # Legs (alternating)
+        leg_w = body_w // 4
+        leg_h = height // 6
+        leg_offset = int(4 * math.sin(i * math.pi * 2 / frames))
+
+        # Left leg
+        left_leg_x = body_x + leg_w // 2 - leg_offset
+        draw.rounded_rectangle([left_leg_x, body_y + body_h - 2, left_leg_x + leg_w, body_y + body_h + leg_h],
+                              radius=2, fill=outline)
+
+        # Right leg
+        right_leg_x = body_x + body_w - leg_w - leg_w // 2 + leg_offset
+        draw.rounded_rectangle([right_leg_x, body_y + body_h - 2, right_leg_x + leg_w, body_y + body_h + leg_h],
+                              radius=2, fill=outline)
+
+        # Head
+        head_r = width // 3
+        head_x, head_y = cx, cy - head_r // 3 + bounce
+
+        draw.ellipse([head_x - head_r - 1, head_y - head_r - 1, head_x + head_r, head_y + head_r], fill=outline)
+        draw.ellipse([head_x - head_r + 1, head_y - head_r + 1, head_x + head_r - 2, head_y + head_r - 2], fill=color)
+
+        # Highlight
+        draw.ellipse([head_x - head_r // 2, head_y - head_r + 2, head_x + head_r // 3, head_y - head_r // 3], fill=highlight)
+
+        # Eyes
+        eye_w = head_r // 2
+        eye_h = head_r // 2
+        left_eye_x = head_x - head_r // 2
+        right_eye_x = head_x + head_r // 6
+        eye_y = head_y - head_r // 4
+
+        draw.ellipse([left_eye_x, eye_y, left_eye_x + eye_w, eye_y + eye_h], fill=eye_color)
+        draw.ellipse([right_eye_x, eye_y, right_eye_x + eye_w, eye_y + eye_h], fill=eye_color)
+
+        # Pupils
+        p_size = eye_w // 2
+        draw.ellipse([left_eye_x + eye_w // 3, eye_y + eye_h // 4, left_eye_x + eye_w // 3 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+        draw.ellipse([right_eye_x + eye_w // 3, eye_y + eye_h // 4, right_eye_x + eye_w // 3 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+
+        images.append(img)
+
+    return images
+
+
+def anim_enemy_idle(width: int, height: int, color: tuple, frames: int = 4) -> list:
+    """Generate enemy idle/bounce animation"""
+    images = []
+    outline = darken(color, 0.4)
+    highlight = lighten(color, 0.3)
+    eye_color = (255, 255, 255, 255)
+    pupil = (40, 40, 40, 255)
+
+    for i in range(frames):
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        # Squash and stretch
+        stretch = 1 + 0.15 * math.sin(i * math.pi * 2 / frames)
+        squash = 1 / stretch
+
+        body_w = int((width - 4) * squash)
+        body_h = int((height * 2 // 3) * stretch)
+        body_x = (width - body_w) // 2
+        body_y = height - body_h - 1
+
+        draw.ellipse([body_x, body_y, body_x + body_w, height - 2], fill=outline)
+        draw.ellipse([body_x + 2, body_y + 2, body_x + body_w - 2, height - 4], fill=color)
+
+        # Highlight
+        draw.ellipse([width // 4, body_y + 4, width * 3 // 4, body_y + body_h // 3], fill=highlight)
+
+        # Eyes
+        eye_w = width // 4
+        eye_h = height // 5
+        cx = width // 2
+        left_x = cx - eye_w - 2
+        right_x = cx + 2
+        eye_y = body_y + body_h // 3
+
+        draw.ellipse([left_x, eye_y, left_x + eye_w, eye_y + eye_h], fill=eye_color)
+        draw.ellipse([right_x, eye_y, right_x + eye_w, eye_y + eye_h], fill=eye_color)
+
+        # Angry eyebrows
+        draw.polygon([(left_x, eye_y - 2), (left_x + eye_w, eye_y + 2), (left_x + eye_w, eye_y - 2)], fill=outline)
+        draw.polygon([(right_x, eye_y + 2), (right_x + eye_w, eye_y - 2), (right_x, eye_y - 2)], fill=outline)
+
+        # Pupils
+        p_size = eye_w // 2
+        draw.ellipse([left_x + eye_w // 4, eye_y + eye_h // 4, left_x + eye_w // 4 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+        draw.ellipse([right_x + eye_w // 4, eye_y + eye_h // 4, right_x + eye_w // 4 + p_size, eye_y + eye_h // 4 + p_size], fill=pupil)
+
+        images.append(img)
+
+    return images
+
+
+def anim_explosion(width: int, height: int, color: tuple, frames: int = 6) -> list:
+    """Generate explosion animation"""
+    images = []
+    colors = [
+        lighten(color, 0.6),  # Bright center
+        color,
+        darken(color, 0.7),
+        darken(color, 0.5),
+        (100, 100, 100, 200),  # Smoke
+        (80, 80, 80, 100),
+    ]
+
+    for i in range(frames):
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        progress = i / (frames - 1)
+        cx, cy = width // 2, height // 2
+
+        # Multiple circles expanding
+        for j in range(3):
+            radius = int((min(width, height) // 2) * (progress + j * 0.2))
+            alpha = int(255 * (1 - progress) * (1 - j * 0.3))
+            if alpha > 0 and radius > 0:
+                c = colors[min(i, len(colors) - 1)]
+                c_alpha = (c[0], c[1], c[2], min(alpha, c[3]))
+                draw.ellipse([cx - radius, cy - radius, cx + radius, cy + radius], fill=c_alpha)
+
+        images.append(img)
+
+    return images
+
+
+def anim_blink(width: int, height: int, color: tuple, frames: int = 2) -> list:
+    """Generate simple blink/flash animation"""
+    images = []
+    for i in range(frames):
+        if i % 2 == 0:
+            img = kenney_box(width, height, color)
+        else:
+            img = kenney_box(width, height, lighten(color, 0.4))
+        images.append(img)
+    return images
+
+
 def image_to_base64(img: Image.Image) -> str:
     """Convert PIL Image to base64 data URI"""
     buffer = io.BytesIO()
@@ -621,12 +830,98 @@ def main():
         choices=["box", "circle", "player", "enemy", "coin", "platform", "spike"],
         help="Kenney-style preset")
 
+    # Animation
+    parser.add_argument("--anim", "-a",
+        choices=["coin-spin", "player-walk", "enemy-idle", "explosion", "blink"],
+        help="Animation preset")
+    parser.add_argument("--frames", type=int, default=4, help="Number of animation frames")
+
     # Output
     parser.add_argument("--json", "-j", action="store_true", help="Output as JSON array element")
+    parser.add_argument("--c3-object", action="store_true", help="Output complete C3 object-types JSON")
 
     args = parser.parse_args()
 
-    # Generate image
+    # Handle animation
+    if args.anim:
+        color = parse_color(args.color)
+        if args.anim == "coin-spin":
+            images = anim_coin_spin(args.width, args.height, color, args.frames)
+        elif args.anim == "player-walk":
+            images = anim_player_walk(args.width, args.height, color, args.frames)
+        elif args.anim == "enemy-idle":
+            images = anim_enemy_idle(args.width, args.height, color, args.frames)
+        elif args.anim == "explosion":
+            images = anim_explosion(args.width, args.height, color, args.frames)
+        elif args.anim == "blink":
+            images = anim_blink(args.width, args.height, color, args.frames)
+        else:
+            images = [kenney_box(args.width, args.height, color)]
+
+        # Convert all frames to base64
+        image_data_list = [image_to_base64(img) for img in images]
+
+        if args.c3_object:
+            # Output complete C3 object-types JSON with animation
+            obj_json = {
+                "is-c3-clipboard-data": True,
+                "type": "object-types",
+                "families": [],
+                "items": [{
+                    "name": args.anim.replace("-", "").title(),
+                    "plugin-id": "Sprite",
+                    "isGlobal": False,
+                    "editorNewInstanceIsReplica": True,
+                    "instanceVariables": [],
+                    "behaviorTypes": [],
+                    "effectTypes": [],
+                    "animations": {
+                        "items": [{
+                            "frames": [
+                                {
+                                    "width": args.width,
+                                    "height": args.height,
+                                    "originX": 0.5,
+                                    "originY": 0.5,
+                                    "originalSource": "",
+                                    "exportFormat": "lossless",
+                                    "exportQuality": 0.8,
+                                    "fileType": "image/png",
+                                    "imageDataIndex": i,
+                                    "useCollisionPoly": True,
+                                    "duration": 1,
+                                    "tag": ""
+                                }
+                                for i in range(len(images))
+                            ],
+                            "name": "Default",
+                            "isLooping": True,
+                            "isPingPong": False,
+                            "repeatCount": 1,
+                            "repeatTo": 0,
+                            "speed": 8
+                        }],
+                        "subfolders": [],
+                        "name": "Animations"
+                    }
+                }],
+                "folders": [],
+                "imageData": image_data_list
+            }
+            import json
+            print(json.dumps(obj_json, ensure_ascii=False))
+        else:
+            # Output just the imageData array
+            print("[")
+            for i, data in enumerate(image_data_list):
+                comma = "," if i < len(image_data_list) - 1 else ""
+                print(f'  "{data}"{comma}')
+            print("]")
+
+        print(f"\n// Animation: {args.anim}, {len(images)} frames, {args.width}x{args.height}", file=sys.stderr)
+        sys.exit(0)
+
+    # Generate single image
     if args.file:
         img = load_image_file(args.file)
     elif args.kenney:
