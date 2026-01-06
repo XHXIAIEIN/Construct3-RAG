@@ -1,5 +1,15 @@
 # Object Type Templates
 
+## Choose the Right Object Type
+
+| Object Type | Use Case | Example |
+|-------------|----------|---------|
+| **Sprite** | Single objects, characters, animated items | Player, Enemy, Coin, Bullet |
+| **TiledBackground** | Large repeating textures | Ground, Water, Sky, Wall |
+| **NinePatch** | Scalable UI elements | Button, Panel, Dialog box |
+| **Tilemap** | Tile-based level design | Platformer terrain, RPG maps |
+| **Text** | Display text | Score, Title, Instructions |
+
 ## Generate Custom imageData
 
 Use the script to generate any color/size/shape:
@@ -47,6 +57,45 @@ Generate imageData first, then use this structure:
 "behaviorTypes":[{"behaviorId":"Bullet","name":"Bullet"}]
 "behaviorTypes":[{"behaviorId":"solid","name":"Solid"}]
 ```
+
+---
+
+## TiledBackground Template
+
+For large repeating textures (ground, walls, water). Tiles seamlessly.
+
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"{NAME}","plugin-id":"TiledBg","isGlobal":false,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[],"image":{"width":{WIDTH},"height":{HEIGHT},"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true}}],"folders":[],"imageData":["{IMAGEDATA}"]}
+```
+
+**Note**: Use `--pattern brick` or `--pattern checkerboard` to generate tileable textures. Add Solid behavior if needed.
+
+---
+
+## NinePatch Template
+
+For scalable UI (buttons, panels). Corners stay fixed, edges stretch.
+
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"{NAME}","plugin-id":"NinePatch","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[],"image":{"width":{WIDTH},"height":{HEIGHT},"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"tag":""}}],"folders":[],"imageData":["{IMAGEDATA}"]}
+```
+
+**Note**: Margins are set in the C3 editor after pasting. Image should have distinct corners.
+
+---
+
+## Tilemap Template
+
+For tile-based levels. Uses a tileset image containing multiple tiles.
+
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[{"name":"{NAME}","plugin-id":"Tilemap","isGlobal":false,"editorNewInstanceIsReplica":true,"instanceVariables":[],"behaviorTypes":[],"effectTypes":[],"image":{"width":{WIDTH},"height":{HEIGHT},"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"tag":""},"tile-collision-polys":{}}],"folders":[],"imageData":["{TILESET_IMAGEDATA}"]}
+```
+
+**Note**:
+- Tileset image contains multiple tiles in a grid
+- `tile-collision-polys` defines collision shapes per tile (empty `{}` = default boxes)
+- Set tile size in C3 editor after pasting
 
 ---
 
