@@ -597,6 +597,9 @@ def main():
     parser.add_argument("--direction", "-d", default="up", help="Direction for triangle/arrow (up/down/left/right)")
     parser.add_argument("--thickness", type=int, default=3, help="Thickness for ring/cross")
 
+    # Style
+    parser.add_argument("--flat", action="store_true", help="Use flat style (no outline/highlight)")
+
     # Border
     parser.add_argument("--border", "-b", help="Border color")
     parser.add_argument("--border-width", "-bw", type=int, default=1, help="Border width")
@@ -680,18 +683,35 @@ def main():
             img = generate_rectangle(args.width, args.height, color1)
     else:
         color = parse_color(args.color)
-        if args.shape == "circle":
-            img = generate_circle(args.width, args.height, color)
-        elif args.shape == "rounded":
-            img = generate_rounded_rect(args.width, args.height, color, args.radius)
-        elif args.shape == "triangle":
-            img = generate_triangle(args.width, args.height, color, args.direction)
-        elif args.shape == "diamond":
-            img = generate_diamond(args.width, args.height, color)
-        elif args.shape == "ring":
-            img = generate_ring(args.width, args.height, color, args.thickness)
+        if args.flat:
+            # Flat style (original simple shapes)
+            if args.shape == "circle":
+                img = generate_circle(args.width, args.height, color)
+            elif args.shape == "rounded":
+                img = generate_rounded_rect(args.width, args.height, color, args.radius)
+            elif args.shape == "triangle":
+                img = generate_triangle(args.width, args.height, color, args.direction)
+            elif args.shape == "diamond":
+                img = generate_diamond(args.width, args.height, color)
+            elif args.shape == "ring":
+                img = generate_ring(args.width, args.height, color, args.thickness)
+            else:
+                img = generate_rectangle(args.width, args.height, color)
         else:
-            img = generate_rectangle(args.width, args.height, color)
+            # Kenney style (default)
+            if args.shape == "circle":
+                img = kenney_circle(args.width, args.height, color)
+            elif args.shape == "rounded":
+                img = kenney_box(args.width, args.height, color)
+            elif args.shape == "triangle":
+                img = kenney_spike(args.width, args.height, color)
+            elif args.shape == "diamond":
+                img = generate_diamond(args.width, args.height, color)  # Keep flat for diamond
+                img = add_border(img, darken(color, 0.5), 2)
+            elif args.shape == "ring":
+                img = generate_ring(args.width, args.height, color, args.thickness)
+            else:
+                img = kenney_box(args.width, args.height, color)
 
     # Add border if specified
     if args.border:
