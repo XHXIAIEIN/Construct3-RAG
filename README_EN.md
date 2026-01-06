@@ -13,7 +13,26 @@ An AI assistant for Construct 3 game development powered by RAG, supporting docu
 
 ## Quick Start
 
-### 1. Prepare Data Sources
+### Claude Code Skill
+
+Generate Construct 3 event sheet JSON with natural language, paste directly into editor.
+
+```bash
+git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
+cd Construct3-Copilot
+claude
+```
+
+> Requires [Claude Code CLI](https://claude.ai/download)
+
+### RAG Documentation Q&A (Optional)
+
+To use the documentation Q&A feature, you need to set up the RAG environment:
+
+<details>
+<summary>Click to expand RAG setup steps</summary>
+
+#### 1. Prepare Data Sources
 
 All data should be placed in sibling directories:
 
@@ -25,8 +44,6 @@ Parent Directory/
 ```
 
 ```bash
-# Clone related repositories
-git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
 git clone https://github.com/Scirra/Construct-Example-Projects.git
 ```
@@ -37,7 +54,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | Official manual Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
 
-### 2. Install Dependencies
+#### 2. Install Dependencies
 
 ```bash
 cd Construct3-Copilot
@@ -46,7 +63,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Start Services
+#### 3. Start Services
 
 ```bash
 # Start Qdrant (Docker)
@@ -56,23 +73,25 @@ docker run -d -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 ollama pull qwen2.5:7b   # or qwen3:30b (stronger but slower)
 ```
 
-### 4. Index Data
+#### 4. Index Data
 
 ```bash
-# Generate ACE Schema (optional, already included in repo)
+# Generate ACE Schema (optional, already included in repo. Dependency: source/zh-CN_R466.csv)
 node scripts/generate-schema.js
 
 # Index data (first time takes ~15 minutes)
 python -m src.data_processing.indexer --rebuild
 ```
 
-### 5. Start Application
+#### 5. Start Application
 
 ```bash
 python -m src.app.gradio_ui
 ```
 
 > **Note**: Vector database data is stored in Docker volume, not included in Git repo. First use requires `--rebuild` to build the index.
+
+</details>
 
 ---
 

@@ -13,7 +13,26 @@
 
 ## 快速开始
 
-### 1. 准备数据源
+### Claude Code Skill
+
+用自然语言生成 Construct 3 事件表 JSON，直接粘贴到编辑器。
+
+```bash
+git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
+cd Construct3-Copilot
+claude
+```
+
+> 需要安装 [Claude Code CLI](https://claude.ai/download)
+
+### RAG 文档问答（可选）
+
+如需使用文档问答功能，需要额外搭建 RAG 环境：
+
+<details>
+<summary>展开查看 RAG 搭建步骤</summary>
+
+#### 1. 准备数据源
 
 所有数据需放在同级目录：
 
@@ -25,8 +44,6 @@ Parent Directory/
 ```
 
 ```bash
-# 克隆相关仓库
-git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
 git clone https://github.com/Scirra/Construct-Example-Projects.git
 ```
@@ -37,7 +54,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
-### 2. 安装依赖
+#### 2. 安装依赖
 
 ```bash
 cd Construct3-Copilot
@@ -46,7 +63,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. 启动服务
+#### 3. 启动服务
 
 ```bash
 # 启动 Qdrant (Docker)
@@ -56,23 +73,25 @@ docker run -d -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 ```
 
-### 4. 索引数据
+#### 4. 索引数据
 
 ```bash
-# 生成 ACE Schema (可选，已包含在仓库中。依赖文件: source/zh-CN_R466.csv )
+# 生成 ACE Schema (可选，已包含在仓库中。依赖文件: source/zh-CN_R466.csv)
 node scripts/generate-schema.js
 
 # 索引数据 (首次约需 15 分钟)
 python -m src.data_processing.indexer --rebuild
 ```
 
-### 5. 启动应用
+#### 5. 启动应用
 
 ```bash
 python -m src.app.gradio_ui
 ```
 
 > **注意**: 向量数据库数据保存在 Docker volume 中，不包含在 Git 仓库内。首次使用需执行 `--rebuild` 重建索引。
+
+</details>
 
 ---
 
