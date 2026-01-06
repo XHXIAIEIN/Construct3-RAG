@@ -44,7 +44,7 @@ Parent Directory/
 ```
 
 ```bash
-git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
+git clone https://github.com/XHXIAIEIN/Construct3-Manual.git
 git clone https://github.com/Scirra/Construct-Example-Projects.git
 ```
 
