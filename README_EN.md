@@ -1,8 +1,8 @@
-# Construct 3 RAG Assistant
+# Construct-3 Copilot
 
 [中文](README.md) | **English**
 
-A knowledge base assistant for the Construct 3 game engine based on RAG (Retrieval-Augmented Generation) technology.
+An AI assistant for Construct 3 game development powered by RAG, supporting documentation Q&A, code generation, and term translation.
 
 ## Features
 
@@ -102,7 +102,7 @@ Construct3-LLM/
 
 ---
 
-## Construct3-Copilot
+## Claude Code Skill
 
 This project includes a Claude Code Skill that enables AI to generate Construct 3 clipboard-format JSON.
 
@@ -300,4 +300,4 @@ This project splits by H2 headings, each H2 section becomes an independent "docu
 
 ## License
 
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+[MIT](LICENSE)

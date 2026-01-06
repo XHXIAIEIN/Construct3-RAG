@@ -1,4 +1,4 @@
-# Construct 3 RAG 助手
+# Construct-3 Copilot
 
 **中文** | [English](README_EN.md)
 
@@ -102,7 +102,7 @@ Construct3-LLM/
 
 ---
 
-## Construct3-Copilot
+## Claude Code Skill
 
 本项目包含 Claude Code Skill，可以让 AI 直接生成 Construct 3 剪贴板格式的 JSON。
 
@@ -299,4 +299,4 @@ data/schemas/
 
 ## License
 
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+[MIT](LICENSE)
