@@ -3,37 +3,59 @@ name: construct3-event-sheet
 description: >
   Generates Construct 3 event sheet JSON for clipboard paste. Triggers: Construct 3,
   C3, event sheet, game logic, movement, collision, keyboard, tween, platform, bullet.
-  中文：事件表、精灵、平铺图、文本、键盘、鼠标、触控、音频、粒子、八方向、
-  平台、子弹、补间动画、计时器、实体、物理、寻路、淡入淡出、闪烁、旋转。
 ---
 
-# Generate C3 Event Sheet JSON
+# Construct 3 Event Sheet Generator
 
-## 1. Output This Format
+Generate Construct 3 clipboard-compatible JSON that can be directly pasted into the C3 editor.
+
+## Quick Start
+
+### What This Skill Does
+
+1. **Generate Events** - Create game logic (movement, collision, scoring, etc.)
+2. **Generate Objects** - Create sprites, text, tilemaps with valid imageData
+3. **Generate Layouts** - Create complete scenes with objects + instances + events
+
+### How to Use
+
+Simply describe what you want in natural language:
+
+```
+"Create a platformer with WASD controls"
+"Add collision detection between Player and Enemy"
+"Make a breakout game with mouse-controlled paddle"
+```
+
+The skill will generate JSON that you paste into Construct 3.
+
+## Output Types
+
+| Type | Paste Location | Use Case |
+|------|----------------|----------|
+| `events` | Event sheet margin | Game logic |
+| `object-types` | Project Bar → Object types | New objects |
+| `layouts` | Project Bar → Layouts | Complete scenes |
+
+## Clipboard Format
+
+All output follows this structure:
 
 ```json
 {"is-c3-clipboard-data": true, "type": "TYPE", "items": [...]}
 ```
 
-| type | Paste Location |
-|------|----------------|
-| `"events"` | Event sheet margin |
-| `"object-types"` | Project Bar → Object types |
-| `"world-instances"` | Layout view (with positions) |
-| `"layouts"` | Project Bar → Layouts (complete layout) |
-| `"event-sheets"` | Project Bar → Event sheets (complete sheet) |
-
-## 2. Use This Structure
+### Event Block Structure
 
 ```json
-{"eventType": "block",
- "conditions": [{"id": "{ace-id}", "objectClass": "{Object}", "parameters": {...}}],
- "actions": [{"id": "{ace-id}", "objectClass": "{Object}", "parameters": {...}}]}
+{
+  "eventType": "block",
+  "conditions": [{"id": "ace-id", "objectClass": "Object", "parameters": {...}}],
+  "actions": [{"id": "ace-id", "objectClass": "Object", "parameters": {...}}]
+}
 ```
 
-For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
-
-## 3. Format Parameters Correctly
+### Parameter Rules
 
 | Type | Format | Example |
 |------|--------|---------|
@@ -41,87 +63,106 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 | String | **Nested quotes** | `"text": "\"Hello\""` |
 | Expression | Direct | `"x": "Player.X + 100"` |
 | Comparison | 0-5 | `0`=, `1`≠, `2`<, `3`≤, `4`>, `5`≥ |
-| Key code | Number | `87`=W, `65`=A, `83`=S, `68`=D, `32`=Space |
+| Key code | Number | `87`=W, `65`=A, `83`=S, `68`=D |
 
-## 4. Apply These Rules
+## Available Scripts
 
-1. **String params must have nested quotes**: `"animation": "\"Walk\""`
-2. **Behavior ACE requires behaviorType**: `"behaviorType": "8Direction"`
-3. **Comparison must be number**: `4` not `">"`
-4. **Variable must have comment field**: `"comment": ""`
-5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
-6. **imageData must be valid PNG** - Use templates from [object-templates.md](references/object-templates.md) OR generate with script
-7. **NEVER guess ACE IDs** - MUST verify from schema (see step 7)
+### Generate ImageData
 
-## Generate Custom imageData
+Create valid PNG base64 data for sprites:
 
 ```bash
-# Colored rectangle
+# Colored shapes (Kenney style by default)
 python3 scripts/generate_imagedata.py --color red --width 32 --height 32
+python3 scripts/generate_imagedata.py --color blue --shape circle -W 16 -H 16
 
-# Circle shape
-python3 scripts/generate_imagedata.py --color blue --width 16 --height 16 --shape circle
+# Kenney presets
+python3 scripts/generate_imagedata.py --kenney player --color blue
+python3 scripts/generate_imagedata.py --kenney coin --color gold
 
-# From existing image file
+# Animation frames
+python3 scripts/generate_imagedata.py --anim coin-spin --c3-object Coin
+
+# From image file
 python3 scripts/generate_imagedata.py --file sprite.png
-
-# Colors: red, green, blue, yellow, cyan, white, black, gray, orange, purple, brown, pink, or #RRGGBB
 ```
 
-## 5. Choose Output Format
+### Generate Complete Layout
 
-**Option A: Separate JSONs** (more control)
-1. Object types JSON → paste to Project Bar → Object types
-2. Events JSON → paste to Event sheet margin
+Create complete scenes with objects and instances:
 
-**Option B: Complete Layout** (one paste)
-- `layouts` type JSON → paste to Project Bar → Layouts
-- Includes objects + instances + positions
+```bash
+# Platformer preset
+python3 scripts/generate_layout.py --preset platformer -W 640 -H 480 -o layout.json
 
-**Option C: Complete Event Sheet** (one paste)
-- `event-sheets` type JSON → paste to Project Bar → Event sheets
+# Breakout preset
+python3 scripts/generate_layout.py --preset breakout -W 640 -H 480 -o layout.json
+```
 
-Get templates from [layout-templates.md](references/layout-templates.md).
+### Query ACE Schema
 
-## 6. Validate Before Output
+Look up correct ACE IDs:
+
+```bash
+python3 scripts/query_schema.py plugin sprite set-animation
+python3 scripts/query_schema.py behavior platform simulate-control
+```
+
+### Validate Output
+
+Check JSON before pasting:
 
 ```bash
 python3 scripts/validate_output.py '<json>'
 ```
 
-## 7. Query Schema When Unsure
-
-```bash
-python3 scripts/query_schema.py plugin sprite set-animation
-python3 scripts/query_schema.py behavior platform simulate-control
-python3 scripts/query_examples.py action create-object
-```
-
 ## Quick Templates
 
-**Variable** (comment required):
+### Variable (comment field required)
+
 ```json
-{"eventType": "variable", "name": "{Name}", "type": "number", "initialValue": "0", "comment": ""}
+{"eventType": "variable", "name": "Score", "type": "number", "initialValue": "0", "comment": ""}
 ```
 
-**Collision**:
+### Collision Detection
+
 ```json
-{"conditions": [{"id": "on-collision-with-another-object", "objectClass": "{A}", "parameters": {"object": "{B}"}}], "actions": [...]}
+{"eventType": "block",
+ "conditions": [{"id": "on-collision-with-another-object", "objectClass": "Player", "parameters": {"object": "Enemy"}}],
+ "actions": [{"id": "destroy", "objectClass": "Enemy", "parameters": {}}]}
 ```
 
-**Keyboard**:
+### Keyboard Control
+
 ```json
-{"conditions": [{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}], "actions": [...]}
+{"eventType": "block",
+ "conditions": [{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}],
+ "actions": [{"id": "simulate-control", "objectClass": "Player", "behaviorType": "Platform", "parameters": {"control": "jump"}}]}
 ```
 
-## References (consult when needed)
+### Mouse Follow
 
-| When | File |
-|------|------|
-| Chinese user input | [zh-cn.md](references/zh-cn.md) |
-| Need object-types JSON | [object-templates.md](references/object-templates.md) |
-| Need complete layout JSON | [layout-templates.md](references/layout-templates.md) |
-| Need event templates | [clipboard-format.md](references/clipboard-format.md) |
-| Unsure behavior name | [behavior-names.md](references/behavior-names.md) |
-| Check deprecated APIs | [deprecated-features.md](references/deprecated-features.md) |
-| Debug paste errors | [troubleshooting.md](references/troubleshooting.md) |
+```json
+{"eventType": "block",
+ "conditions": [{"id": "every-tick", "objectClass": "System", "parameters": {}}],
+ "actions": [{"id": "set-x", "objectClass": "Paddle", "parameters": {"x": "Mouse.X"}}]}
+```
+
+## Important Rules
+
+1. **String params must have nested quotes**: `"animation": "\"Walk\""`
+2. **Behavior ACE requires behaviorType**: `"behaviorType": "8Direction"`
+3. **Comparison must be number**: `4` not `">"`
+4. **Variable must have comment field**: `"comment": ""`
+5. **NEVER hallucinate ACE IDs** - Query schema when unsure
+
+## References
+
+| Document | Purpose |
+|----------|---------|
+| [clipboard-format.md](references/clipboard-format.md) | Full JSON format specification |
+| [object-templates.md](references/object-templates.md) | Object type templates with imageData |
+| [layout-templates.md](references/layout-templates.md) | Complete layout templates |
+| [behavior-names.md](references/behavior-names.md) | behaviorId ↔ behaviorType mapping |
+| [zh-cn.md](references/zh-cn.md) | Chinese terminology reference |
+| [troubleshooting.md](references/troubleshooting.md) | Debug paste errors |

@@ -8,6 +8,59 @@
 - **术语翻译**: 中英术语查询，保持与官方翻译一致
 - **代码生成**: 根据需求生成 Construct 3 事件表代码
 - **ACE 参考**: 查询插件/行为的 Actions、Conditions、Expressions
+- **Claude Code Skill**: 使用 AI 生成可直接粘贴到 C3 编辑器的 JSON
+
+---
+
+## Claude Code Skills
+
+本项目包含 Claude Code Skills，可以让 AI 直接生成 Construct 3 剪贴板格式的 JSON。
+
+### 快速开始
+
+1. 安装 [Claude Code CLI](https://claude.com/claude-code)
+2. 在项目目录中运行 `claude`
+3. 用自然语言描述你想要的游戏逻辑
+
+### 示例
+
+```
+> 创建一个打砖块游戏，球拍用鼠标控制
+
+AI 会生成两个 JSON 文件：
+- layout.json  → 粘贴到 Project Bar → Layouts
+- events.json  → 粘贴到事件表边缘
+```
+
+```
+> 添加 WASD 控制的 8 方向移动
+
+AI 会生成事件 JSON → 粘贴到事件表边缘
+```
+
+### Skill 功能
+
+| 功能 | 说明 |
+|------|------|
+| 生成事件 | 游戏逻辑（移动、碰撞、计分等） |
+| 生成对象 | Sprite、Text、TiledBackground 等 |
+| 生成布局 | 完整场景（对象 + 实例 + 位置） |
+| 生成图像 | 有效的 PNG base64 imageData |
+
+### 可用脚本
+
+```bash
+# 生成 imageData
+python3 .claude/skills/construct3-event-sheet/scripts/generate_imagedata.py --color red -W 32 -H 32
+
+# 生成完整布局
+python3 .claude/skills/construct3-event-sheet/scripts/generate_layout.py --preset breakout -o layout.json
+
+# 查询 ACE Schema
+python3 .claude/skills/construct3-event-sheet/scripts/query_schema.py plugin sprite set-animation
+```
+
+详细文档: [.claude/skills/construct3-event-sheet/SKILL.md](.claude/skills/construct3-event-sheet/SKILL.md)
 
 ---
 
