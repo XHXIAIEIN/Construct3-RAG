@@ -22,14 +22,14 @@ All data should be placed in sibling directories:
 
 ```
 Parent Directory/
-├── Construct3-LLM/                    # This project
+├── Construct3-Copilot/                    # This project
 ├── Construct3-Manual/                 # Official manual Markdown version
 └── Construct-Example-Projects-main/   # Official example projects
 ```
 
 ```bash
 # Clone related repositories
-git clone https://github.com/XHXIAIEIN/Construct3-LLM.git
+git clone https://github.com/XHXIAIEIN/Construct3-Copilot.git
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git Construct3-Manual
 git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Example-Projects-main
 ```
@@ -43,7 +43,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Exa
 ### 2. Install Dependencies
 
 ```bash
-cd Construct3-LLM
+cd Construct3-Copilot
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -82,7 +82,7 @@ python -m src.app.gradio_ui
 ## Project Structure
 
 ```
-Construct3-LLM/
+Construct3-Copilot/
 ├── source/                    # External data (manual download required)
 │   └── zh-CN_R466.csv         # Official translation file
 ├── data/
@@ -141,13 +141,13 @@ AI generates events JSON → Paste to event sheet margin
 
 ```bash
 # Generate imageData
-python3 .claude/skills/construct3-event-sheet/scripts/generate_imagedata.py --color red -W 32 -H 32
+python3 .claude/skills/construct3-copilot/scripts/generate_imagedata.py --color red -W 32 -H 32
 
 # Generate complete layout
-python3 .claude/skills/construct3-event-sheet/scripts/generate_layout.py --preset breakout -o layout.json
+python3 .claude/skills/construct3-copilot/scripts/generate_layout.py --preset breakout -o layout.json
 
 # Query ACE Schema
-python3 .claude/skills/construct3-event-sheet/scripts/query_schema.py plugin sprite set-animation
+python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite set-animation
 ```
 
 ---

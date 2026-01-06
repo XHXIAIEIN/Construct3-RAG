@@ -1,11 +1,11 @@
 ---
-name: construct3-event-sheet
+name: construct3-copilot
 description: >
   Generates Construct 3 event sheet JSON for clipboard paste. Triggers: Construct 3,
   C3, event sheet, game logic, movement, collision, keyboard, tween, platform, bullet.
 ---
 
-# Construct 3 Event Sheet Generator
+# Construct 3 Copilot
 
 Generate Construct 3 clipboard-compatible JSON that can be directly pasted into the C3 editor.
 
