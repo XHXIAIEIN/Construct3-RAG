@@ -50,8 +50,23 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 3. **Comparison must be number**: `4` not `">"`
 4. **Variable must have comment field**: `"comment": ""`
 5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
-6. **NEVER generate new imageData** - MUST copy from [object-templates.md](references/object-templates.md)
+6. **imageData must be valid PNG** - Use templates from [object-templates.md](references/object-templates.md) OR generate with script
 7. **NEVER guess ACE IDs** - MUST verify from schema (see step 7)
+
+## Generate Custom imageData
+
+```bash
+# Colored rectangle
+python3 scripts/generate_imagedata.py --color red --width 32 --height 32
+
+# Circle shape
+python3 scripts/generate_imagedata.py --color blue --width 16 --height 16 --shape circle
+
+# From existing image file
+python3 scripts/generate_imagedata.py --file sprite.png
+
+# Colors: red, green, blue, yellow, cyan, white, black, gray, orange, purple, brown, pink, or #RRGGBB
+```
 
 ## 5. Choose Output Format
 
