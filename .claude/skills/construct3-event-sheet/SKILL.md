@@ -51,6 +51,7 @@ For behavior ACE, add `"behaviorType": "{BehaviorName}"`.
 4. **Variable must have comment field**: `"comment": ""`
 5. **behaviorType uses display name**: EightDir→`8Direction`, Sin→`Sine`
 6. **NEVER generate new imageData** - MUST copy from [object-templates.md](references/object-templates.md)
+7. **NEVER guess ACE IDs** - MUST verify from schema (see step 7)
 
 ## 5. Choose Output Format
 
@@ -102,10 +103,10 @@ python3 scripts/query_examples.py action create-object
 
 | When | File |
 |------|------|
+| Chinese user input | [zh-cn.md](references/zh-cn.md) |
 | Need object-types JSON | [object-templates.md](references/object-templates.md) |
 | Need complete layout JSON | [layout-templates.md](references/layout-templates.md) |
 | Need event templates | [clipboard-format.md](references/clipboard-format.md) |
-| Chinese user input | [zh-cn.md](references/zh-cn.md) |
 | Unsure behavior name | [behavior-names.md](references/behavior-names.md) |
 | Check deprecated APIs | [deprecated-features.md](references/deprecated-features.md) |
 | Debug paste errors | [troubleshooting.md](references/troubleshooting.md) |
