@@ -2,14 +2,12 @@
 
 [中文](README.md) | **English**
 
-An AI assistant for Construct 3 game development powered by RAG, supporting documentation Q&A, code generation, and term translation.
+An AI assistant for Construct 3 game development powered by RAG, supporting documentation Q&A and code generation.
 
 ## Features
 
 - **Documentation Q&A**: Answer Construct 3 questions with source citations
-- **Term Translation**: Chinese-English terminology lookup, consistent with official translations
 - **Code Generation**: Generate Construct 3 event sheet code from requirements
-- **ACE Reference**: Query plugin/behavior Actions, Conditions, Expressions
 - **Construct3-Copilot**: Generate JSON that can be directly pasted into the C3 editor
 
 ---
@@ -36,7 +34,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Exa
 
 | Data Source | How to Get | Purpose |
 |-------------|------------|---------|
-| `zh-CN_R466.csv` | POEditor | Term translation + ACE Schema generation |
+| `zh-CN_R466.csv` | POEditor | ACE Schema generation |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | Official manual Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
 
@@ -182,7 +180,6 @@ python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite 
 
 | Collection | Source | Content |
 |------------|--------|---------|
-| `c3_terms` | `source/zh-CN_R466.csv` | Official term translations (23,255 entries) |
 | `c3_examples` | Official example projects | Example events (490 projects, 7,148 events) |
 
 ### ACE Schema
@@ -208,9 +205,8 @@ data/schemas/
 | c3_plugins | 420 | Plugin reference |
 | c3_behaviors | 156 | Behavior reference |
 | c3_scripting | 201 | Script API |
-| c3_terms | 23,255 | Term translations |
 | c3_examples | 7,148 | Example code |
-| **Total** | **31,583** | |
+| **Total** | **8,328** | |
 
 ---
 
@@ -285,10 +281,10 @@ This project splits by H2 headings, each H2 section becomes an independent "docu
                             ▼
 ┌─────────────────────────────────────────────────────────┐
 │                  Qdrant Vector Database                  │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │
-│  │c3_guide │ │c3_plugins│ │c3_terms │ │c3_examples│      │
-│  │Tutorials│ │Plugin Ref│ │Terms    │ │Examples  │      │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘       │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐                   │
+│  │c3_guide │ │c3_plugins│ │c3_examples│                  │
+│  │Tutorials│ │Plugin Ref│ │Examples  │                  │
+│  └─────────┘ └─────────┘ └─────────┘                   │
 └─────────────────────────────────────────────────────────┘
 ```
 

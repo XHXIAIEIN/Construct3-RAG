@@ -7,9 +7,7 @@
 ## 功能
 
 - **文档问答**: 回答 Construct 3 使用相关问题，并标注来源
-- **术语翻译**: 中英术语查询，保持与官方翻译一致
 - **代码生成**: 根据需求生成 Construct 3 事件表代码
-- **ACE 参考**: 查询插件/行为的 Actions、Conditions、Expressions
 - **Construct3-Copilot**: 使用 AI 生成可直接粘贴到 C3 编辑器的 JSON
 
 ---
@@ -36,7 +34,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git Construct-Exa
 
 | 数据源 | 获取方式 | 用途 |
 |--------|----------|------|
-| `zh-CN_R466.csv` | POEditor | 术语翻译 + ACE Schema 生成 |
+| `zh-CN_R466.csv` | POEditor | ACE Schema 生成 |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
@@ -182,7 +180,6 @@ python3 .claude/skills/construct3-copilot/scripts/query_schema.py plugin sprite 
 
 | 集合 | 来源 | 内容 |
 |------|------|------|
-| `c3_terms` | `source/zh-CN_R466.csv` | 官方术语翻译 (23,255 条) |
 | `c3_examples` | 官方示例项目 | 示例事件 (490 项目, 7,148 事件) |
 
 ### ACE Schema
@@ -208,9 +205,8 @@ data/schemas/
 | c3_plugins | 420 | 插件参考 |
 | c3_behaviors | 156 | 行为参考 |
 | c3_scripting | 201 | 脚本 API |
-| c3_terms | 23,255 | 术语翻译 |
 | c3_examples | 7,148 | 示例代码 |
-| **总计** | **31,583** | |
+| **总计** | **8,328** | |
 
 ---
 
@@ -272,7 +268,7 @@ data/schemas/
 │                    RAGChain (chain.py)                   │
 │  ┌──────────────┐    ┌──────────────┐    ┌───────────┐ │
 │  │ 问题分类      │ → │ 检索上下文    │ → │ LLM 生成   │ │
-│  │ (qa/翻译/代码)│    │ (多集合搜索)  │    │ (Qwen3)   │ │
+│  │ (qa/代码)    │    │ (多集合搜索)  │    │ (Qwen3)   │ │
 │  └──────────────┘    └──────────────┘    └───────────┘ │
 └─────────────────────────────────────────────────────────┘
                             │
@@ -284,10 +280,10 @@ data/schemas/
                             ▼
 ┌─────────────────────────────────────────────────────────┐
 │                  Qdrant 向量数据库                        │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │
-│  │c3_guide │ │c3_plugins│ │c3_terms │ │c3_examples│      │
-│  │入门教程  │ │插件参考  │ │术语翻译  │ │示例代码   │      │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘       │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐                   │
+│  │c3_guide │ │c3_plugins│ │c3_examples│                  │
+│  │入门教程  │ │插件参考  │ │示例代码   │                  │
+│  └─────────┘ └─────────┘ └─────────┘                   │
 └─────────────────────────────────────────────────────────┘
 ```
 
