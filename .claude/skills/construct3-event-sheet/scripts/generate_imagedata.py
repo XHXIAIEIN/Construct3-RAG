@@ -3,21 +3,32 @@
 Generate valid C3 imageData (base64 PNG) for sprites.
 
 Usage:
-    # Generate colored rectangle
+    # Basic shapes
     python generate_imagedata.py --color red --width 32 --height 32
-    python generate_imagedata.py --color "#00FF00" --width 64 --height 16
-
-    # Convert existing image file
-    python generate_imagedata.py --file sprite.png
-
-    # Generate with specific shape
     python generate_imagedata.py --color blue --width 16 --height 16 --shape circle
+
+    # With border
+    python generate_imagedata.py --color yellow --width 32 --height 32 --border black --border-width 2
+
+    # Patterns
+    python generate_imagedata.py --width 32 --height 32 --pattern checkerboard --color white --color2 gray
+    python generate_imagedata.py --width 32 --height 32 --pattern stripes --color red --color2 white
+    python generate_imagedata.py --width 32 --height 32 --pattern gradient --color blue --color2 cyan
+
+    # Icons
+    python generate_imagedata.py --width 32 --height 32 --icon arrow --color white
+    python generate_imagedata.py --width 32 --height 32 --icon star --color yellow
+    python generate_imagedata.py --width 32 --height 32 --icon heart --color red
+
+    # Convert existing image
+    python generate_imagedata.py --file sprite.png
 """
 
 import argparse
 import base64
 import io
 import sys
+import math
 
 try:
     from PIL import Image, ImageDraw
@@ -40,6 +51,12 @@ COLORS = {
     "purple": (128, 0, 128, 255),
     "brown": (139, 69, 19, 255),
     "pink": (255, 192, 203, 255),
+    "lime": (50, 205, 50, 255),
+    "navy": (0, 0, 128, 255),
+    "teal": (0, 128, 128, 255),
+    "gold": (255, 215, 0, 255),
+    "silver": (192, 192, 192, 255),
+    "transparent": (0, 0, 0, 0),
 }
 
 
@@ -48,7 +65,6 @@ def parse_color(color_str: str) -> tuple:
     if color_str.lower() in COLORS:
         return COLORS[color_str.lower()]
 
-    # Parse hex color
     if color_str.startswith("#"):
         hex_color = color_str[1:]
         if len(hex_color) == 6:
@@ -88,6 +104,210 @@ def generate_rounded_rect(width: int, height: int, color: tuple, radius: int = 4
     return img
 
 
+def generate_triangle(width: int, height: int, color: tuple, direction: str = "up") -> Image.Image:
+    """Generate a triangle"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    if direction == "up":
+        points = [(width // 2, 0), (0, height - 1), (width - 1, height - 1)]
+    elif direction == "down":
+        points = [(0, 0), (width - 1, 0), (width // 2, height - 1)]
+    elif direction == "left":
+        points = [(width - 1, 0), (0, height // 2), (width - 1, height - 1)]
+    else:  # right
+        points = [(0, 0), (width - 1, height // 2), (0, height - 1)]
+
+    draw.polygon(points, fill=color)
+    return img
+
+
+def generate_diamond(width: int, height: int, color: tuple) -> Image.Image:
+    """Generate a diamond shape"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    points = [(width // 2, 0), (width - 1, height // 2), (width // 2, height - 1), (0, height // 2)]
+    draw.polygon(points, fill=color)
+    return img
+
+
+def generate_ring(width: int, height: int, color: tuple, thickness: int = 3) -> Image.Image:
+    """Generate a ring (hollow circle)"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    draw.ellipse([0, 0, width - 1, height - 1], fill=color)
+    inner = thickness
+    draw.ellipse([inner, inner, width - 1 - inner, height - 1 - inner], fill=(0, 0, 0, 0))
+    return img
+
+
+def add_border(img: Image.Image, border_color: tuple, border_width: int) -> Image.Image:
+    """Add border to existing image"""
+    draw = ImageDraw.Draw(img)
+    w, h = img.size
+    for i in range(border_width):
+        draw.rectangle([i, i, w - 1 - i, h - 1 - i], outline=border_color)
+    return img
+
+
+def generate_checkerboard(width: int, height: int, color1: tuple, color2: tuple, cell_size: int = 8) -> Image.Image:
+    """Generate checkerboard pattern"""
+    img = Image.new("RGBA", (width, height), color1)
+    draw = ImageDraw.Draw(img)
+    for y in range(0, height, cell_size):
+        for x in range(0, width, cell_size):
+            if ((x // cell_size) + (y // cell_size)) % 2 == 1:
+                draw.rectangle([x, y, x + cell_size - 1, y + cell_size - 1], fill=color2)
+    return img
+
+
+def generate_stripes(width: int, height: int, color1: tuple, color2: tuple, stripe_width: int = 4, horizontal: bool = False) -> Image.Image:
+    """Generate stripe pattern"""
+    img = Image.new("RGBA", (width, height), color1)
+    draw = ImageDraw.Draw(img)
+    if horizontal:
+        for y in range(0, height, stripe_width * 2):
+            draw.rectangle([0, y, width - 1, y + stripe_width - 1], fill=color2)
+    else:
+        for x in range(0, width, stripe_width * 2):
+            draw.rectangle([x, 0, x + stripe_width - 1, height - 1], fill=color2)
+    return img
+
+
+def generate_gradient(width: int, height: int, color1: tuple, color2: tuple, horizontal: bool = False) -> Image.Image:
+    """Generate gradient"""
+    img = Image.new("RGBA", (width, height))
+    for i in range(width if horizontal else height):
+        ratio = i / (width if horizontal else height)
+        r = int(color1[0] + (color2[0] - color1[0]) * ratio)
+        g = int(color1[1] + (color2[1] - color1[1]) * ratio)
+        b = int(color1[2] + (color2[2] - color1[2]) * ratio)
+        a = int(color1[3] + (color2[3] - color1[3]) * ratio)
+        if horizontal:
+            for y in range(height):
+                img.putpixel((i, y), (r, g, b, a))
+        else:
+            for x in range(width):
+                img.putpixel((x, i), (r, g, b, a))
+    return img
+
+
+def generate_dots(width: int, height: int, bg_color: tuple, dot_color: tuple, dot_size: int = 2, spacing: int = 6) -> Image.Image:
+    """Generate dot pattern"""
+    img = Image.new("RGBA", (width, height), bg_color)
+    draw = ImageDraw.Draw(img)
+    for y in range(spacing // 2, height, spacing):
+        for x in range(spacing // 2, width, spacing):
+            draw.ellipse([x - dot_size, y - dot_size, x + dot_size, y + dot_size], fill=dot_color)
+    return img
+
+
+def generate_brick(width: int, height: int, brick_color: tuple, mortar_color: tuple) -> Image.Image:
+    """Generate brick pattern"""
+    img = Image.new("RGBA", (width, height), mortar_color)
+    draw = ImageDraw.Draw(img)
+    brick_h = 8
+    brick_w = 16
+    mortar = 1
+
+    for row, y in enumerate(range(0, height, brick_h)):
+        offset = (brick_w // 2) if row % 2 == 1 else 0
+        for x in range(-brick_w, width + brick_w, brick_w):
+            bx = x + offset
+            draw.rectangle([bx + mortar, y + mortar, bx + brick_w - mortar - 1, y + brick_h - mortar - 1], fill=brick_color)
+    return img
+
+
+def generate_icon_arrow(width: int, height: int, color: tuple, direction: str = "right") -> Image.Image:
+    """Generate arrow icon"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    cx, cy = width // 2, height // 2
+    size = min(width, height) // 2 - 2
+
+    if direction == "right":
+        points = [(cx - size // 2, cy - size // 2), (cx + size // 2, cy), (cx - size // 2, cy + size // 2)]
+    elif direction == "left":
+        points = [(cx + size // 2, cy - size // 2), (cx - size // 2, cy), (cx + size // 2, cy + size // 2)]
+    elif direction == "up":
+        points = [(cx - size // 2, cy + size // 2), (cx, cy - size // 2), (cx + size // 2, cy + size // 2)]
+    else:  # down
+        points = [(cx - size // 2, cy - size // 2), (cx, cy + size // 2), (cx + size // 2, cy - size // 2)]
+
+    draw.polygon(points, fill=color)
+    return img
+
+
+def generate_icon_star(width: int, height: int, color: tuple, points: int = 5) -> Image.Image:
+    """Generate star icon"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    cx, cy = width // 2, height // 2
+    outer_r = min(width, height) // 2 - 1
+    inner_r = outer_r // 2
+
+    star_points = []
+    for i in range(points * 2):
+        angle = math.pi / 2 + i * math.pi / points
+        r = outer_r if i % 2 == 0 else inner_r
+        x = cx + r * math.cos(angle)
+        y = cy - r * math.sin(angle)
+        star_points.append((x, y))
+
+    draw.polygon(star_points, fill=color)
+    return img
+
+
+def generate_icon_heart(width: int, height: int, color: tuple) -> Image.Image:
+    """Generate heart icon"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    # Draw two circles for top of heart
+    r = width // 4
+    draw.ellipse([width // 4 - r, height // 4 - r, width // 4 + r, height // 4 + r], fill=color)
+    draw.ellipse([3 * width // 4 - r, height // 4 - r, 3 * width // 4 + r, height // 4 + r], fill=color)
+
+    # Draw triangle for bottom
+    points = [(1, height // 3), (width // 2, height - 2), (width - 2, height // 3)]
+    draw.polygon(points, fill=color)
+
+    return img
+
+
+def generate_icon_cross(width: int, height: int, color: tuple, thickness: int = None) -> Image.Image:
+    """Generate cross/plus icon"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    if thickness is None:
+        thickness = max(2, min(width, height) // 4)
+
+    cx, cy = width // 2, height // 2
+
+    # Horizontal bar
+    draw.rectangle([2, cy - thickness // 2, width - 3, cy + thickness // 2], fill=color)
+    # Vertical bar
+    draw.rectangle([cx - thickness // 2, 2, cx + thickness // 2, height - 3], fill=color)
+
+    return img
+
+
+def generate_icon_x(width: int, height: int, color: tuple, thickness: int = 3) -> Image.Image:
+    """Generate X icon"""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    # Draw two thick diagonal lines
+    for i in range(-thickness // 2, thickness // 2 + 1):
+        draw.line([(2 + i, 2), (width - 3 + i, height - 3)], fill=color, width=1)
+        draw.line([(width - 3 + i, 2), (2 + i, height - 3)], fill=color, width=1)
+
+    return img
+
+
 def image_to_base64(img: Image.Image) -> str:
     """Convert PIL Image to base64 data URI"""
     buffer = io.BytesIO()
@@ -106,34 +326,104 @@ def load_image_file(filepath: str) -> Image.Image:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate C3-compatible imageData (base64 PNG)"
-    )
+    parser = argparse.ArgumentParser(description="Generate C3-compatible imageData (base64 PNG)")
+
+    # Input
     parser.add_argument("--file", "-f", help="Input image file to convert")
-    parser.add_argument("--color", "-c", default="white", help="Color name or #RRGGBB")
+
+    # Size
     parser.add_argument("--width", "-W", type=int, default=32, help="Width in pixels")
     parser.add_argument("--height", "-H", type=int, default=32, help="Height in pixels")
-    parser.add_argument(
-        "--shape", "-s",
-        choices=["rect", "circle", "rounded"],
-        default="rect",
-        help="Shape type"
-    )
+
+    # Colors
+    parser.add_argument("--color", "-c", default="white", help="Primary color (name or #RRGGBB)")
+    parser.add_argument("--color2", "-c2", help="Secondary color for patterns")
+
+    # Shape
+    parser.add_argument("--shape", "-s",
+        choices=["rect", "circle", "rounded", "triangle", "diamond", "ring"],
+        default="rect", help="Shape type")
     parser.add_argument("--radius", "-r", type=int, default=4, help="Corner radius for rounded rect")
+    parser.add_argument("--direction", "-d", default="up", help="Direction for triangle/arrow (up/down/left/right)")
+    parser.add_argument("--thickness", type=int, default=3, help="Thickness for ring/cross")
+
+    # Border
+    parser.add_argument("--border", "-b", help="Border color")
+    parser.add_argument("--border-width", "-bw", type=int, default=1, help="Border width")
+
+    # Patterns
+    parser.add_argument("--pattern", "-p",
+        choices=["checkerboard", "stripes", "stripes-h", "gradient", "gradient-h", "dots", "brick"],
+        help="Pattern type")
+    parser.add_argument("--cell-size", type=int, default=8, help="Cell size for checkerboard")
+    parser.add_argument("--stripe-width", type=int, default=4, help="Stripe width")
+
+    # Icons
+    parser.add_argument("--icon", "-i",
+        choices=["arrow", "arrow-up", "arrow-down", "arrow-left", "star", "heart", "cross", "x"],
+        help="Icon type")
+
+    # Output
     parser.add_argument("--json", "-j", action="store_true", help="Output as JSON array element")
 
     args = parser.parse_args()
 
+    # Generate image
     if args.file:
         img = load_image_file(args.file)
+    elif args.icon:
+        color = parse_color(args.color)
+        if args.icon.startswith("arrow"):
+            direction = args.icon.split("-")[1] if "-" in args.icon else "right"
+            img = generate_icon_arrow(args.width, args.height, color, direction)
+        elif args.icon == "star":
+            img = generate_icon_star(args.width, args.height, color)
+        elif args.icon == "heart":
+            img = generate_icon_heart(args.width, args.height, color)
+        elif args.icon == "cross":
+            img = generate_icon_cross(args.width, args.height, color, args.thickness)
+        elif args.icon == "x":
+            img = generate_icon_x(args.width, args.height, color, args.thickness)
+        else:
+            img = generate_rectangle(args.width, args.height, color)
+    elif args.pattern:
+        color1 = parse_color(args.color)
+        color2 = parse_color(args.color2) if args.color2 else parse_color("gray")
+        if args.pattern == "checkerboard":
+            img = generate_checkerboard(args.width, args.height, color1, color2, args.cell_size)
+        elif args.pattern == "stripes":
+            img = generate_stripes(args.width, args.height, color1, color2, args.stripe_width, horizontal=False)
+        elif args.pattern == "stripes-h":
+            img = generate_stripes(args.width, args.height, color1, color2, args.stripe_width, horizontal=True)
+        elif args.pattern == "gradient":
+            img = generate_gradient(args.width, args.height, color1, color2, horizontal=False)
+        elif args.pattern == "gradient-h":
+            img = generate_gradient(args.width, args.height, color1, color2, horizontal=True)
+        elif args.pattern == "dots":
+            img = generate_dots(args.width, args.height, color1, color2)
+        elif args.pattern == "brick":
+            img = generate_brick(args.width, args.height, color1, color2)
+        else:
+            img = generate_rectangle(args.width, args.height, color1)
     else:
         color = parse_color(args.color)
         if args.shape == "circle":
             img = generate_circle(args.width, args.height, color)
         elif args.shape == "rounded":
             img = generate_rounded_rect(args.width, args.height, color, args.radius)
+        elif args.shape == "triangle":
+            img = generate_triangle(args.width, args.height, color, args.direction)
+        elif args.shape == "diamond":
+            img = generate_diamond(args.width, args.height, color)
+        elif args.shape == "ring":
+            img = generate_ring(args.width, args.height, color, args.thickness)
         else:
             img = generate_rectangle(args.width, args.height, color)
+
+    # Add border if specified
+    if args.border:
+        border_color = parse_color(args.border)
+        img = add_border(img, border_color, args.border_width)
 
     base64_data = image_to_base64(img)
 
@@ -142,7 +432,6 @@ def main():
     else:
         print(base64_data)
 
-    # Print image info to stderr
     print(f"\n// Size: {img.width}x{img.height}", file=sys.stderr)
 
 
