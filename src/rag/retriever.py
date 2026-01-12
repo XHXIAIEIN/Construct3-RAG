@@ -4,7 +4,7 @@ Combines vector search with optional BM25 for better results
 """
 import time
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set
 from dataclasses import dataclass
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -126,7 +126,7 @@ class HybridRetriever:
     def search_all(
         self,
         query: str,
-        top_k_per_collection: int = 2
+        top_k_per_collection: int = 5
     ) -> Dict[str, List[SearchResult]]:
         """Search all collections and return organized results"""
         results = {
@@ -140,6 +140,106 @@ class HybridRetriever:
             "examples": self.search_examples(query, top_k_per_collection)
         }
         return results
+
+    def search_all_with_rerank(
+        self,
+        query: str,
+        top_k_per_collection: int = 5,
+        final_top_k: int = 10
+    ) -> List[SearchResult]:
+        """
+        Search all collections with cross-collection reranking.
+
+        Args:
+            query: Search query
+            top_k_per_collection: Results per collection before reranking
+            final_top_k: Final number of results after reranking
+
+        Returns:
+            Reranked list of SearchResults
+        """
+        import time
+        logger.info(f"[检索] 开始多 collection 检索 (每 collection top_k={top_k_per_collection})...")
+        t0 = time.time()
+
+        # Collect all results from all collections
+        all_results: List[SearchResult] = []
+
+        # Define collection mapping
+        collection_map = {
+            "guide": self.search_guide,
+            "interface": self.search_interface,
+            "project": self.search_project,
+            "plugins": self.search_plugins,
+            "behaviors": self.search_behaviors,
+            "scripting": self.search_scripting,
+            "terms": self.search_terms,
+            "examples": self.search_examples,
+        }
+
+        for coll_name, search_fn in collection_map.items():
+            try:
+                results = search_fn(query, top_k_per_collection)
+                for r in results:
+                    all_results.append(r)
+                logger.info(f"[检索] {coll_name}: {len(results)} 条")
+            except Exception as e:
+                logger.warning(f"[检索] {coll_name} 失败: {e}")
+
+        logger.info(f"[检索] 原始结果共 {len(all_results)} 条 ({time.time()-t0:.1f}s)")
+
+        if not all_results:
+            return []
+
+        # Cross-collection reranking using score normalization
+        logger.info(f"[重排] 开始跨 collection 重排序...")
+
+        # Compute min/max scores per collection for normalization
+        collection_scores: Dict[str, List[float]] = {}
+        for r in all_results:
+            if r.source not in collection_scores:
+                collection_scores[r.source] = []
+            collection_scores[r.source].append(r.score)
+
+        # Normalize scores and compute final score
+        reranked: List[SearchResult] = []
+        seen_texts: Set[str] = set()  # Deduplication
+
+        for r in all_results:
+            # Min-max normalization per collection
+            coll_scores = collection_scores[r.source]
+            min_s, max_s = min(coll_scores), max(coll_scores)
+            if max_s > min_s:
+                normalized = (r.score - min_s) / (max_s - min_s)
+            else:
+                normalized = r.score if max_s > 0 else 0
+
+            # Boost for certain collections (more authoritative)
+            collection_boost = {
+                "c3_plugins": 1.1,
+                "c3_behaviors": 1.1,
+                "c3_project": 1.05,
+            }
+            boost = collection_boost.get(r.source, 1.0)
+            final_score = normalized * boost
+
+            # Deduplication by text content
+            text_key = r.text[:100].lower().strip()
+            if text_key not in seen_texts:
+                seen_texts.add(text_key)
+                reranked.append(SearchResult(
+                    text=r.text,
+                    score=final_score,
+                    source=r.source,
+                    metadata=r.metadata
+                ))
+
+        # Sort by final score and return top-k
+        reranked.sort(key=lambda x: x.score, reverse=True)
+        final_results = reranked[:final_top_k]
+
+        logger.info(f"[重排] 完成，返回 top-{len(final_results)}")
+        return final_results
 
     def format_context(self, results: Dict[str, List[SearchResult]]) -> str:
         """Format search results as context for LLM"""
