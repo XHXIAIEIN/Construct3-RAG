@@ -1,10 +1,18 @@
 """
 Hybrid Retriever for Construct 3 RAG
 Combines vector search with optional BM25 for better results
+
+Features:
+- Semantic similarity search via Qdrant
+- Cross-collection reranking with score normalization
+- Adaptive score threshold filtering
+- Query decomposition for complex multi-step workflows
+- Reciprocal Rank Fusion (RRF) for multi-query results
 """
 import time
 import logging
-from typing import List, Dict, Any, Optional, Set
+import statistics
+from typing import List, Dict, Any, Optional, Set, Tuple
 from dataclasses import dataclass
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -30,7 +38,23 @@ class HybridRetriever:
     Hybrid retriever combining:
     - Vector search (semantic similarity)
     - Optional keyword matching for terms
+    - Adaptive score threshold filtering
+    - Query decomposition for complex workflows
+    - Reciprocal Rank Fusion (RRF) for multi-query results
+
+    Handling Irrelevant Results:
+        Use `filter_by_adaptive_threshold()` to remove low-relevance chunks
+        based on score distribution analysis.
+
+    Complex Multi-Step Workflows:
+        Use `search_with_decomposition()` which breaks complex queries into
+        sub-queries and combines results using RRF.
     """
+
+    # Score threshold configuration
+    DEFAULT_SCORE_THRESHOLD = 0.5
+    MIN_SCORE_THRESHOLD = 0.3
+    HIGH_RELEVANCE_THRESHOLD = 0.7
 
     def __init__(
         self,
@@ -41,6 +65,7 @@ class HybridRetriever:
         self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
         self.embedding_model_name = embedding_model_name
         self._embedder = None
+        self._qdrant_available = None  # Cache for health check
 
     @property
     def embedder(self):
@@ -51,6 +76,161 @@ class HybridRetriever:
             self._embedder = EmbeddingModel(self.embedding_model_name, device="cpu")
             logger.info(f"[加载] Embedding 模型完成 ({time.time()-t0:.1f}s)")
         return self._embedder
+
+    def check_health(self) -> Tuple[bool, str]:
+        """
+        Check if Qdrant vector database is available.
+
+        Returns:
+            Tuple of (is_available, status_message)
+
+        Example:
+            >>> retriever = HybridRetriever()
+            >>> available, msg = retriever.check_health()
+            >>> if not available:
+            ...     print(f"Qdrant unavailable: {msg}")
+        """
+        try:
+            # Try to get collections list as health check
+            self.client.get_collections()
+            self._qdrant_available = True
+            return True, "Qdrant is healthy"
+        except Exception as e:
+            self._qdrant_available = False
+            return False, f"Qdrant connection failed: {str(e)}"
+
+    def compute_adaptive_threshold(self, results: List[SearchResult]) -> float:
+        """
+        Compute adaptive score threshold based on result distribution.
+
+        This helps filter out irrelevant chunks by analyzing the score
+        distribution and removing results in the "long tail".
+
+        Args:
+            results: List of search results with scores
+
+        Returns:
+            Computed threshold score. Results below this should be filtered.
+
+        Strategy:
+            - If few results (< 3): use minimum threshold
+            - Otherwise: use mean - 0.5 * std_dev as cutoff
+            - Never go below MIN_SCORE_THRESHOLD
+
+        Example:
+            >>> results = retriever.search_plugins("sprite animation", top_k=10)
+            >>> threshold = retriever.compute_adaptive_threshold(results)
+            >>> filtered = [r for r in results if r.score >= threshold]
+        """
+        if len(results) < 3:
+            return self.MIN_SCORE_THRESHOLD
+
+        scores = [r.score for r in results]
+        mean_score = statistics.mean(scores)
+        std_dev = statistics.stdev(scores) if len(scores) > 1 else 0
+
+        # Adaptive threshold: mean - 0.5 * std_dev
+        # This keeps results within reasonable range of the mean
+        threshold = mean_score - (0.5 * std_dev)
+
+        # Clamp to reasonable bounds
+        return max(self.MIN_SCORE_THRESHOLD, min(threshold, mean_score))
+
+    def filter_by_adaptive_threshold(
+        self,
+        results: List[SearchResult],
+        min_results: int = 2
+    ) -> List[SearchResult]:
+        """
+        Filter results using adaptive threshold while ensuring minimum results.
+
+        This is the primary method for handling irrelevant semantic search results.
+        It removes low-scoring chunks that are likely irrelevant while preserving
+        a minimum number of results for context.
+
+        Args:
+            results: List of search results to filter
+            min_results: Minimum number of results to keep (default: 2)
+
+        Returns:
+            Filtered list of SearchResults
+
+        Example:
+            >>> results = retriever.search_all_with_rerank(query)
+            >>> # Remove likely irrelevant chunks
+            >>> filtered = retriever.filter_by_adaptive_threshold(results)
+            >>> print(f"Kept {len(filtered)}/{len(results)} results")
+        """
+        if len(results) <= min_results:
+            return results
+
+        threshold = self.compute_adaptive_threshold(results)
+        filtered = [r for r in results if r.score >= threshold]
+
+        # Ensure minimum results
+        if len(filtered) < min_results:
+            # Sort by score and take top min_results
+            sorted_results = sorted(results, key=lambda x: x.score, reverse=True)
+            return sorted_results[:min_results]
+
+        return filtered
+
+    def reciprocal_rank_fusion(
+        self,
+        result_lists: List[List[SearchResult]],
+        k: int = 60
+    ) -> List[SearchResult]:
+        """
+        Combine multiple retrieval result lists using Reciprocal Rank Fusion.
+
+        RRF is effective for combining results from different queries or
+        retrieval methods. It weights results by their rank position across
+        all lists, giving higher weight to consistently high-ranked items.
+
+        Args:
+            result_lists: List of result lists to fuse
+            k: RRF parameter (default: 60, standard value from literature)
+
+        Returns:
+            Fused and deduplicated list of SearchResults, sorted by RRF score
+
+        Formula:
+            RRF_score(d) = Σ 1 / (k + rank(d))
+
+        Example:
+            >>> # Combine results from original and rewritten queries
+            >>> results1 = retriever.search_all_with_rerank("sprite collision")
+            >>> results2 = retriever.search_all_with_rerank("detect overlap sprite")
+            >>> fused = retriever.reciprocal_rank_fusion([results1, results2])
+        """
+        # Track RRF scores and best result object for each unique text
+        rrf_scores: Dict[str, float] = {}
+        result_map: Dict[str, SearchResult] = {}
+
+        for results in result_lists:
+            for rank, r in enumerate(results):
+                # Use first 150 chars as dedup key
+                key = r.text[:150].lower().strip()
+                rrf_scores[key] = rrf_scores.get(key, 0) + 1 / (k + rank + 1)
+
+                # Keep the result with highest original score
+                if key not in result_map or r.score > result_map[key].score:
+                    result_map[key] = r
+
+        # Build final list sorted by RRF score
+        fused_results = []
+        for key, rrf_score in sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True):
+            if key in result_map:
+                result = result_map[key]
+                # Update score to RRF score for transparency
+                fused_results.append(SearchResult(
+                    text=result.text,
+                    score=rrf_score,  # Use RRF score
+                    source=result.source,
+                    metadata={**result.metadata, "original_score": result.score}
+                ))
+
+        return fused_results
 
     def search_collection(
         self,

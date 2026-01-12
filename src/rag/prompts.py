@@ -132,6 +132,48 @@ NO_RESULTS_RESPONSE = """抱歉，我没有在 Construct 3 文档中找到与您
 
 
 # ----------------------------
+# Fallback responses (for service unavailability)
+# ----------------------------
+
+LLM_UNAVAILABLE_RESPONSE = """抱歉，LLM 服务当前不可用。
+
+## 检索到的相关文档
+{sources_summary}
+
+## 建议
+1. 检查 Ollama 服务是否正在运行: `ollama serve`
+2. 确认模型已下载: `ollama pull qwen2.5:7b`
+3. 检查服务地址配置是否正确
+
+您可以先查阅上方检索到的相关文档，稍后重试获取 AI 回答。
+"""
+
+QDRANT_UNAVAILABLE_RESPONSE = """抱歉，向量数据库服务当前不可用。
+
+## 可能原因
+1. Qdrant 服务未启动
+2. 连接配置错误
+3. 网络问题
+
+## 建议
+1. 启动 Qdrant: `docker run -d -p 6333:6333 qdrant/qdrant`
+2. 检查连接地址: 默认为 localhost:6333
+3. 确认数据已索引: `python -m src.data_processing.indexer`
+
+请解决上述问题后重试。
+"""
+
+LOW_CONFIDENCE_WARNING = """
+⚠️ **置信度提示**: 以上回答的置信度较低，可能原因：
+- 检索到的相关文档较少
+- 问题涉及多个复杂概念
+- 部分信息可能基于通用经验而非官方文档
+
+建议：核实关键信息，或提供更多上下文以获得更准确的回答。
+"""
+
+
+# ----------------------------
 # Event sheet generation prompt
 # ----------------------------
 
@@ -187,6 +229,32 @@ QUERY_REWRITE_PROMPT = """你是搜索查询优化专家。用户在搜索 Const
 - 尽量包含对象/行为/事件表关键词（Sprite, Event sheet, Behavior, Instance variable 等）
 
 每行一个查询，不要编号或解释："""
+
+
+# ----------------------------
+# Query Decomposition Prompt (for complex multi-step workflows)
+# ----------------------------
+
+QUERY_DECOMPOSITION_PROMPT = """你是 Construct 3 问题分析专家。用户提出了一个复杂的多步骤问题。
+
+## 原始问题
+{original_query}
+
+## 任务
+将这个复杂问题分解为 2-4 个独立的子问题，每个子问题应该：
+1. 聚焦于一个具体的 Construct 3 概念或功能
+2. 可以独立检索文档
+3. 覆盖原问题的不同方面
+
+## 分解策略
+- 如果涉及多个对象/行为：分别查询每个
+- 如果涉及流程：分解为设置、运行时、触发条件等步骤
+- 如果涉及概念+实现：分为"是什么"和"怎么做"
+
+## 输出格式
+每行一个子问题，不要编号或解释。子问题要具体，包含 Construct 3 相关关键词。
+
+子问题："""
 
 
 # ----------------------------
