@@ -12,7 +12,7 @@ Features:
 import time
 import logging
 import statistics
-from typing import List, Dict, Any, Optional, Set, Tuple
+from typing import List, Dict, Any, Set, Tuple
 from dataclasses import dataclass
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -52,9 +52,9 @@ class HybridRetriever:
     """
 
     # Score threshold configuration
-    DEFAULT_SCORE_THRESHOLD = 0.5
-    MIN_SCORE_THRESHOLD = 0.3
-    HIGH_RELEVANCE_THRESHOLD = 0.7
+    DEFAULT_SCORE_THRESHOLD = 0.3
+    MIN_SCORE_THRESHOLD = 0.2
+    HIGH_RELEVANCE_THRESHOLD = 0.6
 
     def __init__(
         self,
@@ -70,11 +70,11 @@ class HybridRetriever:
     @property
     def embedder(self):
         if self._embedder is None:
-            logger.info(f"[加载] Embedding 模型: {self.embedding_model_name} ...")
+            logger.info(f"[Load] Embedding model: {self.embedding_model_name} ...")
             t0 = time.time()
-            from src.data_processing.indexer import EmbeddingModel
+            from src.ingest.indexer import EmbeddingModel
             self._embedder = EmbeddingModel(self.embedding_model_name, device="cpu")
-            logger.info(f"[加载] Embedding 模型完成 ({time.time()-t0:.1f}s)")
+            logger.info(f"[Load] Embedding model ready ({time.time()-t0:.1f}s)")
         return self._embedder
 
     def check_health(self) -> Tuple[bool, str]:
@@ -243,12 +243,13 @@ class HybridRetriever:
         query_vector = self.embedder.encode_single(query)
 
         try:
-            results = self.client.search(
+            response = self.client.query_points(
                 collection_name=collection_name,
-                query_vector=query_vector,
+                query=query_vector,
                 limit=top_k,
                 score_threshold=score_threshold
             )
+            results = response.points
         except Exception as e:
             print(f"Search error in {collection_name}: {e}")
             return []
@@ -303,23 +304,80 @@ class HybridRetriever:
         from src.collections import COLLECTIONS
         return self.search_collection(COLLECTIONS["examples"], query, top_k)
 
-    def search_all(
+    def search_ace(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search ACE schema (Actions/Conditions/Expressions per plugin)"""
+        from src.collections import COLLECTIONS
+        return self.search_collection(COLLECTIONS["ace"], query, top_k, score_threshold=0.3)
+
+    def search_plugin_by_name(
         self,
         query: str,
-        top_k_per_collection: int = 5
-    ) -> Dict[str, List[SearchResult]]:
-        """Search all collections and return organized results"""
-        results = {
-            "guide": self.search_guide(query, top_k_per_collection),
-            "interface": self.search_interface(query, top_k_per_collection),
-            "project": self.search_project(query, top_k_per_collection),
-            "plugins": self.search_plugins(query, top_k_per_collection),
-            "behaviors": self.search_behaviors(query, top_k_per_collection),
-            "scripting": self.search_scripting(query, top_k_per_collection),
-            "terms": self.search_terms(query, top_k_per_collection),
-            "examples": self.search_examples(query, top_k_per_collection)
-        }
-        return results
+        plugin_en: str,
+        section_types: List[str] | None = None,
+        top_k: int = 5,
+        score_threshold: float = 0.3,
+    ) -> List[SearchResult]:
+        """Search plugins collection filtered by plugin name + ACE type, ranked by query semantics.
+
+        Args:
+            query: User's original query (for semantic ranking)
+            plugin_en: Plugin English name (e.g. "Array")
+            section_types: ACE type filter, e.g. ["conditions", "expressions"].
+                           None means no section_type filter.
+            top_k: Number of results per search
+            score_threshold: Minimum similarity score
+        """
+        from src.collections import COLLECTIONS
+        from qdrant_client.models import Filter, FieldCondition, MatchText, MatchValue
+        collection = COLLECTIONS["plugins"]
+        source_key = plugin_en.lower()
+        query_vector = self.embedder.encode_single(query)
+
+        # Build filter: source contains plugin name
+        must_conditions = [
+            FieldCondition(key="source", match=MatchText(text=source_key))
+        ]
+        # If section_types specified, add OR filter
+        if section_types:
+            should_conditions = [
+                FieldCondition(key="section_type", match=MatchValue(value=st))
+                for st in section_types
+            ]
+            # Nested Filter: must[source] + should[section_types]
+            query_filter = Filter(
+                must=must_conditions,
+                should=should_conditions,
+            )
+        else:
+            query_filter = Filter(must=must_conditions)
+
+        try:
+            response = self.client.query_points(
+                collection_name=collection,
+                query=query_vector,
+                query_filter=query_filter,
+                limit=top_k,
+                score_threshold=score_threshold,
+            )
+            results = [
+                SearchResult(
+                    text=r.payload.get("text", ""),
+                    score=r.score,
+                    source=collection,
+                    metadata={k: v for k, v in r.payload.items() if k != "text"}
+                )
+                for r in response.points
+            ]
+            if results:
+                types_found = {r.metadata.get("section_type", "general") for r in results}
+                logger.info(
+                    f"[PluginSearch] {plugin_en} section_types={section_types} "
+                    f"→ {len(results)} hits ({', '.join(str(t) for t in types_found)})"
+                )
+            return results
+        except Exception as e:
+            logger.warning(f"[Search] search_plugin_by_name({plugin_en}) failed: {e}")
+            return []
 
     def search_all_with_rerank(
         self,
@@ -338,8 +396,7 @@ class HybridRetriever:
         Returns:
             Reranked list of SearchResults
         """
-        import time
-        logger.info(f"[检索] 开始多 collection 检索 (每 collection top_k={top_k_per_collection})...")
+        logger.info(f"[Search] Multi-collection search (per-collection top_k={top_k_per_collection})...")
         t0 = time.time()
 
         # Collect all results from all collections
@@ -353,6 +410,7 @@ class HybridRetriever:
             "plugins": self.search_plugins,
             "behaviors": self.search_behaviors,
             "scripting": self.search_scripting,
+            "ace": self.search_ace,
             "terms": self.search_terms,
             "examples": self.search_examples,
         }
@@ -362,174 +420,34 @@ class HybridRetriever:
                 results = search_fn(query, top_k_per_collection)
                 for r in results:
                     all_results.append(r)
-                logger.info(f"[检索] {coll_name}: {len(results)} 条")
+                logger.info(f"[Search] {coll_name}: {len(results)} hits")
             except Exception as e:
-                logger.warning(f"[检索] {coll_name} 失败: {e}")
+                logger.warning(f"[Search] {coll_name} failed: {e}")
 
-        logger.info(f"[检索] 原始结果共 {len(all_results)} 条 ({time.time()-t0:.1f}s)")
+        logger.info(f"[Search] Raw results: {len(all_results)} total ({time.time()-t0:.1f}s)")
 
         if not all_results:
             return []
 
-        # Cross-collection reranking using score normalization
-        logger.info(f"[重排] 开始跨 collection 重排序...")
+        # Cross-collection reranking using raw cosine similarity scores.
+        # bge-m3 returns comparable cosine similarity scores across collections,
+        # so per-collection min-max normalization is not needed and would distort ranking.
+        logger.info(f"[Rerank] Cross-collection reranking...")
 
-        # Compute min/max scores per collection for normalization
-        collection_scores: Dict[str, List[float]] = {}
-        for r in all_results:
-            if r.source not in collection_scores:
-                collection_scores[r.source] = []
-            collection_scores[r.source].append(r.score)
-
-        # Normalize scores and compute final score
         reranked: List[SearchResult] = []
         seen_texts: Set[str] = set()  # Deduplication
 
         for r in all_results:
-            # Min-max normalization per collection
-            coll_scores = collection_scores[r.source]
-            min_s, max_s = min(coll_scores), max(coll_scores)
-            if max_s > min_s:
-                normalized = (r.score - min_s) / (max_s - min_s)
-            else:
-                normalized = r.score if max_s > 0 else 0
-
-            # Boost for certain collections (more authoritative)
-            collection_boost = {
-                "c3_plugins": 1.1,
-                "c3_behaviors": 1.1,
-                "c3_project": 1.05,
-            }
-            boost = collection_boost.get(r.source, 1.0)
-            final_score = normalized * boost
-
             # Deduplication by text content
             text_key = r.text[:100].lower().strip()
             if text_key not in seen_texts:
                 seen_texts.add(text_key)
-                reranked.append(SearchResult(
-                    text=r.text,
-                    score=final_score,
-                    source=r.source,
-                    metadata=r.metadata
-                ))
+                reranked.append(r)
 
         # Sort by final score and return top-k
         reranked.sort(key=lambda x: x.score, reverse=True)
         final_results = reranked[:final_top_k]
 
-        logger.info(f"[重排] 完成，返回 top-{len(final_results)}")
+        logger.info(f"[Rerank] Done, returning top-{len(final_results)}")
         return final_results
 
-    def format_context(self, results: Dict[str, List[SearchResult]]) -> str:
-        """Format search results as context for LLM"""
-        context_parts = []
-
-        def format_doc_result(r: SearchResult) -> str:
-            # 从 source 推导 breadcrumb: "plugin-reference/sprite.md" → "plugin-reference > sprite"
-            source = r.metadata.get("source", "")
-            if source.endswith(".md"):
-                source_path = source[:-3]
-            else:
-                source_path = source
-            breadcrumb = source_path.replace("/", " > ")
-
-            h2 = r.metadata.get("h2_heading", "")
-            header = f"[{breadcrumb}"
-            if h2:
-                header += f" > {h2}"
-            header += "]"
-            return f"{header}\n{r.text}\n来源: {source}\n"
-
-        # Document collections with their display names
-        doc_sections = [
-            ("guide", "入门指南"),
-            ("interface", "编辑器界面"),
-            ("project", "项目元素"),
-            ("plugins", "插件参考"),
-            ("behaviors", "行为参考"),
-            ("scripting", "脚本 API"),
-        ]
-
-        for key, title in doc_sections:
-            if results.get(key):
-                context_parts.append(f"\n### {title}\n")
-                for r in results[key]:
-                    context_parts.append(format_doc_result(r))
-
-        # Term results
-        if results.get("terms"):
-            context_parts.append("\n### 术语表\n")
-            for r in results["terms"]:
-                zh = r.metadata.get("zh", "")
-                en = r.metadata.get("en", "")
-                context_parts.append(f"- {zh} = {en}")
-
-        # Example results
-        if results.get("examples"):
-            context_parts.append("\n### 示例代码\n")
-            for r in results["examples"]:
-                project = r.metadata.get("project", "unknown")
-                context_parts.append(f"[项目: {project}]\n{r.text}\n")
-
-        return "\n".join(context_parts)
-
-
-class TermMatcher:
-    """
-    Exact term matching for translation assistance
-    Uses in-memory term dictionary for fast lookups
-    """
-
-    def __init__(self):
-        self.terms: Dict[str, Dict[str, str]] = {}  # zh -> {en, key}
-        self.terms_en: Dict[str, Dict[str, str]] = {}  # en -> {zh, key}
-        self._loaded = False
-
-    def load_terms(self, csv_path: str):
-        """Load terms from CSV file"""
-        from src.data_processing.csv_parser import CSVParser
-
-        parser = CSVParser()
-        entries = parser.parse_file(csv_path)
-
-        for entry in entries:
-            self.terms[entry.zh] = {"en": entry.en, "key": entry.term_key}
-            self.terms_en[entry.en.lower()] = {"zh": entry.zh, "key": entry.term_key}
-
-        self._loaded = True
-        print(f"Loaded {len(self.terms)} terms for matching")
-
-    def match_zh(self, text: str) -> List[Dict[str, str]]:
-        """Find exact Chinese term matches in text"""
-        matches = []
-        for zh, data in self.terms.items():
-            if zh in text:
-                matches.append({
-                    "zh": zh,
-                    "en": data["en"],
-                    "key": data["key"]
-                })
-        return matches
-
-    def match_en(self, text: str) -> List[Dict[str, str]]:
-        """Find exact English term matches in text"""
-        matches = []
-        text_lower = text.lower()
-        for en, data in self.terms_en.items():
-            if en in text_lower:
-                matches.append({
-                    "zh": data["zh"],
-                    "en": en,
-                    "key": data["key"]
-                })
-        return matches
-
-    def translate(self, term: str, to_lang: str = "zh") -> Optional[str]:
-        """Translate a single term"""
-        if to_lang == "zh":
-            data = self.terms_en.get(term.lower())
-            return data["zh"] if data else None
-        else:
-            data = self.terms.get(term)
-            return data["en"] if data else None

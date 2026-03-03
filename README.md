@@ -6,8 +6,11 @@
 
 ## 功能
 
-- **文档问答**: 回答 Construct 3 使用问题，标注来源
-- **语义搜索**: 基于向量数据库的智能检索
+- **文档问答**: 回答 Construct 3 使用问题，标注来源与置信度
+- **语义搜索**: 基于向量数据库的智能检索，跨集合重排序
+- **多轮对话**: 带上下文记忆的连续问答
+- **流式输出**: 实时显示 LLM 生成过程
+- **防幻觉**: Self-Reflection 验证 + 严格引用模式
 
 ## 快速开始
 
@@ -30,7 +33,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 
 | 数据源 | 获取方式 | 用途 |
 |--------|----------|------|
-| `zh-CN_R466.csv` | POEditor | ACE Schema 生成 |
+| `zh-CN_r473.csv` | POEditor | ACE Schema 生成 |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
@@ -60,44 +63,61 @@ ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 node scripts/generate-schema.js
 
 # 索引数据 (首次约需 15 分钟)
-python -m src.data_processing.indexer --rebuild
+python -m src.ingest.indexer --rebuild
 ```
 
-### 5. 启动应用
+### 5. 配置环境变量（可选）
+
+```bash
+cp .env.example .env
+# 按需编辑 .env（修改 LLM 模型、端口等）
+```
+
+### 6. 启动应用
 
 ```bash
 python -m src.app.gradio_ui
 ```
 
+访问 http://127.0.0.1:7860
+
+| 按钮 | 说明 |
+|------|------|
+| 流式回答 | 实时显示生成过程（Enter 键触发） |
+| 智能回答 ✦ | 自动检测复杂度，含来源标注（推荐） |
+| 高置信度 | 多查询检索 + Self-Reflection 验证，最慢但最准 |
+| 多轮对话 Tab | 带上下文记忆的连续问答 |
+
 > **注意**: 向量数据库数据保存在 Docker volume 中，不包含在 Git 仓库内。首次使用需执行 `--rebuild` 重建索引。
 
 ## 技术栈
 
-| 组件 | 选择 | 说明 |
-|------|------|------|
-| LLM | Qwen3:30b | 本地运行，通过 Ollama |
-| 向量数据库 | Qdrant | 高性能向量搜索 |
-| Embedding | BAAI/bge-m3 | 多语言嵌入模型，1024 维 |
-| 分块策略 | H2 语义分块 | 按文档结构切分 |
-| 框架 | LangChain | RAG 编排框架 |
-| 前端 | Gradio | 快速搭建 Web 界面 |
+| 组件       | 选择          | 说明                          |
+|-----------|--------------|-------------------------------|
+| LLM       | Qwen3-8B     | 本地运行，HuggingFace / Ollama |
+| 向量数据库 | Qdrant       | 高性能向量搜索                  |
+| Embedding | BAAI/bge-m3  | 多语言嵌入模型，1024 维          |
+| 分块策略   | H2 语义分块   | 按文档结构切分                  |
+| 前端       | Gradio       | 快速搭建 Web 界面              |
 
 ## 项目结构
 
 ```
 Construct3-RAG/
-├── source/                    # 外部资料 (需手动获取)
-│   └── zh-CN_R466.csv         # 官方翻译文件
 ├── data/
+│   ├── source/                # 外部资料 (需手动获取)
+│   │   └── zh-CN_r473.csv     # 官方翻译文件
 │   └── schemas/               # ACE Schema (72 插件 + 31 行为)
-├── scripts/
-│   └── generate-schema.js     # Schema 生成脚本
+├── docs/                      # 设计文档、指南、知识库
+├── scripts/                   # 运维脚本 (启动/索引/清理)
 ├── src/
 │   ├── config.py              # 全局配置
 │   ├── collections.py         # 集合定义
-│   ├── data_processing/       # 数据处理
+│   ├── ingest/                # 数据处理与索引
 │   ├── rag/                   # RAG 核心
 │   └── app/                   # Web 界面
+├── tests/                     # 单元测试
+├── .env.example               # 环境变量示例
 └── requirements.txt
 ```
 
@@ -117,7 +137,7 @@ Construct3-RAG/
 
 ## 更多文档
 
-- [RAG 详细原理讲解](doc/guides/rag-introduction.md)
+- [RAG 详细原理讲解](docs/rag-introduction.md)
 
 ## License
 

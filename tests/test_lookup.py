@@ -1,0 +1,461 @@
+"""
+Tests for the Query Routing & Direct Lookup System.
+Uses real JSON schemas from data/schemas/ but no external services.
+"""
+import sys
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.rag.lookup import (
+    SchemaIndex, TermIndex, IntentClassifier, LookupEngine,
+    LookupIntent,
+)
+
+
+# ---------------------------------------------------------------------------
+# Fixtures
+# ---------------------------------------------------------------------------
+
+DATA_DIR = Path(__file__).parent.parent / "data"
+SOURCE_DIR = Path(__file__).parent.parent / "data" / "source"
+
+
+def make_schema_index() -> SchemaIndex:
+    """Return a SchemaIndex pointing at real schema data."""
+    return SchemaIndex(DATA_DIR / "schemas")
+
+
+def make_term_index() -> TermIndex:
+    """Return a TermIndex pointing at real CSV."""
+    return TermIndex(SOURCE_DIR)
+
+
+def make_classifier(embedder=None) -> IntentClassifier:
+    return IntentClassifier(
+        schema_index=make_schema_index(),
+        embedder=embedder,
+    )
+
+
+def make_engine(embedder=None) -> LookupEngine:
+    return LookupEngine(
+        schema_dir=DATA_DIR / "schemas",
+        source_dir=SOURCE_DIR,
+        embedder=embedder,
+    )
+
+
+# ---------------------------------------------------------------------------
+# TestSchemaIndex
+# ---------------------------------------------------------------------------
+
+class TestSchemaIndex:
+    def test_load_plugins(self):
+        idx = make_schema_index()
+        pids, bids = idx.get_all_ids()
+        assert len(pids) >= 70, f"Expected >= 70 plugins, got {len(pids)}"
+        assert len(bids) >= 20, f"Expected >= 20 behaviors, got {len(bids)}"
+
+    def test_resolve_by_id(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("sprite")
+        assert result is not None
+        assert result[0] == "sprite"
+        assert result[1] is False  # not a behavior
+
+    def test_resolve_by_english_name(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("Sprite")
+        assert result is not None
+        assert result[0] == "sprite"
+
+    def test_resolve_by_chinese_name(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("精灵")
+        assert result is not None
+        assert result[0] == "sprite"
+
+    def test_resolve_case_insensitive(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("SPRITE")
+        assert result is not None
+        assert result[0] == "sprite"
+
+    def test_resolve_behavior(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("bullet")
+        assert result is not None
+        pid, is_beh = result
+        assert pid == "bullet"
+        assert is_beh is True
+
+    def test_resolve_behavior_chinese(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("子弹")
+        assert result is not None
+        pid, is_beh = result
+        assert pid == "bullet"
+        assert is_beh is True
+
+    def test_resolve_nonexistent(self):
+        idx = make_schema_index()
+        result = idx.resolve_name("nonexistent_plugin_xyz")
+        assert result is None
+
+    def test_get_ace_list(self):
+        idx = make_schema_index()
+        actions = idx.get_ace_list("sprite", "actions")
+        assert len(actions) > 0
+        assert "name_zh" in actions[0]
+
+    def test_get_properties(self):
+        idx = make_schema_index()
+        props = idx.get_ace_list("sprite", "properties")
+        assert len(props) > 0
+
+
+# ---------------------------------------------------------------------------
+# TestTermIndex
+# ---------------------------------------------------------------------------
+
+class TestTermIndex:
+    def test_load(self):
+        idx = make_term_index()
+        idx._load()
+        assert len(idx._terms) > 1000
+
+    def test_search_exact_zh(self):
+        idx = make_term_index()
+        results = idx.search("精灵")
+        assert len(results) > 0
+        assert any("精灵" in r["zh"] for r in results)
+
+    def test_search_exact_en(self):
+        idx = make_term_index()
+        results = idx.search("Sprite")
+        assert len(results) > 0
+
+    def test_search_partial(self):
+        idx = make_term_index()
+        results = idx.search("动画")
+        assert len(results) > 0
+
+    def test_search_empty(self):
+        idx = make_term_index()
+        results = idx.search("")
+        assert results == []
+
+    def test_search_no_match(self):
+        idx = make_term_index()
+        results = idx.search("xyznonexistentterm123")
+        assert results == []
+
+
+# ---------------------------------------------------------------------------
+# TestIntentClassifier
+# ---------------------------------------------------------------------------
+
+class TestIntentClassifier:
+    """Test Tier 1 (rule-based) classification only — no embedder needed."""
+
+    def test_ace_list_sprite_actions(self):
+        c = make_classifier()
+        intent = c.classify("Sprite 有哪些 action")
+        assert intent is not None
+        assert intent.intent_type == "ace_list"
+        assert intent.plugin_id == "sprite"
+        assert intent.ace_type == "actions"
+        assert intent.tier == 1
+
+    def test_ace_list_chinese(self):
+        c = make_classifier()
+        intent = c.classify("精灵 有哪些 动作")
+        assert intent is not None
+        assert intent.intent_type == "ace_list"
+        assert intent.plugin_id == "sprite"
+        assert intent.ace_type == "actions"
+
+    def test_ace_list_conditions(self):
+        c = make_classifier()
+        intent = c.classify("Sprite 有哪些 condition")
+        assert intent is not None
+        assert intent.ace_type == "conditions"
+
+    def test_ace_list_expressions(self):
+        c = make_classifier()
+        intent = c.classify("列出 Sprite 的 expression")
+        assert intent is not None
+        assert intent.ace_type == "expressions"
+
+    def test_prop_list(self):
+        c = make_classifier()
+        intent = c.classify("Sprite 有哪些 属性")
+        assert intent is not None
+        assert intent.intent_type == "prop_list"
+        assert intent.ace_type == "properties"
+
+    def test_behavior_ace_list(self):
+        c = make_classifier()
+        intent = c.classify("Bullet 有哪些 action")
+        assert intent is not None
+        assert intent.plugin_id == "bullet"
+        assert intent.is_behavior is True
+
+    def test_term_translate_zh(self):
+        c = make_classifier()
+        intent = c.classify("翻译 Destroy")
+        assert intent is not None
+        assert intent.intent_type == "term_translate"
+        assert "Destroy" in intent.term
+
+    def test_term_translate_en(self):
+        c = make_classifier()
+        intent = c.classify("Destroy 中文是什么")
+        assert intent is not None
+        assert intent.intent_type == "term_translate"
+
+    def test_not_lookup_general_question(self):
+        """General questions should NOT be classified as lookup."""
+        c = make_classifier()
+        intent = c.classify("如何实现存档系统？")
+        assert intent is None
+
+    def test_not_lookup_how_to(self):
+        c = make_classifier()
+        intent = c.classify("怎么做一个平台跳跃游戏？")
+        assert intent is None
+
+    def test_not_lookup_explanation(self):
+        c = make_classifier()
+        intent = c.classify("Sprite 和 Tiled Background 有什么区别？")
+        assert intent is None
+
+    def test_ace_list_suffix_pattern(self):
+        """Test 'Sprite action 列表' pattern."""
+        c = make_classifier()
+        intent = c.classify("Sprite action 列表")
+        assert intent is not None
+        assert intent.intent_type == "ace_list"
+        assert intent.ace_type == "actions"
+
+    def test_ace_detail_usage_query(self):
+        """'Sprite 的 Destroy 怎么用' → ace_detail."""
+        c = make_classifier()
+        intent = c.classify("Sprite 的 Destroy 怎么用")
+        assert intent is not None
+        assert intent.intent_type == "ace_detail"
+        assert intent.plugin_id == "sprite"
+        assert "destroy" in intent.ace_name.lower()
+        assert intent.tier == 1
+
+    def test_ace_detail_params_query(self):
+        """'Sprite 的 Set animation 参数是什么' → ace_detail."""
+        c = make_classifier()
+        intent = c.classify("Sprite 的 Set animation 参数是什么")
+        assert intent is not None
+        assert intent.intent_type == "ace_detail"
+        assert intent.plugin_id == "sprite"
+
+    def test_ace_detail_nonexistent_plugin(self):
+        """ace_detail with fake plugin falls through."""
+        c = make_classifier()
+        intent = c.classify("FakeXYZ 的 Destroy 怎么用")
+        assert intent is None
+
+    def test_prop_list_via_canshu_keyword(self):
+        """'Platform 行为有哪些主要参数' → prop_list."""
+        c = make_classifier()
+        intent = c.classify("Platform 行为有哪些主要参数？")
+        assert intent is not None
+        assert intent.intent_type == "prop_list"
+        assert intent.plugin_id == "platform"
+        assert intent.ace_type == "properties"
+
+
+# ---------------------------------------------------------------------------
+# TestLookupEngine — ace_detail formatting
+# ---------------------------------------------------------------------------
+
+class TestLookupEngineDetail:
+    """Tests for ace_detail lookup responses."""
+
+    def test_ace_detail_returns_markdown(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 的 Set animation 怎么用")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_detail"
+        assert "animation" in resp.answer.lower()
+
+    def test_ace_detail_nonexistent_ace_falls_through(self):
+        """Query with valid plugin but non-matching ACE name returns None."""
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 的 NonexistentAce12345 怎么用")
+        assert resp is None
+
+
+# ---------------------------------------------------------------------------
+# TestLookupEngine
+# ---------------------------------------------------------------------------
+
+class TestLookupEngine:
+    """End-to-end tests: query → markdown output."""
+
+    def test_ace_list_returns_markdown_table(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 有哪些 action")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_list"
+        assert "|" in resp.answer  # markdown table
+        assert "动作 (Actions)" in resp.answer
+
+    def test_prop_list(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 有哪些 属性")
+        assert resp is not None
+        assert resp.query_type == "lookup_prop_list"
+
+    def test_prop_list_platform_canshu(self):
+        """'Platform 行为有哪些主要参数' returns properties with jump/speed info."""
+        engine = make_engine()
+        resp = engine.try_lookup("Platform 行为有哪些主要参数？")
+        assert resp is not None
+        assert resp.query_type == "lookup_prop_list"
+        assert "跳跃" in resp.answer
+        assert "速度" in resp.answer
+
+    def test_term_translate(self):
+        engine = make_engine()
+        resp = engine.try_lookup("翻译 Sprite")
+        assert resp is not None
+        assert resp.query_type == "lookup_term_translate"
+        assert "|" in resp.answer
+
+    def test_rag_fallthrough(self):
+        """Non-lookup queries should return None."""
+        engine = make_engine()
+        resp = engine.try_lookup("如何实现存档系统？")
+        assert resp is None
+
+    def test_behavior_lookup(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Bullet 有哪些 action")
+        assert resp is not None
+        assert "行为" in resp.answer
+
+    def test_nonexistent_plugin_falls_through(self):
+        """Query with fake plugin name should fallback to RAG."""
+        engine = make_engine()
+        resp = engine.try_lookup("FakePlugin12345 有哪些 action")
+        assert resp is None
+
+    def test_elapsed_ms(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 有哪些 action")
+        assert resp is not None
+        assert resp.elapsed_ms >= 0
+
+
+# ---------------------------------------------------------------------------
+# TestKeywordInfer — Tier 1.5 fuzzy query tests
+# ---------------------------------------------------------------------------
+
+class TestKeywordInfer:
+    """Test Tier 1.5 keyword inference: plugin + topic → ace_search."""
+
+    def test_sprite_collision(self):
+        """'Sprite 碰撞' → ace_search with conditions (碰撞 is a conditions keyword)."""
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 碰撞")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert "碰撞" in resp.answer
+        assert "|" in resp.answer  # markdown table
+
+    def test_array_sort(self):
+        """'Array 排序' → ace_search with actions (排序 is an actions keyword)."""
+        engine = make_engine()
+        resp = engine.try_lookup("Array 排序")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert "排序" in resp.answer
+
+    def test_sprite_animation(self):
+        """'Sprite 动画' → ace_search, may span multiple ACE types."""
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 播放 动画")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert "动画" in resp.answer
+
+    def test_no_keyword_fallthrough(self):
+        """'Sprite 是什么' contains skip word → should NOT trigger ace_search."""
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 是什么")
+        assert resp is None  # falls through to RAG
+
+    def test_array_find_howto_fallthrough(self):
+        """'怎么在数组中查找特定数字？' is a how-to → should fall through to RAG.
+        Users asking '怎么...' want step-by-step guidance, not just an ACE table.
+        The RAG pipeline provides both ACE info and explanatory context."""
+        engine = make_engine()
+        resp = engine.try_lookup("怎么在数组中查找特定数字？")
+        assert resp is None  # falls through to RAG
+
+    def test_array_find_without_howto(self):
+        """'数组 查找数字' (no 怎么) → ace_search on Array, still triggers lookup."""
+        engine = make_engine()
+        resp = engine.try_lookup("数组 查找数字")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert resp.intent.plugin_id == "arr"
+        assert "|" in resp.answer  # markdown table
+
+    def test_howto_with_plugin_fallthrough(self):
+        """'怎么检测Sprite碰撞' has a plugin name but is how-to → should fall through."""
+        engine = make_engine()
+        resp = engine.try_lookup("怎么检测Sprite碰撞")
+        assert resp is None  # falls through to RAG
+
+    def test_zenyang_fallthrough(self):
+        """'怎样用数组存储数据' — '怎样' is also a how-to word → should fall through."""
+        engine = make_engine()
+        resp = engine.try_lookup("怎样用数组存储数据")
+        assert resp is None  # falls through to RAG
+
+    def test_howto_fallthrough(self):
+        """'怎么做一个平台跳跃游戏？' is a how-to → should NOT trigger ace_search."""
+        engine = make_engine()
+        resp = engine.try_lookup("怎么做一个平台跳跃游戏？")
+        assert resp is None  # falls through to RAG
+
+    def test_general_howto_fallthrough(self):
+        """'如何实现存档系统？' is a general how-to → should NOT trigger ace_search."""
+        engine = make_engine()
+        resp = engine.try_lookup("如何实现存档系统？")
+        assert resp is None  # falls through to RAG
+
+    def test_behavior_topic(self):
+        """'Platform 跳跃' → ace_search on platform behavior."""
+        engine = make_engine()
+        resp = engine.try_lookup("Platform 跳跃")
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert resp.intent.is_behavior is True
+        assert "跳跃" in resp.answer
+
+    def test_no_plugin_no_trigger(self):
+        """Query with ACE keyword but no plugin → should not trigger."""
+        engine = make_engine()
+        resp = engine.try_lookup("碰撞检测")
+        assert resp is None  # no plugin name → falls through
+
+    def test_classifier_tier(self):
+        """Verify keyword infer sets tier=1."""
+        c = make_classifier()
+        intent = c.classify("Sprite 碰撞")
+        assert intent is not None
+        assert intent.intent_type == "ace_search"
+        assert intent.tier == 1
+        assert "碰撞" in intent.filter_term

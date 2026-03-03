@@ -30,7 +30,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 
 | Data Source | How to Get | Purpose |
 |-------------|------------|---------|
-| `zh-CN_R466.csv` | POEditor | ACE Schema generation |
+| `zh-CN_r473.csv` | POEditor | ACE Schema generation |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | Official manual Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
 
@@ -60,7 +60,7 @@ ollama pull qwen2.5:7b   # or qwen3:30b (stronger but slower)
 node scripts/generate-schema.js
 
 # Index data (first time takes ~15 minutes)
-python -m src.data_processing.indexer --rebuild
+python -m src.ingest.indexer --rebuild
 ```
 
 ### 5. Start Application
@@ -75,29 +75,29 @@ python -m src.app.gradio_ui
 
 | Component | Choice | Description |
 |-----------|--------|-------------|
-| LLM | Qwen3:30b | Local via Ollama |
+| LLM | Qwen3-8B | Local via HuggingFace / Ollama |
 | Vector DB | Qdrant | High-performance vector search |
 | Embedding | BAAI/bge-m3 | Multilingual embedding model, 1024 dimensions |
 | Chunking | H2 semantic chunking | Split by document structure |
-| Framework | LangChain | RAG orchestration framework |
 | Frontend | Gradio | Quick web UI building |
 
 ## Project Structure
 
 ```
 Construct3-RAG/
-├── source/                    # External data (manual download required)
-│   └── zh-CN_R466.csv         # Official translation file
 ├── data/
+│   ├── source/                # External data (manual download required)
+│   │   └── zh-CN_r473.csv     # Official translation file
 │   └── schemas/               # ACE Schema (72 plugins + 31 behaviors)
-├── scripts/
-│   └── generate-schema.js     # Schema generation script
+├── docs/                      # Design docs, guides, knowledge base
+├── scripts/                   # Operations scripts (start/index/clean)
 ├── src/
 │   ├── config.py              # Global config
 │   ├── collections.py         # Collection definitions
-│   ├── data_processing/       # Data processing
+│   ├── ingest/                # Data processing and indexing
 │   ├── rag/                   # RAG core
 │   └── app/                   # Web UI
+├── tests/                     # Unit tests
 └── requirements.txt
 ```
 
@@ -117,7 +117,7 @@ Construct3-RAG/
 
 ## More Documentation
 
-- [Detailed RAG Explanation](doc/guides/rag-introduction.md)
+- [Detailed RAG Explanation](docs/rag-introduction.md)
 
 ## License
 
