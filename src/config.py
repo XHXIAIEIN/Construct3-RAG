@@ -5,25 +5,34 @@ Construct 3 RAG Assistant Configuration
 import os
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # =============================================================================
-# 目录结构
+# Directory Structure
 # =============================================================================
 BASE_DIR = Path(__file__).parent.parent
-SOURCE_DIR = BASE_DIR / "source"  # 外部资料 (CSV 翻译文件等)
-DATA_DIR = BASE_DIR / "data"  # 生成的数据 (Schema 等)
-SCHEMA_DIR = DATA_DIR / "schemas"  # 生成的数据 (Generated Data)
+SOURCE_DIR = BASE_DIR / "data" / "source"
+DATA_DIR = BASE_DIR / "data"
+SCHEMA_DIR = DATA_DIR / "schemas"
 
 # =============================================================================
-# 外部资料 (External Sources)
-# 这些资料需要从外部获取，统一在此配置
+# External Sources
 # =============================================================================
 
-# 翻译文件 (来自 POEditor)
-TRANSLATION_CSV = "zh-CN_R466.csv"
+# Translation CSV (from POEditor)
+TRANSLATION_CSV = "zh-CN_r473.csv"
 
-# 外部仓库 (位于父目录的兄弟仓库)
+# External repos (sibling directories of this repo)
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual
 EXAMPLE_REPO = "Construct-Example-Projects"  # https://github.com/Scirra/Construct-Example-Projects
+
+# Derived paths
+MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO
+EXAMPLE_PROJECTS_DIR = BASE_DIR.parent / EXAMPLE_REPO / "example-projects"
 
 # =============================================================================
 # Vector Database
@@ -34,19 +43,34 @@ QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 # =============================================================================
 # Embedding Model
 # =============================================================================
-# 可选: BAAI/bge-m3 (多语言), BAAI/bge-large-zh-v1.5 (中文优化)
+# Options: BAAI/bge-m3 (multilingual), BAAI/bge-large-zh-v1.5 (Chinese-optimized)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
 EMBEDDING_DIMENSION = 1024
 
 # =============================================================================
-# LLM Configuration (Ollama)
+# LLM Configuration
 # =============================================================================
-# Mac M4 24GB 推荐: qwen2.5:7b (速度快) 或 qwen2.5:14b (效果好)
+# provider=ollama:       LLM_MODEL=qwen2.5:7b
+# provider=openai:       LLM_MODEL=moonshot-v1-128k / gpt-4o  (requires API Key)
+# provider=huggingface:  LLM_MODEL=Qwen/Qwen2.5-7B-Instruct   (local inference)
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama")   # ollama | openai | huggingface
 LLM_MODEL = os.getenv("LLM_MODEL", "qwen2.5:7b")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
+LLM_API_KEY = os.getenv("LLM_API_KEY", "")
+
+# =============================================================================
+# Lookup Classifier (Tier 3: Ollama small model)
+# =============================================================================
+LOOKUP_OLLAMA_MODEL = os.getenv("LOOKUP_OLLAMA_MODEL", "qwen2.5:7b")
+LOOKUP_OLLAMA_URL = os.getenv("LOOKUP_OLLAMA_URL", "http://localhost:11434")
+
+# =============================================================================
+# UI Language
+# =============================================================================
+UI_LANGUAGE: str = os.getenv("UI_LANGUAGE", "zh")
 
 # =============================================================================
 # RAG Settings
 # =============================================================================
-MAX_CHUNK_SIZE = 2000  # 超长 H2 段落的分割阈值
-TOP_K = 5  # 检索返回的文档数量
+MAX_CHUNK_SIZE = 2000  # Chunk split threshold for long H2 sections
+TOP_K = 5  # Number of documents returned per retrieval

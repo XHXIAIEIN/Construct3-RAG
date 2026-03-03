@@ -7,14 +7,14 @@ Zero-hallucination event sheet generation with:
 2. Structured JSON output (clipboard format)
 3. Copy-paste ready for Construct 3
 
-剪贴板格式详细参考：doc/knowledge/eventsheet/clipboard-format.md
+Clipboard format reference: docs/knowledge/clipboard-format.md
 
-关键要点：
-- 无需 sid（与项目文件格式不同）
-- 所有参数值为字符串格式
-- objectClass 对应项目中的对象类型名称
-- behaviorType 对应行为的 name 字段
-- variable 的 comment 字段必填（可为空字符串）
+Key points:
+- No sid needed (unlike project file format)
+- All parameter values are strings
+- objectClass corresponds to object type names in the project
+- behaviorType corresponds to the behavior's name field
+- variable's comment field is required (can be empty string)
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
 
 from .prompts import CLIPBOARD_FORMAT_REFERENCE, EVENT_JSON_GENERATION_PROMPT
+from src.locale import VALIDATION_ERRORS, PLUGIN_KIND_LABELS, ACE_SECTION_LABELS_SHORT
 
 # ============================================================
 # Schema Loader & Cache
@@ -324,20 +325,20 @@ class ClipboardValidator:
         try:
             data = json.loads(json_str)
         except json.JSONDecodeError as e:
-            self.errors.append(f"JSON 解析错误: {e}")
+            self.errors.append(VALIDATION_ERRORS["json_parse"].format(error=e))
             return False, self.errors, self.warnings
 
         # Check clipboard header
         if not data.get("is-c3-clipboard-data"):
-            self.errors.append("缺少 'is-c3-clipboard-data': true")
+            self.errors.append(VALIDATION_ERRORS["missing_clipboard_header"])
 
         clip_type = data.get("type")
         if clip_type not in self.VALID_CLIPBOARD_TYPES:
-            self.errors.append(f"无效的剪贴板类型: {clip_type}")
+            self.errors.append(VALIDATION_ERRORS["invalid_clipboard_type"].format(type=clip_type))
 
         items = data.get("items", [])
         if not isinstance(items, list):
-            self.errors.append("'items' 必须是数组")
+            self.errors.append(VALIDATION_ERRORS["items_not_array"])
             return False, self.errors, self.warnings
 
         # Validate items based on type
@@ -358,12 +359,12 @@ class ClipboardValidator:
         event_type = event.get("eventType")
 
         if event_type not in self.VALID_EVENT_TYPES:
-            self.errors.append(f"{path}: 无效的 eventType: {event_type}")
+            self.errors.append(VALIDATION_ERRORS["invalid_event_type"].format(path=path, type=event_type))
             return
 
         if event_type == "comment":
             if "text" not in event:
-                self.errors.append(f"{path}: comment 缺少 'text' 字段")
+                self.errors.append(VALIDATION_ERRORS["comment_missing_text"].format(path=path))
 
         elif event_type == "variable":
             self._validate_variable(event, path)
@@ -380,25 +381,23 @@ class ClipboardValidator:
     def _validate_variable(self, var: Dict, path: str):
         """Validate variable definition"""
         if "name" not in var:
-            self.errors.append(f"{path}: variable 缺少 'name'")
+            self.errors.append(VALIDATION_ERRORS["variable_missing_name"].format(path=path))
 
         var_type = var.get("type")
         if var_type not in self.VALID_VAR_TYPES:
-            self.errors.append(f"{path}: 无效的变量类型: {var_type}")
+            self.errors.append(VALIDATION_ERRORS["invalid_var_type"].format(path=path, type=var_type))
 
         if "initialValue" not in var:
-            self.warnings.append(f"{path}: variable 建议设置 'initialValue'")
+            self.warnings.append(VALIDATION_ERRORS["variable_suggest_initial"].format(path=path))
 
         # comment field is required by C3 (can be empty string)
         if "comment" not in var:
-            self.warnings.append(
-                f"{path}: variable 建议添加 'comment' 字段 (可为空字符串)"
-            )
+            self.warnings.append(VALIDATION_ERRORS["variable_suggest_comment"].format(path=path))
 
     def _validate_group(self, group: Dict, path: str):
         """Validate event group"""
         if "title" not in group:
-            self.errors.append(f"{path}: group 缺少 'title'")
+            self.errors.append(VALIDATION_ERRORS["group_missing_title"].format(path=path))
 
         children = group.get("children", [])
         for i, child in enumerate(children):
@@ -422,11 +421,11 @@ class ClipboardValidator:
     def _validate_function_block(self, func: Dict, path: str):
         """Validate function definition"""
         if "functionName" not in func:
-            self.errors.append(f"{path}: function-block 缺少 'functionName'")
+            self.errors.append(VALIDATION_ERRORS["function_missing_name"].format(path=path))
 
         ret_type = func.get("functionReturnType", "none")
         if ret_type not in self.VALID_FUNCTION_RETURN_TYPES:
-            self.errors.append(f"{path}: 无效的返回类型: {ret_type}")
+            self.errors.append(VALIDATION_ERRORS["invalid_return_type"].format(path=path, type=ret_type))
 
         # Validate conditions, actions, children
         self._validate_block(func, path)
@@ -435,25 +434,25 @@ class ClipboardValidator:
         """Validate a condition"""
         # Check for required fields
         if "id" not in cond and "callFunction" not in cond:
-            self.errors.append(f"{path}: condition 缺少 'id'")
+            self.errors.append(VALIDATION_ERRORS["condition_missing_id"].format(path=path))
             return
 
         if "objectClass" not in cond and "callFunction" not in cond:
-            self.errors.append(f"{path}: condition 缺少 'objectClass'")
+            self.errors.append(VALIDATION_ERRORS["condition_missing_object"].format(path=path))
 
         # Validate comparison parameter if present
         params = cond.get("parameters", {})
         if "comparison" in params:
             comp = params["comparison"]
             if comp not in self.COMPARISON_OPERATORS:
-                self.errors.append(f"{path}: 无效的比较操作符: {comp}")
+                self.errors.append(VALIDATION_ERRORS["invalid_comparison"].format(path=path, value=comp))
 
     def _validate_action(self, action: Dict, path: str):
         """Validate an action"""
         # Inline comment in actions
         if action.get("type") == "comment":
             if "text" not in action:
-                self.errors.append(f"{path}: action comment 缺少 'text'")
+                self.errors.append(VALIDATION_ERRORS["action_comment_missing_text"].format(path=path))
             return
 
         # Function call
@@ -462,11 +461,11 @@ class ClipboardValidator:
 
         # Regular action
         if "id" not in action:
-            self.errors.append(f"{path}: action 缺少 'id'")
+            self.errors.append(VALIDATION_ERRORS["action_missing_id"].format(path=path))
             return
 
         if "objectClass" not in action:
-            self.errors.append(f"{path}: action 缺少 'objectClass'")
+            self.errors.append(VALIDATION_ERRORS["action_missing_object"].format(path=path))
 
 
 # ============================================================
@@ -566,15 +565,15 @@ class EventGenerator:
             # Load based on type
             if schema_type == "plugin":
                 schema = self.schema_loader.load_plugin(schema_id)
-                type_label = "插件"
+                type_label = PLUGIN_KIND_LABELS["plugin"]
             else:
                 schema = self.schema_loader.load_behavior(schema_id)
-                type_label = "行为"
+                type_label = PLUGIN_KIND_LABELS["behavior"]
 
             if schema:
                 schema_text.append(self._format_schema_for_prompt(schema, type_label))
 
-        return "\n\n".join(schema_text) if schema_text else "（无相关 Schema）"
+        return "\n\n".join(schema_text) if schema_text else VALIDATION_ERRORS["no_schema"]
 
     def _extract_keywords(self, text: str) -> List[str]:
         """Extract keywords from requirement text"""
@@ -589,14 +588,14 @@ class EventGenerator:
 
         # Format conditions
         if schema.conditions:
-            lines.append("\n**条件 (Conditions):**")
+            lines.append(f"\n**{ACE_SECTION_LABELS_SHORT.get('conditions', 'Conditions')} (Conditions):**")
             for cond_id, cond in list(schema.conditions.items())[:10]:  # Limit to 10
                 params_str = ", ".join([f"{p.id}: {p.type}" for p in cond.params])
                 lines.append(f"- `{cond_id}`: {cond.name_zh} ({params_str})")
 
         # Format actions
         if schema.actions:
-            lines.append("\n**动作 (Actions):**")
+            lines.append(f"\n**{ACE_SECTION_LABELS_SHORT.get('actions', 'Actions')} (Actions):**")
             for act_id, act in list(schema.actions.items())[:15]:  # Limit to 15
                 params_str = ", ".join([f"{p.id}: {p.type}" for p in act.params])
                 lines.append(f"- `{act_id}`: {act.name_zh} ({params_str})")
@@ -634,7 +633,7 @@ class EventGenerator:
             return {
                 "success": False,
                 "json": None,
-                "errors": ["无法从回复中提取有效的 JSON"],
+                "errors": [VALIDATION_ERRORS["no_json_extracted"]],
                 "warnings": [],
             }
 

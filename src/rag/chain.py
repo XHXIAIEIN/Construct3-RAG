@@ -7,23 +7,88 @@ With anti-hallucination features:
 - Self-reflection verification
 - Strict prompting with forced citations
 """
+import json
+import re
 import time
 import logging
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 
+import jieba
+
+from src.config import (
+    QDRANT_HOST, QDRANT_PORT,
+    LLM_MODEL, LLM_BASE_URL, LLM_API_KEY, LLM_PROVIDER,
+)
 from .retriever import HybridRetriever, SearchResult
+from src.locale.keywords import (
+    ACE_INTENT_KEYWORDS, ZH_STOP_WORDS,
+    COMPLEXITY_INDICATORS, CODE_GENERATION_KEYWORDS,
+)
+from src.locale import (
+    ACE_SECTION_LABELS,
+    CONTEXT_HEADER, CONTEXT_HEADER_STRICT, SOURCE_LABEL,
+    REFLECTION_VERDICT_KEY, REFLECTION_UNRELIABLE, REFLECTION_RELIABLE,
+)
 from .prompts import (
     QA_PROMPT, EVENT_GENERATION_PROMPT, SYSTEM_MESSAGE,
     LOW_RELEVANCE_PROMPT, NO_RESULTS_RESPONSE, QUERY_REWRITE_PROMPT,
-    STRICT_QA_PROMPT, SELF_REFLECTION_PROMPT, ANSWER_VERIFICATION_PROMPT,
+    STRICT_QA_PROMPT, SELF_REFLECTION_PROMPT,
     QUERY_DECOMPOSITION_PROMPT, LLM_UNAVAILABLE_RESPONSE,
-    QDRANT_UNAVAILABLE_RESPONSE, LOW_CONFIDENCE_WARNING
+    QDRANT_UNAVAILABLE_RESPONSE, LOW_CONFIDENCE_WARNING,
+    JS_HINT_FOOTER, JS_INCLUDE_INSTRUCTION,
 )
 
-# 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+_jieba_c3_loaded = False
+
+
+def _load_jieba_c3_dict():
+    """Load C3-specific terms into jieba for domain-aware tokenization."""
+    global _jieba_c3_loaded
+    if _jieba_c3_loaded:
+        return
+    _jieba_c3_loaded = True
+
+    from src.config import SCHEMA_DIR, SOURCE_DIR, TRANSLATION_CSV
+    terms: set[str] = set()
+
+    # Schema JSONs: plugin/behavior names + ACE names
+    for subdir in ("plugins", "behaviors"):
+        schema_path = SCHEMA_DIR / subdir
+        if not schema_path.is_dir():
+            continue
+        for fp in schema_path.glob("*.json"):
+            try:
+                data = json.loads(fp.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            name = data.get("name_zh", "")
+            if len(name) >= 2:
+                terms.add(name)
+            for ace_type in ("actions", "conditions", "expressions", "properties"):
+                for ace in data.get(ace_type, []):
+                    n = ace.get("name_zh", "")
+                    if len(n) >= 2:
+                        terms.add(n)
+
+    # Translation CSV: zh column
+    csv_path = SOURCE_DIR / TRANSLATION_CSV
+    if csv_path.is_file():
+        import csv as csv_mod
+        with open(csv_path, "r", encoding="utf-8") as f:
+            reader = csv_mod.reader(f)
+            next(reader, None)  # skip header
+            for row in reader:
+                zh = row[1].strip() if len(row) > 1 else ""
+                if len(zh) >= 2 and re.search(r'[\u4e00-\u9fff]', zh):
+                    terms.add(zh)
+
+    for term in terms:
+        jieba.add_word(term)
+    logger.info(f"[jieba] Loaded {len(terms)} C3 terms")
 
 
 @dataclass
@@ -38,61 +103,176 @@ class RAGResponse:
 
 class LLMClient:
     """
-    Client for LLM inference (Ollama or OpenAI-compatible).
+    Client for LLM inference. Supports three providers:
 
-    Includes health checking and graceful fallback support.
+    - "ollama":       local Ollama service  (default)
+    - "openai":       OpenAI-compatible API (Kimi, DeepSeek, OpenAI, ...)
+    - "huggingface":  local HuggingFace transformers model
 
-    Example:
-        >>> llm = LLMClient(model="qwen2.5:7b")
-        >>> available, msg = llm.check_health()
-        >>> if available:
-        ...     response = llm.generate("Hello")
-        ... else:
-        ...     print(f"LLM unavailable: {msg}")
+    Examples:
+        >>> LLMClient(provider="ollama",  model="qwen2.5:7b")
+        >>> LLMClient(provider="openai",  model="moonshot-v1-128k",
+        ...           base_url="https://api.moonshot.cn/v1", api_key="sk-...")
+        >>> LLMClient(provider="huggingface", model="Qwen/Qwen2.5-7B-Instruct")
     """
 
     def __init__(
         self,
-        model: str = "qwen2.5:14b",
-        base_url: str = "http://localhost:11434"
+        model: str = "qwen2.5:7b",
+        base_url: str = "http://localhost:11434",
+        api_key: str = "",
+        provider: str = "ollama"
     ):
         self.model = model
         self.base_url = base_url
-        self._client = None
-        self._available = None  # Cache health status
+        self.api_key = api_key
+        self.provider = provider
+        self._client = None       # Ollama / OpenAI client
+        self._hf_model = None     # HuggingFace model
+        self._hf_tokenizer = None
+        self._available = None
+
+    # ── API-based clients (Ollama / OpenAI) ──────────────────────────────────
 
     @property
     def client(self):
+        """Lazy-load API client. Returns None for huggingface provider."""
+        if self.provider == "huggingface":
+            return None
         if self._client is None:
-            try:
-                import ollama
-                self._client = ollama.Client(host=self.base_url)
-            except ImportError:
-                print("Warning: ollama not installed. Run: pip install ollama")
-                self._client = None
+            if self.provider == "ollama":
+                try:
+                    import ollama
+                    self._client = ollama.Client(host=self.base_url)
+                except ImportError:
+                    print("Warning: ollama not installed. Run: pip install ollama")
+            else:  # openai
+                try:
+                    from openai import OpenAI
+                    self._client = OpenAI(base_url=self.base_url, api_key=self.api_key)
+                except ImportError:
+                    print("Warning: openai not installed. Run: pip install openai")
         return self._client
 
+    def _chat_ollama(self, messages: List[Dict[str, str]]) -> str:
+        response = self.client.chat(model=self.model, messages=messages)
+        return response["message"]["content"]
+
+    def _chat_openai(self, messages: List[Dict[str, str]]) -> str:
+        response = self.client.chat.completions.create(
+            model=self.model, messages=messages
+        )
+        return response.choices[0].message.content
+
+    # ── HuggingFace local inference ───────────────────────────────────────────
+
+    def _load_hf(self):
+        """Lazy-load HuggingFace model and tokenizer."""
+        if self._hf_model is not None:
+            return
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        logger.info(f"[HF] Loading model: {self.model} ...")
+        self._hf_tokenizer = AutoTokenizer.from_pretrained(self.model)
+
+        if torch.cuda.is_available():
+            logger.info("[HF] GPU detected, loading to CUDA ...")
+            self._hf_model = AutoModelForCausalLM.from_pretrained(
+                self.model, dtype=torch.bfloat16, low_cpu_mem_usage=True
+            )
+            self._hf_model = self._hf_model.to("cuda")
+        else:
+            self._hf_model = AutoModelForCausalLM.from_pretrained(
+                self.model, dtype="auto"
+            )
+
+        device = next(self._hf_model.parameters()).device
+        logger.info(f"[HF] Model loaded, device: {device}")
+
+    @property
+    def _is_qwen3(self) -> bool:
+        return "qwen3" in self.model.lower()
+
+    def _apply_chat_template(self, messages: List[Dict[str, str]]) -> str:
+        """Apply chat template, disabling Qwen3 thinking mode for RAG."""
+        kwargs = {"tokenize": False, "add_generation_prompt": True}
+        if self._is_qwen3:
+            kwargs["enable_thinking"] = False  # Non-thinking mode: faster for doc QA
+        return self._hf_tokenizer.apply_chat_template(messages, **kwargs)
+
+    def _generate_kwargs(self) -> dict:
+        """Sampling parameters per model family."""
+        if self._is_qwen3:
+            # Qwen3 non-thinking mode recommended params
+            return {"temperature": 0.7, "top_p": 0.8, "top_k": 20}
+        return {"temperature": 0.7, "top_p": 0.9}
+
+    def _chat_hf(self, messages: List[Dict[str, str]]) -> str:
+        import torch
+        self._load_hf()
+        tok = self._hf_tokenizer
+        text = self._apply_chat_template(messages)
+        inputs = tok([text], return_tensors="pt").to(self._hf_model.device)
+        with torch.no_grad():
+            output = self._hf_model.generate(
+                **inputs,
+                max_new_tokens=2048,
+                do_sample=True,
+                pad_token_id=tok.eos_token_id,
+                **self._generate_kwargs()
+            )
+        generated = output[0][inputs.input_ids.shape[-1]:]
+        return tok.decode(generated, skip_special_tokens=True)
+
+    def _stream_hf(self, messages: List[Dict[str, str]]):
+        import torch
+        from transformers import TextIteratorStreamer
+        from threading import Thread
+
+        self._load_hf()
+        tok = self._hf_tokenizer
+        text = self._apply_chat_template(messages)
+        inputs = tok([text], return_tensors="pt").to(self._hf_model.device)
+        streamer = TextIteratorStreamer(tok, skip_prompt=True, skip_special_tokens=True)
+
+        def _run():
+            with torch.no_grad():
+                self._hf_model.generate(
+                    **inputs,
+                    max_new_tokens=2048,
+                    do_sample=True,
+                    pad_token_id=tok.eos_token_id,
+                    streamer=streamer,
+                    **self._generate_kwargs()
+                )
+
+        Thread(target=_run, daemon=True).start()
+        for token in streamer:
+            yield token
+
+    # ── Health check ──────────────────────────────────────────────────────────
+
     def check_health(self) -> tuple[bool, str]:
-        """
-        Check if LLM service is available.
+        """Check if LLM service / model is available."""
+        if self.provider == "huggingface":
+            try:
+                from transformers import AutoConfig
+                AutoConfig.from_pretrained(self.model, local_files_only=True)
+                self._available = True
+                return True, f"HuggingFace model cached: {self.model}"
+            except Exception as e:
+                self._available = False
+                return False, f"Model not cached locally: {e}"
 
-        Returns:
-            Tuple of (is_available, status_message)
-
-        Example:
-            >>> llm = LLMClient()
-            >>> available, msg = llm.check_health()
-            >>> if not available:
-            ...     # Use fallback response
-            ...     return LLM_UNAVAILABLE_RESPONSE.format(sources_summary="...")
-        """
         if self.client is None:
             self._available = False
-            return False, "Ollama client not installed"
-
+            return False, f"{self.provider} package not installed"
         try:
-            # Try to list models as health check
-            self.client.list()
+            if self.provider == "ollama":
+                self.client.list()
+            else:
+                self.client.models.list()
             self._available = True
             return True, "LLM service is healthy"
         except Exception as e:
@@ -101,64 +281,57 @@ class LLMClient:
 
     @property
     def is_available(self) -> bool:
-        """Check if LLM is available (uses cached status if recent)."""
         if self._available is None:
             self.check_health()
         return self._available or False
 
+    # ── Public generation methods ─────────────────────────────────────────────
+
     def generate(self, prompt: str, system: str = "") -> str:
-        """Generate response from LLM"""
-        if self.client is None:
-            return "LLM client not available. Please install ollama."
-
+        """Single-turn generation."""
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
         try:
-            messages = []
-            if system:
-                messages.append({"role": "system", "content": system})
-            messages.append({"role": "user", "content": prompt})
-
-            response = self.client.chat(
-                model=self.model,
-                messages=messages
-            )
-            return response["message"]["content"]
+            return self.chat(messages)
         except Exception as e:
             return f"LLM error: {str(e)}"
 
     def generate_stream(self, prompt: str, system: str = ""):
-        """Generate response from LLM with streaming"""
-        if self.client is None:
-            yield "LLM client not available. Please install ollama."
-            return
-
+        """Single-turn streaming generation."""
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
         try:
-            messages = []
-            if system:
-                messages.append({"role": "system", "content": system})
-            messages.append({"role": "user", "content": prompt})
-
-            stream = self.client.chat(
-                model=self.model,
-                messages=messages,
-                stream=True
-            )
-            for chunk in stream:
-                if "message" in chunk and "content" in chunk["message"]:
-                    yield chunk["message"]["content"]
+            if self.provider == "huggingface":
+                yield from self._stream_hf(messages)
+            elif self.provider == "ollama":
+                stream = self.client.chat(model=self.model, messages=messages, stream=True)
+                for chunk in stream:
+                    if "message" in chunk and "content" in chunk["message"]:
+                        yield chunk["message"]["content"]
+            else:
+                stream = self.client.chat.completions.create(
+                    model=self.model, messages=messages, stream=True
+                )
+                for chunk in stream:
+                    content = chunk.choices[0].delta.content
+                    if content:
+                        yield content
         except Exception as e:
             yield f"LLM error: {str(e)}"
 
     def chat(self, messages: List[Dict[str, str]]) -> str:
-        """Multi-turn chat"""
-        if self.client is None:
-            return "LLM client not available."
-
+        """Multi-turn chat."""
         try:
-            response = self.client.chat(
-                model=self.model,
-                messages=messages
-            )
-            return response["message"]["content"]
+            if self.provider == "huggingface":
+                return self._chat_hf(messages)
+            elif self.provider == "ollama":
+                return self._chat_ollama(messages)
+            else:
+                return self._chat_openai(messages)
         except Exception as e:
             return f"LLM error: {str(e)}"
 
@@ -173,43 +346,42 @@ class RAGChain:
     4. Strict prompting
     """
 
-    # 检索结果阈值配置
-    MIN_RESULTS_THRESHOLD = 3  # 低于此数量视为低相关度
-    HIGH_SCORE_THRESHOLD = 0.7  # 高置信度分数阈值
-    STRICT_MODE = True  # 启用严格模式（强制引用）
+    # Retrieval threshold configuration
+    MIN_RESULTS_THRESHOLD = 3
+    HIGH_SCORE_THRESHOLD = 0.7
+    STRICT_MODE = True
 
     def __init__(
         self,
-        qdrant_host: str = "localhost",
-        qdrant_port: int = 6333,
-        llm_model: str = "qwen2.5:14b",
-        llm_base_url: str = "http://localhost:11434",
+        qdrant_host: str = QDRANT_HOST,
+        qdrant_port: int = QDRANT_PORT,
+        llm_model: str = LLM_MODEL,
+        llm_base_url: str = LLM_BASE_URL,
+        llm_api_key: str = LLM_API_KEY,
+        llm_provider: str = LLM_PROVIDER,
         enable_query_rewrite: bool = True
     ):
         self.retriever = HybridRetriever(qdrant_host, qdrant_port)
-        self.llm = LLMClient(model=llm_model, base_url=llm_base_url)
+        self.llm = LLMClient(
+            model=llm_model,
+            base_url=llm_base_url,
+            api_key=llm_api_key,
+            provider=llm_provider
+        )
         self.enable_query_rewrite = enable_query_rewrite
 
-    def _count_results(self, results: Dict[str, List[SearchResult]]) -> int:
-        """统计检索结果总数"""
-        return sum(len(items) for items in results.values())
-
-    def _get_max_score(self, results: Dict[str, List[SearchResult]]) -> float:
-        """获取最高相关度分数"""
-        max_score = 0.0
-        for items in results.values():
-            for item in items:
-                if item.score > max_score:
-                    max_score = item.score
-        return max_score
+    @staticmethod
+    def _append_js_note(prompt: str, include_js: bool) -> str:
+        if include_js:
+            return prompt + JS_INCLUDE_INSTRUCTION
+        return prompt + JS_HINT_FOOTER
 
     def _rewrite_query(self, query: str) -> List[str]:
-        """使用 LLM 改写查询以提高检索效果"""
+        """Rewrite query using LLM to improve retrieval."""
         prompt = QUERY_REWRITE_PROMPT.format(original_query=query)
         response = self.llm.generate(prompt)
-        # 解析改写结果，每行一个查询
         rewritten = [q.strip() for q in response.strip().split('\n') if q.strip()]
-        return rewritten[:3]  # 最多返回 3 个改写
+        return rewritten[:3]
 
     def _decompose_query(self, query: str) -> List[str]:
         """
@@ -234,7 +406,7 @@ class RAGChain:
         prompt = QUERY_DECOMPOSITION_PROMPT.format(original_query=query)
         response = self.llm.generate(prompt)
         sub_queries = [q.strip() for q in response.strip().split('\n') if q.strip()]
-        return sub_queries[:4]  # 最多 4 个子问题
+        return sub_queries[:4]  # max 4 sub-queries
 
     def _is_complex_query(self, query: str) -> bool:
         """
@@ -251,30 +423,109 @@ class RAGChain:
         Returns:
             True if query appears complex
         """
-        # Indicators of complex queries
-        complexity_indicators = [
-            # Multi-step keywords
-            "步骤", "流程", "实现", "workflow", "how to",
-            # Multiple concepts
-            "和", "以及", "同时", "并且", "both", "and",
-            # Combined operations
-            "然后", "之后", "接着", "first", "then",
-        ]
-
         query_lower = query.lower()
 
         # Check for complexity indicators
-        indicator_count = sum(1 for ind in complexity_indicators if ind in query_lower)
+        indicator_count = sum(1 for ind in COMPLEXITY_INDICATORS if ind in query_lower)
 
         # Check query length (longer queries tend to be more complex)
         word_count = len(query.split())
 
         return indicator_count >= 2 or word_count > 15
 
+    # ── Query enhancement (migrated from gradio_ui.py) ───────────────────────
+
+    @staticmethod
+    def _is_chinese(text: str) -> bool:
+        """Detect Chinese query (>15% CJK characters)."""
+        zh = sum(1 for c in text if '\u4e00' <= c <= '\u9fff')
+        return zh / max(len(text.strip()), 1) > 0.15
+
+    @staticmethod
+    def _split_zh_segments(text: str) -> list[str]:
+        """Jieba tokenization: keep 2+ char Chinese tokens, remove stop words, dedup."""
+        _load_jieba_c3_dict()
+        words = jieba.lcut(text)
+        segments = [w for w in words if len(w) >= 2 and re.fullmatch(r'[\u4e00-\u9fff]+', w)]
+        return list(dict.fromkeys(s for s in segments if s not in ZH_STOP_WORDS))
+
+    @staticmethod
+    def _classify_ace_intent(query: str) -> list[str]:
+        """Classify which ACE sections to search based on query intent keywords.
+
+        Returns matched section_type list, e.g. ["conditions", "expressions"].
+        Returns all types (incl. properties) when no match.
+        """
+        _load_jieba_c3_dict()
+        words = set(jieba.lcut(query))
+        intents = []
+        for ace_type, keywords in ACE_INTENT_KEYWORDS.items():
+            if words & keywords:
+                intents.append(ace_type)
+        # expressions and properties are tightly coupled
+        if "expressions" in intents and "properties" not in intents:
+            intents.append("properties")
+        elif "properties" in intents and "expressions" not in intents:
+            intents.append("expressions")
+        return intents if intents else ["conditions", "actions", "expressions", "properties"]
+
+    def _extract_term_keywords(
+        self, query: str, threshold: float = 0.5, top_k: int = 3
+    ) -> list[dict]:
+        """Search term collection per jieba segment, extract English keywords.
+
+        Flow: query -> jieba tokenize -> search top_k per segment -> filter -> dedup
+        Returns list of adopted keyword dicts with zh/en/score.
+        """
+        segments = self._split_zh_segments(query)
+        keywords: list[dict] = []
+        seen_en: set[str] = set()
+
+        for seg in segments:
+            results = self.retriever.search_terms(seg, top_k=top_k)
+            for r in results:
+                en = r.metadata.get("en", "")
+                zh = r.metadata.get("zh", "")
+                if en and en.lower() in seen_en:
+                    continue
+                if en:
+                    seen_en.add(en.lower())
+                if r.score >= threshold and en:
+                    keywords.append({"zh": zh, "en": en, "score": r.score})
+
+        return keywords
+
+    def _enrich_with_ace_search(
+        self, query: str, term_keywords: list[dict],
+        existing_results: List[SearchResult],
+    ) -> List[SearchResult]:
+        """Enrich results with plugin-specific ACE search based on term hits.
+
+        Returns extended results list (original + new ACE hits, deduplicated).
+        """
+        if not term_keywords:
+            return existing_results
+
+        ace_intents = self._classify_ace_intent(query)
+        seen_texts = {r.text[:200] for r in existing_results}
+        extra: List[SearchResult] = []
+
+        for kw in term_keywords:
+            plugin_results = self.retriever.search_plugin_by_name(
+                query=query, plugin_en=kw["en"],
+                section_types=ace_intents,
+            )
+            for doc in plugin_results:
+                if doc.text[:200] not in seen_texts:
+                    seen_texts.add(doc.text[:200])
+                    extra.append(doc)
+
+        return existing_results + extra
+
     def _format_sources_summary(self, results: List[SearchResult]) -> str:
         """Format search results as a readable summary for fallback responses."""
         if not results:
-            return "无相关文档"
+            return "No relevant documents found"
 
         summary_parts = []
         for i, r in enumerate(results[:5], start=1):
@@ -312,7 +563,7 @@ class RAGChain:
         Self-reflection: Verify if answer is supported by sources.
         Returns: (reflection_result, is_reliable)
         """
-        logger.info(f"[反思] 开始验证回答可靠性...")
+        logger.info("[Reflect] Verifying answer reliability...")
         prompt = SELF_REFLECTION_PROMPT.format(
             question=query,
             answer=answer,
@@ -321,27 +572,25 @@ class RAGChain:
 
         reflection = self.llm.generate(prompt)
 
+        # Parse verdict from the structured output line (e.g. "可靠性：[可靠 / 不可靠]")
+        # NOTE: REFLECTION_RELIABLE may be a substring of REFLECTION_UNRELIABLE,
+        # so we must check REFLECTION_UNRELIABLE first.
         is_reliable = False
-        if "可靠" in reflection and "不可靠" not in reflection:
-            is_reliable = True
-        elif "不可靠" in reflection and "可靠" not in reflection:
-            is_reliable = False
-        else:
-            is_reliable = "可靠" in reflection.split("不可靠")[0]
+        for line in reflection.split("\n"):
+            stripped = line.strip()
+            if REFLECTION_VERDICT_KEY in stripped:
+                if REFLECTION_UNRELIABLE in stripped:
+                    is_reliable = False
+                elif REFLECTION_RELIABLE in stripped:
+                    is_reliable = True
+                break
 
-        logger.info(f"[反思] 可靠性: {'可靠' if is_reliable else '不可靠'}")
+        logger.info(f"[Reflect] Reliability: {'reliable' if is_reliable else 'unreliable'}")
 
         return reflection, is_reliable
 
-    def _verify_answer(self, query: str, answer: str) -> str:
-        """Verify answer quality and return feedback"""
-        prompt = ANSWER_VERIFICATION_PROMPT.format(
-            question=query,
-            answer=answer
-        )
-
-        result = self.llm.generate(prompt)
-        return result
+    # section_type → context label (from locale)
+    _SECTION_TYPE_LABELS = ACE_SECTION_LABELS
 
     def _format_reranked_context(self, results: List[SearchResult]) -> str:
         """Format reranked results as context with clear numbering"""
@@ -360,11 +609,17 @@ class RAGChain:
             if h2:
                 header += f" > {h2}"
 
-            return f"{header}\n{r.text}\n来源: {source}\n"
+            # ACE type tag: let LLM know if this is a condition/action/expression
+            section_type = r.metadata.get("section_type", "")
+            type_label = self._SECTION_TYPE_LABELS.get(section_type, "")
+            if type_label:
+                header += f"  [{type_label}]"
+
+            return f"{header}\n{r.text}\n{SOURCE_LABEL.format(source=source)}\n"
 
         # Show all results (not just top 5) to avoid hallucinated citations
         if results:
-            context_parts.append(f"## 参考资料（共 {len(results)} 条）\n")
+            context_parts.append(f"{CONTEXT_HEADER.format(count=len(results))}\n")
             for i, r in enumerate(results, start=1):
                 context_parts.append(format_reranked_result(r, i))
 
@@ -374,16 +629,15 @@ class RAGChain:
         """Classify query type (qa/code)"""
         query_lower = query.lower()
 
-        # Simple rule-based classification
-        if any(kw in query_lower for kw in ["生成", "写一个", "帮我写", "事件表", "代码"]):
+        if any(kw in query_lower for kw in CODE_GENERATION_KEYWORDS):
             return "code"
         else:
             return "qa"
 
-    def answer_qa(self, query: str, retry_count: int = 0, use_strict_mode: bool = True) -> RAGResponse:
+    def answer_qa(self, query: str, retry_count: int = 0, use_strict_mode: bool = True, include_js: bool = False) -> RAGResponse:
         """Answer general Q&A queries with anti-hallucination measures"""
         # Step 1: Retrieve with increased top_k and reranking
-        logger.info(f"[1/4] 检索相关文档... 查询: {query[:50]}...")
+        logger.info(f"[1/4] Retrieving docs... query: {query[:50]}...")
         t0 = time.time()
 
         # Try original query first
@@ -392,26 +646,26 @@ class RAGChain:
             top_k_per_collection=5,  # Increased from 2
             final_top_k=10
         )
-        logger.info(f"[1/4] 检索完成 ({time.time()-t0:.1f}s), 找到 {len(results)} 条")
+        logger.info(f"[1/4] Retrieval done ({time.time()-t0:.1f}s), found {len(results)} results")
 
         # If no results, try query rewrite
         if len(results) == 0:
             if self.enable_query_rewrite and retry_count == 0:
-                logger.info("[1/4] 未找到结果，尝试改写查询...")
+                logger.info("[1/4] No results, trying query rewrite...")
                 rewritten_queries = self._rewrite_query(query)
-                logger.info(f"[1/4] 改写查询: {rewritten_queries}")
+                logger.info(f"[1/4] Rewritten queries: {rewritten_queries}")
 
                 for rq in rewritten_queries:
                     retry_results = self.retriever.search_all_with_rerank(
                         rq, top_k_per_collection=5, final_top_k=10
                     )
                     if len(retry_results) > 0:
-                        logger.info(f"[1/4] 改写查询 '{rq}' 找到结果")
+                        logger.info(f"[1/4] Rewritten query '{rq}' found results")
                         results = retry_results
                         break
 
             if len(results) == 0:
-                logger.info("[1/4] 改写后仍无结果，返回无结果提示")
+                logger.info("[1/4] Still no results after rewrite")
                 return RAGResponse(
                     answer=NO_RESULTS_RESPONSE,
                     sources=[],
@@ -423,19 +677,20 @@ class RAGChain:
         context = self._format_reranked_context(results)
 
         # Step 3: Generate answer with strict mode (anti-hallucination)
-        logger.info(f"[2/4] LLM 生成回答 (严格模式: {use_strict_mode})...")
+        logger.info(f"[2/4] LLM generating answer (strict: {use_strict_mode})...")
         t0 = time.time()
 
         if use_strict_mode and self.STRICT_MODE:
             prompt = STRICT_QA_PROMPT.format(context=context, question=query)
         else:
             prompt = QA_PROMPT.format(context=context, question=query)
+        prompt = self._append_js_note(prompt, include_js)
 
         answer = self.llm.generate(prompt, system=SYSTEM_MESSAGE)
-        logger.info(f"[2/4] 生成完成 ({time.time()-t0:.1f}s)")
+        logger.info(f"[2/4] Generation done ({time.time()-t0:.1f}s)")
 
         # Step 4: Self-reflection verification
-        logger.info(f"[3/4] Self-Reflection 验证...")
+        logger.info("[3/4] Self-Reflection verification...")
         reflection, is_reliable = self._self_reflect(query, answer, context)
 
         # If unreliable, try with more context
@@ -443,7 +698,7 @@ class RAGChain:
         verification_notes = ""
 
         if not is_reliable and retry_count < 1:
-            logger.info(f"[3/4] 初始回答不可靠，尝试改进...")
+            logger.info("[3/4] Initial answer unreliable, attempting improvement...")
             # Try with even more results
             results_expanded = self.retriever.search_all_with_rerank(
                 query, top_k_per_collection=8, final_top_k=15
@@ -474,11 +729,11 @@ class RAGChain:
                     answer = answer_improved
                     results = results_expanded
                     confidence = "high"
-                    logger.info(f"[3/4] 改进后回答可靠")
+                    logger.info("[3/4] Improved answer is reliable")
                 else:
-                    verification_notes = f"初步验证发现问题:\n{reflection}\n\n改进后:\n{reflection2}"
+                    verification_notes = f"Initial verification issues:\n{reflection}\n\nAfter improvement:\n{reflection2}"
             else:
-                verification_notes = f"初步验证发现问题:\n{reflection}"
+                verification_notes = f"Initial verification issues:\n{reflection}"
 
         # Collect sources
         sources = []
@@ -495,7 +750,7 @@ class RAGChain:
         if confidence != "high":
             query_type = "qa_low_confidence"
 
-        logger.info(f"[4/4] 完成，回答置信度: {confidence}")
+        logger.info(f"[4/4] Done, confidence: {confidence}")
 
         return RAGResponse(
             answer=answer,
@@ -528,7 +783,7 @@ class RAGChain:
             sources=sources,
             query_type="code",
             confidence="medium",
-            verification_notes="事件生成未经过 Self-Reflection 验证"
+            verification_notes="Event generation not verified by Self-Reflection"
         )
 
     def answer(self, query: str) -> RAGResponse:
@@ -542,13 +797,13 @@ class RAGChain:
         else:
             return self.answer_qa(query, use_strict_mode=True)
 
-    def answer_high_confidence(self, query: str) -> RAGResponse:
+    def answer_high_confidence(self, query: str, include_js: bool = False) -> RAGResponse:
         """
         High-confidence Q&A with maximum anti-hallucination measures.
         Use this for fact-critical questions.
         """
         # Multi-query retrieval for comprehensive coverage
-        logger.info("[高置信度] 开始多查询检索...")
+        logger.info("[HighConf] Starting multi-query retrieval...")
         all_results: List[SearchResult] = []
 
         # Original query
@@ -597,8 +852,9 @@ class RAGChain:
         # Use strict mode with expanded context
         context = self._format_reranked_context(unique_results)
         prompt = STRICT_QA_PROMPT.format(context=context, question=query)
+        prompt = self._append_js_note(prompt, include_js)
 
-        logger.info("[高置信度] 生成回答...")
+        logger.info("[HighConf] Generating answer...")
         answer = self.llm.generate(prompt, system=SYSTEM_MESSAGE)
 
         # Self-reflection
@@ -625,7 +881,7 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
-    def answer_stream(self, query: str, use_strict_mode: bool = True):
+    def answer_stream(self, query: str, use_strict_mode: bool = True, include_js: bool = False):
         """
         Streaming version of answer with anti-hallucination measures
         """
@@ -672,6 +928,7 @@ class RAGChain:
                 prompt = STRICT_QA_PROMPT.format(context=context, question=query)
             else:
                 prompt = QA_PROMPT.format(context=context, question=query)
+            prompt = self._append_js_note(prompt, include_js)
             system = SYSTEM_MESSAGE
 
         # Stream the response
@@ -697,7 +954,7 @@ class RAGChain:
             context = self._format_reranked_context(results)
 
             # Use strict mode for chat
-            system_with_context = f"{SYSTEM_MESSAGE}\n\n## 参考资料（回答必须基于这些来源）\n{context}"
+            system_with_context = f"{SYSTEM_MESSAGE}\n\n{CONTEXT_HEADER_STRICT}\n{context}"
             enhanced_messages = [
                 {"role": "system", "content": system_with_context}
             ] + messages
@@ -706,7 +963,7 @@ class RAGChain:
         else:
             return self.llm.chat(messages)
 
-    def answer_complex_workflow(self, query: str) -> RAGResponse:
+    def answer_complex_workflow(self, query: str, include_js: bool = False) -> RAGResponse:
         """
         Answer complex multi-step workflow queries using query decomposition.
 
@@ -735,19 +992,28 @@ class RAGChain:
             ... )
             >>> print(response.answer)
         """
-        logger.info(f"[复杂查询] 开始处理: {query[:50]}...")
+        logger.info(f"[Complex] Processing: {query[:50]}...")
+
+        # Query enhancement for Chinese queries
+        search_query = query
+        term_keywords: list[dict] = []
+        if self._is_chinese(query):
+            term_keywords = self._extract_term_keywords(query)
+            if term_keywords:
+                en_terms = " ".join(kw["en"] for kw in term_keywords)
+                search_query = f"{query} {en_terms}"
 
         # Step 1: Decompose query
-        logger.info("[复杂查询] 分解查询...")
+        logger.info("[Complex] Decomposing query...")
         sub_queries = self._decompose_query(query)
-        logger.info(f"[复杂查询] 子查询: {sub_queries}")
+        logger.info(f"[Complex] Sub-queries: {sub_queries}")
 
         # Step 2: Retrieve for each sub-query
         all_result_lists: List[List[SearchResult]] = []
 
-        # Original query
+        # Original query (with term enrichment)
         original_results = self.retriever.search_all_with_rerank(
-            query, top_k_per_collection=5, final_top_k=10
+            search_query, top_k_per_collection=5, final_top_k=10
         )
         all_result_lists.append(original_results)
 
@@ -758,17 +1024,20 @@ class RAGChain:
             )
             if sq_results:
                 all_result_lists.append(sq_results)
-                logger.info(f"[复杂查询] 子查询 '{sq[:30]}...' 返回 {len(sq_results)} 条")
+                logger.info(f"[Complex] Sub-query '{sq[:30]}...' returned {len(sq_results)} results")
 
         # Step 3: Combine with RRF
-        logger.info("[复杂查询] RRF 融合结果...")
+        logger.info("[Complex] Fusing results with RRF...")
         fused_results = self.retriever.reciprocal_rank_fusion(all_result_lists)
+
+        # Enrich with plugin-specific ACE search
+        fused_results = self._enrich_with_ace_search(query, term_keywords, fused_results)
 
         # Step 4: Filter with adaptive threshold
         filtered_results = self.retriever.filter_by_adaptive_threshold(
             fused_results, min_results=5
         )
-        logger.info(f"[复杂查询] 过滤后保留 {len(filtered_results)} 条")
+        logger.info(f"[Complex] Filtered to {len(filtered_results)} results")
 
         if not filtered_results:
             return RAGResponse(
@@ -781,6 +1050,7 @@ class RAGChain:
         # Step 5: Generate answer
         context = self._format_reranked_context(filtered_results[:15])
         prompt = STRICT_QA_PROMPT.format(context=context, question=query)
+        prompt = self._append_js_note(prompt, include_js)
 
         answer = self.llm.generate(prompt, system=SYSTEM_MESSAGE)
 
@@ -808,7 +1078,7 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
-    def answer_with_fallback(self, query: str) -> RAGResponse:
+    def answer_with_fallback(self, query: str, include_js: bool = False) -> RAGResponse:
         """
         Answer query with graceful fallback for service unavailability.
 
@@ -837,7 +1107,7 @@ class RAGChain:
         # Check Qdrant availability
         qdrant_ok, qdrant_msg = self.retriever.check_health()
         if not qdrant_ok:
-            logger.warning(f"[Fallback] Qdrant 不可用: {qdrant_msg}")
+            logger.warning(f"[Fallback] Qdrant unavailable: {qdrant_msg}")
             return RAGResponse(
                 answer=QDRANT_UNAVAILABLE_RESPONSE,
                 sources=[],
@@ -846,10 +1116,22 @@ class RAGChain:
                 verification_notes=qdrant_msg
             )
 
+        # Query enhancement: extract English term keywords for Chinese queries
+        search_query = query
+        term_keywords: list[dict] = []
+        if self._is_chinese(query):
+            term_keywords = self._extract_term_keywords(query)
+            if term_keywords:
+                en_terms = " ".join(kw["en"] for kw in term_keywords)
+                search_query = f"{query} {en_terms}"
+
         # Retrieve results (Qdrant is available)
         results = self.retriever.search_all_with_rerank(
-            query, top_k_per_collection=5, final_top_k=10
+            search_query, top_k_per_collection=5, final_top_k=10
         )
+
+        # Enrich with plugin-specific ACE search based on term hits
+        results = self._enrich_with_ace_search(query, term_keywords, results)
 
         # Filter irrelevant results
         filtered_results = self.retriever.filter_by_adaptive_threshold(results)
@@ -868,7 +1150,7 @@ class RAGChain:
         # Check LLM availability
         llm_ok, llm_msg = self.llm.check_health()
         if not llm_ok:
-            logger.warning(f"[Fallback] LLM 不可用: {llm_msg}")
+            logger.warning(f"[Fallback] LLM unavailable: {llm_msg}")
             sources_summary = self._format_sources_summary(filtered_results)
             return RAGResponse(
                 answer=LLM_UNAVAILABLE_RESPONSE.format(sources_summary=sources_summary),
@@ -890,6 +1172,7 @@ class RAGChain:
         # Full answer generation (both services available)
         context = self._format_reranked_context(filtered_results)
         prompt = STRICT_QA_PROMPT.format(context=context, question=query)
+        prompt = self._append_js_note(prompt, include_js)
 
         answer = self.llm.generate(prompt, system=SYSTEM_MESSAGE)
 
@@ -920,15 +1203,16 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
-    def answer_smart(self, query: str) -> RAGResponse:
+    def answer_smart(self, query: str, include_js: bool = False) -> RAGResponse:
         """
         Smart answer routing with automatic complexity detection and fallback.
 
         This is the recommended entry point for production use. It:
-        1. Detects query complexity
-        2. Routes to appropriate handler (simple vs complex workflow)
-        3. Provides graceful fallback on service failures
-        4. Filters irrelevant results automatically
+        1. Tries direct lookup (zero LLM cost, instant)
+        2. Detects query complexity
+        3. Routes to appropriate handler (simple vs complex workflow)
+        4. Provides graceful fallback on service failures
+        5. Filters irrelevant results automatically
 
         Args:
             query: User query
@@ -943,10 +1227,23 @@ class RAGChain:
             >>> # Complex query - uses decomposition
             >>> r2 = chain.answer_smart("如何实现带存档功能的平台游戏？")
         """
+        # Lookup shortcut — direct JSON/CSV lookup, no LLM needed
+        if not hasattr(self, '_lookup'):
+            from src.rag.lookup import LookupEngine
+            self._lookup = LookupEngine()
+        resp = self._lookup.try_lookup(query)
+        if resp:
+            return RAGResponse(
+                answer=resp.answer,
+                sources=[],
+                query_type=resp.query_type,
+                confidence="high",
+            )
+
         # Route based on complexity
         if self._is_complex_query(query):
-            logger.info(f"[Smart] 检测到复杂查询，使用分解策略")
-            return self.answer_complex_workflow(query)
+            logger.info("[Smart] Complex query detected, using decomposition")
+            return self.answer_complex_workflow(query, include_js=include_js)
         else:
-            logger.info(f"[Smart] 标准查询，使用 fallback 策略")
-            return self.answer_with_fallback(query)
+            logger.info("[Smart] Standard query, using fallback strategy")
+            return self.answer_with_fallback(query, include_js=include_js)
