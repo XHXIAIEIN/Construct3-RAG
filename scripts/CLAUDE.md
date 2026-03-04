@@ -42,7 +42,7 @@ Operations and development scripts. All scripts are in the `scripts/` root (no s
 | Script | Purpose | Usage |
 |--------|---------|-------|
 | `benchmark.py` | RAG quality evaluation (15 questions, 4 scoring dimensions) | `python scripts/benchmark.py --mode smart` |
-| `download_model.py` | Download HuggingFace model to local cache | `python scripts/download_model.py Qwen/Qwen3-8B` |
+| `download_model.py` | Download HuggingFace model to local cache | `python scripts/download_model.py Qwen/Qwen3.5-9B` |
 | `analyze_eventsheets.py` | Deep analysis of C3 event sheet structures (incremental) | `python scripts/analyze_eventsheets.py` |
 | `analyze_projects.py` | Full analysis of C3 project structures (incremental) | `python scripts/analyze_projects.py` |
 

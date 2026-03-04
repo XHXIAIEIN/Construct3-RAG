@@ -63,10 +63,11 @@ node scripts/generate-schema.js
 python -m src.ingest.indexer --rebuild
 ```
 
-### 5. Start Application
+### 5. Configure Environment (Optional)
 
 ```bash
-python -m src.app.gradio_ui
+cp .env.example .env
+# Edit .env as needed (change LLM model, ports, etc.)
 ```
 
 > **Note**: Vector database data is stored in Docker volume, not included in Git repo. First use requires `--rebuild` to build the index.
@@ -75,11 +76,10 @@ python -m src.app.gradio_ui
 
 | Component | Choice | Description |
 |-----------|--------|-------------|
-| LLM | Qwen3-8B | Local via HuggingFace / Ollama |
+| LLM | Qwen3.5-9B | Local via HuggingFace / Ollama |
 | Vector DB | Qdrant | High-performance vector search |
 | Embedding | BAAI/bge-m3 | Multilingual embedding model, 1024 dimensions |
 | Chunking | H2 semantic chunking | Split by document structure |
-| Frontend | Gradio | Quick web UI building |
 
 ## Project Structure
 
@@ -96,7 +96,7 @@ Construct3-RAG/
 │   ├── collections.py         # Collection definitions
 │   ├── ingest/                # Data processing and indexing
 │   ├── rag/                   # RAG core
-│   └── app/                   # Web UI
+│   └── locale/                # Internationalization (zh/en)
 ├── tests/                     # Unit tests
 └── requirements.txt
 ```

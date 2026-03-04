@@ -6,7 +6,7 @@ RAG assistant for Construct 3 game engine documentation. Local LLM + Qdrant vect
 
 | Component | Technology |
 |-----------|------------|
-| LLM | HuggingFace / Ollama (default: Qwen3-8B) |
+| LLM | HuggingFace / Ollama (default: Qwen3.5-9B) |
 | Embedding | BAAI/bge-m3 |
 | Vector DB | Qdrant |
 | Language | Python 3.14 |

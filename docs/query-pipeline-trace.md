@@ -1,7 +1,7 @@
 # 查询处理全流程追踪
 
 > 示例查询：**"怎么在数组中查找特定数字？"**
-> 入口：Web UI (`gradio_ui.py`) → `respond()` 函数
+> 入口：`RAGChain.answer_smart()` (`src/rag/chain.py`)
 
 ---
 
@@ -33,7 +33,7 @@
            │
            ▼
 ┌─────────────────────────────────┐
-│  Stage 4: LLM 生成回答           │  ← Qwen3-8B 推理
+│  Stage 4: LLM 生成回答           │  ← Qwen3.5-9B 推理
 └──────────┬──────────────────────┘
            │
            ▼
@@ -46,7 +46,7 @@
 
 ## Stage 0: Direct Lookup 快捷路径
 
-**代码入口**: `gradio_ui.py:230-233` → `LookupEngine.try_lookup()`
+**代码入口**: `chain.py` → `LookupEngine.try_lookup()`
 
 **目的**：对于"列出 Sprite 的所有动作"、"翻译 Destroy"等精确查询，直接从本地 JSON/CSV 查找，跳过整个 RAG 流程。
 
@@ -142,7 +142,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### 格式化输出
 
-**代码**: `formatters.py:_format_lookup_analysis()`
+**代码**: 格式化输出（原 `formatters.py`，已迁入 `chain.py`）
 
 ```html
 <details class="rag-analysis">
@@ -170,7 +170,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### Stage 1: 查询分析
 
-**代码**: `gradio_ui.py:241-267`
+**代码**: `chain.py` — 查询增强逻辑
 
 ```
 1. 语言检测:
@@ -224,7 +224,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### Stage 2: 向量检索
 
-**代码**: `gradio_ui.py:274-276` → `HybridRetriever.search_all_with_rerank()`
+**代码**: `chain.py` → `HybridRetriever.search_all_with_rerank()`
 
 ```
 1. 健康检查:
@@ -266,7 +266,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### Stage 3: 插件精确检索
 
-**代码**: `gradio_ui.py:279-292`
+**代码**: `chain.py` — 插件精确检索
 
 ```
 因为 term_keywords 命中了 Array/Sort/Find，触发 search_plugin_by_name():
@@ -287,7 +287,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### Stage 4: LLM 生成回答
 
-**代码**: `gradio_ui.py:308-321`
+**代码**: `chain.py` — LLM 调用
 
 ```
 1. 格式化上下文:
@@ -312,7 +312,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
      {role: "user", content: "怎么在数组中实现排序后的二分查找？"}
    ]
 
-3. LLM 推理 (Qwen3-8B, bf16, GPU):
+3. LLM 推理 (Qwen3.5-9B, bf16, GPU):
    a. apply_chat_template(messages, enable_thinking=False)
    b. tokenize → input_ids → GPU
    c. model.generate(max_new_tokens=2048, temperature=0.7, top_p=0.8)
@@ -340,7 +340,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### Stage 5: 格式化输出
 
-**代码**: `formatters.py:_format_analysis()` + 拼接回答
+**代码**: 格式化输出 + 拼接回答
 
 最终用户看到的完整输出：
 
@@ -395,7 +395,6 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 | 入口方法 | 路径 | 特点 |
 |----------|------|------|
-| `respond()` (Web UI) | Lookup → 术语映射 → 检索 → LLM | 完整流程，带分析面板 |
 | `answer_smart()` | Lookup → 复杂度检测 → fallback/decompose | 生产推荐，自动路由 |
 | `answer_stream()` | 检索 → 流式 LLM | 实时输出，无 Self-Reflection |
 | `answer_high_confidence()` | 多查询检索 → LLM → Self-Reflection | 最慢最准 |
@@ -435,15 +434,13 @@ query = "怎么在数组中查找特定数字？"
 | `HybridRetriever` | `src/rag/retriever.py` | Qdrant 向量检索 + 跨 collection 重排 + RRF 融合 |
 | `RAGChain` | `src/rag/chain.py` | 查询路由 + LLM 调用 + Self-Reflection |
 | `LLMClient` | `src/rag/chain.py` | 多 provider 推理（HuggingFace/Ollama/OpenAI） |
-| `gradio_ui.respond()` | `src/app/gradio_ui.py` | UI 入口，术语映射 + ACE 意图 + 编排检索 |
-| `formatters` | `src/app/formatters.py` | 分析面板 HTML 生成 |
 
 ## 数据流向
 
 ```
 用户查询
   ↓
-gradio_ui.respond()
+RAGChain.answer_smart()
   ├─→ LookupEngine ──→ SchemaIndex (data/schemas/*.json)
   │                 └─→ TermIndex   (data/source/zh-CN_r473.csv)
   │
@@ -458,9 +455,9 @@ gradio_ui.respond()
   │     └─→ Qdrant c3_plugins (带 Filter)
   │
   └─→ LLMClient.chat()
-        └─→ Qwen3-8B (GPU, bf16)
+        └─→ Qwen3.5-9B (GPU, bf16)
               ↓
-        格式化回答（分析面板 + Markdown）
+        格式化回答（Markdown）
               ↓
          返回给用户
 ```
