@@ -52,7 +52,7 @@ EMBEDDING_DIMENSION = 1024
 # =============================================================================
 # provider=ollama:       LLM_MODEL=qwen2.5:7b
 # provider=openai:       LLM_MODEL=moonshot-v1-128k / gpt-4o  (requires API Key)
-# provider=huggingface:  LLM_MODEL=Qwen/Qwen2.5-7B-Instruct   (local inference)
+# provider=huggingface:  LLM_MODEL=Qwen/Qwen3.5-9B             (local inference)
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama")   # ollama | openai | huggingface
 LLM_MODEL = os.getenv("LLM_MODEL", "qwen2.5:7b")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")

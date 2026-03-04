@@ -391,7 +391,6 @@ def answer(query):
 | 索引器 | `indexer.py` | 文本 → 向量 → 存入 Qdrant |
 | 检索器 | `retriever.py` | 问题 → 向量 → 搜索相似文档 |
 | 生成链 | `chain.py` | 组合检索结果 + LLM 生成回答 |
-| 界面 | `gradio_ui.py` | Web 交互界面 |
 
 ---
 

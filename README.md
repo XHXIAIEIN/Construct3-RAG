@@ -73,32 +73,16 @@ cp .env.example .env
 # 按需编辑 .env（修改 LLM 模型、端口等）
 ```
 
-### 6. 启动应用
-
-```bash
-python -m src.app.gradio_ui
-```
-
-访问 http://127.0.0.1:7860
-
-| 按钮 | 说明 |
-|------|------|
-| 流式回答 | 实时显示生成过程（Enter 键触发） |
-| 智能回答 ✦ | 自动检测复杂度，含来源标注（推荐） |
-| 高置信度 | 多查询检索 + Self-Reflection 验证，最慢但最准 |
-| 多轮对话 Tab | 带上下文记忆的连续问答 |
-
 > **注意**: 向量数据库数据保存在 Docker volume 中，不包含在 Git 仓库内。首次使用需执行 `--rebuild` 重建索引。
 
 ## 技术栈
 
 | 组件       | 选择          | 说明                          |
 |-----------|--------------|-------------------------------|
-| LLM       | Qwen3-8B     | 本地运行，HuggingFace / Ollama |
+| LLM       | Qwen3.5-9B   | 本地运行，HuggingFace / Ollama |
 | 向量数据库 | Qdrant       | 高性能向量搜索                  |
 | Embedding | BAAI/bge-m3  | 多语言嵌入模型，1024 维          |
 | 分块策略   | H2 语义分块   | 按文档结构切分                  |
-| 前端       | Gradio       | 快速搭建 Web 界面              |
 
 ## 项目结构
 
@@ -115,7 +99,7 @@ Construct3-RAG/
 │   ├── collections.py         # 集合定义
 │   ├── ingest/                # 数据处理与索引
 │   ├── rag/                   # RAG 核心
-│   └── app/                   # Web 界面
+│   └── locale/                # 多语言 (zh/en)
 ├── tests/                     # 单元测试
 ├── .env.example               # 环境变量示例
 └── requirements.txt
