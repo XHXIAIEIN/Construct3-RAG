@@ -84,23 +84,87 @@ score = (命中 zh token 数 / 该节点 zh 词表大小) × weight
 
 ---
 
-## Component: QueryExpander
+## Component: SmallLLMExpander
 
-### 扩展词来源
+手工词表覆盖率有限，人工维护不可持续。引入极小 LLM 做通用语义联想，替代手工词表成为主要扩展源。
 
-**A. 手工词表 `SEMANTIC_EXPAND`**（`src/locale/keywords.py`）
+### 职责
 
-```python
-SEMANTIC_EXPAND: dict[str, list[str]] = {
-    '查找': ['条件', '表达式', '检索', '检测', '遍历', '包含', '存在', '出现'],
-    '排序': ['升序', '降序', '动作', '顺序'],
-    '碰撞': ['重叠', '检测', '条件'],
-    '移动': ['速度', '方向', '动作', '位置'],
-    # ...
-}
+输入：查询 token 列表 → 输出：这些词在技术文档中的语义近义词集（中文）
+
+**不需要** C3 领域知识——只做通用汉语语义联想（"查找"→包含/检测/遍历/索引），C3 专有术语映射由 SchemaZhEnIndex 负责。
+
+### 模型选型
+
+| 模型 | VRAM | 速度（CPU） | 备注 |
+|------|------|------------|------|
+| Qwen3-0.5B | ~0.5GB | ~1-3s | 推荐，足够做词义联想 |
+| Qwen3-1.5B | ~1.5GB | ~3-6s | 质量略好，适合 GPU |
+
+默认 CPU 推理——不与主模型竞争 VRAM；结果缓存后重复查询极快。
+
+### Prompt 设计
+
+```
+你是一个语义联想助手。给定技术文档查询中的关键词，
+列出相关的中文动词和名词（每行一个，不超过12个，只输出词语）：
+
+关键词：数组 / 查找 / 数字
+
+相关词：
 ```
 
-手工词表优先级高于自动扩展，两者取并集。
+期望输出：
+```
+包含
+检测
+索引
+遍历
+比较
+存在
+返回
+位置
+查询
+元素
+值
+筛选
+```
+
+### 配置
+
+```python
+# config.py 新增
+EXPANDER_MODEL  = os.getenv("EXPANDER_MODEL", "Qwen/Qwen3-0.5B")
+EXPANDER_DEVICE = os.getenv("EXPANDER_DEVICE", "cpu")   # "cpu" | "cuda"
+```
+
+### 接口
+
+```python
+class SmallLLMExpander:
+    def expand(self, tokens: list[str]) -> set[str]   # 返回扩展词集，失败返回 set()
+    @property
+    def available(self) -> bool                        # 模型是否已成功加载
+```
+
+- 懒加载：首次调用时加载模型
+- 结果缓存：`frozenset(tokens)` 为 key，避免重复推理
+- 超时保护：推理超过 5s 则跳过，返回空集
+- 失败降级：加载失败不抛异常，`available=False`，QueryExpander 静默跳过
+
+---
+
+## Component: QueryExpander
+
+### 扩展词来源（三层，按优先级合并）
+
+| 来源 | 类型 | 优先级 | 说明 |
+|------|------|--------|------|
+| `SmallLLMExpander` | 神经网络语义联想 | 主 | 通用中文词义扩展，不依赖 C3 知识 |
+| `SEMANTIC_EXPAND` 手工词表 | 规则 | 补充 | 快速路径 + LLM 不可用时兜底 |
+| `SchemaZhEnIndex.auto_expand` | 共现统计 | 补充 | schema 词汇共现，贴近 C3 文档用词 |
+
+三者取并集，无优先级覆盖关系。
 
 **B. 自动扩展（从 SchemaZhEnIndex）**
 
@@ -160,11 +224,12 @@ Trace 插桩：在 `"expand"` 阶段后新增 `"schema_match"` phase，输出 to
 
 | 操作 | 文件 | 内容 |
 |------|------|------|
-| 新建 | `src/rag/query_expander.py` | `SchemaZhEnIndex` + `QueryExpander` + `SchemaMatch` |
-| 修改 | `src/locale/keywords.py` | 新增 `SEMANTIC_EXPAND` 手工词表 |
+| 新建 | `src/rag/query_expander.py` | `SmallLLMExpander` + `SchemaZhEnIndex` + `QueryExpander` + `SchemaMatch` |
+| 修改 | `src/config.py` | 新增 `EXPANDER_MODEL` / `EXPANDER_DEVICE` |
+| 修改 | `src/locale/keywords.py` | 新增 `SEMANTIC_EXPAND` 手工词表（兜底用） |
 | 修改 | `src/rag/chain.py` | 初始化 `QueryExpander`，接入 `answer_with_fallback()` |
 | 修改 | `scripts/chat.py` | `_TRACE_LABEL`/`_TRACE_GROUP` 添加 `"schema_match"` phase |
-| 新建 | `tests/test_query_expander.py` | 单元测试（全 mock，无外部依赖）|
+| 新建 | `tests/test_query_expander.py` | 单元测试（SmallLLMExpander mock + SchemaZhEnIndex + QueryExpander）|
 
 ---
 

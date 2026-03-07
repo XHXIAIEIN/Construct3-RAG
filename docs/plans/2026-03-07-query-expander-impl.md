@@ -4,9 +4,304 @@
 
 **Goal:** Build a two-stage pre-retrieval component that expands Chinese query tokens via a manual dict + schema inverted index, then bridges zh→en to produce precise ACE identifiers for better vector retrieval.
 
-**Architecture:** `SchemaZhEnIndex` builds an inverted index from all schema JSON files (plugins/behaviors/effects/features/editor) mapping Chinese tokens to ACE nodes. `QueryExpander` merges manual `SEMANTIC_EXPAND` expansions with auto-expansions from the index, then scores nodes by term overlap to produce `SchemaMatch` results. High-scoring matches augment the retrieval query with English ACE identifiers; very high-scoring matches additionally pre-inject ACE schema context.
+**Architecture:** `SmallLLMExpander` uses a tiny HuggingFace model (Qwen3-0.5B, CPU by default) to generate semantically related Chinese terms from query tokens — replacing hand-crafted dictionaries as the primary expansion source. `SchemaZhEnIndex` builds an inverted index from all schema JSON files (plugins/behaviors/effects/features/editor) mapping Chinese tokens to ACE nodes. `QueryExpander` merges LLM expansion + manual fallback + schema auto-expansion, then scores nodes by term overlap. High-scoring matches augment the retrieval query with English ACE identifiers.
 
-**Tech Stack:** Python dataclasses, jieba, pathlib, json, existing `SchemaIndex` from `src/rag/lookup.py`
+**Tech Stack:** Python dataclasses, jieba, HuggingFace transformers, pathlib, json, existing `SchemaIndex` from `src/rag/lookup.py`
+
+---
+
+## Task 0: Add EXPANDER_MODEL config
+
+**Files:**
+- Modify: `src/config.py`
+
+**Step 1: Append to config.py**
+
+```python
+# =============================================================================
+# Query Expander (SmallLLMExpander)
+# =============================================================================
+# Ultra-small model for semantic query token expansion (zh → related zh terms).
+# Runs on CPU by default — does not compete with main LLM for VRAM.
+# Set EXPANDER_MODEL="" to disable LLM expansion (fall back to manual+auto only).
+EXPANDER_MODEL  = os.getenv("EXPANDER_MODEL",  "Qwen/Qwen3-0.5B")
+EXPANDER_DEVICE = os.getenv("EXPANDER_DEVICE", "cpu")   # "cpu" | "cuda"
+EXPANDER_MAX_NEW_TOKENS = int(os.getenv("EXPANDER_MAX_NEW_TOKENS", "80"))
+EXPANDER_TIMEOUT_S      = float(os.getenv("EXPANDER_TIMEOUT_S",    "5.0"))
+```
+
+**Step 2: Verify**
+
+```bash
+/c/Users/test/AppData/Local/Python/bin/python.exe -c "from src.config import EXPANDER_MODEL, EXPANDER_DEVICE; print(EXPANDER_MODEL, EXPANDER_DEVICE)"
+```
+
+Expected: `Qwen/Qwen3-0.5B cpu`
+
+**Step 3: Commit**
+
+```bash
+git add src/config.py
+git commit -m "feat: add EXPANDER_MODEL/DEVICE config for SmallLLMExpander"
+```
+
+---
+
+## Task 0.5: Implement SmallLLMExpander
+
+**Files:**
+- Create: `src/rag/query_expander.py` (first pass — SmallLLMExpander only)
+
+**Step 1: Write failing tests for SmallLLMExpander**
+
+Add to `tests/test_query_expander.py` (create the file now with just this class):
+
+```python
+"""Tests for SmallLLMExpander — LLM mocked, no model download required."""
+import sys
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
+class TestSmallLLMExpander:
+
+    def test_available_false_when_model_empty(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander(model_path="")
+        assert exp.available is False
+
+    def test_expand_returns_empty_when_unavailable(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander(model_path="")
+        result = exp.expand(["查找", "数组"])
+        assert result == set()
+
+    def test_expand_calls_model_generate(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander.__new__(SmallLLMExpander)
+        exp._cache = {}
+        exp._model_path = "fake"
+        # Inject mock model + tokenizer
+        mock_tok = MagicMock()
+        mock_tok.return_value = {"input_ids": MagicMock()}
+        mock_tok.decode = MagicMock(return_value="包含\n检测\n遍历\n索引")
+        mock_model = MagicMock()
+        mock_model.generate = MagicMock(return_value=[[0, 1, 2]])
+        exp._tokenizer = mock_tok
+        exp._model = mock_model
+        result = exp._run_inference(["查找", "数组"])
+        assert isinstance(result, set)
+
+    def test_expand_caches_result(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander(model_path="")
+        exp.expand(["查找"])
+        exp.expand(["查找"])  # second call should use cache
+        # No assertion needed — just verify no exception
+
+    def test_parse_output_extracts_words(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander.__new__(SmallLLMExpander)
+        result = exp._parse_output("包含\n检测\n遍历\n索引\n比较\n")
+        assert "包含" in result
+        assert "检测" in result
+        assert len(result) <= 12
+
+    def test_parse_output_filters_short_tokens(self):
+        from src.rag.query_expander import SmallLLMExpander
+        exp = SmallLLMExpander.__new__(SmallLLMExpander)
+        result = exp._parse_output("的\n包含\n检测\na\n遍历\n")
+        assert "的" not in result
+        assert "a" not in result
+        assert "包含" in result
+```
+
+**Step 2: Run tests to confirm they fail**
+
+```bash
+/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py::TestSmallLLMExpander -v 2>&1 | head -20
+```
+
+Expected: `ERROR — ModuleNotFoundError`
+
+**Step 3: Implement SmallLLMExpander**
+
+Create `src/rag/query_expander.py`:
+
+```python
+"""Query Expander: semantic expansion + schema zh→en bridging."""
+from __future__ import annotations
+
+import json
+import logging
+import threading
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import jieba
+
+from src.config import DATA_DIR, EXPANDER_MODEL, EXPANDER_DEVICE, EXPANDER_MAX_NEW_TOKENS, EXPANDER_TIMEOUT_S
+
+logger = logging.getLogger(__name__)
+
+_SCHEMA_DIR = Path(DATA_DIR) / "schemas"
+
+_EXPAND_PROMPT = (
+    "你是一个语义联想助手。给定技术文档查询中的关键词，"
+    "列出相关的中文动词和名词（每行一个，不超过12个，只输出词语）：\n\n"
+    "关键词：{keywords}\n\n相关词：\n"
+)
+
+_ZH_SKIP: frozenset[str] = frozenset({
+    "的", "了", "在", "是", "有", "和", "就", "不", "都", "一",
+    "上", "也", "到", "要", "去", "会", "着", "没", "好", "这",
+    "他", "她", "它", "中", "把", "那", "被", "从", "对", "让",
+    "给", "用", "与", "向", "于", "某", "其", "将", "该", "或",
+    "以", "及", "并", "但", "而", "如", "当", "若", "为", "由",
+    "可", "能", "应", "需", "至", "等", "种", "个", "件", "些",
+})
+
+
+class SmallLLMExpander:
+    """Ultra-lightweight LLM semantic expander.
+
+    Uses a small HuggingFace model (default: Qwen3-0.5B) to generate
+    semantically related Chinese terms for query tokens. Runs on CPU by
+    default to avoid competing with the main LLM for VRAM.
+
+    Falls back gracefully (returns empty set) when:
+    - EXPANDER_MODEL is empty string
+    - Model fails to load
+    - Inference times out (> EXPANDER_TIMEOUT_S)
+    """
+
+    def __init__(
+        self,
+        model_path: str = EXPANDER_MODEL,
+        device: str = EXPANDER_DEVICE,
+    ) -> None:
+        self._model_path = model_path
+        self._device = device
+        self._model = None
+        self._tokenizer = None
+        self._load_error: str | None = None
+        self._cache: dict[frozenset, set[str]] = {}
+        self._lock = threading.Lock()
+        if model_path:
+            self._lazy_load()
+
+    def _lazy_load(self) -> None:
+        try:
+            from transformers import AutoTokenizer, AutoModelForCausalLM
+            import torch
+            logger.info(f"[SmallLLM] Loading {self._model_path} on {self._device}...")
+            self._tokenizer = AutoTokenizer.from_pretrained(
+                self._model_path, trust_remote_code=True
+            )
+            self._model = AutoModelForCausalLM.from_pretrained(
+                self._model_path, torch_dtype=torch.float32, trust_remote_code=True
+            )
+            if self._device != "cpu":
+                self._model = self._model.to(self._device)
+            self._model.eval()
+            logger.info(f"[SmallLLM] Loaded OK")
+        except Exception as e:
+            self._load_error = str(e)
+            logger.warning(f"[SmallLLM] Load failed: {e} — expansion disabled")
+
+    @property
+    def available(self) -> bool:
+        return self._model is not None and self._tokenizer is not None
+
+    def expand(self, tokens: list[str]) -> set[str]:
+        """Return semantically related zh terms. Empty set if unavailable."""
+        if not self.available:
+            return set()
+        cache_key = frozenset(tokens)
+        with self._lock:
+            if cache_key in self._cache:
+                return self._cache[cache_key]
+        result = self._run_with_timeout(tokens)
+        with self._lock:
+            self._cache[cache_key] = result
+        return result
+
+    def _run_with_timeout(self, tokens: list[str]) -> set[str]:
+        result: set[str] = set()
+        exc: list[Exception] = []
+
+        def _target():
+            try:
+                result.update(self._run_inference(tokens))
+            except Exception as e:
+                exc.append(e)
+
+        t = threading.Thread(target=_target, daemon=True)
+        t.start()
+        t.join(timeout=EXPANDER_TIMEOUT_S)
+        if t.is_alive():
+            logger.warning("[SmallLLM] Inference timeout — skipping expansion")
+            return set()
+        if exc:
+            logger.warning(f"[SmallLLM] Inference error: {exc[0]}")
+            return set()
+        return result
+
+    def _run_inference(self, tokens: list[str]) -> set[str]:
+        import torch
+        prompt = _EXPAND_PROMPT.format(keywords=" / ".join(tokens))
+        inputs = self._tokenizer(prompt, return_tensors="pt")
+        if self._device != "cpu":
+            inputs = {k: v.to(self._device) for k, v in inputs.items()}
+        with torch.no_grad():
+            out = self._model.generate(
+                **inputs,
+                max_new_tokens=EXPANDER_MAX_NEW_TOKENS,
+                do_sample=False,
+                pad_token_id=self._tokenizer.eos_token_id,
+            )
+        input_len = inputs["input_ids"].shape[1]
+        new_tokens = out[0][input_len:]
+        text = self._tokenizer.decode(new_tokens, skip_special_tokens=True)
+        return self._parse_output(text)
+
+    def _parse_output(self, text: str) -> set[str]:
+        """Parse LLM output: one word per line, filter noise."""
+        result: set[str] = set()
+        for line in text.strip().splitlines():
+            word = line.strip().strip("、，。,.")
+            if len(word) >= 2 and word not in _ZH_SKIP:
+                result.add(word)
+            if len(result) >= 12:
+                break
+        return result
+```
+
+**Step 4: Run SmallLLMExpander tests**
+
+```bash
+/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py::TestSmallLLMExpander -v
+```
+
+Expected: all pass.
+
+**Step 5: Run full suite**
+
+```bash
+/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/ -v 2>&1 | tail -5
+```
+
+Expected: `126 passed`
+
+**Step 6: Commit**
+
+```bash
+git add src/rag/query_expander.py tests/test_query_expander.py
+git commit -m "feat: implement SmallLLMExpander with lazy load, cache, and timeout"
+```
 
 ---
 
@@ -634,7 +929,7 @@ git commit -m "feat: implement SchemaZhEnIndex with five schema types"
 
 ---
 
-## Task 4: Implement QueryExpander
+## Task 4: Implement QueryExpander (three-layer merge)
 
 **Files:**
 - Modify: `src/rag/query_expander.py` (append class)
@@ -643,20 +938,26 @@ git commit -m "feat: implement SchemaZhEnIndex with five schema types"
 
 ```python
 class QueryExpander:
-    """Combines manual SEMANTIC_EXPAND + SchemaZhEnIndex auto-expansion.
+    """Three-layer semantic expander + schema zh→en bridge.
+
+    Expansion priority (all merged via union):
+      1. SmallLLMExpander  — neural semantic association (primary)
+      2. SEMANTIC_EXPAND   — manual fallback dict (fast, always available)
+      3. SchemaZhEnIndex   — schema co-occurrence (C3-specific vocabulary)
 
     Usage:
         expander = QueryExpander()
         term_set = expander.get_term_set(["数组", "查找"])
         matches  = expander.search(term_set)
-        # High-score matches (>0.7): use en_tokens to boost retrieval
-        # Mid-score  matches (0.3-0.7): append en_tokens to search query
+        # score > 0.7  → en_tokens boost retrieval query heavily
+        # score 0.3-0.7 → en_tokens appended to search query
     """
 
     def __init__(
         self,
         schema_index: SchemaZhEnIndex | None = None,
         manual_expand: dict[str, list[str]] | None = None,
+        llm_expander: SmallLLMExpander | None = None,
     ) -> None:
         self._index = schema_index if schema_index is not None else SchemaZhEnIndex()
         if manual_expand is not None:
@@ -664,14 +965,18 @@ class QueryExpander:
         else:
             from src.locale.keywords import SEMANTIC_EXPAND
             self._manual = SEMANTIC_EXPAND
+        self._llm = llm_expander if llm_expander is not None else SmallLLMExpander()
 
     def expand(self, tokens: list[str]) -> dict[str, set[str]]:
-        """For each token, return union of manual + auto expansions."""
+        """For each token, return union of LLM + manual + auto expansions."""
+        # LLM expansion: runs on all tokens as a cluster (better context)
+        llm_all = self._llm.expand(tokens)
+
         result: dict[str, set[str]] = {}
         for tok in tokens:
             manual = set(self._manual.get(tok, []))
-            auto = self._index.auto_expand(tok)
-            result[tok] = manual | auto
+            auto   = self._index.auto_expand(tok)
+            result[tok] = llm_all | manual | auto
         return result
 
     def get_term_set(self, tokens: list[str]) -> set[str]:
@@ -684,6 +989,23 @@ class QueryExpander:
     def search(self, term_set: set[str]) -> list[SchemaMatch]:
         """Score schema nodes by term_set overlap. Returns sorted matches."""
         return self._index.search(term_set)
+```
+
+**Step 2: Update TestQueryExpander tests** to pass a mock `llm_expander`
+
+In `tests/test_query_expander.py`, update `_make_expander()`:
+
+```python
+def _make_expander(self):
+    from src.rag.query_expander import QueryExpander, SchemaZhEnIndex, SmallLLMExpander
+    idx = SchemaZhEnIndex.__new__(SchemaZhEnIndex)
+    idx._build_from_fixtures(
+        plugins=[FIXTURE_ARR], behaviors=[], effects=[], features=[], editor={}
+    )
+    manual = {"查找": ["包含", "遍历", "存在"]}
+    # Disable LLM for unit tests
+    mock_llm = SmallLLMExpander(model_path="")
+    return QueryExpander(schema_index=idx, manual_expand=manual, llm_expander=mock_llm)
 ```
 
 **Step 2: Run all QueryExpander tests**
