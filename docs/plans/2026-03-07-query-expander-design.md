@@ -84,26 +84,56 @@ score = (命中 zh token 数 / 该节点 zh 词表大小) × weight
 
 ---
 
-## Component: SmallLLMExpander
+## Component: SemanticExpander（多后端，可配置）
 
-手工词表覆盖率有限，人工维护不可持续。引入极小 LLM 做通用语义联想，替代手工词表成为主要扩展源。
+手工词表覆盖率有限，人工维护不可持续。引入可配置的语义扩展后端，通过 `EXPANDER_BACKEND` 切换。
 
-### 职责
+### 统一接口
 
-输入：查询 token 列表 → 输出：这些词在技术文档中的语义近义词集（中文）
+```python
+class BaseExpander(ABC):
+    @abstractmethod
+    def expand(self, tokens: list[str]) -> set[str]: ...
+    @property
+    def available(self) -> bool: ...
+```
 
-**不需要** C3 领域知识——只做通用汉语语义联想（"查找"→包含/检测/遍历/索引），C3 专有术语映射由 SchemaZhEnIndex 负责。
+### 三种后端
 
-### 模型选型
+#### 1. DictExpander（默认，零依赖）
 
-| 模型 | VRAM | 速度（CPU） | 备注 |
-|------|------|------------|------|
-| Qwen3-0.5B | ~0.5GB | ~1-3s | 推荐，足够做词义联想 |
-| Qwen3-1.5B | ~1.5GB | ~3-6s | 质量略好，适合 GPU |
+从中文同义词字典中检索相似词，速度极快（ms 级）。
 
-默认 CPU 推理——不与主模型竞争 VRAM；结果缓存后重复查询极快。
+**字典来源（可选下载）：**
 
-### Prompt 设计
+| 字典 | 规模 | 授权 | 说明 |
+|------|------|------|------|
+| 同义词词林（哈工大 cilin）| ~77K 词 | 学术免费 | 最常用 |
+| OpenHowNet | ~230K 词义 | Apache 2.0 | 语义更细 |
+
+**关键优化——C3 范围过滤（可选）：**
+
+字典与 C3 的交集极小。可以用 SchemaZhEnIndex 的 zh 词表（~5K 词）做锚点，只保留与 schema 词汇有语义关联的条目，将字典从 77K 压缩到 ~5-10K，内存占用极低且全部 C3 相关。
+
+**检索方式：**
+
+用已有的 bge-m3 embedding（已加载）对字典词进行离线预嵌入，查询时做 cosine similarity Top-K 检索。
+
+```
+离线：字典词 → bge-m3 → 向量文件（data/expander/dict_vectors.npy）
+运行：token → bge-m3 → cosine → Top-K 近邻词
+```
+
+#### 2. APIExpander（联网，质量最高）
+
+调用免费 LLM API，发送短 prompt（~100 token），解析输出。
+
+| API Provider | 免费额度 | 延迟 | 配置 |
+|---|---|---|---|
+| DashScope（Qwen）| 每月 100 万 token | ~300-800ms | `EXPANDER_API_PROVIDER=dashscope` |
+| DeepSeek | 每天免费额度 | ~200-500ms | `EXPANDER_API_PROVIDER=deepseek` |
+
+**Prompt（与本地 LLM 相同）：**
 
 ```
 你是一个语义联想助手。给定技术文档查询中的关键词，
@@ -114,43 +144,59 @@ score = (命中 zh token 数 / 该节点 zh 词表大小) × weight
 相关词：
 ```
 
-期望输出：
-```
-包含
-检测
-索引
-遍历
-比较
-存在
-返回
-位置
-查询
-元素
-值
-筛选
-```
+#### 3. LocalLLMExpander（本地推理，离线最高质量）
+
+本地加载极小 HuggingFace 模型（默认 Qwen3-0.5B），CPU 推理。
+
+| 模型 | 大小 | CPU 速度 | 备注 |
+|------|------|----------|------|
+| Qwen3-0.5B | ~0.5GB | ~1-3s | 推荐 |
+| Qwen3-1.5B | ~1.5GB | ~3-6s | 质量略好 |
 
 ### 配置
 
 ```python
 # config.py 新增
-EXPANDER_MODEL  = os.getenv("EXPANDER_MODEL", "Qwen/Qwen3-0.5B")
-EXPANDER_DEVICE = os.getenv("EXPANDER_DEVICE", "cpu")   # "cpu" | "cuda"
+EXPANDER_BACKEND      = os.getenv("EXPANDER_BACKEND", "dict")
+# dict | api | local | disabled
+
+# dict 后端
+EXPANDER_DICT_SOURCE  = os.getenv("EXPANDER_DICT_SOURCE", "cilin")
+# cilin | hownet
+EXPANDER_DICT_FILTER  = os.getenv("EXPANDER_DICT_FILTER", "true")
+# "true" = 只保留 C3 相关词（推荐）
+
+# api 后端
+EXPANDER_API_PROVIDER = os.getenv("EXPANDER_API_PROVIDER", "dashscope")
+# dashscope | deepseek
+EXPANDER_API_KEY      = os.getenv("EXPANDER_API_KEY", "")
+EXPANDER_API_MODEL    = os.getenv("EXPANDER_API_MODEL", "qwen-turbo")
+
+# local 后端
+EXPANDER_LOCAL_MODEL  = os.getenv("EXPANDER_LOCAL_MODEL", "Qwen/Qwen3-0.5B")
+EXPANDER_DEVICE       = os.getenv("EXPANDER_DEVICE", "cpu")
+
+# 通用
+EXPANDER_TIMEOUT_S    = float(os.getenv("EXPANDER_TIMEOUT_S", "5.0"))
+EXPANDER_MAX_TOKENS   = int(os.getenv("EXPANDER_MAX_TOKENS", "80"))
 ```
 
-### 接口
+### 工厂函数
 
 ```python
-class SmallLLMExpander:
-    def expand(self, tokens: list[str]) -> set[str]   # 返回扩展词集，失败返回 set()
-    @property
-    def available(self) -> bool                        # 模型是否已成功加载
+def create_expander() -> BaseExpander:
+    backend = EXPANDER_BACKEND
+    if backend == "api":    return APIExpander()
+    if backend == "local":  return LocalLLMExpander()
+    if backend == "dict":   return DictExpander()
+    return DisabledExpander()   # "disabled" or unknown
 ```
 
-- 懒加载：首次调用时加载模型
-- 结果缓存：`frozenset(tokens)` 为 key，避免重复推理
-- 超时保护：推理超过 5s 则跳过，返回空集
-- 失败降级：加载失败不抛异常，`available=False`，QueryExpander 静默跳过
+### 公共特性（所有后端）
+
+- 结果缓存：`frozenset(tokens)` 为 key
+- 超时保护：超过 `EXPANDER_TIMEOUT_S` 返回空集
+- 失败降级：任何异常静默返回空集，QueryExpander 继续用 manual + auto
 
 ---
 
@@ -224,12 +270,23 @@ Trace 插桩：在 `"expand"` 阶段后新增 `"schema_match"` phase，输出 to
 
 | 操作 | 文件 | 内容 |
 |------|------|------|
-| 新建 | `src/rag/query_expander.py` | `SmallLLMExpander` + `SchemaZhEnIndex` + `QueryExpander` + `SchemaMatch` |
-| 修改 | `src/config.py` | 新增 `EXPANDER_MODEL` / `EXPANDER_DEVICE` |
+| 新建 | `src/rag/query_expander.py` | `BaseExpander` + 三后端 + `create_expander()` + `SchemaZhEnIndex` + `QueryExpander` + `SchemaMatch` |
+| 新建 | `scripts/download_expander_dict.py` | 下载并预处理同义词字典 + 生成 C3 过滤向量文件 |
+| 修改 | `src/config.py` | 新增 `EXPANDER_BACKEND` 及各后端配置项 |
 | 修改 | `src/locale/keywords.py` | 新增 `SEMANTIC_EXPAND` 手工词表（兜底用） |
 | 修改 | `src/rag/chain.py` | 初始化 `QueryExpander`，接入 `answer_with_fallback()` |
 | 修改 | `scripts/chat.py` | `_TRACE_LABEL`/`_TRACE_GROUP` 添加 `"schema_match"` phase |
-| 新建 | `tests/test_query_expander.py` | 单元测试（SmallLLMExpander mock + SchemaZhEnIndex + QueryExpander）|
+| 新建 | `tests/test_query_expander.py` | 全 mock 单元测试，覆盖三种后端 + SchemaZhEnIndex + QueryExpander |
+
+## Test Plan
+
+- `DictExpander(model_path="")` → `available=False`，`expand()` 返回空集
+- `APIExpander` mock HTTP → 解析输出正确
+- `LocalLLMExpander` mock transformers → 解析输出正确
+- `create_expander("disabled")` → `DisabledExpander`
+- `SchemaZhEnIndex` 从 fixture 构建，命中测试（同上）
+- `QueryExpander` 以 `DisabledExpander` 初始化 → 三层并集仍包含 manual + auto
+- 全部现有 126 个测试通过
 
 ---
 

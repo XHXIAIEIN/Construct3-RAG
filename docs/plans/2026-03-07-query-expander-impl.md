@@ -10,7 +10,7 @@
 
 ---
 
-## Task 0: Add EXPANDER_MODEL config
+## Task 0: Add multi-backend expander config
 
 **Files:**
 - Modify: `src/config.py`
@@ -19,139 +19,222 @@
 
 ```python
 # =============================================================================
-# Query Expander (SmallLLMExpander)
+# Query Expander — semantic token expansion backend
 # =============================================================================
-# Ultra-small model for semantic query token expansion (zh → related zh terms).
-# Runs on CPU by default — does not compete with main LLM for VRAM.
-# Set EXPANDER_MODEL="" to disable LLM expansion (fall back to manual+auto only).
-EXPANDER_MODEL  = os.getenv("EXPANDER_MODEL",  "Qwen/Qwen3-0.5B")
-EXPANDER_DEVICE = os.getenv("EXPANDER_DEVICE", "cpu")   # "cpu" | "cuda"
-EXPANDER_MAX_NEW_TOKENS = int(os.getenv("EXPANDER_MAX_NEW_TOKENS", "80"))
-EXPANDER_TIMEOUT_S      = float(os.getenv("EXPANDER_TIMEOUT_S",    "5.0"))
+# EXPANDER_BACKEND controls which backend is used:
+#   dict     — Chinese thesaurus + bge-m3 embedding search (default, offline)
+#   api      — Free LLM API (DashScope or DeepSeek)
+#   local    — Local small model (Qwen3-0.5B, HuggingFace)
+#   disabled — Skip semantic expansion entirely
+
+EXPANDER_BACKEND = os.getenv("EXPANDER_BACKEND", "dict")
+
+# dict backend
+EXPANDER_DICT_SOURCE = os.getenv("EXPANDER_DICT_SOURCE", "cilin")   # cilin | hownet
+EXPANDER_DICT_FILTER = os.getenv("EXPANDER_DICT_FILTER", "true")    # filter to C3 vocab
+
+# api backend
+EXPANDER_API_PROVIDER = os.getenv("EXPANDER_API_PROVIDER", "dashscope")  # dashscope | deepseek
+EXPANDER_API_KEY      = os.getenv("EXPANDER_API_KEY",      "")
+EXPANDER_API_MODEL    = os.getenv("EXPANDER_API_MODEL",    "qwen-turbo")
+
+# local backend
+EXPANDER_LOCAL_MODEL = os.getenv("EXPANDER_LOCAL_MODEL", "Qwen/Qwen3-0.5B")
+EXPANDER_DEVICE      = os.getenv("EXPANDER_DEVICE",      "cpu")
+
+# shared
+EXPANDER_TIMEOUT_S  = float(os.getenv("EXPANDER_TIMEOUT_S",  "5.0"))
+EXPANDER_MAX_TOKENS = int(os.getenv("EXPANDER_MAX_TOKENS",   "80"))
+EXPANDER_TOP_K      = int(os.getenv("EXPANDER_TOP_K",        "12"))
 ```
 
 **Step 2: Verify**
 
 ```bash
-/c/Users/test/AppData/Local/Python/bin/python.exe -c "from src.config import EXPANDER_MODEL, EXPANDER_DEVICE; print(EXPANDER_MODEL, EXPANDER_DEVICE)"
+/c/Users/test/AppData/Local/Python/bin/python.exe -c "
+from src.config import EXPANDER_BACKEND, EXPANDER_DICT_SOURCE, EXPANDER_API_PROVIDER
+print(EXPANDER_BACKEND, EXPANDER_DICT_SOURCE, EXPANDER_API_PROVIDER)
+"
 ```
 
-Expected: `Qwen/Qwen3-0.5B cpu`
+Expected: `dict cilin dashscope`
 
 **Step 3: Commit**
 
 ```bash
 git add src/config.py
-git commit -m "feat: add EXPANDER_MODEL/DEVICE config for SmallLLMExpander"
+git commit -m "feat: add multi-backend EXPANDER_BACKEND config (dict/api/local/disabled)"
 ```
 
 ---
 
-## Task 0.5: Implement SmallLLMExpander
+## Task 0.5: Implement multi-backend SemanticExpander
 
 **Files:**
-- Create: `src/rag/query_expander.py` (first pass — SmallLLMExpander only)
+- Create: `src/rag/query_expander.py` (first pass — expander backends only)
+- Create: `tests/test_query_expander.py` (first pass — expander tests only)
 
-**Step 1: Write failing tests for SmallLLMExpander**
+**Step 1: Write failing tests**
 
-Add to `tests/test_query_expander.py` (create the file now with just this class):
+Create `tests/test_query_expander.py`:
 
 ```python
-"""Tests for SmallLLMExpander — LLM mocked, no model download required."""
+"""Tests for SemanticExpander backends — all mocked, no downloads required."""
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+_PARSE_CASES = [
+    ("包含\n检测\n遍历\n索引\n比较\n", {"包含", "检测", "遍历", "索引", "比较"}),
+    ("的\n包含\n检测\na\n遍历\n",      {"包含", "检测", "遍历"}),   # short/stop filtered
+    ("",                               set()),
+]
 
-class TestSmallLLMExpander:
+
+class TestDisabledExpander:
+
+    def test_available_false(self):
+        from src.rag.query_expander import DisabledExpander
+        assert DisabledExpander().available is False
+
+    def test_expand_returns_empty(self):
+        from src.rag.query_expander import DisabledExpander
+        assert DisabledExpander().expand(["查找"]) == set()
+
+
+class TestLocalLLMExpander:
 
     def test_available_false_when_model_empty(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander(model_path="")
+        from src.rag.query_expander import LocalLLMExpander
+        assert LocalLLMExpander(model_path="").available is False
+
+    def test_expand_returns_empty_when_unavailable(self):
+        from src.rag.query_expander import LocalLLMExpander
+        assert LocalLLMExpander(model_path="").expand(["查找"]) == set()
+
+    def test_parse_output_extracts_words(self):
+        from src.rag.query_expander import LocalLLMExpander
+        exp = LocalLLMExpander.__new__(LocalLLMExpander)
+        for raw, expected in _PARSE_CASES:
+            result = exp._parse_output(raw)
+            assert result == expected or result.issuperset(expected & result)
+
+    def test_expand_caches_result(self):
+        from src.rag.query_expander import LocalLLMExpander
+        exp = LocalLLMExpander(model_path="")
+        exp.expand(["查找"])
+        exp.expand(["查找"])   # should not raise
+
+
+class TestAPIExpander:
+
+    def test_available_false_when_no_key(self):
+        from src.rag.query_expander import APIExpander
+        exp = APIExpander(api_key="")
         assert exp.available is False
 
     def test_expand_returns_empty_when_unavailable(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander(model_path="")
-        result = exp.expand(["查找", "数组"])
-        assert result == set()
-
-    def test_expand_calls_model_generate(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander.__new__(SmallLLMExpander)
-        exp._cache = {}
-        exp._model_path = "fake"
-        # Inject mock model + tokenizer
-        mock_tok = MagicMock()
-        mock_tok.return_value = {"input_ids": MagicMock()}
-        mock_tok.decode = MagicMock(return_value="包含\n检测\n遍历\n索引")
-        mock_model = MagicMock()
-        mock_model.generate = MagicMock(return_value=[[0, 1, 2]])
-        exp._tokenizer = mock_tok
-        exp._model = mock_model
-        result = exp._run_inference(["查找", "数组"])
-        assert isinstance(result, set)
-
-    def test_expand_caches_result(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander(model_path="")
-        exp.expand(["查找"])
-        exp.expand(["查找"])  # second call should use cache
-        # No assertion needed — just verify no exception
+        from src.rag.query_expander import APIExpander
+        assert APIExpander(api_key="").expand(["查找"]) == set()
 
     def test_parse_output_extracts_words(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander.__new__(SmallLLMExpander)
-        result = exp._parse_output("包含\n检测\n遍历\n索引\n比较\n")
-        assert "包含" in result
-        assert "检测" in result
-        assert len(result) <= 12
+        from src.rag.query_expander import APIExpander
+        exp = APIExpander.__new__(APIExpander)
+        for raw, expected in _PARSE_CASES:
+            result = exp._parse_output(raw)
+            for word in expected:
+                assert word in result
 
-    def test_parse_output_filters_short_tokens(self):
-        from src.rag.query_expander import SmallLLMExpander
-        exp = SmallLLMExpander.__new__(SmallLLMExpander)
-        result = exp._parse_output("的\n包含\n检测\na\n遍历\n")
-        assert "的" not in result
-        assert "a" not in result
+    def test_expand_with_mock_api(self):
+        from src.rag.query_expander import APIExpander
+        exp = APIExpander.__new__(APIExpander)
+        exp._cache = {}
+        exp._api_key = "fake"
+        exp._provider = "dashscope"
+        exp._model = "qwen-turbo"
+        with patch.object(exp, "_call_api", return_value="包含\n检测\n遍历"):
+            result = exp.expand(["查找"])
         assert "包含" in result
+
+
+class TestDictExpander:
+
+    def test_available_false_when_no_dict_file(self, tmp_path):
+        from src.rag.query_expander import DictExpander
+        exp = DictExpander(dict_path=tmp_path / "nonexistent.npy")
+        assert exp.available is False
+
+    def test_expand_returns_empty_when_unavailable(self, tmp_path):
+        from src.rag.query_expander import DictExpander
+        exp = DictExpander(dict_path=tmp_path / "nonexistent.npy")
+        assert exp.expand(["查找"]) == set()
+
+
+class TestCreateExpander:
+
+    def test_disabled(self):
+        from src.rag.query_expander import create_expander, DisabledExpander
+        with patch("src.rag.query_expander.EXPANDER_BACKEND", "disabled"):
+            exp = create_expander()
+        assert isinstance(exp, DisabledExpander)
+
+    def test_api_backend(self):
+        from src.rag.query_expander import create_expander, APIExpander
+        with patch("src.rag.query_expander.EXPANDER_BACKEND", "api"):
+            exp = create_expander()
+        assert isinstance(exp, APIExpander)
+
+    def test_local_backend(self):
+        from src.rag.query_expander import create_expander, LocalLLMExpander
+        with patch("src.rag.query_expander.EXPANDER_BACKEND", "local"):
+            exp = create_expander()
+        assert isinstance(exp, LocalLLMExpander)
 ```
 
-**Step 2: Run tests to confirm they fail**
+**Step 2: Run to confirm failure**
 
 ```bash
-/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py::TestSmallLLMExpander -v 2>&1 | head -20
+/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py -v 2>&1 | head -15
 ```
 
 Expected: `ERROR — ModuleNotFoundError`
 
-**Step 3: Implement SmallLLMExpander**
+**Step 3: Implement query_expander.py (expander portion)**
 
-Create `src/rag/query_expander.py`:
+Create `src/rag/query_expander.py` with the common infrastructure + three backends:
 
 ```python
-"""Query Expander: semantic expansion + schema zh→en bridging."""
+"""Query Expander: semantic token expansion + schema zh→en bridging.
+
+Backend selection via EXPANDER_BACKEND env var:
+  dict     — Chinese thesaurus + bge-m3 similarity search (default, offline)
+  api      — Free LLM API (DashScope / DeepSeek)
+  local    — Local small HuggingFace model (Qwen3-0.5B)
+  disabled — No expansion
+"""
 from __future__ import annotations
 
-import json
 import logging
 import threading
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-import jieba
-
-from src.config import DATA_DIR, EXPANDER_MODEL, EXPANDER_DEVICE, EXPANDER_MAX_NEW_TOKENS, EXPANDER_TIMEOUT_S
+from src.config import (
+    DATA_DIR,
+    EXPANDER_BACKEND, EXPANDER_TIMEOUT_S, EXPANDER_TOP_K,
+    EXPANDER_API_KEY, EXPANDER_API_PROVIDER, EXPANDER_API_MODEL,
+    EXPANDER_LOCAL_MODEL, EXPANDER_DEVICE,
+    EXPANDER_DICT_SOURCE, EXPANDER_DICT_FILTER,
+)
 
 logger = logging.getLogger(__name__)
 
-_SCHEMA_DIR = Path(DATA_DIR) / "schemas"
-
 _EXPAND_PROMPT = (
     "你是一个语义联想助手。给定技术文档查询中的关键词，"
-    "列出相关的中文动词和名词（每行一个，不超过12个，只输出词语）：\n\n"
+    "列出相关的中文动词和名词（每行一个，不超过{top_k}个，只输出词语）：\n\n"
     "关键词：{keywords}\n\n相关词：\n"
 )
 
@@ -165,125 +248,295 @@ _ZH_SKIP: frozenset[str] = frozenset({
 })
 
 
-class SmallLLMExpander:
-    """Ultra-lightweight LLM semantic expander.
+def _parse_output(text: str, top_k: int = EXPANDER_TOP_K) -> set[str]:
+    """Parse one-word-per-line LLM/API output, filter noise."""
+    result: set[str] = set()
+    for line in text.strip().splitlines():
+        word = line.strip().strip("、，。,.1234567890. ")
+        if len(word) >= 2 and word not in _ZH_SKIP:
+            result.add(word)
+        if len(result) >= top_k:
+            break
+    return result
 
-    Uses a small HuggingFace model (default: Qwen3-0.5B) to generate
-    semantically related Chinese terms for query tokens. Runs on CPU by
-    default to avoid competing with the main LLM for VRAM.
 
-    Falls back gracefully (returns empty set) when:
-    - EXPANDER_MODEL is empty string
-    - Model fails to load
-    - Inference times out (> EXPANDER_TIMEOUT_S)
-    """
+def _run_with_timeout(fn, timeout: float) -> set[str]:
+    """Run fn() in a thread; return empty set if it exceeds timeout."""
+    result: list[set[str]] = []
+    exc: list[Exception] = []
 
-    def __init__(
-        self,
-        model_path: str = EXPANDER_MODEL,
-        device: str = EXPANDER_DEVICE,
-    ) -> None:
+    def _target():
+        try:
+            result.append(fn())
+        except Exception as e:
+            exc.append(e)
+
+    t = threading.Thread(target=_target, daemon=True)
+    t.start()
+    t.join(timeout=timeout)
+    if t.is_alive():
+        return set()
+    if exc:
+        logger.warning(f"[Expander] Error: {exc[0]}")
+        return set()
+    return result[0] if result else set()
+
+
+# ---------------------------------------------------------------------------
+# Base
+# ---------------------------------------------------------------------------
+
+class BaseExpander(ABC):
+    _cache: dict[frozenset, set[str]]
+
+    @abstractmethod
+    def expand(self, tokens: list[str]) -> set[str]: ...
+
+    @property
+    @abstractmethod
+    def available(self) -> bool: ...
+
+    def _parse_output(self, text: str) -> set[str]:
+        return _parse_output(text)
+
+    def _cached(self, tokens: list[str], fn) -> set[str]:
+        key = frozenset(tokens)
+        if key in self._cache:
+            return self._cache[key]
+        result = fn()
+        self._cache[key] = result
+        return result
+
+
+# ---------------------------------------------------------------------------
+# DisabledExpander
+# ---------------------------------------------------------------------------
+
+class DisabledExpander(BaseExpander):
+    _cache: dict = {}
+
+    @property
+    def available(self) -> bool:
+        return False
+
+    def expand(self, tokens: list[str]) -> set[str]:
+        return set()
+
+
+# ---------------------------------------------------------------------------
+# LocalLLMExpander
+# ---------------------------------------------------------------------------
+
+class LocalLLMExpander(BaseExpander):
+    """Local small HuggingFace model (e.g. Qwen3-0.5B)."""
+
+    def __init__(self, model_path: str = EXPANDER_LOCAL_MODEL, device: str = EXPANDER_DEVICE) -> None:
         self._model_path = model_path
         self._device = device
         self._model = None
         self._tokenizer = None
-        self._load_error: str | None = None
         self._cache: dict[frozenset, set[str]] = {}
-        self._lock = threading.Lock()
         if model_path:
-            self._lazy_load()
+            self._load()
 
-    def _lazy_load(self) -> None:
+    def _load(self) -> None:
         try:
             from transformers import AutoTokenizer, AutoModelForCausalLM
             import torch
-            logger.info(f"[SmallLLM] Loading {self._model_path} on {self._device}...")
-            self._tokenizer = AutoTokenizer.from_pretrained(
-                self._model_path, trust_remote_code=True
-            )
+            logger.info(f"[LocalLLM] Loading {self._model_path}...")
+            self._tokenizer = AutoTokenizer.from_pretrained(self._model_path, trust_remote_code=True)
             self._model = AutoModelForCausalLM.from_pretrained(
                 self._model_path, torch_dtype=torch.float32, trust_remote_code=True
             )
             if self._device != "cpu":
                 self._model = self._model.to(self._device)
             self._model.eval()
-            logger.info(f"[SmallLLM] Loaded OK")
+            logger.info("[LocalLLM] Ready")
         except Exception as e:
-            self._load_error = str(e)
-            logger.warning(f"[SmallLLM] Load failed: {e} — expansion disabled")
+            logger.warning(f"[LocalLLM] Load failed: {e}")
 
     @property
     def available(self) -> bool:
-        return self._model is not None and self._tokenizer is not None
+        return self._model is not None
 
     def expand(self, tokens: list[str]) -> set[str]:
-        """Return semantically related zh terms. Empty set if unavailable."""
         if not self.available:
             return set()
-        cache_key = frozenset(tokens)
-        with self._lock:
-            if cache_key in self._cache:
-                return self._cache[cache_key]
-        result = self._run_with_timeout(tokens)
-        with self._lock:
-            self._cache[cache_key] = result
-        return result
+        return self._cached(tokens, lambda: _run_with_timeout(
+            lambda: self._infer(tokens), EXPANDER_TIMEOUT_S
+        ))
 
-    def _run_with_timeout(self, tokens: list[str]) -> set[str]:
-        result: set[str] = set()
-        exc: list[Exception] = []
-
-        def _target():
-            try:
-                result.update(self._run_inference(tokens))
-            except Exception as e:
-                exc.append(e)
-
-        t = threading.Thread(target=_target, daemon=True)
-        t.start()
-        t.join(timeout=EXPANDER_TIMEOUT_S)
-        if t.is_alive():
-            logger.warning("[SmallLLM] Inference timeout — skipping expansion")
-            return set()
-        if exc:
-            logger.warning(f"[SmallLLM] Inference error: {exc[0]}")
-            return set()
-        return result
-
-    def _run_inference(self, tokens: list[str]) -> set[str]:
+    def _infer(self, tokens: list[str]) -> set[str]:
         import torch
-        prompt = _EXPAND_PROMPT.format(keywords=" / ".join(tokens))
+        prompt = _EXPAND_PROMPT.format(keywords=" / ".join(tokens), top_k=EXPANDER_TOP_K)
         inputs = self._tokenizer(prompt, return_tensors="pt")
         if self._device != "cpu":
             inputs = {k: v.to(self._device) for k, v in inputs.items()}
         with torch.no_grad():
             out = self._model.generate(
-                **inputs,
-                max_new_tokens=EXPANDER_MAX_NEW_TOKENS,
-                do_sample=False,
-                pad_token_id=self._tokenizer.eos_token_id,
+                **inputs, max_new_tokens=EXPANDER_TOP_K * 6,
+                do_sample=False, pad_token_id=self._tokenizer.eos_token_id,
             )
-        input_len = inputs["input_ids"].shape[1]
-        new_tokens = out[0][input_len:]
-        text = self._tokenizer.decode(new_tokens, skip_special_tokens=True)
-        return self._parse_output(text)
+        new_tokens = out[0][inputs["input_ids"].shape[1]:]
+        return self._parse_output(self._tokenizer.decode(new_tokens, skip_special_tokens=True))
 
-    def _parse_output(self, text: str) -> set[str]:
-        """Parse LLM output: one word per line, filter noise."""
+
+# ---------------------------------------------------------------------------
+# APIExpander
+# ---------------------------------------------------------------------------
+
+class APIExpander(BaseExpander):
+    """Free LLM API backend (DashScope / DeepSeek)."""
+
+    def __init__(
+        self,
+        api_key: str = EXPANDER_API_KEY,
+        provider: str = EXPANDER_API_PROVIDER,
+        model: str = EXPANDER_API_MODEL,
+    ) -> None:
+        self._api_key = api_key
+        self._provider = provider
+        self._model = model
+        self._cache: dict[frozenset, set[str]] = {}
+
+    @property
+    def available(self) -> bool:
+        return bool(self._api_key)
+
+    def expand(self, tokens: list[str]) -> set[str]:
+        if not self.available:
+            return set()
+        return self._cached(tokens, lambda: _run_with_timeout(
+            lambda: self._parse_output(self._call_api(tokens)), EXPANDER_TIMEOUT_S
+        ))
+
+    def _call_api(self, tokens: list[str]) -> str:
+        prompt = _EXPAND_PROMPT.format(keywords=" / ".join(tokens), top_k=EXPANDER_TOP_K)
+        if self._provider == "dashscope":
+            return self._call_dashscope(prompt)
+        if self._provider == "deepseek":
+            return self._call_openai_compat(prompt, "https://api.deepseek.com/v1", "deepseek-chat")
+        raise ValueError(f"Unknown provider: {self._provider}")
+
+    def _call_dashscope(self, prompt: str) -> str:
+        import urllib.request, json
+        body = json.dumps({
+            "model": self._model,
+            "input": {"messages": [{"role": "user", "content": prompt}]},
+            "parameters": {"max_tokens": EXPANDER_TOP_K * 6, "temperature": 0},
+        }).encode()
+        req = urllib.request.Request(
+            "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
+            data=body,
+            headers={"Authorization": f"Bearer {self._api_key}", "Content-Type": "application/json"},
+        )
+        resp = json.loads(urllib.request.urlopen(req, timeout=EXPANDER_TIMEOUT_S).read())
+        return resp["output"]["text"]
+
+    def _call_openai_compat(self, prompt: str, base_url: str, model: str) -> str:
+        import urllib.request, json
+        body = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": EXPANDER_TOP_K * 6, "temperature": 0,
+        }).encode()
+        req = urllib.request.Request(
+            f"{base_url}/chat/completions", data=body,
+            headers={"Authorization": f"Bearer {self._api_key}", "Content-Type": "application/json"},
+        )
+        resp = json.loads(urllib.request.urlopen(req, timeout=EXPANDER_TIMEOUT_S).read())
+        return resp["choices"][0]["message"]["content"]
+
+
+# ---------------------------------------------------------------------------
+# DictExpander
+# ---------------------------------------------------------------------------
+
+class DictExpander(BaseExpander):
+    """Chinese thesaurus + bge-m3 embedding similarity search.
+
+    The dictionary vector file is built by scripts/download_expander_dict.py.
+    If the file does not exist, DictExpander is unavailable (graceful fallback).
+    """
+
+    _DEFAULT_PATH = Path(DATA_DIR) / "expander" / "dict_vectors.npz"
+
+    def __init__(self, dict_path: Path | None = None) -> None:
+        self._path = dict_path or self._DEFAULT_PATH
+        self._words: list[str] = []
+        self._vectors = None        # np.ndarray shape (N, D)
+        self._cache: dict[frozenset, set[str]] = {}
+        self._load()
+
+    def _load(self) -> None:
+        if not self._path.exists():
+            logger.info(f"[DictExpander] Dict not found: {self._path} — run download_expander_dict.py")
+            return
+        try:
+            import numpy as np
+            data = np.load(self._path, allow_pickle=True)
+            self._words = list(data["words"])
+            self._vectors = data["vectors"]      # float32, shape (N, D)
+            logger.info(f"[DictExpander] Loaded {len(self._words)} words")
+        except Exception as e:
+            logger.warning(f"[DictExpander] Load failed: {e}")
+
+    @property
+    def available(self) -> bool:
+        return self._vectors is not None and len(self._words) > 0
+
+    def expand(self, tokens: list[str]) -> set[str]:
+        if not self.available:
+            return set()
+        return self._cached(tokens, lambda: self._search(tokens))
+
+    def _search(self, tokens: list[str]) -> set[str]:
+        """Embed tokens with bge-m3 and find Top-K nearest words."""
+        import numpy as np
+        from src.rag.retriever import HybridRetriever   # reuse existing embedder
+        try:
+            # Use the module-level embedder if available, else import fresh
+            from src.ingest.indexer import get_embedder
+            embedder = get_embedder()
+        except Exception:
+            return set()
+
         result: set[str] = set()
-        for line in text.strip().splitlines():
-            word = line.strip().strip("、，。,.")
-            if len(word) >= 2 and word not in _ZH_SKIP:
-                result.add(word)
-            if len(result) >= 12:
-                break
+        for tok in tokens:
+            try:
+                vec = np.array(embedder.embed_query(tok), dtype=np.float32)
+                # Cosine similarity: vectors are already normalised in bge-m3
+                sims = self._vectors @ vec
+                top_idx = np.argsort(sims)[::-1][:EXPANDER_TOP_K]
+                for i in top_idx:
+                    word = self._words[i]
+                    if word != tok and len(word) >= 2 and word not in _ZH_SKIP:
+                        result.add(word)
+            except Exception as e:
+                logger.debug(f"[DictExpander] embed error for '{tok}': {e}")
         return result
+
+
+# ---------------------------------------------------------------------------
+# Factory
+# ---------------------------------------------------------------------------
+
+def create_expander() -> BaseExpander:
+    """Instantiate the expander backend selected by EXPANDER_BACKEND."""
+    backend = EXPANDER_BACKEND
+    if backend == "api":
+        return APIExpander()
+    if backend == "local":
+        return LocalLLMExpander()
+    if backend == "dict":
+        return DictExpander()
+    return DisabledExpander()
 ```
 
-**Step 4: Run SmallLLMExpander tests**
+**Step 4: Run expander tests**
 
 ```bash
-/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py::TestSmallLLMExpander -v
+/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/test_query_expander.py::TestDisabledExpander tests/test_query_expander.py::TestLocalLLMExpander tests/test_query_expander.py::TestAPIExpander tests/test_query_expander.py::TestDictExpander tests/test_query_expander.py::TestCreateExpander -v
 ```
 
 Expected: all pass.
@@ -300,7 +553,145 @@ Expected: `126 passed`
 
 ```bash
 git add src/rag/query_expander.py tests/test_query_expander.py
-git commit -m "feat: implement SmallLLMExpander with lazy load, cache, and timeout"
+git commit -m "feat: implement multi-backend SemanticExpander (dict/api/local/disabled)"
+```
+
+---
+
+## Task 0.8: Add dictionary download script
+
+**Files:**
+- Create: `scripts/download_expander_dict.py`
+
+**Step 1: Write the script**
+
+```python
+"""Download and preprocess a Chinese synonym dictionary for DictExpander.
+
+Usage:
+    python scripts/download_expander_dict.py --source cilin [--filter-c3]
+
+Downloads 同义词词林 (cilin) or OpenHowNet, optionally filters to C3-relevant
+words using SchemaZhEnIndex vocabulary, then pre-embeds with bge-m3 and saves
+a numpy .npz file for DictExpander to load at runtime.
+
+Output: data/expander/dict_vectors.npz
+"""
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+_CILIN_URL = "https://raw.githubusercontent.com/huyingxi/Synonyms/master/synonyms/data/cilin.txt"
+_OUT_DIR = Path("data/expander")
+
+DICT_SOURCES = {
+    "cilin": {
+        "url": _CILIN_URL,
+        "parse": "parse_cilin",
+        "desc": "同义词词林（哈工大）~77K 词",
+    },
+}
+
+
+def parse_cilin(text: str) -> list[str]:
+    """Extract all words from cilin format (one group per line)."""
+    words = []
+    for line in text.splitlines():
+        parts = line.strip().split()
+        if len(parts) > 1:
+            words.extend(parts[1:])
+    return list(set(words))
+
+
+def filter_c3_relevant(words: list[str], threshold: float = 0.3) -> list[str]:
+    """Keep only words semantically related to C3 schema vocabulary."""
+    from src.rag.query_expander import SchemaZhEnIndex
+    idx = SchemaZhEnIndex()
+    c3_vocab = set(idx.token_to_nodes.keys())
+    # Keep words that appear in C3 schema or share characters with C3 vocab
+    filtered = []
+    c3_chars = set("".join(c3_vocab))
+    for w in words:
+        if w in c3_vocab:
+            filtered.append(w)
+        elif any(c in c3_chars for c in w):
+            filtered.append(w)
+    print(f"Filtered {len(words)} → {len(filtered)} words (C3-relevant)")
+    return filtered
+
+
+def embed_words(words: list[str]) -> "np.ndarray":
+    import numpy as np
+    from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+    from src.config import EMBEDDING_MODEL
+    print(f"Embedding {len(words)} words with {EMBEDDING_MODEL}...")
+    embedder = HuggingFaceBgeEmbeddings(
+        model_name=EMBEDDING_MODEL,
+        encode_kwargs={"normalize_embeddings": True},
+    )
+    batch_size = 256
+    vectors = []
+    for i in range(0, len(words), batch_size):
+        batch = words[i:i + batch_size]
+        vecs = embedder.embed_documents(batch)
+        vectors.extend(vecs)
+        print(f"  {min(i + batch_size, len(words))}/{len(words)}", end="\r")
+    print()
+    return np.array(vectors, dtype=np.float32)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Download & preprocess synonym dict")
+    parser.add_argument("--source", default="cilin", choices=list(DICT_SOURCES))
+    parser.add_argument("--filter-c3", action="store_true", help="Filter to C3-relevant words only")
+    parser.add_argument("--no-embed", action="store_true", help="Skip embedding (test mode)")
+    args = parser.parse_args()
+
+    import urllib.request, numpy as np
+
+    src = DICT_SOURCES[args.source]
+    print(f"Downloading {src['desc']}...")
+    with urllib.request.urlopen(src["url"]) as r:
+        text = r.read().decode("utf-8", errors="replace")
+
+    parse_fn = globals()[src["parse"]]
+    words = parse_fn(text)
+    print(f"Parsed {len(words)} words")
+
+    if args.filter_c3:
+        words = filter_c3_relevant(words)
+
+    if args.no_embed:
+        print("Skipping embedding (--no-embed)")
+        return
+
+    vectors = embed_words(words)
+
+    _OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = _OUT_DIR / "dict_vectors.npz"
+    np.savez_compressed(out_path, words=np.array(words), vectors=vectors)
+    print(f"Saved → {out_path}  ({len(words)} words, {vectors.shape[1]}d)")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+**Step 2: Quick smoke test (no embedding)**
+
+```bash
+/c/Users/test/AppData/Local/Python/bin/python.exe scripts/download_expander_dict.py --source cilin --no-embed
+```
+
+Expected: `Parsed XXXXX words` (no crash)
+
+**Step 3: Commit**
+
+```bash
+git add scripts/download_expander_dict.py
+git commit -m "feat: add download_expander_dict.py for DictExpander vocabulary build"
 ```
 
 ---
