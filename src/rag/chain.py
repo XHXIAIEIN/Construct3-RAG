@@ -12,7 +12,7 @@ import re
 import time
 import logging
 from typing import List, Dict, Any, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import jieba
 
@@ -30,6 +30,8 @@ from src.locale import (
     CONTEXT_HEADER, CONTEXT_HEADER_STRICT, SOURCE_LABEL,
     REFLECTION_VERDICT_KEY, REFLECTION_UNRELIABLE, REFLECTION_RELIABLE,
 )
+from ._trace import _trace, _trace_local
+from .query_expander import QueryExpander, SchemaMatch
 from .prompts import (
     QA_PROMPT, EVENT_GENERATION_PROMPT, SYSTEM_MESSAGE,
     LOW_RELEVANCE_PROMPT, NO_RESULTS_RESPONSE, QUERY_REWRITE_PROMPT,
@@ -99,6 +101,7 @@ class RAGResponse:
     query_type: str
     confidence: str = "unknown"  # high / medium / low
     verification_notes: str = ""
+    trace: list = field(default_factory=list)  # processing path events
 
 
 class LLMClient:
@@ -176,19 +179,67 @@ class LLMClient:
         logger.info(f"[HF] Loading model: {self.model} ...")
         self._hf_tokenizer = AutoTokenizer.from_pretrained(self.model)
 
+        model_cls = self._resolve_model_class(AutoModelForCausalLM)
+        load_kwargs = dict(low_cpu_mem_usage=True)
         if torch.cuda.is_available():
             logger.info("[HF] GPU detected, loading to CUDA ...")
-            self._hf_model = AutoModelForCausalLM.from_pretrained(
-                self.model, dtype=torch.bfloat16, low_cpu_mem_usage=True
+            load_kwargs["dtype"] = torch.bfloat16
+            self._hf_model = model_cls.from_pretrained(
+                self.model, **load_kwargs
             )
+            self._strip_vision_modules(self._hf_model)
             self._hf_model = self._hf_model.to("cuda")
+            torch.cuda.empty_cache()
         else:
-            self._hf_model = AutoModelForCausalLM.from_pretrained(
-                self.model, dtype="auto"
+            load_kwargs["dtype"] = "auto"
+            self._hf_model = model_cls.from_pretrained(
+                self.model, **load_kwargs
             )
 
         device = next(self._hf_model.parameters()).device
         logger.info(f"[HF] Model loaded, device: {device}")
+
+    def _strip_vision_modules(self, model):
+        """Remove vision encoder and multimodal modules to save VRAM."""
+        import gc
+        removed = []
+        for attr in ("visual", "mtp"):
+            if hasattr(model, attr):
+                delattr(model, attr)
+                removed.append(attr)
+            elif hasattr(model, "model") and hasattr(model.model, attr):
+                delattr(model.model, attr)
+                removed.append(f"model.{attr}")
+        if removed:
+            gc.collect()
+            logger.info(f"[HF] Stripped vision modules: {removed}")
+
+    def _resolve_model_class(self, default_cls):
+        """Pick the right model class based on config.json architectures."""
+        import json
+        from pathlib import Path
+
+        config_path = Path(self.model) / "config.json"
+        if not config_path.exists():
+            return default_cls
+
+        with open(config_path) as f:
+            arch_list = json.load(f).get("architectures", [])
+
+        if not arch_list:
+            return default_cls
+
+        arch_name = arch_list[0]
+        # VLM models (e.g. Qwen3_5ForConditionalGeneration) need their
+        # specific class instead of AutoModelForCausalLM.
+        if arch_name.endswith("ForConditionalGeneration"):
+            import transformers
+            cls = getattr(transformers, arch_name, None)
+            if cls is not None:
+                logger.info(f"[HF] Using {arch_name} (VLM architecture)")
+                return cls
+
+        return default_cls
 
     @property
     def _is_qwen3(self) -> bool:
@@ -369,6 +420,13 @@ class RAGChain:
             provider=llm_provider
         )
         self.enable_query_rewrite = enable_query_rewrite
+        self._query_expander: QueryExpander | None = None  # lazy init
+
+    @property
+    def query_expander(self) -> QueryExpander:
+        if self._query_expander is None:
+            self._query_expander = QueryExpander()
+        return self._query_expander
 
     @staticmethod
     def _append_js_note(prompt: str, include_js: bool) -> str:
@@ -478,11 +536,14 @@ class RAGChain:
         Returns list of adopted keyword dicts with zh/en/score.
         """
         segments = self._split_zh_segments(query)
+        _trace(f"{' / '.join(segments) if segments else '无'}", "tokenize")
+
         keywords: list[dict] = []
         seen_en: set[str] = set()
 
         for seg in segments:
             results = self.retriever.search_terms(seg, top_k=top_k)
+            seg_hits = []
             for r in results:
                 en = r.metadata.get("en", "")
                 zh = r.metadata.get("zh", "")
@@ -492,8 +553,24 @@ class RAGChain:
                     seen_en.add(en.lower())
                 if r.score >= threshold and en:
                     keywords.append({"zh": zh, "en": en, "score": r.score})
+                    seg_hits.append(f"{zh}→{en}({r.score:.2f})")
+            if seg_hits:
+                _trace(f"[{seg}]: {', '.join(seg_hits)}", "term_hit")
+            elif results:
+                top = results[0]
+                top_en = top.metadata.get("en", "?")
+                _trace(f"[{seg}]: 最高分 {top.score:.2f}<阈值 ({top_en}，丢弃)", "term_hit")
+            else:
+                _trace(f"[{seg}]: 无结果", "term_hit")
+
+        if keywords:
+            expansions = [f"{kw['zh']}→{kw['en']}" for kw in keywords]
+            _trace(', '.join(expansions), "expand")
+        else:
+            _trace("无", "expand")
 
         return keywords
+
 
     def _enrich_with_ace_search(
         self, query: str, term_keywords: list[dict],
@@ -504,6 +581,7 @@ class RAGChain:
         Returns extended results list (original + new ACE hits, deduplicated).
         """
         if not term_keywords:
+            _trace("跳过", "ace")
             return existing_results
 
         ace_intents = self._classify_ace_intent(query)
@@ -519,6 +597,12 @@ class RAGChain:
                 if doc.text[:200] not in seen_texts:
                     seen_texts.add(doc.text[:200])
                     extra.append(doc)
+
+        if extra:
+            plugin_names = [kw["en"] for kw in term_keywords]
+            _trace(f"{', '.join(plugin_names)}  +{len(extra)} 条", "ace")
+        else:
+            _trace("无命中", "ace")
 
         return existing_results + extra
 
@@ -564,6 +648,7 @@ class RAGChain:
         Returns: (reflection_result, is_reliable)
         """
         logger.info("[Reflect] Verifying answer reliability...")
+        t_reflect = time.time()
         prompt = SELF_REFLECTION_PROMPT.format(
             question=query,
             answer=answer,
@@ -585,6 +670,16 @@ class RAGChain:
                     is_reliable = True
                 break
 
+        elapsed = time.time() - t_reflect
+        verdict = "可靠" if is_reliable else "不可靠"
+        _trace(f"{verdict}  ({elapsed:.1f}s)", "reflect")
+        if not is_reliable:
+            # Extract first issue/problem line from reflection for quick diagnosis
+            for line in reflection.split("\n"):
+                stripped = line.strip()
+                if stripped and REFLECTION_VERDICT_KEY not in stripped and len(stripped) > 5:
+                    _trace(f"问题: {stripped[:80]}", "reflect_issue")
+                    break
         logger.info(f"[Reflect] Reliability: {'reliable' if is_reliable else 'unreliable'}")
 
         return reflection, is_reliable
@@ -994,14 +1089,28 @@ class RAGChain:
         """
         logger.info(f"[Complex] Processing: {query[:50]}...")
 
-        # Query enhancement for Chinese queries
+        # Query enhancement: term keyword expansion via TermIndex
         search_query = query
         term_keywords: list[dict] = []
         if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query)
+            term_keywords = self._extract_term_keywords(query, threshold=0.3)
             if term_keywords:
                 en_terms = " ".join(kw["en"] for kw in term_keywords)
                 search_query = f"{query} {en_terms}"
+                logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
+
+            # Schema zh→en bridge via QueryExpander
+            segments = self._split_zh_segments(query)
+            if segments:
+                term_set = self.query_expander.get_term_set(segments)
+                schema_matches = self.query_expander.search(term_set)
+                high = [m for m in schema_matches if m.score > 0.7]
+                mid  = [m for m in schema_matches if 0.3 <= m.score <= 0.7]
+                if high or mid:
+                    boost_matches = high if high else mid[:3]
+                    en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
+                    search_query = f"{search_query} {en_boost}".strip()
+                    logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
 
         # Step 1: Decompose query
         logger.info("[Complex] Decomposing query...")
@@ -1116,14 +1225,37 @@ class RAGChain:
                 verification_notes=qdrant_msg
             )
 
-        # Query enhancement: extract English term keywords for Chinese queries
+        # Query enhancement: term keyword expansion via TermIndex
         search_query = query
         term_keywords: list[dict] = []
+        schema_matches: list[SchemaMatch] = []
+
         if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query)
+            term_keywords = self._extract_term_keywords(query, threshold=0.3)
             if term_keywords:
                 en_terms = " ".join(kw["en"] for kw in term_keywords)
                 search_query = f"{query} {en_terms}"
+                logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
+
+            # Schema zh→en bridge via QueryExpander
+            segments = self._split_zh_segments(query)
+            if segments:
+                term_set = self.query_expander.get_term_set(segments)
+                schema_matches = self.query_expander.search(term_set)
+                high = [m for m in schema_matches if m.score > 0.7]
+                mid  = [m for m in schema_matches if 0.3 <= m.score <= 0.7]
+                if high or mid:
+                    boost_matches = high if high else mid[:3]
+                    en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
+                    search_query = f"{search_query} {en_boost}".strip()
+                    logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
+                if schema_matches:
+                    top3 = schema_matches[:3]
+                    summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
+                    _trace(summary, "schema_match")
+
+            if search_query != query:
+                _trace(f"\"{search_query[:80]}\"", "query")
 
         # Retrieve results (Qdrant is available)
         results = self.retriever.search_all_with_rerank(
@@ -1135,6 +1267,16 @@ class RAGChain:
 
         # Filter irrelevant results
         filtered_results = self.retriever.filter_by_adaptive_threshold(results)
+
+        # Trace top results going to LLM
+        for i, r in enumerate(filtered_results[:3], 1):
+            src = r.metadata.get("source", r.source)
+            src_name = src.split("/")[-1].replace(".md", "")[:18] if "/" in src else src[:18]
+            h2 = r.metadata.get("h2_heading", "")
+            section = r.metadata.get("section_type", "")
+            loc = src_name + (f" > {h2[:12]}" if h2 else "") + (f" ({section})" if section else "")
+            snippet = r.text[:30].replace("\n", " ")
+            _trace(f"#{i} [{r.source}] {loc}  {r.score:.2f}  {snippet}…", "context")
 
         # Format sources for potential fallback
         sources = []
@@ -1151,6 +1293,7 @@ class RAGChain:
         llm_ok, llm_msg = self.llm.check_health()
         if not llm_ok:
             logger.warning(f"[Fallback] LLM unavailable: {llm_msg}")
+            _trace("LLM: 不可用", "route")
             sources_summary = self._format_sources_summary(filtered_results)
             return RAGResponse(
                 answer=LLM_UNAVAILABLE_RESPONSE.format(sources_summary=sources_summary),
@@ -1190,6 +1333,7 @@ class RAGChain:
         # Self-reflection for quality assurance
         reflection, is_reliable = self._self_reflect(query, answer, context)
         confidence = "high" if is_reliable else "medium"
+        _trace(confidence, "confidence")
 
         # Add low confidence warning if needed
         if not is_reliable:
@@ -1227,23 +1371,38 @@ class RAGChain:
             >>> # Complex query - uses decomposition
             >>> r2 = chain.answer_smart("如何实现带存档功能的平台游戏？")
         """
+        _trace_local.events = []
+
         # Lookup shortcut — direct JSON/CSV lookup, no LLM needed
         if not hasattr(self, '_lookup'):
             from src.rag.lookup import LookupEngine
             self._lookup = LookupEngine()
-        resp = self._lookup.try_lookup(query)
-        if resp:
-            return RAGResponse(
-                answer=resp.answer,
+        lookup_resp = self._lookup.try_lookup(query)
+        if lookup_resp:
+            _trace(f"路由: Lookup命中({lookup_resp.intent.intent_type})", "route")
+            resp = RAGResponse(
+                answer=lookup_resp.answer,
                 sources=[],
-                query_type=resp.query_type,
+                query_type=lookup_resp.query_type,
                 confidence="high",
             )
+            resp.trace = list(_trace_local.events)
+            return resp
 
         # Route based on complexity
         if self._is_complex_query(query):
             logger.info("[Smart] Complex query detected, using decomposition")
-            return self.answer_complex_workflow(query, include_js=include_js)
+            word_count = len(query.split())
+            indicators = [ind for ind in COMPLEXITY_INDICATORS if ind in query.lower()]
+            reason_parts = [f"词数={word_count}"]
+            if indicators:
+                reason_parts.append(f"指标=[{', '.join(indicators[:3])}]")
+            _trace(f"路由: QA 复杂（{'，'.join(reason_parts)}）", "route")
+            resp = self.answer_complex_workflow(query, include_js=include_js)
         else:
             logger.info("[Smart] Standard query, using fallback strategy")
-            return self.answer_with_fallback(query, include_js=include_js)
+            _trace(f"路由: QA 简单（词数={len(query.split())}）", "route")
+            resp = self.answer_with_fallback(query, include_js=include_js)
+
+        resp.trace = list(_trace_local.events)
+        return resp

@@ -59,6 +59,11 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 
 # =============================================================================
+# Chat Server
+# =============================================================================
+RAG_SERVER_PORT = int(os.getenv("RAG_SERVER_PORT", "8765"))
+
+# =============================================================================
 # Lookup Classifier (Tier 3: Ollama small model)
 # =============================================================================
 LOOKUP_OLLAMA_MODEL = os.getenv("LOOKUP_OLLAMA_MODEL", "qwen2.5:7b")
@@ -74,3 +79,32 @@ UI_LANGUAGE: str = os.getenv("UI_LANGUAGE", "zh")
 # =============================================================================
 MAX_CHUNK_SIZE = 2000  # Chunk split threshold for long H2 sections
 TOP_K = 5  # Number of documents returned per retrieval
+
+# =============================================================================
+# Query Expander — semantic token expansion backend
+# =============================================================================
+# EXPANDER_BACKEND controls which backend is used:
+#   dict     — Chinese thesaurus + bge-m3 embedding search (default, offline)
+#   api      — Free LLM API (DashScope or DeepSeek)
+#   local    — Local small model (Qwen3-0.5B, HuggingFace)
+#   disabled — Skip semantic expansion entirely
+
+EXPANDER_BACKEND = os.getenv("EXPANDER_BACKEND", "dict")
+
+# dict backend
+EXPANDER_DICT_SOURCE = os.getenv("EXPANDER_DICT_SOURCE", "cilin")   # cilin | hownet
+EXPANDER_DICT_FILTER = os.getenv("EXPANDER_DICT_FILTER", "true")    # filter to C3 vocab
+
+# api backend
+EXPANDER_API_PROVIDER = os.getenv("EXPANDER_API_PROVIDER", "dashscope")  # dashscope | deepseek
+EXPANDER_API_KEY      = os.getenv("EXPANDER_API_KEY",      "")
+EXPANDER_API_MODEL    = os.getenv("EXPANDER_API_MODEL",    "qwen-turbo")
+
+# local backend
+EXPANDER_LOCAL_MODEL = os.getenv("EXPANDER_LOCAL_MODEL", "Qwen/Qwen3-0.5B")
+EXPANDER_DEVICE      = os.getenv("EXPANDER_DEVICE",      "cpu")
+
+# shared
+EXPANDER_TIMEOUT_S  = float(os.getenv("EXPANDER_TIMEOUT_S",  "5.0"))
+EXPANDER_MAX_TOKENS = int(os.getenv("EXPANDER_MAX_TOKENS",   "80"))
+EXPANDER_TOP_K      = int(os.getenv("EXPANDER_TOP_K",        "12"))
