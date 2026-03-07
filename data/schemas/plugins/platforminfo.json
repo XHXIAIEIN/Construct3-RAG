@@ -15,6 +15,36 @@
     "performance",
     "wake-lock"
   ],
+  "aceCategories": {
+    "platform": {
+      "zh": "平台",
+      "en": "Platform"
+    },
+    "export": {
+      "zh": "导出类型",
+      "en": "Export types"
+    },
+    "display": {
+      "zh": "显示",
+      "en": "Display"
+    },
+    "network": {
+      "zh": "网络",
+      "en": "Network"
+    },
+    "device": {
+      "zh": "设备",
+      "en": "Device"
+    },
+    "performance": {
+      "zh": "性能测试",
+      "en": "Performance"
+    },
+    "wake-lock": {
+      "zh": "屏幕常亮",
+      "en": "Wake lock"
+    }
+  },
   "conditions": [
     {
       "id": "is-on-mobile",
@@ -25,7 +55,9 @@
       "display_zh": "在移动端运行",
       "display_en": "Is on mobile",
       "scriptName": "IsOnMobile",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-windows",
@@ -36,7 +68,9 @@
       "display_zh": "在 Windows 运行",
       "display_en": "Is on Windows",
       "scriptName": "IsOnWindows",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-macos",
@@ -47,7 +81,9 @@
       "display_zh": "在 macOS 运行",
       "display_en": "Is on macOS",
       "scriptName": "IsOnMacOS",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-linux",
@@ -58,7 +94,9 @@
       "display_zh": "在 Linux 运行",
       "display_en": "Is on Linux",
       "scriptName": "IsOnLinux",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-chromeos",
@@ -69,7 +107,9 @@
       "display_zh": "在 Chrome OS 运行",
       "display_en": "Is on Chrome OS",
       "scriptName": "IsOnChromeOS",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-android",
@@ -80,7 +120,9 @@
       "display_zh": "在 Android 运行",
       "display_en": "Is on Android",
       "scriptName": "IsOnAndroid",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-on-ios",
@@ -91,7 +133,9 @@
       "display_zh": "在 iOS 运行",
       "display_en": "Is on iOS",
       "scriptName": "IsOniOS",
-      "category": "platform"
+      "category": "platform",
+      "category_zh": "平台",
+      "category_en": "Platform"
     },
     {
       "id": "is-web-export",
@@ -102,7 +146,9 @@
       "display_zh": "使用 Web 导出",
       "display_en": "Is web export",
       "scriptName": "IsWebExport",
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-cordova-export",
@@ -113,7 +159,9 @@
       "display_zh": "使用 Cordova 导出",
       "display_en": "Is Cordova export",
       "scriptName": "IsCordovaExport",
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-nwjs-export",
@@ -123,7 +171,9 @@
       "description_en": "",
       "scriptName": "IsNWjsExport",
       "isDeprecated": true,
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-windows-uwp-export",
@@ -133,7 +183,9 @@
       "description_en": "",
       "scriptName": "IsWindowsUWPExport",
       "isDeprecated": true,
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-windows-webview2-export",
@@ -144,7 +196,9 @@
       "display_zh": "使用 Windows WebView2 方式导出",
       "display_en": "Is Windows wrapper (WebView2) export",
       "scriptName": "IsWindowsWebView2Export",
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-macos-wkwebview-export",
@@ -155,7 +209,9 @@
       "display_zh": "使用 macOS WKWebView 导出",
       "display_en": "Is macOS wrapper (WKWebView) export",
       "scriptName": "IsMacOSWKWebView2Export",
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "is-linux-cef-export",
@@ -166,7 +222,9 @@
       "display_zh": "使用 Linux CEF 导出",
       "display_en": "Is Linux wrapper (CEF) export",
       "scriptName": "IsLinuxCEFExport",
-      "category": "export"
+      "category": "export",
+      "category_zh": "导出类型",
+      "category_en": "Export types"
     },
     {
       "id": "on-network-change",
@@ -179,7 +237,9 @@
       "scriptName": "OnNetworkChange",
       "isTrigger": true,
       "canDebug": true,
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "on-wake-lock-acquired",
@@ -192,7 +252,9 @@
       "scriptName": "OnWakeLockAcquired",
       "isTrigger": true,
       "canDebug": true,
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     },
     {
       "id": "on-wake-lock-error",
@@ -205,7 +267,9 @@
       "scriptName": "OnWakeLockError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     },
     {
       "id": "on-wake-lock-released",
@@ -218,7 +282,9 @@
       "scriptName": "OnWakeLockReleased",
       "isTrigger": true,
       "canDebug": true,
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     },
     {
       "id": "is-wake-lock-active",
@@ -229,7 +295,9 @@
       "display_zh": "已开启屏幕常亮",
       "display_en": "Is wake lock active",
       "scriptName": "IsWakeLockActive",
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     },
     {
       "id": "is-wake-lock-supported",
@@ -240,7 +308,9 @@
       "display_zh": "设备支持屏幕常亮",
       "display_en": "Is wake lock supported",
       "scriptName": "IsWakeLockSupported",
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     }
   ],
   "actions": [
@@ -253,7 +323,9 @@
       "display_zh": "请求屏幕常亮",
       "display_en": "Request wake lock",
       "scriptName": "RequestWakeLock",
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     },
     {
       "id": "release-wake-lock",
@@ -264,7 +336,9 @@
       "display_zh": "关闭屏幕常亮",
       "display_en": "Release wake lock",
       "scriptName": "ReleaseWakeLock",
-      "category": "wake-lock"
+      "category": "wake-lock",
+      "category_zh": "屏幕常亮",
+      "category_en": "Wake lock"
     }
   ],
   "expressions": [
@@ -276,7 +350,9 @@
       "description_en": "The graphics rendering technology in use, e.g. \"webgl2\".",
       "expressionName": "Renderer",
       "returnType": "string",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "renderer-detail",
@@ -286,7 +362,9 @@
       "description_en": "A string describing the graphics hardware, if available.",
       "expressionName": "RendererDetail",
       "returnType": "string",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "device-pixel-ratio",
@@ -296,7 +374,9 @@
       "description_en": "The number of device (hardware) pixels per CSS pixel.",
       "expressionName": "DevicePixelRatio",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "screen-width",
@@ -306,7 +386,9 @@
       "description_en": "The width of the screen in pixels.",
       "expressionName": "ScreenWidth",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "screen-height",
@@ -316,7 +398,9 @@
       "description_en": "The height of the screen in pixels.",
       "expressionName": "ScreenHeight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "window-inner-width",
@@ -326,7 +410,9 @@
       "description_en": "The width of the window client area in pixels.",
       "expressionName": "WindowInnerWidth",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "window-inner-height",
@@ -336,7 +422,9 @@
       "description_en": "The height of the window client area in pixels.",
       "expressionName": "WindowInnerHeight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "window-outer-width",
@@ -346,7 +434,9 @@
       "description_en": "The width of the entire window area in pixels.",
       "expressionName": "WindowOuterWidth",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "window-outer-height",
@@ -356,7 +446,9 @@
       "description_en": "The height of the entire window area in pixels.",
       "expressionName": "WindowOuterHeight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "canvas-css-width",
@@ -366,7 +458,9 @@
       "description_en": "The width of the main display canvas in CSS pixels.",
       "expressionName": "CanvasCssWidth",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "canvas-css-height",
@@ -376,7 +470,9 @@
       "description_en": "The height of the main display canvas in CSS pixels.",
       "expressionName": "CanvasCssHeight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "canvas-device-width",
@@ -386,7 +482,9 @@
       "description_en": "The width of the main display canvas in device pixels.",
       "expressionName": "CanvasDeviceWidth",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "canvas-device-height",
@@ -396,7 +494,9 @@
       "description_en": "The height of the main display canvas in device pixels.",
       "expressionName": "CanvasDeviceHeight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "safe-area-inset-top",
@@ -406,7 +506,9 @@
       "description_en": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
       "expressionName": "SafeAreaInsetTop",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "safe-area-inset-right",
@@ -416,7 +518,9 @@
       "description_en": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
       "expressionName": "SafeAreaInsetRight",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "safe-area-inset-bottom",
@@ -426,7 +530,9 @@
       "description_en": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
       "expressionName": "SafeAreaInsetBottom",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "safe-area-inset-left",
@@ -436,7 +542,9 @@
       "description_en": "Inset in CSS pixels of safe rectangular area on non-rectangular screens.",
       "expressionName": "SafeAreaInsetLeft",
       "returnType": "number",
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "downlink",
@@ -446,7 +554,9 @@
       "description_en": "An estimated effective bandwidth measurement in megabits per second.",
       "expressionName": "Downlink",
       "returnType": "number",
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "downlink-max",
@@ -456,7 +566,9 @@
       "description_en": "The maximum downlink speed in megabits per second of the underlying connection technology.",
       "expressionName": "DownlinkMax",
       "returnType": "number",
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "connection-type",
@@ -466,7 +578,9 @@
       "description_en": "The type of connection technology in use, e.g. \"cellular\", \"wifi\" or \"ethernet\".",
       "expressionName": "ConnectionType",
       "returnType": "string",
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "connection-effective-type",
@@ -476,7 +590,9 @@
       "description_en": "A connection rating compared to cellular data connections, e.g. \"2g\", \"3g\", \"4g\".",
       "expressionName": "ConnectionEffectiveType",
       "returnType": "string",
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "connection-rtt",
@@ -486,7 +602,9 @@
       "description_en": "The estimated effective round-trip time (latency) of the connection, in milliseconds.",
       "expressionName": "ConnectionRTT",
       "returnType": "number",
-      "category": "network"
+      "category": "network",
+      "category_zh": "网络",
+      "category_en": "Network"
     },
     {
       "id": "hardware-concurrency",
@@ -496,7 +614,9 @@
       "description_en": "The number of hardware threads supported by the device CPU. 0 if cannot detect.",
       "expressionName": "HardwareConcurrency",
       "returnType": "number",
-      "category": "device"
+      "category": "device",
+      "category_zh": "设备",
+      "category_en": "Device"
     },
     {
       "id": "device-memory",
@@ -506,7 +626,9 @@
       "description_en": "The approximate amount of device memory in gigabytes. 0 if cannot detect.",
       "expressionName": "DeviceMemory",
       "returnType": "number",
-      "category": "device"
+      "category": "device",
+      "category_zh": "设备",
+      "category_en": "Device"
     },
     {
       "id": "frames-per-second",
@@ -516,7 +638,9 @@
       "description_en": "Number of frames rendered per second.",
       "expressionName": "FramesPerSecond",
       "returnType": "number",
-      "category": "performance"
+      "category": "performance",
+      "category_zh": "性能测试",
+      "category_en": "Performance"
     },
     {
       "id": "ticks-per-second",
@@ -526,7 +650,9 @@
       "description_en": "Number of ticks processed per second.",
       "expressionName": "TicksPerSecond",
       "returnType": "number",
-      "category": "performance"
+      "category": "performance",
+      "category_zh": "性能测试",
+      "category_en": "Performance"
     }
   ]
 }

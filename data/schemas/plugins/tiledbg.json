@@ -12,6 +12,24 @@
     "tile-randomization",
     "web"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "image": {
+      "zh": "图片",
+      "en": "Image"
+    },
+    "tile-randomization": {
+      "zh": "纹理混合",
+      "en": "Tile randomization"
+    },
+    "web": {
+      "zh": "网络",
+      "en": "Web"
+    }
+  },
   "conditions": [
     {
       "id": "is-tile-randomization-enabled",
@@ -22,7 +40,9 @@
       "display_zh": "已开启纹理混合",
       "display_en": "Is tile randomization enabled",
       "scriptName": "IsTileRandomizationEnabled",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "on-image-url-loaded",
@@ -35,7 +55,9 @@
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     },
     {
       "id": "on-image-url-failed",
@@ -47,7 +69,9 @@
       "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "actions": [
@@ -149,7 +173,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-image-offset-x",
@@ -170,7 +196,9 @@
           "desc_zh": "图像在X轴的偏移量",
           "desc_en": "The X offset of the image within the object, in pixels."
         }
-      ]
+      ],
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "set-image-offset-y",
@@ -191,7 +219,9 @@
           "desc_zh": "图像在Y轴的偏移量",
           "desc_en": "The Y offset of the image within the object, in pixels."
         }
-      ]
+      ],
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "set-image-scale-x",
@@ -213,7 +243,9 @@
           "desc_en": "The X scale of the image within the object, as a percentage.",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "set-image-scale-y",
@@ -235,7 +267,9 @@
           "desc_en": "The Y scale of the image within the object, as a percentage.",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "set-image-angle",
@@ -256,7 +290,9 @@
           "desc_zh": "设置内部图像的角度，以度数为单位。",
           "desc_en": "The angle of the image within the object, in degrees."
         }
-      ]
+      ],
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "set-tile-randomization-enabled",
@@ -277,7 +313,9 @@
           "desc_zh": "启用或禁用纹理混合功能。",
           "desc_en": "Whether to enable or disable tile randomization."
         }
-      ]
+      ],
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "set-tile-pos-random",
@@ -306,7 +344,9 @@
           "desc_zh": "在垂直方向的随机偏移量，从0到100。",
           "desc_en": "Amount of vertical randomness, from 0 to 100."
         }
-      ]
+      ],
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "set-tile-angle-random",
@@ -327,7 +367,9 @@
           "desc_zh": "随机角度偏移量，从0到100。",
           "desc_en": "Amount of angle randomness, from 0 to 100."
         }
-      ]
+      ],
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "set-tile-blend-margin",
@@ -356,7 +398,9 @@
           "desc_zh": "图块在垂直方向淡出到相邻边缘的百分比，从0到100。",
           "desc_en": "Percentage of tile height that fades to adjacent tile, 0-100."
         }
-      ]
+      ],
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "load-image-from-url",
@@ -401,7 +445,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "expressions": [
@@ -413,7 +459,9 @@
       "description_en": "The width of the current image, in pixels.",
       "expressionName": "ImageWidth",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "imageheight",
@@ -423,7 +471,9 @@
       "description_en": "The height of the current image, in pixels.",
       "expressionName": "ImageHeight",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "image-offset-x",
@@ -433,7 +483,9 @@
       "description_en": "The X offset of the image within the object, in pixels.",
       "expressionName": "ImageOffsetX",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "image-offset-y",
@@ -443,7 +495,9 @@
       "description_en": "The Y offset of the image within the object, in pixels.",
       "expressionName": "ImageOffsetY",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "image-scale-x",
@@ -453,7 +507,9 @@
       "description_en": "The X scale of the image within the object.",
       "expressionName": "ImageScaleX",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "image-scale-y",
@@ -463,7 +519,9 @@
       "description_en": "The Y scale of the image within the object.",
       "expressionName": "ImageScaleY",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "image-angle",
@@ -473,7 +531,9 @@
       "description_en": "The angle of the image within the object, in degrees.",
       "expressionName": "ImageAngle",
       "returnType": "number",
-      "category": "image"
+      "category": "image",
+      "category_zh": "图片",
+      "category_en": "Image"
     },
     {
       "id": "tile-x-random",
@@ -483,7 +543,9 @@
       "description_en": "The tile horizontal randomness, 0-100.",
       "expressionName": "TileXRandom",
       "returnType": "number",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "tile-y-random",
@@ -493,7 +555,9 @@
       "description_en": "The tile vertical randomness, 0-100.",
       "expressionName": "TileYRandom",
       "returnType": "number",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "tile-angle-random",
@@ -503,7 +567,9 @@
       "description_en": "The tile angle randomness, 0-100.",
       "expressionName": "TileAngleRandom",
       "returnType": "number",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "tile-blend-margin-x",
@@ -513,7 +579,9 @@
       "description_en": "The tile randomization horizontal blend margin, 0-100.",
       "expressionName": "TileBlendMarginX",
       "returnType": "number",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     },
     {
       "id": "tile-blend-margin-y",
@@ -523,7 +591,9 @@
       "description_en": "The tile randomization vertical blend margin, 0-100.",
       "expressionName": "TileBlendMarginY",
       "returnType": "number",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "category_zh": "纹理混合",
+      "category_en": "Tile randomization"
     }
   ],
   "properties": [

@@ -11,6 +11,20 @@
     "orientation-motion",
     "touch"
   ],
+  "aceCategories": {
+    "gestures": {
+      "zh": "手势",
+      "en": "Gestures"
+    },
+    "orientation-motion": {
+      "zh": "方向和运动",
+      "en": "Orientation & motion"
+    },
+    "touch": {
+      "zh": "触控",
+      "en": "Touch"
+    }
+  },
   "conditions": [
     {
       "id": "on-hold",
@@ -22,7 +36,9 @@
       "display_en": "On hold gesture",
       "scriptName": "OnHoldGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "on-tap",
@@ -34,7 +50,9 @@
       "display_en": "On tap gesture",
       "scriptName": "OnTapGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "on-double-tap",
@@ -46,7 +64,9 @@
       "display_en": "On double-tap gesture",
       "scriptName": "OnDoubleTapGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "on-hold-over-object",
@@ -68,7 +88,9 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "on-tap-object",
@@ -90,7 +112,9 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "on-double-tap-object",
@@ -112,7 +136,9 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "category_zh": "手势",
+      "category_en": "Gestures"
     },
     {
       "id": "device-orientation-supported",
@@ -122,7 +148,9 @@
       "description_en": "",
       "scriptName": "OrientationSupported",
       "isDeprecated": true,
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "device-motion-supported",
@@ -132,7 +160,9 @@
       "description_en": "",
       "scriptName": "MotionSupported",
       "isDeprecated": true,
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "compare-orientation",
@@ -188,7 +218,9 @@
           "desc_zh": "要比较的角度方向，以度为单位。",
           "desc_en": "The orientation to compare to, in degrees."
         }
-      ]
+      ],
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "compare-acceleration",
@@ -259,7 +291,9 @@
           "desc_zh": "要比较的加速度，单位为m/s^2。",
           "desc_en": "The acceleration to compare to, in m/s^2."
         }
-      ]
+      ],
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "on-permission-granted",
@@ -295,7 +329,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "on-permission-denied",
@@ -331,7 +367,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "on-any-touch-start",
@@ -343,7 +381,9 @@
       "display_en": "On any touch start",
       "scriptName": "OnTouchStart",
       "isTrigger": true,
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "on-any-touch-end",
@@ -355,7 +395,9 @@
       "display_en": "On any touch end",
       "scriptName": "OnTouchEnd",
       "isTrigger": true,
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "is-in-touch",
@@ -366,7 +408,9 @@
       "display_zh": "正在按住",
       "display_en": "Is in touch",
       "scriptName": "IsInTouch",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "on-touched-object",
@@ -410,7 +454,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "is-touching-object",
@@ -431,7 +477,9 @@
           "desc_zh": "选择要检查被触摸的对象。",
           "desc_en": "Choose the object to check for being touched."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "compare-touch-speed",
@@ -468,7 +516,9 @@
           "desc_zh": "要比较的速度，以每秒绝对像素为单位。",
           "desc_en": "Speed to compare to, in absolute pixels per second."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "on-nth-touch-start",
@@ -490,7 +540,9 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "on-nth-touch-end",
@@ -512,7 +564,9 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "has-nth-touch",
@@ -533,7 +587,9 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     }
   ],
   "actions": [
@@ -570,7 +626,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     }
   ],
   "expressions": [
@@ -582,7 +640,9 @@
       "description_en": "The device compass direction relative to due north, in degrees.",
       "expressionName": "CompassHeading",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "alpha",
@@ -592,7 +652,9 @@
       "description_en": "The device compass direction relative to the device initial angle, in degrees.",
       "expressionName": "Alpha",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "beta",
@@ -602,7 +664,9 @@
       "description_en": "The device front-to-back tilt, in degrees (front is positive).",
       "expressionName": "Beta",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "gamma",
@@ -612,7 +676,9 @@
       "description_en": "The device left-to-right tilt, in degrees (right is positive).",
       "expressionName": "Gamma",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationxwithg",
@@ -622,7 +688,9 @@
       "description_en": "The device X acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationXWithG",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationywithg",
@@ -632,7 +700,9 @@
       "description_en": "The device Y acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationYWithG",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationzwithg",
@@ -642,7 +712,9 @@
       "description_en": "The device Z acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationZWithG",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationx",
@@ -652,7 +724,9 @@
       "description_en": "The device X acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationX",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationy",
@@ -662,7 +736,9 @@
       "description_en": "The device Y acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationY",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "accelerationz",
@@ -672,7 +748,9 @@
       "description_en": "The device Z acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationZ",
       "returnType": "number",
-      "category": "orientation-motion"
+      "category": "orientation-motion",
+      "category_zh": "方向和运动",
+      "category_en": "Orientation & motion"
     },
     {
       "id": "x",
@@ -683,7 +761,9 @@
       "expressionName": "X",
       "returnType": "number",
       "isVariadicParameters": true,
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "y",
@@ -694,7 +774,9 @@
       "expressionName": "Y",
       "returnType": "number",
       "isVariadicParameters": true,
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absolutex",
@@ -704,7 +786,9 @@
       "description_en": "Get the primary touch X co-ordinate on the canvas.",
       "expressionName": "AbsoluteX",
       "returnType": "number",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absolutey",
@@ -714,7 +798,9 @@
       "description_en": "Get the primary touch Y co-ordinate on the canvas.",
       "expressionName": "AbsoluteY",
       "returnType": "number",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "touchcount",
@@ -724,7 +810,9 @@
       "description_en": "Get the number of current touches.",
       "expressionName": "TouchCount",
       "returnType": "number",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "xat",
@@ -745,7 +833,9 @@
           "desc_zh": "触控点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "yat",
@@ -766,7 +856,9 @@
           "desc_zh": "触控点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absolutexat",
@@ -786,7 +878,9 @@
           "desc_zh": "要获取的触点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absoluteyat",
@@ -806,7 +900,9 @@
           "desc_zh": "要获取的触点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "speedat",
@@ -826,7 +922,9 @@
           "desc_zh": "要获取的触点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "angleat",
@@ -846,7 +944,9 @@
           "desc_zh": "要获取的触点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "touchindex",
@@ -856,7 +956,9 @@
       "description_en": "Get the index of the current touch.",
       "expressionName": "TouchIndex",
       "returnType": "number",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "touchid",
@@ -866,7 +968,9 @@
       "description_en": "Get the unique ID of the current touch.",
       "expressionName": "TouchID",
       "returnType": "number",
-      "category": "touch"
+      "category": "touch",
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "xforid",
@@ -887,7 +991,9 @@
           "desc_zh": "要获得的触点ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "yforid",
@@ -908,7 +1014,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absolutexforid",
@@ -928,7 +1036,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "absoluteyforid",
@@ -948,7 +1058,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "speedforid",
@@ -968,7 +1080,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "angleforid",
@@ -988,7 +1102,9 @@
           "desc_zh": "要获得的触摸点ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "widthforid",
@@ -1008,7 +1124,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "heightforid",
@@ -1028,7 +1146,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     },
     {
       "id": "pressureforid",
@@ -1048,7 +1168,9 @@
           "desc_zh": "要获得的触摸ID。",
           "desc_en": "ID of the touch to get."
         }
-      ]
+      ],
+      "category_zh": "触控",
+      "category_en": "Touch"
     }
   ],
   "properties": [

@@ -37,6 +37,16 @@ Operations and development scripts. All scripts are in the `scripts/` root (no s
 |--------|---------|-------|
 | `generate-schema.js` | Generate ACE Schema JSON from C3 source (output to `data/schemas/`) | `node scripts/generate-schema.js` |
 
+### Interactive Chat
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `server.py` | Model server — load models once, serve multiple chat clients | `python scripts/server.py` |
+| `chat.py` | Interactive CLI — auto-connects to server, falls back to local load | `python scripts/chat.py` |
+
+Workflow: start `server.py` once, then open as many `chat.py` terminals as needed.
+Server auto-shuts after 30s with no active clients. Port: `RAG_SERVER_PORT` (default `8765`).
+
 ### Evaluation & Analysis
 
 | Script | Purpose | Usage |

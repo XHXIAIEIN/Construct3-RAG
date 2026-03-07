@@ -10,6 +10,16 @@
     "speech-recognition",
     "on-device-recognition"
   ],
+  "aceCategories": {
+    "speech-recognition": {
+      "zh": "语音识别",
+      "en": "Speech recognition"
+    },
+    "on-device-recognition": {
+      "zh": "设备端识别",
+      "en": "On-device recognition"
+    }
+  },
   "conditions": [
     {
       "id": "supports-speech-recognition",
@@ -20,7 +30,9 @@
       "display_zh": "支持语音识别",
       "display_en": "Supports speech recognition",
       "scriptName": "SupportsSpeechRecognition",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-start",
@@ -33,7 +45,9 @@
       "scriptName": "OnSpeechRecognitionStart",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-end",
@@ -46,7 +60,9 @@
       "scriptName": "OnSpeechRecognitionEnd",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-error",
@@ -59,7 +75,9 @@
       "scriptName": "OnSpeechRecognitionError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-result",
@@ -72,7 +90,9 @@
       "scriptName": "OnSpeechRecognitionResult",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "is-recognising-speech",
@@ -83,7 +103,9 @@
       "display_zh": "正在识别语音",
       "display_en": "Is recognizing speech",
       "scriptName": "IsRecognisingSpeech",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-check-language-available-result",
@@ -139,7 +161,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "supports-on-device-recongition",
@@ -150,7 +174,9 @@
       "display_zh": "支持本地处理",
       "display_en": "Supports on-device recognition",
       "scriptName": "SupportsOnDeviceRecognition",
-      "category": "on-device-recognition"
+      "category": "on-device-recognition",
+      "category_zh": "设备端识别",
+      "category_en": "On-device recognition"
     },
     {
       "id": "on-install-on-device-recongition-result",
@@ -186,7 +212,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设备端识别",
+      "category_en": "On-device recognition"
     }
   ],
   "actions": [
@@ -262,7 +290,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "stop-speech-recognition",
@@ -273,7 +303,9 @@
       "display_zh": "停止语音识别",
       "display_en": "Stop speech recognition",
       "scriptName": "StopSpeechRecognition",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "check-language-available",
@@ -304,7 +336,9 @@
           "desc_zh": "检查该语言是否可用本机设备端的语音识别功能。",
           "desc_en": "Whether to check for availability of on-device speech recognition for this language."
         }
-      ]
+      ],
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "install-on-device-recognition",
@@ -327,7 +361,9 @@
           "desc_en": "The BCP 47 language tag to install on-device recognition for.",
           "initialValue": "\"en\""
         }
-      ]
+      ],
+      "category_zh": "设备端识别",
+      "category_en": "On-device recognition"
     }
   ],
   "expressions": [
@@ -339,7 +375,9 @@
       "description_en": "Return the final recognized speech.",
       "expressionName": "FinalTranscript",
       "returnType": "string",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "interimtranscript",
@@ -349,7 +387,9 @@
       "description_en": "Return the interim recognized speech, which can change.",
       "expressionName": "InterimTranscript",
       "returnType": "string",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "speecherror",
@@ -359,7 +399,9 @@
       "description_en": "Return a string describing the type of error in 'On error'.",
       "expressionName": "SpeechError",
       "returnType": "string",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     }
   ],
   "productTypes": "games"

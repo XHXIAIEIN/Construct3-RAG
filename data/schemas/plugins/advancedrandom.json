@@ -12,6 +12,24 @@
     "probability-tables",
     "advancedrandom"
   ],
+  "aceCategories": {
+    "gradients": {
+      "zh": "渐变",
+      "en": "Gradients"
+    },
+    "permutation-tables": {
+      "zh": "序列表",
+      "en": "Permutation tables"
+    },
+    "probability-tables": {
+      "zh": "概率表",
+      "en": "Probability tables"
+    },
+    "advancedrandom": {
+      "zh": "高级随机",
+      "en": "Advanced Random"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -55,7 +73,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "渐变",
+      "category_en": "Gradients"
     },
     {
       "id": "addStop",
@@ -84,7 +104,9 @@
           "desc_zh": "添加到经过点的值。可以是任何数字，或使用 rgbEx 或 rgba 表达式指定颜色。",
           "desc_en": "The value of the new stop. Use rgbEx/rgba expressions for color gradients."
         }
-      ]
+      ],
+      "category_zh": "渐变",
+      "category_en": "Gradients"
     },
     {
       "id": "setGradient",
@@ -105,7 +127,9 @@
           "desc_zh": "渐变的名称",
           "desc_en": "The name of the gradient"
         }
-      ]
+      ],
+      "category_zh": "渐变",
+      "category_en": "Gradients"
     },
     {
       "id": "createPermutationTable",
@@ -135,7 +159,9 @@
           "desc_en": "The lowest value in the table.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "序列表",
+      "category_en": "Permutation tables"
     },
     {
       "id": "shufflePermutationTable",
@@ -146,7 +172,9 @@
       "display_zh": "打乱序列表",
       "display_en": "Shuffle permutation table",
       "scriptName": "ShufflePermutationTable",
-      "category": "permutation-tables"
+      "category": "permutation-tables",
+      "category_zh": "序列表",
+      "category_en": "Permutation tables"
     },
     {
       "id": "createProbabilityTable",
@@ -167,7 +195,9 @@
           "desc_zh": "概率表名称",
           "desc_en": "The name of the probability table"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "createProbabilityTableFromJSON",
@@ -196,7 +226,9 @@
           "desc_zh": "用于序列化概率表的JSON字符串",
           "desc_en": "A JSON string of a serialized probability table"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "addProbabilityEntry",
@@ -227,7 +259,9 @@
           "desc_en": "The weight for the probability of the value",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "removeProbabilityEntry",
@@ -258,7 +292,9 @@
           "desc_en": "The weight for the probability of the value, specifying 0 matches any weight",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "setProbabilityTable",
@@ -279,7 +315,9 @@
           "desc_zh": "概率表的名称",
           "desc_en": "The name of the probability table"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "seed",
@@ -300,7 +338,9 @@
           "desc_zh": "随机生成的新种子",
           "desc_en": "The new seed for the random number generator"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "octaves",
@@ -322,7 +362,9 @@
           "desc_en": "The number of octaves to use, from 1-16.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     }
   ],
   "expressions": [
@@ -344,7 +386,9 @@
           "desc_zh": "要获取的渐变值的位置",
           "desc_en": "Position to sample gradient"
         }
-      ]
+      ],
+      "category_zh": "渐变",
+      "category_en": "Gradients"
     },
     {
       "id": "sample-gradient-by-name",
@@ -372,7 +416,9 @@
           "desc_zh": "要获取渐变值的位置",
           "desc_en": "Position to sample gradient"
         }
-      ]
+      ],
+      "category_zh": "渐变",
+      "category_en": "Gradients"
     },
     {
       "id": "permutation",
@@ -392,7 +438,9 @@
           "desc_zh": "在列表中的位置，从 0 开始计数，最大值不超过序列表长度（不包含）。",
           "desc_en": "location"
         }
-      ]
+      ],
+      "category_zh": "序列表",
+      "category_en": "Permutation tables"
     },
     {
       "id": "sampleProbability",
@@ -402,7 +450,9 @@
       "description_en": "Sample a value from the current probability table",
       "expressionName": "Weighted",
       "returnType": "any",
-      "category": "probability-tables"
+      "category": "probability-tables",
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "sample-probability-by-name",
@@ -422,7 +472,9 @@
           "desc_zh": "概率表名称",
           "desc_en": "Table name"
         }
-      ]
+      ],
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "probabilityTableAsJSON",
@@ -432,7 +484,9 @@
       "description_en": "Serialize the current probability table as a JSON string",
       "expressionName": "ProbabilityTableAsJSON",
       "returnType": "string",
-      "category": "probability-tables"
+      "category": "probability-tables",
+      "category_zh": "概率表",
+      "category_en": "Probability tables"
     },
     {
       "id": "classic2d",
@@ -460,7 +514,9 @@
           "desc_zh": "要采样的Y坐标。",
           "desc_en": "Y co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "classic3d",
@@ -496,7 +552,9 @@
           "desc_zh": "要采样的Z坐标。",
           "desc_en": "Z co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "billow2d",
@@ -524,7 +582,9 @@
           "desc_zh": "要采样的Y坐标。",
           "desc_en": "Y co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "billow3d",
@@ -560,7 +620,9 @@
           "desc_zh": "要采样的Z坐标。",
           "desc_en": "Z co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "ridged2d",
@@ -588,7 +650,9 @@
           "desc_zh": "要采样的Y坐标。",
           "desc_en": "Y co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "ridged3d",
@@ -624,7 +688,9 @@
           "desc_zh": "要采样的Z坐标。",
           "desc_en": "Z co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "seed",
@@ -634,7 +700,9 @@
       "description_en": "The seed value currently being used",
       "expressionName": "Seed",
       "returnType": "string",
-      "category": "advancedrandom"
+      "category": "advancedrandom",
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "cellular2d",
@@ -662,7 +730,9 @@
           "desc_zh": "要采样的Y坐标。",
           "desc_en": "Y co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "cellular3d",
@@ -698,7 +768,9 @@
           "desc_zh": "要采样的Z坐标。",
           "desc_en": "Z co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "voronoi2d",
@@ -726,7 +798,9 @@
           "desc_zh": "要采样的Y坐标。",
           "desc_en": "Y co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "voronoi3d",
@@ -762,7 +836,9 @@
           "desc_zh": "要采样的Z坐标。",
           "desc_en": "Z co-ordinate to sample"
         }
-      ]
+      ],
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "randomSeed",
@@ -772,7 +848,9 @@
       "description_en": "Generate a random seed",
       "expressionName": "RandomSeed",
       "returnType": "string",
-      "category": "advancedrandom"
+      "category": "advancedrandom",
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     },
     {
       "id": "random",
@@ -782,7 +860,9 @@
       "description_en": "Generate a random number in the range [0, 1) based on the current seed.",
       "expressionName": "Random",
       "returnType": "number",
-      "category": "advancedrandom"
+      "category": "advancedrandom",
+      "category_zh": "高级随机",
+      "category_en": "Advanced Random"
     }
   ],
   "properties": [

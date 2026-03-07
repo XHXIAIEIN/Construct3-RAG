@@ -1020,5 +1020,5 @@ class LookupEngine:
                 key = "..." + key[-47:]
             lines.append(f"| {count} | {r['zh']} | {r['en']} | `{key}` |")
 
-        lines.append("\n[来源: 1] 数据来源：Construct 3 翻译词表 (zh-CN_r473.csv)")
+        lines.append("\n[来源: 1] 数据来源：Construct 3 翻译词表 (zh_r475.csv)")
         return "\n".join(lines)

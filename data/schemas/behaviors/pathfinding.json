@@ -12,6 +12,24 @@
     "rabbit",
     "settings"
   ],
+  "aceCategories": {
+    "movement": {
+      "zh": "移动",
+      "en": "Movement"
+    },
+    "path": {
+      "zh": "路径",
+      "en": "Path"
+    },
+    "rabbit": {
+      "zh": "目标",
+      "en": "Rabbit"
+    },
+    "settings": {
+      "zh": "设置",
+      "en": "Settings"
+    }
+  },
   "conditions": [
     {
       "id": "on-path-found",
@@ -436,7 +454,9 @@
       "display_zh": "{my}: 开始寻路",
       "display_en": "{my}: Move along path",
       "scriptName": "StartMoving",
-      "category": "movement"
+      "category": "movement",
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "stop",
@@ -447,7 +467,9 @@
       "display_zh": "{my}: 停止",
       "display_en": "{my}: Stop",
       "scriptName": "Stop",
-      "category": "movement"
+      "category": "movement",
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-max-speed",
@@ -468,7 +490,9 @@
           "desc_zh": "设置移动时可达到的最大移动速度，以像素/秒为单位。",
           "desc_en": "The maximum speed to set, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-acceleration",
@@ -489,7 +513,9 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The acceleration to set, in pixels per second per second."
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-deceleration",
@@ -510,7 +536,9 @@
           "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
           "desc_en": "The deceleration to set, in pixels per second per second."
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-rotate-speed",
@@ -531,7 +559,9 @@
           "desc_zh": "沿路线移动时的转向速度，以每秒度数为单位。",
           "desc_en": "The turn speed to set, in degrees per second."
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-diagonals-enabled",
@@ -566,7 +596,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-direct-movement",
@@ -606,7 +638,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     },
     {
       "id": "set-speed",
@@ -627,7 +661,9 @@
           "desc_zh": "设置的速度，以像素/秒为单位",
           "desc_en": "The speed to set, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "移动",
+      "category_en": "Movement"
     }
   ],
   "expressions": [
@@ -639,7 +675,9 @@
       "description_en": "The number of nodes along a found path.",
       "expressionName": "NodeCount",
       "returnType": "number",
-      "category": "path"
+      "category": "path",
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "nodexat",
@@ -659,7 +697,9 @@
           "desc_zh": "路径节点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of node in path."
         }
-      ]
+      ],
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "nodeyat",
@@ -679,7 +719,9 @@
           "desc_zh": "路径节点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of node in path."
         }
-      ]
+      ],
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "movingangle",
@@ -689,7 +731,9 @@
       "description_en": "The current angle of motion along a path, in degrees.",
       "expressionName": "MovingAngle",
       "returnType": "number",
-      "category": "path"
+      "category": "path",
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "currentnode",
@@ -699,7 +743,9 @@
       "description_en": "The current zero-based node index moving towards.",
       "expressionName": "CurrentNode",
       "returnType": "number",
-      "category": "path"
+      "category": "path",
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "speed",
@@ -709,7 +755,9 @@
       "description_en": "The current speed in pixels per second while moving.",
       "expressionName": "Speed",
       "returnType": "number",
-      "category": "path"
+      "category": "path",
+      "category_zh": "路径",
+      "category_en": "Path"
     },
     {
       "id": "rabbitx",
@@ -720,7 +768,9 @@
       "expressionName": "RabbitX",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "rabbit"
+      "category": "rabbit",
+      "category_zh": "目标",
+      "category_en": "Rabbit"
     },
     {
       "id": "rabbity",
@@ -731,7 +781,9 @@
       "expressionName": "RabbitY",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "rabbit"
+      "category": "rabbit",
+      "category_zh": "目标",
+      "category_en": "Rabbit"
     },
     {
       "id": "cellsize",
@@ -741,7 +793,9 @@
       "description_en": "The current cell size property.",
       "expressionName": "CellSize",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "maxspeed",
@@ -751,7 +805,9 @@
       "description_en": "The current maximum speed in pixels per second.",
       "expressionName": "MaxSpeed",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "acceleration",
@@ -761,7 +817,9 @@
       "description_en": "The current acceleration in pixels per second per second.",
       "expressionName": "Acceleration",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "deceleration",
@@ -771,7 +829,9 @@
       "description_en": "The current deceleration in pixels per second per second.",
       "expressionName": "Deceleration",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "rotatespeed",
@@ -781,7 +841,9 @@
       "description_en": "The current maximum turn speed in degrees per second.",
       "expressionName": "RotateSpeed",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     }
   ],
   "properties": [

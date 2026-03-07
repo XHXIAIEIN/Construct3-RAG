@@ -10,6 +10,16 @@
     "appearance",
     "text"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "text": {
+      "zh": "文本",
+      "en": "Text"
+    }
+  },
   "conditions": [
     {
       "id": "compare-text",
@@ -52,7 +62,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "is-running-typewriter-text",
@@ -63,7 +75,9 @@
       "display_zh": "打字机正在运行",
       "display_en": "Is running typewriter text",
       "scriptName": "IsRunningTypewriterText",
-      "category": "text"
+      "category": "text",
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "on-typewriter-text-finished",
@@ -75,7 +89,9 @@
       "display_en": "On typewriter text finished",
       "scriptName": "OnTypewriterTextFinished",
       "isTrigger": true,
-      "category": "text"
+      "category": "text",
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "has-tag-at-position",
@@ -112,7 +128,9 @@
           "desc_zh": "要检测的Y坐标。",
           "desc_en": "The Y co-ordinate to check."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     }
   ],
   "actions": [
@@ -214,7 +232,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-scale",
@@ -236,7 +256,9 @@
           "desc_en": "Enter the scale of the spritefont image.",
           "initialValue": "1.0"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-character-spacing",
@@ -257,7 +279,9 @@
           "desc_zh": "输入字符间距的像素数。",
           "desc_en": "Enter the number of pixels for the spacing between characters."
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-line-height",
@@ -278,7 +302,9 @@
           "desc_zh": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
           "desc_en": "Enter the number of pixels for the spacing between lines."
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-character-width",
@@ -308,7 +334,9 @@
           "desc_en": "Enter the number of pixels width you want the character(s) to occupy. This should be less than the cell width.",
           "initialValue": "8"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-horizontal-alignment",
@@ -348,7 +376,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-vertical-alignment",
@@ -388,7 +418,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-wrapping",
@@ -428,7 +460,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-text",
@@ -451,7 +485,9 @@
           "desc_en": "Enter the text to set the object's content to.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "append-text",
@@ -473,7 +509,9 @@
           "desc_en": "Enter the text to append to the object's content.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "typewriter-text",
@@ -503,7 +541,9 @@
           "desc_zh": "文本完全显示所需的总时间，以秒为单位。如希望每秒显示字符数，可使用 len(Self.PlainText) / 10 表达式，表示每秒显示 10 个字符。",
           "desc_en": "The time in seconds to write out the text."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "typewriter-finish",
@@ -514,7 +554,9 @@
       "display_zh": "立即显示完成",
       "display_en": "Finish typewriter",
       "scriptName": "TypewriterFinish",
-      "category": "text"
+      "category": "text",
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "set-read-aloud",
@@ -535,7 +577,9 @@
           "desc_zh": "是否允许朗读内容。",
           "desc_en": "Whether to enable reading aloud."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     }
   ],
   "expressions": [
@@ -557,7 +601,9 @@
           "desc_zh": "要获取其宽度的字符。默认为空，如果字符串包含多个字符，仅获取第 1 个字符。",
           "desc_en": "Character to get width for (empty for default)"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "characterheight",
@@ -567,7 +613,9 @@
       "description_en": "Get the height of a character.",
       "expressionName": "CharacterHeight",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "characterscale",
@@ -577,7 +625,9 @@
       "description_en": "Get the scale of the characters.",
       "expressionName": "CharacterScale",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "characterspacing",
@@ -587,7 +637,9 @@
       "description_en": "Get the spacing between characters.",
       "expressionName": "CharacterSpacing",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "lineheight",
@@ -597,7 +649,9 @@
       "description_en": "Get the line height.",
       "expressionName": "LineHeight",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "textwidth",
@@ -607,7 +661,9 @@
       "description_en": "Get the width extent of the text in the object in pixels.",
       "expressionName": "TextWidth",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "textheight",
@@ -617,7 +673,9 @@
       "description_en": "Get the height extent of the text in the object in pixels.",
       "expressionName": "TextHeight",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "text",
@@ -627,7 +685,9 @@
       "description_en": "Get the object's text.",
       "expressionName": "Text",
       "returnType": "string",
-      "category": "text"
+      "category": "text",
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "plaintext",
@@ -637,7 +697,9 @@
       "description_en": "Get the object's text with any BBcode tags stripped out.",
       "expressionName": "PlainText",
       "returnType": "string",
-      "category": "text"
+      "category": "text",
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-at-position",
@@ -665,7 +727,9 @@
           "desc_zh": "要检测的Y坐标。",
           "desc_en": "The Y co-ordinate to check."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-count",
@@ -685,7 +749,9 @@
           "desc_zh": "要使用的标签。",
           "desc_en": "The tag to use."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-x",
@@ -713,7 +779,9 @@
           "desc_zh": "标签的索引编号，从0开始计数。",
           "desc_en": "The tag index, in case there are multiple."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-y",
@@ -741,7 +809,9 @@
           "desc_zh": "标签的索引编号，从0开始计数。",
           "desc_en": "The tag index, in case there are multiple."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-width",
@@ -769,7 +839,9 @@
           "desc_zh": "标签的索引编号，从0开始计数。",
           "desc_en": "The tag index, in case there are multiple."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     },
     {
       "id": "tag-height",
@@ -797,7 +869,9 @@
           "desc_zh": "标签的索引编号，从 0 开始计数。",
           "desc_en": "The tag index, in case there are multiple."
         }
-      ]
+      ],
+      "category_zh": "文本",
+      "category_en": "Text"
     }
   ],
   "properties": [

@@ -11,6 +11,20 @@
     "services",
     "characteristics"
   ],
+  "aceCategories": {
+    "bluetooth": {
+      "zh": "蓝牙",
+      "en": "Bluetooth"
+    },
+    "services": {
+      "zh": "服务",
+      "en": "Services"
+    },
+    "characteristics": {
+      "zh": "特征数据",
+      "en": "Characteristics"
+    }
+  },
   "conditions": [
     {
       "id": "is-supported",
@@ -21,7 +35,9 @@
       "display_zh": "设备支持蓝牙",
       "display_en": "Is bluetooth supported",
       "scriptName": "IsSupported",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-device-connected",
@@ -34,7 +50,9 @@
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-device-disconnected",
@@ -47,7 +65,9 @@
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-request-device-failed",
@@ -60,7 +80,9 @@
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "is-device-connected",
@@ -83,7 +105,9 @@
           "desc_zh": "设备ID",
           "desc_en": "The ID of the device."
         }
-      ]
+      ],
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-primary-services-loaded",
@@ -96,7 +120,9 @@
       "scriptName": "OnPrimaryServicesLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "services"
+      "category": "services",
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "on-primary-services-error",
@@ -109,7 +135,9 @@
       "scriptName": "OnPrimaryServicesError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "services"
+      "category": "services",
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "on-characteristics-loaded",
@@ -122,7 +150,9 @@
       "scriptName": "OnCharacteristicsLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "services"
+      "category": "services",
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "on-characteristics-error",
@@ -135,7 +165,9 @@
       "scriptName": "OnCharacteristicsError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "services"
+      "category": "services",
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "on-any-characteristic-read",
@@ -148,7 +180,9 @@
       "scriptName": "OnAnyCharacteristicRead",
       "isTrigger": true,
       "canDebug": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-characteristic-read",
@@ -171,7 +205,9 @@
           "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-any-characteristic-written",
@@ -184,7 +220,9 @@
       "scriptName": "OnAnyCharacteristicWritten",
       "isTrigger": true,
       "canDebug": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-characteristic-written",
@@ -207,7 +245,9 @@
           "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-any-characteristic-notification",
@@ -230,7 +270,9 @@
           "desc_zh": "要用来缓存读取数据的二进制数据实例",
           "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-characteristic-notification",
@@ -261,7 +303,9 @@
           "desc_zh": "要用来缓存读取数据的二进制数据实例",
           "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-characteristic-read-error",
@@ -274,7 +318,9 @@
       "scriptName": "OnCharacteristicReadError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "on-characteristic-write-error",
@@ -287,7 +333,9 @@
       "scriptName": "OnCharacteristicWriteError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     }
   ],
   "actions": [
@@ -356,7 +404,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "disconnect-device",
@@ -377,7 +427,9 @@
           "desc_zh": "要断开连接的设备 留空为默认设备",
           "desc_en": "The ID of the device to disconnect. Leave empty to disconnect default device."
         }
-      ]
+      ],
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "request-primary-services",
@@ -399,7 +451,9 @@
           "desc_zh": "要请求次要服务的设备ID  留空危默认",
           "desc_en": "The ID of the device to get primary services for. Leave empty for default device."
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "request-characteristics",
@@ -429,7 +483,9 @@
           "desc_zh": "服务名称，UUID或十六进制ID，用于获取特征数据。",
           "desc_en": "The service name, UUID, or hexadecimal ID, to get characteristics for."
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "read-characteristic-binary",
@@ -475,7 +531,9 @@
           "desc_zh": "要读取的二进制数据",
           "desc_en": "A Binary Data object to read the data to."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "read-characteristic-value",
@@ -513,7 +571,9 @@
           "desc_zh": "服务名、UUID或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "write-characteristic-binary",
@@ -559,7 +619,9 @@
           "desc_zh": "要写入的二进制值",
           "desc_en": "A Binary Data object with data to write."
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "start-stop-characteristic-notifications",
@@ -618,7 +680,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     }
   ],
   "expressions": [
@@ -630,7 +694,9 @@
       "description_en": "In a trigger, the ID of the relevant device.",
       "expressionName": "DeviceID",
       "returnType": "string",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "device-name",
@@ -640,7 +706,9 @@
       "description_en": "In 'On device connected', a string with the name of the device.",
       "expressionName": "DeviceName",
       "returnType": "string",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "primary-service-id",
@@ -650,7 +718,9 @@
       "description_en": "In a trigger, the ID of the relevant primary service.",
       "expressionName": "PrimaryServiceID",
       "returnType": "string",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "characteristic-id",
@@ -660,7 +730,9 @@
       "description_en": "In a trigger, the ID of the relevant characteristic.",
       "expressionName": "CharacteristicID",
       "returnType": "string",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "primary-service-count",
@@ -680,7 +752,9 @@
           "desc_zh": "设备ID",
           "desc_en": "Device ID"
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "primary-service-at",
@@ -708,7 +782,9 @@
           "desc_zh": "次要服务的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of primary service"
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "characteristic-count",
@@ -736,7 +812,9 @@
           "desc_zh": "服务ID",
           "desc_en": "Service identifier"
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "characteristic-at",
@@ -772,7 +850,9 @@
           "desc_zh": "特征数据的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of characteristic"
         }
-      ]
+      ],
+      "category_zh": "服务",
+      "category_en": "Services"
     },
     {
       "id": "characteristic-text",
@@ -782,7 +862,9 @@
       "description_en": "After 'Read value', the data as a string.",
       "expressionName": "CharacteristicText",
       "returnType": "string",
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "characteristic-signed-int",
@@ -792,7 +874,9 @@
       "description_en": "After 'Read value', the data as a signed integer.",
       "expressionName": "CharacteristicSignedInteger",
       "returnType": "number",
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "characteristic-unsigned-int",
@@ -802,7 +886,9 @@
       "description_en": "After 'Read value', the data as an unsigned integer.",
       "expressionName": "CharacteristicUnsignedInteger",
       "returnType": "number",
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     },
     {
       "id": "characteristic-float",
@@ -812,7 +898,9 @@
       "description_en": "After 'Read value', the data as a floating point number.",
       "expressionName": "CharacteristicFloat",
       "returnType": "number",
-      "category": "characteristics"
+      "category": "characteristics",
+      "category_zh": "特征数据",
+      "category_en": "Characteristics"
     }
   ],
   "productTypes": "games"

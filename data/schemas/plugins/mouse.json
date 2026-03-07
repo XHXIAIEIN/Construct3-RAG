@@ -12,6 +12,24 @@
     "pointer-lock",
     "wheel"
   ],
+  "aceCategories": {
+    "cursor": {
+      "zh": "光标",
+      "en": "Cursor"
+    },
+    "mouse": {
+      "zh": "鼠标键",
+      "en": "Mouse"
+    },
+    "pointer-lock": {
+      "zh": "光标锁",
+      "en": "Pointer lock"
+    },
+    "wheel": {
+      "zh": "滚轮",
+      "en": "Wheel"
+    }
+  },
   "conditions": [
     {
       "id": "on-click",
@@ -85,7 +103,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "on-any-click",
@@ -97,7 +117,9 @@
       "display_en": "On any click",
       "scriptName": "OnAnyClick",
       "isTrigger": true,
-      "category": "mouse"
+      "category": "mouse",
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "mouse-button-is-down",
@@ -147,7 +169,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "on-button-released",
@@ -198,7 +222,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "on-object-clicked",
@@ -279,7 +305,9 @@
           "desc_zh": "选择要检查单击的对象。",
           "desc_en": "Choose the object to check for a click on."
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "cursor-is-over-object",
@@ -300,7 +328,9 @@
           "desc_zh": "选择要检查鼠标悬停的对象。",
           "desc_en": "Choose the object to check for mouse over."
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "on-mouse-wheel",
@@ -341,7 +371,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "on-pointer-locked",
@@ -353,7 +385,9 @@
       "display_en": "On pointer locked",
       "scriptName": "OnPointerLocked",
       "isTrigger": true,
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "on-pointer-unlocked",
@@ -365,7 +399,9 @@
       "display_en": "On pointer unlocked",
       "scriptName": "OnPointerUnlocked",
       "isTrigger": true,
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "on-pointer-lock-error",
@@ -377,7 +413,9 @@
       "display_en": "On pointer lock error",
       "scriptName": "OnPointerLockError",
       "isTrigger": true,
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "has-pointer-lock",
@@ -388,7 +426,9 @@
       "display_zh": "已启用光标锁",
       "display_en": "Has pointer lock",
       "scriptName": "HasPointerLock",
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "on-movement",
@@ -400,7 +440,9 @@
       "display_en": "On movement",
       "scriptName": "OnMovement",
       "isTrigger": true,
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     }
   ],
   "actions": [
@@ -430,7 +472,9 @@
             "none"
           ]
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "set-cursor-style2",
@@ -451,7 +495,9 @@
           "desc_zh": "选择要设置的光标样式。",
           "desc_en": "Choose the cursor style to set."
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "set-cursor-from-sprite",
@@ -472,7 +518,9 @@
           "desc_zh": "选择一个精灵对象作为指针的图像。",
           "desc_en": "Choose a Sprite object to use as the cursor image."
         }
-      ]
+      ],
+      "category_zh": "鼠标键",
+      "category_en": "Mouse"
     },
     {
       "id": "request-pointer-lock",
@@ -493,7 +541,9 @@
           "desc_zh": "禁用系统的指针加速调整，以访问原始鼠标输入。",
           "desc_en": "Check to disable the system-level adjustment for mouse acceleration, and access raw mouse input instead."
         }
-      ]
+      ],
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "release-pointer-lock",
@@ -504,7 +554,9 @@
       "display_zh": "解除光标锁",
       "display_en": "Release pointer lock",
       "scriptName": "ReleasePointerLock",
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     }
   ],
   "expressions": [
@@ -517,7 +569,9 @@
       "expressionName": "X",
       "returnType": "number",
       "isVariadicParameters": true,
-      "category": "cursor"
+      "category": "cursor",
+      "category_zh": "光标",
+      "category_en": "Cursor"
     },
     {
       "id": "y",
@@ -528,7 +582,9 @@
       "expressionName": "Y",
       "returnType": "number",
       "isVariadicParameters": true,
-      "category": "cursor"
+      "category": "cursor",
+      "category_zh": "光标",
+      "category_en": "Cursor"
     },
     {
       "id": "absolutex",
@@ -538,7 +594,9 @@
       "description_en": "Get the mouse cursor X co-ordinate on the canvas.",
       "expressionName": "AbsoluteX",
       "returnType": "number",
-      "category": "cursor"
+      "category": "cursor",
+      "category_zh": "光标",
+      "category_en": "Cursor"
     },
     {
       "id": "absolutey",
@@ -548,7 +606,9 @@
       "description_en": "Get the mouse cursor Y co-ordinate on the canvas.",
       "expressionName": "AbsoluteY",
       "returnType": "number",
-      "category": "cursor"
+      "category": "cursor",
+      "category_zh": "光标",
+      "category_en": "Cursor"
     },
     {
       "id": "movement-x",
@@ -558,7 +618,9 @@
       "description_en": "Get the horizontal movement when using pointer lock.",
       "expressionName": "MovementX",
       "returnType": "number",
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "movement-y",
@@ -568,7 +630,9 @@
       "description_en": "Get the vertical movement when using pointer lock.",
       "expressionName": "MovementY",
       "returnType": "number",
-      "category": "pointer-lock"
+      "category": "pointer-lock",
+      "category_zh": "光标锁",
+      "category_en": "Pointer lock"
     },
     {
       "id": "wheel-delta-x",
@@ -578,7 +642,9 @@
       "description_en": "Get the X change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaX",
       "returnType": "number",
-      "category": "wheel"
+      "category": "wheel",
+      "category_zh": "滚轮",
+      "category_en": "Wheel"
     },
     {
       "id": "wheel-delta-y",
@@ -588,7 +654,9 @@
       "description_en": "Get the Y change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaY",
       "returnType": "number",
-      "category": "wheel"
+      "category": "wheel",
+      "category_zh": "滚轮",
+      "category_en": "Wheel"
     },
     {
       "id": "wheel-delta-z",
@@ -598,7 +666,9 @@
       "description_en": "Get the Z change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaZ",
       "returnType": "number",
-      "category": "wheel"
+      "category": "wheel",
+      "category_zh": "滚轮",
+      "category_en": "Wheel"
     }
   ]
 }

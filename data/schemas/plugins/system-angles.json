@@ -1,0 +1,127 @@
+{
+  "id": "system-angles",
+  "originalId": "system",
+  "name_zh": "系统 - 角度",
+  "name_en": "System - Angles",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "angles",
+  "category_zh": "角度",
+  "category_en": "Angles",
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "name_zh": "在相差角度内",
+      "name_en": "Is within angle",
+      "description_zh": "检测某个角度是否位于另一个角度的相差范围内，例如某个角度可能与90度相差0.5度。",
+      "description_en": "Compare if an angle is within X degrees of another angle.",
+      "display_zh": "{0} 位于 {1} 相差 {2} 范围内",
+      "display_en": "{0} within {1} degrees of {2}",
+      "scriptName": "AngleWithin",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle-1",
+          "type": "number",
+          "name_zh": "角度1",
+          "name_en": "Angle 1",
+          "desc_zh": "要用于比较的角度。",
+          "desc_en": "Angle in degrees to test."
+        },
+        {
+          "id": "within",
+          "type": "number",
+          "name_zh": "相差",
+          "name_en": "Within",
+          "desc_zh": "检查角度1是否位于角度2的相差范围内。",
+          "desc_en": "Number of degrees that angle 1 must be within angle 2.",
+          "initialValue": "0.5"
+        },
+        {
+          "id": "angle-2",
+          "type": "number",
+          "name_zh": "角度2",
+          "name_en": "Angle 2",
+          "desc_zh": "检查角度1是否接近这个角度。",
+          "desc_en": "Angle in degrees to test angle 1 against."
+        }
+      ],
+      "category_zh": "角度",
+      "category_en": "Angles"
+    },
+    {
+      "id": "is-clockwise-from",
+      "name_zh": "在顺时针方向",
+      "name_en": "Is clockwise from",
+      "description_zh": "比较角度是否是从另一个角度顺时针方向。",
+      "description_en": "Compare if an angle is clockwise from another angle.",
+      "display_zh": "{0} 在 {1} 顺时针方向",
+      "display_en": "{0} is clockwise from {1}",
+      "scriptName": "IsClockwiseFrom",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle-1",
+          "type": "number",
+          "name_zh": "角度1",
+          "name_en": "Angle 1",
+          "desc_zh": "需要测试的角度，以度为单位。",
+          "desc_en": "Angle in degrees to test."
+        },
+        {
+          "id": "angle-2",
+          "type": "number",
+          "name_zh": "角度2",
+          "name_en": "Angle 2",
+          "desc_zh": "用于测试是否在角度1的顺时针方向的角度。",
+          "desc_en": "Angle in degrees to test if angle 1 is clockwise from."
+        }
+      ],
+      "category_zh": "角度",
+      "category_en": "Angles"
+    },
+    {
+      "id": "is-between-angles",
+      "name_zh": "在角度范围内",
+      "name_en": "Is between angles",
+      "description_zh": "比较角度是否位于两角度之间。",
+      "description_en": "Compare if an angle is between two angles.",
+      "display_zh": "{0} 角度在 {1}° 与 {2}° 之间",
+      "display_en": "{0} is between {1} and {2} degrees",
+      "scriptName": "IsBetweenAngles",
+      "category": "angles",
+      "params": [
+        {
+          "id": "angle",
+          "type": "number",
+          "name_zh": "角度",
+          "name_en": "Angle",
+          "desc_zh": "检测角度是否在其他两个顺时针角度之间。",
+          "desc_en": "Angle in degrees to test if between the first and second angles."
+        },
+        {
+          "id": "first-angle",
+          "type": "number",
+          "name_zh": "角度1",
+          "name_en": "First angle",
+          "desc_zh": "第一个角度，按顺时针方向顺序。",
+          "desc_en": "First angle in degrees. Specify in clockwise order."
+        },
+        {
+          "id": "second-angle",
+          "type": "number",
+          "name_zh": "角度2",
+          "name_en": "Second angle",
+          "desc_zh": "第二个角度，按顺时针方向顺序。",
+          "desc_en": "Second angle in degrees. Specify in clockwise order.",
+          "initialValue": "45"
+        }
+      ],
+      "category_zh": "角度",
+      "category_en": "Angles"
+    }
+  ],
+  "actions": [],
+  "expressions": []
+}

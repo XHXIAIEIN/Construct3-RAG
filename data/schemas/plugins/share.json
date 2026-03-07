@@ -9,6 +9,12 @@
   "categories": [
     "share"
   ],
+  "aceCategories": {
+    "share": {
+      "zh": "分享",
+      "en": "Share"
+    }
+  },
   "conditions": [
     {
       "id": "is-supported",
@@ -19,7 +25,9 @@
       "display_zh": "设备支持分享功能",
       "display_en": "Is sharing supported",
       "scriptName": "IsSupported",
-      "category": "share"
+      "category": "share",
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "is-sharing-files-supported",
@@ -30,7 +38,9 @@
       "display_zh": "设备支持分享功能",
       "display_en": "Is sharing files supported",
       "scriptName": "IsSharingFilesSupported",
-      "category": "share"
+      "category": "share",
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "on-share-completed",
@@ -42,7 +52,9 @@
       "display_en": "On share completed",
       "scriptName": "OnShareCompleted",
       "isTrigger": true,
-      "category": "share"
+      "category": "share",
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "on-share-failed",
@@ -54,7 +66,9 @@
       "display_en": "On share failed",
       "scriptName": "OnShareFailed",
       "isTrigger": true,
-      "category": "share"
+      "category": "share",
+      "category_zh": "分享",
+      "category_en": "Share"
     }
   ],
   "actions": [
@@ -93,7 +107,9 @@
           "desc_zh": "要分享的链接，留空则忽略。",
           "desc_en": "A URL to share. Leave empty to omit."
         }
-      ]
+      ],
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "add-file",
@@ -132,7 +148,9 @@
           "desc_zh": "要使用的二进制数据对象。",
           "desc_en": "A Binary Data object to use as the content of the file."
         }
-      ]
+      ],
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "rate-app",
@@ -181,7 +199,9 @@
           "desc_en": "The app ID to request a rating for (Android with no Google Play Store App only). Leave empty to use the project's app ID.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "分享",
+      "category_en": "Share"
     },
     {
       "id": "open-store",
@@ -202,7 +222,9 @@
           "desc_zh": "要打开商店页面的应用程序ID。留空则使用项目设置中的应用程序ID。",
           "desc_en": "The app ID of the store page to open. Leave empty to use the project's app ID."
         }
-      ]
+      ],
+      "category_zh": "分享",
+      "category_en": "Share"
     }
   ],
   "expressions": []

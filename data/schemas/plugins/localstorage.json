@@ -13,6 +13,28 @@
     "progress",
     "in-memory-only"
   ],
+  "aceCategories": {
+    "items": {
+      "zh": "词条",
+      "en": "Items"
+    },
+    "binary-data": {
+      "zh": "二进制",
+      "en": "Binary data"
+    },
+    "local-storage": {
+      "zh": "本地存储",
+      "en": "Local storage"
+    },
+    "progress": {
+      "zh": "进度",
+      "en": "Progress"
+    },
+    "in-memory-only": {
+      "zh": "仅在内存中",
+      "en": "In memory only"
+    }
+  },
   "conditions": [
     {
       "id": "on-item-set",
@@ -35,7 +57,9 @@
           "desc_zh": "要检测的词条的名称。",
           "desc_en": "Enter the name of the key to check for being set."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-item-get",
@@ -58,7 +82,9 @@
           "desc_zh": "输入要检查的词条名称。",
           "desc_en": "Enter the name of the key to check for being read."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-item-removed",
@@ -81,7 +107,9 @@
           "desc_zh": "要删除的词条的名称",
           "desc_en": "Enter the name of the key to check for being removed."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-any-item-set",
@@ -94,7 +122,9 @@
       "scriptName": "OnAnyItemSet",
       "isTrigger": true,
       "canDebug": true,
-      "category": "items"
+      "category": "items",
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-any-item-get",
@@ -107,7 +137,9 @@
       "scriptName": "OnAnyItemGet",
       "isTrigger": true,
       "canDebug": true,
-      "category": "items"
+      "category": "items",
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-any-item-removed",
@@ -120,7 +152,9 @@
       "scriptName": "OnAnyItemRemoved",
       "isTrigger": true,
       "canDebug": true,
-      "category": "items"
+      "category": "items",
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-item-exists",
@@ -143,7 +177,9 @@
           "desc_zh": "检测词条名称是否于本地存储中存在。",
           "desc_en": "Enter the name of the key to check if exists."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-item-missing",
@@ -166,7 +202,9 @@
           "desc_zh": "要检查的词条的名称。",
           "desc_en": "Enter the name of the key to check if missing."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "on-storage-cleared",
@@ -179,7 +217,9 @@
       "scriptName": "OnCleared",
       "isTrigger": true,
       "canDebug": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "on-all-key-names-loaded",
@@ -192,7 +232,9 @@
       "scriptName": "OnAllKeyNamesLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "on-error",
@@ -205,7 +247,9 @@
       "scriptName": "OnError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "compare-key",
@@ -234,7 +278,9 @@
           "desc_zh": "用于比较词条的字符串。",
           "desc_en": "String to compare the current key to."
         }
-      ]
+      ],
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "compare-value",
@@ -264,7 +310,9 @@
           "desc_en": "String or number to compare the current value to.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "is-persistent",
@@ -275,7 +323,9 @@
       "display_zh": "已开启持久存储",
       "display_en": "Is persistent",
       "scriptName": "IsPersistent",
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "is-processing-sets",
@@ -286,7 +336,9 @@
       "display_zh": "正在设置",
       "display_en": "Is processing sets",
       "scriptName": "IsProcessingSets",
-      "category": "progress"
+      "category": "progress",
+      "category_zh": "进度",
+      "category_en": "Progress"
     },
     {
       "id": "is-processing-gets",
@@ -297,7 +349,9 @@
       "display_zh": "正在获取",
       "display_en": "Is processing gets",
       "scriptName": "IsProcessingGets",
-      "category": "progress"
+      "category": "progress",
+      "category_zh": "进度",
+      "category_en": "Progress"
     },
     {
       "id": "on-all-sets-complete",
@@ -310,7 +364,9 @@
       "scriptName": "OnAllSetsComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "progress"
+      "category": "progress",
+      "category_zh": "进度",
+      "category_en": "Progress"
     },
     {
       "id": "on-all-gets-complete",
@@ -323,7 +379,9 @@
       "scriptName": "OnAllGetsComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "progress"
+      "category": "progress",
+      "category_zh": "进度",
+      "category_en": "Progress"
     }
   ],
   "actions": [
@@ -357,7 +415,9 @@
           "desc_en": "Enter the value to store.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "get-item",
@@ -380,7 +440,9 @@
           "desc_zh": "要获取的词条名称。完成后触发 '词条获取完成' 条件。",
           "desc_en": "Enter the name of the key to get the value for. 'On item get' will trigger when the value is ready."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "remove-item",
@@ -402,7 +464,9 @@
           "desc_zh": "输入要删除的词条名称。完成后触发 '词条删除完成' 条件。",
           "desc_en": "Enter the name of the key to remove. 'On item removed' will trigger when done."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "check-item-exists",
@@ -424,7 +488,9 @@
           "desc_zh": "要检查的词条的名称。",
           "desc_en": "Enter the name of the key to check if exists."
         }
-      ]
+      ],
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "set-binary-item",
@@ -454,7 +520,9 @@
           "desc_zh": "要存储的二进制数据对象",
           "desc_en": "The Binary Data object to store."
         }
-      ]
+      ],
+      "category_zh": "二进制",
+      "category_en": "Binary data"
     },
     {
       "id": "get-binary-item",
@@ -484,7 +552,9 @@
           "desc_zh": "要获取数据的二进制数据对象。",
           "desc_en": "The Binary Data object load the value into."
         }
-      ]
+      ],
+      "category_zh": "二进制",
+      "category_en": "Binary data"
     },
     {
       "id": "clear-storage",
@@ -496,7 +566,9 @@
       "display_en": "Clear storage",
       "scriptName": "ClearStorage",
       "isAsync": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "get-all-key-names",
@@ -508,7 +580,9 @@
       "display_en": "Get all key names",
       "scriptName": "GetAllKeyNames",
       "isAsync": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "request-persistent",
@@ -520,7 +594,9 @@
       "display_en": "Request persistent storage",
       "scriptName": "RequestPersistent",
       "isAsync": true,
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "load-memory-from-json",
@@ -541,7 +617,9 @@
           "desc_zh": "要加载的 JSON 数据字符串。",
           "desc_en": "A string of JSON data to load."
         }
-      ]
+      ],
+      "category_zh": "仅在内存中",
+      "category_en": "In memory only"
     }
   ],
   "expressions": [
@@ -553,7 +631,9 @@
       "description_en": "In 'On item get', the item value retrieved.",
       "expressionName": "ItemValue",
       "returnType": "any",
-      "category": "items"
+      "category": "items",
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "key",
@@ -563,7 +643,9 @@
       "description_en": "The current key name in a storage trigger.",
       "expressionName": "Key",
       "returnType": "string",
-      "category": "items"
+      "category": "items",
+      "category_zh": "词条",
+      "category_en": "Items"
     },
     {
       "id": "keycount",
@@ -573,7 +655,9 @@
       "description_en": "After 'On all key names loaded', the key count.",
       "expressionName": "KeyCount",
       "returnType": "number",
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "keyat",
@@ -593,7 +677,9 @@
           "desc_zh": "从零开始的索引值",
           "desc_en": "Zero-based index"
         }
-      ]
+      ],
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "errormessage",
@@ -603,7 +689,9 @@
       "description_en": "In 'On error', an error message if any available.",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "local-storage"
+      "category": "local-storage",
+      "category_zh": "本地存储",
+      "category_en": "Local storage"
     },
     {
       "id": "memory-storage-as-json",
@@ -613,7 +701,9 @@
       "description_en": "When using in-memory storage, a JSON string representing all stored data.",
       "expressionName": "MemoryStorageAsJSON",
       "returnType": "string",
-      "category": "in-memory-only"
+      "category": "in-memory-only",
+      "category_zh": "仅在内存中",
+      "category_en": "In memory only"
     }
   ],
   "properties": [

@@ -10,6 +10,16 @@
     "ads",
     "interstitial"
   ],
+  "aceCategories": {
+    "ads": {
+      "zh": "",
+      "en": "ads"
+    },
+    "interstitial": {
+      "zh": "",
+      "en": "interstitial"
+    }
+  },
   "conditions": [
     {
       "id": "is-banner-showing",
@@ -18,7 +28,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "IsBannerShowing",
-      "category": "ads"
+      "category": "ads",
+      "category_en": "ads"
     },
     {
       "id": "on-ready",
@@ -29,7 +40,8 @@
       "scriptName": "OnInterstitialReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_en": "interstitial"
     },
     {
       "id": "on-error",
@@ -40,7 +52,8 @@
       "scriptName": "OnInterstitialError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_en": "interstitial"
     },
     {
       "id": "on-completed",
@@ -51,7 +64,8 @@
       "scriptName": "OnInterstitialCompleted",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_en": "interstitial"
     },
     {
       "id": "on-cancelled",
@@ -62,7 +76,8 @@
       "scriptName": "OnInterstitialCancelled",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_en": "interstitial"
     }
   ],
   "actions": [
@@ -106,7 +121,8 @@
             "728x90"
           ]
         }
-      ]
+      ],
+      "category_en": "ads"
     },
     {
       "id": "hide-banner-ad",
@@ -115,7 +131,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "HideBanner",
-      "category": "ads"
+      "category": "ads",
+      "category_en": "ads"
     },
     {
       "id": "prepare-interstitial",
@@ -143,7 +160,8 @@
             "banner"
           ]
         }
-      ]
+      ],
+      "category_en": "interstitial"
     },
     {
       "id": "show-interstitial",
@@ -152,7 +170,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "ShowInterstitial",
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_en": "interstitial"
     }
   ],
   "expressions": [],

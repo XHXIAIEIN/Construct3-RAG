@@ -10,6 +10,16 @@
     "connection",
     "data"
   ],
+  "aceCategories": {
+    "connection": {
+      "zh": "连接",
+      "en": "Connection"
+    },
+    "data": {
+      "zh": "数据",
+      "en": "Data"
+    }
+  },
   "conditions": [
     {
       "id": "on-opened",
@@ -22,7 +32,9 @@
       "scriptName": "OnOpened",
       "isTrigger": true,
       "canDebug": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "on-closed",
@@ -35,7 +47,9 @@
       "scriptName": "OnClosed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "on-error",
@@ -48,7 +62,9 @@
       "scriptName": "OnError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "is-open",
@@ -59,7 +75,9 @@
       "display_zh": "已开启",
       "display_en": "Is connection open",
       "scriptName": "IsOpen",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "is-connecting",
@@ -70,7 +88,9 @@
       "display_zh": "正在连接",
       "display_en": "Is connecting",
       "scriptName": "IsConnecting",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "is-supported",
@@ -81,7 +101,9 @@
       "display_zh": "设备受支持",
       "display_en": "Is WebSocket supported",
       "scriptName": "IsSupported",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "on-message",
@@ -95,7 +117,9 @@
       "isTrigger": true,
       "canDebug": true,
       "highlight": true,
-      "category": "data"
+      "category": "data",
+      "category_zh": "数据",
+      "category_en": "Data"
     },
     {
       "id": "on-binary-message",
@@ -118,7 +142,9 @@
           "desc_zh": "选择二进制数据对象，将接收到的二进制消息写入其中。",
           "desc_en": "Choose a Binary Data object to write the received binary message to."
         }
-      ]
+      ],
+      "category_zh": "数据",
+      "category_en": "Data"
     }
   ],
   "actions": [
@@ -151,7 +177,9 @@
           "desc_zh": "部分服务器必须要求填写子协议才能建立连接。留空表示无需协议要求。",
           "desc_en": "Enter a required sub-protocol the server must support in order to establish a connection.  Leave empty for no protocol requirement."
         }
-      ]
+      ],
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "close",
@@ -162,7 +190,9 @@
       "display_zh": "关闭连接",
       "display_en": "Close connection",
       "scriptName": "Close",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "send-text",
@@ -184,7 +214,9 @@
           "desc_zh": "要发送到服务器的文本字符串。",
           "desc_en": "A text string to send to the server."
         }
-      ]
+      ],
+      "category_zh": "数据",
+      "category_en": "Data"
     },
     {
       "id": "send-binary",
@@ -205,7 +237,9 @@
           "desc_zh": "要作为消息发送的二进制数据对象。",
           "desc_en": "A Binary Data object to send as a message."
         }
-      ]
+      ],
+      "category_zh": "数据",
+      "category_en": "Data"
     }
   ],
   "expressions": [
@@ -217,7 +251,9 @@
       "description_en": "The error message in 'On error'.",
       "expressionName": "ErrorMsg",
       "returnType": "string",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "closecode",
@@ -227,7 +263,9 @@
       "description_en": "The close code in 'On closed'.",
       "expressionName": "CloseCode",
       "returnType": "string",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "closereason",
@@ -237,7 +275,9 @@
       "description_en": "The reason for closing in 'On closed'.",
       "expressionName": "CloseReason",
       "returnType": "string",
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "messagetext",
@@ -247,7 +287,9 @@
       "description_en": "The text content of the message in 'On message'.",
       "expressionName": "MessageText",
       "returnType": "string",
-      "category": "data"
+      "category": "data",
+      "category_zh": "数据",
+      "category_en": "Data"
     }
   ]
 }

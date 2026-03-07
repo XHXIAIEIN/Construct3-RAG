@@ -9,6 +9,12 @@
   "categories": [
     "text-input"
   ],
+  "aceCategories": {
+    "text-input": {
+      "zh": "输入框",
+      "en": "Text input"
+    }
+  },
   "conditions": [
     {
       "id": "compare-text",
@@ -51,7 +57,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "on-text-changed",
@@ -64,7 +72,9 @@
       "scriptName": "OnTextChanged",
       "isTrigger": true,
       "canDebug": true,
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "on-clicked",
@@ -77,7 +87,9 @@
       "scriptName": "OnClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "on-double-clicked",
@@ -90,7 +102,9 @@
       "scriptName": "OnDoubleClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     }
   ],
   "actions": [
@@ -114,7 +128,9 @@
           "desc_en": "The text to set in the text input.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "append-text",
@@ -136,7 +152,9 @@
           "desc_en": "Enter the text to append to the object's content.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "set-placeholder",
@@ -157,7 +175,9 @@
           "desc_zh": "新文本输入占位符。",
           "desc_en": "The new text input placeholder."
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "set-tooltip",
@@ -178,7 +198,9 @@
           "desc_zh": "用于设置文本输入的工具提示。",
           "desc_en": "The tooltip to set on the text input."
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "set-read-only",
@@ -213,7 +235,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "scroll-to-bottom",
@@ -224,7 +248,9 @@
       "display_zh": "转到尾行",
       "display_en": "Scroll to bottom",
       "scriptName": "ScrollToBottom",
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "set-max-length",
@@ -245,7 +271,9 @@
           "desc_zh": "可以输入字符的最大长度，-1为不限制",
           "desc_en": "The maximum number of characters that can be entered. Use -1 for unlimited."
         }
-      ]
+      ],
+      "category_zh": "输入框",
+      "category_en": "Text input"
     }
   ],
   "expressions": [
@@ -257,7 +285,9 @@
       "description_en": "Get the text input's current text.",
       "expressionName": "Text",
       "returnType": "string",
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     },
     {
       "id": "max-length",
@@ -267,7 +297,9 @@
       "description_en": "Get the maximum number of characters that can be entered, or -1 for unlimited.",
       "expressionName": "MaxLength",
       "returnType": "number",
-      "category": "text-input"
+      "category": "text-input",
+      "category_zh": "输入框",
+      "category_en": "Text input"
     }
   ],
   "properties": [

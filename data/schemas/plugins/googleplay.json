@@ -13,6 +13,28 @@
     "leaderboards",
     "player-details"
   ],
+  "aceCategories": {
+    "achievements": {
+      "zh": "成就",
+      "en": "Achievements"
+    },
+    "google-play-game-services": {
+      "zh": "Google Play 游戏服务",
+      "en": "Google Play Game Services"
+    },
+    "hi-scores": {
+      "zh": "最高得分",
+      "en": "Hi-scores"
+    },
+    "leaderboards": {
+      "zh": "排行榜",
+      "en": "Leaderboards"
+    },
+    "player-details": {
+      "zh": "玩家详情",
+      "en": "Player details"
+    }
+  },
   "conditions": [
     {
       "id": "on-achievement-list-success",
@@ -24,7 +46,9 @@
       "display_en": "On achievement list success",
       "scriptName": "OnAchievementsRequestSuccess",
       "isTrigger": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-achievement-list-fail",
@@ -36,7 +60,9 @@
       "display_en": "On achievement list fail",
       "scriptName": "OnAchievementsRequestFail",
       "isTrigger": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "compare-achievement-state",
@@ -84,7 +110,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-achievement-metadata-success",
@@ -96,7 +124,9 @@
       "display_en": "On achievement metadata success",
       "scriptName": "OnAchievementsMetadataSuccess",
       "isTrigger": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-achievement-metadata-fail",
@@ -108,7 +138,9 @@
       "display_en": "On achievement metadata fail",
       "scriptName": "OnAchievementsMetadataFail",
       "isTrigger": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-achievement-revealed",
@@ -130,7 +162,9 @@
           "desc_zh": "已揭秘的成就ID。",
           "desc_en": "ID of the achievement that was revealed."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-achievement-unlocked",
@@ -152,7 +186,9 @@
           "desc_zh": "要达成的成就ID。",
           "desc_en": "ID of the achievement that was unlocked."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "on-loaded",
@@ -163,7 +199,9 @@
       "scriptName": "OnLoaded",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "is-loaded",
@@ -174,7 +212,9 @@
       "display_zh": "服务已加载",
       "display_en": "Is loaded",
       "scriptName": "IsLoaded",
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-signed-in",
@@ -186,7 +226,9 @@
       "display_en": "On signed in",
       "scriptName": "OnSignedIn",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "is-signed-in",
@@ -197,7 +239,9 @@
       "display_zh": "账户已登录",
       "display_en": "Is signed in",
       "scriptName": "IsSignedIn",
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-error",
@@ -209,7 +253,9 @@
       "display_en": "On error",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-player-details-received",
@@ -221,7 +267,9 @@
       "display_en": "On player details received",
       "scriptName": "OnPlayerDetails",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-signed-out",
@@ -233,7 +281,9 @@
       "display_en": "On signed out",
       "scriptName": "OnSignedOut",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-auto-sign-in-failed",
@@ -245,7 +295,9 @@
       "display_en": "On auto-sign in failed",
       "scriptName": "OnAutoSignInFailed",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-sign-in-fail",
@@ -257,7 +309,9 @@
       "display_en": "On sign in failed",
       "scriptName": "OnSignInFail",
       "isTrigger": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "on-score-submit-success",
@@ -269,7 +323,9 @@
       "display_en": "On score submit success",
       "scriptName": "OnScoreSubmitSuccess",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-score-submit-fail",
@@ -281,7 +337,9 @@
       "display_en": "On score submit fail",
       "scriptName": "OnScoreSubmitFail",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-hi-score-request-success",
@@ -293,7 +351,9 @@
       "display_en": "On hi-score request success",
       "scriptName": "OnHiScoreRequestSuccess",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-hi-score-request-fail",
@@ -305,7 +365,9 @@
       "display_en": "On hi-score request fail",
       "scriptName": "OnHiScoreRequestFail",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     }
   ],
   "actions": [
@@ -362,7 +424,9 @@
           "desc_en": "Ensure that the results are up to date, and not from the cache.",
           "initialValue": "false"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "get-metadata",
@@ -385,7 +449,9 @@
           "desc_en": "Ensure that the results are up to date, and not from the cache.",
           "initialValue": "false"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "reveal",
@@ -407,7 +473,9 @@
           "desc_zh": "要揭秘的成就ID。揭秘表示玩家可知道该成就，但尚未解锁。",
           "desc_en": "Achievement ID to reveal."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "unlock",
@@ -429,7 +497,9 @@
           "desc_zh": "要达成的成就ID。",
           "desc_en": "Achievement ID to unlock."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "increment",
@@ -459,7 +529,9 @@
           "desc_zh": "增加分布成就的步数。",
           "desc_en": "Number of steps to increment the achievement by."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "set-steps",
@@ -489,7 +561,9 @@
           "desc_zh": "设置成就进度的步骤数。 这些步骤无法减少。",
           "desc_en": "Number of steps to set the achievement progress to. The steps cannot be reduced."
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "show-achievements",
@@ -501,7 +575,9 @@
       "display_en": "Display achievements",
       "scriptName": "ShowAchievements",
       "isAsync": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "request-player-details",
@@ -513,7 +589,9 @@
       "display_en": "Request player details",
       "scriptName": "RequestPlayerDetails",
       "isAsync": true,
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "sign-in",
@@ -524,7 +602,9 @@
       "display_zh": "登录",
       "display_en": "Sign in",
       "scriptName": "SignIn",
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "sign-out",
@@ -535,7 +615,9 @@
       "display_zh": "退出登录",
       "display_en": "Sign out",
       "scriptName": "SignOut",
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "submit-score",
@@ -573,7 +655,9 @@
           "desc_zh": "用于后台备注此分数的额外信息，与分数一起提交，最多支持 64 个字符。",
           "desc_en": "Up to 64 extra characters to submit along with this score."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "request-hi-scores",
@@ -684,7 +768,9 @@
           "desc_en": "Ensure that the results are up to date, and not from the cache.",
           "initialValue": "false"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "show-leaderboard",
@@ -706,7 +792,9 @@
           "desc_zh": "要显示的排行榜ID",
           "desc_en": "Leaderboard ID to display."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "show-leaderboards",
@@ -718,7 +806,9 @@
       "display_en": "Display leaderboards",
       "scriptName": "ShowLeaderboards",
       "isAsync": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     }
   ],
   "expressions": [
@@ -730,7 +820,9 @@
       "description_en": "The number of returned achievements in the list.",
       "expressionName": "AchievementsCount",
       "returnType": "number",
-      "category": "achievements"
+      "category": "achievements",
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementidat",
@@ -750,7 +842,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementstepsat",
@@ -770,7 +864,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementnameat",
@@ -790,7 +886,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementdescriptionat",
@@ -810,7 +908,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementtypeat",
@@ -830,7 +930,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementtotalstepsat",
@@ -850,7 +952,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementrevealediconurlat",
@@ -870,7 +974,9 @@
           "desc_zh": "成就在列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "achievementunlockediconurlat",
@@ -890,7 +996,9 @@
           "desc_zh": "成就位于列表的索引，从 0 开始计数。",
           "desc_en": "Achievement index"
         }
-      ]
+      ],
+      "category_zh": "成就",
+      "category_en": "Achievements"
     },
     {
       "id": "errormessage",
@@ -900,7 +1008,9 @@
       "description_en": "In 'On error', return the error message if available.",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "google-play-game-services"
+      "category": "google-play-game-services",
+      "category_zh": "Google Play 游戏服务",
+      "category_en": "Google Play Game Services"
     },
     {
       "id": "hiscoretotalcount",
@@ -910,7 +1020,9 @@
       "description_en": "The total number of scores in the leaderboard.",
       "expressionName": "HiScoreTotalCount",
       "returnType": "number",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoremybest",
@@ -920,7 +1032,9 @@
       "description_en": "The current player's best score on the returned leaderboard.",
       "expressionName": "HiScoreMyBest",
       "returnType": "number",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoremybesttag",
@@ -930,7 +1044,9 @@
       "description_en": "The tag for the current player's best score.",
       "expressionName": "HiScoreMyBestTag",
       "returnType": "string",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscorecount",
@@ -940,7 +1056,9 @@
       "description_en": "The number of scores returned for the current page.",
       "expressionName": "HiScoreCount",
       "returnType": "number",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscorenameat",
@@ -960,7 +1078,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscorerankat",
@@ -980,7 +1100,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoreat",
@@ -1000,7 +1122,9 @@
           "desc_zh": "分数位于列表的索引位置，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoretagat",
@@ -1020,7 +1144,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoreformattedat",
@@ -1040,7 +1166,9 @@
           "desc_zh": "分数位于列表的索引位置，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoreformattedrankat",
@@ -1060,7 +1188,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoremyformattedbest",
@@ -1070,7 +1200,9 @@
       "description_en": "The formatted version of the current player's best score.",
       "expressionName": "HiScoreMyFormattedBest",
       "returnType": "string",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoremybestrank",
@@ -1080,7 +1212,9 @@
       "description_en": "The rank of the current player's best score.",
       "expressionName": "HiScoreMyBestRank",
       "returnType": "number",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "hiscoremybestformattedrank",
@@ -1090,7 +1224,9 @@
       "description_en": "The formatted rank (e.g. \"1st\") of the current player's best score.",
       "expressionName": "HiScoreMyBestFormattedRank",
       "returnType": "string",
-      "category": "hi-scores"
+      "category": "hi-scores",
+      "category_zh": "最高得分",
+      "category_en": "Hi-scores"
     },
     {
       "id": "myid",
@@ -1100,7 +1236,9 @@
       "description_en": "The ID of the signed in player.",
       "expressionName": "MyID",
       "returnType": "string",
-      "category": "player-details"
+      "category": "player-details",
+      "category_zh": "玩家详情",
+      "category_en": "Player details"
     },
     {
       "id": "mydisplayname",
@@ -1110,7 +1248,9 @@
       "description_en": "The display name of the signed in player.",
       "expressionName": "MyDisplayName",
       "returnType": "string",
-      "category": "player-details"
+      "category": "player-details",
+      "category_zh": "玩家详情",
+      "category_en": "Player details"
     },
     {
       "id": "myavatarurl",
@@ -1120,7 +1260,9 @@
       "description_en": "The URL to the avatar image of the signed in player.",
       "expressionName": "MyAvatarUrl",
       "returnType": "string",
-      "category": "player-details"
+      "category": "player-details",
+      "category_zh": "玩家详情",
+      "category_en": "Player details"
     },
     {
       "id": "mygivenname",
@@ -1130,7 +1272,9 @@
       "description_en": "The given name of the signed in player.",
       "expressionName": "MyGivenName",
       "returnType": "string",
-      "category": "player-details"
+      "category": "player-details",
+      "category_zh": "玩家详情",
+      "category_en": "Player details"
     },
     {
       "id": "myfamilyname",
@@ -1140,7 +1284,9 @@
       "description_en": "The family name of the signed in player.",
       "expressionName": "MyFamilyName",
       "returnType": "string",
-      "category": "player-details"
+      "category": "player-details",
+      "category_zh": "玩家详情",
+      "category_en": "Player details"
     }
   ],
   "properties": [

@@ -13,6 +13,28 @@
     "change",
     "format"
   ],
+  "aceCategories": {
+    "convert": {
+      "zh": "转换",
+      "en": "Convert"
+    },
+    "compare": {
+      "zh": "比较",
+      "en": "Compare"
+    },
+    "get": {
+      "zh": "读取",
+      "en": "Get"
+    },
+    "change": {
+      "zh": "更换",
+      "en": "Change"
+    },
+    "format": {
+      "zh": "格式化",
+      "en": "Format"
+    }
+  },
   "conditions": [
     {
       "id": "compare-timestamps",
@@ -49,7 +71,9 @@
           "desc_zh": "要进行比较的第二个时间戳。",
           "desc_en": "The second time stamp to compare."
         }
-      ]
+      ],
+      "category_zh": "比较",
+      "category_en": "Compare"
     },
     {
       "id": "compare-date-strings",
@@ -86,7 +110,9 @@
           "desc_zh": "要进行比较的第二个长日期。",
           "desc_en": "The second date string to compare."
         }
-      ]
+      ],
+      "category_zh": "比较",
+      "category_en": "Compare"
     },
     {
       "id": "compare-timestamp-parts",
@@ -176,7 +202,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "比较",
+      "category_en": "Compare"
     },
     {
       "id": "compare-date-string-parts",
@@ -289,7 +317,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "比较",
+      "category_en": "Compare"
     }
   ],
   "actions": [],
@@ -312,7 +342,9 @@
           "desc_zh": "要转换为长日期的时间戳",
           "desc_en": "The time stamp to convert to a string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toDateString",
@@ -332,7 +364,9 @@
           "desc_zh": "要转换为长日期的时间戳",
           "desc_en": "The time stamp to convert to a date string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTimeString",
@@ -352,7 +386,9 @@
           "desc_zh": "要转换为长时间的时间戳",
           "desc_en": "The time stamp to convert to a time string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toLocaleString",
@@ -372,7 +408,9 @@
           "desc_zh": "要转换为本地长日期的时间戳。",
           "desc_en": "The time stamp to convert to a localized string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toLocaleDateString",
@@ -392,7 +430,9 @@
           "desc_zh": "需要转换为本地长日期的时间戳",
           "desc_en": "The time stamp to convert to a localized date string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toLocaleTimeString",
@@ -412,7 +452,9 @@
           "desc_zh": "要转换为本地长时间的时间戳",
           "desc_en": "The time stamp to convert to a localized time string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toUTCString",
@@ -432,7 +474,9 @@
           "desc_zh": "要转换为字符串的时间戳",
           "desc_en": "The time stamp to convert to a string"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "parse",
@@ -452,7 +496,9 @@
           "desc_zh": "输入日期的字符串，将其转换成时间戳。如：\"2017-04-12 12:00:00",
           "desc_en": "The date string to convert to a time stamp"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTimerHours",
@@ -472,7 +518,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTimerMinutes",
@@ -492,7 +540,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTimerSeconds",
@@ -512,7 +562,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTimerMilliseconds",
@@ -532,7 +584,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTotalHours",
@@ -552,7 +606,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTotalMinutes",
@@ -572,7 +628,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "toTotalSeconds",
@@ -592,7 +650,9 @@
           "desc_zh": "要转换的毫秒",
           "desc_en": "The milliseconds to convert"
         }
-      ]
+      ],
+      "category_zh": "转换",
+      "category_en": "Convert"
     },
     {
       "id": "now",
@@ -602,7 +662,9 @@
       "description_en": "Get a time stamp for the current time.",
       "expressionName": "Now",
       "returnType": "number",
-      "category": "get"
+      "category": "get",
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "export-timestamp",
@@ -612,7 +674,9 @@
       "description_en": "Get the time stamp for when the project was exported from the editor.",
       "expressionName": "ExportTimestamp",
       "returnType": "number",
-      "category": "get"
+      "category": "get",
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "get",
@@ -680,7 +744,9 @@
           "desc_zh": "新的时间戳的毫秒(0-999)",
           "desc_en": "The milliseconds of the new time stamp (0 - 999)"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "timezoneOffset",
@@ -690,7 +756,9 @@
       "description_en": "The offset, in minutes, from the local host to universal time.",
       "expressionName": "TimezoneOffset",
       "returnType": "number",
-      "category": "get"
+      "category": "get",
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getYear",
@@ -710,7 +778,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCYear",
@@ -730,7 +800,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getMonth",
@@ -750,7 +822,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCMonth",
@@ -770,7 +844,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getDate",
@@ -790,7 +866,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCDate",
@@ -810,7 +888,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getDay",
@@ -830,7 +910,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCDay",
@@ -850,7 +932,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getHours",
@@ -870,7 +954,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCHours",
@@ -890,7 +976,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getMinutes",
@@ -910,7 +998,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCMinutes",
@@ -930,7 +1020,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getSeconds",
@@ -950,7 +1042,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCSeconds",
@@ -970,7 +1064,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getUTCMilliseconds",
@@ -990,7 +1086,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "getMilliseconds",
@@ -1010,7 +1108,9 @@
           "desc_zh": "要提取信息的时间戳",
           "desc_en": "The time stamp to extract information from"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "difference",
@@ -1038,7 +1138,9 @@
           "desc_zh": "第二个时间戳",
           "desc_en": "The second time stamp"
         }
-      ]
+      ],
+      "category_zh": "读取",
+      "category_en": "Get"
     },
     {
       "id": "changeYear",
@@ -1066,7 +1168,9 @@
           "desc_zh": "新的年份",
           "desc_en": "The new year"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCYear",
@@ -1094,7 +1198,9 @@
           "desc_zh": "新的年份",
           "desc_en": "The new year"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeMonth",
@@ -1122,7 +1228,9 @@
           "desc_zh": "新的月份",
           "desc_en": "The new month"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCMonth",
@@ -1150,7 +1258,9 @@
           "desc_zh": "新的月份",
           "desc_en": "The new month"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeDate",
@@ -1178,7 +1288,9 @@
           "desc_zh": "新的日期",
           "desc_en": "The new date"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCDate",
@@ -1206,7 +1318,9 @@
           "desc_zh": "新的日期",
           "desc_en": "The new date"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeDay",
@@ -1234,7 +1348,9 @@
           "desc_zh": "新的星期",
           "desc_en": "The new day"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCDay",
@@ -1262,7 +1378,9 @@
           "desc_zh": "新的星期",
           "desc_en": "The new day"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeHours",
@@ -1290,7 +1408,9 @@
           "desc_zh": "新的小时",
           "desc_en": "The new hours"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCHours",
@@ -1318,7 +1438,9 @@
           "desc_zh": "新的小时",
           "desc_en": "The new hours"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeMinutes",
@@ -1346,7 +1468,9 @@
           "desc_zh": "新的分钟",
           "desc_en": "The new minutes"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCMinutes",
@@ -1374,7 +1498,9 @@
           "desc_zh": "新的分钟",
           "desc_en": "The new minutes"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeSeconds",
@@ -1402,7 +1528,9 @@
           "desc_zh": "新的秒数",
           "desc_en": "The new seconds"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCSeconds",
@@ -1430,7 +1558,9 @@
           "desc_zh": "新的秒数",
           "desc_en": "The new seconds"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeMilliseconds",
@@ -1458,7 +1588,9 @@
           "desc_zh": "新的毫秒",
           "desc_en": "The new milliseconds"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "changeUTCMilliseconds",
@@ -1486,7 +1618,9 @@
           "desc_zh": "新的毫秒",
           "desc_en": "The new milliseconds"
         }
-      ]
+      ],
+      "category_zh": "更换",
+      "category_en": "Change"
     },
     {
       "id": "format-date-with-styles",
@@ -1538,7 +1672,9 @@
           "desc_zh": "可选的小时制格式，可以是 '12' 或 '24' 。空字符串为用户设备默认的格式。",
           "desc_en": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
         }
-      ]
+      ],
+      "category_zh": "格式化",
+      "category_en": "Format"
     },
     {
       "id": "format-date-with-components",
@@ -1630,7 +1766,9 @@
           "desc_zh": "可选的小时格式，可以是 '12' 或 '24'。空字符串为用户设备默认的格式。",
           "desc_en": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
         }
-      ]
+      ],
+      "category_zh": "格式化",
+      "category_en": "Format"
     }
   ]
 }

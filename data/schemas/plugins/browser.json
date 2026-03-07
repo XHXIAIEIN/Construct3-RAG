@@ -22,6 +22,64 @@
     "pwa",
     "desktop-exports-only"
   ],
+  "aceCategories": {
+    "battery": {
+      "zh": "电池",
+      "en": "Battery"
+    },
+    "browser": {
+      "zh": "浏览器",
+      "en": "Browser"
+    },
+    "connection": {
+      "zh": "连接",
+      "en": "Connection"
+    },
+    "console": {
+      "zh": "控制台",
+      "en": "Console"
+    },
+    "device": {
+      "zh": "设备",
+      "en": "Device"
+    },
+    "display": {
+      "zh": "显示",
+      "en": "Display"
+    },
+    "document": {
+      "zh": "文档",
+      "en": "Document"
+    },
+    "mobile": {
+      "zh": "移动端",
+      "en": "Mobile"
+    },
+    "navigation": {
+      "zh": "导航",
+      "en": "Navigation"
+    },
+    "offline": {
+      "zh": "离线",
+      "en": "Offline"
+    },
+    "page": {
+      "zh": "页面",
+      "en": "Page"
+    },
+    "window": {
+      "zh": "窗口",
+      "en": "Window"
+    },
+    "pwa": {
+      "zh": "渐进式应用 (PWA)",
+      "en": "Progressive Web Apps (PWA)"
+    },
+    "desktop-exports-only": {
+      "zh": "窗口管理 (仅桌面端导出)",
+      "en": "Desktop exports only"
+    }
+  },
   "conditions": [
     {
       "id": "is-charging",
@@ -31,7 +89,9 @@
       "description_en": "",
       "scriptName": "IsCharging",
       "isDeprecated": true,
-      "category": "battery"
+      "category": "battery",
+      "category_zh": "电池",
+      "category_en": "Battery"
     },
     {
       "id": "cookies-enabled",
@@ -42,7 +102,9 @@
       "display_zh": "已启用 Cookie",
       "display_en": "Cookies are enabled",
       "scriptName": "CookiesEnabled",
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "is-online",
@@ -53,7 +115,9 @@
       "display_zh": "网络已连接",
       "display_en": "Is online",
       "scriptName": "IsOnline",
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "java-supported",
@@ -63,7 +127,9 @@
       "description_en": "",
       "scriptName": "HasJava",
       "isDeprecated": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "on-went-online",
@@ -76,7 +142,9 @@
       "scriptName": "OnOnline",
       "isTrigger": true,
       "canDebug": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "on-went-offline",
@@ -89,7 +157,9 @@
       "scriptName": "OnOffline",
       "isTrigger": true,
       "canDebug": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "is-metered",
@@ -99,7 +169,9 @@
       "description_en": "",
       "scriptName": "IsMetered",
       "isDeprecated": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "on-menu-button",
@@ -110,7 +182,9 @@
       "scriptName": "OnMenuButton",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "mobile"
+      "category": "mobile",
+      "category_zh": "移动端",
+      "category_en": "Mobile"
     },
     {
       "id": "on-search-button",
@@ -121,7 +195,9 @@
       "scriptName": "OnSearchButton",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "mobile"
+      "category": "mobile",
+      "category_zh": "移动端",
+      "category_en": "Mobile"
     },
     {
       "id": "is-portraitlandscape",
@@ -156,7 +232,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "移动端",
+      "category_en": "Mobile"
     },
     {
       "id": "on-back-button",
@@ -169,7 +247,9 @@
       "scriptName": "OnBackButton",
       "isTrigger": true,
       "canDebug": true,
-      "category": "mobile"
+      "category": "mobile",
+      "category_zh": "移动端",
+      "category_en": "Mobile"
     },
     {
       "id": "on-hash-change",
@@ -181,7 +261,9 @@
       "display_en": "On hash change",
       "scriptName": "OnHashChange",
       "isTrigger": true,
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "warn-on-close-enabled",
@@ -192,7 +274,9 @@
       "display_zh": "已启用窗口关闭警告",
       "display_en": "Warn on close is enabled",
       "scriptName": "IsWarnOnCloseEnabled",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "is-downloading-update",
@@ -202,7 +286,9 @@
       "description_en": "",
       "scriptName": "IsDownloadingUpdate",
       "isDeprecated": true,
-      "category": "offline"
+      "category": "offline",
+      "category_zh": "离线",
+      "category_en": "Offline"
     },
     {
       "id": "on-update-ready",
@@ -213,7 +299,9 @@
       "scriptName": "OnUpdateReady",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "offline"
+      "category": "offline",
+      "category_zh": "离线",
+      "category_en": "Offline"
     },
     {
       "id": "on-update-ready-sw",
@@ -225,7 +313,9 @@
       "display_en": "On update ready",
       "scriptName": "OnUpdateReady",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "category_zh": "离线",
+      "category_en": "Offline"
     },
     {
       "id": "on-update-found-sw",
@@ -237,7 +327,9 @@
       "display_en": "On update found",
       "scriptName": "OnUpdateFound",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "category_zh": "离线",
+      "category_en": "Offline"
     },
     {
       "id": "on-offline-ready-sw",
@@ -249,7 +341,9 @@
       "display_en": "On offline ready",
       "scriptName": "OnOfflineReady",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "category_zh": "离线",
+      "category_en": "Offline"
     },
     {
       "id": "page-is-visible",
@@ -259,7 +353,9 @@
       "description_en": "",
       "scriptName": "PageVisible",
       "isDeprecated": true,
-      "category": "page"
+      "category": "page",
+      "category_zh": "页面",
+      "category_en": "Page"
     },
     {
       "id": "on-resumed",
@@ -270,7 +366,9 @@
       "scriptName": "OnPageVisible",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "page"
+      "category": "page",
+      "category_zh": "页面",
+      "category_en": "Page"
     },
     {
       "id": "on-suspended",
@@ -281,7 +379,9 @@
       "scriptName": "OnPageHidden",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "page"
+      "category": "page",
+      "category_zh": "页面",
+      "category_en": "Page"
     },
     {
       "id": "supports-requesting-fullscreen",
@@ -291,7 +391,9 @@
       "description_en": "",
       "scriptName": "SupportsFullscreen",
       "isDeprecated": true,
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "is-fullscreen",
@@ -302,7 +404,9 @@
       "display_zh": "已进入全屏",
       "display_en": "Is fullscreen",
       "scriptName": "IsFullscreen",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "on-resized",
@@ -315,7 +419,9 @@
       "scriptName": "OnResize",
       "isTrigger": true,
       "canDebug": true,
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "on-fullscreen-error",
@@ -328,7 +434,9 @@
       "scriptName": "OnFullscreenError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "on-window-focus",
@@ -341,7 +449,9 @@
       "scriptName": "OnWindowFocus",
       "isTrigger": true,
       "canDebug": true,
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "on-window-blur",
@@ -354,7 +464,9 @@
       "scriptName": "OnWindowBlur",
       "isTrigger": true,
       "canDebug": true,
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "window-has-focus",
@@ -365,7 +477,9 @@
       "display_zh": "窗口已聚焦",
       "display_en": "Window has focus",
       "scriptName": "WindowHasFocus",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "on-install-available",
@@ -377,7 +491,9 @@
       "display_en": "On install available",
       "scriptName": "OnInstallAvailable",
       "isTrigger": true,
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "is-install-available",
@@ -388,7 +504,9 @@
       "display_zh": "可安装",
       "display_en": "Is install available",
       "scriptName": "IsInstallAvailable",
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "on-install-result",
@@ -434,7 +552,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "on-app-installed",
@@ -446,7 +566,9 @@
       "display_en": "On app installed",
       "scriptName": "OnAppInstalled",
       "isTrigger": true,
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "compare-display-mode",
@@ -491,7 +613,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "on-window-maximized",
@@ -504,7 +628,9 @@
       "scriptName": "OnWindowMaximized",
       "isTrigger": true,
       "canDebug": true,
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "category_zh": "窗口管理 (仅桌面端导出)",
+      "category_en": "Desktop exports only"
     },
     {
       "id": "on-window-minimized",
@@ -517,7 +643,9 @@
       "scriptName": "OnWindowMinimized",
       "isTrigger": true,
       "canDebug": true,
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "category_zh": "窗口管理 (仅桌面端导出)",
+      "category_en": "Desktop exports only"
     }
   ],
   "actions": [
@@ -538,7 +666,9 @@
           "name_en": "",
           "initialValue": "\"myFunction();\""
         }
-      ]
+      ],
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "log",
@@ -587,7 +717,9 @@
           "desc_en": "Enter the message text to log to the browser console.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "控制台",
+      "category_en": "Console"
     },
     {
       "id": "start-group",
@@ -608,7 +740,9 @@
           "desc_zh": "输入分组名称，用于在控制台组织输出信息。",
           "desc_en": "Enter the group name to add to the browser console."
         }
-      ]
+      ],
+      "category_zh": "控制台",
+      "category_en": "Console"
     },
     {
       "id": "end-group",
@@ -619,7 +753,9 @@
       "display_zh": "结束日志分组",
       "display_en": "End console group",
       "scriptName": "ConsoleGroupEnd",
-      "category": "console"
+      "category": "console",
+      "category_zh": "控制台",
+      "category_en": "Console"
     },
     {
       "id": "vibrate",
@@ -641,7 +777,9 @@
           "desc_en": "A comma-separated string with a list of times in milliseconds, describing a pattern of vibrations and pauses.",
           "initialValue": "\"200,100,200\""
         }
-      ]
+      ],
+      "category_zh": "设备",
+      "category_en": "Device"
     },
     {
       "id": "load-stylesheet",
@@ -662,7 +800,9 @@
           "desc_zh": "要加载CSS样式表的文件链接，也可以指定项目内的文件，如 \"mystyle.css\"。若位于文件夹中，则填写文件夹路径，如 \"folder/mystyle.css",
           "desc_en": "URL to load CSS from. This can be a project file URL, e.g. \"mystyle.css\"."
         }
-      ]
+      ],
+      "category_zh": "文档",
+      "category_en": "Document"
     },
     {
       "id": "set-document-css-style",
@@ -725,7 +865,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文档",
+      "category_en": "Document"
     },
     {
       "id": "get-document-css-style",
@@ -764,7 +906,9 @@
           "desc_zh": "用于后续检索此属性值的标签。",
           "desc_en": "A tag to later retrieve this value with."
         }
-      ]
+      ],
+      "category_zh": "文档",
+      "category_en": "Document"
     },
     {
       "id": "go-back",
@@ -775,7 +919,9 @@
       "display_zh": "返回",
       "display_en": "Go back",
       "scriptName": "GoBack",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "go-forward",
@@ -786,7 +932,9 @@
       "display_zh": "前进",
       "display_en": "Go forward",
       "scriptName": "GoForward",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "go-home",
@@ -796,7 +944,9 @@
       "description_en": "",
       "scriptName": "GoHome",
       "isDeprecated": true,
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "go-to-url",
@@ -845,7 +995,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "open-url-in-new-window",
@@ -876,7 +1028,9 @@
           "desc_en": "A string to identify this window.  You can reuse an existing window by reusing its tag.",
           "initialValue": "\"NewWindow\""
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "reload",
@@ -887,7 +1041,9 @@
       "display_zh": "重新加载",
       "display_en": "Reload",
       "scriptName": "Reload",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "invoke-download",
@@ -916,7 +1072,9 @@
           "desc_zh": "即将下载的文件的文件名。",
           "desc_en": "The filename to give the downloaded file."
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "invoke-download-of-string",
@@ -955,7 +1113,9 @@
           "desc_en": "The filename to give the downloaded file.",
           "initialValue": "\"mydata.json\""
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "set-hash",
@@ -976,7 +1136,9 @@
           "desc_zh": "设置网页地址的 '#' 参数。用于页面内的锚点标记。",
           "desc_en": "New string to set after the hash (#) symbol in the URL."
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "set-warn-on-close",
@@ -997,7 +1159,9 @@
           "desc_zh": "关闭窗口时，是否启用关闭确认警告。",
           "desc_en": "Whether to enable a prompt to confirm closing."
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "alert",
@@ -1019,7 +1183,9 @@
           "desc_en": "Enter the message to display in the alert.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "close",
@@ -1030,7 +1196,9 @@
       "display_zh": "关闭",
       "display_en": "Close",
       "scriptName": "Close",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "focus",
@@ -1041,7 +1209,9 @@
       "display_zh": "获得焦点",
       "display_en": "Focus",
       "scriptName": "Focus",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "blur",
@@ -1052,7 +1222,9 @@
       "display_zh": "取消焦点",
       "display_en": "Blur",
       "scriptName": "Blur",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "request-fullscreen",
@@ -1146,7 +1318,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "cancel-fullscreen",
@@ -1157,7 +1331,9 @@
       "display_zh": "取消全屏",
       "display_en": "Cancel fullscreen",
       "scriptName": "CancelFullScreen",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "lock-orientation",
@@ -1212,7 +1388,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "unlock-orientation",
@@ -1223,7 +1401,9 @@
       "display_zh": "解锁方向",
       "display_en": "Unlock orientation",
       "scriptName": "UnlockOrientation",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-window-size",
@@ -1252,7 +1432,9 @@
           "desc_zh": "要设置的窗口高度。",
           "desc_en": "The window height to set."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-window-position",
@@ -1281,7 +1463,9 @@
           "desc_zh": "要设置的窗口 Y 位置。",
           "desc_en": "The window Y position to set."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "request-install",
@@ -1293,7 +1477,9 @@
       "display_en": "Request install",
       "scriptName": "RequestInstall",
       "isAsync": true,
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "maximize-window",
@@ -1304,7 +1490,9 @@
       "display_zh": "最大化窗口",
       "display_en": "Maximize window",
       "scriptName": "MaximizeWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "category_zh": "窗口管理 (仅桌面端导出)",
+      "category_en": "Desktop exports only"
     },
     {
       "id": "minimize-window",
@@ -1315,7 +1503,9 @@
       "display_zh": "最小化窗口",
       "display_en": "Minimize window",
       "scriptName": "MinimizeWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "category_zh": "窗口管理 (仅桌面端导出)",
+      "category_en": "Desktop exports only"
     },
     {
       "id": "restore-window",
@@ -1326,7 +1516,9 @@
       "display_zh": "恢复窗口",
       "display_en": "Restore window",
       "scriptName": "RestoreWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "category_zh": "窗口管理 (仅桌面端导出)",
+      "category_en": "Desktop exports only"
     }
   ],
   "expressions": [
@@ -1339,7 +1531,9 @@
       "expressionName": "BatteryLevel",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "battery"
+      "category": "battery",
+      "category_zh": "电池",
+      "category_en": "Battery"
     },
     {
       "id": "batterytimeleft",
@@ -1350,7 +1544,9 @@
       "expressionName": "BatteryTimeLeft",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "battery"
+      "category": "battery",
+      "category_zh": "电池",
+      "category_en": "Battery"
     },
     {
       "id": "name",
@@ -1361,7 +1557,9 @@
       "expressionName": "Name",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "version",
@@ -1372,7 +1570,9 @@
       "expressionName": "Version",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "language",
@@ -1382,7 +1582,9 @@
       "description_en": "Get the browser language.",
       "expressionName": "Language",
       "returnType": "string",
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "platform",
@@ -1392,7 +1594,9 @@
       "description_en": "Get the browser platform (e.g. Windows, Mac).",
       "expressionName": "Platform",
       "returnType": "string",
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "product",
@@ -1403,7 +1607,9 @@
       "expressionName": "Product",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "vendor",
@@ -1414,7 +1620,9 @@
       "expressionName": "Vendor",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "useragent",
@@ -1424,7 +1632,9 @@
       "description_en": "Get the full browser user agent string.",
       "expressionName": "UserAgent",
       "returnType": "string",
-      "category": "browser"
+      "category": "browser",
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "execjs",
@@ -1443,7 +1653,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "浏览器",
+      "category_en": "Browser"
     },
     {
       "id": "bandwidth",
@@ -1454,7 +1666,9 @@
       "expressionName": "Bandwidth",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "connectiontype",
@@ -1465,7 +1679,9 @@
       "expressionName": "ConnectionType",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "connection"
+      "category": "connection",
+      "category_zh": "连接",
+      "category_en": "Connection"
     },
     {
       "id": "screenwidth",
@@ -1476,7 +1692,9 @@
       "expressionName": "ScreenWidth",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "screenheight",
@@ -1487,7 +1705,9 @@
       "expressionName": "ScreenHeight",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "devicepixelratio",
@@ -1498,7 +1718,9 @@
       "expressionName": "DevicePixelRatio",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "windowinnerwidth",
@@ -1509,7 +1731,9 @@
       "expressionName": "WindowInnerWidth",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "windowinnerheight",
@@ -1520,7 +1744,9 @@
       "expressionName": "WindowInnerHeight",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "windowouterwidth",
@@ -1531,7 +1757,9 @@
       "expressionName": "WindowOuterWidth",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "windowouterheight",
@@ -1542,7 +1770,9 @@
       "expressionName": "WindowOuterHeight",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "display"
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
     },
     {
       "id": "title",
@@ -1552,7 +1782,9 @@
       "description_en": "Get the page title.",
       "expressionName": "Title",
       "returnType": "string",
-      "category": "document"
+      "category": "document",
+      "category_zh": "文档",
+      "category_en": "Document"
     },
     {
       "id": "css-style-value",
@@ -1572,7 +1804,9 @@
           "desc_zh": "用于获取检索结果的标签。",
           "desc_en": "The tag to retrieve the value for."
         }
-      ]
+      ],
+      "category_zh": "文档",
+      "category_en": "Document"
     },
     {
       "id": "url",
@@ -1582,7 +1816,9 @@
       "description_en": "Get the current browser URL.",
       "expressionName": "URL",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "protocol",
@@ -1592,7 +1828,9 @@
       "description_en": "Get the current protocol, e.g. http:.",
       "expressionName": "Protocol",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "domain",
@@ -1602,7 +1840,9 @@
       "description_en": "Get the current domain, e.g. construct.net.",
       "expressionName": "Domain",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "port",
@@ -1612,7 +1852,9 @@
       "description_en": "Get the port specified in the current URL if any, e.g. 443.",
       "expressionName": "Port",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "pathname",
@@ -1622,7 +1864,9 @@
       "description_en": "Get the path relative to domain.",
       "expressionName": "PathName",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "hash",
@@ -1632,7 +1876,9 @@
       "description_en": "Get the hash from the URL, e.g. #myAnchor.",
       "expressionName": "Hash",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "referrer",
@@ -1642,7 +1888,9 @@
       "description_en": "Get the referrer (the page that linked to this page).",
       "expressionName": "Referrer",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "querystring",
@@ -1652,7 +1900,9 @@
       "description_en": "Get the full query string, including the ?.",
       "expressionName": "QueryString",
       "returnType": "string",
-      "category": "navigation"
+      "category": "navigation",
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "queryparam",
@@ -1672,7 +1922,9 @@
           "desc_zh": "要查找的参数的名称。",
           "desc_en": "Query string parameter name."
         }
-      ]
+      ],
+      "category_zh": "导航",
+      "category_en": "Navigation"
     },
     {
       "id": "display-mode",
@@ -1682,7 +1934,9 @@
       "description_en": "A string of the current app display mode, e.g. \"browser\" or \"standalone\".",
       "expressionName": "DisplayMode",
       "returnType": "string",
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     },
     {
       "id": "install-result",
@@ -1692,7 +1946,9 @@
       "description_en": "In 'On install result', a string of the install result, e.g. \"accepted\" or \"dismissed\".",
       "expressionName": "InstallResult",
       "returnType": "string",
-      "category": "pwa"
+      "category": "pwa",
+      "category_zh": "渐进式应用 (PWA)",
+      "category_en": "Progressive Web Apps (PWA)"
     }
   ]
 }

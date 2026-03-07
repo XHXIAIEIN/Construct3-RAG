@@ -7,6 +7,7 @@
   "description_en": "Make instances of this object remember their state when returning to the layout, rather than resetting to the initial objects.",
   "path": "attributes/persist",
   "categories": [],
+  "aceCategories": {},
   "conditions": [],
   "actions": [],
   "expressions": []

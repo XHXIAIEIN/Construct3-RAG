@@ -7,6 +7,7 @@
   "description_en": "Change an object's opacity over time.  Useful for making objects gradually disappear.",
   "path": "general/fade",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "on-fade-out-finished",

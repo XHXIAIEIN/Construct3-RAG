@@ -10,6 +10,16 @@
     "items",
     "list"
   ],
+  "aceCategories": {
+    "items": {
+      "zh": "列表项",
+      "en": "Items"
+    },
+    "list": {
+      "zh": "列表",
+      "en": "List"
+    }
+  },
   "conditions": [
     {
       "id": "compare-selection",
@@ -38,7 +48,9 @@
           "desc_zh": "要比较的所选项的索引。",
           "desc_en": "The index of the selected item to compare to."
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "on-selection-changed",
@@ -51,7 +63,9 @@
       "scriptName": "OnSelectionChanged",
       "isTrigger": true,
       "canDebug": true,
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "on-clicked",
@@ -64,7 +78,9 @@
       "scriptName": "OnClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "on-double-clicked",
@@ -77,7 +93,9 @@
       "scriptName": "OnDoubleClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "compare-selected-item-text",
@@ -120,7 +138,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "compare-item-text-at",
@@ -171,7 +191,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     }
   ],
   "actions": [
@@ -194,7 +216,9 @@
           "desc_zh": "要选择的选项在列表的索引位置，从 0 开始计数。",
           "desc_en": "The zero-based index of the item to select."
         }
-      ]
+      ],
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "add-item",
@@ -215,7 +239,9 @@
           "desc_zh": "要添加的项目文本。",
           "desc_en": "The item text to add."
         }
-      ]
+      ],
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "add-item-at",
@@ -244,7 +270,9 @@
           "desc_zh": "要添加的待选项的文本。",
           "desc_en": "The item text to add."
         }
-      ]
+      ],
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "remove",
@@ -265,7 +293,9 @@
           "desc_zh": "要删除的项的从零开始的索引。",
           "desc_en": "The zero-based index of the item to remove."
         }
-      ]
+      ],
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "set-item-text",
@@ -294,7 +324,9 @@
           "desc_zh": "要设置的选项文本。",
           "desc_en": "The item text to set."
         }
-      ]
+      ],
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "clear",
@@ -305,7 +337,9 @@
       "display_zh": "清空列表",
       "display_en": "Clear all items",
       "scriptName": "Clear",
-      "category": "items"
+      "category": "items",
+      "category_zh": "列表项",
+      "category_en": "Items"
     },
     {
       "id": "set-tooltip",
@@ -326,7 +360,9 @@
           "desc_zh": "要弹出的工具提示信息。",
           "desc_en": "The tooltip to set on the list."
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     }
   ],
   "expressions": [
@@ -338,7 +374,9 @@
       "description_en": "The number of items in the list.",
       "expressionName": "ItemCount",
       "returnType": "number",
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "selectedindex",
@@ -348,7 +386,9 @@
       "description_en": "The zero-based index of the currently selected item.",
       "expressionName": "SelectedIndex",
       "returnType": "number",
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "selectedtext",
@@ -358,7 +398,9 @@
       "description_en": "The text of the currently selected item.",
       "expressionName": "SelectedText",
       "returnType": "string",
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "selectedcount",
@@ -368,7 +410,9 @@
       "description_en": "In a multi-select list box, the number of currently selected items.",
       "expressionName": "SelectedCount",
       "returnType": "number",
-      "category": "list"
+      "category": "list",
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "selectedindexat",
@@ -388,7 +432,9 @@
           "desc_zh": "文本在已选项的索引，从 0 开始计数。",
           "desc_en": "Selected item number to get index from."
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "selectedtextat",
@@ -408,7 +454,9 @@
           "desc_zh": "文本在已选项的索引，从 0 开始计数。",
           "desc_en": "Selected item number to get text from."
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     },
     {
       "id": "itemtextat",
@@ -428,7 +476,9 @@
           "desc_zh": "文本在列表选项的索引，从 0 开始计数。",
           "desc_en": "Item number to get text from."
         }
-      ]
+      ],
+      "category_zh": "列表",
+      "category_en": "List"
     }
   ],
   "properties": [

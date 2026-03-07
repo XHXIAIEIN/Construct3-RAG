@@ -7,6 +7,7 @@
   "description_en": "Automatically destroy the object if it leaves the layout or viewport.",
   "path": "general/destroy",
   "categories": [],
+  "aceCategories": {},
   "conditions": [],
   "actions": [],
   "expressions": [],

@@ -10,6 +10,16 @@
     "document",
     "xml"
   ],
+  "aceCategories": {
+    "document": {
+      "zh": "文档",
+      "en": "Document"
+    },
+    "xml": {
+      "zh": "XML",
+      "en": "XML"
+    }
+  },
   "conditions": [
     {
       "id": "for-each-node",
@@ -30,7 +40,9 @@
           "desc_zh": "要计算的XPath表达式，返回一系列要迭代的节点",
           "desc_en": "The XPath expression to evaluate, returning a series of nodes to iterate."
         }
-      ]
+      ],
+      "category_zh": "XML",
+      "category_en": "XML"
     }
   ],
   "actions": [
@@ -54,7 +66,9 @@
           "desc_zh": "包含待加载的XML文档的字符串",
           "desc_en": "A string containing the XML document to load."
         }
-      ]
+      ],
+      "category_zh": "文档",
+      "category_en": "Document"
     }
   ],
   "expressions": [
@@ -76,7 +90,9 @@
           "desc_zh": "待解析的XPath表达式",
           "desc_en": "The XPath expression to evaluate."
         }
-      ]
+      ],
+      "category_zh": "XML",
+      "category_en": "XML"
     },
     {
       "id": "stringvalue",
@@ -96,7 +112,9 @@
           "desc_zh": "待解析的XPath表达式",
           "desc_en": "The XPath expression to evaluate."
         }
-      ]
+      ],
+      "category_zh": "XML",
+      "category_en": "XML"
     },
     {
       "id": "nodecount",
@@ -116,7 +134,9 @@
           "desc_zh": "待解析的XPath表达式",
           "desc_en": "The XPath expression to evaluate."
         }
-      ]
+      ],
+      "category_zh": "XML",
+      "category_en": "XML"
     }
   ]
 }

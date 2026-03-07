@@ -14,6 +14,32 @@
     "leaderboards",
     "ads"
   ],
+  "aceCategories": {
+    "instant-games": {
+      "zh": "Instant Games",
+      "en": "Instant Games"
+    },
+    "context": {
+      "zh": "内容",
+      "en": "Context"
+    },
+    "player": {
+      "zh": "玩家",
+      "en": "Player"
+    },
+    "analytics": {
+      "zh": "分析",
+      "en": "Analytics"
+    },
+    "leaderboards": {
+      "zh": "排行榜",
+      "en": "Leaderboards"
+    },
+    "ads": {
+      "zh": "广告",
+      "en": "Ads"
+    }
+  },
   "conditions": [
     {
       "id": "is-available",
@@ -24,7 +50,9 @@
       "display_zh": "是否可用",
       "display_en": "Is available",
       "scriptName": "IsAvailable",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-pause",
@@ -37,7 +65,9 @@
       "scriptName": "OnPause",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-error",
@@ -50,7 +80,9 @@
       "scriptName": "OnError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-shortcut-created",
@@ -63,7 +95,9 @@
       "scriptName": "OnShortcutCreated",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-shortcut-failed",
@@ -76,7 +110,9 @@
       "scriptName": "OnShortcutFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-context-changed",
@@ -89,7 +125,9 @@
       "scriptName": "OnContextChanged",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-context-change-cancelled",
@@ -102,7 +140,9 @@
       "scriptName": "OnContextChangeCancelled",
       "isTrigger": true,
       "canDebug": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "supports-feature",
@@ -132,7 +172,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "on-loaded-player-data",
@@ -145,7 +187,9 @@
       "scriptName": "OnLoadedPlayerData",
       "isTrigger": true,
       "canDebug": true,
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "on-connected-players-loaded",
@@ -158,7 +202,9 @@
       "scriptName": "OnConnectedPlayersLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "on-score-submitted",
@@ -171,7 +217,9 @@
       "scriptName": "OnScoreSubmitted",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-player-score-loaded",
@@ -184,7 +232,9 @@
       "scriptName": "OnPlayerScoreLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-leaderboard-loaded",
@@ -197,7 +247,9 @@
       "scriptName": "OnLeaderboardLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "on-load-ad-success",
@@ -234,7 +286,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     },
     {
       "id": "on-load-ad-error",
@@ -271,7 +325,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     },
     {
       "id": "on-show-ad-success",
@@ -308,7 +364,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     },
     {
       "id": "on-show-ad-error",
@@ -345,7 +403,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     }
   ],
   "actions": [
@@ -358,7 +418,9 @@
       "display_zh": "退出",
       "display_en": "Quit",
       "scriptName": "Quit",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "share",
@@ -403,7 +465,9 @@
           "desc_zh": "是否将用户切换到共享时创建的新视图。",
           "desc_en": "Whether to switch the user into the new context created on sharing."
         }
-      ]
+      ],
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "custom-update",
@@ -500,7 +564,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "create-shortcut",
@@ -512,7 +578,9 @@
       "display_en": "Create home screen shortcut",
       "scriptName": "CreateShortcut",
       "isAsync": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "subscribe-bot",
@@ -523,7 +591,9 @@
       "display_zh": "关注机器人",
       "display_en": "Subscribe to bot",
       "scriptName": "SubscribeBot",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "switch-game",
@@ -552,7 +622,9 @@
           "desc_zh": "要附加的数据字符串，如果从开关启动，将可以作为EntryPointData 最大1000字符。",
           "desc_en": "A string of data to attach, available as EntryPointData if launched from the switch. Max 1000 chars."
         }
-      ]
+      ],
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "change-context",
@@ -616,7 +688,9 @@
           "desc_en": "The maximum number of participants that a suggested context should ideally have. Use -1 to specify no limit.",
           "initialValue": "-1"
         }
-      ]
+      ],
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "set-player-data",
@@ -638,7 +712,9 @@
           "desc_en": "A string of data to save for the player. Consider using a JSON string, e.g. from the Dictionary plugin.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "load-player-data",
@@ -650,7 +726,9 @@
       "display_en": "Load player data",
       "scriptName": "LoadPlayerData",
       "isAsync": true,
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "load-connected-players",
@@ -662,7 +740,9 @@
       "display_en": "Load connected players",
       "scriptName": "LoadConnectedPlayers",
       "isAsync": true,
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "log-event",
@@ -691,7 +771,9 @@
           "desc_zh": "一个可供FB分析 的数字（可选）",
           "desc_en": "An optional number that FB Analytics can calculate a sum with."
         }
-      ]
+      ],
+      "category_zh": "分析",
+      "category_en": "Analytics"
     },
     {
       "id": "set-score",
@@ -743,7 +825,9 @@
           "desc_zh": "要设置给玩家的分数",
           "desc_en": "The score to set for this player."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "load-player-score",
@@ -787,7 +871,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "share-leaderboard-update",
@@ -815,7 +901,9 @@
             "yes"
           ]
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "load-leaderboard",
@@ -890,7 +978,9 @@
           "desc_en": "The number of leaderboard scores to request.",
           "initialValue": "10"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "load-ad",
@@ -934,7 +1024,9 @@
           "desc_zh": "要加载的广告投放ID。",
           "desc_en": "The ad placement ID to load."
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     },
     {
       "id": "show-ad",
@@ -970,7 +1062,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告",
+      "category_en": "Ads"
     }
   ],
   "expressions": [
@@ -982,7 +1076,9 @@
       "description_en": "Locale of the current player.",
       "expressionName": "Locale",
       "returnType": "string",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "platform",
@@ -992,7 +1088,9 @@
       "description_en": "A string describing the current platform the game is being played on.",
       "expressionName": "Platform",
       "returnType": "string",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "sdk-version",
@@ -1002,7 +1100,9 @@
       "description_en": "The version of the Instant Games SDK in use.",
       "expressionName": "SDKVersion",
       "returnType": "string",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "entry-point-data",
@@ -1012,7 +1112,9 @@
       "description_en": "A string of data associated with this launch of the game, e.g. from a share.",
       "expressionName": "EntryPointData",
       "returnType": "string",
-      "category": "instant-games"
+      "category": "instant-games",
+      "category_zh": "Instant Games",
+      "category_en": "Instant Games"
     },
     {
       "id": "context-id",
@@ -1022,7 +1124,9 @@
       "description_en": "A unique identifier for the current game context.",
       "expressionName": "ContextID",
       "returnType": "string",
-      "category": "context"
+      "category": "context",
+      "category_zh": "内容",
+      "category_en": "Context"
     },
     {
       "id": "context-type",
@@ -1033,7 +1137,9 @@
       "expressionName": "ContextType",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "context"
+      "category": "context",
+      "category_zh": "内容",
+      "category_en": "Context"
     },
     {
       "id": "player-name",
@@ -1043,7 +1149,9 @@
       "description_en": "The name of the current player.",
       "expressionName": "PlayerName",
       "returnType": "string",
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "player-photo",
@@ -1053,7 +1161,9 @@
       "description_en": "A URL to the player's current profile image.",
       "expressionName": "PlayerPhotoURL",
       "returnType": "string",
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "player-id",
@@ -1063,7 +1173,9 @@
       "description_en": "A unique identifier for the current player.",
       "expressionName": "PlayerID",
       "returnType": "string",
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "player-data",
@@ -1073,7 +1185,9 @@
       "description_en": "In 'On loaded player data', the string of the loaded player data.",
       "expressionName": "PlayerData",
       "returnType": "string",
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "connected-player-count",
@@ -1083,7 +1197,9 @@
       "description_en": "After 'On connected players loaded', the number of connected players.",
       "expressionName": "ConnectedPlayerCount",
       "returnType": "number",
-      "category": "player"
+      "category": "player",
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "connected-player-id-at",
@@ -1103,7 +1219,9 @@
           "desc_zh": "已连接玩家的编号",
           "desc_en": "The index of the connected player."
         }
-      ]
+      ],
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "connected-player-name-at",
@@ -1122,7 +1240,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "connected-player-photo-url-at",
@@ -1141,7 +1261,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "玩家",
+      "category_en": "Player"
     },
     {
       "id": "player-score",
@@ -1151,7 +1273,9 @@
       "description_en": "After 'On player score loaded', the player's current score.",
       "expressionName": "PlayerScore",
       "returnType": "number",
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "player-rank",
@@ -1161,7 +1285,9 @@
       "description_en": "After 'On player score loaded', the player's current rank on the leaderboard.",
       "expressionName": "PlayerRank",
       "returnType": "number",
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-result-count",
@@ -1171,7 +1297,9 @@
       "description_en": "After 'On leaderboard loaded', the number of results on the leaderboard.",
       "expressionName": "LeaderboardResultCount",
       "returnType": "number",
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-player-name-at",
@@ -1190,7 +1318,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-player-id-at",
@@ -1210,7 +1340,9 @@
           "desc_zh": "结果的索引值。",
           "desc_en": "The index of the result."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-player-photo-at",
@@ -1229,7 +1361,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-score-at",
@@ -1249,7 +1383,9 @@
           "desc_zh": "结果的索引值。",
           "desc_en": "The index of the result."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "leaderboard-rank-at",
@@ -1268,7 +1404,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     }
   ],
   "properties": [

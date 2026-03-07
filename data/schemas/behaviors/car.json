@@ -7,6 +7,7 @@
   "description_en": "Moves an object forwards with steering.",
   "path": "movements/car",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-moving",

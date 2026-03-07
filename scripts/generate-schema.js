@@ -168,6 +168,15 @@ function getPropertiesTranslation(type, pluginId) {
 }
 
 /**
+ * 获取 ACE 分类的中英文名称
+ */
+function getCategoryTranslation(type, pluginId, categoryId) {
+  const translations = parseTranslationCSV();
+  const key = `text.${type}.${pluginId.toLowerCase()}.aceCategories.${categoryId}`;
+  return translations[key] || { zh: '', en: categoryId };
+}
+
+/**
  * 获取 ACE 项的翻译
  */
 function getAceTranslation(type, pluginId, aceType, aceId) {
@@ -242,7 +251,10 @@ function processAceItem(type, pluginId, aceType, item, category) {
   if (item.isStatic) result.isStatic = true;
   if (item.highlight) result.highlight = true;
   if (item.isVariadicParameters) result.isVariadicParameters = true;
-  if (category) result.category = category;
+  if (category) {
+    result.category = category;
+    // category_zh / category_en 由调用方注入（需要 pluginId 上下文）
+  }
 
   if (item.params && item.params.length > 0) {
     result.params = item.params.map(param => {
@@ -276,28 +288,47 @@ function processAllAces(type, pluginId, pluginAces) {
   const actions = [];
   const expressions = [];
   const categories = new Set();
+  // aceCategories: categoryId → { zh, en }
+  const aceCategories = {};
 
   for (const [category, categoryData] of Object.entries(pluginAces)) {
-    if (category) categories.add(category);
+    if (category) {
+      categories.add(category);
+      if (!aceCategories[category]) {
+        const catTrans = getCategoryTranslation(type, pluginId, category);
+        aceCategories[category] = { zh: catTrans.zh, en: catTrans.en };
+      }
+    }
+    const catZh = aceCategories[category]?.zh || '';
+    const catEn = aceCategories[category]?.en || category;
 
     if (categoryData.conditions) {
       for (const item of categoryData.conditions) {
-        conditions.push(processAceItem(type, pluginId, 'conditions', item, category));
+        const ace = processAceItem(type, pluginId, 'conditions', item, category);
+        if (catZh) ace.category_zh = catZh;
+        if (catEn) ace.category_en = catEn;
+        conditions.push(ace);
       }
     }
     if (categoryData.actions) {
       for (const item of categoryData.actions) {
-        actions.push(processAceItem(type, pluginId, 'actions', item, category));
+        const ace = processAceItem(type, pluginId, 'actions', item, category);
+        if (catZh) ace.category_zh = catZh;
+        if (catEn) ace.category_en = catEn;
+        actions.push(ace);
       }
     }
     if (categoryData.expressions) {
       for (const item of categoryData.expressions) {
-        expressions.push(processAceItem(type, pluginId, 'expressions', item, category));
+        const ace = processAceItem(type, pluginId, 'expressions', item, category);
+        if (catZh) ace.category_zh = catZh;
+        if (catEn) ace.category_en = catEn;
+        expressions.push(ace);
       }
     }
   }
 
-  return { conditions, actions, expressions, categories: Array.from(categories) };
+  return { conditions, actions, expressions, categories: Array.from(categories), aceCategories };
 }
 
 // ============ Plugins ============
@@ -319,7 +350,7 @@ function generatePlugins() {
     const pluginInfo = pluginList[pluginId] || {};
     const translation = getPluginTranslation('plugins', pluginId);
     const properties = getPropertiesTranslation('plugins', pluginId);
-    const { conditions, actions, expressions, categories } = processAllAces('plugins', pluginId, pluginAces);
+    const { conditions, actions, expressions, categories, aceCategories } = processAllAces('plugins', pluginId, pluginAces);
 
     const plugin = {
       id,
@@ -330,6 +361,7 @@ function generatePlugins() {
       description_en: translation.description_en,
       path: pluginInfo.path || '',
       categories,
+      aceCategories,
       conditions,
       actions,
       expressions
@@ -391,7 +423,7 @@ function generateBehaviors() {
     const behaviorInfo = behaviorList[behaviorId] || {};
     const translation = getPluginTranslation('behaviors', behaviorId);
     const properties = getPropertiesTranslation('behaviors', behaviorId);
-    const { conditions, actions, expressions, categories } = processAllAces('behaviors', behaviorId, behaviorAces);
+    const { conditions, actions, expressions, categories, aceCategories } = processAllAces('behaviors', behaviorId, behaviorAces);
 
     const behavior = {
       id,
@@ -402,6 +434,7 @@ function generateBehaviors() {
       description_en: translation.description_en,
       path: behaviorInfo.path || '',
       categories,
+      aceCategories,
       conditions,
       actions,
       expressions
@@ -855,6 +888,69 @@ function cleanOldFiles() {
   }
 }
 
+/**
+ * 把 system.json 按 category 拆分成 system-{category}.json
+ * 原 system.json 保留作汇总索引（不含 ACE 列表，避免重复检索）
+ */
+function splitSystem() {
+  const systemPath = path.join(OUTPUT_DIR, 'plugins', 'system.json');
+  if (!fs.existsSync(systemPath)) return;
+
+  const system = JSON.parse(fs.readFileSync(systemPath, 'utf-8'));
+  const allAces = [...system.conditions, ...system.actions, ...system.expressions];
+
+  // 收集所有分类
+  const categoryMap = {};
+  for (const ace of allAces) {
+    const cat = ace.category || 'general';
+    if (!categoryMap[cat]) categoryMap[cat] = { conditions: [], actions: [], expressions: [] };
+  }
+  for (const ace of system.conditions)   (categoryMap[ace.category || 'general'].conditions).push(ace);
+  for (const ace of system.actions)      (categoryMap[ace.category || 'general'].actions).push(ace);
+  for (const ace of system.expressions)  (categoryMap[ace.category || 'general'].expressions).push(ace);
+
+  const outputDir = path.join(OUTPUT_DIR, 'plugins');
+  const splitIds = [];
+
+  for (const [cat, aces] of Object.entries(categoryMap)) {
+    const catInfo = system.aceCategories?.[cat] || {};
+    const splitId = `system-${cat}`;
+    const splitPlugin = {
+      id: splitId,
+      originalId: 'system',
+      name_zh: `系统 - ${catInfo.zh || cat}`,
+      name_en:  `System - ${catInfo.en || cat}`,
+      description_zh: system.description_zh || '',
+      description_en: system.description_en || '',
+      path: system.path,
+      category: cat,
+      category_zh: catInfo.zh || '',
+      category_en: catInfo.en || cat,
+      conditions:  aces.conditions,
+      actions:     aces.actions,
+      expressions: aces.expressions,
+    };
+    writeJson(path.join(outputDir, `${splitId}.json`), splitPlugin);
+    splitIds.push(splitId);
+  }
+
+  // 原 system.json 改为只保留 meta，不含 ACE（避免与拆分文件重复）
+  const systemMeta = {
+    id: 'system',
+    originalId: 'system',
+    name_zh: system.name_zh,
+    name_en:  system.name_en,
+    description_zh: system.description_zh,
+    description_en: system.description_en,
+    path: system.path,
+    splitInto: splitIds,
+    conditions: [], actions: [], expressions: []
+  };
+  writeJson(systemPath, systemMeta);
+
+  console.log(`  system 拆分为 ${splitIds.length} 个子文件`);
+}
+
 function main() {
   console.log('开始生成 Construct3 Schema（分目录结构）...\n');
 
@@ -863,6 +959,7 @@ function main() {
 
   // 生成各部分
   const pluginStats = generatePlugins();
+  splitSystem();
   const behaviorStats = generateBehaviors();
   const effectStats = generateEffects();
   const editorStats = generateEditor();

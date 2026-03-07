@@ -6,7 +6,7 @@
 |--------|------|------|
 | Construct3-Manual/ | Markdown | 主手册文档 (334 文件) |
 | Construct3-Addon-SDK/ | Markdown | 插件开发文档 (62 文件) |
-| zh-CN_r473.csv | CSV | 23,513 条中英翻译 |
+| zh_r475.csv | CSV | 23,513 条中英翻译 |
 | example-projects/ | C3 项目 | 490 个示例项目 |
 
 ## 1. Markdown 手册处理

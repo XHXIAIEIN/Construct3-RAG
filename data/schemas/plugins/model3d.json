@@ -12,6 +12,24 @@
     "misc",
     "collisions"
   ],
+  "aceCategories": {
+    "3d-model": {
+      "zh": "3D 模型",
+      "en": "3D model"
+    },
+    "playback": {
+      "zh": "动画播放",
+      "en": "Playback"
+    },
+    "misc": {
+      "zh": "杂项",
+      "en": "Misc"
+    },
+    "collisions": {
+      "zh": "碰撞",
+      "en": "Collisions"
+    }
+  },
   "conditions": [
     {
       "id": "on-load-model",
@@ -23,7 +41,9 @@
       "display_en": "On model loaded",
       "scriptName": "OnLoadModel",
       "isTrigger": true,
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "on-load-model-fail",
@@ -35,7 +55,9 @@
       "display_en": "On model load error",
       "scriptName": "OnLoadModelFail",
       "isTrigger": true,
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "for-each-mesh",
@@ -46,7 +68,9 @@
       "display_zh": "遍历网格",
       "display_en": "For each mesh",
       "scriptName": "ForEachMesh",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "for-each-animation",
@@ -57,7 +81,9 @@
       "display_zh": "遍历动画",
       "display_en": "For each animation",
       "scriptName": "ForEachAnimation",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "playing",
@@ -68,7 +94,9 @@
       "display_zh": "正在播放",
       "display_en": "Is playing",
       "scriptName": "IsPlaying",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "mesh-render-mode",
@@ -104,7 +132,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "is-mesh-enabled",
@@ -125,7 +155,9 @@
           "desc_zh": "要检查的网格名称。",
           "desc_en": "The name of the mesh to check for."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "are-all-meshes-enabled",
@@ -136,7 +168,9 @@
       "display_zh": "启用所有网格",
       "display_en": "Are all meshes enabled",
       "scriptName": "AreAllMeshesEnabled",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "mesh-exists",
@@ -157,7 +191,9 @@
           "desc_zh": "要检查的网格名称。",
           "desc_en": "The name of the mesh to check for."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "collisions-enabled",
@@ -168,7 +204,9 @@
       "display_zh": "已启用碰撞",
       "display_en": "Collisions enabled",
       "scriptName": "IsCollisionEnabled",
-      "category": "collisions"
+      "category": "collisions",
+      "category_zh": "碰撞",
+      "category_en": "Collisions"
     }
   ],
   "actions": [
@@ -227,7 +265,9 @@
           "desc_en": "Value in the [0-1] range to chosse where the selected animation should start playing from.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-model-by-name",
@@ -283,7 +323,9 @@
           "desc_en": "Value in the [0-1] range to chosse where the selected animation should start playing from.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-mesh",
@@ -301,7 +343,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-meshes",
@@ -332,7 +376,9 @@
           "name_en": "",
           "initialValue": "\",\""
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-mesh-enabled",
@@ -361,7 +407,9 @@
           "desc_zh": "选择是否显示或隐藏网格中指定的元素。",
           "desc_en": "Choose if the specified in mesh should be shown or hidden."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-all-meshes-enabled",
@@ -382,7 +430,9 @@
           "desc_zh": "选择是否显示或隐藏所有网格。",
           "desc_en": "Choose if all the meshes should be shown or hidden."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-animation",
@@ -421,7 +471,9 @@
           "desc_en": "Choose where the selected animation should start playing from, using a value in the range [0-1].",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-progress",
@@ -443,7 +495,9 @@
           "desc_en": "Choose the progress of the current animation with a value in the range [0-1].",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-transform",
@@ -549,7 +603,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "set-mesh-render-mode",
@@ -585,7 +641,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "play",
@@ -616,7 +674,9 @@
           "desc_en": "Choose where the selected animation should start playing from, using a value in the range [0-1].",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "动画播放",
+      "category_en": "Playback"
     },
     {
       "id": "stop",
@@ -627,7 +687,9 @@
       "display_zh": "停止当前动画",
       "display_en": "Stop current animation",
       "scriptName": "Stop",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "动画播放",
+      "category_en": "Playback"
     },
     {
       "id": "pause",
@@ -638,7 +700,9 @@
       "display_zh": "暂停当前动画",
       "display_en": "Pause current animation",
       "scriptName": "Pause",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "动画播放",
+      "category_en": "Playback"
     },
     {
       "id": "resume",
@@ -649,7 +713,9 @@
       "display_zh": "继续播放当前的动画",
       "display_en": "Resume current animation",
       "scriptName": "Resume",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "动画播放",
+      "category_en": "Playback"
     },
     {
       "id": "set-collisions-enabled",
@@ -684,7 +750,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "杂项",
+      "category_en": "Misc"
     }
   ],
   "expressions": [
@@ -696,7 +764,9 @@
       "description_en": "In 'On model load error', the name of the model that failed.",
       "expressionName": "Error3dModelName",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "name",
@@ -706,7 +776,9 @@
       "description_en": "The current 3D model. If nothing is loaded yet, the expression returns an empty string.",
       "expressionName": "Name",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "mesh",
@@ -717,7 +789,9 @@
       "expressionName": "Mesh",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "meshes",
@@ -727,7 +801,9 @@
       "description_en": "A comma separated string with all the meshes being drawn. If all the meshes are being drawn, the expression returns an empty string.",
       "expressionName": "Meshes",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "animation",
@@ -737,7 +813,9 @@
       "description_en": "The current animation. If there is no animation, the expression returns an empty string.",
       "expressionName": "Animation",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "animation-duration",
@@ -757,7 +835,9 @@
           "desc_zh": "动画名称",
           "desc_en": "The name of the animation to get the duration for."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "progress",
@@ -767,7 +847,9 @@
       "description_en": "The progress of the current animation in the range [0-1].",
       "expressionName": "Progress",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "mesh-count",
@@ -777,7 +859,9 @@
       "description_en": "The amount of meshes in the model.",
       "expressionName": "MeshCount",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "mesh-at",
@@ -797,7 +881,9 @@
           "desc_zh": "网格的索引。",
           "desc_en": "The index of the mesh."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "animation-count",
@@ -807,7 +893,9 @@
       "description_en": "The amount of animations in the model.",
       "expressionName": "AnimationCount",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "animation-at",
@@ -827,7 +915,9 @@
           "desc_zh": "动画的索引。",
           "desc_en": "The index of the animation."
         }
-      ]
+      ],
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "cur-mesh",
@@ -837,7 +927,9 @@
       "description_en": "The current mesh name in a 'For each mesh' loop.",
       "expressionName": "CurMesh",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "cur-animation",
@@ -847,7 +939,9 @@
       "description_en": "The current animation name in a 'For each animation' loop.",
       "expressionName": "CurAnimation",
       "returnType": "string",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "position-x",
@@ -857,7 +951,9 @@
       "description_en": "Get the offset in the X axis.",
       "expressionName": "OffsetX",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "position-y",
@@ -867,7 +963,9 @@
       "description_en": "Get the offset in the Y axis.",
       "expressionName": "OffsetY",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "position-z",
@@ -877,7 +975,9 @@
       "description_en": "Get the offset in the Z axis.",
       "expressionName": "OffsetZ",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "rotation-x",
@@ -887,7 +987,9 @@
       "description_en": "Get the rotation in the X axis.",
       "expressionName": "RotationX",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "rotation-y",
@@ -897,7 +999,9 @@
       "description_en": "Get the rotation in the Y axis.",
       "expressionName": "RotationY",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "rotation-z",
@@ -907,7 +1011,9 @@
       "description_en": "Get the rotation in the Z axis.",
       "expressionName": "RotationZ",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "scale-x",
@@ -917,7 +1023,9 @@
       "description_en": "Get the scale in the X axis.",
       "expressionName": "ScaleX",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "scale-y",
@@ -927,7 +1035,9 @@
       "description_en": "Get the scale in the Y axis.",
       "expressionName": "ScaleY",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     },
     {
       "id": "scale-z",
@@ -937,7 +1047,9 @@
       "description_en": "Get the scale in the Z axis.",
       "expressionName": "ScaleZ",
       "returnType": "number",
-      "category": "3d-model"
+      "category": "3d-model",
+      "category_zh": "3D 模型",
+      "category_en": "3D model"
     }
   ],
   "properties": [

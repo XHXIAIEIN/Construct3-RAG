@@ -1,0 +1,212 @@
+{
+  "id": "system-memory-management",
+  "originalId": "system",
+  "name_zh": "系统 - 内存管理",
+  "name_en": "System - Memory management",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "memory-management",
+  "category_zh": "内存管理",
+  "category_en": "Memory management",
+  "conditions": [
+    {
+      "id": "on-image-loading-complete",
+      "name_zh": "图像加载完成",
+      "name_en": "On image loading complete",
+      "description_zh": "使用内存管理操作后，当图像加载完成时触发。",
+      "description_en": "Triggered when images loaded with the memory management actions have finished loading.",
+      "display_zh": "图像加载完成",
+      "display_en": "On image loading complete",
+      "scriptName": "OnImageLoadingComplete",
+      "isTrigger": true,
+      "category": "memory-management",
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "is-loading-images",
+      "name_zh": "图像正在加载",
+      "name_en": "Is loading images",
+      "description_zh": "使用内存管理操作后，用于检测当前是否正在加载图像的过程中。",
+      "description_en": "Test if images loaded with the memory management actions are currently in the process of loading.",
+      "display_zh": "图像正在加载",
+      "display_en": "Is loading images",
+      "scriptName": "IsLoadingImages",
+      "category": "memory-management",
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    }
+  ],
+  "actions": [
+    {
+      "id": "load-object-images",
+      "name_zh": "加载对象图像",
+      "name_en": "Load object images",
+      "description_zh": "将对象的图像资源加载到内存中(如果它还没有被加载)。",
+      "description_en": "Load the images for an object in to memory, if it isn't already loaded.",
+      "display_zh": "加载 {0} 图像资源到内存",
+      "display_en": "Load {0} images in to memory",
+      "scriptName": "LoadObjectTextures",
+      "isAsync": true,
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "目标",
+          "name_en": "Object",
+          "desc_zh": "需要加载图像的对象。",
+          "desc_en": "The object to load images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "load-object-images-by-name",
+      "name_zh": "加载对象图像(根据名称)",
+      "name_en": "Load object images (by name)",
+      "description_zh": "将指定名称的对象使用的图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "description_en": "Load the images for an object in to memory by a string of the object name.",
+      "display_zh": "加载 [i]{0}[/i] 图像资源到内存",
+      "display_en": "Load [i]{0}[/i] images in to memory",
+      "scriptName": "LoadObjectTexturesByName",
+      "isAsync": true,
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "objectname",
+          "name_zh": "目标",
+          "name_en": "Object name",
+          "desc_zh": "需要加载图像的对象名称。",
+          "desc_en": "The name of the object to load images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "unload-object-images",
+      "name_zh": "挂载对象图像",
+      "name_en": "Unload object images",
+      "description_zh": "从内存中挂载对象的图像资源(如果该对象已经加载，将会销毁它所有的实例)。",
+      "description_en": "Unload the images for an object from memory, if it is loaded and all its instances are destroyed.",
+      "display_zh": "挂载 {0} 图像资源",
+      "display_en": "Unload {0} images from memory",
+      "scriptName": "UnloadObjectTextures",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "要挂载图像的对象。",
+          "desc_en": "The object to unload images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "unload-object-images-by-name",
+      "name_zh": "挂载对象图像(根据名称)",
+      "name_en": "Unload object images (by name)",
+      "description_zh": "从内存中挂载指定对象名称的图像资源。",
+      "description_en": "Unload the images for an object from memory by a string of the object name.",
+      "display_zh": "挂载 [i]{0}[/i] 图像资源",
+      "display_en": "Unload [i]{0}[/i] images from memory",
+      "scriptName": "UnloadObjectTexturesByName",
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "object",
+          "type": "objectname",
+          "name_zh": "目标",
+          "name_en": "Object name",
+          "desc_zh": "需要挂载图像的对象名称。",
+          "desc_en": "The name of the object to unload images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "unload-unused-images",
+      "name_zh": "挂载未使用的图像",
+      "name_en": "Unload unused images",
+      "description_zh": "挂载已加载的对象的图像，并销毁所有实例。",
+      "description_en": "Unload the images for objects that are loaded and all instances are destroyed.",
+      "display_zh": "挂载未使用的图像资源",
+      "display_en": "Unload unused images from memory",
+      "scriptName": "UnloadUnusedTextures",
+      "category": "memory-management",
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "load-layout-images",
+      "name_zh": "加载场景图像",
+      "name_en": "Load layout images",
+      "description_zh": "将场景使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "description_en": "Load all the images used by a layout in to memory. Note this can result in high memory usage.",
+      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "display_en": "Load layout [b]{0}[/b] images in to memory",
+      "scriptName": "LoadLayoutTextures",
+      "isAsync": true,
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "layout",
+          "type": "layout",
+          "name_zh": "场景",
+          "name_en": "Layout",
+          "desc_zh": "需要加载所有图像的场景。",
+          "desc_en": "The layout to load all images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    },
+    {
+      "id": "load-layout-images-by-name",
+      "name_zh": "加载场景图片(根据名称)",
+      "name_en": "Load layout images (by name)",
+      "description_zh": "将指定名称的场景所使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "description_en": "Load all the images used by a layout (by a string of its name) in to memory. Note this can result in high memory usage.",
+      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "display_en": "Load layout [b]{0}[/b] images in to memory",
+      "scriptName": "LoadLayoutTexturesByName",
+      "isAsync": true,
+      "category": "memory-management",
+      "params": [
+        {
+          "id": "layout",
+          "type": "string",
+          "name_zh": "场景",
+          "name_en": "Layout",
+          "desc_zh": "需要加载所有图像的场景名称。",
+          "desc_en": "The name of the layout to load all images for."
+        }
+      ],
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "imageloadingprogress",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取从0到1的图像加载进度。",
+      "description_en": "Get the image loading progress from 0 to 1.",
+      "expressionName": "imageloadingprogress",
+      "returnType": "number",
+      "category": "memory-management",
+      "category_zh": "内存管理",
+      "category_en": "Memory management"
+    }
+  ]
+}

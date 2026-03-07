@@ -10,6 +10,16 @@
     "settings",
     "custom-properties"
   ],
+  "aceCategories": {
+    "settings": {
+      "zh": "设置",
+      "en": "Settings"
+    },
+    "custom-properties": {
+      "zh": "自定义属性",
+      "en": "Custom properties"
+    }
+  },
   "conditions": [
     {
       "id": "compare-mode",
@@ -44,7 +54,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "compare-delay",
@@ -73,7 +85,9 @@
           "desc_zh": "比较当前的延迟",
           "desc_en": "The delay to compare to."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "compare-max-delay",
@@ -102,7 +116,9 @@
           "desc_zh": "要比较的最大同步时长",
           "desc_en": "The maximum delay to compare to."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "compare-history-rate",
@@ -131,7 +147,9 @@
           "desc_zh": "要比较的同步频率。",
           "desc_en": "The history rate to compare to."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "is-following-property",
@@ -201,7 +219,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "is-enabled",
@@ -212,7 +232,9 @@
       "display_zh": "{my} 已启用",
       "display_en": "{my} is enabled",
       "scriptName": "IsEnabled",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "is-following-custom-property",
@@ -233,7 +255,9 @@
           "desc_zh": "自定义属性的标签",
           "desc_en": "A string identifying the custom property."
         }
-      ]
+      ],
+      "category_zh": "自定义属性",
+      "category_en": "Custom properties"
     },
     {
       "id": "is-following-object",
@@ -300,7 +324,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-delay",
@@ -321,7 +347,9 @@
           "desc_zh": "延迟跟随的时机，时间(秒)或距离(像素)，取决于跟随模式。",
           "desc_en": "The time in seconds, or distance in pixels, to follow (depending on the mode)."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-max-delay",
@@ -342,7 +370,9 @@
           "desc_zh": "最大同步时长，具体时间或距离，取决于模式。",
           "desc_en": "The maximum time/distance data to remember."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-history-rate",
@@ -364,7 +394,9 @@
           "desc_en": "The rate in entries per second at which to remember changes in the followed object.",
           "initialValue": "30"
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-following-property",
@@ -442,7 +474,9 @@
           "desc_zh": "要跟随的属性",
           "desc_en": "Whether to follow the chosen property."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-property-interpolation",
@@ -539,7 +573,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-enabled",
@@ -560,7 +596,9 @@
           "desc_zh": "启用或禁用行为。",
           "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "start-following-custom-property",
@@ -608,7 +646,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "自定义属性",
+      "category_en": "Custom properties"
     },
     {
       "id": "stop-following-custom-property",
@@ -629,7 +669,9 @@
           "desc_zh": "自定义属性的标签",
           "desc_en": "A string identifying the custom property."
         }
-      ]
+      ],
+      "category_zh": "自定义属性",
+      "category_en": "Custom properties"
     },
     {
       "id": "set-custom-property-value",
@@ -658,7 +700,9 @@
           "desc_zh": "设置自定义属性的值。",
           "desc_en": "A number or string to set as the current value of this custom property."
         }
-      ]
+      ],
+      "category_zh": "自定义属性",
+      "category_en": "Custom properties"
     },
     {
       "id": "follow-object",
@@ -788,7 +832,9 @@
       "description_en": "The current delay in seconds or pixels.",
       "expressionName": "Delay",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "max-delay",
@@ -798,7 +844,9 @@
       "description_en": "The current maximum delay in seconds or pixels.",
       "expressionName": "MaxDelay",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "history-rate",
@@ -808,7 +856,9 @@
       "description_en": "The current history rate in entries per second.",
       "expressionName": "HistoryRate",
       "returnType": "number",
-      "category": "settings"
+      "category": "settings",
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "delayed-custom-property-value",
@@ -828,7 +878,9 @@
           "desc_zh": "自定义属性的标签",
           "desc_en": "A string identifying the custom property."
         }
-      ]
+      ],
+      "category_zh": "自定义属性",
+      "category_en": "Custom properties"
     },
     {
       "id": "follow-uid",

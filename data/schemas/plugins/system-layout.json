@@ -1,0 +1,617 @@
+{
+  "id": "system-layout",
+  "originalId": "system",
+  "name_zh": "系统 - 场景",
+  "name_en": "System - Layout",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "layout",
+  "category_zh": "场景",
+  "category_en": "Layout",
+  "conditions": [
+    {
+      "id": "on-canvas-snapshot",
+      "name_zh": "截屏完成",
+      "name_en": "On canvas snapshot",
+      "description_zh": "执行 '截屏' 动作后，成功截屏时触发。",
+      "description_en": "Triggered after 'Snapshot canvas' when the snapshot is ready.",
+      "display_zh": "截屏完成",
+      "display_en": "On canvas snapshot",
+      "scriptName": "OnCanvasSnapshot",
+      "isTrigger": true,
+      "canDebug": true,
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "effects-are-supported",
+      "name_zh": "设备支持滤镜",
+      "name_en": "Effects are supported",
+      "description_zh": "检测当前设备是否支持着色器效果并且可以在游戏中显示。",
+      "description_en": "True if shader effects are supported and can be displayed in the game.",
+      "display_zh": "设备支持滤镜",
+      "display_en": "Effects are supported",
+      "scriptName": "EffectsSupported",
+      "isDeprecated": true,
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    }
+  ],
+  "actions": [
+    {
+      "id": "go-to-layout",
+      "name_zh": "跳转到场景",
+      "name_en": "Go to layout",
+      "description_zh": "跳转到项目中的另一个场景。",
+      "description_en": "Jump to another layout in the project.",
+      "display_zh": "跳转到[b]{0}[/b]",
+      "display_en": "Go to [b]{0}[/b]",
+      "scriptName": "GoToLayout",
+      "category": "layout",
+      "params": [
+        {
+          "id": "layout",
+          "type": "layout",
+          "name_zh": "场景",
+          "name_en": "Layout",
+          "desc_zh": "选择跳转的场景",
+          "desc_en": "Choose the layout to go to."
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "go-to-layout-by-name",
+      "name_zh": "跳转到场景(根据名称)",
+      "name_en": "Go to layout (by name)",
+      "description_zh": "跳转到项目中的另一个场景，使用字符串作为场景名称。",
+      "description_en": "Jump to another layout in the project, using a string for the layout name.",
+      "display_zh": "跳转到场景[b]{0}[/b]",
+      "display_en": "Go to layout [b]{0}[/b]",
+      "scriptName": "GoToLayoutByName",
+      "category": "layout",
+      "params": [
+        {
+          "id": "layout",
+          "type": "string",
+          "name_zh": "场景",
+          "name_en": "Layout",
+          "desc_zh": "要跳转的场景的名称。",
+          "desc_en": "The name of the layout to go to."
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "restart-layout",
+      "name_zh": "重载场景",
+      "name_en": "Restart layout",
+      "description_zh": "重新进入当前场景，并将任何事件分组还原到初始激活状态。",
+      "description_en": "Restart the current layout, and also restore any groups to their initial activation state.",
+      "display_zh": "重载场景",
+      "display_en": "Restart layout",
+      "scriptName": "RestartLayout",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "go-to-nextprevious-layout",
+      "name_zh": "跳转下一个/上一个场景",
+      "name_en": "Go to next/previous layout",
+      "description_zh": "跳转下一个或上一个场景。",
+      "description_en": "Go to the next or previous layout.",
+      "display_zh": "跳转到{0}场景",
+      "display_en": "Go to {0} layout",
+      "scriptName": "NextPrevLayout",
+      "category": "layout",
+      "params": [
+        {
+          "id": "which",
+          "type": "combo",
+          "name_zh": "跳转到",
+          "name_en": "Which",
+          "desc_zh": "是否转到下一个或上一个场景。",
+          "desc_en": "Whether to go to the next or the previous layout.",
+          "items": [
+            "next",
+            "previous"
+          ],
+          "items_i18n": {
+            "next": {
+              "zh": "下一个",
+              "en": "next"
+            },
+            "previous": {
+              "zh": "上一个",
+              "en": "previous"
+            }
+          }
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-scale",
+      "name_zh": "设置场景缩放倍数",
+      "name_en": "Set layout scale",
+      "description_zh": "设置场景的缩放比例。",
+      "description_en": "Set the scale of the entire layout.",
+      "display_zh": "设置场景缩放为[b]{0}[/b]倍",
+      "display_en": "Set layout scale to [b]{0}[/b]",
+      "scriptName": "SetLayoutScale",
+      "category": "layout",
+      "params": [
+        {
+          "id": "scale",
+          "type": "number",
+          "name_zh": "大小",
+          "name_en": "Scale",
+          "desc_zh": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。",
+          "desc_en": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc.",
+          "initialValue": "1.0"
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-angle",
+      "name_zh": "设置场景角度",
+      "name_en": "Set layout angle",
+      "description_zh": "设置整个场景的角度。",
+      "description_en": "Set the angle of the entire layout.",
+      "display_zh": "设置场景角度为[b]{0}[/b]",
+      "display_en": "Set layout angle to [b]{0}[/b]",
+      "scriptName": "SetLayoutAngle",
+      "category": "layout",
+      "params": [
+        {
+          "id": "angle",
+          "type": "number",
+          "name_zh": "角度",
+          "name_en": "Angle",
+          "desc_zh": "旋转画布到指定的角度，以度为单位。",
+          "desc_en": "The angle to rotate the canvas view to, in degrees."
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-effect-enabled",
+      "name_zh": "启用场景滤镜",
+      "name_en": "Set layout effect enabled",
+      "description_zh": "启用或禁用当前场景的滤镜。",
+      "description_en": "Enable or disable an effect on the current layout.",
+      "display_zh": "{0}场景滤镜{1}",
+      "display_en": "{0} layout effect {1}",
+      "scriptName": "SetLayoutEffectEnabled",
+      "category": "layout",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_zh": "模式",
+          "name_en": "Mode",
+          "desc_zh": "启用或禁用场景的滤镜。",
+          "desc_en": "Whether to enable or disable the layout effect.",
+          "items": [
+            "disable",
+            "enable"
+          ],
+          "items_i18n": {
+            "disable": {
+              "zh": "禁用",
+              "en": "Disable"
+            },
+            "enable": {
+              "zh": "启用",
+              "en": "Enable"
+            }
+          }
+        },
+        {
+          "id": "effect",
+          "type": "layouteffect",
+          "name_zh": "滤镜",
+          "name_en": "Effect",
+          "desc_zh": "要修改的场景滤镜。 此滤镜必须先添加到场景的滤镜列表中。",
+          "desc_en": "Choose the layout effect to modify. The effect must be present on the currently running layout."
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-effect-parameter",
+      "name_zh": "设置场景滤镜参数",
+      "name_en": "Set layout effect parameter",
+      "description_zh": "设置场景的滤镜参数。",
+      "description_en": "Set the value of a parameter in one of the layout's effects.",
+      "display_zh": "设置场景滤镜{0}第{1}个参数为[b]{2}[/b]",
+      "display_en": "Set layout effect {0} parameter {1} to [b]{2}[/b]",
+      "scriptName": "SetLayoutEffectParam",
+      "category": "layout",
+      "params": [
+        {
+          "id": "effect",
+          "type": "layouteffect",
+          "name_zh": "滤镜",
+          "name_en": "Effect",
+          "desc_zh": "要设置的滤镜名称。此滤镜必须先添加到场景的滤镜列表中。",
+          "desc_en": "Choose the layout effect to modify. The effect must be present on the currently running layout."
+        },
+        {
+          "id": "parameter-index",
+          "type": "number",
+          "name_zh": "参数索引",
+          "name_en": "Parameter index",
+          "desc_zh": "要更改的第几个参数，从 0 开始索引。例如 0 = 第1个参数，1 = 第2个参数等。",
+          "desc_en": "Enter the zero-based index of the parameter to change, e.g. 0 = first param, 1 = second param, etc."
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_zh": "数值",
+          "name_en": "Value",
+          "desc_zh": "要设置的数值。",
+          "desc_en": "Enter the new parameter value."
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-vanishing-point",
+      "name_zh": "设置场景透视中心",
+      "name_en": "Set layout vanishing point",
+      "description_zh": "使用3D布局功能时，设置视区透视中心点的位置。",
+      "description_en": "When using 3D features, set where the vanishing point is relative to the viewport area.",
+      "display_zh": "设置场景透视点为 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set layout vanishing point to ([i]{0}[/i], [i]{1}[/i])",
+      "scriptName": "SetLayoutVanishingPoint",
+      "category": "layout",
+      "params": [
+        {
+          "id": "vanishing-point-x",
+          "type": "number",
+          "name_zh": "透视点X",
+          "name_en": "Vanishing point X",
+          "desc_zh": "透视点的X坐标，数值从 0-100，中间位置是50。",
+          "desc_en": "The vanishing point X in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
+        },
+        {
+          "id": "vanishing-point-y",
+          "type": "number",
+          "name_zh": "透视点Y",
+          "name_en": "Vanishing point Y",
+          "desc_zh": "透视点的Y坐标，数值从 0-100，中间位置是50。",
+          "desc_en": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-projection",
+      "name_zh": "设置场景投影类型",
+      "name_en": "Set layout projection",
+      "description_zh": "对于3D场景，相机视角使用透视投影，还是正交投影。",
+      "description_en": "Set whether to render 3D features with perspective, or a flat orthographic projection.",
+      "display_zh": "设置场景投影类型为[i]{0}[/i]",
+      "display_en": "Set layout projection [i]{0}[/i]",
+      "scriptName": "SetLayoutProjection",
+      "category": "layout",
+      "params": [
+        {
+          "id": "projection",
+          "type": "combo",
+          "name_zh": "投影类型",
+          "name_en": "Projection",
+          "desc_zh": "要使用的投影类型",
+          "desc_en": "The type of projection to use.",
+          "items": [
+            "perspective",
+            "orthographic"
+          ],
+          "items_i18n": {
+            "perspective": {
+              "zh": "透视投影",
+              "en": "Perspective"
+            },
+            "orthographic": {
+              "zh": "正交投影",
+              "en": "Orthographic"
+            }
+          }
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "set-layout-sampling",
+      "name_zh": "设置场景采样",
+      "name_en": "Set layout sampling",
+      "description_zh": "设置场景的采样模式。",
+      "description_en": "Set the layout sampling mode.",
+      "display_zh": "设置场景采样为 [b]{0}[/b]",
+      "display_en": "Set layout sampling [b]{0}[/b]",
+      "scriptName": "SetLayoutSampling",
+      "category": "layout",
+      "params": [
+        {
+          "id": "sampling",
+          "type": "combo",
+          "name_zh": "采样",
+          "name_en": "Sampling",
+          "desc_zh": "调整图像时，使用的采样方式。",
+          "desc_en": "The quality to use when scaling images.",
+          "items": [
+            "auto",
+            "nearest",
+            "bilinear",
+            "trilinear"
+          ],
+          "items_i18n": {
+            "auto": {
+              "zh": "自动",
+              "en": "Auto"
+            },
+            "nearest": {
+              "zh": "邻近",
+              "en": "Nearest"
+            },
+            "bilinear": {
+              "zh": "双线性",
+              "en": "Bilinear"
+            },
+            "trilinear": {
+              "zh": "三线性",
+              "en": "Trilinear"
+            }
+          }
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "recreate-initial-objects",
+      "name_zh": "初始化场景对象",
+      "name_en": "Recreate initial objects",
+      "description_zh": "在矩形区域内，重新创建场景中的对象并初始化。",
+      "description_en": "Recreate the layout's initial objects within a rectangular area.",
+      "display_zh": "初始化对象 {0}, 原始场景: [i]{5}[/i], 原始位置: [i]{1}[/i], [i]{2}[/i]) 到 ([i]{3}[/i], [i]{4}[/i]), 原始图层: [i]{6}[/i], 目标图层: [i]{7}[/i], 位置偏移: ([i]{8}[/i], [i]{9}[/i]), 创建对象层级: [i]{10}[/i]",
+      "display_en": "Recreate initial {0} objects from ([i]{1}[/i], [i]{2}[/i]) to ([i]{3}[/i], [i]{4}[/i]) from layout [i]{5}[/i], source layer [i]{6}[/i], dest layer [i]{7}[/i], offset ([i]{8}[/i], [i]{9}[/i]), create hierarchy: [i]{10}[/i]",
+      "scriptName": "RecreateInitialObjects",
+      "category": "layout",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "要重新创建实例的对象类型。",
+          "desc_en": "The object type to re-create instances for."
+        },
+        {
+          "id": "from-x",
+          "type": "number",
+          "name_zh": "起始 X",
+          "name_en": "From X",
+          "desc_zh": "要重新创建的左边缘的X坐标",
+          "desc_en": "X co-ordinate of left edge to re-create."
+        },
+        {
+          "id": "from-y",
+          "type": "number",
+          "name_zh": "起始 Y",
+          "name_en": "From Y",
+          "desc_zh": "要重新创建的上边缘的Y坐标",
+          "desc_en": "Y co-ordinate of top edge to re-create."
+        },
+        {
+          "id": "to-x",
+          "type": "number",
+          "name_zh": "目标 X",
+          "name_en": "To X",
+          "desc_zh": "要重新创建的右边缘的X坐标",
+          "desc_en": "X co-ordinate of right edge to re-create."
+        },
+        {
+          "id": "to-y",
+          "type": "number",
+          "name_zh": "目标 Y",
+          "name_en": "To Y",
+          "desc_zh": "准备重新创建区域的右下角Y坐标。",
+          "desc_en": "Y co-ordinate of bottom edge to re-create."
+        },
+        {
+          "id": "source-layout",
+          "type": "string",
+          "name_zh": "源场景",
+          "name_en": "Source layout",
+          "desc_zh": "目标物体的所在场景 留空来选择当前场景",
+          "desc_en": "Name of the layout to take objects from. Leave empty to use the current layout."
+        },
+        {
+          "id": "source-layer",
+          "type": "any",
+          "name_zh": "源图层",
+          "name_en": "Source layer",
+          "desc_zh": "目标物体的所在图层名或零基编号 留空来选择当前层",
+          "desc_en": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers.",
+          "initialValue": "-1"
+        },
+        {
+          "id": "dest-layer",
+          "type": "any",
+          "name_zh": "目标图层",
+          "name_en": "Destination layer",
+          "desc_zh": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。",
+          "desc_en": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers.",
+          "initialValue": "-1"
+        },
+        {
+          "id": "offset-x",
+          "type": "number",
+          "name_zh": "X 偏移",
+          "name_en": "Offset X",
+          "desc_zh": "在指定位置进行偏移的X坐标。",
+          "desc_en": "Amount to offset the X positions of the created objects."
+        },
+        {
+          "id": "offset-y",
+          "type": "number",
+          "name_zh": "Y 偏移",
+          "name_en": "Offset Y",
+          "desc_zh": "在指定位置进行偏移的Y坐标。",
+          "desc_en": "Amount to offset the Y positions of the created objects."
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_zh": "创建子对象",
+          "name_en": "Create hierarchy",
+          "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
+        }
+      ],
+      "category_zh": "场景",
+      "category_en": "Layout"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "scrollx",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "当前镜头位置的X坐标。",
+      "description_en": "X co-ordinate of current scroll location.",
+      "expressionName": "scrollx",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "scrolly",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "当前镜头位置的Y坐标。",
+      "description_en": "Y co-ordinate of current scroll location.",
+      "expressionName": "scrolly",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "layoutwidth",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取当前场景的宽度。",
+      "description_en": "Width of the current layout.",
+      "expressionName": "LayoutWidth",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "layoutheight",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取当前场景的高度。",
+      "description_en": "Height of the current layout.",
+      "expressionName": "LayoutHeight",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "layoutscale",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取场景当前的缩放倍数。",
+      "description_en": "Get the current scale of the entire layout.",
+      "expressionName": "LayoutScale",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "layoutname",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取当前场景的名称。",
+      "description_en": "Get the name of the current layout.",
+      "expressionName": "LayoutName",
+      "returnType": "string",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "layoutangle",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取场景当前的角度。",
+      "description_en": "Get the current angle of the layout, in degrees.",
+      "expressionName": "LayoutAngle",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "canvassnapshot",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "在 '截图完成' 条件中，返回的画布快照图像。可用于精灵或平铺图加载远程图像。",
+      "description_en": "In 'On canvas snapshot', the URL of the snapshot image.",
+      "expressionName": "CanvasSnapshot",
+      "returnType": "string",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "vanishing-point-x",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取当前视区的透视消失点X，从 0 - 100。",
+      "description_en": "Get the current vanishing point X in the viewport from 0-100.",
+      "expressionName": "VanishingPointX",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    },
+    {
+      "id": "vanishing-point-y",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取当前视区的透视消失点Y，从 0 - 100。",
+      "description_en": "Get the current vanishing point Y in the viewport from 0-100.",
+      "expressionName": "VanishingPointY",
+      "returnType": "number",
+      "category": "layout",
+      "category_zh": "场景",
+      "category_en": "Layout"
+    }
+  ]
+}

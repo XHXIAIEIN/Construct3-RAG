@@ -15,6 +15,36 @@
     "statistics",
     "binary-transfers"
   ],
+  "aceCategories": {
+    "listings": {
+      "zh": "通信",
+      "en": "Listings"
+    },
+    "room": {
+      "zh": "房间",
+      "en": "Room"
+    },
+    "room-host": {
+      "zh": "房间: 房主",
+      "en": "Room: Host"
+    },
+    "room-peer": {
+      "zh": "房间: 玩家",
+      "en": "Room: Peer"
+    },
+    "signalling": {
+      "zh": "信令服务器",
+      "en": "Signalling"
+    },
+    "statistics": {
+      "zh": "统计",
+      "en": "Statistics"
+    },
+    "binary-transfers": {
+      "zh": "二进制传输",
+      "en": "Binary transfers"
+    }
+  },
   "conditions": [
     {
       "id": "is-host",
@@ -25,7 +55,9 @@
       "display_zh": "身份为主机",
       "display_en": "Is host",
       "scriptName": "IsHost",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-peer-connected",
@@ -38,7 +70,9 @@
       "scriptName": "OnPeerConnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-peer-disconnected",
@@ -51,7 +85,9 @@
       "scriptName": "OnPeerDisconnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-host-disconnected",
@@ -64,7 +100,9 @@
       "scriptName": "OnHostDisconnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-kicked",
@@ -77,7 +115,9 @@
       "scriptName": "OnSignallingKicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-peer-message",
@@ -100,7 +140,9 @@
           "desc_zh": "用于区分不同的消息类型的标签。",
           "desc_en": "The tag to identify the message type."
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-any-peer-message",
@@ -113,7 +155,9 @@
       "scriptName": "OnAnyPeerMessage",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-peer-binary-message",
@@ -136,7 +180,9 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "compare-peer-count",
@@ -165,7 +211,9 @@
           "desc_zh": "要比较的数量。",
           "desc_en": "Number of peers to compare to."
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "on-client-update",
@@ -178,7 +226,9 @@
       "scriptName": "OnClientUpdate",
       "isTrigger": true,
       "canDebug": true,
-      "category": "room-peer"
+      "category": "room-peer",
+      "category_zh": "房间: 玩家",
+      "category_en": "Room: Peer"
     },
     {
       "id": "is-ready-for-input",
@@ -189,7 +239,9 @@
       "display_zh": "准备输入",
       "display_en": "Is ready for input",
       "scriptName": "IsReadyForInput",
-      "category": "room-peer"
+      "category": "room-peer",
+      "category_zh": "房间: 玩家",
+      "category_en": "Room: Peer"
     },
     {
       "id": "on-server-list-received",
@@ -200,7 +252,9 @@
       "scriptName": "OnServerList",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-error",
@@ -213,7 +267,9 @@
       "scriptName": "OnSignallingError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-connected",
@@ -226,7 +282,9 @@
       "scriptName": "OnSignallingConnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-disconnected",
@@ -239,7 +297,9 @@
       "scriptName": "OnSignallingDisconnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-logged-in",
@@ -252,7 +312,9 @@
       "scriptName": "OnSignallingLoggedIn",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-joined-room",
@@ -265,7 +327,9 @@
       "scriptName": "OnSignallingJoinedRoom",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-left-room",
@@ -278,7 +342,9 @@
       "scriptName": "OnSignallingLeftRoom",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "is-connected",
@@ -289,7 +355,9 @@
       "display_zh": "已连接到信令服务器",
       "display_en": "Is connected to signalling server",
       "scriptName": "SignallingIsConnected",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "is-logged-in",
@@ -300,7 +368,9 @@
       "display_zh": "已登录到信令服务器",
       "display_en": "Is logged in to signalling server",
       "scriptName": "SignallingIsLoggedIn",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "is-in-room",
@@ -311,7 +381,9 @@
       "display_zh": "在房间内",
       "display_en": "Is in room",
       "scriptName": "SignallingIsInRoom",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "supports-multiplayer",
@@ -321,7 +393,9 @@
       "description_en": "",
       "scriptName": "IsSupported",
       "isDeprecated": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-game-instance-list",
@@ -334,7 +408,9 @@
       "scriptName": "OnGameInstanceList",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-room-list",
@@ -347,7 +423,9 @@
       "scriptName": "OnRoomList",
       "isTrigger": true,
       "canDebug": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "on-binary-transfer-event",
@@ -401,7 +479,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "on-any-binary-transfer-event",
@@ -447,7 +527,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "on-binary-transfer-complete",
@@ -477,7 +559,9 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "on-any-binary-transfer-complete",
@@ -499,7 +583,9 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     }
   ],
   "actions": [
@@ -512,7 +598,9 @@
       "display_zh": "离开房间",
       "display_en": "Disconnect from room",
       "scriptName": "DisconnectRoom",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "send-message",
@@ -576,7 +664,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "send-binary-message",
@@ -632,7 +722,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "simulate-latency",
@@ -672,7 +764,9 @@
           "desc_en": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed.",
           "initialValue": "0.05"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "sync-object",
@@ -725,7 +819,9 @@
             "very-low-bandwidth-essentially-static"
           ]
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "sync-object-2",
@@ -825,7 +921,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "sync-instance-variable",
@@ -922,7 +1020,9 @@
           "desc_zh": "与相应的客户端输入值相应的标签(如果有)，用于帮助房主能以更小的延迟处理客户端实例变量的延迟同步。",
           "desc_en": "If this value corresponds to a client input value, the tag for the value. This allows the host to sync the value between peers with less latency."
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "associate-object-with-peer",
@@ -951,7 +1051,9 @@
           "desc_zh": "与所选对象关联的玩家ID。",
           "desc_en": "The ID of the peer to associate the chosen object with."
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "add-client-input-value",
@@ -1032,7 +1134,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "set-bandwidth-profile",
@@ -1067,7 +1171,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "broadcast-message",
@@ -1131,7 +1237,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "kick-peer",
@@ -1160,7 +1268,9 @@
           "desc_zh": "移除用户的理由。",
           "desc_en": "A string of the reason to give for kicking (optional)."
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "set-client-state",
@@ -1189,7 +1299,9 @@
           "desc_zh": "用于表示客户端的输入状态，必须是数字。",
           "desc_en": "A number representing the client input state."
         }
-      ]
+      ],
+      "category_zh": "房间: 玩家",
+      "category_en": "Room: Peer"
     },
     {
       "id": "enable-local-input-prediction",
@@ -1226,7 +1338,9 @@
           "desc_zh": "使用平台行为时请勾选此选项，避免对象站在地板时仍然对 Y 轴进行不必要的输入预测。",
           "desc_en": "Check when using the Platform behavior to avoid input predicting on the Y axis when standing on the floor."
         }
-      ]
+      ],
+      "category_zh": "房间: 玩家",
+      "category_en": "Room: Peer"
     },
     {
       "id": "request-server-list",
@@ -1245,7 +1359,9 @@
           "name_en": "",
           "initialValue": ""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "connect",
@@ -1268,7 +1384,9 @@
           "desc_en": "The signalling server URL to connect to.",
           "initialValue": "\"wss://multiplayer.construct.net\""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "disconnect-signalling",
@@ -1279,7 +1397,9 @@
       "display_zh": "断开连接",
       "display_en": "Disconnect from signalling server",
       "scriptName": "SignallingDisconnect",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "add-ice-server",
@@ -1317,7 +1437,9 @@
           "desc_zh": "用于 TURN 服务器，该服务器使用的凭据证书。",
           "desc_en": "If a TURN server, then the credential to use with that server."
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "log-in",
@@ -1339,7 +1461,9 @@
           "desc_zh": "在服务器上使用的名称，如果名称被占用，服务器会分配不同的别名。",
           "desc_en": "The desired alias to use on the server. The server may assign you a different alias if it is taken."
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "join-room",
@@ -1387,7 +1511,9 @@
           "desc_zh": "此房间可容纳的最大玩家数量。仅房主设置有效，保留 0 则无限制。",
           "desc_en": "The maximum number of peers that can join this room. Only the host's value is used. Leave 0 for unlimited."
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "leave-room",
@@ -1399,7 +1525,9 @@
       "display_en": "Leave room",
       "scriptName": "SignallingLeaveRoom",
       "isAsync": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "request-game-instance-list",
@@ -1421,7 +1549,9 @@
           "desc_zh": "要请求的游戏。",
           "desc_en": "The game on the server to list instances for."
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "auto-join-room",
@@ -1492,7 +1622,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "request-room-list",
@@ -1549,7 +1681,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "transfer-peer-binary",
@@ -1603,7 +1737,9 @@
           "desc_zh": "指定本次传输的媒体类型(MIME)。例如 PNG 表示为 \"image/png",
           "desc_en": "An optional string with a MIME type for this transfer, e.g. \"image/png\" for a PNG image."
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "cancel-binary-transfer",
@@ -1632,7 +1768,9 @@
           "desc_zh": "要取消传输的标签。",
           "desc_en": "The tag of the transfer to cancel."
         }
-      ]
+      ],
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     }
   ],
   "expressions": [
@@ -1644,7 +1782,9 @@
       "description_en": "The number of game instances available.",
       "expressionName": "ListInstanceCount",
       "returnType": "number",
-      "category": "listings"
+      "category": "listings",
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listinstancename",
@@ -1664,7 +1804,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listinstancepeercount",
@@ -1684,7 +1826,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listroomcount",
@@ -1694,7 +1838,9 @@
       "description_en": "The number of rooms returned.",
       "expressionName": "ListRoomCount",
       "returnType": "number",
-      "category": "listings"
+      "category": "listings",
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listroomname",
@@ -1714,7 +1860,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listroompeercount",
@@ -1734,7 +1882,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listroommaxpeercount",
@@ -1754,7 +1904,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "listroomstate",
@@ -1774,7 +1926,9 @@
           "desc_zh": "索引",
           "desc_en": "Index"
         }
-      ]
+      ],
+      "category_zh": "通信",
+      "category_en": "Listings"
     },
     {
       "id": "peerid",
@@ -1784,7 +1938,9 @@
       "description_en": "The ID of relevant peer in a trigger.",
       "expressionName": "PeerID",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peeralias",
@@ -1794,7 +1950,9 @@
       "description_en": "The alias of relevant peer in a trigger.",
       "expressionName": "PeerAlias",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "hostid",
@@ -1804,7 +1962,9 @@
       "description_en": "The ID of the room host.",
       "expressionName": "HostID",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "hostalias",
@@ -1814,7 +1974,9 @@
       "description_en": "The alias of the room host.",
       "expressionName": "HostAlias",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "message",
@@ -1824,7 +1986,9 @@
       "description_en": "The message received in a message trigger.",
       "expressionName": "Message",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "tag",
@@ -1834,7 +1998,9 @@
       "description_en": "The tag of the message or binary transfer in a trigger.",
       "expressionName": "Tag",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "fromid",
@@ -1844,7 +2010,9 @@
       "description_en": "The ID of the user the message is from in a message trigger.",
       "expressionName": "FromID",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "fromalias",
@@ -1854,7 +2022,9 @@
       "description_en": "The alias of the user the message is from in a message trigger.",
       "expressionName": "FromAlias",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peeraliasfromid",
@@ -1874,7 +2044,9 @@
           "desc_zh": "玩家ID",
           "desc_en": "Peer ID"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peeridfromalias",
@@ -1894,7 +2066,9 @@
           "desc_zh": "玩家昵称",
           "desc_en": "Peer alias"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peerlatency",
@@ -1914,7 +2088,9 @@
           "desc_zh": "玩家ID",
           "desc_en": "Peer ID"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peerpdv",
@@ -1934,7 +2110,9 @@
           "desc_zh": "玩家ID",
           "desc_en": "Peer ID"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peercount",
@@ -1944,7 +2122,9 @@
       "description_en": "The number of connected peers in the current room.",
       "expressionName": "PeerCount",
       "returnType": "number",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "leavereason",
@@ -1954,7 +2134,9 @@
       "description_en": "In 'On peer disconnected', the leave reason if known.",
       "expressionName": "LeaveReason",
       "returnType": "string",
-      "category": "room"
+      "category": "room",
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peeridat",
@@ -1974,7 +2156,9 @@
           "desc_zh": "玩家索引",
           "desc_en": "Peer index"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peeraliasat",
@@ -1994,7 +2178,9 @@
           "desc_zh": "玩家索引",
           "desc_en": "Peer index"
         }
-      ]
+      ],
+      "category_zh": "房间",
+      "category_en": "Room"
     },
     {
       "id": "peerstate",
@@ -2022,7 +2208,9 @@
           "desc_zh": "客户端值标签",
           "desc_en": "Client value tag"
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "lagcompensatex",
@@ -2050,7 +2238,9 @@
           "desc_zh": "要补偿延迟的玩家ID。",
           "desc_en": "Peer ID to compensate for"
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "lagcompensatey",
@@ -2078,7 +2268,9 @@
           "desc_zh": "要补偿延迟的玩家ID。",
           "desc_en": "Peer ID to compensate for"
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "lagcompensateangle",
@@ -2106,7 +2298,9 @@
           "desc_zh": "要补偿延迟的玩家ID",
           "desc_en": "Peer ID to compensate for"
         }
-      ]
+      ],
+      "category_zh": "房间: 房主",
+      "category_en": "Room: Host"
     },
     {
       "id": "serverlistcount",
@@ -2117,7 +2311,9 @@
       "expressionName": "ServerListCount",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "serverlisturlat",
@@ -2136,7 +2332,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "serverlistnameat",
@@ -2155,7 +2353,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "serverlistoperatorat",
@@ -2174,7 +2374,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "serverlistwebsiteat",
@@ -2193,7 +2395,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "signallingurl",
@@ -2203,7 +2407,9 @@
       "description_en": "The URL of the current signalling server.",
       "expressionName": "SignallingURL",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "signallingversion",
@@ -2213,7 +2419,9 @@
       "description_en": "The version of the current signalling server.",
       "expressionName": "SignallingVersion",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "signallingname",
@@ -2223,7 +2431,9 @@
       "description_en": "The name of the current signalling server.",
       "expressionName": "SignallingName",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "signallingoperator",
@@ -2233,7 +2443,9 @@
       "description_en": "The operator of the current signalling server.",
       "expressionName": "SignallingOperator",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "signallingmotd",
@@ -2243,7 +2455,9 @@
       "description_en": "The 'message of the day' for the current signalling server.",
       "expressionName": "SignallingMOTD",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "myalias",
@@ -2253,7 +2467,9 @@
       "description_en": "The alias for the current user.",
       "expressionName": "MyAlias",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "currentgame",
@@ -2263,7 +2479,9 @@
       "description_en": "The current game name joined.",
       "expressionName": "CurrentGame",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "currentinstance",
@@ -2273,7 +2491,9 @@
       "description_en": "The current game instance joined.",
       "expressionName": "CurrentInstance",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "currentroom",
@@ -2283,7 +2503,9 @@
       "description_en": "The current room joined.",
       "expressionName": "CurrentRoom",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "errormessage",
@@ -2293,7 +2515,9 @@
       "description_en": "In 'on signalling error', the error message.",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "myid",
@@ -2303,7 +2527,9 @@
       "description_en": "The ID for the current user.",
       "expressionName": "MyID",
       "returnType": "string",
-      "category": "signalling"
+      "category": "signalling",
+      "category_zh": "信令服务器",
+      "category_en": "Signalling"
     },
     {
       "id": "statoutboundcount",
@@ -2313,7 +2539,9 @@
       "description_en": "Number of outbound messages per second.",
       "expressionName": "StatOutboundCount",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "statoutboundbandwidth",
@@ -2323,7 +2551,9 @@
       "description_en": "Network uploaded bytes per second.",
       "expressionName": "StatOutboundBandwidth",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "statoutbounddecompressedbandwidth",
@@ -2333,7 +2563,9 @@
       "description_en": "Decompressed data sent in bytes per second.",
       "expressionName": "StatOutboundDecompressedBandwidth",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "statinboundcount",
@@ -2343,7 +2575,9 @@
       "description_en": "Number of inbound messages per second.",
       "expressionName": "StatInboundCount",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "statinboundbandwidth",
@@ -2353,7 +2587,9 @@
       "description_en": "Network downloaded bytes per second.",
       "expressionName": "StatInboundBandwidth",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "statinbounddecompressedbandwidth",
@@ -2363,7 +2599,9 @@
       "description_en": "Decompressed data received in bytes per second.",
       "expressionName": "StatInboundDecompressedBandwidth",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "clientxerror",
@@ -2373,7 +2611,9 @@
       "description_en": "Client-side input prediction X error from host, for debugging.",
       "expressionName": "ClientXError",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "clientyerror",
@@ -2383,7 +2623,9 @@
       "description_en": "Client-side input prediction Y error from host, for debugging.",
       "expressionName": "ClientYError",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "hostx",
@@ -2393,7 +2635,9 @@
       "description_en": "Host X position for debugging input prediction.",
       "expressionName": "HostX",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "hosty",
@@ -2403,7 +2647,9 @@
       "description_en": "Host Y position for debugging input prediction.",
       "expressionName": "HostY",
       "returnType": "number",
-      "category": "statistics"
+      "category": "statistics",
+      "category_zh": "统计",
+      "category_en": "Statistics"
     },
     {
       "id": "filename",
@@ -2413,7 +2659,9 @@
       "description_en": "Filename of a binary data transfer, if specified.",
       "expressionName": "Filename",
       "returnType": "string",
-      "category": "binary-transfers"
+      "category": "binary-transfers",
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "mime-type",
@@ -2423,7 +2671,9 @@
       "description_en": "MIME type of a binary data transfer, if specified.",
       "expressionName": "MIMEType",
       "returnType": "string",
-      "category": "binary-transfers"
+      "category": "binary-transfers",
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "transfer-progress",
@@ -2433,7 +2683,9 @@
       "description_en": "In a binary transfer progress trigger, the transfer progress in the range 0-1.",
       "expressionName": "TransferProgress",
       "returnType": "number",
-      "category": "binary-transfers"
+      "category": "binary-transfers",
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     },
     {
       "id": "transfer-size",
@@ -2443,7 +2695,9 @@
       "description_en": "In a binary transfer start trigger, the size in bytes of the data being transmitted.",
       "expressionName": "TransferSize",
       "returnType": "number",
-      "category": "binary-transfers"
+      "category": "binary-transfers",
+      "category_zh": "二进制传输",
+      "category_en": "Binary transfers"
     }
   ],
   "productTypes": "games"

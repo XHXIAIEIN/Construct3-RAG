@@ -11,6 +11,20 @@
     "keys-and-values",
     "arrays"
   ],
+  "aceCategories": {
+    "json": {
+      "zh": "JSON",
+      "en": "JSON"
+    },
+    "keys-and-values": {
+      "zh": "JSON: 字典",
+      "en": "Keys & values"
+    },
+    "arrays": {
+      "zh": "JSON: 数组",
+      "en": "Arrays"
+    }
+  },
   "conditions": [
     {
       "id": "on-parse-error",
@@ -22,7 +36,9 @@
       "display_en": "On parse error",
       "scriptName": "OnParseError",
       "isTrigger": true,
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "on-parse-success",
@@ -34,7 +50,9 @@
       "display_en": "On parse success",
       "scriptName": "OnParseSuccess",
       "isTrigger": true,
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "has-key",
@@ -55,7 +73,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "compare-type",
@@ -118,7 +138,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "compare-value",
@@ -155,7 +177,9 @@
           "desc_zh": "要比较的值。",
           "desc_en": "Value to compare to."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "is-boolean-set",
@@ -176,7 +200,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "for-each",
@@ -197,7 +223,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组则使用下标表示位置，如 \".0.name",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     }
   ],
   "actions": [
@@ -220,7 +248,9 @@
           "desc_zh": "要解析的JSON数据字符串。",
           "desc_en": "A string of JSON data to parse."
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "set-path",
@@ -241,7 +271,9 @@
           "desc_zh": "在 JSON 中的路径。绝对路径需使用完整路径，如 \"items.data\"。若包含数组则使用下标表示其位置，如 \"items.0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "set-value",
@@ -270,7 +302,9 @@
           "desc_zh": "在指定的字段的位置设置值。",
           "desc_en": "The value to set at the given key."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "set-object",
@@ -291,7 +325,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"items.0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "set-json",
@@ -320,7 +356,9 @@
           "desc_zh": "要设置的 JSON 字符串。如果希望在字符串中显示双引号，可使用 2 个双引号进行转义。",
           "desc_en": "The value to set at the location, as a JSON string."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "set-null",
@@ -341,7 +379,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "set-boolean",
@@ -384,7 +424,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "delete-key",
@@ -405,7 +447,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "toggle-boolean",
@@ -426,7 +470,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "add-to",
@@ -455,7 +501,9 @@
           "desc_zh": "要增加的值",
           "desc_en": "Value to add to this field."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "subtract-from",
@@ -484,7 +532,9 @@
           "desc_zh": "要减少的值。",
           "desc_en": "Value to subtract from this field."
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "push-value",
@@ -535,7 +585,9 @@
           "desc_zh": "在指定字段的位置添加的值",
           "desc_en": "The value to add at the given key."
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "insert-value",
@@ -572,7 +624,9 @@
           "desc_zh": "数组的索引，将值插入到此位置。",
           "desc_en": "Index to insert the value into the array."
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "remove-values",
@@ -609,7 +663,9 @@
           "desc_zh": "删除数组在索引位置的元素，从 0 开始计数。",
           "desc_en": "Index to start removing elements from the array."
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "pop-value",
@@ -652,7 +708,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name",
           "desc_en": "Location within the JSON data."
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "set-array",
@@ -682,7 +740,9 @@
           "desc_en": "The number of elements in the array.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     }
   ],
   "expressions": [
@@ -694,7 +754,9 @@
       "description_en": "Get the currently set path.",
       "expressionName": "Path",
       "returnType": "string",
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "to-compact-string",
@@ -704,7 +766,9 @@
       "description_en": "Return the current JSON data as a minimal string with no additional whitespace.",
       "expressionName": "ToCompactString",
       "returnType": "string",
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "to-beautified-string",
@@ -714,7 +778,9 @@
       "description_en": "Return the current JSON data as a formatted string with line breaks and indentation.",
       "expressionName": "ToBeautifiedString",
       "returnType": "string",
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "get-as-beautified-string",
@@ -734,7 +800,9 @@
           "desc_zh": "在 JSON 的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "get-as-compact-string",
@@ -754,7 +822,9 @@
           "desc_zh": "在 JSON 的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。对于数组元素使用数字指定下标位置。如 \".0",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "get-value",
@@ -774,7 +844,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "get-type",
@@ -794,7 +866,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。数组元素则使用下标表示其位置，如 \"data.0",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "current-key",
@@ -804,7 +878,9 @@
       "description_en": "The current key during a for each loop.",
       "expressionName": "CurrentKey",
       "returnType": "string",
-      "category": "keys-and-values"
+      "category": "keys-and-values",
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "current-value",
@@ -814,7 +890,9 @@
       "description_en": "The current value during a for each loop.",
       "expressionName": "CurrentValue",
       "returnType": "any",
-      "category": "keys-and-values"
+      "category": "keys-and-values",
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "current-type",
@@ -824,7 +902,9 @@
       "description_en": "The type of the current value during a for each loop.",
       "expressionName": "CurrentType",
       "returnType": "string",
-      "category": "keys-and-values"
+      "category": "keys-and-values",
+      "category_zh": "JSON: 字典",
+      "category_en": "Keys & values"
     },
     {
       "id": "back",
@@ -844,7 +924,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "front",
@@ -864,7 +946,9 @@
           "desc_zh": "在 JSON 中的路径。相对路径需使用 '设置路径' 动作后填写以 \".\" 开头的路径，如 \".name\"。若包含数组元素则使用下标表示位置，如 \".0.name",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     },
     {
       "id": "array-size",
@@ -884,7 +968,9 @@
           "desc_zh": "在 JSON 中的路径，此路径需先使用 '设置数组类型' 动作转换为数组对象。",
           "desc_en": "Location within the JSON data"
         }
-      ]
+      ],
+      "category_zh": "JSON: 数组",
+      "category_en": "Arrays"
     }
   ]
 }

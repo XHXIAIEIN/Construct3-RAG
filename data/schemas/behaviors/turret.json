@@ -9,6 +9,12 @@
   "categories": [
     "settings"
   ],
+  "aceCategories": {
+    "settings": {
+      "zh": "设置",
+      "en": "Settings"
+    }
+  },
   "conditions": [
     {
       "id": "has-target",
@@ -148,7 +154,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-range",
@@ -169,7 +177,9 @@
           "desc_zh": "要设置的范围，以像素为单位。",
           "desc_en": "The range to set, in pixels."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-rate-of-fire",
@@ -190,7 +200,9 @@
           "desc_zh": "要设置的射击速度，以秒为单位。",
           "desc_en": "The rate of fire to set, in seconds."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-rotate",
@@ -225,7 +237,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-rotate-speed",
@@ -246,7 +260,9 @@
           "desc_zh": "要设置的转向速度，以度/秒为单位",
           "desc_en": "The rotation speed to set, in degrees per second."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-target-mode",
@@ -281,7 +297,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-predictive-aim",
@@ -316,7 +334,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     },
     {
       "id": "set-projectile-speed",
@@ -337,7 +357,9 @@
           "desc_zh": "用于预测目标的射弹速度，以每秒像素为单位",
           "desc_en": "The projectile speed to set for predictive aim, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Settings"
     }
   ],
   "expressions": [

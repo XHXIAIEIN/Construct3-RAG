@@ -9,6 +9,12 @@
   "categories": [
     "light"
   ],
+  "aceCategories": {
+    "light": {
+      "zh": "光源",
+      "en": "Light"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -30,7 +36,9 @@
           "desc_zh": "要设置的光源的高度，以像素为单位。",
           "desc_en": "The height of the light to set, in pixels."
         }
-      ]
+      ],
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "set-shadow-color",
@@ -52,7 +60,9 @@
           "desc_en": "The color of the shadows cast by this object.",
           "initialValue": "rgbEx(0, 0, 0)"
         }
-      ]
+      ],
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "set-tag",
@@ -73,7 +83,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的投影对象。",
           "desc_en": "The new tag to set for the light."
         }
-      ]
+      ],
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "set-cast-from",
@@ -113,7 +125,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "set-light-position",
@@ -142,7 +156,9 @@
           "desc_zh": "光源的Y坐标。",
           "desc_en": "The Y co-ordinate of the light."
         }
-      ]
+      ],
+      "category_zh": "光源",
+      "category_en": "Light"
     }
   ],
   "expressions": [
@@ -154,7 +170,9 @@
       "description_en": "The X position of the light source.",
       "expressionName": "LightX",
       "returnType": "number",
-      "category": "light"
+      "category": "light",
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "lighty",
@@ -164,7 +182,9 @@
       "description_en": "The Y position of the light source.",
       "expressionName": "LightY",
       "returnType": "number",
-      "category": "light"
+      "category": "light",
+      "category_zh": "光源",
+      "category_en": "Light"
     },
     {
       "id": "tag",
@@ -174,7 +194,9 @@
       "description_en": "The tag of the light.",
       "expressionName": "Tag",
       "returnType": "string",
-      "category": "light"
+      "category": "light",
+      "category_zh": "光源",
+      "category_en": "Light"
     }
   ],
   "properties": [

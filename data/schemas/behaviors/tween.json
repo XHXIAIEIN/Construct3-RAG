@@ -14,6 +14,32 @@
     "three-properties",
     "value"
   ],
+  "aceCategories": {
+    "playback": {
+      "zh": "播放",
+      "en": "Playback"
+    },
+    "setters": {
+      "zh": "设置",
+      "en": "Setters"
+    },
+    "one-property": {
+      "zh": "一个参数",
+      "en": "One property"
+    },
+    "two-properties": {
+      "zh": "两个参数",
+      "en": "Two properties"
+    },
+    "three-properties": {
+      "zh": "三个属性",
+      "en": "Three properties"
+    },
+    "value": {
+      "zh": "仅数值",
+      "en": "Value"
+    }
+  },
   "conditions": [
     {
       "id": "on-tweens-finished",
@@ -364,7 +390,9 @@
           "desc_en": "The tag or tags of the tweens to pause.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "pause-all-tweens",
@@ -375,7 +403,9 @@
       "display_zh": "{my} 暂停全部",
       "display_en": "{my}: Pause all",
       "scriptName": "PauseAllTweens",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "resume-tweens",
@@ -397,7 +427,9 @@
           "desc_en": "The tag or tags of the paused tweens to resume.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "resume-all-tweens",
@@ -408,7 +440,9 @@
       "display_zh": "{my} 恢复全部",
       "display_en": "{my}: Resume all",
       "scriptName": "ResumeAllTweens",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "stop-tweens",
@@ -430,7 +464,9 @@
           "desc_en": "The tag or tags of the tweens to stop.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "stop-all-tweens",
@@ -441,7 +477,9 @@
       "display_zh": "{my} 停止全部",
       "display_en": "{my}: Stop all",
       "scriptName": "StopAllTweens",
-      "category": "playback"
+      "category": "playback",
+      "category_zh": "播放",
+      "category_en": "Playback"
     },
     {
       "id": "set-enabled",
@@ -476,7 +514,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-tweens-ease",
@@ -506,7 +546,9 @@
           "desc_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
           "desc_en": "The ease function to set."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-all-tweens-ease",
@@ -527,7 +569,9 @@
           "desc_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
           "desc_en": "The easing function to set."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-tweens-time",
@@ -557,7 +601,9 @@
           "desc_zh": "要设置的持续时间，以秒为单位。",
           "desc_en": "The time to set, in seconds."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-all-tweens-time",
@@ -578,7 +624,9 @@
           "desc_zh": "要设置的持续时间，以秒为单位。",
           "desc_en": "The time to set, in seconds."
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-tweens-destroy-on-complete",
@@ -623,7 +671,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-all-tweens-destroy-on-complete",
@@ -659,7 +709,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-tweens-playback-rate",
@@ -690,7 +742,9 @@
           "desc_en": "The playback rate to set.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "set-all-tweens-playback-rate",
@@ -712,7 +766,9 @@
           "desc_en": "The playback rate to set.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "设置",
+      "category_en": "Setters"
     },
     {
       "id": "tween-one-property",
@@ -906,7 +962,9 @@
           "desc_en": "The amount of times to repeat the animation",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "一个参数",
+      "category_en": "One property"
     },
     {
       "id": "set-one-property-tweens-end-value",
@@ -1000,7 +1058,9 @@
           "desc_en": "The end value to set. Specify colors with the rgbEx() expression.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "一个参数",
+      "category_en": "One property"
     },
     {
       "id": "tween-two-properties",
@@ -1164,7 +1224,9 @@
           "desc_en": "The amount of times to repeat the animation",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "两个参数",
+      "category_en": "Two properties"
     },
     {
       "id": "set-two-properties-tweens-end-value",
@@ -1232,7 +1294,9 @@
           "desc_en": "The end value to set in the second property.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "两个参数",
+      "category_en": "Two properties"
     },
     {
       "id": "tween-three-properties",
@@ -1395,7 +1459,9 @@
           "desc_en": "The amount of times to repeat the animation",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "三个属性",
+      "category_en": "Three properties"
     },
     {
       "id": "set-three-properties-tweens-end-value",
@@ -1462,7 +1528,9 @@
           "desc_en": "The end value to set in the third property.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "三个属性",
+      "category_en": "Three properties"
     },
     {
       "id": "tween-value",
@@ -1598,7 +1666,9 @@
           "desc_en": "The amount of times to repeat the animation",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "仅数值",
+      "category_en": "Value"
     },
     {
       "id": "set-value-property-tweens-start-value",
@@ -1629,7 +1699,9 @@
           "desc_en": "The start value to set.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "仅数值",
+      "category_en": "Value"
     },
     {
       "id": "set-value-property-tweens-end-value",
@@ -1660,7 +1732,9 @@
           "desc_en": "The end value to set.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "仅数值",
+      "category_en": "Value"
     }
   ],
   "expressions": [

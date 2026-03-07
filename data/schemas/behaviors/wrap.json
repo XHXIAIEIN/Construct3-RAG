@@ -7,6 +7,7 @@
   "description_en": "Make an object leaving the layout reappear on the other side.",
   "path": "general/wrap",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "on-wrap",

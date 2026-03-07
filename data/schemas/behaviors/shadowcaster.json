@@ -7,6 +7,7 @@
   "description_en": "Make the object cast a shadow away from a Shadow Light object.",
   "path": "attributes/shadowcaster",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-enabled",

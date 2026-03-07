@@ -12,6 +12,24 @@
     "drawing-general",
     "drawing-polygons"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "canvas": {
+      "zh": "画布",
+      "en": "Canvas"
+    },
+    "drawing-general": {
+      "zh": "绘图：常规",
+      "en": "Drawing: general"
+    },
+    "drawing-polygons": {
+      "zh": "绘图：多边形",
+      "en": "Drawing: polygons"
+    }
+  },
   "conditions": [
     {
       "id": "on-saved-image",
@@ -23,7 +41,9 @@
       "display_en": "On saved image",
       "scriptName": "OnSavedImage",
       "isTrigger": true,
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "on-snapshot",
@@ -35,7 +55,9 @@
       "display_en": "On snapshot",
       "scriptName": "OnSnapshot",
       "isTrigger": true,
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "on-resolution-changed",
@@ -47,7 +69,9 @@
       "display_en": "On resolution changed",
       "scriptName": "OnResolutionChanged",
       "isTrigger": true,
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     }
   ],
   "actions": [
@@ -149,7 +173,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "save-image",
@@ -226,7 +252,9 @@
           "desc_zh": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。",
           "desc_en": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height."
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "save-snapshot",
@@ -238,7 +266,9 @@
       "display_en": "Save snapshot",
       "scriptName": "SaveSnapshot",
       "isAsync": true,
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "clear-snapshot",
@@ -249,7 +279,9 @@
       "display_zh": "清理快照",
       "display_en": "Clear snapshot",
       "scriptName": "ClearSnapshot",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-set-pixel",
@@ -287,7 +319,9 @@
           "desc_en": "The color of the pixel to set.",
           "initialValue": "rgba(0, 0, 0, 100)"
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "load-snapshot",
@@ -298,7 +332,9 @@
       "display_zh": "加载快照",
       "display_en": "Load snapshot to canvas",
       "scriptName": "LoadSnapshot",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "set-resolution-mode",
@@ -349,7 +385,9 @@
           "desc_zh": "固定分辨率时，使用的垂直分辨率，以像素为单位。",
           "desc_en": "When using fixed resolution, the vertical resolution in pixels."
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "clear-canvas",
@@ -371,7 +409,9 @@
           "desc_en": "The color to clear to.",
           "initialValue": "rgba(0, 0, 0, 0)"
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "clear-rect",
@@ -425,7 +465,9 @@
           "desc_en": "The color to clear to.",
           "initialValue": "rgba(0, 0, 0, 0)"
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "fill-rect",
@@ -479,7 +521,9 @@
           "desc_en": "The color to fill.",
           "initialValue": "rgba(0, 0, 0, 100)"
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "fill-linear-gradient",
@@ -564,7 +608,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "fill-ellipse",
@@ -641,7 +687,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "outline-ellipse",
@@ -727,7 +775,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "outline-rect",
@@ -790,7 +840,9 @@
           "desc_en": "The line thickness of the outline.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "line",
@@ -875,7 +927,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "line-dashed",
@@ -969,7 +1023,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "set-drawing-blend",
@@ -1064,7 +1120,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "paste-object",
@@ -1109,7 +1167,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：常规",
+      "category_en": "Drawing: general"
     },
     {
       "id": "add-poly-point",
@@ -1138,7 +1198,9 @@
           "desc_zh": "顶点的Y坐标。",
           "desc_en": "Y co-ordinate of point."
         }
-      ]
+      ],
+      "category_zh": "绘图：多边形",
+      "category_en": "Drawing: polygons"
     },
     {
       "id": "reset-poly",
@@ -1149,7 +1211,9 @@
       "display_zh": "重置多边形",
       "display_en": "Reset polygon",
       "scriptName": "ResetPoly",
-      "category": "drawing-polygons"
+      "category": "drawing-polygons",
+      "category_zh": "绘图：多边形",
+      "category_en": "Drawing: polygons"
     },
     {
       "id": "line-poly",
@@ -1202,7 +1266,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：多边形",
+      "category_en": "Drawing: polygons"
     },
     {
       "id": "line-dashed-poly",
@@ -1264,7 +1330,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "绘图：多边形",
+      "category_en": "Drawing: polygons"
     },
     {
       "id": "fill-poly",
@@ -1294,7 +1362,9 @@
           "desc_zh": "检查多边形的形状是否凸起，这样可以更可靠地进行渲染。",
           "desc_en": "Check if the polygon shape is convex, which enables more reliable rendering."
         }
-      ]
+      ],
+      "category_zh": "绘图：多边形",
+      "category_en": "Drawing: polygons"
     }
   ],
   "expressions": [
@@ -1306,7 +1376,9 @@
       "description_en": "In 'On saved image', the URL of the saved image.",
       "expressionName": "SavedImageURL",
       "returnType": "string",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-red-at",
@@ -1334,7 +1406,9 @@
           "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。",
           "desc_en": "Pixel Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-green-at",
@@ -1362,7 +1436,9 @@
           "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。",
           "desc_en": "Pixel Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-blue-at",
@@ -1390,7 +1466,9 @@
           "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。",
           "desc_en": "Pixel Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-alpha-at",
@@ -1418,7 +1496,9 @@
           "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。",
           "desc_en": "Pixel Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-width",
@@ -1428,7 +1508,9 @@
       "description_en": "The width of the last snapshot in pixels.",
       "expressionName": "SnapshotWidth",
       "returnType": "number",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "snapshot-height",
@@ -1438,7 +1520,9 @@
       "description_en": "The height of the last snapshot in pixels.",
       "expressionName": "SnapshotHeight",
       "returnType": "number",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "pixel-scale",
@@ -1448,7 +1532,9 @@
       "description_en": "The size of a single canvas pixel in object co-ordinates.",
       "expressionName": "PixelScale",
       "returnType": "number",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "surface-device-width",
@@ -1458,7 +1544,9 @@
       "description_en": "The width of the Drawing Canvas surface in device pixels.",
       "expressionName": "SurfaceDeviceWidth",
       "returnType": "number",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     },
     {
       "id": "surface-device-height",
@@ -1468,7 +1556,9 @@
       "description_en": "The height of the Drawing Canvas surface in device pixels.",
       "expressionName": "SurfaceDeviceHeight",
       "returnType": "number",
-      "category": "canvas"
+      "category": "canvas",
+      "category_zh": "画布",
+      "category_en": "Canvas"
     }
   ],
   "properties": [

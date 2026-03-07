@@ -12,6 +12,24 @@
     "json",
     "manipulation"
   ],
+  "aceCategories": {
+    "array": {
+      "zh": "数组:元素",
+      "en": "Array"
+    },
+    "for-each": {
+      "zh": "数组:遍历",
+      "en": "For Each"
+    },
+    "json": {
+      "zh": "JSON",
+      "en": "JSON"
+    },
+    "manipulation": {
+      "zh": "数组:操作",
+      "en": "Manipulation"
+    }
+  },
   "conditions": [
     {
       "id": "compare-at-x",
@@ -48,7 +66,9 @@
           "desc_zh": "要进行比较的值。",
           "desc_en": "The value to compare the array value to."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "compare-at-xy",
@@ -93,7 +113,9 @@
           "desc_zh": "要进行比较的值。",
           "desc_en": "The value to compare the array value to."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "compare-at-xyz",
@@ -146,7 +168,9 @@
           "desc_zh": "要进行比较的值。",
           "desc_en": "The value to compare the array value to."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "contains-value",
@@ -167,7 +191,9 @@
           "desc_zh": "要在数组中查找的值。",
           "desc_en": "The value to test if in the array."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "is-empty",
@@ -178,7 +204,9 @@
       "display_zh": "如果为空",
       "display_en": "Is empty",
       "scriptName": "IsEmpty",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "compare-size",
@@ -234,7 +262,9 @@
           "desc_zh": "要比较的值。",
           "desc_en": "The value to compare to."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "for-each-element",
@@ -274,7 +304,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     },
     {
       "id": "compare-current-value",
@@ -303,7 +335,9 @@
           "desc_zh": "要进行比较的值。",
           "desc_en": "The value to compare the array value to."
         }
-      ]
+      ],
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     }
   ],
   "actions": [
@@ -326,7 +360,9 @@
           "desc_zh": "用于覆盖整个数组的值。",
           "desc_en": "The value to clear the entire array with."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "set-size",
@@ -366,7 +402,9 @@
           "desc_en": "The new number of elements on the Z axis.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "set-at-x",
@@ -395,7 +433,9 @@
           "desc_zh": "要存储在数组中的值。",
           "desc_en": "The value to store in the array."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "set-at-xy",
@@ -432,7 +472,9 @@
           "desc_zh": "要存储在数组中的值。",
           "desc_en": "The value to store in the array."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "set-at-xyz",
@@ -477,7 +519,9 @@
           "desc_zh": "要存储在数组中的值。",
           "desc_en": "The value to store in the array."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "load",
@@ -498,7 +542,9 @@
           "desc_zh": "数组文件的 JSON 格式。如果希望导入项目文件夹的数组文件，请先通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式在此处输入。",
           "desc_en": "A string of the JSON data to load."
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "download",
@@ -520,7 +566,9 @@
           "desc_en": "The name of the file to download.",
           "initialValue": "\"data.json\""
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "push",
@@ -590,7 +638,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "pop",
@@ -652,7 +702,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "reverse",
@@ -692,7 +744,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "sort",
@@ -715,7 +769,9 @@
             "z"
           ]
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "sort2",
@@ -765,7 +821,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "shuffle",
@@ -805,7 +863,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "delete",
@@ -853,7 +913,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "insert",
@@ -909,7 +971,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     },
     {
       "id": "split-string",
@@ -966,7 +1030,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     }
   ],
   "expressions": [
@@ -989,7 +1055,9 @@
           "desc_zh": "要获取的值位于数组X轴的位置，从 0 开始计数。",
           "desc_en": "The X index (0-based) of the array value to get."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "width",
@@ -999,7 +1067,9 @@
       "description_en": "Get the number of elements on the X axis of the array.",
       "expressionName": "Width",
       "returnType": "number",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "height",
@@ -1009,7 +1079,9 @@
       "description_en": "Get the number of elements on the Y axis of the array.",
       "expressionName": "Height",
       "returnType": "number",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "depth",
@@ -1019,7 +1091,9 @@
       "description_en": "Get the number of elements on the Z axis of the array.",
       "expressionName": "Depth",
       "returnType": "number",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "front",
@@ -1029,7 +1103,9 @@
       "description_en": "Get the front value on the X axis (at 0, 0, 0).",
       "expressionName": "Front",
       "returnType": "any",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "back",
@@ -1039,7 +1115,9 @@
       "description_en": "Get the back value on the X axis (at w-1, 0, 0).",
       "expressionName": "Back",
       "returnType": "any",
-      "category": "array"
+      "category": "array",
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "indexof",
@@ -1059,7 +1137,9 @@
           "desc_zh": "要搜索的值。",
           "desc_en": "Value to search for."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "lastindexof",
@@ -1079,7 +1159,9 @@
           "desc_zh": "要搜索的值。",
           "desc_en": "Value to search for."
         }
-      ]
+      ],
+      "category_zh": "数组:元素",
+      "category_en": "Array"
     },
     {
       "id": "curx",
@@ -1089,7 +1171,9 @@
       "description_en": "Get the current X index in a For Each loop.",
       "expressionName": "CurX",
       "returnType": "number",
-      "category": "for-each"
+      "category": "for-each",
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     },
     {
       "id": "cury",
@@ -1099,7 +1183,9 @@
       "description_en": "Get the current Y index in a For Each loop.",
       "expressionName": "CurY",
       "returnType": "number",
-      "category": "for-each"
+      "category": "for-each",
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     },
     {
       "id": "curz",
@@ -1109,7 +1195,9 @@
       "description_en": "Get the current Z index in a For Each loop.",
       "expressionName": "CurZ",
       "returnType": "number",
-      "category": "for-each"
+      "category": "for-each",
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     },
     {
       "id": "curvalue",
@@ -1119,7 +1207,9 @@
       "description_en": "Get the current value in a For Each loop.",
       "expressionName": "CurValue",
       "returnType": "any",
-      "category": "for-each"
+      "category": "for-each",
+      "category_zh": "数组:遍历",
+      "category_en": "For Each"
     },
     {
       "id": "asjson",
@@ -1129,7 +1219,9 @@
       "description_en": "Return the contents of the array in JSON format.",
       "expressionName": "AsJSON",
       "returnType": "string",
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "join-string",
@@ -1150,7 +1242,9 @@
           "desc_en": "The character to use to join the string.",
           "initialValue": "\",\""
         }
-      ]
+      ],
+      "category_zh": "数组:操作",
+      "category_en": "Manipulation"
     }
   ],
   "properties": [

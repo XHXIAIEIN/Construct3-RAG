@@ -32,17 +32,16 @@ class EmbeddingModel:
     @property
     def model(self):
         if self._model is None:
-            print(f"Loading embedding model: {self.model_name} (device: {self.device})")
             self._model = SentenceTransformer(self.model_name, device=self.device)
         return self._model
 
     def encode(self, texts: List[str], batch_size: int = 8) -> List[List[float]]:
         """Encode texts to vectors"""
-        return self.model.encode(texts, show_progress_bar=True, batch_size=batch_size).tolist()
+        return self.model.encode(texts, show_progress_bar=False, batch_size=batch_size).tolist()
 
     def encode_single(self, text: str) -> List[float]:
         """Encode single text to vector"""
-        return self.model.encode([text])[0].tolist()
+        return self.model.encode([text], show_progress_bar=False)[0].tolist()
 
     @property
     def dimension(self) -> int:

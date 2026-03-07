@@ -10585,7 +10585,7 @@ text.ui.dialogs.addonManager.dev-addon-install.message,"输入URL 在本地服�
 text.ui.dialogs.addonManager.dev-addon-install.url-label,URL:,,,,URL:
 text.ui.dialogs.addonManager.dev-install-failed,无法加载JSON插件。检查你的本地Web服务器是否运行并正确配置。检查浏览器控制台是否有错误。,,,,"Unable to load the addon JSON. Check your local web server is running and correctly configured. Check the browser console for errors."
 text.ui.bars.properties.instance.color.name,颜色,,,,Color
-text.ui.bars.properties.instance.color.desc,应用于该实例的颜色。,,,,"The color to apply to this instance."
+text.ui.bars.properties.instance.color.desc,应用于这个实例的颜色。,,,,"The color to apply to this instance."
 text.ui.dialogs.about.release-number-beta,"测试版 {0} (Beta)",,,,"Release {0} beta"
 text.ui.dialogs.about.release-number-stable,"正式版 {0} (Stable)",,,,"Release {0} stable"
 text.ui.dialogs.createKeystoreDialog.validation.validity,"请输入 1-100 年之内的值。",,,,"Please specify a validity between 1 - 100 years."
@@ -12568,11 +12568,11 @@ text.ui.undo.change-ui-property.track,"更改'{0}' 属性'{1}'",,,,"Change '{0}'
 text.ui.undo.change-ui-property.property-track,"更改'{0}' 属性'{1}'",,,,"Change '{0}' property '{1}'"
 text.plugins.system.actions.set-layer-z-elevation.list-name,设置图层视距高度,,,,"Set layer Z elevation"
 text.plugins.system.actions.set-layer-z-elevation.display-text,设置图层{0}视距高度为[b]{1}[/b],,,,"Set layer {0} Z elevation to [b]{1}[/b]"
-text.plugins.system.actions.set-layer-z-elevation.description,设置图层在Z轴上的视距高度。,,,,"Set the Z elevation of a layer."
+text.plugins.system.actions.set-layer-z-elevation.description,设置图层在Z轴的视距高度。,,,,"Set the Z elevation of a layer."
 text.plugins.system.actions.set-layer-z-elevation.params.layer.name,图层,,,,Layer
 text.plugins.system.actions.set-layer-z-elevation.params.layer.desc,要修改的图层的名称或编号。,,,,"Name or number of the layer to modify."
 text.plugins.system.actions.set-layer-z-elevation.params.z-elevation.name,视距高度,,,,"Z elevation"
-text.plugins.system.actions.set-layer-z-elevation.params.z-elevation.desc,设置图层在Z轴上的视距高度。,,,,"The Z elevation to set for the layer."
+text.plugins.system.actions.set-layer-z-elevation.params.z-elevation.desc,设置图层在Z轴的视距高度。,,,,"The Z elevation to set for the layer."
 text.plugins.system.expressions.layer-z-elevation.description,获取指定图层的视距高度。,,,,"Get the Z elevation of a layer."
 text.plugins.system.expressions.layer-z-elevation.params.layer.name,图层,,,,layer
 text.plugins.system.expressions.layer-z-elevation.params.layer.desc,要获取的图层。可以是编号或者名字。,,,,"Layer to get parallax for."
@@ -12587,7 +12587,7 @@ text.plugins._common.expressions.z-elevation.translated-name,视距高度,,,,ZEl
 text.plugins._common.expressions.z-elevation.description,获取相对于图层的视距高度。,,,,"Get the Z elevation relative to its layer."
 text.plugins._common.expressions.total-z-elevation.translated-name,整体视距高度,,,,TotalZElevation
 text.plugins._common.expressions.total-z-elevation.description,基于当前图层的视距高度，计算整体的视距高度总值。,,,,"Get the total Z elevation taking in to account the layer Z elevation."
-text.ui.bars.properties.layer.use-render-cells.desc,用于优化较大型图层中存在大量静态对象的渲染模式。不能与视距高度一起使用。,,,,"Optimise rendering for large layers with many static objects. Cannot be used with Z elevation."
+text.ui.bars.properties.layer.use-render-cells.desc,用于优化大型图层中包含大量静态对象的渲染模式。不能与视距高度一起使用。,,,,"Optimise rendering for large layers with many static objects. Cannot be used with Z elevation."
 text.exporters.preview.debugger.system.layer.z-elevation,视距高度,,,,"Z elevation"
 text.ui.dialogs.instantGamesExportReport.caption,导出{0}的报告,,,,"Export report for '{0}'"
 text.ui.dialogs.instantGamesExportReport.export-finished,导出完成,,,,"Export finished!"
@@ -15929,9 +15929,9 @@ text.plugins._common.actions.set-mesh-size.params.rows.desc,"在垂直方向的�
 text.plugins._common.actions.set-mesh-point.list-name,设置网格锚点,,,,"Set mesh point"
 text.plugins._common.actions.set-mesh-point.description,设置对象纹理网格，更改锚点位置和纹理坐标。,,,,"Set the position and texture co-ordinates of a point on the object's mesh."
 text.plugins._common.actions.set-mesh-point.params.col.name,列,,,,Column
-text.plugins._common.actions.set-mesh-point.params.col.desc,要设置的锚点所在列的位置，从0开始计数。,,,,"Zero-based column number of the mesh point to set."
+text.plugins._common.actions.set-mesh-point.params.col.desc,"要设置的锚点所在列的位置，从 0 开始计数。",,,,"Zero-based column number of the mesh point to set."
 text.plugins._common.actions.set-mesh-point.params.row.name,行,,,,Row
-text.plugins._common.actions.set-mesh-point.params.row.desc,要设置的锚点所在行的位置，从0开始计数。,,,,"Zero-based row number of the mesh point to set."
+text.plugins._common.actions.set-mesh-point.params.row.desc,"要设置的锚点所在行的位置，从 0 开始计数。",,,,"Zero-based row number of the mesh point to set."
 text.plugins._common.actions.set-mesh-point.params.mode.name,模式,,,,Mode
 text.plugins._common.actions.set-mesh-point.params.mode.desc,要设置的网格锚点，是使用对象图像框内的绝对值，或是相对于默认位置的偏移值。,,,,"Whether to set points using absolute values within the object's box, or apply a relative displacement from its default position."
 text.plugins._common.actions.set-mesh-point.params.mode.items.absolute,绝对位置,,,,Absolute
@@ -15942,9 +15942,9 @@ text.plugins._common.actions.set-mesh-point.params.posy.name,位置Y,,,,"Positio
 text.plugins._common.actions.set-mesh-point.params.posy.desc,"设置锚点的 Y 位置。基于对象的图像框内，在 0 到 1 范围。",,,,"Y position of the mesh point, from 0-1 within to the object's box."
 text.plugins._common.actions.set-mesh-point.params.texx.name,纹理X,,,,"Texture X"
 text.plugins._common.actions.set-mesh-point.params.texy.name,纹理Y,,,,"Texture Y"
-text.plugins._common.expressions.mesh-columns.translated-name,纹理列数,,,,MeshColumns
+text.plugins._common.expressions.mesh-columns.translated-name,网格列数,,,,MeshColumns
 text.plugins._common.expressions.mesh-columns.description,"获取对象的网格列数。如果没有使用网格，则为 0。",,,,"Get the number of columns on the object's mesh, or 0 if no mesh in use."
-text.plugins._common.expressions.mesh-rows.translated-name,纹理行数,,,,MeshRows
+text.plugins._common.expressions.mesh-rows.translated-name,网格行数,,,,MeshRows
 text.plugins._common.expressions.mesh-rows.description,"获取对象的网格行数。如果没有使用网格，则为 0。",,,,"Get the number of rows on the object's mesh, or 0 if no mesh in use."
 englishName,"Chinese (simplified)",,,,"English (US)"
 nativeName,简体中文,,,,"English (US)"
@@ -15996,8 +15996,8 @@ text.ui.editors.layoutView.context-menu.hierarchy.select-all-children,选择所�
 text.ui.undo.multi-undo.scene-graph.add,"添加 {0} 实例对象到层级",,,,"Add instance to hierarchy"
 text.ui.undo.multi-undo.scene-graph.remove,"移除 {0} 实例对象层级",,,,"Remove instance from hierarchy"
 text.exporters.preview.loading-message,加载中...,,,,"Please wait, loading..."
-text.plugins._common.actions.set-mesh-point.params.texx.desc,"网格点位置的图像 X 坐标。基于对象的图像框内，在 0 到 1 范围。如需保持不变，则在绝对模式中使用-1，或在相对模式下使用 0。",,,,"X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
-text.plugins._common.actions.set-mesh-point.params.texy.desc,"网格点位置的图像 Y 坐标。基于对象的图像框内，在 0 到 1 范围。如需保持不变，则在绝对模式中使用-1，或在相对模式下使用 0。",,,,"Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+text.plugins._common.actions.set-mesh-point.params.texx.desc,"网格点对应对象图像的 X 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。",,,,"X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+text.plugins._common.actions.set-mesh-point.params.texy.desc,"网格点对应对象图像的 Y 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。",,,,"Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
 text.main-menu.project-menu.open-recent-item-with-name,"{0} ({1})",,,,"{0} ({1})"
 text.plugins.audio.aceCategories.web,Web,,,,Web
 text.plugins.audio.actions.add-remote-url.list-name,加载远程音频,,,,"Add remote URL"
@@ -16230,7 +16230,7 @@ text.animations-editor.frames-panel.title-3d-shape,朝向,,,,Faces
 text.plugins.shape3d.name,3D形状,,,,"3D shape"
 text.plugins.shape3d.description,"简单的 3D 形状支持，如创建一个立方体，每个面都可以自定义图像。",,,,"A simple 3D shape such as a cube, with custom images for each face."
 text.plugins.shape3d.face-names.back,背面,,,,Back
-text.plugins.shape3d.face-names.front,正面,,,,Front
+text.plugins.shape3d.face-names.front,顶面,,,,Front
 text.plugins.shape3d.face-names.left,左面,,,,Left
 text.plugins.shape3d.face-names.right,右面,,,,Right
 text.plugins.shape3d.face-names.top,顶面,,,,Top
@@ -16250,8 +16250,8 @@ text.plugins.shape3d.properties.face-visibility.name,朝面可见,,,,"Face visib
 text.plugins.shape3d.properties.face-visibility.desc,选择形状的哪些面是可见的。,,,,"Choose which faces of the shape are visible."
 text.plugins.shape3d.properties.face-back.name,背面,,,,"Back face"
 text.plugins.shape3d.properties.face-back.desc,选择背面是否可见。,,,,"Choose whether the back face is visible."
-text.plugins.shape3d.properties.face-front.name,正面,,,,"Front face"
-text.plugins.shape3d.properties.face-front.desc,选择正面是否可见。,,,,"Choose whether the front face is visible."
+text.plugins.shape3d.properties.face-front.name,顶面,,,,"Front face"
+text.plugins.shape3d.properties.face-front.desc,选择顶面是否可见。,,,,"Choose whether the front face is visible."
 text.plugins.shape3d.properties.face-left.name,左面,,,,"Left face"
 text.plugins.shape3d.properties.face-left.desc,选择左面是否可见。,,,,"Choose whether the left face is visible."
 text.plugins.shape3d.properties.face-right.name,右面,,,,"Right face"
@@ -16283,7 +16283,7 @@ text.plugins.shape3d.conditions.is-face-visible.description,检测对象某个�
 text.plugins.shape3d.conditions.is-face-visible.params.face.name,朝面,,,,Face
 text.plugins.shape3d.conditions.is-face-visible.params.face.desc,要检查的朝面。,,,,"The face to check."
 text.plugins.shape3d.conditions.is-face-visible.params.face.items.back,背面,,,,Back
-text.plugins.shape3d.conditions.is-face-visible.params.face.items.front,正面,,,,Front
+text.plugins.shape3d.conditions.is-face-visible.params.face.items.front,顶面,,,,Front
 text.plugins.shape3d.conditions.is-face-visible.params.face.items.left,左面,,,,Left
 text.plugins.shape3d.conditions.is-face-visible.params.face.items.right,右面,,,,Right
 text.plugins.shape3d.conditions.is-face-visible.params.face.items.top,顶面,,,,Top
@@ -16307,7 +16307,7 @@ text.plugins.shape3d.actions.set-face-visible.description,设置形状的某个�
 text.plugins.shape3d.actions.set-face-visible.params.face.name,朝面,,,,Face
 text.plugins.shape3d.actions.set-face-visible.params.face.desc,要检查的朝面。,,,,"The face to check."
 text.plugins.shape3d.actions.set-face-visible.params.face.items.back,背面,,,,Back
-text.plugins.shape3d.actions.set-face-visible.params.face.items.front,正面,,,,Front
+text.plugins.shape3d.actions.set-face-visible.params.face.items.front,顶面,,,,Front
 text.plugins.shape3d.actions.set-face-visible.params.face.items.left,左面,,,,Left
 text.plugins.shape3d.actions.set-face-visible.params.face.items.right,右面,,,,Right
 text.plugins.shape3d.actions.set-face-visible.params.face.items.top,顶面,,,,Top
@@ -16327,7 +16327,7 @@ text.plugins.shape3d.actions.set-face-image.description,设置形状朝面使用
 text.plugins.shape3d.actions.set-face-image.params.face.name,朝面,,,,Face
 text.plugins.shape3d.actions.set-face-image.params.face.desc,要更改图像的朝面。,,,,"The face to change the image for."
 text.plugins.shape3d.actions.set-face-image.params.face.items.back,背面,,,,Back
-text.plugins.shape3d.actions.set-face-image.params.face.items.front,正面,,,,Front
+text.plugins.shape3d.actions.set-face-image.params.face.items.front,顶面,,,,Front
 text.plugins.shape3d.actions.set-face-image.params.face.items.left,左面,,,,Left
 text.plugins.shape3d.actions.set-face-image.params.face.items.right,右面,,,,Right
 text.plugins.shape3d.actions.set-face-image.params.face.items.top,顶面,,,,Top
@@ -16335,7 +16335,7 @@ text.plugins.shape3d.actions.set-face-image.params.face.items.bottom,底面,,,,B
 text.plugins.shape3d.actions.set-face-image.params.image.name,图像,,,,Image
 text.plugins.shape3d.actions.set-face-image.params.image.desc,用于朝面的图像。,,,,"The image to use for the chosen face."
 text.plugins.shape3d.actions.set-face-image.params.image.items.back,背面,,,,Back
-text.plugins.shape3d.actions.set-face-image.params.image.items.front,正面,,,,Front
+text.plugins.shape3d.actions.set-face-image.params.image.items.front,顶面,,,,Front
 text.plugins.shape3d.actions.set-face-image.params.image.items.left,左面,,,,Left
 text.plugins.shape3d.actions.set-face-image.params.image.items.right,右面,,,,Right
 text.plugins.shape3d.actions.set-face-image.params.image.items.top,顶面,,,,Top
@@ -16353,7 +16353,7 @@ text.ui.bars.properties.mesh-point.object-type-name.name,对象名称,,,,"Object
 text.ui.bars.properties.mesh-point.object-type-name.desc,具有网格的实例的对象类型的名称。,,,,"Name of the object type of the instance with the mesh."
 text.ui.bars.properties.mesh-point.instance-uid.name,"实例 UID",,,,"Instance UID"
 text.ui.bars.properties.mesh-point.instance-uid.desc,当前网格点所属实例的UID。,,,,"Unique ID (UID) of the instance the mesh point belongs to."
-text.ui.bars.properties.mesh-point.mesh-size.name,网格尺寸,,,,"Mesh size"
+text.ui.bars.properties.mesh-point.mesh-size.name,网格大小,,,,"Mesh size"
 text.ui.bars.properties.mesh-point.mesh-size.desc,纹理网格的列数和行数。,,,,"Number of columns and rows in the mesh."
 text.ui.bars.properties.mesh-point.mesh-size.value,"{0} x {1}",,,,"{0} x {1}"
 text.ui.bars.properties.mesh-point.mesh-point-position.name,锚点位置,,,,"Mesh point position"
@@ -16405,8 +16405,8 @@ text.plugins.shape3d.properties.use-object-image-for-faces.desc,可选。允许�
 text.plugins.shape3d.properties.z-tiling-factor.name,平铺系数,,,,"Z tiling factor"
 text.plugins.shape3d.properties.object-back.name,背面对象,,,,"Back face object"
 text.plugins.shape3d.properties.object-back.desc,可选。选择一个对象作为背面的图像。注意，此对象的实例必须放在相同场景中。,,,,"Optionally choose an object to use as the image for the back face. An instance of the object must be in the same layout."
-text.plugins.shape3d.properties.object-front.name,正面对象,,,,"Front face object"
-text.plugins.shape3d.properties.object-front.desc,可选。选择一个对象作为正面的图像。注意，此对象的实例必须放在相同场景中。,,,,"Optionally choose an object to use as the image for the front face. An instance of the object must be in the same layout."
+text.plugins.shape3d.properties.object-front.name,顶面对象,,,,"Front face object"
+text.plugins.shape3d.properties.object-front.desc,可选。选择一个对象作为顶面的图像。注意，此对象的实例必须放在相同场景中。,,,,"Optionally choose an object to use as the image for the front face. An instance of the object must be in the same layout."
 text.plugins.shape3d.properties.object-left.name,左面对象,,,,"Left face object"
 text.plugins.shape3d.properties.object-left.desc,可选。选择一个对象作为左面的图像。注意，此对象的实例必须放在相同场景中。,,,,"Optionally choose an object to use as the image for the left face. An instance of the object must be in the same layout."
 text.plugins.shape3d.properties.object-right.name,右面对象,,,,"Right face object"
@@ -16426,7 +16426,7 @@ text.plugins.shape3d.actions.set-face-object.description,选择一个对象，�
 text.plugins.shape3d.actions.set-face-object.params.face.name,朝面,,,,Face
 text.plugins.shape3d.actions.set-face-object.params.face.desc,要更改哪个朝面的图像。,,,,"The face to change the image for."
 text.plugins.shape3d.actions.set-face-object.params.face.items.back,背面,,,,Back
-text.plugins.shape3d.actions.set-face-object.params.face.items.front,正面,,,,Front
+text.plugins.shape3d.actions.set-face-object.params.face.items.front,顶面,,,,Front
 text.plugins.shape3d.actions.set-face-object.params.face.items.left,左面,,,,Left
 text.plugins.shape3d.actions.set-face-object.params.face.items.right,右面,,,,Right
 text.plugins.shape3d.actions.set-face-object.params.face.items.top,顶面,,,,Top
@@ -16436,7 +16436,7 @@ text.plugins.shape3d.actions.set-face-object.params.object.desc,用于朝向显�
 text.plugins.shape3d.expressions.z-tiling-factor.description,应用于Z轴的纹理平铺系数。数值越大，图像重复越密集。,,,,"The current Z tiling factor for image repetition on the Z axis."
 text.plugins.shape3d.expressions.z-tiling-factor.translated-name,平铺系数,,,,ZTilingFactor
 text.plugins._common.actions.set-mesh-point.params.z-elevation.name,视距高度,,,,"Z elevation"
-text.plugins._common.actions.set-mesh-point.params.z-elevation.desc,设置纹理锚点的视距高度，不适用于相对模式，且不允许负数。,,,,"Z elevation of the mesh point, as an absolute value (relative mode does not apply). Negative Z elevations are not allowed."
+text.plugins._common.actions.set-mesh-point.params.z-elevation.desc,网格点的视距高度，采用绝对值。不适用于相对模式。不能为负数。,,,,"Z elevation of the mesh point, as an absolute value (relative mode does not apply). Negative Z elevations are not allowed."
 text.plugins._common.actions.set-mesh-point.display-text,"设置纹理锚点 (网格点: [i]{0}[/i], [i]{1}[/i], 位置: [i]{3}[/i], [i]{4}[/i], 模式: [i]{2}[/i], 纹理: [i]{6}[/i], [i]{7}[/i],  视距高度: [i]{5}[/i])",,,,"Set mesh point ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i] position ([i]{3}[/i], [i]{4}[/i]), Z elevation [i]{5}[/i], texture ([i]{6}[/i], [i]{7}[/i])"
 text.ui.start-page.projects.template-alien-invasion.name,游戏示例：太空侵略者,,,,"Alien invasion"
 text.ui.start-page.projects.template-alien-invasion.description,在他们入侵地球之前击落前进的外星人。,,,,"Shoot down the advancing aliens before they invade Earth."
@@ -17875,7 +17875,7 @@ text.plugins.camera3d.debugger.camera.camera-z,相机Z,,,,"Camera Z"
 text.plugins.camera3d.debugger.camera.look-x,注视X,,,,"Look X"
 text.plugins.camera3d.debugger.camera.look-y,注视Y,,,,"Look Y"
 text.plugins.camera3d.debugger.camera.look-z,注视Z,,,,"Look Z"
-text.plugins.camera3d.debugger.camera.x-rotation,X旋转,,,,"X rotation"
+text.plugins.camera3d.debugger.camera.x-rotation,"X 旋转",,,,"X rotation"
 text.plugins.camera3d.debugger.camera.y-rotation,Y旋转,,,,"Y rotation"
 text.plugins.camera3d.debugger.vectors.title,向量,,,,Vectors
 text.plugins.camera3d.debugger.vectors.up-x,抬头X,,,,"Up X"
@@ -21081,7 +21081,7 @@ text.plugins.system.actions.reset-eventvar.display-text,"重置变量 [b]{0}[/b]
 text.plugins.system.actions.reset-eventvar.description,将指定的变量恢复为项目中的初始值。,,,,"Reset a specific variable in the project to its initial value."
 text.plugins.system.actions.reset-eventvar.params.variable.name,变量,,,,Variable
 text.plugins.system.actions.reset-eventvar.params.variable.desc,选择要重置的变量。,,,,"Choose the variable to reset."
-text.plugins.system.actions.reset-global-variables.display-text,"重置全局变量 (包含静态类型: [i]{0}[/i])",,,,"Reset global variables to default (include static: [i]{0}[/i])"
+text.plugins.system.actions.reset-global-variables.display-text,"重置全局变量 (包含静态变量: [i]{0}[/i])",,,,"Reset global variables to default (include static: [i]{0}[/i])"
 text.ui.start-page.projects.custom-canvas-drawing.name,脚本绘图：绘制曲线,,,,"Custom canvas drawing"
 text.ui.start-page.projects.custom-canvas-drawing.description,"演示使用 HTML图层的 Canvas 元素绘制具有彩虹渐变的抗锯齿贝塞尔曲线。",,,,"Demonstrates using a custom canvas element with HTML layers to draw an antialiased bezier curve with a rainbow gradient."
 text.ui.dialogs.addonManager.install-min-version-error-message,"无法安装此插件，它至少需要在 [a1]{0}[/a1] 版本运行，而您正在使用 [b]{1}[/b] 版本。",,,,"This addon cannot be installed because it requires a minimum version of [a1]{0}[/a1], and you are currently using [b]{1}[/b]."
@@ -23509,7 +23509,6 @@ text.plugins.browser.actions.request-fullscreen.params.mode.items.stretch-intege
 text.plugins.constructgameservices.actions.sign-in-with-provider.params.provider.items.patreon,Patreon,,,,Patreon
 text.ui.bars.properties.project.framerate-mode.desc,调整游戏帧速调度方式，通常垂直同步效果最好，可以保持与显示器刷新率同步。无上限用于特殊使用场景，将尽可能在屏幕刷新前更快的渲染。,,,,"How to schedule frames. Typically v-synced gives the best results."
 text.plugins.system.actions.set-framerate-mode.display-text,"设置帧率模式为 [b]{0}[/b] ([i]{1}[/i])",,,,"Set framerate mode to [b]{0}[/b] ([i]{1}[/i])"
-text.ui.bars.project.confirm-delete.models3d,"确定要删除选定的 [b]{0}[/b] 个 3D 模型吗？",,,,"Are you sure you want to delete the selected 3d models?"
 text.ui.bars.project.menu.model3dItem.import,导入模型,,,,Import
 text.ui.bars.project.menu.model3dItem.import-from-folder,导入文件夹,,,,"From folder"
 text.ui.bars.project.menu.model3dItem.import-from-file,导入文件,,,,"From file"
@@ -23518,34 +23517,13 @@ text.ui.bars.project.menu.model3dItem.help,"查看 3D 模型文档",,,,"Help on 
 text.ui.bars.project.menu.model3dFolderItem.add-model3d,"创建 3D 模型",,,,"Add 3D model"
 text.ui.bars.project.menu.model3dFolderItem.add-subfolder,创建子文件夹,,,,"Add subfolder"
 text.ui.bars.project.menu.model3dFolderItem.help,"查看 3D 模型文档",,,,"Help on 3D models"
-text.ui.bars.properties.model3d.model3d-properties.name,"3D 模型属性",,,,"3d model properties"
-text.ui.bars.properties.model3d.model3d-properties.desc,"所选的 3D 模型属性",,,,"Properties for the selected 3d model."
 text.ui.bars.properties.model3d.model3d-name.name,名称,,,,Name
-text.ui.bars.properties.model3d.model3d-name.desc,"3D 模型的名称。",,,,"Name of the 3d model."
 text.ui.bars.properties.model3d.model3d-import.name,数据,,,,Data
-text.ui.bars.properties.model3d.model3d-import.desc-folder,"选择一个本地文件夹，导入一个 3D 模型文件。",,,,"Import a 3d model file from a folder in the local file system."
-text.ui.bars.properties.model3d.model3d-import.desc-file,"选择一个本地文件，导入一个 3D 模型文件。",,,,"Import a 3d model file from the local file system."
 text.ui.bars.properties.model3d.model3d-import.link-text,导入,,,,Import
 text.ui.bars.properties.model3d.model3d-textures.name,纹理,,,,Textures
-text.ui.bars.properties.model3d.model3d-textures.desc,"查看并编辑 3D 模型使用的纹理。",,,,"View and edit the textures used by the 3d model."
 text.ui.bars.properties.model3d.model3d-textures.link-text,编辑,,,,Edit
 text.ui.bars.properties.model3d.help-link.name,更多信息,,,,"More information"
-text.ui.bars.properties.model3d.help-link.desc,"查看 3D 模型文档。",,,,"Open the manual to learn more about 3d models."
 text.ui.bars.properties.model3d.help-link.link-text,帮助文档,,,,Help
-text.ui.dialogs.parameters.controls.model3d.none-available,"<请先添加一个 3D 模型>",,,,"<none - add a 3d model first>"
-text.ui.dialogs.parameters.controls.model3d.pick-message.title,"没有 3D 模型",,,,"No 3d models"
-text.ui.dialogs.parameters.controls.model3d.pick-message.message,"当前项目 '{0}' 中没有任何 3D 模型对象。使用之前先创建一个。",,,,"The project '{0}' has no 3d models that can be shown here. Create one before using this."
-text.ui.undo.rename.model3d,"重命名 3D 模型为 '{0}' ",,,,"Rename 3d model '{0}'"
-text.ui.undo.delete.model3d,"添加 3D 模型",,,,"Add 3d model"
-text.ui.undo.delete.collection.model3d,"添加 3D 模型 ({0})",,,,"Add 3d models ({0})"
-text.ui.undo.undelete.model3d,"删除 3D 模型",,,,"Delete 3d model"
-text.ui.undo.undelete.collection.model3d,"删除 3D 模型 ({0})",,,,"Delete 3d models ({0})"
-text.ui.undo.change-json-object.model3d,"更改 3D 模型",,,,"Change 3d model"
-text.ui.undo.change-json-object.model3d-texture,"更改 3D 模型纹理",,,,"Change 3d model texture"
-text.ui.undo.change-json-object.collection.model3d,"更换 3D 模型 ({0})",,,,"Change 3d models ({0})"
-text.ui.undo.change-json-object.collection.model3d-texture,"更改 3D 模型纹理 ({0})",,,,"Change 3d model textures ({0})"
-text.ui.undo.change-properties.model3d,"更改 3D 模型属性 '{0}'",,,,"Change properties of 3d model '{0}'"
-text.ui.undo.change-properties.model3d-texture,"更改 3D 模型纹理 '{0}'",,,,"Change properties of 3d model texture '{0}'"
 text.ui.undo.change-ui-property.model3d,"更改 {0} 属性 '{1}'",,,,"Change {0} property '{1}'"
 text.ui.undo.change-ui-property.model3d-texture,"更改 {0} 属性 '{1}'",,,,"Change {0} property '{1}'"
 text.ui.undo.change-ui-state.model3d.colorpickcollections.add-folder,"添加 '{0}' 色板文件夹",,,,"Add '{0}' palette folder"
@@ -23554,16 +23532,13 @@ text.ui.undo.change-ui-state.model3d.colorpickcollections.folder-name,"重命名
 text.ui.undo.change-ui-state.model3d.colorpickcollections.update,"编辑 '{0}' 色板",,,,"Update '{0}' palette"
 text.ui.undo.change-ui-state.model3d.colorpickcollections.load,"加载 '{0}' 色板",,,,"Load '{0}' palette"
 text.ui.undo.change-ui-state.model3d.colorpickcollections.move,"移动 {0} '{1}' 色板元素",,,,"Move {0} '{1}' palette element"
-text.ui.undo.multi-undo.model3d-change,"更改 3D 模型",,,,"3d model change"
-text.ui.undo.multi-undo.format-change.textures,"更改 3D 模型纹理格式",,,,"Change 3d model textures format"
 text.animations-editor.model-3d-title,"3D 模型纹理编辑器: {0}",,,,"3D Model Texture Editor: {0}"
-text.animations-editor.properties-panel.texture-properties.body.index.description,"在当前 3D 模型，此纹理的索引，从 0 开始计数。",,,,"0 based index of this texture in the corresponding 3d model."
 text.animations-editor.main-panel.body.shortcuts-extended.save-model3d,"({ctrl} + S, {ctrl} + {shift} + S)",,,,"({ctrl} + S, {ctrl} + {shift} + S)"
 text.animations-editor.main-panel.body.misc-keyboard.hold-shift-to-apply-to-whole-animation-model3d,"(按住 {shift} 应用全部纹理)",,,,"(Hold {shift} to apply to all textures)"
 text.animations-editor.main-panel.body.tooltips.save-model3d,保存图片到文件,,,,"Save the image to a file"
 text.animations-editor.frames-panel.title-model-3d,网格纹理,,,,"Mesh textures"
-text.model.sampling-modes.name,采样,,,,Sampling
-text.model.sampling-modes.desc,缩放图像时使用的图像质量,,,,"The quality to use when scaling images."
+text.model.sampling-modes.name,采样质量,,,,Sampling
+text.model.sampling-modes.desc,调整图像时，使用的采样方式。,,,,"The quality to use when scaling images."
 text.model.sampling-modes.auto,自动,,,,Auto
 text.model.sampling-modes.nearest,邻近,,,,Nearest
 text.model.sampling-modes.bilinear,双线性,,,,Bilinear
@@ -23597,19 +23572,17 @@ text.plugins.model3d.aceCategories.3d-model,"3D 模型",,,,"3D model"
 text.plugins.model3d.aceCategories.playback,动画播放,,,,Playback
 text.plugins.model3d.aceCategories.collisions,碰撞,,,,Collisions
 text.plugins.model3d.aceCategories.misc,杂项,,,,Misc
-text.plugins.model3d.properties.mesh.name,纹理,,,,Mesh
+text.plugins.model3d.properties.mesh.name,网格,,,,Mesh
 text.plugins.model3d.properties.mesh.desc,选择一个可用的网格来绘制。,,,,"Pick one of the available meshes to draw."
 text.plugins.model3d.properties.animation.name,动画,,,,Animation
 text.plugins.model3d.properties.animation.desc,选择一个可用的动画。,,,,"Pick one of the available animations."
-text.plugins.model3d.properties.3d-model-object.name,"3D 模型",,,,"3d model"
-text.plugins.model3d.properties.3d-model-object.desc,"从项目中选择一个 3D 模型。",,,,"Pick a 3d model from the project."
 text.plugins.model3d.properties.x-position.name,"X 偏移",,,,"X offset"
 text.plugins.model3d.properties.x-position.desc,"显示到 X 轴的偏移值。",,,,"Offset on the X axis."
 text.plugins.model3d.properties.y-position.name,"Y 偏移",,,,"Y offset"
 text.plugins.model3d.properties.y-position.desc,"显示到 Y 轴的偏移值。",,,,"Offset on the Y axis."
 text.plugins.model3d.properties.z-position.name,"Z 偏移",,,,"Z offset"
 text.plugins.model3d.properties.z-position.desc,"显示到 Z 轴的偏移值。",,,,"Offset on the Z axis."
-text.plugins.model3d.properties.x-rotation.name,X旋转,,,,"X rotation"
+text.plugins.model3d.properties.x-rotation.name,"X 旋转",,,,"X rotation"
 text.plugins.model3d.properties.x-rotation.desc,在X轴的旋转角度。,,,,"Rotation on the X axis."
 text.plugins.model3d.properties.y-rotation.name,"Y 旋转",,,,"Y rotation"
 text.plugins.model3d.properties.y-rotation.desc,在Y轴的旋转角度。,,,,"Rotation on the Y axis."
@@ -23639,9 +23612,9 @@ text.plugins.model3d.properties.mesh-render-mode.name,渲染模式,,,,"Render mo
 text.plugins.model3d.properties.mesh-render-mode.desc,选择绘制单个网格的渲染模式，是按层级绘制，或组件隔离。,,,,"How to draw individual meshes: either following the hierarchy in the model file or in isolation."
 text.plugins.model3d.properties.mesh-render-mode.items.hierarchy,层级,,,,"Model hierarchy"
 text.plugins.model3d.properties.mesh-render-mode.items.isolate,隔离,,,,Isolate
-text.plugins.model3d.properties.editor-properties.name,"3D 模型编辑器属性",,,,"3D model editor properties"
+text.plugins.model3d.properties.editor-properties.name,编辑器属性,,,,"3D model editor properties"
 text.plugins.model3d.properties.editor-properties.desc,"这些设置只影响编辑器中 3D 模型实例的使用方式。",,,,"Settings which only affect how 3D model instances are used in the editor."
-text.plugins.model3d.properties.position.name,模型偏移量,,,,"Model offset"
+text.plugins.model3d.properties.position.name,模型偏移,,,,"Model offset"
 text.plugins.model3d.properties.position.desc,模型的偏移量。,,,,"The offset of the model."
 text.plugins.model3d.properties.position.separator,", ",,,,", "
 text.plugins.model3d.properties.rotation.name,模型旋转,,,,"Model rotation"
@@ -23655,11 +23628,6 @@ text.plugins.model3d.debugger.progress,进度,,,,Progress
 text.plugins.model3d.debugger.playback-controls,控制,,,,Controls
 text.plugins.model3d.debugger.hierarchy,层级,,,,"Model hierarchy"
 text.plugins.model3d.debugger.isolate,隔离,,,,Isolated
-text.plugins.model3d.actions.set-model.list-name,"设置 3D 模型",,,,"Set 3d model"
-text.plugins.model3d.actions.set-model.display-text,"设置 3D 模型 [b]{0}[/b] (纹理: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 播放进度: [i]{4}[/i])",,,,"Set 3d model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], progress: [i]{4}[/i])"
-text.plugins.model3d.actions.set-model.description,"更改显示的 3D 模型。",,,,"Change the 3d model shown."
-text.plugins.model3d.actions.set-model.params.model.name,"3D 模型",,,,"3d model"
-text.plugins.model3d.actions.set-model.params.model.desc,"要使用的 3D 模型对象。",,,,"The 3d model object to use."
 text.plugins.model3d.actions.set-model.params.mesh.name,纹理,,,,Mesh
 text.plugins.model3d.actions.set-model.params.mesh.desc,要绘制的网格。留空则绘制到所有网格。,,,,"The mesh to draw. Leave empty to draw all the meshes in the model."
 text.plugins.model3d.actions.set-model.params.animation.name,动画,,,,Animation
@@ -23668,11 +23636,6 @@ text.plugins.model3d.actions.set-model.params.playing.name,初始播放,,,,Playi
 text.plugins.model3d.actions.set-model.params.playing.desc,场景开始时，是否立即播放所选动画。,,,,"Choose if the selected animation should start playing immediately."
 text.plugins.model3d.actions.set-model.params.progress.name,动画进度,,,,Progress
 text.plugins.model3d.actions.set-model.params.progress.desc,"开始播放动画时，从指定进度开始。范围在 [0-1]",,,,"Value in the [0-1] range to chosse where the selected animation should start playing from."
-text.plugins.model3d.actions.set-model-by-name.list-name,"设置 3D 模型 (根据名称)",,,,"Set 3d model (by name)"
-text.plugins.model3d.actions.set-model-by-name.display-text,"设置 3D 模型 [b]{0}[/b] (网格: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 动画进度: [i]{4}[/i])",,,,"Set 3d model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], progress: [i]{4}[/i])"
-text.plugins.model3d.actions.set-model-by-name.description,"使用字符串名称更改显示的 3D 模型。",,,,"Change the 3d model shown, using a string to look for it."
-text.plugins.model3d.actions.set-model-by-name.params.model.name,"3D 模型",,,,"3d model"
-text.plugins.model3d.actions.set-model-by-name.params.model.desc,"要使用的 3D 模型对象的名称。",,,,"The name of the 3d model object to use."
 text.plugins.model3d.actions.set-model-by-name.params.mesh.name,网格,,,,Mesh
 text.plugins.model3d.actions.set-model-by-name.params.mesh.desc,要绘制的网格。留空则绘制到所有网格。,,,,"The mesh to draw. Leave empty to draw all the meshes in the model."
 text.plugins.model3d.actions.set-model-by-name.params.animation.name,动画,,,,Animation
@@ -23681,10 +23644,6 @@ text.plugins.model3d.actions.set-model-by-name.params.playing.name,初始播放,
 text.plugins.model3d.actions.set-model-by-name.params.playing.desc,场景开始时，是否立即播放所选动画。,,,,"Choose if the selected animation should start playing immediately."
 text.plugins.model3d.actions.set-model-by-name.params.progress.name,动画进度,,,,Progress
 text.plugins.model3d.actions.set-model-by-name.params.progress.desc,"开始播放动画时，从指定进度开始。范围在 [0-1]",,,,"Value in the [0-1] range to chosse where the selected animation should start playing from."
-text.plugins.model3d.actions.set-mesh.list-name,设置网格,,,,"Set mesh"
-text.plugins.model3d.actions.set-mesh.display-text,"设置网格为 [b]{0}[/b]",,,,"Set mesh to [b]{0}[/b]"
-text.plugins.model3d.actions.set-mesh.description,更改显示的网格。,,,,"Change the displayed mesh."
-text.plugins.model3d.actions.set-mesh.params.mesh.name,网格,,,,Mesh
 text.plugins.model3d.actions.set-animation.list-name,设置动画,,,,"Set animation"
 text.plugins.model3d.actions.set-animation.description,如果模型存在动画，更改播放的动画。,,,,"Change the animation (if the model has any)."
 text.plugins.model3d.actions.set-animation.params.animation.name,动画,,,,Animation
@@ -23775,9 +23734,7 @@ text.plugins.model3d.conditions.mesh-render-mode.params.mode.items.hierarchy,层
 text.plugins.model3d.conditions.mesh-render-mode.params.mode.items.isolate,隔离,,,,Isolate
 text.plugins.model3d.expressions.error-model-3d-name.description,"在 '模型导入失败' 事件中，返回的异常模型名称。",,,,"In 'On model load error', the name of the model that failed."
 text.plugins.model3d.expressions.error-model-3d-name.translated-name,异常模型名称,,,,Error3dModelName
-text.plugins.model3d.expressions.name.description,"当前的 3D 模型。如果还没有加载任何内容，将返回一个空字符串。",,,,"The current 3d model. If nothing is loaded yet, the expression returns an empty string."
 text.plugins.model3d.expressions.name.translated-name,名称,,,,Name
-text.plugins.model3d.expressions.mesh.translated-name,纹理,,,,Mesh
 text.plugins.model3d.expressions.animation.description,当前的动画。如果没有动画，将返回一个空字符串。,,,,"The current animation. If there is no animation, the expression returns an empty string."
 text.plugins.model3d.expressions.animation.translated-name,动画,,,,Animation
 text.plugins.model3d.expressions.animation-duration.description,模型正在播放的动画的持续时间，以秒为单位。,,,,"The duration of an animation in the model."
@@ -23820,12 +23777,12 @@ text.plugins.model3d.expressions.scale-y.description,"在 Y 轴的缩放比例�
 text.plugins.model3d.expressions.scale-y.translated-name,Y轴缩放,,,,ScaleY
 text.plugins.model3d.expressions.scale-z.description,"在 Z 轴的缩放比例。",,,,"Get the scale in the Z axis."
 text.plugins.model3d.expressions.scale-z.translated-name,Z轴缩放,,,,ScaleZ
-text.plugins.model3d.combo-items.@all,全选,,,,All
+text.plugins.model3d.combo-items.@all,全部,,,,All
 text.plugins.system.actions.set-project-sampling.list-name,设置项目采样,,,,"Set project sampling"
 text.plugins.system.actions.set-project-sampling.display-text,设置项目采样为[b]{0}[/b],,,,"Set project sampling [b]{0}[/b]"
 text.plugins.system.actions.set-project-sampling.description,设置项目的采样模式。,,,,"Set the project sampling mode."
 text.plugins.system.actions.set-project-sampling.params.sampling.name,采样,,,,Sampling
-text.plugins.system.actions.set-project-sampling.params.sampling.desc,调整图像大小时，使用的采样方式。,,,,"The quality to use when scaling images."
+text.plugins.system.actions.set-project-sampling.params.sampling.desc,调整图像时，使用的采样方式。,,,,"The quality to use when scaling images."
 text.plugins.system.actions.set-project-sampling.params.sampling.items.nearest,邻近,,,,Nearest
 text.plugins.system.actions.set-project-sampling.params.sampling.items.bilinear,双线性,,,,Bilinear
 text.plugins.system.actions.set-project-sampling.params.sampling.items.trilinear,三线性,,,,Trilinear
@@ -23845,18 +23802,18 @@ text.plugins.system.actions.set-layout-sampling.list-name,设置场景采样,,,,
 text.plugins.system.actions.set-layout-sampling.display-text,"设置场景采样为 [b]{0}[/b]",,,,"Set layout sampling [b]{0}[/b]"
 text.plugins.system.actions.set-layout-sampling.description,设置场景的采样模式。,,,,"Set the layout sampling mode."
 text.plugins.system.actions.set-layout-sampling.params.sampling.name,采样,,,,Sampling
-text.plugins.system.actions.set-layout-sampling.params.sampling.desc,调整图像大小时，使用的采样模式。,,,,"The quality to use when scaling images."
+text.plugins.system.actions.set-layout-sampling.params.sampling.desc,调整图像时，使用的采样方式。,,,,"The quality to use when scaling images."
 text.plugins.system.actions.set-layout-sampling.params.sampling.items.auto,自动,,,,Auto
 text.plugins.system.actions.set-layout-sampling.params.sampling.items.nearest,邻近,,,,Nearest
 text.plugins.system.actions.set-layout-sampling.params.sampling.items.bilinear,双线性,,,,Bilinear
 text.plugins.system.actions.set-layout-sampling.params.sampling.items.trilinear,三线性,,,,Trilinear
 text.plugins.system.actions.set-layer-sampling.list-name,设置图层采样,,,,"Set layer sampling"
-text.plugins.system.actions.set-layer-sampling.display-text,"设置图层 {0} 采样模式为 [b]{1}[/b]",,,,"Set layer {0} sampling [b]{1}[/b]"
+text.plugins.system.actions.set-layer-sampling.display-text,"设置图层 {0} 采样质量为 [b]{1}[/b]",,,,"Set layer {0} sampling [b]{1}[/b]"
 text.plugins.system.actions.set-layer-sampling.description,设置图层的采样模式。,,,,"Set the layer sampling mode."
 text.plugins.system.actions.set-layer-sampling.params.layer.name,图层,,,,Layer
 text.plugins.system.actions.set-layer-sampling.params.layer.desc,要修改的图层的名称或编号。,,,,"Name or number of the layer to modify."
 text.plugins.system.actions.set-layer-sampling.params.sampling.name,采样,,,,Sampling
-text.plugins.system.actions.set-layer-sampling.params.sampling.desc,调整图像大小时，使用的采样方式。,,,,"The quality to use when scaling images."
+text.plugins.system.actions.set-layer-sampling.params.sampling.desc,调整图像时，使用的采样方式。,,,,"The quality to use when scaling images."
 text.plugins.system.actions.set-layer-sampling.params.sampling.items.auto,自动,,,,Auto
 text.plugins.system.actions.set-layer-sampling.params.sampling.items.nearest,邻近,,,,Nearest
 text.plugins.system.actions.set-layer-sampling.params.sampling.items.bilinear,双线性,,,,Bilinear
@@ -23865,7 +23822,7 @@ text.plugins._common.actions.set-sampling.list-name,设置采样,,,,"Set samplin
 text.plugins._common.actions.set-sampling.display-text,"设置采样模式 [b]{0}[/b]",,,,"Set sampling [b]{0}[/b]"
 text.plugins._common.actions.set-sampling.description,设置采样模式。,,,,"Set the sampling mode."
 text.plugins._common.actions.set-sampling.params.sampling.name,采样,,,,Sampling
-text.plugins._common.actions.set-sampling.params.sampling.desc,调整图像大小时，使用的采样方式。,,,,"The quality to use when scaling images."
+text.plugins._common.actions.set-sampling.params.sampling.desc,调整图像时，使用的采样方式。,,,,"The quality to use when scaling images."
 text.plugins._common.actions.set-sampling.params.sampling.items.auto,自动,,,,Auto
 text.plugins._common.actions.set-sampling.params.sampling.items.nearest,邻近,,,,Nearest
 text.plugins._common.actions.set-sampling.params.sampling.items.bilinear,双线性,,,,Bilinear
@@ -23887,9 +23844,9 @@ text.model.model3d.errors.morph-targets-present.title,不支持的变形目标,,
 text.model.model3d.errors.morph-targets-present.message,该模型包含不支持的变形目标动画。,,,,"The model includes morph target animations which are not supported."
 text.plugins.model3d.description,"展示项目的 3D 模型。目前仅支持 GLTF 或 GLB 格式。",,,,"Display a 3D model that has been imported to the project."
 text.ui.bars.properties.instance.position.z.name,Z,,,,Z
-text.ui.bars.properties.instance.position.z.desc,"该实例在场景的 Z 坐标位置，以像素为单位。",,,,"The Z co-ordinate of this instance in the layout, in pixels."
+text.ui.bars.properties.instance.position.z.desc,"在场景的 Z 坐标位置，以像素为单位。",,,,"The Z co-ordinate of this instance in the layout, in pixels."
 text.ui.bars.properties.instance.size.depth.name,深度,,,,Depth
-text.ui.bars.properties.instance.size.depth.desc,该实例的深度，以像素为单位。,,,,"The depth of this instance, in pixels."
+text.ui.bars.properties.instance.size.depth.desc,此实例的深度，以像素为单位。,,,,"The depth of this instance, in pixels."
 text.ui.start-page.projects.meowgix.name,游戏示例：喵吉克斯,,,,Meowgix
 text.ui.start-page.projects.meowgix.description,扮演猫咪巫师。学习、升级并组合喵喵魔法，变得更强，击败邪恶大军。,,,,"Assume the role of a cat wizard. Learn, upgrade, and combine meowgic spells to grow stronger and defeat the evil hordes."
 text.exporters.preview.debugger.common-props.layout.z,Z,,,,Z
@@ -23959,7 +23916,7 @@ text.behaviors.bound.properties.region.items.layout,场景,,,,Layout
 text.behaviors.bound.properties.region.items.viewport,视区,,,,Viewport
 text.behaviors.tween.aceCategories.three-properties,三个属性,,,,"Three properties"
 text.behaviors.tween.actions.tween-three-properties.list-name,"补间 (三个属性)",,,,"Tween (three properties)"
-text.behaviors.tween.actions.tween-three-properties.display-text,"{my} 在[b]{5}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}, {4}[/b], 曲线: [i]{6}[/i], 标签: [b]{0}[/b], 重复次数: [i]{10}[/i], 循环播放: [i]{8}[/i], 反转播放: [i]{8}[/i], 播放完成后销毁: [i]{7}[/i]",,,,"{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}, {4}[/b] in [b]{5}[/b] seconds ([i]{6}[/i], destroy: [i]{7}[/i], loop: [i]{8}[/i], ping pong: [i]{9}[/i], repeat count: [i]{10}[/i])"
+text.behaviors.tween.actions.tween-three-properties.display-text,"{my} 在[b]{5}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}, {4}[/b], 曲线: [i]{6}[/i], 标签: [b]{0}[/b], 重复次数: [i]{10}[/i], 循环播放: [i]{8}[/i], 反转播放: [i]{9}[/i], 播放完成后销毁: [i]{7}[/i]",,,,"{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}, {4}[/b] in [b]{5}[/b] seconds ([i]{6}[/i], destroy: [i]{7}[/i], loop: [i]{8}[/i], ping pong: [i]{9}[/i], repeat count: [i]{10}[/i])"
 text.behaviors.tween.actions.tween-three-properties.description,"补间三个属性，例如位置（由 X、Y、Z 坐标组成）。",,,,"Tween three properties, such as the position (consisting of an X, Y and co-ordinates)."
 text.behaviors.tween.actions.tween-three-properties.params.tags.name,标签(可选),,,,Tags
 text.behaviors.tween.actions.tween-three-properties.params.tags.desc,填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。,,,,"Optional space-separated list of many tags to identify a tween."
@@ -24008,16 +23965,13 @@ text.ui.editors.layoutView.warnings.placed-3d-object-on-2d-layer.title,"3D 对�
 text.ui.editors.layoutView.warnings.placed-3d-object-on-2d-layer.message,"3D 对象在 2D 图层上可能无法正确显示。请将 3D 对象移动到 3D 图层，或将该图层设置为使用 3D 渲染模式。",,,,"3D objects may not display correctly on 2D layers. Move 3D objects to a 3D layer, or set this layer to use a 3D rendering mode."
 text.ui.start-page.projects.ship-repair.name,游戏示例：修船工,,,,"Ship repair"
 text.ui.start-page.projects.ship-repair.description,小行星撞击损坏了飞船。收集物品并将其放置在正确的位置以完成修复。,,,,"An asteroid strike damaged the ship. Collect items and use them in the right places to complete the repairs."
-text.plugins.model3d.actions.set-meshes.list-name,设置网格,,,,"Set meshes"
-text.plugins.model3d.actions.set-meshes.description,更改显示的网格。,,,,"Change the displayed meshes."
-text.plugins.model3d.actions.set-meshes.params.meshes.name,网格,,,,Meshes
 text.plugins.model3d.expressions.meshes.description,"一个包含要绘制的所有网格的字符串， 以逗号分隔名称。如果所有网格都已绘制，则返回空字符串。",,,,"A comma separated string with all the meshes being drawn. If all the meshes are being drawn, the expression returns an empty string."
 text.plugins.model3d.expressions.meshes.translated-name,网格,,,,Meshes
 text.plugins.shape3d.properties.z-origin.name,原点Z,,,,"Z origin"
 text.plugins.shape3d.properties.z-origin.desc,"物体位于 Z 轴上的位置。",,,,"Where the object origin is on the Z axis."
 text.plugins.shape3d.properties.z-origin.items.back,背面,,,,Back
 text.plugins.shape3d.properties.z-origin.items.middle,中间,,,,Middle
-text.plugins.shape3d.properties.z-origin.items.front,正面,,,,Front
+text.plugins.shape3d.properties.z-origin.items.front,顶面,,,,Front
 text.plugins.system.expressions.distance3d.description,计算三维空间中两点之间的距离。,,,,"Calculate the distance between two points in 3D."
 text.plugins.system.expressions.distance3d.params.x1.name,x1,,,,x1
 text.plugins.system.expressions.distance3d.params.x1.desc,"第一个点的 X 坐标。",,,,"X position of first point."
@@ -24035,7 +23989,7 @@ text.plugins.system.expressions.distance3d.translated-name,计算三维距离,,,
 text.plugins._common.expressions.bboxback.translated-name,边界背部,,,,BBoxBack
 text.plugins._common.expressions.bboxback.description,"获取物体边界框背面的 Z 坐标。",,,,"Get the Z co-ordinate of the back side of the object's bounding box."
 text.plugins._common.expressions.bboxfront.translated-name,边界前侧,,,,BBoxFront
-text.plugins._common.expressions.bboxfront.description,"获取物体边界框正面的 Z 坐标。",,,,"Get the Z co-ordinate of the front side of the object's bounding box."
+text.plugins._common.expressions.bboxfront.description,"获取物体边界框顶面的 Z 坐标。",,,,"Get the Z co-ordinate of the front side of the object's bounding box."
 text.plugins._common.expressions.bboxmidz.translated-name,边界中心,,,,BBoxMidZ
 text.plugins._common.expressions.bboxmidz.description,"获取物体边界框中心的 Z 坐标。",,,,"Get the Z co-ordinate of the middle of the object's bounding box."
 text.behaviors.bound.name,边界约束,,,,"Bound to"
@@ -24046,7 +24000,6 @@ text.behaviors.follow.conditions.is-following-property.params.property.items.z-e
 text.behaviors.follow.actions.set-following-property.params.property.items.z-elevation,Z,,,,Z
 text.behaviors.follow.actions.set-property-interpolation.params.property.items.z-elevation,Z,,,,Z
 text.plugins.model3d.actions.set-animation.display-text,"设置动画为[b]{0}[/b] (初始播放: [i]{1}[/i], 动画进度: [i]{2}[/i])",,,,"Set animation to [b]{0}[/b] (playing: [i]{1}[/i], progress: [i]{2}[/i])"
-text.plugins.model3d.expressions.mesh.description,当前使用的网格。如果有多个网格，将返回空字符串。,,,,"The current mesh. If more than one mesh is being drawn, the expression returns an empty string."
 text.plugins._common.expressions.bboxleft.description,"获取对象边界框左边缘的 X 坐标。",,,,"Get the X co-ordinate of the left side of the object's bounding box."
 text.plugins._common.expressions.bboxtop.description,"获取对象边界框上边缘的 Y 坐标。",,,,"Get the Y co-ordinate of the top side of the object's bounding box."
 text.plugins._common.expressions.bboxright.description,"获取对象边界框右边缘的 X 坐标。",,,,"Get the X co-ordinate of the right side of the object's bounding box."
@@ -24068,10 +24021,6 @@ text.plugins.model3d.actions.set-mesh-enabled.params.mesh.name,网格,,,,Mesh
 text.plugins.model3d.actions.set-mesh-enabled.params.mesh.desc,要修改的网格。如果模型中找不到该网格，则不进行任何更改。,,,,"The mesh to affect. If the mesh is not found in the model, nothing changes."
 text.plugins.model3d.actions.set-mesh-enabled.params.enabled.name,启用,,,,Enabled
 text.plugins.model3d.actions.set-mesh-enabled.params.enabled.desc,选择是否显示或隐藏网格中指定的元素。,,,,"Choose if the specified in mesh should be shown or hidden."
-text.plugins.model3d.actions.set-meshes.params.enable.name,启用,,,,Enable
-text.plugins.model3d.actions.set-meshes.params.enable.desc,选择是否显示或隐藏传入的列表。,,,,"Choose if the passed in list should be shown or hidden."
-text.plugins.model3d.actions.set-meshes.params.separator.name,分隔符,,,,Separator
-text.plugins.model3d.actions.set-meshes.params.separator.desc,"用于分隔网格数据的字符，默认为 [b]"",""[/b] 符号。",,,,"The character used to separate the string, defaults to [b]"",""[/b] ."
 text.plugins.model3d.actions.set-all-meshes-enabled.list-name,启用网格(全部),,,,"Set all meshes enabled"
 text.plugins.model3d.actions.set-all-meshes-enabled.display-text,"启用全部网格: {0}",,,,"Set all meshes enabled: {0}"
 text.plugins.model3d.actions.set-all-meshes-enabled.description,启用或禁用模型中的所有网格。,,,,"Enable or disable all the meshes in the model."
@@ -24087,12 +24036,47 @@ text.plugins.model3d.conditions.are-all-meshes-enabled.display-text,启用所有
 text.plugins.model3d.conditions.are-all-meshes-enabled.description,检查是否所有网格都已绘制。,,,,"Check if all the meshes are being drawn."
 text.plugins.model3d.conditions.mesh-exists.list-name,存在网格,,,,"Mesh exists"
 text.plugins.model3d.conditions.mesh-exists.display-text,"存在网格 [b]{0}[/b]",,,,"Mesh [b]{0}[/b] exists"
-text.plugins.model3d.conditions.mesh-exists.description,"检查 3D 模型中是否存在网格",,,,"Check if a mesh exists in the 3d model."
 text.plugins.model3d.conditions.mesh-exists.params.mesh.name,纹理,,,,Mesh
 text.plugins.model3d.conditions.mesh-exists.params.mesh.desc,要检查的网格名称。,,,,"The name of the mesh to check for."
 text.behaviors.destroy.name,出界销毁,,,,"Destroy outside"
 text.behaviors.destroy.description,离开场景或视区范围时，自动销毁对象。,,,,"Automatically destroy the object if it leaves the layout or viewport."
-text.plugins.model3d.actions.set-mesh.params.mesh.desc,"要绘制的网格。留空则使用特殊字符串 [b]""@all""[/b]；如果名称没有对应于任何网格，则将绘制模型中的所有网格。",,,,"The mesh to draw. If left empty, the special string [b]""@all""[/b] is used or the name does not correspond to any mesh, all the meshes in the model will be drawn."
-text.plugins.model3d.actions.set-meshes.display-text,"设置网格为 [b]{0}[/b] (启用: {1}, 分隔符: {2})",,,,"Set meshes to [b]{0}[/b], enable: {1}, separator: {2}"
-text.plugins.model3d.actions.set-meshes.params.meshes.desc,"包含要网格数据的字符串，以 [b]分隔符[/b] 参数中的值分隔。如果包含特殊字符串 [b]""@all"",/b]，将应用到所有网格。留空则不做任何更改。",,,,"A string separated by the value in the [b]Separator[/b] parameter with the names of the meshes to affect. If the special string [b]""@all""[/b] is included all the meshes are affected. If left empty nothing changes."
 text.plugins.model3d.conditions.mesh-render-mode.display-text,"渲染模式为 [b]{0}[/b]",,,,"Render mode is [b]{0}[/b]"
+text.ui.bars.project.confirm-delete.models3d,"您确定要删除选定的 [b]{0}[/b] 个 3D 模型吗？",,,,"Are you sure you want to delete the selected 3D models?"
+text.ui.bars.properties.model3d.model3d-properties.name,"3D 模型属性",,,,"3D model properties"
+text.ui.bars.properties.model3d.model3d-properties.desc,"所选的 3D 模型属性",,,,"Properties for the selected 3D model."
+text.ui.bars.properties.model3d.model3d-name.desc,"3D 模型的名称。",,,,"Name of the 3D model."
+text.ui.bars.properties.model3d.model3d-import.desc-folder,"选择一个本地文件夹，导入 3D 模型文件。",,,,"Import a 3D model file from a folder in the local file system."
+text.ui.bars.properties.model3d.model3d-import.desc-file,"选择一个本地文件，导入 3D 模型文件。",,,,"Import a 3D model file from the local file system."
+text.ui.bars.properties.model3d.model3d-textures.desc,"查看并编辑 3D 模型使用的纹理。",,,,"View and edit the textures used by the 3D model."
+text.ui.bars.properties.model3d.help-link.desc,"打开手册了解更多关于 3D 模型的信息。",,,,"Open the manual to learn more about 3D models."
+text.ui.dialogs.parameters.controls.model3d.none-available,"<请先添加一个 3D 模型>",,,,"<none - add a 3D model first>"
+text.ui.dialogs.parameters.controls.model3d.pick-message.title,"没有 3D 模型",,,,"No 3D models"
+text.ui.dialogs.parameters.controls.model3d.pick-message.message,"当前项目 '{0}' 中没有任何 3D 模型对象。使用之前先创建一个。",,,,"The project '{0}' has no 3D models that can be shown here. Create one before using this."
+text.ui.undo.rename.model3d,"重命名 3D 模型为 '{0}' ",,,,"Rename 3D model '{0}'"
+text.ui.undo.delete.model3d,"添加 3D 模型",,,,"Add 3D model"
+text.ui.undo.delete.collection.model3d,"添加 3D 模型 ({0})",,,,"Add 3D models ({0})"
+text.ui.undo.undelete.model3d,"删除 3D 模型",,,,"Delete 3D model"
+text.ui.undo.undelete.collection.model3d,"删除 3D 模型 ({0})",,,,"Delete 3D models ({0})"
+text.ui.undo.change-json-object.model3d,"更改 3D 模型",,,,"Change 3D model"
+text.ui.undo.change-json-object.model3d-texture,"更改 3D 模型纹理",,,,"Change 3D model texture"
+text.ui.undo.change-json-object.collection.model3d,"更换 3D 模型 ({0})",,,,"Change 3D models ({0})"
+text.ui.undo.change-json-object.collection.model3d-texture,"更改 3D 模型纹理 ({0})",,,,"Change 3D model textures ({0})"
+text.ui.undo.change-properties.model3d,"更改 3D 模型属性 '{0}' 属性",,,,"Change properties of 3D model '{0}'"
+text.ui.undo.change-properties.model3d-texture,"更改 3D 模型纹理 '{0}' 属性",,,,"Change properties of 3D model texture '{0}'"
+text.ui.undo.multi-undo.model3d-change,"更改 3D 模型",,,,"3D model change"
+text.ui.undo.multi-undo.format-change.textures,"更改 3D 模型纹理格式",,,,"Change 3D model textures format"
+text.animations-editor.properties-panel.texture-properties.body.index.description,"在当前 3D 模型，此纹理的索引，从 0 开始计数。",,,,"Zero-based index of this texture in the corresponding 3D model."
+text.plugins.model3d.properties.3d-model-object.name,"3D 模型",,,,"3D model"
+text.plugins.model3d.properties.3d-model-object.desc,"从项目中选择一个 3D 模型。",,,,"Pick a 3D model from the project."
+text.plugins.model3d.actions.set-model.list-name,"设置 3D 模型",,,,"Set 3D model"
+text.plugins.model3d.actions.set-model.display-text,"设置 3D 模型 [b]{0}[/b] (网格: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 动画进度: [i]{4}[/i])",,,,"Set 3D model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], progress: [i]{4}[/i])"
+text.plugins.model3d.actions.set-model.description,"更改显示的 3D 模型。",,,,"Change the 3D model shown."
+text.plugins.model3d.actions.set-model.params.model.name,"3D 模型",,,,"3D model"
+text.plugins.model3d.actions.set-model.params.model.desc,"要使用的 3D 模型对象。",,,,"The 3D model object to use."
+text.plugins.model3d.actions.set-model-by-name.list-name,"设置 3D 模型 (根据名称)",,,,"Set 3D model (by name)"
+text.plugins.model3d.actions.set-model-by-name.display-text,"设置 3D 模型 [b]{0}[/b] (网格: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 播放进度: [i]{4}[/i])",,,,"Set 3D model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], progress: [i]{4}[/i])"
+text.plugins.model3d.actions.set-model-by-name.description,"使用字符串名称更改显示的 3D 模型。",,,,"Change the 3D model shown, using a string to look for it."
+text.plugins.model3d.actions.set-model-by-name.params.model.name,"3D 模型",,,,"3D model"
+text.plugins.model3d.actions.set-model-by-name.params.model.desc,"要使用的 3D 模型对象的名称。",,,,"The name of the 3D model object to use."
+text.plugins.model3d.conditions.mesh-exists.description,"检查 3D 模型中是否存在网格",,,,"Check if a mesh exists in the 3D model."
+text.plugins.model3d.expressions.name.description,"当前的 3D 模型。如果还没有加载任何内容，将返回一个空字符串。",,,,"The current 3D model. If nothing is loaded yet, the expression returns an empty string."

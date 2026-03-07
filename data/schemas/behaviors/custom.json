@@ -10,6 +10,16 @@
     "angle-of-motion",
     "velocity"
   ],
+  "aceCategories": {
+    "angle-of-motion": {
+      "zh": "运动角度",
+      "en": "Angle of motion"
+    },
+    "velocity": {
+      "zh": "速度",
+      "en": "Velocity"
+    }
+  },
   "conditions": [
     {
       "id": "is-moving",
@@ -174,7 +184,9 @@
           "desc_zh": "设置移动角度，以角度为单位。",
           "desc_en": "The new angle of motion, in degrees."
         }
-      ]
+      ],
+      "category_zh": "运动角度",
+      "category_en": "Angle of motion"
     },
     {
       "id": "rotate-clockwise",
@@ -195,7 +207,9 @@
           "desc_zh": "顺时针旋转角度，以度数为单位。",
           "desc_en": "Amount to rotate clockwise, in degrees."
         }
-      ]
+      ],
+      "category_zh": "运动角度",
+      "category_en": "Angle of motion"
     },
     {
       "id": "rotate-counter-clockwise",
@@ -216,7 +230,9 @@
           "desc_zh": "逆时针旋转的角度，以度数为单位。",
           "desc_en": "Amount to rotate counter-clockwise, in degrees."
         }
-      ]
+      ],
+      "category_zh": "运动角度",
+      "category_en": "Angle of motion"
     },
     {
       "id": "stop",
@@ -227,7 +243,9 @@
       "display_zh": "停止 {my}",
       "display_en": "Stop {my}",
       "scriptName": "Stop",
-      "category": "velocity"
+      "category": "velocity",
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "reverse",
@@ -267,7 +285,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "set-speed",
@@ -315,7 +335,9 @@
           "desc_zh": "设置对象的新速度，以像素/秒为单位。",
           "desc_en": "The new speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "accelerate",
@@ -363,7 +385,9 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The acceleration, in pixels per second per second."
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "accelerate-toward-angle",
@@ -392,7 +416,9 @@
           "desc_zh": "向前加速移动的角度，以度数为单位。",
           "desc_en": "The angle, in degrees, to accelerate toward."
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "accelerate-toward-position",
@@ -429,7 +455,9 @@
           "desc_zh": "朝向场景Y轴方向加速。",
           "desc_en": "The Y co-ordinate in the layout to accelerate toward."
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "stop-stepping",
@@ -464,7 +492,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "push-out-solid",
@@ -519,7 +549,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     },
     {
       "id": "push-out-solid-at-angle",
@@ -540,7 +572,9 @@
           "desc_zh": "将对象反弹的角度。",
           "desc_en": "Angle, in degrees, to push the object out at."
         }
-      ]
+      ],
+      "category_zh": "速度",
+      "category_en": "Velocity"
     }
   ],
   "expressions": [

@@ -7,6 +7,7 @@
   "description_en": "Make the object impassable, so other objects cannot move or fall through it.",
   "path": "attributes/solid",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-enabled",

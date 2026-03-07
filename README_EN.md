@@ -30,7 +30,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 
 | Data Source | How to Get | Purpose |
 |-------------|------------|---------|
-| `zh-CN_r473.csv` | POEditor | ACE Schema generation |
+| `zh_r475.csv` | POEditor | ACE Schema generation |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | Official manual Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
 
@@ -87,7 +87,7 @@ cp .env.example .env
 Construct3-RAG/
 ├── data/
 │   ├── source/                # External data (manual download required)
-│   │   └── zh-CN_r473.csv     # Official translation file
+│   │   └── zh_r475.csv     # Official translation file
 │   └── schemas/               # ACE Schema (72 plugins + 31 behaviors)
 ├── docs/                      # Design docs, guides, knowledge base
 ├── scripts/                   # Operations scripts (start/index/clean)

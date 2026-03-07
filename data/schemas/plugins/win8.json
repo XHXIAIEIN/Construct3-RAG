@@ -17,6 +17,44 @@
     "windows-store",
     "windows-10"
   ],
+  "aceCategories": {
+    "live-tile": {
+      "zh": "",
+      "en": "live-tile"
+    },
+    "other": {
+      "zh": "",
+      "en": "other"
+    },
+    "purchases": {
+      "zh": "",
+      "en": "purchases"
+    },
+    "roaming-storage": {
+      "zh": "",
+      "en": "roaming-storage"
+    },
+    "sharing": {
+      "zh": "",
+      "en": "sharing"
+    },
+    "store-listing": {
+      "zh": "",
+      "en": "store-listing"
+    },
+    "view-state": {
+      "zh": "",
+      "en": "view-state"
+    },
+    "windows-store": {
+      "zh": "",
+      "en": "windows-store"
+    },
+    "windows-10": {
+      "zh": "",
+      "en": "windows-10"
+    }
+  },
   "conditions": [
     {
       "id": "on-license-changed",
@@ -27,7 +65,8 @@
       "scriptName": "OnLicenseChanged",
       "isTrigger": true,
       "canDebug": true,
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "is-trial",
@@ -36,7 +75,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "IsTrial",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "is-licensed",
@@ -45,7 +85,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "IsLicensed",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "is-expired-trial",
@@ -54,7 +95,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "IsExpiredTrial",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "has-product",
@@ -71,7 +113,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "purchases"
     },
     {
       "id": "on-successful-purchase",
@@ -82,7 +125,8 @@
       "scriptName": "OnPurchaseSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "on-failed-purchase",
@@ -93,7 +137,8 @@
       "scriptName": "OnPurchaseFail",
       "isTrigger": true,
       "canDebug": true,
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "on-store-listing-received",
@@ -104,7 +149,8 @@
       "scriptName": "OnStoreListing",
       "isTrigger": true,
       "canDebug": true,
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "on-data-changed",
@@ -115,7 +161,8 @@
       "scriptName": "OnDataChanged",
       "isTrigger": true,
       "canDebug": true,
-      "category": "roaming-storage"
+      "category": "roaming-storage",
+      "category_en": "roaming-storage"
     },
     {
       "id": "roaming-key-exists",
@@ -132,7 +179,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "roaming-storage"
     },
     {
       "id": "on-share",
@@ -143,7 +191,8 @@
       "scriptName": "OnShare",
       "isTrigger": true,
       "canDebug": true,
-      "category": "sharing"
+      "category": "sharing",
+      "category_en": "sharing"
     },
     {
       "id": "on-view-state-changed",
@@ -168,7 +217,8 @@
             "fullscreen-portrait"
           ]
         }
-      ]
+      ],
+      "category_en": "view-state"
     },
     {
       "id": "compare-view-state",
@@ -192,7 +242,8 @@
             "fullscreen-portrait"
           ]
         }
-      ]
+      ],
+      "category_en": "view-state"
     },
     {
       "id": "is-windows-8-app",
@@ -202,7 +253,8 @@
       "description_en": "",
       "scriptName": "IsWindows8",
       "isDeprecated": true,
-      "category": "windows-store"
+      "category": "windows-store",
+      "category_en": "windows-store"
     },
     {
       "id": "is-windows-store-app",
@@ -211,7 +263,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "IsWindowsStoreApp",
-      "category": "windows-store"
+      "category": "windows-store",
+      "category_en": "windows-store"
     }
   ],
   "actions": [
@@ -250,7 +303,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "live-tile"
     },
     {
       "id": "open-windows-store",
@@ -272,7 +326,8 @@
             "review-app"
           ]
         }
-      ]
+      ],
+      "category_en": "other"
     },
     {
       "id": "purchase-app",
@@ -281,7 +336,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "PurchaseApp",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "purchase-product",
@@ -298,7 +354,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "purchases"
     },
     {
       "id": "request-store-listing",
@@ -307,7 +364,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "RequestStoreListing",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "set-roaming-value",
@@ -331,7 +389,8 @@
           "name_en": "",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_en": "roaming-storage"
     },
     {
       "id": "remove-roaming-value",
@@ -348,7 +407,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "roaming-storage"
     },
     {
       "id": "clear-roaming-data",
@@ -357,7 +417,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "ClearRoamingData",
-      "category": "roaming-storage"
+      "category": "roaming-storage",
+      "category_en": "roaming-storage"
     },
     {
       "id": "show-share-ui",
@@ -366,7 +427,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "ShowShareUI",
-      "category": "sharing"
+      "category": "sharing",
+      "category_en": "sharing"
     },
     {
       "id": "share-text",
@@ -395,7 +457,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "share-link",
@@ -425,7 +488,8 @@
           "name_en": "",
           "initialValue": "\"https://\""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "share-html",
@@ -454,7 +518,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "share-sprite-image",
@@ -483,7 +548,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "share-data-uri",
@@ -512,7 +578,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "fail-share",
@@ -529,7 +596,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "sharing"
     },
     {
       "id": "try-unsnap",
@@ -539,7 +607,8 @@
       "description_en": "",
       "scriptName": "TryUnsnap",
       "isDeprecated": true,
-      "category": "view-state"
+      "category": "view-state",
+      "category_en": "view-state"
     },
     {
       "id": "set-back-button-visible",
@@ -560,7 +629,8 @@
             "visible"
           ]
         }
-      ]
+      ],
+      "category_en": "windows-10"
     }
   ],
   "expressions": [
@@ -572,7 +642,8 @@
       "description_en": "",
       "expressionName": "TrialTimeLeft",
       "returnType": "number",
-      "category": "purchases"
+      "category": "purchases",
+      "category_en": "purchases"
     },
     {
       "id": "roamingvalue",
@@ -590,7 +661,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "roaming-storage"
     },
     {
       "id": "appformattedprice",
@@ -600,7 +672,8 @@
       "description_en": "",
       "expressionName": "AppFormattedPrice",
       "returnType": "number",
-      "category": "store-listing"
+      "category": "store-listing",
+      "category_en": "store-listing"
     },
     {
       "id": "productname",
@@ -618,7 +691,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "store-listing"
     },
     {
       "id": "productformattedprice",
@@ -636,7 +710,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "store-listing"
     }
   ],
   "productTypes": "games"
