@@ -32,8 +32,8 @@ const path = require('path');
 const ROOT_DIR = path.join(__dirname, '..');
 
 // 外部资料
-const SOURCE_DIR = path.join(ROOT_DIR, 'source');
-const TRANSLATION_CSV = 'zh-CN_R466.csv';  // 来自 POEditor
+const SOURCE_DIR = path.join(ROOT_DIR, 'data', 'source');
+const TRANSLATION_CSV = 'zh_r475.csv';  // 来自 POEditor
 
 // 本地开发资源 (不纳入版本控制)
 const LOCAL_DIR = path.join(ROOT_DIR, '.local');

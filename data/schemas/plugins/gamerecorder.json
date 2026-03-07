@@ -18,7 +18,9 @@
       "description_en": "Triggered after 'Stop recording' when the recording is available in the RecordingURL expression.",
       "scriptName": "OnRecordingReady",
       "isTrigger": true,
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "录制完成",
+      "display_en": "On recording ready"
     },
     {
       "id": "on-recording-error",
@@ -28,7 +30,9 @@
       "description_en": "Triggered if an error occurs during recording.",
       "scriptName": "OnRecordingError",
       "isTrigger": true,
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "录制失败",
+      "display_en": "On recording error"
     },
     {
       "id": "is-recording-supported",
@@ -37,7 +41,9 @@
       "description_zh": "检测运行设备是否支持屏幕录制。",
       "description_en": "True if the current browser supports video recording.",
       "scriptName": "SupportsRecording",
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "设备支持屏幕录制",
+      "display_en": "Is recording supported"
     },
     {
       "id": "is-screen-recording-supported",
@@ -46,7 +52,9 @@
       "description_zh": "检测浏览器是否支持使用屏幕录制功能。",
       "description_en": "True if the current browser supports screen recording.",
       "scriptName": "SupportsScreenRecording",
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "设备支持屏幕录制",
+      "display_en": "Is screen recording supported"
     },
     {
       "id": "is-video-format-supported",
@@ -121,7 +129,9 @@
               "zh": "MP4",
               "en": "MP4"
             }
-          }
+          },
+          "desc_zh": "要使用的视频格式。",
+          "desc_en": "The container format to test if supported for recording."
         },
         {
           "id": "codec",
@@ -151,9 +161,13 @@
               "zh": "H.265",
               "en": "H.265"
             }
-          }
+          },
+          "desc_zh": "要使用的视频编解码器。",
+          "desc_en": "The video codec to test if supported for recording."
         }
-      ]
+      ],
+      "display_zh": "支持视频格式 [b]{0} {1}[/b]",
+      "display_en": "Is video format [b]{0} {1}[/b] supported"
     },
     {
       "id": "is-audio-format-supported-2",
@@ -182,7 +196,9 @@
               "zh": "MP4",
               "en": "MP4"
             }
-          }
+          },
+          "desc_zh": "要保存的视频格式。",
+          "desc_en": "The container format to test if supported for recording."
         },
         {
           "id": "codec",
@@ -202,9 +218,13 @@
               "zh": "AAC",
               "en": "AAC"
             }
-          }
+          },
+          "desc_zh": "录制使用的音频编解码器。",
+          "desc_en": "The audio codec  to test if supported for recording."
         }
-      ]
+      ],
+      "display_zh": "支持音频格式 [b]{0} {1}[/b]",
+      "display_en": "Is audio format [b]{0} {1}[/b] supported"
     },
     {
       "id": "is-recording",
@@ -213,7 +233,9 @@
       "description_zh": "检测目前是否正处于录制状态。",
       "description_en": "True while actively recording a video.",
       "scriptName": "IsRecording",
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "正在录制",
+      "display_en": "Is recording"
     }
   ],
   "actions": [
@@ -303,7 +325,9 @@
               "zh": "MP4",
               "en": "MP4"
             }
-          }
+          },
+          "desc_zh": "要保存的视频格式",
+          "desc_en": "The container format to record."
         },
         {
           "id": "video-codec",
@@ -344,13 +368,17 @@
               "zh": "H.265",
               "en": "H.265"
             }
-          }
+          },
+          "desc_zh": "要使用的视频编解码器。",
+          "desc_en": "The video codec to encode the recording with."
         },
         {
           "id": "framerate",
           "type": "number",
           "name_zh": "帧率",
-          "name_en": "Framerate"
+          "name_en": "Framerate",
+          "desc_zh": "录制每秒捕获的帧数(如果可用)，使用 0 默认使用显示器的帧率。",
+          "desc_en": "The frames per second to capture in the video (if used). Use 0 for the display rate."
         },
         {
           "id": "audio-codec",
@@ -381,16 +409,22 @@
               "zh": "AAC",
               "en": "AAC"
             }
-          }
+          },
+          "desc_zh": "要使用的音频编解码器",
+          "desc_en": "The audio codec to encode the recording with."
         },
         {
           "id": "quality-kbps",
           "type": "number",
           "name_zh": "质量(kbps)",
           "name_en": "Quality (kbps)",
-          "initialValue": "2500"
+          "initialValue": "2500",
+          "desc_zh": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "desc_en": "The data rate to encode in kilobits per second (kbps)."
         }
-      ]
+      ],
+      "display_zh": "开始录制 ([i]{0} {1}[/i] @ [i]{2}[/i] fps, [i]{3}[/i], [i]{4}[/i] kbps)",
+      "display_en": "Start recording ([i]{0} {1}[/i] @ [i]{2}[/i] fps, [i]{3}[/i], [i]{4}[/i] kbps)"
     },
     {
       "id": "start-screen-recording",
@@ -478,7 +512,9 @@
               "zh": "MP4",
               "en": "MP4"
             }
-          }
+          },
+          "desc_zh": "要保存的视频格式。",
+          "desc_en": "The container format to record."
         },
         {
           "id": "video-codec",
@@ -519,7 +555,9 @@
               "zh": "H.265",
               "en": "H.265"
             }
-          }
+          },
+          "desc_zh": "要使用的视频编解码器。",
+          "desc_en": "The video codec to encode the recording with."
         },
         {
           "id": "audio-codec",
@@ -550,22 +588,30 @@
               "zh": "AAC",
               "en": "AAC"
             }
-          }
+          },
+          "desc_zh": "要使用的音频编解码器。",
+          "desc_en": "The audio codec to encode the recording with."
         },
         {
           "id": "system-audio",
           "type": "boolean",
           "name_zh": "系统音频",
-          "name_en": "System audio"
+          "name_en": "System audio",
+          "desc_zh": "勾选后，请求录制系统音频。否则，仅录制浏览器标签页或音频对象的声音。",
+          "desc_en": "Check to request recording the entire system's audio output. Otherwise audio may be limited to the tab or Audio object output."
         },
         {
           "id": "quality-kbps",
           "type": "number",
           "name_zh": "质量(kbps)",
           "name_en": "Quality (kbps)",
-          "initialValue": "2500"
+          "initialValue": "2500",
+          "desc_zh": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "desc_en": "The data rate to encode in kilobits per second (kbps)."
         }
-      ]
+      ],
+      "display_zh": "开始录制 ([i]{0} {1}[/i], [i]{2}[/i], [i]{4}[/i] kbps, 使用电脑音频: [i]{3}[/i])",
+      "display_en": "Start screen recording ([i]{0} {1}[/i], [i]{2}[/i], system audio [i]{3}[/i], [i]{4}[/i] kbps)"
     },
     {
       "id": "start-user-media-recording",
@@ -647,7 +693,9 @@
               "zh": "MP4",
               "en": "MP4"
             }
-          }
+          },
+          "desc_zh": "要保存的视频格式。",
+          "desc_en": "The container format to record."
         },
         {
           "id": "video-codec",
@@ -688,7 +736,9 @@
               "zh": "H.265",
               "en": "H.265"
             }
-          }
+          },
+          "desc_zh": "要使用的视频编解码器。",
+          "desc_en": "The video codec to encode the recording with."
         },
         {
           "id": "audio-codec",
@@ -719,16 +769,22 @@
               "zh": "AAC",
               "en": "AAC"
             }
-          }
+          },
+          "desc_zh": "要使用的音频编解码器。",
+          "desc_en": "The audio codec to encode the recording with."
         },
         {
           "id": "quality-kbps",
           "type": "number",
           "name_zh": "质量(kbps)",
           "name_en": "Quality (kbps)",
-          "initialValue": "2500"
+          "initialValue": "2500",
+          "desc_zh": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "desc_en": "The data rate to encode in kilobits per second (kbps)."
         }
-      ]
+      ],
+      "display_zh": "开始录制 ([i]{0} {1}[/i], [i]{2}[/i], [i]{3}[/i] kbps)",
+      "display_en": "Start User Media recording ([i]{0} {1}[/i], [i]{2}[/i], [i]{3}[/i] kbps)"
     },
     {
       "id": "stop-recording",
@@ -737,14 +793,16 @@
       "description_zh": "结束视频录制。处理完成后将触发 '录制完成' 条件。",
       "description_en": "Finish recording a video. Triggers 'On recording ready' when available.",
       "scriptName": "StopRecording",
-      "category": "recording"
+      "category": "recording",
+      "display_zh": "停止录制",
+      "display_en": "Stop recording"
     }
   ],
   "expressions": [
     {
       "id": "recordingurl",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "录制文件地址",
+      "name_en": "RecordingURL",
       "description_zh": "返回可被浏览器对象下载使用的录像文件URL。",
       "description_en": "Return a URL of the recording that can be downloaded with the Browser object.",
       "expressionName": "RecordingURL",
@@ -753,9 +811,9 @@
     },
     {
       "id": "recording-type",
-      "name_zh": "",
-      "name_en": "",
-      "description_zh": "返回录制结果的MIME类型，如：\"\"video/webm\"\"",
+      "name_zh": "录制类型",
+      "name_en": "RecordingType",
+      "description_zh": "返回录制结果的MIME类型，如：\"video/webm",
       "description_en": "Return the MIME type of the recording, e.g. \"\"video/webm\"\".",
       "expressionName": "RecordingType",
       "returnType": "string",
@@ -763,9 +821,9 @@
     },
     {
       "id": "recording-file-extension",
-      "name_zh": "",
-      "name_en": "",
-      "description_zh": "返回录制结果的文件扩展名，如：\"\".webm\"\"",
+      "name_zh": "录制文件扩展名",
+      "name_en": "RecordingFileExtension",
+      "description_zh": "返回录制结果的文件扩展名，如：\".webm",
       "description_en": "Return the file extension for the recording, e.g. \"\".webm\"\".",
       "expressionName": "RecordingFileExtension",
       "returnType": "string",

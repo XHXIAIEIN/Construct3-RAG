@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -31,14 +33,18 @@
           "type": "number",
           "name_zh": "振动强度",
           "name_en": "Magnitude",
-          "initialValue": "20"
+          "initialValue": "20",
+          "desc_zh": "振动强度，即允许滚动随机偏移的最大像素。",
+          "desc_en": "The strength of the shake, in maximum pixels to scroll away."
         },
         {
           "id": "duration",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Duration",
-          "initialValue": "0.4"
+          "initialValue": "0.4",
+          "desc_zh": "振动的持续时间，以秒为单位。",
+          "desc_en": "The time the shake should last, in seconds."
         },
         {
           "id": "mode",
@@ -58,9 +64,13 @@
               "zh": "保持不变",
               "en": "Constant magnitude"
             }
-          }
+          },
+          "desc_zh": "在持续时间内，振动强度是逐渐减弱至零，还是保持不变。",
+          "desc_en": "Select whether the magnitude gradually reduces to zero over the duration, or stays constant."
         }
-      ]
+      ],
+      "display_zh": "{my} 振动[i]{1}[/i]秒, 强度[i]{0}[/i]  ({2})",
+      "display_en": "Shake {my} with magnitude [i]{0}[/i] for [i]{1}[/i] seconds ({2})"
     },
     {
       "id": "set-enabled",
@@ -88,9 +98,13 @@
               "zh": "启用",
               "en": "enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}"
     }
   ],
   "expressions": [],

@@ -15,7 +15,9 @@
       "description_zh": "淡出结束时触发。",
       "description_en": "Triggered when the fade-out has finished.",
       "scriptName": "OnFadeOutEnd",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 淡出完成",
+      "display_en": "On {my} fade-out finished"
     },
     {
       "id": "on-fade-in-finished",
@@ -24,7 +26,9 @@
       "description_zh": "淡入完成时触发。",
       "description_en": "Triggered when the fade-in has finished.",
       "scriptName": "OnFadeInEnd",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 淡入完成",
+      "display_en": "On {my} fade-in finished"
     },
     {
       "id": "on-wait-finished",
@@ -33,7 +37,9 @@
       "description_zh": "等待结束后触发。",
       "description_en": "Triggered when the wait has finished.",
       "scriptName": "OnWaitEnd",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 等待结束",
+      "display_en": "On {my} wait finished"
     }
   ],
   "actions": [
@@ -43,7 +49,9 @@
       "name_en": "Restart fade",
       "description_zh": "再次运行一次淡入淡出。",
       "description_en": "Run the fade again.",
-      "scriptName": "RestartFade"
+      "scriptName": "RestartFade",
+      "display_zh": "{my} 重新播放",
+      "display_en": "{my}: restart fade"
     },
     {
       "id": "start-fade",
@@ -51,7 +59,9 @@
       "name_en": "Start fade",
       "description_zh": "在对象属性中，如果未勾选在创建时自动淡入，则使用此动作开始淡入。",
       "description_en": "Start the fade, if not active on start.",
-      "scriptName": "StartFade"
+      "scriptName": "StartFade",
+      "display_zh": "{my} 开始播放",
+      "display_en": "{my}: start fade"
     },
     {
       "id": "set-fade-in-time",
@@ -65,9 +75,13 @@
           "id": "fade-in-time",
           "type": "number",
           "name_zh": "淡入时间",
-          "name_en": "Fade-in time"
+          "name_en": "Fade-in time",
+          "desc_zh": "淡入阶段的时间，以秒为单位。如果为0，则跳过淡入。",
+          "desc_en": "Time in seconds to spend in the fade-in phase."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}淡入时间为[i]{0}[/i]秒",
+      "display_en": "{my}: set fade-in time to [i]{0}[/i]"
     },
     {
       "id": "set-wait-time",
@@ -81,9 +95,13 @@
           "id": "wait-time",
           "type": "number",
           "name_zh": "等待时间",
-          "name_en": "Wait time"
+          "name_en": "Wait time",
+          "desc_zh": "等待的时间，以秒为单位。如果为0，则跳过等待，立即执行淡出。",
+          "desc_en": "Time in seconds to spend in the wait phase."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}等待时间为[i]{0}[/i]秒",
+      "display_en": "{my}: set wait time to [i]{0}[/i]"
     },
     {
       "id": "set-fade-out-time",
@@ -97,16 +115,20 @@
           "id": "fade-out-time",
           "type": "number",
           "name_zh": "淡出时间",
-          "name_en": "Fade-out time"
+          "name_en": "Fade-out time",
+          "desc_zh": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。",
+          "desc_en": "Time in seconds to spend in the fade-out phase."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}淡出时间为[i]{0}[/i]",
+      "display_en": "{my}: set fade-out time to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "fadeintime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "淡入时间",
+      "name_en": "FadeInTime",
       "description_zh": "淡入持续时间，以秒为单位。如果为 0，则跳过淡入。",
       "description_en": "The fade-in time in seconds.",
       "expressionName": "FadeInTime",
@@ -114,8 +136,8 @@
     },
     {
       "id": "waittime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "等待时间",
+      "name_en": "WaitTime",
       "description_zh": "等待持续时间，以秒为单位。如果为 0，则跳过等待。",
       "description_en": "The wait time in seconds.",
       "expressionName": "WaitTime",
@@ -123,8 +145,8 @@
     },
     {
       "id": "fadeouttime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "淡出时间",
+      "name_en": "FadeOutTime",
       "description_zh": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。",
       "description_en": "The fade-out time in seconds.",
       "expressionName": "FadeOutTime",

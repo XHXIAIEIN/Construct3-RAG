@@ -18,7 +18,9 @@
       "description_en": "Triggered when the button is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "button"
+      "category": "button",
+      "display_zh": "点击按钮",
+      "display_en": "On clicked"
     },
     {
       "id": "is-checked",
@@ -27,7 +29,9 @@
       "description_zh": "检测复选框是否已被勾选。",
       "description_en": "True if the checkbox is checked.",
       "scriptName": "IsChecked",
-      "category": "button"
+      "category": "button",
+      "display_zh": "已勾选",
+      "display_en": "Is checked"
     },
     {
       "id": "compare-text",
@@ -42,7 +46,9 @@
           "id": "text-to-compare",
           "type": "string",
           "name_zh": "要比较的文本",
-          "name_en": "Text to compare"
+          "name_en": "Text to compare",
+          "desc_zh": "与按钮文本进行比较的文本。",
+          "desc_en": "Enter the text to compare with the button text."
         },
         {
           "id": "case-sensitivity",
@@ -62,9 +68,13 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          }
+          },
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
         }
-      ]
+      ],
+      "display_zh": "按钮文本是[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]"
     }
   ],
   "actions": [
@@ -81,9 +91,13 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "在按钮上显示的文本。",
+          "desc_en": "The text to set in the button."
         }
-      ]
+      ],
+      "display_zh": "设置按钮文字为{0}",
+      "display_en": "Set text to {0}"
     },
     {
       "id": "set-tooltip",
@@ -98,9 +112,13 @@
           "id": "tooltip",
           "type": "string",
           "name_zh": "提示",
-          "name_en": "Tooltip"
+          "name_en": "Tooltip",
+          "desc_zh": "在按钮上设置的工具提示。",
+          "desc_en": "The tooltip to set on the button."
         }
-      ]
+      ],
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}"
     },
     {
       "id": "set-checked",
@@ -129,9 +147,13 @@
               "zh": "已勾选",
               "en": "Checked"
             }
-          }
+          },
+          "desc_zh": "选择复选框状态。",
+          "desc_en": "Choose the checkbox state."
         }
-      ]
+      ],
+      "display_zh": "设置[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]"
     },
     {
       "id": "toggle-checked",
@@ -140,14 +162,16 @@
       "description_zh": "切换复选框",
       "description_en": "Toggle a checkbox.",
       "scriptName": "ToggleChecked",
-      "category": "button"
+      "category": "button",
+      "display_zh": "反转勾选",
+      "display_en": "Toggle checked"
     }
   ],
   "expressions": [
     {
       "id": "text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文本",
+      "name_en": "Text",
       "description_zh": "获取按钮文字",
       "description_en": "Get the button text.",
       "expressionName": "Text",

@@ -19,7 +19,9 @@
       "description_en": "Triggered when the connection to the WebSocket server is successfully established.",
       "scriptName": "OnOpened",
       "isTrigger": true,
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "连接打开",
+      "display_en": "On connection opened"
     },
     {
       "id": "on-closed",
@@ -29,7 +31,9 @@
       "description_en": "Triggered when an active connection is closed.",
       "scriptName": "OnClosed",
       "isTrigger": true,
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "连接关闭",
+      "display_en": "On connection closed"
     },
     {
       "id": "on-error",
@@ -39,7 +43,9 @@
       "description_en": "Triggered when there is a connection error.",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "连接错误",
+      "display_en": "On connection error"
     },
     {
       "id": "is-open",
@@ -48,7 +54,9 @@
       "description_zh": "检测连接当前是否已打开。",
       "description_en": "True if the connection is currently open.",
       "scriptName": "IsOpen",
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "已开启",
+      "display_en": "Is connection open"
     },
     {
       "id": "is-connecting",
@@ -57,7 +65,9 @@
       "description_zh": "检测当前是否正在建立连接。",
       "description_en": "True if the connection is currently being established.",
       "scriptName": "IsConnecting",
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "正在连接",
+      "display_en": "Is connecting"
     },
     {
       "id": "is-supported",
@@ -66,7 +76,9 @@
       "description_zh": "检测当前运行设备是否支持 WebSocket 连接。",
       "description_en": "True if the user's client supports WebSocket connections.",
       "scriptName": "IsSupported",
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "设备受支持",
+      "display_en": "Is WebSocket supported"
     },
     {
       "id": "on-message",
@@ -76,7 +88,9 @@
       "description_en": "Triggered when a message is received from the server in text format.",
       "scriptName": "OnMessage",
       "isTrigger": true,
-      "category": "data"
+      "category": "data",
+      "display_zh": "收到文字消息",
+      "display_en": "On text message"
     },
     {
       "id": "on-binary-message",
@@ -92,9 +106,13 @@
           "id": "receive-to",
           "type": "object",
           "name_zh": "接收到",
-          "name_en": "Receive to"
+          "name_en": "Receive to",
+          "desc_zh": "选择二进制数据对象，将接收到的二进制消息写入其中。",
+          "desc_en": "Choose a Binary Data object to write the received binary message to."
         }
-      ]
+      ],
+      "display_zh": "接受到二进制消息(储存到 {0})",
+      "display_en": "On binary message (in {0})"
     }
   ],
   "actions": [
@@ -113,15 +131,21 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"ws://\""
+          "initialValue": "\"ws://\"",
+          "desc_zh": "输入要连接的WebSocket服务器。",
+          "desc_en": "Enter the WebSocket server to connect to."
         },
         {
           "id": "protocol-optional",
           "type": "string",
           "name_zh": "子协议(可选)",
-          "name_en": "Protocol (optional)"
+          "name_en": "Protocol (optional)",
+          "desc_zh": "部分服务器必须要求填写子协议才能建立连接。留空表示无需协议要求。",
+          "desc_en": "Enter a required sub-protocol the server must support in order to establish a connection.  Leave empty for no protocol requirement."
         }
-      ]
+      ],
+      "display_zh": "连接到 [i]{0}[/i] (请求协议: {1})",
+      "display_en": "Connect to [i]{0}[/i] (require protocol {1})"
     },
     {
       "id": "close",
@@ -130,7 +154,9 @@
       "description_zh": "关闭所有活跃的 WebSocket 连接。",
       "description_en": "Close any active WebSocket connection.",
       "scriptName": "Close",
-      "category": "connection"
+      "category": "connection",
+      "display_zh": "关闭连接",
+      "display_en": "Close connection"
     },
     {
       "id": "send-text",
@@ -145,9 +171,13 @@
           "id": "data",
           "type": "string",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要发送到服务器的文本字符串。",
+          "desc_en": "A text string to send to the server."
         }
-      ]
+      ],
+      "display_zh": "发送文本 [i]{0}[/i]",
+      "display_en": "Send text [i]{0}[/i]"
     },
     {
       "id": "send-binary",
@@ -162,16 +192,20 @@
           "id": "data",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary data"
+          "name_en": "Binary data",
+          "desc_zh": "要作为消息发送的二进制数据对象。",
+          "desc_en": "A Binary Data object to send as a message."
         }
-      ]
+      ],
+      "display_zh": "发送 [i]{0}[/i]",
+      "display_en": "Send [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "errormsg",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误信息",
+      "name_en": "ErrorMsg",
       "description_zh": "在触发事件 '连接出错' 中的错误消息。",
       "description_en": "The error message in 'On error'.",
       "expressionName": "ErrorMsg",
@@ -180,8 +214,8 @@
     },
     {
       "id": "closecode",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误代码",
+      "name_en": "CloseCode",
       "description_zh": "触发事件 '已关闭' 的关闭代码。",
       "description_en": "The close code in 'On closed'.",
       "expressionName": "CloseCode",
@@ -190,8 +224,8 @@
     },
     {
       "id": "closereason",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误理由",
+      "name_en": "CloseReason",
       "description_zh": "触发事件 '连接被关闭' 的关闭原因。",
       "description_en": "The reason for closing in 'On closed'.",
       "expressionName": "CloseReason",
@@ -200,8 +234,8 @@
     },
     {
       "id": "messagetext",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "信息文本",
+      "name_en": "MessageText",
       "description_zh": "在 '收到文字消息' 条件中，收到的文本内容。",
       "description_en": "The text content of the message in 'On message'.",
       "expressionName": "MessageText",

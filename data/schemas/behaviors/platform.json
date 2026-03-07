@@ -16,7 +16,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving"
+      "scriptName": "IsMoving",
+      "display_zh": "{my} 正在移动",
+      "display_en": "{my} is moving"
     },
     {
       "id": "compare-speed",
@@ -30,15 +32,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Choose the way to compare the current speed."
         },
         {
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "每秒像素数 的速度，对比当前速度",
+          "desc_en": "The speed, in pixels per second, to compare the current speed to."
         }
-      ]
+      ],
+      "display_zh": "{my} 速度 {0} {1}",
+      "display_en": "{my} speed {0} {1}"
     },
     {
       "id": "is-on-floor",
@@ -46,7 +54,9 @@
       "name_en": "Is on floor",
       "description_zh": "检测对象是否位于具有 '实体' 行为的对象平台上面。",
       "description_en": "True when the object is on top of a solid or platform.",
-      "scriptName": "IsOnFloor"
+      "scriptName": "IsOnFloor",
+      "display_zh": "{my} 接触地面",
+      "display_en": "{my} is on floor"
     },
     {
       "id": "is-jumping",
@@ -54,7 +64,9 @@
       "name_en": "Is jumping",
       "description_zh": "检测物体当前是否正在向上移动（即跳跃）",
       "description_en": "True when the object is moving upwards (i.e. jumping).",
-      "scriptName": "IsJumping"
+      "scriptName": "IsJumping",
+      "display_zh": "{my} 正在跳跃",
+      "display_en": "{my} is jumping"
     },
     {
       "id": "is-falling",
@@ -62,7 +74,9 @@
       "name_en": "Is falling",
       "description_zh": "检测物体当前是否正在向下移动（即坠落）",
       "description_en": "True when the object is moving downwards (i.e. falling).",
-      "scriptName": "IsFalling"
+      "scriptName": "IsFalling",
+      "display_zh": "{my} 正在下落",
+      "display_en": "{my} is falling"
     },
     {
       "id": "is-by-wall",
@@ -90,9 +104,13 @@
               "zh": "右边",
               "en": "right"
             }
-          }
+          },
+          "desc_zh": "检测哪个方向有墙壁",
+          "desc_en": "Select the side to test for a wall."
         }
-      ]
+      ],
+      "display_zh": "{my}{0}接触墙壁",
+      "display_en": "{my} has wall to {0}"
     },
     {
       "id": "is-double-jump-enabled",
@@ -100,7 +118,9 @@
       "name_en": "Is double-jump enabled",
       "description_zh": "检测当前是否已启用二段跳。",
       "description_en": "True if double-jump is currently enabled.",
-      "scriptName": "IsDoubleJumpEnabled"
+      "scriptName": "IsDoubleJumpEnabled",
+      "display_zh": "{my} 已启用二段跳",
+      "display_en": "{my} double-jump is enabled"
     },
     {
       "id": "is-enabled",
@@ -108,7 +128,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     },
     {
       "id": "on-jump",
@@ -118,7 +140,9 @@
       "description_en": "Triggered when jumping.",
       "scriptName": "OnJump",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "display_zh": "{my} 准备起跳",
+      "display_en": "{my} On jump"
     },
     {
       "id": "on-fall",
@@ -128,7 +152,9 @@
       "description_en": "Triggered when falling.",
       "scriptName": "OnFall",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "display_zh": "{my} 准备下落",
+      "display_en": "{my} On fall"
     },
     {
       "id": "on-stopped",
@@ -138,7 +164,9 @@
       "description_en": "Triggered when stopped moving.",
       "scriptName": "OnStop",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "display_zh": "{my} 准备停下",
+      "display_en": "{my} On stopped"
     },
     {
       "id": "on-moved",
@@ -148,7 +176,9 @@
       "description_en": "Triggered when starting to move.",
       "scriptName": "OnMove",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "display_zh": "{my} 准备移动",
+      "display_en": "{my} On moved"
     },
     {
       "id": "on-landed",
@@ -158,7 +188,9 @@
       "description_en": "Triggered when first hitting the floor.",
       "scriptName": "OnLand",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "display_zh": "{my} 准备落地",
+      "display_en": "{my} On landed"
     }
   ],
   "actions": [
@@ -188,9 +220,13 @@
               "zh": "开始屏蔽",
               "en": "Start ignoring"
             }
-          }
+          },
+          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
+          "desc_en": "Set whether to ignore the controls for this movement."
         }
-      ]
+      ],
+      "display_zh": "{0}控制 {my}",
+      "display_en": "{0} {my} user input"
     },
     {
       "id": "set-max-speed",
@@ -204,9 +240,13 @@
           "id": "max-speed",
           "type": "number",
           "name_zh": "最大移动速度",
-          "name_en": "Max Speed"
+          "name_en": "Max Speed",
+          "desc_zh": "设置最大移动速度，以每秒像素为单位。",
+          "desc_en": "The new maximum speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}最大速度为[i]{0}[/i]",
+      "display_en": "Set {my} maximum speed to [i]{0}[/i]"
     },
     {
       "id": "set-acceleration",
@@ -220,9 +260,13 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+          "desc_en": "The new acceleration of the object to set, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
+      "display_en": "Set {my} acceleration to [i]{0}[/i]"
     },
     {
       "id": "set-deceleration",
@@ -236,9 +280,13 @@
           "id": "deceleration",
           "type": "number",
           "name_zh": "减速度",
-          "name_en": "Deceleration"
+          "name_en": "Deceleration",
+          "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+          "desc_en": "The new deceleration of the object to set, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
+      "display_en": "Set {my} deceleration to [i]{0}[/i]"
     },
     {
       "id": "set-jump-strength",
@@ -252,9 +300,13 @@
           "id": "jump-strength",
           "type": "number",
           "name_zh": "跳跃高度",
-          "name_en": "Jump strength"
+          "name_en": "Jump strength",
+          "desc_zh": "跳跃的初始速度，以像素每秒为单位。",
+          "desc_en": "The new speed at which jumps start, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}跳跃高度为[i]{0}[/i]",
+      "display_en": "Set {my} jump strength to [i]{0}[/i]"
     },
     {
       "id": "set-gravity",
@@ -268,9 +320,13 @@
           "id": "gravity",
           "type": "number",
           "name_zh": "重力",
-          "name_en": "Gravity"
+          "name_en": "Gravity",
+          "desc_zh": "由重力产生的加速度，以像素/秒为单位。",
+          "desc_en": "The new acceleration from gravity, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}重力值为[i]{0}[/i]",
+      "display_en": "Set {my} gravity to [i]{0}[/i]"
     },
     {
       "id": "set-max-fall-speed",
@@ -284,9 +340,13 @@
           "id": "max-fall-speed",
           "type": "number",
           "name_zh": "最大下落速度",
-          "name_en": "Max fall speed"
+          "name_en": "Max fall speed",
+          "desc_zh": "自由落体对象新速度的最大最小值",
+          "desc_en": "The new maximum speed object can reach in freefall, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}最大下落速度为[i]{0}[/i]",
+      "display_en": "Set {my} max fall speed to [i]{0}[/i]"
     },
     {
       "id": "simulate-control",
@@ -319,9 +379,13 @@
               "zh": "跳跃",
               "en": "Jump"
             }
-          }
+          },
+          "desc_zh": "模拟玩家按下按键来控制角色行动。",
+          "desc_en": "The movement control to simulate pressing."
         }
-      ]
+      ],
+      "display_zh": "控制 {my} {0}",
+      "display_en": "Simulate {my} pressing {0}"
     },
     {
       "id": "set-vector-x",
@@ -335,9 +399,13 @@
           "id": "vector-x",
           "type": "number",
           "name_zh": "向量 X",
-          "name_en": "Vector X"
+          "name_en": "Vector X",
+          "desc_zh": "设置在X轴的运动向量，以每秒像素为单位。大于 0 将向右移动，小于 0 则向左移动。",
+          "desc_en": "The new horizontal movement vector, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}运动向量X为[i]{0}[/i]",
+      "display_en": "Set {my} vector X to [i]{0}[/i]"
     },
     {
       "id": "set-vector-y",
@@ -351,9 +419,13 @@
           "id": "vector-y",
           "type": "number",
           "name_zh": "向量 Y",
-          "name_en": "Vector Y"
+          "name_en": "Vector Y",
+          "desc_zh": "像素/秒的新垂直移动向量",
+          "desc_en": "The new vertical movement vector, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}运动向量Y为[i]{0}[/i]",
+      "display_en": "Set {my} vector Y to [i]{0}[/i]"
     },
     {
       "id": "set-angle-of-gravity",
@@ -367,9 +439,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "重力方向的度数。",
+          "desc_en": "The angle of gravity in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}重力方向为[i]{0}[/i]°",
+      "display_en": "Set {my} angle of gravity to [i]{0}[/i] degrees"
     },
     {
       "id": "set-enabled",
@@ -397,9 +473,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "fall-through",
@@ -407,7 +487,9 @@
       "name_en": "Fall through",
       "description_zh": "下落穿过平台",
       "description_en": "Fall through a jump-thru platform.",
-      "scriptName": "FallThrough"
+      "scriptName": "FallThrough",
+      "display_zh": "{my} 从穿透平台落下",
+      "display_en": "Fall {my} down through jump-thru"
     },
     {
       "id": "set-double-jump",
@@ -435,9 +517,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "禁用启动二段跳功能",
+          "desc_en": "Set whether to enable or disable double jumps."
         }
-      ]
+      ],
+      "display_zh": "{my}[b]{0}[/b]二段跳",
+      "display_en": "Set {my} double-jump [b]{0}[/b]"
     },
     {
       "id": "set-jump-sustain",
@@ -451,9 +537,13 @@
           "id": "jump-sustain",
           "type": "number",
           "name_zh": "跳跃保持",
-          "name_en": "Jump sustain"
+          "name_en": "Jump sustain",
+          "desc_zh": "跳跃保持时间，以毫秒为单位。",
+          "desc_en": "The new jump sustain, in milliseconds to sustain jump velocity for."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}跳跃保持为[b]{0}[/b]毫秒",
+      "display_en": "Set {my} jump sustain to [b]{0}[/b] ms"
     },
     {
       "id": "set-ceiling-collision",
@@ -481,9 +571,13 @@
               "zh": "保持动力",
               "en": "Preserve momentum"
             }
-          }
+          },
+          "desc_zh": "如何处理碰撞到天花板时的反馈。",
+          "desc_en": "Set how to handle collisions with the ceiling."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}碰撞到天花板后[b]{0}[/b]",
+      "display_en": "Set {my} ceiling collision mode to [b]{0}[/b]"
     },
     {
       "id": "set-default-controls",
@@ -497,9 +591,13 @@
           "id": "default-controls",
           "type": "boolean",
           "name_zh": "默认的控制方式",
-          "name_en": "Default controls"
+          "name_en": "Default controls",
+          "desc_zh": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。",
+          "desc_en": "Whether to enable or disable the behavior default controls."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
+      "display_en": "Set {my} default controls [b]{0}[/b]"
     },
     {
       "id": "reset-double-jump",
@@ -513,16 +611,20 @@
           "id": "double-jump-allowed",
           "type": "boolean",
           "name_zh": "允许二段跳",
-          "name_en": "Double jump allowed"
+          "name_en": "Double jump allowed",
+          "desc_zh": "在当前跳跃状态是否允许二段跳。",
+          "desc_en": "Whether a double jump is allowed during the current jump."
         }
-      ]
+      ],
+      "display_zh": "重置 {my} 二段跳判定 [b]{0}[/b]",
+      "display_en": "Reset {my} double jump allowed [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动速度",
+      "name_en": "Speed",
       "description_zh": "当前对象的移动速度，以像素/秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -530,8 +632,8 @@
     },
     {
       "id": "maxspeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大移动速度",
+      "name_en": "MaxSpeed",
       "description_zh": "设置最大移动速度，以像素/秒为单位。",
       "description_en": "The maximum speed setting, in pixels per second.",
       "expressionName": "MaxSpeed",
@@ -539,8 +641,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度",
+      "name_en": "Acceleration",
       "description_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
       "description_en": "The acceleration setting, in pixels per second per second.",
       "expressionName": "Acceleration",
@@ -548,8 +650,8 @@
     },
     {
       "id": "deceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "减速度",
+      "name_en": "Deceleration",
       "description_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
       "description_en": "The deceleration setting, in pixels per second per second.",
       "expressionName": "Deceleration",
@@ -557,8 +659,8 @@
     },
     {
       "id": "jumpstrength",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "跳跃高度",
+      "name_en": "JumpStrength",
       "description_zh": "设置对象的跳跃高度，以每秒像素为单位。",
       "description_en": "The jump strength setting, in pixels per second.",
       "expressionName": "JumpStrength",
@@ -566,8 +668,8 @@
     },
     {
       "id": "gravity",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力",
+      "name_en": "Gravity",
       "description_zh": "设置重力，以每秒像素为单位。",
       "description_en": "The gravity setting, in pixels per second per second.",
       "expressionName": "Gravity",
@@ -575,8 +677,8 @@
     },
     {
       "id": "maxfallspeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大下落速度",
+      "name_en": "MaxFallSpeed",
       "description_zh": "设置最大下落速度，以像素/秒为单位。",
       "description_en": "The maximum fall speed setting, in pixels per second.",
       "expressionName": "MaxFallSpeed",
@@ -584,8 +686,8 @@
     },
     {
       "id": "movingangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动角度",
+      "name_en": "MovingAngle",
       "description_zh": "当前的移动方向，以度数为单位。",
       "description_en": "The current angle of motion, in degrees.",
       "expressionName": "MovingAngle",
@@ -593,8 +695,8 @@
     },
     {
       "id": "vectorx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动向量X",
+      "name_en": "VectorX",
       "description_zh": "在水平方向移动的向量X，以像素/秒为单位。",
       "description_en": "The current X component of motion, in pixels.",
       "expressionName": "VectorX",
@@ -602,8 +704,8 @@
     },
     {
       "id": "vectory",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动向量Y",
+      "name_en": "VectorY",
       "description_zh": "在水平方向移动的向量Y，以像素/秒为单位。",
       "description_en": "The current Y component of motion, in pixels.",
       "expressionName": "VectorY",
@@ -611,8 +713,8 @@
     },
     {
       "id": "gravityangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力角度",
+      "name_en": "GravityAngle",
       "description_zh": "重力的角度，以度数为单位。",
       "description_en": "The angle of gravity, in degrees.",
       "expressionName": "GravityAngle",
@@ -620,8 +722,8 @@
     },
     {
       "id": "jumpsustain",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "跳跃保持时间",
+      "name_en": "JumpSustain",
       "description_zh": "跳跃保持时间，以毫秒为单位。",
       "description_en": "The jump sustain property, in milliseconds.",
       "expressionName": "JumpSustain",

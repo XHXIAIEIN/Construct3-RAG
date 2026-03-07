@@ -27,9 +27,13 @@
           "id": "keycode",
           "type": "number",
           "name_zh": "按键码",
-          "name_en": "Keycode"
+          "name_en": "Keycode",
+          "desc_zh": "输入要测试的按键码。",
+          "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "display_zh": "按下 [b]{0}[/b] 按键码",
+      "display_en": "On key code [b]{0}[/b] pressed"
     },
     {
       "id": "key-code-is-down",
@@ -44,9 +48,13 @@
           "id": "keycode",
           "type": "number",
           "name_zh": "按键码",
-          "name_en": "Keycode"
+          "name_en": "Keycode",
+          "desc_zh": "输入要测试的按键码。",
+          "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "display_zh": "按住 [b]{0}[/b] 按键码",
+      "display_en": "Key code [b]{0}[/b] is down"
     },
     {
       "id": "on-key-code-released",
@@ -62,9 +70,13 @@
           "id": "keycode",
           "type": "number",
           "name_zh": "按键码",
-          "name_en": "Keycode"
+          "name_en": "Keycode",
+          "desc_zh": "输入要测试的按键码。",
+          "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "display_zh": "松开 [b]{0}[/b] 按键码",
+      "display_en": "On key code [b]{0}[/b] released"
     },
     {
       "id": "on-key-pressed",
@@ -80,9 +92,13 @@
           "id": "key",
           "type": "keyb",
           "name_zh": "按键",
-          "name_en": "Key"
+          "name_en": "Key",
+          "desc_zh": "选择一个键盘上的按键。注意：请避免使用一些不常用的按键。因为在不同的地区、不同操作系统、不同输入设备，用户使用的键盘可能并不相同，可能没有部分按键或按键的位置布局也不一致。",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "display_zh": "按下 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] pressed"
     },
     {
       "id": "on-any-key-pressed",
@@ -92,7 +108,9 @@
       "description_en": "Triggered when any keyboard key is pressed.",
       "scriptName": "OnAnyKey",
       "isTrigger": true,
-      "category": "keyboard"
+      "category": "keyboard",
+      "display_zh": "按下任意键",
+      "display_en": "On any key pressed"
     },
     {
       "id": "on-any-key-released",
@@ -102,7 +120,9 @@
       "description_en": "Triggered when any keyboard key is released.",
       "scriptName": "OnAnyKeyReleased",
       "isTrigger": true,
-      "category": "keyboard"
+      "category": "keyboard",
+      "display_zh": "松开任意键",
+      "display_en": "On any key released"
     },
     {
       "id": "key-is-down",
@@ -117,9 +137,13 @@
           "id": "key",
           "type": "keyb",
           "name_zh": "按键",
-          "name_en": "Key"
+          "name_en": "Key",
+          "desc_zh": "选择一个按键。 请注意，在不同国际、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "display_zh": "按住 [b]{0}[/b] 键",
+      "display_en": "[b]{0}[/b] is down"
     },
     {
       "id": "on-key-released",
@@ -135,9 +159,13 @@
           "id": "key",
           "type": "keyb",
           "name_zh": "按键",
-          "name_en": "Key"
+          "name_en": "Key",
+          "desc_zh": "选择一个按键。 请注意，在不同地区、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "display_zh": "松开 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] released"
     },
     {
       "id": "is-keyboard-lock-supported",
@@ -146,7 +174,9 @@
       "description_zh": "检查当前浏览器/平台是否支持键盘锁。",
       "description_en": "True if the current browser/platform supports using keyboard lock.",
       "scriptName": "IsKeyboardLockSupported",
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "display_zh": "支持键盘锁功能",
+      "display_en": "Is keyboard lock supported"
     },
     {
       "id": "on-keyboard-locked",
@@ -156,7 +186,9 @@
       "description_en": "Triggered after the 'Lock keyboard' action after successfully locking the keyboard.",
       "scriptName": "OnKeyboardLocked",
       "isTrigger": true,
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "display_zh": "键盘已锁定",
+      "display_en": "On keyboard locked"
     },
     {
       "id": "on-keyboard-lock-error",
@@ -166,7 +198,9 @@
       "description_en": "Triggered after the 'Lock keyboard' action after failing to lock the keyboard.",
       "scriptName": "OnKeyboardLockError",
       "isTrigger": true,
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "display_zh": "键盘锁定错误",
+      "display_en": "On keyboard lock error"
     },
     {
       "id": "on-left-right-key-pressed",
@@ -226,9 +260,13 @@
               "zh": "Right meta",
               "en": "Right meta"
             }
-          }
+          },
+          "desc_zh": "选择一个按键。",
+          "desc_en": "Choose a key."
         }
-      ]
+      ],
+      "display_zh": "按下 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] pressed"
     },
     {
       "id": "on-left-right-key-released",
@@ -288,9 +326,13 @@
               "zh": "Right meta",
               "en": "Right meta"
             }
-          }
+          },
+          "desc_zh": "选择一个按键。",
+          "desc_en": "Choose a key."
         }
-      ]
+      ],
+      "display_zh": "松开 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] released"
     },
     {
       "id": "is-left-right-key-down",
@@ -349,9 +391,13 @@
               "zh": "Right meta",
               "en": "Right meta"
             }
-          }
+          },
+          "desc_zh": "选择一个按键。",
+          "desc_en": "Choose a key."
         }
-      ]
+      ],
+      "display_zh": "按住 [b]{0}[/b] 键",
+      "display_en": "[b]{0}[/b] is down"
     }
   ],
   "actions": [
@@ -370,9 +416,13 @@
           "type": "string",
           "name_zh": "按键",
           "name_en": "Keys",
-          "initialValue": "\"KeyW,KeyA,KeyS,KeyD\""
+          "initialValue": "\"KeyW,KeyA,KeyS,KeyD\"",
+          "desc_zh": "要锁定的按键名，以逗号区分多个按键名。留空默认所有按键。注：按键名使用 keyCode 标准。",
+          "desc_en": "A comma-separated array of keys to lock. Leave empty to request to lock all keys."
         }
-      ]
+      ],
+      "display_zh": "锁定键盘(按键: [i]{0}[/i]))",
+      "display_en": "Lock keyboard (keys: [i]{0}[/i])"
     },
     {
       "id": "unlock-keyboard",
@@ -381,14 +431,16 @@
       "description_zh": "解锁的键盘锁，恢复按键的默认处理。",
       "description_en": "Unlock a previous keyboard lock, restoring the default handling of key presses.",
       "scriptName": "UnlockKeyboard",
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "display_zh": "解锁键盘",
+      "display_en": "Unlock keyboard"
     }
   ],
   "expressions": [
     {
       "id": "lastkeycode",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "按键码",
+      "name_en": "LastKeyCode",
       "description_zh": "获取最后按下的键的键代码。",
       "description_en": "Get the key code for the last pressed key.",
       "expressionName": "LastKeyCode",
@@ -397,8 +449,8 @@
     },
     {
       "id": "stringfromkeycode",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "按键码字符串",
+      "name_en": "StringFromKeyCode",
       "description_zh": "获取对应按键码的字符串。",
       "description_en": "Get a character string representing a key code.",
       "expressionName": "StringFromKeyCode",
@@ -409,14 +461,16 @@
           "id": "key-code",
           "type": "number",
           "name_zh": "按键码",
-          "name_en": "Key code"
+          "name_en": "Key code",
+          "desc_zh": "用于获取对应字符串的按键码。",
+          "desc_en": "The key code to get a string from"
         }
       ]
     },
     {
       "id": "typed-key",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "功能键",
+      "name_en": "TypedKey",
       "description_zh": "获取最后按下的按键的类型字符串。",
       "description_en": "Get the typed key string for the last pressed key.",
       "expressionName": "TypedKey",

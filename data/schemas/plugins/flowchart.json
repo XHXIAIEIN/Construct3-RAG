@@ -23,7 +23,9 @@
       "description_en": "Triggered when any node is reached.",
       "scriptName": "OnAnyNodeChange",
       "isTrigger": true,
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "进入任意节点",
+      "display_en": "On any node entered"
     },
     {
       "id": "on-tagged-node-change",
@@ -39,9 +41,13 @@
           "id": "node-tag",
           "type": "string",
           "name_zh": "节点标签",
-          "name_en": "Node tags"
+          "name_en": "Node tags",
+          "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
+          "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ]
+      ],
+      "display_zh": "进入 [b]{0}[/b] 节点",
+      "display_en": "On node [b]{0}[/b] entered"
     },
     {
       "id": "on-before-any-node-change",
@@ -51,7 +57,9 @@
       "description_en": "Triggered when any node is exited.",
       "scriptName": "OnBeforeAnyNodeChange",
       "isTrigger": true,
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "离开任意节点",
+      "display_en": "On any node exited"
     },
     {
       "id": "on-before-tagged-node-change",
@@ -67,9 +75,13 @@
           "id": "node-tag",
           "type": "string",
           "name_zh": "节点标签",
-          "name_en": "Node tags"
+          "name_en": "Node tags",
+          "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
+          "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ]
+      ],
+      "display_zh": "离开节点 [b]{0}[/b]",
+      "display_en": "On node [b]{0}[/b] exited"
     },
     {
       "id": "is-at-start-node",
@@ -78,7 +90,9 @@
       "description_zh": "检查当前节点是否为起始节点。",
       "description_en": "Check if the current node is the starting one.",
       "scriptName": "IsAtStartNode",
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "是起始节点",
+      "display_en": "Is at start node"
     },
     {
       "id": "on-any-node-change-in-flowchart",
@@ -94,9 +108,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要定位的流程的标签。",
+          "desc_en": "The tag of the flowchart to target."
         }
-      ]
+      ],
+      "display_zh": "进入流程 [b]{0}[/b] 任意节点",
+      "display_en": "On any node entered in flowchart [b]{0}[/b]"
     },
     {
       "id": "on-tagged-node-change-in-flowchart",
@@ -112,15 +130,21 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart Tag"
+          "name_en": "Flowchart Tag",
+          "desc_zh": "要定位的流程的标签。",
+          "desc_en": "The tag of the flowchart to target."
         },
         {
           "id": "node-tag",
           "type": "string",
           "name_zh": "节点标签",
-          "name_en": "Node tags"
+          "name_en": "Node tags",
+          "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
+          "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ]
+      ],
+      "display_zh": "进入流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "display_en": "On node [b]{1}[/b] entered in flowchart [i]{0}[/i]"
     },
     {
       "id": "on-before-any-node-change-in-flowchart",
@@ -136,9 +160,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要定位的流程的标签。",
+          "desc_en": "The tag of the flowchart to target."
         }
-      ]
+      ],
+      "display_zh": "离开流程 [b]{0}[/b] 任意节点",
+      "display_en": "On any node exited in flowchart [b]{0}[/b]"
     },
     {
       "id": "on-before-tagged-node-change-in-flowchart",
@@ -154,15 +182,21 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart Tag"
+          "name_en": "Flowchart Tag",
+          "desc_zh": "要定位的流程的标签。",
+          "desc_en": "The tag of the flowchart to target."
         },
         {
           "id": "node-tag",
           "type": "string",
           "name_zh": "节点标签",
-          "name_en": "Node tags"
+          "name_en": "Node tags",
+          "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
+          "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ]
+      ],
+      "display_zh": "离开流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "display_en": "On node [b]{1}[/b] exited in flowchart [i]{0}[/i]"
     },
     {
       "id": "is-at-start-node-in-flowchart",
@@ -177,9 +211,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要定位的流程的标签。",
+          "desc_en": "The tag of the flowchart to target."
         }
-      ]
+      ],
+      "display_zh": "流程 [b]{0}[/b] 位于起始节点",
+      "display_en": "Is at start node in flowchart [b]{0}[/b]"
     },
     {
       "id": "compare-output-count",
@@ -194,15 +232,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "输出",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要比较的值。",
+          "desc_en": "The value to compare the output count of the current node against."
         }
-      ]
+      ],
+      "display_zh": "输出数量 {0} {1}",
+      "display_en": "Output count {0} {1}"
     },
     {
       "id": "compare-output-name",
@@ -217,21 +261,29 @@
           "id": "output-index",
           "type": "number",
           "name_zh": "输出编号",
-          "name_en": "Output index"
+          "name_en": "Output index",
+          "desc_zh": "要比较输出名称的编号。",
+          "desc_en": "The index of the output to get the name for comparison."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "输出",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "用于比较的字符串。",
+          "desc_en": "The value to compare the output name against."
         }
-      ]
+      ],
+      "display_zh": "输出 {0} 名称 {1} {2}",
+      "display_en": "Output {0} name {1} {2}"
     },
     {
       "id": "compare-output-value",
@@ -246,21 +298,29 @@
           "id": "output-index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "Index or name"
+          "name_en": "Index or name",
+          "desc_zh": "要获取输出值的输出名称或编号，编号从 0 开始计数。",
+          "desc_en": "The name or index (0-based) of the output to get."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "输出",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "用于比较的值。",
+          "desc_en": "The value to compare the output value against."
         }
-      ]
+      ],
+      "display_zh": "输出 {0} 值 {1} {2}",
+      "display_en": "Output {0} value {1} {2}"
     },
     {
       "id": "compare-node-tag",
@@ -275,15 +335,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "输出",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "与当前节点的标签进行比较的值，用空格分隔多个标签。",
+          "desc_en": "The value to compare the tags of the current node against. A space separated string will be interpreted as multiple tags."
         }
-      ]
+      ],
+      "display_zh": "节点标签 {0} {1}",
+      "display_en": "Node tags {0} {1}"
     },
     {
       "id": "compare-node-tag-count",
@@ -298,15 +364,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "与节点标签数量进行比较的值。",
+          "desc_en": "The value to compare the tag count of the current node against."
         }
-      ]
+      ],
+      "display_zh": "节点标签数量 {0} {1}",
+      "display_en": "Node tag count {0} {1}"
     },
     {
       "id": "has-output",
@@ -321,9 +393,13 @@
           "id": "output-index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "Index or name"
+          "name_en": "Index or name",
+          "desc_zh": "要检查的输出名称或编号，编号从 0 开始计数。",
+          "desc_en": "The output name or index (0-based) to check for."
         }
-      ]
+      ],
+      "display_zh": "存在输出 [b]{0}[/b]",
+      "display_en": "Has output [b]{0}[/b]"
     },
     {
       "id": "output-name-match-regex",
@@ -338,22 +414,30 @@
           "id": "index",
           "type": "number",
           "name_zh": "0",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要检查的输出的编号，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the output to check for."
         },
         {
           "id": "regex",
           "type": "string",
           "name_zh": "正则表达式",
-          "name_en": "Regex"
+          "name_en": "Regex",
+          "desc_zh": "用于测试输出名称的正则表达式。",
+          "desc_en": "Enter the regular expression to test the output name with."
         },
         {
           "id": "flags",
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\""
+          "initialValue": "\"gi\"",
+          "desc_zh": "正则表达式的修饰符",
+          "desc_en": "Regular expression flags"
         }
-      ]
+      ],
+      "display_zh": "匹配输出名称: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "Output name at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])"
     },
     {
       "id": "output-value-match-regex",
@@ -368,22 +452,30 @@
           "id": "index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "Index or name"
+          "name_en": "Index or name",
+          "desc_zh": "要匹配的输出名称或编号，编号从 0 开始计数。",
+          "desc_en": "The name or index (0-based) of the output."
         },
         {
           "id": "regex",
           "type": "string",
           "name_zh": "正则表达式",
-          "name_en": "Regex"
+          "name_en": "Regex",
+          "desc_zh": "用于测试输出值的正则表达式。",
+          "desc_en": "Enter the regular expression to test the output value with."
         },
         {
           "id": "flags",
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\""
+          "initialValue": "\"gi\"",
+          "desc_zh": "正则表达式的修饰符",
+          "desc_en": "Regular expression flags"
         }
-      ]
+      ],
+      "display_zh": "匹配输出值: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "Output value at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])"
     },
     {
       "id": "compare-output-name-default",
@@ -398,15 +490,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "用于比较的值。",
+          "desc_en": "The value to compare the output name against."
         }
-      ]
+      ],
+      "display_zh": "默认输出名称 {0} {1}",
+      "display_en": "Default output name {0} {1}"
     },
     {
       "id": "compare-output-value-default",
@@ -421,15 +519,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要与输出进行比较的值。",
+          "desc_en": "The value to compare the output value against."
         }
-      ]
+      ],
+      "display_zh": "默认输出值 {0} {1}",
+      "display_en": "Default output value {0} {1}"
     },
     {
       "id": "has-output-default",
@@ -438,7 +542,9 @@
       "description_zh": "检查是否有默认输出。",
       "description_en": "Check if there is a default output.",
       "scriptName": "HasOutputDefault",
-      "category": "current-node-default"
+      "category": "current-node-default",
+      "display_zh": "存在默认输出",
+      "display_en": "Has default output"
     },
     {
       "id": "for-each-output",
@@ -447,7 +553,9 @@
       "description_zh": "在当前节点中，对每项输出重复执行一些动作。",
       "description_en": "Repeat the event for each output in the current node.",
       "scriptName": "ForEachOutput",
-      "category": "loops"
+      "category": "loops",
+      "display_zh": "遍历输出",
+      "display_en": "For Each Output"
     },
     {
       "id": "on-flowchart-change",
@@ -457,7 +565,9 @@
       "description_en": "Triggered when a new flowchart is entered.",
       "scriptName": "OnFlowchartChange",
       "isTrigger": true,
-      "category": "flowchart-management"
+      "category": "flowchart-management",
+      "display_zh": "进入任意流程",
+      "display_en": "On any flowchart entered"
     },
     {
       "id": "on-before-flowchart-change",
@@ -467,7 +577,9 @@
       "description_en": "Triggered when a flowchart is exited.",
       "scriptName": "OnBeforeFlowchartChange",
       "isTrigger": true,
-      "category": "flowchart-management"
+      "category": "flowchart-management",
+      "display_zh": "退出任意流程",
+      "display_en": "On any flowchart exited"
     },
     {
       "id": "has-flow-chart",
@@ -482,9 +594,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要检查的流程的标签。",
+          "desc_en": "The tag of the flowchart to check for."
         }
-      ]
+      ],
+      "display_zh": "存在流程 [b]{0}[/b]",
+      "display_en": "Has flowchart [b]{0}[/b]"
     },
     {
       "id": "compare-flowchart-tag",
@@ -499,15 +615,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择比较值的方法。",
+          "desc_en": "Select the way to compare the values."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "输出",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要比较的对应流程标签的值。",
+          "desc_en": "The value to compare the flowchart tag of the current node against."
         }
-      ]
+      ],
+      "display_zh": "流程标签 {0} {1}",
+      "display_en": "Flowchart tag {0} {1}"
     }
   ],
   "actions": [
@@ -518,7 +640,9 @@
       "description_zh": "退出当前流程。这将立即结束已创建的流程，不再拥有当前流程图的信息。",
       "description_en": "End the current flowchart. This destroys the created flowchart and the plugin will no longer have a current flowchart.",
       "scriptName": "EndFlowchart",
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "退出当前流程",
+      "display_en": "End current flowchart"
     },
     {
       "id": "reset-flowchart",
@@ -527,7 +651,9 @@
       "description_zh": "重置当前的流程。此操作将当前节点设置回默认起始节点，并清除之前的节点。",
       "description_en": "Reset the current flowchart, setting the current node to the default start node and clearing previous nodes.",
       "scriptName": "ResetFlowchart",
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "重置当前流程",
+      "display_en": "Reset current flowchart"
     },
     {
       "id": "goto-next-flowchart-node",
@@ -542,9 +668,13 @@
           "id": "index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "Index or name"
+          "name_en": "Index or name",
+          "desc_zh": "要跳转到的目标输出名称或编号，编号从 0 开始计数。",
+          "desc_en": "The name or index (0-based) of the output to follow."
         }
-      ]
+      ],
+      "display_zh": "跳转到下一个节点(编号: [b]{0}[/b])",
+      "display_en": "Go to output [b]{0}[/b]"
     },
     {
       "id": "goto-any-flowchart-node",
@@ -559,9 +689,13 @@
           "id": "node-tag",
           "type": "string",
           "name_zh": "节点标签",
-          "name_en": "Node tags"
+          "name_en": "Node tags",
+          "desc_zh": "要跳转到的节点标签。用空格分隔多个标签。如果匹配到多项结果，则选择第一个。",
+          "desc_en": "The tags of the node the flowchart should move to. Flow will move to the first node found that matches all the passed in tags."
         }
-      ]
+      ],
+      "display_zh": "跳转到节点 [b]{0}[/b]",
+      "display_en": "Go to node [b]{0}[/b]"
     },
     {
       "id": "goto-previous-flowchart-node",
@@ -570,7 +704,9 @@
       "description_zh": "转到当前流程的上一个节点。",
       "description_en": "Go to the previous node of the current flowchart.",
       "scriptName": "GotoPreviousFlowchartNode",
-      "category": "current-flowchart"
+      "category": "current-flowchart",
+      "display_zh": "跳转到上一个节点",
+      "display_en": "Go to previous node"
     },
     {
       "id": "goto-parent-flowchart-node",
@@ -585,9 +721,13 @@
           "id": "index-or-tag",
           "type": "any",
           "name_zh": "编号或标签",
-          "name_en": "Index or tags"
+          "name_en": "Index or tags",
+          "desc_zh": "要跳转到父节点的索引或标签。使用标签时，用空格分隔多个标签。如果匹配到多项结果，则选择第一个。",
+          "desc_en": "The index (0-based) or tags of the parent node the flowchart should move to. In the case of using tags, flow will move to the first parent node that matches all the passed in tags."
         }
-      ]
+      ],
+      "display_zh": "跳转到父节点(编号: [b]{0}[/b])",
+      "display_en": "Go to parent node [b]{0}[/b]"
     },
     {
       "id": "end-flowchart-by-tag",
@@ -602,9 +742,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要结束的流程标签。",
+          "desc_en": "The tag of the flowchart to end."
         }
-      ]
+      ],
+      "display_zh": "结束流程 (标签: [b]{0}[/b])",
+      "display_en": "End the flowchart with tag [b]{0}[/b]"
     },
     {
       "id": "reset-flowchart-by-tag",
@@ -619,9 +763,13 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要重置的流程的标签。",
+          "desc_en": "The tag of the flowchart to reset."
         }
-      ]
+      ],
+      "display_zh": "重置流程 (标签: [b]{0}[/b])",
+      "display_en": "Reset the flowchart with tag [b]{0}[/b]"
     },
     {
       "id": "goto-next-flowchart-node-default",
@@ -630,7 +778,9 @@
       "description_zh": "通过默认输出转到当前流程图的下一个节点。如果不是默认，则不会发生任何事情。",
       "description_en": "Go to the next node of the current flowchart via the default output. If there is no default nothing will happen.",
       "scriptName": "GotoNextFlowchartNodeDefault",
-      "category": "current-node-default"
+      "category": "current-node-default",
+      "display_zh": "跳转到默认输出",
+      "display_en": "Go to default output"
     },
     {
       "id": "start-flowchart",
@@ -645,28 +795,38 @@
           "id": "flowchart-name",
           "type": "flowchart",
           "name_zh": "流程名称",
-          "name_en": "Flowchart name"
+          "name_en": "Flowchart name",
+          "desc_zh": "要启动的流程。",
+          "desc_en": "The flowchart to start."
         },
         {
           "id": "start-node-tag",
           "type": "string",
           "name_zh": "起始节点标签",
-          "name_en": "Start node tags"
+          "name_en": "Start node tags",
+          "desc_zh": "流程起始的节点标签，用空格分隔多个标签。如果匹配多项结果，则选择第一个。留空则使用默认起始节点。",
+          "desc_en": "The tags of the node the flowchart should start in. Use multiple tags in a space separated string. The first node found that matches all tags will be used. If empty the default start node is used."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "用于稍后标识此流程图进程的标签。",
+          "desc_en": "A tag to later identify this flowchart."
         },
         {
           "id": "set-as-current",
           "type": "boolean",
           "name_zh": "设为当前流程",
           "name_en": "Set as current",
-          "initialValue": "true"
+          "initialValue": "true",
+          "desc_zh": "将此流程成为创建时的当前流程。",
+          "desc_en": "Make this flowchart the current one on creation."
         }
-      ]
+      ],
+      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i])",
+      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])"
     },
     {
       "id": "start-flowchart-by-name",
@@ -681,28 +841,38 @@
           "id": "flowchart-name",
           "type": "flowchart-string",
           "name_zh": "流程名称",
-          "name_en": "Flowchart name"
+          "name_en": "Flowchart name",
+          "desc_zh": "要启动的流程的名称。",
+          "desc_en": "The name of the flowchart to start."
         },
         {
           "id": "start-node-tag",
           "type": "string",
           "name_zh": "起始节点标签",
-          "name_en": "Start node tags"
+          "name_en": "Start node tags",
+          "desc_zh": "流程起始的节点标签，用空格分隔多个标签。如果匹配到多项结果，则选择第一个。留空则使用默认起始节点。",
+          "desc_en": "The tags of the node the flowchart should start in. Use multiple tags in a space separated string. The first node found that matches all tags will be used. If empty the default start node is used."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "用于稍后标识此流程图进程的标签。",
+          "desc_en": "A tag to later identify this flowchart."
         },
         {
           "id": "set-as-current",
           "type": "boolean",
           "name_zh": "设为当前流程",
           "name_en": "Set as current",
-          "initialValue": "true"
+          "initialValue": "true",
+          "desc_zh": "将此流程成为创建时的当前流程。",
+          "desc_en": "Make this flowchart the current one on creation."
         }
-      ]
+      ],
+      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i]))",
+      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])"
     },
     {
       "id": "set-flowchart",
@@ -717,16 +887,20 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "Flowchart tag"
+          "name_en": "Flowchart tag",
+          "desc_zh": "要设置为当前流程图的标签。",
+          "desc_en": "The tag of the flowchart to set as the current one."
         }
-      ]
+      ],
+      "display_zh": "设置当前流程(标签:  [b]{0}[/b])",
+      "display_en": "Set flowchart with tag [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "current-flowchart-tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "流程标签",
+      "name_en": "FlowchartTag",
       "description_zh": "获取当前流程的标签。",
       "description_en": "Get the tag of the current flowchart.",
       "expressionName": "FlowchartTag",
@@ -735,8 +909,8 @@
     },
     {
       "id": "current-node-tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "节点标签",
+      "name_en": "NodeTag",
       "description_zh": "获取当前节点的完整标签。",
       "description_en": "Get the whole tag string of the current node.",
       "expressionName": "NodeTag",
@@ -745,8 +919,8 @@
     },
     {
       "id": "current-node-tag-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取节点标签",
+      "name_en": "NodeTagAt",
       "description_zh": "获取当前节点指定索引位置的标签。",
       "description_en": "Get the tag at the provided index of the current node.",
       "expressionName": "NodeTagAt",
@@ -757,14 +931,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的标签的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the tag to get."
         }
       ]
     },
     {
       "id": "current-node-tag-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "节点标签数量",
+      "name_en": "NodeTagCount",
       "description_zh": "获取当前节点的标签数量。",
       "description_en": "Get the amount of tags of the current node.",
       "expressionName": "NodeTagCount",
@@ -773,8 +949,8 @@
     },
     {
       "id": "current-node-output-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取节点输出数量",
+      "name_en": "OutputCount",
       "description_zh": "获取当前节点中，输出的数量。",
       "description_en": "Get the number of outputs of the current the node in the current flowchart.",
       "expressionName": "OutputCount",
@@ -783,8 +959,8 @@
     },
     {
       "id": "current-node-output-name-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取节点输出名称",
+      "name_en": "OutputNameAt",
       "description_zh": "获取指定编号的输出名称。",
       "description_en": "Get the name of one of the outputs of the current node in the current flowchart.",
       "expressionName": "OutputNameAt",
@@ -795,14 +971,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的输出的名称的编号。",
+          "desc_en": "The index (0-based) of the output name to get."
         }
       ]
     },
     {
       "id": "current-node-output-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "输出值",
+      "name_en": "OutputValue",
       "description_zh": "获取当前节点中，指定名称或编号的输出值。",
       "description_en": "Get the value of one of the outputs of the current node in the current flowchart.",
       "expressionName": "OutputValue",
@@ -813,14 +991,16 @@
           "id": "index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "IndexOrName"
+          "name_en": "IndexOrName",
+          "desc_zh": "要获取的输出名称或编号，编号从 0 开始计数。",
+          "desc_en": "The name or index (0-based) of the output value to get."
         }
       ]
     },
     {
       "id": "current-node-parent-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "父节点数量",
+      "name_en": "ParentCount",
       "description_zh": "获取当前节点的父节点数量。",
       "description_en": "Get the number of parents of the current node in the current flowchart.",
       "expressionName": "ParentCount",
@@ -829,8 +1009,8 @@
     },
     {
       "id": "current-node-parent-tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "父节点标签",
+      "name_en": "ParentTag",
       "description_zh": "获取当前流程图中，当前节点的父节点的完整标签。",
       "description_en": "Get the whole tag string of a parent of the current node in the current flowchart.",
       "expressionName": "ParentTag",
@@ -841,14 +1021,16 @@
           "id": "parent-index",
           "type": "number",
           "name_zh": "父节点编号",
-          "name_en": "ParentIndex"
+          "name_en": "ParentIndex",
+          "desc_zh": "要获取其标签的父节点的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the parent to get the tag string for."
         }
       ]
     },
     {
       "id": "current-node-parent-tag-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取父节点标签",
+      "name_en": "ParentTagAt",
       "description_zh": "获取当前节点的父节点标签。",
       "description_en": "Get a tag of a parent of the current node in the current flowchart.",
       "expressionName": "ParentTagAt",
@@ -859,20 +1041,24 @@
           "id": "parent-index",
           "type": "number",
           "name_zh": "父节点索引",
-          "name_en": "ParentIndex"
+          "name_en": "ParentIndex",
+          "desc_zh": "要获取其标签的父节点的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the parent to get the tag for."
         },
         {
           "id": "tag-index",
           "type": "number",
           "name_zh": "标签索引",
-          "name_en": "TagIndex"
+          "name_en": "TagIndex",
+          "desc_zh": "标签的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the tag."
         }
       ]
     },
     {
       "id": "current-node-parent-index",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "父节点编号",
+      "name_en": "ParentIndex",
       "description_zh": "获取当前节点的父节点的编号。",
       "description_en": "Get the index of a parent of the current node in the current flowchart.",
       "expressionName": "ParentIndex",
@@ -883,14 +1069,16 @@
           "id": "parent-tag",
           "type": "string",
           "name_zh": "父节点标签",
-          "name_en": "ParentTags"
+          "name_en": "ParentTags",
+          "desc_zh": "要获取的父节点的标签，使用空格分隔多个标签。如果没有找到匹配的结果，则返回 -1。",
+          "desc_en": "The tags of the parent to get the index of. Pass multiple tags separated by a space. Returns '-1' if no parent is found which matches all the tags."
         }
       ]
     },
     {
       "id": "cur-output-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前输出名称",
+      "name_en": "CurOutputName",
       "description_zh": "在 '遍历输出' 条件中，当前循环的输出名称。",
       "description_en": "Get the current output name in a For Each Output loop.",
       "expressionName": "CurOutputName",
@@ -899,8 +1087,8 @@
     },
     {
       "id": "cur-output-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前输出值",
+      "name_en": "CurOutputValue",
       "description_zh": "在 '遍历输出' 条件中，当前循环的输出值。",
       "description_en": "Get the current output value in a For Each Output loop.",
       "expressionName": "CurOutputValue",
@@ -909,8 +1097,8 @@
     },
     {
       "id": "current-node-tag-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程节点标签",
+      "name_en": "NodeTagInFlowchart",
       "description_zh": "获取指定流程图中，当前节点的完整标签。",
       "description_en": "Get the whole tag string of the current node in a specific flowchart.",
       "expressionName": "NodeTagInFlowchart",
@@ -921,14 +1109,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from"
         }
       ]
     },
     {
       "id": "current-node-tag-count-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程节点标签数量",
+      "name_en": "NodeTagCountInFlowchart",
       "description_zh": "获取指定流程图中，当前节点的标签数量。",
       "description_en": "Get the amount of tags of the current node in a specific flowchart.",
       "expressionName": "NodeTagCountInFlowchart",
@@ -939,14 +1129,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from"
         }
       ]
     },
     {
       "id": "current-node-tag-at-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "流程节点标签",
+      "name_en": "NodeTagAtInFlowchart",
       "description_zh": "获取指定的流程图中，当前节点的某个标签。",
       "description_en": "Get one of the tags of the current node in a specific flowchart.",
       "expressionName": "NodeTagAtInFlowchart",
@@ -957,20 +1149,24 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引，从 0 开始计数。",
-          "name_en": "Index (0-based)"
+          "name_en": "Index (0-based)",
+          "desc_zh": "标签的索引",
+          "desc_en": "The index of the tag"
         }
       ]
     },
     {
       "id": "current-node-output-count-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程输出数量",
+      "name_en": "OutputCountInFlowchart",
       "description_zh": "获取指定流程图中，当前节点的输出数量。",
       "description_en": "Get the number of outputs of the current the node in a specific flowchart.",
       "expressionName": "OutputCountInFlowchart",
@@ -981,14 +1177,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-output-name-at-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程输出名称",
+      "name_en": "OutputNameAtInFlowchart",
       "description_zh": "获取指定流程中，当前节点的输出名称。",
       "description_en": "Get the name of one of the outputs of the current node in a specific flowchart.",
       "expressionName": "OutputNameAtInFlowchart",
@@ -999,20 +1197,24 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的输出名称的编号，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the output name to get."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-output-value-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程输出值",
+      "name_en": "OutputValueInFlowchart",
       "description_zh": "获取指定流程中，当前节点的输出值。",
       "description_en": "Get the value of one of the outputs of the current node in a specific flowchart.",
       "expressionName": "OutputValueInFlowchart",
@@ -1023,20 +1225,24 @@
           "id": "index-or-name",
           "type": "any",
           "name_zh": "编号或名称",
-          "name_en": "IndexOrName"
+          "name_en": "IndexOrName",
+          "desc_zh": "要获取的输出值的名称或编号。",
+          "desc_en": "The name or index (0-based) of the output value to get."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "获取流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-parent-count-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程父节点数量",
+      "name_en": "ParentCountInFlowchart",
       "description_zh": "获取指定流程中当前节点的父节点数量。",
       "description_en": "Get the number of parents of the current node in a specific flowchart.",
       "expressionName": "ParentCountInFlowchart",
@@ -1047,14 +1253,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-parent-tag-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程父节点标签",
+      "name_en": "ParentTagInFlowchart",
       "description_zh": "获取指定的流程图中，当前节点的父节点的完整标签。",
       "description_en": "Get the whole tag string of a parent of the current node in a specific flowchart.",
       "expressionName": "ParentTagInFlowchart",
@@ -1065,20 +1273,24 @@
           "id": "parent-index",
           "type": "number",
           "name_zh": "父节点编号",
-          "name_en": "ParentIndex"
+          "name_en": "ParentIndex",
+          "desc_zh": "要获取标签的父节点的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the parent to get the tag string for."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-parent-tag-at-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取当前流程父节点标签",
+      "name_en": "ParentTagAtInFlowchart",
       "description_zh": "获取指定的流程图中，当前节点的父节点的标签。",
       "description_en": "Get a tag of a parent of the current node in a specific flowchart.",
       "expressionName": "ParentTagAtInFlowchart",
@@ -1089,26 +1301,32 @@
           "id": "parent-index",
           "type": "number",
           "name_zh": "父节点索引",
-          "name_en": "ParentIndex"
+          "name_en": "ParentIndex",
+          "desc_zh": "要获取其标签的父节点的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the parent to get the tag for."
         },
         {
           "id": "tag-index",
           "type": "number",
           "name_zh": "标签索引",
-          "name_en": "TagIndex"
+          "name_en": "TagIndex",
+          "desc_zh": "标签的索引，从 0 开始计数。",
+          "desc_en": "The index (0-based) of the tag."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-parent-index-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取流程父节点编号",
+      "name_en": "ParentIndexInFlowchart",
       "description_zh": "获取指定流程中当前节点的父节点的编号。",
       "description_en": "Get the index of a parent of the current node in a specific flowchart.",
       "expressionName": "ParentIndexInFlowchart",
@@ -1119,20 +1337,24 @@
           "id": "parent-tag",
           "type": "string",
           "name_zh": "父节点标签",
-          "name_en": "ParentTags"
+          "name_en": "ParentTags",
+          "desc_zh": "要获取的父节点的标签，使用空格分隔多个标签。如果没有找到匹配的结果，则返回 -1。",
+          "desc_en": "The tags of the parent to get the index of. Pass multiple tags separated by a space. Returns '-1' if no parent is found which matches all the tags."
         },
         {
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-output-name-default",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认输出名称",
+      "name_en": "OutputNameDefault",
       "description_zh": "获取当前流程图中当前节点的默认输出的名称。",
       "description_en": "Get the name of the default output of the current node in the current flowchart.",
       "expressionName": "OutputNameDefault",
@@ -1141,8 +1363,8 @@
     },
     {
       "id": "current-node-output-value-default",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认输出值",
+      "name_en": "OutputValueDefault",
       "description_zh": "获取当前流程图中当前节点的默认输出的值。",
       "description_en": "Get the value of the default output of the current node in the current flowchart.",
       "expressionName": "OutputValueDefault",
@@ -1151,8 +1373,8 @@
     },
     {
       "id": "current-node-output-name-default-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "流程图默认输出名称",
+      "name_en": "OutputNameDefaultInFlowchart",
       "description_zh": "获取指定流程图中当前节点的默认输出的名称。",
       "description_en": "Get the name of the default output of the current node in a specific flowchart.",
       "expressionName": "OutputNameDefaultInFlowchart",
@@ -1163,14 +1385,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程图标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取的流程的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "current-node-output-value-default-in-flowchart",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认流程图输出值",
+      "name_en": "OutputValueDefaultInFlowchart",
       "description_zh": "获取特定流程图中当前节点的默认输出值。",
       "description_en": "Get the value of the default output of the current node in a specific flowchart.",
       "expressionName": "OutputValueDefaultInFlowchart",
@@ -1181,14 +1405,16 @@
           "id": "flowchart-tag",
           "type": "string",
           "name_zh": "流程图标签",
-          "name_en": "FlowchartTag"
+          "name_en": "FlowchartTag",
+          "desc_zh": "要获取信息的流程图的标签。",
+          "desc_en": "The tag of the flowchart to get the information from."
         }
       ]
     },
     {
       "id": "cur-output-default",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认当前输出状态",
+      "name_en": "CurIsDefault",
       "description_zh": "在 '遍历输出' 条件中，检查当前是否为默认输出。",
       "description_en": "Check if the current output in For Each Output loop is the default one.",
       "expressionName": "CurIsDefault",

@@ -18,7 +18,9 @@
       "description_zh": "测试设备是否支持语音识别。",
       "description_en": "True if the current browser supports speech recognition.",
       "scriptName": "SupportsSpeechRecognition",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "支持语音识别",
+      "display_en": "Supports speech recognition"
     },
     {
       "id": "on-start",
@@ -28,7 +30,9 @@
       "description_en": "Triggered when speech recognition begins.",
       "scriptName": "OnSpeechRecognitionStart",
       "isTrigger": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "开始语音识别",
+      "display_en": "On speech recognition started"
     },
     {
       "id": "on-end",
@@ -38,7 +42,9 @@
       "description_en": "Triggered when speech recognition ends.",
       "scriptName": "OnSpeechRecognitionEnd",
       "isTrigger": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "语音识别结束了",
+      "display_en": "On speech recognition ended"
     },
     {
       "id": "on-error",
@@ -48,7 +54,9 @@
       "description_en": "Triggered if there is an error starting speech recognition, e.g. permission denied.",
       "scriptName": "OnSpeechRecognitionError",
       "isTrigger": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "语音识别错误",
+      "display_en": "On speech recognition error"
     },
     {
       "id": "on-result",
@@ -58,7 +66,9 @@
       "description_en": "Triggered during speech recognition as results are detected.",
       "scriptName": "OnSpeechRecognitionResult",
       "isTrigger": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "识别结果完成",
+      "display_en": "On speech recognition result"
     },
     {
       "id": "is-recognising-speech",
@@ -67,13 +77,15 @@
       "description_zh": "测试当前语音识别功能是否活跃。",
       "description_en": "True if speech recognition is currently active.",
       "scriptName": "IsRecognisingSpeech",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "正在识别语音",
+      "display_en": "Is recognizing speech"
     },
     {
       "id": "on-check-language-available-result",
       "name_zh": "可用语言检查完成",
       "name_en": "On check language available result",
-      "description_zh": "在执行 \"\"检查语言可用状态\"\" 动作后，返回的各种结果的触发条件。",
+      "description_zh": "在执行 \"检查语言可用状态\" 动作后，返回的各种结果的触发条件。",
       "description_en": "Triggered after the 'Check language available' action with the availability status.",
       "scriptName": "OnCheckLanguageAvailableResult",
       "isTrigger": true,
@@ -117,9 +129,13 @@
               "zh": "错误",
               "en": "error"
             }
-          }
+          },
+          "desc_zh": "要检查的结果。",
+          "desc_en": "The availability result to check for."
         }
-      ]
+      ],
+      "display_zh": "可用语言检查结果为 [b]{0}[/b]",
+      "display_en": "On check language result [b]{0}[/b]"
     },
     {
       "id": "supports-on-device-recongition",
@@ -128,11 +144,13 @@
       "description_zh": "检测当前浏览器是否支持处理设备端语音识别（本地处理）。注意，即使支持，仍可能需要安装语言包。",
       "description_en": "True if the current browser supports on-device speech recognition (processing locally). Installation may still be required.",
       "scriptName": "SupportsOnDeviceRecognition",
-      "category": "on-device-recognition"
+      "category": "on-device-recognition",
+      "display_zh": "支持本地处理",
+      "display_en": "Supports on-device recognition"
     },
     {
       "id": "on-install-on-device-recongition-result",
-      "name_zh": "语言包安装完成",
+      "name_zh": "设备端识别结果安装完成",
       "name_en": "On install on device recognition result",
       "description_zh": "执行 '安装语言包' 动作后，根据安装结果返回的触发事件。",
       "description_en": "Triggered after the 'Install on-device recognition' action with the result of the install.",
@@ -158,9 +176,13 @@
               "zh": "失败",
               "en": "error"
             }
-          }
+          },
+          "desc_zh": "要检查的安装结果。",
+          "desc_en": "The install result to check for."
         }
-      ]
+      ],
+      "display_zh": "设备端识别结果安装[b]{0}[/b]",
+      "display_en": "On install on-device recognition result [b]{0}[/b]"
     }
   ],
   "actions": [
@@ -178,13 +200,17 @@
           "type": "string",
           "name_zh": "语言",
           "name_en": "Language",
-          "initialValue": "\"en\""
+          "initialValue": "\"en\"",
+          "desc_zh": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "desc_en": "The BCP 47 language tag to recognize, or empty for the browser's current language."
         },
         {
           "id": "process-locally",
           "type": "boolean",
           "name_zh": "本地处理",
-          "name_en": "Process locally"
+          "name_en": "Process locally",
+          "desc_zh": "使用设备端的语音识别功能。使用前，可能需要先安装语言包。",
+          "desc_en": "Use on-device speech recognition. Support for the specified language may need to be installed first."
         },
         {
           "id": "mode",
@@ -204,7 +230,9 @@
               "zh": "单个短语",
               "en": "Single phrase"
             }
-          }
+          },
+          "desc_zh": "是否在停止前一直检测说话，或者在检测到说完话时自动停止",
+          "desc_en": "Whether to keep detecting speech until stopped (continuous), or to automatically stop when speech stops (single phrase)."
         },
         {
           "id": "results",
@@ -224,9 +252,13 @@
               "zh": "最终",
               "en": "Final"
             }
-          }
+          },
+          "desc_zh": "是否允许不确定（临时）结果，或仅允许最终结果。",
+          "desc_en": "Whether to allow uncertain (interim) results, or only final results."
         }
-      ]
+      ],
+      "display_zh": "请求语音识别 (语言: [i]{0}[/i], 本地处理: [i]{1}[/i], 模式: {2}, 结果: {3})",
+      "display_en": "Request speech recognition (language [i]{0}[/i], process locally [i]{1}[/i], {2} mode, {3} results)"
     },
     {
       "id": "stop-speech-recognition",
@@ -235,13 +267,15 @@
       "description_zh": "停止任何语音识别",
       "description_en": "Stop any active speech recognition input.",
       "scriptName": "StopSpeechRecognition",
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "display_zh": "停止语音识别",
+      "display_en": "Stop speech recognition"
     },
     {
       "id": "check-language-available",
       "name_zh": "检查语言可用状态",
       "name_en": "Check language available",
-      "description_zh": "检查特定语言是否可用于语音识别，包括设备端识别。完成后触发 \"\"可用语言检查完成\"\" 条件，并返回结果。",
+      "description_zh": "检查特定语言是否可用于语音识别，包括设备端识别。完成后触发 \"可用语言检查完成\" 条件，并返回结果。",
       "description_en": "Check if a given language is available for speech recognition, including for on-device recognition, subsequently triggering 'On check language available result'.",
       "scriptName": "CheckLanguageAvailable",
       "isAsync": true,
@@ -252,21 +286,27 @@
           "type": "string",
           "name_zh": "语言环境",
           "name_en": "Language",
-          "initialValue": "\"en\""
+          "initialValue": "\"en\"",
+          "desc_zh": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "desc_en": "The BCP 47 language tag to check."
         },
         {
           "id": "process-locally",
           "type": "boolean",
           "name_zh": "本地端处理",
-          "name_en": "Process locally"
+          "name_en": "Process locally",
+          "desc_zh": "检查该语言是否可用本机设备端的语音识别功能。",
+          "desc_en": "Whether to check for availability of on-device speech recognition for this language."
         }
-      ]
+      ],
+      "display_zh": "检查语言 [b]{0}[/b] 可用状态 (本地处理: [i]{1}[/i])",
+      "display_en": "Check language [b]{0}[/b] is available (process locally: [i]{1}[/i])"
     },
     {
       "id": "install-on-device-recognition",
       "name_zh": "安装语言包",
       "name_en": "Install on-device recognition",
-      "description_zh": "安装特定语言的设备端语音识别功能，完成后触发 \"\"语言包安装完成\"\" 条件。",
+      "description_zh": "为特定语言安装设备端语音识别，随后触发 \"设备端识别结果安装完成\"。",
       "description_en": "Install on-device speech recognition for a specific language, subsequently triggering 'On install on device recognition result'.",
       "scriptName": "InstallOnDeviceRecognition",
       "isAsync": true,
@@ -277,16 +317,20 @@
           "type": "string",
           "name_zh": "语言环境",
           "name_en": "Language",
-          "initialValue": "\"en\""
+          "initialValue": "\"en\"",
+          "desc_zh": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "desc_en": "The BCP 47 language tag to install on-device recognition for."
         }
-      ]
+      ],
+      "display_zh": "安装语言包(语言: [b]{0}[/b])",
+      "display_en": "Install on-device recognition for [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "finaltranscript",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最终记录结果",
+      "name_en": "FinalTranscript",
       "description_zh": "返回最终识别的语音内容。",
       "description_en": "Return the final recognized speech.",
       "expressionName": "FinalTranscript",
@@ -295,8 +339,8 @@
     },
     {
       "id": "interimtranscript",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "缓存记录",
+      "name_en": "InterimTranscript",
       "description_zh": "返回临时猜测的语音内容，会根据上下文随时变化 。",
       "description_en": "Return the interim recognized speech, which can change.",
       "expressionName": "InterimTranscript",
@@ -305,8 +349,8 @@
     },
     {
       "id": "speecherror",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "言语误差",
+      "name_en": "SpeechError",
       "description_zh": "返回一个字符串，描述'在出错'中的错误类型。",
       "description_en": "Return a string describing the type of error in 'On error'.",
       "expressionName": "SpeechError",

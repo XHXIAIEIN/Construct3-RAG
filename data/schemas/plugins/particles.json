@@ -20,7 +20,9 @@
       "description_zh": "检测粒子的发射模式是否为持续发射。",
       "description_en": "True if the continuous spray is currently enabled.",
       "scriptName": "IsSpraying",
-      "category": "particle-spray"
+      "category": "particle-spray",
+      "display_zh": "正在喷射",
+      "display_en": "Is spraying"
     }
   ],
   "actions": [
@@ -116,9 +118,13 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          }
+          },
+          "desc_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "desc_en": "Choose the new blend mode for this object."
         }
-      ]
+      ],
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]"
     },
     {
       "id": "set-particle-object",
@@ -133,9 +139,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "粒子对象",
-          "name_en": "Particle object"
+          "name_en": "Particle object",
+          "desc_zh": "要将图像作为粒子生成的对象。",
+          "desc_en": "The object to spawn as particles."
         }
-      ]
+      ],
+      "display_zh": "设置粒子对象为 {0}",
+      "display_en": "Set particle object to {0}"
     },
     {
       "id": "unset-particle-object",
@@ -144,7 +154,9 @@
       "description_zh": "取消已设置成粒子图像的对象，重新启用粒子本身的图像。",
       "description_en": "Remove any object set to spawn as particles, reverting back to using the particle image.",
       "scriptName": "UnsetParticleObject",
-      "category": "appearance"
+      "category": "appearance",
+      "display_zh": "取消设置粒子对象",
+      "display_en": "Unset particle object"
     },
     {
       "id": "fast-forward",
@@ -160,9 +172,13 @@
           "type": "number",
           "name_zh": "时间",
           "name_en": "Time",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "粒子预热的时间，以秒为单位。",
+          "desc_en": "The amount of time in seconds to advance the particle effect by."
         }
-      ]
+      ],
+      "display_zh": "预热 [i]{0}[/i] 秒",
+      "display_en": "Fast-forward [i]{0}[/i] seconds"
     },
     {
       "id": "set-speed",
@@ -177,9 +193,13 @@
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "初始粒子速度，以每秒像素为单位。",
+          "desc_en": "Initial particle speed, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始速度为[i]{0}[/i]",
+      "display_en": "Set initial particle speed to [i]{0}[/i]"
     },
     {
       "id": "set-size",
@@ -194,9 +214,13 @@
           "id": "size",
           "type": "number",
           "name_zh": "大小",
-          "name_en": "Size"
+          "name_en": "Size",
+          "desc_zh": "每个粒子的初始大小，以像素为单位。",
+          "desc_en": "Initial size of each particle, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始大小为[i]{0}[/i]",
+      "display_en": "Set initial particle size to [i]{0}[/i]"
     },
     {
       "id": "set-init-opacity",
@@ -211,9 +235,13 @@
           "id": "opacity",
           "type": "number",
           "name_zh": "不透明度",
-          "name_en": "Opacity"
+          "name_en": "Opacity",
+          "desc_zh": "每个粒子初始不透明度，从0到100，数值越大越不透明。",
+          "desc_en": "Initial opacity of each particle, from 0 (transparent) to 100 (opaque)."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始不透明度为[i]{0}[/i]",
+      "display_en": "Set initial particle opacity to [i]{0}[/i]"
     },
     {
       "id": "set-grow-rate",
@@ -228,9 +256,13 @@
           "id": "grow-rate",
           "type": "number",
           "name_zh": "增长率",
-          "name_en": "Grow rate"
+          "name_en": "Grow rate",
+          "desc_zh": "评估大小随时间的变化，以每秒像素为单位。",
+          "desc_en": "Rate the size changes over time, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置粒子增长率为[i]{0}[/i]",
+      "display_en": "Set grow rate to [i]{0}[/i]"
     },
     {
       "id": "set-x-randomiser",
@@ -245,9 +277,13 @@
           "id": "x-randomiser",
           "type": "number",
           "name_zh": "X轴分散",
-          "name_en": "X randomiser"
+          "name_en": "X randomiser",
+          "desc_zh": "粒子在X轴初始位置的随机值。",
+          "desc_en": "Random X co-ordinate offset on creation."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始X随机数为[i]{0}[/i]",
+      "display_en": "Set initial particle X randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-y-randomiser",
@@ -262,9 +298,13 @@
           "id": "y-randomiser",
           "type": "number",
           "name_zh": "Y轴分散",
-          "name_en": "Y randomiser"
+          "name_en": "Y randomiser",
+          "desc_zh": "粒子在Y轴初始位置的随机偏移值。",
+          "desc_en": "Random Y co-ordinate offset on creation."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始Y随机数为[i]{0}[/i]",
+      "display_en": "Set initial particle Y randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-initial-speed-randomiser",
@@ -279,9 +319,13 @@
           "id": "speed-randomiser",
           "type": "number",
           "name_zh": "速度分散",
-          "name_en": "Speed randomiser"
+          "name_en": "Speed randomiser",
+          "desc_zh": "在创建时随机添加粒子速度。",
+          "desc_en": "Random addition to particle speed on creation."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始速度随机数为[i]{0}[/i]",
+      "display_en": "Set initial particle speed randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-size-randomiser",
@@ -296,9 +340,13 @@
           "id": "size-randomiser",
           "type": "number",
           "name_zh": "大小分散",
-          "name_en": "Size randomiser"
+          "name_en": "Size randomiser",
+          "desc_zh": "在创建时随机添加粒度。",
+          "desc_en": "Random addition to particle size on creation."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始大小随机数为[i]{0}[/i]",
+      "display_en": "Set initial particle size randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-grow-rate-randomiser",
@@ -313,9 +361,13 @@
           "id": "grow-rate-randomiser",
           "type": "number",
           "name_zh": "增长率分散",
-          "name_en": "Grow rate randomiser"
+          "name_en": "Grow rate randomiser",
+          "desc_zh": "在创建时随机添加粒子生长率。",
+          "desc_en": "Random addition to particle grow rate on creation."
         }
-      ]
+      ],
+      "display_zh": "设置粒子初始生长率随机数为[i]{0}[/i]",
+      "display_en": "Set initial particle grow rate randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-acceleration",
@@ -330,9 +382,13 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "粒子加速度，以像素/每秒为单位。",
+          "desc_en": "Particle acceleration, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置粒子加速度为[i]{0}[/i]",
+      "display_en": "Set particle acceleration to [i]{0}[/i]"
     },
     {
       "id": "set-gravity",
@@ -347,9 +403,13 @@
           "id": "gravity",
           "type": "number",
           "name_zh": "重力",
-          "name_en": "Gravity"
+          "name_en": "Gravity",
+          "desc_zh": "重力，以每秒像素/秒为单位。",
+          "desc_en": "Force of gravity, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置粒子重力为[i]{0}[/i]",
+      "display_en": "Set particle gravity to [i]{0}[/i]"
     },
     {
       "id": "set-angle-randomiser",
@@ -364,9 +424,13 @@
           "id": "angle-randomiser",
           "type": "number",
           "name_zh": "角度分散",
-          "name_en": "Angle randomiser"
+          "name_en": "Angle randomiser",
+          "desc_zh": "调整随机偏移角度，以度数/秒为单位。",
+          "desc_en": "Random angle deflection over time."
         }
-      ]
+      ],
+      "display_zh": "设置粒子角度随机数为[i]{0}[/i]",
+      "display_en": "Set particle angle randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-life-speed-randomiser",
@@ -381,9 +445,13 @@
           "id": "speed-randomiser",
           "type": "number",
           "name_zh": "速度分散",
-          "name_en": "Speed randomiser"
+          "name_en": "Speed randomiser",
+          "desc_zh": "调整随机偏移速度，以像素/秒为单位。",
+          "desc_en": "Random speed adjustment over time."
         }
-      ]
+      ],
+      "display_zh": "设置粒子速度随机数为[i]{0}[/i]",
+      "display_en": "Set particle speed randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-opacity-randomiser",
@@ -398,9 +466,13 @@
           "id": "opacity-randomiser",
           "type": "number",
           "name_zh": "不透明度分散",
-          "name_en": "Opacity randomiser"
+          "name_en": "Opacity randomiser",
+          "desc_zh": "根据时间变化随机调整不透明度。",
+          "desc_en": "Random opacity adjustment over time."
         }
-      ]
+      ],
+      "display_zh": "设置粒子不透明度随机数为[i]{0}[/i]",
+      "display_en": "Set particle opacity randomiser to [i]{0}[/i]"
     },
     {
       "id": "set-timeout",
@@ -415,9 +487,13 @@
           "id": "timeout",
           "type": "number",
           "name_zh": "持续时间",
-          "name_en": "Timeout"
+          "name_en": "Timeout",
+          "desc_zh": "超时或淡出至不可见的时间，以秒为单位。(取决于销毁模式)。",
+          "desc_en": "Time in seconds for timeout or fade to invisible (depending on destroy mode)."
         }
-      ]
+      ],
+      "display_zh": "设置粒子持续时间为[i]{0}[/i]",
+      "display_en": "Set particle timeout to [i]{0}[/i]"
     },
     {
       "id": "set-spraying",
@@ -446,9 +522,13 @@
               "zh": "启用",
               "en": "spraying"
             }
-          }
+          },
+          "desc_zh": "设置粒子是否持续喷雾。",
+          "desc_en": "Whether or not the spray is currently enabled."
         }
-      ]
+      ],
+      "display_zh": "{0}粒子",
+      "display_en": "Set {0}"
     },
     {
       "id": "set-rate",
@@ -463,9 +543,13 @@
           "id": "rate",
           "type": "number",
           "name_zh": "频率",
-          "name_en": "Rate"
+          "name_en": "Rate",
+          "desc_zh": "每秒创建的粒子数。",
+          "desc_en": "Number of particles to create per second."
         }
-      ]
+      ],
+      "display_zh": "设置粒子喷射频率为[i]{0}[/i]",
+      "display_en": "Set rate to [i]{0}[/i]"
     },
     {
       "id": "set-spray-cone",
@@ -480,16 +564,20 @@
           "id": "spray-cone",
           "type": "number",
           "name_zh": "喷射角度",
-          "name_en": "Spray cone"
+          "name_en": "Spray cone",
+          "desc_zh": "粒子被创建时发射角度范围。",
+          "desc_en": "Number of degrees through which particles are created."
         }
-      ]
+      ],
+      "display_zh": "设置粒子喷射范围为[i]{0}[/i]°",
+      "display_en": "Set spray cone to [i]{0}[/i] degrees"
     }
   ],
   "expressions": [
     {
       "id": "initspeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始速度",
+      "name_en": "InitSpeed",
       "description_zh": "每秒每像素的粒子初始速度",
       "description_en": "The initial particle speed, in pixels per second.",
       "expressionName": "InitSpeed",
@@ -498,8 +586,8 @@
     },
     {
       "id": "initsize",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始大小",
+      "name_en": "InitSize",
       "description_zh": "以像素增长的粒子初始大小",
       "description_en": "The initial particle size, in pixels.",
       "expressionName": "InitSize",
@@ -508,8 +596,8 @@
     },
     {
       "id": "initopacity",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始不透明度",
+      "name_en": "InitOpacity",
       "description_zh": "从0到100透明度的粒子初始透明度",
       "description_en": "The initial particle opacity, from 0 (transparent) to 100 (opaque).",
       "expressionName": "InitOpacity",
@@ -518,8 +606,8 @@
     },
     {
       "id": "initgrowrate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始生长率",
+      "name_en": "InitGrowRate",
       "description_zh": "每秒每像素增长的粒子初始增长率",
       "description_en": "The initial particle grow rate, in pixels per second.",
       "expressionName": "InitGrowRate",
@@ -528,8 +616,8 @@
     },
     {
       "id": "xrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "X扰动",
+      "name_en": "XRandom",
       "description_zh": "粒子在X轴初始位置的随机值。",
       "description_en": "The random X offset on creation.",
       "expressionName": "XRandom",
@@ -538,8 +626,8 @@
     },
     {
       "id": "yrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Y扰动",
+      "name_en": "YRandom",
       "description_zh": "粒子在Y轴初始位置的随机值。",
       "description_en": "The random Y offset on creation.",
       "expressionName": "YRandom",
@@ -548,8 +636,8 @@
     },
     {
       "id": "initspeedrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始角度扰动",
+      "name_en": "InitSpeedRandom",
       "description_zh": "在创建时随机添加粒子速度。",
       "description_en": "The random addition to particle speed on creation.",
       "expressionName": "InitSpeedRandom",
@@ -558,8 +646,8 @@
     },
     {
       "id": "initsizerandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始大小扰动",
+      "name_en": "InitSizeRandom",
       "description_zh": "在粒子创建时，对大小增加一个随机值。",
       "description_en": "The random addition to particle size on creation.",
       "expressionName": "InitSizeRandom",
@@ -568,8 +656,8 @@
     },
     {
       "id": "initgrowrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "初始生长率扰动",
+      "name_en": "InitGrowRandom",
       "description_zh": "在粒子创建时，对增长率增加一个随机值。",
       "description_en": "The random addition to particle grow rate on creation.",
       "expressionName": "InitGrowRandom",
@@ -578,8 +666,8 @@
     },
     {
       "id": "particleacceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "粒子加速度",
+      "name_en": "ParticleAcceleration",
       "description_zh": "粒子加速度，以每秒每秒的像素数为单位。",
       "description_en": "The particle acceleration in pixels per second per second.",
       "expressionName": "ParticleAcceleration",
@@ -588,8 +676,8 @@
     },
     {
       "id": "gravity",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力",
+      "name_en": "Gravity",
       "description_zh": "重力，以每秒每秒的像素数为单位。",
       "description_en": "The force of gravity in pixels per second per second.",
       "expressionName": "Gravity",
@@ -598,8 +686,8 @@
     },
     {
       "id": "particleanglerandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "粒子角度扰动",
+      "name_en": "ParticleAngleRandom",
       "description_zh": "粒子的最大随机角度偏差，以角度每秒为单位。",
       "description_en": "The maximum random angle deflection in degrees per second.",
       "expressionName": "ParticleAngleRandom",
@@ -608,8 +696,8 @@
     },
     {
       "id": "particlespeedrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "粒子速度扰动",
+      "name_en": "ParticleSpeedRandom",
       "description_zh": "粒子的最大随机速度偏差，以像素每秒为单位。",
       "description_en": "The maximum random change in speed in pixels per second per second.",
       "expressionName": "ParticleSpeedRandom",
@@ -618,8 +706,8 @@
     },
     {
       "id": "particleopacityrandom",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "粒子不透明度扰动",
+      "name_en": "ParticleOpacityRandom",
       "description_zh": "每秒不透明度的最大变化。",
       "description_en": "The maximum change in opacity per second.",
       "expressionName": "ParticleOpacityRandom",
@@ -628,8 +716,8 @@
     },
     {
       "id": "timeout",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "生命周期",
+      "name_en": "Timeout",
       "description_zh": "破坏或淡化到隐形超时。",
       "description_en": "The destroy or fade to invisible timeout.",
       "expressionName": "Timeout",
@@ -638,8 +726,8 @@
     },
     {
       "id": "particlecount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "粒子数量",
+      "name_en": "ParticleCount",
       "description_zh": "返回粒子对象的数量。",
       "description_en": "Return the number of particles.",
       "expressionName": "ParticleCount",
@@ -648,8 +736,8 @@
     },
     {
       "id": "rate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "生长率",
+      "name_en": "Rate",
       "description_zh": "每秒创建的粒子数。",
       "description_en": "The number of particles created per second.",
       "expressionName": "Rate",
@@ -658,8 +746,8 @@
     },
     {
       "id": "spraycone",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "喷射角度",
+      "name_en": "SprayCone",
       "description_zh": "创建粒子的度数。",
       "description_en": "The number of degrees through which particles are created.",
       "expressionName": "SprayCone",

@@ -18,7 +18,9 @@
       "description_en": "Triggered when any part of the element is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "html-content"
+      "category": "html-content",
+      "display_zh": "被点击",
+      "display_en": "On clicked"
     },
     {
       "id": "on-clicked-id",
@@ -34,9 +36,13 @@
           "id": "id",
           "type": "string",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "指定的ID。",
+          "desc_en": "The ID of the element that was clicked."
         }
-      ]
+      ],
+      "display_zh": "ID元素 [i]{0}[/i] 被点击",
+      "display_en": "On clicked ID [i]{0}[/i]"
     },
     {
       "id": "on-clicked-class",
@@ -52,9 +58,13 @@
           "id": "class",
           "type": "string",
           "name_zh": "Class",
-          "name_en": "Class"
+          "name_en": "Class",
+          "desc_zh": "指定的Class类名。 使用空格匹配多个类名称。",
+          "desc_en": "The class of the element that was clicked. Use space-separated class names to match multiple classes."
         }
-      ]
+      ],
+      "display_zh": "Class类名 [i]{0}[/i] 被点击",
+      "display_en": "On clicked class [i]{0}[/i]"
     },
     {
       "id": "on-css-animation-ended",
@@ -70,9 +80,13 @@
           "id": "animation-name",
           "type": "string",
           "name_zh": "动画名称",
-          "name_en": "Animation name"
+          "name_en": "Animation name",
+          "desc_zh": "CSS动画的名称，不区分大小写。",
+          "desc_en": "The name of the CSS animation (as defined by the @keyframes rule), case insensitive."
         }
-      ]
+      ],
+      "display_zh": "CSS 动画 [i]{0}[/i] 播放结束",
+      "display_en": "On CSS animation [i]{0}[/i] ended"
     }
   ],
   "actions": [
@@ -109,19 +123,25 @@
               "zh": "纯文本",
               "en": "Plain text"
             }
-          }
+          },
+          "desc_zh": "使用哪种方式解析内容。",
+          "desc_en": "How to interpret the given string."
         },
         {
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "将该元素的内容解析为特定的字符串。注意: 在HTML中将转义为用户提供的值。",
+          "desc_en": "A string to set for the element content. NOTE: escape user-provided values in HTML."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "An optional CSS selector of a child element to set the content for. Leave empty to set content for the entire element."
         },
         {
           "id": "type",
@@ -141,9 +161,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "影响子元素的CSS选择器的匹配规则。 匹配单次或是匹配所有元素。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "设置 [b]{0}[/b] 内容为 [i]{1}[/i] (选择器: [i]{2}[/i], 类型: [i]{3}[/i])",
+      "display_en": "Set [b]{0}[/b] content to [i]{1}[/i] at [i]{2}[/i] ([i]{3}[/i])"
     },
     {
       "id": "insert-content",
@@ -178,13 +202,17 @@
               "zh": "纯文本",
               "en": "Plain text"
             }
-          }
+          },
+          "desc_zh": "使用哪种方式解析内容。",
+          "desc_en": "How to interpret the given string."
         },
         {
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "将该元素的内容解析为特定的字符串。注意：在HTML中将转义为用户提供的值。",
+          "desc_en": "A string to set for the element content. NOTE: escape user-provided values in HTML."
         },
         {
           "id": "position",
@@ -205,13 +233,17 @@
               "zh": "底部",
               "en": "end"
             }
-          }
+          },
+          "desc_zh": "在元素的顶部或底部位置插入内容。",
+          "desc_en": "Whether to insert content at the start or end of the element."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "可选，用于子元素的CSS选择器。留空以向主体HTML元素插入内容。",
+          "desc_en": "An optional CSS selector of a child element to insert content to. Leave empty to insert content to the main HTML element."
         },
         {
           "id": "type",
@@ -231,9 +263,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "在[i]{2}[/i]插入[b]{0}[/b]内容 [i]{1}[/i] (选择器: [i]{3}[/i], 类型: [i]{4}[/i])",
+      "display_en": "Insert [b]{0}[/b] content [i]{1}[/i] position [i]{2}[/i] at [i]{3}[/i] ([i]{4}[/i])"
     },
     {
       "id": "remove-content",
@@ -263,13 +299,17 @@
               "zh": "清空",
               "en": "Clear"
             }
-          }
+          },
+          "desc_zh": "选择移除匹配的元素，或是全部清空内容。",
+          "desc_en": "Whether to entirely remove the matching elements, or clear their contents."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "用于匹配的CSS选择器。留空以清除主体HTML元素。",
+          "desc_en": "A CSS selector which will be used to match elements. Leave empty to clear the main HTML element."
         },
         {
           "id": "type",
@@ -289,9 +329,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "{0}内容, 选择器: [i]{1}[/i], ([i]{2}[/i])",
+      "display_en": "{0} content at [i]{1}[/i] ([i]{2}[/i])"
     },
     {
       "id": "set-content-class",
@@ -326,19 +370,25 @@
               "zh": "移除",
               "en": "Remove"
             }
-          }
+          },
+          "desc_zh": "是否添加、切换或删除类。",
+          "desc_en": "Whether to add, toggle or remove classes."
         },
         {
           "id": "class",
           "type": "string",
           "name_zh": "Class",
-          "name_en": "Class"
+          "name_en": "Class",
+          "desc_zh": "要更改的元素类名。 使用空格分隔的多个类。",
+          "desc_en": "The class name to change. Use space-separated class names to affect multiple classes."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "用于匹配元素的 CSS 选择器。 留空以使用主体HTML元素。",
+          "desc_en": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
         },
         {
           "id": "type",
@@ -358,9 +408,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "{0} class [i]{1}[/i] 到 [i]{2}[/i] ([i]{3}[/i])",
+      "display_en": "{0} class [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])"
     },
     {
       "id": "set-content-attribute",
@@ -390,26 +444,34 @@
               "zh": "移除",
               "en": "Remove"
             }
-          }
+          },
+          "desc_zh": "设置或删除属性。",
+          "desc_en": "Whether to set or remove attributes."
         },
         {
           "id": "attribute",
           "type": "string",
           "name_zh": "特性",
-          "name_en": "Attribute"
+          "name_en": "Attribute",
+          "desc_zh": "要更改的属性。",
+          "desc_en": "The attribute to change."
         },
         {
           "id": "value",
           "type": "any",
           "name_zh": "值",
           "name_en": "Value",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "设置新属性的值（如果是删除属性则忽略）",
+          "desc_en": "The value to set for the attribute (ignored if removing attribute)."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "用于匹配元素的CSS选择器。 留空以使用主体HTML元素。",
+          "desc_en": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
         },
         {
           "id": "type",
@@ -429,9 +491,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "{0}属性 [b]{1}[/b] 为 [i]{2}[/i], 选择器: [i]{3}[/i] ([i]{4}[/i])",
+      "display_en": "{0} attribute [b]{1}[/b] to [i]{2}[/i] for [i]{3}[/i] ([i]{4}[/i])"
     },
     {
       "id": "set-content-css-style",
@@ -448,20 +514,26 @@
           "type": "string",
           "name_zh": "属性名称",
           "name_en": "Property name",
-          "initialValue": "\"border\""
+          "initialValue": "\"border\"",
+          "desc_zh": "填写CSS样式属性名称。",
+          "desc_en": "A CSS property name to set on the HTML element."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "值",
           "name_en": "Value",
-          "initialValue": "\"1px solid red\""
+          "initialValue": "\"1px solid red\"",
+          "desc_zh": "要指定为此CSS属性的值的字符串。",
+          "desc_en": "A string to assign as the value for this CSS property."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "一个CSS选择器，用于匹配元素。留空则使用主体HTML元素。",
+          "desc_en": "A CSS selector which will be used to match elements. Leave empty to use the main HTML element."
         },
         {
           "id": "type",
@@ -481,9 +553,13 @@
               "zh": "全选",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "设置CSS样式 [b]{0}[/b]: [i]{1}[/i] (选择器: [i]{2}[/i], 范围: [i]{3}[/i])",
+      "display_en": "Set CSS style [b]{0}[/b] to [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])"
     },
     {
       "id": "position-object-at-element",
@@ -499,15 +575,21 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "要移动和调整大小的对象",
+          "desc_en": "The object to move and resize."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "CSS 选择器，用于标识要将对象定位到的HTML元素。",
+          "desc_en": "A CSS selector identifying the element to position the object to."
         }
-      ]
+      ],
+      "display_zh": "定位 {0} 到 [i]{1}[/i]",
+      "display_en": "Position {0} at [i]{1}[/i]"
     },
     {
       "id": "create-sprite-img-element",
@@ -523,13 +605,17 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "使用图像的对象。",
+          "desc_en": "The object to use an image from."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "CSS 选择器，用于标识父元素的位置，图像元素将会被插入到这个地方。留空则使用父级的 HTML 元素。",
+          "desc_en": "A CSS selector identifying the parent element the image element will be inserted to. Leave empty to use the main HTML element."
         },
         {
           "id": "insert",
@@ -554,21 +640,29 @@
               "zh": "替换内容",
               "en": "replace content"
             }
-          }
+          },
+          "desc_zh": "选择在标签的开头、结尾位置插入元素，也可以整个替换元素的内容。",
+          "desc_en": "Whether to insert the image element at the start, end, or replace the entire content of the parent element."
         },
         {
           "id": "id",
           "type": "string",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "可选项，为新创建的图像元素设置 ID。",
+          "desc_en": "An optional ID to set for the created image element."
         },
         {
           "id": "class",
           "type": "string",
           "name_zh": "Class",
-          "name_en": "Class"
+          "name_en": "Class",
+          "desc_zh": "(可选) 为新创建的图像元素设置 class。",
+          "desc_en": "An optional class to set for the created image element."
         }
-      ]
+      ],
+      "display_zh": "创建 {0} 图片元素到 [i]{1}[/i],  位置: [i]{2}[/i], ID [i]{3}[/i], class [i]{4}[/i]",
+      "display_en": "Create {0} image element at [i]{1}[/i], insert [i]{2}[/i], ID [i]{3}[/i], class [i]{4}[/i]"
     },
     {
       "id": "set-scroll-position",
@@ -584,7 +678,9 @@
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
-          "name_en": "Selector"
+          "name_en": "Selector",
+          "desc_zh": "标识要滚动的元素的 CSS 选择器。留空则使用主HTML 元素。",
+          "desc_en": "A CSS selector identifying the element to scroll. Leave empty to use the main HTML element."
         },
         {
           "id": "direction",
@@ -605,22 +701,28 @@
               "zh": "上下",
               "en": "top"
             }
-          }
+          },
+          "desc_zh": "将滚动设置为左侧或顶部的位置。",
+          "desc_en": "Whether to set the scroll left or top position."
         },
         {
           "id": "position",
           "type": "number",
           "name_zh": "位置",
-          "name_en": "Position"
+          "name_en": "Position",
+          "desc_zh": "设置滚动到的位置，以CSS像素为单位。",
+          "desc_en": "The scroll position to set in CSS pixels."
         }
-      ]
+      ],
+      "display_zh": "设置 [i]{0}[/i] 元素 {1} 滚动到 [i]{2}[/i]",
+      "display_en": "Set [i]{0}[/i] scroll {1} to [i]{2}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "html-content",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "HTML内容",
+      "name_en": "HTMLContent",
       "description_zh": "包含HTML元素内容的字符串。",
       "description_en": "String with HTML content of the element.",
       "expressionName": "HTMLContent",
@@ -629,8 +731,8 @@
     },
     {
       "id": "text-content",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文本内容",
+      "name_en": "TextContent",
       "description_zh": "包含HTML元素的纯文本内容的字符串。",
       "description_en": "String with plain text content of the element.",
       "expressionName": "TextContent",
@@ -639,8 +741,8 @@
     },
     {
       "id": "target-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标ID",
+      "name_en": "TargetID",
       "description_zh": "在触发器中，目标元素的ID。",
       "description_en": "In a trigger, the ID of the targeted element.",
       "expressionName": "TargetID",
@@ -649,8 +751,8 @@
     },
     {
       "id": "target-class",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标Class",
+      "name_en": "TargetClass",
       "description_zh": "在触发器中，目标元素的类。",
       "description_en": "In a trigger, the class of the targeted element.",
       "expressionName": "TargetClass",
@@ -659,8 +761,8 @@
     },
     {
       "id": "escape-html",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转义HTML",
+      "name_en": "EscapeHTML",
       "description_zh": "将HTML的标签字符(如 < ) 转换为实体(如 &lt; )， 所以文本不能改变HTML。",
       "description_en": "Convert HTML tag characters like < to entities like &lt; so text cannot alter HTML.",
       "expressionName": "EscapeHTML",
@@ -671,7 +773,9 @@
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "要转义的HTML字符串",
+          "desc_en": "String of HTML to escape."
         }
       ]
     }

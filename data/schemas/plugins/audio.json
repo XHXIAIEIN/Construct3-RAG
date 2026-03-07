@@ -40,9 +40,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的音频标签。",
+          "desc_en": "The audio tag that finished."
         }
-      ]
+      ],
+      "display_zh": "{0} 播放结束",
+      "display_en": "On {0} ended"
     },
     {
       "id": "on-fade-ended",
@@ -58,9 +62,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测淡出动作完成的声音标签。",
+          "desc_en": "The audio tag that finished a fade."
         }
-      ]
+      ],
+      "display_zh": "{0} 淡出结束",
+      "display_en": "On {0} fade ended"
     },
     {
       "id": "preloads-complete",
@@ -69,7 +77,9 @@
       "description_zh": "检测是否所有预加载的音频都准备就绪，随时可播放。",
       "description_en": "True when all preloaded audio is ready to play.",
       "scriptName": "PreloadsComplete",
-      "category": "audio"
+      "category": "audio",
+      "display_zh": "所有预加载完成",
+      "display_en": "All preloads complete"
     },
     {
       "id": "is-silent",
@@ -78,7 +88,9 @@
       "description_zh": "检测是否已启用静音模式。",
       "description_en": "True if silent mode has been enabled.",
       "scriptName": "IsSilent",
-      "category": "audio"
+      "category": "audio",
+      "display_zh": "如果已静音",
+      "display_en": "Is silent"
     },
     {
       "id": "is-any-playing",
@@ -87,7 +99,9 @@
       "description_zh": "检测当前是否有任何音频正在播放。",
       "description_en": "True if any audio is actively playing.",
       "scriptName": "IsAnyPlaying",
-      "category": "audio"
+      "category": "audio",
+      "display_zh": "任意音频正在播放",
+      "display_en": "Is any playing"
     },
     {
       "id": "is-tag-playing",
@@ -102,9 +116,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要播放的测试文件的音频标签。",
+          "desc_en": "The audio tag of the file to test if playing."
         }
-      ]
+      ],
+      "display_zh": "正在播放音频标签[b]{0}[/b]",
+      "display_en": "Tag [b]{0}[/b] is playing"
     }
   ],
   "actions": [
@@ -121,9 +139,13 @@
           "id": "time",
           "type": "number",
           "name_zh": "时间",
-          "name_en": "Time"
+          "name_en": "Time",
+          "desc_zh": "准确安排下一首播放的时间。通常这是 Audio.CurrentTime + N的形式。",
+          "desc_en": "Time in seconds at which to sample-accurately schedule the next Play. Normally this is of the form Audio.CurrentTime + N."
         }
-      ]
+      ],
+      "display_zh": "在 [i]{0}[/i] 播放下一首",
+      "display_en": "Schedule next play for [i]{0}[/i]"
     },
     {
       "id": "add-filter-effect",
@@ -138,7 +160,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "type",
@@ -188,42 +212,56 @@
               "zh": "全通",
               "en": "all-pass"
             }
-          }
+          },
+          "desc_zh": "要添加的滤波器类型。",
+          "desc_en": "Select the kind of filter to use for this effect."
         },
         {
           "id": "frequency",
           "type": "number",
           "name_zh": "频率",
           "name_en": "Frequency",
-          "initialValue": "350"
+          "initialValue": "350",
+          "desc_zh": "滤波器的频率，以赫兹为单位。",
+          "desc_en": "The frequency parameter for the chosen filter, in Hertz."
         },
         {
           "id": "detune",
           "type": "number",
           "name_zh": "失谐",
-          "name_en": "Detune"
+          "name_en": "Detune",
+          "desc_zh": "滤波器的失谐量，以音分为单位。用于调节跑调的效果，或模拟年久失修而走音的乐器。",
+          "desc_en": "The detune to apply, in cents."
         },
         {
           "id": "q",
           "type": "number",
           "name_zh": "Q",
           "name_en": "Q",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "滤波器的品质因子, 默认为 1，范围从 0.0001 到 1000。Q值越高，损耗越大，用于模拟随振荡衰减的频率。",
+          "desc_en": "The filter Q factor."
         },
         {
           "id": "gain",
           "type": "number",
           "name_zh": "增益",
-          "name_en": "Gain"
+          "name_en": "Gain",
+          "desc_zh": "滤波器的增益，以分贝为单位。如果滤波器使用增益。",
+          "desc_en": "The filter gain, if applicable, in decibels."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加{1}滤波器效果 (音频标签: {0}, 频率: [i]{2}[/i], 失谐: [i]{3}[/i], Q: [i]{4}[/i], 增益: [i]{5}[/i], 混合: [i]{6}[/i])",
+      "display_en": "Add {1} filter to tag {0} (frequency [i]{2}[/i], detune [i]{3}[/i], Q [i]{4}[/i], gain [i]{5}[/i], mix [i]{6}[/i])"
     },
     {
       "id": "remove-all-effects",
@@ -238,9 +276,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要移除所有音频效果的音频标签。",
+          "desc_en": "The audio tag to remove effects from."
         }
-      ]
+      ],
+      "display_zh": "移除全部效果 (音频标签: {0})",
+      "display_en": "Remove all effects from tag {0}"
     },
     {
       "id": "add-delay-effect",
@@ -255,30 +297,40 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "delay",
           "type": "number",
           "name_zh": "延迟",
           "name_en": "Delay",
-          "initialValue": "0.4"
+          "initialValue": "0.4",
+          "desc_zh": "延迟时间，以秒为单位。",
+          "desc_en": "The delay time in seconds."
         },
         {
           "id": "gain",
           "type": "number",
           "name_zh": "增益",
           "name_en": "Gain",
-          "initialValue": "-5"
+          "initialValue": "-5",
+          "desc_zh": "延迟音频的增益，以分贝为单位。",
+          "desc_en": "The gain of the delayed audio in decibels."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加延迟效果 (音频标签: {0}, 延迟: [i]{1}[/i] 秒, 增益: [i]{2}[/i]dB,  混合: [i]{3}[/i])",
+      "display_en": "Add [i]{1}[/i] second delay effect to tag {0} (gain [i]{2}[/i] dB, mix [i]{3}[/i])"
     },
     {
       "id": "add-convolution-effect",
@@ -293,13 +345,17 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "audio",
           "type": "audiofile",
           "name_zh": "音频",
-          "name_en": "Audio"
+          "name_en": "Audio",
+          "desc_zh": "选择包含用于卷积效果的脉冲响应的音频文件。",
+          "desc_en": "Choose an audio file containing an impulse response to use for the convolution effect."
         },
         {
           "id": "level",
@@ -319,16 +375,22 @@
               "zh": "非标准化",
               "en": "don't normalize"
             }
-          }
+          },
+          "desc_zh": "选择对目标音频文件进行标准化处理，或保持其原始状态。",
+          "desc_en": "Choose whether to normalize or leave intact the audio file used above."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加混响效果 (音频标签: {0}, 声音: [b]{1}[/b],  输出: [i]{2}[/i],  混合: [i]{3}[/i])",
+      "display_en": "Add convolution effect with [b]{1}[/b] to tag {0} ([i]{2}[/i], mix [i]{3}[/i])"
     },
     {
       "id": "set-effect-parameter",
@@ -343,13 +405,17 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "添加效果的标签。",
+          "desc_en": "The tag the effect was added for."
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "添加的修改效果的从零开始的索引，例如， 第一效果为0，第二效果为1，等等",
+          "desc_en": "The zero-based index of the added effect to modify, e.g. 0 for first effect, 1 for second, etc."
         },
         {
           "id": "parameter",
@@ -409,13 +475,17 @@
               "zh": "声道",
               "en": "Stereo pan"
             }
-          }
+          },
+          "desc_zh": "选择要修改的效果参数。",
+          "desc_en": "Select the effect parameter to modify."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要设置的参数值。",
+          "desc_en": "The value to set for the parameter."
         },
         {
           "id": "ramp",
@@ -440,15 +510,21 @@
               "zh": "指数",
               "en": "Exponential"
             }
-          }
+          },
+          "desc_zh": "是立即设置值还是平滑渐变到预期值。",
+          "desc_en": "Whether to immediately set the value or smoothly ramp to the intended value."
         },
         {
           "id": "time",
           "type": "number",
           "name_zh": "时间",
-          "name_en": "Time"
+          "name_en": "Time",
+          "desc_zh": "控制声音频率变化的曲线，让声音过渡更加自然。",
+          "desc_en": "The duration of the ramp in seconds, or the delay before stepping the value."
         }
-      ]
+      ],
+      "display_zh": "设置标签 {0} 的声音效果 [i]{1}[/i] 的第 [b]{2}[/b] 个参数为 [b]{3}[/b] (平滑: [i]{5}[/i], {4}秒)",
+      "display_en": "Set tag {0} effect [i]{1}[/i] parameter [b]{2}[/b] to [b]{3}[/b] ({4} in [i]{5}[/i] seconds)"
     },
     {
       "id": "add-flanger-effect",
@@ -463,44 +539,58 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "delay",
           "type": "number",
           "name_zh": "延迟",
           "name_en": "Delay",
-          "initialValue": "5"
+          "initialValue": "5",
+          "desc_zh": "延迟时间，以毫秒为单位。",
+          "desc_en": "The delay time, in milliseconds."
         },
         {
           "id": "modulation",
           "type": "number",
           "name_zh": "调制",
           "name_en": "Modulation",
-          "initialValue": "3"
+          "initialValue": "3",
+          "desc_zh": "改变延迟时间的幅度，以毫秒为单位。 设置为0表示合唱风格效果。",
+          "desc_en": "The magnitude by which to alter the delay time, in milliseconds. Set to 0 for a chorus style effect."
         },
         {
           "id": "frequency",
           "type": "number",
           "name_zh": "频率",
           "name_en": "Frequency",
-          "initialValue": "0.25"
+          "initialValue": "0.25",
+          "desc_zh": "设置时间延迟的频率，以赫兹为单位。",
+          "desc_en": "The frequency over which to cycle the delay time, in hertz."
         },
         {
           "id": "feedback",
           "type": "number",
           "name_zh": "反馈",
           "name_en": "Feedback",
-          "initialValue": "50"
+          "initialValue": "50",
+          "desc_zh": "反馈量，从0（无）到100（全部）。",
+          "desc_en": "The feedback amount, from 0 (none) to 100 (all)."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加镶边效果 (音频标签: {0}, 延迟: [i]{1}[/i]ms,  调制: [i]{2}[/i]ms,  频率: [i]{3}[/i]Hz,  反馈: [i]{4}[/i],  混合: [i]{5}[/i])",
+      "display_en": "Add flanger effect to tag {0} (delay [i]{1}[/i] ms, modulation [i]{2}[/i] ms, frequency [i]{3}[/i] Hz, feedback [i]{4}[/i], mix [i]{5}[/i])"
     },
     {
       "id": "add-phaser-effect",
@@ -515,50 +605,66 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "frequency",
           "type": "number",
           "name_zh": "频率",
           "name_en": "Frequency",
-          "initialValue": "4000"
+          "initialValue": "4000",
+          "desc_zh": "相位转换的中心位置所对应的频率，以赫兹为单位。",
+          "desc_en": "The frequency in Hertz where the center of the phase transition occurs."
         },
         {
           "id": "detune",
           "type": "number",
           "name_zh": "微调",
-          "name_en": "Detune"
+          "name_en": "Detune",
+          "desc_zh": "要应用的音高微调量，以音分为单位。",
+          "desc_en": "The detune to apply, in cents."
         },
         {
           "id": "q",
           "type": "number",
           "name_zh": "Q",
           "name_en": "Q",
-          "initialValue": "0.5"
+          "initialValue": "0.5",
+          "desc_zh": "过滤器Q因子。",
+          "desc_en": "The filter Q factor."
         },
         {
           "id": "modulation",
           "type": "number",
           "name_zh": "调频",
           "name_en": "Modulation",
-          "initialValue": "3900"
+          "initialValue": "3900",
+          "desc_zh": "改变频率的强度，以赫兹为单位。",
+          "desc_en": "The magnitude by which to alter the frequency, in Hertz."
         },
         {
           "id": "modulation-frequency",
           "type": "number",
           "name_zh": "调制频率",
           "name_en": "Modulation frequency",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "设置调制器周期的频率，以赫兹为单位。",
+          "desc_en": "The frequency over which to cycle the modulation, in hertz."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加移相效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz,  失谐: [i]{2}[/i],  Q: [i]{3}[/i],  调制: [i]{4}[/i],  调制频率: [i]{5}[/i],  混合: [i]{6}[/i])",
+      "display_en": "Add phaser effect to tag {0} (frequency [i]{1}[/i] Hz, detune [i]{2}[/i] cents, Q [i]{3}[/i], modulation [i]{4}[/i], modulation frequency [i]{5}[/i], mix [i]{6}[/i])"
     },
     {
       "id": "add-gain-effect",
@@ -573,16 +679,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "gain",
           "type": "number",
           "name_zh": "增益",
           "name_en": "Gain",
-          "initialValue": "-10"
+          "initialValue": "-10",
+          "desc_zh": "音量调整，以分贝为单位。",
+          "desc_en": "The volume adjustment, in decibels."
         }
-      ]
+      ],
+      "display_zh": "添加增益效果 (音频标签: {0}, 增益: [i]{1}[/i] dB)",
+      "display_en": "Add gain effect to tag {0} ([i]{1}[/i] dB)"
     },
     {
       "id": "add-stereo-pan-effect",
@@ -597,16 +709,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "stereo-pan",
           "type": "number",
           "name_zh": "声道",
           "name_en": "Stereo pan",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
         }
-      ]
+      ],
+      "display_zh": "添加立体声效果 (音频标签: {0}, 声道: [i]{1}[/i])",
+      "display_en": "Add stereo pan effect to tag {0} ([i]{1}[/i])"
     },
     {
       "id": "add-compressor-effect",
@@ -621,44 +739,58 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "threshold",
           "type": "number",
           "name_zh": "阈值",
           "name_en": "Threshold",
-          "initialValue": "-24"
+          "initialValue": "-24",
+          "desc_zh": "高于此阈值的阈值，以dB为单位。",
+          "desc_en": "The threshold above which compression occurs, in dB."
         },
         {
           "id": "knee",
           "type": "number",
           "name_zh": "转折点",
           "name_en": "Knee",
-          "initialValue": "30"
+          "initialValue": "30",
+          "desc_zh": "高于阈值的范围，以dB为单位。此范围内的曲线会平滑地过渡到 '比率' 部分。",
+          "desc_en": "The range above the threshold where the curve smoothly transitions to the 'ratio' portion, in dB."
         },
         {
           "id": "ratio",
           "type": "number",
           "name_zh": "比率",
           "name_en": "Ratio",
-          "initialValue": "12"
+          "initialValue": "12",
+          "desc_zh": "控制输入与输出的压缩比。例如比率为 4 时，输入每增加 4 dB，输出就会影响 1 dB 。",
+          "desc_en": "The amount of dB change in input for a 1dB change in output."
         },
         {
           "id": "attack",
           "type": "number",
           "name_zh": "起音",
           "name_en": "Attack",
-          "initialValue": "3"
+          "initialValue": "3",
+          "desc_zh": "将增益降低 10 分贝所需的时间，以毫秒为单位。",
+          "desc_en": "The time in which to reduce gain by 10dB, in milliseconds."
         },
         {
           "id": "release",
           "type": "number",
           "name_zh": "释放",
           "name_en": "Release",
-          "initialValue": "250"
+          "initialValue": "250",
+          "desc_zh": "增益增加到 10dB 所需的时间，以毫秒为单位。",
+          "desc_en": "The time in which to increase gain by 10dB, in milliseconds."
         }
-      ]
+      ],
+      "display_zh": "添加压缩器效果 (音频标签: {0}, 阀值: [i]{1}[/i]dB,  转折点: [i]{2}[/i]dB,  压缩比例: [i]{3}[/i],  启动时间: [i]{4}[/i]ms,  施放时间: [i]{5}[/i]ms)",
+      "display_en": "Add compressor effect to tag {0} (threshold [i]{1}[/i] dB, knee [i]{2}[/i] dB, ratio [i]{3}[/i], attack [i]{4}[/i] ms, release [i]{5}[/i] ms)"
     },
     {
       "id": "add-tremolo-effect",
@@ -673,23 +805,31 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "frequency",
           "type": "number",
           "name_zh": "频率",
           "name_en": "Frequency",
-          "initialValue": "10"
+          "initialValue": "10",
+          "desc_zh": "幅度调制的频率，以赫兹为单位。",
+          "desc_en": "The frequency of amplitude modulation, in Hertz."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加颤音效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz, 混合: [i]{2}[/i])",
+      "display_en": "Add tremolo effect to tag {0} ([i]{1}[/i] Hz, mix [i]{2}[/i])"
     },
     {
       "id": "add-analyser-effect",
@@ -704,22 +844,30 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "fft-size",
           "type": "number",
           "name_zh": "FFT 大小",
           "name_en": "FFT size",
-          "initialValue": "512"
+          "initialValue": "512",
+          "desc_zh": "用于频域分析的 FFT 大小。必须是 2 的幂次方。",
+          "desc_en": "The size of the FFT used for frequency-domain analysis. Must be a power of two."
         },
         {
           "id": "smoothing",
           "type": "number",
           "name_zh": "平滑",
-          "name_en": "Smoothing"
+          "name_en": "Smoothing",
+          "desc_zh": "平滑时间常数，从0（不与最后分析帧平均）到1（平均）。",
+          "desc_en": "The smoothing time constant, from 0 (no averaging with last analysis frame) to 1 (averaging)."
         }
-      ]
+      ],
+      "display_zh": "添加分析器效果 (音频标签: {0}, FFT大小: [i]{1}[/i], 平滑[i]{2}[/i])",
+      "display_en": "Add analyser effect to tag {0} (FFT size [i]{1}[/i], smoothing [i]{2}[/i])"
     },
     {
       "id": "add-ring-mod-effect",
@@ -734,23 +882,31 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "frequency",
           "type": "number",
           "name_zh": "频率",
           "name_en": "Frequency",
-          "initialValue": "600"
+          "initialValue": "600",
+          "desc_zh": "环形调制器的频率，以赫兹为单位。",
+          "desc_en": "The frequency of the ring modulator, in Hertz."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加变调效果 (音频标签: {0}, 频率: [i]{1}[/i]Hz,  混合: [i]{2}[/i])",
+      "display_en": "Add ring modulator effect to tag {0} ([i]{1}[/i] Hz, mix [i]{2}[/i])"
     },
     {
       "id": "add-distortion-effect",
@@ -765,44 +921,58 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要处理的音频标签。",
+          "desc_en": "The audio tag to process."
         },
         {
           "id": "threshold",
           "type": "number",
           "name_zh": "阈值",
           "name_en": "Threshold",
-          "initialValue": "-27"
+          "initialValue": "-27",
+          "desc_zh": "失真阈值，以dB为单位。",
+          "desc_en": "The distortion threshold, in dB."
         },
         {
           "id": "headroom",
           "type": "number",
           "name_zh": "动态余量",
           "name_en": "Headroom",
-          "initialValue": "21"
+          "initialValue": "21",
+          "desc_zh": "信号在临近失真范围的余量，以 dB 为单位。",
+          "desc_en": "The distortion headroom, in dB."
         },
         {
           "id": "drive",
           "type": "number",
           "name_zh": "驱动",
           "name_en": "Drive",
-          "initialValue": "5"
+          "initialValue": "5",
+          "desc_zh": "失真效果的驱动程度，影响信号的饱和度。",
+          "desc_en": "The distortion drive."
         },
         {
           "id": "make-up-gain",
           "type": "number",
           "name_zh": "增益补偿",
           "name_en": "Make-up gain",
-          "initialValue": "3"
+          "initialValue": "3",
+          "desc_zh": "效果后的额外音量增加，以dB为单位。",
+          "desc_en": "The additional volume increase after the effect, in dB."
         },
         {
           "id": "mix",
           "type": "number",
           "name_zh": "混合",
           "name_en": "Mix",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
         }
-      ]
+      ],
+      "display_zh": "添加失真效果 (音频标签: {0}, 阈值: [i]{1}[/i]dB,  净空: [i]{2}[/i]dB,  驱动: [i]{3}[/i]，增益补偿:  [i]{4}[/i]dB,  混合: [i]{5}[/i]）",
+      "display_en": "Add distortion effect to tag {0} (threshold [i]{1}[/i] dB, headroom [i]{2}[/i] dB, drive [i]{3}[/i], make-up gain [i]{4}[/i] dB, mix [i]{5}[/i])"
     },
     {
       "id": "add-mute-effect",
@@ -817,9 +987,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要静音的音频标签。",
+          "desc_en": "The audio tag to mute."
         }
-      ]
+      ],
+      "display_zh": "添加静音效果 (音频标签: {0})",
+      "display_en": "Add mute effect to tag {0}"
     },
     {
       "id": "play-at-position",
@@ -834,7 +1008,9 @@
           "id": "audio-file",
           "type": "audiofile",
           "name_zh": "音频",
-          "name_en": "Audio file"
+          "name_en": "Audio file",
+          "desc_zh": "选择要播放的音频文件。",
+          "desc_en": "Choose the audio file to play."
         },
         {
           "id": "loop",
@@ -854,65 +1030,87 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音，即单曲循环。",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "音量衰减的分贝量(dB)。0 是原始音量,  -10 db 大约是降低原本一半的音量。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "声音在场景的X轴位置。",
+          "desc_en": "The X position in the layout to play the sound at."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "声音在场景的Y轴位置。",
+          "desc_en": "The Y position in the layout to play the sound at."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "Z",
-          "name_en": "Z"
+          "name_en": "Z",
+          "desc_zh": "在场景Z轴位置播放声音。",
+          "desc_en": "The Z position in the layout to play the sound at."
         },
         {
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "如果是方向源，则以度为单位的角度。",
+          "desc_en": "The angle in degrees to play at, if a directional source."
         },
         {
           "id": "inner-angle",
           "type": "number",
           "name_zh": "内角",
           "name_en": "Inner angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。",
+          "desc_en": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
         },
         {
           "id": "outer-angle",
           "type": "number",
           "name_zh": "外角",
           "name_en": "Outer angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。",
+          "desc_en": "The cone outer angle (where volume is reduced for directional sources) in degrees."
         },
         {
           "id": "outer-gain",
           "type": "number",
           "name_zh": "外角增益",
-          "name_en": "Outer gain"
+          "name_en": "Outer gain",
+          "desc_zh": "位于声源外角之外时，听到音量会随着距离逐渐减少的分贝量。",
+          "desc_en": "The volume reduction in decibels outside the outer angle, for directional sources."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，用于方便自己区分不同的音频。用于控制不同标签的音频。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "播放[b]{0}[/b] 位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 音量: {2} dB, 角度: [i]{6}[/i], 内角: [i]{7}[/i], 外角: [i]{8}[/i], 圈外增益: [i]{9}[/i] dB, 音频标签:  [i]{10}[/i], {1}",
+      "display_en": "Play [b]{0}[/b] {1} at volume {2} dB at position ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), angle [i]{6}[/i] (inner angle [i]{7}[/i], outer angle [i]{8}[/i], outer gain [i]{9}[/i] dB) with tag [i]{10}[/i]"
     },
     {
       "id": "play-at-object",
@@ -927,7 +1125,9 @@
           "id": "audio-file",
           "type": "audiofile",
           "name_zh": "音频",
-          "name_en": "Audio file"
+          "name_en": "Audio file",
+          "desc_zh": "选择要播放的音频文件。",
+          "desc_en": "Choose the audio file to play."
         },
         {
           "id": "loop",
@@ -947,47 +1147,63 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音。(单曲循环)",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "基于原始音量的增益与衰减，以分贝 (dB)为单位。0 是原始音量，-10 dB大约是声音的一半。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "object",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要播放声音的对象。",
+          "desc_en": "Choose the object to play the sound at."
         },
         {
           "id": "inner-angle",
           "type": "number",
           "name_zh": "内角",
           "name_en": "Inner angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。",
+          "desc_en": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
         },
         {
           "id": "outer-angle",
           "type": "number",
           "name_zh": "外角",
           "name_en": "Outer angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。",
+          "desc_en": "The cone outer angle (where volume is reduced for directional sources) in degrees."
         },
         {
           "id": "outer-gain",
           "type": "number",
           "name_zh": "外部增益",
-          "name_en": "Outer gain"
+          "name_en": "Outer gain",
+          "desc_zh": "超出外角范围的声音衰减量，要逐渐减小的音量的增益，以分贝 (dB)为单位。",
+          "desc_en": "The volume reduction in decibels outside the outer angle, for directional sources."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "在对象 {3} 位置播放[b]{0}[/b]{1} (内角: [i]{4}[/i], 外角: [i]{5}[/i], 圈外增益[i]{6}[/i]dB, 音量增益: {2}dB, 音频标签: [i]{7}[/i])",
+      "display_en": "Play [b]{0}[/b] {1} at volume {2} dB at object {3} (inner angle [i]{4}[/i], outer angle [i]{5}[/i], outer gain [i]{6}[/i] dB) with tag [i]{7}[/i]"
     },
     {
       "id": "set-listener-object",
@@ -1002,9 +1218,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要表示监听器的对象。",
+          "desc_en": "Choose the object to represent the listener."
         }
-      ]
+      ],
+      "display_zh": "设置监听器对象为 {0}",
+      "display_en": "Set listener object to {0}"
     },
     {
       "id": "set-listener-z",
@@ -1019,9 +1239,13 @@
           "id": "z",
           "type": "number",
           "name_zh": "Z",
-          "name_en": "Z"
+          "name_en": "Z",
+          "desc_zh": "监听器位于场景Z轴的高度，以像素为单位。",
+          "desc_en": "The new listener Z (height above the layout), in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置侦听器高度为[i]{0}[/i]",
+      "display_en": "Set listener Z to [i]{0}[/i]"
     },
     {
       "id": "set-listener-orientation",
@@ -1037,44 +1261,58 @@
           "type": "number",
           "name_zh": "前推X",
           "name_en": "Forward X",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "前推向量的X分量。",
+          "desc_en": "The X component of the forward vector."
         },
         {
           "id": "forwardY",
           "type": "number",
           "name_zh": "前推Y",
           "name_en": "Forward Y",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "前推向量的Y分量。",
+          "desc_en": "The Y component of the forward vector."
         },
         {
           "id": "forwardZ",
           "type": "number",
           "name_zh": "前推Z",
           "name_en": "Forward Z",
-          "initialValue": "-1"
+          "initialValue": "-1",
+          "desc_zh": "前推向量的Z分量。",
+          "desc_en": "The Z component of the forward vector."
         },
         {
           "id": "upX",
           "type": "number",
           "name_zh": "升降X",
           "name_en": "Up X",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "升降向量的X分量。",
+          "desc_en": "The X component of the up vector."
         },
         {
           "id": "upY",
           "type": "number",
           "name_zh": "升降Y",
           "name_en": "Up Y",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "升降向量的Y分量。",
+          "desc_en": "The Y component of the up vector."
         },
         {
           "id": "upZ",
           "type": "number",
           "name_zh": "升降Z",
           "name_en": "Up Z",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "升降向量的Z分量。",
+          "desc_en": "The Z component of the up vector."
         }
-      ]
+      ],
+      "display_zh": "设置监听器方向, 前推 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 升降 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "display_en": "Set listener orientation to forward ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), up ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i])"
     },
     {
       "id": "play-at-object-by-name",
@@ -1103,13 +1341,17 @@
               "zh": "音乐",
               "en": "Music"
             }
-          }
+          },
+          "desc_zh": "选择包含音频文件的文件夹。",
+          "desc_en": "Choose the folder which contains the audio file."
         },
         {
           "id": "audio-file-name",
           "type": "string",
           "name_zh": "音频文件名",
-          "name_en": "Audio file name"
+          "name_en": "Audio file name",
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
         },
         {
           "id": "loop",
@@ -1129,47 +1371,63 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音。(单曲循环)",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "基于原始音量的增益与衰减，以分贝 (dB)为单位。0 是原始音量，-10 dB大约是声音的一半。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "object",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要播放声音的对象。",
+          "desc_en": "Choose the object to play the sound at."
         },
         {
           "id": "inner-angle",
           "type": "number",
           "name_zh": "内角",
           "name_en": "Inner angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。",
+          "desc_en": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
         },
         {
           "id": "outer-angle",
           "type": "number",
           "name_zh": "外角",
           "name_en": "Outer angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。",
+          "desc_en": "The cone outer angle (where volume is reduced for directional sources) in degrees."
         },
         {
           "id": "outer-gain",
           "type": "number",
           "name_zh": "外部增益",
-          "name_en": "Outer gain"
+          "name_en": "Outer gain",
+          "desc_zh": "超出外角范围的声音衰减量，要逐渐减小的音量的增益，以分贝 (dB)为单位。",
+          "desc_en": "The volume reduction in decibels outside the outer angle, for directional sources."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "在对象位置 {4} 播放{0} [b]{1}[/b] (内角: [i]{5}[/i], 外角: [i]{6}[/i], 圈外增益: [i]{7}[/i]dB, 音量增益: {3}, 标签: [i]{8}[/i], 重复: {2})",
+      "display_en": "Play [b]{1}[/b] {2} from {0} at volume {3} dB at object {4} (inner angle [i]{5}[/i], outer angle [i]{6}[/i], outer gain [i]{7}[/i] dB) with tag [i]{8}[/i]"
     },
     {
       "id": "play-at-position-by-name",
@@ -1198,13 +1456,17 @@
               "zh": "音乐",
               "en": "Music"
             }
-          }
+          },
+          "desc_zh": "选择包含音频文件的文件夹。",
+          "desc_en": "Choose the folder which contains the audio file."
         },
         {
           "id": "audio-file-name",
           "type": "string",
           "name_zh": "音频文件名",
-          "name_en": "Audio file name"
+          "name_en": "Audio file name",
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
         },
         {
           "id": "loop",
@@ -1224,65 +1486,87 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音，即单曲循环。",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "音量衰减的分贝量(dB)。0 是原始音量,  -10 db 大约是降低原本一半的音量。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "声音在场景的X轴位置。",
+          "desc_en": "The X position in the layout to play the sound at."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "声音在场景的Y轴位置。",
+          "desc_en": "The Y position in the layout to play the sound at."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "Z",
-          "name_en": "Z"
+          "name_en": "Z",
+          "desc_zh": "在场景的Z轴位置播放声音。",
+          "desc_en": "The Z position in the layout to play the sound at."
         },
         {
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "如果是方向性的声源，调整播放声音的方向角度。",
+          "desc_en": "The angle in degrees to play at, if a directional source."
         },
         {
           "id": "inner-angle",
           "type": "number",
           "name_zh": "内角",
           "name_en": "Inner angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。",
+          "desc_en": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
         },
         {
           "id": "outer-angle",
           "type": "number",
           "name_zh": "外角",
           "name_en": "Outer angle",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。",
+          "desc_en": "The cone outer angle (where volume is reduced for directional sources) in degrees."
         },
         {
           "id": "outer-gain",
           "type": "number",
           "name_zh": "外角增益",
-          "name_en": "Outer gain"
+          "name_en": "Outer gain",
+          "desc_zh": "位于声源外角之外时，听到音量会随着距离逐渐减少的分贝量。",
+          "desc_en": "The volume reduction in decibels outside the outer angle, for directional sources."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "播放{0} [b]{1}[/b] {2} 位置: ([i]{4}[/i], [i]{5}[/i], [i]{6}[/i]), 音量增益: {3} dB, 角度: [i]{7}[/i], 内角: [i]{8}[/i], 外角: [i]{9}[/i], 圈外增益: [i]{10}[/i] dB, 音频标签: [i]{11}[/i]",
+      "display_en": "Play [b]{1}[/b] {2} from {0} at volume {3} dB at position ([i]{4}[/i], [i]{5}[/i], [i]{6}[/i]), angle [i]{7}[/i] (inner angle [i]{8}[/i], outer angle [i]{9}[/i], outer gain [i]{10}[/i] dB) with tag [i]{11}[/i]"
     },
     {
       "id": "set-stereo-pan",
@@ -1297,16 +1581,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要改变的声音的标签。 留空则影响最后播放的声音。",
+          "desc_en": "The tag identifying the sound to change.  Leave empty to affect the last played sound."
         },
         {
           "id": "stereo-pan",
           "type": "number",
           "name_zh": "声道",
           "name_en": "Stereo pan",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
         }
-      ]
+      ],
+      "display_zh": "设置 [i]{0}[/i] 声道为 [b]{1}[/b]",
+      "display_en": "Set [i]{0}[/i] stereo pan to [b]{1}[/b]"
     },
     {
       "id": "play",
@@ -1321,7 +1611,9 @@
           "id": "audio-file",
           "type": "audiofile",
           "name_zh": "音频",
-          "name_en": "Audio file"
+          "name_en": "Audio file",
+          "desc_zh": "选择要播放的音频文件。",
+          "desc_en": "Choose the audio file to play."
         },
         {
           "id": "loop",
@@ -1341,28 +1633,38 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音。(单曲循环)",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "stereo-pan",
           "type": "number",
           "name_zh": "声道",
           "name_en": "Stereo pan",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "播放音频 [b]{0}[/b] (标签: [i]{4}[/i], 增益: {2} dB,  声道: [i]{3}[/i], 重复: {1} )",
+      "display_en": "Play [b]{0}[/b] {1} at volume {2} dB (stereo pan [i]{3}[/i], tag [i]{4}[/i])"
     },
     {
       "id": "set-looping",
@@ -1377,7 +1679,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要设置循环的签。留空则指定最后一次播放的声音。",
+          "desc_en": "The tag identifying the sound to loop.  Leave empty to affect the last played sound."
         },
         {
           "id": "state",
@@ -1397,9 +1701,13 @@
               "zh": "仅播放一次",
               "en": "not looping"
             }
-          }
+          },
+          "desc_zh": "选择是打开还是关闭循环。",
+          "desc_en": "Choose whether to turn looping on or off."
         }
-      ]
+      ],
+      "display_zh": "设置[i]{0}[/i] {1}",
+      "display_en": "Set [i]{0}[/i] {1}"
     },
     {
       "id": "set-muted",
@@ -1414,7 +1722,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要设置静音的标签，留空则指定最后一次播放的声音。",
+          "desc_en": "The tag identifying the sound to mute.  Leave empty to affect the last played sound."
         },
         {
           "id": "state",
@@ -1434,9 +1744,13 @@
               "zh": "关闭静音",
               "en": "unmuted"
             }
-          }
+          },
+          "desc_zh": "选择是静音还是取消静音。",
+          "desc_en": "Choose whether to mute or unmute the sound."
         }
-      ]
+      ],
+      "display_zh": "设置[i]{0}[/i] {1}",
+      "display_en": "Set [i]{0}[/i] {1}"
     },
     {
       "id": "set-volume",
@@ -1451,16 +1765,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要更改音量的标签。留空则指定最后一次播放的声音。",
+          "desc_en": "The tag identifying the sound to change the volume for.  Leave empty to affect the last played sound."
         },
         {
           "id": "db",
           "type": "number",
           "name_zh": "dB",
           "name_en": "dB",
-          "initialValue": "-10"
+          "initialValue": "-10",
+          "desc_zh": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         }
-      ]
+      ],
+      "display_zh": "设置音量为[b]{1}[/b]dB (音频标签:  [i]{0}[/i])",
+      "display_en": "Set [i]{0}[/i] volume to [b]{1}[/b] dB"
     },
     {
       "id": "fade-volume",
@@ -1475,21 +1795,27 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要设置的音频标签，留空则影响最后播放的声音。",
+          "desc_en": "The tag identifying the sound to change the volume for.  Leave empty to affect the last played sound."
         },
         {
           "id": "db",
           "type": "number",
           "name_zh": "dB",
           "name_en": "dB",
-          "initialValue": "-100"
+          "initialValue": "-100",
+          "desc_zh": "以分贝(dB)进行衰减淡出。",
+          "desc_en": "The attenuation in decibels (dB) to fade to."
         },
         {
           "id": "duration",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Duration",
-          "initialValue": "3"
+          "initialValue": "3",
+          "desc_zh": "在几秒内完全淡出完成。",
+          "desc_en": "The time in seconds to fade over."
         },
         {
           "id": "ending",
@@ -1509,9 +1835,13 @@
               "zh": "保持播放",
               "en": "keep playing"
             }
-          }
+          },
+          "desc_zh": "淡出结束后该做什么。对于淡出效果，在完成后停止声音播放是最有效的。",
+          "desc_en": "What to do when the fade finishes. For fade-outs, it's useful to stop the sound afterwards."
         }
-      ]
+      ],
+      "display_zh": "在[b]{2}[/b]秒内，淡出 [i]{0}[/i] 的声音至[b]{1}[/b]dB 然后{3}",
+      "display_en": "Fade [i]{0}[/i] volume to [b]{1}[/b] dB over [b]{2}[/b] seconds, then {3}"
     },
     {
       "id": "preload",
@@ -1527,9 +1857,13 @@
           "id": "audio-file",
           "type": "audiofile",
           "name_zh": "音频文件",
-          "name_en": "Audio file"
+          "name_en": "Audio file",
+          "desc_zh": "选择要预加载的音频文件。 它将从服务器下载但不播放。",
+          "desc_en": "Choose the audio file to preload.  It will be downloaded from the server but not played."
         }
-      ]
+      ],
+      "display_zh": "预加载[b]{0}[/b]",
+      "display_en": "Preload [b]{0}[/b]"
     },
     {
       "id": "set-playback-rate",
@@ -1544,16 +1878,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要改变播放进度的标签。留空则指定最后一次播放的声音。",
+          "desc_en": "The tag identifying the sound to change the playback rate for.  Leave empty to affect the last played sound."
         },
         {
           "id": "playback-rate",
           "type": "number",
           "name_zh": "播放速度",
           "name_en": "Playback rate",
-          "initialValue": "1.0"
+          "initialValue": "1.0",
+          "desc_zh": "声音的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+          "desc_en": "The rate of playback.  1.0 is normal speed, 0.5 half speed, 2.0 double speed, etc."
         }
-      ]
+      ],
+      "display_zh": "设置标签[i]{0}[/i]播放速度为[b]{1}[/b]倍",
+      "display_en": "Set [i]{0}[/i] playback rate to [b]{1}[/b]"
     },
     {
       "id": "stop",
@@ -1568,9 +1908,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要停止播放的标签。留空则指定最后一次播放的声音。",
+          "desc_en": "The tag identifying the sound to stop.  Leave empty to affect the last played sound."
         }
-      ]
+      ],
+      "display_zh": "停止播放[b]{0}[/b]",
+      "display_en": "Stop [b]{0}[/b]"
     },
     {
       "id": "play-by-name",
@@ -1599,13 +1943,17 @@
               "zh": "音乐",
               "en": "Music"
             }
-          }
+          },
+          "desc_zh": "选择包含音频文件的文件夹。",
+          "desc_en": "Choose the folder which contains the audio file."
         },
         {
           "id": "audio-file-name",
           "type": "string",
           "name_zh": "音频文件名",
-          "name_en": "Audio file name"
+          "name_en": "Audio file name",
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
         },
         {
           "id": "loop",
@@ -1625,28 +1973,38 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "是否循环播放声音。(单曲循环)",
+          "desc_en": "Whether or not to initially play the sound in a loop (repeating)."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。",
+          "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         },
         {
           "id": "stereo-pan",
           "type": "number",
           "name_zh": "声道",
           "name_en": "Stereo pan",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
         },
         {
           "id": "tag-optional",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
+          "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "display_zh": "播放{0} [b]{1}[/b] (标签: [i]{5}[/i], 增益: {3} dB, 声道: [i]{4}[/i],  重复: {2})",
+      "display_en": "Play [b]{1}[/b] {2} from {0} at {3} dB (stereo pan [i]{4}[/i], tag [i]{5}[/i])"
     },
     {
       "id": "set-silent",
@@ -1680,9 +2038,13 @@
               "zh": "反转静音状态",
               "en": "toggle silent"
             }
-          }
+          },
+          "desc_zh": "设置是否处于静音模式。",
+          "desc_en": "Set whether in silent mode or not."
         }
-      ]
+      ],
+      "display_zh": "设置 {0}",
+      "display_en": "Set {0}"
     },
     {
       "id": "preload-by-name",
@@ -1712,15 +2074,21 @@
               "zh": "音乐",
               "en": "Music"
             }
-          }
+          },
+          "desc_zh": "选择包含要预加载的音频文件的文件夹。",
+          "desc_en": "Choose the folder which contains the audio file to preload."
         },
         {
           "id": "audio-file-name",
           "type": "string",
           "name_zh": "音频文件名",
-          "name_en": "Audio file name"
+          "name_en": "Audio file name",
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
+          "desc_en": "A string with the name of the audio file to preload, without the file extension.  For example, to load myfile.webm, use only \"myfile\"."
         }
-      ]
+      ],
+      "display_zh": "预加载[b]{1}[/b] (从 [i]{0}[/i])",
+      "display_en": "Preload [b]{1}[/b] (from [i]{0}[/i])"
     },
     {
       "id": "set-master-volume",
@@ -1736,9 +2104,13 @@
           "type": "number",
           "name_zh": "dB",
           "name_en": "dB",
-          "initialValue": "-10"
+          "initialValue": "-10",
+          "desc_zh": "主衰减以分贝（dB）表示。 0是原始音量，-10 dB大约是声音的一半，等等。",
+          "desc_en": "The master attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
         }
-      ]
+      ],
+      "display_zh": "设置主音量为[b]{0}[/b]dB",
+      "display_en": "Set master volume to [b]{0}[/b] dB"
     },
     {
       "id": "set-paused",
@@ -1753,7 +2125,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要暂停或恢复播放的音频标签。",
+          "desc_en": "The audio tag to pause or resume."
         },
         {
           "id": "state",
@@ -1773,9 +2147,13 @@
               "zh": "恢复",
               "en": "Resume"
             }
-          }
+          },
+          "desc_zh": "要将指定标签的音频暂停或恢复播放。",
+          "desc_en": "Whether to pause or resume the sound with the given tag."
         }
-      ]
+      ],
+      "display_zh": "{1} 标签 [i]{0}[/i]",
+      "display_en": "{1} tag [i]{0}[/i]"
     },
     {
       "id": "seek-to",
@@ -1790,15 +2168,21 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要操作的音频的标签。",
+          "desc_en": "The audio tag to seek."
         },
         {
           "id": "position",
           "type": "number",
           "name_zh": "位置",
-          "name_en": "Position"
+          "name_en": "Position",
+          "desc_zh": "跳转到音频指定的时间位置，以秒为单位。结合 Audio.CurrentTime 表达式使用，可实现快进或后退几秒的效果。",
+          "desc_en": "The time in the audio to seek to, in seconds."
         }
-      ]
+      ],
+      "display_zh": "音频跳转到[i]{1}[/i]秒(标签: [i]{0}[/i])",
+      "display_en": "Seek tag [i]{0}[/i] to [i]{1}[/i] seconds"
     },
     {
       "id": "stop-all",
@@ -1807,7 +2191,9 @@
       "description_zh": "停止所有正在播放的声音。",
       "description_en": "Stop all currently playing sounds.",
       "scriptName": "StopAll",
-      "category": "audio"
+      "category": "audio",
+      "display_zh": "停止所有",
+      "display_en": "Stop all"
     },
     {
       "id": "unload-audio",
@@ -1822,9 +2208,13 @@
           "id": "audio-file",
           "type": "audiofile",
           "name_zh": "音频文件",
-          "name_en": "Audio file"
+          "name_en": "Audio file",
+          "desc_zh": "选择要卸载的音频文件。",
+          "desc_en": "Choose the audio file to unload."
         }
-      ]
+      ],
+      "display_zh": "卸载[b]{0}[/b]",
+      "display_en": "Unload [b]{0}[/b]"
     },
     {
       "id": "unload-audio-by-name",
@@ -1853,15 +2243,21 @@
               "zh": "音乐",
               "en": "Music"
             }
-          }
+          },
+          "desc_zh": "选择包含音频文件的文件夹。",
+          "desc_en": "Choose the folder which contains the audio file."
         },
         {
           "id": "audio-file-name",
           "type": "string",
           "name_zh": "音频文件名",
-          "name_en": "Audio file name"
+          "name_en": "Audio file name",
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
+          "desc_en": "A string with the name of the audio file to unload, without the file extension.  For example, to unload myfile.webm, use only \"myfile\"."
         }
-      ]
+      ],
+      "display_zh": "从{0}卸载[b]{1}[/b]",
+      "display_en": "Unload [b]{1}[/b] from {0}"
     },
     {
       "id": "unload-all",
@@ -1870,7 +2266,9 @@
       "description_zh": "从内存中卸载所有音频文件。后续想再次播放则需要重新加载它。",
       "description_en": "Unload all audio files from memory.",
       "scriptName": "UnloadAll",
-      "category": "memory"
+      "category": "memory",
+      "display_zh": "卸载全部音频",
+      "display_en": "Unload all"
     },
     {
       "id": "add-remote-url",
@@ -1886,29 +2284,37 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "加载音频的远程链接。注意，跨域的请求需要使用CORS。",
+          "desc_en": "URL to load the audio from. Note cross-domain requests require CORS."
         },
         {
           "id": "type",
           "type": "string",
           "name_zh": "类型",
           "name_en": "Type",
-          "initialValue": "\"audio/webm; codecs=opus\""
+          "initialValue": "\"audio/webm; codecs=opus\"",
+          "desc_zh": "在指定链接中加载的音频的格式类型( 也叫MIME类型)。注：WebM Opus 是唯一能保证在所有平台上播放的格式。",
+          "desc_en": "The content type (aka MIME type) of the audio loaded at the given URL. Note WebM Opus is the only format guaranteed to play on all platforms."
         },
         {
           "id": "name",
           "type": "string",
           "name_zh": "名称",
-          "name_en": "Name"
+          "name_en": "Name",
+          "desc_zh": "分配此链接的名称。分配后可以使用此名称的字符串进行操作。",
+          "desc_en": "The name to assign this URL. This name can then be used in the actions that use a string for the name."
         }
-      ]
+      ],
+      "display_zh": "加载远程音频 [b]{0}[/b] (类型: [i]{1}[/i], 别名: [b]{2}[/b])",
+      "display_en": "Add remote URL [b]{0}[/b] (type [i]{1}[/i]) as name [b]{2}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "effectcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "效果器数量",
+      "name_en": "EffectCount",
       "description_zh": "获取音频标签已添加的声音效果的数量。",
       "description_en": "Get the current number of effects added to a tag.",
       "expressionName": "EffectCount",
@@ -1919,14 +2325,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音标签。",
+          "desc_en": "Tag of the sound to use"
         }
       ]
     },
     {
       "id": "analyserfreqbincount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "分析采样点数量",
+      "name_en": "AnalyserFreqBinCount",
       "description_zh": "从音频分析器中，获取采样点的数量。",
       "description_en": "Get the number of frequency bins returned by an analyser effect.",
       "expressionName": "AnalyserFreqBinCount",
@@ -1937,20 +2345,24 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音标签。",
+          "desc_en": "Tag of the sound to use"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "在分析器中，采样点的索引。",
+          "desc_en": "Index of the analyser effect"
         }
       ]
     },
     {
       "id": "analyserfreqbinat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "分析采样频率",
+      "name_en": "AnalyserFreqBinAt",
       "description_zh": "从音频分析器中，获取采样点的幅度。",
       "description_en": "Get the magnitude of an analyser's Nth frequency bin.",
       "expressionName": "AnalyserFreqBinAt",
@@ -1961,26 +2373,32 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要应用的声音标签。",
+          "desc_en": "Tag of the sound to use"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "在分析器中，采样点的索引。",
+          "desc_en": "Index of the analyser effect"
         },
         {
           "id": "bin",
           "type": "number",
           "name_zh": "采样点",
-          "name_en": "Bin"
+          "name_en": "Bin",
+          "desc_zh": "在分析器中，采样点的索引。",
+          "desc_en": "Index of the frequency bin"
         }
       ]
     },
     {
       "id": "analyserpeaklevel",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "分析采样峰值",
+      "name_en": "AnalyserPeakLevel",
       "description_zh": "从音频分析器中，获取采样点的峰值水平。",
       "description_en": "Get the peak level from an analyser.",
       "expressionName": "AnalyserPeakLevel",
@@ -1991,20 +2409,24 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音的标签",
+          "desc_en": "Tag of the sound to use"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "在分析器中，采样点的索引。",
+          "desc_en": "Index of the analyser effect"
         }
       ]
     },
     {
       "id": "analyserrmslevel",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "分析采样平均功率",
+      "name_en": "AnalyserRMSLevel",
       "description_zh": "从音频分析器中，获取采样点的平均功率级别。",
       "description_en": "Get the RMS level from an analyser.",
       "expressionName": "AnalyserRMSLevel",
@@ -2015,20 +2437,24 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音的标签",
+          "desc_en": "Tag of the sound to use"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "在分析器中，采样点的索引。",
+          "desc_en": "Index of the analyser effect"
         }
       ]
     },
     {
       "id": "duration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "持续时间",
+      "name_en": "Duration",
       "description_zh": "获取指定标签的声音的持续时间，以秒为单位。",
       "description_en": "Get the duration in seconds of a sound with a tag.",
       "expressionName": "Duration",
@@ -2039,14 +2465,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音的标签",
+          "desc_en": "Tag of the sound to use"
         }
       ]
     },
     {
       "id": "playbacktime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "播放时间",
+      "name_en": "PlaybackTime",
       "description_zh": "获取指定标签声音的播放位置，以秒为单位。",
       "description_en": "Get the playback position in seconds of a sound with a tag.",
       "expressionName": "PlaybackTime",
@@ -2057,14 +2485,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音的标签",
+          "desc_en": "Tag of the sound to use"
         }
       ]
     },
     {
       "id": "playbackrate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "播放速度",
+      "name_en": "PlaybackRate",
       "description_zh": "设置指定标签的声音的播放速度。",
       "description_en": "Get the playback rate of a sound with a tag.",
       "expressionName": "PlaybackRate",
@@ -2075,14 +2505,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的音频的标签",
+          "desc_en": "Tag of the sound to use"
         }
       ]
     },
     {
       "id": "volume",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "音量",
+      "name_en": "Volume",
       "description_zh": "获取指定标签的声音的当前音量，以分贝为单位。",
       "description_en": "Get the current volume, in decibels, of a sound with a tag.",
       "expressionName": "Volume",
@@ -2093,14 +2525,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要使用的声音的标签",
+          "desc_en": "Tag of the sound to use"
         }
       ]
     },
     {
       "id": "mastervolume",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "主音量",
+      "name_en": "MasterVolume",
       "description_zh": "获取当前主音量，以分贝为单位。",
       "description_en": "Get the current master volume, in decibels.",
       "expressionName": "MasterVolume",
@@ -2109,8 +2543,8 @@
     },
     {
       "id": "samplerate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "采样率",
+      "name_en": "SampleRate",
       "description_zh": "获取音频输出采样率，以赫兹为单位。",
       "description_en": "Get the audio output sample rate in Hz.",
       "expressionName": "SampleRate",
@@ -2119,8 +2553,8 @@
     },
     {
       "id": "currenttime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前时间",
+      "name_en": "CurrentTime",
       "description_zh": "获取当前音频的真实时间，以秒为单位。常用于安排音频播放的准确时间，对 '安排下一首播放' 动作非常重要。",
       "description_en": "Get the audio clock time in seconds.",
       "expressionName": "CurrentTime",
@@ -2129,8 +2563,8 @@
     },
     {
       "id": "output-latency",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "输出延迟",
+      "name_en": "OutputLatency",
       "description_zh": "音频在输出设备上实际播放的延迟，以秒为单位。如果延迟未知，则返回为 -1。",
       "description_en": "Time delay in seconds for audio to actually be played on output device (or -1 if not known).",
       "expressionName": "OutputLatency",
@@ -2139,8 +2573,8 @@
     },
     {
       "id": "normalized-volume",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "音量转换分贝",
+      "name_en": "NormalizedVolume",
       "description_zh": "将音量转换为分贝，音量在 0-100 范围。",
       "description_en": "Convert a volume in the range 0-100 to dB.",
       "expressionName": "NormalizedVolume",
@@ -2151,13 +2585,17 @@
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "要转换的音量百分比，在 0 - 100 范围。",
+          "desc_en": "Volume in range 0-100"
         },
         {
           "id": "dbThreshold",
           "type": "number",
           "name_zh": "分贝阈值",
-          "name_en": "dbThreshold"
+          "name_en": "dbThreshold",
+          "desc_zh": "音量在 10 百分比位置时，低于阈值分贝的声音将线性淡出直到听静音。建议值为 -40。",
+          "desc_en": "dB level at volume 10, below which it reverts to linear ramp."
         }
       ]
     }

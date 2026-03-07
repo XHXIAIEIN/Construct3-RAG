@@ -27,21 +27,29 @@
           "id": "first",
           "type": "number",
           "name_zh": "第一个时间戳",
-          "name_en": "First time stamp"
+          "name_en": "First time stamp",
+          "desc_zh": "要进行比较的第一个时间戳。",
+          "desc_en": "The first time stamp to compare."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the time stamps."
         },
         {
           "id": "second",
           "type": "number",
           "name_zh": "第二个时间戳",
-          "name_en": "Second time stamp"
+          "name_en": "Second time stamp",
+          "desc_zh": "要进行比较的第二个时间戳。",
+          "desc_en": "The second time stamp to compare."
         }
-      ]
+      ],
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}"
     },
     {
       "id": "compare-date-strings",
@@ -56,21 +64,29 @@
           "id": "first",
           "type": "string",
           "name_zh": "第一个长日期",
-          "name_en": "First date string"
+          "name_en": "First date string",
+          "desc_zh": "要进行比较的第一个长日期。",
+          "desc_en": "The first date string to compare."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the date strings."
         },
         {
           "id": "second",
           "type": "string",
           "name_zh": "第二个长日期",
-          "name_en": "Second date string"
+          "name_en": "Second date string",
+          "desc_zh": "要进行比较的第二个长日期。",
+          "desc_en": "The second date string to compare."
         }
-      ]
+      ],
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}"
     },
     {
       "id": "compare-timestamp-parts",
@@ -85,19 +101,25 @@
           "id": "first",
           "type": "number",
           "name_zh": "第一个时间戳",
-          "name_en": "First time stamp"
+          "name_en": "First time stamp",
+          "desc_zh": "要进行比较的第一个时间戳。",
+          "desc_en": "The first time stamp to compare."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the time stamps."
         },
         {
           "id": "second",
           "type": "number",
           "name_zh": "第二个时间戳",
-          "name_en": "Second time stamp"
+          "name_en": "Second time stamp",
+          "desc_zh": "要进行比较的第二个时间戳。",
+          "desc_en": "The second time stamp to compare."
         },
         {
           "id": "part",
@@ -148,9 +170,13 @@
               "zh": "毫秒",
               "en": "Milliseconds"
             }
-          }
+          },
+          "desc_zh": "选择时间戳中要比较的部分。",
+          "desc_en": "The part of the time stamps to compare."
         }
-      ]
+      ],
+      "display_zh": "{0}的{3} {1} {2}的{3}",
+      "display_en": "{3} of {0} {1} {3} of {2}"
     },
     {
       "id": "compare-date-string-parts",
@@ -165,19 +191,25 @@
           "id": "first",
           "type": "string",
           "name_zh": "第一个长日期",
-          "name_en": "First date string"
+          "name_en": "First date string",
+          "desc_zh": "要进行比较的第一个长日期。",
+          "desc_en": "The first date string to compare."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the date strings."
         },
         {
           "id": "second",
           "type": "string",
           "name_zh": "第二个长日期",
-          "name_en": "Second date string"
+          "name_en": "Second date string",
+          "desc_zh": "要进行比较的第二个长日期。",
+          "desc_en": "The second date string to compare."
         },
         {
           "id": "part",
@@ -228,7 +260,9 @@
               "zh": "毫秒",
               "en": "Milliseconds"
             }
-          }
+          },
+          "desc_zh": "选择时间戳中要比较的部分。",
+          "desc_en": "The part of the date strings to compare."
         },
         {
           "id": "mode",
@@ -249,17 +283,21 @@
               "zh": "世界标准时间",
               "en": "Universal"
             }
-          }
+          },
+          "desc_zh": "比较本地时间还是世界标准时间。",
+          "desc_en": "Whether to compare values in local or universal time."
         }
-      ]
+      ],
+      "display_zh": "{0}的{3} {1} {2}的{3} ({4})",
+      "display_en": "{3} of {0} {1} {3} of {2} using {4} time"
     }
   ],
   "actions": [],
   "expressions": [
     {
       "id": "toString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为长日期",
+      "name_en": "ToString",
       "description_zh": "将时间戳转换为包含长日期和长时间的字符串。（星期 月 日 年 时:分:秒）",
       "description_en": "Convert a time stamp to a string.",
       "expressionName": "ToString",
@@ -270,14 +308,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为长日期的时间戳",
+          "desc_en": "The time stamp to convert to a string"
         }
       ]
     },
     {
       "id": "toDateString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为长日期",
+      "name_en": "ToDateString",
       "description_zh": "将时间戳转换为长日期。（星期 月 日 年）",
       "description_en": "Convert a time stamp to a date string.",
       "expressionName": "ToDateString",
@@ -288,14 +328,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为长日期的时间戳",
+          "desc_en": "The time stamp to convert to a date string"
         }
       ]
     },
     {
       "id": "toTimeString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为长时间",
+      "name_en": "ToTimeString",
       "description_zh": "将时间戳转换为长时间。(时:分:秒 时区)",
       "description_en": "Convert a time stamp to a time string.",
       "expressionName": "ToTimeString",
@@ -306,14 +348,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为长时间的时间戳",
+          "desc_en": "The time stamp to convert to a time string"
         }
       ]
     },
     {
       "id": "toLocaleString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为本地长日期",
+      "name_en": "ToLocaleString",
       "description_zh": "将时间戳转换为本地时间的长日期。(年/月/日 上午或下午 时:分:秒)",
       "description_en": "Convert a time stamp to a localized string.",
       "expressionName": "ToLocaleString",
@@ -324,14 +368,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为本地长日期的时间戳。",
+          "desc_en": "The time stamp to convert to a localized string"
         }
       ]
     },
     {
       "id": "toLocaleDateString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为本地日期",
+      "name_en": "ToLocaleDateString",
       "description_zh": "将时间戳转换为本地长日期。（年/月/日 上午或下午 时:分:秒）",
       "description_en": "Convert a time stamp to a localized date string.",
       "expressionName": "ToLocaleDateString",
@@ -342,14 +388,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "需要转换为本地长日期的时间戳",
+          "desc_en": "The time stamp to convert to a localized date string"
         }
       ]
     },
     {
       "id": "toLocaleTimeString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为本地时间",
+      "name_en": "ToLocaleTimeString",
       "description_zh": "转换时间戳为本地长时间。(上午或下午 时:分:秒)",
       "description_en": "Convert a time stamp to a localized time string.",
       "expressionName": "ToLocaleTimeString",
@@ -360,14 +408,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为本地长时间的时间戳",
+          "desc_en": "The time stamp to convert to a localized time string"
         }
       ]
     },
     {
       "id": "toUTCString",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换为UTC时区长日期",
+      "name_en": "ToUTCString",
       "description_zh": "将UTC时区的时间戳转换为长日期。(星期, 日 月 年 时:分:秒)",
       "description_en": "Convert a time stamp to a string using the UTC time zone.",
       "expressionName": "ToUTCString",
@@ -378,14 +428,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要转换为字符串的时间戳",
+          "desc_en": "The time stamp to convert to a string"
         }
       ]
     },
     {
       "id": "parse",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "解析日期",
+      "name_en": "Parse",
       "description_zh": "将日期时间的字符串，转换为时间戳。",
       "description_en": "Convert a date string to a time stamp.",
       "expressionName": "Parse",
@@ -396,14 +448,16 @@
           "id": "dateString",
           "type": "string",
           "name_zh": "日期字符串",
-          "name_en": "Date string"
+          "name_en": "Date string",
+          "desc_zh": "输入日期的字符串，将其转换成时间戳。如：\"2017-04-12 12:00:00",
+          "desc_en": "The date string to convert to a time stamp"
         }
       ]
     },
     {
       "id": "toTimerHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换计时器小时",
+      "name_en": "ToTimerHours",
       "description_zh": "将毫秒转换为时钟经过的小时。返回一个整数。",
       "description_en": "Convert milliseconds to the equivalent elapsed hours count. The result is always a whole number.",
       "expressionName": "ToTimerHours",
@@ -414,14 +468,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTimerMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换计时器分钟",
+      "name_en": "ToTimerMinutes",
       "description_zh": "将毫秒转换为时钟经过的分钟。返回一个(0 - 59)范围内的整数。",
       "description_en": "Convert milliseconds to the equivalent elapsed minutes count. The result is always a whole number in the range (0 - 59).",
       "expressionName": "ToTimerMinutes",
@@ -432,14 +488,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTimerSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换计时器秒",
+      "name_en": "ToTimerSeconds",
       "description_zh": "将毫秒转换为时钟经过的秒数。返回一个(0 - 59)范围内的整数。",
       "description_en": "Convert milliseconds to the equivalent elapsed seconds count. The result is always a whole number in the range (0 - 59).",
       "expressionName": "ToTimerSeconds",
@@ -450,14 +508,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTimerMilliseconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换计时器毫秒",
+      "name_en": "ToTimerMilliseconds",
       "description_zh": "将毫秒转换为时钟经过的毫秒。返回一个(0 - 999)范围内的整数。",
       "description_en": "Convert milliseconds to the equivalent elapsed milliseconds count. The result is always a whole number in the range (0 - 999).",
       "expressionName": "ToTimerMilliseconds",
@@ -468,14 +528,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTotalHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换小时",
+      "name_en": "ToTotalHours",
       "description_zh": "将毫秒转换为相应的小时。",
       "description_en": "Convert milliseconds to the equivalent hours.",
       "expressionName": "ToTotalHours",
@@ -486,14 +548,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTotalMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换分钟",
+      "name_en": "ToTotalMinutes",
       "description_zh": "将毫秒转换为相应的分钟。",
       "description_en": "Convert milliseconds to the equivalent minutes.",
       "expressionName": "ToTotalMinutes",
@@ -504,14 +568,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "toTotalSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换秒",
+      "name_en": "ToTotalSeconds",
       "description_zh": "将毫秒转换为相应的秒数。",
       "description_en": "Convert milliseconds to the equivalent seconds.",
       "expressionName": "ToTotalSeconds",
@@ -522,14 +588,16 @@
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "要转换的毫秒",
+          "desc_en": "The milliseconds to convert"
         }
       ]
     },
     {
       "id": "now",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前时间",
+      "name_en": "Now",
       "description_zh": "获取当前本地时间的时间戳",
       "description_en": "Get a time stamp for the current time.",
       "expressionName": "Now",
@@ -538,8 +606,8 @@
     },
     {
       "id": "export-timestamp",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "项目导出时间",
+      "name_en": "ExportTimestamp",
       "description_zh": "获取项目从编辑器导出的时间戳。",
       "description_en": "Get the time stamp for when the project was exported from the editor.",
       "expressionName": "ExportTimestamp",
@@ -548,8 +616,8 @@
     },
     {
       "id": "get",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取时间",
+      "name_en": "Get",
       "description_zh": "从日期的指定部分来获得通用时间戳。",
       "description_en": "Get a universal time stamp from the specified parts of a date.",
       "expressionName": "Get",
@@ -560,50 +628,64 @@
           "id": "year",
           "type": "number",
           "name_zh": "年",
-          "name_en": "Year"
+          "name_en": "Year",
+          "desc_zh": "新的时间戳的年份",
+          "desc_en": "The year of the new time stamp"
         },
         {
           "id": "month",
           "type": "number",
           "name_zh": "月",
-          "name_en": "Month"
+          "name_en": "Month",
+          "desc_zh": "新的时间戳的月份(0-11)",
+          "desc_en": "The month of the new time stamp (0 - 11)"
         },
         {
           "id": "day",
           "type": "number",
           "name_zh": "天",
-          "name_en": "Day"
+          "name_en": "Day",
+          "desc_zh": "新的时间戳的天数(1-31)",
+          "desc_en": "The day of the new time stamp (1 - 31)"
         },
         {
           "id": "hours",
           "type": "number",
           "name_zh": "时",
-          "name_en": "Hours"
+          "name_en": "Hours",
+          "desc_zh": "新的时间戳的小时(0-23)",
+          "desc_en": "The hours of the new time stamp (0 - 23)"
         },
         {
           "id": "minutes",
           "type": "number",
           "name_zh": "分",
-          "name_en": "Minutes"
+          "name_en": "Minutes",
+          "desc_zh": "新的时间戳的分钟(0-59)",
+          "desc_en": "The minutes of the new time stamp (0 - 59)"
         },
         {
           "id": "seconds",
           "type": "number",
           "name_zh": "秒",
-          "name_en": "Seconds"
+          "name_en": "Seconds",
+          "desc_zh": "新的时间戳的秒数(0-59)",
+          "desc_en": "The seconds of the new time stamp (0 - 59)"
         },
         {
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "新的时间戳的毫秒(0-999)",
+          "desc_en": "The milliseconds of the new time stamp (0 - 999)"
         }
       ]
     },
     {
       "id": "timezoneOffset",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "地区时差",
+      "name_en": "TimezoneOffset",
       "description_zh": "从本地时间到世界时间的偏移量，以分钟为单位。",
       "description_en": "The offset, in minutes, from the local host to universal time.",
       "expressionName": "TimezoneOffset",
@@ -612,8 +694,8 @@
     },
     {
       "id": "getYear",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取年份",
+      "name_en": "GetYear",
       "description_zh": "根据本地时间，从时间戳中获取年份。",
       "description_en": "Get the year of the specified date according to local time.",
       "expressionName": "GetYear",
@@ -624,14 +706,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCYear",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区年份",
+      "name_en": "GetUTCYear",
       "description_zh": "根据世界标准时间，从时间戳中获取年份。",
       "description_en": "Get the year of the specified date according to universal time.",
       "expressionName": "GetUTCYear",
@@ -642,14 +726,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getMonth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取月份",
+      "name_en": "GetMonth",
       "description_zh": "根据本地时间，从时间戳中获取月份(0-11)。",
       "description_en": "Get the month (0–11) of the specified date according to local time.",
       "expressionName": "GetMonth",
@@ -660,14 +746,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCMonth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区月份",
+      "name_en": "GetUTCMonth",
       "description_zh": "根据世界标准时间，从时间戳中获取月份(0-11)。",
       "description_en": "Get the month (0–11) of the specified date according to universal time.",
       "expressionName": "GetUTCMonth",
@@ -678,14 +766,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getDate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取日期",
+      "name_en": "GetDate",
       "description_zh": "根据本地时间，从时间中戳获取日期(1-31)。",
       "description_en": "Get the date of the month (1-31) of the specified date according to local time.",
       "expressionName": "GetDate",
@@ -696,14 +786,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCDate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区日期",
+      "name_en": "GetUTCDate",
       "description_zh": "根据世界标准时间，从时间戳中获取月份(1-31)。",
       "description_en": "Get the date of the month (1-31) of the specified date according to universal time.",
       "expressionName": "GetUTCDate",
@@ -714,14 +806,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getDay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取星期",
+      "name_en": "GetDay",
       "description_zh": "根据本地时间，从时间戳中获取星期(0-6)。",
       "description_en": "Get the day (0-6) of the specified date according to local time.",
       "expressionName": "GetDay",
@@ -732,14 +826,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCDay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区天数",
+      "name_en": "GetUTCDay",
       "description_zh": "根据世界标准时间，从时间戳中获取星期(0-6)。",
       "description_en": "Get the day (0-6) of the specified date according to universal time.",
       "expressionName": "GetUTCDay",
@@ -750,14 +846,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取小时",
+      "name_en": "GetHours",
       "description_zh": "根据本地时间，从时间戳中获取小时(0-23)。",
       "description_en": "Get the hours (0-23) of the specified date according to local time.",
       "expressionName": "GetHours",
@@ -768,14 +866,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区小时",
+      "name_en": "GetUTCHours",
       "description_zh": "根据世界标准时间，从时间戳中获取小时(0-23)。",
       "description_en": "Get the hours (0-23) of the specified date according to universal time.",
       "expressionName": "GetUTCHours",
@@ -786,14 +886,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取分钟",
+      "name_en": "GetMinutes",
       "description_zh": "根据本地时间，从时间戳中获取分钟(0-59)。",
       "description_en": "Get the minutes (0-59) of the specified date according to local time.",
       "expressionName": "GetMinutes",
@@ -804,14 +906,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区分钟",
+      "name_en": "GetUTCMinutes",
       "description_zh": "根据世界标准时间，从时间戳中获取分钟(0-59)。",
       "description_en": "Get the minutes (0-59) of the specified date according to universal time.",
       "expressionName": "GetUTCMinutes",
@@ -822,14 +926,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取秒",
+      "name_en": "GetSeconds",
       "description_zh": "根据本地时间，从时间戳中获取秒数(0-59)。",
       "description_en": "Get the seconds (0-59) of the specified date according to local time.",
       "expressionName": "GetSeconds",
@@ -840,14 +946,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区秒数",
+      "name_en": "GetUTCSeconds",
       "description_zh": "根据世界标准时间，从时间戳中获取秒数(0-59)。",
       "description_en": "Get the seconds (0-59) of the specified date according to universal time.",
       "expressionName": "GetUTCSeconds",
@@ -858,14 +966,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getUTCMilliseconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取UTC时区毫秒",
+      "name_en": "GetUTCMilliseconds",
       "description_zh": "根据世界标准时间，从时间戳中获取毫秒(0-999)。",
       "description_en": "Get the milliseconds (0-999) of the specified date according to universal time.",
       "expressionName": "GetUTCMilliseconds",
@@ -876,14 +986,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "getMilliseconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取毫秒",
+      "name_en": "GetMilliseconds",
       "description_zh": "根据本地时间，从时间戳中获取毫秒(0-999)。",
       "description_en": "Get the milliseconds (0-999) of the specified date according to local time.",
       "expressionName": "GetMilliseconds",
@@ -894,14 +1006,16 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要提取信息的时间戳",
+          "desc_en": "The time stamp to extract information from"
         }
       ]
     },
     {
       "id": "difference",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "时间差",
+      "name_en": "Difference",
       "description_zh": "计算两个时间戳的差值。",
       "description_en": "The difference between two time stamps.",
       "expressionName": "Difference",
@@ -912,20 +1026,24 @@
           "id": "firstTimeStamp",
           "type": "number",
           "name_zh": "第一个时间戳",
-          "name_en": "FirstTimeStamp"
+          "name_en": "FirstTimeStamp",
+          "desc_zh": "第一个时间戳",
+          "desc_en": "The first time stamp"
         },
         {
           "id": "secondTimeStamp",
           "type": "number",
           "name_zh": "第二个时间戳",
-          "name_en": "SecondTimeStamp"
+          "name_en": "SecondTimeStamp",
+          "desc_zh": "第二个时间戳",
+          "desc_en": "The second time stamp"
         }
       ]
     },
     {
       "id": "changeYear",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换年份",
+      "name_en": "ChangeYear",
       "description_zh": "根据本地时间，更改时间戳中的年份。",
       "description_en": "Change the year of the specified date according to local time.",
       "expressionName": "ChangeYear",
@@ -936,20 +1054,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "year",
           "type": "number",
           "name_zh": "年",
-          "name_en": "Year"
+          "name_en": "Year",
+          "desc_zh": "新的年份",
+          "desc_en": "The new year"
         }
       ]
     },
     {
       "id": "changeUTCYear",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区年份",
+      "name_en": "ChangeUTCYear",
       "description_zh": "根据世界标准时间，更改时间戳中的年份。",
       "description_en": "Change the year of the specified date according to universal time.",
       "expressionName": "ChangeUTCYear",
@@ -960,20 +1082,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "year",
           "type": "number",
           "name_zh": "年",
-          "name_en": "Year"
+          "name_en": "Year",
+          "desc_zh": "新的年份",
+          "desc_en": "The new year"
         }
       ]
     },
     {
       "id": "changeMonth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换月份",
+      "name_en": "ChangeMonth",
       "description_zh": "根据本地时间，更改时间戳中的月份(0-11)。",
       "description_en": "Change the month (0–11) of the specified date according to local time.",
       "expressionName": "ChangeMonth",
@@ -984,20 +1110,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "month",
           "type": "number",
           "name_zh": "月",
-          "name_en": "Month"
+          "name_en": "Month",
+          "desc_zh": "新的月份",
+          "desc_en": "The new month"
         }
       ]
     },
     {
       "id": "changeUTCMonth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区月份",
+      "name_en": "ChangeUTCMonth",
       "description_zh": "根据世界标准时间，更改时间戳中的月份(0-11)。",
       "description_en": "Change the month (0–11) of the specified date according to universal time.",
       "expressionName": "ChangeUTCMonth",
@@ -1008,20 +1138,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "month",
           "type": "number",
           "name_zh": "月",
-          "name_en": "Month"
+          "name_en": "Month",
+          "desc_zh": "新的月份",
+          "desc_en": "The new month"
         }
       ]
     },
     {
       "id": "changeDate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换日期",
+      "name_en": "ChangeDate",
       "description_zh": "根据本地时间，更改时间戳中的日期(1-31)。",
       "description_en": "Change the date of the month (1-31) of the specified date according to local time.",
       "expressionName": "ChangeDate",
@@ -1032,20 +1166,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "date",
           "type": "number",
           "name_zh": "日期",
-          "name_en": "Date"
+          "name_en": "Date",
+          "desc_zh": "新的日期",
+          "desc_en": "The new date"
         }
       ]
     },
     {
       "id": "changeUTCDate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区日期",
+      "name_en": "ChangeUTCDate",
       "description_zh": "根据世界标准时间，更改时间戳中的日期(1-31)。",
       "description_en": "Change the date of the month (1-31) of the specified date according to universal time.",
       "expressionName": "ChangeUTCDate",
@@ -1056,20 +1194,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "date",
           "type": "number",
           "name_zh": "日期",
-          "name_en": "Date"
+          "name_en": "Date",
+          "desc_zh": "新的日期",
+          "desc_en": "The new date"
         }
       ]
     },
     {
       "id": "changeDay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换星期",
+      "name_en": "ChangeDay",
       "description_zh": "根据本地时间，更改时间戳中的星期(0-6)。",
       "description_en": "Change the day (0-6) of the specified date according to local time.",
       "expressionName": "ChangeDay",
@@ -1080,20 +1222,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "day",
           "type": "number",
           "name_zh": "星期",
-          "name_en": "Day"
+          "name_en": "Day",
+          "desc_zh": "新的星期",
+          "desc_en": "The new day"
         }
       ]
     },
     {
       "id": "changeUTCDay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区星期",
+      "name_en": "ChangeUTCDay",
       "description_zh": "根据世界标准时间，更改时间戳中的星期(0-6)。",
       "description_en": "Change the day (0-6) of the specified date according to universal time.",
       "expressionName": "ChangeUTCDay",
@@ -1104,20 +1250,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "day",
           "type": "number",
           "name_zh": "星期",
-          "name_en": "Day"
+          "name_en": "Day",
+          "desc_zh": "新的星期",
+          "desc_en": "The new day"
         }
       ]
     },
     {
       "id": "changeHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换小时",
+      "name_en": "ChangeHours",
       "description_zh": "根据本地时间，更改时间戳中的小时(0-23)。",
       "description_en": "Change the hours (0-23) of the specified date according to local time.",
       "expressionName": "ChangeHours",
@@ -1128,20 +1278,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "hours",
           "type": "number",
           "name_zh": "时",
-          "name_en": "Hours"
+          "name_en": "Hours",
+          "desc_zh": "新的小时",
+          "desc_en": "The new hours"
         }
       ]
     },
     {
       "id": "changeUTCHours",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区小时",
+      "name_en": "ChangeUTCHours",
       "description_zh": "根据世界标准时间，更改时间戳中的小时(0-23)。",
       "description_en": "Change the hours (0-23) of the specified date according to universal time.",
       "expressionName": "ChangeUTCHours",
@@ -1152,20 +1306,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "hours",
           "type": "number",
           "name_zh": "时",
-          "name_en": "Hours"
+          "name_en": "Hours",
+          "desc_zh": "新的小时",
+          "desc_en": "The new hours"
         }
       ]
     },
     {
       "id": "changeMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换分钟",
+      "name_en": "ChangeMinutes",
       "description_zh": "根据本地时间，更改时间戳中的分钟(0-60)。",
       "description_en": "Change the minutes (0-59) of the specified date according to local time.",
       "expressionName": "ChangeMinutes",
@@ -1176,20 +1334,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "minutes",
           "type": "number",
           "name_zh": "分",
-          "name_en": "Minutes"
+          "name_en": "Minutes",
+          "desc_zh": "新的分钟",
+          "desc_en": "The new minutes"
         }
       ]
     },
     {
       "id": "changeUTCMinutes",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区分钟",
+      "name_en": "ChangeUTCMinutes",
       "description_zh": "根据世界标准时间，更改时间戳中的分钟(0-60)。",
       "description_en": "Change the minutes (0-59) of the specified date according to universal time.",
       "expressionName": "ChangeUTCMinutes",
@@ -1200,20 +1362,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "minutes",
           "type": "number",
           "name_zh": "分钟",
-          "name_en": "Minutes"
+          "name_en": "Minutes",
+          "desc_zh": "新的分钟",
+          "desc_en": "The new minutes"
         }
       ]
     },
     {
       "id": "changeSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换秒",
+      "name_en": "ChangeSeconds",
       "description_zh": "根本地时间，更改时间戳中的秒数(0-60)。",
       "description_en": "Change the seconds (0-59) of the specified date according to local time.",
       "expressionName": "ChangeSeconds",
@@ -1224,20 +1390,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "seconds",
           "type": "number",
           "name_zh": "秒",
-          "name_en": "Seconds"
+          "name_en": "Seconds",
+          "desc_zh": "新的秒数",
+          "desc_en": "The new seconds"
         }
       ]
     },
     {
       "id": "changeUTCSeconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区秒数",
+      "name_en": "ChangeUTCSeconds",
       "description_zh": "根据世界标准时间，更改时间戳中的秒数(0-60)。",
       "description_en": "Change the seconds (0-59) of the specified date according to universal time.",
       "expressionName": "ChangeUTCSeconds",
@@ -1248,20 +1418,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "seconds",
           "type": "number",
           "name_zh": "秒",
-          "name_en": "Seconds"
+          "name_en": "Seconds",
+          "desc_zh": "新的秒数",
+          "desc_en": "The new seconds"
         }
       ]
     },
     {
       "id": "changeMilliseconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换毫秒",
+      "name_en": "ChangeMilliseconds",
       "description_zh": "根据本地时间，更改时间戳中的毫秒(0-999)。",
       "description_en": "Change the milliseconds (0-999) of the specified date according to local time.",
       "expressionName": "ChangeMilliseconds",
@@ -1272,20 +1446,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "新的毫秒",
+          "desc_en": "The new milliseconds"
         }
       ]
     },
     {
       "id": "changeUTCMilliseconds",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换UTC时区毫秒",
+      "name_en": "ChangeUTCMilliseconds",
       "description_zh": "根据世界标准时间，更改时间戳中的毫秒(0-999)。",
       "description_en": "Change the milliseconds (0-999) of the specified date according to universal time.",
       "expressionName": "ChangeUTCMilliseconds",
@@ -1296,20 +1474,24 @@
           "id": "timeStamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "TimeStamp"
+          "name_en": "TimeStamp",
+          "desc_zh": "要进行修改的时间戳",
+          "desc_en": "The time stamp to modify"
         },
         {
           "id": "milliseconds",
           "type": "number",
           "name_zh": "毫秒",
-          "name_en": "Milliseconds"
+          "name_en": "Milliseconds",
+          "desc_zh": "新的毫秒",
+          "desc_en": "The new milliseconds"
         }
       ]
     },
     {
       "id": "format-date-with-styles",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "样式格式化",
+      "name_en": "FormatDateWithStyles",
       "description_zh": "转换指定语言环境的标准日期时间显示格式。如: '2017年12月4日 星期三 下午2:30'",
       "description_en": "Format a timestamp with a locale and the specified styles",
       "expressionName": "FormatDateWithStyles",
@@ -1320,38 +1502,48 @@
           "id": "locale",
           "type": "string",
           "name_zh": "区域",
-          "name_en": "Locale"
+          "name_en": "Locale",
+          "desc_zh": "用于格式化的区域设置。",
+          "desc_en": "The locale to use for formatting"
         },
         {
           "id": "time-stamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "Timestamp"
+          "name_en": "Timestamp",
+          "desc_zh": "格式化UTC时间戳",
+          "desc_en": "The UTC timestamp to format"
         },
         {
           "id": "date-style",
           "type": "string",
           "name_zh": "日期格式",
-          "name_en": "Date style"
+          "name_en": "Date style",
+          "desc_zh": "可选的日期样式，可以是 'full'、'long'、'medium'或'short'。忽略则使用空字符串。",
+          "desc_en": "Optional date style can be any of 'full', 'long', 'medium' or 'short'. Ignore using an empty string"
         },
         {
           "id": "time-style",
           "type": "string",
           "name_zh": "时间格式",
-          "name_en": "Time style"
+          "name_en": "Time style",
+          "desc_zh": "可选的时间样式，可以是'full'、'long'、'medium' 或 'short' ，忽略则使用空字符串。",
+          "desc_en": "Optional time style can be any of 'full', 'long', 'medium' or 'short'. Ignore using an empty string"
         },
         {
           "id": "hour-format",
           "type": "string",
           "name_zh": "小时制",
-          "name_en": "Hour format"
+          "name_en": "Hour format",
+          "desc_zh": "可选的小时制格式，可以是 '12' 或 '24' 。空字符串为用户设备默认的格式。",
+          "desc_en": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
         }
       ]
     },
     {
       "id": "format-date-with-components",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "组件格式化",
+      "name_en": "FormatDateWithComponents",
       "description_zh": "转换指定语言环境的时间自定义格式。如: '周三 12月04日 14:30'",
       "description_en": "Format a timestamp with a locale and the specified components",
       "expressionName": "FormatDateWithComponents",
@@ -1362,61 +1554,81 @@
           "id": "locale",
           "type": "string",
           "name_zh": "区域",
-          "name_en": "Locale"
+          "name_en": "Locale",
+          "desc_zh": "用于格式化的区域设置。",
+          "desc_en": "The locale to use for formatting"
         },
         {
           "id": "time-stamp",
           "type": "number",
           "name_zh": "时间戳",
-          "name_en": "Timestamp"
+          "name_en": "Timestamp",
+          "desc_zh": "格式化UTC时间戳",
+          "desc_en": "The UTC timestamp to format"
         },
         {
           "id": "weekday",
           "type": "string",
           "name_zh": "星期",
-          "name_en": "Weekday"
+          "name_en": "Weekday",
+          "desc_zh": "可选的星期格式，可以是'long'、'short' 或 'narrow' 之一。忽略则使用空字符串。",
+          "desc_en": "Optional week day format can be any of 'long', 'short' or 'narrow'. Ignore using an empty string"
         },
         {
           "id": "year",
           "type": "string",
           "name_zh": "年",
-          "name_en": "Year"
+          "name_en": "Year",
+          "desc_zh": "可选的年份格式，可以是 'numeric' 或 '2-digit'。忽略则使用空字符串。",
+          "desc_en": "Optional year format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
         },
         {
           "id": "month",
           "type": "string",
           "name_zh": "月",
-          "name_en": "Month"
+          "name_en": "Month",
+          "desc_zh": "可选的月份格式，可以是'numeric'、'2-digit'、'long'、'short' 或 'narrow'。忽略则使用空字符串。",
+          "desc_en": "Optional month format can be any of 'numeric', '2-digit', 'long', 'short' or 'narrow'. Ignore using an empty string"
         },
         {
           "id": "day",
           "type": "string",
           "name_zh": "日",
-          "name_en": "Day"
+          "name_en": "Day",
+          "desc_zh": "可选的日期格式，可以是 'numeric' 或 '2-digit' 。忽略则使用空字符串。",
+          "desc_en": "Optional day format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
         },
         {
           "id": "hour",
           "type": "string",
           "name_zh": "时",
-          "name_en": "Hour"
+          "name_en": "Hour",
+          "desc_zh": "可选的小时格式可以是 'numeric' 或 '2-digit' 。忽略则使用空字符串。",
+          "desc_en": "Optional hour format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
         },
         {
           "id": "minute",
           "type": "string",
           "name_zh": "分",
-          "name_en": "Minute"
+          "name_en": "Minute",
+          "desc_zh": "可选的分钟格式，可以是'numeric' 或 '2-digit'。忽略则使用空字符串。",
+          "desc_en": "Optional minute format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
         },
         {
           "id": "second",
           "type": "string",
           "name_zh": "秒",
-          "name_en": "Second"
+          "name_en": "Second",
+          "desc_zh": "可选的秒格式，可以是 'numeric' 或 '2-digit'。忽略则使用空字符串。",
+          "desc_en": "Optional second format can be any of 'numeric' or '2-digit'. Ignore using an empty string"
         },
         {
           "id": "hour-format",
           "type": "string",
           "name_zh": "小时制",
-          "name_en": "Hour format"
+          "name_en": "Hour format",
+          "desc_zh": "可选的小时格式，可以是 '12' 或 '24'。空字符串为用户设备默认的格式。",
+          "desc_en": "Optional hour format can be '12' or '24'. An empty string will produce a locale dependant result"
         }
       ]
     }

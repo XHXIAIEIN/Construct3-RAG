@@ -14,7 +14,9 @@
       "name_en": "Is dragging",
       "description_zh": "检测对象是否正处于被拖动状态中。",
       "description_en": "True if the object is currently being dragged.",
-      "scriptName": "IsDragging"
+      "scriptName": "IsDragging",
+      "display_zh": "{my} 正在拖动",
+      "display_en": "{my} is dragging"
     },
     {
       "id": "on-drag-start",
@@ -23,7 +25,9 @@
       "description_zh": "当对象处于拖动中触发",
       "description_en": "Triggered when the object begins to be dragged.",
       "scriptName": "OnDragStart",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 开始拖动",
+      "display_en": "On {my} drag start"
     },
     {
       "id": "on-drop",
@@ -32,7 +36,9 @@
       "description_zh": "当对象被放下时触发，即拖动效果结束，手势或鼠标松开。",
       "description_en": "Triggered when the object is dropped (the drag stops).",
       "scriptName": "OnDrop",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 结束拖动",
+      "display_en": "On {my} drop"
     },
     {
       "id": "is-enabled",
@@ -40,7 +46,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测此行为是否已启用。",
       "description_en": "True if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -70,9 +78,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Choose whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}"
     },
     {
       "id": "set-axes",
@@ -105,9 +117,13 @@
               "zh": "仅垂直方向",
               "en": "Vertical only"
             }
-          }
+          },
+          "desc_zh": "选择可被拖动的方向。",
+          "desc_en": "The ways in which the object can be dragged."
         }
-      ]
+      ],
+      "display_zh": "设置{my}的拖动方向为 [b]{0}[/b]",
+      "display_en": "Set {my} axes [b]{0}[/b]"
     },
     {
       "id": "drop",
@@ -115,7 +131,9 @@
       "name_en": "Drop",
       "description_zh": "如果当前正在拖动，强制放下此对象。",
       "description_en": "If currently being dragged, force the object to be dropped.",
-      "scriptName": "Drop"
+      "scriptName": "Drop",
+      "display_zh": "放下 {my}",
+      "display_en": "Drop {my}"
     }
   ],
   "expressions": [],

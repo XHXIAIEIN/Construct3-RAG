@@ -24,15 +24,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select how to compare the current selection."
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要比较的所选项的索引。",
+          "desc_en": "The index of the selected item to compare to."
         }
-      ]
+      ],
+      "display_zh": "当前选择项索引 {0} [b]{1}[/b]",
+      "display_en": "Selected item {0} [b]{1}[/b]"
     },
     {
       "id": "on-selection-changed",
@@ -42,7 +48,9 @@
       "description_en": "Triggered when the selected item changes.",
       "scriptName": "OnSelectionChanged",
       "isTrigger": true,
-      "category": "list"
+      "category": "list",
+      "display_zh": "选择项变更",
+      "display_en": "On selection changed"
     },
     {
       "id": "on-clicked",
@@ -52,7 +60,9 @@
       "description_en": "Triggered when the list is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "list"
+      "category": "list",
+      "display_zh": "点击列表",
+      "display_en": "On clicked"
     },
     {
       "id": "on-double-clicked",
@@ -62,7 +72,9 @@
       "description_en": "Triggered when the list is double-clicked.",
       "scriptName": "OnDoubleClicked",
       "isTrigger": true,
-      "category": "list"
+      "category": "list",
+      "display_zh": "双击列表",
+      "display_en": "On double-clicked"
     },
     {
       "id": "compare-selected-item-text",
@@ -77,7 +89,9 @@
           "id": "text-to-compare",
           "type": "string",
           "name_zh": "要比较的内容",
-          "name_en": "Text to compare"
+          "name_en": "Text to compare",
+          "desc_zh": "要进行比较的文本。",
+          "desc_en": "Enter the text to compare with the selected item's text."
         },
         {
           "id": "case-sensitivity",
@@ -97,9 +111,13 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          }
+          },
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
         }
-      ]
+      ],
+      "display_zh": "当前选择项内容为[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Selected item text is [b]{0}[/b] [i]({1})[/i]"
     },
     {
       "id": "compare-item-text-at",
@@ -114,13 +132,17 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要比较的选项在列表的索引位置，从 0 开始计数。",
+          "desc_en": "The zero-based index of the item text to compare with."
         },
         {
           "id": "text-to-compare",
           "type": "string",
           "name_zh": "要比较的文字",
-          "name_en": "Text to compare"
+          "name_en": "Text to compare",
+          "desc_zh": "输入要与项目文本进行比较的文本。",
+          "desc_en": "Enter the text to compare with the item's text."
         },
         {
           "id": "case-sensitivity",
@@ -140,9 +162,13 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          }
+          },
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
         }
-      ]
+      ],
+      "display_zh": "选项[b]{0}[/b]是[b]{1}[/b] [i]({2})[/i]",
+      "display_en": "Item [b]{0}[/b] text is [b]{1}[/b] [i]({2})[/i]"
     }
   ],
   "actions": [
@@ -159,9 +185,13 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要选择的选项在列表的索引位置，从 0 开始计数。",
+          "desc_en": "The zero-based index of the item to select."
         }
-      ]
+      ],
+      "display_zh": "选择列表第 [i]{0}[/i] 项",
+      "display_en": "Select item [i]{0}[/i]"
     },
     {
       "id": "add-item",
@@ -176,9 +206,13 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要添加的项目文本。",
+          "desc_en": "The item text to add."
         }
-      ]
+      ],
+      "display_zh": "添加选项 [i]{0}[/i]",
+      "display_en": "Add item [i]{0}[/i]"
     },
     {
       "id": "add-item-at",
@@ -193,15 +227,21 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "将选项添加到列表的索引位置，从0开始计数。",
+          "desc_en": "The zero-based index of the item to insert before."
         },
         {
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要添加的待选项的文本。",
+          "desc_en": "The item text to add."
         }
-      ]
+      ],
+      "display_zh": "添加选项 [i]{0}[/i] 到位置 [i]{1}[/i]",
+      "display_en": "Add item [i]{1}[/i] at index [i]{0}[/i]"
     },
     {
       "id": "remove",
@@ -216,9 +256,13 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要删除的项的从零开始的索引。",
+          "desc_en": "The zero-based index of the item to remove."
         }
-      ]
+      ],
+      "display_zh": "删除选项 [i]{0}[/i]",
+      "display_en": "Remove item [i]{0}[/i]"
     },
     {
       "id": "set-item-text",
@@ -233,15 +277,21 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要更改的项的从零开始的索引。",
+          "desc_en": "The zero-based index of the item to change."
         },
         {
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要设置的选项文本。",
+          "desc_en": "The item text to set."
         }
-      ]
+      ],
+      "display_zh": "设置列表选项[i]{0}[/i]文本为[i]{1}[/i]",
+      "display_en": "Set item [i]{0}[/i] text to [i]{1}[/i]"
     },
     {
       "id": "clear",
@@ -250,7 +300,9 @@
       "description_zh": "删除列表中的所有待选项。",
       "description_en": "Remove all items from the list.",
       "scriptName": "Clear",
-      "category": "items"
+      "category": "items",
+      "display_zh": "清空列表",
+      "display_en": "Clear all items"
     },
     {
       "id": "set-tooltip",
@@ -265,16 +317,20 @@
           "id": "tooltip",
           "type": "string",
           "name_zh": "工具提示",
-          "name_en": "Tooltip"
+          "name_en": "Tooltip",
+          "desc_zh": "要弹出的工具提示信息。",
+          "desc_en": "The tooltip to set on the list."
         }
-      ]
+      ],
+      "display_zh": "设置工具提示为[i]{0}[/i]",
+      "display_en": "Set tooltip to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "itemcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "列表项数量",
+      "name_en": "ItemCount",
       "description_zh": "列表中的选项数量。",
       "description_en": "The number of items in the list.",
       "expressionName": "ItemCount",
@@ -283,8 +339,8 @@
     },
     {
       "id": "selectedindex",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已选项索引",
+      "name_en": "SelectedIndex",
       "description_zh": "当前所选项目的从零开始的索引。",
       "description_en": "The zero-based index of the currently selected item.",
       "expressionName": "SelectedIndex",
@@ -293,8 +349,8 @@
     },
     {
       "id": "selectedtext",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已选项文本",
+      "name_en": "SelectedText",
       "description_zh": "当前选项的文本。",
       "description_en": "The text of the currently selected item.",
       "expressionName": "SelectedText",
@@ -303,8 +359,8 @@
     },
     {
       "id": "selectedcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已选项数量",
+      "name_en": "SelectedCount",
       "description_zh": "在多选列表框中，当前所选项目的数量。",
       "description_en": "In a multi-select list box, the number of currently selected items.",
       "expressionName": "SelectedCount",
@@ -313,8 +369,8 @@
     },
     {
       "id": "selectedindexat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取已选项索引",
+      "name_en": "SelectedIndexAt",
       "description_zh": "在多选列表框中，当前选中的第N个项目的索引。",
       "description_en": "In a multi-select list box, the index of the Nth selected item.",
       "expressionName": "SelectedIndexAt",
@@ -325,14 +381,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "文本在已选项的索引，从 0 开始计数。",
+          "desc_en": "Selected item number to get index from."
         }
       ]
     },
     {
       "id": "selectedtextat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取已选项文本",
+      "name_en": "SelectedTextAt",
       "description_zh": "在多选列表框中，当前选中的第N个项目的文本。",
       "description_en": "In a multi-select list box, the text of the Nth selected item.",
       "expressionName": "SelectedTextAt",
@@ -343,14 +401,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "文本在已选项的索引，从 0 开始计数。",
+          "desc_en": "Selected item number to get text from."
         }
       ]
     },
     {
       "id": "itemtextat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取选项文本",
+      "name_en": "ItemTextAt",
       "description_zh": "获取列表中第n个项目的文本。",
       "description_en": "The text of the Nth item in the list.",
       "expressionName": "ItemTextAt",
@@ -361,7 +421,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "文本在列表选项的索引，从 0 开始计数。",
+          "desc_en": "Item number to get text from."
         }
       ]
     }

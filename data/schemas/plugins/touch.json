@@ -20,7 +20,9 @@
       "description_en": "Triggered when a touch held in the same place for a time.",
       "scriptName": "OnHoldGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "display_zh": "长按屏幕",
+      "display_en": "On hold gesture"
     },
     {
       "id": "on-tap",
@@ -30,7 +32,9 @@
       "description_en": "Triggered when a touch is quickly released from its start location.",
       "scriptName": "OnTapGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "display_zh": "点击屏幕",
+      "display_en": "On tap gesture"
     },
     {
       "id": "on-double-tap",
@@ -40,7 +44,9 @@
       "description_en": "Triggered when two taps occur in quick succession.",
       "scriptName": "OnDoubleTapGesture",
       "isTrigger": true,
-      "category": "gestures"
+      "category": "gestures",
+      "display_zh": "双击屏幕",
+      "display_en": "On double-tap gesture"
     },
     {
       "id": "on-hold-over-object",
@@ -56,9 +62,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查的对象。",
+          "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "display_zh": "长按 {0}",
+      "display_en": "On hold gesture over {0}"
     },
     {
       "id": "on-tap-object",
@@ -74,9 +84,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查的对象。",
+          "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "display_zh": "点击 {0}",
+      "display_en": "On tap gesture on {0}"
     },
     {
       "id": "on-double-tap-object",
@@ -92,9 +106,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查的对象。",
+          "desc_en": "Choose the object to check."
         }
-      ]
+      ],
+      "display_zh": "双击 {0}",
+      "display_en": "On double-tap gesture on {0}"
     },
     {
       "id": "device-orientation-supported",
@@ -148,21 +166,29 @@
               "zh": "Gamma",
               "en": "Gamma"
             }
-          }
+          },
+          "desc_zh": "要比较的方向。alpha: 水平方向, beta: 前后倾斜, gamma: 左右倾斜。",
+          "desc_en": "Choose the orientation to compare (alpha = compass direction, beta = front-to-back tilt, gamma = left-to-right tilt)."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the orientation."
         },
         {
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "要比较的角度方向，以度为单位。",
+          "desc_en": "The orientation to compare to, in degrees."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] 方向 {1} [b]{2}[/b]",
+      "display_en": "[b]{0}[/b] orientation {1} [b]{2}[/b]"
     },
     {
       "id": "compare-acceleration",
@@ -211,21 +237,29 @@
               "zh": "Z (不计算重力)",
               "en": "Z (without gravity)"
             }
-          }
+          },
+          "desc_zh": "选择要比较加速度的轴，以及测量是否应包括重力。",
+          "desc_en": "Choose the axis to compare acceleration for, and whether the measurement should include the force of gravity."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the acceleration."
         },
         {
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "要比较的加速度，单位为m/s^2。",
+          "desc_en": "The acceleration to compare to, in m/s^2."
         }
-      ]
+      ],
+      "display_zh": "{0} 加速度 {1} [b]{2}[/b]",
+      "display_en": "{0} acceleration {1} [b]{2}[/b]"
     },
     {
       "id": "on-permission-granted",
@@ -255,9 +289,13 @@
               "zh": "运动",
               "en": "Motion"
             }
-          }
+          },
+          "desc_zh": "请求的权限类型。",
+          "desc_en": "The type of permission."
         }
-      ]
+      ],
+      "display_zh": "[i]{0}[/i]权限被允许",
+      "display_en": "On [i]{0}[/i] permission granted"
     },
     {
       "id": "on-permission-denied",
@@ -287,9 +325,13 @@
               "zh": "运动",
               "en": "Motion"
             }
-          }
+          },
+          "desc_zh": "请求的权限类型。",
+          "desc_en": "The type of permission."
         }
-      ]
+      ],
+      "display_zh": "请求[i]{0}[/i]权限被拒绝",
+      "display_en": "On [i]{0}[/i] permission denied"
     },
     {
       "id": "on-any-touch-start",
@@ -299,7 +341,9 @@
       "description_en": "Triggered when any touch input begins.",
       "scriptName": "OnTouchStart",
       "isTrigger": true,
-      "category": "touch"
+      "category": "touch",
+      "display_zh": "任意按住开始",
+      "display_en": "On any touch start"
     },
     {
       "id": "on-any-touch-end",
@@ -309,7 +353,9 @@
       "description_en": "Triggered when any touch input ends.",
       "scriptName": "OnTouchEnd",
       "isTrigger": true,
-      "category": "touch"
+      "category": "touch",
+      "display_zh": "任意按住结束",
+      "display_en": "On any touch end"
     },
     {
       "id": "is-in-touch",
@@ -318,7 +364,9 @@
       "description_zh": "检测当前是否有任意手指正在与设备接触。",
       "description_en": "True if any touch is currently in contact with the device.",
       "scriptName": "IsInTouch",
-      "category": "touch"
+      "category": "touch",
+      "display_zh": "正在按住",
+      "display_en": "Is in touch"
     },
     {
       "id": "on-touched-object",
@@ -334,7 +382,9 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查触摸的对象。",
+          "desc_en": "Choose the object to check for touch."
         },
         {
           "id": "type",
@@ -354,9 +404,13 @@
               "zh": "结束",
               "en": "end"
             }
-          }
+          },
+          "desc_zh": "在触摸对象开始或结束时触发。",
+          "desc_en": "Whether to trigger when starting or ending a touch on the object."
         }
-      ]
+      ],
+      "display_zh": "触摸{0} ([i]{1}[/i])",
+      "display_en": "On touched {0} ([i]{1}[/i])"
     },
     {
       "id": "is-touching-object",
@@ -371,9 +425,13 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查被触摸的对象。",
+          "desc_en": "Choose the object to check for being touched."
         }
-      ]
+      ],
+      "display_zh": "正在触摸 {0}",
+      "display_en": "Is touching {0}"
     },
     {
       "id": "compare-touch-speed",
@@ -388,21 +446,29 @@
           "id": "touch-index",
           "type": "number",
           "name_zh": "触控点",
-          "name_en": "Touch index"
+          "name_en": "Touch index",
+          "desc_zh": "要检测的触控点的索引，从0开始的计数。如第 1 根手指的索引为0，第 2 根手指的索引为1...以此类推。",
+          "desc_en": "The zero-based index of the touch to test the speed for.  0 is the first touch."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the touch speed."
         },
         {
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "要比较的速度，以每秒绝对像素为单位。",
+          "desc_en": "Speed to compare to, in absolute pixels per second."
         }
-      ]
+      ],
+      "display_zh": "触控点[b]{0}[/b]滑动速度 {1}[b]{2} [/b]",
+      "display_en": "Touch [b]{0}[/b] speed {1} [b]{2}[/b]"
     },
     {
       "id": "on-nth-touch-start",
@@ -418,9 +484,13 @@
           "id": "touch-number",
           "type": "number",
           "name_zh": "触控点",
-          "name_en": "Touch number"
+          "name_en": "Touch number",
+          "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
+          "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "display_zh": "第 {0} 触控点按下",
+      "display_en": "On touch {0} start"
     },
     {
       "id": "on-nth-touch-end",
@@ -436,9 +506,13 @@
           "id": "touch-number",
           "type": "number",
           "name_zh": "触控点",
-          "name_en": "Touch number"
+          "name_en": "Touch number",
+          "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
+          "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "display_zh": "第 {0} 触控点松开",
+      "display_en": "On touch {0} end"
     },
     {
       "id": "has-nth-touch",
@@ -453,9 +527,13 @@
           "id": "touch-number",
           "type": "number",
           "name_zh": "触控点",
-          "name_en": "Touch number"
+          "name_en": "Touch number",
+          "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
+          "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ]
+      ],
+      "display_zh": "存在第 {0} 触控点",
+      "display_en": "Has touch {0}"
     }
   ],
   "actions": [
@@ -486,16 +564,20 @@
               "zh": "运动",
               "en": "Motion"
             }
-          }
+          },
+          "desc_zh": "权限类型",
+          "desc_en": "The type of permission."
         }
-      ]
+      ],
+      "display_zh": "请求[b]{0}[/b]权限",
+      "display_en": "Request [b]{0}[/b] permission"
     }
   ],
   "expressions": [
     {
       "id": "compass-heading",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "罗盘方向",
+      "name_en": "CompassHeading",
       "description_zh": "设备相对于正北的罗盘方向，以角度为单位。",
       "description_en": "The device compass direction relative to due north, in degrees.",
       "expressionName": "CompassHeading",
@@ -504,8 +586,8 @@
     },
     {
       "id": "alpha",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Alpha",
+      "name_en": "Alpha",
       "description_zh": "相对于设备初始角度的罗盘方向，以角度为单位。",
       "description_en": "The device compass direction relative to the device initial angle, in degrees.",
       "expressionName": "Alpha",
@@ -514,8 +596,8 @@
     },
     {
       "id": "beta",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Beta",
+      "name_en": "Beta",
       "description_zh": "设备前后倾斜的角度。正数表示向前。",
       "description_en": "The device front-to-back tilt, in degrees (front is positive).",
       "expressionName": "Beta",
@@ -524,8 +606,8 @@
     },
     {
       "id": "gamma",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Gamma",
+      "name_en": "Gamma",
       "description_zh": "设备左右倾斜的角度。正数表示向右。",
       "description_en": "The device left-to-right tilt, in degrees (right is positive).",
       "expressionName": "Gamma",
@@ -534,8 +616,8 @@
     },
     {
       "id": "accelerationxwithg",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力加速度X",
+      "name_en": "AccelerationXWithG",
       "description_zh": "获取设备在X轴的重力加速度，使用前需要获得设备运动权限。",
       "description_en": "The device X acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationXWithG",
@@ -544,8 +626,8 @@
     },
     {
       "id": "accelerationywithg",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力加速度Y",
+      "name_en": "AccelerationYWithG",
       "description_zh": "获取设备在Y轴的重力加速度，使用前需要获得设备运动权限。",
       "description_en": "The device Y acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationYWithG",
@@ -554,8 +636,8 @@
     },
     {
       "id": "accelerationzwithg",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重力加速度Z",
+      "name_en": "AccelerationZWithG",
       "description_zh": "获取设备在Z轴的重力加速度，使用前需要获得设备运动权限。",
       "description_en": "The device Z acceleration with gravity, in m/s^2.",
       "expressionName": "AccelerationZWithG",
@@ -564,8 +646,8 @@
     },
     {
       "id": "accelerationx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度X",
+      "name_en": "AccelerationX",
       "description_zh": "获取设备在X轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
       "description_en": "The device X acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationX",
@@ -574,8 +656,8 @@
     },
     {
       "id": "accelerationy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度Y",
+      "name_en": "AccelerationY",
       "description_zh": "获取设备在Y轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
       "description_en": "The device Y acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationY",
@@ -584,8 +666,8 @@
     },
     {
       "id": "accelerationz",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度Z",
+      "name_en": "AccelerationZ",
       "description_zh": "获取设备在Z轴的加速度，不考虑重力影响，使用前需要获得设备运动权限。",
       "description_en": "The device Z acceleration without gravity (if supported), in m/s^2.",
       "expressionName": "AccelerationZ",
@@ -594,8 +676,8 @@
     },
     {
       "id": "x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "X",
+      "name_en": "X",
       "description_zh": "获取触控点在图层的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
       "description_en": "Get the primary touch X co-ordinate in the layout.",
       "expressionName": "X",
@@ -604,8 +686,8 @@
     },
     {
       "id": "y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Y",
+      "name_en": "Y",
       "description_zh": "获取触控点在图层的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
       "description_en": "Get the primary touch Y co-ordinate in the layout.",
       "expressionName": "Y",
@@ -614,8 +696,8 @@
     },
     {
       "id": "absolutex",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "绝对坐标X",
+      "name_en": "AbsoluteX",
       "description_zh": "获得触控点在画布的X坐标，不会受缩放或滚动的影响。",
       "description_en": "Get the primary touch X co-ordinate on the canvas.",
       "expressionName": "AbsoluteX",
@@ -624,8 +706,8 @@
     },
     {
       "id": "absolutey",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "绝对坐标Y",
+      "name_en": "AbsoluteY",
       "description_zh": "获得触控点在画布的Y坐标，不会受缩放或滚动的影响。",
       "description_en": "Get the primary touch Y co-ordinate on the canvas.",
       "expressionName": "AbsoluteY",
@@ -634,8 +716,8 @@
     },
     {
       "id": "touchcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点数量",
+      "name_en": "TouchCount",
       "description_zh": "获取当前触摸的数量。",
       "description_en": "Get the number of current touches.",
       "expressionName": "TouchCount",
@@ -644,8 +726,8 @@
     },
     {
       "id": "xat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点坐标X",
+      "name_en": "XAt",
       "description_zh": "获取触控点位于场景的 X 坐标。",
       "description_en": "Get a touch X co-ordinate in the layout from a zero-based index of the touch.",
       "expressionName": "XAt",
@@ -656,14 +738,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "触控点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "yat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点坐标Y",
+      "name_en": "YAt",
       "description_zh": "获取触控点位于场景的 Y 坐标。",
       "description_en": "Get a touch Y co-ordinate in the layout from a zero-based index of the touch.",
       "expressionName": "YAt",
@@ -674,14 +758,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "触控点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "absolutexat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点绝对坐标X",
+      "name_en": "AbsoluteXAt",
       "description_zh": "获取触控点在画布的 X 坐标。不会受到滚动或缩放的影响。",
       "description_en": "Get a touch X co-ordinate on the canvas from a zero-based index of the touch.",
       "expressionName": "AbsoluteXAt",
@@ -692,14 +778,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的触点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "absoluteyat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点绝对坐标Y",
+      "name_en": "AbsoluteYAt",
       "description_zh": "获取触控点在画布的 Y 坐标。不会受到滚动或缩放的影响。",
       "description_en": "Get a touch Y co-ordinate on the canvas from a zero-based index of the touch.",
       "expressionName": "AbsoluteYAt",
@@ -710,14 +798,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的触点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "speedat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点速度",
+      "name_en": "SpeedAt",
       "description_zh": "以每秒绝对（屏幕）像素获得触摸速度。",
       "description_en": "Get the speed of a touch, in absolute (screen) pixels per second.",
       "expressionName": "SpeedAt",
@@ -728,14 +818,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的触点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "angleat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点角度",
+      "name_en": "AngleAt",
       "description_zh": "获得触摸的运动角度，以度为单位。",
       "description_en": "Get the angle of motion of a touch, in degrees.",
       "expressionName": "AngleAt",
@@ -746,14 +838,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "要获取的触点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of the touch to get."
         }
       ]
     },
     {
       "id": "touchindex",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点索引",
+      "name_en": "TouchIndex",
       "description_zh": "获取当前触点的索引。",
       "description_en": "Get the index of the current touch.",
       "expressionName": "TouchIndex",
@@ -762,8 +856,8 @@
     },
     {
       "id": "touchid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点ID",
+      "name_en": "TouchID",
       "description_zh": "获取当前触控点的唯一ID",
       "description_en": "Get the unique ID of the current touch.",
       "expressionName": "TouchID",
@@ -772,8 +866,8 @@
     },
     {
       "id": "xforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点坐标X",
+      "name_en": "XForID",
       "description_zh": "获取指定触控点在场景的X坐标。",
       "description_en": "Get a touch X co-ordinate in the layout for a touch with a specific ID.",
       "expressionName": "XForID",
@@ -784,14 +878,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触点ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "yforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点坐标Y",
+      "name_en": "YForID",
       "description_zh": "获取指定触控点在场景的Y坐标。",
       "description_en": "Get a touch Y co-ordinate in the layout for a touch with a specific ID.",
       "expressionName": "YForID",
@@ -802,14 +898,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "absolutexforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点绝对坐标X",
+      "name_en": "AbsoluteXForID",
       "description_zh": "获取指定触控点在画布的X坐标，不受缩放和滚动影响。",
       "description_en": "Get a touch X co-ordinate on the canvas for a touch with a specific ID.",
       "expressionName": "AbsoluteXForID",
@@ -820,14 +918,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "absoluteyforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点绝对坐标Y",
+      "name_en": "AbsoluteYForID",
       "description_zh": "获取指定触控点在画布的Y坐标，不受缩放和滚动影响。",
       "description_en": "Get a touch Y co-ordinate on the canvas for a touch with a specific ID.",
       "expressionName": "AbsoluteYForID",
@@ -838,14 +938,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "speedforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点速度",
+      "name_en": "SpeedForID",
       "description_zh": "获取指定触摸点的绝对运动速度，以像素每秒为单位。",
       "description_en": "Get the speed of a touch with a specific ID, in absolute (screen) pixels per second.",
       "expressionName": "SpeedForID",
@@ -856,14 +958,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "angleforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点角度",
+      "name_en": "AngleForID",
       "description_zh": "获取指定触摸点的运动角度，以角度为单位。",
       "description_en": "Get the angle of motion of a touch with a specific ID, in degrees.",
       "expressionName": "AngleForID",
@@ -874,14 +978,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸点ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "widthforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点宽度",
+      "name_en": "WidthForID",
       "description_zh": "获取指定触控点触摸区域的宽度。",
       "description_en": "Get the width of a touch with a specific ID.",
       "expressionName": "WidthForID",
@@ -892,14 +998,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "heightforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点高度",
+      "name_en": "HeightForID",
       "description_zh": "获取指定触控点触摸区域的高度。",
       "description_en": "Get the height of a touch with a specific ID.",
       "expressionName": "HeightForID",
@@ -910,14 +1018,16 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     },
     {
       "id": "pressureforid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "触点压感",
+      "name_en": "PressureForID",
       "description_zh": "获取具有特定ID的触摸的压力（从0到1）。",
       "description_en": "Get the pressure (from 0 to 1) of a touch with a specific ID.",
       "expressionName": "PressureForID",
@@ -928,7 +1038,9 @@
           "id": "id",
           "type": "number",
           "name_zh": "ID",
-          "name_en": "ID"
+          "name_en": "ID",
+          "desc_zh": "要获得的触摸ID。",
+          "desc_en": "ID of the touch to get."
         }
       ]
     }

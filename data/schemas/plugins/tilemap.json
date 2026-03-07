@@ -28,27 +28,37 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要比较的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要比较的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile (in tiles)."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the tile at the given position."
         },
         {
           "id": "tile",
           "type": "number",
           "name_zh": "图块编号",
-          "name_en": "Tile"
+          "name_en": "Tile",
+          "desc_zh": "要比较的图块编号。",
+          "desc_en": "The tile number to compare to."
         }
-      ]
+      ],
+      "display_zh": "图块 ({0}, {1}) {2} {3}",
+      "display_en": "Tile ({0}, {1}) {2} {3}"
     },
     {
       "id": "compare-tile-state-at",
@@ -63,13 +73,17 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要比较的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要比较的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile (in tiles)."
         },
         {
           "id": "state",
@@ -119,9 +133,13 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          }
+          },
+          "desc_zh": "检查给定图块是否匹配的状态。",
+          "desc_en": "The state to check if the given tile matches."
         }
-      ]
+      ],
+      "display_zh": "图块 ({0}, {1}) 已{2}",
+      "display_en": "Tile ({0}, {1}) is {2}"
     },
     {
       "id": "brush-exists",
@@ -136,9 +154,13 @@
           "id": "brush",
           "type": "tilemapbrush-string",
           "name_zh": "笔刷名称",
-          "name_en": "Brush name"
+          "name_en": "Brush name",
+          "desc_zh": "要检测的笔刷名称。",
+          "desc_en": "The name of the brush to check for."
         }
-      ]
+      ],
+      "display_zh": "笔刷 [b]{0}[/b] 已存在",
+      "display_en": "Brush [b]{0}[/b] exists"
     },
     {
       "id": "on-image-url-loaded",
@@ -148,7 +170,9 @@
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "图像加载完成",
+      "display_en": "On image URL loaded"
     },
     {
       "id": "on-image-url-failed",
@@ -158,7 +182,9 @@
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "图像加载失败",
+      "display_en": "On image URL failed to load"
     }
   ],
   "actions": [
@@ -249,9 +275,13 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          }
+          },
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object."
         }
-      ]
+      ],
+      "display_zh": "设置混合模式为 [i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]"
     },
     {
       "id": "load",
@@ -266,9 +296,13 @@
           "id": "json",
           "type": "string",
           "name_zh": "JSON",
-          "name_en": "JSON"
+          "name_en": "JSON",
+          "desc_zh": "要加载的数据。来自瓦片图对象的 '导出图块数据' 表达式。",
+          "desc_en": "A string to load tilemap tiles from in JSON format from a previous use of the TilesJSON expression."
         }
-      ]
+      ],
+      "display_zh": "导入图块数据 [b]{0}[/b]",
+      "display_en": "Load tilemap from JSON [b]{0}[/b]"
     },
     {
       "id": "download",
@@ -284,9 +318,13 @@
           "type": "string",
           "name_zh": "文件名",
           "name_en": "Filename",
-          "initialValue": "\"tilemap.json\""
+          "initialValue": "\"tilemap.json\"",
+          "desc_zh": "要下载的文件的名称。",
+          "desc_en": "The name of the file to download."
         }
-      ]
+      ],
+      "display_zh": "下载瓦片图数据 (文件名: [i]{0}[/i])",
+      "display_en": "Download as JSON data with filename [i]{0}[/i]"
     },
     {
       "id": "erase-tile",
@@ -301,15 +339,21 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要擦除的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to erase (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要擦除的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to erase (in tiles)."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i])"
     },
     {
       "id": "set-tile",
@@ -324,19 +368,25 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "tile",
           "type": "number",
           "name_zh": "瓷砖",
-          "name_en": "Tile"
+          "name_en": "Tile",
+          "desc_zh": "在给定位置设置的图块编号。",
+          "desc_en": "Tile number to set at the given position."
         },
         {
           "id": "state",
@@ -386,9 +436,13 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          }
+          },
+          "desc_zh": "选择旋转或翻转此图块。",
+          "desc_en": "Whether to rotate or flip this tile."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 图块: [b]{2}[/b], 状态: [i]{3}[/i])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) to tile [b]{2}[/b] ([i]{3}[/i])"
     },
     {
       "id": "erase-tile-range",
@@ -403,29 +457,39 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要擦除的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the first tile to erase (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要擦除的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the first tile to erase (in tiles)."
         },
         {
           "id": "width",
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要擦除的横向图块数量。",
+          "desc_en": "Number of tiles across to erase."
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要擦除的纵向图块数量。",
+          "desc_en": "Number of tiles down to erase."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 范围: [i]{2}[/i] x [i]{3}[/i])",
+      "display_en": "Erase tile range ([i]{0}[/i], [i]{1}[/i]) area [i]{2}[/i] x [i]{3}[/i]"
     },
     {
       "id": "set-tile-range",
@@ -440,33 +504,43 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the first tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the first tile to set (in tiles)."
         },
         {
           "id": "width",
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要设置的横向图块数量。",
+          "desc_en": "Number of tiles across to set."
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要擦除的纵向图块数量。",
+          "desc_en": "Number of tiles down to set."
         },
         {
           "id": "tile",
           "type": "number",
           "name_zh": "图块",
-          "name_en": "Tile"
+          "name_en": "Tile",
+          "desc_zh": "在给定范围内设置的图块数。",
+          "desc_en": "Tile number to set across the given range."
         },
         {
           "id": "state",
@@ -516,9 +590,13 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          }
+          },
+          "desc_zh": "选择旋转或翻转图块。",
+          "desc_en": "Whether to rotate or flip the tiles."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i]),  范围: [i]{2}[/i] x [i]{3}[/i], 图块: [b]{4}[/b], 状态: [i]{5}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] to tile [b]{4}[/b] ([i]{5}[/i])"
     },
     {
       "id": "set-tile-state",
@@ -533,13 +611,17 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to modify (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to modify (in tiles)."
         },
         {
           "id": "state",
@@ -589,9 +671,13 @@
               "zh": "旋转270°, 上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          }
+          },
+          "desc_zh": "选择旋转或翻转此图块。",
+          "desc_en": "Whether to rotate or flip this tile."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 状态: [i]{2}[/i])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) state [i]{2}[/i]"
     },
     {
       "id": "set-tile-state-range",
@@ -606,27 +692,35 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的第一个图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the first tile to modify (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的第一个图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the first tile to modify (in tiles)."
         },
         {
           "id": "width",
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要设置的图块在水平方向的数量。",
+          "desc_en": "Number of tiles across to set."
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要设置的图块在垂直方向的数量。",
+          "desc_en": "Number of tiles down to set."
         },
         {
           "id": "state",
@@ -676,9 +770,13 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          }
+          },
+          "desc_zh": "选择旋转或翻转图块。",
+          "desc_en": "Whether to rotate or flip the tiles."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 区域 [i]{2}[/i] x [i]{3}[/i], 状态: [i]{4}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] state [i]{4}[/i]"
     },
     {
       "id": "set-tile-with-brush",
@@ -693,21 +791,29 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要使用的图块笔刷。",
+          "desc_en": "The brush to use."
         }
-      ]
+      ],
+      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷 [b]{2}[/b])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
     },
     {
       "id": "erase-tile-with-brush",
@@ -722,21 +828,29 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要使用的图块笔刷。",
+          "desc_en": "The brush to use."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
     },
     {
       "id": "set-tile-with-brush-by-name",
@@ -751,21 +865,29 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush-string",
           "name_zh": "笔刷名称",
-          "name_en": "Brush name"
+          "name_en": "Brush name",
+          "desc_zh": "要使用的笔刷名称。",
+          "desc_en": "The name of the brush to use."
         }
-      ]
+      ],
+      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
     },
     {
       "id": "erase-tile-with-brush-by-name",
@@ -780,21 +902,29 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush-string",
           "name_zh": "笔刷名称",
-          "name_en": "Brush name"
+          "name_en": "Brush name",
+          "desc_zh": "要使用的笔刷名称。",
+          "desc_en": "The name of the brush to use."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
     },
     {
       "id": "set-tile-with-patch-brush",
@@ -809,33 +939,43 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要使用的图块笔刷。",
+          "desc_en": "The brush to use."
         },
         {
           "id": "mirror",
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否左右翻转。",
+          "desc_en": "Whether to mirror the brush."
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否上下翻转。",
+          "desc_en": "Whether to flip the brush."
         },
         {
           "id": "rotation",
@@ -865,7 +1005,9 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          }
+          },
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush."
         },
         {
           "id": "invalid-indexes",
@@ -885,9 +1027,13 @@
               "zh": "忽略",
               "en": "Ignore"
             }
-          }
+          },
+          "desc_zh": "画笔应该如何处理无效的索引。",
+          "desc_en": "What should the brush do with invalid indexes."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]"
     },
     {
       "id": "erase-tile-with-patch-brush",
@@ -902,33 +1048,43 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要使用的笔刷。",
+          "desc_en": "The brush to use."
         },
         {
           "id": "mirror",
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否左右翻转。",
+          "desc_en": "Whether to mirror the brush."
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否上下翻转。",
+          "desc_en": "Whether to flip the brush."
         },
         {
           "id": "rotation",
@@ -958,9 +1114,13 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          }
+          },
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]"
     },
     {
       "id": "set-tile-with-patch-brush-by-name",
@@ -975,33 +1135,43 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush-string",
           "name_zh": "笔刷名称",
-          "name_en": "Brush name"
+          "name_en": "Brush name",
+          "desc_zh": "要使用的笔刷名称。",
+          "desc_en": "The name of the brush to use."
         },
         {
           "id": "mirror",
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否左右翻转。",
+          "desc_en": "Whether to mirror the brush."
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否上下翻转。",
+          "desc_en": "Whether to flip the brush."
         },
         {
           "id": "rotation",
@@ -1031,7 +1201,9 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          }
+          },
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush."
         },
         {
           "id": "invalid-indexes",
@@ -1051,9 +1223,13 @@
               "zh": "忽略",
               "en": "Ignore"
             }
-          }
+          },
+          "desc_zh": "画笔应该如何处理无效的索引。",
+          "desc_en": "What should the brush do with invalid indexes."
         }
-      ]
+      ],
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]"
     },
     {
       "id": "erase-tile-with-patch-brush-by-name",
@@ -1068,33 +1244,43 @@
           "id": "tile-x",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "Tile X"
+          "name_en": "Tile X",
+          "desc_zh": "要设置的图块位于瓦片图 X 轴的序列。使用 PositionToTileX() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "X index of the tile to set (in tiles)."
         },
         {
           "id": "tile-y",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "Tile Y"
+          "name_en": "Tile Y",
+          "desc_zh": "要设置的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
+          "desc_en": "Y index of the tile to set (in tiles)."
         },
         {
           "id": "brush",
           "type": "tilemapbrush-string",
           "name_zh": "笔刷名称",
-          "name_en": "Brush name"
+          "name_en": "Brush name",
+          "desc_zh": "要使用的笔刷名称。",
+          "desc_en": "The name of the brush to use."
         },
         {
           "id": "mirror",
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否左右翻转。",
+          "desc_en": "Whether to mirror the brush."
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false"
+          "initialValue": "false",
+          "desc_zh": "笔刷是否上下翻转。",
+          "desc_en": "Whether to flip the brush."
         },
         {
           "id": "rotation",
@@ -1124,9 +1310,13 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          }
+          },
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush."
         }
-      ]
+      ],
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b],  左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]"
     },
     {
       "id": "load-image-from-url",
@@ -1143,7 +1333,9 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "要下载图像或数据的远程服务器地址。",
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
         },
         {
           "id": "cross-origin",
@@ -1163,16 +1355,20 @@
               "zh": "无",
               "en": "none"
             }
-          }
+          },
+          "desc_zh": "用于网络通信的跨域请求模式。",
+          "desc_en": "The cross-origin (CORS) mode to use for the request."
         }
-      ]
+      ],
+      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})"
     }
   ],
   "expressions": [
     {
       "id": "tilesjson",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块数据",
+      "name_en": "TilesJSON",
       "description_zh": "将图块数据导出为 JSON格式的字符串。",
       "description_en": "Get tilemap data as a JSON-formatted string.",
       "expressionName": "TilesJSON",
@@ -1181,8 +1377,8 @@
     },
     {
       "id": "tileat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块索引",
+      "name_en": "TileAt",
       "description_zh": "将图块编号返回到图块中的位置。",
       "description_en": "Return the tile number at a position in tiles.",
       "expressionName": "TileAt",
@@ -1193,20 +1389,24 @@
           "id": "tilex",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "TileX"
+          "name_en": "TileX",
+          "desc_zh": "图块的X位置",
+          "desc_en": "X position in tiles"
         },
         {
           "id": "tiley",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "TileY"
+          "name_en": "TileY",
+          "desc_zh": "图块的Y位置",
+          "desc_en": "Y position in tiles"
         }
       ]
     },
     {
       "id": "positiontotilex",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "坐标转图块X",
+      "name_en": "PositionToTileX",
       "description_zh": "将X坐标转换为图块X索引。",
       "description_en": "Convert an X co-ordinate to a tile X index.",
       "expressionName": "PositionToTileX",
@@ -1217,14 +1417,16 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "X坐标",
+          "desc_en": "X co-ordinate"
         }
       ]
     },
     {
       "id": "positiontotiley",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "坐标转图块Y",
+      "name_en": "PositionToTileY",
       "description_zh": "将Y坐标转换为图块Y索引。",
       "description_en": "Convert a Y co-ordinate to a tile Y index.",
       "expressionName": "PositionToTileY",
@@ -1235,14 +1437,16 @@
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "Y坐标",
+          "desc_en": "Y co-ordinate"
         }
       ]
     },
     {
       "id": "tiletopositionx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块转坐标X",
+      "name_en": "TileToPositionX",
       "description_zh": "将图块X索引转换为X坐标。",
       "description_en": "Convert a tile X index to X co-ordinate.",
       "expressionName": "TileToPositionX",
@@ -1253,14 +1457,16 @@
           "id": "tilex",
           "type": "number",
           "name_zh": "图块X",
-          "name_en": "TileX"
+          "name_en": "TileX",
+          "desc_zh": "图块的X位置",
+          "desc_en": "X position in tiles"
         }
       ]
     },
     {
       "id": "tiletopositiony",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块转坐标Y",
+      "name_en": "TileToPositionY",
       "description_zh": "将索引的图块转换为Y坐标。",
       "description_en": "Convert a tile Y index to Y co-ordinate.",
       "expressionName": "TileToPositionY",
@@ -1271,14 +1477,16 @@
           "id": "tiley",
           "type": "number",
           "name_zh": "图块Y",
-          "name_en": "TileY"
+          "name_en": "TileY",
+          "desc_zh": "图块中的Y位置",
+          "desc_en": "Y position in tiles"
         }
       ]
     },
     {
       "id": "snapx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取位置相邻图块X",
+      "name_en": "SnapX",
       "description_zh": "将X坐标与最近的图块X对齐。",
       "description_en": "Snap an X co-ordinate to the nearest tile X.",
       "expressionName": "SnapX",
@@ -1289,14 +1497,16 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "X坐标",
+          "desc_en": "X co-ordinate"
         }
       ]
     },
     {
       "id": "snapy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取位置相邻图块Y",
+      "name_en": "SnapY",
       "description_zh": "将Y坐标与最近的图块Y对齐。",
       "description_en": "Snap a Y co-ordinate to the nearest tile Y.",
       "expressionName": "SnapY",
@@ -1307,14 +1517,16 @@
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "Y坐标",
+          "desc_en": "Y co-ordinate"
         }
       ]
     },
     {
       "id": "tile-width",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块宽度",
+      "name_en": "TileWidth",
       "description_zh": "图块的宽度，以像素为单位。",
       "description_en": "The width of a tile, in pixels.",
       "expressionName": "TileWidth",
@@ -1323,8 +1535,8 @@
     },
     {
       "id": "tile-height",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块高度",
+      "name_en": "TileHeight",
       "description_zh": "图块的高度，以像素为单位",
       "description_en": "The height of a tile, in pixels.",
       "expressionName": "TileHeight",
@@ -1333,8 +1545,8 @@
     },
     {
       "id": "map-display-width",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "地图显示宽度",
+      "name_en": "MapDisplayWidth",
       "description_zh": "瓦片地图显示的水平瓦片数",
       "description_en": "The horizontal number of tiles shown by the tilemap.",
       "expressionName": "MapDisplayWidth",
@@ -1343,8 +1555,8 @@
     },
     {
       "id": "map-display-height",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "地图显示高度",
+      "name_en": "MapDisplayHeight",
       "description_zh": "瓦片地图显示的垂直瓦片数量。",
       "description_en": "The vertical number of tiles shown by the tilemap.",
       "expressionName": "MapDisplayHeight",
@@ -1353,8 +1565,8 @@
     },
     {
       "id": "brush-width",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "画笔宽度",
+      "name_en": "BrushWidth",
       "description_zh": "获取画笔的图块宽度。",
       "description_en": "The tile width of the specified brush.",
       "expressionName": "BrushWidth",
@@ -1365,14 +1577,16 @@
           "id": "brush",
           "type": "string",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要获取其宽度的笔刷名称。",
+          "desc_en": "The name of the brush to get the width of."
         }
       ]
     },
     {
       "id": "brush-height",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "画笔高度",
+      "name_en": "BrushHeight",
       "description_zh": "获取画笔的图块高度。",
       "description_en": "The tile height of the specified brush.",
       "expressionName": "BrushHeight",
@@ -1383,7 +1597,9 @@
           "id": "brush",
           "type": "string",
           "name_zh": "笔刷",
-          "name_en": "Brush"
+          "name_en": "Brush",
+          "desc_zh": "要获取其高度的笔刷名称。",
+          "desc_en": "The name of the brush to get the height of."
         }
       ]
     }

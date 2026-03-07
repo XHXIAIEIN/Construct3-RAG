@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为是否已经启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -30,9 +32,13 @@
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "要设置的速度，以每秒旋转度数为单位。",
+          "desc_en": "The new orbit speed, in degrees per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}环绕速度为{0}",
+      "display_en": "Set {my} speed to {0} degrees per second"
     },
     {
       "id": "set-target",
@@ -46,15 +52,21 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "要环绕的X坐标。",
+          "desc_en": "X position of target in layout co-ordinates."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "要环绕的Y坐标。",
+          "desc_en": "Y position of target in layout co-ordinates."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}环绕中心为 ({0}, {1})",
+      "display_en": "Set {my} target to ({0}, {1})"
     },
     {
       "id": "set-rotation",
@@ -68,9 +80,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "设置当前轨道的旋转角度。",
+          "desc_en": "New orbit rotation angle, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}旋转角度{0}",
+      "display_en": "Set {my} rotation {0}"
     },
     {
       "id": "set-offset-angle",
@@ -84,9 +100,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "设置轨道和轴的偏移角度，以度数为单位。",
+          "desc_en": "New offset of ellipse angle from axis, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}偏移角度为{0}",
+      "display_en": "Set {my} offset angle {0}"
     },
     {
       "id": "set-radius",
@@ -100,15 +120,21 @@
           "id": "primary",
           "type": "number",
           "name_zh": "主半径",
-          "name_en": "Primary radius"
+          "name_en": "Primary radius",
+          "desc_zh": "主半径的长度，以像素为单位。",
+          "desc_en": "New primary radius length, in pixels."
         },
         {
           "id": "secondary",
           "type": "number",
           "name_zh": "副半径",
-          "name_en": "Secondary radius"
+          "name_en": "Secondary radius",
+          "desc_zh": "副半径的长度，以像素为单位。圆形轨道应设置和主半径相同。",
+          "desc_en": "New secondary radius length, in pixels. (For a circle make the same as primary)"
         }
-      ]
+      ],
+      "display_zh": "设置 {my}环绕主半径为{0}, 副半径为{1}",
+      "display_en": "Set {my} primary radius {0}, secondary radius {1}"
     },
     {
       "id": "set-match-rotation",
@@ -136,9 +162,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "是否将对象的角度跟随轨道的角度旋转。",
+          "desc_en": "Whether to match the rotation of the object to the orbit angle."
         }
-      ]
+      ],
+      "display_zh": "[i]{0}[/i] {my} 旋转对齐",
+      "display_en": "Set {my} match rotation [i]{0}[/i]"
     },
     {
       "id": "pin",
@@ -152,9 +182,13 @@
           "id": "target",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Target"
+          "name_en": "Target",
+          "desc_zh": "要固定到的对象",
+          "desc_en": "Object to pin to."
         }
-      ]
+      ],
+      "display_zh": "固定 {my} 到 {0}",
+      "display_en": "Pin {my} to {0}"
     },
     {
       "id": "unpin",
@@ -162,7 +196,9 @@
       "name_en": "Unpin",
       "description_zh": "解除对象的固定，不再跟随对象的位置运动。",
       "description_en": "Unpins from the target object.",
-      "scriptName": "Unpin"
+      "scriptName": "Unpin",
+      "display_zh": "解除 {my} 固定",
+      "display_en": "Unpin {my} from target"
     },
     {
       "id": "set-acceleration",
@@ -176,9 +212,13 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "沿轨道环绕的加速度，以每秒度数为单位。",
+          "desc_en": "The new orbit acceleration, in degrees per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}加速度为{0}",
+      "display_en": "Set {my} acceleration to {0} degrees per second per second"
     },
     {
       "id": "set-enabled",
@@ -206,9 +246,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "reset-total-rotation",
@@ -216,14 +260,16 @@
       "name_en": "Reset total rotation",
       "description_zh": "重置总旋转角度和总绝对旋转角度的计数，全部归零。",
       "description_en": "Return the total rotation and total absolute rotation counters to 0",
-      "scriptName": "ResetTotalRotation"
+      "scriptName": "ResetTotalRotation",
+      "display_zh": "重置 {my} 总旋转角度",
+      "display_en": "Reset {my} total rotation"
     }
   ],
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "速度",
+      "name_en": "Speed",
       "description_zh": "沿轨道环绕的速度，以每秒度数为单位。",
       "description_en": "The orbit speed in degrees per second.",
       "expressionName": "Speed",
@@ -231,8 +277,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度",
+      "name_en": "Acceleration",
       "description_zh": "轨道加速度，以度数/秒为单位。",
       "description_en": "The orbit acceleration in degrees per second per second.",
       "expressionName": "Acceleration",
@@ -240,8 +286,8 @@
     },
     {
       "id": "primary-radius",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "主轨半径",
+      "name_en": "PrimaryRadius",
       "description_zh": "在主轴轨道上每秒的运动距离，单位是像素每秒。",
       "description_en": "The length of the primary radius, in pixels.",
       "expressionName": "PrimaryRadius",
@@ -249,8 +295,8 @@
     },
     {
       "id": "secondary-radius",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "副轨半径",
+      "name_en": "SecondaryRadius",
       "description_zh": "次级半径的长度，以像素为单位。",
       "description_en": "The length of the secondary radius, in pixels.",
       "expressionName": "SecondaryRadius",
@@ -258,8 +304,8 @@
     },
     {
       "id": "offset-angle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "偏移角度",
+      "name_en": "OffsetAngle",
       "description_zh": "椭圆的偏移角度",
       "description_en": "The ellipse offset angle, in degrees.",
       "expressionName": "OffsetAngle",
@@ -267,8 +313,8 @@
     },
     {
       "id": "rotation",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "旋转角度",
+      "name_en": "Rotation",
       "description_zh": "当前轨道的旋转角度。",
       "description_en": "The current orbit rotation, in degrees.",
       "expressionName": "Rotation",
@@ -276,8 +322,8 @@
     },
     {
       "id": "target-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标X",
+      "name_en": "TargetX",
       "description_zh": "当前X坐标",
       "description_en": "The current target X position.",
       "expressionName": "TargetX",
@@ -285,8 +331,8 @@
     },
     {
       "id": "target-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标Y",
+      "name_en": "TargetY",
       "description_zh": "当前目标Y的位置。",
       "description_en": "The current target Y position.",
       "expressionName": "TargetY",
@@ -294,8 +340,8 @@
     },
     {
       "id": "distance-to-target",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "到达目标距离",
+      "name_en": "DistanceToTarget",
       "description_zh": "当前到目标的距离",
       "description_en": "The current distance to the target position.",
       "expressionName": "DistanceToTarget",
@@ -303,8 +349,8 @@
     },
     {
       "id": "total-rotation",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "总旋转角度",
+      "name_en": "TotalRotation",
       "description_zh": "当前未被约束的总旋转角度，该值会随着 CCW 旋转而降低。",
       "description_en": "The total unclamped rotation so far, in degrees. Value decreases with CCW rotation.",
       "expressionName": "TotalRotation",
@@ -312,8 +358,8 @@
     },
     {
       "id": "total-absolute-rotation",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "总绝对旋转角度",
+      "name_en": "TotalAbsoluteRotation",
       "description_zh": "当前未被约束的总旋转角度。",
       "description_en": "The total unclamped rotation so far, in degrees.",
       "expressionName": "TotalAbsoluteRotation",

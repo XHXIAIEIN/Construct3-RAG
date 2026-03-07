@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为当前是否启用。",
       "description_en": "Test whether the behavior is currently enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     },
     {
       "id": "compare-height",
@@ -28,15 +30,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the height."
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "投影高度",
-          "name_en": "Height"
+          "name_en": "Height",
+          "desc_zh": "要比较的对象投影高度。",
+          "desc_en": "The object height to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} 投影高度 {0} {1}",
+      "display_en": "{my} height {0} {1}"
     }
   ],
   "actions": [
@@ -67,9 +75,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "设置对象是否投射阴影。",
+          "desc_en": "Set whether the object casts a shadow or not."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "set-height",
@@ -83,9 +95,13 @@
           "id": "height",
           "type": "number",
           "name_zh": "投影高度",
-          "name_en": "Height"
+          "name_en": "Height",
+          "desc_zh": "对象的投影高度，用于确定阴影投射的长度，以像素为单位。",
+          "desc_en": "The height to set the object for determining the length of the shadow it casts."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}投影高度为[i]{0}[/i]",
+      "display_en": "Set {my} height to [i]{0}[/i]"
     },
     {
       "id": "set-tag",
@@ -99,16 +115,20 @@
           "id": "tag",
           "type": "string",
           "name_zh": "投影标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的投影光源。",
+          "desc_en": "The new tag to set for the shadow caster."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}投影标签为[i]{0}[/i]",
+      "display_en": "Set {my} tag to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "height",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "投影高度",
+      "name_en": "Height",
       "description_zh": "对象的投影高度，用于确定阴影投射的距离，以像素为单位。",
       "description_en": "The shadow caster object height.",
       "expressionName": "Height",
@@ -116,8 +136,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "投影标签",
+      "name_en": "Tag",
       "description_zh": "对象的阴影标签。",
       "description_en": "The tag of the object.",
       "expressionName": "Tag",

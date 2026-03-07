@@ -3,7 +3,7 @@
   "originalId": "destroy",
   "name_zh": "出界销毁",
   "name_en": "Destroy outside layout",
-  "description_zh": "对象超出场景范围时自动销毁。",
+  "description_zh": "离开场景或视区范围时，自动销毁对象。",
   "description_en": "Automatically destroy the object if it leaves the layout area.",
   "path": "general/destroy",
   "categories": [],

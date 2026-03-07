@@ -17,7 +17,9 @@
       "description_zh": "测试设备是否支持语音合成。",
       "description_en": "True if the current browser supports speech synthesis.",
       "scriptName": "SupportsSpeechSynthesis",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "支持语音合成",
+      "display_en": "Supports speech synthesis"
     },
     {
       "id": "is-speaking",
@@ -26,7 +28,9 @@
       "description_zh": "检测当前是否正在讲话。",
       "description_en": "True if currently speaking some text.",
       "scriptName": "IsSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "正在讲话",
+      "display_en": "Is speaking"
     },
     {
       "id": "on-speech-ended",
@@ -36,7 +40,9 @@
       "description_en": "Triggered when a phrase finishes being spoken.",
       "scriptName": "OnSpeechEnded",
       "isTrigger": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "说话结束",
+      "display_en": "On speech ended"
     },
     {
       "id": "on-speech-error",
@@ -46,7 +52,9 @@
       "description_en": "Triggered if an error occurs when trying to speak text.",
       "scriptName": "OnSpeechError",
       "isTrigger": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "发声错误",
+      "display_en": "On speech error"
     }
   ],
   "actions": [
@@ -63,41 +71,55 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要说的文字。",
+          "desc_en": "The text to be spoken."
         },
         {
           "id": "language",
           "type": "string",
           "name_zh": "语言",
-          "name_en": "Language"
+          "name_en": "Language",
+          "desc_zh": "文字的语言代码，如 \"en-US\" 为美式英语，\"zh-CN\"为简体中文。留空则使用设备默认语言。",
+          "desc_en": "The language of the text, e.g. \"en-US\" for US English. Leave empty to use the default language."
         },
         {
           "id": "voice-uri",
           "type": "string",
           "name_zh": "声音文件地址",
-          "name_en": "Voice URI"
+          "name_en": "Voice URI",
+          "desc_zh": "要使用的声音。 留空以使用默认语音。",
+          "desc_en": "The voice to use. Leave empty to use the default voice."
         },
         {
           "id": "volume",
           "type": "number",
           "name_zh": "音量",
-          "name_en": "Volume"
+          "name_en": "Volume",
+          "desc_zh": "朗读文本的音量，以分贝为单位。",
+          "desc_en": "The volume to speak the text at, in dB attenuation."
         },
         {
           "id": "rate",
           "type": "number",
           "name_zh": "速率",
           "name_en": "Rate",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "说话的相对速度，例如 1为正常，0.5为一半快。",
+          "desc_en": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast."
         },
         {
           "id": "pitch",
           "type": "number",
           "name_zh": "音高",
           "name_en": "Pitch",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "说话的相对音高，介于0和2之间。",
+          "desc_en": "The relative pitch at which to speak, between 0 and 2."
         }
-      ]
+      ],
+      "display_zh": "朗读文本 [b]{0}[/b] (语言: [i]{1}[/i], 声音来源: [i]{2}[/i], 音量: [i]{3}[/i]dB, 速度: [i]{4}[/i], 音高 [i]{5}[/i])",
+      "display_en": "Speak text [b]{0}[/b] (language [i]{1}[/i], voice URI [i]{2}[/i], volume [i]{3}[/i] dB, rate [i]{4}[/i], pitch [i]{5}[/i])"
     },
     {
       "id": "stop-speaking",
@@ -106,7 +128,9 @@
       "description_zh": "取消任何活动的语音合成。",
       "description_en": "Cancel any active speech synthesis.",
       "scriptName": "StopSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "停止语音输入",
+      "display_en": "Stop speaking"
     },
     {
       "id": "pause-speaking",
@@ -115,7 +139,9 @@
       "description_zh": "暂停任何活动的语音合成。",
       "description_en": "Pause any active speech synthesis.",
       "scriptName": "PauseSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "暂停语音输入",
+      "display_en": "Pause speaking"
     },
     {
       "id": "resume-speaking",
@@ -124,14 +150,16 @@
       "description_zh": "恢复先前暂停的语音合成。",
       "description_en": "Resume a previously paused speech synthesis.",
       "scriptName": "ResumeSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "display_zh": "恢复语音输入",
+      "display_en": "Resume speaking"
     }
   ],
   "expressions": [
     {
       "id": "voicecount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "声音数量",
+      "name_en": "VoiceCount",
       "description_zh": "返回可用语音的数量。",
       "description_en": "Return the number of available voices.",
       "expressionName": "VoiceCount",
@@ -140,8 +168,8 @@
     },
     {
       "id": "voicenameat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "语音名称索引",
+      "name_en": "VoiceNameAt",
       "description_zh": "返回索引处的语音名称。",
       "description_en": "Return the name of a voice at an index.",
       "expressionName": "VoiceNameAt",
@@ -152,14 +180,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "基于零的语音索引。",
+          "desc_en": "Zero-based index of the voice."
         }
       ]
     },
     {
       "id": "voicelangat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "语音语言索引",
+      "name_en": "VoiceLangAt",
       "description_zh": "在索引处返回语音的语言。",
       "description_en": "Return the language of a voice at an index.",
       "expressionName": "VoiceLangAt",
@@ -170,14 +200,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "基于零的语音索引。",
+          "desc_en": "Zero-based index of the voice."
         }
       ]
     },
     {
       "id": "voiceuriat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "语音链接索引",
+      "name_en": "VoiceURIAt",
       "description_zh": "返回索引处语音的URI。",
       "description_en": "Return the URI of a voice at an index.",
       "expressionName": "VoiceURIAt",
@@ -188,7 +220,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "基于零的语音索引。",
+          "desc_en": "Zero-based index of the voice."
         }
       ]
     }

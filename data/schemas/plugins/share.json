@@ -17,7 +17,9 @@
       "description_zh": "检测当前运行设备是否支持分享功能。",
       "description_en": "Test if the sharing actions are supported on this platform.",
       "scriptName": "IsSupported",
-      "category": "share"
+      "category": "share",
+      "display_zh": "设备支持分享功能",
+      "display_en": "Is sharing supported"
     },
     {
       "id": "is-sharing-files-supported",
@@ -26,7 +28,9 @@
       "description_zh": "检测当前运行的平台是否支持 '附加文件' 操作分享文件。",
       "description_en": "Test if sharing files via the 'Add file' action is supported on this platform.",
       "scriptName": "IsSharingFilesSupported",
-      "category": "share"
+      "category": "share",
+      "display_zh": "设备支持分享功能",
+      "display_en": "Is sharing files supported"
     },
     {
       "id": "on-share-completed",
@@ -36,7 +40,9 @@
       "description_en": "Triggered after the user completes a share. Note this does not necessarily mean anything was shared.",
       "scriptName": "OnShareCompleted",
       "isTrigger": true,
-      "category": "share"
+      "category": "share",
+      "display_zh": "分享完成",
+      "display_en": "On share completed"
     },
     {
       "id": "on-share-failed",
@@ -46,7 +52,9 @@
       "description_en": "Triggered if a share is not completed successfully or an error occurs.",
       "scriptName": "OnShareFailed",
       "isTrigger": true,
-      "category": "share"
+      "category": "share",
+      "display_zh": "分享失败",
+      "display_en": "On share failed"
     }
   ],
   "actions": [
@@ -63,21 +71,29 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要分享的信息，留空则忽略。",
+          "desc_en": "The message to share. Leave empty to omit."
         },
         {
           "id": "title",
           "type": "string",
           "name_zh": "标题",
-          "name_en": "Title"
+          "name_en": "Title",
+          "desc_zh": "分享时显示的标题，留空则忽略。",
+          "desc_en": "The title or subject of the share. Leave empty to omit."
         },
         {
           "id": "url",
           "type": "string",
           "name_zh": "链接",
-          "name_en": "URL"
+          "name_en": "URL",
+          "desc_zh": "要分享的链接，留空则忽略。",
+          "desc_en": "A URL to share. Leave empty to omit."
         }
-      ]
+      ],
+      "display_zh": "分享信息(标题: [i]{1}[/i], 内容: [i]{0}[/i], 链接: [i]{2}[/i])",
+      "display_en": "Share text [i]{0}[/i] (title [i]{1}[/i], URL [i]{2}[/i])"
     },
     {
       "id": "add-file",
@@ -93,22 +109,30 @@
           "type": "string",
           "name_zh": "文件名",
           "name_en": "Filename",
-          "initialValue": "\"image.png\""
+          "initialValue": "\"image.png\"",
+          "desc_zh": "要添加的文件的名称。",
+          "desc_en": "Name of the file to add."
         },
         {
           "id": "type",
           "type": "string",
           "name_zh": "文件类型",
           "name_en": "Type",
-          "initialValue": "\"image/png\""
+          "initialValue": "\"image/png\"",
+          "desc_zh": "要添加的文件的内容类型，也称为MIME类型。",
+          "desc_en": "Content type (also known as MIME type) of the file to add."
         },
         {
           "id": "data",
           "type": "object",
           "name_zh": "数据来源",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要使用的二进制数据对象。",
+          "desc_en": "A Binary Data object to use as the content of the file."
         }
-      ]
+      ],
+      "display_zh": "附加文件(文件名: [i]{0}[/i], 类型: [i]{1}[/i], 数据: {2})",
+      "display_en": "Add file [i]{0}[/i] type [i]{1}[/i] from {2}"
     },
     {
       "id": "rate-app",
@@ -124,30 +148,40 @@
           "type": "string",
           "name_zh": "正文内容",
           "name_en": "Dialog Text",
-          "initialValue": "\"If you enjoy using MY_APP_NAME, please take a moment to rate it. Thanks for your support!\""
+          "initialValue": "\"If you enjoy using MY_APP_NAME, please take a moment to rate it. Thanks for your support!\"",
+          "desc_zh": "请求评价对话框的正文。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "desc_en": "The body text of the request review dialog (Android with no Google Play Store App only)."
         },
         {
           "id": "confirmButtonText",
           "type": "string",
           "name_zh": "确认按钮",
           "name_en": "Confirm Button Text",
-          "initialValue": "\"Rate MY_APP_NAME\""
+          "initialValue": "\"Rate MY_APP_NAME\"",
+          "desc_zh": "确认按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "desc_en": "The text of the \"confirm\" button on the request review dialog (Android with no Google Play Store App only)."
         },
         {
           "id": "cancelButtonText",
           "type": "string",
           "name_zh": "取消按钮",
           "name_en": "Cancel Button Text",
-          "initialValue": "\"No, thanks\""
+          "initialValue": "\"No, thanks\"",
+          "desc_zh": "取消按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "desc_en": "The text of the \"cancel\" button on the request review dialog (Android with no Google Play Store App only)."
         },
         {
           "id": "appIdentifier",
           "type": "string",
           "name_zh": "App ID",
           "name_en": "App ID",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "请求评分的应用程序ID。留空则使用在项目属性中填写的应用程序ID。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "desc_en": "The app ID to request a rating for (Android with no Google Play Store App only). Leave empty to use the project's app ID."
         }
-      ]
+      ],
+      "display_zh": "弹出请求评分窗口 (正文: [i]{0}[/i], 确认按钮: [i]{1}[/i], 取消按钮: [i]{2}[/i],  AppID: [i]{3}[/i])",
+      "display_en": "Request app rating (body: [i]{0}[/i], confirm: [i]{1}[/i], cancel: [i]{2}[/i], app ID: [i]{3}[/i])"
     },
     {
       "id": "open-store",
@@ -162,9 +196,13 @@
           "id": "appIdentifier",
           "type": "string",
           "name_zh": "App ID",
-          "name_en": "App ID"
+          "name_en": "App ID",
+          "desc_zh": "要打开商店页面的应用程序ID。留空则使用项目设置中的应用程序ID。",
+          "desc_en": "The app ID of the store page to open. Leave empty to use the project's app ID."
         }
-      ]
+      ],
+      "display_zh": "显示商店页面 (AppID: [i]{0}[/i])",
+      "display_en": "Display store page for app ID [i]{0}[/i]"
     }
   ],
   "expressions": []

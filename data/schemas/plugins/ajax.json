@@ -25,9 +25,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写在 AJAX 请求动作中的标签，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]请求完成",
+      "display_en": "On [b]{0}[/b] completed"
     },
     {
       "id": "on-any-completed",
@@ -37,7 +41,9 @@
       "description_en": "Triggered when any AJAX request completes successfully. The 'Tag' expression identifies the request.",
       "scriptName": "OnAnyComplete",
       "isTrigger": true,
-      "category": "ajax"
+      "category": "ajax",
+      "display_zh": "任意请求完成",
+      "display_en": "On any completed"
     },
     {
       "id": "on-error",
@@ -53,9 +59,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]请求失败",
+      "display_en": "On [b]{0}[/b] error"
     },
     {
       "id": "on-any-error",
@@ -65,7 +75,9 @@
       "description_en": "Triggered when any AJAX request fails. The 'Tag' expression identifies the request.",
       "scriptName": "OnAnyError",
       "isTrigger": true,
-      "category": "ajax"
+      "category": "ajax",
+      "display_zh": "任意请求失败",
+      "display_en": "On any error"
     },
     {
       "id": "on-progress",
@@ -81,9 +93,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]进度更新",
+      "display_en": "On [b]{0}[/b] progress"
     },
     {
       "id": "on-upload-progress",
@@ -99,9 +115,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]进度更新",
+      "display_en": "On [b]{0}[/b] upload progress"
     }
   ],
   "actions": [
@@ -119,16 +139,22 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的 AJAX 请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         },
         {
           "id": "url",
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "要请求的远程服务器地址，或本地项目文件路径。注意，大多数浏览器会阻止跨域请求，请确保服务器有正确设置 CORS 权限。或本地测试环境是否启用HTTPS",
+          "desc_en": "The URL to request.  Note: most browsers prevent cross-domain requests."
         }
-      ]
+      ],
+      "display_zh": "获取请求 [b]{1}[/b] (标签 [i]{0}[/i])",
+      "display_en": "Request [b]{1}[/b] (tag [i]{0}[/i])"
     },
     {
       "id": "request-project-file",
@@ -144,15 +170,21 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的 AJAX 请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         },
         {
           "id": "file",
           "type": "projectfile",
           "name_zh": "文件",
-          "name_en": "File"
+          "name_en": "File",
+          "desc_zh": "选择要请求的项目文件。",
+          "desc_en": "Select a project file to request."
         }
-      ]
+      ],
+      "display_zh": "请求文件[b]{1}[/b] (标签 [i]{0}[/i])",
+      "display_en": "Request [b]{1}[/b] (tag [i]{0}[/i])"
     },
     {
       "id": "post-to-url",
@@ -168,29 +200,39 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         },
         {
           "id": "url",
           "type": "string",
           "name_zh": "地址",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "目标服务器的地址。注意，由于安全限制，浏览器通常会拦截跨域请求，请查询目标服务器 CORS 相关配置。",
+          "desc_en": "The URL to post to.  Note: most browsers prevent cross-domain posts."
         },
         {
           "id": "data",
           "type": "string",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要以查询字符串形式发布的数据。 确保URLEncode任何用户输入的数据。",
+          "desc_en": "The data to post, in query string form.  Be sure to URLEncode any user-entered data."
         },
         {
           "id": "method",
           "type": "string",
           "name_zh": "请求方法",
           "name_en": "Method",
-          "initialValue": "\"POST\""
+          "initialValue": "\"POST\"",
+          "desc_zh": "要使用的HTTP请求方法。通常是 \"Get\" 或 \"POST\"。",
+          "desc_en": "The HTTP method to use, typically \"POST\"."
         }
-      ]
+      ],
+      "display_zh": "发送 [b]{2}[/b] 到服务器 [b]{1}[/b] ([i]{3}[/i]方法, 标签: [i]{0}[/i])",
+      "display_en": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])"
     },
     {
       "id": "set-timeout",
@@ -205,9 +247,13 @@
           "id": "timeout",
           "type": "number",
           "name_zh": "超时",
-          "name_en": "Timeout"
+          "name_en": "Timeout",
+          "desc_zh": "AJAX请求的超时时间，以秒为单位。使用 -1 表示没有超时。",
+          "desc_en": "The timeout for AJAX requests in seconds. Use -1 for no timeout."
         }
-      ]
+      ],
+      "display_zh": "设置超时时间为[i]{0}[/i]秒",
+      "display_en": "Set timeout to [i]{0}[/i] seconds"
     },
     {
       "id": "set-request-header",
@@ -222,15 +268,21 @@
           "id": "header",
           "type": "string",
           "name_zh": "标头",
-          "name_en": "Header"
+          "name_en": "Header",
+          "desc_zh": "要在请求上设置的HTTP标头名称。",
+          "desc_en": "The HTTP header name to set on the request."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要设置的标头值。",
+          "desc_en": "A string of the value to set the header to."
         }
-      ]
+      ],
+      "display_zh": "设置请求标头 [i]{0}[/i]: [i]{1}[/i]",
+      "display_en": "Set request header [i]{0}[/i] to [i]{1}[/i]"
     },
     {
       "id": "override-mime-type",
@@ -245,9 +297,13 @@
           "id": "mime-type",
           "type": "string",
           "name_zh": "MIME类型",
-          "name_en": "MIME type"
+          "name_en": "MIME type",
+          "desc_zh": "要设置的媒体类型。如 \"text/plain;charset=UTF-8\",  \"image/png\",   \"application/json",
+          "desc_en": "The MIME type to interpret the response as."
         }
-      ]
+      ],
+      "display_zh": "设置媒体类型为[b]{0}[/b]",
+      "display_en": "Override MIME type with [b]{0}[/b]"
     },
     {
       "id": "set-with-credentials",
@@ -262,9 +318,13 @@
           "id": "with-credentials",
           "type": "boolean",
           "name_zh": "凭证信息",
-          "name_en": "With credentials"
+          "name_en": "With credentials",
+          "desc_zh": "设置下次请求是否发送凭证信息。",
+          "desc_en": "Whether the next request is sent with credentials."
         }
-      ]
+      ],
+      "display_zh": "设置发送凭证请求: [b]{0}[/b]",
+      "display_en": "Set with credentials [b]{0}[/b]"
     },
     {
       "id": "post-binary",
@@ -280,29 +340,39 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的AJAX请求。",
+          "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         },
         {
           "id": "url",
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "要接受数据的远程服务器地址。提示：多数浏览器不允许跨域提交数据。",
+          "desc_en": "The URL to post to. Note: most browsers prevent cross-domain posts."
         },
         {
           "id": "data",
           "type": "object",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要提交的数据，来自二进制的对象。",
+          "desc_en": "The data to post, from a Binary Data object."
         },
         {
           "id": "method",
           "type": "string",
           "name_zh": "方法",
           "name_en": "Method",
-          "initialValue": "\"POST\""
+          "initialValue": "\"POST\"",
+          "desc_zh": "要使用的HTTP请求方法，通常是 \"Get\" 或 \"POST\"。",
+          "desc_en": "The HTTP method to use, typically \"POST\"."
         }
-      ]
+      ],
+      "display_zh": "发送 [b]{2}[/b] 到地址 [b]{1}[/b] (方法: [i]{3}[/i], 标签: [i]{0}[/i])",
+      "display_en": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])"
     },
     {
       "id": "set-response-binary",
@@ -317,16 +387,20 @@
           "id": "destination",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Destination"
+          "name_en": "Destination",
+          "desc_zh": "要发送的二进制数据对象",
+          "desc_en": "The Binary Data object to receive the response in to."
         }
-      ]
+      ],
+      "display_zh": "设置 [i]{0}[/i] 接收请求数据",
+      "display_en": "Set response binary to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "lastdata",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "请求数据",
+      "name_en": "LastData",
       "description_zh": "获取上次成功请求返回的数据。",
       "description_en": "Get the data returned by the last successful request.",
       "expressionName": "LastData",
@@ -335,8 +409,8 @@
     },
     {
       "id": "laststatuscode",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "状态码",
+      "name_en": "LastStatusCode",
       "description_zh": "获取上一次 HTTP 请求返回的状态码。",
       "description_en": "Get the HTTP status code of the last request.",
       "expressionName": "LastStatusCode",
@@ -345,8 +419,8 @@
     },
     {
       "id": "progress",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "请求进度",
+      "name_en": "Progress",
       "description_zh": "在 '进度更新' 条件中，返回当前的请求进度，范围在 0 到 1 之间。",
       "description_en": "Get the progress, from 0 to 1, of the request in 'On progress'.",
       "expressionName": "Progress",
@@ -355,8 +429,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "请求标签",
+      "name_en": "Tag",
       "description_zh": "要获取的 AJAX 对应标签的请求数据。",
       "description_en": "Get the tag for the request in a trigger.",
       "expressionName": "Tag",

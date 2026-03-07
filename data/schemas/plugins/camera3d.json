@@ -26,59 +26,79 @@
           "id": "cam-x",
           "type": "number",
           "name_zh": "相机X",
-          "name_en": "Camera X"
+          "name_en": "Camera X",
+          "desc_zh": "相机位置的X坐标。",
+          "desc_en": "The X co-ordinate of the camera position."
         },
         {
           "id": "cam-y",
           "type": "number",
           "name_zh": "相机Y",
-          "name_en": "Camera Y"
+          "name_en": "Camera Y",
+          "desc_zh": "相机位置的Y坐标。",
+          "desc_en": "The Y co-ordinate of the camera position."
         },
         {
           "id": "cam-z",
           "type": "number",
           "name_zh": "相机Z",
           "name_en": "Camera Z",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "相机位置的Z坐标。",
+          "desc_en": "The Z co-ordinate of the camera position."
         },
         {
           "id": "look-x",
           "type": "number",
           "name_zh": "注视X",
-          "name_en": "Look at X"
+          "name_en": "Look at X",
+          "desc_zh": "相机镜头要朝向位置注视的X坐标。",
+          "desc_en": "The X co-ordinate of the position to point the camera at."
         },
         {
           "id": "look-y",
           "type": "number",
           "name_zh": "注视Y",
-          "name_en": "Look at Y"
+          "name_en": "Look at Y",
+          "desc_zh": "相机镜头要朝向位置注视的Y坐标。",
+          "desc_en": "The Y co-ordinate of the position to point the camera at."
         },
         {
           "id": "look-z",
           "type": "number",
           "name_zh": "注视Z",
-          "name_en": "Look at Z"
+          "name_en": "Look at Z",
+          "desc_zh": "相机镜头要朝向位置注视的Z坐标。",
+          "desc_en": "The Z co-ordinate of the position to point the camera at."
         },
         {
           "id": "up-x",
           "type": "number",
           "name_zh": "上升向量X",
-          "name_en": "Up vector X"
+          "name_en": "Up vector X",
+          "desc_zh": "一个三维矢量的X向量，表示哪一边的方向朝上。",
+          "desc_en": "The X component of a 3D vector indicating which way is up."
         },
         {
           "id": "up-y",
           "type": "number",
           "name_zh": "上升向量Y",
           "name_en": "Up vector Y",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "一个三维矢量的Y向量，表示哪一边的方向朝上。",
+          "desc_en": "The Y component of a 3D vector indicating which way is up."
         },
         {
           "id": "up-z",
           "type": "number",
           "name_zh": "上升向量Z",
-          "name_en": "Up vector Z"
+          "name_en": "Up vector Z",
+          "desc_zh": "一个三维矢量的Z向量，表示哪一边的方向朝上。",
+          "desc_en": "The Z component of a 3D vector indicating which way is up."
         }
-      ]
+      ],
+      "display_zh": "设置相机位置 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 注视位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 上升向量 ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
+      "display_en": "Set camera position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), look at ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), up vector ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])"
     },
     {
       "id": "look-parallel-to-layout",
@@ -93,28 +113,38 @@
           "id": "cam-x",
           "type": "number",
           "name_zh": "相机X",
-          "name_en": "Camera X"
+          "name_en": "Camera X",
+          "desc_zh": "相机位置的X坐标。",
+          "desc_en": "The X co-ordinate of the camera position."
         },
         {
           "id": "cam-y",
           "type": "number",
           "name_zh": "相机Y",
-          "name_en": "Camera Y"
+          "name_en": "Camera Y",
+          "desc_zh": "相机位置的Y坐标。",
+          "desc_en": "The Y co-ordinate of the camera position."
         },
         {
           "id": "cam-z",
           "type": "number",
           "name_zh": "相机Z",
           "name_en": "Camera Z",
-          "initialValue": "10"
+          "initialValue": "10",
+          "desc_zh": "相机位置的Z坐标。",
+          "desc_en": "The Z co-ordinate of the camera position."
         },
         {
           "id": "look-angle",
           "type": "number",
           "name_zh": "注视角度",
-          "name_en": "Look angle"
+          "name_en": "Look angle",
+          "desc_zh": "相机镜头朝向的角度。",
+          "desc_en": "The angle in degrees to point the camera."
         }
-      ]
+      ],
+      "display_zh": "设置相机注视平面 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) 朝向 [i]{3}[/i]",
+      "display_en": "Set camera parallel to layout at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) angle [i]{3}[/i]"
     },
     {
       "id": "restore-2d-camera",
@@ -123,7 +153,9 @@
       "description_zh": "恢复默认的2D相机行为，以当前滚动位置为中心。",
       "description_en": "Restore the default 2D camera behavior, centering on the scroll position.",
       "scriptName": "Restore2DCamera",
-      "category": "3d-camera"
+      "category": "3d-camera",
+      "display_zh": "切换2D相机",
+      "display_en": "Restore 2D camera"
     },
     {
       "id": "set-position",
@@ -138,19 +170,25 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "要设置的X轴位置。",
+          "desc_en": "X position to set."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "要设置的Y轴位置。",
+          "desc_en": "Y position to set."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "Z",
-          "name_en": "Z"
+          "name_en": "Z",
+          "desc_zh": "要设置的Z轴位置。",
+          "desc_en": "Z position to set."
         },
         {
           "id": "which",
@@ -170,9 +208,13 @@
               "zh": "注视位置",
               "en": "Look"
             }
-          }
+          },
+          "desc_zh": "设置相机位置或相机注视位置。",
+          "desc_en": "Whether to set the camera or the look position."
         }
-      ]
+      ],
+      "display_zh": "设置 [b]{3}[/b] 到 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Set [b]{3}[/b] position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])"
     },
     {
       "id": "move-along-layout-axis",
@@ -187,7 +229,9 @@
           "id": "distance",
           "type": "number",
           "name_zh": "距离",
-          "name_en": "Distance"
+          "name_en": "Distance",
+          "desc_zh": "移动的距离。",
+          "desc_en": "Number of units to move along the given axis."
         },
         {
           "id": "axis",
@@ -212,7 +256,9 @@
               "zh": "Z",
               "en": "Z"
             }
-          }
+          },
+          "desc_zh": "相对于场景的轴。",
+          "desc_en": "Which axis, relative to the layout, to move along."
         },
         {
           "id": "which",
@@ -237,9 +283,13 @@
               "zh": "注视位置",
               "en": "Look position"
             }
-          }
+          },
+          "desc_zh": "移动相机位置，或注视位置，或者同时移动。",
+          "desc_en": "Whether to move the camera, the look position, or both."
         }
-      ]
+      ],
+      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis"
     },
     {
       "id": "move-along-camera-axis",
@@ -254,7 +304,9 @@
           "id": "distance",
           "type": "number",
           "name_zh": "距离",
-          "name_en": "Distance"
+          "name_en": "Distance",
+          "desc_zh": "沿着轴移动的距离。",
+          "desc_en": "Number of units to move along the given axis."
         },
         {
           "id": "axis",
@@ -279,7 +331,9 @@
               "zh": "平移",
               "en": "Right"
             }
-          }
+          },
+          "desc_zh": "相对于相机朝向的位置，沿着哪个轴移动。",
+          "desc_en": "Which axis, relative to the direction the camera is pointing in, to move along."
         },
         {
           "id": "which",
@@ -304,9 +358,13 @@
               "zh": "注视位置",
               "en": "Look position"
             }
-          }
+          },
+          "desc_zh": "要移动相机位置，还是注视位置，或者同时移动。",
+          "desc_en": "Whether to move the camera, the look position, or both."
         }
-      ]
+      ],
+      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis"
     },
     {
       "id": "rotate-camera",
@@ -321,28 +379,38 @@
           "id": "rotate-x",
           "type": "number",
           "name_zh": "旋转 X",
-          "name_en": "Rotate X"
+          "name_en": "Rotate X",
+          "desc_zh": "水平方向旋转角度。",
+          "desc_en": "Number of degrees to rotate horizontally."
         },
         {
           "id": "rotate-y",
           "type": "number",
           "name_zh": "旋转 Y",
-          "name_en": "Rotate Y"
+          "name_en": "Rotate Y",
+          "desc_zh": "垂直方向旋转角度。",
+          "desc_en": "Number of degrees to rotate vertically."
         },
         {
           "id": "min-polar-angle",
           "type": "number",
           "name_zh": "最小极角",
-          "name_en": "Min polar angle"
+          "name_en": "Min polar angle",
+          "desc_zh": "在Y轴旋转的最小角度，限制相机可以向上看的距离。",
+          "desc_en": "The minimum angle for Y rotation, limiting how far the camera can look upwards."
         },
         {
           "id": "max-polar-angle",
           "type": "number",
           "name_zh": "最大极角",
           "name_en": "Max polar angle",
-          "initialValue": "180"
+          "initialValue": "180",
+          "desc_zh": "在Y轴旋转的最大角度，限制相机可以向下看的距离。",
+          "desc_en": "The maximum angle for Y rotation, limiting how far the camera can look downwards."
         }
-      ]
+      ],
+      "display_zh": "旋转相机 ([i]{0}[/i], [i]{1}[/i]), 极角范围 [i]{2}[/i] 到 [i]{3}[/i]",
+      "display_en": "Rotate camera by ([i]{0}[/i], [i]{1}[/i]), polar angle range [i]{2}[/i] to [i]{3}[/i]"
     },
     {
       "id": "set-field-of-view",
@@ -357,16 +425,20 @@
           "id": "fov",
           "type": "number",
           "name_zh": "视区角度",
-          "name_en": "Field of view"
+          "name_en": "Field of view",
+          "desc_zh": "3D相机前方可见区域的角度，也被称为 FOV。",
+          "desc_en": "Angle of the field of view, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置视区角度为[i]{0}[/i]°",
+      "display_en": "Set field of view to [i]{0}[/i]°"
     }
   ],
   "expressions": [
     {
       "id": "camera-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相机X",
+      "name_en": "CameraX",
       "description_zh": "相机的X坐标",
       "description_en": "The X co-ordinate of the camera.",
       "expressionName": "CameraX",
@@ -375,8 +447,8 @@
     },
     {
       "id": "camera-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相机Y",
+      "name_en": "CameraY",
       "description_zh": "相机的Y坐标",
       "description_en": "The Y co-ordinate of the camera.",
       "expressionName": "CameraY",
@@ -385,8 +457,8 @@
     },
     {
       "id": "camera-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相机Z",
+      "name_en": "CameraZ",
       "description_zh": "相机的Z坐标",
       "description_en": "The Z co-ordinate of the camera.",
       "expressionName": "CameraZ",
@@ -395,8 +467,8 @@
     },
     {
       "id": "look-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视X",
+      "name_en": "LookX",
       "description_zh": "相机注视位置的X坐标。",
       "description_en": "The X co-ordinate of the position the camera is pointing at.",
       "expressionName": "LookX",
@@ -405,8 +477,8 @@
     },
     {
       "id": "look-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视Y",
+      "name_en": "LookY",
       "description_zh": "相机注视位置的Y坐标。",
       "description_en": "The Y co-ordinate of the position the camera is pointing at.",
       "expressionName": "LookY",
@@ -415,8 +487,8 @@
     },
     {
       "id": "look-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视Z",
+      "name_en": "LookZ",
       "description_zh": "相机注视位置的Z坐标。",
       "description_en": "The Z co-ordinate of the position the camera is pointing at.",
       "expressionName": "LookZ",
@@ -425,8 +497,8 @@
     },
     {
       "id": "z-scale",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "Z轴倍率",
+      "name_en": "ZScale",
       "description_zh": "影响在Z轴方向中，每个像素的缩放比例。",
       "description_en": "The scale factor for number of pixels per unit on the Z axis.",
       "expressionName": "ZScale",
@@ -435,8 +507,8 @@
     },
     {
       "id": "default-camera-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认相机Z",
+      "name_en": "DefaultCameraZ",
       "description_zh": "2D视图中，相机在100%缩放比中的相机位置。",
       "description_en": "The camera Z position where a 2D view will display at 100% scale.",
       "expressionName": "DefaultCameraZ",
@@ -445,8 +517,8 @@
     },
     {
       "id": "field-of-view",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "视区角度",
+      "name_en": "FieldOfView",
       "description_zh": "3D相机前方可见区域的角度，也被称为 FOV。",
       "description_en": "The current field of view in degrees.",
       "expressionName": "FieldOfView",
@@ -455,8 +527,8 @@
     },
     {
       "id": "up-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "升降X",
+      "name_en": "UpX",
       "description_zh": "相机升降的X分量。",
       "description_en": "The X component of the up vector.",
       "expressionName": "UpX",
@@ -465,8 +537,8 @@
     },
     {
       "id": "up-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "升降Y",
+      "name_en": "UpY",
       "description_zh": "相机升降的Y分量。",
       "description_en": "The Y component of the up vector.",
       "expressionName": "UpY",
@@ -475,8 +547,8 @@
     },
     {
       "id": "up-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "升降Z",
+      "name_en": "UpZ",
       "description_zh": "相机升降的Z分量。",
       "description_en": "The Z component of the up vector.",
       "expressionName": "UpZ",
@@ -485,8 +557,8 @@
     },
     {
       "id": "forward-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "前推X",
+      "name_en": "ForwardX",
       "description_zh": "向前推进的X分量。",
       "description_en": "The X component of the forward unit vector.",
       "expressionName": "ForwardX",
@@ -495,8 +567,8 @@
     },
     {
       "id": "forward-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "前推Y",
+      "name_en": "ForwardY",
       "description_zh": "向前推进的Y分量。",
       "description_en": "The Y component of the forward unit vector.",
       "expressionName": "ForwardY",
@@ -505,8 +577,8 @@
     },
     {
       "id": "forward-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "前推Z",
+      "name_en": "ForwardZ",
       "description_zh": "向前推进的Z分量。",
       "description_en": "The Z component of the forward unit vector.",
       "expressionName": "ForwardZ",
@@ -515,8 +587,8 @@
     },
     {
       "id": "right-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平移X",
+      "name_en": "RightX",
       "description_zh": "相机沿水平方向平移的X分量。",
       "description_en": "The X component of the right (perpendicular) unit vector.",
       "expressionName": "RightX",
@@ -525,8 +597,8 @@
     },
     {
       "id": "right-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平移Y",
+      "name_en": "RightY",
       "description_zh": "相机沿水平方向平移的Y分量。",
       "description_en": "The Y component of the right (perpendicular) unit vector.",
       "expressionName": "RightY",
@@ -535,8 +607,8 @@
     },
     {
       "id": "right-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平移Z",
+      "name_en": "RightZ",
       "description_zh": "相机沿水平方向平移的Z分量。",
       "description_en": "The Z component of the right (perpendicular) unit vector.",
       "expressionName": "RightZ",
@@ -545,8 +617,8 @@
     },
     {
       "id": "camera-x-rotation",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相机角度X",
+      "name_en": "CameraXRotation",
       "description_zh": "相机在X轴的旋转角度。",
       "description_en": "The X rotation of the camera in degrees.",
       "expressionName": "CameraXRotation",
@@ -555,8 +627,8 @@
     },
     {
       "id": "camera-y-rotation",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相机角度Y",
+      "name_en": "CameraYRotation",
       "description_zh": "相机在Y轴的旋转角度。",
       "description_en": "The Y rotation of the camera in degrees.",
       "expressionName": "CameraYRotation",
@@ -565,8 +637,8 @@
     },
     {
       "id": "look-vector-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视向量X",
+      "name_en": "LookVectorX",
       "description_zh": "从相机到注视位置的运动向量X。",
       "description_en": "The X component of the vector from the camera to look position.",
       "expressionName": "LookVectorX",
@@ -575,8 +647,8 @@
     },
     {
       "id": "look-vector-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视向量Y",
+      "name_en": "LookVectorY",
       "description_zh": "从相机到注视位置的运动向量Y。",
       "description_en": "The Y component of the vector from the camera to look position.",
       "expressionName": "LookVectorY",
@@ -585,8 +657,8 @@
     },
     {
       "id": "look-vector-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "注视向量Z",
+      "name_en": "LookVectorZ",
       "description_zh": "从相机到注视位置的运动向量Z。",
       "description_en": "The Z component of the vector from the camera to look position.",
       "expressionName": "LookVectorZ",
@@ -595,8 +667,8 @@
     },
     {
       "id": "viewport-top-left-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportTopLeftX",
+      "name_en": "ViewportTopLeftX",
       "description_zh": "获取图层可视区域左上角的X坐标。",
       "description_en": "Get the X co-ordinate of the top-left point of the visible area on a layer.",
       "expressionName": "ViewportTopLeftX",
@@ -607,14 +679,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-top-left-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportTopLeftY",
+      "name_en": "ViewportTopLeftY",
       "description_zh": "获取图层可视区域左上角的Y坐标。",
       "description_en": "Get the Y co-ordinate of the top-left point of the visible area on a layer.",
       "expressionName": "ViewportTopLeftY",
@@ -625,14 +699,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-top-right-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportTopRightX",
+      "name_en": "ViewportTopRightX",
       "description_zh": "获取图层可视区域右上角的X坐标。",
       "description_en": "Get the X co-ordinate of the top-right point of the visible area on a layer.",
       "expressionName": "ViewportTopRightX",
@@ -643,14 +719,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-top-right-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportTopRightY",
+      "name_en": "ViewportTopRightY",
       "description_zh": "获取图层可视区域右上角的Y坐标。",
       "description_en": "Get the Y co-ordinate of the top-right point of the visible area on a layer.",
       "expressionName": "ViewportTopRightY",
@@ -661,14 +739,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-bottom-right-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportBottomRightX",
+      "name_en": "ViewportBottomRightX",
       "description_zh": "获取图层可视区域右下角的X坐标。",
       "description_en": "Get the X co-ordinate of the bottom-right point of the visible area on a layer.",
       "expressionName": "ViewportBottomRightX",
@@ -679,14 +759,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-bottom-right-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportBottomRightY",
+      "name_en": "ViewportBottomRightY",
       "description_zh": "获取图层可视区域右下角的Y坐标。",
       "description_en": "Get the Y co-ordinate of the bottom-right point of the visible area on a layer.",
       "expressionName": "ViewportBottomRightY",
@@ -697,14 +779,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-bottom-left-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportBottomLeftX",
+      "name_en": "ViewportBottomLeftX",
       "description_zh": "获取图层可视区域左下角的X坐标。",
       "description_en": "Get the X co-ordinate of the bottom-left point of the visible area on a layer.",
       "expressionName": "ViewportBottomLeftX",
@@ -715,14 +799,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "viewport-bottom-left-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "ViewportBottomLeftY",
+      "name_en": "ViewportBottomLeftY",
       "description_zh": "获取图层可视区域左下角的Y坐标。",
       "description_en": "Get the Y co-ordinate of the bottom-left point of the visible area on a layer.",
       "expressionName": "ViewportBottomLeftY",
@@ -733,14 +819,16 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要获取的图层。可以是编号或者名字。",
+          "desc_en": "Layer to get viewport for."
         }
       ]
     },
     {
       "id": "layer-to-canvas-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图层转画布坐标X",
+      "name_en": "LayerToCanvasX",
       "description_zh": "将3D图层坐标转换为画布CSS坐标。",
       "description_en": "Translate a 3D position from layer co-ordinates to canvas CSS co-ordinates.",
       "expressionName": "LayerToCanvasX",
@@ -751,32 +839,40 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要使用的图层。",
+          "desc_en": "Layer to use."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "z",
-          "name_en": "z"
+          "name_en": "z",
+          "desc_zh": "要转换的Z坐标。",
+          "desc_en": "Z co-ordinate to translate."
         }
       ]
     },
     {
       "id": "layer-to-canvas-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图层转画布坐标Y",
+      "name_en": "LayerToCanvasY",
       "description_zh": "将图层坐标转换为画布CSS坐标。",
       "description_en": "Translate a 3D position from layer co-ordinates to canvas CSS co-ordinates.",
       "expressionName": "LayerToCanvasY",
@@ -787,32 +883,40 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要使用的图层。",
+          "desc_en": "Layer to use."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "z",
-          "name_en": "z"
+          "name_en": "z",
+          "desc_zh": "要转换的Z坐标。",
+          "desc_en": "Z co-ordinate to translate."
         }
       ]
     },
     {
       "id": "canvas-to-layer-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "画布转图层坐标X",
+      "name_en": "CanvasToLayerX",
       "description_zh": "将画布CSS坐标转换为3D图层坐标。",
       "description_en": "Translate a position from canvas CSS co-ordinates to layer co-ordinates on a Z plane.",
       "expressionName": "CanvasToLayerX",
@@ -823,32 +927,40 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要使用的图层。",
+          "desc_en": "Layer to use."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "layer-z",
           "type": "number",
           "name_zh": "图层",
-          "name_en": "layerZ"
+          "name_en": "layerZ",
+          "desc_zh": "图层的平面Z。",
+          "desc_en": "Z plane on the layer."
         }
       ]
     },
     {
       "id": "canvas-to-layer-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "画布转图层坐标Y",
+      "name_en": "CanvasToLayerY",
       "description_zh": "将画布CSS坐标转换为3D图层坐标。",
       "description_en": "Translate a position from canvas CSS co-ordinates to layer co-ordinates on a Z plane.",
       "expressionName": "CanvasToLayerY",
@@ -859,32 +971,40 @@
           "id": "layer",
           "type": "layer",
           "name_zh": "图层",
-          "name_en": "layer"
+          "name_en": "layer",
+          "desc_zh": "要使用的图层。",
+          "desc_en": "Layer to use."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "layer-z",
           "type": "number",
           "name_zh": "图层Z",
-          "name_en": "layerZ"
+          "name_en": "layerZ",
+          "desc_zh": "图层的平面Z。",
+          "desc_en": "Z plane on the layer."
         }
       ]
     },
     {
       "id": "layer-to-layer-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图层转换图层坐标X",
+      "name_en": "LayerToLayerX",
       "description_zh": "将3D位置从当前图层转换到另一个图层坐标。",
       "description_en": "Translate a 3D position from one layer to another layer.",
       "expressionName": "LayerToLayerX",
@@ -895,38 +1015,48 @@
           "id": "from-layer",
           "type": "layer",
           "name_zh": "原始图层",
-          "name_en": "fromLayer"
+          "name_en": "fromLayer",
+          "desc_zh": "当前所在的位置。",
+          "desc_en": "Layer position is on."
         },
         {
           "id": "to-layer",
           "type": "layer",
           "name_zh": "目标图层",
-          "name_en": "toLayer"
+          "name_en": "toLayer",
+          "desc_zh": "要转换到的图层。",
+          "desc_en": "Layer to translate position to."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "z",
-          "name_en": "z"
+          "name_en": "z",
+          "desc_zh": "要转换的Z坐标。",
+          "desc_en": "Z co-ordinate to translate."
         }
       ]
     },
     {
       "id": "layer-to-layer-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图层转换图层坐标Y",
+      "name_en": "LayerToLayerY",
       "description_zh": "将3D位置从当前图层转换到另一个图层坐标。",
       "description_en": "Translate a 3D position from one layer to another layer.",
       "expressionName": "LayerToLayerY",
@@ -937,31 +1067,41 @@
           "id": "from-layer",
           "type": "layer",
           "name_zh": "原始图层",
-          "name_en": "fromLayer"
+          "name_en": "fromLayer",
+          "desc_zh": "当前所在的位置。",
+          "desc_en": "Layer position is on."
         },
         {
           "id": "to-layer",
           "type": "layer",
           "name_zh": "目标图层",
-          "name_en": "toLayer"
+          "name_en": "toLayer",
+          "desc_zh": "要转换到的图层。",
+          "desc_en": "Layer to translate position to."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "x",
-          "name_en": "x"
+          "name_en": "x",
+          "desc_zh": "要转换的X坐标。",
+          "desc_en": "X co-ordinate to translate."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "y",
-          "name_en": "y"
+          "name_en": "y",
+          "desc_zh": "要转换的Y坐标。",
+          "desc_en": "Y co-ordinate to translate."
         },
         {
           "id": "z",
           "type": "number",
           "name_zh": "z",
-          "name_en": "z"
+          "name_en": "z",
+          "desc_zh": "要转换的Z坐标。",
+          "desc_en": "Z co-ordinate to translate."
         }
       ]
     }

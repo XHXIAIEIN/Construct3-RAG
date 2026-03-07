@@ -16,7 +16,9 @@
       "name_en": "Has target",
       "description_zh": "检测炮台当前是否有射击目标。",
       "description_en": "True if the turret currently has a target to aim at.",
-      "scriptName": "HasTarget"
+      "scriptName": "HasTarget",
+      "display_zh": "{my} 已发现目标",
+      "display_en": "{my} has target"
     },
     {
       "id": "on-shoot",
@@ -25,7 +27,9 @@
       "description_zh": "当炮台可以射击目标时触发。",
       "description_en": "Triggered when the turret can shoot at its target.",
       "scriptName": "OnShoot",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 执行射击",
+      "display_en": "On {my} shoot"
     },
     {
       "id": "on-target-acquired",
@@ -34,7 +38,9 @@
       "description_zh": "当炮台在射程范围内找到新目标时触发",
       "description_en": "Triggered upon the turret finding a new target within range.",
       "scriptName": "OnTargetAcquired",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 锁定目标",
+      "display_en": "On {my} target acquired"
     },
     {
       "id": "is-enabled",
@@ -42,7 +48,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为是否已经启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -58,9 +66,13 @@
           "id": "target",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Target"
+          "name_en": "Target",
+          "desc_zh": "为炮台指定一个目标，当目标出现在射程内时执行射击。",
+          "desc_en": "Choose an object for the turret to specifically target if in range."
         }
-      ]
+      ],
+      "display_zh": "{my} 瞄准目标 {0}",
+      "display_en": "{my} acquire target {0}"
     },
     {
       "id": "add-object-to-target",
@@ -74,9 +86,13 @@
           "id": "target",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Target"
+          "name_en": "Target",
+          "desc_zh": "选择一个对象或家族对象，用于炮台的瞄准目标。",
+          "desc_en": "Choose an object or family for the turret to automatically detect as targets."
         }
-      ]
+      ],
+      "display_zh": "{my}添加 {0} 为瞄准目标",
+      "display_en": "Add {my} target {0}"
     },
     {
       "id": "clear-targets",
@@ -84,7 +100,9 @@
       "name_en": "Clear targets",
       "description_zh": "炮台不再自动瞄准任何对象。",
       "description_en": "Remove all objects to target automatically.",
-      "scriptName": "ClearTargets"
+      "scriptName": "ClearTargets",
+      "display_zh": "清空 {my} 瞄准目标",
+      "display_en": "Clear {my} targets"
     },
     {
       "id": "unacquire-target",
@@ -92,7 +110,9 @@
       "name_en": "Unacquire target",
       "description_zh": "让炮台解除锁定当前的射击目标，以便获取另一个目标。注意，如果不立即使用 '瞄准目标' 动作，炮台仍然可以继续瞄准同一个目标。",
       "description_en": "Unacquire current target so another target can be acquired.",
-      "scriptName": "UnacquireTarget"
+      "scriptName": "UnacquireTarget",
+      "display_zh": "取消 {my} 瞄准目标",
+      "display_en": "Unacquire {my} target"
     },
     {
       "id": "set-enabled",
@@ -121,9 +141,13 @@
               "zh": "启用",
               "en": "enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Choose whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}"
     },
     {
       "id": "set-range",
@@ -138,9 +162,13 @@
           "id": "range",
           "type": "number",
           "name_zh": "范围",
-          "name_en": "Range"
+          "name_en": "Range",
+          "desc_zh": "要设置的范围，以像素为单位。",
+          "desc_en": "The range to set, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}射程范围为[i]{0}[/i]",
+      "display_en": "Set {my} range to [i]{0}[/i]"
     },
     {
       "id": "set-rate-of-fire",
@@ -155,9 +183,13 @@
           "id": "rate-of-fire",
           "type": "number",
           "name_zh": "发射频率",
-          "name_en": "Rate of fire"
+          "name_en": "Rate of fire",
+          "desc_zh": "要设置的射击速度，以秒为单位。",
+          "desc_en": "The rate of fire to set, in seconds."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}发射速率为[i]{0}[/i]",
+      "display_en": "Set {my} rate of fire to [i]{0}[/i]"
     },
     {
       "id": "set-rotate",
@@ -186,9 +218,13 @@
               "zh": "启用",
               "en": "enabled"
             }
-          }
+          },
+          "desc_zh": "炮台是否自动朝向目标的方向旋转。",
+          "desc_en": "Choose whether to automatically rotate towards targets."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}{0}自动转向目标",
+      "display_en": "Set {my} rotate {0}"
     },
     {
       "id": "set-rotate-speed",
@@ -203,9 +239,13 @@
           "id": "rotate-speed",
           "type": "number",
           "name_zh": "转向速度",
-          "name_en": "Rotate speed"
+          "name_en": "Rotate speed",
+          "desc_zh": "要设置的转向速度，以度/秒为单位",
+          "desc_en": "The rotation speed to set, in degrees per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}转向速度为[i]{0}[/i]",
+      "display_en": "Set {my} rotate speed to [i]{0}[/i]"
     },
     {
       "id": "set-target-mode",
@@ -234,9 +274,13 @@
               "zh": "最近的",
               "en": "nearest"
             }
-          }
+          },
+          "desc_zh": "选择如何处理多个目标",
+          "desc_en": "Choose how to deal with multiple targets."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}目标模式为[i]{0}[/i]",
+      "display_en": "Set {my} target mode to [i]{0}[/i]"
     },
     {
       "id": "set-predictive-aim",
@@ -265,9 +309,13 @@
               "zh": "启用",
               "en": "enabled"
             }
-          }
+          },
+          "desc_zh": "选择是否使用预测瞄准",
+          "desc_en": "Choose whether or not to use predictive aim."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}{0}预测瞄准",
+      "display_en": "Set {my} predictive aim {0}"
     },
     {
       "id": "set-projectile-speed",
@@ -282,16 +330,20 @@
           "id": "projectile-speed",
           "type": "number",
           "name_zh": "预判速度",
-          "name_en": "Projectile speed"
+          "name_en": "Projectile speed",
+          "desc_zh": "用于预测目标的射弹速度，以每秒像素为单位",
+          "desc_en": "The projectile speed to set for predictive aim, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}预判速度为[i]{0}[/i]",
+      "display_en": "Set {my} projectile speed to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "targetuid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标UID",
+      "name_en": "TargetUID",
       "description_zh": "获取当前目标对象的唯一识别码(UID)",
       "description_en": "Get the unique ID (UID) of the current target object.",
       "expressionName": "TargetUID",
@@ -299,8 +351,8 @@
     },
     {
       "id": "range",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "发射范围",
+      "name_en": "Range",
       "description_zh": "获取当前的射击范围，以像素为单位。",
       "description_en": "Get the current range in pixels.",
       "expressionName": "Range",
@@ -308,8 +360,8 @@
     },
     {
       "id": "rateoffire",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "发射频率",
+      "name_en": "RateOfFire",
       "description_zh": "获取当前的射击频率，以每秒次数为单位。",
       "description_en": "Get the current rate of fire in seconds.",
       "expressionName": "RateOfFire",
@@ -317,8 +369,8 @@
     },
     {
       "id": "rotatespeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "旋转速度",
+      "name_en": "RotateSpeed",
       "description_zh": "获取当前的旋转速度，以每秒角度为单位。",
       "description_en": "Get the current rotate speed in degrees per second.",
       "expressionName": "RotateSpeed",

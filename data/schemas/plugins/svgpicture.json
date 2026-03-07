@@ -104,9 +104,13 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          }
+          },
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object."
         }
-      ]
+      ],
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]"
     },
     {
       "id": "set-image",
@@ -122,9 +126,13 @@
           "id": "file",
           "type": "projectfile",
           "name_zh": "文件",
-          "name_en": "File"
+          "name_en": "File",
+          "desc_zh": "从项目文件中加载SVG图像。",
+          "desc_en": "A project file to load an SVG image from."
         }
-      ]
+      ],
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]"
     },
     {
       "id": "set-image-by-name",
@@ -140,9 +148,13 @@
           "id": "file",
           "type": "string",
           "name_zh": "文件",
-          "name_en": "File"
+          "name_en": "File",
+          "desc_zh": "用于加载SVG图像的项目文件的名称字符串",
+          "desc_en": "A string of the name of a project file to load an SVG image from."
         }
-      ]
+      ],
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]"
     }
   ],
   "expressions": [],

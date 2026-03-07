@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -30,9 +32,13 @@
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "设置旋转速度，以每秒角度为单位。",
+          "desc_en": "The new rotation speed, in degrees per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}每秒旋转速度为{0}°",
+      "display_en": "Set {my} speed to {0} degrees per second"
     },
     {
       "id": "set-acceleration",
@@ -46,9 +52,13 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "设置旋转加速度，以每秒角度为单位。",
+          "desc_en": "The new rotation acceleration, in degrees per second per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}加速度为{0}",
+      "display_en": "Set {my} acceleration to {0} degrees per second per second"
     },
     {
       "id": "set-enabled",
@@ -76,16 +86,20 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动速度",
+      "name_en": "Speed",
       "description_zh": "当前旋转速度，以度数/每秒为单位。",
       "description_en": "The current rotation speed in degrees per second.",
       "expressionName": "Speed",
@@ -93,8 +107,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度",
+      "name_en": "Acceleration",
       "description_zh": "当前的旋转加速度，以度数/秒为单位。",
       "description_en": "The current rotation acceleration in degrees per second per second.",
       "expressionName": "Acceleration",
