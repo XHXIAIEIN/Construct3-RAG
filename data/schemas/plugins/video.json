@@ -17,7 +17,9 @@
       "description_zh": "检测是否正在播放视频。",
       "description_en": "True if video is currently playing.",
       "scriptName": "IsPlaying",
-      "category": "video"
+      "category": "video",
+      "display_zh": "正在播放",
+      "display_en": "Is playing"
     },
     {
       "id": "is-paused",
@@ -26,7 +28,9 @@
       "description_zh": "检测视频是否已暂停。",
       "description_en": "True if video is currently paused.",
       "scriptName": "IsPaused",
-      "category": "video"
+      "category": "video",
+      "display_zh": "暂停",
+      "display_en": "Is paused"
     },
     {
       "id": "has-ended",
@@ -35,7 +39,9 @@
       "description_zh": "检测视频是否播放完成。",
       "description_en": "True if video has finished playing.",
       "scriptName": "HasEnded",
-      "category": "video"
+      "category": "video",
+      "display_zh": "播放完成",
+      "display_en": "Has ended"
     },
     {
       "id": "is-muted",
@@ -44,7 +50,9 @@
       "description_zh": "检测视频是否开启静音。",
       "description_en": "True if video sound is muted.",
       "scriptName": "IsMuted",
-      "category": "video"
+      "category": "video",
+      "display_zh": "已静音",
+      "display_en": "Is muted"
     },
     {
       "id": "on-playback-event",
@@ -104,9 +112,13 @@
               "zh": "停顿",
               "en": "Stalled"
             }
-          }
+          },
+          "desc_zh": "要检查的播放事件。",
+          "desc_en": "The playback event to check for."
         }
-      ]
+      ],
+      "display_zh": "视频{0}",
+      "display_en": "On {0}"
     }
   ],
   "actions": [
@@ -147,7 +159,9 @@
           "id": "primary-source",
           "type": "string",
           "name_zh": "首选播放源",
-          "name_en": "Primary source"
+          "name_en": "Primary source",
+          "desc_zh": "要播放的视频文件名，包含后缀名，如 video.webm 。若放在文件夹内，需补全文件夹路径，如 Folder/video.mp4",
+          "desc_en": "File name of primary video source to use if supported."
         },
         {
           "id": "primary-format",
@@ -188,13 +202,17 @@
               "zh": "MP4 AV1",
               "en": "MP4 AV1"
             }
-          }
+          },
+          "desc_zh": "首选的视频格式和视频编码器。若设备不支持播放此格式，将使用备选格式。",
+          "desc_en": "The container format and video codec of the primary source."
         },
         {
           "id": "secondary-source",
           "type": "string",
           "name_zh": "备选播放源",
-          "name_en": "Secondary source"
+          "name_en": "Secondary source",
+          "desc_zh": "若首选视频格式设备无法播放，则尝试备选视频源。填写要播放的视频文件名，包含后缀名，如 video.mp4。若放在文件夹内，需补全文件夹路径，如 Folder/video.mp4",
+          "desc_en": "File name of secondary video source to use if the primary format is not supported."
         },
         {
           "id": "secondary-format",
@@ -235,9 +253,13 @@
               "zh": "MP4 AV1",
               "en": "MP4 AV1"
             }
-          }
+          },
+          "desc_zh": "备选的视频格式和编解码器，在首选视频格式无法播放的情况使用。",
+          "desc_en": "The container format and video codec of the secondary source."
         }
-      ]
+      ],
+      "display_zh": "设置视频播放源 [i]{0}[/i] ({1}), 备选播放源: [i]{2}[/i] ({3})",
+      "display_en": "Set video primary source [i]{0}[/i] ({1}), secondary source [i]{2}[/i] ({3})"
     },
     {
       "id": "set-playback-time",
@@ -252,9 +274,13 @@
           "id": "time",
           "type": "number",
           "name_zh": "时间",
-          "name_en": "Time"
+          "name_en": "Time",
+          "desc_zh": "查找的播放时间，以秒为单位。",
+          "desc_en": "Playback time in seconds to seek to."
         }
-      ]
+      ],
+      "display_zh": "设置播放时间为[b]{0}[/b]秒",
+      "display_en": "Set playback time to [b]{0}[/b] seconds"
     },
     {
       "id": "set-playback-rate",
@@ -270,9 +296,13 @@
           "type": "number",
           "name_zh": "倍率",
           "name_en": "Rate",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "视频播放速度的倍率。1.0是正常速度，0.5半速，2.0倍速等。",
+          "desc_en": "The playback rate to set. 1 is original speed, 2 is double speed, etc."
         }
-      ]
+      ],
+      "display_zh": "设置播放速度为[b]{0}[/b]倍",
+      "display_en": "Set playback rate to [b]{0}[/b]"
     },
     {
       "id": "set-looping",
@@ -301,9 +331,13 @@
               "zh": "循环播放",
               "en": "looping"
             }
-          }
+          },
+          "desc_zh": "视频是否应该在到达结尾时循环播放。",
+          "desc_en": "Whether or not the video should loop when it reaches the end."
         }
-      ]
+      ],
+      "display_zh": "设置 {0}",
+      "display_en": "Set {0}"
     },
     {
       "id": "set-muted",
@@ -332,9 +366,13 @@
               "zh": "静音",
               "en": "muted"
             }
-          }
+          },
+          "desc_zh": "设置音频对象是否进入静音模式。",
+          "desc_en": "Whether or not the audio should be muted."
         }
-      ]
+      ],
+      "display_zh": "设置{0}",
+      "display_en": "Set {0}"
     },
     {
       "id": "set-volume",
@@ -350,9 +388,13 @@
           "type": "number",
           "name_zh": "音量",
           "name_en": "Volume",
-          "initialValue": "-6"
+          "initialValue": "-6",
+          "desc_zh": "要设置的音频音量，以dB为单位衰减。",
+          "desc_en": "The volume of the audio to set, in dB attenuation."
         }
-      ]
+      ],
+      "display_zh": "设置音量为[b]{0}[/b]dB",
+      "display_en": "Set volume to [b]{0}[/b] dB"
     },
     {
       "id": "pause",
@@ -361,7 +403,9 @@
       "description_zh": "暂停当前播放。",
       "description_en": "Pause the current playback.",
       "scriptName": "Pause",
-      "category": "video"
+      "category": "video",
+      "display_zh": "暂停",
+      "display_en": "Pause"
     },
     {
       "id": "play",
@@ -370,14 +414,16 @@
       "description_zh": "如果停止或暂停，则开始播放视频。 在移动设备上，可能只能在用户输入触发器中工作。",
       "description_en": "Start playing the video if stopped or paused. On mobile, may only work in a user input trigger.",
       "scriptName": "Play",
-      "category": "video"
+      "category": "video",
+      "display_zh": "播放",
+      "display_en": "Play"
     }
   ],
   "expressions": [
     {
       "id": "playbacktime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "播放进度",
+      "name_en": "PlaybackTime",
       "description_zh": "当前播放时间（秒）。",
       "description_en": "Current playback time in seconds.",
       "expressionName": "PlaybackTime",
@@ -386,8 +432,8 @@
     },
     {
       "id": "playbackrate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "播放速度",
+      "name_en": "PlaybackRate",
       "description_zh": "当前的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
       "description_en": "Current playback rate, 1 being normal speed.",
       "expressionName": "PlaybackRate",
@@ -396,8 +442,8 @@
     },
     {
       "id": "duration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "持续时间",
+      "name_en": "Duration",
       "description_zh": "获得视频的时长(秒)。需要视频加载到一定进度时可用。",
       "description_en": "Video duration in seconds, if known.",
       "expressionName": "Duration",
@@ -406,8 +452,8 @@
     },
     {
       "id": "volume",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "音量",
+      "name_en": "Volume",
       "description_zh": "当前视频音量以dB为单位衰减。",
       "description_en": "Current video volume in dB attenuation.",
       "expressionName": "Volume",
@@ -416,8 +462,8 @@
     },
     {
       "id": "videowidth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "视频宽度",
+      "name_en": "VideoWidth",
       "description_zh": "原视频宽度",
       "description_en": "The width of the source video.",
       "expressionName": "VideoWidth",
@@ -426,8 +472,8 @@
     },
     {
       "id": "videoheight",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "视频高度",
+      "name_en": "VideoHeight",
       "description_zh": "原视频高度",
       "description_en": "The height of the source video.",
       "expressionName": "VideoHeight",

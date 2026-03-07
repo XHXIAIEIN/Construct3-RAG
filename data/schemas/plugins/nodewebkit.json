@@ -22,7 +22,9 @@
       "description_en": "Triggered after a file chosen from an open dialog.",
       "scriptName": "OnOpenDlg",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "打开对话框被确认",
+      "display_en": "On open dialog OK"
     },
     {
       "id": "on-folder-dialog-ok",
@@ -32,7 +34,9 @@
       "description_en": "Triggered after a folder chosen from a folder dialog.",
       "scriptName": "OnFolderDlg",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "文件夹对话框被确认",
+      "display_en": "On folder dialog OK"
     },
     {
       "id": "on-save-dialog-ok",
@@ -42,7 +46,9 @@
       "description_en": "Triggered after a file chosen from a save dialog.",
       "scriptName": "OnSaveDlg",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "保存对话框被确认",
+      "display_en": "On save dialog OK"
     },
     {
       "id": "on-open-dialog-cancel",
@@ -52,7 +58,9 @@
       "description_en": "Triggered if the open dialog is cancelled.",
       "scriptName": "OnOpenDlgCancel",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "打开对话框被取消",
+      "display_en": "On open dialog cancel"
     },
     {
       "id": "on-folder-dialog-cancel",
@@ -62,7 +70,9 @@
       "description_en": "Triggered if the folder dialog is cancelled.",
       "scriptName": "OnFolderDlgCancel",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "文件夹对话框被取消",
+      "display_en": "On folder dialog cancel"
     },
     {
       "id": "on-save-dialog-cancel",
@@ -72,7 +82,9 @@
       "description_en": "Triggered if the save dialog is cancelled.",
       "scriptName": "OnSaveDlgCancel",
       "isTrigger": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "保存对话框被取消",
+      "display_en": "On save dialog cancel"
     },
     {
       "id": "path-exists",
@@ -87,9 +99,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要检测的文件路径。",
+          "desc_en": "Enter a file path to test if exists."
         }
-      ]
+      ],
+      "display_zh": "路径 [i]{0}[/i] 已存在",
+      "display_en": "Path [i]{0}[/i] exists"
     },
     {
       "id": "on-file-dropped",
@@ -99,7 +115,9 @@
       "description_en": "Triggered when the user drag-and-drops a file in to the window.",
       "scriptName": "OnFileDrop",
       "isTrigger": true,
-      "category": "file-system"
+      "category": "file-system",
+      "display_zh": "文件被拖入",
+      "display_en": "On file dropped"
     },
     {
       "id": "on-binary-file-read",
@@ -115,9 +133,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
+          "desc_en": "A tag to distinguish between different file actions."
         }
-      ]
+      ],
+      "display_zh": "[i]{0}[/i] 二进制文件读取完成",
+      "display_en": "On [i]{0}[/i] binary file read"
     },
     {
       "id": "on-binary-file-written",
@@ -133,9 +155,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
+          "desc_en": "A tag to distinguish between different file actions."
         }
-      ]
+      ],
+      "display_zh": "二进制数据 [i]{0}[/i] 写入完成",
+      "display_en": "On [i]{0}[/i] binary file written"
     },
     {
       "id": "on-any-binary-file-read",
@@ -145,7 +171,9 @@
       "description_en": "Triggered when any binary file read completes. The 'FileTag' expression identifies the action.",
       "scriptName": "OnAnyBinaryFileRead",
       "isTrigger": true,
-      "category": "file-system"
+      "category": "file-system",
+      "display_zh": "任意二进制文件读取完成",
+      "display_en": "On any binary file read"
     },
     {
       "id": "on-any-binary-file-written",
@@ -155,7 +183,9 @@
       "description_en": "Triggered when any binary file write completes. The 'FileTag' expression identifies the action.",
       "scriptName": "OnAnyBinaryFileWritten",
       "isTrigger": true,
-      "category": "file-system"
+      "category": "file-system",
+      "display_zh": "任意二进制文件写入完成",
+      "display_en": "On any binary file written"
     },
     {
       "id": "on-file-system-error",
@@ -165,7 +195,9 @@
       "description_en": "Triggered when a file operation fails.",
       "scriptName": "OnFileSystemError",
       "isTrigger": true,
-      "category": "file-system"
+      "category": "file-system",
+      "display_zh": "文件系统出现错误",
+      "display_en": "On file system error"
     }
   ],
   "actions": [
@@ -210,9 +242,13 @@
           "id": "accept",
           "type": "string",
           "name_zh": "同意",
-          "name_en": "Accept"
+          "name_en": "Accept",
+          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
+          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
         }
-      ]
+      ],
+      "display_zh": "显示打开对话框 (接受 [i]{0}[/i])",
+      "display_en": "Show open dialog (accept [i]{0}[/i])"
     },
     {
       "id": "show-folder-dialog",
@@ -221,7 +257,9 @@
       "description_zh": "显示文件夹选择器对话框，允许用户选择文件夹。",
       "description_en": "Show a folder picker dialog allowing the user to pick a folder.",
       "scriptName": "ShowFolderDlg",
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "display_zh": "显示文件夹对话框",
+      "display_en": "Show folder dialog"
     },
     {
       "id": "show-save-dialog",
@@ -236,9 +274,13 @@
           "id": "accept",
           "type": "string",
           "name_zh": "同意",
-          "name_en": "Accept"
+          "name_en": "Accept",
+          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
+          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
         }
-      ]
+      ],
+      "display_zh": "显示保存对话框（接受 [i]{0}[/i]）",
+      "display_en": "Show save dialog (accept [i]{0}[/i])"
     },
     {
       "id": "write-file",
@@ -253,15 +295,21 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要写入的文件路径。注意，此操作会直接覆盖文件！",
+          "desc_en": "Enter the file path to write to. The file will be overwritten!"
         },
         {
           "id": "contents",
           "type": "string",
           "name_zh": "内容",
-          "name_en": "Contents"
+          "name_en": "Contents",
+          "desc_zh": "输入要写入文件的文本内容。",
+          "desc_en": "Enter the text content to write to the file."
         }
-      ]
+      ],
+      "display_zh": "写 [b]{1}[/b] 到文件 [i]{0}[/i]",
+      "display_en": "Write text [b]{1}[/b] to file [i]{0}[/i]"
     },
     {
       "id": "rename-file",
@@ -276,15 +324,21 @@
           "id": "existing-file",
           "type": "string",
           "name_zh": "现有文件",
-          "name_en": "Existing file"
+          "name_en": "Existing file",
+          "desc_zh": "输入要重命名的现有文件路径。",
+          "desc_en": "Enter the existing file path to be renamed."
         },
         {
           "id": "new-name",
           "type": "string",
           "name_zh": "新名称",
-          "name_en": "New name"
+          "name_en": "New name",
+          "desc_zh": "输入要重命名为的新文件路径。",
+          "desc_en": "Enter the new file path to rename to."
         }
-      ]
+      ],
+      "display_zh": "重命名 [i]{0}[/i] 为 [i]{1}[/i]",
+      "display_en": "Rename [i]{0}[/i] to [i]{1}[/i]"
     },
     {
       "id": "delete-file",
@@ -299,9 +353,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要删除的文件路径。",
+          "desc_en": "Enter the file path to delete."
         }
-      ]
+      ],
+      "display_zh": "删除 [i]{0}[/i]",
+      "display_en": "Delete [i]{0}[/i]"
     },
     {
       "id": "create-folder",
@@ -316,9 +374,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要创建的文件夹路径。",
+          "desc_en": "Enter the folder path to create."
         }
-      ]
+      ],
+      "display_zh": "创建文件夹 [i]{0}[/i]",
+      "display_en": "Create folder [i]{0}[/i]"
     },
     {
       "id": "append-file",
@@ -333,15 +395,21 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要操作的文件路径。",
+          "desc_en": "Enter the file path to append to."
         },
         {
           "id": "contents",
           "type": "string",
           "name_zh": "内容",
-          "name_en": "Contents"
+          "name_en": "Contents",
+          "desc_zh": "要附加到文件的文本内容。",
+          "desc_en": "Enter the text content to append to the file."
         }
-      ]
+      ],
+      "display_zh": "追加[b]{1}[/b]到文件[i]{0}[/i]",
+      "display_en": "Append [b]{1}[/b] to file [i]{0}[/i]"
     },
     {
       "id": "list-files",
@@ -356,9 +424,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要获取的文件夹路径。",
+          "desc_en": "Enter the folder path to list files from."
         }
-      ]
+      ],
+      "display_zh": "从 [i]{0}[/i] 列出文件",
+      "display_en": "List files from [i]{0}[/i]"
     },
     {
       "id": "copy-file",
@@ -373,15 +445,21 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要复制的文件路径。",
+          "desc_en": "Enter the file path to copy."
         },
         {
           "id": "destination",
           "type": "string",
           "name_zh": "终点",
-          "name_en": "Destination"
+          "name_en": "Destination",
+          "desc_zh": "输入要复制到的文件路径。",
+          "desc_en": "Enter the file path to copy to."
         }
-      ]
+      ],
+      "display_zh": "复制 [i]{0}[/i] 到 [i]{1}[/i]",
+      "display_en": "Copy [i]{0}[/i] to [i]{1}[/i]"
     },
     {
       "id": "move-file",
@@ -396,15 +474,21 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要移动的文件路径。",
+          "desc_en": "Enter the file path to move."
         },
         {
           "id": "destination",
           "type": "string",
           "name_zh": "终点",
-          "name_en": "Destination"
+          "name_en": "Destination",
+          "desc_zh": "输入要移动到的文件路径。",
+          "desc_en": "Enter the file path to move to."
         }
-      ]
+      ],
+      "display_zh": "移动 [i]{0}[/i] 到 [i]{1}[/i]",
+      "display_en": "Move [i]{0}[/i] to [i]{1}[/i]"
     },
     {
       "id": "run-file",
@@ -419,9 +503,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要执行文件的路径，用空格分隔附加参数。如果路径包含空格，需使用连续2个双引号进行转义，例如 \"\"\"C:\\Program Files\\file.exe\"\"",
+          "desc_en": "Enter the path of the file to execute. This can also include space-separated arguments. To execute a path with spaces in it, wrap in double-quotes (e.g. \"\"\"C:\\Program Files\\file.exe\"\"\")."
         }
-      ]
+      ],
+      "display_zh": "运行 [i]{0}[/i]",
+      "display_en": "Run [i]{0}[/i]"
     },
     {
       "id": "shell-open",
@@ -436,9 +524,13 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要打开的文件路径。这将会打开与该文件关联的默认应用程序。",
+          "desc_en": "File path to open. The default app associated with the file will be opened."
         }
-      ]
+      ],
+      "display_zh": "使用shell开启 [i]{0}[/i]",
+      "display_en": "Shell open [i]{0}[/i]"
     },
     {
       "id": "open-browser",
@@ -453,9 +545,13 @@
           "id": "url",
           "type": "string",
           "name_zh": "URL",
-          "name_en": "URL"
+          "name_en": "URL",
+          "desc_zh": "要在浏览器中打开的Web地址。",
+          "desc_en": "The web address to open in a browser."
         }
-      ]
+      ],
+      "display_zh": "打开浏览器并跳转至 [i]{0}[/i]",
+      "display_en": "Open browser to URL [i]{0}[/i]"
     },
     {
       "id": "read-binary-file",
@@ -471,21 +567,29 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
+          "desc_en": "A tag to distinguish between different file operations."
         },
         {
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要读取的文件路径。",
+          "desc_en": "Enter the file path to read from."
         },
         {
           "id": "destination",
           "type": "object",
           "name_zh": "终点",
-          "name_en": "Destination"
+          "name_en": "Destination",
+          "desc_zh": "要读取的二进制数据",
+          "desc_en": "The Binary Data object to read data in to."
         }
-      ]
+      ],
+      "display_zh": "读二进制文件[b]{1}[/b]为{2}(标签[i]{0}[/i])",
+      "display_en": "Read binary file [b]{1}[/b] into {2} (tag [i]{0}[/i])"
     },
     {
       "id": "write-binary-file",
@@ -501,21 +605,29 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
+          "desc_en": "A tag to distinguish between different file actions."
         },
         {
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要写入的文件路径。注意，此操作会直接覆盖文件！",
+          "desc_en": "Enter the file path to write to. The file will be overwritten!"
         },
         {
           "id": "source",
           "type": "object",
           "name_zh": "来源",
-          "name_en": "Source"
+          "name_en": "Source",
+          "desc_zh": "要写入该文件的二进制数据",
+          "desc_en": "The Binary Data object to write into the file."
         }
-      ]
+      ],
+      "display_zh": "写二进制文件[b]{1}[/b]为{2}(标签[i]{0}[/i])",
+      "display_en": "Write {2} to binary file [b]{1}[/b] (tag [i]{0}[/i])"
     },
     {
       "id": "set-x",
@@ -530,9 +642,13 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "将窗口移动到屏幕上的X坐标。",
+          "desc_en": "The X co-ordinate to move the window to on the screen."
         }
-      ]
+      ],
+      "display_zh": "设置窗体位置X为[i]{0}[/i]",
+      "display_en": "Set window X to [i]{0}[/i]"
     },
     {
       "id": "set-y",
@@ -547,9 +663,13 @@
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "将窗口移动到屏幕上的Y坐标。",
+          "desc_en": "The Y co-ordinate to move the window to on the screen."
         }
-      ]
+      ],
+      "display_zh": "设置窗体Y坐标为[i]{0}[/i]",
+      "display_en": "Set window Y to [i]{0}[/i]"
     },
     {
       "id": "set-width",
@@ -564,9 +684,13 @@
           "id": "width",
           "type": "number",
           "name_zh": "宽度",
-          "name_en": "Width"
+          "name_en": "Width",
+          "desc_zh": "窗口的新宽度。",
+          "desc_en": "The new width of the window."
         }
-      ]
+      ],
+      "display_zh": "设置窗口宽度为[i]{0}[/i]",
+      "display_en": "Set window width to [i]{0}[/i]"
     },
     {
       "id": "set-height",
@@ -581,9 +705,13 @@
           "id": "height",
           "type": "number",
           "name_zh": "高度",
-          "name_en": "Height"
+          "name_en": "Height",
+          "desc_zh": "窗口的新高度。",
+          "desc_en": "The new height of the window."
         }
-      ]
+      ],
+      "display_zh": "设置窗口高度为[i]{0}[/i]",
+      "display_en": "Set window height to [i]{0}[/i]"
     },
     {
       "id": "set-title",
@@ -598,9 +726,13 @@
           "id": "title",
           "type": "string",
           "name_zh": "标题",
-          "name_en": "Title"
+          "name_en": "Title",
+          "desc_zh": "要在窗口标题栏中显示的字符串。",
+          "desc_en": "A string to display in the window title bar."
         }
-      ]
+      ],
+      "display_zh": "设置窗口标题为[i]{0}[/i]",
+      "display_en": "Set window title to [i]{0}[/i]"
     },
     {
       "id": "minimize",
@@ -609,7 +741,9 @@
       "description_zh": "最小化窗口",
       "description_en": "Minimize the window.",
       "scriptName": "WindowMinimize",
-      "category": "window"
+      "category": "window",
+      "display_zh": "最小化窗口",
+      "display_en": "Minimize window"
     },
     {
       "id": "maximize",
@@ -618,7 +752,9 @@
       "description_zh": "最大化窗口",
       "description_en": "Maximize the window.",
       "scriptName": "WindowMaximize",
-      "category": "window"
+      "category": "window",
+      "display_zh": "最大化窗口",
+      "display_en": "Maximize window"
     },
     {
       "id": "unmaximize",
@@ -627,7 +763,9 @@
       "description_zh": "取消最大化窗口（即反向最大化）。",
       "description_en": "Unmaximize the window (i.e. the reverse of maximizing).",
       "scriptName": "WindowUnmaximize",
-      "category": "window"
+      "category": "window",
+      "display_zh": "取消最大化窗口",
+      "display_en": "Unmaximize window"
     },
     {
       "id": "restore",
@@ -636,7 +774,9 @@
       "description_zh": "恢复窗口（即在最小化后再次显示）。",
       "description_en": "Restore the window (i.e. show again after minimizing).",
       "scriptName": "WindowRestore",
-      "category": "window"
+      "category": "window",
+      "display_zh": "恢复窗口",
+      "display_en": "Restore window"
     },
     {
       "id": "request-attention",
@@ -665,9 +805,13 @@
               "zh": "停止提醒",
               "en": "Stop requesting attention"
             }
-          }
+          },
+          "desc_zh": "是否要求注意或取消之前的注意请求。",
+          "desc_en": "Whether to request attention or cancel a previous request for attention."
         }
-      ]
+      ],
+      "display_zh": "窗口： {0}",
+      "display_en": "Window: {0}"
     },
     {
       "id": "set-maximum-size",
@@ -682,15 +826,21 @@
           "id": "max-width",
           "type": "number",
           "name_zh": "最大宽度",
-          "name_en": "Max width"
+          "name_en": "Max width",
+          "desc_zh": "要设置的窗口最大宽度，以像素为单位。",
+          "desc_en": "The maximum window width to set, in pixels."
         },
         {
           "id": "max-height",
           "type": "number",
           "name_zh": "最大高度",
-          "name_en": "Max height"
+          "name_en": "Max height",
+          "desc_zh": "要设置的窗口最大高度，以像素为单位。",
+          "desc_en": "The maximum window height to set, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置窗口最大尺寸为 [i]{0}[/i] x [i]{1}[/i]",
+      "display_en": "Set window maximum size to [i]{0}[/i] x [i]{1}[/i]"
     },
     {
       "id": "set-minimum-size",
@@ -705,15 +855,21 @@
           "id": "min-width",
           "type": "number",
           "name_zh": "最小宽度",
-          "name_en": "Min width"
+          "name_en": "Min width",
+          "desc_zh": "要设置的窗口最小宽度，以像素为单位。",
+          "desc_en": "The minimum window width to set, in pixels."
         },
         {
           "id": "min-height",
           "type": "number",
           "name_zh": "最小高度",
-          "name_en": "Min height"
+          "name_en": "Min height",
+          "desc_zh": "要设置的窗口最小高度，以像素为单位。",
+          "desc_en": "The minimum window height to set, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置窗口最小尺寸为 [i]{0}[/i] x [i]{1}[/i]",
+      "display_en": "Set window minimum size to [i]{0}[/i] x [i]{1}[/i]"
     },
     {
       "id": "set-resizable",
@@ -742,9 +898,13 @@
               "zh": "可调整大小",
               "en": "resizable"
             }
-          }
+          },
+          "desc_zh": "是否在窗口上启用或禁用调整大小。",
+          "desc_en": "Whether to enable or disable resizing on the window."
         }
-      ]
+      ],
+      "display_zh": "设置窗口化 {0}",
+      "display_en": "Set window {0}"
     },
     {
       "id": "set-always-on-top",
@@ -773,9 +933,13 @@
               "zh": "窗口置顶",
               "en": "always on top"
             }
-          }
+          },
+          "desc_zh": "是否启用或禁用始终位于顶部的窗口。",
+          "desc_en": "Whether to enable or disable the window always being on top."
         }
-      ]
+      ],
+      "display_zh": "设置窗口化 {0}",
+      "display_en": "Set window {0}"
     },
     {
       "id": "show-dev-tools",
@@ -784,7 +948,9 @@
       "description_zh": "显示浏览器开发者工具，用于调试或检查控制台消息。",
       "description_en": "Display the web developer tools e.g. for Javascript debugging or inspecting console messages.",
       "scriptName": "ShowDevTools",
-      "category": "window"
+      "category": "window",
+      "display_zh": "显示开发者工具",
+      "display_en": "Show dev tools"
     }
   ],
   "expressions": [
@@ -801,8 +967,8 @@
     },
     {
       "id": "chosenpath",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "选择路径",
+      "name_en": "ChosenPath",
       "description_zh": "在文件对话框后返回所选路径。",
       "description_en": "Return the chosen path after a file dialog.",
       "expressionName": "ChosenPath",
@@ -811,8 +977,8 @@
     },
     {
       "id": "appfolder",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "应用文件夹",
+      "name_en": "AppFolder",
       "description_zh": "返回应用程序的文件夹路径。 请注意，它可能没有写入权限。",
       "description_en": "Return the application's folder path. Note it may not have write permission.",
       "expressionName": "AppFolder",
@@ -821,8 +987,8 @@
     },
     {
       "id": "appfolderurl",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "应用文件夹链接",
+      "name_en": "AppFolderURL",
       "description_zh": "将应用程序的文件夹作为文件URL返回。 用于任何URL参数。",
       "description_en": "Return the application's folder as a file URL. Use this for any URL parameters.",
       "expressionName": "AppFolderURL",
@@ -831,8 +997,8 @@
     },
     {
       "id": "projectfilesfolder",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "项目文件夹",
+      "name_en": "ProjectFilesFolder",
       "description_zh": "返回项目文件的文件夹根路径，即 index.html 的位置。注意，可能因权限问题而无法写入文件。",
       "description_en": "Return the folder path to project files (i.e. where index.html is). Note it may not have write permission.",
       "expressionName": "ProjectFilesFolder",
@@ -841,8 +1007,8 @@
     },
     {
       "id": "projectfilesfolderurl",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "项目文件夹链接",
+      "name_en": "ProjectFilesFolderURL",
       "description_zh": "返回项目文件的文件夹路径 URL。",
       "description_en": "Return the folder path to project files as a file URL. Use this for any URL parameters.",
       "expressionName": "ProjectFilesFolderURL",
@@ -851,8 +1017,8 @@
     },
     {
       "id": "userfolder",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "用户文件夹",
+      "name_en": "UserFolder",
       "description_zh": "返回当前用户文件夹",
       "description_en": "Return the current user's folder.",
       "expressionName": "UserFolder",
@@ -861,8 +1027,8 @@
     },
     {
       "id": "readfile",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取文件",
+      "name_en": "ReadFile",
       "description_zh": "返回磁盘上文件的文本内容。",
       "description_en": "Return the text content of a file on disk.",
       "expressionName": "ReadFile",
@@ -873,14 +1039,16 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要加载的文件路径。",
+          "desc_en": "The file path to load."
         }
       ]
     },
     {
       "id": "filesize",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文件大小",
+      "name_en": "FileSize",
       "description_zh": "返回磁盘上文件的大小，以字节为单位。",
       "description_en": "Return the size of a file on disk, in bytes.",
       "expressionName": "FileSize",
@@ -891,14 +1059,16 @@
           "id": "path",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Path"
+          "name_en": "Path",
+          "desc_zh": "要获取的文件路径。",
+          "desc_en": "The file path to get the size of."
         }
       ]
     },
     {
       "id": "listcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "列表数量",
+      "name_en": "ListCount",
       "description_zh": "在 '获取文件列表完成' 条件中，返回列表的文件数量。",
       "description_en": "Return the number of files after 'List files'.",
       "expressionName": "ListCount",
@@ -907,8 +1077,8 @@
     },
     {
       "id": "listat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "列表索引",
+      "name_en": "ListAt",
       "description_zh": "在 '获取文件列表完成' 条件中，获取列表中索引位置的文件名。",
       "description_en": "Return the filename at an index after 'List files'.",
       "expressionName": "ListAt",
@@ -919,14 +1089,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "文件在列表的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of file to retrieve."
         }
       ]
     },
     {
       "id": "droppedfile",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已拖放文件",
+      "name_en": "DroppedFile",
       "description_zh": "返回放入窗口的文件的文件名。",
       "description_en": "Return the filename of a file dropped in to the window.",
       "expressionName": "DroppedFile",
@@ -935,8 +1107,8 @@
     },
     {
       "id": "fileerror",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文件错误信息",
+      "name_en": "FileError",
       "description_zh": "在当文件系统错误时返回的错误信息",
       "description_en": "In 'On file system error', the related error message.",
       "expressionName": "FileError",
@@ -945,8 +1117,8 @@
     },
     {
       "id": "file-tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文件标签",
+      "name_en": "FileTag",
       "description_zh": "在执行动作中相应的标签。",
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "FileTag",
@@ -955,8 +1127,8 @@
     },
     {
       "id": "windowx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "窗口X坐标",
+      "name_en": "WindowX",
       "description_zh": "屏幕上窗口的X位置。",
       "description_en": "The X position of the window on the screen.",
       "expressionName": "WindowX",
@@ -965,8 +1137,8 @@
     },
     {
       "id": "windowy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "窗口Y坐标",
+      "name_en": "WindowY",
       "description_zh": "屏幕上窗口的Y位置。",
       "description_en": "The Y position of the window on the screen.",
       "expressionName": "WindowY",
@@ -975,8 +1147,8 @@
     },
     {
       "id": "windowwidth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "窗口宽度",
+      "name_en": "WindowWidth",
       "description_zh": "操作系统中UI窗口的宽度。",
       "description_en": "The width of the UI window in the operating system.",
       "expressionName": "WindowWidth",
@@ -985,8 +1157,8 @@
     },
     {
       "id": "windowheight",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "窗口高度",
+      "name_en": "WindowHeight",
       "description_zh": "操作系统中UI窗口的高度。",
       "description_en": "The height of the UI window in the operating system.",
       "expressionName": "WindowHeight",
@@ -995,8 +1167,8 @@
     },
     {
       "id": "windowtitle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "窗口标题",
+      "name_en": "WindowTitle",
       "description_zh": "当前窗口标题栏文本。",
       "description_en": "The current window title bar text.",
       "expressionName": "WindowTitle",
@@ -1005,8 +1177,8 @@
     },
     {
       "id": "argument-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "参数数量",
+      "name_en": "ArgumentCount",
       "description_zh": "命令行参数的数量",
       "description_en": "The number of command-line arguments.",
       "expressionName": "ArgumentCount",
@@ -1015,8 +1187,8 @@
     },
     {
       "id": "argument-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取参数",
+      "name_en": "ArgumentAt",
       "description_zh": "获取命令行索引位置的参数，从 0 开始计数。",
       "description_en": "The command-line argument at an index.",
       "expressionName": "ArgumentAt",
@@ -1027,7 +1199,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "参数是从0开始计数的",
+          "desc_en": "Zero-based index of argument"
         }
       ]
     }

@@ -24,9 +24,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "已成功购买的产品ID。",
+          "desc_en": "Product ID that has been purchased successfully."
         }
-      ]
+      ],
+      "display_zh": "产品 [i]{0}[/i] 购买成功",
+      "display_en": "On product [i]{0}[/i] purchase success"
     },
     {
       "id": "on-any-purchase-success",
@@ -36,7 +40,9 @@
       "description_en": "Triggered when any product has been purchased successfully.",
       "scriptName": "OnAnyPurchaseSuccess",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "任意产品购买成功",
+      "display_en": "On any purchase success"
     },
     {
       "id": "on-purchase-failed",
@@ -52,9 +58,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "无法购买的产品ID。",
+          "desc_en": "Product ID that has failed to purchase."
         }
-      ]
+      ],
+      "display_zh": "购买产品 [i]{0}[/i] 失败",
+      "display_en": "On product [i]{0}[/i] purchase failed"
     },
     {
       "id": "on-any-purchase-failed",
@@ -64,7 +74,9 @@
       "description_en": "Triggered when any product has failed to be purchased.",
       "scriptName": "OnAnyPurchaseFail",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "任意购买失败",
+      "display_en": "On any purchase failed"
     },
     {
       "id": "on-registration-success",
@@ -74,7 +86,9 @@
       "description_en": "Triggered when store registration succeeds.",
       "scriptName": "OnRegistrationSuccess",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "商店注册成功",
+      "display_en": "On store registration success"
     },
     {
       "id": "on-registration-failure",
@@ -84,7 +98,9 @@
       "description_en": "Triggered when store registration fails.",
       "scriptName": "OnRegistrationFail",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "商店注册失败",
+      "display_en": "On store registration failed"
     },
     {
       "id": "product-owned",
@@ -99,9 +115,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "要检查是否拥有的产品ID。",
+          "desc_en": "Product ID to check if owned."
         }
-      ]
+      ],
+      "display_zh": "存在产品 [i]{0}[/i]",
+      "display_en": "Has product [i]{0}[/i]"
     },
     {
       "id": "product-available",
@@ -116,9 +136,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "要检查的产品ID是否可用。",
+          "desc_en": "Product ID to check if available."
         }
-      ]
+      ],
+      "display_zh": "产品 [i]{0}[/i] 可供购买",
+      "display_en": "Product [i]{0}[/i] available for purchase"
     },
     {
       "id": "store-registered",
@@ -127,7 +151,9 @@
       "description_zh": "检测商店是否已注册，并准备好发起购买请求。",
       "description_en": "True if the store has been registered and is ready to make purchase requests.",
       "scriptName": "StoreRegistered",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "商店注册完成",
+      "display_en": "Is registration complete"
     },
     {
       "id": "on-product-available",
@@ -143,9 +169,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "要检查的产品ID。",
+          "desc_en": "Product ID to check if available."
         }
-      ]
+      ],
+      "display_zh": "产品 [i]{0}[/i] 可供购买",
+      "display_en": "On product [i]{0}[/i] available for purchase"
     },
     {
       "id": "on-any-product-available",
@@ -155,7 +185,9 @@
       "description_en": "Triggered when a product becomes available for purchase.",
       "scriptName": "OnAnyProductAvailable",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "任意产品可购买",
+      "display_en": "On any product available for purchase"
     },
     {
       "id": "on-product-owned",
@@ -171,9 +203,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "要检查的产品ID。",
+          "desc_en": "Product ID to check if owned."
         }
-      ]
+      ],
+      "display_zh": "已拥有产品 [i]{0}[/i]",
+      "display_en": "On product [i]{0}[/i] owned"
     },
     {
       "id": "on-any-product-owned",
@@ -183,7 +219,9 @@
       "description_en": "Triggered when a non-consumable product becomes owned.",
       "scriptName": "OnAnyProductOwned",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "拥有任意产品",
+      "display_en": "On any product owned"
     },
     {
       "id": "on-transaction-finished",
@@ -193,7 +231,9 @@
       "description_en": "Triggered when a transaction finishes. The ID is available in the 'TransactionID' expression.",
       "scriptName": "OnTransactionFinished",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "交易完成",
+      "display_en": "On transaction finished"
     }
   ],
   "actions": [
@@ -210,7 +250,9 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "您正在注册的产品ID。",
+          "desc_en": "The product ID you are registering."
         },
         {
           "id": "product-type",
@@ -230,9 +272,13 @@
               "zh": "非消耗品",
               "en": "Non-consumable"
             }
-          }
+          },
+          "desc_zh": "输入您注册的产品类型。",
+          "desc_en": "The product type you are registering."
         }
-      ]
+      ],
+      "display_zh": "添加产品 (类型: [b]{0}[/b], 产品ID: [b]{1}[/b])",
+      "display_en": "Add product ID [b]{0}[/b] with type [b]{1}[/b]"
     },
     {
       "id": "complete-registration",
@@ -241,7 +287,9 @@
       "description_zh": "结束产品注册阶段，必须先调用此函数才能购买产品。",
       "description_en": "Complete the product registration stage.",
       "scriptName": "CompleteRegistration",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "完成产品注册",
+      "display_en": "Complete product registration"
     },
     {
       "id": "purchase-product",
@@ -256,9 +304,13 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "Product ID"
+          "name_en": "Product ID",
+          "desc_zh": "要购买的产品ID。",
+          "desc_en": "The product ID to purchase."
         }
-      ]
+      ],
+      "display_zh": "购买产品 [b]{0}[/b]",
+      "display_en": "Purchase product [b]{0}[/b]"
     },
     {
       "id": "restore-purchases",
@@ -267,7 +319,9 @@
       "description_zh": "从商店恢复购买状态。",
       "description_en": "Restore the purchases state from the store.",
       "scriptName": "RestorePurchases",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "display_zh": "恢复购买",
+      "display_en": "Restore purchases"
     },
     {
       "id": "set-public-key",
@@ -291,8 +345,8 @@
   "expressions": [
     {
       "id": "product-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "产品名称",
+      "name_en": "ProductName",
       "description_zh": "根据产品 ID 获取产品名称。",
       "description_en": "Return the name of a product from its ID.",
       "expressionName": "ProductName",
@@ -303,14 +357,16 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "ProductID"
+          "name_en": "ProductID",
+          "desc_zh": "用于获取名称的产品ID。",
+          "desc_en": "Product ID to get name from"
         }
       ]
     },
     {
       "id": "product-price",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "产品价格",
+      "name_en": "ProductPrice",
       "description_zh": "根据产品ID获取产品的格式化价格。",
       "description_en": "Return the formatted price of a product from its ID.",
       "expressionName": "ProductPrice",
@@ -321,14 +377,16 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "ProductID"
+          "name_en": "ProductID",
+          "desc_zh": "用于获取价格的产品ID。",
+          "desc_en": "Product ID to get price from"
         }
       ]
     },
     {
       "id": "product-description",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "产品描述",
+      "name_en": "ProductDescription",
       "description_zh": "在触发器中，相关的产品描述。",
       "description_en": "Return the description of a product from its ID.",
       "expressionName": "ProductDescription",
@@ -339,14 +397,16 @@
           "id": "product-id",
           "type": "string",
           "name_zh": "产品ID",
-          "name_en": "ProductID"
+          "name_en": "ProductID",
+          "desc_zh": "用于获取描述的产品ID。",
+          "desc_en": "Product ID to get description from"
         }
       ]
     },
     {
       "id": "product-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "产品ID",
+      "name_en": "ProductID",
       "description_zh": "在触发器中，相关的产品ID。",
       "description_en": "In a trigger, the relevant product ID.",
       "expressionName": "ProductID",
@@ -355,8 +415,8 @@
     },
     {
       "id": "error-message",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误信息",
+      "name_en": "ErrorMessage",
       "description_zh": "在触发器中，返回相关的错误消息。",
       "description_en": "In a trigger, an error message if available.",
       "expressionName": "ErrorMessage",
@@ -365,8 +425,8 @@
     },
     {
       "id": "transaction-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "订单ID",
+      "name_en": "TransactionID",
       "description_zh": "在 '交易完成' 条件中，完成的订单ID。",
       "description_en": "After 'On transaction finished', the ID of the last finished transaction.",
       "expressionName": "TransactionID",

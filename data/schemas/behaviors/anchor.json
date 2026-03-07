@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -44,9 +46,13 @@
               "zh": "启用",
               "en": "enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}"
     }
   ],
   "expressions": [],

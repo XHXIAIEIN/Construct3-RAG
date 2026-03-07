@@ -19,7 +19,9 @@
       "description_zh": "检测当前运行设备是否支持蓝牙连接。",
       "description_en": "True if the current platform supports Bluetooth features.",
       "scriptName": "IsSupported",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备受支持",
+      "display_en": "Is supported"
     },
     {
       "id": "on-device-connected",
@@ -29,7 +31,9 @@
       "description_en": "Triggered after 'Request device' successfully connects to a device.",
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备连接成功",
+      "display_en": "On device connected"
     },
     {
       "id": "on-device-disconnected",
@@ -39,7 +43,9 @@
       "description_en": "Triggered when a connected device disconnects and is no longer accessible.",
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备断开连接",
+      "display_en": "On device disconnected"
     },
     {
       "id": "is-device-connected",
@@ -48,7 +54,9 @@
       "description_zh": "检测目前是否已连接到任意设备。",
       "description_en": "Test if any device is currently connected.",
       "scriptName": "IsDeviceConnected",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备已连接",
+      "display_en": "Is device connected"
     },
     {
       "id": "on-request-device-failed",
@@ -58,7 +66,9 @@
       "description_en": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "请求连接失败",
+      "display_en": "On request device failed"
     },
     {
       "id": "on-accelerometer-reading",
@@ -68,7 +78,9 @@
       "description_en": "Triggered when an accelerometer reading is received from the device.",
       "scriptName": "OnAccelerometerReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "display_zh": "加速度计读数更新",
+      "display_en": "On accelerometer reading"
     },
     {
       "id": "on-button-pressed",
@@ -98,7 +110,9 @@
               "zh": "B",
               "en": "B"
             }
-          }
+          },
+          "desc_zh": "检测哪个按钮被按下",
+          "desc_en": "Which button to detect input from."
         },
         {
           "id": "input",
@@ -123,9 +137,13 @@
               "zh": "松开",
               "en": "released"
             }
-          }
+          },
+          "desc_zh": "要检测的输入类型。",
+          "desc_en": "The type of input to detect."
         }
-      ]
+      ],
+      "display_zh": "{1}按钮[b]{0}[/b]",
+      "display_en": "On button [b]{0}[/b] {1}"
     },
     {
       "id": "on-bearing-reading",
@@ -135,7 +153,9 @@
       "description_en": "Triggered when a bearing reading is received from the device.",
       "scriptName": "OnBearingReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "display_zh": "指南针读数更新",
+      "display_en": "On bearing reading"
     },
     {
       "id": "on-temperature-reading",
@@ -145,7 +165,9 @@
       "description_en": "Triggered when a temperature reading is received from the device.",
       "scriptName": "OnTemperatureReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "display_zh": "温度计读数更新",
+      "display_en": "On temperature reading"
     }
   ],
   "actions": [
@@ -156,7 +178,9 @@
       "description_zh": "请求通过蓝牙访问 BBC micro:bit 设备。必须在用户输入后才能使用。",
       "description_en": "Request access to a BBC micro:bit device over Bluetooth. Must be used in a user input trigger.",
       "scriptName": "RequestDevice",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "请求连接",
+      "display_en": "Request device"
     },
     {
       "id": "disconnect-device",
@@ -165,7 +189,9 @@
       "description_zh": "断开当前连接的设备。",
       "description_en": "Disconnect a currently connected device.",
       "scriptName": "DisconnectDevice",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "断开设备",
+      "display_en": "Disconnect device"
     },
     {
       "id": "clear-led-state",
@@ -174,7 +200,9 @@
       "description_zh": "重置所有 LED 状态，使所有 LED 熄灭。",
       "description_en": "Reset the stored LED state, so all LEDs are off.",
       "scriptName": "ClearLEDState",
-      "category": "led-display"
+      "category": "led-display",
+      "display_zh": "清除 LED 状态",
+      "display_en": "Clear LED state"
     },
     {
       "id": "set-led-state",
@@ -189,21 +217,29 @@
           "id": "col",
           "type": "number",
           "name_zh": "列",
-          "name_en": "Column"
+          "name_en": "Column",
+          "desc_zh": "单个 LED 灯所在的列，0-4。(从0开始)",
+          "desc_en": "The zero-based column of the LED, from 0-4."
         },
         {
           "id": "row",
           "type": "number",
           "name_zh": "行",
-          "name_en": "Row"
+          "name_en": "Row",
+          "desc_zh": "单个 LED 灯所在的行，0-4。(从0开始)",
+          "desc_en": "The zero-based row of the LED, from 0-4."
         },
         {
           "id": "state",
           "type": "boolean",
           "name_zh": "状态",
-          "name_en": "State"
+          "name_en": "State",
+          "desc_zh": "打开或关闭 LED",
+          "desc_en": "Whether the LED is on or off."
         }
-      ]
+      ],
+      "display_zh": "设置 LED ([i]{0}[/i], [i]{1}[/i]) 状态 [b]{2}[/b]",
+      "display_en": "Set LED ([i]{0}[/i], [i]{1}[/i]) state [b]{2}[/b]"
     },
     {
       "id": "update-leds",
@@ -212,7 +248,9 @@
       "description_zh": "将设备上的 LED 更新为存储的 LED 状态。",
       "description_en": "Update the LEDs on the device to the stored LED state.",
       "scriptName": "UpdateLEDs",
-      "category": "led-display"
+      "category": "led-display",
+      "display_zh": "更新LED",
+      "display_en": "Update LEDs"
     },
     {
       "id": "scroll-text",
@@ -227,16 +265,20 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要显示的消息，最多 20 个字符。",
+          "desc_en": "The message to display, up to 20 characters."
         }
-      ]
+      ],
+      "display_zh": "显示滚动文字 [i]{0}[/i]",
+      "display_en": "Scroll text [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "device-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "设备ID",
+      "name_en": "DeviceID",
       "description_zh": "连接的设备ID（如果有）。",
       "description_en": "The ID of a connected device (if any).",
       "expressionName": "DeviceID",
@@ -245,8 +287,8 @@
     },
     {
       "id": "accelerometer-raw-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "原始加速度X",
+      "name_en": "AccelerometerRawX",
       "description_zh": "加速度计原始 X 读数。",
       "description_en": "The raw accelerometer X reading.",
       "expressionName": "AccelerometerRawX",
@@ -255,8 +297,8 @@
     },
     {
       "id": "accelerometer-raw-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "原始加速度Y",
+      "name_en": "AccelerometerRawY",
       "description_zh": "加速度计原始 Y 读数。",
       "description_en": "The raw accelerometer Y reading.",
       "expressionName": "AccelerometerRawY",
@@ -265,8 +307,8 @@
     },
     {
       "id": "accelerometer-raw-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "原始加速度Z",
+      "name_en": "AccelerometerRawZ",
       "description_zh": "加速度计原始 Z 读数。",
       "description_en": "The raw accelerometer Z reading.",
       "expressionName": "AccelerometerRawZ",
@@ -275,8 +317,8 @@
     },
     {
       "id": "accelerometer-smoothed-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平滑加速度X",
+      "name_en": "AccelerometerSmoothedX",
       "description_zh": "加速度计平滑后的 X 读数。",
       "description_en": "The smoothed accelerometer X reading.",
       "expressionName": "AccelerometerSmoothedX",
@@ -285,8 +327,8 @@
     },
     {
       "id": "accelerometer-smoothed-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平滑加速度Y",
+      "name_en": "AccelerometerSmoothedY",
       "description_zh": "加速度计平滑后的 Y 读数。",
       "description_en": "The smoothed accelerometer Y reading.",
       "expressionName": "AccelerometerSmoothedY",
@@ -295,8 +337,8 @@
     },
     {
       "id": "accelerometer-smoothed-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平滑加速度Z",
+      "name_en": "AccelerometerSmoothedZ",
       "description_zh": "加速度计平滑后的 Z 读数。",
       "description_en": "The smoothed accelerometer Z reading.",
       "expressionName": "AccelerometerSmoothedZ",
@@ -305,8 +347,8 @@
     },
     {
       "id": "bearing",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "轴承",
+      "name_en": "Bearing",
       "description_zh": "磁力计的方位读数，以距离正北的度数相差为单位。",
       "description_en": "The magnetometer bearing reading, in degrees from due north.",
       "expressionName": "Bearing",
@@ -315,8 +357,8 @@
     },
     {
       "id": "temperature",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "温度",
+      "name_en": "Temperature",
       "description_zh": "温度计的读数，以摄氏度为单位。",
       "description_en": "The temperature reading, in degrees celcius.",
       "expressionName": "Temperature",

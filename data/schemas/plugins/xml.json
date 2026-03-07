@@ -24,9 +24,13 @@
           "id": "xpath",
           "type": "string",
           "name_zh": "XPath",
-          "name_en": "XPath"
+          "name_en": "XPath",
+          "desc_zh": "要计算的XPath表达式，返回一系列要迭代的节点",
+          "desc_en": "The XPath expression to evaluate, returning a series of nodes to iterate."
         }
-      ]
+      ],
+      "display_zh": "遍历节点 [i]{0}[/i]",
+      "display_en": "For each node [i]{0}[/i]"
     }
   ],
   "actions": [
@@ -43,16 +47,20 @@
           "id": "xml",
           "type": "string",
           "name_zh": "XML",
-          "name_en": "XML"
+          "name_en": "XML",
+          "desc_zh": "包含待加载的XML文档的字符串",
+          "desc_en": "A string containing the XML document to load."
         }
-      ]
+      ],
+      "display_zh": "加载XML数据 [i]{0}[/i]",
+      "display_en": "Load XML document from string [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "numbervalue",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "数字值",
+      "name_en": "NumberValue",
       "description_zh": "从XPath表达式中检索单个数值",
       "description_en": "Retrieve a single number value from an XPath expression.",
       "expressionName": "NumberValue",
@@ -63,14 +71,16 @@
           "id": "xpath",
           "type": "string",
           "name_zh": "XPath",
-          "name_en": "XPath"
+          "name_en": "XPath",
+          "desc_zh": "待解析的XPath表达式",
+          "desc_en": "The XPath expression to evaluate."
         }
       ]
     },
     {
       "id": "stringvalue",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "字符串值",
+      "name_en": "StringValue",
       "description_zh": "从XPath表达式中检索单个字符串",
       "description_en": "Retrieve a single string from an XPath expression.",
       "expressionName": "StringValue",
@@ -81,14 +91,16 @@
           "id": "xpath",
           "type": "string",
           "name_zh": "XPath",
-          "name_en": "XPath"
+          "name_en": "XPath",
+          "desc_zh": "待解析的XPath表达式",
+          "desc_en": "The XPath expression to evaluate."
         }
       ]
     },
     {
       "id": "nodecount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "节点数量",
+      "name_en": "NodeCount",
       "description_zh": "计算XPath表达式返回的节点数",
       "description_en": "Count the number of nodes returned by an XPath expression.",
       "expressionName": "NodeCount",
@@ -99,7 +111,9 @@
           "id": "xpath",
           "type": "string",
           "name_zh": "XPath",
-          "name_en": "XPath"
+          "name_en": "XPath",
+          "desc_zh": "待解析的XPath表达式",
+          "desc_en": "The XPath expression to evaluate."
         }
       ]
     }

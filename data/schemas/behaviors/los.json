@@ -20,15 +20,21 @@
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "选择要检查能否被视线看到的对象。",
+          "desc_en": "Choose the object to test if line-of-sight covers."
         },
         {
           "id": "image-point",
           "type": "any",
           "name_zh": "图像点 (可选)",
-          "name_en": "Image point (optional)"
+          "name_en": "Image point (optional)",
+          "desc_zh": "检查视线对象是否能发现另一个对象的图像点，可指定图像点的名称或编号。保留 0 为对象的图像原点。",
+          "desc_en": "The name or number of an image point in the object to test line-of-sight to. Leave 0 for object's origin."
         }
-      ]
+      ],
+      "display_zh": "{my} 可发现 {0} 图像点[i]{1}[/i]",
+      "display_en": "Has {my} to {0} image point [i]{1}[/i]"
     },
     {
       "id": "has-los-to-position",
@@ -42,15 +48,21 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "要检查是否拥有视线的X坐标，以像素为单位。",
+          "desc_en": "The X co-ordinate to test line-of-sight to, in pixels."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "要检查是否拥有视线的Y坐标，以像素为单位。",
+          "desc_en": "The Y co-ordinate to test line-of-sight to, in pixels."
         }
-      ]
+      ],
+      "display_zh": "{my} 可发现位置 (目标: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Has {my} to ([i]{0}[/i], [i]{1}[/i])"
     },
     {
       "id": "has-los-between-positions",
@@ -64,33 +76,45 @@
           "id": "from-x",
           "type": "number",
           "name_zh": "起始 X",
-          "name_en": "From X"
+          "name_en": "From X",
+          "desc_zh": "用于检测视线的第1个X坐标。",
+          "desc_en": "The X co-ordinate to test line-of-sight from, in pixels."
         },
         {
           "id": "from-y",
           "type": "number",
           "name_zh": "起始 Y",
-          "name_en": "From Y"
+          "name_en": "From Y",
+          "desc_zh": "用于检测视线的第1个Y坐标。",
+          "desc_en": "The Y co-ordinate to test line-of-sight from, in pixels."
         },
         {
           "id": "from-angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "用来确定视线方向的角度。",
+          "desc_en": "The angle to orient the cone of view with, in degrees."
         },
         {
           "id": "to-x",
           "type": "number",
           "name_zh": "终点 X",
-          "name_en": "To X"
+          "name_en": "To X",
+          "desc_zh": "用于检测视线的第2个X坐标。",
+          "desc_en": "The X co-ordinate to test line-of-sight to, in pixels."
         },
         {
           "id": "to-y",
           "type": "number",
           "name_zh": "终点 Y",
-          "name_en": "To Y"
+          "name_en": "To Y",
+          "desc_zh": "用于检测视线的第2个Y坐标。",
+          "desc_en": "The Y co-ordinate to test line-of-sight to, in pixels."
         }
-      ]
+      ],
+      "display_zh": "{my} 可发现位置 (起始: ([i]{0}[/i], [i]{1}[/i]),  方向: [i]{2}[/i], 终点: [i]{3}[/i], [i]{4}[/i])",
+      "display_en": "Has {my} from ([i]{0}[/i], [i]{1}[/i]) angle [i]{2}[/i] to ([i]{3}[/i], [i]{4}[/i])"
     },
     {
       "id": "ray-intersected",
@@ -98,7 +122,9 @@
       "name_en": "Ray intersected",
       "description_zh": "检查上次发出的射线是否命中障碍物。",
       "description_en": "Test if the last cast ray intersected an obstacle.",
-      "scriptName": "RayIntersected"
+      "scriptName": "RayIntersected",
+      "display_zh": "{my}发现障碍",
+      "display_en": "{my} ray intersected"
     }
   ],
   "actions": [
@@ -115,9 +141,13 @@
           "type": "number",
           "name_zh": "范围",
           "name_en": "Range",
-          "initialValue": "10000"
+          "initialValue": "10000",
+          "desc_zh": "视线能覆盖的最远距离，以像素为单位。",
+          "desc_en": "The new maximum distance in pixels that line-of-sight can cover."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}视线范围为[i]{0}[/i]",
+      "display_en": "Set {my} range to [i]{0}[/i]"
     },
     {
       "id": "set-cone-of-view",
@@ -132,9 +162,13 @@
           "type": "number",
           "name_zh": "角度",
           "name_en": "Cone of view",
-          "initialValue": "360"
+          "initialValue": "360",
+          "desc_zh": "视线在朝向能够覆盖的角度范围，以角度为单位。",
+          "desc_en": "The new angle range in degrees relative to the object angle that line-of-sight can cover."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}视线角度为[i]{0}[/i]°",
+      "display_en": "Set {my} cone of view to [i]{0}[/i]"
     },
     {
       "id": "add-obstacle",
@@ -148,9 +182,13 @@
           "id": "obstacle",
           "type": "object",
           "name_zh": "遮挡物",
-          "name_en": "Obstacle"
+          "name_en": "Obstacle",
+          "desc_zh": "选择一个对象视为遮挡物，阻挡视线。",
+          "desc_en": "Choose an object to add as an obstacle, obstructing line-of-sight."
         }
-      ]
+      ],
+      "display_zh": "{my}添加 {0} 视为遮挡物",
+      "display_en": "Add {my} obstacle {0}"
     },
     {
       "id": "clear-obstacles",
@@ -158,7 +196,9 @@
       "name_en": "Clear obstacles",
       "description_zh": "删除所有已添加的障碍。",
       "description_en": "Remove all added obstacle objects.",
-      "scriptName": "ClearObstacles"
+      "scriptName": "ClearObstacles",
+      "display_zh": "{my} 清空全部障碍",
+      "display_en": "Clear {my} obstacles"
     },
     {
       "id": "cast-ray",
@@ -173,42 +213,54 @@
           "type": "number",
           "name_zh": "起始 X",
           "name_en": "From X",
-          "initialValue": "Self.X"
+          "initialValue": "Self.X",
+          "desc_zh": "用于检测视线的第1个X坐标。",
+          "desc_en": "The ray origin X co-ordinate."
         },
         {
           "id": "from-y",
           "type": "number",
           "name_zh": "起始 Y",
           "name_en": "From Y",
-          "initialValue": "Self.Y"
+          "initialValue": "Self.Y",
+          "desc_zh": "用于检测视线的第1个Y坐标。",
+          "desc_en": "The ray origin Y co-ordinate."
         },
         {
           "id": "to-x",
           "type": "number",
           "name_zh": "目标 X",
-          "name_en": "To X"
+          "name_en": "To X",
+          "desc_zh": "用于检测视线的第2个X坐标。",
+          "desc_en": "The ray destination X co-ordinate."
         },
         {
           "id": "to-y",
           "type": "number",
           "name_zh": "目标 Y",
-          "name_en": "To Y"
+          "name_en": "To Y",
+          "desc_zh": "用于检测视线的第2个Y坐标。",
+          "desc_en": "The ray destination Y co-ordinate."
         },
         {
           "id": "use-collision-cells",
           "type": "boolean",
           "name_zh": "使用碰撞单元",
           "name_en": "Use collision cells",
-          "initialValue": "true"
+          "initialValue": "true",
+          "desc_zh": "启用此选项通常可以提升性能，但在检查较远的距离时，反而导致性能变慢。",
+          "desc_en": "Enabling usually improves performance, but can be slower over very long distances."
         }
-      ]
+      ],
+      "display_zh": "{my} 发出射线 (起始位置: ({0}, {1}), 目标位置: ({2}, {3}), 使用碰撞单元: [i]{4}[/i])",
+      "display_en": "Cast {my} ray from ({0}, {1}) to ({2}, {3}) (use collision cells [i]{4}[/i])"
     }
   ],
   "expressions": [
     {
       "id": "range",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "视线范围",
+      "name_en": "Range",
       "description_zh": "返回视线当前的范围，以像素为单位。",
       "description_en": "Return the current range in pixels that line-of-sight can cover.",
       "expressionName": "Range",
@@ -216,8 +268,8 @@
     },
     {
       "id": "coneofview",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "视线角度",
+      "name_en": "ConeOfView",
       "description_zh": "返回视线当前的覆盖角度，以像素为单位。",
       "description_en": "Return the current cone of view in degrees.",
       "expressionName": "ConeOfView",
@@ -225,8 +277,8 @@
     },
     {
       "id": "hitx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相交点X",
+      "name_en": "HitX",
       "description_zh": "视线击中目标时，返回相交位置的X坐标。",
       "description_en": "Return the X position of the hit position.",
       "expressionName": "HitX",
@@ -234,8 +286,8 @@
     },
     {
       "id": "hity",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相交点Y",
+      "name_en": "HitY",
       "description_zh": "视线击中目标时，返回相交位置的Y坐标。",
       "description_en": "Return the Y position of the hit position.",
       "expressionName": "HitY",
@@ -243,8 +295,8 @@
     },
     {
       "id": "hituid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相交实例UID",
+      "name_en": "HitUID",
       "description_zh": "视线击中目标时，返回相交的实例对象UID。",
       "description_en": "Return the UID of the instance that was hit.",
       "expressionName": "HitUID",
@@ -252,8 +304,8 @@
     },
     {
       "id": "hitdistance",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "相交距离",
+      "name_en": "HitDistance",
       "description_zh": "视线击中目标时，返回视线原点和相交位置的距离。",
       "description_en": "Return the distance between the ray origin and hit position.",
       "expressionName": "HitDistance",
@@ -261,8 +313,8 @@
     },
     {
       "id": "normalx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "法线X",
+      "name_en": "NormalX",
       "description_zh": "视线击中目标后，返回命中沿法线延长指定距离位置的X坐标。",
       "description_en": "Return the X position at a distance along the hit normal.",
       "expressionName": "NormalX",
@@ -272,14 +324,16 @@
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "length"
+          "name_en": "length",
+          "desc_zh": "要沿法线延长的距离。",
+          "desc_en": "Length along the normal"
         }
       ]
     },
     {
       "id": "normaly",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "法线Y",
+      "name_en": "NormalY",
       "description_zh": "视线击中目标后，返回命中沿法线延长指定距离位置的Y坐标。",
       "description_en": "Return the Y position at a distance along the hit normal",
       "expressionName": "NormalY",
@@ -289,14 +343,16 @@
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "length"
+          "name_en": "length",
+          "desc_zh": "要沿法线延长的距离。",
+          "desc_en": "Length along the normal"
         }
       ]
     },
     {
       "id": "normalangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "法线角度",
+      "name_en": "NormalAngle",
       "description_zh": "视线击中目标后，返回命中位置表面法线的角度。",
       "description_en": "Return the angle for the surface normal at the hit position.",
       "expressionName": "NormalAngle",
@@ -304,8 +360,8 @@
     },
     {
       "id": "reflectionx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "反射线X",
+      "name_en": "ReflectionX",
       "description_zh": "视线击中目标后，返回沿法线反射角度指定距离位置的X坐标。",
       "description_en": "Return the X position at a distance along the hit reflection angle.",
       "expressionName": "ReflectionX",
@@ -315,14 +371,16 @@
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "length"
+          "name_en": "length",
+          "desc_zh": "要沿反射法线延长的距离。",
+          "desc_en": "Length along the reflection"
         }
       ]
     },
     {
       "id": "reflectiony",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "反射线Y",
+      "name_en": "ReflectionY",
       "description_zh": "视线击中目标后，返回沿法线反射角度指定距离位置的Y坐标。",
       "description_en": "Return the Y position at a distance along the hit reflection angle.",
       "expressionName": "ReflectionY",
@@ -332,14 +390,16 @@
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "length"
+          "name_en": "length",
+          "desc_zh": "要沿反射法线延长的距离。",
+          "desc_en": "Length along the reflection"
         }
       ]
     },
     {
       "id": "reflectionangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "反射角度",
+      "name_en": "ReflectionAngle",
       "description_zh": "视线击中目标后，返回命中位置反射的绝对角度。",
       "description_en": "Return the absolute angle of the ray reflection at the hit position.",
       "expressionName": "ReflectionAngle",

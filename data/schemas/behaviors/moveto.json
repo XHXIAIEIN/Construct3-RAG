@@ -16,7 +16,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving"
+      "scriptName": "IsMoving",
+      "display_zh": "{my} 正在移动",
+      "display_en": "{my} is moving"
     },
     {
       "id": "compare-speed",
@@ -30,15 +32,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Choose the way to compare the current speed."
         },
         {
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "速度，以每秒像素为单位，用于比较当前的速度。",
+          "desc_en": "The speed, in pixels per second, to compare the current speed to."
         }
-      ]
+      ],
+      "display_zh": "{my} 速度 {0} {1}",
+      "display_en": "{my} speed {0} {1}"
     },
     {
       "id": "is-enabled",
@@ -46,7 +54,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为是否已经启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     },
     {
       "id": "on-arrived",
@@ -55,7 +65,9 @@
       "description_zh": "到达目标位置时触发。",
       "description_en": "Triggered when arrived at target position.",
       "scriptName": "OnArrived",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 已到达",
+      "display_en": "On {my} arrived"
     },
     {
       "id": "on-hit-solid",
@@ -64,7 +76,9 @@
       "description_zh": "在启用 '撞到实体对象时停下' 属性且碰撞到实体对象时触发。",
       "description_en": "Triggered if 'Stop on solids' is enabled and the object hit a solid while moving.",
       "scriptName": "OnHitSolid",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 撞击到实体对象",
+      "display_en": "On {my} hit solid"
     }
   ],
   "actions": [
@@ -80,13 +94,17 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "要移动到的X坐标。",
+          "desc_en": "The X co-ordinate to move to."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "要移动到的Y坐标。",
+          "desc_en": "The Y co-ordinate to move to."
         },
         {
           "id": "mode",
@@ -106,9 +124,13 @@
               "zh": "添加路径点",
               "en": "Add waypoint"
             }
-          }
+          },
+          "desc_zh": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "desc_en": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements."
         }
-      ]
+      ],
+      "display_zh": "{my}: 移动到 ([i]{0}[/i], [i]{1}[/i]) ({2})",
+      "display_en": "{my}: Move to ([i]{0}[/i], [i]{1}[/i]) ({2})"
     },
     {
       "id": "move-to-object",
@@ -122,13 +144,17 @@
           "id": "object",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "要移动的对象",
+          "desc_en": "The object to move to."
         },
         {
           "id": "image-point",
           "type": "any",
           "name_zh": "图像点 (可选)",
-          "name_en": "Image point (optional)"
+          "name_en": "Image point (optional)",
+          "desc_zh": "要移动到图像中点的名称或者序号 输入0则为原点",
+          "desc_en": "The name or number of an image point in the object to move to. Leave 0 for object's origin."
         },
         {
           "id": "mode",
@@ -148,9 +174,13 @@
               "zh": "添加路径点",
               "en": "Add waypoint"
             }
-          }
+          },
+          "desc_zh": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "desc_en": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements."
         }
-      ]
+      ],
+      "display_zh": "{my}: 移动到 {0} 图像点 [i]{1}[/i] ({2})",
+      "display_en": "{my}: Move to {0} image point [i]{1}[/i] ({2})"
     },
     {
       "id": "move-along-pathfinding-path",
@@ -178,9 +208,13 @@
               "zh": "添加路径点",
               "en": "Add waypoints"
             }
-          }
+          },
+          "desc_zh": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "desc_en": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements."
         }
-      ]
+      ],
+      "display_zh": "{my}: 沿着寻路路径移动 ({0})",
+      "display_en": "{my}: Move along Pathfinding path ({0})"
     },
     {
       "id": "move-along-timeline",
@@ -194,13 +228,17 @@
           "id": "timeline",
           "type": "timeline",
           "name_zh": "时间轴",
-          "name_en": "Timeline"
+          "name_en": "Timeline",
+          "desc_zh": "使用该轨道的时间轴。",
+          "desc_en": "The timeline to use a track from."
         },
         {
           "id": "track",
           "type": "string",
           "name_zh": "轨道ID",
-          "name_en": "Track ID"
+          "name_en": "Track ID",
+          "desc_zh": "在时间轴中使用X和Y位置的轨迹ID。如果为空，则使用第一个轨道。",
+          "desc_en": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
         },
         {
           "id": "mode",
@@ -220,9 +258,13 @@
               "zh": "添加路径点",
               "en": "Add waypoints"
             }
-          }
+          },
+          "desc_zh": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "desc_en": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements."
         }
-      ]
+      ],
+      "display_zh": "{my} 沿着 [b]{0}[/b] 轨道移动 [i]{1}[/i] ({2})",
+      "display_en": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})"
     },
     {
       "id": "move-along-timeline-by-name",
@@ -236,13 +278,17 @@
           "id": "timeline",
           "type": "string",
           "name_zh": "时间轴名称",
-          "name_en": "Timeline name"
+          "name_en": "Timeline name",
+          "desc_zh": "使用轨道时间轴名称的字符串。",
+          "desc_en": "A string with the name of the timeline to use a track from."
         },
         {
           "id": "track",
           "type": "string",
           "name_zh": "轨道ID",
-          "name_en": "Track ID"
+          "name_en": "Track ID",
+          "desc_zh": "在时间轴中使用X和Y位置的轨迹ID。如果为空，则使用第一个轨道。",
+          "desc_en": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
         },
         {
           "id": "mode",
@@ -262,9 +308,13 @@
               "zh": "添加路径点",
               "en": "Add waypoints"
             }
-          }
+          },
+          "desc_zh": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "desc_en": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements."
         }
-      ]
+      ],
+      "display_zh": "{my} 沿着 [b]{0}[/b] 轨道移动 [i]{1}[/i] ({2})",
+      "display_en": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})"
     },
     {
       "id": "stop",
@@ -272,7 +322,9 @@
       "name_en": "Stop",
       "description_zh": "停止移动并删除所有路径点。",
       "description_en": "Stop movement and remove all waypoints.",
-      "scriptName": "Stop"
+      "scriptName": "Stop",
+      "display_zh": "停止 {my}",
+      "display_en": "Stop {my}"
     },
     {
       "id": "set-moving-angle",
@@ -286,9 +338,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "设置移动角度，以度数为单位。",
+          "desc_en": "The new angle of motion, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}移动角度为[i]{0}[/i]°",
+      "display_en": "Set {my} angle of motion to [i]{0}[/i] degrees"
     },
     {
       "id": "set-speed",
@@ -302,9 +358,13 @@
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "要设置的对象的新速度，以像素/秒为单位。",
+          "desc_en": "The new speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} speed to [i]{0}[/i]"
     },
     {
       "id": "set-max-speed",
@@ -319,9 +379,13 @@
           "id": "max-speed",
           "type": "number",
           "name_zh": "最大移动速度",
-          "name_en": "Max Speed"
+          "name_en": "Max Speed",
+          "desc_zh": "设置最大移动速度，以每秒像素为单位。",
+          "desc_en": "The new maximum speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} maximum speed to [i]{0}[/i]"
     },
     {
       "id": "set-acceleration",
@@ -336,9 +400,13 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。使用 0 表示瞬间加速。",
+          "desc_en": "The new acceleration of the object to set, in pixels per second per second. Use 0 for instant acceleration."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
+      "display_en": "Set {my} acceleration to [i]{0}[/i]"
     },
     {
       "id": "set-deceleration",
@@ -353,9 +421,13 @@
           "id": "deceleration",
           "type": "number",
           "name_zh": "减速度",
-          "name_en": "Deceleration"
+          "name_en": "Deceleration",
+          "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+          "desc_en": "The new deceleration of the object to set, in pixels per second per second. Use 0 for instant deceleration."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
+      "display_en": "Set {my} deceleration to [i]{0}[/i]"
     },
     {
       "id": "set-rotate-speed",
@@ -370,9 +442,13 @@
           "id": "rotate-speed",
           "type": "number",
           "name_zh": "转向速度",
-          "name_en": "Rotate speed"
+          "name_en": "Rotate speed",
+          "desc_zh": "转向速度，以度数每秒为单位，使用 0 可以禁用转向。",
+          "desc_en": "The turn speed to set, in degrees per second. Use 0 to disable turning."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}转向速度为[i]{0}[/i]",
+      "display_en": "Set {my} rotate speed to [i]{0}[/i] degrees per second"
     },
     {
       "id": "set-stop-on-solids",
@@ -387,9 +463,13 @@
           "id": "enabled",
           "type": "boolean",
           "name_zh": "启用",
-          "name_en": "Enabled"
+          "name_en": "Enabled",
+          "desc_zh": "设置是否被实体阻止",
+          "desc_en": "Set whether to stop on solids."
         }
-      ]
+      ],
+      "display_zh": "{my} [b]{0}[/b] 碰撞到实体对象时停下",
+      "display_en": "Set {my} stop on solids [b]{0}[/b]"
     },
     {
       "id": "set-enabled",
@@ -404,16 +484,20 @@
           "id": "enabled",
           "type": "boolean",
           "name_zh": "启用",
-          "name_en": "Enabled"
+          "name_en": "Enabled",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} enabled [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "速度",
+      "name_en": "Speed",
       "description_zh": "当前对象的移动速度，以像素/秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -421,8 +505,8 @@
     },
     {
       "id": "movingangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动角度",
+      "name_en": "MovingAngle",
       "description_zh": "当前移动角度，以度数为单位。",
       "description_en": "The current angle of motion, in degrees.",
       "expressionName": "MovingAngle",
@@ -430,8 +514,8 @@
     },
     {
       "id": "targetx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标X",
+      "name_en": "TargetX",
       "description_zh": "当前目标位置移动的X坐标。",
       "description_en": "The X co-ordinate of the current target position moving towards.",
       "expressionName": "TargetX",
@@ -439,8 +523,8 @@
     },
     {
       "id": "targety",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "目标Y",
+      "name_en": "TargetY",
       "description_zh": "当前目标位置移动的Y坐标。",
       "description_en": "The Y co-ordinate of the current target position moving towards.",
       "expressionName": "TargetY",
@@ -448,8 +532,8 @@
     },
     {
       "id": "waypointcount",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "路径点数量",
+      "name_en": "WaypointCount",
       "description_zh": "剩下要移动的路径点",
       "description_en": "The number of remaining waypoints to move to.",
       "expressionName": "WaypointCount",
@@ -457,8 +541,8 @@
     },
     {
       "id": "waypointxat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取路径点X坐标",
+      "name_en": "WaypointXAt",
       "description_zh": "路径点在某一指标上的X坐标。",
       "description_en": "The X co-ordinate of a waypoint at an index.",
       "expressionName": "WaypointXAt",
@@ -468,14 +552,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "路径点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of waypoint."
         }
       ]
     },
     {
       "id": "waypointyat",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取路径点Y坐标",
+      "name_en": "WaypointYAt",
       "description_zh": "路径点在某一指标上的Y坐标。",
       "description_en": "The Y co-ordinate of a waypoint at an index.",
       "expressionName": "WaypointYAt",
@@ -485,14 +571,16 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "路径点的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of waypoint."
         }
       ]
     },
     {
       "id": "maxspeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大移动速度",
+      "name_en": "MaxSpeed",
       "description_zh": "设置最大移动速度，以像素/秒为单位。",
       "description_en": "The maximum speed setting, in pixels per second.",
       "expressionName": "MaxSpeed",
@@ -501,8 +589,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "加速度",
+      "name_en": "Acceleration",
       "description_zh": "设置加速度，以像素/秒为单位。",
       "description_en": "The acceleration setting, in pixels per second per second.",
       "expressionName": "Acceleration",
@@ -511,8 +599,8 @@
     },
     {
       "id": "deceleration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "减速度",
+      "name_en": "Deceleration",
       "description_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
       "description_en": "The deceleration setting, in pixels per second per second.",
       "expressionName": "Deceleration",
@@ -521,8 +609,8 @@
     },
     {
       "id": "rotatespeed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转向速度",
+      "name_en": "RotateSpeed",
       "description_zh": "当前最大转速以度/秒为单位",
       "description_en": "The current maximum turn speed in degrees per second.",
       "expressionName": "RotateSpeed",

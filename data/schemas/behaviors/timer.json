@@ -20,9 +20,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。",
+          "desc_en": "Enter the name of the timer."
         }
-      ]
+      ],
+      "display_zh": "{my} [i]{0}[/i]计时结束",
+      "display_en": "On {my} [i]{0}[/i]"
     },
     {
       "id": "is-timer-running",
@@ -36,9 +40,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器的标签。",
+          "desc_en": "Enter the name of the timer."
         }
-      ]
+      ],
+      "display_zh": "{my} [i]{0}[/i] 正在计时",
+      "display_en": "Is {my} [i]{0}[/i] running"
     },
     {
       "id": "is-timer-paused",
@@ -52,9 +60,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测暂停的计时器的标签。",
+          "desc_en": "Enter the name of the timer."
         }
-      ]
+      ],
+      "display_zh": "{my} [i]{0}[/i] 已暂停",
+      "display_en": "Is {my} [i]{0}[/i] paused"
     }
   ],
   "actions": [
@@ -71,7 +83,9 @@
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Duration",
-          "initialValue": "1.0"
+          "initialValue": "1.0",
+          "desc_zh": "要倒计时的时间，以秒为单位。",
+          "desc_en": "Enter the time in seconds after which to trigger 'On timer'."
         },
         {
           "id": "type",
@@ -91,15 +105,21 @@
               "zh": "重复",
               "en": "Regular"
             }
-          }
+          },
+          "desc_zh": "仅计时一次，或按周期计时直到手动停止。",
+          "desc_en": "Whether to run this timer once only, or regularly until cancelled."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的计时器。",
+          "desc_en": "Enter a name to identify this timer."
         }
-      ]
+      ],
+      "display_zh": "{my}开始计时[b]{0}[/b]秒 (标签: [i]{2}[/i], 类型: {1})",
+      "display_en": "Start {my} [i]{2}[/i] for [b]{0}[/b] ({1})"
     },
     {
       "id": "stop-timer",
@@ -113,9 +133,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要停止的计时器的标签。",
+          "desc_en": "Enter the name of the timer to stop."
         }
-      ]
+      ],
+      "display_zh": "{my} 取消计时 [i]{0}[/i]",
+      "display_en": "Stop {my} [i]{0}[/i]"
     },
     {
       "id": "stop-all-timers",
@@ -123,7 +147,9 @@
       "name_en": "Stop all timers",
       "description_zh": "停止所有计时器。不会触发 '计时结束' 事件。",
       "description_en": "Stop all timers.",
-      "scriptName": "StopAllTimers"
+      "scriptName": "StopAllTimers",
+      "display_zh": "{my} 停止所有计时",
+      "display_en": "Stop all {my} timers"
     },
     {
       "id": "pause-resume-timer",
@@ -137,7 +163,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要暂停的计时器的标签。",
+          "desc_en": "Enter a name to identify the timer."
         },
         {
           "id": "state",
@@ -157,9 +185,13 @@
               "zh": "恢复",
               "en": "Resumed"
             }
-          }
+          },
+          "desc_zh": "暂停或恢复计时器。",
+          "desc_en": "Whether to pause or resume this timer."
         }
-      ]
+      ],
+      "display_zh": "{my} {1} 计时器 [b]{0}[/b]",
+      "display_en": "Set {my} timer [b]{0}[/b] {1}"
     },
     {
       "id": "pause-resume-all-timers",
@@ -187,16 +219,20 @@
               "zh": "恢复",
               "en": "Resumed"
             }
-          }
+          },
+          "desc_zh": "暂停或恢复计时器。",
+          "desc_en": "Whether to pause or resume timers."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my} 所有计时器",
+      "display_en": "Set all {my} timers [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "currenttime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前时间",
+      "name_en": "CurrentTime",
       "description_zh": "计时器经过的秒数。对于周期类型计时器，则是自上次 '计时结束' 事件以来经过的秒数。",
       "description_en": "Seconds since last 'On timer' event.",
       "expressionName": "CurrentTime",
@@ -206,14 +242,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。",
+          "desc_en": "Timer name"
         }
       ]
     },
     {
       "id": "normalized-progress",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "进度值",
+      "name_en": "NormalizedProgress",
       "description_zh": "获取计时器当前进度，返回 0 到 1 的值。",
       "description_en": "The progress of a given timer on a scale of 0 to 1.",
       "expressionName": "NormalizedProgress",
@@ -223,14 +261,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器名称",
+          "desc_en": "Timer name"
         }
       ]
     },
     {
       "id": "totaltime",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "总计时间",
+      "name_en": "TotalTime",
       "description_zh": "对于周期计时器，自上次 '开始计时' 事件以来累计的秒数。",
       "description_en": "Seconds since timer was started.",
       "expressionName": "TotalTime",
@@ -240,14 +280,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。",
+          "desc_en": "Timer name"
         }
       ]
     },
     {
       "id": "duration",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "持续时间",
+      "name_en": "Duration",
       "description_zh": "计时器的持续秒数，到达此时间触发 '计时结束' 事件。",
       "description_en": "Duration in seconds of a timer that is running.",
       "expressionName": "Duration",
@@ -257,7 +299,9 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。",
+          "desc_en": "Timer name"
         }
       ]
     }

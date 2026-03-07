@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "当前已启用移动方式时触发。",
       "description_en": "True if the movement is currently enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my}已启用",
+      "display_en": "Is {my} enabled"
     },
     {
       "id": "compare-movement",
@@ -82,9 +84,13 @@
               "zh": "视距高度",
               "en": "Z elevation"
             }
-          }
+          },
+          "desc_zh": "选择要比较的运动属性",
+          "desc_en": "Select the movement property to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} 运动类型是{0}",
+      "display_en": "{my} movement is {0}"
     },
     {
       "id": "compare-period",
@@ -98,15 +104,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select how to compare the period in seconds."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "用于比较周期的值，以秒为单位。",
+          "desc_en": "Value to compare the period to, in seconds."
         }
-      ]
+      ],
+      "display_zh": "{my} 周期 {0} {1}",
+      "display_en": "{my} period {0} {1}"
     },
     {
       "id": "compare-magnitude",
@@ -120,15 +132,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select how to compare the magnitude."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "比较振幅的值",
+          "desc_en": "Value to compare the magnitude to."
         }
-      ]
+      ],
+      "display_zh": "{my} 振幅 {0} {1}",
+      "display_en": "{my} magnitude {0} {1}"
     },
     {
       "id": "compare-wave",
@@ -171,9 +189,13 @@
               "zh": "方波",
               "en": "Square"
             }
-          }
+          },
+          "desc_zh": "选择要比较的波形类型",
+          "desc_en": "Select the wave type to compare to."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}波形类型为[b]{0}[/b]",
+      "display_en": "{my} is [b]{0}[/b] wave"
     }
   ],
   "actions": [
@@ -203,9 +225,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用移动方式。",
+          "desc_en": "Set whether the movement is enabled or disabled."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "set-period",
@@ -219,9 +245,13 @@
           "id": "period",
           "type": "number",
           "name_zh": "周期",
-          "name_en": "Period"
+          "name_en": "Period",
+          "desc_zh": "循环一次的周期时间，以秒为单位。",
+          "desc_en": "The time in seconds for a complete cycle."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}运动周期为[b]{0}[/b]",
+      "display_en": "Set {my} period to [b]{0}[/b]"
     },
     {
       "id": "set-magnitude",
@@ -235,9 +265,13 @@
           "id": "magnitude",
           "type": "number",
           "name_zh": "振幅",
-          "name_en": "Magnitude"
+          "name_en": "Magnitude",
+          "desc_zh": "运动的幅度。振幅越大，影响运动的变化越明显。",
+          "desc_en": "The maximum change in pixels (or degrees for Angle)."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}运动振幅为[b]{0}[/b]",
+      "display_en": "Set {my} magnitude to [b]{0}[/b]"
     },
     {
       "id": "set-movement",
@@ -305,9 +339,13 @@
               "zh": "视距高度",
               "en": "Z elevation"
             }
-          }
+          },
+          "desc_zh": "选择要比较的运动属性",
+          "desc_en": "Select the movement property to compare to."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}运动类型为[b]{0}[/b]",
+      "display_en": "Set {my} movement to [b]{0}[/b]"
     },
     {
       "id": "set-wave",
@@ -350,9 +388,13 @@
               "zh": "方波",
               "en": "Square"
             }
-          }
+          },
+          "desc_zh": "选择要应用的波形函数。",
+          "desc_en": "Select the wave function to apply."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}波形函数为[b]{0}[/b]",
+      "display_en": "Set {my} wave function to [b]{0}[/b]"
     },
     {
       "id": "set-cycle-position",
@@ -366,9 +408,13 @@
           "id": "cycle-position",
           "type": "number",
           "name_zh": "周期位置",
-          "name_en": "Cycle position"
+          "name_en": "Cycle position",
+          "desc_zh": "设置周期的进度。从 0 到 1 表示周期的位置，若 0.5 则为周期一半的位置。",
+          "desc_en": "The progress through one cycle (phase) to set, from 0 to 1."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}周期位置为[b]{0}[/b]",
+      "display_en": "Set {my} cycle position to [b]{0}[/b]"
     },
     {
       "id": "update-initial-state",
@@ -376,14 +422,16 @@
       "name_en": "Update initial state",
       "description_zh": "将此行为的状态重置到初始状态。",
       "description_en": "Set the initial state to oscillate from to the current state of the object.",
-      "scriptName": "UpdateInitialState"
+      "scriptName": "UpdateInitialState",
+      "display_zh": "初始化 {my} 周期状态",
+      "display_en": "Update {my} initial state"
     }
   ],
   "expressions": [
     {
       "id": "cycleposition",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "周期位置",
+      "name_en": "CyclePosition",
       "description_zh": "当前在周期的进度位置，使用 0 到 1 表示，若 0.5 则为周期一半的位置。",
       "description_en": "Return the current position in the cycle (phase) as a number from 0 to 1.",
       "expressionName": "CyclePosition",
@@ -391,8 +439,8 @@
     },
     {
       "id": "period",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "周期",
+      "name_en": "Period",
       "description_zh": "当前的周期持续时间，以秒为单位。",
       "description_en": "Return the current period, in seconds.",
       "expressionName": "Period",
@@ -400,8 +448,8 @@
     },
     {
       "id": "magnitude",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "振幅",
+      "name_en": "Magnitude",
       "description_zh": "当前移动的幅度。",
       "description_en": "Return the current magnitude of the movement.",
       "expressionName": "Magnitude",
@@ -409,8 +457,8 @@
     },
     {
       "id": "value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "值",
+      "name_en": "Value",
       "description_zh": "当前的波形函数的数值。",
       "description_en": "Return the current oscillating value.",
       "expressionName": "Value",

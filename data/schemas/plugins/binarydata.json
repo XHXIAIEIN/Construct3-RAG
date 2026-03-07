@@ -24,15 +24,21 @@
           "id": "cmp",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "用哪种方式比较长度。",
+          "desc_en": "How to compare the length."
         },
         {
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "Length"
+          "name_en": "Length",
+          "desc_zh": "要进行比较的长度，以字节为单位。",
+          "desc_en": "Length to compare in bytes."
         }
-      ]
+      ],
+      "display_zh": "长度 {0} [b]{1}[/b]字节",
+      "display_en": "Length {0} [b]{1}[/b] bytes"
     },
     {
       "id": "compare-value",
@@ -91,27 +97,37 @@
               "zh": "Float64",
               "en": "Float64"
             }
-          }
+          },
+          "desc_zh": "要读取的数值类型。",
+          "desc_en": "Value type to read."
         },
         {
           "id": "offset",
           "type": "number",
           "name_zh": "偏移",
-          "name_en": "Offset"
+          "name_en": "Offset",
+          "desc_zh": "数值的偏移量，以字节为单位。",
+          "desc_en": "Offset of the value in bytes."
         },
         {
           "id": "cmp",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "用哪种方式比较。",
+          "desc_en": "How to compare the value."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要比较的值。",
+          "desc_en": "Value to compare."
         }
-      ]
+      ],
+      "display_zh": "{0} 于 [b]{1}[/b] {2} [b]{3}[/b]",
+      "display_en": "{0} at [b]{1}[/b] {2} [b]{3}[/b]"
     },
     {
       "id": "on-compression-finished",
@@ -121,7 +137,9 @@
       "description_en": "Triggered when compression completes successfully.",
       "scriptName": "OnCompressionFinished",
       "isTrigger": true,
-      "category": "compression"
+      "category": "compression",
+      "display_zh": "压缩完成",
+      "display_en": "On compression finished"
     },
     {
       "id": "on-compression-failed",
@@ -131,7 +149,9 @@
       "description_en": "Triggered when compression fails to complete.",
       "scriptName": "OnCompressionFailed",
       "isTrigger": true,
-      "category": "compression"
+      "category": "compression",
+      "display_zh": "压缩失败",
+      "display_en": "On compression failed"
     },
     {
       "id": "on-decompression-finished",
@@ -141,7 +161,9 @@
       "description_en": "Triggered when decompression completes successfully.",
       "scriptName": "OnDecompressionFinished",
       "isTrigger": true,
-      "category": "compression"
+      "category": "compression",
+      "display_zh": "解压缩完成",
+      "display_en": "On decompression finished"
     },
     {
       "id": "on-decompression-failed",
@@ -151,7 +173,9 @@
       "description_en": "Triggered when decompression fails to complete.",
       "scriptName": "OnDecompressionFailed",
       "isTrigger": true,
-      "category": "compression"
+      "category": "compression",
+      "display_zh": "解压缩失败",
+      "display_en": "On decompression failed"
     }
   ],
   "actions": [
@@ -182,9 +206,13 @@
               "zh": "Big",
               "en": "Big"
             }
-          }
+          },
+          "desc_zh": "读写数据时，使用的字节顺序。",
+          "desc_en": "New endian to use."
         }
-      ]
+      ],
+      "display_zh": "设置字节顺序: [b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b] endian"
     },
     {
       "id": "set-length",
@@ -199,9 +227,13 @@
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "Length"
+          "name_en": "Length",
+          "desc_zh": "新缓冲区的字节长度。",
+          "desc_en": "New length for buffer in bytes."
         }
-      ]
+      ],
+      "display_zh": "设置缓冲区长度为[i]{0}[/i]字节",
+      "display_en": "Set buffer length to [i]{0}[/i] bytes"
     },
     {
       "id": "set-from-string",
@@ -216,7 +248,9 @@
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "要设置的字符串。",
+          "desc_en": "The string to set."
         },
         {
           "id": "type",
@@ -241,9 +275,13 @@
               "zh": "十六进制",
               "en": "hex"
             }
-          }
+          },
+          "desc_zh": "将字符串设置为文本(UTF-8)、二进制(Base64)、十六进制。",
+          "desc_en": "Whether to set the string as text (with UTF-8 encoding), base64, or hexadecimal."
         }
-      ]
+      ],
+      "display_zh": "写入字符串到缓冲区 (来源: {1},  内容: [i]{0}[/i])",
+      "display_en": "Set buffer from {1} string [i]{0}[/i]"
     },
     {
       "id": "set-from-base64",
@@ -294,9 +332,13 @@
           "id": "source",
           "type": "object",
           "name_zh": "来源",
-          "name_en": "Source"
+          "name_en": "Source",
+          "desc_zh": "要复制的内容",
+          "desc_en": "Content to copy buffer from."
         }
-      ]
+      ],
+      "display_zh": "写入 {0} 到缓冲区",
+      "display_en": "Set buffer to copy of {0}"
     },
     {
       "id": "fill",
@@ -355,29 +397,39 @@
               "zh": "Float64",
               "en": "Float64"
             }
-          }
+          },
+          "desc_zh": "要插入的数值类型。",
+          "desc_en": "Value type to insert."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要插入的值",
+          "desc_en": "Value to insert."
         },
         {
           "id": "offset",
           "type": "number",
           "name_zh": "偏移",
           "name_en": "Offset",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "起始位的偏移量，以字节为单位。",
+          "desc_en": "Offset of start in bytes."
         },
         {
           "id": "length",
           "type": "number",
           "name_zh": "长度",
           "name_en": "Length",
-          "initialValue": "-1"
+          "initialValue": "-1",
+          "desc_zh": "要填充的区域长度，以字节为单位。使用 -1 表示尾部。",
+          "desc_en": "Length of area to fill in bytes. Use -1 for end."
         }
-      ]
+      ],
+      "display_zh": "填充 [i]{1}[/i] (类型: {0}, 范围: [i]{2}[/i], 长度: [i]{3}[/i])",
+      "display_en": "Fill with {0} [i]{1}[/i] from ([i]{2}[/i], [i]{3}[/i])"
     },
     {
       "id": "copy",
@@ -392,30 +444,40 @@
           "id": "source",
           "type": "object",
           "name_zh": "来源",
-          "name_en": "Source"
+          "name_en": "Source",
+          "desc_zh": "二进制对象，用于复制里面的缓冲区数据。",
+          "desc_en": "Binary Data object to copy data from"
         },
         {
           "id": "start",
           "type": "number",
           "name_zh": "起始位置",
           "name_en": "Start",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "范围的起始值(包含)，以字节为单位。",
+          "desc_en": "Start of range in bytes (inclusive)."
         },
         {
           "id": "length",
           "type": "number",
           "name_zh": "长度",
           "name_en": "Length",
-          "initialValue": "-1"
+          "initialValue": "-1",
+          "desc_zh": "字节范围长度。使用 -1 表示尾部。",
+          "desc_en": "Length of range in bytes. Use -1 for end."
         },
         {
           "id": "target",
           "type": "number",
           "name_zh": "目标",
           "name_en": "Target",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "插入范围的位置，以字节为单位。",
+          "desc_en": "Location to insert range in bytes."
         }
-      ]
+      ],
+      "display_zh": "复制 {0} 到 [i]{3}[/i] (范围: [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Copy {0} range ([i]{1}[/i], [i]{2}[/i]) to [i]{3}[/i]"
     },
     {
       "id": "set-value",
@@ -474,21 +536,29 @@
               "zh": "Float64",
               "en": "Float64"
             }
-          }
+          },
+          "desc_zh": "要插入的数值类型。",
+          "desc_en": "Value type to insert."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要设置的数值",
+          "desc_en": "Value to set."
         },
         {
           "id": "offset",
           "type": "number",
           "name_zh": "偏移",
-          "name_en": "Offset"
+          "name_en": "Offset",
+          "desc_zh": "数值在字节中的偏移量。",
+          "desc_en": "Offset of value in bytes."
         }
-      ]
+      ],
+      "display_zh": "写入 [i]{1}[/i] 到缓冲区 (类型:  {0}, 偏移: [i]{2}[/i])",
+      "display_en": "Set {0} [i]{1}[/i] at offset [i]{2}[/i]"
     },
     {
       "id": "compress",
@@ -518,9 +588,13 @@
               "zh": "gzip",
               "en": "gzip"
             }
-          }
+          },
+          "desc_zh": "要使用的压缩格式。",
+          "desc_en": "The compression format to use."
         }
-      ]
+      ],
+      "display_zh": "压缩数据 (格式: [i]{0}[/i])",
+      "display_en": "Compress data with [i]{0}[/i]"
     },
     {
       "id": "decompress",
@@ -550,16 +624,20 @@
               "zh": "gzip",
               "en": "gzip"
             }
-          }
+          },
+          "desc_zh": "使用的压缩格式。",
+          "desc_en": "The compression format to use."
         }
-      ]
+      ],
+      "display_zh": "解压缩数据 (格式: [i]{0}[/i])",
+      "display_en": "Decompress data with [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "get-url",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取地址",
+      "name_en": "GetURL",
       "description_zh": "获取当前数据的 blob URL。",
       "description_en": "Get a blob URL for the current data.",
       "expressionName": "GetURL",
@@ -568,8 +646,8 @@
     },
     {
       "id": "get-base64",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Base64",
+      "name_en": "GetBase64",
       "description_zh": "读取当前缓冲区的 Base64 编码的字符串。",
       "description_en": "Get the current buffer encoded as a base64 string.",
       "expressionName": "GetBase64",
@@ -578,8 +656,8 @@
     },
     {
       "id": "get-hex",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取十六进制",
+      "name_en": "GetHex",
       "description_zh": "读取当前缓冲区编码为十六进制字符串。",
       "description_en": "Get the current buffer encoded as a hexadecimal string.",
       "expressionName": "GetHex",
@@ -588,8 +666,8 @@
     },
     {
       "id": "bytelength",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "字节长度",
+      "name_en": "ByteLength",
       "description_zh": "读取当前缓冲区的字节长度。",
       "description_en": "Get the length of the current buffer in bytes.",
       "expressionName": "ByteLength",
@@ -598,8 +676,8 @@
     },
     {
       "id": "get-int8",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Int8",
+      "name_en": "GetInt8",
       "description_zh": "读取字节位置的 Int8 值。",
       "description_en": "Get an Int8 value at a byte offset.",
       "expressionName": "GetInt8",
@@ -610,14 +688,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-uint8",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Uint8",
+      "name_en": "GetUint8",
       "description_zh": "读取字节位置的 Uint8 值。",
       "description_en": "Get a Uint8 value at a byte offset.",
       "expressionName": "GetUint8",
@@ -628,14 +708,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-int16",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Int16",
+      "name_en": "GetInt16",
       "description_zh": "读取字节位置的 Int16 值。",
       "description_en": "Get an Int16 value at a byte offset.",
       "expressionName": "GetInt16",
@@ -646,14 +728,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-uint16",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Uint16",
+      "name_en": "GetUint16",
       "description_zh": "读取字节位置的 Int16 值。",
       "description_en": "Get a Uint16 value at a byte offset.",
       "expressionName": "GetUint16",
@@ -664,14 +748,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-int32",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Int32",
+      "name_en": "GetInt32",
       "description_zh": "读取字节位置的 Int32 值。",
       "description_en": "Get an Int32 value at a byte offset.",
       "expressionName": "GetInt32",
@@ -682,14 +768,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-uint32",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Uint32",
+      "name_en": "GetUint32",
       "description_zh": "读取字节位置的 Uint32 值。",
       "description_en": "Get a Uint32 value at a byte offset.",
       "expressionName": "GetUint32",
@@ -700,14 +788,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-float32",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Float32",
+      "name_en": "GetFloat32",
       "description_zh": "读取字节位置的 Float32 值。",
       "description_en": "Get a Float32 value at a byte offset.",
       "expressionName": "GetFloat32",
@@ -718,14 +808,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-float64",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取Float64",
+      "name_en": "GetFloat64",
       "description_zh": "读取字节位置的 Float64 值。",
       "description_en": "Get a Float64 value at a byte offset.",
       "expressionName": "GetFloat64",
@@ -736,14 +828,16 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         }
       ]
     },
     {
       "id": "get-text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取文字",
+      "name_en": "GetText",
       "description_zh": "读取指定范围的 UTF-8 编码的文本。",
       "description_en": "Get UTF-8 text from a given range.",
       "expressionName": "GetText",
@@ -754,20 +848,24 @@
           "id": "offset",
           "type": "number",
           "name_zh": "字节偏移",
-          "name_en": "ByteOffset"
+          "name_en": "ByteOffset",
+          "desc_zh": "开始读取数据的字节位置。",
+          "desc_en": "Position to read the value from, in bytes from the start."
         },
         {
           "id": "length",
           "type": "number",
           "name_zh": "长度",
-          "name_en": "Length"
+          "name_en": "Length",
+          "desc_zh": "读取的文本长度，以字节为单位。",
+          "desc_en": "Length of the text to read, in bytes."
         }
       ]
     },
     {
       "id": "get-all-text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "读取全部文本",
+      "name_en": "GetAllText",
       "description_zh": "读取整个缓冲区作为 UTF-8 编码的文本。",
       "description_en": "Get the entire buffer as UTF-8 encoded text.",
       "expressionName": "GetAllText",

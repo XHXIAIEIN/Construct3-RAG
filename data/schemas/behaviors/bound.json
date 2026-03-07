@@ -3,7 +3,7 @@
   "originalId": "bound",
   "name_zh": "边界约束",
   "name_en": "Bound to layout",
-  "description_zh": "阻止对象超出场景边界范围。",
+  "description_zh": "阻止对象超出场景边界或视区范围。",
   "description_en": "Stop an object leaving the layout.",
   "path": "general/bound",
   "categories": [],

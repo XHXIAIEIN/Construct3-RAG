@@ -14,7 +14,9 @@
       "name_en": "Is flashing",
       "description_zh": "检测对象当前是否处于闪烁状态中。",
       "description_en": "True if the object is currently flashing.",
-      "scriptName": "IsFlashing"
+      "scriptName": "IsFlashing",
+      "display_zh": "正在闪烁",
+      "display_en": "Is flashing"
     },
     {
       "id": "on-flash-ended",
@@ -23,7 +25,9 @@
       "description_zh": "当闪烁结束时执行",
       "description_en": "Triggered when the object stops flashing.",
       "scriptName": "OnFlashEnded",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "闪烁结束",
+      "display_en": "On flash ended"
     }
   ],
   "actions": [
@@ -40,23 +44,31 @@
           "type": "number",
           "name_zh": "可见时间",
           "name_en": "'On' time",
-          "initialValue": "0.1"
+          "initialValue": "0.1",
+          "desc_zh": "在持续时间内使对象可见",
+          "desc_en": "Duration in seconds the object is visible."
         },
         {
           "id": "off-time",
           "type": "number",
           "name_zh": "隐去时间",
           "name_en": "'Off' time",
-          "initialValue": "0.1"
+          "initialValue": "0.1",
+          "desc_zh": "在持续时间内使对象不可见",
+          "desc_en": "Duration in seconds the object is invisible."
         },
         {
           "id": "duration",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Duration",
-          "initialValue": "1.0"
+          "initialValue": "1.0",
+          "desc_zh": "在持续时间内使对象闪烁",
+          "desc_en": "Duration in seconds the object flashes for."
         }
-      ]
+      ],
+      "display_zh": "{my} 开始闪烁 (持续: [b]{2}[/b]秒, 显示: {0}秒, 隐去: {1}秒)",
+      "display_en": "{my}: Flash {0} on {1} off for [b]{2}[/b] seconds"
     },
     {
       "id": "stop-flashing",
@@ -64,7 +76,9 @@
       "name_en": "Stop flashing",
       "description_zh": "停止闪烁并使对象可见",
       "description_en": "Stop the flashing and set the object visible.",
-      "scriptName": "StopFlashing"
+      "scriptName": "StopFlashing",
+      "display_zh": "{my} 停止闪烁",
+      "display_en": "{my}: Stop flashing"
     }
   ],
   "expressions": []

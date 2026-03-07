@@ -24,9 +24,13 @@
           "id": "url",
           "type": "string",
           "name_zh": "URL",
-          "name_en": "URL"
+          "name_en": "URL",
+          "desc_zh": "要加载的链接",
+          "desc_en": "The URL to load."
         }
-      ]
+      ],
+      "display_zh": "跳转到 [b]{0}[/b]",
+      "display_en": "Navigate to [b]{0}[/b]"
     },
     {
       "id": "display-html-string",
@@ -41,9 +45,13 @@
           "id": "html",
           "type": "string",
           "name_zh": "HTML",
-          "name_en": "HTML"
+          "name_en": "HTML",
+          "desc_zh": "要加载的HTML内容字符串。如果有任何不可信任的内容，请启用沙盒模式。",
+          "desc_en": "A string of HTML content to load. Enable sandbox if there is any untrusted content."
         }
-      ]
+      ],
+      "display_zh": "显示HTML内容 [b]{0}[/b]",
+      "display_en": "Display HTML string [b]{0}[/b]"
     }
   ],
   "expressions": [],

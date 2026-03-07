@@ -14,7 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为当前是否启用。",
       "description_en": "Test whether the behavior is currently enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -45,9 +47,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用实体行为。",
+          "desc_en": "Set whether the object counts as solid or not."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "set-tags",
@@ -61,9 +67,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。",
+          "desc_en": "A space-separated list of tags to use for collision filtering with this solid."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}实体标签为[i]{0}[/i]",
+      "display_en": "Set {my} tags [i]{0}[/i]"
     }
   ],
   "expressions": [],

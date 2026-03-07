@@ -17,7 +17,9 @@
       "description_zh": "检测当前运行设备是否支持获取地理位置信息。",
       "description_en": "True if the current platform supports geolocation.",
       "scriptName": "IsSupported",
-      "category": "geolocation"
+      "category": "geolocation",
+      "display_zh": "设备支持访问地理位置",
+      "display_en": "Is supported"
     },
     {
       "id": "is-watching-location",
@@ -26,7 +28,9 @@
       "description_zh": "检测当前是否正在跟踪用户的地理位置。",
       "description_en": "True if the user's location is currently being tracked.",
       "scriptName": "IsWatching",
-      "category": "geolocation"
+      "category": "geolocation",
+      "display_zh": "正在跟踪位置",
+      "display_en": "Is watching location"
     },
     {
       "id": "on-location-update",
@@ -36,7 +40,9 @@
       "description_en": "Triggered when requesting or watching the user's position when the location is updated.",
       "scriptName": "OnUpdate",
       "isTrigger": true,
-      "category": "geolocation"
+      "category": "geolocation",
+      "display_zh": "位置更新时",
+      "display_en": "On location update"
     },
     {
       "id": "on-error",
@@ -46,7 +52,9 @@
       "description_en": "Triggered when a geolocation error occurs.",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "geolocation"
+      "category": "geolocation",
+      "display_zh": "在出错时",
+      "display_en": "On error"
     }
   ],
   "actions": [
@@ -77,22 +85,30 @@
               "zh": "高度",
               "en": "High"
             }
-          }
+          },
+          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery."
         },
         {
           "id": "timeout",
           "type": "number",
           "name_zh": "超时",
           "name_en": "Timeout",
-          "initialValue": "60"
+          "initialValue": "60",
+          "desc_zh": "设备返回位置的最大时长，以秒为单位。",
+          "desc_en": "The maximum length of time in seconds that the device can take to return a position."
         },
         {
           "id": "maximum-age",
           "type": "number",
           "name_zh": "最长缓存时间",
-          "name_en": "Maximum age"
+          "name_en": "Maximum age",
+          "desc_zh": "缓存结果可记录的最大时长，以秒为单位。使用 0 禁用缓存。",
+          "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ]
+      ],
+      "display_zh": "请求位置（{0}准确度，超时{1}，最大年龄{2}）",
+      "display_en": "Request location ({0} accuracy, timeout {1}, maximum age {2})"
     },
     {
       "id": "watch-location",
@@ -121,22 +137,30 @@
               "zh": "高度",
               "en": "High"
             }
-          }
+          },
+          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery."
         },
         {
           "id": "timeout",
           "type": "number",
           "name_zh": "超时",
           "name_en": "Timeout",
-          "initialValue": "60"
+          "initialValue": "60",
+          "desc_zh": "设备返回位置的最大时长，以秒为单位。",
+          "desc_en": "The maximum length of time in seconds that the device can take to return a position."
         },
         {
           "id": "maximum-age",
           "type": "number",
           "name_zh": "最长缓存时间",
-          "name_en": "Maximum age"
+          "name_en": "Maximum age",
+          "desc_zh": "缓存结果可保留的最长时间，以秒为单位。 使用 0 禁用缓存。",
+          "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ]
+      ],
+      "display_zh": "监测位置（{0}准确度，超时{1}，最大时长{2}）",
+      "display_en": "Watch location ({0} accuracy, timeout {1}, maximum age {2})"
     },
     {
       "id": "stop-watching",
@@ -145,14 +169,16 @@
       "description_zh": "停止监测之前的发起的定位",
       "description_en": "Stop watching a previous 'Watch location' action.",
       "scriptName": "StopWatching",
-      "category": "geolocation"
+      "category": "geolocation",
+      "display_zh": "停止监测位置信息",
+      "display_en": "Stop watching location"
     }
   ],
   "expressions": [
     {
       "id": "errormessage",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误信息",
+      "name_en": "ErrorMessage",
       "description_zh": "在出错时返回的相关的错误消息。",
       "description_en": "In 'On error', the relevant error message.",
       "expressionName": "ErrorMessage",
@@ -161,8 +187,8 @@
     },
     {
       "id": "timestamp",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "时间戳",
+      "name_en": "Timestamp",
       "description_zh": "检索当前详细信息的时间戳。",
       "description_en": "The timestamp at which the current details were retrieved.",
       "expressionName": "Timestamp",
@@ -171,8 +197,8 @@
     },
     {
       "id": "latitude",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "纬度",
+      "name_en": "Latitude",
       "description_zh": "纬度位置以十进制度表示。",
       "description_en": "The latitude position in decimal degrees.",
       "expressionName": "Latitude",
@@ -181,8 +207,8 @@
     },
     {
       "id": "longitude",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "经度",
+      "name_en": "Longitude",
       "description_zh": "十进制度的经度位置。",
       "description_en": "The longitude position in decimal degrees.",
       "expressionName": "Longitude",
@@ -191,8 +217,8 @@
     },
     {
       "id": "altitude",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "海拔",
+      "name_en": "Altitude",
       "description_zh": "海拔高度以米为单位（如果有）。",
       "description_en": "The altitude above sea-level in meters, if available.",
       "expressionName": "Altitude",
@@ -201,8 +227,8 @@
     },
     {
       "id": "accuracy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "精度",
+      "name_en": "Accuracy",
       "description_zh": "纬度和经度的估计精度（米）。",
       "description_en": "The estimated accuracy in meters of the latitude and longitude.",
       "expressionName": "Accuracy",
@@ -211,8 +237,8 @@
     },
     {
       "id": "altitudeaccuracy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "海拔精度",
+      "name_en": "AltitudeAccuracy",
       "description_zh": "如果可用，获取预估的海拔精度，以米为单位。",
       "description_en": "The estimated accuracy in meters of the altitude, if available.",
       "expressionName": "AltitudeAccuracy",
@@ -221,8 +247,8 @@
     },
     {
       "id": "heading",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "前进方向",
+      "name_en": "Heading",
       "description_zh": "相对于正北方向的行进方向（如果有）。",
       "description_en": "The direction of travel in degrees relative to due north, if available.",
       "expressionName": "Heading",
@@ -231,8 +257,8 @@
     },
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "前进速度",
+      "name_en": "Speed",
       "description_zh": "以米为单位的行程速度（如果可用）。",
       "description_en": "The speed of travel in meters per second, if available.",
       "expressionName": "Speed",

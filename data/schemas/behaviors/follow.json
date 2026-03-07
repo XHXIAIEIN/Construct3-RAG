@@ -38,9 +38,13 @@
               "zh": "距离",
               "en": "Distance"
             }
-          }
+          },
+          "desc_zh": "要比较的模式。",
+          "desc_en": "The mode to compare to."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}跟随模式为 [b]{0}[/b]",
+      "display_en": "{my} mode is [b]{0}[/b]"
     },
     {
       "id": "compare-delay",
@@ -55,15 +59,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "The comparison to use."
         },
         {
           "id": "delay",
           "type": "number",
           "name_zh": "延迟",
-          "name_en": "Delay"
+          "name_en": "Delay",
+          "desc_zh": "比较当前的延迟",
+          "desc_en": "The delay to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} 延迟 {0} {1}",
+      "display_en": "{my} delay {0} {1}"
     },
     {
       "id": "compare-max-delay",
@@ -78,15 +88,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "The comparison to use."
         },
         {
           "id": "max-delay",
           "type": "number",
           "name_zh": "最大同步时长",
-          "name_en": "Max delay"
+          "name_en": "Max delay",
+          "desc_zh": "要比较的最大同步时长",
+          "desc_en": "The maximum delay to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} 最大同步时长 {0} {1}",
+      "display_en": "{my} max delay {0} {1}"
     },
     {
       "id": "compare-history-rate",
@@ -101,15 +117,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "The comparison to use."
         },
         {
           "id": "history-rate",
           "type": "number",
           "name_zh": "同步频率",
-          "name_en": "History rate"
+          "name_en": "History rate",
+          "desc_zh": "要比较的同步频率。",
+          "desc_en": "The history rate to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} 同步频率 {0} {1}",
+      "display_en": "{my} history rate {0} {1}"
     },
     {
       "id": "is-following-property",
@@ -173,9 +195,13 @@
               "zh": "销毁状态",
               "en": "Destroyed"
             }
-          }
+          },
+          "desc_zh": "检测跟随行为是否正在跟随以下的属性。",
+          "desc_en": "The property to test if enabled for following."
         }
-      ]
+      ],
+      "display_zh": "{my} 正在跟随 [b]{0}[/b]",
+      "display_en": "{my} is following [b]{0}[/b]"
     },
     {
       "id": "is-enabled",
@@ -184,7 +210,9 @@
       "description_zh": "测试行为是否启用。",
       "description_en": "Test if the behavior is currently enabled.",
       "scriptName": "IsEnabled",
-      "category": "settings"
+      "category": "settings",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     },
     {
       "id": "is-following-custom-property",
@@ -199,9 +227,13 @@
           "id": "custom-property",
           "type": "string",
           "name_zh": "自定义属性",
-          "name_en": "Custom property"
+          "name_en": "Custom property",
+          "desc_zh": "自定义属性的标签",
+          "desc_en": "A string identifying the custom property."
         }
-      ]
+      ],
+      "display_zh": "{my} 正在跟随自定义属性 [b]{0}[/b]",
+      "display_en": "{my} is following custom property [b]{0}[/b]"
     },
     {
       "id": "is-following-object",
@@ -209,7 +241,9 @@
       "name_en": "Is following object",
       "description_zh": "检测跟随行为是否正在跟随某个对象。",
       "description_en": "Test if currently actively following an object.",
-      "scriptName": "IsFollowingObject"
+      "scriptName": "IsFollowingObject",
+      "display_zh": "{my} 正在跟随对象",
+      "display_en": "{my} is following object"
     },
     {
       "id": "is-paused",
@@ -217,7 +251,9 @@
       "name_en": "Is paused",
       "description_zh": "检测跟随行为是否已暂停。",
       "description_en": "Test if following is currently paused.",
-      "scriptName": "IsPaused"
+      "scriptName": "IsPaused",
+      "display_zh": "{my} 正在暂停",
+      "display_en": "{my} is paused"
     },
     {
       "id": "has-follow-data",
@@ -225,7 +261,9 @@
       "name_en": "Has follow data",
       "description_zh": "检测当前是否已收集足够的数据以进行跟随。",
       "description_en": "Test if enough data has been recorded for the object to start following.",
-      "scriptName": "HasFollowData"
+      "scriptName": "HasFollowData",
+      "display_zh": "{my} 存在跟随数据",
+      "display_en": "{my} has follow data"
     }
   ],
   "actions": [
@@ -256,9 +294,13 @@
               "zh": "距离",
               "en": "Distance"
             }
-          }
+          },
+          "desc_zh": "要设置的模式。",
+          "desc_en": "The mode to set."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}跟随模式为 [i]{0}[/i]",
+      "display_en": "{my}: Set mode [i]{0}[/i]"
     },
     {
       "id": "set-delay",
@@ -273,9 +315,13 @@
           "id": "delay",
           "type": "number",
           "name_zh": "延迟",
-          "name_en": "Delay"
+          "name_en": "Delay",
+          "desc_zh": "延迟跟随的时机，时间(秒)或距离(像素)，取决于跟随模式。",
+          "desc_en": "The time in seconds, or distance in pixels, to follow (depending on the mode)."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}跟随延迟为[i]{0}[/i]",
+      "display_en": "{my}: Set delay [i]{0}[/i]"
     },
     {
       "id": "set-max-delay",
@@ -290,9 +336,13 @@
           "id": "max-delay",
           "type": "number",
           "name_zh": "最大同步时长",
-          "name_en": "Max delay"
+          "name_en": "Max delay",
+          "desc_zh": "最大同步时长，具体时间或距离，取决于模式。",
+          "desc_en": "The maximum time/distance data to remember."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}最大同步时长为[i]{0}[/i]",
+      "display_en": "{my}: Set max delay [i]{0}[/i]"
     },
     {
       "id": "set-history-rate",
@@ -308,9 +358,13 @@
           "type": "number",
           "name_zh": "频率",
           "name_en": "History rate",
-          "initialValue": "30"
+          "initialValue": "30",
+          "desc_zh": "每秒记录跟随对象属性的次数。",
+          "desc_en": "The rate in entries per second at which to remember changes in the followed object."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}同步频率为[i]{0}[/i]",
+      "display_en": "{my}: Set history rate [i]{0}[/i]"
     },
     {
       "id": "set-following-property",
@@ -374,15 +428,21 @@
               "zh": "销毁状态",
               "en": "Destroyed"
             }
-          }
+          },
+          "desc_zh": "设置是否要跟随某些属性。",
+          "desc_en": "The property to set whether being followed."
         },
         {
           "id": "enabled",
           "type": "boolean",
           "name_zh": "启用",
-          "name_en": "Enabled"
+          "name_en": "Enabled",
+          "desc_zh": "要跟随的属性",
+          "desc_en": "Whether to follow the chosen property."
         }
-      ]
+      ],
+      "display_zh": "[i]{1}[/i] {my} 跟随属性[b]{0}[/b]",
+      "display_en": "{my}: Set following [b]{0}[/b] [i]{1}[/i]"
     },
     {
       "id": "set-property-interpolation",
@@ -446,7 +506,9 @@
               "zh": "跟随销毁",
               "en": "Destroyed"
             }
-          }
+          },
+          "desc_zh": "要设置插值的属性。",
+          "desc_en": "The property to set interpolation for."
         },
         {
           "id": "interpolation",
@@ -471,9 +533,13 @@
               "zh": "角度",
               "en": "Angular"
             }
-          }
+          },
+          "desc_zh": "用于属性的插值模式。",
+          "desc_en": "The interpolation mode to use for the property."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}自定义属性[b]{0}[/b]使用[i]{1}[/i]插值模式",
+      "display_en": "{my}: Set property [b]{0}[/b] interpolation [i]{1}[/i]"
     },
     {
       "id": "set-enabled",
@@ -488,9 +554,13 @@
           "id": "state",
           "type": "boolean",
           "name_zh": "状态",
-          "name_en": "State"
+          "name_en": "State",
+          "desc_zh": "启用或禁用行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} enabled [b]{0}[/b]"
     },
     {
       "id": "start-following-custom-property",
@@ -505,7 +575,9 @@
           "id": "custom-property",
           "type": "string",
           "name_zh": "自定义属性",
-          "name_en": "Custom property"
+          "name_en": "Custom property",
+          "desc_zh": "自定义属性的标签",
+          "desc_en": "A string identifying the custom property."
         },
         {
           "id": "interpolation",
@@ -530,9 +602,13 @@
               "zh": "插值",
               "en": "Angular"
             }
-          }
+          },
+          "desc_zh": "用于属性的插值模式。",
+          "desc_en": "The interpolation mode to use for the property."
         }
-      ]
+      ],
+      "display_zh": "{my} 开始跟随属性[b]{0}[/b] [i]{1}[/i]",
+      "display_en": "{my}: Start following custom property [b]{0}[/b] [i]{1}[/i]"
     },
     {
       "id": "stop-following-custom-property",
@@ -547,9 +623,13 @@
           "id": "custom-property",
           "type": "string",
           "name_zh": "自定义属性",
-          "name_en": "Custom property"
+          "name_en": "Custom property",
+          "desc_zh": "自定义属性的标签",
+          "desc_en": "A string identifying the custom property."
         }
-      ]
+      ],
+      "display_zh": "{my} 停止跟随属性 [b]{0}[/b]",
+      "display_en": "{my}: Stop following custom property [b]{0}[/b]"
     },
     {
       "id": "set-custom-property-value",
@@ -564,15 +644,21 @@
           "id": "custom-property",
           "type": "string",
           "name_zh": "自定义属性",
-          "name_en": "Custom property"
+          "name_en": "Custom property",
+          "desc_zh": "自定义属性的标签",
+          "desc_en": "A string identifying the custom property."
         },
         {
           "id": "value",
           "type": "any",
           "name_zh": "数值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "设置自定义属性的值。",
+          "desc_en": "A number or string to set as the current value of this custom property."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}自定义属性[b]{0}[/b]为[i]{1}[/i]",
+      "display_en": "{my}: Set custom property [b]{0}[/b] value [i]{1}[/i]"
     },
     {
       "id": "follow-object",
@@ -586,15 +672,21 @@
           "id": "object",
           "type": "object",
           "name_zh": "目标",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "要跟随的对象",
+          "desc_en": "The object to follow."
         },
         {
           "id": "from-current-position",
           "type": "boolean",
           "name_zh": "从当前位置开始",
-          "name_en": "From current position"
+          "name_en": "From current position",
+          "desc_zh": "启用后，该对象将立即从其当前位置开始跟随。",
+          "desc_en": "If enabled, this object will immediately follow starting from its current position."
         }
-      ]
+      ],
+      "display_zh": "{my}: 跟随 {0} (从当前位置开始: [i]{1}[/i])",
+      "display_en": "{my}: Follow {0} (from current position [i]{1}[/i])"
     },
     {
       "id": "follow-self",
@@ -602,7 +694,9 @@
       "name_en": "Follow self",
       "description_zh": "开始跟踪目标对象，并储存历史记录。",
       "description_en": "Start remembering the history of the object this behavior belongs to.",
-      "scriptName": "FollowSelf"
+      "scriptName": "FollowSelf",
+      "display_zh": "{my} 跟随自己",
+      "display_en": "{my}: Follow self"
     },
     {
       "id": "stop-following",
@@ -610,7 +704,9 @@
       "name_en": "Stop following",
       "description_zh": "停止跟随所有对象。",
       "description_en": "Stop following any currently followed object.",
-      "scriptName": "StopFollowing"
+      "scriptName": "StopFollowing",
+      "display_zh": "{my} 停止跟随",
+      "display_en": "{my}: Stop following"
     },
     {
       "id": "clear-history",
@@ -618,7 +714,9 @@
       "name_en": "Clear history",
       "description_zh": "清空跟随对象的历史记录。",
       "description_en": "Clear the remembered history of the object being followed, starting over from scratch.",
-      "scriptName": "ClearHistory"
+      "scriptName": "ClearHistory",
+      "display_zh": "{my} 清空历史记录",
+      "display_en": "{my}: Clear history"
     },
     {
       "id": "rewind-history",
@@ -632,9 +730,13 @@
           "id": "time",
           "type": "number",
           "name_zh": "时间",
-          "name_en": "Time"
+          "name_en": "Time",
+          "desc_zh": "倒回历史时间，以秒为单位。",
+          "desc_en": "The time in seconds to rewind through history."
         }
-      ]
+      ],
+      "display_zh": "{my} 回退 [b]{0}[/b] 秒历史记录",
+      "display_en": "{my}: Rewind history by [b]{0}[/b] seconds"
     },
     {
       "id": "set-paused",
@@ -648,9 +750,13 @@
           "id": "is-paused",
           "type": "boolean",
           "name_zh": "暂停",
-          "name_en": "Paused"
+          "name_en": "Paused",
+          "desc_zh": "是否暂停跟随。",
+          "desc_en": "Whether to pause following."
         }
-      ]
+      ],
+      "display_zh": "{my} 暂停 [i]{0}[/i]",
+      "display_en": "Set {my} paused [i]{0}[/i]"
     },
     {
       "id": "load-history-json",
@@ -664,16 +770,20 @@
           "id": "json",
           "type": "string",
           "name_zh": "JSON",
-          "name_en": "JSON"
+          "name_en": "JSON",
+          "desc_zh": "包含跟随历史数据的JSON字符串，来自 '导出历史数据' 表达式。",
+          "desc_en": "A string of history JSON data, from the 'HistoryAsJSON' expression."
         }
-      ]
+      ],
+      "display_zh": "{my} 读取历史记录 [i]{0}[/i]",
+      "display_en": "Load {my} history JSON [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "delay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "延迟",
+      "name_en": "Delay",
       "description_zh": "当前延迟，以秒或像素为单位。",
       "description_en": "The current delay in seconds or pixels.",
       "expressionName": "Delay",
@@ -682,8 +792,8 @@
     },
     {
       "id": "max-delay",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大同步时长",
+      "name_en": "MaxDelay",
       "description_zh": "最大同步时长，以秒或像素为单位。",
       "description_en": "The current maximum delay in seconds or pixels.",
       "expressionName": "MaxDelay",
@@ -692,8 +802,8 @@
     },
     {
       "id": "history-rate",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "同步频率",
+      "name_en": "HistoryRate",
       "description_zh": "每秒记录跟随对象属性的次数。",
       "description_en": "The current history rate in entries per second.",
       "expressionName": "HistoryRate",
@@ -702,8 +812,8 @@
     },
     {
       "id": "delayed-custom-property-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "自定义属性延迟",
+      "name_en": "DelayedCustomPropertyValue",
       "description_zh": "跟随的自定义属性的延迟值。",
       "description_en": "The delayed value of a custom property being followed.",
       "expressionName": "DelayedCustomPropertyValue",
@@ -714,14 +824,16 @@
           "id": "custom-property",
           "type": "string",
           "name_zh": "自定义属性",
-          "name_en": "CustomProperty"
+          "name_en": "CustomProperty",
+          "desc_zh": "自定义属性的标签",
+          "desc_en": "A string identifying the custom property."
         }
       ]
     },
     {
       "id": "follow-uid",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "跟随对象UID",
+      "name_en": "FollowUID",
       "description_zh": "当前跟踪对象的UID，如果没有，则为-1。",
       "description_en": "The UID of the currently followed object (or -1 if none).",
       "expressionName": "FollowUID",
@@ -729,8 +841,8 @@
     },
     {
       "id": "history-as-json",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "导出历史记录",
+      "name_en": "HistoryAsJSON",
       "description_zh": "将对象跟随的历史记录保存到 JSON 数据字符串中。",
       "description_en": "Save the history of the followed object to a string of JSON data.",
       "expressionName": "HistoryAsJSON",
@@ -740,7 +852,9 @@
           "id": "max-delay",
           "type": "number",
           "name_zh": "最大同步时长",
-          "name_en": "MaxDelay"
+          "name_en": "MaxDelay",
+          "desc_zh": "历史记录数据保存的最长时间，以秒为单位。",
+          "desc_en": "Max time in seconds of history to save."
         }
       ]
     }
@@ -800,9 +914,9 @@
     },
     {
       "id": "follow-z-elevation",
-      "name_zh": "跟随视距高度",
+      "name_zh": "跟随Z坐标",
       "name_en": "Follow Z elevation",
-      "description_zh": "是否需要跟随对象的视距高度。",
+      "description_zh": "是否需要跟随对象的Z坐标。",
       "description_en": "Whether to follow the object Z elevation position."
     },
     {

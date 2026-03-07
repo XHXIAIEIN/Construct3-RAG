@@ -19,7 +19,9 @@
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "远程图像加载完成",
+      "display_en": "On image URL loaded"
     },
     {
       "id": "on-image-url-failed",
@@ -29,7 +31,9 @@
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "网络图像加载失败",
+      "display_en": "On image URL failed to load"
     }
   ],
   "actions": [
@@ -125,9 +129,13 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          }
+          },
+          "desc_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "desc_en": "Choose the new blend mode for this object."
         }
-      ]
+      ],
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]"
     },
     {
       "id": "set-margins",
@@ -142,27 +150,37 @@
           "id": "left-margin",
           "type": "number",
           "name_zh": "左边距",
-          "name_en": "Left margin"
+          "name_en": "Left margin",
+          "desc_zh": "左边距大小，以像素为单位。",
+          "desc_en": "The left margin size in pixels."
         },
         {
           "id": "right-margin",
           "type": "number",
           "name_zh": "右边距",
-          "name_en": "Right margin"
+          "name_en": "Right margin",
+          "desc_zh": "右边距大小，以像素为单位。",
+          "desc_en": "The right margin size in pixels."
         },
         {
           "id": "top-margin",
           "type": "number",
           "name_zh": "上边距",
-          "name_en": "Top margin"
+          "name_en": "Top margin",
+          "desc_zh": "顶部边距大小，以像素为单位。",
+          "desc_en": "The top margin size in pixels."
         },
         {
           "id": "bottom-margin",
           "type": "number",
           "name_zh": "下边距",
-          "name_en": "Bottom margin"
+          "name_en": "Bottom margin",
+          "desc_zh": "底部边距大小，以像素为单位。",
+          "desc_en": "The bottom margin size in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置图像边距 (左: [i]{0}[/i], 右: [i]{1}[/i], 上: [i]{2}[/i], 下: [i]{3}[/i])",
+      "display_en": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]"
     },
     {
       "id": "set-edges",
@@ -191,9 +209,13 @@
               "zh": "拉伸",
               "en": "Stretch"
             }
-          }
+          },
+          "desc_zh": "设置边缘部分的显示方式，选择平铺或拉伸。",
+          "desc_en": "Choose whether to tile or stretch the edges."
         }
-      ]
+      ],
+      "display_zh": "设置边缘模式为 [i]{0}[/i]",
+      "display_en": "Set edges to [i]{0}[/i]"
     },
     {
       "id": "set-fill",
@@ -227,9 +249,13 @@
               "zh": "透明",
               "en": "Transparent"
             }
-          }
+          },
+          "desc_zh": "设置中间填充部分的显示方式，选择平铺、拉伸或透明。",
+          "desc_en": "Choose how to display the inside of the box."
         }
-      ]
+      ],
+      "display_zh": "设置填充模式为 [i]{0}[/i]",
+      "display_en": "Set fill to [i]{0}[/i]"
     },
     {
       "id": "set-image-scale-x",
@@ -245,9 +271,13 @@
           "type": "number",
           "name_zh": "缩放比例 X",
           "name_en": "X scale",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "图像在 X 轴的缩放比例，以百分比表示。",
+          "desc_en": "The X scale of the image within the object, as a percentage."
         }
-      ]
+      ],
+      "display_zh": "设置图像缩放比例X为[i]{0}[/i]",
+      "display_en": "Set image X scale to [i]{0}[/i]"
     },
     {
       "id": "set-image-scale-y",
@@ -263,9 +293,13 @@
           "type": "number",
           "name_zh": "缩放比例 Y",
           "name_en": "Y scale",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "图像在 Y 轴的缩放比例，以百分比表示。",
+          "desc_en": "The Y scale of the image within the object, as a percentage."
         }
-      ]
+      ],
+      "display_zh": "设置图像缩放比例Y为[i]{0}[/i]",
+      "display_en": "Set image Y scale to [i]{0}[/i]"
     },
     {
       "id": "set-seams",
@@ -294,9 +328,13 @@
               "zh": "覆盖",
               "en": "Overlap"
             }
-          }
+          },
+          "desc_zh": "选择边缘衔接的渲染方式，用于实现无缝衔接效果。使用半透明的图像，建议使用 '精准匹配' 模式。",
+          "desc_en": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used."
         }
-      ]
+      ],
+      "display_zh": "设置边缘衔接为[i]{0}[/i]",
+      "display_en": "Set seams to [i]{0}[/i]"
     },
     {
       "id": "load-image-from-url",
@@ -313,16 +351,20 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "填入远程服务器的地址，或图像数据地址的表达式。",
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
         }
-      ]
+      ],
+      "display_zh": "加载远程图像(地址: [i]{0}[/i])",
+      "display_en": "Load image from [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "left-margin",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "左边距",
+      "name_en": "LeftMargin",
       "description_zh": "图像的左边距，以像素为单位。保持不被拉伸的空间。",
       "description_en": "Left border margin on the image in pixels.",
       "expressionName": "LeftMargin",
@@ -331,8 +373,8 @@
     },
     {
       "id": "right-margin",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "右边距",
+      "name_en": "RightMargin",
       "description_zh": "图像的右边距，以像素为单位。保持不被拉伸的空间。",
       "description_en": "Right border margin on the image in pixels.",
       "expressionName": "RightMargin",
@@ -341,8 +383,8 @@
     },
     {
       "id": "top-margin",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "上边距",
+      "name_en": "TopMargin",
       "description_zh": "图像的上边距，以像素为单位。保持不被拉伸的空间。",
       "description_en": "Top border margin on the image in pixels.",
       "expressionName": "TopMargin",
@@ -351,8 +393,8 @@
     },
     {
       "id": "bottom-margin",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "下边距",
+      "name_en": "BottomMargin",
       "description_zh": "图像的下边距，以像素为单位。保持不被拉伸的空间。",
       "description_en": "Bottom border margin on the image in pixels.",
       "expressionName": "BottomMargin",
@@ -361,8 +403,8 @@
     },
     {
       "id": "image-scale-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "缩放比例X",
+      "name_en": "ImageScaleX",
       "description_zh": "获取图像在X轴的缩放比例。",
       "description_en": "The X scale of the image within the object.",
       "expressionName": "ImageScaleX",
@@ -371,8 +413,8 @@
     },
     {
       "id": "image-scale-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "缩放比例Y",
+      "name_en": "ImageScaleY",
       "description_zh": "获取图像在Y轴的缩放比例。",
       "description_en": "The Y scale of the image within the object.",
       "expressionName": "ImageScaleY",

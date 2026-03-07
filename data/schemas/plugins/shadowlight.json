@@ -24,9 +24,13 @@
           "id": "height",
           "type": "number",
           "name_zh": "高度",
-          "name_en": "Height"
+          "name_en": "Height",
+          "desc_zh": "要设置的光源的高度，以像素为单位。",
+          "desc_en": "The height of the light to set, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置光源高度为[i]{0}[/i]",
+      "display_en": "Set light height to [i]{0}[/i]"
     },
     {
       "id": "set-shadow-color",
@@ -42,9 +46,13 @@
           "type": "number",
           "name_zh": "颜色",
           "name_en": "Color",
-          "initialValue": "rgbEx(0, 0, 0)"
+          "initialValue": "rgbEx(0, 0, 0)",
+          "desc_zh": "此对象投射的阴影的颜色。",
+          "desc_en": "The color of the shadows cast by this object."
         }
-      ]
+      ],
+      "display_zh": "设置光源颜色为[i]{0}[/i]",
+      "display_en": "Set shadow color to [i]{0}[/i]"
     },
     {
       "id": "set-tag",
@@ -59,9 +67,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的投影对象。",
+          "desc_en": "The new tag to set for the light."
         }
-      ]
+      ],
+      "display_zh": "设置投影标签为[i]{0}[/i]",
+      "display_en": "Set shadow tag to [i]{0}[/i]"
     },
     {
       "id": "set-cast-from",
@@ -95,9 +107,13 @@
               "zh": "不同标签",
               "en": "Different tag"
             }
-          }
+          },
+          "desc_zh": "设置光源的投影标签，以区分不同的投影对象。",
+          "desc_en": "Decide which objects to cast shadows from depending on their tags."
         }
-      ]
+      ],
+      "display_zh": "设置投影目标为[b]{0}[/b]",
+      "display_en": "Set cast from [b]{0}[/b]"
     },
     {
       "id": "set-light-position",
@@ -112,22 +128,28 @@
           "id": "x",
           "type": "number",
           "name_zh": "灯光 X",
-          "name_en": "Light X"
+          "name_en": "Light X",
+          "desc_zh": "光源的X坐标。",
+          "desc_en": "The X co-ordinate of the light."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "光源Y",
-          "name_en": "Light Y"
+          "name_en": "Light Y",
+          "desc_zh": "光源的Y坐标。",
+          "desc_en": "The Y co-ordinate of the light."
         }
-      ]
+      ],
+      "display_zh": "设置光源位置 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set light position to ([i]{0}[/i], [i]{1}[/i])"
     }
   ],
   "expressions": [
     {
       "id": "lightx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "光源X",
+      "name_en": "LightX",
       "description_zh": "光源的X位置。",
       "description_en": "The X position of the light source.",
       "expressionName": "LightX",
@@ -136,8 +158,8 @@
     },
     {
       "id": "lighty",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "光源Y",
+      "name_en": "LightY",
       "description_zh": "光源的Y位置。",
       "description_en": "The Y position of the light source.",
       "expressionName": "LightY",
@@ -146,8 +168,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "投影标签",
+      "name_en": "Tag",
       "description_zh": "光源的投影标签。",
       "description_en": "The tag of the light.",
       "expressionName": "Tag",

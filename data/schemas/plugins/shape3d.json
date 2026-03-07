@@ -57,9 +57,13 @@
               "zh": "尖角(外)",
               "en": "Corner (out)"
             }
-          }
+          },
+          "desc_zh": "要检查的形状。",
+          "desc_en": "The shape to check."
         }
-      ]
+      ],
+      "display_zh": "形状为[i]{0}[/i]",
+      "display_en": "Shape is [i]{0}[/i]"
     },
     {
       "id": "compare-z-height",
@@ -74,15 +78,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the current Z height."
         },
         {
           "id": "z-height",
           "type": "number",
           "name_zh": "形状高度",
-          "name_en": "Z height"
+          "name_en": "Z height",
+          "desc_zh": "比较形状在Z轴方向的高度。",
+          "desc_en": "The Z height to compare to."
         }
-      ]
+      ],
+      "display_zh": "形状高度 {0} {1}",
+      "display_en": "Z height {0} {1}"
     },
     {
       "id": "is-face-visible",
@@ -131,9 +141,13 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          }
+          },
+          "desc_zh": "要检查的朝面。",
+          "desc_en": "The face to check."
         }
-      ]
+      ],
+      "display_zh": "[i]{0}[/i] 朝面可见",
+      "display_en": "[i]{0}[/i] face is visible"
     }
   ],
   "actions": [
@@ -184,9 +198,13 @@
               "zh": "尖角(外)",
               "en": "Corner (out)"
             }
-          }
+          },
+          "desc_zh": "要设置的形状。",
+          "desc_en": "The shape to set."
         }
-      ]
+      ],
+      "display_zh": "设置形状为[b]{0}[/b]",
+      "display_en": "Set shape to [b]{0}[/b]"
     },
     {
       "id": "set-z-height",
@@ -201,9 +219,13 @@
           "id": "z-height",
           "type": "number",
           "name_zh": "形状高度",
-          "name_en": "Z height"
+          "name_en": "Z height",
+          "desc_zh": "要设置的形状的Z轴高度。",
+          "desc_en": "The Z height of the shape to set."
         }
-      ]
+      ],
+      "display_zh": "设置形状高度为[b]{0}[/b]",
+      "display_en": "Set Z height to [b]{0}[/b]"
     },
     {
       "id": "set-face-visible",
@@ -252,15 +274,21 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          }
+          },
+          "desc_zh": "要检查的朝面。",
+          "desc_en": "The face to check."
         },
         {
           "id": "visible",
           "type": "boolean",
           "name_zh": "可见",
-          "name_en": "Visible"
+          "name_en": "Visible",
+          "desc_zh": "显示或隐藏形状的朝面。",
+          "desc_en": "Whether to show or hide this face of the shape."
         }
-      ]
+      ],
+      "display_zh": "[b]{1}[/b][i]{0}[/i]可见",
+      "display_en": "Set [i]{0}[/i] face visible [b]{1}[/b]"
     },
     {
       "id": "set-back-face-culling",
@@ -275,9 +303,13 @@
           "id": "back-face-culling",
           "type": "boolean",
           "name_zh": "背面剔除",
-          "name_en": "Back face culling"
+          "name_en": "Back face culling",
+          "desc_zh": "是否启用背面剔除。",
+          "desc_en": "Whether to enable back face culling."
         }
-      ]
+      ],
+      "display_zh": "设置背面剔除(启用: [b]{0}[/b])",
+      "display_en": "Set back face culling [b]{0}[/b]"
     },
     {
       "id": "set-face-image",
@@ -326,7 +358,9 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          }
+          },
+          "desc_zh": "要更改图像的朝面。",
+          "desc_en": "The face to change the image for."
         },
         {
           "id": "image",
@@ -366,9 +400,13 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          }
+          },
+          "desc_zh": "用于朝面的图像。",
+          "desc_en": "The image to use for the chosen face."
         }
-      ]
+      ],
+      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 图像:[i]{1}[/i])",
+      "display_en": "Set [i]{0}[/i] face to use image of [i]{1}[/i] face"
     },
     {
       "id": "set-z-tiling-factor",
@@ -383,9 +421,13 @@
           "id": "z-tiling-factor",
           "type": "number",
           "name_zh": "平铺系数",
-          "name_en": "Z tiling factor"
+          "name_en": "Z tiling factor",
+          "desc_zh": "要设置的平铺系数。",
+          "desc_en": "The Z tiling factor to set."
         }
-      ]
+      ],
+      "display_zh": "设置平铺系数为[b]{0}[/b]",
+      "display_en": "Set Z tiling factor to [b]{0}[/b]"
     },
     {
       "id": "set-face-object",
@@ -434,22 +476,28 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          }
+          },
+          "desc_zh": "要更改哪个朝面的图像。",
+          "desc_en": "The face to change the image for."
         },
         {
           "id": "object",
           "type": "object",
           "name_zh": "对象",
-          "name_en": "Object"
+          "name_en": "Object",
+          "desc_zh": "用于朝向显示的对象。",
+          "desc_en": "The object to use for the face image."
         }
-      ]
+      ],
+      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 对象:{1})",
+      "display_en": "Set [i]{0}[/i] face to use image of {1}"
     }
   ],
   "expressions": [
     {
       "id": "z-height",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "形状高度",
+      "name_en": "ZHeight",
       "description_zh": "形状在 Z 轴上的高度。视角从 100 的高度向下看。",
       "description_en": "The current Z height of the shape.",
       "expressionName": "ZHeight",
@@ -458,8 +506,8 @@
     },
     {
       "id": "z-tiling-factor",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平铺系数",
+      "name_en": "ZTilingFactor",
       "description_zh": "应用于Z轴的纹理平铺系数。数值越大，图像重复越密集。",
       "description_en": "The current Z tiling factor for image repetition on the Z axis.",
       "expressionName": "ZTilingFactor",
@@ -468,8 +516,8 @@
     },
     {
       "id": "face-image-point-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "朝面图像点X",
+      "name_en": "FaceImagePointX",
       "description_zh": "在3D形状朝面的一个图像点的X坐标。",
       "description_en": "The X position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointX",
@@ -480,20 +528,24 @@
           "id": "face",
           "type": "number",
           "name_zh": "朝面",
-          "name_en": "Face"
+          "name_en": "Face",
+          "desc_zh": "朝面的数字编号(0-5)",
+          "desc_en": "Number of face (0-5)."
         },
         {
           "id": "imagepoint",
           "type": "any",
           "name_zh": "图像点",
-          "name_en": "ImagePoint"
+          "name_en": "ImagePoint",
+          "desc_zh": "要获取的图像点的名称或编号。",
+          "desc_en": "Name or number of image point to get."
         }
       ]
     },
     {
       "id": "face-image-point-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "朝面图像点Y",
+      "name_en": "FaceImagePointY",
       "description_zh": "在3D形状朝面的一个图像点的Y坐标。",
       "description_en": "The Y position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointY",
@@ -504,20 +556,24 @@
           "id": "face",
           "type": "number",
           "name_zh": "朝面",
-          "name_en": "Face"
+          "name_en": "Face",
+          "desc_zh": "朝面的数字编号(0-5)",
+          "desc_en": "Number of face (0-5)."
         },
         {
           "id": "imagepoint",
           "type": "any",
           "name_zh": "图像点",
-          "name_en": "ImagePoint"
+          "name_en": "ImagePoint",
+          "desc_zh": "要获取的图像点的名称或编号。",
+          "desc_en": "Name or number of image point to get."
         }
       ]
     },
     {
       "id": "face-image-point-z",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "朝面图像点Z",
+      "name_en": "FaceImagePointZ",
       "description_zh": "在3D形状朝面的一个图像点的Z轴位置。",
       "description_en": "The Z position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointZ",
@@ -528,20 +584,24 @@
           "id": "face",
           "type": "number",
           "name_zh": "朝面",
-          "name_en": "Face"
+          "name_en": "Face",
+          "desc_zh": "朝面的数字编号(0-5)",
+          "desc_en": "Number of face (0-5)."
         },
         {
           "id": "imagepoint",
           "type": "any",
           "name_zh": "图像点",
-          "name_en": "ImagePoint"
+          "name_en": "ImagePoint",
+          "desc_zh": "要获取的图像点的名称或编号。",
+          "desc_en": "Name or number of image point to get."
         }
       ]
     },
     {
       "id": "face-image-point-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "朝面图像点数量",
+      "name_en": "FaceImagePointCount",
       "description_zh": "在3D形状朝面的图像点数量。",
       "description_en": "The number of image points on one of the shape's faces.",
       "expressionName": "FaceImagePointCount",
@@ -552,7 +612,9 @@
           "id": "face",
           "type": "number",
           "name_zh": "朝面",
-          "name_en": "Face"
+          "name_en": "Face",
+          "desc_zh": "朝面的数字编号(0-5)",
+          "desc_en": "Number of face (0-5)."
         }
       ]
     }
@@ -628,9 +690,9 @@
     },
     {
       "id": "face-front",
-      "name_zh": "正面",
+      "name_zh": "顶面",
       "name_en": "Front face",
-      "description_zh": "选择正面是否可见。",
+      "description_zh": "选择顶面是否可见。",
       "description_en": "Choose whether the front face is visible."
     },
     {
@@ -684,9 +746,9 @@
     },
     {
       "id": "object-front",
-      "name_zh": "正面对象",
+      "name_zh": "顶面对象",
       "name_en": "Front face object",
-      "description_zh": "可选。选择一个对象作为正面的图像。注意，此对象的实例必须放在相同场景中。",
+      "description_zh": "可选。选择一个对象作为顶面的图像。注意，此对象的实例必须放在相同场景中。",
       "description_en": "Optionally choose an object to use as the image for the front face. An instance of the object must be in the same layout."
     },
     {

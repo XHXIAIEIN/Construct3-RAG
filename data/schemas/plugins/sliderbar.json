@@ -18,7 +18,9 @@
       "description_en": "Triggered when the slider bar is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "slider-bar"
+      "category": "slider-bar",
+      "display_zh": "点击",
+      "display_en": "On clicked"
     },
     {
       "id": "compare-value",
@@ -33,15 +35,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the current value."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要比较的值。",
+          "desc_en": "Value to compare to."
         }
-      ]
+      ],
+      "display_zh": "滑块值 {0} [i]{1}[/i]",
+      "display_en": "Slider value {0} [i]{1}[/i]"
     },
     {
       "id": "on-changed",
@@ -51,7 +59,9 @@
       "description_en": "Triggered when the slider bar value is changed.",
       "scriptName": "OnChanged",
       "isTrigger": true,
-      "category": "slider-bar"
+      "category": "slider-bar",
+      "display_zh": "进度已改变",
+      "display_en": "On changed"
     },
     {
       "id": "on-changing",
@@ -61,7 +71,9 @@
       "description_en": "Triggered during the slider bar value being changed, such as while it is dragged.",
       "scriptName": "OnChanging",
       "isTrigger": true,
-      "category": "slider-bar"
+      "category": "slider-bar",
+      "display_zh": "被拖动",
+      "display_en": "On changing"
     }
   ],
   "actions": [
@@ -78,9 +90,13 @@
           "id": "tooltip",
           "type": "string",
           "name_zh": "提示",
-          "name_en": "Tooltip"
+          "name_en": "Tooltip",
+          "desc_zh": "在滑块栏上出现的工具提示信息。",
+          "desc_en": "The tooltip to set on the slider bar."
         }
-      ]
+      ],
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}"
     },
     {
       "id": "set-value",
@@ -95,9 +111,13 @@
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要设置的值。",
+          "desc_en": "The value to set for the slider."
         }
-      ]
+      ],
+      "display_zh": "设置值为[b]{0}[/b]",
+      "display_en": "Set value to [b]{0}[/b]"
     },
     {
       "id": "set-maximum",
@@ -112,9 +132,13 @@
           "id": "maximum",
           "type": "number",
           "name_zh": "最大值",
-          "name_en": "Maximum"
+          "name_en": "Maximum",
+          "desc_zh": "滑块的新最大值。",
+          "desc_en": "The new maximum value for the slider bar."
         }
-      ]
+      ],
+      "display_zh": "设置最大值为[b]{0}[/b]",
+      "display_en": "Set maximum to [b]{0}[/b]"
     },
     {
       "id": "set-minimum",
@@ -129,9 +153,13 @@
           "id": "minimum",
           "type": "number",
           "name_zh": "最小值",
-          "name_en": "Minimum"
+          "name_en": "Minimum",
+          "desc_zh": "滑块的新最小值。",
+          "desc_en": "The new minimum value for the slider bar."
         }
-      ]
+      ],
+      "display_zh": "设置最小值为[b]{0}[/b]",
+      "display_en": "Set minimum to [b]{0}[/b]"
     },
     {
       "id": "set-step",
@@ -146,16 +174,20 @@
           "id": "step",
           "type": "number",
           "name_zh": "步长",
-          "name_en": "Step"
+          "name_en": "Step",
+          "desc_zh": "设置滑块步长值。",
+          "desc_en": "The new stepping value for the slider bar."
         }
-      ]
+      ],
+      "display_zh": "设置步长为[b]{0}[/b]",
+      "display_en": "Set step to [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "值",
+      "name_en": "Value",
       "description_zh": "当前滑块值",
       "description_en": "Current slider value.",
       "expressionName": "Value",
@@ -164,8 +196,8 @@
     },
     {
       "id": "maximum",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大值",
+      "name_en": "Maximum",
       "description_zh": "当前最大值。",
       "description_en": "Current maximum value.",
       "expressionName": "Maximum",
@@ -174,8 +206,8 @@
     },
     {
       "id": "minimum",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最小值",
+      "name_en": "Minimum",
       "description_zh": "当前最小值。",
       "description_en": "Current minimum value.",
       "expressionName": "Minimum",
@@ -184,8 +216,8 @@
     },
     {
       "id": "step",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "步长",
+      "name_en": "Step",
       "description_zh": "当前步长。",
       "description_en": "Current step value.",
       "expressionName": "Step",

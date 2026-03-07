@@ -3,7 +3,7 @@
   "originalId": "progressbar",
   "name_zh": "进度条",
   "name_en": "Progress bar",
-  "description_zh": "浏览器基本样式的进度条组件，通常用于跟踪系统级的任务进程。如果你希望显示游戏生命条、进度等，建议改用精灵或平铺图。",
+  "description_zh": "浏览器基本样式的进度条组件，通常用于跟踪系统级的任务进程。如果你希望显示游戏生命条、进度等，建议使用九宫图、精灵、平铺图。",
   "description_en": "A browser-styled progress bar to show the amount of completion of a task.",
   "path": "html-elements/progressbar",
   "categories": [
@@ -18,7 +18,9 @@
       "description_en": "Triggered when the progress bar is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "display_zh": "点击",
+      "display_en": "On clicked"
     },
     {
       "id": "compare-progress",
@@ -33,15 +35,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "How to compare the current progress."
         },
         {
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要比较的进度值。",
+          "desc_en": "Progress value to compare to."
         }
-      ]
+      ],
+      "display_zh": "进度 {0} [i]{1}[/i]",
+      "display_en": "Progress {0} [i]{1}[/i]"
     }
   ],
   "actions": [
@@ -58,9 +66,13 @@
           "id": "tooltip",
           "type": "string",
           "name_zh": "提示",
-          "name_en": "Tooltip"
+          "name_en": "Tooltip",
+          "desc_zh": "要在进度条上设置的工具提示。",
+          "desc_en": "The tooltip to set on the progress bar."
         }
-      ]
+      ],
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}"
     },
     {
       "id": "set-progress",
@@ -75,9 +87,13 @@
           "id": "value",
           "type": "number",
           "name_zh": "值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "要设置的进度值。",
+          "desc_en": "The value to set for the progress."
         }
-      ]
+      ],
+      "display_zh": "设置进度为[b]{0}[/b]",
+      "display_en": "Set progress to [b]{0}[/b]"
     },
     {
       "id": "set-maximum",
@@ -92,9 +108,13 @@
           "id": "maximum",
           "type": "number",
           "name_zh": "最大值",
-          "name_en": "Maximum"
+          "name_en": "Maximum",
+          "desc_zh": "进度的新最大值。",
+          "desc_en": "The new maximum value for the progress."
         }
-      ]
+      ],
+      "display_zh": "设置最大值为[b]{0}[/b]",
+      "display_en": "Set maximum to [b]{0}[/b]"
     },
     {
       "id": "make-indeterminate",
@@ -103,14 +123,16 @@
       "description_zh": "使进度条显示不确定（未知）进度。",
       "description_en": "Make the progress bar show indeterminate (unknown) progress.",
       "scriptName": "SetIndeterminate",
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "display_zh": "使不确定",
+      "display_en": "Make indeterminate"
     }
   ],
   "expressions": [
     {
       "id": "progress",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "进度",
+      "name_en": "Progress",
       "description_zh": "当前进度值。",
       "description_en": "Current progress value.",
       "expressionName": "Progress",
@@ -119,8 +141,8 @@
     },
     {
       "id": "maximum",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大值",
+      "name_en": "Maximum",
       "description_zh": "当前最大进度值。",
       "description_en": "Current maximum progress value.",
       "expressionName": "Maximum",

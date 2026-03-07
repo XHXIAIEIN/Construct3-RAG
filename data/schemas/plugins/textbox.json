@@ -3,7 +3,7 @@
   "originalId": "TextBox",
   "name_zh": "输入框",
   "name_en": "Text input",
-  "description_zh": "用于提供给用户输入文本的表单控件。 如果只是要简单的显示文本，请改用 \"\"文本\"\" 对象。",
+  "description_zh": "用于提供给用户输入文本的表单控件。 如果只是要简单的显示文本，请改用 \"文本\" 对象。",
   "description_en": "A text field form control for the user to type text in to. For simply displaying text, use the 'Text' object instead.",
   "path": "html-elements/textinput",
   "categories": [
@@ -23,7 +23,9 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "用于比较文本输入文本的文本。",
+          "desc_en": "The text to compare the text input's text to."
         },
         {
           "id": "case",
@@ -43,9 +45,13 @@
               "zh": "区分大小写",
               "en": "case sensitive"
             }
-          }
+          },
+          "desc_zh": "选择比较是区分大小写（FOO与Foo不同）还是不区分大小写（FOO与Foo相同）。",
+          "desc_en": "Choose whether the comparison is case sensitive (FOO different to Foo) or case insensitive (FOO same as Foo)."
         }
-      ]
+      ],
+      "display_zh": "文本内容是 {0} ([i]{1}[/i])",
+      "display_en": "Text is {0} ([i]{1}[/i])"
     },
     {
       "id": "on-text-changed",
@@ -55,7 +61,9 @@
       "description_en": "Triggered when the text in the text input changes.",
       "scriptName": "OnTextChanged",
       "isTrigger": true,
-      "category": "text-input"
+      "category": "text-input",
+      "display_zh": "文本已改变",
+      "display_en": "On text changed"
     },
     {
       "id": "on-clicked",
@@ -65,7 +73,9 @@
       "description_en": "Triggered when the text input is clicked.",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "text-input"
+      "category": "text-input",
+      "display_zh": "点击",
+      "display_en": "On clicked"
     },
     {
       "id": "on-double-clicked",
@@ -75,7 +85,9 @@
       "description_en": "Triggered when the text input is double-clicked.",
       "scriptName": "OnDoubleClicked",
       "isTrigger": true,
-      "category": "text-input"
+      "category": "text-input",
+      "display_zh": "双击",
+      "display_en": "On double-clicked"
     }
   ],
   "actions": [
@@ -93,9 +105,13 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。",
+          "desc_en": "The text to set in the text input."
         }
-      ]
+      ],
+      "display_zh": "设置文本内容为{0}",
+      "display_en": "Set text to {0}"
     },
     {
       "id": "append-text",
@@ -111,9 +127,13 @@
           "type": "any",
           "name_zh": "文本内容",
           "name_en": "Text",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "在当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2",
+          "desc_en": "Enter the text to append to the object's content."
         }
-      ]
+      ],
+      "display_zh": "追加文本 [i]{0}[/i]",
+      "display_en": "Append [i]{0}[/i]"
     },
     {
       "id": "set-placeholder",
@@ -128,9 +148,13 @@
           "id": "placeholder",
           "type": "string",
           "name_zh": "占位符",
-          "name_en": "Placeholder"
+          "name_en": "Placeholder",
+          "desc_zh": "新文本输入占位符。",
+          "desc_en": "The new text input placeholder."
         }
-      ]
+      ],
+      "display_zh": "设置占位符为{0}",
+      "display_en": "Set placeholder to {0}"
     },
     {
       "id": "set-tooltip",
@@ -145,9 +169,13 @@
           "id": "tooltip",
           "type": "string",
           "name_zh": "提示",
-          "name_en": "Tooltip"
+          "name_en": "Tooltip",
+          "desc_zh": "用于设置文本输入的工具提示。",
+          "desc_en": "The tooltip to set on the text input."
         }
-      ]
+      ],
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}"
     },
     {
       "id": "set-read-only",
@@ -176,9 +204,13 @@
               "zh": "关闭只读",
               "en": "Not read-only"
             }
-          }
+          },
+          "desc_zh": "启用或禁用输入框的只读模式。",
+          "desc_en": "Choose whether to enable or disable read-only mode."
         }
-      ]
+      ],
+      "display_zh": "设置[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]"
     },
     {
       "id": "scroll-to-bottom",
@@ -187,7 +219,9 @@
       "description_zh": "如果是多行文本，则滚动到文本输入的底部。",
       "description_en": "Scroll to the bottom of the text input if a textarea.",
       "scriptName": "ScrollToBottom",
-      "category": "text-input"
+      "category": "text-input",
+      "display_zh": "转到尾行",
+      "display_en": "Scroll to bottom"
     },
     {
       "id": "set-max-length",
@@ -202,16 +236,20 @@
           "id": "max-length",
           "type": "number",
           "name_zh": "最大长度",
-          "name_en": "Max length"
+          "name_en": "Max length",
+          "desc_zh": "可以输入字符的最大长度，-1为不限制",
+          "desc_en": "The maximum number of characters that can be entered. Use -1 for unlimited."
         }
-      ]
+      ],
+      "display_zh": "设置最大长度为[i]{0}[/i]",
+      "display_en": "Set max length to [i]{0}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "文本内容",
+      "name_en": "Text",
       "description_zh": "获取文本输入的当前文本",
       "description_en": "Get the text input's current text.",
       "expressionName": "Text",
@@ -220,8 +258,8 @@
     },
     {
       "id": "max-length",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "最大长度",
+      "name_en": "MaxLength",
       "description_zh": "获取可以输入字符的最大长度，-1为不限制",
       "description_en": "Get the maximum number of characters that can be entered, or -1 for unlimited.",
       "expressionName": "MaxLength",

@@ -22,7 +22,9 @@
       "description_zh": "检测 Instant Games 是否可以运行。",
       "description_en": "Test if the Instant Games platform is available.",
       "scriptName": "IsAvailable",
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "是否可用",
+      "display_en": "Is available"
     },
     {
       "id": "on-pause",
@@ -32,7 +34,9 @@
       "description_en": "Triggered when the Instant Games platform wants your game to pause in order to handle an interruption.",
       "scriptName": "OnPause",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "暂停",
+      "display_en": "On pause"
     },
     {
       "id": "on-error",
@@ -42,7 +46,9 @@
       "description_en": "Triggered if an error occurs while using the Instant Games platform.",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "出现错误",
+      "display_en": "On error"
     },
     {
       "id": "on-shortcut-created",
@@ -52,7 +58,9 @@
       "description_en": "Triggered after 'Create home screen shortcut' when a shortcut was successfully created.",
       "scriptName": "OnShortcutCreated",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "创建快捷图标",
+      "display_en": "On shortcut created"
     },
     {
       "id": "on-shortcut-failed",
@@ -62,7 +70,9 @@
       "description_en": "Triggered after 'Create home screen shortcut' when a shortcut could not be created.",
       "scriptName": "OnShortcutFailed",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "创建快捷方式失败",
+      "display_en": "On shortcut failed"
     },
     {
       "id": "on-context-changed",
@@ -72,7 +82,9 @@
       "description_en": "Triggered after the 'Change context' action when the user successfully switched to another context.",
       "scriptName": "OnContextChanged",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "环境发生改变",
+      "display_en": "On context changed"
     },
     {
       "id": "on-context-change-cancelled",
@@ -82,7 +94,9 @@
       "description_en": "Triggered after the 'Change context' action when the user cancels the context change.",
       "scriptName": "OnContextChangeCancelled",
       "isTrigger": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "更换环境被取消",
+      "display_en": "On context change cancelled"
     },
     {
       "id": "supports-feature",
@@ -106,9 +120,13 @@
               "zh": "切换游戏",
               "en": "Switch game"
             }
-          }
+          },
+          "desc_zh": "检查平台是否支持某些功能特性。",
+          "desc_en": "The feature to check if supported."
         }
-      ]
+      ],
+      "display_zh": "支持功能 [i]{0}[/i]",
+      "display_en": "Supports feature [i]{0}[/i]"
     },
     {
       "id": "on-loaded-player-data",
@@ -118,7 +136,9 @@
       "description_en": "Triggered after 'Load player data' when the data is available.",
       "scriptName": "OnLoadedPlayerData",
       "isTrigger": true,
-      "category": "player"
+      "category": "player",
+      "display_zh": "玩家数据加载完成",
+      "display_en": "On loaded player data"
     },
     {
       "id": "on-connected-players-loaded",
@@ -128,7 +148,9 @@
       "description_en": "Triggered after 'Load connected players' when the data is available.",
       "scriptName": "OnConnectedPlayersLoaded",
       "isTrigger": true,
-      "category": "player"
+      "category": "player",
+      "display_zh": "当在线玩家被加载",
+      "display_en": "On connected players loaded"
     },
     {
       "id": "on-score-submitted",
@@ -138,7 +160,9 @@
       "description_en": "Triggered after 'Set score' when the score has been submitted.",
       "scriptName": "OnScoreSubmitted",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "display_zh": "在提交分数",
+      "display_en": "On score submitted"
     },
     {
       "id": "on-player-score-loaded",
@@ -148,7 +172,9 @@
       "description_en": "Triggered after 'Load player score' when the data is available.",
       "scriptName": "OnPlayerScoreLoaded",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "display_zh": "当玩家分数读取完成",
+      "display_en": "On player score loaded"
     },
     {
       "id": "on-leaderboard-loaded",
@@ -158,7 +184,9 @@
       "description_en": "Triggered after 'Load leaderboard scores' when the data is available.",
       "scriptName": "OnLeaderboardLoaded",
       "isTrigger": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "display_zh": "当计分板加载",
+      "display_en": "On leaderboard loaded"
     },
     {
       "id": "on-load-ad-success",
@@ -188,9 +216,13 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "加载的广告类型",
+          "desc_en": "The type of advert that was loaded."
         }
-      ]
+      ],
+      "display_zh": "加载 [i]{0}[/i] 广告成功",
+      "display_en": "On load [i]{0}[/i] ad success"
     },
     {
       "id": "on-load-ad-error",
@@ -220,9 +252,13 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "已加载的广告类型",
+          "desc_en": "The type of advert that was loaded."
         }
-      ]
+      ],
+      "display_zh": "加载 [i]{0}[/i] 广告错误",
+      "display_en": "On load [i]{0}[/i] ad error"
     },
     {
       "id": "on-show-ad-success",
@@ -252,9 +288,13 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "显示的广告的类型",
+          "desc_en": "The type of advert that was shown."
         }
-      ]
+      ],
+      "display_zh": "显示 [i]{0}[/i] 广告成功",
+      "display_en": "On show [i]{0}[/i] ad success"
     },
     {
       "id": "on-show-ad-error",
@@ -284,9 +324,13 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "显示的广告的类型",
+          "desc_en": "The type of advert that was shown."
         }
-      ]
+      ],
+      "display_zh": "显示 [i]{0}[/i] 广告失败时触发",
+      "display_en": "On show [i]{0}[/i] ad error"
     }
   ],
   "actions": [
@@ -297,7 +341,9 @@
       "description_zh": "退出游戏",
       "description_en": "Quits the game.",
       "scriptName": "Quit",
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "退出",
+      "display_en": "Quit"
     },
     {
       "id": "share",
@@ -312,27 +358,37 @@
           "id": "image",
           "type": "object",
           "name_zh": "图片",
-          "name_en": "Image"
+          "name_en": "Image",
+          "desc_zh": "在分享时要用来截图的游戏精灵",
+          "desc_en": "A Sprite object to take an image from for the share."
         },
         {
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "在分享时插入的信息",
+          "desc_en": "A message to include with the share."
         },
         {
           "id": "data",
           "type": "string",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要加上的字符串 如果是从分享链接启动则可用传入数据 最大100字符",
+          "desc_en": "A string of data to attach, available as EntryPointData if launched from the share. Max 1000 chars."
         },
         {
           "id": "switch-context",
           "type": "boolean",
           "name_zh": "切换视图",
-          "name_en": "Switch context"
+          "name_en": "Switch context",
+          "desc_zh": "是否将用户切换到共享时创建的新视图。",
+          "desc_en": "Whether to switch the user into the new context created on sharing."
         }
-      ]
+      ],
+      "display_zh": "共享 {0}, 文字: [i]{1}[/i], 数据: [i]{2}[/i] (切换视图: [i]{3}[/i])",
+      "display_en": "Share image {0}, text [i]{1}[/i], data [i]{2}[/i] (switch context: [i]{3}[/i])"
     },
     {
       "id": "custom-update",
@@ -347,31 +403,41 @@
           "id": "template-id",
           "type": "string",
           "name_zh": "模板ID",
-          "name_en": "Template ID"
+          "name_en": "Template ID",
+          "desc_zh": "用于自定义更新使用的模板ID，如默认的 fbapp-config.json",
+          "desc_en": "ID of the template this custom update is using, as defined in fbapp-config.json."
         },
         {
           "id": "cta",
           "type": "string",
           "name_zh": "CTA",
-          "name_en": "CTA"
+          "name_en": "CTA",
+          "desc_zh": "可选。引导按钮文字，留空则使用默认的 'play'。",
+          "desc_en": "Optional \"call to action\" (CTA) button text. Leave empty to use the default (\"Play\")."
         },
         {
           "id": "image",
           "type": "object",
           "name_zh": "图片",
-          "name_en": "Image"
+          "name_en": "Image",
+          "desc_zh": "一个接受更新图片的游戏精灵",
+          "desc_en": "A Sprite object to take an image from for the update."
         },
         {
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "更新时提示的信息",
+          "desc_en": "A message to include with the update."
         },
         {
           "id": "data",
           "type": "string",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要附加的数据字符串，如果从更新启动，则作为 EntryPointData 提供。 最多 1000 个字符。",
+          "desc_en": "A string of data to attach, available as EntryPointData if launched from the update. Max 1000 chars."
         },
         {
           "id": "strategy",
@@ -391,7 +457,9 @@
               "zh": "最后",
               "en": "Last"
             }
-          }
+          },
+          "desc_zh": "发布更新的时间，选择立即发布或等游戏结束时发布。",
+          "desc_en": "How to deliver the update. 'Immediate' posts immediately (optionally clearing any other pending updates); 'Last' posts when the game session ends."
         },
         {
           "id": "notification",
@@ -411,9 +479,13 @@
               "zh": "推送",
               "en": "Push"
             }
-          }
+          },
+          "desc_zh": "是否需要推送自定义更新的通知提醒。只在必要且可立即执行的更新中使用提示。",
+          "desc_en": "Whether to send a push notification for the custom update. Only use push notifications for updates that are essential and immediately actionable."
         }
-      ]
+      ],
+      "display_zh": "推送更新 (模板ID:  [i]{0}[/i], CTA: [i]{1}[/i], 图片: {2}, 文本: [i]{3}[/i], 数据: [i]{4}[/i], 更新方式: [i]{5}[/i],  推送通知: [i]{6}[/i])",
+      "display_en": "Post custom update with template ID [i]{0}[/i], CTA [i]{1}[/i], image {2}, text [i]{3}[/i], data [i]{4}[/i], strategy [i]{5}[/i], notification [i]{6}[/i]"
     },
     {
       "id": "create-shortcut",
@@ -423,7 +495,9 @@
       "description_en": "(Android only) Request to create a home screen shortcut.",
       "scriptName": "CreateShortcut",
       "isAsync": true,
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "创建桌面图标",
+      "display_en": "Create home screen shortcut"
     },
     {
       "id": "subscribe-bot",
@@ -432,7 +506,9 @@
       "description_zh": "请求用户订阅与游戏相关的机器人账号。",
       "description_en": "Prompt the user to subscribe to a bot associated with the game.",
       "scriptName": "SubscribeBot",
-      "category": "instant-games"
+      "category": "instant-games",
+      "display_zh": "关注机器人",
+      "display_en": "Subscribe to bot"
     },
     {
       "id": "switch-game",
@@ -447,15 +523,21 @@
           "id": "app-id",
           "type": "string",
           "name_zh": "App ID",
-          "name_en": "App ID"
+          "name_en": "App ID",
+          "desc_zh": "要切换到游戏的AppID。必须是同公司的游戏",
+          "desc_en": "The Application ID of the Instant Game to switch to. It must belong to the same business as the current game."
         },
         {
           "id": "data",
           "type": "string",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要附加的数据字符串，如果从开关启动，将可以作为EntryPointData 最大1000字符。",
+          "desc_en": "A string of data to attach, available as EntryPointData if launched from the switch. Max 1000 chars."
         }
-      ]
+      ],
+      "display_zh": "切换游戏到 [b]{0}[/b] 传递数据 [i]{1}[/i]",
+      "display_en": "Switch game to [b]{0}[/b] with data [i]{1}[/i]"
     },
     {
       "id": "change-context",
@@ -495,23 +577,31 @@
               "zh": "仅新玩家",
               "en": "New players only"
             }
-          }
+          },
+          "desc_zh": "如何过滤推荐的环境",
+          "desc_en": "How to filter the suggested contexts."
         },
         {
           "id": "min-size",
           "type": "number",
           "name_zh": "最小尺寸",
           "name_en": "Min size",
-          "initialValue": "-1"
+          "initialValue": "-1",
+          "desc_zh": "建议的上下文理想情况下应该具有的最小参与者数量。使用-1指定无限制。",
+          "desc_en": "The minimum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
         },
         {
           "id": "max-size",
           "type": "number",
           "name_zh": "最大大小",
           "name_en": "Max size",
-          "initialValue": "-1"
+          "initialValue": "-1",
+          "desc_zh": "建议的上下文理想情况下应该具有的最大参与者数量。使用-1指定无限制。",
+          "desc_en": "The maximum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
         }
-      ]
+      ],
+      "display_zh": "用过滤器 [i]{0}[/i]改变context，最小大小[i]{1}[/i]，最大大小[i]{2}[/i]",
+      "display_en": "Change context with filter [i]{0}[/i], min size [i]{1}[/i], max size [i]{2}[/i]"
     },
     {
       "id": "set-player-data",
@@ -527,9 +617,13 @@
           "type": "any",
           "name_zh": "数据",
           "name_en": "Data",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "要为玩家保存的数据，建议使用 JSON 或字典对象储存。",
+          "desc_en": "A string of data to save for the player. Consider using a JSON string, e.g. from the Dictionary plugin."
         }
-      ]
+      ],
+      "display_zh": "设置玩家数据为[i]{0}[/i]",
+      "display_en": "Set player data to [i]{0}[/i]"
     },
     {
       "id": "load-player-data",
@@ -539,7 +633,9 @@
       "description_en": "Request to load the last set player data. Triggers 'On loaded player data' when loaded.",
       "scriptName": "LoadPlayerData",
       "isAsync": true,
-      "category": "player"
+      "category": "player",
+      "display_zh": "加载玩家数据",
+      "display_en": "Load player data"
     },
     {
       "id": "load-connected-players",
@@ -549,7 +645,9 @@
       "description_en": "Request a list of connected players. Triggers 'On connected players loaded' when done.",
       "scriptName": "LoadConnectedPlayers",
       "isAsync": true,
-      "category": "player"
+      "category": "player",
+      "display_zh": "加载已连接玩家",
+      "display_en": "Load connected players"
     },
     {
       "id": "log-event",
@@ -564,15 +662,21 @@
           "id": "name",
           "type": "string",
           "name_zh": "事件名称",
-          "name_en": "Event name"
+          "name_en": "Event name",
+          "desc_zh": "要输出的分析事件",
+          "desc_en": "Name of the analytics event to log."
         },
         {
           "id": "sum",
           "type": "number",
           "name_zh": "要求和的数值",
-          "name_en": "Value to sum"
+          "name_en": "Value to sum",
+          "desc_zh": "一个可供FB分析 的数字（可选）",
+          "desc_en": "An optional number that FB Analytics can calculate a sum with."
         }
-      ]
+      ],
+      "display_zh": "日志事件[i]{0}[/i](值为: [i]{1}[/i])",
+      "display_en": "Log event [i]{0}[/i] (value to sum: [i]{1}[/i])"
     },
     {
       "id": "set-score",
@@ -588,7 +692,9 @@
           "id": "name",
           "type": "string",
           "name_zh": "计分板",
-          "name_en": "Leaderboard"
+          "name_en": "Leaderboard",
+          "desc_zh": "要发送数据的计分板的名字",
+          "desc_en": "Name of the leaderboard to submit to."
         },
         {
           "id": "is-contextual",
@@ -608,15 +714,21 @@
               "zh": "是",
               "en": "Yes"
             }
-          }
+          },
+          "desc_zh": "设置计分板是否在环境下创建",
+          "desc_en": "Set according to whether the leaderboard was created as contextual or not."
         },
         {
           "id": "score",
           "type": "number",
           "name_zh": "分数",
-          "name_en": "Score"
+          "name_en": "Score",
+          "desc_zh": "要设置给玩家的分数",
+          "desc_en": "The score to set for this player."
         }
-      ]
+      ],
+      "display_zh": "设置分数为[i]{2}[/i] (计分板: [i]{0}[/i], 语境: [i]{1}[/i])",
+      "display_en": "Set score to [i]{2}[/i] on leaderboard [i]{0}[/i] (contextual: [i]{1}[/i])"
     },
     {
       "id": "load-player-score",
@@ -632,7 +744,9 @@
           "id": "name",
           "type": "string",
           "name_zh": "计分板",
-          "name_en": "Leaderboard"
+          "name_en": "Leaderboard",
+          "desc_zh": "要加载的计分板名字",
+          "desc_en": "Name of the leaderboard to load from."
         },
         {
           "id": "is-contextual",
@@ -652,9 +766,13 @@
               "zh": "是",
               "en": "Yes"
             }
-          }
+          },
+          "desc_zh": "设置计分板是否在环境下创建",
+          "desc_en": "Set according to whether the leaderboard was created as contextual or not."
         }
-      ]
+      ],
+      "display_zh": "获取排行榜分数 [i]{0}[/i] (上下文: [i]{1}[/i])",
+      "display_en": "Load player score from leaderboard [i]{0}[/i] (contextual: [i]{1}[/i])"
     },
     {
       "id": "share-leaderboard-update",
@@ -698,7 +816,9 @@
           "id": "name",
           "type": "string",
           "name_zh": "计分板",
-          "name_en": "Leaderboard"
+          "name_en": "Leaderboard",
+          "desc_zh": "要加载的计分板名字",
+          "desc_en": "Name of the leaderboard to load from."
         },
         {
           "id": "is-contextual",
@@ -718,7 +838,9 @@
               "zh": "是",
               "en": "Yes"
             }
-          }
+          },
+          "desc_zh": "设置计分板是否在环境下创建",
+          "desc_en": "Set according to whether the leaderboard was created as contextual or not."
         },
         {
           "id": "results",
@@ -738,16 +860,22 @@
               "zh": "已连接玩家",
               "en": "Connected players"
             }
-          }
+          },
+          "desc_zh": "只为已连接玩家返回数据",
+          "desc_en": "Return results for either all results or only those for connected players."
         },
         {
           "id": "count",
           "type": "number",
           "name_zh": "计数",
           "name_en": "Count",
-          "initialValue": "10"
+          "initialValue": "10",
+          "desc_zh": "要请求多少条分数",
+          "desc_en": "The number of leaderboard scores to request."
         }
-      ]
+      ],
+      "display_zh": "从[i]{0}[/i]排行榜加载 [i]{2}[/i] 分数 (环境: [i]{1}[/i], 计数: [i]{3}[/i])",
+      "display_en": "Load [i]{2}[/i] scores from leaderboard [i]{0}[/i] (contextual: [i]{1}[/i], count: [i]{3}[/i])"
     },
     {
       "id": "load-ad",
@@ -777,15 +905,21 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "要加载的广告类型",
+          "desc_en": "The type of advert to load."
         },
         {
           "id": "placement-id",
           "type": "string",
           "name_zh": "广告ID",
-          "name_en": "Placement ID"
+          "name_en": "Placement ID",
+          "desc_zh": "要加载的广告投放ID。",
+          "desc_en": "The ad placement ID to load."
         }
-      ]
+      ],
+      "display_zh": "加载广告 [b]{0}[/b] 使用ID：[i]{1}[/i]",
+      "display_en": "Load [b]{0}[/b] ad with placement ID [i]{1}[/i]"
     },
     {
       "id": "show-ad",
@@ -815,16 +949,20 @@
               "zh": "奖励视频广告",
               "en": "Rewarded video"
             }
-          }
+          },
+          "desc_zh": "要显示广告的类型。这种广告必须要先加载",
+          "desc_en": "The type of advert to show. An ad of this type must have previously been loaded."
         }
-      ]
+      ],
+      "display_zh": "显示[b]{0}[/b]广告",
+      "display_en": "Show [b]{0}[/b] ad"
     }
   ],
   "expressions": [
     {
       "id": "locale",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "地区",
+      "name_en": "Locale",
       "description_zh": "当前玩家地区",
       "description_en": "Locale of the current player.",
       "expressionName": "Locale",
@@ -833,8 +971,8 @@
     },
     {
       "id": "platform",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "平台",
+      "name_en": "Platform",
       "description_zh": "用来解释当前游戏平台的文本",
       "description_en": "A string describing the current platform the game is being played on.",
       "expressionName": "Platform",
@@ -843,8 +981,8 @@
     },
     {
       "id": "sdk-version",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "开发工具版本",
+      "name_en": "SDKVersion",
       "description_zh": "当前 Instant Games SDK 版本。",
       "description_en": "The version of the Instant Games SDK in use.",
       "expressionName": "SDKVersion",
@@ -853,8 +991,8 @@
     },
     {
       "id": "entry-point-data",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "入口数据",
+      "name_en": "EntryPointData",
       "description_zh": "当游戏启动时显示的游戏来源，例如来自分享链接启动。",
       "description_en": "A string of data associated with this launch of the game, e.g. from a share.",
       "expressionName": "EntryPointData",
@@ -863,8 +1001,8 @@
     },
     {
       "id": "context-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "环境ID",
+      "name_en": "ContextID",
       "description_zh": "游戏内容的ID",
       "description_en": "A unique identifier for the current game context.",
       "expressionName": "ContextID",
@@ -884,8 +1022,8 @@
     },
     {
       "id": "player-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家名称",
+      "name_en": "PlayerName",
       "description_zh": "当前玩家名",
       "description_en": "The name of the current player.",
       "expressionName": "PlayerName",
@@ -894,8 +1032,8 @@
     },
     {
       "id": "player-photo",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家头像链接",
+      "name_en": "PlayerPhotoURL",
       "description_zh": "玩家的头像链接",
       "description_en": "A URL to the player's current profile image.",
       "expressionName": "PlayerPhotoURL",
@@ -904,8 +1042,8 @@
     },
     {
       "id": "player-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家ID",
+      "name_en": "PlayerID",
       "description_zh": "玩家的ID",
       "description_en": "A unique identifier for the current player.",
       "expressionName": "PlayerID",
@@ -914,8 +1052,8 @@
     },
     {
       "id": "player-data",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家数据",
+      "name_en": "PlayerData",
       "description_zh": "当加载完玩家数据后，将返回玩家数据的文本",
       "description_en": "In 'On loaded player data', the string of the loaded player data.",
       "expressionName": "PlayerData",
@@ -924,8 +1062,8 @@
     },
     {
       "id": "connected-player-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已连接玩家数量",
+      "name_en": "ConnectedPlayerCount",
       "description_zh": "在 '已连接玩家加载完成' 条件中，返回已连接玩家的数量。",
       "description_en": "After 'On connected players loaded', the number of connected players.",
       "expressionName": "ConnectedPlayerCount",
@@ -934,8 +1072,8 @@
     },
     {
       "id": "connected-player-id-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "已连接编号为X的玩家ID",
+      "name_en": "ConnectedPlayerIDAt",
       "description_zh": "编号为X玩家的名字",
       "description_en": "The player ID of a connected player at an index.",
       "expressionName": "ConnectedPlayerIDAt",
@@ -946,7 +1084,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "已连接玩家的编号",
+          "desc_en": "The index of the connected player."
         }
       ]
     },
@@ -990,8 +1130,8 @@
     },
     {
       "id": "player-score",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家分数",
+      "name_en": "PlayerScore",
       "description_zh": "当加载玩家分数后，将返回玩家目前分数",
       "description_en": "After 'On player score loaded', the player's current score.",
       "expressionName": "PlayerScore",
@@ -1000,8 +1140,8 @@
     },
     {
       "id": "player-rank",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "玩家排名",
+      "name_en": "PlayerRank",
       "description_zh": "当加载玩家分数后，将返回玩家目前排名",
       "description_en": "After 'On player score loaded', the player's current rank on the leaderboard.",
       "expressionName": "PlayerRank",
@@ -1010,8 +1150,8 @@
     },
     {
       "id": "leaderboard-result-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "高分榜结果数量",
+      "name_en": "LeaderboardResultCount",
       "description_zh": "当加载计分板后，将返回计分板条目数量",
       "description_en": "After 'On leaderboard loaded', the number of results on the leaderboard.",
       "expressionName": "LeaderboardResultCount",
@@ -1039,8 +1179,8 @@
     },
     {
       "id": "leaderboard-player-id-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "排行榜玩家ID索引",
+      "name_en": "LeaderboardPlayerIDAt",
       "description_zh": "获取比赛结果排行榜的玩家ID。",
       "description_en": "The session-scoped player ID for a result at an index on a leaderboard.",
       "expressionName": "LeaderboardPlayerIDAt",
@@ -1051,7 +1191,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "结果的索引值。",
+          "desc_en": "The index of the result."
         }
       ]
     },
@@ -1076,8 +1218,8 @@
     },
     {
       "id": "leaderboard-score-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取高分榜分数",
+      "name_en": "LeaderboardScoreAt",
       "description_zh": "计分板中编号为X的结果分数",
       "description_en": "The score of a result at an index on a leaderboard.",
       "expressionName": "LeaderboardScoreAt",
@@ -1088,7 +1230,9 @@
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "结果的索引值。",
+          "desc_en": "The index of the result."
         }
       ]
     },

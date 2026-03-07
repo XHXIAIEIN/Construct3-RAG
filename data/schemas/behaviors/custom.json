@@ -17,7 +17,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving"
+      "scriptName": "IsMoving",
+      "display_zh": "{my} 正在移动",
+      "display_en": "{my} is moving"
     },
     {
       "id": "compare-speed",
@@ -50,21 +52,29 @@
               "zh": "垂直方向",
               "en": "Vertical"
             }
-          }
+          },
+          "desc_zh": "选择要进行比较的速度",
+          "desc_en": "Choose the speed to compare."
         },
         {
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Choose the way to compare the speed."
         },
         {
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "要进行比较的速度，以像素/秒为单位。",
+          "desc_en": "The speed, in pixels per second, to compare to."
         }
-      ]
+      ],
+      "display_zh": "{my} {0}速度 {1} {2}",
+      "display_en": "{my} {0} speed {1} {2}"
     },
     {
       "id": "on-step",
@@ -73,7 +83,9 @@
       "description_zh": "对象进行步进运动时触发。",
       "description_en": "Triggered when stepping the object for motion.",
       "scriptName": "OnCMStep",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 触发步进",
+      "display_en": "On {my} step"
     },
     {
       "id": "on-horizontal-step",
@@ -82,7 +94,9 @@
       "description_zh": "对象在水平方向进行步进移动时触发。",
       "description_en": "Triggered when stepping the object horizontally for motion.",
       "scriptName": "OnCMHorizStep",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 向水平方向步进",
+      "display_en": "On {my} horizontal step"
     },
     {
       "id": "on-vertical-step",
@@ -91,7 +105,9 @@
       "description_zh": "对象在垂直方向进行步进移动时触发。",
       "description_en": "Triggered when stepping the object vertically for motion.",
       "scriptName": "OnCMVertStep",
-      "isTrigger": true
+      "isTrigger": true,
+      "display_zh": "{my} 向垂直方向步进",
+      "display_en": "On {my} vertical step"
     },
     {
       "id": "is-enabled",
@@ -99,7 +115,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled"
+      "scriptName": "IsEnabled",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled"
     }
   ],
   "actions": [
@@ -129,9 +147,13 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          }
+          },
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]"
     },
     {
       "id": "set-angle-of-motion",
@@ -146,9 +168,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "设置移动角度，以角度为单位。",
+          "desc_en": "The new angle of motion, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}移动角度为[i]{0}[/i]°",
+      "display_en": "Set {my} angle of motion to [i]{0}[/i]"
     },
     {
       "id": "rotate-clockwise",
@@ -163,9 +189,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "顺时针旋转角度，以度数为单位。",
+          "desc_en": "Amount to rotate clockwise, in degrees."
         }
-      ]
+      ],
+      "display_zh": "{my} 顺时针旋转[i]{0}[/i]°",
+      "display_en": "Rotate {my} angle of motion clockwise [i]{0}[/i] degrees"
     },
     {
       "id": "rotate-counter-clockwise",
@@ -180,9 +210,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "逆时针旋转的角度，以度数为单位。",
+          "desc_en": "Amount to rotate counter-clockwise, in degrees."
         }
-      ]
+      ],
+      "display_zh": "{my} 逆时针旋转[i]{0}[/i]°",
+      "display_en": "Rotate {my} angle of motion counter-clockwise [i]{0}[/i] degrees"
     },
     {
       "id": "stop",
@@ -191,7 +225,9 @@
       "description_zh": "设置速度为0",
       "description_en": "Set the speed to zero.",
       "scriptName": "Stop",
-      "category": "velocity"
+      "category": "velocity",
+      "display_zh": "停止 {my}",
+      "display_en": "Stop {my}"
     },
     {
       "id": "reverse",
@@ -225,9 +261,13 @@
               "zh": "垂直",
               "en": "Vertically"
             }
-          }
+          },
+          "desc_zh": "选择要翻转的坐标轴",
+          "desc_en": "Choose which axes to reverse on."
         }
-      ]
+      ],
+      "display_zh": "反转{my} ({0})",
+      "display_en": "Reverse {my} ({0})"
     },
     {
       "id": "set-speed",
@@ -261,15 +301,21 @@
               "zh": "垂直方向",
               "en": "Vertical"
             }
-          }
+          },
+          "desc_zh": "选择要设置的速度",
+          "desc_en": "Choose the speed to set."
         },
         {
           "id": "speed",
           "type": "number",
           "name_zh": "速度",
-          "name_en": "Speed"
+          "name_en": "Speed",
+          "desc_zh": "设置对象的新速度，以像素/秒为单位。",
+          "desc_en": "The new speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "display_zh": "设置 {my}{0}速度为[i]{1}[/i]",
+      "display_en": "Set {my} {0} speed to [i]{1}[/i]"
     },
     {
       "id": "accelerate",
@@ -303,15 +349,21 @@
               "zh": "垂直方向",
               "en": "Vertically"
             }
-          }
+          },
+          "desc_zh": "选择加速的方式",
+          "desc_en": "Choose which way to accelerate."
         },
         {
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+          "desc_en": "The acceleration, in pixels per second per second."
         }
-      ]
+      ],
+      "display_zh": "{my}{0}加速 (加速度: [i]{1}[/i])",
+      "display_en": "Accelerate {my} {0} [i]{1}[/i]"
     },
     {
       "id": "accelerate-toward-angle",
@@ -326,15 +378,21 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+          "desc_en": "The acceleration, in pixels per second per second."
         },
         {
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "向前加速移动的角度，以度数为单位。",
+          "desc_en": "The angle, in degrees, to accelerate toward."
         }
-      ]
+      ],
+      "display_zh": "{my} 朝角度加速 (加速度: [i]{0}[/i], 角度: [i]{1}[/i]°)",
+      "display_en": "Accelerate {my} [i]{0}[/i] at angle [i]{1}[/i]"
     },
     {
       "id": "accelerate-toward-position",
@@ -349,21 +407,29 @@
           "id": "acceleration",
           "type": "number",
           "name_zh": "加速度",
-          "name_en": "Acceleration"
+          "name_en": "Acceleration",
+          "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+          "desc_en": "The acceleration, in pixels per second per second."
         },
         {
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "朝向场景X轴方向加速。",
+          "desc_en": "The X co-ordinate in the layout to accelerate toward."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "朝向场景Y轴方向加速。",
+          "desc_en": "The Y co-ordinate in the layout to accelerate toward."
         }
-      ]
+      ],
+      "display_zh": "{my} 朝位置加速 (加速度: [i]{0}[/i], 目标: [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Accelerate {my} [i]{0}[/i] toward ([i]{1}[/i], [i]{2}[/i])"
     },
     {
       "id": "stop-stepping",
@@ -392,9 +458,13 @@
               "zh": "停留在当前位置",
               "en": "Stay at current position"
             }
-          }
+          },
+          "desc_zh": "选择生成的对象位置",
+          "desc_en": "Choose the resulting object position."
         }
-      ]
+      ],
+      "display_zh": "{my} 停止步进 ({0})",
+      "display_en": "Stop {my} stepping ({0})"
     },
     {
       "id": "push-out-solid",
@@ -443,9 +513,13 @@
               "zh": "向右",
               "en": "Right"
             }
-          }
+          },
+          "desc_zh": "选择推开的方式",
+          "desc_en": "Choose the method of push out."
         }
-      ]
+      ],
+      "display_zh": "撞击到 {0} 后推开 {my}",
+      "display_en": "Push {my} out of solid ({0})"
     },
     {
       "id": "push-out-solid-at-angle",
@@ -460,16 +534,20 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "将对象反弹的角度。",
+          "desc_en": "Angle, in degrees, to push the object out at."
         }
-      ]
+      ],
+      "display_zh": "撞击到实体时朝 {0}° 推开{my}",
+      "display_en": "Push {my} out of solid at angle {0}"
     }
   ],
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动速度",
+      "name_en": "Speed",
       "description_zh": "当前对象的移动速度，以像素/秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -477,8 +555,8 @@
     },
     {
       "id": "movingangle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动角度",
+      "name_en": "MovingAngle",
       "description_zh": "当前的移动方向，以度数为单位。",
       "description_en": "The current angle of motion, in degrees.",
       "expressionName": "MovingAngle",
@@ -486,8 +564,8 @@
     },
     {
       "id": "dx",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动速度X",
+      "name_en": "dx",
       "description_zh": "当前在水平方向移动速度，以像素/秒为单位。",
       "description_en": "The current X component of motion, in pixels per second.",
       "expressionName": "dx",
@@ -495,8 +573,8 @@
     },
     {
       "id": "dy",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "移动速度Y",
+      "name_en": "dy",
       "description_zh": "当前在垂直方向的移动速度，以像素/秒为单位。",
       "description_en": "The current Y component of motion, in pixels per second.",
       "expressionName": "dy",

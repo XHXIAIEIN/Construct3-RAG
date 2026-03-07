@@ -18,7 +18,9 @@
       "description_en": "Triggered when a copy to the clipboard is successful.",
       "scriptName": "OnCopySuccess",
       "isTrigger": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "复制成功",
+      "display_en": "On copy success"
     },
     {
       "id": "on-copy-error",
@@ -28,7 +30,9 @@
       "description_en": "Triggered when a copy to the clipboard fails.",
       "scriptName": "OnCopyError",
       "isTrigger": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "复制失败",
+      "display_en": "On copy error"
     },
     {
       "id": "on-paste-text",
@@ -38,7 +42,9 @@
       "description_en": "Triggered on a successful paste of text.",
       "scriptName": "OnPasteText",
       "isTrigger": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "粘贴文本",
+      "display_en": "On paste text"
     },
     {
       "id": "on-paste-binary",
@@ -54,16 +60,22 @@
           "id": "receive-to",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary data"
+          "name_en": "Binary data",
+          "desc_zh": "选择 '二进制数据' 对象，将粘贴的二进制数据写入到对象中。",
+          "desc_en": "Choose a Binary Data object to write the pasted binary data to."
         },
         {
           "id": "type",
           "type": "string",
           "name_zh": "类型",
           "name_en": "Type",
-          "initialValue": "\"image/png\""
+          "initialValue": "\"image/png\"",
+          "desc_zh": "粘贴数据的类型（又称 MIME 类型）。",
+          "desc_en": "The content type (aka MIME type) of the pasted data."
         }
-      ]
+      ],
+      "display_zh": "粘贴二进制数据 (对象: {0}, 类型: [i]{1}[/i])",
+      "display_en": "On paste binary (to {0}, type [i]{1}[/i])"
     },
     {
       "id": "on-paste-error",
@@ -73,7 +85,9 @@
       "description_en": "Triggered when a paste fails.",
       "scriptName": "OnPasteError",
       "isTrigger": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "粘贴失败",
+      "display_en": "On paste error"
     }
   ],
   "actions": [
@@ -91,9 +105,13 @@
           "id": "text",
           "type": "string",
           "name_zh": "文本",
-          "name_en": "Text"
+          "name_en": "Text",
+          "desc_zh": "要复制到剪贴板的文本。",
+          "desc_en": "The text to copy to the clipboard."
         }
-      ]
+      ],
+      "display_zh": "复制文本 [i]{0}[/i]",
+      "display_en": "Copy text [i]{0}[/i]"
     },
     {
       "id": "copy-binary",
@@ -109,16 +127,22 @@
           "id": "data",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary data"
+          "name_en": "Binary data",
+          "desc_zh": "要复制到剪贴板的二进制数据对象。",
+          "desc_en": "A Binary Data object to copy to the clipboard."
         },
         {
           "id": "type",
           "type": "string",
           "name_zh": "类型",
           "name_en": "Type",
-          "initialValue": "\"image/png\""
+          "initialValue": "\"image/png\"",
+          "desc_zh": "被复制的数据类型（又称 MIME 类型）。",
+          "desc_en": "The content type (aka MIME type) of the data being copied."
         }
-      ]
+      ],
+      "display_zh": "复制二进制数据 {0} (类型: [i]{1}[/i])",
+      "display_en": "Copy binary {0} (type [i]{1}[/i])"
     },
     {
       "id": "request-paste-text",
@@ -128,7 +152,9 @@
       "description_en": "Request to read text from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
       "scriptName": "RequestPasteText",
       "isAsync": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "请求粘贴文本",
+      "display_en": "Request paste text"
     },
     {
       "id": "request-paste-binary",
@@ -138,14 +164,16 @@
       "description_en": "Request to read binary data from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
       "scriptName": "RequestPasteBinary",
       "isAsync": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "display_zh": "请求粘贴二进制数据",
+      "display_en": "Request paste binary"
     }
   ],
   "expressions": [
     {
       "id": "pasted-text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "剪贴文本",
+      "name_en": "PastedText",
       "description_zh": "触发 '粘贴文本' 动作后，从剪贴板中读取到的文本。",
       "description_en": "In 'On paste text', the text that was read from the clipboard.",
       "expressionName": "PastedText",

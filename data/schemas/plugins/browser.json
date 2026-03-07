@@ -40,7 +40,9 @@
       "description_zh": "浏览器已启用Cookie。",
       "description_en": "Browser has cookies enabled.",
       "scriptName": "CookiesEnabled",
-      "category": "browser"
+      "category": "browser",
+      "display_zh": "已启用 Cookie",
+      "display_en": "Cookies are enabled"
     },
     {
       "id": "is-online",
@@ -49,7 +51,9 @@
       "description_zh": "浏览器可正常连接互联网。即不处于离线访问模式。",
       "description_en": "Browser is online (i.e. not in an offline browsing mode).",
       "scriptName": "IsOnline",
-      "category": "browser"
+      "category": "browser",
+      "display_zh": "网络已连接",
+      "display_en": "Is online"
     },
     {
       "id": "java-supported",
@@ -69,7 +73,9 @@
       "description_en": "Triggered when user is offline and a connection becomes available.",
       "scriptName": "OnOnline",
       "isTrigger": true,
-      "category": "browser"
+      "category": "browser",
+      "display_zh": "用户上线",
+      "display_en": "On went online"
     },
     {
       "id": "on-went-offline",
@@ -79,7 +85,9 @@
       "description_en": "Triggered when user is online and the connection becomes unavailable.",
       "scriptName": "OnOffline",
       "isTrigger": true,
-      "category": "browser"
+      "category": "browser",
+      "display_zh": "用户离线",
+      "display_en": "On went offline"
     },
     {
       "id": "is-metered",
@@ -140,9 +148,13 @@
               "zh": "横屏",
               "en": "Landscape"
             }
-          }
+          },
+          "desc_zh": "选择要测试的方向。",
+          "desc_en": "Select the orientation to test."
         }
-      ]
+      ],
+      "display_zh": "屏幕方向为{0}",
+      "display_en": "Is {0}"
     },
     {
       "id": "on-back-button",
@@ -152,7 +164,9 @@
       "description_en": "Triggers when device 'Back' button is pressed.  Note not all devices have a 'Back' button.",
       "scriptName": "OnBackButton",
       "isTrigger": true,
-      "category": "mobile"
+      "category": "mobile",
+      "display_zh": "按下手机的返回键",
+      "display_en": "On mobile back button pressed"
     },
     {
       "id": "on-hash-change",
@@ -162,7 +176,9 @@
       "description_en": "Triggered when the part of the URL after the hash (#) is changed.",
       "scriptName": "OnHashChange",
       "isTrigger": true,
-      "category": "navigation"
+      "category": "navigation",
+      "display_zh": "页面锚点已变化",
+      "display_en": "On hash change"
     },
     {
       "id": "warn-on-close-enabled",
@@ -171,7 +187,9 @@
       "description_zh": "检测是否已开启窗口关闭警告。",
       "description_en": "True if the 'Set warn on close' action has been used to enable warning on close.",
       "scriptName": "IsWarnOnCloseEnabled",
-      "category": "navigation"
+      "category": "navigation",
+      "display_zh": "已启用窗口关闭警告",
+      "display_en": "Warn on close is enabled"
     },
     {
       "id": "is-downloading-update",
@@ -202,7 +220,9 @@
       "description_en": "Triggers when an update has finished downloading in the background.",
       "scriptName": "OnUpdateReady",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "display_zh": "更新准备完成",
+      "display_en": "On update ready"
     },
     {
       "id": "on-update-found-sw",
@@ -212,7 +232,9 @@
       "description_en": "Triggers upon starting to download an update in the background.",
       "scriptName": "OnUpdateFound",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "display_zh": "发现有更新",
+      "display_en": "On update found"
     },
     {
       "id": "on-offline-ready-sw",
@@ -222,7 +244,9 @@
       "description_en": "Triggers on the first run when finished saving resources for offline support.",
       "scriptName": "OnOfflineReady",
       "isTrigger": true,
-      "category": "offline"
+      "category": "offline",
+      "display_zh": "离线版本已就绪",
+      "display_en": "On offline ready"
     },
     {
       "id": "page-is-visible",
@@ -273,7 +297,9 @@
       "description_zh": "检测当前页面是否处于全屏模式。",
       "description_en": "True if the page is currently in fullscreen mode.",
       "scriptName": "IsFullscreen",
-      "category": "window"
+      "category": "window",
+      "display_zh": "已进入全屏",
+      "display_en": "Is fullscreen"
     },
     {
       "id": "on-resized",
@@ -283,7 +309,9 @@
       "description_en": "Triggered when the current browser viewport is resized.",
       "scriptName": "OnResize",
       "isTrigger": true,
-      "category": "window"
+      "category": "window",
+      "display_zh": "调整窗口尺寸",
+      "display_en": "On resized"
     },
     {
       "id": "on-fullscreen-error",
@@ -293,7 +321,9 @@
       "description_en": "Triggered when a request to enter fullscreen mode was refused by the browser.",
       "scriptName": "OnFullscreenError",
       "isTrigger": true,
-      "category": "window"
+      "category": "window",
+      "display_zh": "进入全屏失败",
+      "display_en": "On fullscreen error"
     },
     {
       "id": "on-window-focus",
@@ -303,7 +333,9 @@
       "description_en": "Triggered when the window becomes focused.",
       "scriptName": "OnWindowFocus",
       "isTrigger": true,
-      "category": "window"
+      "category": "window",
+      "display_zh": "窗口聚焦",
+      "display_en": "On window focused"
     },
     {
       "id": "on-window-blur",
@@ -313,7 +345,9 @@
       "description_en": "Triggered when the window loses focus.",
       "scriptName": "OnWindowBlur",
       "isTrigger": true,
-      "category": "window"
+      "category": "window",
+      "display_zh": "窗口失去焦点",
+      "display_en": "On window blur"
     },
     {
       "id": "window-has-focus",
@@ -322,7 +356,9 @@
       "description_zh": "检测窗口当前是否具有焦点。",
       "description_en": "True when the window currently has focus.",
       "scriptName": "WindowHasFocus",
-      "category": "window"
+      "category": "window",
+      "display_zh": "窗口已聚焦",
+      "display_en": "Window has focus"
     },
     {
       "id": "on-install-available",
@@ -332,7 +368,9 @@
       "description_en": "Triggered when PWA install becomes available.",
       "scriptName": "OnInstallAvailable",
       "isTrigger": true,
-      "category": "pwa"
+      "category": "pwa",
+      "display_zh": "安装已就绪",
+      "display_en": "On install available"
     },
     {
       "id": "is-install-available",
@@ -341,7 +379,9 @@
       "description_zh": "在 '安装已就绪' 条件完成后， 激活 PWA 可安装状态。",
       "description_en": "True after 'On install available' when PWA install is available.",
       "scriptName": "IsInstallAvailable",
-      "category": "pwa"
+      "category": "pwa",
+      "display_zh": "可安装",
+      "display_en": "Is install available"
     },
     {
       "id": "on-install-result",
@@ -381,9 +421,13 @@
               "zh": "任意结果",
               "en": "any"
             }
-          }
+          },
+          "desc_zh": "请求安装的结果。",
+          "desc_en": "The result of the install request."
         }
-      ]
+      ],
+      "display_zh": "返回安装结果 [i]{0}[/i]",
+      "display_en": "On install result [i]{0}[/i]"
     },
     {
       "id": "on-app-installed",
@@ -393,7 +437,9 @@
       "description_en": "Triggered after requesting install, the user accepting the prompt, and the app install then successfully completing.",
       "scriptName": "OnAppInstalled",
       "isTrigger": true,
-      "category": "pwa"
+      "category": "pwa",
+      "display_zh": "安装成功",
+      "display_en": "On app installed"
     },
     {
       "id": "compare-display-mode",
@@ -432,9 +478,13 @@
               "zh": "全屏",
               "en": "fullscreen"
             }
-          }
+          },
+          "desc_zh": "要检查的显示模式。",
+          "desc_en": "The display mode to check."
         }
-      ]
+      ],
+      "display_zh": "显示模式为[i]{0}[/i]",
+      "display_en": "Display mode is [i]{0}[/i]"
     },
     {
       "id": "on-window-maximized",
@@ -444,7 +494,9 @@
       "description_en": "Triggered when the main app window is maximized.",
       "scriptName": "OnWindowMaximized",
       "isTrigger": true,
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "display_zh": "窗口最大化",
+      "display_en": "On window maximized"
     },
     {
       "id": "on-window-minimized",
@@ -454,7 +506,9 @@
       "description_en": "Triggered when the main app window is minimized.",
       "scriptName": "OnWindowMinimized",
       "isTrigger": true,
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "display_zh": "窗口最小化",
+      "display_en": "On window minimized"
     }
   ],
   "actions": [
@@ -509,16 +563,22 @@
               "zh": "错误",
               "en": "Error"
             }
-          }
+          },
+          "desc_zh": "选择要记录到浏览器控制台的消息类型。",
+          "desc_en": "Choose the type of message to log to the browser console."
         },
         {
           "id": "message",
           "type": "any",
           "name_zh": "信息",
           "name_en": "Message",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "输入要在控制台中输出的信息",
+          "desc_en": "Enter the message text to log to the browser console."
         }
-      ]
+      ],
+      "display_zh": "在控制台打印{0} : [i]{1}[/i]",
+      "display_en": "{0} in console: [i]{1}[/i]"
     },
     {
       "id": "start-group",
@@ -533,9 +593,13 @@
           "id": "group-name",
           "type": "string",
           "name_zh": "分组名称",
-          "name_en": "Group name"
+          "name_en": "Group name",
+          "desc_zh": "输入分组名称，用于在控制台组织输出信息。",
+          "desc_en": "Enter the group name to add to the browser console."
         }
-      ]
+      ],
+      "display_zh": "开始日志分组 [i]{0}[/i]",
+      "display_en": "Start console group [i]{0}[/i]"
     },
     {
       "id": "end-group",
@@ -544,7 +608,9 @@
       "description_zh": "在浏览器控制台中结束消息组",
       "description_en": "End a message group in the browser console.",
       "scriptName": "ConsoleGroupEnd",
-      "category": "console"
+      "category": "console",
+      "display_zh": "结束日志分组",
+      "display_en": "End console group"
     },
     {
       "id": "vibrate",
@@ -560,9 +626,13 @@
           "type": "string",
           "name_zh": "模式",
           "name_en": "Pattern",
-          "initialValue": "\"200,100,200\""
+          "initialValue": "\"200,100,200\"",
+          "desc_zh": "一组由逗号分割的字符串，表示在振动和停顿周期交替的持续时间，以毫秒为单位。其中 0 表示立即取消振动。",
+          "desc_en": "A comma-separated string with a list of times in milliseconds, describing a pattern of vibrations and pauses."
         }
-      ]
+      ],
+      "display_zh": "发起振动 (模式: [i]{0}[/i])",
+      "display_en": "Vibrate with pattern [i]{0}[/i]"
     },
     {
       "id": "load-stylesheet",
@@ -577,9 +647,13 @@
           "id": "url",
           "type": "string",
           "name_zh": "URL",
-          "name_en": "URL"
+          "name_en": "URL",
+          "desc_zh": "要加载CSS样式表的文件链接，也可以指定项目内的文件，如 \"mystyle.css\"。若位于文件夹中，则填写文件夹路径，如 \"folder/mystyle.css",
+          "desc_en": "URL to load CSS from. This can be a project file URL, e.g. \"mystyle.css\"."
         }
-      ]
+      ],
+      "display_zh": "加载CSS样式表 (来源: [i]{0}[/i])",
+      "display_en": "Load stylesheet from [i]{0}[/i]"
     },
     {
       "id": "set-document-css-style",
@@ -596,21 +670,27 @@
           "type": "string",
           "name_zh": "属性名称",
           "name_en": "Property name",
-          "initialValue": "\"border\""
+          "initialValue": "\"border\"",
+          "desc_zh": "要修改的 CSS 样式属性名称。",
+          "desc_en": "A CSS property name to set on the HTML element."
         },
         {
           "id": "value",
           "type": "string",
           "name_zh": "值",
           "name_en": "Value",
-          "initialValue": "\"1px solid red\""
+          "initialValue": "\"1px solid red\"",
+          "desc_zh": "要修改的 CSS 样式属性值的字符串。",
+          "desc_en": "A string to assign as the value for this CSS property."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
           "name_en": "Selector",
-          "initialValue": "\"html\""
+          "initialValue": "\"html\"",
+          "desc_zh": "用于匹配元素的 CSS 选择器。",
+          "desc_en": "A CSS selector which will be used to match elements."
         },
         {
           "id": "type",
@@ -630,9 +710,13 @@
               "zh": "所有",
               "en": "all"
             }
-          }
+          },
+          "desc_zh": "CSS选择器仅影响单次匹配到的元素，还是影响所有匹配到的元素。",
+          "desc_en": "Whether to affect one element matching the selector, or all matching elements."
         }
-      ]
+      ],
+      "display_zh": "设置 CSS 样式 [b]{0}[/b]: [i]{1}[/i] (选择器: [i]{2}[/i], 类型: [i]{3}[/i])",
+      "display_en": "Set CSS style [b]{0}[/b] to [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])"
     },
     {
       "id": "get-document-css-style",
@@ -648,22 +732,30 @@
           "id": "property-name",
           "type": "string",
           "name_zh": "属性名",
-          "name_en": "Property name"
+          "name_en": "Property name",
+          "desc_zh": "要修改的 CSS 样式属性名称。",
+          "desc_en": "The CSS property name to get."
         },
         {
           "id": "selector",
           "type": "string",
           "name_zh": "选择器",
           "name_en": "Selector",
-          "initialValue": "\"html\""
+          "initialValue": "\"html\"",
+          "desc_zh": "用于匹配元素的 CSS 选择器。",
+          "desc_en": "A CSS selector which will be used to match the element."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "用于后续检索此属性值的标签。",
+          "desc_en": "A tag to later retrieve this value with."
         }
-      ]
+      ],
+      "display_zh": "获取 CSS 样式 [b]{0}[/b] (选择器: [i]{1}[/i], 标签: [i]{2}[/i])",
+      "display_en": "Get CSS style [b]{0}[/b] from [i]{1}[/i] (tag [i]{2}[/i])"
     },
     {
       "id": "go-back",
@@ -672,7 +764,9 @@
       "description_zh": "转到浏览器历史记录中的上一页。",
       "description_en": "Go to the previous page in browser history.",
       "scriptName": "GoBack",
-      "category": "navigation"
+      "category": "navigation",
+      "display_zh": "返回",
+      "display_en": "Go back"
     },
     {
       "id": "go-forward",
@@ -681,7 +775,9 @@
       "description_zh": "转到浏览器历史记录中的下一页。",
       "description_en": "Go to the next page in browser history.",
       "scriptName": "GoForward",
-      "category": "navigation"
+      "category": "navigation",
+      "display_zh": "前进",
+      "display_en": "Go forward"
     },
     {
       "id": "go-home",
@@ -707,7 +803,9 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "输入要跳转的完整URL",
+          "desc_en": "Enter the full URL to navigate to."
         },
         {
           "id": "target",
@@ -732,9 +830,13 @@
               "zh": "顶部",
               "en": "top"
             }
-          }
+          },
+          "desc_zh": "要跳转的 frame 级别，仅在 Web浏览器环境使用 frame 时有效。",
+          "desc_en": "Which frame level to navigate. Only has an effect when using frames in a web browser."
         }
-      ]
+      ],
+      "display_zh": "跳转到 {0} (目标 [i]{1}[/i])",
+      "display_en": "Go to {0} (target [i]{1}[/i])"
     },
     {
       "id": "open-url-in-new-window",
@@ -750,16 +852,22 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "输入要跳转的完整URL。",
+          "desc_en": "Enter the full URL to navigate to."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"NewWindow\""
+          "initialValue": "\"NewWindow\"",
+          "desc_zh": "用于识别此窗口的标签。用于后续通过此标签来重现这个窗口。",
+          "desc_en": "A string to identify this window.  You can reuse an existing window by reusing its tag."
         }
-      ]
+      ],
+      "display_zh": "在新窗口中打开{0} ([i]{1}[/i])",
+      "display_en": "Go to {0} in a new window ([i]{1}[/i])"
     },
     {
       "id": "reload",
@@ -768,7 +876,9 @@
       "description_zh": "重新加载当前的标签页。",
       "description_en": "Reload the current page.  Also updates if an 'On update ready' event has triggered.",
       "scriptName": "Reload",
-      "category": "navigation"
+      "category": "navigation",
+      "display_zh": "重新加载",
+      "display_en": "Reload"
     },
     {
       "id": "invoke-download",
@@ -783,15 +893,21 @@
           "id": "url",
           "type": "string",
           "name_zh": "URL",
-          "name_en": "URL"
+          "name_en": "URL",
+          "desc_zh": "要下载的数据地址。可以是资源标识符、项目文件路径或任意网站地址。",
+          "desc_en": "A data URI, project file, or any website address to invoke as a download."
         },
         {
           "id": "filename",
           "type": "string",
           "name_zh": "文件名",
-          "name_en": "Filename"
+          "name_en": "Filename",
+          "desc_zh": "即将下载的文件的文件名。",
+          "desc_en": "The filename to give the downloaded file."
         }
-      ]
+      ],
+      "display_zh": "下载[b]{0}[/b] (文件名:[i]{1}[/i])",
+      "display_en": "Invoke download of [b]{0}[/b] with filename [i]{1}[/i]"
     },
     {
       "id": "invoke-download-of-string",
@@ -806,23 +922,31 @@
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "要作为文件下载的一串数据，例如 来自AsJSON表达式的JSON数据。",
+          "desc_en": "A string of data to download as a file, e.g. JSON data from the AsJSON expression."
         },
         {
           "id": "mime-type",
           "type": "string",
           "name_zh": "MIME类型",
           "name_en": "MIME type",
-          "initialValue": "\"application/json\""
+          "initialValue": "\"application/json\"",
+          "desc_zh": "给定数据的MIME类型。",
+          "desc_en": "The MIME type of the given data."
         },
         {
           "id": "filename",
           "type": "string",
           "name_zh": "文件名",
           "name_en": "Filename",
-          "initialValue": "\"mydata.json\""
+          "initialValue": "\"mydata.json\"",
+          "desc_zh": "下载文件的文件名",
+          "desc_en": "The filename to give the downloaded file."
         }
-      ]
+      ],
+      "display_zh": "通过字符串下载[b]{0}[/b] (文件名: [i]{2}[/i], MIME类型: [i]{1}[/i])",
+      "display_en": "Invoke download of string [b]{0}[/b] with MIME type [i]{1}[/i] and filename [i]{2}[/i]"
     },
     {
       "id": "set-hash",
@@ -837,9 +961,13 @@
           "id": "hash",
           "type": "string",
           "name_zh": "页面锚点",
-          "name_en": "Hash"
+          "name_en": "Hash",
+          "desc_zh": "设置网页地址的 '#' 参数。用于页面内的锚点标记。",
+          "desc_en": "New string to set after the hash (#) symbol in the URL."
         }
-      ]
+      ],
+      "display_zh": "设置页面锚点为 [i]{0}[/i]",
+      "display_en": "Set hash to [i]{0}[/i]"
     },
     {
       "id": "set-warn-on-close",
@@ -854,9 +982,13 @@
           "id": "warn-on-close",
           "type": "boolean",
           "name_zh": "关闭窗口时发出警告",
-          "name_en": "Warn on close"
+          "name_en": "Warn on close",
+          "desc_zh": "关闭窗口时，是否启用关闭确认警告。",
+          "desc_en": "Whether to enable a prompt to confirm closing."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]窗口关闭警告",
+      "display_en": "Set warn on close enabled: [b]{0}[/b]"
     },
     {
       "id": "alert",
@@ -872,9 +1004,13 @@
           "type": "any",
           "name_zh": "信息",
           "name_en": "Message",
-          "initialValue": "\"\""
+          "initialValue": "\"\"",
+          "desc_zh": "输入要在对话框中显示的消息",
+          "desc_en": "Enter the message to display in the alert."
         }
-      ]
+      ],
+      "display_zh": "弹出对话框 {0}",
+      "display_en": "Alert {0}"
     },
     {
       "id": "close",
@@ -883,7 +1019,9 @@
       "description_zh": "关闭当前浏览器窗口或选项卡。注意，浏览器可能会提示用户是否要确认关闭。",
       "description_en": "Close the current browser window or tab.  The browser may prompt the user to confirm.",
       "scriptName": "Close",
-      "category": "window"
+      "category": "window",
+      "display_zh": "关闭",
+      "display_en": "Close"
     },
     {
       "id": "focus",
@@ -892,7 +1030,9 @@
       "description_zh": "获取当前选项卡或窗口的焦点",
       "description_en": "Focus the current browser window or tab.",
       "scriptName": "Focus",
-      "category": "window"
+      "category": "window",
+      "display_zh": "获得焦点",
+      "display_en": "Focus"
     },
     {
       "id": "blur",
@@ -901,7 +1041,9 @@
       "description_zh": "取消当前选项卡或窗口的焦点",
       "description_en": "Blur (unfocus) the current browser window or tab.",
       "scriptName": "Blur",
-      "category": "window"
+      "category": "window",
+      "display_zh": "取消焦点",
+      "display_en": "Blur"
     },
     {
       "id": "request-fullscreen",
@@ -951,7 +1093,9 @@
               "zh": "内部缩放",
               "en": "Stretch (scale inner)"
             }
-          }
+          },
+          "desc_zh": "选择游戏画面如何适应到显示屏的缩放方式。",
+          "desc_en": "Determine how the game viewport is displayed in the monitor area."
         },
         {
           "id": "navigation-ui",
@@ -977,9 +1121,13 @@
               "zh": "显示",
               "en": "Show"
             }
-          }
+          },
+          "desc_zh": "对于移动设备，是否在全屏模式中仍然显示某些系统级控件，如状态栏、导航栏等。",
+          "desc_en": "Whether the browser should still display some user interface controls while in fullscreen mode. Typically only affects mobile browsers."
         }
-      ]
+      ],
+      "display_zh": "请求全屏 (缩放模式: {0},  状态栏: [i]{1}[/i])",
+      "display_en": "Request fullscreen - {0}, navigation UI: [i]{1}[/i]"
     },
     {
       "id": "cancel-fullscreen",
@@ -988,7 +1136,9 @@
       "description_zh": "退出全屏",
       "description_en": "Exit fullscreen mode.",
       "scriptName": "CancelFullScreen",
-      "category": "window"
+      "category": "window",
+      "display_zh": "取消全屏",
+      "display_en": "Cancel fullscreen"
     },
     {
       "id": "lock-orientation",
@@ -1037,9 +1187,13 @@
               "zh": "备选横屏",
               "en": "secondary landscape"
             }
-          }
+          },
+          "desc_zh": "锁定设备的方向。仅在全屏模式时才会生效。",
+          "desc_en": "The orientation to lock the device to. This may only take effect if already in fullscreen mode."
         }
-      ]
+      ],
+      "display_zh": "锁定方向为[b]{0}[/b]",
+      "display_en": "Lock orientation to [b]{0}[/b]"
     },
     {
       "id": "unlock-orientation",
@@ -1048,7 +1202,9 @@
       "description_zh": "在解锁后恢复正常方向",
       "description_en": "Restore normal device orientation after locking.",
       "scriptName": "UnlockOrientation",
-      "category": "window"
+      "category": "window",
+      "display_zh": "解锁方向",
+      "display_en": "Unlock orientation"
     },
     {
       "id": "set-window-size",
@@ -1063,15 +1219,21 @@
           "id": "width",
           "type": "number",
           "name_zh": "宽度",
-          "name_en": "Width"
+          "name_en": "Width",
+          "desc_zh": "要设置的窗口宽度。",
+          "desc_en": "The window width to set."
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
-          "name_en": "Height"
+          "name_en": "Height",
+          "desc_zh": "要设置的窗口高度。",
+          "desc_en": "The window height to set."
         }
-      ]
+      ],
+      "display_zh": "设置窗口大小为 [i]{0}[/i] x [i]{1}[/i]",
+      "display_en": "Set window size to [i]{0}[/i] x [i]{1}[/i]"
     },
     {
       "id": "set-window-position",
@@ -1086,15 +1248,21 @@
           "id": "x",
           "type": "number",
           "name_zh": "X",
-          "name_en": "X"
+          "name_en": "X",
+          "desc_zh": "要设置的窗口 X 位置。",
+          "desc_en": "The window X position to set."
         },
         {
           "id": "y",
           "type": "number",
           "name_zh": "Y",
-          "name_en": "Y"
+          "name_en": "Y",
+          "desc_zh": "要设置的窗口 Y 位置。",
+          "desc_en": "The window Y position to set."
         }
-      ]
+      ],
+      "display_zh": "设置窗口位置 [i]{0}[/i], [i]{1}[/i]",
+      "display_en": "Set window position to ([i]{0}[/i], [i]{1}[/i])"
     },
     {
       "id": "request-install",
@@ -1104,7 +1272,9 @@
       "description_en": "When install is available, prompt the user to install the page as an app. This may only be allowed in a user input event.",
       "scriptName": "RequestInstall",
       "isAsync": true,
-      "category": "pwa"
+      "category": "pwa",
+      "display_zh": "请求安装",
+      "display_en": "Request install"
     },
     {
       "id": "maximize-window",
@@ -1113,7 +1283,9 @@
       "description_zh": "将主程序窗口最大化至全屏。",
       "description_en": "Maximize the main app window.",
       "scriptName": "MaximizeWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "display_zh": "最大化窗口",
+      "display_en": "Maximize window"
     },
     {
       "id": "minimize-window",
@@ -1122,7 +1294,9 @@
       "description_zh": "将主程序窗口最小化。",
       "description_en": "Minimize the main app window.",
       "scriptName": "MinimizeWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "display_zh": "最小化窗口",
+      "display_en": "Minimize window"
     },
     {
       "id": "restore-window",
@@ -1131,7 +1305,9 @@
       "description_zh": "如果主程序窗口被最大化或最小化，将其恢复到原始大小和位置。",
       "description_en": "Restore the main app window to its original size and position if it was maximized or minimized.",
       "scriptName": "RestoreWindow",
-      "category": "desktop-exports-only"
+      "category": "desktop-exports-only",
+      "display_zh": "恢复窗口",
+      "display_en": "Restore window"
     }
   ],
   "expressions": [
@@ -1181,8 +1357,8 @@
     },
     {
       "id": "language",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "语言环境",
+      "name_en": "Language",
       "description_zh": "获取浏览器语言标识。如 en-US,  zh-CN, ja-JP",
       "description_en": "Get the browser language.",
       "expressionName": "Language",
@@ -1191,8 +1367,8 @@
     },
     {
       "id": "platform",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "运行平台",
+      "name_en": "Platform",
       "description_zh": "获取浏览器运行平台。如 Windows 或 Mac",
       "description_en": "Get the browser platform (e.g. Windows, Mac).",
       "expressionName": "Platform",
@@ -1223,8 +1399,8 @@
     },
     {
       "id": "useragent",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "用户代理",
+      "name_en": "UserAgent",
       "description_zh": "获取浏览器 User Agent 标识字符串。",
       "description_en": "Get the full browser user agent string.",
       "expressionName": "UserAgent",
@@ -1351,8 +1527,8 @@
     },
     {
       "id": "title",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "网页标题",
+      "name_en": "Title",
       "description_zh": "获取页面标题。",
       "description_en": "Get the page title.",
       "expressionName": "Title",
@@ -1361,8 +1537,8 @@
     },
     {
       "id": "css-style-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "CSS样式属性值",
+      "name_en": "CSSStyleValue",
       "description_zh": "执行 '获取 CSS 样式' 动作后，返回的结果。",
       "description_en": "Get the result value for a tag after 'Get CSS style' completes.",
       "expressionName": "CSSStyleValue",
@@ -1373,14 +1549,16 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "用于获取检索结果的标签。",
+          "desc_en": "The tag to retrieve the value for."
         }
       ]
     },
     {
       "id": "url",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "网页链接",
+      "name_en": "Url",
       "description_zh": "获取浏览器当前访问的网页地址。",
       "description_en": "Get the current browser URL.",
       "expressionName": "URL",
@@ -1389,8 +1567,8 @@
     },
     {
       "id": "protocol",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "网络协议",
+      "name_en": "Protocol",
       "description_zh": "获取当前的通信协议，如 http:  ftp:  smtp: 等。",
       "description_en": "Get the current protocol, e.g. http:.",
       "expressionName": "Protocol",
@@ -1399,8 +1577,8 @@
     },
     {
       "id": "domain",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "域名",
+      "name_en": "Domain",
       "description_zh": "获取当前域名，如 construct.net",
       "description_en": "Get the current domain, e.g. construct.net.",
       "expressionName": "Domain",
@@ -1409,8 +1587,8 @@
     },
     {
       "id": "port",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "端口",
+      "name_en": "Port",
       "description_zh": "获取当前地址的端口(如果有)，例如 443, 8080 等。",
       "description_en": "Get the port specified in the current URL if any, e.g. 443.",
       "expressionName": "Port",
@@ -1419,8 +1597,8 @@
     },
     {
       "id": "pathname",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "路径名称",
+      "name_en": "PathName",
       "description_zh": "获取相对于域的路径。",
       "description_en": "Get the path relative to domain.",
       "expressionName": "PathName",
@@ -1429,8 +1607,8 @@
     },
     {
       "id": "hash",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "锚点标签",
+      "name_en": "Hash",
       "description_zh": "获取网页地址中的锚点参数，例如 #myAnchor。如果没有该属性，则返回空字符串。",
       "description_en": "Get the hash from the URL, e.g. #myAnchor.",
       "expressionName": "Hash",
@@ -1439,8 +1617,8 @@
     },
     {
       "id": "referrer",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "重定向地址",
+      "name_en": "Referrer",
       "description_zh": "获取地址的重定向来源。用于分辨用户从哪个页面跳转到此页面。",
       "description_en": "Get the referrer (the page that linked to this page).",
       "expressionName": "Referrer",
@@ -1449,8 +1627,8 @@
     },
     {
       "id": "querystring",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "参数字符串",
+      "name_en": "QueryString",
       "description_zh": "获取地址栏完整的参数字符串，包括 ?",
       "description_en": "Get the full query string, including the ?.",
       "expressionName": "QueryString",
@@ -1459,8 +1637,8 @@
     },
     {
       "id": "queryparam",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "参数索引",
+      "name_en": "QueryParam",
       "description_zh": "按名称获取地址栏参数。",
       "description_en": "Get a query string parameter by name.",
       "expressionName": "QueryParam",
@@ -1471,14 +1649,16 @@
           "id": "name",
           "type": "string",
           "name_zh": "名称",
-          "name_en": "name"
+          "name_en": "name",
+          "desc_zh": "要查找的参数的名称。",
+          "desc_en": "Query string parameter name."
         }
       ]
     },
     {
       "id": "display-mode",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "显示模式",
+      "name_en": "DisplayMode",
       "description_zh": "返回当前应用程序显示模式的字符串，例如 'browser' (浏览器) 或 'standalone' (应用程序)。",
       "description_en": "A string of the current app display mode, e.g. \"\"browser\"\" or \"\"standalone\"\".",
       "expressionName": "DisplayMode",
@@ -1487,8 +1667,8 @@
     },
     {
       "id": "install-result",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "安装结果",
+      "name_en": "InstallResult",
       "description_zh": "在 '安装完成' 条件中，返回的安装结果字符串，例如 'accepted'(已接受) 或 'dismissed' (已拒绝)。",
       "description_en": "In 'On install result', a string of the install result, e.g. \"\"accepted\"\" or \"\"dismissed\"\".",
       "expressionName": "InstallResult",

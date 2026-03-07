@@ -88,7 +88,9 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Timeline tags to check for."
         },
         {
           "id": "trigger-on",
@@ -113,9 +115,13 @@
               "zh": "恢复",
               "en": "Resuming"
             }
-          }
+          },
+          "desc_zh": "此触发器生效时，时间线处于的状态。",
+          "desc_en": "The timeline state when this trigger runs."
         }
-      ]
+      ],
+      "display_zh": "在 [b]{0}[/b] 开始播放 [i]{1}[/i]",
+      "display_en": "On [b]{0}[/b] started on [i]{1}[/i]"
     },
     {
       "id": "on-any-timeline-started",
@@ -150,9 +156,13 @@
               "zh": "恢复状态",
               "en": "Resuming"
             }
-          }
+          },
+          "desc_zh": "此触发器生效时，时间线处于的状态。",
+          "desc_en": "The timeline state when this trigger runs."
         }
-      ]
+      ],
+      "display_zh": "在 [b]{0}[/b] 任意开始播放",
+      "display_en": "On any started on [b]{0}[/b]"
     },
     {
       "id": "on-timeline-finished",
@@ -206,9 +216,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] 播放完成",
+      "display_en": "On [b]{0}[/b] finished"
     },
     {
       "id": "on-any-timeline-finished",
@@ -218,7 +232,9 @@
       "description_en": "Triggered when any timeline finishes.",
       "scriptName": "OnAnyTimelineFinished",
       "isTrigger": true,
-      "category": "timeline"
+      "category": "timeline",
+      "display_zh": "任意动画播放完成",
+      "display_en": "On any finished"
     },
     {
       "id": "is-playing",
@@ -269,9 +285,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] 正在播放",
+      "display_en": "Is [b]{0}[/b] playing"
     },
     {
       "id": "is-any-playing",
@@ -280,7 +300,9 @@
       "description_zh": "检测任意时间轴动画是否正在播放。",
       "description_en": "Test if any timeline is currently playing.",
       "scriptName": "IsAnyPlaying",
-      "category": "timeline"
+      "category": "timeline",
+      "display_zh": "任意动画正在播放",
+      "display_en": "Is any playing"
     },
     {
       "id": "is-paused-by-tags",
@@ -295,9 +317,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要检测的时间轴标签。使用空格分隔多个标签。",
+          "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "display_zh": "时间轴 [b]{0}[/b] 正在暂停",
+      "display_en": "Is [b]{0}[/b] paused"
     },
     {
       "id": "is-any-paused",
@@ -306,7 +332,9 @@
       "description_zh": "检测是否有任意的时间轴动画正在暂停。",
       "description_en": "Test if any timeline is currently paused.",
       "scriptName": "IsAnyPaused",
-      "category": "timeline"
+      "category": "timeline",
+      "display_zh": "任意时间轴正在暂停",
+      "display_en": "Is any paused"
     },
     {
       "id": "on-time-set",
@@ -360,9 +388,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b] 已到达时间",
+      "display_en": "On [b]{0}[/b] time set"
     },
     {
       "id": "on-any-keyframe-reached",
@@ -372,7 +404,9 @@
       "description_en": "Triggered when any master keyframe has been reached during timeline playback.",
       "scriptName": "OnAnyKeyframeReached",
       "isTrigger": true,
-      "category": "timeline"
+      "category": "timeline",
+      "display_zh": "触发任意关键帧",
+      "display_en": "On any keyframe reached"
     },
     {
       "id": "on-keyframe-reached",
@@ -388,7 +422,9 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于确认是否到达主关键帧。使用空格分隔多个标签。",
+          "desc_en": "Space-separated tags to check for to determine if a master keyframe has been reached."
         },
         {
           "id": "match",
@@ -408,9 +444,13 @@
               "zh": "所有标签",
               "en": "All tags"
             }
-          }
+          },
+          "desc_zh": "触发关键帧的标签列表内，包含任意一个标签即可匹配，或是需要满足所有的标签才可进行匹配。",
+          "desc_en": "Whether to match if the keyframe has any of the tags or all of the tags."
         }
-      ]
+      ],
+      "display_zh": "触发关键帧 [b]{0}[/b] (匹配[b]{1}[/b])",
+      "display_en": "On keyframe [b]{0}[/b] (match [b]{1}[/b]) reached"
     }
   ],
   "actions": [
@@ -428,15 +468,21 @@
           "id": "timeline",
           "type": "timeline",
           "name_zh": "时间轴",
-          "name_en": "Timeline"
+          "name_en": "Timeline",
+          "desc_zh": "开始播放时间轴动画。",
+          "desc_en": "The timeline to start playing."
         },
         {
           "id": "tags",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。",
+          "desc_en": "Optional space separated list of tags to identify a timeline later on."
         }
-      ]
+      ],
+      "display_zh": "播放 [b]{0}[/b] 标签 [i]{1}[/i]",
+      "display_en": "Play [b]{0}[/b] with tags [i]{1}[/i]"
     },
     {
       "id": "pause-timeline",
@@ -556,15 +602,21 @@
           "id": "timeline-name",
           "type": "string",
           "name_zh": "名称",
-          "name_en": "Name"
+          "name_en": "Name",
+          "desc_zh": "要开始播放的时间轴",
+          "desc_en": "The name of the timeline to start playing."
         },
         {
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "可选。填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。",
+          "desc_en": "Optional space separated list of tags to identify a timeline later on."
         }
-      ]
+      ],
+      "display_zh": "播放 [b]{0}[/b] 标签 [i]{1}[/i]",
+      "display_en": "Play [b]{0}[/b] with tags [i]{1}[/i]"
     },
     {
       "id": "pause-timeline-by-name",
@@ -683,9 +735,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "display_zh": "暂停 [b]{0}[/b]",
+      "display_en": "Pause [b]{0}[/b]"
     },
     {
       "id": "resume-timeline-by-tags",
@@ -700,9 +756,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "display_zh": "恢复 [b]{0}[/b]",
+      "display_en": "Resume [b]{0}[/b]"
     },
     {
       "id": "stop-timeline-by-tags",
@@ -717,9 +777,13 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "display_zh": "停止 [b]{0}[/b]",
+      "display_en": "Stop [b]{0}[/b]"
     },
     {
       "id": "set-timeline-time-by-tags",
@@ -734,16 +798,22 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Space separated list of tags to find timelines with."
         },
         {
           "id": "time",
           "type": "any",
           "name_zh": "时间",
           "name_en": "Time",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "要设置的时间（秒）或带有tag的字符串，来将所有时间轴同步",
+          "desc_en": "The time to set in seconds, or a string with a keyframe's tags, to set the time to the first keyframe that matches all the tags."
         }
-      ]
+      ],
+      "display_zh": "设置 [b]{0}[/b] 的时间为 [b]{1}[/b]",
+      "display_en": "Set [b]{0}[/b] time to [b]{1}[/b]"
     },
     {
       "id": "set-timeline-playback-rate-by-tags",
@@ -758,16 +828,22 @@
           "id": "tags",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tags"
+          "name_en": "Tags",
+          "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
+          "desc_en": "Space separated list of timeline tags to change."
         },
         {
           "id": "rate",
           "type": "number",
           "name_zh": "倍速",
           "name_en": "Rate",
-          "initialValue": "1"
+          "initialValue": "1",
+          "desc_zh": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。负值则反向回放。",
+          "desc_en": "The rate to set, 1 being normal speed, 0.5 half speed, etc. Negative values produce backwards playback."
         }
-      ]
+      ],
+      "display_zh": "设置 [b]{0}[/b] 播放速度为 [b]{1}[/b] 倍",
+      "display_en": "Set [b]{0}[/b] playback rate to [b]{1}[/b]"
     },
     {
       "id": "play-all-timelines",
@@ -777,7 +853,9 @@
       "description_en": "Play all timelines which are not already playing.",
       "scriptName": "PlayAllTimelines",
       "isAsync": true,
-      "category": "all"
+      "category": "all",
+      "display_zh": "播放全部",
+      "display_en": "Play all"
     },
     {
       "id": "pause-all-timelines",
@@ -786,7 +864,9 @@
       "description_zh": "暂停所有正在运行的时间轴播放。",
       "description_en": "Pause all active timelines.",
       "scriptName": "PauseAllTimelines",
-      "category": "all"
+      "category": "all",
+      "display_zh": "暂停全部",
+      "display_en": "Pause all"
     },
     {
       "id": "resume-all-timelines",
@@ -795,7 +875,9 @@
       "description_zh": "恢复所有正在运行的时间轴播放。",
       "description_en": "Resume all active timelines.",
       "scriptName": "ResumeAllTimelines",
-      "category": "all"
+      "category": "all",
+      "display_zh": "恢复所有",
+      "display_en": "Resume all"
     },
     {
       "id": "stop-all-timelines",
@@ -804,7 +886,9 @@
       "description_zh": "停止所有正在运行的时间轴播放。",
       "description_en": "Stop all active timelines.",
       "scriptName": "StopAllTimelines",
-      "category": "all"
+      "category": "all",
+      "display_zh": "停止所有",
+      "display_en": "Stop all"
     },
     {
       "id": "set-instance",
@@ -819,15 +903,21 @@
           "id": "object-class",
           "type": "object",
           "name_zh": "设置的对象",
-          "name_en": "Object to set"
+          "name_en": "Object to set",
+          "desc_zh": "设置在下一个时间轴播放的对象。",
+          "desc_en": "The object to set to the next timeline played."
         },
         {
           "id": "track-id",
           "type": "string",
           "name_zh": "轨道ID",
-          "name_en": "Track ID"
+          "name_en": "Track ID",
+          "desc_zh": "设置实例对象的轨道ID。如果为空，将被设置为找到的第一个轨道，以前没有被设置过的。",
+          "desc_en": "The ID of the track to set the instance to. If empty, the instance will be set to the first track found, which hasn't been previously set."
         }
-      ]
+      ],
+      "display_zh": "设置[b]{0}[/b]在[b]{1}[/b]的下一条时间轴轨道播放",
+      "display_en": "Set [b]{0}[/b] to track [b]{1}[/b] of the next timeline"
     },
     {
       "id": "unset-instances",
@@ -836,14 +926,16 @@
       "description_zh": "取消设置下一个时间轴在之前设置的所有实例。",
       "description_en": "Unset all previously set instances for the next timeline.",
       "scriptName": "UnsetInstances",
-      "category": "misc"
+      "category": "misc",
+      "display_zh": "取消设置所有实例",
+      "display_en": "Unset all instances"
     }
   ],
   "expressions": [
     {
       "id": "time",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "时间",
+      "name_en": "Time",
       "description_zh": "时间轴当前的播放时间，以秒为单位。",
       "description_en": "The current playback time of a timeline in seconds.",
       "expressionName": "Time",
@@ -854,14 +946,16 @@
           "id": "timeline",
           "type": "string",
           "name_zh": "时间轴名称或标签",
-          "name_en": "TimelineNameOrTags"
+          "name_en": "TimelineNameOrTags",
+          "desc_zh": "获取时间的时间轴的名称或标记",
+          "desc_en": "Name or tags of the timeline to get the time from."
         }
       ]
     },
     {
       "id": "total-time",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "总长时间",
+      "name_en": "TotalTime",
       "description_zh": "时间线已播放总长度",
       "description_en": "The total playing time of a timeline in seconds.",
       "expressionName": "TotalTime",
@@ -872,14 +966,16 @@
           "id": "timeline",
           "type": "string",
           "name_zh": "时间轴名称或标签",
-          "name_en": "TimelineNameOrTags"
+          "name_en": "TimelineNameOrTags",
+          "desc_zh": "获取时间轴的总时长",
+          "desc_en": "Name or tags of the timeline to get the total time from."
         }
       ]
     },
     {
       "id": "progress",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "进度",
+      "name_en": "Progress",
       "description_zh": "时间轴当前的播放进度，在 0-1 范围内。",
       "description_en": "The current playback progress of a timeline in the range 0-1.",
       "expressionName": "Progress",
@@ -890,14 +986,16 @@
           "id": "timeline",
           "type": "string",
           "name_zh": "时间轴名称或标签",
-          "name_en": "TimelineNameOrTags"
+          "name_en": "TimelineNameOrTags",
+          "desc_zh": "获取时间轴的名称或标签",
+          "desc_en": "Name or tags of the timeline to get the progress for."
         }
       ]
     },
     {
       "id": "ease",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "曲线",
+      "name_en": "Ease",
       "description_zh": "获取曲线的值。",
       "description_en": "Get the value of an easing function.",
       "expressionName": "Ease",
@@ -908,20 +1006,24 @@
           "id": "ease",
           "type": "string",
           "name_zh": "名称",
-          "name_en": "Name"
+          "name_en": "Name",
+          "desc_zh": "内置或自定义的曲线名称。",
+          "desc_en": "The name of a built-in or custom ease."
         },
         {
           "id": "progress",
           "type": "number",
           "name_zh": "数值",
-          "name_en": "Value"
+          "name_en": "Value",
+          "desc_zh": "数值范围在0-1之间。",
+          "desc_en": "A value in the range 0-1."
         }
       ]
     },
     {
       "id": "keyframe-time",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取关键帧时间",
+      "name_en": "KeyframeTime",
       "description_zh": "获取指定时间轴上关键帧的时间。",
       "description_en": "Get the time of a keyframe in the specified timeline.",
       "expressionName": "KeyframeTime",
@@ -932,20 +1034,24 @@
           "id": "timeline",
           "type": "string",
           "name_zh": "时间轴名称或标签",
-          "name_en": "TimelineNameOrTags"
+          "name_en": "TimelineNameOrTags",
+          "desc_zh": "时间轴的名称或标签。",
+          "desc_en": "Name or tags of the timeline the keyframe is in."
         },
         {
           "id": "keyframe",
           "type": "string",
           "name_zh": "关键帧标签",
-          "name_en": "KeyframeTags"
+          "name_en": "KeyframeTags",
+          "desc_zh": "获取关键帧时间戳的标签",
+          "desc_en": "Tags of the keyframe to get the time of."
         }
       ]
     },
     {
       "id": "keyframe-tags",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "关键帧标签",
+      "name_en": "KeyframeTags",
       "description_zh": "在触发器中，相关的关键帧标签。",
       "description_en": "In a trigger, the tags of the relevant keyframe.",
       "expressionName": "KeyframeTags",
@@ -954,8 +1060,8 @@
     },
     {
       "id": "timeline-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "时间轴名称",
+      "name_en": "TimelineName",
       "description_zh": "在触发器中，相关的时间轴名称。",
       "description_en": "In a trigger, the name of the relevant timeline.",
       "expressionName": "TimelineName",
@@ -964,8 +1070,8 @@
     },
     {
       "id": "timeline-tags",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "时间轴标签",
+      "name_en": "TimelineTags",
       "description_zh": "在触发器中，与相关时间轴的标签",
       "description_en": "In a trigger, the tags of the relevant timeline.",
       "expressionName": "TimelineTags",
@@ -974,8 +1080,8 @@
     },
     {
       "id": "value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "数值",
+      "name_en": "Value",
       "description_zh": "作用于指定时间轴内的变量的数值。",
       "description_en": "The value of a value track in the specified timeline",
       "expressionName": "Value",
@@ -987,14 +1093,18 @@
           "type": "string",
           "name_zh": "时间轴名称或标签",
           "name_en": "TimelineNameOrTags",
-          "initialValue": ""
+          "initialValue": "",
+          "desc_zh": "时间轴的名称或者标签。",
+          "desc_en": "Name or tags of the timeline that has the value track."
         },
         {
           "id": "track",
           "type": "string",
           "name_zh": "属性轨道名称或ID",
           "name_en": "ValueTrackNameOrId",
-          "initialValue": ""
+          "initialValue": "",
+          "desc_zh": "时间轴的名称或者标签。",
+          "desc_en": "Name or id of the track to get the value for."
         }
       ]
     }

@@ -23,7 +23,9 @@
       "description_en": "Trigger when banner advert is ready to display",
       "scriptName": "OnBannerReady",
       "isTrigger": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "横幅广告准备完成",
+      "display_en": "On banner ready"
     },
     {
       "id": "on-banner-failed-to-load",
@@ -33,7 +35,9 @@
       "description_en": "Triggers when banner advert fails to load",
       "scriptName": "OnBannerFailedToLoad",
       "isTrigger": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "横幅广告拉取失败",
+      "display_en": "On banner failed to load"
     },
     {
       "id": "on-banner-shown",
@@ -43,7 +47,9 @@
       "description_en": "Trigger when banner advert is displayed",
       "scriptName": "OnBannerShown",
       "isTrigger": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "横幅广告展示完成",
+      "display_en": "On banner shown"
     },
     {
       "id": "on-banner-hidden",
@@ -53,7 +59,9 @@
       "description_en": "Triggers when a banner has been hidden",
       "scriptName": "OnBannerHidden",
       "isTrigger": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "横幅广告被隐藏",
+      "display_en": "On banner hidden"
     },
     {
       "id": "is-showing-banner",
@@ -62,7 +70,9 @@
       "description_zh": "检测当前是否正在显示横幅广告。",
       "description_en": "returns true if a banner advert is currently being displayed",
       "scriptName": "IsShowingBanner",
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "正在展示横幅广告",
+      "display_en": "is showing banner"
     },
     {
       "id": "is-loaded-banner",
@@ -71,7 +81,9 @@
       "description_zh": "检测横幅广告是否已经加载。",
       "description_en": "returns true if a banner advert is loaded",
       "scriptName": "IsBannerLoaded",
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "横幅广告已加载",
+      "display_en": "is banner loaded"
     },
     {
       "id": "on-interstitial-ready",
@@ -81,7 +93,9 @@
       "description_en": "Triggers when interstitial advert is ready to display",
       "scriptName": "OnInterstitialReady",
       "isTrigger": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "插页式广告准备完成",
+      "display_en": "On interstitial ready"
     },
     {
       "id": "on-interstitial-failed-to-load",
@@ -91,7 +105,9 @@
       "description_en": "Triggers when interstitial advert fails to load",
       "scriptName": "OnInterstitialFailedToLoad",
       "isTrigger": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "插页式广告拉取失败",
+      "display_en": "On interstitial failed to load"
     },
     {
       "id": "on-interstitial-complete",
@@ -101,7 +117,9 @@
       "description_en": "Triggers when a interstitial has been dismissed",
       "scriptName": "OnInterstitialComplete",
       "isTrigger": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "插页式广告展示完成",
+      "display_en": "On interstitial complete"
     },
     {
       "id": "on-interstitial-cancelled",
@@ -111,7 +129,9 @@
       "description_en": "Triggers when a interstitial advert is cancelled",
       "scriptName": "OnInterstitialCancelled",
       "isTrigger": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "插页式广告被取消",
+      "display_en": "On interstitial cancelled"
     },
     {
       "id": "is-showing-interstitial",
@@ -120,7 +140,9 @@
       "description_zh": "检测当前是否正在展示插页式广告。",
       "description_en": "returns true if a interstitial advert is currently being displayed",
       "scriptName": "IsShowingInterstitial",
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "正在展示插页式广告",
+      "display_en": "is showing interstitial"
     },
     {
       "id": "is-loaded-interstitial",
@@ -129,7 +151,9 @@
       "description_zh": "检测插页式广告是否已加载",
       "description_en": "returns true if a interstitial advert is loaded",
       "scriptName": "IsInterstitialLoaded",
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "插页式广告已加载",
+      "display_en": "is interstitial loaded"
     },
     {
       "id": "on-video-ready",
@@ -203,7 +227,9 @@
       "description_en": "Triggers when a rewarded advert is ready to display",
       "scriptName": "OnRewardedReady",
       "isTrigger": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "激励视频准备完成",
+      "display_en": "On rewarded ready"
     },
     {
       "id": "on-rewarded-failed-to-load",
@@ -213,7 +239,9 @@
       "description_en": "Triggers when a rewarded advert fails to load",
       "scriptName": "OnRewardedFailedToLoad",
       "isTrigger": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "激励广告加载失败",
+      "display_en": "On rewarded failed to load"
     },
     {
       "id": "on-rewarded-complete",
@@ -223,7 +251,9 @@
       "description_en": "Triggers when a rewarded advert has completed",
       "scriptName": "OnRewardedComplete",
       "isTrigger": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "激励广告展示完成",
+      "display_en": "On rewarded complete"
     },
     {
       "id": "on-rewarded-cancelled",
@@ -233,7 +263,9 @@
       "description_en": "Triggers when a rewarded advert is cancelled",
       "scriptName": "OnRewardedCancelled",
       "isTrigger": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "激励广告被取消",
+      "display_en": "On rewarded cancelled"
     },
     {
       "id": "is-showing-rewarded",
@@ -242,7 +274,9 @@
       "description_zh": "检测当前是否正在展示激励广告。",
       "description_en": "returns true if a rewarded advert is currently being displayed",
       "scriptName": "IsShowingRewarded",
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "正在展示激励广告",
+      "display_en": "is showing rewarded"
     },
     {
       "id": "is-loaded-rewarded",
@@ -251,7 +285,9 @@
       "description_zh": "检测激励广告是否已加载。",
       "description_en": "returns true if a rewarded advert is loaded",
       "scriptName": "IsRewardedLoaded",
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "激励视频已加载",
+      "display_en": "is rewarded loaded"
     },
     {
       "id": "on-rewarded-interstitial-ready",
@@ -261,7 +297,9 @@
       "description_en": "Triggers when a rewarded interstitial advert is ready to display",
       "scriptName": "OnRewardedInterstitialReady",
       "isTrigger": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "插页式激励广告准备就绪",
+      "display_en": "On rewarded interstitial ready"
     },
     {
       "id": "on-rewarded-interstitial-failed-to-load",
@@ -271,7 +309,9 @@
       "description_en": "Triggers when a rewarded interstitial advert fails to load",
       "scriptName": "OnRewardedInterstitialFailedToLoad",
       "isTrigger": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "插页式激励广告加载失败",
+      "display_en": "On rewarded interstitial failed to load"
     },
     {
       "id": "on-rewarded-interstitial-complete",
@@ -281,7 +321,9 @@
       "description_en": "Triggers when a rewarded interstitial advert has completed",
       "scriptName": "OnRewardedInterstitialComplete",
       "isTrigger": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "插页式激励广告展示完成",
+      "display_en": "On rewarded interstitial complete"
     },
     {
       "id": "on-rewarded-interstitial-cancelled",
@@ -291,7 +333,9 @@
       "description_en": "Triggers when a rewarded interstitial advert is cancelled",
       "scriptName": "OnRewardedInterstitialCancelled",
       "isTrigger": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "插页式激励广告被取消",
+      "display_en": "On rewarded interstitial cancelled"
     },
     {
       "id": "is-showing-rewarded-interstitial",
@@ -300,7 +344,9 @@
       "description_zh": "检测当前是否正在展示插页式激励广告。",
       "description_en": "returns true if a rewarded interstitial advert is currently being displayed",
       "scriptName": "IsShowingRewardedInterstitial",
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "正在展示插页式激励广告",
+      "display_en": "is showing rewarded interstitial"
     },
     {
       "id": "is-loaded-rewarded-interstitial",
@@ -309,7 +355,9 @@
       "description_zh": "检测插页式激励广告是否已加载。",
       "description_en": "returns true if a rewarded interstitial advert is loaded",
       "scriptName": "IsRewardedInterstitialLoaded",
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "插页式激励广告已加载",
+      "display_en": "is rewarded interstitial loaded"
     },
     {
       "id": "on-configuration-failed",
@@ -319,7 +367,9 @@
       "description_en": "Triggers when the ad plugin configuration fails",
       "scriptName": "OnConfigurationFailed",
       "isTrigger": true,
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "广告配置失败",
+      "display_en": "On configuration failed"
     },
     {
       "id": "on-configuration-complete",
@@ -329,7 +379,9 @@
       "description_en": "Triggers when the ad plugin configuration succeeds",
       "scriptName": "OnConfigurationComplete",
       "isTrigger": true,
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "广告配置成功",
+      "display_en": "On configuration complete"
     },
     {
       "id": "is-configured",
@@ -338,7 +390,9 @@
       "description_zh": "检测应用程序ID是否已设置。",
       "description_en": "returns true if the application ID has been set",
       "scriptName": "IsConfigured",
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "已配置",
+      "display_en": "is configured"
     },
     {
       "id": "on-user-personalization-updated",
@@ -358,7 +412,9 @@
       "description_zh": "检测设备所在位置，是否处于欧洲经济特区(EEA) 或未知地点。",
       "description_en": "Is true if the device is inside the EEA or the location is unknown",
       "scriptName": "IsInEeaOrUnknown",
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "位于欧洲经济特区或未知地区",
+      "display_en": "is in EEA or unknown"
     },
     {
       "id": "on-idfa-request-complete",
@@ -368,7 +424,9 @@
       "description_en": "Triggered after the 'Request IDFA' prompt is closed (regardless of outcome).",
       "scriptName": "OnIDFARequestComplete",
       "isTrigger": true,
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "广告标识符请求完成",
+      "display_en": "On IDFA request complete"
     }
   ],
   "actions": [
@@ -386,7 +444,9 @@
           "id": "advert-id",
           "type": "string",
           "name_zh": "横幅广告单元ID",
-          "name_en": "Banner Advert Unit ID"
+          "name_en": "Banner Advert Unit ID",
+          "desc_zh": "当前广告的 AdMob 广告单元ID。",
+          "desc_en": "The AdMob Advert Unit ID for this advert"
         },
         {
           "id": "banner-size",
@@ -431,7 +491,9 @@
               "zh": "页首 (728x90)",
               "en": "Leaderboard"
             }
-          }
+          },
+          "desc_zh": "广告的显示尺寸，其宽高比大致为 320x50，以 dp 为单位。",
+          "desc_en": "The display size of the advert"
         },
         {
           "id": "show",
@@ -451,7 +513,9 @@
               "zh": "否",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "加载后自动显示广告",
+          "desc_en": "Automatically show the advert once it has loaded"
         },
         {
           "id": "position",
@@ -471,7 +535,9 @@
               "zh": "顶部",
               "en": "top"
             }
-          }
+          },
+          "desc_zh": "在屏幕放置横幅的位置。",
+          "desc_en": "Position on the screen where the banner should be placed"
         },
         {
           "id": "reload",
@@ -492,14 +558,18 @@
               "zh": "否",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "如果广告已经存在，使用新的设置重新加载横幅。",
+          "desc_en": "Reload the banner with new setting if one already exists"
         },
         {
           "id": "offset",
           "type": "number",
           "name_zh": "偏移位置",
           "name_en": "Offset",
-          "initialValue": "0"
+          "initialValue": "0",
+          "desc_zh": "横幅的偏移位置，以像素为单位。需要 '覆盖显示' 选项为 '覆盖' 时有效。",
+          "desc_en": "Offset the banner by the specified amount. Ignored when 'Overlap' is 'false'"
         },
         {
           "id": "overlap",
@@ -520,9 +590,13 @@
               "zh": "不覆盖",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "广告横幅是否允许覆盖游戏窗口的内容。若允许覆盖，随后可通过偏移调整出现的位置。",
+          "desc_en": "Should the banner overlap the main content or not"
         }
-      ]
+      ],
+      "display_zh": "创建横幅广告 [b]{0}[/b], 大小: [b]{1}[/b], 位置: [b]{3}[/b], 偏移位置: [b]{5}[/b], 初始显示: [b]{2}[/b], 强制更新: [b]{4}[/b],  覆盖游戏画面: [b]{6}[/b]",
+      "display_en": "Create banner advert [b]{0}[/b] size: [b]{1}[/b] position: [b]{3}[/b] show: [b]{2}[/b] reload: [b]{4}[/b] offset: [b]{5}[/b] overlap: [b]{6}[/b]"
     },
     {
       "id": "show-banner",
@@ -532,7 +606,9 @@
       "description_en": "Shows an already loaded banner advert",
       "scriptName": "ShowBanner",
       "isAsync": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "展示当前横幅广告",
+      "display_en": "Show the current banner advert"
     },
     {
       "id": "hide-banner",
@@ -542,7 +618,9 @@
       "description_en": "Hides the current banner advert",
       "scriptName": "HideBanner",
       "isAsync": true,
-      "category": "banner"
+      "category": "banner",
+      "display_zh": "隐藏横幅广告",
+      "display_en": "Hide the current banner advert"
     },
     {
       "id": "create-interstitial",
@@ -558,7 +636,9 @@
           "id": "advert-id",
           "type": "string",
           "name_zh": "插页式广告单元ID",
-          "name_en": "Interstitial Advert Unit ID"
+          "name_en": "Interstitial Advert Unit ID",
+          "desc_zh": "此广告的AdMob广告单元ID",
+          "desc_en": "The AdMob Advert Unit ID for this advert"
         },
         {
           "id": "show",
@@ -578,9 +658,13 @@
               "zh": "否",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "加载后自动显示广告",
+          "desc_en": "Automatically show the advert once it has loaded"
         }
-      ]
+      ],
+      "display_zh": "拉取插页式广告 [b]{0}[/b]  (立即展示: [b]{1}[/b])",
+      "display_en": "Create interstitial advert [b]{0}[/b] show: [b]{1}[/b]"
     },
     {
       "id": "show-interstitial",
@@ -590,7 +674,9 @@
       "description_en": "Shows an already loaded interstitial advert",
       "scriptName": "ShowInterstitial",
       "isAsync": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "display_zh": "展示插页式广告",
+      "display_en": "Show interstitial advert"
     },
     {
       "id": "create-video",
@@ -646,7 +732,9 @@
           "id": "advert-id",
           "type": "string",
           "name_zh": "奖励广告单元 ID",
-          "name_en": "Rewarded Advert Unit ID"
+          "name_en": "Rewarded Advert Unit ID",
+          "desc_zh": "此广告的 AdMob 广告单元 ID",
+          "desc_en": "The AdMob Advert Unit ID for this advert"
         },
         {
           "id": "show",
@@ -666,9 +754,13 @@
               "zh": "否",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "加载后自动显示广告",
+          "desc_en": "Automatically show the advert once it has loaded"
         }
-      ]
+      ],
+      "display_zh": "拉取激励视频广告 [b]{0}[/b] (立即展示: [b]{1}[/b])",
+      "display_en": "Create rewarded advert [b]{0}[/b] show: [b]{1}[/b]"
     },
     {
       "id": "show-rewarded",
@@ -678,7 +770,9 @@
       "description_en": "Shows an already loaded rewarded advert",
       "scriptName": "ShowRewarded",
       "isAsync": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "display_zh": "展示激励广告",
+      "display_en": "Show rewarded advert"
     },
     {
       "id": "create-rewarded-interstitial",
@@ -694,7 +788,9 @@
           "id": "advert-id",
           "type": "string",
           "name_zh": "奖励插页式广告单元 ID",
-          "name_en": "Rewarded Interstitial Advert Unit ID"
+          "name_en": "Rewarded Interstitial Advert Unit ID",
+          "desc_zh": "此广告的 AdMob 广告单元 ID",
+          "desc_en": "The AdMob Advert Unit ID for this advert"
         },
         {
           "id": "show",
@@ -714,9 +810,13 @@
               "zh": "否",
               "en": "false"
             }
-          }
+          },
+          "desc_zh": "加载后自动显示广告",
+          "desc_en": "Automatically show the advert once it has loaded"
         }
-      ]
+      ],
+      "display_zh": "拉取插页式激励广告 [b]{0}[/b] (立即展示: [b]{1}[/b])",
+      "display_en": "Create rewarded interstitial advert [b]{0}[/b] show: [b]{1}[/b]"
     },
     {
       "id": "show-rewarded-interstitial",
@@ -726,7 +826,9 @@
       "description_en": "Shows an already loaded rewarded interstitial advert",
       "scriptName": "ShowRewardedInterstitial",
       "isAsync": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "display_zh": "展示插页式激励广告",
+      "display_en": "Show rewarded interstitial advert"
     },
     {
       "id": "set-public-key",
@@ -798,7 +900,9 @@
       "description_en": "Displays the modal user consent dialog",
       "scriptName": "ShowConsentDialog",
       "isAsync": true,
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "显示用户同意对话框",
+      "display_en": "Show user consent dialog"
     },
     {
       "id": "set-user-personalisation",
@@ -863,9 +967,13 @@
               "zh": "成年人",
               "en": "Mature Audiences"
             }
-          }
+          },
+          "desc_zh": "您希望展示的广告内容分级的最高级别。仅支持移动端导出。",
+          "desc_en": "The maximum digital content rating of adverts you wish to show"
         }
-      ]
+      ],
+      "display_zh": "设置广告最大评级为 {0}",
+      "display_en": "Set advert content rating {0}"
     },
     {
       "id": "tag-for-child-directed-treatment",
@@ -882,9 +990,13 @@
           "type": "boolean",
           "name_zh": "标记此用户为儿童",
           "name_en": "Use child directed content",
-          "initialValue": "true"
+          "initialValue": "true",
+          "desc_zh": "告知 Admob SDK 此用户为儿童，应返回适用于儿童的广告内容。",
+          "desc_en": "Specifies if the Admob SDK should return child directed content"
         }
-      ]
+      ],
+      "display_zh": "标记为儿童: {0}",
+      "display_en": "Use child directed content {0}"
     },
     {
       "id": "tag-for-under-age-of-consent",
@@ -901,9 +1013,13 @@
           "type": "boolean",
           "name_zh": "标记此用户为未成年人",
           "name_en": "User under age of consent",
-          "initialValue": "true"
+          "initialValue": "true",
+          "desc_zh": "告知 Admob SDK 此用户未达到法定年龄。",
+          "desc_en": "Specifies if the user is under the age of consent"
         }
-      ]
+      ],
+      "display_zh": "标记为未成年人: {0}",
+      "display_en": "Tag under age of consent {0}"
     },
     {
       "id": "request-idfa",
@@ -913,14 +1029,16 @@
       "description_en": "Request to use the identifier for advertisers (IDFA) on iOS. This may prompt the user.",
       "scriptName": "RequestIDFA",
       "isAsync": true,
-      "category": "advert"
+      "category": "advert",
+      "display_zh": "请求访问广告标识符",
+      "display_en": "Request IDFA"
     }
   ],
   "expressions": [
     {
       "id": "error-message",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "错误信息",
+      "name_en": "ErrorMessage",
       "description_zh": "在触发器中的错误消息（如果可用）",
       "description_en": "In a trigger, an error message if available",
       "expressionName": "ErrorMessage",
@@ -929,8 +1047,8 @@
     },
     {
       "id": "reward-type",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "激励广告类型",
+      "name_en": "RewardType",
       "description_zh": "在触发器中的奖励类型（如果可用）",
       "description_en": "In a trigger, the reward type if available",
       "expressionName": "RewardType",
@@ -939,8 +1057,8 @@
     },
     {
       "id": "reward-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "激励广告价值",
+      "name_en": "RewardValue",
       "description_zh": "在触发器中调用，返回值是否可用",
       "description_en": "In a trigger, the reward value if available",
       "expressionName": "RewardValue",
@@ -949,8 +1067,8 @@
     },
     {
       "id": "reward-interstitial-type",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "插页式激励广告类型",
+      "name_en": "RewardInterstitialType",
       "description_zh": "广告展示完成时，返回相关的广告激励类型。",
       "description_en": "In a trigger, the reward type of an interstitial advert if available",
       "expressionName": "RewardInterstitialType",
@@ -959,8 +1077,8 @@
     },
     {
       "id": "reward-interstitial-value",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "插页式激励广告价值",
+      "name_en": "RewardInterstitialValue",
       "description_zh": "广告展示完成时，返回相关的广告激励价值。",
       "description_en": "In a trigger, the reward value of an interstitial advert if available",
       "expressionName": "RewardInterstitialValue",
@@ -969,8 +1087,8 @@
     },
     {
       "id": "consent-status",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "同意状态",
+      "name_en": "ConsentStatus",
       "description_zh": "当前用户同意广告的状态",
       "description_en": "The current user consent status for adverts",
       "expressionName": "ConsentStatus",
@@ -979,8 +1097,8 @@
     },
     {
       "id": "idfa-status",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "广告标识状态",
+      "name_en": "IDFAStatus",
       "description_zh": "当前用户同意开启广告标识符(IDFA)的状态。",
       "description_en": "The current user consent status for the identifier for advertisers (IDFA)",
       "expressionName": "IDFAStatus",

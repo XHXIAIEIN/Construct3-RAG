@@ -26,9 +26,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的哈希加密动作的标签。",
+          "desc_en": "Tag of the hash operation that finished."
         }
-      ]
+      ],
+      "display_zh": "哈希加密完成 ([i]{0}[/i])",
+      "display_en": "On hash [i]{0}[/i] finished"
     },
     {
       "id": "on-any-hash-finished",
@@ -38,7 +42,9 @@
       "description_en": "Triggered when any hash action finishes. The 'Tag' expression identifies the action.",
       "scriptName": "OnAnyHashFinished",
       "isTrigger": true,
-      "category": "hashing"
+      "category": "hashing",
+      "display_zh": "任意哈希加密完成",
+      "display_en": "On any hash finished"
     },
     {
       "id": "on-encryption-finished",
@@ -54,9 +60,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的加密动作的标签。",
+          "desc_en": "Tag of the encryption operation that finished."
         }
-      ]
+      ],
+      "display_zh": "加密 [i]{0}[/i] 完成",
+      "display_en": "On encryption [i]{0}[/i] finished"
     },
     {
       "id": "on-encryption-failed",
@@ -72,9 +82,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的加密动作的标签。",
+          "desc_en": "Tag of the encryption operation that failed."
         }
-      ]
+      ],
+      "display_zh": "加密 [i]{0}[/i] 失败",
+      "display_en": "On encryption [i]{0}[/i] failed"
     },
     {
       "id": "on-decryption-finished",
@@ -90,9 +104,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的解密动作的标签。",
+          "desc_en": "Tag of the decryption operation that finished."
         }
-      ]
+      ],
+      "display_zh": "解密 [i]{0}[/i] 完成",
+      "display_en": "On decryption [i]{0}[/i] finished"
     },
     {
       "id": "on-decryption-failed",
@@ -108,9 +126,13 @@
           "id": "tag",
           "type": "string",
           "name_zh": "标签",
-          "name_en": "Tag"
+          "name_en": "Tag",
+          "desc_zh": "要检测的解密动作的标签。",
+          "desc_en": "Tag of the decryption operation that failed."
         }
-      ]
+      ],
+      "display_zh": "解密 [i]{0}[/i] 失败",
+      "display_en": "On decryption [i]{0}[/i] failed"
     },
     {
       "id": "on-any-encryption-finished",
@@ -120,7 +142,9 @@
       "description_en": "Triggered when any encryption action finishes. The 'Tag' expression identifies the action.",
       "scriptName": "OnAnyEncryptionFinished",
       "isTrigger": true,
-      "category": "encryption"
+      "category": "encryption",
+      "display_zh": "加密完成",
+      "display_en": "On any encryption finished"
     },
     {
       "id": "on-any-encryption-failed",
@@ -130,7 +154,9 @@
       "description_en": "Triggered when any encryption action fails. The 'Tag' expression identifies the action.",
       "scriptName": "OnAnyEncryptionFailed",
       "isTrigger": true,
-      "category": "encryption"
+      "category": "encryption",
+      "display_zh": "任意加密失败",
+      "display_en": "On any encryption failed"
     },
     {
       "id": "on-any-decryption-finished",
@@ -140,7 +166,9 @@
       "description_en": "Triggered when any decryption action finishes. The 'Tag' expression identifies the action.",
       "scriptName": "OnAnyDecryptionFinished",
       "isTrigger": true,
-      "category": "encryption"
+      "category": "encryption",
+      "display_zh": "任意解密完成",
+      "display_en": "On any decryption finished"
     },
     {
       "id": "on-any-decryption-failed",
@@ -150,7 +178,9 @@
       "description_en": "Triggered when any encryption action fails. The 'Tag' expression identifies the action.",
       "scriptName": "OnAnyDecryptionFailed",
       "isTrigger": true,
-      "category": "encryption"
+      "category": "encryption",
+      "display_zh": "任意解密失败",
+      "display_en": "On any decryption failed"
     }
   ],
   "actions": [
@@ -168,7 +198,9 @@
           "id": "binary-data",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary data"
+          "name_en": "Binary data",
+          "desc_zh": "选择二进制数据对象，对其数据内容进行哈希加密。",
+          "desc_en": "Choose a Binary Data object to hash the contents of."
         },
         {
           "id": "algorithm",
@@ -193,15 +225,21 @@
               "zh": "SHA-512",
               "en": "SHA-512"
             }
-          }
+          },
+          "desc_zh": "要使用的哈希加密算法。",
+          "desc_en": "The hashing algorithm to use."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "用于识别不同的哈希加密动作，方便进行管理。",
+          "desc_en": "An optional tag to identify different hashing operations."
         }
-      ]
+      ],
+      "display_zh": "哈希加密 {0} (算法: [i]{1}[/i], 标签: [i]{2}[/i])",
+      "display_en": "Hash {0} with algorithm [i]{1}[/i] (tag [i]{2}[/i])"
     },
     {
       "id": "encrypt-binary",
@@ -217,7 +255,9 @@
           "id": "binary-data",
           "type": "object",
           "name_zh": "来源",
-          "name_en": "Source"
+          "name_en": "Source",
+          "desc_zh": "选择二进制数据对象，对其数据内容进行加密。",
+          "desc_en": "Choose a Binary Data object with the data to encrypt."
         },
         {
           "id": "algorithm",
@@ -232,28 +272,38 @@
               "zh": "AES-GCM",
               "en": "AES-GCM"
             }
-          }
+          },
+          "desc_zh": "要使用的加密算法。",
+          "desc_en": "The encryption algorithm to use."
         },
         {
           "id": "password",
           "type": "string",
           "name_zh": "密钥",
-          "name_en": "Password"
+          "name_en": "Password",
+          "desc_zh": "用来加密数据的密钥（区分大小写）。反向解密时，只有相同的密钥才能正确读取内容。",
+          "desc_en": "The password to encrypt the data with (case sensitive)."
         },
         {
           "id": "iterations",
           "type": "number",
           "name_zh": "迭代",
           "name_en": "Iterations",
-          "initialValue": "100000"
+          "initialValue": "100000",
+          "desc_zh": "对内容反复加密的次数。越高的值需要更长的生成时间，但会更加安全，更难被破解。",
+          "desc_en": "Number of times to repeat hash function when generating key. Higher values are slower but more secure."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "用于识别不同的加密动作，方便进行管理。",
+          "desc_en": "An optional tag to identify different encryption operations."
         }
-      ]
+      ],
+      "display_zh": "加密 {0} (算法: [i]{1}[/i], 密钥: [i]{2}[/i], 加密次数: [i]{3}[/i], 标签: [i]{4}[/i])",
+      "display_en": "Encrypt {0} with algorithm [i]{1}[/i] password [i]{2}[/i] ([i]{3}[/i] iterations, tag [i]{4}[/i])"
     },
     {
       "id": "decrypt-binary",
@@ -269,7 +319,9 @@
           "id": "binary-data",
           "type": "object",
           "name_zh": "来源",
-          "name_en": "Source"
+          "name_en": "Source",
+          "desc_zh": "选择二进制数据对象，对其数据内容进行解密。",
+          "desc_en": "Choose a Binary Data object with the data to decrypt."
         },
         {
           "id": "algorithm",
@@ -284,28 +336,36 @@
               "zh": "AES-GCM",
               "en": "AES-GCM"
             }
-          }
+          },
+          "desc_zh": "要使用的加密算法。",
+          "desc_en": "The encryption algorithm to use."
         },
         {
           "id": "password",
           "type": "string",
           "name_zh": "密钥",
-          "name_en": "Password"
+          "name_en": "Password",
+          "desc_zh": "用来解密数据的密钥（区分大小写）。只有与加密时使用的相同密钥才能正确读取内容。",
+          "desc_en": "The password to decrypt the data with (case sensitive)."
         },
         {
           "id": "tag",
           "type": "string",
           "name_zh": "标签(可选)",
-          "name_en": "Tag (optional)"
+          "name_en": "Tag (optional)",
+          "desc_zh": "用于识别不同的解密动作，方便进行管理。",
+          "desc_en": "An optional tag to identify different decryption operations."
         }
-      ]
+      ],
+      "display_zh": "解密 {0} (算法: [i]{1}[/i], 密钥: [i]{2}[/i],标签: [i]{3}[/i])",
+      "display_en": "Decrypt {0} with algorithm [i]{1}[/i] password [i]{2}[/i] (tag [i]{3}[/i])"
     }
   ],
   "expressions": [
     {
       "id": "hash",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "哈希加密",
+      "name_en": "Hash",
       "description_zh": "产生的十六进制字符串哈希值。",
       "description_en": "Hexadecimal string of a resulting hash.",
       "expressionName": "Hash",
@@ -314,8 +374,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "标签",
+      "name_en": "Tag",
       "description_zh": "在执行动作中相应的标签。",
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "Tag",
@@ -324,9 +384,9 @@
     },
     {
       "id": "random-uuid",
-      "name_zh": "",
-      "name_en": "",
-      "description_zh": "使用密码学生成一个安全的 v4 UUID 随机数，格式类似 \"\"36b8f84d-df4e-4d49-b662-bcde71a8764f\"\"",
+      "name_zh": "随机序列码",
+      "name_en": "RandomUUID",
+      "description_zh": "使用密码学生成一个安全的 v4 UUID 随机数，格式类似 \"36b8f84d-df4e-4d49-b662-bcde71a8764f",
       "description_en": "Generate a v4 UUID using a cryptographically secure random number generator.",
       "expressionName": "RandomUUID",
       "returnType": "string",

@@ -20,7 +20,9 @@
       "description_zh": "检测纹理混合功能是否已启用。",
       "description_en": "True if tile randomization is currently enabled.",
       "scriptName": "IsTileRandomizationEnabled",
-      "category": "tile-randomization"
+      "category": "tile-randomization",
+      "display_zh": "已开启纹理混合",
+      "display_en": "Is tile randomization enabled"
     },
     {
       "id": "on-image-url-loaded",
@@ -30,7 +32,9 @@
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "网络图像加载完成",
+      "display_en": "On image URL loaded"
     },
     {
       "id": "on-image-url-failed",
@@ -40,7 +44,9 @@
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "display_zh": "当图像链接读取失败",
+      "display_en": "On image URL failed to load"
     }
   ],
   "actions": [
@@ -136,9 +142,13 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          }
+          },
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object."
         }
-      ]
+      ],
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]"
     },
     {
       "id": "set-image-offset-x",
@@ -153,9 +163,13 @@
           "id": "offset-x",
           "type": "number",
           "name_zh": "X偏移值",
-          "name_en": "X offset"
+          "name_en": "X offset",
+          "desc_zh": "图像在X轴的偏移量",
+          "desc_en": "The X offset of the image within the object, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置图像偏移X为[i]{0}[/i]",
+      "display_en": "Set image X offset to [i]{0}[/i]"
     },
     {
       "id": "set-image-offset-y",
@@ -170,9 +184,13 @@
           "id": "offset-y",
           "type": "number",
           "name_zh": "Y偏移值",
-          "name_en": "Y offset"
+          "name_en": "Y offset",
+          "desc_zh": "图像在Y轴的偏移量",
+          "desc_en": "The Y offset of the image within the object, in pixels."
         }
-      ]
+      ],
+      "display_zh": "设置图像偏移Y为[i]{0}[/i]",
+      "display_en": "Set image Y offset to [i]{0}[/i]"
     },
     {
       "id": "set-image-scale-x",
@@ -188,9 +206,13 @@
           "type": "number",
           "name_zh": "X轴比例",
           "name_en": "X scale",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "图像在 X 轴的缩放比例，以百分比表示。",
+          "desc_en": "The X scale of the image within the object, as a percentage."
         }
-      ]
+      ],
+      "display_zh": "设置图像X缩放为[i]{0}[/i]",
+      "display_en": "Set image X scale to [i]{0}[/i]"
     },
     {
       "id": "set-image-scale-y",
@@ -206,9 +228,13 @@
           "type": "number",
           "name_zh": "Y轴比例",
           "name_en": "Y scale",
-          "initialValue": "100"
+          "initialValue": "100",
+          "desc_zh": "图像在 Y 轴的缩放比例，以百分比表示。",
+          "desc_en": "The Y scale of the image within the object, as a percentage."
         }
-      ]
+      ],
+      "display_zh": "设置图像Y缩放为[i]{0}[/i]",
+      "display_en": "Set image Y scale to [i]{0}[/i]"
     },
     {
       "id": "set-image-angle",
@@ -223,9 +249,13 @@
           "id": "angle",
           "type": "number",
           "name_zh": "角度",
-          "name_en": "Angle"
+          "name_en": "Angle",
+          "desc_zh": "设置内部图像的角度，以度数为单位。",
+          "desc_en": "The angle of the image within the object, in degrees."
         }
-      ]
+      ],
+      "display_zh": "设置图像角度为[i]{0}[/i]°",
+      "display_en": "Set image angle to [i]{0}[/i] degrees"
     },
     {
       "id": "set-tile-randomization-enabled",
@@ -240,9 +270,13 @@
           "id": "enabled",
           "type": "boolean",
           "name_zh": "启用",
-          "name_en": "Enabled"
+          "name_en": "Enabled",
+          "desc_zh": "启用或禁用纹理混合功能。",
+          "desc_en": "Whether to enable or disable tile randomization."
         }
-      ]
+      ],
+      "display_zh": "[b]{0}[/b]纹理混合",
+      "display_en": "Set tile randomization enabled: [b]{0}[/b]"
     },
     {
       "id": "set-tile-pos-random",
@@ -257,15 +291,21 @@
           "id": "x-random",
           "type": "number",
           "name_zh": "扰动X",
-          "name_en": "X random"
+          "name_en": "X random",
+          "desc_zh": "在水平方向的随机偏移量，从0到100。",
+          "desc_en": "Amount of horizontal randomness, from 0 to 100."
         },
         {
           "id": "y-random",
           "type": "number",
           "name_zh": "扰动Y",
-          "name_en": "Y random"
+          "name_en": "Y random",
+          "desc_zh": "在垂直方向的随机偏移量，从0到100。",
+          "desc_en": "Amount of vertical randomness, from 0 to 100."
         }
-      ]
+      ],
+      "display_zh": "设置纹理混合(扰动位置: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set tile position randomization to [i]{0}[/i], [i]{1}[/i]"
     },
     {
       "id": "set-tile-angle-random",
@@ -280,9 +320,13 @@
           "id": "angle-random",
           "type": "number",
           "name_zh": "扰动的角度",
-          "name_en": "Angle random"
+          "name_en": "Angle random",
+          "desc_zh": "随机角度偏移量，从0到100。",
+          "desc_en": "Amount of angle randomness, from 0 to 100."
         }
-      ]
+      ],
+      "display_zh": "设置纹理混合(扰动角度: [i]{0}[/i])",
+      "display_en": "Set tile angle randomization to [i]{0}[/i]"
     },
     {
       "id": "set-tile-blend-margin",
@@ -297,15 +341,21 @@
           "id": "blend-margin-x",
           "type": "number",
           "name_zh": "边界混合X",
-          "name_en": "Blend margin X"
+          "name_en": "Blend margin X",
+          "desc_zh": "图块在水平方向淡出到相邻边缘的百分比，从0到100。",
+          "desc_en": "Percentage of tile width that fades to adjacent tile, 0-100."
         },
         {
           "id": "blend-margin-y",
           "type": "number",
           "name_zh": "边界混合Y",
-          "name_en": "Blend margin Y"
+          "name_en": "Blend margin Y",
+          "desc_zh": "图块在垂直方向淡出到相邻边缘的百分比，从0到100。",
+          "desc_en": "Percentage of tile height that fades to adjacent tile, 0-100."
         }
-      ]
+      ],
+      "display_zh": "设置边缘混合 [i]{0}[/i], [i]{1}[/i]",
+      "display_en": "Set tile blend margin to [i]{0}[/i], [i]{1}[/i]"
     },
     {
       "id": "load-image-from-url",
@@ -322,7 +372,9 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\""
+          "initialValue": "\"https://\"",
+          "desc_zh": "要下载数据的远程服务器地址。",
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
         },
         {
           "id": "cross-origin",
@@ -342,16 +394,20 @@
               "zh": "无",
               "en": "none"
             }
-          }
+          },
+          "desc_zh": "用于请求的跨源（CORS）模式。",
+          "desc_en": "The cross-origin (CORS) mode to use for the request."
         }
-      ]
+      ],
+      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})"
     }
   ],
   "expressions": [
     {
       "id": "imagewidth",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "原始图像宽度",
+      "name_en": "ImageWidth",
       "description_zh": "当前图像的宽度，以像素为单位。",
       "description_en": "The width of the current image, in pixels.",
       "expressionName": "ImageWidth",
@@ -360,8 +416,8 @@
     },
     {
       "id": "imageheight",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "原始图像高度",
+      "name_en": "ImageHeight",
       "description_zh": "当前图像的高度，以像素为单位。",
       "description_en": "The height of the current image, in pixels.",
       "expressionName": "ImageHeight",
@@ -370,8 +426,8 @@
     },
     {
       "id": "image-offset-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图像偏移坐标X",
+      "name_en": "ImageOffsetX",
       "description_zh": "图像在X轴的偏移值",
       "description_en": "The X offset of the image within the object, in pixels.",
       "expressionName": "ImageOffsetX",
@@ -380,8 +436,8 @@
     },
     {
       "id": "image-offset-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图像偏移坐标Y",
+      "name_en": "ImageOffsetY",
       "description_zh": "图像在Y轴的偏移量",
       "description_en": "The Y offset of the image within the object, in pixels.",
       "expressionName": "ImageOffsetY",
@@ -390,8 +446,8 @@
     },
     {
       "id": "image-scale-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图像缩放比例X",
+      "name_en": "ImageScaleX",
       "description_zh": "图像在X轴的缩放",
       "description_en": "The X scale of the image within the object.",
       "expressionName": "ImageScaleX",
@@ -400,8 +456,8 @@
     },
     {
       "id": "image-scale-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图像缩放比例Y",
+      "name_en": "ImageScaleY",
       "description_zh": "图像在Y轴的缩放",
       "description_en": "The Y scale of the image within the object.",
       "expressionName": "ImageScaleY",
@@ -410,8 +466,8 @@
     },
     {
       "id": "image-angle",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图像角度",
+      "name_en": "ImageAngle",
       "description_zh": "设置内部图像的角度，以度数为单位。",
       "description_en": "The angle of the image within the object, in degrees.",
       "expressionName": "ImageAngle",
@@ -420,8 +476,8 @@
     },
     {
       "id": "tile-x-random",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块扰动X",
+      "name_en": "TileXRandom",
       "description_zh": "图块纹理混合的水平方向扰动，从0到100。",
       "description_en": "The tile horizontal randomness, 0-100.",
       "expressionName": "TileXRandom",
@@ -430,8 +486,8 @@
     },
     {
       "id": "tile-y-random",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块扰动Y",
+      "name_en": "TileYRandom",
       "description_zh": "图块纹理混合的垂直方向扰动，从0到100。",
       "description_en": "The tile vertical randomness, 0-100.",
       "expressionName": "TileYRandom",
@@ -440,8 +496,8 @@
     },
     {
       "id": "tile-angle-random",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块扰动角度",
+      "name_en": "TileAngleRandom",
       "description_zh": "图块纹理混合的角度扰动，从0到100。",
       "description_en": "The tile angle randomness, 0-100.",
       "expressionName": "TileAngleRandom",
@@ -450,8 +506,8 @@
     },
     {
       "id": "tile-blend-margin-x",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块边缘混合X",
+      "name_en": "TileBlendMarginX",
       "description_zh": "图片在水平方向的边缘混合量，从0到100。",
       "description_en": "The tile randomization horizontal blend margin, 0-100.",
       "expressionName": "TileBlendMarginX",
@@ -460,8 +516,8 @@
     },
     {
       "id": "tile-blend-margin-y",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "图块边缘混合Y",
+      "name_en": "TileBlendMarginY",
       "description_zh": "图片在垂直方向的边缘混合量，从0到100。",
       "description_en": "The tile randomization vertical blend margin, 0-100.",
       "expressionName": "TileBlendMarginY",

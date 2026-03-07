@@ -19,7 +19,9 @@
       "description_zh": "检测当前运行设备是否支持蓝牙连接。",
       "description_en": "True if the current platform supports Bluetooth features.",
       "scriptName": "IsSupported",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备支持蓝牙",
+      "display_en": "Is bluetooth supported"
     },
     {
       "id": "on-device-connected",
@@ -29,7 +31,9 @@
       "description_en": "Triggered after 'Request device' successfully connects to a device.",
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备连接成功",
+      "display_en": "On device connected"
     },
     {
       "id": "on-device-disconnected",
@@ -39,7 +43,9 @@
       "description_en": "Triggered when a connected device disconnects and is no longer accessible.",
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "设备断开连接",
+      "display_en": "On device disconnected"
     },
     {
       "id": "on-request-device-failed",
@@ -49,7 +55,9 @@
       "description_en": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "display_zh": "请求设备失败",
+      "display_en": "On request device failed"
     },
     {
       "id": "is-device-connected",
@@ -65,9 +73,13 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID",
+          "desc_en": "The ID of the device."
         }
-      ]
+      ],
+      "display_zh": "设备 [b]{0}[/b] 已连接",
+      "display_en": "Is device [b]{0}[/b] connected"
     },
     {
       "id": "on-primary-services-loaded",
@@ -77,7 +89,9 @@
       "description_en": "Triggered after 'Request primary services' once the services have been loaded successfully.",
       "scriptName": "OnPrimaryServicesLoaded",
       "isTrigger": true,
-      "category": "services"
+      "category": "services",
+      "display_zh": "次要服务加载完成",
+      "display_en": "On primary services loaded"
     },
     {
       "id": "on-primary-services-error",
@@ -87,7 +101,9 @@
       "description_en": "Triggered after 'Request primary services' if the services fail to load.",
       "scriptName": "OnPrimaryServicesError",
       "isTrigger": true,
-      "category": "services"
+      "category": "services",
+      "display_zh": "请求次要服务出错",
+      "display_en": "On primary services error"
     },
     {
       "id": "on-characteristics-loaded",
@@ -97,7 +113,9 @@
       "description_en": "Triggered after 'Request characteristics' once the characteristics have been loaded successfully.",
       "scriptName": "OnCharacteristicsLoaded",
       "isTrigger": true,
-      "category": "services"
+      "category": "services",
+      "display_zh": "特征数据加载成功",
+      "display_en": "On characteristics loaded"
     },
     {
       "id": "on-characteristics-error",
@@ -107,7 +125,9 @@
       "description_en": "Triggered after 'Request characteristics' if the characteristics fail to load.",
       "scriptName": "OnCharacteristicsError",
       "isTrigger": true,
-      "category": "services"
+      "category": "services",
+      "display_zh": "特征数据加载错误",
+      "display_en": "On characteristics error"
     },
     {
       "id": "on-any-characteristic-read",
@@ -117,7 +137,9 @@
       "description_en": "Triggered after any read of a characteristic completes successfully.",
       "scriptName": "OnAnyCharacteristicRead",
       "isTrigger": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "display_zh": "任意特征数据读取成功",
+      "display_en": "On any characteristic read"
     },
     {
       "id": "on-characteristic-read",
@@ -133,9 +155,13 @@
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "display_zh": "蓝牙特征数据 [b]{0}[/b] 读取成功",
+      "display_en": "On characteristic [b]{0}[/b] read"
     },
     {
       "id": "on-any-characteristic-written",
@@ -145,7 +171,9 @@
       "description_en": "Triggered after any write to a characteristic completes successfully.",
       "scriptName": "OnAnyCharacteristicWritten",
       "isTrigger": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "display_zh": "任意特征数据写入完成",
+      "display_en": "On any characteristic written"
     },
     {
       "id": "on-characteristic-written",
@@ -161,9 +189,13 @@
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "display_zh": "特征数据 [b]{0}[/b] 写入完成",
+      "display_en": "On characteristic [b]{0}[/b] written"
     },
     {
       "id": "on-any-characteristic-notification",
@@ -179,9 +211,13 @@
           "id": "binary-data",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary Data"
+          "name_en": "Binary Data",
+          "desc_zh": "要用来缓存读取数据的二进制数据实例",
+          "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ]
+      ],
+      "display_zh": "任意特征数据收到通知提醒  (在 {0} 中)",
+      "display_en": "On any characteristic notification (in {0})"
     },
     {
       "id": "on-characteristic-notification",
@@ -197,15 +233,21 @@
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         },
         {
           "id": "binary-data",
           "type": "object",
           "name_zh": "二进制数据",
-          "name_en": "Binary Data"
+          "name_en": "Binary Data",
+          "desc_zh": "要用来缓存读取数据的二进制数据实例",
+          "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ]
+      ],
+      "display_zh": "特征数据 [b]{0}[/b] 收到通知 (在 {1} 中)",
+      "display_en": "On characteristic [b]{0}[/b] notification (in {1})"
     },
     {
       "id": "on-characteristic-read-error",
@@ -215,7 +257,9 @@
       "description_en": "Triggered after any read of a characteristic fails.",
       "scriptName": "OnCharacteristicReadError",
       "isTrigger": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "display_zh": "特征数据读取错误",
+      "display_en": "On characteristic read error"
     },
     {
       "id": "on-characteristic-write-error",
@@ -225,7 +269,9 @@
       "description_en": "Triggered after any write to a characteristic fails.",
       "scriptName": "OnCharacteristicWriteError",
       "isTrigger": true,
-      "category": "characteristics"
+      "category": "characteristics",
+      "display_zh": "特征数据写入失败",
+      "display_en": "On characteristic write error"
     }
   ],
   "actions": [
@@ -242,25 +288,33 @@
           "id": "services",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Services"
+          "name_en": "Services",
+          "desc_zh": "可选蓝牙服务名称，十六进制ID或UUID的列表，以逗号分隔。",
+          "desc_en": "Comma-separated list of bluetooth service names, hexadecimal IDs, or UUIDs to filter by."
         },
         {
           "id": "device-name",
           "type": "string",
           "name_zh": "设备名",
-          "name_en": "Device name"
+          "name_en": "Device name",
+          "desc_zh": "要过滤的设备名",
+          "desc_en": "Device name to filter by."
         },
         {
           "id": "device-name-prefix",
           "type": "string",
           "name_zh": "设备前缀",
-          "name_en": "Device name prefix"
+          "name_en": "Device name prefix",
+          "desc_zh": "要过滤的设备前缀",
+          "desc_en": "Device name prefix to filter by."
         },
         {
           "id": "optional-services",
           "type": "string",
           "name_zh": "可选服务",
-          "name_en": "Optional services"
+          "name_en": "Optional services",
+          "desc_zh": "可选蓝牙服务名称，十六进制ID或UUID的列表，以逗号分隔。",
+          "desc_en": "Comma-separated list of optional bluetooth service names, hexadecimal IDs, or UUIDs."
         },
         {
           "id": "accept-all-devices",
@@ -280,9 +334,13 @@
               "zh": "是",
               "en": "Yes"
             }
-          }
+          },
+          "desc_zh": "显示所有设备（即时不符合上面条件）",
+          "desc_en": "Whether to display all devices, even if they do not match the above filters."
         }
-      ]
+      ],
+      "display_zh": "请求设备(服务[i]{0}[/i]，设备名称[i]{1}[/i]，设备名称前缀[i]{2}[/i]，可选服务[i]{3}[/i]，接受所有设备[i]{4}[/i])",
+      "display_en": "Request device (services [i]{0}[/i], device name [i]{1}[/i], device name prefix [i]{2}[/i], optional services [i]{3}[/i], accept all devices [i]{4}[/i])"
     },
     {
       "id": "disconnect-device",
@@ -297,9 +355,13 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "要断开连接的设备 留空为默认设备",
+          "desc_en": "The ID of the device to disconnect. Leave empty to disconnect default device."
         }
-      ]
+      ],
+      "display_zh": "与设备[i]{0}[/i]断开连接",
+      "display_en": "Disconnect device [i]{0}[/i]"
     },
     {
       "id": "request-primary-services",
@@ -315,9 +377,13 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "要请求次要服务的设备ID  留空危默认",
+          "desc_en": "The ID of the device to get primary services for. Leave empty for default device."
         }
-      ]
+      ],
+      "display_zh": "为设备 [i]{0}[/i]请求次要服务",
+      "display_en": "Request primary services for device [i]{0}[/i]"
     },
     {
       "id": "request-characteristics",
@@ -333,15 +399,21 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID 为空则为默认设备",
+          "desc_en": "The ID of the device. Leave empty for default device."
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务名称，UUID或十六进制ID，用于获取特征数据。",
+          "desc_en": "The service name, UUID, or hexadecimal ID, to get characteristics for."
         }
-      ]
+      ],
+      "display_zh": "为设备 [i]{0}[/i] 请求蓝牙特性服务 [i]{1}[/i]",
+      "display_en": "Request characteristics for device [i]{0}[/i] service [i]{1}[/i]"
     },
     {
       "id": "read-characteristic-binary",
@@ -357,27 +429,37 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID 为空则为默认设备",
+          "desc_en": "The ID of the device. Leave empty for default device."
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The service name, UUID, or hexadecimal ID."
         },
         {
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         },
         {
           "id": "binary-data",
           "type": "object",
           "name_zh": "终点",
-          "name_en": "Destination"
+          "name_en": "Destination",
+          "desc_zh": "要读取的二进制数据",
+          "desc_en": "A Binary Data object to read the data to."
         }
-      ]
+      ],
+      "display_zh": "从设备[i]{0}[/i] 的服务 [i]{1}[/i] 蓝牙特性 [i]{2}[/i] 读取数据到 {3} 中",
+      "display_en": "Read binary from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i] in to {3}"
     },
     {
       "id": "read-characteristic-value",
@@ -393,21 +475,29 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID 为空则为默认设备",
+          "desc_en": "The ID of the device. Leave empty for default device."
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The service name, UUID, or hexadecimal ID."
         },
         {
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ]
+      ],
+      "display_zh": "从设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 中读取信息",
+      "display_en": "Read value from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
     },
     {
       "id": "write-characteristic-binary",
@@ -423,27 +513,37 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID 为空则为默认设备",
+          "desc_en": "The ID of the device. Leave empty for default device."
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The service name, UUID, or hexadecimal ID."
         },
         {
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         },
         {
           "id": "binary-data",
           "type": "object",
           "name_zh": "数据",
-          "name_en": "Data"
+          "name_en": "Data",
+          "desc_zh": "要写入的二进制值",
+          "desc_en": "A Binary Data object with data to write."
         }
-      ]
+      ],
+      "display_zh": "向设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 写入数据  {3}",
+      "display_en": "Write {3} to device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
     },
     {
       "id": "start-stop-characteristic-notifications",
@@ -458,19 +558,25 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "Device ID"
+          "name_en": "Device ID",
+          "desc_zh": "设备ID 为空则为默认设备",
+          "desc_en": "The ID of the device. Leave empty for default device."
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The service name, UUID, or hexadecimal ID."
         },
         {
           "id": "characteristic",
           "type": "string",
           "name_zh": "特征数据",
-          "name_en": "Characteristic"
+          "name_en": "Characteristic",
+          "desc_zh": "服务名、UUID或十六进制ID。",
+          "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         },
         {
           "id": "notifications",
@@ -490,16 +596,20 @@
               "zh": "停下",
               "en": "Stop"
             }
-          }
+          },
+          "desc_zh": "用来设置启动或停止此特性的通知",
+          "desc_en": "Whether to start or stop notifications for this characteristic."
         }
-      ]
+      ],
+      "display_zh": "{3}设备[i]{0}[/i]服务[i]{1}[/i]特性[i]{2}[/i]",
+      "display_en": "{3} notifications for device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
     }
   ],
   "expressions": [
     {
       "id": "device-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "设备ID",
+      "name_en": "DeviceID",
       "description_zh": "在触发器中调用，相关设备的ID",
       "description_en": "In a trigger, the ID of the relevant device.",
       "expressionName": "DeviceID",
@@ -508,8 +618,8 @@
     },
     {
       "id": "device-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "设备名称",
+      "name_en": "DeviceName",
       "description_zh": "在'当设备连接成功'中，返回带有设备名称的字符串。",
       "description_en": "In 'On device connected', a string with the name of the device.",
       "expressionName": "DeviceName",
@@ -518,8 +628,8 @@
     },
     {
       "id": "primary-service-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "次要服务ID",
+      "name_en": "PrimaryServiceID",
       "description_zh": "在触发器中调用：最近服务的ID",
       "description_en": "In a trigger, the ID of the relevant primary service.",
       "expressionName": "PrimaryServiceID",
@@ -528,8 +638,8 @@
     },
     {
       "id": "characteristic-id",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "特征数据ID",
+      "name_en": "CharacteristicID",
       "description_zh": "在触发器中调用：最近字节集的ID",
       "description_en": "In a trigger, the ID of the relevant characteristic.",
       "expressionName": "CharacteristicID",
@@ -538,8 +648,8 @@
     },
     {
       "id": "primary-service-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "次要服务数量",
+      "name_en": "PrimaryServiceCount",
       "description_zh": "在次要服务加载之后，服务数量",
       "description_en": "After 'On primary services loaded', the number of primary services available for a device.",
       "expressionName": "PrimaryServiceCount",
@@ -550,14 +660,16 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "DeviceID"
+          "name_en": "DeviceID",
+          "desc_zh": "设备ID",
+          "desc_en": "Device ID"
         }
       ]
     },
     {
       "id": "primary-service-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取次要服务",
+      "name_en": "PrimaryServiceAt",
       "description_zh": "在次要服务加载之后，第X个服务的ID",
       "description_en": "After 'On primary services loaded', the primary service identifier at an index.",
       "expressionName": "PrimaryServiceAt",
@@ -568,20 +680,24 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "DeviceID"
+          "name_en": "DeviceID",
+          "desc_zh": "设备ID",
+          "desc_en": "Device ID"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "次要服务的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of primary service"
         }
       ]
     },
     {
       "id": "characteristic-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "特征数据数量",
+      "name_en": "CharacteristicCount",
       "description_zh": "在蓝牙特性加载后，一个服务可用的特性数量",
       "description_en": "After 'On characteristics loaded', the number of characteristics available for a service.",
       "expressionName": "CharacteristicCount",
@@ -592,20 +708,24 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "DeviceID"
+          "name_en": "DeviceID",
+          "desc_zh": "设备ID",
+          "desc_en": "Device ID"
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务ID",
+          "desc_en": "Service identifier"
         }
       ]
     },
     {
       "id": "characteristic-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取特征数据",
+      "name_en": "CharacteristicAt",
       "description_zh": "在 '蓝牙特性加载完成' 条件中，返回的特征数据ID。",
       "description_en": "After 'On characteristics loaded', the characteristic identifier at an index.",
       "expressionName": "CharacteristicAt",
@@ -616,26 +736,32 @@
           "id": "device-id",
           "type": "string",
           "name_zh": "设备ID",
-          "name_en": "DeviceID"
+          "name_en": "DeviceID",
+          "desc_zh": "设备ID",
+          "desc_en": "Device ID"
         },
         {
           "id": "service",
           "type": "string",
           "name_zh": "服务",
-          "name_en": "Service"
+          "name_en": "Service",
+          "desc_zh": "服务ID",
+          "desc_en": "Service identifier"
         },
         {
           "id": "index",
           "type": "number",
           "name_zh": "索引",
-          "name_en": "Index"
+          "name_en": "Index",
+          "desc_zh": "特征数据的索引，从 0 开始计数。",
+          "desc_en": "Zero-based index of characteristic"
         }
       ]
     },
     {
       "id": "characteristic-text",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "设备特征文本",
+      "name_en": "CharacteristicText",
       "description_zh": "在读取值之后，字符串形式的数据",
       "description_en": "After 'Read value', the data as a string.",
       "expressionName": "CharacteristicText",
@@ -644,8 +770,8 @@
     },
     {
       "id": "characteristic-signed-int",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "CharacteristicSignedInteger",
+      "name_en": "CharacteristicSignedInteger",
       "description_zh": "在读取值之后，整数形式的数据",
       "description_en": "After 'Read value', the data as a signed integer.",
       "expressionName": "CharacteristicSignedInteger",
@@ -654,8 +780,8 @@
     },
     {
       "id": "characteristic-unsigned-int",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "CharacteristicUnsignedInteger",
+      "name_en": "CharacteristicUnsignedInteger",
       "description_zh": "在读取值之后，无点形式的数据",
       "description_en": "After 'Read value', the data as an unsigned integer.",
       "expressionName": "CharacteristicUnsignedInteger",
@@ -664,8 +790,8 @@
     },
     {
       "id": "characteristic-float",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "CharacteristicFloat",
+      "name_en": "CharacteristicFloat",
       "description_zh": "在读取值中调用：以浮点数存储的数据",
       "description_en": "After 'Read value', the data as a floating point number.",
       "expressionName": "CharacteristicFloat",

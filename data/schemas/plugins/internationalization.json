@@ -23,15 +23,21 @@
           "id": "comparison",
           "type": "cmp",
           "name_zh": "比较",
-          "name_en": "Comparison"
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the locale strings."
         },
         {
           "id": "locale",
           "type": "string",
           "name_zh": "区域设置",
-          "name_en": "Locale"
+          "name_en": "Locale",
+          "desc_zh": "与当前区域比较的语言区域标识符。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
+          "desc_en": "The locale string to compare against the locale string of the internationalization object"
         }
-      ]
+      ],
+      "display_zh": "当前区域 {1} {0}",
+      "display_en": "current locale {0} {1}"
     }
   ],
   "actions": [
@@ -48,9 +54,13 @@
           "id": "locale",
           "type": "string",
           "name_zh": "区域",
-          "name_en": "Locale"
+          "name_en": "Locale",
+          "desc_zh": "要设置的区域。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
+          "desc_en": "The locale to use."
         }
-      ]
+      ],
+      "display_zh": "设置区域为 [b]{0}[/b]",
+      "display_en": "Set locale [b]{0}[/b]"
     },
     {
       "id": "set-context",
@@ -65,9 +75,13 @@
           "id": "context",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Context"
+          "name_en": "Context",
+          "desc_zh": "设置本地化对象的路径，可以是绝对路径或是相对路径。",
+          "desc_en": "The new current context, can be absolute or relative."
         }
-      ]
+      ],
+      "display_zh": "设置路径为 [b]{0}[/b]",
+      "display_en": "Set context [b]{0}[/b]"
     },
     {
       "id": "push-context",
@@ -82,9 +96,13 @@
           "id": "context",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Context"
+          "name_en": "Context",
+          "desc_zh": "要追加的路径，可以是绝对路径或是相对路径。",
+          "desc_en": "The new context to push, can be absolute or relative."
         }
-      ]
+      ],
+      "display_zh": "追加路径 [b]{0}[/b]",
+      "display_en": "Push context [b]{0}[/b]"
     },
     {
       "id": "pop-context",
@@ -93,7 +111,9 @@
       "description_zh": "弹出本地化对象的列表最后一项元素。",
       "description_en": "Pops the last element of the internationalization's object stack",
       "scriptName": "PopContext",
-      "category": "internationalization"
+      "category": "internationalization",
+      "display_zh": "弹出路径",
+      "display_en": "Pop context"
     },
     {
       "id": "add-string",
@@ -108,15 +128,21 @@
           "id": "context",
           "type": "string",
           "name_zh": "路径",
-          "name_en": "Context"
+          "name_en": "Context",
+          "desc_zh": "要添加文本的路径节点，可以是绝对路径或是相对路径。",
+          "desc_en": "The context where the new string will be added, can be absolute or relative."
         },
         {
           "id": "string",
           "type": "string",
           "name_zh": "字符串",
-          "name_en": "String"
+          "name_en": "String",
+          "desc_zh": "用于添加到本地化对象的字符串。",
+          "desc_en": "The string that will be added to the internationalization object."
         }
-      ]
+      ],
+      "display_zh": "添加文本 [b]{1}[/b] 到节点 [b]{0}[/b]。",
+      "display_en": "Add string [b]{1}[/b] to context [b]{0}[/b]"
     },
     {
       "id": "load-from-json",
@@ -131,16 +157,20 @@
           "id": "json",
           "type": "string",
           "name_zh": "JSON",
-          "name_en": "JSON string"
+          "name_en": "JSON string",
+          "desc_zh": "包含翻译数据的JSON字符串。特定格式请阅读文档。",
+          "desc_en": "JSON string with translation data"
         }
-      ]
+      ],
+      "display_zh": "加载翻译数据 [b]{0}[/b]",
+      "display_en": "Load from JSON [b]{0}[/b]"
     }
   ],
   "expressions": [
     {
       "id": "look-up",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "查找",
+      "name_en": "Lookup",
       "description_zh": "获取当前路径中的本地化字符串。",
       "description_en": "Get the internationalized string at the current context.",
       "expressionName": "Lookup",
@@ -151,14 +181,16 @@
           "id": "context",
           "type": "string",
           "name_zh": "内容",
-          "name_en": "Context"
+          "name_en": "Context",
+          "desc_zh": "本地化对象的路径",
+          "desc_en": "Location within the internationalization object"
         }
       ]
     },
     {
       "id": "look-up-plural",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "查找复数",
+      "name_en": "LookupPlural",
       "description_zh": "根据定义的复数形式规则，在当前路径获取本地化字符串。",
       "description_en": "Get the internationalized string at the current context using the defined pluralization rules.",
       "expressionName": "LookupPlural",
@@ -169,20 +201,24 @@
           "id": "context",
           "type": "string",
           "name_zh": "内容",
-          "name_en": "Context"
+          "name_en": "Context",
+          "desc_zh": "本地化对象的路径",
+          "desc_en": "Location within the internationalization object"
         },
         {
           "id": "count",
           "type": "number",
           "name_zh": "数量",
-          "name_en": "Count"
+          "name_en": "Count",
+          "desc_zh": "用于获取复数形式的值。",
+          "desc_en": "The value used to get the plural form"
         }
       ]
     },
     {
       "id": "current-context",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "当前路径",
+      "name_en": "CurrentContext",
       "description_zh": "获取本地化对象的当前路径。",
       "description_en": "Get the current context of the internationalization object.",
       "expressionName": "CurrentContext",
@@ -191,8 +227,8 @@
     },
     {
       "id": "select-plural",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "选择复数",
+      "name_en": "SelectPlural",
       "description_zh": "获取指定数字的复数形式。",
       "description_en": "Get the plural category for the provided number.",
       "expressionName": "SelectPlural",
@@ -203,14 +239,16 @@
           "id": "plural-number",
           "type": "number",
           "name_zh": "复数数词",
-          "name_en": "PluralNumber"
+          "name_en": "PluralNumber",
+          "desc_zh": "获取复数形式的数字。",
+          "desc_en": "Number to get a plural category for"
         }
       ]
     },
     {
       "id": "plural-categorie-count",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "复数数量",
+      "name_en": "PluralCategoryCount",
       "description_zh": "获取当前语言环境的复数形式的数量。",
       "description_en": "Get amount of plural categories for the current locale.",
       "expressionName": "PluralCategoryCount",
@@ -219,8 +257,8 @@
     },
     {
       "id": "plural-category-at",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "获取复数形式类型",
+      "name_en": "PluralCategoryAt",
       "description_zh": "获取指定的复数形式类型",
       "description_en": "Get the plural category for the given index.",
       "expressionName": "PluralCategoryAt",
@@ -231,14 +269,16 @@
           "id": "category-index",
           "type": "number",
           "name_zh": "分类索引",
-          "name_en": "CategoryIndex"
+          "name_en": "CategoryIndex",
+          "desc_zh": "获取复数形式",
+          "desc_en": "Index of the plural category"
         }
       ]
     },
     {
       "id": "save-to-json",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "导出到JSON",
+      "name_en": "SaveToJSON",
       "description_zh": "获取当前语言环境的翻译字符串，返回JSON格式。",
       "description_en": "Get the translation strings for the current locale in JSON format.",
       "expressionName": "SaveToJSON",
@@ -247,8 +287,8 @@
     },
     {
       "id": "locale",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "区域",
+      "name_en": "Locale",
       "description_zh": "获取本地化对象的区域设置。",
       "description_en": "Get the current locale of the internationalization object.",
       "expressionName": "Locale",
@@ -257,8 +297,8 @@
     },
     {
       "id": "default-locale",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "默认区域",
+      "name_en": "DefaultLocale",
       "description_zh": "获取系统默认的区域设置。",
       "description_en": "Get the default system locale.",
       "expressionName": "DefaultLocale",
@@ -267,8 +307,8 @@
     },
     {
       "id": "format-number-as-decimal",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "格式化数字",
+      "name_en": "FormatNumberAsDecimal",
       "description_zh": "将数字格式化为本地区域设置的小数格式。",
       "description_en": "Format a number as a decimal using the current locale.",
       "expressionName": "FormatNumberAsDecimal",
@@ -279,14 +319,16 @@
           "id": "number",
           "type": "number",
           "name_zh": "数字",
-          "name_en": "Number"
+          "name_en": "Number",
+          "desc_zh": "要格式化的数字。",
+          "desc_en": "The number to format"
         }
       ]
     },
     {
       "id": "format-number-as-percent",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "格式化百分数",
+      "name_en": "FormatNumberAsPercent",
       "description_zh": "将数字格式化为本地区域设置的百分比。",
       "description_en": "Format a number as a percentage using the current locale.",
       "expressionName": "FormatNumberAsPercent",
@@ -297,14 +339,16 @@
           "id": "number",
           "type": "number",
           "name_zh": "数字",
-          "name_en": "Number"
+          "name_en": "Number",
+          "desc_zh": "要格式化的数字",
+          "desc_en": "The number to format"
         }
       ]
     },
     {
       "id": "format-number-as-currency",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "转换货币格式",
+      "name_en": "FormatNumberAsCurrency",
       "description_zh": "将数字格式化为本地区域设置的货币。",
       "description_en": "Format a number as a currency using the current locale.",
       "expressionName": "FormatNumberAsCurrency",
@@ -315,26 +359,32 @@
           "id": "number",
           "type": "number",
           "name_zh": "数字",
-          "name_en": "Number"
+          "name_en": "Number",
+          "desc_zh": "数字的格式",
+          "desc_en": "The number to format"
         },
         {
           "id": "currency",
           "type": "string",
           "name_zh": "货币",
-          "name_en": "Currency"
+          "name_en": "Currency",
+          "desc_zh": "货币代码",
+          "desc_en": "The currency code"
         },
         {
           "id": "currency-display",
           "type": "string",
           "name_zh": "货币符号",
-          "name_en": "CurrencyDisplay"
+          "name_en": "CurrencyDisplay",
+          "desc_zh": "货币的显示格式。可以是 'symbol'、'narrowSymbol'、'code' 或 'name' 中的任意一种。默认为 'symbol'。",
+          "desc_en": "The currency display format. Can be any of 'symbol', 'narrowSymbol', 'code' or 'name'. Defaults to 'symbol'"
         }
       ]
     },
     {
       "id": "format-number-with-unit",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "格式化数字单位",
+      "name_en": "FormatNumberWithUnit",
       "description_zh": "将数字格式化为当前区域的货币格式。",
       "description_en": "Format a number using a specific unit and the current locale.",
       "expressionName": "FormatNumberWithUnit",
@@ -345,26 +395,32 @@
           "id": "number",
           "type": "number",
           "name_zh": "数字",
-          "name_en": "Number"
+          "name_en": "Number",
+          "desc_zh": "要格式化的数字。",
+          "desc_en": "The number to format"
         },
         {
           "id": "unit",
           "type": "string",
           "name_zh": "单位",
-          "name_en": "Unit"
+          "name_en": "Unit",
+          "desc_zh": "用于格式化的单位",
+          "desc_en": "The unit to use for formatting"
         },
         {
           "id": "unit-display",
           "type": "string",
           "name_zh": "单位显示",
-          "name_en": "UnitDisplay"
+          "name_en": "UnitDisplay",
+          "desc_zh": "单位显示格式。可以是 'long', 'short' or 'narrow'。默认为 'short'。",
+          "desc_en": "The unit display format. Can be any of 'long', 'short' or 'narrow'. Defaults to 'short'"
         }
       ]
     },
     {
       "id": "region-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "区域名称",
+      "name_en": "RegionName",
       "description_zh": "获取指定区域的本地化名称。",
       "description_en": "Get the localized name of the provided locale's region",
       "expressionName": "RegionName",
@@ -375,14 +431,16 @@
           "id": "locale",
           "type": "string",
           "name_zh": "地区",
-          "name_en": "RegionLocale"
+          "name_en": "RegionLocale",
+          "desc_zh": "区域代码，用于获取对应的本地化名称。",
+          "desc_en": "The region code to the get a localized name for"
         }
       ]
     },
     {
       "id": "language-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "语言名称",
+      "name_en": "LanguageName",
       "description_zh": "根据当前的语言环境，获取语言的名称。",
       "description_en": "Get the localized name of a language according to the current locale",
       "expressionName": "LanguageName",
@@ -393,14 +451,16 @@
           "id": "language",
           "type": "string",
           "name_zh": "语言区域",
-          "name_en": "LanguageLocale"
+          "name_en": "LanguageLocale",
+          "desc_zh": "根据当前的语言环境，获取语言的区域。",
+          "desc_en": "The locale to the get a localized language name for"
         }
       ]
     },
     {
       "id": "currency-name",
-      "name_zh": "",
-      "name_en": "",
+      "name_zh": "货币名称",
+      "name_en": "CurrencyName",
       "description_zh": "根据当前的语言环境，获取货币的本地化名称。",
       "description_en": "Get the localized name of a currency according to the current locale",
       "expressionName": "CurrencyName",
@@ -411,7 +471,9 @@
           "id": "currency",
           "type": "string",
           "name_zh": "货币符号",
-          "name_en": "CurrencyCode"
+          "name_en": "CurrencyCode",
+          "desc_zh": "获取本地区域货币的货币符号。",
+          "desc_en": "The currency code to the get a localized currency name for"
         }
       ]
     }
