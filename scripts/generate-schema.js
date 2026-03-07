@@ -37,7 +37,7 @@ const TRANSLATION_CSV = 'zh_r475.csv';  // 来自 POEditor
 
 // 本地开发资源 (不纳入版本控制)
 const LOCAL_DIR = path.join(ROOT_DIR, '.local');
-const R466_SOURCE = 'construct-source/r466';  // Construct 3 r466 源码
+const R466_SOURCE = 'construct-source/r475-2';  // Construct 3 r475-2 源码
 const MANUAL_DATA = 'manual-data/data/construct-3';  // 手册数据
 
 const R466_DIR = path.join(LOCAL_DIR, R466_SOURCE);

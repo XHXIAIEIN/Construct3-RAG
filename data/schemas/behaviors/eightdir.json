@@ -14,9 +14,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving",
       "display_zh": "{my} 正在移动",
-      "display_en": "{my} is moving"
+      "display_en": "{my} is moving",
+      "scriptName": "IsMoving"
     },
     {
       "id": "compare-speed",
@@ -24,6 +24,8 @@
       "name_en": "Compare speed",
       "description_zh": "与对象当前的速度进行比较。",
       "description_en": "Compare the current speed of the object.",
+      "display_zh": "{my} 速度 {0} {1}",
+      "display_en": "{my} speed {0} {1}",
       "scriptName": "CompareSpeed",
       "params": [
         {
@@ -42,9 +44,7 @@
           "desc_zh": "速度值，以像素/秒为单位，与对象当前的速度进行比较。",
           "desc_en": "The speed, in pixels per second, to compare the current speed to."
         }
-      ],
-      "display_zh": "{my} 速度 {0} {1}",
-      "display_en": "{my} speed {0} {1}"
+      ]
     },
     {
       "id": "is-enabled",
@@ -52,9 +52,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     },
     {
       "id": "is-allow-sliding",
@@ -62,9 +62,9 @@
       "name_en": "Allows sliding",
       "description_zh": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。",
       "description_en": "Test if the behavior allows sliding along solids.",
-      "scriptName": "IsAllowSliding",
       "display_zh": "启动 {my} 沿边缘滑行",
-      "display_en": "{my} allows sliding"
+      "display_en": "{my} allows sliding",
+      "scriptName": "IsAllowSliding"
     }
   ],
   "actions": [
@@ -74,9 +74,9 @@
       "name_en": "Stop",
       "description_zh": "设置对象的移动速度为0",
       "description_en": "Set the speed to zero.",
-      "scriptName": "Stop",
       "display_zh": "{my} 停止移动",
-      "display_en": "Stop {my}"
+      "display_en": "Stop {my}",
+      "scriptName": "Stop"
     },
     {
       "id": "reverse",
@@ -84,9 +84,9 @@
       "name_en": "Reverse",
       "description_zh": "使对象进行反向移动。",
       "description_en": "Invert the direction of motion.",
-      "scriptName": "Reverse",
       "display_zh": "{my} 转向",
-      "display_en": "Reverse {my}"
+      "display_en": "Reverse {my}",
+      "scriptName": "Reverse"
     },
     {
       "id": "set-ignoring-input",
@@ -94,6 +94,8 @@
       "name_en": "Set ignoring input",
       "description_zh": "是否屏蔽玩家对该对象移动的控制行为。",
       "description_en": "Set whether to ignore the controls for this movement.",
+      "display_zh": "{my} {0}控制",
+      "display_en": "{0} {my} user input",
       "scriptName": "SetIgnoreInput",
       "params": [
         {
@@ -101,6 +103,8 @@
           "type": "combo",
           "name_zh": "输入",
           "name_en": "Input",
+          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
+          "desc_en": "Set whether to ignore the controls for this movement.",
           "items": [
             "stop-ignoring",
             "start-ignoring"
@@ -114,13 +118,9 @@
               "zh": "开始屏蔽",
               "en": "Start ignoring"
             }
-          },
-          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
-          "desc_en": "Set whether to ignore the controls for this movement."
+          }
         }
-      ],
-      "display_zh": "{my} {0}控制",
-      "display_en": "{0} {my} user input"
+      ]
     },
     {
       "id": "set-speed",
@@ -128,6 +128,8 @@
       "name_en": "Set speed",
       "description_zh": "设置对象当前的移动速度。",
       "description_en": "Set the object's current speed.",
+      "display_zh": "设置 {my}移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} speed to [i]{0}[/i]",
       "scriptName": "SetSpeed",
       "params": [
         {
@@ -138,9 +140,7 @@
           "desc_zh": "设置移动速度，以像素/秒为单位。",
           "desc_en": "The new speed of the object to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}移动速度为[i]{0}[/i]",
-      "display_en": "Set {my} speed to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-max-speed",
@@ -148,6 +148,8 @@
       "name_en": "Set max speed",
       "description_zh": "设置对象的最大移动速度。",
       "description_en": "Set the object's maximum speed.",
+      "display_zh": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} maximum speed to [i]{0}[/i]",
       "scriptName": "SetMaxSpeed",
       "params": [
         {
@@ -158,9 +160,7 @@
           "desc_zh": "设置最大移动速度，以像素/秒为单位。",
           "desc_en": "The new maximum speed of the object to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}最大移动速度为[i]{0}[/i]",
-      "display_en": "Set {my} maximum speed to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-acceleration",
@@ -168,6 +168,8 @@
       "name_en": "Set acceleration",
       "description_zh": "设置对象的加速度。",
       "description_en": "Set the object's acceleration.",
+      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
+      "display_en": "Set {my} acceleration to [i]{0}[/i]",
       "scriptName": "SetAcceleration",
       "params": [
         {
@@ -178,9 +180,7 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The new acceleration of the object to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
-      "display_en": "Set {my} acceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-deceleration",
@@ -188,6 +188,8 @@
       "name_en": "Set deceleration",
       "description_zh": "设置对象的减速度。",
       "description_en": "Set the object's deceleration.",
+      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
+      "display_en": "Set {my} deceleration to [i]{0}[/i]",
       "scriptName": "SetDeceleration",
       "params": [
         {
@@ -198,9 +200,7 @@
           "desc_zh": "从移动状态至完全停止的减速度，以像素/秒为单位。",
           "desc_en": "The new deceleration of the object to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
-      "display_en": "Set {my} deceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "simulate-control",
@@ -208,6 +208,8 @@
       "name_en": "Simulate control",
       "description_zh": "模拟玩家按下按键，来控制角色行动。",
       "description_en": "Control the movement by events.",
+      "display_zh": "控制{my}{0}",
+      "display_en": "Simulate {my} pressing {0}",
       "scriptName": "SimulateControl",
       "params": [
         {
@@ -215,6 +217,8 @@
           "type": "combo",
           "name_zh": "控制",
           "name_en": "Control",
+          "desc_zh": "模拟玩家按下按键，来控制角色行动。",
+          "desc_en": "The movement control to simulate pressing.",
           "items": [
             "left",
             "right",
@@ -238,13 +242,9 @@
               "zh": "向下移动",
               "en": "Down"
             }
-          },
-          "desc_zh": "模拟玩家按下按键，来控制角色行动。",
-          "desc_en": "The movement control to simulate pressing."
+          }
         }
-      ],
-      "display_zh": "控制{my}{0}",
-      "display_en": "Simulate {my} pressing {0}"
+      ]
     },
     {
       "id": "set-enabled",
@@ -252,6 +252,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -259,6 +261,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -272,13 +276,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-vector-x",
@@ -286,6 +286,8 @@
       "name_en": "Set vector X",
       "description_zh": "设置 X 轴方向的运动向量。",
       "description_en": "Set the X component of motion.",
+      "display_zh": "设置 {my}向量X为[b]{0}[/b]",
+      "display_en": "Set {my} vector X to [b]{0}[/b]",
       "scriptName": "SetVectorX",
       "params": [
         {
@@ -296,9 +298,7 @@
           "desc_zh": "在X轴方向的运动向量，以每秒像素为单位。大于 0 将向右运动，小于 0 则向左运动。最终速度不会超过最大速度属性。",
           "desc_en": "The X component of motion to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}向量X为[b]{0}[/b]",
-      "display_en": "Set {my} vector X to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-vector-y",
@@ -306,6 +306,8 @@
       "name_en": "Set vector Y",
       "description_zh": "设置 Y 轴方向的运动向量。",
       "description_en": "Set the Y component of motion.",
+      "display_zh": "设置 {my}向量Y为[b]{0}[/b]",
+      "display_en": "Set {my} vector Y to [b]{0}[/b]",
       "scriptName": "SetVectorY",
       "params": [
         {
@@ -316,9 +318,7 @@
           "desc_zh": "在Y轴方向的运动向量，以每秒像素为单位。大于 0 将向上运动，小于 0 则向下运动。最终速度不会超过最大速度属性。",
           "desc_en": "The Y component of motion to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}向量Y为[b]{0}[/b]",
-      "display_en": "Set {my} vector Y to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-default-controls",
@@ -326,6 +326,8 @@
       "name_en": "Set default controls",
       "description_zh": "更改默认开启控制的设置。",
       "description_en": "Change the default controls setting.",
+      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
+      "display_en": "Set {my} default controls [b]{0}[/b]",
       "scriptName": "SetDefaultControls",
       "params": [
         {
@@ -336,9 +338,7 @@
           "desc_zh": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。",
           "desc_en": "Whether to enable or disable the behavior default controls."
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
-      "display_en": "Set {my} default controls [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-allow-sliding",
@@ -346,6 +346,8 @@
       "name_en": "Set allow sliding",
       "description_zh": "设置启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。",
       "description_en": "Set whether the behavior allows sliding along solids.",
+      "display_zh": "设置 {my}[b]{0}[/b]沿边缘滑行",
+      "display_en": "Set {my} allow sliding [b]{0}[/b]",
       "scriptName": "SetAllowSliding",
       "params": [
         {
@@ -356,9 +358,7 @@
           "desc_zh": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。",
           "desc_en": "If enabled, moving along sloped obstacles allows sliding along them rather than stopping."
         }
-      ],
-      "display_zh": "设置 {my}[b]{0}[/b]沿边缘滑行",
-      "display_en": "Set {my} allow sliding [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

@@ -14,9 +14,9 @@
       "name_en": "Is pinned",
       "description_zh": "检查对象当前是否已被固定到另一个对象。",
       "description_en": "Object is currently pinned to another object.",
-      "scriptName": "IsPinned",
       "display_zh": "{my} 已固定",
-      "display_en": "{my} is pinned"
+      "display_en": "{my} is pinned",
+      "scriptName": "IsPinned"
     },
     {
       "id": "will-destroy",
@@ -24,9 +24,9 @@
       "name_en": "Will destroy with pinned object",
       "description_zh": "如果被固定的对象被销毁时，该对象也将被销毁。",
       "description_en": "True if the object will be destroyed when the object it is pinned to is destroyed.",
-      "scriptName": "WillDestroy",
       "display_zh": "{my} 与被固定对象一起销毁",
-      "display_en": "{my} will destroy with pinned object"
+      "display_en": "{my} will destroy with pinned object",
+      "scriptName": "WillDestroy"
     }
   ],
   "actions": [
@@ -36,6 +36,8 @@
       "name_en": "Pin to object",
       "description_zh": "把对象固定另一个对象上",
       "description_en": "Pin the object to another object.",
+      "display_zh": "固定 {my} 到 {0} ({1})",
+      "display_en": "{my} Pin to {0} ({1})",
       "scriptName": "Pin",
       "isDeprecated": true,
       "params": [
@@ -52,6 +54,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "选择要更改的对象属性。",
+          "desc_en": "Choose which properties of the object to update.",
           "items": [
             "position-angle",
             "position-only",
@@ -80,13 +84,9 @@
               "zh": "小节方式",
               "en": "Bar style"
             }
-          },
-          "desc_zh": "选择要更改的对象属性。",
-          "desc_en": "Choose which properties of the object to update."
+          }
         }
-      ],
-      "display_zh": "固定 {my} 到 {0} ({1})",
-      "display_en": "{my} Pin to {0} ({1})"
+      ]
     },
     {
       "id": "pin-to-object-distance",
@@ -94,6 +94,8 @@
       "name_en": "Pin at distance",
       "description_zh": "通过限制对象到另一个对象的距离来将该对象固定到另一个对象上。",
       "description_en": "Pin the object to another object by restricting its distance to that object.",
+      "display_zh": "{my} 固定到 {0} (模式: {1})",
+      "display_en": "{my} Pin to {0} {1}",
       "scriptName": "PinByDistance",
       "params": [
         {
@@ -109,6 +111,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "选择一种限制距离的方式",
+          "desc_en": "Choose the distance limitation to use for the pin.",
           "items": [
             "rope-style",
             "bar-style"
@@ -122,13 +126,9 @@
               "zh": "条形(固定距离)",
               "en": "Bar style (fixed distance)"
             }
-          },
-          "desc_zh": "选择一种限制距离的方式",
-          "desc_en": "Choose the distance limitation to use for the pin."
+          }
         }
-      ],
-      "display_zh": "{my} 固定到 {0} (模式: {1})",
-      "display_en": "{my} Pin to {0} {1}"
+      ]
     },
     {
       "id": "pin-to-object-properties",
@@ -136,6 +136,8 @@
       "name_en": "Pin to object",
       "description_zh": "将对象固定到另一个对象上。",
       "description_en": "Pin the object to another object.",
+      "display_zh": "{my} 固定到 {0} (X: [i]{1}[/i], Y: [i]{2}[/i], 角度: [i]{3}[/i], 宽度: [i]{4}[/i], 高度: [i]{5}[/i], Z: [i]{6}[/i])",
+      "display_en": "{my} Pin to {0} (X: [i]{1}[/i], Y: [i]{2}[/i], angle: [i]{3}[/i], width: [i]{4}[/i], height: [i]{5}[/i], Z: [i]{6}[/i])",
       "scriptName": "PinByProperties",
       "params": [
         {
@@ -151,33 +153,35 @@
           "type": "boolean",
           "name_zh": "X",
           "name_en": "X",
-          "initialValue": "true",
           "desc_zh": "固定对象的X坐标。",
-          "desc_en": "Pin the object's X co-ordinate."
+          "desc_en": "Pin the object's X co-ordinate.",
+          "initialValue": "true"
         },
         {
           "id": "y",
           "type": "boolean",
           "name_zh": "Y",
           "name_en": "Y",
-          "initialValue": "true",
           "desc_zh": "固定对象的Y坐标。",
-          "desc_en": "Pin the object's Y co-ordinate."
+          "desc_en": "Pin the object's Y co-ordinate.",
+          "initialValue": "true"
         },
         {
           "id": "angle",
           "type": "boolean",
           "name_zh": "角度",
           "name_en": "Angle",
-          "initialValue": "true",
           "desc_zh": "固定对象的角度。",
-          "desc_en": "Pin the object's angle."
+          "desc_en": "Pin the object's angle.",
+          "initialValue": "true"
         },
         {
           "id": "width-type",
           "type": "combo",
           "name_zh": "宽度",
           "name_en": "Width",
+          "desc_zh": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
+          "desc_en": "Pin the object's width, either by absolute difference or relative scale.",
           "items": [
             "no",
             "absolute",
@@ -196,15 +200,15 @@
               "zh": "比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
-          "desc_en": "Pin the object's width, either by absolute difference or relative scale."
+          }
         },
         {
           "id": "height-type",
           "type": "combo",
           "name_zh": "高度",
           "name_en": "Height",
+          "desc_zh": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
+          "desc_en": "Pin the object's height, either by absolute difference or relative scale.",
           "items": [
             "no",
             "absolute",
@@ -223,9 +227,7 @@
               "zh": "比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
-          "desc_en": "Pin the object's height, either by absolute difference or relative scale."
+          }
         },
         {
           "id": "z",
@@ -235,9 +237,7 @@
           "desc_zh": "固定到对象的Z轴视距位置。",
           "desc_en": "Pin the object's Z elevation."
         }
-      ],
-      "display_zh": "{my} 固定到 {0} (X: [i]{1}[/i], Y: [i]{2}[/i], 角度: [i]{3}[/i], 宽度: [i]{4}[/i], 高度: [i]{5}[/i], Z: [i]{6}[/i])",
-      "display_en": "{my} Pin to {0} (X: [i]{1}[/i], Y: [i]{2}[/i], angle: [i]{3}[/i], width: [i]{4}[/i], height: [i]{5}[/i], Z: [i]{6}[/i])"
+      ]
     },
     {
       "id": "pin-to-object-imagepoint",
@@ -245,6 +245,8 @@
       "name_en": "Pin to image point",
       "description_zh": "将对象固定到另一个对象的图像点上。",
       "description_en": "Pin the object to another object's image point.",
+      "display_zh": "{my} 固定到 {0} (图像点 [i]{1}[/i], 角度:[i]{2}[/i], 宽度:[i]{3}[/i], 高度: [i]{4}[/i], Z: [i]{5}[/i])",
+      "display_en": "{my} Pin to {0} (image point [i]{1}[/i], angle: [i]{2}[/i], width: [i]{3}[/i], height: [i]{4}[/i], Z: [i]{5}[/i])",
       "scriptName": "PinByImagePoint",
       "params": [
         {
@@ -268,15 +270,17 @@
           "type": "boolean",
           "name_zh": "角度",
           "name_en": "Angle",
-          "initialValue": "true",
           "desc_zh": "固定对象的角度。",
-          "desc_en": "Pin the object's angle."
+          "desc_en": "Pin the object's angle.",
+          "initialValue": "true"
         },
         {
           "id": "width-type",
           "type": "combo",
           "name_zh": "宽度",
           "name_en": "Width",
+          "desc_zh": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
+          "desc_en": "Pin the object's width, either by absolute difference or relative scale.",
           "items": [
             "no",
             "absolute",
@@ -295,15 +299,15 @@
               "zh": "比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "固定的对象宽度改变时，如何设置对象的宽度。相同的变化值，或相对比例。",
-          "desc_en": "Pin the object's width, either by absolute difference or relative scale."
+          }
         },
         {
           "id": "height-type",
           "type": "combo",
           "name_zh": "高度",
           "name_en": "Height",
+          "desc_zh": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
+          "desc_en": "Pin the object's height, either by absolute difference or relative scale.",
           "items": [
             "no",
             "absolute",
@@ -322,9 +326,7 @@
               "zh": "比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "固定的对象高度改变时，如何设置对象的高度。相同的变化值，或相对比例。",
-          "desc_en": "Pin the object's height, either by absolute difference or relative scale."
+          }
         },
         {
           "id": "z",
@@ -334,9 +336,7 @@
           "desc_zh": "固定到对象的视距高度。",
           "desc_en": "Pin the object's Z elevation."
         }
-      ],
-      "display_zh": "{my} 固定到 {0} (图像点 [i]{1}[/i], 角度:[i]{2}[/i], 宽度:[i]{3}[/i], 高度: [i]{4}[/i], Z: [i]{5}[/i])",
-      "display_en": "{my} Pin to {0} (image point [i]{1}[/i], angle: [i]{2}[/i], width: [i]{3}[/i], height: [i]{4}[/i], Z: [i]{5}[/i])"
+      ]
     },
     {
       "id": "set-pin-distance",
@@ -344,6 +344,8 @@
       "name_en": "Set pin distance",
       "description_zh": "使用'固定到距离'时，设置距离限制。",
       "description_en": "When using 'Pin at distance', set the distance limit.",
+      "display_zh": "设置 {my} 固定距离 [i]{0}[/i]",
+      "display_en": "Set {my} distance to [i]{0}[/i]",
       "scriptName": "SetPinDistance",
       "params": [
         {
@@ -354,9 +356,7 @@
           "desc_zh": "设置的距离限制，以像素为单位。",
           "desc_en": "The distance limit to use, in pixels."
         }
-      ],
-      "display_zh": "设置 {my} 固定距离 [i]{0}[/i]",
-      "display_en": "Set {my} distance to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-destroy",
@@ -364,6 +364,8 @@
       "name_en": "Set destroy with pinned object",
       "description_zh": "设置固定的对象被销毁时，是否也将该对象销毁。",
       "description_en": "Set whether to destroy this object if the object it is pinned to is destroyed.",
+      "display_zh": "设置 {my}与被固定对象一起销毁 [i]{0}[/i]",
+      "display_en": "Set {my} destroy with pinned object [i]{0}[/i]",
       "scriptName": "SetDestroy",
       "params": [
         {
@@ -374,9 +376,7 @@
           "desc_zh": "固定的对象被销毁时，是否也将该对象销毁。",
           "desc_en": "Whether to destroy this object if the object it is pinned to is destroyed."
         }
-      ],
-      "display_zh": "设置 {my}与被固定对象一起销毁 [i]{0}[/i]",
-      "display_en": "Set {my} destroy with pinned object [i]{0}[/i]"
+      ]
     },
     {
       "id": "unpin",
@@ -384,9 +384,9 @@
       "name_en": "Unpin",
       "description_zh": "解除固定到其他对象。",
       "description_en": "Unpin the object.",
-      "scriptName": "Unpin",
       "display_zh": "{my} 取消固定",
-      "display_en": "{my} Unpin"
+      "display_en": "{my} Unpin",
+      "scriptName": "Unpin"
     }
   ],
   "expressions": [

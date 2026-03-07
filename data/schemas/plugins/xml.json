@@ -17,6 +17,8 @@
       "name_en": "For each node",
       "description_zh": "迭代XPath表达式返回的节点",
       "description_en": "Iterate the nodes returned by an XPath expression.",
+      "display_zh": "遍历节点 [i]{0}[/i]",
+      "display_en": "For each node [i]{0}[/i]",
       "scriptName": "ForEach",
       "category": "xml",
       "params": [
@@ -28,9 +30,7 @@
           "desc_zh": "要计算的XPath表达式，返回一系列要迭代的节点",
           "desc_en": "The XPath expression to evaluate, returning a series of nodes to iterate."
         }
-      ],
-      "display_zh": "遍历节点 [i]{0}[/i]",
-      "display_en": "For each node [i]{0}[/i]"
+      ]
     }
   ],
   "actions": [
@@ -40,7 +40,10 @@
       "name_en": "Load",
       "description_zh": "从字符串中加载 XML 文档",
       "description_en": "Load an XML document from a string.",
+      "display_zh": "加载XML数据 [i]{0}[/i]",
+      "display_en": "Load XML document from string [i]{0}[/i]",
       "scriptName": "Load",
+      "highlight": true,
       "category": "document",
       "params": [
         {
@@ -51,9 +54,7 @@
           "desc_zh": "包含待加载的XML文档的字符串",
           "desc_en": "A string containing the XML document to load."
         }
-      ],
-      "display_zh": "加载XML数据 [i]{0}[/i]",
-      "display_en": "Load XML document from string [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

@@ -223,7 +223,5 @@
       "zh": "很遗憾通知您，由于此插件 (由 [i]{0}[/i] 开发的 [i]{1}[/i]) 版本过旧导致无法被安装。此插件版本被支持的最后一个发布版本是 [b]r449[/b] LTS 版本。请查看 [a1]LTS 发布页面[/a1]，或尝试联系插件开发者，获取此插件的最新版本。",
       "en": "The addon [i]{0}[/i] by [i]{1}[/i] is a legacy (SDK v1) addon which is no longer supported in this release of Construct and so cannot be installed. The last release that supports legacy addons is the [b]r449[/b] LTS release. See the [a1]LTS releases page[/a1], or contact the addon developer for an updated version of the addon."
     }
-  },
-  "description_en": "The Addon Manager shows a detailed list of all addons (plugins, behaviors, effects and themes) available in Construct 3. It can be opened via Menu ► View ► Addon Manager . By default built-in addons are included in the list. Third-party addons appear at the top so you can easily see what you have installed. You can also uncheck Show built-in in the toolbar to reduce the list to only your installed addons. The search field also allows filtering the list to help you find an addon. You can find a l",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/addon-manager"
+  }
 }

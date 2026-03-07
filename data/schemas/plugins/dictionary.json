@@ -18,6 +18,8 @@
       "name_en": "Compare value",
       "description_zh": "比较一个字段对应的值。",
       "description_en": "Compare the value at a key.",
+      "display_zh": "字段[b]{0}[/b]的值 {1} [b]{2}[/b]",
+      "display_en": "Key [b]{0}[/b] {1} [b]{2}[/b]",
       "scriptName": "CompareValue",
       "category": "dictionary",
       "params": [
@@ -45,9 +47,7 @@
           "desc_zh": "要比较的值。",
           "desc_en": "The value to compare to."
         }
-      ],
-      "display_zh": "字段[b]{0}[/b]的值 {1} [b]{2}[/b]",
-      "display_en": "Key [b]{0}[/b] {1} [b]{2}[/b]"
+      ]
     },
     {
       "id": "has-key",
@@ -55,6 +55,8 @@
       "name_en": "Has key",
       "description_zh": "检测指定的字段是否已储存。",
       "description_en": "Check if a key name has been stored.",
+      "display_zh": "字段 [b]{0}[/b] 已存在",
+      "display_en": "Has key [b]{0}[/b]",
       "scriptName": "HasKey",
       "category": "dictionary",
       "params": [
@@ -66,9 +68,7 @@
           "desc_zh": "检测指定的字段名称是否存在。",
           "desc_en": "The name of the key to check if exists."
         }
-      ],
-      "display_zh": "字段 [b]{0}[/b] 已存在",
-      "display_en": "Has key [b]{0}[/b]"
+      ]
     },
     {
       "id": "is-empty",
@@ -76,10 +76,10 @@
       "name_en": "Is empty",
       "description_zh": "检测字典是否为空，没有储存任何字段。",
       "description_en": "True if no keys are in storage.",
-      "scriptName": "IsEmpty",
-      "category": "dictionary",
       "display_zh": "如果为空",
-      "display_en": "Is empty"
+      "display_en": "Is empty",
+      "scriptName": "IsEmpty",
+      "category": "dictionary"
     },
     {
       "id": "for-each-key",
@@ -87,10 +87,10 @@
       "name_en": "For each key",
       "description_zh": "对当前字典中的所有字段执行一遍动作。",
       "description_en": "Repeat the event for each key/value pair that has been stored.",
-      "scriptName": "ForEachKey",
-      "category": "for-each",
       "display_zh": "遍历字段",
-      "display_en": "For each key"
+      "display_en": "For each key",
+      "scriptName": "ForEachKey",
+      "category": "for-each"
     },
     {
       "id": "compare-current-value",
@@ -98,6 +98,8 @@
       "name_en": "Compare current value",
       "description_zh": "在循环中遍历当前字段的值。",
       "description_en": "Compare the value at the current key in the for-each loop.",
+      "display_zh": "当前值 {0} [b]{1}[/b]",
+      "display_en": "Current value {0} [b]{1}[/b]",
       "scriptName": "CompareCurrentValue",
       "category": "for-each",
       "params": [
@@ -117,9 +119,7 @@
           "desc_zh": "要比较的值。",
           "desc_en": "The value to compare to."
         }
-      ],
-      "display_zh": "当前值 {0} [b]{1}[/b]",
-      "display_en": "Current value {0} [b]{1}[/b]"
+      ]
     }
   ],
   "actions": [
@@ -129,6 +129,8 @@
       "name_en": "Add key",
       "description_zh": "添加新的字段到字典中，如果字段已存在，则覆盖旧的字段值。",
       "description_en": "Add a new key in to storage. If it already exists, its value will be overwritten.",
+      "display_zh": "添加字段[i]{0}[/i]: [i]{1}[/i]",
+      "display_en": "Add key [i]{0}[/i] with value [i]{1}[/i]",
       "scriptName": "AddKey",
       "category": "dictionary",
       "params": [
@@ -148,9 +150,7 @@
           "desc_zh": "存储到字段的值。",
           "desc_en": "The value to store for the key."
         }
-      ],
-      "display_zh": "添加字段[i]{0}[/i]: [i]{1}[/i]",
-      "display_en": "Add key [i]{0}[/i] with value [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-key",
@@ -158,6 +158,8 @@
       "name_en": "Set key",
       "description_zh": "设置字段的值。如果字段不存在，此操作无效。",
       "description_en": "Set an existing key in to storage. If it does not exist, this will have no effect.",
+      "display_zh": "设置字段[i]{0}[/i]: [i]{1}[/i]",
+      "display_en": "Set key [i]{0}[/i] to value [i]{1}[/i]",
       "scriptName": "SetKey",
       "category": "dictionary",
       "params": [
@@ -177,9 +179,7 @@
           "desc_zh": "存储到字段的值。",
           "desc_en": "The value to store for the key."
         }
-      ],
-      "display_zh": "设置字段[i]{0}[/i]: [i]{1}[/i]",
-      "display_en": "Set key [i]{0}[/i] to value [i]{1}[/i]"
+      ]
     },
     {
       "id": "delete-key",
@@ -187,6 +187,8 @@
       "name_en": "Delete key",
       "description_zh": "从本地存储中删除字段。",
       "description_en": "Delete a key from storage.",
+      "display_zh": "删除字段[i]{0}[/i]",
+      "display_en": "Delete key [i]{0}[/i]",
       "scriptName": "DeleteKey",
       "category": "dictionary",
       "params": [
@@ -198,9 +200,7 @@
           "desc_zh": "要删除的字段名称。",
           "desc_en": "The name of the key to delete."
         }
-      ],
-      "display_zh": "删除字段[i]{0}[/i]",
-      "display_en": "Delete key [i]{0}[/i]"
+      ]
     },
     {
       "id": "clear",
@@ -208,10 +208,10 @@
       "name_en": "Clear",
       "description_zh": "从本地存储中删除所有字段和值，返回空白对象。",
       "description_en": "Delete all keys and values from storage, returning to empty.",
-      "scriptName": "Clear",
-      "category": "dictionary",
       "display_zh": "清空字典",
-      "display_en": "Clear"
+      "display_en": "Clear",
+      "scriptName": "Clear",
+      "category": "dictionary"
     },
     {
       "id": "load",
@@ -219,6 +219,8 @@
       "name_en": "Load",
       "description_zh": "字典文件的JSON格式。如果想希望导入项目的字典文件，通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式获得数组文件的数据导入。",
       "description_en": "Load from a dictionary previously encoded in JSON format.",
+      "display_zh": "导入对象数据[i]{0}[/i]",
+      "display_en": "Load from JSON string [i]{0}[/i]",
       "scriptName": "JSONLoad",
       "category": "json",
       "params": [
@@ -230,9 +232,7 @@
           "desc_zh": "字典文件的JSON格式。如果想希望导入项目的字典文件，通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式获得数组文件的数据导入。",
           "desc_en": "A string of the JSON data to load."
         }
-      ],
-      "display_zh": "导入对象数据[i]{0}[/i]",
-      "display_en": "Load from JSON string [i]{0}[/i]"
+      ]
     },
     {
       "id": "download",
@@ -240,6 +240,8 @@
       "name_en": "Download",
       "description_zh": "将字典的内容下载为JSON文件。",
       "description_en": "Download the contents of the dictionary as a JSON file.",
+      "display_zh": "下载 JSON数据文件 [i]{0}[/i]",
+      "display_en": "Download as JSON data with filename [i]{0}[/i]",
       "scriptName": "JSONDownload",
       "category": "json",
       "params": [
@@ -248,13 +250,11 @@
           "type": "string",
           "name_zh": "文件名",
           "name_en": "Filename",
-          "initialValue": "\"data.json\"",
           "desc_zh": "要下载的文件的名称。",
-          "desc_en": "The name of the file to download."
+          "desc_en": "The name of the file to download.",
+          "initialValue": "\"data.json\""
         }
-      ],
-      "display_zh": "下载 JSON数据文件 [i]{0}[/i]",
-      "display_en": "Download as JSON data with filename [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

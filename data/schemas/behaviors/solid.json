@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为当前是否启用。",
       "description_en": "Test whether the behavior is currently enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -26,6 +26,8 @@
       "name_en": "Set enabled",
       "description_zh": "设置对象启用或禁用实体行为。",
       "description_en": "Set whether the object counts as solid or not.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -33,6 +35,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用实体行为。",
+          "desc_en": "Set whether the object counts as solid or not.",
           "initialValue": "enabled",
           "items": [
             "disabled",
@@ -47,13 +51,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用实体行为。",
-          "desc_en": "Set whether the object counts as solid or not."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-tags",
@@ -61,6 +61,8 @@
       "name_en": "Set tags",
       "description_zh": "设置用于碰撞过滤的实体行为标签。",
       "description_en": "Set the Solid behavior tags used for collision filtering.",
+      "display_zh": "设置 {my}实体标签为[i]{0}[/i]",
+      "display_en": "Set {my} tags [i]{0}[/i]",
       "scriptName": "SetTags",
       "params": [
         {
@@ -71,9 +73,7 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。",
           "desc_en": "A space-separated list of tags to use for collision filtering with this solid."
         }
-      ],
-      "display_zh": "设置 {my}实体标签为[i]{0}[/i]",
-      "display_en": "Set {my} tags [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [],

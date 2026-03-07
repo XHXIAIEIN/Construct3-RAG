@@ -2,16 +2,5 @@
   "id": "timeline",
   "name_zh": "时间轴",
   "name_en": "Timeline",
-  "menuItems": [],
-  "description_en": "The Timeline Bar shows the currently active timeline . Through this control you can add and remove instances and other types of tracks to a timeline, and edit its properties. Using the Timeline Bar Here's a summary of how to use the Timeline Bar. A project can have multiple timelines, each timeline can have multiple instances, and each instance can have multiple property tracks. Tracks then use keyframes to mark points in a timeline. Timelines can also have nested timelines to produce more compl",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/timeline-bar",
-  "sections": [
-    "Using the Timeline Bar",
-    "Edit mode",
-    "Updating keyframes",
-    "Drag & drop",
-    "Auto keyframing",
-    "Note on animating Sprite plugin instances",
-    "More information"
-  ]
+  "menuItems": []
 }

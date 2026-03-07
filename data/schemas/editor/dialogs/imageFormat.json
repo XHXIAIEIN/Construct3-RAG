@@ -50,6 +50,14 @@
     "quality": {
       "zh": "品质(0-100)：",
       "en": "Quality (0-100):"
+    },
+    "texture": {
+      "zh": "当前纹理",
+      "en": "This texture"
+    },
+    "all-textures": {
+      "zh": "所有纹理",
+      "en": "All textures"
     }
   }
 }

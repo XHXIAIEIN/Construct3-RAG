@@ -27,6 +27,23 @@
           "en": "Edge"
         }
       }
+    },
+    {
+      "id": "region",
+      "name_zh": "范围",
+      "name_en": "Region",
+      "description_zh": "选择要检测的区域。",
+      "description_en": "Choose the region to bound the object inside.",
+      "items": {
+        "layout": {
+          "zh": "场景",
+          "en": "Layout"
+        },
+        "viewport": {
+          "zh": "视区",
+          "en": "Viewport"
+        }
+      }
     }
   ]
 }

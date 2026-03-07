@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "dot-size",
@@ -20,7 +24,8 @@
       "name_zh": "dot-size",
       "name_en": "dot-size",
       "initialValue": 0.05,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "dotSize"
     },
     {
       "id": "dot-scale",
@@ -28,7 +33,8 @@
       "name_zh": "dot-scale",
       "name_en": "dot-scale",
       "initialValue": 0.9,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "dotScale"
     }
   ]
 }

@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "color",
@@ -24,7 +28,8 @@
         0,
         0
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "setColor"
     }
   ]
 }

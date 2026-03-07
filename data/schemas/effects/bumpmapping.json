@@ -13,6 +13,10 @@
   "blendsBackground": true,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "light-x",
@@ -20,7 +24,8 @@
       "name_zh": "light-x",
       "name_en": "light-x",
       "initialValue": 0.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "lightx"
     },
     {
       "id": "light-y",
@@ -28,7 +33,8 @@
       "name_zh": "light-y",
       "name_en": "light-y",
       "initialValue": 0.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "lighty"
     },
     {
       "id": "light-z",
@@ -36,7 +42,8 @@
       "name_zh": "light-z",
       "name_en": "light-z",
       "initialValue": 0.1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "lightz"
     },
     {
       "id": "intensity",
@@ -44,7 +51,8 @@
       "name_zh": "intensity",
       "name_en": "intensity",
       "initialValue": 2.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "intensity"
     }
   ]
 }

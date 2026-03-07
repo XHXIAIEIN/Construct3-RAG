@@ -258,8 +258,18 @@
     "controls.event-variable.sub-event": {
       "zh": "局部事件",
       "en": "Sub-event"
+    },
+    "controls.model3d.none-available": {
+      "zh": "<请先添加一个 3D 模型>",
+      "en": "<none - add a 3D model first>"
+    },
+    "controls.model3d.pick-message.title": {
+      "zh": "没有 3D 模型",
+      "en": "No 3D models"
+    },
+    "controls.model3d.pick-message.message": {
+      "zh": "当前项目 '{0}' 中没有任何 3D 模型对象。使用之前先创建一个。",
+      "en": "The project '{0}' has no 3D models that can be shown here. Create one before using this."
     }
-  },
-  "description_en": "The Parameters dialog appears after the Add condition/action dialog , or when editing a condition or action . It allows you to enter parameters such as the X and Y co-ordinate for the Sprite object's Set Position action (shown below). It does not appear for conditions or actions which do not use any parameters, such as the Destroy action. Expressions can be entered for many parameters, which can be anything from a simple value to a sophisticated mathematical calculation. The parameters that are ",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/parameters"
+  }
 }

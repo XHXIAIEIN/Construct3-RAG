@@ -13,6 +13,10 @@
   "blendsBackground": true,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "threshold",
@@ -20,7 +24,8 @@
       "name_zh": "threshold",
       "name_en": "threshold",
       "initialValue": 0.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "threshold"
     }
   ]
 }

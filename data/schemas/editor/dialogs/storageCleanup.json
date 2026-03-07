@@ -83,7 +83,5 @@
       "zh": "[i]Linux CEF 版本可在联网时再次下载。[/i]",
       "en": "[i]Linux CEF versions can be downloaded again while online.[/i]"
     }
-  },
-  "description_en": "The Storage Cleanup dialog is a tool that helps you to free up storage space on the local device. If you run out of available storage space, it can cause errors to appear and may stop some features of Construct working correctly. This tool provides a way to help solve the problem if that happens. In some cases Construct will recommend you use this dialog to free up more space if it detects a storage problem that may have been caused by lack of free space. The Storage Cleanup dialog can be opened",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/storage-cleanup"
+  }
 }

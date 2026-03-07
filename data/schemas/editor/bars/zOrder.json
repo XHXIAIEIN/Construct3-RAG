@@ -2,13 +2,5 @@
   "id": "zOrder",
   "name_zh": "显示顺序",
   "name_en": "Z Order",
-  "menuItems": [],
-  "description_en": "Paid plans only The Z Order Bar allows precise control over which objects appear in front of others. Although Construct is a 2D engine, the term Z order is used to refer to the display order of each individual object. The Z Order Bar To open the Z Order Bar, either right click in the Layout View and select Z Order ► Open Z Order bar... , or tick the check at Menu ► View ► Bars ► Z Order . The Z Order list Instances are listed in the Z Order bar in front-to-back order, i.e. instances at the top o",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/z-order-bar",
-  "sections": [
-    "The Z Order list",
-    "Identifying instances",
-    "Editing the Z Order",
-    "View options"
-  ]
+  "menuItems": []
 }

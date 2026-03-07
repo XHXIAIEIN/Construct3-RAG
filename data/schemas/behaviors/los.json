@@ -14,7 +14,10 @@
       "name_en": "Has LOS to object",
       "description_zh": "测试在视线范围内，可否看到某个对象。",
       "description_en": "Test if there is line-of-sight to any instance of an object type.",
+      "display_zh": "{my} 可发现 {0} 图像点[i]{1}[/i]",
+      "display_en": "Has {my} to {0} image point [i]{1}[/i]",
       "scriptName": "HasLOSToObject",
+      "isStatic": true,
       "params": [
         {
           "id": "object",
@@ -32,9 +35,7 @@
           "desc_zh": "检查视线对象是否能发现另一个对象的图像点，可指定图像点的名称或编号。保留 0 为对象的图像原点。",
           "desc_en": "The name or number of an image point in the object to test line-of-sight to. Leave 0 for object's origin."
         }
-      ],
-      "display_zh": "{my} 可发现 {0} 图像点[i]{1}[/i]",
-      "display_en": "Has {my} to {0} image point [i]{1}[/i]"
+      ]
     },
     {
       "id": "has-los-to-position",
@@ -42,6 +43,8 @@
       "name_en": "Has LOS to position",
       "description_zh": "检测对象是否拥有场景的某个位置的视线。",
       "description_en": "Test if there is line-of-sight to a position in the layout.",
+      "display_zh": "{my} 可发现位置 (目标: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Has {my} to ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "HasLOSToPosition",
       "params": [
         {
@@ -60,9 +63,7 @@
           "desc_zh": "要检查是否拥有视线的Y坐标，以像素为单位。",
           "desc_en": "The Y co-ordinate to test line-of-sight to, in pixels."
         }
-      ],
-      "display_zh": "{my} 可发现位置 (目标: [i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Has {my} to ([i]{0}[/i], [i]{1}[/i])"
+      ]
     },
     {
       "id": "has-los-between-positions",
@@ -70,6 +71,8 @@
       "name_en": "Has LOS between positions",
       "description_zh": "检测在场景任意 2 个位置之间，是否存在视线。",
       "description_en": "Test if there is line-of-sight between any two positions in the layout.",
+      "display_zh": "{my} 可发现位置 (起始: ([i]{0}[/i], [i]{1}[/i]),  方向: [i]{2}[/i], 终点: [i]{3}[/i], [i]{4}[/i])",
+      "display_en": "Has {my} from ([i]{0}[/i], [i]{1}[/i]) angle [i]{2}[/i] to ([i]{3}[/i], [i]{4}[/i])",
       "scriptName": "HasLOSBetweenPositions",
       "params": [
         {
@@ -112,9 +115,7 @@
           "desc_zh": "用于检测视线的第2个Y坐标。",
           "desc_en": "The Y co-ordinate to test line-of-sight to, in pixels."
         }
-      ],
-      "display_zh": "{my} 可发现位置 (起始: ([i]{0}[/i], [i]{1}[/i]),  方向: [i]{2}[/i], 终点: [i]{3}[/i], [i]{4}[/i])",
-      "display_en": "Has {my} from ([i]{0}[/i], [i]{1}[/i]) angle [i]{2}[/i] to ([i]{3}[/i], [i]{4}[/i])"
+      ]
     },
     {
       "id": "ray-intersected",
@@ -122,9 +123,9 @@
       "name_en": "Ray intersected",
       "description_zh": "检查上次发出的射线是否命中障碍物。",
       "description_en": "Test if the last cast ray intersected an obstacle.",
-      "scriptName": "RayIntersected",
       "display_zh": "{my}发现障碍",
-      "display_en": "{my} ray intersected"
+      "display_en": "{my} ray intersected",
+      "scriptName": "RayIntersected"
     }
   ],
   "actions": [
@@ -134,6 +135,8 @@
       "name_en": "Set range",
       "description_zh": "设置视线能覆盖的最远距离，以像素为单位。",
       "description_en": "Set the maximum range the line-of-sight can cover.",
+      "display_zh": "设置 {my}视线范围为[i]{0}[/i]",
+      "display_en": "Set {my} range to [i]{0}[/i]",
       "scriptName": "SetRange",
       "params": [
         {
@@ -141,13 +144,11 @@
           "type": "number",
           "name_zh": "范围",
           "name_en": "Range",
-          "initialValue": "10000",
           "desc_zh": "视线能覆盖的最远距离，以像素为单位。",
-          "desc_en": "The new maximum distance in pixels that line-of-sight can cover."
+          "desc_en": "The new maximum distance in pixels that line-of-sight can cover.",
+          "initialValue": "10000"
         }
-      ],
-      "display_zh": "设置 {my}视线范围为[i]{0}[/i]",
-      "display_en": "Set {my} range to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-cone-of-view",
@@ -155,6 +156,8 @@
       "name_en": "Set cone of view",
       "description_zh": "设置视线在当前朝向能够覆盖的角度范围，以角度为单位。",
       "description_en": "Set the angle range relative to the object angle that line-of-sight can cover.",
+      "display_zh": "设置 {my}视线角度为[i]{0}[/i]°",
+      "display_en": "Set {my} cone of view to [i]{0}[/i]",
       "scriptName": "SetCone",
       "params": [
         {
@@ -162,13 +165,11 @@
           "type": "number",
           "name_zh": "角度",
           "name_en": "Cone of view",
-          "initialValue": "360",
           "desc_zh": "视线在朝向能够覆盖的角度范围，以角度为单位。",
-          "desc_en": "The new angle range in degrees relative to the object angle that line-of-sight can cover."
+          "desc_en": "The new angle range in degrees relative to the object angle that line-of-sight can cover.",
+          "initialValue": "360"
         }
-      ],
-      "display_zh": "设置 {my}视线角度为[i]{0}[/i]°",
-      "display_en": "Set {my} cone of view to [i]{0}[/i]"
+      ]
     },
     {
       "id": "add-obstacle",
@@ -176,6 +177,8 @@
       "name_en": "Add obstacle",
       "description_zh": "添加自定义对象作为视线遮挡物。",
       "description_en": "Add a custom object as an obstacle to line-of-sight.",
+      "display_zh": "{my}添加 {0} 视为遮挡物",
+      "display_en": "Add {my} obstacle {0}",
       "scriptName": "AddObstacle",
       "params": [
         {
@@ -186,9 +189,7 @@
           "desc_zh": "选择一个对象视为遮挡物，阻挡视线。",
           "desc_en": "Choose an object to add as an obstacle, obstructing line-of-sight."
         }
-      ],
-      "display_zh": "{my}添加 {0} 视为遮挡物",
-      "display_en": "Add {my} obstacle {0}"
+      ]
     },
     {
       "id": "clear-obstacles",
@@ -196,9 +197,9 @@
       "name_en": "Clear obstacles",
       "description_zh": "删除所有已添加的障碍。",
       "description_en": "Remove all added obstacle objects.",
-      "scriptName": "ClearObstacles",
       "display_zh": "{my} 清空全部障碍",
-      "display_en": "Clear {my} obstacles"
+      "display_en": "Clear {my} obstacles",
+      "scriptName": "ClearObstacles"
     },
     {
       "id": "cast-ray",
@@ -206,6 +207,8 @@
       "name_en": "Cast ray",
       "description_zh": "在任意两个坐标位置之间投出射线，检查是否有障碍物。",
       "description_en": "Cast a ray between any two positions in the layout, checking for obstructions.",
+      "display_zh": "{my} 发出射线 (起始位置: ({0}, {1}), 目标位置: ({2}, {3}), 使用碰撞单元: [i]{4}[/i])",
+      "display_en": "Cast {my} ray from ({0}, {1}) to ({2}, {3}) (use collision cells [i]{4}[/i])",
       "scriptName": "CastRay",
       "params": [
         {
@@ -213,18 +216,18 @@
           "type": "number",
           "name_zh": "起始 X",
           "name_en": "From X",
-          "initialValue": "Self.X",
           "desc_zh": "用于检测视线的第1个X坐标。",
-          "desc_en": "The ray origin X co-ordinate."
+          "desc_en": "The ray origin X co-ordinate.",
+          "initialValue": "Self.X"
         },
         {
           "id": "from-y",
           "type": "number",
           "name_zh": "起始 Y",
           "name_en": "From Y",
-          "initialValue": "Self.Y",
           "desc_zh": "用于检测视线的第1个Y坐标。",
-          "desc_en": "The ray origin Y co-ordinate."
+          "desc_en": "The ray origin Y co-ordinate.",
+          "initialValue": "Self.Y"
         },
         {
           "id": "to-x",
@@ -247,13 +250,11 @@
           "type": "boolean",
           "name_zh": "使用碰撞单元",
           "name_en": "Use collision cells",
-          "initialValue": "true",
           "desc_zh": "启用此选项通常可以提升性能，但在检查较远的距离时，反而导致性能变慢。",
-          "desc_en": "Enabling usually improves performance, but can be slower over very long distances."
+          "desc_en": "Enabling usually improves performance, but can be slower over very long distances.",
+          "initialValue": "true"
         }
-      ],
-      "display_zh": "{my} 发出射线 (起始位置: ({0}, {1}), 目标位置: ({2}, {3}), 使用碰撞单元: [i]{4}[/i])",
-      "display_en": "Cast {my} ray from ({0}, {1}) to ({2}, {3}) (use collision cells [i]{4}[/i])"
+      ]
     }
   ],
   "expressions": [

@@ -28,6 +28,7 @@
       "description_en": "",
       "scriptName": "OnInterstitialReady",
       "isTrigger": true,
+      "canDebug": true,
       "category": "interstitial"
     },
     {
@@ -38,6 +39,7 @@
       "description_en": "",
       "scriptName": "OnInterstitialError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "interstitial"
     },
     {
@@ -48,6 +50,7 @@
       "description_en": "",
       "scriptName": "OnInterstitialCompleted",
       "isTrigger": true,
+      "canDebug": true,
       "category": "interstitial"
     },
     {
@@ -58,6 +61,7 @@
       "description_en": "",
       "scriptName": "OnInterstitialCancelled",
       "isTrigger": true,
+      "canDebug": true,
       "category": "interstitial"
     }
   ],

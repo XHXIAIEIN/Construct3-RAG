@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "radius",
@@ -20,7 +24,8 @@
       "name_zh": "radius",
       "name_en": "radius",
       "initialValue": 0.33,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "radius"
     },
     {
       "id": "refractive-index",
@@ -28,7 +33,8 @@
       "name_zh": "refractive-index",
       "name_en": "refractive-index",
       "initialValue": 0.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "refractiveIndex"
     },
     {
       "id": "progress",
@@ -36,7 +42,8 @@
       "name_zh": "progress",
       "name_en": "progress",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "progress"
     }
   ]
 }

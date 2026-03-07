@@ -20,6 +20,8 @@
       "name_en": "Compare time stamps",
       "description_zh": "比较两个时间戳。",
       "description_en": "Compare two time stamps.",
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}",
       "scriptName": "CompareTimeStamps",
       "category": "compare",
       "params": [
@@ -47,9 +49,7 @@
           "desc_zh": "要进行比较的第二个时间戳。",
           "desc_en": "The second time stamp to compare."
         }
-      ],
-      "display_zh": "{0} {1} {2}",
-      "display_en": "{0} {1} {2}"
+      ]
     },
     {
       "id": "compare-date-strings",
@@ -57,6 +57,8 @@
       "name_en": "Compare date strings",
       "description_zh": "比较两个长日期。将长日期解析为UTC标准时间戳进行比较。",
       "description_en": "Compare two date strings. The date strings are parsed into UTC time stamps to do the comparison.",
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}",
       "scriptName": "CompareDateStrings",
       "category": "compare",
       "params": [
@@ -84,9 +86,7 @@
           "desc_zh": "要进行比较的第二个长日期。",
           "desc_en": "The second date string to compare."
         }
-      ],
-      "display_zh": "{0} {1} {2}",
-      "display_en": "{0} {1} {2}"
+      ]
     },
     {
       "id": "compare-timestamp-parts",
@@ -94,6 +94,8 @@
       "name_en": "Compare part of time stamps",
       "description_zh": "比较两个时间戳的一部分。",
       "description_en": "Compare a part of two time stamps.",
+      "display_zh": "{0}的{3} {1} {2}的{3}",
+      "display_en": "{3} of {0} {1} {3} of {2}",
       "scriptName": "CompareTimestampParts",
       "category": "compare",
       "params": [
@@ -126,6 +128,8 @@
           "type": "combo",
           "name_zh": "部分",
           "name_en": "Part",
+          "desc_zh": "选择时间戳中要比较的部分。",
+          "desc_en": "The part of the time stamps to compare.",
           "initialValue": "year",
           "items": [
             "year",
@@ -170,13 +174,9 @@
               "zh": "毫秒",
               "en": "Milliseconds"
             }
-          },
-          "desc_zh": "选择时间戳中要比较的部分。",
-          "desc_en": "The part of the time stamps to compare."
+          }
         }
-      ],
-      "display_zh": "{0}的{3} {1} {2}的{3}",
-      "display_en": "{3} of {0} {1} {3} of {2}"
+      ]
     },
     {
       "id": "compare-date-string-parts",
@@ -184,6 +184,8 @@
       "name_en": "Compare part of date strings",
       "description_zh": "比较两个日期字符串的一部分。",
       "description_en": "Compare a part of two date strings.",
+      "display_zh": "{0}的{3} {1} {2}的{3} ({4})",
+      "display_en": "{3} of {0} {1} {3} of {2} using {4} time",
       "scriptName": "CompareDateStringParts",
       "category": "compare",
       "params": [
@@ -216,6 +218,8 @@
           "type": "combo",
           "name_zh": "部分",
           "name_en": "Part",
+          "desc_zh": "选择时间戳中要比较的部分。",
+          "desc_en": "The part of the date strings to compare.",
           "initialValue": "year",
           "items": [
             "year",
@@ -260,15 +264,15 @@
               "zh": "毫秒",
               "en": "Milliseconds"
             }
-          },
-          "desc_zh": "选择时间戳中要比较的部分。",
-          "desc_en": "The part of the date strings to compare."
+          }
         },
         {
           "id": "mode",
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "比较本地时间还是世界标准时间。",
+          "desc_en": "Whether to compare values in local or universal time.",
           "initialValue": "universal",
           "items": [
             "local",
@@ -283,13 +287,9 @@
               "zh": "世界标准时间",
               "en": "Universal"
             }
-          },
-          "desc_zh": "比较本地时间还是世界标准时间。",
-          "desc_en": "Whether to compare values in local or universal time."
+          }
         }
-      ],
-      "display_zh": "{0}的{3} {1} {2}的{3} ({4})",
-      "display_en": "{3} of {0} {1} {3} of {2} using {4} time"
+      ]
     }
   ],
   "actions": [],

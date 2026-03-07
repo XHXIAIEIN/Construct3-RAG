@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "当前已启用移动方式时触发。",
       "description_en": "True if the movement is currently enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my}已启用",
-      "display_en": "Is {my} enabled"
+      "display_en": "Is {my} enabled",
+      "scriptName": "IsEnabled"
     },
     {
       "id": "compare-movement",
@@ -24,6 +24,8 @@
       "name_en": "Compare movement",
       "description_zh": "比较当前的正弦运动属性",
       "description_en": "Compare the current sine movement property.",
+      "display_zh": "{my} 运动类型是{0}",
+      "display_en": "{my} movement is {0}",
       "scriptName": "CompareMovement",
       "params": [
         {
@@ -31,6 +33,8 @@
           "type": "combo",
           "name_zh": "运动类型",
           "name_en": "Movement",
+          "desc_zh": "选择要比较的运动属性",
+          "desc_en": "Select the movement property to compare to.",
           "items": [
             "horizontal",
             "vertical",
@@ -84,13 +88,9 @@
               "zh": "视距高度",
               "en": "Z elevation"
             }
-          },
-          "desc_zh": "选择要比较的运动属性",
-          "desc_en": "Select the movement property to compare to."
+          }
         }
-      ],
-      "display_zh": "{my} 运动类型是{0}",
-      "display_en": "{my} movement is {0}"
+      ]
     },
     {
       "id": "compare-period",
@@ -98,6 +98,8 @@
       "name_en": "Compare period",
       "description_zh": "比较当前的振荡周期，以秒为单位。",
       "description_en": "Compare the current period of the oscillation, in seconds.",
+      "display_zh": "{my} 周期 {0} {1}",
+      "display_en": "{my} period {0} {1}",
       "scriptName": "ComparePeriod",
       "params": [
         {
@@ -116,9 +118,7 @@
           "desc_zh": "用于比较周期的值，以秒为单位。",
           "desc_en": "Value to compare the period to, in seconds."
         }
-      ],
-      "display_zh": "{my} 周期 {0} {1}",
-      "display_en": "{my} period {0} {1}"
+      ]
     },
     {
       "id": "compare-magnitude",
@@ -126,6 +126,8 @@
       "name_en": "Compare magnitude",
       "description_zh": "比较振幅的强度大小。",
       "description_en": "Compare the current magnitude of the oscillation.",
+      "display_zh": "{my} 振幅 {0} {1}",
+      "display_en": "{my} magnitude {0} {1}",
       "scriptName": "CompareMagnitude",
       "params": [
         {
@@ -144,9 +146,7 @@
           "desc_zh": "比较振幅的值",
           "desc_en": "Value to compare the magnitude to."
         }
-      ],
-      "display_zh": "{my} 振幅 {0} {1}",
-      "display_en": "{my} magnitude {0} {1}"
+      ]
     },
     {
       "id": "compare-wave",
@@ -154,6 +154,8 @@
       "name_en": "Compare wave",
       "description_zh": "比较当前的波形函数类型。",
       "description_en": "Compare the current wave function of the behavior.",
+      "display_zh": "设置 {my}波形类型为[b]{0}[/b]",
+      "display_en": "{my} is [b]{0}[/b] wave",
       "scriptName": "CompareWave",
       "params": [
         {
@@ -161,6 +163,8 @@
           "type": "combo",
           "name_zh": "波形",
           "name_en": "Wave",
+          "desc_zh": "选择要比较的波形类型",
+          "desc_en": "Select the wave type to compare to.",
           "items": [
             "sine",
             "triangle",
@@ -189,13 +193,9 @@
               "zh": "方波",
               "en": "Square"
             }
-          },
-          "desc_zh": "选择要比较的波形类型",
-          "desc_en": "Select the wave type to compare to."
+          }
         }
-      ],
-      "display_zh": "设置 {my}波形类型为[b]{0}[/b]",
-      "display_en": "{my} is [b]{0}[/b] wave"
+      ]
     }
   ],
   "actions": [
@@ -205,6 +205,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用移动",
       "description_en": "Enable or disable the movement.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -212,6 +214,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用移动方式。",
+          "desc_en": "Set whether the movement is enabled or disabled.",
           "items": [
             "inactive",
             "active"
@@ -225,13 +229,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用移动方式。",
-          "desc_en": "Set whether the movement is enabled or disabled."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-period",
@@ -239,6 +239,8 @@
       "name_en": "Set period",
       "description_zh": "设置完整播放循环一次的时间，以秒为单位。",
       "description_en": "Set the time in seconds for a complete cycle.",
+      "display_zh": "设置 {my}运动周期为[b]{0}[/b]",
+      "display_en": "Set {my} period to [b]{0}[/b]",
       "scriptName": "SetPeriod",
       "params": [
         {
@@ -249,9 +251,7 @@
           "desc_zh": "循环一次的周期时间，以秒为单位。",
           "desc_en": "The time in seconds for a complete cycle."
         }
-      ],
-      "display_zh": "设置 {my}运动周期为[b]{0}[/b]",
-      "display_en": "Set {my} period to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-magnitude",
@@ -259,6 +259,8 @@
       "name_en": "Set magnitude",
       "description_zh": "设置运动的振幅。",
       "description_en": "Set the magnitude of the movement.",
+      "display_zh": "设置 {my}运动振幅为[b]{0}[/b]",
+      "display_en": "Set {my} magnitude to [b]{0}[/b]",
       "scriptName": "SetMagnitude",
       "params": [
         {
@@ -269,9 +271,7 @@
           "desc_zh": "运动的幅度。振幅越大，影响运动的变化越明显。",
           "desc_en": "The maximum change in pixels (or degrees for Angle)."
         }
-      ],
-      "display_zh": "设置 {my}运动振幅为[b]{0}[/b]",
-      "display_en": "Set {my} magnitude to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-movement",
@@ -279,6 +279,8 @@
       "name_en": "Set movement",
       "description_zh": "设置运动类型",
       "description_en": "Set the type of movement.",
+      "display_zh": "设置 {my}运动类型为[b]{0}[/b]",
+      "display_en": "Set {my} movement to [b]{0}[/b]",
       "scriptName": "SetMovement",
       "params": [
         {
@@ -286,6 +288,8 @@
           "type": "combo",
           "name_zh": "运动",
           "name_en": "Movement",
+          "desc_zh": "选择要比较的运动属性",
+          "desc_en": "Select the movement property to compare to.",
           "items": [
             "horizontal",
             "vertical",
@@ -339,13 +343,9 @@
               "zh": "视距高度",
               "en": "Z elevation"
             }
-          },
-          "desc_zh": "选择要比较的运动属性",
-          "desc_en": "Select the movement property to compare to."
+          }
         }
-      ],
-      "display_zh": "设置 {my}运动类型为[b]{0}[/b]",
-      "display_en": "Set {my} movement to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-wave",
@@ -353,6 +353,8 @@
       "name_en": "Set wave",
       "description_zh": "设置用于计算运动的波形。",
       "description_en": "Set the wave function used to calculate movement.",
+      "display_zh": "设置 {my}波形函数为[b]{0}[/b]",
+      "display_en": "Set {my} wave function to [b]{0}[/b]",
       "scriptName": "SetWave",
       "params": [
         {
@@ -360,6 +362,8 @@
           "type": "combo",
           "name_zh": "波形",
           "name_en": "Wave",
+          "desc_zh": "选择要应用的波形函数。",
+          "desc_en": "Select the wave function to apply.",
           "items": [
             "sine",
             "triangle",
@@ -388,13 +392,9 @@
               "zh": "方波",
               "en": "Square"
             }
-          },
-          "desc_zh": "选择要应用的波形函数。",
-          "desc_en": "Select the wave function to apply."
+          }
         }
-      ],
-      "display_zh": "设置 {my}波形函数为[b]{0}[/b]",
-      "display_en": "Set {my} wave function to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-cycle-position",
@@ -402,6 +402,8 @@
       "name_en": "Set cycle position",
       "description_zh": "设置周期的进度。从 0 到 1 表示周期的位置，若 0.5 则为周期一半的位置。",
       "description_en": "Set the progress through one cycle (the phase).",
+      "display_zh": "设置 {my}周期位置为[b]{0}[/b]",
+      "display_en": "Set {my} cycle position to [b]{0}[/b]",
       "scriptName": "SetPhase",
       "params": [
         {
@@ -412,9 +414,7 @@
           "desc_zh": "设置周期的进度。从 0 到 1 表示周期的位置，若 0.5 则为周期一半的位置。",
           "desc_en": "The progress through one cycle (phase) to set, from 0 to 1."
         }
-      ],
-      "display_zh": "设置 {my}周期位置为[b]{0}[/b]",
-      "display_en": "Set {my} cycle position to [b]{0}[/b]"
+      ]
     },
     {
       "id": "update-initial-state",
@@ -422,9 +422,9 @@
       "name_en": "Update initial state",
       "description_zh": "将此行为的状态重置到初始状态。",
       "description_en": "Set the initial state to oscillate from to the current state of the object.",
-      "scriptName": "UpdateInitialState",
       "display_zh": "初始化 {my} 周期状态",
-      "display_en": "Update {my} initial state"
+      "display_en": "Update {my} initial state",
+      "scriptName": "UpdateInitialState"
     }
   ],
   "expressions": [

@@ -20,6 +20,7 @@
       "description_en": "",
       "scriptName": "OnAchievementReportSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -30,6 +31,7 @@
       "description_en": "",
       "scriptName": "OnAchievementReportError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -40,6 +42,7 @@
       "description_en": "",
       "scriptName": "OnAchievementResetSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -50,6 +53,7 @@
       "description_en": "",
       "scriptName": "OnAchievementResetError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -60,6 +64,7 @@
       "description_en": "",
       "scriptName": "OnAchievementList",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -70,6 +75,7 @@
       "description_en": "",
       "scriptName": "OnAchievementListError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -80,6 +86,7 @@
       "description_en": "",
       "scriptName": "OnAuthSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "authentication"
     },
     {
@@ -90,6 +97,7 @@
       "description_en": "",
       "scriptName": "OnAuthFail",
       "isTrigger": true,
+      "canDebug": true,
       "category": "authentication"
     },
     {
@@ -100,6 +108,7 @@
       "description_en": "",
       "scriptName": "OnPlayerImageSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "authentication"
     },
     {
@@ -110,6 +119,7 @@
       "description_en": "",
       "scriptName": "OnPlayerImageError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "authentication"
     },
     {
@@ -120,6 +130,7 @@
       "description_en": "",
       "scriptName": "OnScoreSubmitSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "leaderboards"
     },
     {
@@ -130,6 +141,7 @@
       "description_en": "",
       "scriptName": "OnScoreSubmitFail",
       "isTrigger": true,
+      "canDebug": true,
       "category": "leaderboards"
     },
     {
@@ -140,6 +152,7 @@
       "description_en": "",
       "scriptName": "OnShowLeaderboardSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "leaderboards"
     },
     {
@@ -150,6 +163,7 @@
       "description_en": "",
       "scriptName": "OnShowLeaderboardError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "leaderboards"
     }
   ],

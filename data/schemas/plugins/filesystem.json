@@ -19,8 +19,11 @@
       "name_en": "On picker complete",
       "description_zh": "执行 '打开文件' 动作后，用户成功选择文件时触发。",
       "description_en": "Triggered after showing a file/folder picker when the user successfully made a selection.",
+      "display_zh": "文件 [b]{0}[/b] 选取完成",
+      "display_en": "On picker [b]{0}[/b] complete",
       "scriptName": "OnPickerComplete",
       "isTrigger": true,
+      "canDebug": true,
       "category": "file-pickers",
       "params": [
         {
@@ -31,9 +34,7 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ],
-      "display_zh": "文件 [b]{0}[/b] 选取完成",
-      "display_en": "On picker [b]{0}[/b] complete"
+      ]
     },
     {
       "id": "on-picker-error",
@@ -41,8 +42,11 @@
       "name_en": "On picker error",
       "description_zh": "执行 '打开文件' 动作后，用户没有选择文件或取消选择窗口时触发。",
       "description_en": "Triggered after showing a file/folder picker when the user did not make a selection (including cancelling).",
+      "display_zh": "文件 [b]{0}[/b] 选取失败",
+      "display_en": "On picker [b]{0}[/b] error",
       "scriptName": "OnPickerError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "file-pickers",
       "params": [
         {
@@ -53,9 +57,7 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ],
-      "display_zh": "文件 [b]{0}[/b] 选取失败",
-      "display_en": "On picker [b]{0}[/b] error"
+      ]
     },
     {
       "id": "has-picker-tag",
@@ -63,6 +65,8 @@
       "name_en": "Has picker tag",
       "description_zh": "检查拾取器标签是否可用。这包括最近打开的选取器。",
       "description_en": "Check if a picker tag is available. This includes pickers remembered from prior sessions.",
+      "display_zh": "包含选取器标签 [b]{0}[/b]",
+      "display_en": "Has picker tag [b]{0}[/b]",
       "scriptName": "HasPickerTag",
       "category": "file-pickers",
       "params": [
@@ -74,9 +78,7 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ],
-      "display_zh": "包含选取器标签 [b]{0}[/b]",
-      "display_en": "Has picker tag [b]{0}[/b]"
+      ]
     },
     {
       "id": "is-supported",
@@ -84,10 +86,10 @@
       "name_en": "Is supported",
       "description_zh": "检测当前运行设备是否支持访问文件系统。",
       "description_en": "Test whether file system operations are supported on the current browser/platform.",
-      "scriptName": "IsSupported",
-      "category": "file-system",
       "display_zh": "设备支持访问文件系统",
-      "display_en": "Is supported"
+      "display_en": "Is supported",
+      "scriptName": "IsSupported",
+      "category": "file-system"
     },
     {
       "id": "on-file-operation-complete",
@@ -95,8 +97,11 @@
       "name_en": "On file operation complete",
       "description_zh": "对文件的操作完成时触发。",
       "description_en": "Triggered upon successfully completing a file operation.",
+      "display_zh": "文件 [b]{0}[/b] 操作完成",
+      "display_en": "On file operation [b]{0}[/b] complete",
       "scriptName": "OnFileOperationComplete",
       "isTrigger": true,
+      "canDebug": true,
       "category": "file-system",
       "params": [
         {
@@ -107,9 +112,7 @@
           "desc_zh": "对应文件操作的标签。",
           "desc_en": "Tag of the corresponding file operation."
         }
-      ],
-      "display_zh": "文件 [b]{0}[/b] 操作完成",
-      "display_en": "On file operation [b]{0}[/b] complete"
+      ]
     },
     {
       "id": "on-file-operation-error",
@@ -117,8 +120,11 @@
       "name_en": "On file operation error",
       "description_zh": "在文件操作失败时触发。",
       "description_en": "Triggered when a file operation fails.",
+      "display_zh": "文件 [b]{0}[/b] 操作失败",
+      "display_en": "On file operation [b]{0}[/b] error",
       "scriptName": "OnFileOperationError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "file-system",
       "params": [
         {
@@ -129,9 +135,7 @@
           "desc_zh": "对应文件操作的标签。",
           "desc_en": "Tag of the corresponding file operation."
         }
-      ],
-      "display_zh": "文件 [b]{0}[/b] 操作失败",
-      "display_en": "On file operation [b]{0}[/b] error"
+      ]
     },
     {
       "id": "on-any-file-operation-complete",
@@ -139,11 +143,12 @@
       "name_en": "On any file operation complete",
       "description_zh": "任意二进制文件操作完成时触发，并返回 '文件标签' 表达式。",
       "description_en": "Triggered upon successfully completing any file operation. The 'FileTag' expression identifies the operation.",
+      "display_zh": "任意二进制文件操作完成",
+      "display_en": "On any file operation complete",
       "scriptName": "OnAnyFileOperationComplete",
       "isTrigger": true,
-      "category": "file-system",
-      "display_zh": "任意二进制文件操作完成",
-      "display_en": "On any file operation complete"
+      "canDebug": true,
+      "category": "file-system"
     },
     {
       "id": "on-any-file-operation-error",
@@ -151,11 +156,12 @@
       "name_en": "On any file operation error",
       "description_zh": "任意文件操作失败时触发，并返回 '文件标签' 表达式。",
       "description_en": "Triggered when any file operation fails. The 'FileTag' expression identifies the operation.",
+      "display_zh": "任意二进制文件操作错误",
+      "display_en": "On any file operation error",
       "scriptName": "OnAnyFileOperationError",
       "isTrigger": true,
-      "category": "file-system",
-      "display_zh": "任意二进制文件操作错误",
-      "display_en": "On any file operation error"
+      "canDebug": true,
+      "category": "file-system"
     },
     {
       "id": "on-dropped-files",
@@ -163,11 +169,12 @@
       "name_en": "On dropped files",
       "description_zh": "检测到有文件拖入到窗口时触发。被拖入的文件，会被视为位于带有 <dropped-files> 标签的文件夹中。",
       "description_en": "Triggered when files are dragged and dropped in to the window.",
+      "display_zh": "拖入文件",
+      "display_en": "On dropped files",
       "scriptName": "OnDroppedFiles",
       "isTrigger": true,
-      "category": "file-system",
-      "display_zh": "拖入文件",
-      "display_en": "On dropped files"
+      "canDebug": true,
+      "category": "file-system"
     },
     {
       "id": "has-file-or-folder",
@@ -175,6 +182,8 @@
       "name_en": "Has file/folder",
       "description_zh": "执行 '列出所有文件' 动作后，检查列表中是否存在文件或文件夹名称。",
       "description_en": "After the 'List content' action completes, check if a name exists in the file or folder lists.",
+      "display_zh": "存在{0}[b]{1}[/b] (区分大小写: [i]{2}[/i])",
+      "display_en": "Has {0} [b]{1}[/b] (case sensitive: [i]{2}[/i])",
       "scriptName": "HasFileOrFolder",
       "category": "folder-operations",
       "params": [
@@ -183,6 +192,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "要检查文件或文件夹。",
+          "desc_en": "Whether to check for a file or folder.",
           "items": [
             "file",
             "folder"
@@ -196,9 +207,7 @@
               "zh": "文件夹",
               "en": "folder"
             }
-          },
-          "desc_zh": "要检查文件或文件夹。",
-          "desc_en": "Whether to check for a file or folder."
+          }
         },
         {
           "id": "name",
@@ -216,9 +225,7 @@
           "desc_zh": "检查名称时是否区分大小写。请注意，某些文件系统必须区分大小写。",
           "desc_en": "Whether to check the name case-sensitively. Note some file systems are case-sensitive."
         }
-      ],
-      "display_zh": "存在{0}[b]{1}[/b] (区分大小写: [i]{2}[/i])",
-      "display_en": "Has {0} [b]{1}[/b] (case sensitive: [i]{2}[/i])"
+      ]
     },
     {
       "id": "desktop-features-supported",
@@ -226,10 +233,10 @@
       "name_en": "Desktop features supported",
       "description_zh": "检查当前运行环境是否支持使用桌面端功能，支持文件夹选择器。仅在使用桌面端导出时有效。",
       "description_en": "True when running on a platform which supports known folder picker tags and desktop-only actions.",
-      "scriptName": "DesktopFeaturesSupported",
-      "category": "desktop-only",
       "display_zh": "支持客户端功能",
-      "display_en": "Desktop features supported"
+      "display_en": "Desktop features supported",
+      "scriptName": "DesktopFeaturesSupported",
+      "category": "desktop-only"
     }
   ],
   "actions": [
@@ -239,6 +246,8 @@
       "name_en": "Add accept type",
       "description_zh": "在下次打开文件选取器时，限定可选的文件类型。",
       "description_en": "Add a category of files allowed to be accepted by the next file picker.",
+      "display_zh": "添加文件类型筛选 (媒体类型: [i]{0}[/i], 文件扩展名: [i]{1}[/i], 文件描述: [i]{2}[/i])",
+      "display_en": "Add accept type [i]{0}[/i] with file extensions [i]{1}[/i] description [i]{2}[/i]",
       "scriptName": "AddAcceptType",
       "category": "file-pickers",
       "params": [
@@ -266,9 +275,7 @@
           "desc_zh": "显示在打开对话框右下角的文件类型的描述信息，用于提示用户。例如: 图像文件。",
           "desc_en": "A description to show to the user for this category, e.g. \"Image files\"."
         }
-      ],
-      "display_zh": "添加文件类型筛选 (媒体类型: [i]{0}[/i], 文件扩展名: [i]{1}[/i], 文件描述: [i]{2}[/i])",
-      "display_en": "Add accept type [i]{0}[/i] with file extensions [i]{1}[/i] description [i]{2}[/i]"
+      ]
     },
     {
       "id": "show-save-file-picker",
@@ -276,6 +283,8 @@
       "name_en": "Show save file picker",
       "description_zh": "显示一个保存文件的选取器，允许用户选择一个要写入的文件。",
       "description_en": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_zh": "保存文件 (选取器标签: [b]{0}[/b], 初始文件名: [i]{2}[/i],  初始位置: [i]{4}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Show save file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], suggested name [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])",
       "scriptName": "ShowSaveFilePicker",
       "isAsync": true,
       "category": "file-pickers",
@@ -293,9 +302,9 @@
           "type": "boolean",
           "name_zh": "接受所有文件类型",
           "name_en": "Show accept all",
-          "initialValue": "true",
           "desc_zh": "是否显示所有文件类型",
-          "desc_en": "Whether to show an accept type that shows all files."
+          "desc_en": "Whether to show an accept type that shows all files.",
+          "initialValue": "true"
         },
         {
           "id": "suggested-name",
@@ -318,6 +327,8 @@
           "type": "combo",
           "name_zh": "初始位置",
           "name_en": "Start in",
+          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "desc_en": "The default folder to show when there are no prior remembered settings.",
           "items": [
             "default",
             "desktop",
@@ -356,13 +367,9 @@
               "zh": "视频",
               "en": "Videos"
             }
-          },
-          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
-          "desc_en": "The default folder to show when there are no prior remembered settings."
+          }
         }
-      ],
-      "display_zh": "保存文件 (选取器标签: [b]{0}[/b], 初始文件名: [i]{2}[/i],  初始位置: [i]{4}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Show save file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], suggested name [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])"
+      ]
     },
     {
       "id": "show-open-file-picker",
@@ -370,6 +377,8 @@
       "name_en": "Show open file picker",
       "description_zh": "显示保存文件的选取器，允许用户选择一个要操作的文件。",
       "description_en": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_zh": "打开文件 (选取器标签: [b]{0}[/b], 初始位置: [i]{4}[/i], 允许多选: [i]{2}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Show open file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], multiple [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])",
       "scriptName": "ShowOpenFilePicker",
       "isAsync": true,
       "category": "file-pickers",
@@ -387,9 +396,9 @@
           "type": "boolean",
           "name_zh": "接受所有文件类型",
           "name_en": "Show accept all",
-          "initialValue": "true",
           "desc_zh": "是否显示所有文件类型",
-          "desc_en": "Whether to show an accept type that shows all files."
+          "desc_en": "Whether to show an accept type that shows all files.",
+          "initialValue": "true"
         },
         {
           "id": "multiple",
@@ -412,6 +421,8 @@
           "type": "combo",
           "name_zh": "初始位置",
           "name_en": "Start in",
+          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "desc_en": "The default folder to show when there are no prior remembered settings.",
           "items": [
             "default",
             "desktop",
@@ -450,13 +461,9 @@
               "zh": "视频",
               "en": "Videos"
             }
-          },
-          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
-          "desc_en": "The default folder to show when there are no prior remembered settings."
+          }
         }
-      ],
-      "display_zh": "打开文件 (选取器标签: [b]{0}[/b], 初始位置: [i]{4}[/i], 允许多选: [i]{2}[/i], 接受所有文件类型: [i]{1}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Show open file picker tag [b]{0}[/b] (show accept all [i]{1}[/i], multiple [i]{2}[/i], ID [i]{3}[/i], start in [i]{4}[/i])"
+      ]
     },
     {
       "id": "show-folder-picker",
@@ -464,6 +471,8 @@
       "name_en": "Show folder picker",
       "description_zh": "显示一个保存文件的选取器，允许用户选择一个要写入的文件。",
       "description_en": "Show a save file picker, allowing the user to choose a file to write to.",
+      "display_zh": "打开文件夹 (选取器标签: [b]{0}[/b], 模式: [i]{1}[/i], 文件标签: [i]{2}[/i], 初始位置: [i]{3}[/i])",
+      "display_en": "Show folder picker tag [b]{0}[/b] mode [i]{1}[/i] (ID [i]{2}[/i], start in [i]{3}[/i])",
       "scriptName": "ShowFolderPicker",
       "isAsync": true,
       "category": "file-pickers",
@@ -481,6 +490,8 @@
           "type": "combo",
           "name_zh": "权限类型",
           "name_en": "Mode",
+          "desc_zh": "为文件夹申请的访问权限的种类。",
+          "desc_en": "The kind of access permission to request for the folder.",
           "items": [
             "read-only",
             "read-write"
@@ -494,9 +505,7 @@
               "zh": "读写",
               "en": "Read & write"
             }
-          },
-          "desc_zh": "为文件夹申请的访问权限的种类。",
-          "desc_en": "The kind of access permission to request for the folder."
+          }
         },
         {
           "id": "id",
@@ -511,6 +520,8 @@
           "type": "combo",
           "name_zh": "初始位置",
           "name_en": "Start in",
+          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
+          "desc_en": "The default folder to show when there are no prior remembered settings.",
           "items": [
             "default",
             "desktop",
@@ -549,13 +560,9 @@
               "zh": "视频",
               "en": "Videos"
             }
-          },
-          "desc_zh": "在选取器窗口没有上次访问的记录时，默认指定的文件夹位置。",
-          "desc_en": "The default folder to show when there are no prior remembered settings."
+          }
         }
-      ],
-      "display_zh": "打开文件夹 (选取器标签: [b]{0}[/b], 模式: [i]{1}[/i], 文件标签: [i]{2}[/i], 初始位置: [i]{3}[/i])",
-      "display_en": "Show folder picker tag [b]{0}[/b] mode [i]{1}[/i] (ID [i]{2}[/i], start in [i]{3}[/i])"
+      ]
     },
     {
       "id": "write-text-file",
@@ -563,6 +570,8 @@
       "name_en": "Write text file",
       "description_zh": "在指定的文件或文件夹路径，写入一个文本文件。",
       "description_en": "Write a text file to a previously picked file or folder.",
+      "display_zh": "写入文本文件 (选取器标签: [b]{0}[/b], 内容: [i]{3}[/i], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i], 模式: [i]{4}[/i])",
+      "display_en": "Write text file for picker tag [b]{0}[/b] with content [i]{3}[/i] (folder path [i]{1}[/i], file tag [i]{2}[/i], [i]{4}[/i])",
       "scriptName": "WriteTextFile",
       "isAsync": true,
       "category": "file-system",
@@ -604,6 +613,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "是覆盖文件内容，或是追加内容到现有文件中。",
+          "desc_en": "Whether to overwrite the file contents or append to the existing file.",
           "items": [
             "overwrite",
             "append"
@@ -617,13 +628,9 @@
               "zh": "追加",
               "en": "append"
             }
-          },
-          "desc_zh": "是覆盖文件内容，或是追加内容到现有文件中。",
-          "desc_en": "Whether to overwrite the file contents or append to the existing file."
+          }
         }
-      ],
-      "display_zh": "写入文本文件 (选取器标签: [b]{0}[/b], 内容: [i]{3}[/i], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i], 模式: [i]{4}[/i])",
-      "display_en": "Write text file for picker tag [b]{0}[/b] with content [i]{3}[/i] (folder path [i]{1}[/i], file tag [i]{2}[/i], [i]{4}[/i])"
+      ]
     },
     {
       "id": "write-binary-file",
@@ -631,6 +638,8 @@
       "name_en": "Write binary file",
       "description_zh": "将二进制数据写入之前选取的文件或文件夹。",
       "description_en": "Write binary data to a previously picked file or folder.",
+      "display_zh": "写入二进制数据文件 (选取器标签: [b]{0}[/b], 内容来源: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "display_en": "Write binary file for picker tag [b]{0}[/b] with content {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])",
       "scriptName": "WriteBinaryFile",
       "isAsync": true,
       "category": "file-system",
@@ -667,9 +676,7 @@
           "desc_zh": "要写入文件的二进制数据对象。",
           "desc_en": "The Binary Data object to write to the file."
         }
-      ],
-      "display_zh": "写入二进制数据文件 (选取器标签: [b]{0}[/b], 内容来源: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
-      "display_en": "Write binary file for picker tag [b]{0}[/b] with content {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])"
+      ]
     },
     {
       "id": "read-text-file",
@@ -677,6 +684,8 @@
       "name_en": "Read text file",
       "description_zh": "请求读取一个文本文件。",
       "description_en": "Read a text file from a previously picked file or folder.",
+      "display_zh": "读取文件 (选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "display_en": "Read text file for picker tag [b]{0}[/b] (folder path [i]{1}[/i], file tag [i]{2}[/i])",
       "scriptName": "ReadTextFile",
       "isAsync": true,
       "category": "file-system",
@@ -705,9 +714,7 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "读取文件 (选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
-      "display_en": "Read text file for picker tag [b]{0}[/b] (folder path [i]{1}[/i], file tag [i]{2}[/i])"
+      ]
     },
     {
       "id": "read-binary-file",
@@ -715,6 +722,8 @@
       "name_en": "Read binary file",
       "description_zh": "在选取器窗口的文件夹中，请求读取二进制数据文件，并储存到二进制数据对象中。",
       "description_en": "Read binary data from a previously picked file or folder.",
+      "display_zh": "读取二进制数据文件 (选取器标签: [b]{0}[/b], 目标对象: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "display_en": "Read binary file for picker tag [b]{0}[/b] to {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])",
       "scriptName": "ReadBinaryFile",
       "isAsync": true,
       "category": "file-system",
@@ -751,9 +760,7 @@
           "desc_zh": "要读取文件内容的二进制数据对象。",
           "desc_en": "The Binary Data object to read the content of the file in to."
         }
-      ],
-      "display_zh": "读取二进制数据文件 (选取器标签: [b]{0}[/b], 目标对象: {3}, 文件夹路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
-      "display_en": "Read binary file for picker tag [b]{0}[/b] to {3} (folder path [i]{1}[/i], file tag [i]{2}[/i])"
+      ]
     },
     {
       "id": "create-folder",
@@ -761,6 +768,8 @@
       "name_en": "Create folder",
       "description_zh": "在选取器窗口的文件夹中，请求创建一个新的文件夹。",
       "description_en": "Create a new folder within a picked folder.",
+      "display_zh": "创建文件夹(选取器标签: [b]{0}[/b], 创建位置: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "display_en": "Create folder for picker tag [b]{0}[/b] at [i]{1}[/i] (file tag [i]{2}[/i])",
       "scriptName": "CreateFolder",
       "isAsync": true,
       "category": "folder-operations",
@@ -789,9 +798,7 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "创建文件夹(选取器标签: [b]{0}[/b], 创建位置: [i]{1}[/i], 文件标签: [i]{2}[/i])",
-      "display_en": "Create folder for picker tag [b]{0}[/b] at [i]{1}[/i] (file tag [i]{2}[/i])"
+      ]
     },
     {
       "id": "copy-file",
@@ -799,6 +806,8 @@
       "name_en": "Copy file",
       "description_zh": "在选取器窗口的文件夹中，请求复制一个文件。",
       "description_en": "Copy a file within a picked folder.",
+      "display_zh": "复制文件 (选取器标签:  [b]{0}[/b], 来源文件: [i]{1}[/i], 目标位置: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Copy file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])",
       "scriptName": "CopyFile",
       "isAsync": true,
       "category": "folder-operations",
@@ -835,9 +844,7 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "复制文件 (选取器标签:  [b]{0}[/b], 来源文件: [i]{1}[/i], 目标位置: [i]{2}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Copy file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])"
+      ]
     },
     {
       "id": "move-file",
@@ -845,6 +852,8 @@
       "name_en": "Move file",
       "description_zh": "移动（或重命名）指定文件夹中的文件。",
       "description_en": "Move (or rename) a file within a picked folder.",
+      "display_zh": "移动文件 (选取器: [b]{0}[/b],  原始路径: [i]{1}[/i], 目标路径: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Move file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])",
       "scriptName": "MoveFile",
       "isAsync": true,
       "category": "folder-operations",
@@ -881,9 +890,7 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "移动文件 (选取器: [b]{0}[/b],  原始路径: [i]{1}[/i], 目标路径: [i]{2}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Move file for picker tag [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i] (file tag [i]{3}[/i])"
+      ]
     },
     {
       "id": "delete",
@@ -891,6 +898,8 @@
       "name_en": "Delete",
       "description_zh": "在选取器窗口的文件夹中，请求删除一个文件或文件夹。",
       "description_en": "Delete a file or folder within a picked folder.",
+      "display_zh": "删除文件 (选取器标签: [b]{0}[/b], 路径: [i]{1}[/i], 包括子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Delete from picker tag [b]{0}[/b] path [i]{1}[/i] (recursive [i]{2}[/i], file tag [i]{3}[/i])",
       "scriptName": "Delete",
       "isAsync": true,
       "category": "folder-operations",
@@ -927,9 +936,7 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "删除文件 (选取器标签: [b]{0}[/b], 路径: [i]{1}[/i], 包括子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Delete from picker tag [b]{0}[/b] path [i]{1}[/i] (recursive [i]{2}[/i], file tag [i]{3}[/i])"
+      ]
     },
     {
       "id": "list-content",
@@ -937,6 +944,8 @@
       "name_en": "List content",
       "description_zh": "检索指定文件夹路径的所有文件和文件夹的列表。",
       "description_en": "Retrieve a list of the files and folders at a given path in a folder.",
+      "display_zh": "列出文件列表(选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 包含子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "List content for picker tag [b]{0}[/b] path [i]{1}[/i] (recursive: [i]{2}[/i], file tag [i]{3}[/i])",
       "scriptName": "ListContent",
       "isAsync": true,
       "category": "folder-operations",
@@ -973,9 +982,7 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "列出文件列表(选取器标签: [b]{0}[/b], 文件夹路径: [i]{1}[/i], 包含子文件夹: [i]{2}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "List content for picker tag [b]{0}[/b] path [i]{1}[/i] (recursive: [i]{2}[/i], file tag [i]{3}[/i])"
+      ]
     },
     {
       "id": "shell-open",
@@ -983,6 +990,8 @@
       "name_en": "Shell open",
       "description_zh": "通过文件关联的默认关联应用程序，打开一个文件。",
       "description_en": "Open the default associated app for a file.",
+      "display_zh": "通过外部应用程序打开文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
+      "display_en": "Shell open picker tag [b]{0}[/b] path [i]{1}[/i] (file tag [i]{2}[/i])",
       "scriptName": "ShellOpen",
       "isAsync": true,
       "category": "desktop-only",
@@ -1011,9 +1020,7 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "通过外部应用程序打开文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 文件标签: [i]{2}[/i])",
-      "display_en": "Shell open picker tag [b]{0}[/b] path [i]{1}[/i] (file tag [i]{2}[/i])"
+      ]
     },
     {
       "id": "run-file",
@@ -1021,6 +1028,8 @@
       "name_en": "Run file",
       "description_zh": "运行一个文件，例如执行另一个应用程序。",
       "description_en": "Run a file, such as executing another program.",
+      "display_zh": "运行文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 参数: [i]{2}[/i], 文件标签: [i]{3}[/i])",
+      "display_en": "Run file picker tag [b]{0}[/b] path [i]{1}[/i] arguments [i]{2}[/i] (file tag [i]{3}[/i])",
       "scriptName": "RunFile",
       "isAsync": true,
       "category": "desktop-only",
@@ -1057,9 +1066,7 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ],
-      "display_zh": "运行文件 (选择器标签: [b]{0}[/b], 文件路径: [i]{1}[/i], 参数: [i]{2}[/i], 文件标签: [i]{3}[/i])",
-      "display_en": "Run file picker tag [b]{0}[/b] path [i]{1}[/i] arguments [i]{2}[/i] (file tag [i]{3}[/i])"
+      ]
     }
   ],
   "expressions": [

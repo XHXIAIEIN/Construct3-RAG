@@ -14,10 +14,10 @@
       "name_en": "On wrap",
       "description_zh": "在边界穿梭行为作用生效，对象位置发生改变时触发。",
       "description_en": "Triggered when the object position is changed by wrapping.",
-      "scriptName": "OnWrap",
-      "isTrigger": true,
       "display_zh": "穿过边界",
-      "display_en": "On wrap"
+      "display_en": "On wrap",
+      "scriptName": "OnWrap",
+      "isTrigger": true
     }
   ],
   "actions": [],

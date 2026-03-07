@@ -20,6 +20,8 @@
       "name_en": "Create gradient",
       "description_zh": "生成一个线性渐变。",
       "description_en": "Creates a new linear gradient",
+      "display_zh": "生成线性渐变 (类型: [b]{1}[/b], 名称: [b]{0}[/b])",
+      "display_en": "Create [b]{1}[/b] gradient called [b]{0}[/b]",
       "scriptName": "CreateGradient",
       "category": "gradients",
       "params": [
@@ -36,6 +38,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Mode",
+          "desc_zh": "设置渐变生成的内容，是数值还是颜色。",
+          "desc_en": "Specify if the gradient is numerical or color",
           "items": [
             "color",
             "number"
@@ -49,13 +53,9 @@
               "zh": "颜色",
               "en": "Color"
             }
-          },
-          "desc_zh": "设置渐变生成的内容，是数值还是颜色。",
-          "desc_en": "Specify if the gradient is numerical or color"
+          }
         }
-      ],
-      "display_zh": "生成线性渐变 (类型: [b]{1}[/b], 名称: [b]{0}[/b])",
-      "display_en": "Create [b]{1}[/b] gradient called [b]{0}[/b]"
+      ]
     },
     {
       "id": "addStop",
@@ -63,6 +63,8 @@
       "name_en": "Add gradient stop",
       "description_zh": "在当前渐变的位置添加经过点",
       "description_en": "Add a stop to the current gradient",
+      "display_zh": "添加渐变经过点(位置: [b]{0}[/b], 数值: [b]{1}[/b])",
+      "display_en": "Add stop at [b]{0}[/b] with value [b]{1}[/b]",
       "scriptName": "AddStop",
       "category": "gradients",
       "params": [
@@ -82,9 +84,7 @@
           "desc_zh": "添加到经过点的值。可以是任何数字，或使用 rgbEx 或 rgba 表达式指定颜色。",
           "desc_en": "The value of the new stop. Use rgbEx/rgba expressions for color gradients."
         }
-      ],
-      "display_zh": "添加渐变经过点(位置: [b]{0}[/b], 数值: [b]{1}[/b])",
-      "display_en": "Add stop at [b]{0}[/b] with value [b]{1}[/b]"
+      ]
     },
     {
       "id": "setGradient",
@@ -92,6 +92,8 @@
       "name_en": "Set gradient",
       "description_zh": "设置当前的渐变，用于后续的引用。",
       "description_en": "Sets current gradient",
+      "display_zh": "设置当前渐变为[b]{0}[/b]",
+      "display_en": "Set current gradient to [b]{0}[/b]",
       "scriptName": "SetGradient",
       "category": "gradients",
       "params": [
@@ -103,9 +105,7 @@
           "desc_zh": "渐变的名称",
           "desc_en": "The name of the gradient"
         }
-      ],
-      "display_zh": "设置当前渐变为[b]{0}[/b]",
-      "display_en": "Set current gradient to [b]{0}[/b]"
+      ]
     },
     {
       "id": "createPermutationTable",
@@ -113,6 +113,8 @@
       "name_en": "Create permutation table",
       "description_zh": "创建一个随机排序的数字序列。",
       "description_en": "Creates a sequence of numbers that are randomly ordered.",
+      "display_zh": "创建序列表 (起始: {1}, 长度: {0})",
+      "display_en": "Create permutation with {0} values starting at {1}",
       "scriptName": "CreatePermutationTable",
       "category": "permutation-tables",
       "params": [
@@ -129,13 +131,11 @@
           "type": "number",
           "name_zh": "起始值",
           "name_en": "Offset",
-          "initialValue": "0",
           "desc_zh": "序列表中的首位最小值。",
-          "desc_en": "The lowest value in the table."
+          "desc_en": "The lowest value in the table.",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "创建序列表 (起始: {1}, 长度: {0})",
-      "display_en": "Create permutation with {0} values starting at {1}"
+      ]
     },
     {
       "id": "shufflePermutationTable",
@@ -143,10 +143,10 @@
       "name_en": "Shuffle permutation table",
       "description_zh": "将当前序列表的位置排列随机打乱。",
       "description_en": "Reshuffles the current permutation table",
-      "scriptName": "ShufflePermutationTable",
-      "category": "permutation-tables",
       "display_zh": "打乱序列表",
-      "display_en": "Shuffle permutation table"
+      "display_en": "Shuffle permutation table",
+      "scriptName": "ShufflePermutationTable",
+      "category": "permutation-tables"
     },
     {
       "id": "createProbabilityTable",
@@ -154,6 +154,8 @@
       "name_en": "Create probability table",
       "description_zh": "创建一个加权概率表，指定每个元素出现的概率。",
       "description_en": "Creates a new weighted probability table",
+      "display_zh": "创建概率表 [b]{0}[/b]",
+      "display_en": "Create probability table called [b]{0}[/b]",
       "scriptName": "CreateProbabilityTable",
       "category": "probability-tables",
       "params": [
@@ -165,9 +167,7 @@
           "desc_zh": "概率表名称",
           "desc_en": "The name of the probability table"
         }
-      ],
-      "display_zh": "创建概率表 [b]{0}[/b]",
-      "display_en": "Create probability table called [b]{0}[/b]"
+      ]
     },
     {
       "id": "createProbabilityTableFromJSON",
@@ -175,6 +175,8 @@
       "name_en": "Create probability table from JSON",
       "description_zh": "从 JSON 字符串创建新的加权概率表。数据结构使用权重和名称组成的数组。",
       "description_en": "Creates a new weighted probability table from a JSON string",
+      "display_zh": "导入概率表[b]{0}[/b] (JSON: [b]{1}[/b])",
+      "display_en": "Create probability table called [b]{0}[/b] from [b]{1}[/b]",
       "scriptName": "CreateProbabilityTableFromJSON",
       "category": "probability-tables",
       "params": [
@@ -194,9 +196,7 @@
           "desc_zh": "用于序列化概率表的JSON字符串",
           "desc_en": "A JSON string of a serialized probability table"
         }
-      ],
-      "display_zh": "导入概率表[b]{0}[/b] (JSON: [b]{1}[/b])",
-      "display_en": "Create probability table called [b]{0}[/b] from [b]{1}[/b]"
+      ]
     },
     {
       "id": "addProbabilityEntry",
@@ -204,6 +204,8 @@
       "name_en": "Add probability entry",
       "description_zh": "在当前概率表中添加元素",
       "description_en": "Add an entry to the current probability table",
+      "display_zh": "添加元素 [b]{0}[/b] 权重 [b]{1}[/b]",
+      "display_en": "Add entry [b]{0}[/b] with weight [b]{1}[/b]",
       "scriptName": "AddProbabilityEntry",
       "category": "probability-tables",
       "params": [
@@ -212,22 +214,20 @@
           "type": "any",
           "name_zh": "数值",
           "name_en": "Value",
-          "initialValue": "\"\"",
           "desc_zh": "元素的值",
-          "desc_en": "The value of the entry"
+          "desc_en": "The value of the entry",
+          "initialValue": "\"\""
         },
         {
           "id": "weight",
           "type": "number",
           "name_zh": "元素权重",
           "name_en": "Entry weight",
-          "initialValue": "1",
           "desc_zh": "此在列表中出现的概率权重",
-          "desc_en": "The weight for the probability of the value"
+          "desc_en": "The weight for the probability of the value",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "添加元素 [b]{0}[/b] 权重 [b]{1}[/b]",
-      "display_en": "Add entry [b]{0}[/b] with weight [b]{1}[/b]"
+      ]
     },
     {
       "id": "removeProbabilityEntry",
@@ -235,6 +235,8 @@
       "name_en": "Remove probability entry",
       "description_zh": "从当前概率表中删除与指定权重相同的元素。填写 0 时指定第 1 项。",
       "description_en": "Remove an entry from the current probability table that matches a given weight and value",
+      "display_zh": "移除权重为 [b]{1}[/b] 的 [b]{0}[/b] 元素",
+      "display_en": "Remove entry [b]{0}[/b] with weight [b]{1}[/b]",
       "scriptName": "RemoveProbabilityEntry",
       "category": "probability-tables",
       "params": [
@@ -243,22 +245,20 @@
           "type": "any",
           "name_zh": "数值",
           "name_en": "Value",
-          "initialValue": "\"\"",
           "desc_zh": "元素的数值",
-          "desc_en": "The value of the entry"
+          "desc_en": "The value of the entry",
+          "initialValue": "\"\""
         },
         {
           "id": "weight",
           "type": "number",
           "name_zh": "元素权重",
           "name_en": "Entry weight",
-          "initialValue": "0",
           "desc_zh": "此元素的权重，只有权重相同的才会被删除。填写 0 则匹配第 1 项。",
-          "desc_en": "The weight for the probability of the value, specifying 0 matches any weight"
+          "desc_en": "The weight for the probability of the value, specifying 0 matches any weight",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "移除权重为 [b]{1}[/b] 的 [b]{0}[/b] 元素",
-      "display_en": "Remove entry [b]{0}[/b] with weight [b]{1}[/b]"
+      ]
     },
     {
       "id": "setProbabilityTable",
@@ -266,6 +266,8 @@
       "name_en": "Set probability table",
       "description_zh": "设置当前概率表",
       "description_en": "Sets current probability table",
+      "display_zh": "设置当前概率表为 [b]{0}[/b]",
+      "display_en": "Set current probability table to [b]{0}[/b]",
       "scriptName": "SetProbabilityTable",
       "category": "probability-tables",
       "params": [
@@ -277,9 +279,7 @@
           "desc_zh": "概率表的名称",
           "desc_en": "The name of the probability table"
         }
-      ],
-      "display_zh": "设置当前概率表为 [b]{0}[/b]",
-      "display_en": "Set current probability table to [b]{0}[/b]"
+      ]
     },
     {
       "id": "seed",
@@ -287,6 +287,8 @@
       "name_en": "Update seed",
       "description_zh": "更新随机数生成器种子",
       "description_en": "Updates the random number generator seed",
+      "display_zh": "更新随机种子为 [b]{0}[/b]",
+      "display_en": "Update seed to [b]{0}[/b]",
       "scriptName": "SetSeed",
       "category": "advancedrandom",
       "params": [
@@ -298,9 +300,7 @@
           "desc_zh": "随机生成的新种子",
           "desc_en": "The new seed for the random number generator"
         }
-      ],
-      "display_zh": "更新随机种子为 [b]{0}[/b]",
-      "display_en": "Update seed to [b]{0}[/b]"
+      ]
     },
     {
       "id": "octaves",
@@ -308,6 +308,8 @@
       "name_en": "Set octaves",
       "description_zh": "设置柏林噪声模型所使用的分形倍数，在1-16之间。",
       "description_en": "Updates the number of octaves used by coherent noise",
+      "display_zh": "设置分形为 [b]{0}[/b]",
+      "display_en": "Set octaves to [b]{0}[/b]",
       "scriptName": "SetOctaves",
       "category": "advancedrandom",
       "params": [
@@ -316,13 +318,11 @@
           "type": "number",
           "name_zh": "数量",
           "name_en": "Count",
-          "initialValue": "1",
           "desc_zh": "要使用的分型倍数，从1至16。",
-          "desc_en": "The number of octaves to use, from 1-16."
+          "desc_en": "The number of octaves to use, from 1-16.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "设置分形为 [b]{0}[/b]",
-      "display_en": "Set octaves to [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

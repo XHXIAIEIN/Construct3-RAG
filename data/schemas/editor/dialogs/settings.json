@@ -8,7 +8,7 @@
       "en": "Language"
     },
     "editor-settings.ui-mode.label": {
-      "zh": "页面",
+      "zh": "布局偏好",
       "en": "UI mode"
     },
     "editor-settings.ui-mode.auto": {
@@ -393,7 +393,5 @@
       "zh": "关闭",
       "en": "Close"
     }
-  },
-  "description_en": "The Settings dialog allows you to change various settings for the Construct 3 editor. It can be opened via the main menu . User interface Language Select the language for the editor interface. Construct 3 must be reloaded after changing this. UI mode Whether to use a desktop interface, a mobile interface , or automatically decide which to use (the default). This can be useful to force tablets with a mouse and keyboard attached in to desktop mode. Construct 3 must be reloaded after changing this.",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/settings"
+  }
 }

@@ -14,10 +14,10 @@
       "name_en": "On fade-out finished",
       "description_zh": "淡出结束时触发。",
       "description_en": "Triggered when the fade-out has finished.",
-      "scriptName": "OnFadeOutEnd",
-      "isTrigger": true,
       "display_zh": "{my} 淡出完成",
-      "display_en": "On {my} fade-out finished"
+      "display_en": "On {my} fade-out finished",
+      "scriptName": "OnFadeOutEnd",
+      "isTrigger": true
     },
     {
       "id": "on-fade-in-finished",
@@ -25,10 +25,10 @@
       "name_en": "On fade-in finished",
       "description_zh": "淡入完成时触发。",
       "description_en": "Triggered when the fade-in has finished.",
-      "scriptName": "OnFadeInEnd",
-      "isTrigger": true,
       "display_zh": "{my} 淡入完成",
-      "display_en": "On {my} fade-in finished"
+      "display_en": "On {my} fade-in finished",
+      "scriptName": "OnFadeInEnd",
+      "isTrigger": true
     },
     {
       "id": "on-wait-finished",
@@ -36,10 +36,10 @@
       "name_en": "On wait finished",
       "description_zh": "等待结束后触发。",
       "description_en": "Triggered when the wait has finished.",
-      "scriptName": "OnWaitEnd",
-      "isTrigger": true,
       "display_zh": "{my} 等待结束",
-      "display_en": "On {my} wait finished"
+      "display_en": "On {my} wait finished",
+      "scriptName": "OnWaitEnd",
+      "isTrigger": true
     }
   ],
   "actions": [
@@ -49,9 +49,9 @@
       "name_en": "Restart fade",
       "description_zh": "再次运行一次淡入淡出。",
       "description_en": "Run the fade again.",
-      "scriptName": "RestartFade",
       "display_zh": "{my} 重新播放",
-      "display_en": "{my}: restart fade"
+      "display_en": "{my}: restart fade",
+      "scriptName": "RestartFade"
     },
     {
       "id": "start-fade",
@@ -59,9 +59,9 @@
       "name_en": "Start fade",
       "description_zh": "在对象属性中，如果未勾选在创建时自动淡入，则使用此动作开始淡入。",
       "description_en": "Start the fade, if not active on start.",
-      "scriptName": "StartFade",
       "display_zh": "{my} 开始播放",
-      "display_en": "{my}: start fade"
+      "display_en": "{my}: start fade",
+      "scriptName": "StartFade"
     },
     {
       "id": "set-fade-in-time",
@@ -69,6 +69,8 @@
       "name_en": "Set fade-in time",
       "description_zh": "设置从不可见状态，逐渐淡入，直至可见的时间。",
       "description_en": "Set the fade-in time property.",
+      "display_zh": "设置 {my}淡入时间为[i]{0}[/i]秒",
+      "display_en": "{my}: set fade-in time to [i]{0}[/i]",
       "scriptName": "SetFadeInTime",
       "params": [
         {
@@ -79,9 +81,7 @@
           "desc_zh": "淡入阶段的时间，以秒为单位。如果为0，则跳过淡入。",
           "desc_en": "Time in seconds to spend in the fade-in phase."
         }
-      ],
-      "display_zh": "设置 {my}淡入时间为[i]{0}[/i]秒",
-      "display_en": "{my}: set fade-in time to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-wait-time",
@@ -89,6 +89,8 @@
       "name_en": "Set wait time",
       "description_zh": "在淡入完成后，等待淡出的时间。",
       "description_en": "Set the wait time property.",
+      "display_zh": "设置 {my}等待时间为[i]{0}[/i]秒",
+      "display_en": "{my}: set wait time to [i]{0}[/i]",
       "scriptName": "SetWaitTime",
       "params": [
         {
@@ -99,9 +101,7 @@
           "desc_zh": "等待的时间，以秒为单位。如果为0，则跳过等待，立即执行淡出。",
           "desc_en": "Time in seconds to spend in the wait phase."
         }
-      ],
-      "display_zh": "设置 {my}等待时间为[i]{0}[/i]秒",
-      "display_en": "{my}: set wait time to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-fade-out-time",
@@ -109,6 +109,8 @@
       "name_en": "Set fade-out time",
       "description_zh": "设置从可见状态，逐渐淡出，直至不可见的时间。",
       "description_en": "Set the fade-out time property.",
+      "display_zh": "设置 {my}淡出时间为[i]{0}[/i]",
+      "display_en": "{my}: set fade-out time to [i]{0}[/i]",
       "scriptName": "SetFadeOutTime",
       "params": [
         {
@@ -119,9 +121,7 @@
           "desc_zh": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。",
           "desc_en": "Time in seconds to spend in the fade-out phase."
         }
-      ],
-      "display_zh": "设置 {my}淡出时间为[i]{0}[/i]",
-      "display_en": "{my}: set fade-out time to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

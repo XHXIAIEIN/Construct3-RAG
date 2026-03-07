@@ -42,6 +42,10 @@
     "window-caption": {
       "zh": "窗口标题栏",
       "en": "Window caption"
+    },
+    "export-for-steam": {
+      "zh": "导出到 Steam",
+      "en": "Export for Steam"
     }
   }
 }

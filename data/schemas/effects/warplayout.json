@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": true,
+  "extendBox": {
+    "horizontal": 30,
+    "vertical": 30
+  },
   "parameters": [
     {
       "id": "x-period",
@@ -20,7 +24,8 @@
       "name_zh": "x-period",
       "name_en": "x-period",
       "initialValue": 60,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "periodX"
     },
     {
       "id": "y-period",
@@ -28,7 +33,8 @@
       "name_zh": "y-period",
       "name_en": "y-period",
       "initialValue": 60,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "periodY"
     },
     {
       "id": "x-amplitude",
@@ -36,7 +42,8 @@
       "name_zh": "x-amplitude",
       "name_en": "x-amplitude",
       "initialValue": 5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "ampX"
     },
     {
       "id": "y-amplitude",
@@ -44,7 +51,8 @@
       "name_zh": "y-amplitude",
       "name_en": "y-amplitude",
       "initialValue": 5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "ampY"
     },
     {
       "id": "x-speed",
@@ -52,7 +60,8 @@
       "name_zh": "x-speed",
       "name_en": "x-speed",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speedX"
     },
     {
       "id": "y-speed",
@@ -60,7 +69,8 @@
       "name_zh": "y-speed",
       "name_en": "y-speed",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speedY"
     }
   ]
 }

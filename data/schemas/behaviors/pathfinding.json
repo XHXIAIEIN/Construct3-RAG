@@ -19,10 +19,11 @@
       "name_en": "On path found",
       "description_zh": "执行在寻路动作后，成功找到寻路路线时触发。",
       "description_en": "Triggered after 'Find path' when a path successfully found.",
+      "display_zh": "{my} 找到路线",
+      "display_en": "On {my} path found",
       "scriptName": "OnPathFound",
       "isTrigger": true,
-      "display_zh": "{my} 找到路线",
-      "display_en": "On {my} path found"
+      "canDebug": true
     },
     {
       "id": "on-failed-to-find-path",
@@ -30,10 +31,11 @@
       "name_en": "On failed to find path",
       "description_zh": "执行在寻路动作后，无法找到寻路路线时触发。",
       "description_en": "Triggered after 'Find path' when no path could be found.",
+      "display_zh": "{my} 寻找路线失败",
+      "display_en": "On {my} failed to find path",
       "scriptName": "OnFailedToFindPath",
       "isTrigger": true,
-      "display_zh": "{my} 寻找路线失败",
-      "display_en": "On {my} failed to find path"
+      "canDebug": true
     },
     {
       "id": "is-cell-obstacle",
@@ -41,6 +43,8 @@
       "name_en": "Is cell obstacle",
       "description_zh": "检测指定的单元格坐标位置是否存在障碍物。",
       "description_en": "Test if a cell in the pathfinding map is marked as an obstacle.",
+      "display_zh": "{my}寻路单元格({0}, {1}) 存在障碍物",
+      "display_en": "Is {my} cell ({0}, {1}) obstacle",
       "scriptName": "IsCellObstacle",
       "params": [
         {
@@ -59,9 +63,7 @@
           "desc_zh": "要检测的寻路单元格Y，基于 0 开始计数。",
           "desc_en": "The vertical cell to test if an obstacle (in cells, rather than layout co-ordinates)."
         }
-      ],
-      "display_zh": "{my}寻路单元格({0}, {1}) 存在障碍物",
-      "display_en": "Is {my} cell ({0}, {1}) obstacle"
+      ]
     },
     {
       "id": "is-calculating-path",
@@ -69,9 +71,9 @@
       "name_en": "Is calculating path",
       "description_zh": "检测对象当前是否正在寻找路线。",
       "description_en": "True if the object is currently searching for a path.",
-      "scriptName": "IsCalculatingPath",
       "display_zh": "{my} 正在计算路线",
-      "display_en": "Is {my} calculating path"
+      "display_en": "Is {my} calculating path",
+      "scriptName": "IsCalculatingPath"
     },
     {
       "id": "is-moving-along-path",
@@ -79,9 +81,9 @@
       "name_en": "Is moving along path",
       "description_zh": "检测对象是否正沿着一条已找到的路线移动。",
       "description_en": "True if the object is currently moving along a found path.",
-      "scriptName": "IsMoving",
       "display_zh": "正沿着 {my} 路线移动",
-      "display_en": "Is {my} moving along path"
+      "display_en": "Is {my} moving along path",
+      "scriptName": "IsMoving"
     },
     {
       "id": "on-arrived",
@@ -89,10 +91,11 @@
       "name_en": "On arrived",
       "description_zh": "当沿着路线移动并抵达目的时触发",
       "description_en": "Triggered when moving along path and arrived at destination.",
+      "display_zh": "{my} 到达目的地",
+      "display_en": "On {my} arrived",
       "scriptName": "OnArrived",
       "isTrigger": true,
-      "display_zh": "{my} 到达目的地",
-      "display_en": "On {my} arrived"
+      "canDebug": true
     },
     {
       "id": "compare-speed",
@@ -100,6 +103,8 @@
       "name_en": "Compare speed",
       "description_zh": "以当前对象的移动速度进行对比",
       "description_en": "Compare the current movement speed of the object.",
+      "display_zh": "{my} 速度 {0} [b]{1}[/b]",
+      "display_en": "{my} speed {0} [b]{1}[/b]",
       "scriptName": "CompareSpeed",
       "params": [
         {
@@ -118,9 +123,7 @@
           "desc_zh": "进行速度对比的对象，以像素/秒为单位",
           "desc_en": "The speed to compare to, in pixels per second."
         }
-      ],
-      "display_zh": "{my} 速度 {0} [b]{1}[/b]",
-      "display_en": "{my} speed {0} [b]{1}[/b]"
+      ]
     },
     {
       "id": "diagonals-are-enabled",
@@ -128,9 +131,9 @@
       "name_en": "Diagonals are enabled",
       "description_zh": "检测是否允许跨越单元格进行斜向对角移动。",
       "description_en": "True if diagonal movement across cells is currently enabled.",
-      "scriptName": "DiagonalsEnabled",
       "display_zh": "{my} 允许对角线移动",
-      "display_en": "{my} diagonals are enabled"
+      "display_en": "{my} diagonals are enabled",
+      "scriptName": "DiagonalsEnabled"
     },
     {
       "id": "is-enabled",
@@ -138,9 +141,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -150,8 +153,11 @@
       "name_en": "Find path",
       "description_zh": "开始寻找前往目的地的路线，完成后将会触发 '找到路线' 或 '寻找路线失败'。",
       "description_en": "Start looking for a path to a destination, later triggering 'On path found' or 'On failed to find path'.",
+      "display_zh": "{my}: 寻找路径 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "{my}: Find path to ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "FindPath",
       "isAsync": true,
+      "highlight": true,
       "params": [
         {
           "id": "x",
@@ -169,9 +175,7 @@
           "desc_zh": "要寻找路线的位置 Y 坐标。",
           "desc_en": "The Y co-ordinate to find a path to."
         }
-      ],
-      "display_zh": "{my}: 寻找路径 ([i]{0}[/i], [i]{1}[/i])",
-      "display_en": "{my}: Find path to ([i]{0}[/i], [i]{1}[/i])"
+      ]
     },
     {
       "id": "set-enabled",
@@ -179,6 +183,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Enable or disable the behavior.",
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -186,6 +192,8 @@
           "type": "combo",
           "name_zh": "设置",
           "name_en": "Set",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -199,13 +207,9 @@
               "zh": "启用",
               "en": "enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "{0} {my}",
-      "display_en": "Set {my} {0}"
+      ]
     },
     {
       "id": "regenerate-obstacle-map",
@@ -213,10 +217,10 @@
       "name_en": "Regenerate obstacle map",
       "description_zh": "重新检查场景内的每个单元格，检测障碍物是否存在，防止障碍物的位置已经改变。注意，此动作需要一定时间，在下一帧触发完成条件。",
       "description_en": "(Slow) Check every cell to determine if it is an obstacle again, in case obstacles have moved or changed. Completes next tick.",
-      "scriptName": "RegenerateMap",
-      "isAsync": true,
       "display_zh": "{my}重新生成障碍物地图",
-      "display_en": "Regenerate {my} obstacle map"
+      "display_en": "Regenerate {my} obstacle map",
+      "scriptName": "RegenerateMap",
+      "isAsync": true
     },
     {
       "id": "add-obstacle",
@@ -224,6 +228,8 @@
       "name_en": "Add obstacle",
       "description_zh": "使用自定义障碍物时，添加一个家族对象或特定对象作为目标。",
       "description_en": "When using custom obstacles, add a family or object as an obstacle.",
+      "display_zh": "{my}添加 {0} 为障碍物",
+      "display_en": "Add {my} obstacle {0}",
       "scriptName": "AddObstacle",
       "params": [
         {
@@ -234,9 +240,7 @@
           "desc_zh": "在寻路图中选择一个家族对象或特定对象作为障碍物。",
           "desc_en": "Choose a family or object to use as obstacles in the pathfinding map."
         }
-      ],
-      "display_zh": "{my}添加 {0} 为障碍物",
-      "display_en": "Add {my} obstacle {0}"
+      ]
     },
     {
       "id": "clear-obstacles",
@@ -244,9 +248,9 @@
       "name_en": "Clear obstacles",
       "description_zh": "清除所有添加的自定义障碍物。",
       "description_en": "Clear the added custom obstacles.",
-      "scriptName": "ClearObstacles",
       "display_zh": "{my} 清除所有自定义障碍物",
-      "display_en": "Clear {my} obstacles"
+      "display_en": "Clear {my} obstacles",
+      "scriptName": "ClearObstacles"
     },
     {
       "id": "set-move-cost",
@@ -254,6 +258,8 @@
       "name_en": "Set move cost",
       "description_zh": "设置移动到相邻单元格的基本成本，这会影响其他成本的相对效果。",
       "description_en": "Set the basic cost for moving to an adjacent cell, which affects the relative effect of other costs.",
+      "display_zh": "设置 {my}移动成本为[i]{0}[/i]",
+      "display_en": "Set {my} move cost [i]{0}[/i]",
       "scriptName": "SetMoveCost",
       "params": [
         {
@@ -261,13 +267,11 @@
           "type": "number",
           "name_zh": "移动成本",
           "name_en": "Move cost",
-          "initialValue": "10",
           "desc_zh": "移动到相邻单元格的基本成本。",
-          "desc_en": "The basic cost to move to an adjacent cell while calculating a path."
+          "desc_en": "The basic cost to move to an adjacent cell while calculating a path.",
+          "initialValue": "10"
         }
-      ],
-      "display_zh": "设置 {my}移动成本为[i]{0}[/i]",
-      "display_en": "Set {my} move cost [i]{0}[/i]"
+      ]
     },
     {
       "id": "add-path-cost",
@@ -275,6 +279,8 @@
       "name_en": "Add path cost",
       "description_zh": "增加对象在前进路径的成本，用于模拟不同的地形的难易度。",
       "description_en": "Increase the path cost for travelling over an object (e.g. to simulate rough terrain).",
+      "display_zh": "增加 {my} 经过对象 {0} 的寻路成本 [i]{1}[/i]",
+      "display_en": "Add {my} object {0} with path cost [i]{1}[/i]",
       "scriptName": "AddCost",
       "params": [
         {
@@ -290,13 +296,11 @@
           "type": "number",
           "name_zh": "成本",
           "name_en": "Cost",
-          "initialValue": "50",
           "desc_zh": "增加此物体在寻路计算时的额外成本。注意，默认情况下，水平/对角线运动的成本分别为 10 和14。",
-          "desc_en": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively."
+          "desc_en": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively.",
+          "initialValue": "50"
         }
-      ],
-      "display_zh": "增加 {my} 经过对象 {0} 的寻路成本 [i]{1}[/i]",
-      "display_en": "Add {my} object {0} with path cost [i]{1}[/i]"
+      ]
     },
     {
       "id": "clear-cost",
@@ -304,9 +308,9 @@
       "name_en": "Clear cost",
       "description_zh": "清除当前添加的所有额外寻路成本",
       "description_en": "Clear any additional path cost that was previously added.",
-      "scriptName": "ClearCost",
       "display_zh": "清除 {my} 的额外寻路成本",
-      "display_en": "Clear {my} additional path costs"
+      "display_en": "Clear {my} additional path costs",
+      "scriptName": "ClearCost"
     },
     {
       "id": "regenerate-region",
@@ -314,6 +318,8 @@
       "name_en": "Regenerate region",
       "description_zh": "从场景坐标中的矩形区域重新生成障碍物地图。下次运行事件时完成(即下一帧)。",
       "description_en": "Regenerate just a rectangular portion of the obstacle map in layout co-ordinates. Completes next tick.",
+      "display_zh": "{my} 重新生成 ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i])的障碍物地图",
+      "display_en": "Regenerate {my} obstacle map from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i])",
       "scriptName": "RegenerateRegion",
       "isAsync": true,
       "params": [
@@ -349,9 +355,7 @@
           "desc_zh": "在矩形场景中重新生成的结束Y坐标",
           "desc_en": "End Y co-ordinate in layout of rectangle to regenerate."
         }
-      ],
-      "display_zh": "{my} 重新生成 ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i])的障碍物地图",
-      "display_en": "Regenerate {my} obstacle map from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i])"
+      ]
     },
     {
       "id": "regenerate-region-around-object",
@@ -359,6 +363,8 @@
       "name_en": "Regenerate region around object",
       "description_zh": "从指定对象的边界框中重新生成障碍路线。此动作需要到下一个运行周期完成。",
       "description_en": "Regenerate just a rectangular portion of the obstacle map from an object's bounding box. Completes next tick.",
+      "display_zh": "{my} 重新计算 {0} 周围的障碍路线",
+      "display_en": "Regenerate {my} obstacle map around {0}",
       "scriptName": "RegenerateObjectRegion",
       "isAsync": true,
       "params": [
@@ -370,9 +376,7 @@
           "desc_zh": "选择一个对象，使用该对象的碰撞边界框重新生成障碍图的矩形部分。",
           "desc_en": "An object whose bounding box will determine a rectangular portion of the obstacle map to regenerate."
         }
-      ],
-      "display_zh": "{my} 重新计算 {0} 周围的障碍路线",
-      "display_en": "Regenerate {my} obstacle map around {0}"
+      ]
     },
     {
       "id": "start-path-group",
@@ -380,6 +384,8 @@
       "name_en": "Start path group",
       "description_zh": "对相同分组的寻路路径四周增加临时寻路成本来分散路径，防止它们采用完全相同的路径。",
       "description_en": "Spread out paths by adding a temporary extra cost around found paths in the same group.",
+      "display_zh": "{my}: 开始路径组 (基础成本: [i]{0}[/i], 分散单元格: [i]{1}[/i], 最大线程数: [i]{2}[/i])",
+      "display_en": "{my}: Start path group (base cost [i]{0}[/i], cell spread [i]{1}[/i], max workers [i]{2}[/i])",
       "scriptName": "StartPathGroup",
       "params": [
         {
@@ -387,31 +393,29 @@
           "type": "number",
           "name_zh": "基础成本",
           "name_en": "Base cost",
-          "initialValue": "1",
           "desc_zh": "在寻路路径周围增加额外的寻路成本，该成本根据使用的线程数量成倍增加。",
-          "desc_en": "The extra cost to add around found paths, which is multiplied depending on the number of workers used."
+          "desc_en": "The extra cost to add around found paths, which is multiplied depending on the number of workers used.",
+          "initialValue": "1"
         },
         {
           "id": "cell-spread",
           "type": "number",
           "name_zh": "分散单元格",
           "name_en": "Cell spread",
-          "initialValue": "1",
           "desc_zh": "增加的额外寻路成本，最好使用奇数。",
-          "desc_en": "The number of cells around the found path to increase cost for. Prefer to use an odd number."
+          "desc_en": "The number of cells around the found path to increase cost for. Prefer to use an odd number.",
+          "initialValue": "1"
         },
         {
           "id": "max-workers",
           "type": "number",
           "name_zh": "最大线程数",
           "name_en": "Max workers",
-          "initialValue": "1",
           "desc_zh": "为此分组分配路径的最大线程数，每个线程单独跟踪寻路成本。",
-          "desc_en": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately."
+          "desc_en": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "{my}: 开始路径组 (基础成本: [i]{0}[/i], 分散单元格: [i]{1}[/i], 最大线程数: [i]{2}[/i])",
-      "display_en": "{my}: Start path group (base cost [i]{0}[/i], cell spread [i]{1}[/i], max workers [i]{2}[/i])"
+      ]
     },
     {
       "id": "end-path-group",
@@ -419,9 +423,9 @@
       "name_en": "End path group",
       "description_zh": "结束一个路径组，恢复正常的寻路。",
       "description_en": "End a path group, restoring normal pathfinding.",
-      "scriptName": "EndPathGroup",
       "display_zh": "{my}: 结束路径组",
-      "display_en": "{my}: End path group"
+      "display_en": "{my}: End path group",
+      "scriptName": "EndPathGroup"
     },
     {
       "id": "move-along-path",
@@ -429,10 +433,10 @@
       "name_en": "Move along path",
       "description_zh": "在 '找到路线' 条件中使用。开始沿着一条找到的路线移动。",
       "description_en": "Start moving along a found path after the 'On path found' trigger.",
-      "scriptName": "StartMoving",
-      "category": "movement",
       "display_zh": "{my}: 开始寻路",
-      "display_en": "{my}: Move along path"
+      "display_en": "{my}: Move along path",
+      "scriptName": "StartMoving",
+      "category": "movement"
     },
     {
       "id": "stop",
@@ -440,10 +444,10 @@
       "name_en": "Stop",
       "description_zh": "停止沿着路线移动",
       "description_en": "Stop moving along a path.",
-      "scriptName": "Stop",
-      "category": "movement",
       "display_zh": "{my}: 停止",
-      "display_en": "{my}: Stop"
+      "display_en": "{my}: Stop",
+      "scriptName": "Stop",
+      "category": "movement"
     },
     {
       "id": "set-max-speed",
@@ -451,6 +455,8 @@
       "name_en": "Set max speed",
       "description_zh": "设置移动时可达到的最大移动速度，以像素/秒为单位。",
       "description_en": "Set the maximum speed for moving along paths.",
+      "display_zh": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} maximum speed to [i]{0}[/i]",
       "scriptName": "SetMaxSpeed",
       "category": "movement",
       "params": [
@@ -462,9 +468,7 @@
           "desc_zh": "设置移动时可达到的最大移动速度，以像素/秒为单位。",
           "desc_en": "The maximum speed to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}最大移动速度为[i]{0}[/i]",
-      "display_en": "Set {my} maximum speed to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-acceleration",
@@ -472,6 +476,8 @@
       "name_en": "Set acceleration",
       "description_zh": "设置沿路径移动时的加速度。",
       "description_en": "Set the acceleration for moving along paths.",
+      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
+      "display_en": "Set {my} acceleration to [i]{0}[/i]",
       "scriptName": "SetAcc",
       "category": "movement",
       "params": [
@@ -483,9 +489,7 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The acceleration to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
-      "display_en": "Set {my} acceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-deceleration",
@@ -493,6 +497,8 @@
       "name_en": "Set deceleration",
       "description_zh": "设置沿路径移动时的减速度。",
       "description_en": "Set the deceleration for moving along paths.",
+      "display_zh": "设置 {my}减速度[i]{0}[/i]",
+      "display_en": "Set {my} deceleration to [i]{0}[/i]",
       "scriptName": "SetDec",
       "category": "movement",
       "params": [
@@ -504,9 +510,7 @@
           "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
           "desc_en": "The deceleration to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}减速度[i]{0}[/i]",
-      "display_en": "Set {my} deceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-rotate-speed",
@@ -514,6 +518,8 @@
       "name_en": "Set rotate speed",
       "description_zh": "设置沿路径移动时的转向速度。",
       "description_en": "Set the turn speed for moving along paths.",
+      "display_zh": "设置 {my}转向速度为[i]{0}[/i]",
+      "display_en": "Set {my} rotate speed to [i]{0}[/i] degrees per second",
       "scriptName": "SetRotateSpeed",
       "category": "movement",
       "params": [
@@ -525,9 +531,7 @@
           "desc_zh": "沿路线移动时的转向速度，以每秒度数为单位。",
           "desc_en": "The turn speed to set, in degrees per second."
         }
-      ],
-      "display_zh": "设置 {my}转向速度为[i]{0}[/i]",
-      "display_en": "Set {my} rotate speed to [i]{0}[/i] degrees per second"
+      ]
     },
     {
       "id": "set-diagonals-enabled",
@@ -535,6 +539,8 @@
       "name_en": "Set diagonals enabled",
       "description_zh": "启用或禁用穿过单元格时的对角线移动",
       "description_en": "Enable or disable diagonal movement across cells.",
+      "display_zh": "{0} {my} 对角线移动",
+      "display_en": "Set {my} diagonals {0}",
       "scriptName": "SetDiagonalsEnabled",
       "category": "movement",
       "params": [
@@ -543,6 +549,8 @@
           "type": "combo",
           "name_zh": "对角线",
           "name_en": "Diagonals",
+          "desc_zh": "是否启用或禁用穿过单元格时的对角线移动",
+          "desc_en": "Whether to enable or disable diagonal movement across cells.",
           "items": [
             "disabled",
             "enabled"
@@ -556,13 +564,9 @@
               "zh": "启用",
               "en": "enabled"
             }
-          },
-          "desc_zh": "是否启用或禁用穿过单元格时的对角线移动",
-          "desc_en": "Whether to enable or disable diagonal movement across cells."
+          }
         }
-      ],
-      "display_zh": "{0} {my} 对角线移动",
-      "display_en": "Set {my} diagonals {0}"
+      ]
     },
     {
       "id": "set-direct-movement",
@@ -570,6 +574,8 @@
       "name_en": "Set direct movement",
       "description_zh": "设置 '直接移动' 模式。当周围没有障碍物时，如何向下一个路径点移动。",
       "description_en": "Set where to allow moving directly towards a node when the surrounding area is clear.",
+      "display_zh": "设置 {my}直接移动模式为 [i]{0}[/i]",
+      "display_en": "Set {my} direct movement [i]{0}[/i]",
       "scriptName": "SetDirectMovement",
       "category": "movement",
       "params": [
@@ -578,6 +584,8 @@
           "type": "combo",
           "name_zh": "直接移动",
           "name_en": "Direct movement",
+          "desc_zh": "当周围没有障碍物时，允许直接向下一个路径点移动。",
+          "desc_en": "Where to allow moving directly towards a node when the surrounding area is clear.",
           "items": [
             "none",
             "to-destination",
@@ -596,13 +604,9 @@
               "zh": "沿路径任意点",
               "en": "Anywhere along path"
             }
-          },
-          "desc_zh": "当周围没有障碍物时，允许直接向下一个路径点移动。",
-          "desc_en": "Where to allow moving directly towards a node when the surrounding area is clear."
+          }
         }
-      ],
-      "display_zh": "设置 {my}直接移动模式为 [i]{0}[/i]",
-      "display_en": "Set {my} direct movement [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-speed",
@@ -610,6 +614,8 @@
       "name_en": "Set speed",
       "description_zh": "设置沿路径移动时的移动速度。",
       "description_en": "Set the current speed for moving along paths.",
+      "display_zh": "设置 {my}移动速度为[i]{0}[/i]",
+      "display_en": "Set {my} speed to [i]{0}[/i]",
       "scriptName": "SetSpeed",
       "category": "movement",
       "params": [
@@ -621,9 +627,7 @@
           "desc_zh": "设置的速度，以像素/秒为单位",
           "desc_en": "The speed to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}移动速度为[i]{0}[/i]",
-      "display_en": "Set {my} speed to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

@@ -75,11 +75,12 @@
       "name_en": "On media request approved",
       "description_zh": "用户批准媒体请求提示时触发。",
       "description_en": "Triggered after the user approves the prompt from a media request.",
+      "display_zh": "权限被允许",
+      "display_en": "On media request approved",
       "scriptName": "OnApproved",
       "isTrigger": true,
-      "category": "media-request",
-      "display_zh": "权限被允许",
-      "display_en": "On media request approved"
+      "canDebug": true,
+      "category": "media-request"
     },
     {
       "id": "on-media-request-declined",
@@ -87,11 +88,12 @@
       "name_en": "On media request declined",
       "description_zh": "用户拒绝媒体请求提示，或遇到了错误时触发。",
       "description_en": "Triggered on an error, or if the user declines the prompt from a media request.",
+      "display_zh": "权限被拒绝",
+      "display_en": "On media request declined",
       "scriptName": "OnDeclined",
       "isTrigger": true,
-      "category": "media-request",
-      "display_zh": "权限被拒绝",
-      "display_en": "On media request declined"
+      "canDebug": true,
+      "category": "media-request"
     },
     {
       "id": "on-retrieved-media-sources",
@@ -99,11 +101,12 @@
       "name_en": "On retrieved media sources",
       "description_zh": "执行 '获取设备列表' 动作后，成功获取到设备列表时触发。",
       "description_en": "Triggered after 'Get media sources' when the media source list is available.",
+      "display_zh": "获取设备列表成功",
+      "display_en": "On retrieved media sources",
       "scriptName": "OnMediaSources",
       "isTrigger": true,
-      "category": "media-request",
-      "display_zh": "获取设备列表成功",
-      "display_en": "On retrieved media sources"
+      "canDebug": true,
+      "category": "media-request"
     },
     {
       "id": "on-snapshot",
@@ -111,11 +114,12 @@
       "name_en": "On snapshot ready",
       "description_zh": "执行 '截屏' 动作后，成功返回 '截屏文件地址' 表达式时触发。",
       "description_en": "Triggered after the 'Snapshot' action when the snapshot URL is ready.",
+      "display_zh": "截屏完成",
+      "display_en": "On snapshot ready",
       "scriptName": "OnSnapshot",
       "isTrigger": true,
-      "category": "media-request",
-      "display_zh": "截屏完成",
-      "display_en": "On snapshot ready"
+      "canDebug": true,
+      "category": "media-request"
     },
     {
       "id": "supports-speech-recognition",
@@ -264,6 +268,8 @@
       "name_en": "Request camera",
       "description_zh": "向用户请求访问相机的权限作为视频输入。（如果设备支持）",
       "description_en": "Prompt the user for access to video input from a camera, if one is present.",
+      "display_zh": "请求使用摄像头权限 (设备源: [i]{0}[/i],  摄像头: [i]{1}[/i],  预设分辨率: {2}x{3}, 麦克风: [i]{4}[/i], 麦克风设备源: [i]{5}[/i])",
+      "display_en": "Request camera source [i]{0}[/i] (prefer [i]{1}[/i] at {2} x {3}, include mic [i]{4}[/i] source [i]{5}[/i])",
       "scriptName": "RequestCamera",
       "isAsync": true,
       "category": "media-request",
@@ -281,6 +287,8 @@
           "type": "combo",
           "name_zh": "摄像头",
           "name_en": "Preferred direction",
+          "desc_zh": "如果存在多个摄像头，优先选择的摄像头朝向。移动设备通常包含多个摄像头。",
+          "desc_en": "The preferred camera facing mode, if multiple cameras are present. Commonly mobile devices have both user-facing (front) and environment-facing (back) cameras.",
           "items": [
             "any",
             "user",
@@ -299,9 +307,7 @@
               "zh": "后置",
               "en": "Environment-facing"
             }
-          },
-          "desc_zh": "如果存在多个摄像头，优先选择的摄像头朝向。移动设备通常包含多个摄像头。",
-          "desc_en": "The preferred camera facing mode, if multiple cameras are present. Commonly mobile devices have both user-facing (front) and environment-facing (back) cameras."
+          }
         },
         {
           "id": "preferred-width",
@@ -335,9 +341,7 @@
           "desc_zh": "使用麦克风时，指定麦克风设备源的索引，从 0 开始计数。",
           "desc_en": "The zero-based index of the audio source to use, if microphone is included."
         }
-      ],
-      "display_zh": "请求使用摄像头权限 (设备源: [i]{0}[/i],  摄像头: [i]{1}[/i],  预设分辨率: {2}x{3}, 麦克风: [i]{4}[/i], 麦克风设备源: [i]{5}[/i])",
-      "display_en": "Request camera source [i]{0}[/i] (prefer [i]{1}[/i] at {2} x {3}, include mic [i]{4}[/i] source [i]{5}[/i])"
+      ]
     },
     {
       "id": "stop",
@@ -345,10 +349,10 @@
       "name_en": "Stop",
       "description_zh": "结束访问用户媒体。",
       "description_en": "Stop accessing the user media.",
-      "scriptName": "Stop",
-      "category": "media-request",
       "display_zh": "结束",
-      "display_en": "Stop"
+      "display_en": "Stop",
+      "scriptName": "Stop",
+      "category": "media-request"
     },
     {
       "id": "snapshot",
@@ -356,6 +360,8 @@
       "name_en": "Snapshot",
       "description_zh": "保存摄像头当前拍摄的画面快照。完成后触发 '截屏完成' 条件。",
       "description_en": "Take a snapshot of the current image from the camera.  Use 'SnapshotURL' expression to get result.",
+      "display_zh": "截屏 (格式: {0}, 质量: [i]{1}[/i])",
+      "display_en": "Take snapshot ({0}, quality [i]{1}[/i])",
       "scriptName": "Snapshot",
       "isAsync": true,
       "category": "media-request",
@@ -365,6 +371,8 @@
           "type": "combo",
           "name_zh": "格式",
           "name_en": "Format",
+          "desc_zh": "选择快照保存的文件格式。PNG为无损图像，但JPEG文件小。",
+          "desc_en": "Choose the file format to save the snapshot.  PNG is lossless but JPEG files are smaller.",
           "items": [
             "png",
             "jpeg"
@@ -378,22 +386,18 @@
               "zh": "JPEG",
               "en": "JPEG"
             }
-          },
-          "desc_zh": "选择快照保存的文件格式。PNG为无损图像，但JPEG文件小。",
-          "desc_en": "Choose the file format to save the snapshot.  PNG is lossless but JPEG files are smaller."
+          }
         },
         {
           "id": "jpeg-quality",
           "type": "number",
           "name_zh": "JPEG品质",
           "name_en": "JPEG quality",
-          "initialValue": "75",
           "desc_zh": "仅适用于 'JPEG' 格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
-          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG."
+          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG.",
+          "initialValue": "75"
         }
-      ],
-      "display_zh": "截屏 (格式: {0}, 质量: [i]{1}[/i])",
-      "display_en": "Take snapshot ({0}, quality [i]{1}[/i])"
+      ]
     },
     {
       "id": "request-microphone",
@@ -401,6 +405,8 @@
       "name_en": "Request microphone",
       "description_zh": "提示用户访问麦克风的音频输入（如果有）。 必须将Audio对象添加到项目中。",
       "description_en": "Prompt the user for access to audio input from a microphone, if one is present. The Audio object must be added to the project.",
+      "display_zh": "请求麦克风源 [i]{1}[/i] 并路由到音频标签{0}",
+      "display_en": "Request microphone source [i]{1}[/i] and route to Audio tag {0}",
       "scriptName": "RequestMic",
       "isAsync": true,
       "category": "media-request",
@@ -410,9 +416,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"mic\"",
           "desc_zh": "用于在音频对象中，关联麦克风输入的标签。",
-          "desc_en": "A tag in the Audio object to route the microphone input to."
+          "desc_en": "A tag in the Audio object to route the microphone input to.",
+          "initialValue": "\"mic\""
         },
         {
           "id": "source",
@@ -422,9 +428,7 @@
           "desc_zh": "要使用的音频源的从零开始的索引。",
           "desc_en": "The zero-based index of the audio source to use."
         }
-      ],
-      "display_zh": "请求麦克风源 [i]{1}[/i] 并路由到音频标签{0}",
-      "display_en": "Request microphone source [i]{1}[/i] and route to Audio tag {0}"
+      ]
     },
     {
       "id": "get-media-sources",
@@ -432,11 +436,11 @@
       "name_en": "Get media sources",
       "description_zh": "请求当前可用的媒体设备列表。完成后触发 '获取设备列表成功' 条件。",
       "description_en": "Request a list of the available media sources. 'On retrieved media sources' will trigger shortly after.",
+      "display_zh": "获取设备源列表",
+      "display_en": "Get media sources",
       "scriptName": "GetMediaSources",
       "isAsync": true,
-      "category": "media-request",
-      "display_zh": "获取设备源列表",
-      "display_en": "Get media sources"
+      "category": "media-request"
     },
     {
       "id": "request-speech-recognition",

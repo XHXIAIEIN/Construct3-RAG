@@ -53,12 +53,5 @@
       "name_zh": "打开原始图层场景",
       "name_en": "Open original global layer layout"
     }
-  ],
-  "description_en": "The Layers Bar is used to add, edit and remove layers in a layout . A layer is like a sheet of glass objects are painted on to. This allows easy arrangement of which objects display in front of other objects, for example showing foreground objects in front of the background sprites. It also allows for interesting depth effects like Z elevation or parallax, and layers can be individually scaled and rotated as well. Layers can be dragged and dropped in the Layers Bar to change their order. Layers ",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/layers-bar",
-  "sections": [
-    "The Layers list",
-    "Sub-layers",
-    "Object Z ordering"
   ]
 }

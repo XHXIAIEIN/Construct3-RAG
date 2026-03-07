@@ -17,6 +17,8 @@
       "name_en": "Compare text",
       "description_zh": "比较此对象中的文本。",
       "description_en": "Compare the text in this object.",
+      "display_zh": "文本是[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]",
       "scriptName": "CompareText",
       "category": "text",
       "params": [
@@ -33,6 +35,8 @@
           "type": "combo",
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -46,13 +50,9 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          },
-          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
+          }
         }
-      ],
-      "display_zh": "文本是[b]{0}[/b] [i]({1})[/i]",
-      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]"
+      ]
     },
     {
       "id": "is-running-typewriter-text",
@@ -60,10 +60,10 @@
       "name_en": "Is running typewriter text",
       "description_zh": "检测打字机当前是否正在运行。",
       "description_en": "True if currently writing out typewriter text.",
-      "scriptName": "IsRunningTypewriterText",
-      "category": "text",
       "display_zh": "打字机正在运行",
-      "display_en": "Is running typewriter text"
+      "display_en": "Is running typewriter text",
+      "scriptName": "IsRunningTypewriterText",
+      "category": "text"
     },
     {
       "id": "on-typewriter-text-finished",
@@ -71,11 +71,11 @@
       "name_en": "On typewriter text finished",
       "description_zh": "当文本将所有文字全部显示完成时触发。",
       "description_en": "Triggered when typewriter text finishes writing out all the text.",
+      "display_zh": "打字机效果完成",
+      "display_en": "On typewriter text finished",
       "scriptName": "OnTypewriterTextFinished",
       "isTrigger": true,
-      "category": "text",
-      "display_zh": "打字机效果完成",
-      "display_en": "On typewriter text finished"
+      "category": "text"
     },
     {
       "id": "has-tag-at-position",
@@ -83,6 +83,8 @@
       "name_en": "Has tag at position",
       "description_zh": "检测指定位置是否包含 BBCode Tag 标签。",
       "description_en": "Check if a BBcode tag style is set at a given position.",
+      "display_zh": "位置 ([i]{1}[/i], [i]{2}[/i]) 存在标签 [b]{0}[/b]",
+      "display_en": "Has tag [b]{0}[/b] at ([i]{1}[/i], [i]{2}[/i])",
       "scriptName": "HasTagAtPosition",
       "category": "text",
       "params": [
@@ -110,9 +112,7 @@
           "desc_zh": "要检测的Y坐标。",
           "desc_en": "The Y co-ordinate to check."
         }
-      ],
-      "display_zh": "位置 ([i]{1}[/i], [i]{2}[/i]) 存在标签 [b]{0}[/b]",
-      "display_en": "Has tag [b]{0}[/b] at ([i]{1}[/i], [i]{2}[/i])"
+      ]
     }
   ],
   "actions": [
@@ -122,6 +122,8 @@
       "name_en": "Set font face",
       "description_zh": "设置用于显示文本的字体。",
       "description_en": "Set the font face used to display text.",
+      "display_zh": "设置字体为[i]{0}[/i] ([i]{1}[/i])",
+      "display_en": "Set font face to [i]{0}[/i] ([i]{1}[/i])",
       "scriptName": "SetFontFace",
       "category": "appearance",
       "params": [
@@ -130,15 +132,17 @@
           "type": "string",
           "name_zh": "字体",
           "name_en": "Font face",
-          "initialValue": "\"Arial\"",
           "desc_zh": "要设置的新字体名称。",
-          "desc_en": "The new font face name to set."
+          "desc_en": "The new font face name to set.",
+          "initialValue": "\"Arial\""
         },
         {
           "id": "style",
           "type": "combo",
           "name_zh": "样式",
           "name_en": "Style",
+          "desc_zh": "为指定的字体选择样式。",
+          "desc_en": "Choose the style for the given font face.",
           "items": [
             "normal",
             "bold",
@@ -162,13 +166,9 @@
               "zh": "粗体和斜体",
               "en": "bold and italic"
             }
-          },
-          "desc_zh": "为指定的字体选择样式。",
-          "desc_en": "Choose the style for the given font face."
+          }
         }
-      ],
-      "display_zh": "设置字体为[i]{0}[/i] ([i]{1}[/i])",
-      "display_en": "Set font face to [i]{0}[/i] ([i]{1}[/i])"
+      ]
     },
     {
       "id": "set-font-size",
@@ -176,6 +176,8 @@
       "name_en": "Set font size",
       "description_zh": "设置字号。",
       "description_en": "Set the font size.",
+      "display_zh": "设置字号为[i]{0}[/i]px",
+      "display_en": "Set font size to [i]{0}[/i] pt",
       "scriptName": "SetFontSize",
       "category": "appearance",
       "params": [
@@ -184,13 +186,11 @@
           "type": "number",
           "name_zh": "字号(px)",
           "name_en": "Size (pt)",
-          "initialValue": "12",
           "desc_zh": "设置字号大小。",
-          "desc_en": "The new font size."
+          "desc_en": "The new font size.",
+          "initialValue": "12"
         }
-      ],
-      "display_zh": "设置字号为[i]{0}[/i]px",
-      "display_en": "Set font size to [i]{0}[/i] pt"
+      ]
     },
     {
       "id": "set-font-color",
@@ -198,6 +198,8 @@
       "name_en": "Set font color",
       "description_zh": "设置字体颜色。",
       "description_en": "Set the font color.",
+      "display_zh": "设置字体颜色为[i]{0}[/i]",
+      "display_en": "Set font color to [i]{0}[/i]",
       "scriptName": "SetFontColor",
       "category": "appearance",
       "params": [
@@ -206,13 +208,11 @@
           "type": "number",
           "name_zh": "颜色",
           "name_en": "Color",
-          "initialValue": "rgbEx(0, 0, 0)",
           "desc_zh": "新字体颜色。请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。",
-          "desc_en": "The new font color, in the form rgbEx(r, g, b)."
+          "desc_en": "The new font color, in the form rgbEx(r, g, b).",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
-      ],
-      "display_zh": "设置字体颜色为[i]{0}[/i]",
-      "display_en": "Set font color to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-web-font",
@@ -245,6 +245,8 @@
       "name_en": "Set blend mode",
       "description_zh": "设置此对象的背景混合模式。",
       "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
       "scriptName": "SetEffect",
       "category": "appearance",
       "params": [
@@ -253,6 +255,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object.",
           "items": [
             "normal",
             "additive",
@@ -331,13 +335,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "为此对象选择新的混合模式。",
-          "desc_en": "Choose the new blend mode for this object."
+          }
         }
-      ],
-      "display_zh": "设置混合模式为[i]{0}[/i]",
-      "display_en": "Set blend mode to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-line-height",
@@ -345,6 +345,8 @@
       "name_en": "Set line height",
       "description_zh": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
       "description_en": "Offset to the default line height, in pixels. 0 is default line height.",
+      "display_zh": "设置行距为[i]{0}[/i]",
+      "display_en": "Set line height to [i]{0}[/i]",
       "scriptName": "SetLineHeight",
       "category": "appearance",
       "params": [
@@ -356,9 +358,7 @@
           "desc_zh": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
           "desc_en": "Enter the number of pixels for the spacing between lines."
         }
-      ],
-      "display_zh": "设置行距为[i]{0}[/i]",
-      "display_en": "Set line height to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-horizontal-alignment",
@@ -366,6 +366,8 @@
       "name_en": "Set horizontal alignment",
       "description_zh": "设置文本的水平对齐方式。",
       "description_en": "Set the horizontal alignment of the text.",
+      "display_zh": "将水平对齐设置到 [i]{0}[/i]",
+      "display_en": "Set horizontal alignment to [i]{0}[/i]",
       "scriptName": "SetHAlign",
       "category": "appearance",
       "params": [
@@ -374,6 +376,8 @@
           "type": "combo",
           "name_zh": "水平对齐",
           "name_en": "Horizontal alignment",
+          "desc_zh": "选择一种水平对齐方式。",
+          "desc_en": "Choose the new horizontal alignment for the text.",
           "items": [
             "left",
             "center",
@@ -392,13 +396,9 @@
               "zh": "右对齐",
               "en": "right"
             }
-          },
-          "desc_zh": "选择一种水平对齐方式。",
-          "desc_en": "Choose the new horizontal alignment for the text."
+          }
         }
-      ],
-      "display_zh": "将水平对齐设置到 [i]{0}[/i]",
-      "display_en": "Set horizontal alignment to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-vertical-alignment",
@@ -406,6 +406,8 @@
       "name_en": "Set vertical alignment",
       "description_zh": "设置文本的垂直对齐方式。",
       "description_en": "Set the vertical alignment of the text.",
+      "display_zh": "将垂直对齐设置到 [i]{0}[/i]",
+      "display_en": "Set vertical alignment to [i]{0}[/i]",
       "scriptName": "SetVAlign",
       "category": "appearance",
       "params": [
@@ -414,6 +416,8 @@
           "type": "combo",
           "name_zh": "垂直对齐",
           "name_en": "Vertical alignment",
+          "desc_zh": "选择一种垂直对齐方式。",
+          "desc_en": "Choose the new vertical alignment for the text.",
           "items": [
             "top",
             "center",
@@ -432,13 +436,9 @@
               "zh": "底部",
               "en": "bottom"
             }
-          },
-          "desc_zh": "选择一种垂直对齐方式。",
-          "desc_en": "Choose the new vertical alignment for the text."
+          }
         }
-      ],
-      "display_zh": "将垂直对齐设置到 [i]{0}[/i]",
-      "display_en": "Set vertical alignment to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-wrapping",
@@ -446,6 +446,8 @@
       "name_en": "Set wrapping",
       "description_zh": "自动换行的规则，是以空格分隔的词组，还是按每个字符。",
       "description_en": "Set whether to wrap text by space-separated words or by character.",
+      "display_zh": "设置换行规则为[i]{0}[/i]",
+      "display_en": "Set text wrapping to [i]{0}[/i]",
       "scriptName": "SetWrapping",
       "category": "appearance",
       "params": [
@@ -454,6 +456,8 @@
           "type": "combo",
           "name_zh": "自动换行",
           "name_en": "Wrapping",
+          "desc_zh": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
+          "desc_en": "Wrap text by space-separated words or by character.",
           "items": [
             "word",
             "cjk",
@@ -472,13 +476,9 @@
               "zh": "亚洲语言",
               "en": "CJK"
             }
-          },
-          "desc_zh": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
-          "desc_en": "Wrap text by space-separated words or by character."
+          }
         }
-      ],
-      "display_zh": "设置换行规则为[i]{0}[/i]",
-      "display_en": "Set text wrapping to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-text-direction",
@@ -486,6 +486,8 @@
       "name_en": "Set text direction",
       "description_zh": "设置文本书写方向，如从左到右，还是从右到左。",
       "description_en": "Set the direction of the text flow.",
+      "display_zh": "设置书写方向为[i]{0}[/i]",
+      "display_en": "Set text direction to [i]{0}[/i]",
       "scriptName": "SetTextDirection",
       "category": "appearance",
       "params": [
@@ -494,6 +496,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Direction",
+          "desc_zh": "文本书写的方向。",
+          "desc_en": "The direction of the text flow.",
           "items": [
             "ltr",
             "rtl"
@@ -507,13 +511,9 @@
               "zh": "从右向左",
               "en": "Right-to-left"
             }
-          },
-          "desc_zh": "文本书写的方向。",
-          "desc_en": "The direction of the text flow."
+          }
         }
-      ],
-      "display_zh": "设置书写方向为[i]{0}[/i]",
-      "display_en": "Set text direction to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-resolution-mode",
@@ -521,6 +521,8 @@
       "name_en": "Set resolution mode",
       "description_zh": "更改文本的缩放模式。是自适应场景的缩放比例，还是使用固定缩放比例。用于改善文本缩放时产生的模糊感。",
       "description_en": "Change the resolution mode, including changing the fixed scale factor.",
+      "display_zh": "设置缩放模式为[b]{0}[/b] ([i]{1}[/i])",
+      "display_en": "Set resolution mode [b]{0}[/b] ([i]{1}[/i])",
       "scriptName": "SetResolutionMode",
       "category": "appearance",
       "params": [
@@ -529,6 +531,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "设置文本的分辨率渲染方式。选择与当前显示分辨率匹配，或缩放到固定比例。",
+          "desc_en": "Whether to automatically match the text resolution to the display, or always use a fixed scale factor.",
           "items": [
             "auto",
             "fixed"
@@ -542,22 +546,18 @@
               "zh": "固定",
               "en": "Fixed"
             }
-          },
-          "desc_zh": "设置文本的分辨率渲染方式。选择与当前显示分辨率匹配，或缩放到固定比例。",
-          "desc_en": "Whether to automatically match the text resolution to the display, or always use a fixed scale factor."
+          }
         },
         {
           "id": "fixed-scale",
           "type": "number",
           "name_zh": "固定比例",
           "name_en": "Fixed scale",
-          "initialValue": "1",
           "desc_zh": "选择固定分辨率时，要使用的缩放比例，默认值为 1 。",
-          "desc_en": "When using fixed resolution, the scale factor to use."
+          "desc_en": "When using fixed resolution, the scale factor to use.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "设置缩放模式为[b]{0}[/b] ([i]{1}[/i])",
-      "display_en": "Set resolution mode [b]{0}[/b] ([i]{1}[/i])"
+      ]
     },
     {
       "id": "set-text",
@@ -565,7 +565,10 @@
       "name_en": "Set text",
       "description_zh": "设置文本显示的内容。",
       "description_en": "Set the text of this object.",
+      "display_zh": "设置文本内容为[i]{0}[/i]",
+      "display_en": "Set text to [i]{0}[/i]",
       "scriptName": "SetText",
+      "highlight": true,
       "category": "text",
       "params": [
         {
@@ -573,13 +576,11 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "initialValue": "\"\"",
           "desc_zh": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。",
-          "desc_en": "Enter the text to set the object's content to."
+          "desc_en": "Enter the text to set the object's content to.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "设置文本内容为[i]{0}[/i]",
-      "display_en": "Set text to [i]{0}[/i]"
+      ]
     },
     {
       "id": "append-text",
@@ -587,6 +588,8 @@
       "name_en": "Append text",
       "description_zh": "将文本添加到现有文本的末尾。",
       "description_en": "Add text to the end of the existing text.",
+      "display_zh": "追加文本 [i]{0}[/i]",
+      "display_en": "Append [i]{0}[/i]",
       "scriptName": "AppendText",
       "category": "text",
       "params": [
@@ -595,13 +598,11 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "initialValue": "\"\"",
           "desc_zh": "在当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2",
-          "desc_en": "Enter the text to append to the object's content."
+          "desc_en": "Enter the text to append to the object's content.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "追加文本 [i]{0}[/i]",
-      "display_en": "Append [i]{0}[/i]"
+      ]
     },
     {
       "id": "typewriter-text",
@@ -609,6 +610,8 @@
       "name_en": "Typewriter text",
       "description_zh": "在一段时间内，逐字显示一串文本，直到完全显示。实现打字机效果。",
       "description_en": "Set the text over time by starting with an empty string and gradually adding characters.",
+      "display_zh": "在 [i]{1}[/i] 秒内，逐字显示[i]{0}[/i]",
+      "display_en": "Typewriter text [i]{0}[/i] over [i]{1}[/i] seconds",
       "scriptName": "TypewriterText",
       "category": "text",
       "params": [
@@ -617,9 +620,9 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "initialValue": "\"\"",
           "desc_zh": "要逐字显示的文本。",
-          "desc_en": "Enter the text to set the object's content to over time."
+          "desc_en": "Enter the text to set the object's content to over time.",
+          "initialValue": "\"\""
         },
         {
           "id": "duration",
@@ -629,9 +632,7 @@
           "desc_zh": "文本完全显示所需的总时间，以秒为单位。如希望每秒显示字符数，可使用 len(Self.PlainText) / 10 表达式，表示每秒显示 10 个字符。",
           "desc_en": "The time in seconds to write out the text."
         }
-      ],
-      "display_zh": "在 [i]{1}[/i] 秒内，逐字显示[i]{0}[/i]",
-      "display_en": "Typewriter text [i]{0}[/i] over [i]{1}[/i] seconds"
+      ]
     },
     {
       "id": "typewriter-finish",
@@ -639,10 +640,10 @@
       "name_en": "Finish typewriter",
       "description_zh": "强制将打字机效果立即显示所有文本。",
       "description_en": "Force a typewriter text effect to finish immediately.",
-      "scriptName": "TypewriterFinish",
-      "category": "text",
       "display_zh": "立即显示完成",
-      "display_en": "Finish typewriter"
+      "display_en": "Finish typewriter",
+      "scriptName": "TypewriterFinish",
+      "category": "text"
     },
     {
       "id": "change-icon-set",
@@ -650,6 +651,8 @@
       "name_en": "Change icon set",
       "description_zh": "更改用于文本图标的精灵对象。",
       "description_en": "Change the Sprite object used for text icons.",
+      "display_zh": "更换图标集: {0}",
+      "display_en": "Change icon set to {0}",
       "scriptName": "ChangeIconSet",
       "category": "text",
       "params": [
@@ -661,9 +664,7 @@
           "desc_zh": "启用富文本功能时，允许使用 [icon=tag] 标签引用带有动画帧标签的精灵对象的图像，在文本中显示图标。",
           "desc_en": "When BBcode is enabled, a Sprite object with an icon per animation frame to use for icon tags."
         }
-      ],
-      "display_zh": "更换图标集: {0}",
-      "display_en": "Change icon set to {0}"
+      ]
     },
     {
       "id": "update-html",
@@ -671,11 +672,11 @@
       "name_en": "Update HTML",
       "description_zh": "将当前的文本转换为HTML字符串，并更新 '转换字符串' 表达式的返回内容。",
       "description_en": "Update the HTML string returned by the AsHTML expression.",
+      "display_zh": "转换HTML",
+      "display_en": "Update HTML",
       "scriptName": "UpdateHTML",
       "isAsync": true,
-      "category": "text",
-      "display_zh": "转换HTML",
-      "display_en": "Update HTML"
+      "category": "text"
     },
     {
       "id": "set-read-aloud",
@@ -683,6 +684,8 @@
       "name_en": "Set read aloud",
       "description_zh": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
       "description_en": "Set whether the text is read aloud while using a screen reader.",
+      "display_zh": "[i]{0}[/i]朗读内容",
+      "display_en": "Set read aloud [i]{0}[/i]",
       "scriptName": "SetReadAloud",
       "category": "text",
       "params": [
@@ -694,9 +697,7 @@
           "desc_zh": "是否允许朗读",
           "desc_en": "Whether to enable reading aloud."
         }
-      ],
-      "display_zh": "[i]{0}[/i]朗读内容",
-      "display_en": "Set read aloud [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

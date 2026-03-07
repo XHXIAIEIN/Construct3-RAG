@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为当前是否启用。",
       "description_en": "Test whether the behavior is currently enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     },
     {
       "id": "compare-height",
@@ -24,6 +24,8 @@
       "name_en": "Compare height",
       "description_zh": "比较对象的高度，用于确定阴影投射的长度。",
       "description_en": "Compare the height of the object.",
+      "display_zh": "{my} 投影高度 {0} {1}",
+      "display_en": "{my} height {0} {1}",
       "scriptName": "CompareHeight",
       "params": [
         {
@@ -42,9 +44,7 @@
           "desc_zh": "要比较的对象投影高度。",
           "desc_en": "The object height to compare to."
         }
-      ],
-      "display_zh": "{my} 投影高度 {0} {1}",
-      "display_en": "{my} height {0} {1}"
+      ]
     }
   ],
   "actions": [
@@ -54,6 +54,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether the object casts a shadow or not.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -61,6 +63,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "设置对象是否投射阴影。",
+          "desc_en": "Set whether the object casts a shadow or not.",
           "initialValue": "enabled",
           "items": [
             "disabled",
@@ -75,13 +79,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "设置对象是否投射阴影。",
-          "desc_en": "Set whether the object casts a shadow or not."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-height",
@@ -89,6 +89,8 @@
       "name_en": "Set height",
       "description_zh": "设置对象的投影高度，用于确定阴影投射的长度，以像素为单位。",
       "description_en": "Set the height of the object for determining the length shadow it casts.",
+      "display_zh": "设置 {my}投影高度为[i]{0}[/i]",
+      "display_en": "Set {my} height to [i]{0}[/i]",
       "scriptName": "SetHeight",
       "params": [
         {
@@ -99,9 +101,7 @@
           "desc_zh": "对象的投影高度，用于确定阴影投射的长度，以像素为单位。",
           "desc_en": "The height to set the object for determining the length of the shadow it casts."
         }
-      ],
-      "display_zh": "设置 {my}投影高度为[i]{0}[/i]",
-      "display_en": "Set {my} height to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-tag",
@@ -109,6 +109,8 @@
       "name_en": "Set tag",
       "description_zh": "设置投影标签，用于区分不同的投影光源。",
       "description_en": "Set the tag for the shadow caster.",
+      "display_zh": "设置 {my}投影标签为[i]{0}[/i]",
+      "display_en": "Set {my} tag to [i]{0}[/i]",
       "scriptName": "SetTag",
       "params": [
         {
@@ -119,9 +121,7 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的投影光源。",
           "desc_en": "The new tag to set for the shadow caster."
         }
-      ],
-      "display_zh": "设置 {my}投影标签为[i]{0}[/i]",
-      "display_en": "Set {my} tag to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

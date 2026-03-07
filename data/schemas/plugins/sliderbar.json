@@ -16,11 +16,12 @@
       "name_en": "On clicked",
       "description_zh": "当滑动条被点击时触发",
       "description_en": "Triggered when the slider bar is clicked.",
+      "display_zh": "点击",
+      "display_en": "On clicked",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "slider-bar",
-      "display_zh": "点击",
-      "display_en": "On clicked"
+      "canDebug": true,
+      "category": "slider-bar"
     },
     {
       "id": "compare-value",
@@ -28,6 +29,8 @@
       "name_en": "Compare value",
       "description_zh": "比较当前值。",
       "description_en": "Compare the current value.",
+      "display_zh": "滑块值 {0} [i]{1}[/i]",
+      "display_en": "Slider value {0} [i]{1}[/i]",
       "scriptName": "CompareValue",
       "category": "slider-bar",
       "params": [
@@ -47,9 +50,7 @@
           "desc_zh": "要比较的值。",
           "desc_en": "Value to compare to."
         }
-      ],
-      "display_zh": "滑块值 {0} [i]{1}[/i]",
-      "display_en": "Slider value {0} [i]{1}[/i]"
+      ]
     },
     {
       "id": "on-changed",
@@ -57,11 +58,12 @@
       "name_en": "On changed",
       "description_zh": "滑块数值发生更改时触发。如果在拖动，则在松开后触发。",
       "description_en": "Triggered when the slider bar value is changed.",
+      "display_zh": "进度已改变",
+      "display_en": "On changed",
       "scriptName": "OnChanged",
       "isTrigger": true,
-      "category": "slider-bar",
-      "display_zh": "进度已改变",
-      "display_en": "On changed"
+      "canDebug": true,
+      "category": "slider-bar"
     },
     {
       "id": "on-changing",
@@ -69,11 +71,12 @@
       "name_en": "On changing",
       "description_zh": "滑块数值更改时触发。如果在拖动，则每次步进时触发。",
       "description_en": "Triggered during the slider bar value being changed, such as while it is dragged.",
+      "display_zh": "被拖动",
+      "display_en": "On changing",
       "scriptName": "OnChanging",
       "isTrigger": true,
-      "category": "slider-bar",
-      "display_zh": "被拖动",
-      "display_en": "On changing"
+      "canDebug": true,
+      "category": "slider-bar"
     }
   ],
   "actions": [
@@ -83,6 +86,8 @@
       "name_en": "Set tooltip",
       "description_zh": "设置滑块的工具提示。",
       "description_en": "Set the slider bar's tooltip.",
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}",
       "scriptName": "SetTooltip",
       "category": "slider-bar",
       "params": [
@@ -94,9 +99,7 @@
           "desc_zh": "在滑块栏上出现的工具提示信息。",
           "desc_en": "The tooltip to set on the slider bar."
         }
-      ],
-      "display_zh": "设置工具提示为{0}",
-      "display_en": "Set tooltip to {0}"
+      ]
     },
     {
       "id": "set-value",
@@ -104,6 +107,8 @@
       "name_en": "Set value",
       "description_zh": "设置滑块值。",
       "description_en": "Set the value for the bar.",
+      "display_zh": "设置值为[b]{0}[/b]",
+      "display_en": "Set value to [b]{0}[/b]",
       "scriptName": "SetValue",
       "category": "slider-bar",
       "params": [
@@ -115,9 +120,7 @@
           "desc_zh": "要设置的值。",
           "desc_en": "The value to set for the slider."
         }
-      ],
-      "display_zh": "设置值为[b]{0}[/b]",
-      "display_en": "Set value to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-maximum",
@@ -125,6 +128,8 @@
       "name_en": "Set maximum",
       "description_zh": "设置滑块的最大值。",
       "description_en": "Set the maximum slider value for the bar.",
+      "display_zh": "设置最大值为[b]{0}[/b]",
+      "display_en": "Set maximum to [b]{0}[/b]",
       "scriptName": "SetMaximum",
       "category": "slider-bar",
       "params": [
@@ -136,9 +141,7 @@
           "desc_zh": "滑块的新最大值。",
           "desc_en": "The new maximum value for the slider bar."
         }
-      ],
-      "display_zh": "设置最大值为[b]{0}[/b]",
-      "display_en": "Set maximum to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-minimum",
@@ -146,6 +149,8 @@
       "name_en": "Set minimum",
       "description_zh": "设置滑动条的最小值。",
       "description_en": "Set the minimum slider value for the bar.",
+      "display_zh": "设置最小值为[b]{0}[/b]",
+      "display_en": "Set minimum to [b]{0}[/b]",
       "scriptName": "SetMinimum",
       "category": "slider-bar",
       "params": [
@@ -157,9 +162,7 @@
           "desc_zh": "滑块的新最小值。",
           "desc_en": "The new minimum value for the slider bar."
         }
-      ],
-      "display_zh": "设置最小值为[b]{0}[/b]",
-      "display_en": "Set minimum to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-step",
@@ -167,6 +170,8 @@
       "name_en": "Set step",
       "description_zh": "设置滑块的步长值。",
       "description_en": "Set the slider value step for the bar.",
+      "display_zh": "设置步长为[b]{0}[/b]",
+      "display_en": "Set step to [b]{0}[/b]",
       "scriptName": "SetStep",
       "category": "slider-bar",
       "params": [
@@ -178,9 +183,7 @@
           "desc_zh": "设置滑块步长值。",
           "desc_en": "The new stepping value for the slider bar."
         }
-      ],
-      "display_zh": "设置步长为[b]{0}[/b]",
-      "display_en": "Set step to [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

@@ -22,10 +22,10 @@
       "name_en": "Is on mobile",
       "description_zh": "检测当前运行设备是否为移动设备，如手机、平板电脑。注意：这种检测方式并非总是准确的，也不意味着此时必须要使用某种操作方式，如触屏。",
       "description_en": "True if the current device is a mobile device like a phone or tablet. This detection may not always be accurate and does not always imply certain input methods will be used.",
-      "scriptName": "IsOnMobile",
-      "category": "platform",
       "display_zh": "在移动端运行",
-      "display_en": "Is on mobile"
+      "display_en": "Is on mobile",
+      "scriptName": "IsOnMobile",
+      "category": "platform"
     },
     {
       "id": "is-on-windows",
@@ -33,10 +33,10 @@
       "name_en": "Is on Windows",
       "description_zh": "检测当前的运行平台是否为 Windows 设备。",
       "description_en": "True when on a device running Windows.",
-      "scriptName": "IsOnWindows",
-      "category": "platform",
       "display_zh": "在 Windows 运行",
-      "display_en": "Is on Windows"
+      "display_en": "Is on Windows",
+      "scriptName": "IsOnWindows",
+      "category": "platform"
     },
     {
       "id": "is-on-macos",
@@ -44,10 +44,10 @@
       "name_en": "Is on macOS",
       "description_zh": "检测当前的运行平台是否为 MacOS / OS X 设备。",
       "description_en": "True when on a device running macOS / OS X.",
-      "scriptName": "IsOnMacOS",
-      "category": "platform",
       "display_zh": "在 macOS 运行",
-      "display_en": "Is on macOS"
+      "display_en": "Is on macOS",
+      "scriptName": "IsOnMacOS",
+      "category": "platform"
     },
     {
       "id": "is-on-linux",
@@ -55,10 +55,10 @@
       "name_en": "Is on Linux",
       "description_zh": "检测当前的运行平台是否为 Linux 设备。",
       "description_en": "True when on a device running Linux.",
-      "scriptName": "IsOnLinux",
-      "category": "platform",
       "display_zh": "在 Linux 运行",
-      "display_en": "Is on Linux"
+      "display_en": "Is on Linux",
+      "scriptName": "IsOnLinux",
+      "category": "platform"
     },
     {
       "id": "is-on-chromeos",
@@ -66,10 +66,10 @@
       "name_en": "Is on Chrome OS",
       "description_zh": "检测当前的运行平台是否为 Chrome OS 设备。",
       "description_en": "True when on a device running Chrome OS.",
-      "scriptName": "IsOnChromeOS",
-      "category": "platform",
       "display_zh": "在 Chrome OS 运行",
-      "display_en": "Is on Chrome OS"
+      "display_en": "Is on Chrome OS",
+      "scriptName": "IsOnChromeOS",
+      "category": "platform"
     },
     {
       "id": "is-on-android",
@@ -77,10 +77,10 @@
       "name_en": "Is on Android",
       "description_zh": "检测当前的运行平台是否为 Android 设备。",
       "description_en": "True when on a device running Android.",
-      "scriptName": "IsOnAndroid",
-      "category": "platform",
       "display_zh": "在 Android 运行",
-      "display_en": "Is on Android"
+      "display_en": "Is on Android",
+      "scriptName": "IsOnAndroid",
+      "category": "platform"
     },
     {
       "id": "is-on-ios",
@@ -88,10 +88,10 @@
       "name_en": "Is on iOS",
       "description_zh": "检测当前的运行平台是否为 iOS 设备。",
       "description_en": "True when on a device running iOS.",
-      "scriptName": "IsOniOS",
-      "category": "platform",
       "display_zh": "在 iOS 运行",
-      "display_en": "Is on iOS"
+      "display_en": "Is on iOS",
+      "scriptName": "IsOniOS",
+      "category": "platform"
     },
     {
       "id": "is-web-export",
@@ -99,10 +99,10 @@
       "name_en": "Is web export",
       "description_zh": "检测当前运行的项目是否使用基于 Web 的导出方式。注意，在预览模式中总是能满足此结果。",
       "description_en": "True when running after a web-based export. Also true in preview mode.",
-      "scriptName": "IsWebExport",
-      "category": "export",
       "display_zh": "使用 Web 导出",
-      "display_en": "Is web export"
+      "display_en": "Is web export",
+      "scriptName": "IsWebExport",
+      "category": "export"
     },
     {
       "id": "is-cordova-export",
@@ -110,10 +110,10 @@
       "name_en": "Is Cordova export",
       "description_zh": "检测当前运行项目是否使用基于 Cordova 的导出方式。用于检测 Android / iOS 平台。",
       "description_en": "True when running after a Cordova-based export (Android/iOS).",
-      "scriptName": "IsCordovaExport",
-      "category": "export",
       "display_zh": "使用 Cordova 导出",
-      "display_en": "Is Cordova export"
+      "display_en": "Is Cordova export",
+      "scriptName": "IsCordovaExport",
+      "category": "export"
     },
     {
       "id": "is-nwjs-export",
@@ -141,10 +141,10 @@
       "name_en": "Is Windows wrapper export",
       "description_zh": "检测是否使用 Windows wrapper (WebView2) 方式导出的。",
       "description_en": "True when running after a Windows wrapper (WebView2) export.",
-      "scriptName": "IsWindowsWebView2Export",
-      "category": "export",
       "display_zh": "使用 Windows WebView2 方式导出",
-      "display_en": "Is Windows wrapper (WebView2) export"
+      "display_en": "Is Windows wrapper (WebView2) export",
+      "scriptName": "IsWindowsWebView2Export",
+      "category": "export"
     },
     {
       "id": "is-macos-wkwebview-export",
@@ -152,10 +152,10 @@
       "name_en": "Is macOS wrapper export",
       "description_zh": "检测是否使用 macOS wrapper (WKWebView) 方式导出的。",
       "description_en": "True when running after a macOS wrapper (WKWebView) export.",
-      "scriptName": "IsMacOSWKWebView2Export",
-      "category": "export",
       "display_zh": "使用 macOS WKWebView 导出",
-      "display_en": "Is macOS wrapper (WKWebView) export"
+      "display_en": "Is macOS wrapper (WKWebView) export",
+      "scriptName": "IsMacOSWKWebView2Export",
+      "category": "export"
     },
     {
       "id": "is-linux-cef-export",
@@ -163,10 +163,10 @@
       "name_en": "Is Linux wrapper export",
       "description_zh": "检查当前应用是否使用 Linux CEF 导出后运行的。",
       "description_en": "True when running after a Linux wrapper (CEF) export.",
-      "scriptName": "IsLinuxCEFExport",
-      "category": "export",
       "display_zh": "使用 Linux CEF 导出",
-      "display_en": "Is Linux wrapper (CEF) export"
+      "display_en": "Is Linux wrapper (CEF) export",
+      "scriptName": "IsLinuxCEFExport",
+      "category": "export"
     },
     {
       "id": "on-network-change",
@@ -174,11 +174,12 @@
       "name_en": "On network change",
       "description_zh": "当网络环境发生变化时触发，例如从WiFi切换为流量。",
       "description_en": "Triggered when the network connection changes, e.g. when moving from Wifi to cellular data.",
+      "display_zh": "网络连接已变化",
+      "display_en": "On network change",
       "scriptName": "OnNetworkChange",
       "isTrigger": true,
-      "category": "network",
-      "display_zh": "网络连接已变化",
-      "display_en": "On network change"
+      "canDebug": true,
+      "category": "network"
     },
     {
       "id": "on-wake-lock-acquired",
@@ -186,11 +187,12 @@
       "name_en": "On wake lock acquired",
       "description_zh": "成功开启屏幕常亮功能时触发。",
       "description_en": "Triggered after 'Request wake lock' if the lock was successfully acquired.",
+      "display_zh": "请求 '屏幕常亮' 成功",
+      "display_en": "On wake lock acquired",
       "scriptName": "OnWakeLockAcquired",
       "isTrigger": true,
-      "category": "wake-lock",
-      "display_zh": "请求 '屏幕常亮' 成功",
-      "display_en": "On wake lock acquired"
+      "canDebug": true,
+      "category": "wake-lock"
     },
     {
       "id": "on-wake-lock-error",
@@ -198,11 +200,12 @@
       "name_en": "On wake lock error",
       "description_zh": "执行 '请求屏幕常亮' 动作后，权限请求失败时触发。",
       "description_en": "Triggered after 'Request wake lock' if a lock failed to be acquired.",
+      "display_zh": "请求 '屏幕常亮' 失败",
+      "display_en": "On wake lock error",
       "scriptName": "OnWakeLockError",
       "isTrigger": true,
-      "category": "wake-lock",
-      "display_zh": "请求 '屏幕常亮' 失败",
-      "display_en": "On wake lock error"
+      "canDebug": true,
+      "category": "wake-lock"
     },
     {
       "id": "on-wake-lock-released",
@@ -210,11 +213,12 @@
       "name_en": "On wake lock released",
       "description_zh": "开启 '屏幕常亮' 功能后，再次解除时触发，这意味着屏幕此时已关闭。注意：某些情况下，设备会被自动解除。例如进入了省电模式。",
       "description_en": "Triggered when an active wake lock is released. Note in some cases this may be done automatically.",
+      "display_zh": "屏幕常亮解除",
+      "display_en": "On wake lock released",
       "scriptName": "OnWakeLockReleased",
       "isTrigger": true,
-      "category": "wake-lock",
-      "display_zh": "屏幕常亮解除",
-      "display_en": "On wake lock released"
+      "canDebug": true,
+      "category": "wake-lock"
     },
     {
       "id": "is-wake-lock-active",
@@ -222,10 +226,10 @@
       "name_en": "Is wake lock active",
       "description_zh": "检测当前是否已完成请求 '请求屏幕常亮' 动作，并且屏幕已保持常亮的状态。",
       "description_en": "True if a wake lock has been successfully acquired and has not yet been released.",
-      "scriptName": "IsWakeLockActive",
-      "category": "wake-lock",
       "display_zh": "已开启屏幕常亮",
-      "display_en": "Is wake lock active"
+      "display_en": "Is wake lock active",
+      "scriptName": "IsWakeLockActive",
+      "category": "wake-lock"
     },
     {
       "id": "is-wake-lock-supported",
@@ -233,10 +237,10 @@
       "name_en": "Is wake lock supported",
       "description_zh": "检测当前设备是否支持屏幕常亮的功能。",
       "description_en": "True if the 'Request wake lock' action is supported and can be used.",
-      "scriptName": "IsWakeLockSupported",
-      "category": "wake-lock",
       "display_zh": "设备支持屏幕常亮",
-      "display_en": "Is wake lock supported"
+      "display_en": "Is wake lock supported",
+      "scriptName": "IsWakeLockSupported",
+      "category": "wake-lock"
     }
   ],
   "actions": [
@@ -246,10 +250,10 @@
       "name_en": "Request wake lock",
       "description_zh": "请求设备唤醒锁，让设备保持常亮的状态。注意：这可能会导致电量消耗更快。",
       "description_en": "Request a wake lock to keep the screen on permanently. Note this increases power usage so will drain battery faster.",
-      "scriptName": "RequestWakeLock",
-      "category": "wake-lock",
       "display_zh": "请求屏幕常亮",
-      "display_en": "Request wake lock"
+      "display_en": "Request wake lock",
+      "scriptName": "RequestWakeLock",
+      "category": "wake-lock"
     },
     {
       "id": "release-wake-lock",
@@ -257,10 +261,10 @@
       "name_en": "Release wake lock",
       "description_zh": "如果已进入屏幕常亮状态，可以将其关闭。屏幕可能会由于长期不活跃而变暗或者关闭。",
       "description_en": "Release any active wake lock so the screen can turn off to save power again.",
-      "scriptName": "ReleaseWakeLock",
-      "category": "wake-lock",
       "display_zh": "关闭屏幕常亮",
-      "display_en": "Release wake lock"
+      "display_en": "Release wake lock",
+      "scriptName": "ReleaseWakeLock",
+      "category": "wake-lock"
     }
   ],
   "expressions": [

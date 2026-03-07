@@ -18,10 +18,10 @@
       "name_en": "Is supported",
       "description_zh": "检测当前运行设备是否支持蓝牙连接。",
       "description_en": "True if the current platform supports Bluetooth features.",
-      "scriptName": "IsSupported",
-      "category": "bluetooth",
       "display_zh": "设备支持蓝牙",
-      "display_en": "Is bluetooth supported"
+      "display_en": "Is bluetooth supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth"
     },
     {
       "id": "on-device-connected",
@@ -29,11 +29,12 @@
       "name_en": "On device connected",
       "description_zh": "在列出设备完事后触发",
       "description_en": "Triggered after 'Request device' successfully connects to a device.",
+      "display_zh": "设备连接成功",
+      "display_en": "On device connected",
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "设备连接成功",
-      "display_en": "On device connected"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "on-device-disconnected",
@@ -41,11 +42,12 @@
       "name_en": "On device disconnected",
       "description_zh": "在设备断开连接并关闭自身连接收触发",
       "description_en": "Triggered when a connected device disconnects and is no longer accessible.",
+      "display_zh": "设备断开连接",
+      "display_en": "On device disconnected",
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "设备断开连接",
-      "display_en": "On device disconnected"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "on-request-device-failed",
@@ -53,11 +55,12 @@
       "name_en": "On request device failed",
       "description_zh": "执行 '请求设备' 动作后，如果用户取消了请求或设备连接失败时触发。",
       "description_en": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "display_zh": "请求设备失败",
+      "display_en": "On request device failed",
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "请求设备失败",
-      "display_en": "On request device failed"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "is-device-connected",
@@ -65,8 +68,11 @@
       "name_en": "Is device connected",
       "description_zh": "测试：指定设备ID是否已连接",
       "description_en": "Test if a given device ID is currently connected.",
+      "display_zh": "设备 [b]{0}[/b] 已连接",
+      "display_en": "Is device [b]{0}[/b] connected",
       "scriptName": "IsDeviceConnected",
       "isTrigger": true,
+      "canDebug": true,
       "category": "bluetooth",
       "params": [
         {
@@ -77,9 +83,7 @@
           "desc_zh": "设备ID",
           "desc_en": "The ID of the device."
         }
-      ],
-      "display_zh": "设备 [b]{0}[/b] 已连接",
-      "display_en": "Is device [b]{0}[/b] connected"
+      ]
     },
     {
       "id": "on-primary-services-loaded",
@@ -87,11 +91,12 @@
       "name_en": "On primary services loaded",
       "description_zh": "请求次要服务成功时触发",
       "description_en": "Triggered after 'Request primary services' once the services have been loaded successfully.",
+      "display_zh": "次要服务加载完成",
+      "display_en": "On primary services loaded",
       "scriptName": "OnPrimaryServicesLoaded",
       "isTrigger": true,
-      "category": "services",
-      "display_zh": "次要服务加载完成",
-      "display_en": "On primary services loaded"
+      "canDebug": true,
+      "category": "services"
     },
     {
       "id": "on-primary-services-error",
@@ -99,11 +104,12 @@
       "name_en": "On primary services error",
       "description_zh": "请求次要服务出错时触发",
       "description_en": "Triggered after 'Request primary services' if the services fail to load.",
+      "display_zh": "请求次要服务出错",
+      "display_en": "On primary services error",
       "scriptName": "OnPrimaryServicesError",
       "isTrigger": true,
-      "category": "services",
-      "display_zh": "请求次要服务出错",
-      "display_en": "On primary services error"
+      "canDebug": true,
+      "category": "services"
     },
     {
       "id": "on-characteristics-loaded",
@@ -111,11 +117,12 @@
       "name_en": "On characteristics loaded",
       "description_zh": "蓝牙特征数据(Characteristic)加载成功时触发",
       "description_en": "Triggered after 'Request characteristics' once the characteristics have been loaded successfully.",
+      "display_zh": "特征数据加载成功",
+      "display_en": "On characteristics loaded",
       "scriptName": "OnCharacteristicsLoaded",
       "isTrigger": true,
-      "category": "services",
-      "display_zh": "特征数据加载成功",
-      "display_en": "On characteristics loaded"
+      "canDebug": true,
+      "category": "services"
     },
     {
       "id": "on-characteristics-error",
@@ -123,11 +130,12 @@
       "name_en": "On characteristics error",
       "description_zh": "蓝牙特征数据(Characteristic)加载错误时触发",
       "description_en": "Triggered after 'Request characteristics' if the characteristics fail to load.",
+      "display_zh": "特征数据加载错误",
+      "display_en": "On characteristics error",
       "scriptName": "OnCharacteristicsError",
       "isTrigger": true,
-      "category": "services",
-      "display_zh": "特征数据加载错误",
-      "display_en": "On characteristics error"
+      "canDebug": true,
+      "category": "services"
     },
     {
       "id": "on-any-characteristic-read",
@@ -135,11 +143,12 @@
       "name_en": "On any characteristic read",
       "description_zh": "任意蓝牙特征数据(Characteristic)读取成功时触发",
       "description_en": "Triggered after any read of a characteristic completes successfully.",
+      "display_zh": "任意特征数据读取成功",
+      "display_en": "On any characteristic read",
       "scriptName": "OnAnyCharacteristicRead",
       "isTrigger": true,
-      "category": "characteristics",
-      "display_zh": "任意特征数据读取成功",
-      "display_en": "On any characteristic read"
+      "canDebug": true,
+      "category": "characteristics"
     },
     {
       "id": "on-characteristic-read",
@@ -147,8 +156,11 @@
       "name_en": "On characteristic read",
       "description_zh": "在蓝牙特性成功读取后触发",
       "description_en": "Triggered after a read of a given characteristic completes successfully.",
+      "display_zh": "蓝牙特征数据 [b]{0}[/b] 读取成功",
+      "display_en": "On characteristic [b]{0}[/b] read",
       "scriptName": "OnCharacteristicRead",
       "isTrigger": true,
+      "canDebug": true,
       "category": "characteristics",
       "params": [
         {
@@ -159,9 +171,7 @@
           "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ],
-      "display_zh": "蓝牙特征数据 [b]{0}[/b] 读取成功",
-      "display_en": "On characteristic [b]{0}[/b] read"
+      ]
     },
     {
       "id": "on-any-characteristic-written",
@@ -169,11 +179,12 @@
       "name_en": "On any characteristic written",
       "description_zh": "任意蓝牙特征数据(Characteristic)写入完成时触发。",
       "description_en": "Triggered after any write to a characteristic completes successfully.",
+      "display_zh": "任意特征数据写入完成",
+      "display_en": "On any characteristic written",
       "scriptName": "OnAnyCharacteristicWritten",
       "isTrigger": true,
-      "category": "characteristics",
-      "display_zh": "任意特征数据写入完成",
-      "display_en": "On any characteristic written"
+      "canDebug": true,
+      "category": "characteristics"
     },
     {
       "id": "on-characteristic-written",
@@ -181,8 +192,11 @@
       "name_en": "On characteristic written",
       "description_zh": "指定的蓝牙特征数据(Characteristic)写入完成时触发。",
       "description_en": "Triggered after writing to a given characteristic completes successfully.",
+      "display_zh": "特征数据 [b]{0}[/b] 写入完成",
+      "display_en": "On characteristic [b]{0}[/b] written",
       "scriptName": "OnCharacteristicWritten",
       "isTrigger": true,
+      "canDebug": true,
       "category": "characteristics",
       "params": [
         {
@@ -193,9 +207,7 @@
           "desc_zh": "蓝牙特征数据的名称，UUID，或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ],
-      "display_zh": "特征数据 [b]{0}[/b] 写入完成",
-      "display_en": "On characteristic [b]{0}[/b] written"
+      ]
     },
     {
       "id": "on-any-characteristic-notification",
@@ -203,8 +215,11 @@
       "name_en": "On any characteristic notification",
       "description_zh": "任意蓝牙特征数据(Characteristic)接收到通知提醒时触发。",
       "description_en": "Triggered when a notification is received from any characteristic.",
+      "display_zh": "任意特征数据收到通知提醒  (在 {0} 中)",
+      "display_en": "On any characteristic notification (in {0})",
       "scriptName": "OnAnyCharacteristicNotification",
       "isTrigger": true,
+      "canDebug": true,
       "category": "characteristics",
       "params": [
         {
@@ -215,9 +230,7 @@
           "desc_zh": "要用来缓存读取数据的二进制数据实例",
           "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ],
-      "display_zh": "任意特征数据收到通知提醒  (在 {0} 中)",
-      "display_en": "On any characteristic notification (in {0})"
+      ]
     },
     {
       "id": "on-characteristic-notification",
@@ -225,8 +238,11 @@
       "name_en": "On characteristic notification",
       "description_zh": "指定的蓝牙特征数据(Characteristic)收到通知时触发",
       "description_en": "Triggered when a notification is received from a given characteristic.",
+      "display_zh": "特征数据 [b]{0}[/b] 收到通知 (在 {1} 中)",
+      "display_en": "On characteristic [b]{0}[/b] notification (in {1})",
       "scriptName": "OnCharacteristicNotification",
       "isTrigger": true,
+      "canDebug": true,
       "category": "characteristics",
       "params": [
         {
@@ -245,9 +261,7 @@
           "desc_zh": "要用来缓存读取数据的二进制数据实例",
           "desc_en": "A Binary Data object to read the notification data in to."
         }
-      ],
-      "display_zh": "特征数据 [b]{0}[/b] 收到通知 (在 {1} 中)",
-      "display_en": "On characteristic [b]{0}[/b] notification (in {1})"
+      ]
     },
     {
       "id": "on-characteristic-read-error",
@@ -255,11 +269,12 @@
       "name_en": "On characteristic read error",
       "description_zh": "任意蓝牙特征数据(Characteristic)读取失败时触发。",
       "description_en": "Triggered after any read of a characteristic fails.",
+      "display_zh": "特征数据读取错误",
+      "display_en": "On characteristic read error",
       "scriptName": "OnCharacteristicReadError",
       "isTrigger": true,
-      "category": "characteristics",
-      "display_zh": "特征数据读取错误",
-      "display_en": "On characteristic read error"
+      "canDebug": true,
+      "category": "characteristics"
     },
     {
       "id": "on-characteristic-write-error",
@@ -267,11 +282,12 @@
       "name_en": "On characteristic write error",
       "description_zh": "特征数据写入失败的时候触发。",
       "description_en": "Triggered after any write to a characteristic fails.",
+      "display_zh": "特征数据写入失败",
+      "display_en": "On characteristic write error",
       "scriptName": "OnCharacteristicWriteError",
       "isTrigger": true,
-      "category": "characteristics",
-      "display_zh": "特征数据写入失败",
-      "display_en": "On characteristic write error"
+      "canDebug": true,
+      "category": "characteristics"
     }
   ],
   "actions": [
@@ -281,6 +297,8 @@
       "name_en": "Request device",
       "description_zh": "请求最近的蓝牙设备 必须在用户输入操作中被调用",
       "description_en": "Request access to a nearby Bluetooth device. Must be used in a user input trigger.",
+      "display_zh": "请求设备(服务[i]{0}[/i]，设备名称[i]{1}[/i]，设备名称前缀[i]{2}[/i]，可选服务[i]{3}[/i]，接受所有设备[i]{4}[/i])",
+      "display_en": "Request device (services [i]{0}[/i], device name [i]{1}[/i], device name prefix [i]{2}[/i], optional services [i]{3}[/i], accept all devices [i]{4}[/i])",
       "scriptName": "RequestDevice",
       "category": "bluetooth",
       "params": [
@@ -321,6 +339,8 @@
           "type": "combo",
           "name_zh": "允许所有设备",
           "name_en": "Accept all devices",
+          "desc_zh": "显示所有设备（即时不符合上面条件）",
+          "desc_en": "Whether to display all devices, even if they do not match the above filters.",
           "items": [
             "no",
             "yes"
@@ -334,13 +354,9 @@
               "zh": "是",
               "en": "Yes"
             }
-          },
-          "desc_zh": "显示所有设备（即时不符合上面条件）",
-          "desc_en": "Whether to display all devices, even if they do not match the above filters."
+          }
         }
-      ],
-      "display_zh": "请求设备(服务[i]{0}[/i]，设备名称[i]{1}[/i]，设备名称前缀[i]{2}[/i]，可选服务[i]{3}[/i]，接受所有设备[i]{4}[/i])",
-      "display_en": "Request device (services [i]{0}[/i], device name [i]{1}[/i], device name prefix [i]{2}[/i], optional services [i]{3}[/i], accept all devices [i]{4}[/i])"
+      ]
     },
     {
       "id": "disconnect-device",
@@ -348,6 +364,8 @@
       "name_en": "Disconnect device",
       "description_zh": "断开一个已经连接的设备",
       "description_en": "Disconnect a currently connected device.",
+      "display_zh": "与设备[i]{0}[/i]断开连接",
+      "display_en": "Disconnect device [i]{0}[/i]",
       "scriptName": "DisconnectDevice",
       "category": "bluetooth",
       "params": [
@@ -359,9 +377,7 @@
           "desc_zh": "要断开连接的设备 留空为默认设备",
           "desc_en": "The ID of the device to disconnect. Leave empty to disconnect default device."
         }
-      ],
-      "display_zh": "与设备[i]{0}[/i]断开连接",
-      "display_en": "Disconnect device [i]{0}[/i]"
+      ]
     },
     {
       "id": "request-primary-services",
@@ -369,6 +385,8 @@
       "name_en": "Request primary services",
       "description_zh": "加载一个设备可用次要服务的列表 将触发当次要服务加载完成时",
       "description_en": "Load a list of available primary services for a device. Triggers 'On primary services loaded' when completed.",
+      "display_zh": "为设备 [i]{0}[/i]请求次要服务",
+      "display_en": "Request primary services for device [i]{0}[/i]",
       "scriptName": "RequestPrimaryServices",
       "isAsync": true,
       "category": "services",
@@ -381,9 +399,7 @@
           "desc_zh": "要请求次要服务的设备ID  留空危默认",
           "desc_en": "The ID of the device to get primary services for. Leave empty for default device."
         }
-      ],
-      "display_zh": "为设备 [i]{0}[/i]请求次要服务",
-      "display_en": "Request primary services for device [i]{0}[/i]"
+      ]
     },
     {
       "id": "request-characteristics",
@@ -391,6 +407,8 @@
       "name_en": "Request characteristics",
       "description_zh": "加载主要服务的可用特性列表。完成后触发 '特性加载完成' 条件。",
       "description_en": "Load a list of available characteristics for a primary service. Triggers 'On characteristics loaded' when completed.",
+      "display_zh": "为设备 [i]{0}[/i] 请求蓝牙特性服务 [i]{1}[/i]",
+      "display_en": "Request characteristics for device [i]{0}[/i] service [i]{1}[/i]",
       "scriptName": "RequestCharacteristics",
       "isAsync": true,
       "category": "services",
@@ -411,9 +429,7 @@
           "desc_zh": "服务名称，UUID或十六进制ID，用于获取特征数据。",
           "desc_en": "The service name, UUID, or hexadecimal ID, to get characteristics for."
         }
-      ],
-      "display_zh": "为设备 [i]{0}[/i] 请求蓝牙特性服务 [i]{1}[/i]",
-      "display_en": "Request characteristics for device [i]{0}[/i] service [i]{1}[/i]"
+      ]
     },
     {
       "id": "read-characteristic-binary",
@@ -421,6 +437,8 @@
       "name_en": "Read binary",
       "description_zh": "从蓝牙设备中读取二进制数据并存入二进制数据对象中",
       "description_en": "Read data from a Bluetooth characteristic in to a Binary Data object.",
+      "display_zh": "从设备[i]{0}[/i] 的服务 [i]{1}[/i] 蓝牙特性 [i]{2}[/i] 读取数据到 {3} 中",
+      "display_en": "Read binary from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i] in to {3}",
       "scriptName": "ReadCharacteristicBinary",
       "isAsync": true,
       "category": "characteristics",
@@ -457,9 +475,7 @@
           "desc_zh": "要读取的二进制数据",
           "desc_en": "A Binary Data object to read the data to."
         }
-      ],
-      "display_zh": "从设备[i]{0}[/i] 的服务 [i]{1}[/i] 蓝牙特性 [i]{2}[/i] 读取数据到 {3} 中",
-      "display_en": "Read binary from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i] in to {3}"
+      ]
     },
     {
       "id": "read-characteristic-value",
@@ -467,6 +483,8 @@
       "name_en": "Read value",
       "description_zh": "从蓝牙特性中读取文字或数字",
       "description_en": "Read text or a number from a Bluetooth characteristic.",
+      "display_zh": "从设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 中读取信息",
+      "display_en": "Read value from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
       "scriptName": "ReadCharacteristicValue",
       "isAsync": true,
       "category": "characteristics",
@@ -495,9 +513,7 @@
           "desc_zh": "服务名、UUID或十六进制ID。",
           "desc_en": "The characteristic name, UUID, or hexadecimal ID."
         }
-      ],
-      "display_zh": "从设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 中读取信息",
-      "display_en": "Read value from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
+      ]
     },
     {
       "id": "write-characteristic-binary",
@@ -505,6 +521,8 @@
       "name_en": "Write binary",
       "description_zh": "向蓝牙设备写入二进制数据",
       "description_en": "Write data from a Binary Data object to a Bluetooth characteristic.",
+      "display_zh": "向设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 写入数据  {3}",
+      "display_en": "Write {3} to device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
       "scriptName": "WriteCharacteristicBinary",
       "isAsync": true,
       "category": "characteristics",
@@ -541,9 +559,7 @@
           "desc_zh": "要写入的二进制值",
           "desc_en": "A Binary Data object with data to write."
         }
-      ],
-      "display_zh": "向设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 写入数据  {3}",
-      "display_en": "Write {3} to device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
+      ]
     },
     {
       "id": "start-stop-characteristic-notifications",
@@ -551,6 +567,8 @@
       "name_en": "Start/stop notifications",
       "description_zh": "启动或停止此特性的通知",
       "description_en": "Start or stop notifications for a characteristic.",
+      "display_zh": "{3}设备[i]{0}[/i]服务[i]{1}[/i]特性[i]{2}[/i]",
+      "display_en": "{3} notifications for device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
       "scriptName": "StartStopCharacteristicNotifications",
       "category": "characteristics",
       "params": [
@@ -583,6 +601,8 @@
           "type": "combo",
           "name_zh": "通知",
           "name_en": "Notifications",
+          "desc_zh": "用来设置启动或停止此特性的通知",
+          "desc_en": "Whether to start or stop notifications for this characteristic.",
           "items": [
             "start",
             "stop"
@@ -596,13 +616,9 @@
               "zh": "停下",
               "en": "Stop"
             }
-          },
-          "desc_zh": "用来设置启动或停止此特性的通知",
-          "desc_en": "Whether to start or stop notifications for this characteristic."
+          }
         }
-      ],
-      "display_zh": "{3}设备[i]{0}[/i]服务[i]{1}[/i]特性[i]{2}[/i]",
-      "display_en": "{3} notifications for device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]"
+      ]
     }
   ],
   "expressions": [

@@ -125,7 +125,5 @@
       "zh": "请输入有效的视窗高度。",
       "en": "Please enter a valid viewport height."
     }
-  },
-  "description_en": "The New project dialog appears when you create a new project . It allows you to specify some basic details about the project, such as its name. New projects can be created from the Start Page or the main menu . All values are optional so you can simply click OK right away to get a basic new project with default settings. Note the Alt + N keyboard shortcut creates a new project skipping this dialog, as if you clicked OK after it opened. The dialog has the following fields. Name Choose the name of",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/new-project"
+  }
 }

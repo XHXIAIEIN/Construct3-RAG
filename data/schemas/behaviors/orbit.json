@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为是否已经启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -26,6 +26,8 @@
       "name_en": "Set speed",
       "description_zh": "设置环绕的旋转速度。",
       "description_en": "Set the speed the object orbits at.",
+      "display_zh": "设置 {my}环绕速度为{0}",
+      "display_en": "Set {my} speed to {0} degrees per second",
       "scriptName": "SetSpeed",
       "params": [
         {
@@ -36,9 +38,7 @@
           "desc_zh": "要设置的速度，以每秒旋转度数为单位。",
           "desc_en": "The new orbit speed, in degrees per second."
         }
-      ],
-      "display_zh": "设置 {my}环绕速度为{0}",
-      "display_en": "Set {my} speed to {0} degrees per second"
+      ]
     },
     {
       "id": "set-target",
@@ -46,6 +46,8 @@
       "name_en": "Set target",
       "description_zh": "设置环绕的中心点，沿其周围进行环绕运动。",
       "description_en": "Target a position in the layout to orbit around.",
+      "display_zh": "设置 {my}环绕中心为 ({0}, {1})",
+      "display_en": "Set {my} target to ({0}, {1})",
       "scriptName": "SetTarget",
       "params": [
         {
@@ -64,9 +66,7 @@
           "desc_zh": "要环绕的Y坐标。",
           "desc_en": "Y position of target in layout co-ordinates."
         }
-      ],
-      "display_zh": "设置 {my}环绕中心为 ({0}, {1})",
-      "display_en": "Set {my} target to ({0}, {1})"
+      ]
     },
     {
       "id": "set-rotation",
@@ -74,6 +74,8 @@
       "name_en": "Set rotation",
       "description_zh": "根据旋转角度，设置当前轨道的位置。",
       "description_en": "Set the current orbit position by its angle.",
+      "display_zh": "设置 {my}旋转角度{0}",
+      "display_en": "Set {my} rotation {0}",
       "scriptName": "SetRotation",
       "params": [
         {
@@ -84,9 +86,7 @@
           "desc_zh": "设置当前轨道的旋转角度。",
           "desc_en": "New orbit rotation angle, in degrees."
         }
-      ],
-      "display_zh": "设置 {my}旋转角度{0}",
-      "display_en": "Set {my} rotation {0}"
+      ]
     },
     {
       "id": "set-offset-angle",
@@ -94,6 +94,8 @@
       "name_en": "Set offset angle",
       "description_zh": "设置椭圆轨道的旋转偏移角度，对于圆形轨道，则影响初始的角度。",
       "description_en": "Set offset of ellipse angle from axis.",
+      "display_zh": "设置 {my}偏移角度为{0}",
+      "display_en": "Set {my} offset angle {0}",
       "scriptName": "SetOffsetAngle",
       "params": [
         {
@@ -104,9 +106,7 @@
           "desc_zh": "设置轨道和轴的偏移角度，以度数为单位。",
           "desc_en": "New offset of ellipse angle from axis, in degrees."
         }
-      ],
-      "display_zh": "设置 {my}偏移角度为{0}",
-      "display_en": "Set {my} offset angle {0}"
+      ]
     },
     {
       "id": "set-radius",
@@ -114,6 +114,8 @@
       "name_en": "Set radius",
       "description_zh": "设置轨道的半径。",
       "description_en": "Set the primary and secondary orbit radii.",
+      "display_zh": "设置 {my}环绕主半径为{0}, 副半径为{1}",
+      "display_en": "Set {my} primary radius {0}, secondary radius {1}",
       "scriptName": "SetRadius",
       "params": [
         {
@@ -132,9 +134,7 @@
           "desc_zh": "副半径的长度，以像素为单位。圆形轨道应设置和主半径相同。",
           "desc_en": "New secondary radius length, in pixels. (For a circle make the same as primary)"
         }
-      ],
-      "display_zh": "设置 {my}环绕主半径为{0}, 副半径为{1}",
-      "display_en": "Set {my} primary radius {0}, secondary radius {1}"
+      ]
     },
     {
       "id": "set-match-rotation",
@@ -142,6 +142,8 @@
       "name_en": "Set match rotation",
       "description_zh": "对象的角度是否跟随轨道的角度而旋转。",
       "description_en": "Change the 'Match rotation' property.",
+      "display_zh": "[i]{0}[/i] {my} 旋转对齐",
+      "display_en": "Set {my} match rotation [i]{0}[/i]",
       "scriptName": "SetMatchRotation",
       "params": [
         {
@@ -149,6 +151,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "是否将对象的角度跟随轨道的角度旋转。",
+          "desc_en": "Whether to match the rotation of the object to the orbit angle.",
           "items": [
             "disabled",
             "enabled"
@@ -162,13 +166,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "是否将对象的角度跟随轨道的角度旋转。",
-          "desc_en": "Whether to match the rotation of the object to the orbit angle."
+          }
         }
-      ],
-      "display_zh": "[i]{0}[/i] {my} 旋转对齐",
-      "display_en": "Set {my} match rotation [i]{0}[/i]"
+      ]
     },
     {
       "id": "pin",
@@ -176,6 +176,8 @@
       "name_en": "Pin",
       "description_zh": "将轨道固定到指定对象，与对象的位置同步运行，沿其周围进行环绕运动。",
       "description_en": "Set an object as the target location to orbit around.",
+      "display_zh": "固定 {my} 到 {0}",
+      "display_en": "Pin {my} to {0}",
       "scriptName": "Pin",
       "params": [
         {
@@ -186,9 +188,7 @@
           "desc_zh": "要固定到的对象",
           "desc_en": "Object to pin to."
         }
-      ],
-      "display_zh": "固定 {my} 到 {0}",
-      "display_en": "Pin {my} to {0}"
+      ]
     },
     {
       "id": "unpin",
@@ -196,9 +196,9 @@
       "name_en": "Unpin",
       "description_zh": "解除对象的固定，不再跟随对象的位置运动。",
       "description_en": "Unpins from the target object.",
-      "scriptName": "Unpin",
       "display_zh": "解除 {my} 固定",
-      "display_en": "Unpin {my} from target"
+      "display_en": "Unpin {my} from target",
+      "scriptName": "Unpin"
     },
     {
       "id": "set-acceleration",
@@ -206,6 +206,8 @@
       "name_en": "Set acceleration",
       "description_zh": "设置轨道旋转的速率变化。",
       "description_en": "Set the rate the object's orbital rotation changes.",
+      "display_zh": "设置 {my}加速度为{0}",
+      "display_en": "Set {my} acceleration to {0} degrees per second per second",
       "scriptName": "SetAcceleration",
       "params": [
         {
@@ -216,9 +218,7 @@
           "desc_zh": "沿轨道环绕的加速度，以每秒度数为单位。",
           "desc_en": "The new orbit acceleration, in degrees per second per second."
         }
-      ],
-      "display_zh": "设置 {my}加速度为{0}",
-      "display_en": "Set {my} acceleration to {0} degrees per second per second"
+      ]
     },
     {
       "id": "set-enabled",
@@ -226,6 +226,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -233,6 +235,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -246,13 +250,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "reset-total-rotation",
@@ -260,9 +260,9 @@
       "name_en": "Reset total rotation",
       "description_zh": "重置总旋转角度和总绝对旋转角度的计数，全部归零。",
       "description_en": "Return the total rotation and total absolute rotation counters to 0",
-      "scriptName": "ResetTotalRotation",
       "display_zh": "重置 {my} 总旋转角度",
-      "display_en": "Reset {my} total rotation"
+      "display_en": "Reset {my} total rotation",
+      "scriptName": "ResetTotalRotation"
     }
   ],
   "expressions": [

@@ -16,6 +16,8 @@
       "name_en": "Compare to current locale",
       "description_zh": "指定一个特定的语言区域标识符，与本地化对象的当前区域设置进行比较。",
       "description_en": "Compare a locale string against the locale string of the internationalization object.",
+      "display_zh": "当前区域 {1} {0}",
+      "display_en": "current locale {0} {1}",
       "scriptName": "CompareCurrentLocale",
       "category": "internationalization",
       "params": [
@@ -35,9 +37,7 @@
           "desc_zh": "与当前区域比较的语言区域标识符。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
           "desc_en": "The locale string to compare against the locale string of the internationalization object"
         }
-      ],
-      "display_zh": "当前区域 {1} {0}",
-      "display_en": "current locale {0} {1}"
+      ]
     }
   ],
   "actions": [
@@ -47,6 +47,8 @@
       "name_en": "Set locale",
       "description_zh": "设置本地化对象的区域，以提供不同的本地内容。",
       "description_en": "Sets the locale of the internationalization object.",
+      "display_zh": "设置区域为 [b]{0}[/b]",
+      "display_en": "Set locale [b]{0}[/b]",
       "scriptName": "SetLocale",
       "category": "internationalization",
       "params": [
@@ -58,9 +60,7 @@
           "desc_zh": "要设置的区域。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
           "desc_en": "The locale to use."
         }
-      ],
-      "display_zh": "设置区域为 [b]{0}[/b]",
-      "display_en": "Set locale [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-context",
@@ -68,6 +68,8 @@
       "name_en": "Set context",
       "description_zh": "设置本地化对象的路径，用于联系上下文。",
       "description_en": "Sets the current context of the internationalization object.",
+      "display_zh": "设置路径为 [b]{0}[/b]",
+      "display_en": "Set context [b]{0}[/b]",
       "scriptName": "SetContext",
       "category": "internationalization",
       "params": [
@@ -79,9 +81,7 @@
           "desc_zh": "设置本地化对象的路径，可以是绝对路径或是相对路径。",
           "desc_en": "The new current context, can be absolute or relative."
         }
-      ],
-      "display_zh": "设置路径为 [b]{0}[/b]",
-      "display_en": "Set context [b]{0}[/b]"
+      ]
     },
     {
       "id": "push-context",
@@ -89,6 +89,8 @@
       "name_en": "Push context",
       "description_zh": "将路径推入本地化对象的列表中。",
       "description_en": "Pushes a new context into the internationalization object stack.",
+      "display_zh": "追加路径 [b]{0}[/b]",
+      "display_en": "Push context [b]{0}[/b]",
       "scriptName": "PushContext",
       "category": "internationalization",
       "params": [
@@ -100,9 +102,7 @@
           "desc_zh": "要追加的路径，可以是绝对路径或是相对路径。",
           "desc_en": "The new context to push, can be absolute or relative."
         }
-      ],
-      "display_zh": "追加路径 [b]{0}[/b]",
-      "display_en": "Push context [b]{0}[/b]"
+      ]
     },
     {
       "id": "pop-context",
@@ -110,10 +110,10 @@
       "name_en": "Pop context",
       "description_zh": "弹出本地化对象的列表最后一项元素。",
       "description_en": "Pops the last element of the internationalization's object stack",
-      "scriptName": "PopContext",
-      "category": "internationalization",
       "display_zh": "弹出路径",
-      "display_en": "Pop context"
+      "display_en": "Pop context",
+      "scriptName": "PopContext",
+      "category": "internationalization"
     },
     {
       "id": "add-string",
@@ -121,6 +121,8 @@
       "name_en": "Add string",
       "description_zh": "添加一段新的文本到节点列表中。",
       "description_en": "Adds a new string for the given context.",
+      "display_zh": "添加文本 [b]{1}[/b] 到节点 [b]{0}[/b]。",
+      "display_en": "Add string [b]{1}[/b] to context [b]{0}[/b]",
       "scriptName": "AddString",
       "category": "internationalization",
       "params": [
@@ -140,9 +142,7 @@
           "desc_zh": "用于添加到本地化对象的字符串。",
           "desc_en": "The string that will be added to the internationalization object."
         }
-      ],
-      "display_zh": "添加文本 [b]{1}[/b] 到节点 [b]{0}[/b]。",
-      "display_en": "Add string [b]{1}[/b] to context [b]{0}[/b]"
+      ]
     },
     {
       "id": "load-from-json",
@@ -150,6 +150,8 @@
       "name_en": "Load from JSON",
       "description_zh": "从 JSON 字符串中加载翻译数据。特定格式请阅读文档。",
       "description_en": "Loads translation data from a JSON string.",
+      "display_zh": "加载翻译数据 [b]{0}[/b]",
+      "display_en": "Load from JSON [b]{0}[/b]",
       "scriptName": "LoadFromJSON",
       "category": "internationalization",
       "params": [
@@ -161,9 +163,7 @@
           "desc_zh": "包含翻译数据的JSON字符串。特定格式请阅读文档。",
           "desc_en": "JSON string with translation data"
         }
-      ],
-      "display_zh": "加载翻译数据 [b]{0}[/b]",
-      "display_en": "Load from JSON [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [
@@ -175,6 +175,7 @@
       "description_en": "Get the internationalized string at the current context.",
       "expressionName": "Lookup",
       "returnType": "string",
+      "isVariadicParameters": true,
       "category": "internationalization",
       "params": [
         {
@@ -195,6 +196,7 @@
       "description_en": "Get the internationalized string at the current context using the defined pluralization rules.",
       "expressionName": "LookupPlural",
       "returnType": "string",
+      "isVariadicParameters": true,
       "category": "internationalization",
       "params": [
         {

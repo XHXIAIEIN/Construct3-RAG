@@ -2,13 +2,5 @@
   "id": "properties",
   "name_zh": "属性栏",
   "name_en": "Properties",
-  "menuItems": [],
-  "description_en": "The Properties Bar is an essential of the interface. It displays a list of all the settings you can change on whatever is selected. The picture below shows the Properties Bar displaying a project's properties. The Properties Bar There are too many properties in Construct to list here. Instead, properties for different parts of the project are documented in the relevant manual section. For example, layout properties are described in the manual entry Layouts . Properties are organised in to catego",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/properties-bar",
-  "sections": [
-    "Things with properties",
-    "Property descriptions",
-    "Typing calculations",
-    "Dragging values"
-  ]
+  "menuItems": []
 }

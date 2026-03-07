@@ -16,11 +16,13 @@
       "name_en": "On clicked",
       "description_zh": "单击按钮时触发。",
       "description_en": "Triggered when the button is clicked.",
+      "display_zh": "点击按钮",
+      "display_en": "On clicked",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "button",
-      "display_zh": "点击按钮",
-      "display_en": "On clicked"
+      "canDebug": true,
+      "highlight": true,
+      "category": "button"
     },
     {
       "id": "is-checked",
@@ -28,10 +30,10 @@
       "name_en": "Is checked",
       "description_zh": "检测复选框是否已被勾选。",
       "description_en": "True if the checkbox is checked.",
-      "scriptName": "IsChecked",
-      "category": "button",
       "display_zh": "已勾选",
-      "display_en": "Is checked"
+      "display_en": "Is checked",
+      "scriptName": "IsChecked",
+      "category": "button"
     },
     {
       "id": "compare-text",
@@ -39,6 +41,8 @@
       "name_en": "Compare text",
       "description_zh": "比较按钮的文本。",
       "description_en": "Compare the button's text.",
+      "display_zh": "按钮文本是[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]",
       "scriptName": "CompareText",
       "category": "button",
       "params": [
@@ -55,6 +59,8 @@
           "type": "combo",
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -68,13 +74,9 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          },
-          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
+          }
         }
-      ],
-      "display_zh": "按钮文本是[b]{0}[/b] [i]({1})[/i]",
-      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]"
+      ]
     }
   ],
   "actions": [
@@ -84,6 +86,8 @@
       "name_en": "Set text",
       "description_zh": "设置按钮的文字。",
       "description_en": "Set the button's text.",
+      "display_zh": "设置按钮文字为{0}",
+      "display_en": "Set text to {0}",
       "scriptName": "SetText",
       "category": "button",
       "params": [
@@ -95,9 +99,7 @@
           "desc_zh": "在按钮上显示的文本。",
           "desc_en": "The text to set in the button."
         }
-      ],
-      "display_zh": "设置按钮文字为{0}",
-      "display_en": "Set text to {0}"
+      ]
     },
     {
       "id": "set-tooltip",
@@ -105,6 +107,8 @@
       "name_en": "Set tooltip",
       "description_zh": "设置按钮的工具提示。",
       "description_en": "Set the button's tooltip.",
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}",
       "scriptName": "SetTooltip",
       "category": "button",
       "params": [
@@ -116,9 +120,7 @@
           "desc_zh": "在按钮上设置的工具提示。",
           "desc_en": "The tooltip to set on the button."
         }
-      ],
-      "display_zh": "设置工具提示为{0}",
-      "display_en": "Set tooltip to {0}"
+      ]
     },
     {
       "id": "set-checked",
@@ -126,6 +128,8 @@
       "name_en": "Set checked",
       "description_zh": "勾选或取消选中一个复选框。",
       "description_en": "Check or uncheck a checkbox.",
+      "display_zh": "设置[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]",
       "scriptName": "SetChecked",
       "category": "button",
       "params": [
@@ -134,6 +138,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "选择复选框状态。",
+          "desc_en": "Choose the checkbox state.",
           "items": [
             "unchecked",
             "checked"
@@ -147,13 +153,9 @@
               "zh": "已勾选",
               "en": "Checked"
             }
-          },
-          "desc_zh": "选择复选框状态。",
-          "desc_en": "Choose the checkbox state."
+          }
         }
-      ],
-      "display_zh": "设置[b]{0}[/b]",
-      "display_en": "Set [b]{0}[/b]"
+      ]
     },
     {
       "id": "toggle-checked",
@@ -161,10 +163,10 @@
       "name_en": "Toggle checked",
       "description_zh": "切换复选框",
       "description_en": "Toggle a checkbox.",
-      "scriptName": "ToggleChecked",
-      "category": "button",
       "display_zh": "反转勾选",
-      "display_en": "Toggle checked"
+      "display_en": "Toggle checked",
+      "scriptName": "ToggleChecked",
+      "category": "button"
     }
   ],
   "expressions": [

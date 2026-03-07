@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": true,
+  "extendBox": {
+    "horizontal": 30,
+    "vertical": 30
+  },
   "parameters": [
     {
       "id": "frequency",
@@ -20,7 +24,8 @@
       "name_zh": "frequency",
       "name_en": "frequency",
       "initialValue": 12,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "freq"
     },
     {
       "id": "amplitude",
@@ -28,7 +33,8 @@
       "name_zh": "amplitude",
       "name_en": "amplitude",
       "initialValue": 0.05,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "amp"
     },
     {
       "id": "speed",
@@ -36,7 +42,8 @@
       "name_zh": "speed",
       "name_en": "speed",
       "initialValue": 2,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speed"
     }
   ]
 }

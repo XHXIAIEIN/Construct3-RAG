@@ -19,10 +19,10 @@
       "name_en": "Is tile randomization enabled",
       "description_zh": "检测纹理混合功能是否已启用。",
       "description_en": "True if tile randomization is currently enabled.",
-      "scriptName": "IsTileRandomizationEnabled",
-      "category": "tile-randomization",
       "display_zh": "已开启纹理混合",
-      "display_en": "Is tile randomization enabled"
+      "display_en": "Is tile randomization enabled",
+      "scriptName": "IsTileRandomizationEnabled",
+      "category": "tile-randomization"
     },
     {
       "id": "on-image-url-loaded",
@@ -30,11 +30,12 @@
       "name_en": "On image URL loaded",
       "description_zh": "执行 '加载网络图像' 动作后，图像加载完成时触发。",
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_zh": "网络图像加载完成",
+      "display_en": "On image URL loaded",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "网络图像加载完成",
-      "display_en": "On image URL loaded"
+      "canDebug": true,
+      "category": "web"
     },
     {
       "id": "on-image-url-failed",
@@ -42,11 +43,11 @@
       "name_en": "On image URL failed",
       "description_zh": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_zh": "当图像链接读取失败",
+      "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "当图像链接读取失败",
-      "display_en": "On image URL failed to load"
+      "category": "web"
     }
   ],
   "actions": [
@@ -56,6 +57,8 @@
       "name_en": "Set blend mode",
       "description_zh": "设置此对象的背景混合模式。",
       "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
       "scriptName": "SetEffect",
       "category": "appearance",
       "params": [
@@ -64,6 +67,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object.",
           "items": [
             "normal",
             "additive",
@@ -142,13 +147,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "为此对象选择新的混合模式。",
-          "desc_en": "Choose the new blend mode for this object."
+          }
         }
-      ],
-      "display_zh": "设置混合模式为[i]{0}[/i]",
-      "display_en": "Set blend mode to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-offset-x",
@@ -156,6 +157,8 @@
       "name_en": "Set image X offset",
       "description_zh": "设置图像在X轴的偏移量",
       "description_en": "Set the X offset of the image within the object.",
+      "display_zh": "设置图像偏移X为[i]{0}[/i]",
+      "display_en": "Set image X offset to [i]{0}[/i]",
       "scriptName": "SetImageOffsetX",
       "category": "image",
       "params": [
@@ -167,9 +170,7 @@
           "desc_zh": "图像在X轴的偏移量",
           "desc_en": "The X offset of the image within the object, in pixels."
         }
-      ],
-      "display_zh": "设置图像偏移X为[i]{0}[/i]",
-      "display_en": "Set image X offset to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-offset-y",
@@ -177,6 +178,8 @@
       "name_en": "Set image Y offset",
       "description_zh": "设置图片内Y轴偏移量",
       "description_en": "Set the Y offset of the image within the object.",
+      "display_zh": "设置图像偏移Y为[i]{0}[/i]",
+      "display_en": "Set image Y offset to [i]{0}[/i]",
       "scriptName": "SetImageOffsetY",
       "category": "image",
       "params": [
@@ -188,9 +191,7 @@
           "desc_zh": "图像在Y轴的偏移量",
           "desc_en": "The Y offset of the image within the object, in pixels."
         }
-      ],
-      "display_zh": "设置图像偏移Y为[i]{0}[/i]",
-      "display_en": "Set image Y offset to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-scale-x",
@@ -198,6 +199,8 @@
       "name_en": "Set image X scale",
       "description_zh": "设置图片内X轴缩放量",
       "description_en": "Set the X scale of the image within the object.",
+      "display_zh": "设置图像X缩放为[i]{0}[/i]",
+      "display_en": "Set image X scale to [i]{0}[/i]",
       "scriptName": "SetImageScaleX",
       "category": "image",
       "params": [
@@ -206,13 +209,11 @@
           "type": "number",
           "name_zh": "X轴比例",
           "name_en": "X scale",
-          "initialValue": "100",
           "desc_zh": "图像在 X 轴的缩放比例，以百分比表示。",
-          "desc_en": "The X scale of the image within the object, as a percentage."
+          "desc_en": "The X scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
-      ],
-      "display_zh": "设置图像X缩放为[i]{0}[/i]",
-      "display_en": "Set image X scale to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-scale-y",
@@ -220,6 +221,8 @@
       "name_en": "Set image Y scale",
       "description_zh": "设置图片内Y轴缩放量",
       "description_en": "Set the Y scale of the image within the object.",
+      "display_zh": "设置图像Y缩放为[i]{0}[/i]",
+      "display_en": "Set image Y scale to [i]{0}[/i]",
       "scriptName": "SetImageScaleY",
       "category": "image",
       "params": [
@@ -228,13 +231,11 @@
           "type": "number",
           "name_zh": "Y轴比例",
           "name_en": "Y scale",
-          "initialValue": "100",
           "desc_zh": "图像在 Y 轴的缩放比例，以百分比表示。",
-          "desc_en": "The Y scale of the image within the object, as a percentage."
+          "desc_en": "The Y scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
-      ],
-      "display_zh": "设置图像Y缩放为[i]{0}[/i]",
-      "display_en": "Set image Y scale to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-angle",
@@ -242,6 +243,8 @@
       "name_en": "Set image angle",
       "description_zh": "设置图片角度",
       "description_en": "Set the angle of the image within the object.",
+      "display_zh": "设置图像角度为[i]{0}[/i]°",
+      "display_en": "Set image angle to [i]{0}[/i] degrees",
       "scriptName": "SetImageAngle",
       "category": "image",
       "params": [
@@ -253,9 +256,7 @@
           "desc_zh": "设置内部图像的角度，以度数为单位。",
           "desc_en": "The angle of the image within the object, in degrees."
         }
-      ],
-      "display_zh": "设置图像角度为[i]{0}[/i]°",
-      "display_en": "Set image angle to [i]{0}[/i] degrees"
+      ]
     },
     {
       "id": "set-tile-randomization-enabled",
@@ -263,6 +264,8 @@
       "name_en": "Set tile randomization enabled",
       "description_zh": "启用或禁用纹理混合功能。",
       "description_en": "Set whether tile randomization is enabled.",
+      "display_zh": "[b]{0}[/b]纹理混合",
+      "display_en": "Set tile randomization enabled: [b]{0}[/b]",
       "scriptName": "SetTileRandomizationEnabled",
       "category": "tile-randomization",
       "params": [
@@ -274,9 +277,7 @@
           "desc_zh": "启用或禁用纹理混合功能。",
           "desc_en": "Whether to enable or disable tile randomization."
         }
-      ],
-      "display_zh": "[b]{0}[/b]纹理混合",
-      "display_en": "Set tile randomization enabled: [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-tile-pos-random",
@@ -284,6 +285,8 @@
       "name_en": "Set position random",
       "description_zh": "设置纹理混合的水平和垂直的随机偏移量。",
       "description_en": "Set the amount of horizontal and vertical randomness for tile randomization.",
+      "display_zh": "设置纹理混合(扰动位置: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set tile position randomization to [i]{0}[/i], [i]{1}[/i]",
       "scriptName": "SetTilePosRandom",
       "category": "tile-randomization",
       "params": [
@@ -303,9 +306,7 @@
           "desc_zh": "在垂直方向的随机偏移量，从0到100。",
           "desc_en": "Amount of vertical randomness, from 0 to 100."
         }
-      ],
-      "display_zh": "设置纹理混合(扰动位置: [i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Set tile position randomization to [i]{0}[/i], [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-tile-angle-random",
@@ -313,6 +314,8 @@
       "name_en": "Set angle random",
       "description_zh": "设置图块纹理混合的角度扰动量。",
       "description_en": "Set the amount of angle randomness for tile randomization.",
+      "display_zh": "设置纹理混合(扰动角度: [i]{0}[/i])",
+      "display_en": "Set tile angle randomization to [i]{0}[/i]",
       "scriptName": "SetTileAngleRandom",
       "category": "tile-randomization",
       "params": [
@@ -324,9 +327,7 @@
           "desc_zh": "随机角度偏移量，从0到100。",
           "desc_en": "Amount of angle randomness, from 0 to 100."
         }
-      ],
-      "display_zh": "设置纹理混合(扰动角度: [i]{0}[/i])",
-      "display_en": "Set tile angle randomization to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-tile-blend-margin",
@@ -334,6 +335,8 @@
       "name_en": "Set tile blend margin",
       "description_zh": "设置纹理淡出到相邻图块边缘的百分比。",
       "description_en": "Set the percentage of the tile that fades to adjacent tile.",
+      "display_zh": "设置边缘混合 [i]{0}[/i], [i]{1}[/i]",
+      "display_en": "Set tile blend margin to [i]{0}[/i], [i]{1}[/i]",
       "scriptName": "SetTileBlendMargin",
       "category": "tile-randomization",
       "params": [
@@ -353,9 +356,7 @@
           "desc_zh": "图块在垂直方向淡出到相邻边缘的百分比，从0到100。",
           "desc_en": "Percentage of tile height that fades to adjacent tile, 0-100."
         }
-      ],
-      "display_zh": "设置边缘混合 [i]{0}[/i], [i]{1}[/i]",
-      "display_en": "Set tile blend margin to [i]{0}[/i], [i]{1}[/i]"
+      ]
     },
     {
       "id": "load-image-from-url",
@@ -363,6 +364,8 @@
       "name_en": "Load image from URL",
       "description_zh": "从远程服务器地址下载图像或图像数据。",
       "description_en": "Load an image from a web address or data URI.",
+      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})",
       "scriptName": "LoadURL",
       "isAsync": true,
       "category": "web",
@@ -372,15 +375,17 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\"",
           "desc_zh": "要下载数据的远程服务器地址。",
-          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         },
         {
           "id": "cross-origin",
           "type": "combo",
           "name_zh": "跨域",
           "name_en": "Cross-origin",
+          "desc_zh": "用于请求的跨源（CORS）模式。",
+          "desc_en": "The cross-origin (CORS) mode to use for the request.",
           "items": [
             "anonymous",
             "none"
@@ -394,13 +399,9 @@
               "zh": "无",
               "en": "none"
             }
-          },
-          "desc_zh": "用于请求的跨源（CORS）模式。",
-          "desc_en": "The cross-origin (CORS) mode to use for the request."
+          }
         }
-      ],
-      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
-      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})"
+      ]
     }
   ],
   "expressions": [
