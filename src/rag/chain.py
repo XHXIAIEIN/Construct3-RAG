@@ -426,6 +426,10 @@ class RAGChain:
     def query_expander(self) -> QueryExpander:
         if self._query_expander is None:
             self._query_expander = QueryExpander()
+            # Share the retriever's already-loaded embedder to avoid
+            # loading a second bge-m3 instance for DictExpander.
+            import src.rag.query_expander as _qe_mod
+            _qe_mod._shared_embedder = self.retriever.embedder
         return self._query_expander
 
     @staticmethod
@@ -1111,6 +1115,13 @@ class RAGChain:
                     en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
                     search_query = f"{search_query} {en_boost}".strip()
                     logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
+                if schema_matches:
+                    top3 = schema_matches[:3]
+                    summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
+                    _trace(summary, "schema_match")
+
+            if search_query != query:
+                _trace(f"\"{search_query[:80]}\"", "query")
 
         # Step 1: Decompose query
         logger.info("[Complex] Decomposing query...")

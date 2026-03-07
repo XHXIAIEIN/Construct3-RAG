@@ -15,6 +15,8 @@ import statistics
 from typing import List, Dict, Any, Set, Tuple
 from dataclasses import dataclass
 
+from ._trace import _trace
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -70,10 +72,18 @@ class HybridRetriever:
     @property
     def embedder(self):
         if self._embedder is None:
+            import os
+            os.environ.setdefault("HF_HUB_OFFLINE", "1")
+            os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
             logger.info(f"[Load] Embedding model: {self.embedding_model_name} ...")
             t0 = time.time()
             from src.ingest.indexer import EmbeddingModel
-            self._embedder = EmbeddingModel(self.embedding_model_name, device="cpu")
+            try:
+                import torch
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+            except ImportError:
+                device = "cpu"
+            self._embedder = EmbeddingModel(self.embedding_model_name, device=device)
             logger.info(f"[Load] Embedding model ready ({time.time()-t0:.1f}s)")
         return self._embedder
 
@@ -169,9 +179,22 @@ class HybridRetriever:
 
         # Ensure minimum results
         if len(filtered) < min_results:
-            # Sort by score and take top min_results
             sorted_results = sorted(results, key=lambda x: x.score, reverse=True)
-            return sorted_results[:min_results]
+            filtered = sorted_results[:min_results]
+
+        _trace(f"{len(results)} → {len(filtered)}  (阈值 {threshold:.2f})", "filter")
+
+        # Trace dropped items by collection
+        kept_ids = set(id(r) for r in filtered)
+        dropped = [r for r in results if id(r) not in kept_ids]
+        if dropped:
+            drop_by_coll: dict[str, list[float]] = {}
+            for r in dropped:
+                drop_by_coll.setdefault(r.source, []).append(r.score)
+            drop_parts = [
+                f"{c}×{len(v)}(max {max(v):.2f})" for c, v in drop_by_coll.items()
+            ]
+            _trace(f"丢弃: {' '.join(drop_parts)}", "filter_drop")
 
         return filtered
 
@@ -415,14 +438,25 @@ class HybridRetriever:
             "examples": self.search_examples,
         }
 
+        coll_hit_summaries = []
         for coll_name, search_fn in collection_map.items():
             try:
                 results = search_fn(query, top_k_per_collection)
                 for r in results:
                     all_results.append(r)
                 logger.info(f"[Search] {coll_name}: {len(results)} hits")
+                if results:
+                    top_r = max(results, key=lambda r: r.score)
+                    max_score = top_r.score
+                    src = top_r.metadata.get("source", "")
+                    src_name = src.split("/")[-1].replace(".md", "")[:12] if "/" in src else src[:12]
+                    hint = f" {src_name}" if src_name else ""
+                    coll_hit_summaries.append(f"{coll_name}×{len(results)}({max_score:.2f}{hint})")
             except Exception as e:
                 logger.warning(f"[Search] {coll_name} failed: {e}")
+
+        if coll_hit_summaries:
+            _trace(' '.join(coll_hit_summaries), "retrieve")
 
         logger.info(f"[Search] Raw results: {len(all_results)} total ({time.time()-t0:.1f}s)")
 
