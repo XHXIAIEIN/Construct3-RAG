@@ -39,6 +39,101 @@ _EXPAND_PROMPT = (
 # Schema root directory
 _SCHEMA_DIR = Path(DATA_DIR) / "schemas"
 
+# English word → Chinese zh_tokens bridge.
+# Used to make English-only ACE nodes (no name_zh / description_zh) reachable
+# from Chinese user queries. Keys are lowercase English words from name_en / id.
+_EN_TO_ZH: dict[str, list[str]] = {
+    # Media / ad
+    "video":        ["视频", "广告"],
+    "advert":       ["广告", "视频广告"],
+    "advertise":    ["广告"],
+    "ad":           ["广告"],
+    "banner":       ["横幅广告", "广告"],
+    "interstitial": ["插屏广告", "广告"],
+    # Audio
+    "audio":        ["音频", "音乐", "声音"],
+    "sound":        ["声音", "音效"],
+    "music":        ["音乐"],
+    "microphone":   ["麦克风", "录音"],
+    # Platform
+    "browser":      ["浏览器"],
+    "facebook":     ["Facebook", "社交"],
+    "twitter":      ["Twitter", "社交"],
+    "xbox":         ["Xbox"],
+    "xboxlive":     ["Xbox Live", "Xbox"],
+    "gamecenter":   ["Game Center", "游戏中心"],
+    "win":          ["Windows"],
+    "mobile":       ["移动", "手机"],
+    "usermedia":    ["用户媒体", "摄像头", "麦克风"],
+    # Network
+    "multiplayer":  ["多人", "网络", "联机"],
+    "ajax":         ["网络请求", "数据请求"],
+    "websocket":    ["WebSocket", "网络"],
+    # Storage / data
+    "storage":      ["存储", "保存"],
+    "localstorage": ["本地存储", "存储"],
+    "file":         ["文件"],
+    "json":         ["JSON", "数据"],
+    "xml":          ["XML", "数据"],
+    "csv":          ["CSV", "表格数据"],
+    # State events
+    "ready":        ["准备", "就绪", "可以"],
+    "loaded":       ["加载", "完成", "就绪"],
+    "complete":     ["完成"],
+    "failed":       ["失败", "错误"],
+    "cancelled":    ["取消"],
+    "error":        ["错误", "失败"],
+    "success":      ["成功", "完成"],
+    # Actions
+    "show":         ["显示", "展示"],
+    "hide":         ["隐藏"],
+    "play":         ["播放"],
+    "pause":        ["暂停"],
+    "stop":         ["停止"],
+    "create":       ["创建"],
+    "destroy":      ["销毁", "删除"],
+    "set":          ["设置"],
+    "get":          ["获取"],
+    "load":         ["加载"],
+    "save":         ["保存"],
+    "send":         ["发送"],
+    "receive":      ["接收"],
+    "request":      ["请求"],
+    "enable":       ["启用", "开启"],
+    "disable":      ["禁用", "关闭"],
+    # Game / 3D
+    "timeline":     ["时间线", "动画"],
+    "model":        ["模型", "3D"],
+    "gamerecorder": ["游戏录制", "录制"],
+    "instantgames": ["即时游戏"],
+    "pubcenter":    ["广告"],
+    # User
+    "user":         ["用户"],
+    "login":        ["登录"],
+    "logout":       ["登出"],
+    "score":        ["分数", "得分"],
+    "leaderboard":  ["排行榜"],
+    "achievement":  ["成就"],
+    "personaliz":   ["个性化"],
+}
+
+
+def _en_word_to_zh(en_text: str) -> set[str]:
+    """Derive Chinese zh tokens from English name/id for untranslated ACEs."""
+    zh: set[str] = set()
+    # Split on common separators
+    words = en_text.lower().replace("-", " ").replace("_", " ").replace("/", " ").split()
+    for w in words:
+        # Strip "on", "is", "get", "set" prefixes from event/condition names
+        # to get the core concept (e.g. "on-video-ready" → "video", "ready")
+        for zh_list in [_EN_TO_ZH.get(w, [])]:
+            zh.update(zh_list)
+        # Partial prefix match (e.g. "personaliz" prefix matches "personaliz")
+        for key, vals in _EN_TO_ZH.items():
+            if len(key) >= 4 and w.startswith(key):
+                zh.update(vals)
+    return zh
+
 # Node type weights
 _WEIGHTS: dict[str, float] = {
     "plugin":   1.0,
@@ -449,6 +544,10 @@ class SchemaZhEnIndex:
                 en.add(part)
         en.update(d.get("categories", []))
 
+        # Bridge: derive zh tokens from English when no Chinese text available
+        if not zh:
+            zh.update(_en_word_to_zh(f"{plugin_id} {d.get('name_en', '')}"))
+
         self._add_node(NodeData(
             node_id=plugin_id, schema_type=schema_type, plugin_id=plugin_id,
             ace_type=None, weight=weight,
@@ -484,6 +583,12 @@ class SchemaZhEnIndex:
                     en_tok = item_val.get("en", "").strip()
                     if en_tok and len(en_tok) >= 2:
                         en.add(en_tok)
+
+        # Bridge: derive zh tokens from English when no Chinese text available
+        if not zh:
+            zh.update(_en_word_to_zh(
+                f"{plugin_id} {ace_id} {ace.get('name_en', '')} {ace.get('description_en', '')}"
+            ))
 
         self._add_node(NodeData(
             node_id=node_id, schema_type=schema_type, plugin_id=plugin_id,
