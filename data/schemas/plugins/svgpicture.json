@@ -18,6 +18,8 @@
       "name_en": "Set blend mode",
       "description_zh": "设置此对象的背景混合模式。",
       "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
       "scriptName": "SetEffect",
       "category": "appearance",
       "params": [
@@ -26,6 +28,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object.",
           "items": [
             "normal",
             "additive",
@@ -104,13 +108,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "为此对象选择新的混合模式。",
-          "desc_en": "Choose the new blend mode for this object."
+          }
         }
-      ],
-      "display_zh": "设置混合模式为[i]{0}[/i]",
-      "display_en": "Set blend mode to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image",
@@ -118,6 +118,8 @@
       "name_en": "Set image",
       "description_zh": "设置从项目文件中显示的SVG图像。",
       "description_en": "Set the SVG image to be displayed from a project file.",
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]",
       "scriptName": "SetImage",
       "isAsync": true,
       "category": "svg",
@@ -130,9 +132,7 @@
           "desc_zh": "从项目文件中加载SVG图像。",
           "desc_en": "A project file to load an SVG image from."
         }
-      ],
-      "display_zh": "设置图像为[i]{0}[/i]",
-      "display_en": "Set image to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-by-name",
@@ -140,6 +140,8 @@
       "name_en": "Set image (by name)",
       "description_zh": "从字符串对应的项目文件中显示的SVG图像。",
       "description_en": "Set the SVG image to be displayed from a string of a project file.",
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]",
       "scriptName": "SetImageByName",
       "isAsync": true,
       "category": "svg",
@@ -152,9 +154,7 @@
           "desc_zh": "用于加载SVG图像的项目文件的名称字符串",
           "desc_en": "A string of the name of a project file to load an SVG image from."
         }
-      ],
-      "display_zh": "设置图像为[i]{0}[/i]",
-      "display_en": "Set image to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [],

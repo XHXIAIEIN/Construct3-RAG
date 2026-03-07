@@ -21,11 +21,11 @@
       "name_en": "On any node entered",
       "description_zh": "到达任意节点时触发。",
       "description_en": "Triggered when any node is reached.",
+      "display_zh": "进入任意节点",
+      "display_en": "On any node entered",
       "scriptName": "OnAnyNodeChange",
       "isTrigger": true,
-      "category": "current-flowchart",
-      "display_zh": "进入任意节点",
-      "display_en": "On any node entered"
+      "category": "current-flowchart"
     },
     {
       "id": "on-tagged-node-change",
@@ -33,6 +33,8 @@
       "name_en": "On tagged node entered",
       "description_zh": "流程到达特定节点时触发。",
       "description_en": "Triggered when a tagged node is reached.",
+      "display_zh": "进入 [b]{0}[/b] 节点",
+      "display_en": "On node [b]{0}[/b] entered",
       "scriptName": "OnTaggedNodeChange",
       "isTrigger": true,
       "category": "current-flowchart",
@@ -45,9 +47,7 @@
           "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
           "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ],
-      "display_zh": "进入 [b]{0}[/b] 节点",
-      "display_en": "On node [b]{0}[/b] entered"
+      ]
     },
     {
       "id": "on-before-any-node-change",
@@ -55,11 +55,11 @@
       "name_en": "On any node exited",
       "description_zh": "离开任意节点时触发。",
       "description_en": "Triggered when any node is exited.",
+      "display_zh": "离开任意节点",
+      "display_en": "On any node exited",
       "scriptName": "OnBeforeAnyNodeChange",
       "isTrigger": true,
-      "category": "current-flowchart",
-      "display_zh": "离开任意节点",
-      "display_en": "On any node exited"
+      "category": "current-flowchart"
     },
     {
       "id": "on-before-tagged-node-change",
@@ -67,6 +67,8 @@
       "name_en": "On tagged node exited",
       "description_zh": "离开指定节点时触发。",
       "description_en": "Triggered when a tagged node is exited.",
+      "display_zh": "离开节点 [b]{0}[/b]",
+      "display_en": "On node [b]{0}[/b] exited",
       "scriptName": "OnBeforeTaggedNodeChange",
       "isTrigger": true,
       "category": "current-flowchart",
@@ -79,9 +81,7 @@
           "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
           "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ],
-      "display_zh": "离开节点 [b]{0}[/b]",
-      "display_en": "On node [b]{0}[/b] exited"
+      ]
     },
     {
       "id": "is-at-start-node",
@@ -89,10 +89,10 @@
       "name_en": "Is at start node",
       "description_zh": "检查当前节点是否为起始节点。",
       "description_en": "Check if the current node is the starting one.",
-      "scriptName": "IsAtStartNode",
-      "category": "current-flowchart",
       "display_zh": "是起始节点",
-      "display_en": "Is at start node"
+      "display_en": "Is at start node",
+      "scriptName": "IsAtStartNode",
+      "category": "current-flowchart"
     },
     {
       "id": "on-any-node-change-in-flowchart",
@@ -100,6 +100,8 @@
       "name_en": "On any node entered",
       "description_zh": "流程到达任何节点时触发。",
       "description_en": "Triggered when any node is reached in the specified flowchart.",
+      "display_zh": "进入流程 [b]{0}[/b] 任意节点",
+      "display_en": "On any node entered in flowchart [b]{0}[/b]",
       "scriptName": "OnAnyNodeChangeInFlowchart",
       "isTrigger": true,
       "category": "by-flowchart-tag",
@@ -112,9 +114,7 @@
           "desc_zh": "要定位的流程的标签。",
           "desc_en": "The tag of the flowchart to target."
         }
-      ],
-      "display_zh": "进入流程 [b]{0}[/b] 任意节点",
-      "display_en": "On any node entered in flowchart [b]{0}[/b]"
+      ]
     },
     {
       "id": "on-tagged-node-change-in-flowchart",
@@ -122,6 +122,8 @@
       "name_en": "On tagged node entered",
       "description_zh": "流程到达特定节点时触发。",
       "description_en": "Triggered when a tagged node is reached in the specified flowchart.",
+      "display_zh": "进入流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "display_en": "On node [b]{1}[/b] entered in flowchart [i]{0}[/i]",
       "scriptName": "OnTaggedNodeChangeInFlowchart",
       "isTrigger": true,
       "category": "by-flowchart-tag",
@@ -142,9 +144,7 @@
           "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
           "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ],
-      "display_zh": "进入流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
-      "display_en": "On node [b]{1}[/b] entered in flowchart [i]{0}[/i]"
+      ]
     },
     {
       "id": "on-before-any-node-change-in-flowchart",
@@ -152,6 +152,8 @@
       "name_en": "On any node exited",
       "description_zh": "离开指定流程中的任意节点时触发。",
       "description_en": "Triggered when any node is exited in the specified flowchart.",
+      "display_zh": "离开流程 [b]{0}[/b] 任意节点",
+      "display_en": "On any node exited in flowchart [b]{0}[/b]",
       "scriptName": "OnBeforeAnyNodeChangeInFlowchart",
       "isTrigger": true,
       "category": "by-flowchart-tag",
@@ -164,9 +166,7 @@
           "desc_zh": "要定位的流程的标签。",
           "desc_en": "The tag of the flowchart to target."
         }
-      ],
-      "display_zh": "离开流程 [b]{0}[/b] 任意节点",
-      "display_en": "On any node exited in flowchart [b]{0}[/b]"
+      ]
     },
     {
       "id": "on-before-tagged-node-change-in-flowchart",
@@ -174,6 +174,8 @@
       "name_en": "On tagged node exited",
       "description_zh": "离开指定流程的指定节点时触发。",
       "description_en": "Triggered when a tagged node is exited in the specified flowchart.",
+      "display_zh": "离开流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
+      "display_en": "On node [b]{1}[/b] exited in flowchart [i]{0}[/i]",
       "scriptName": "OnBeforeTaggedNodeChangeInFlowchart",
       "isTrigger": true,
       "category": "by-flowchart-tag",
@@ -194,9 +196,7 @@
           "desc_zh": "流程图节点的标签，用空格分隔多个标签。对于包含多标签的节点，必须匹配所有标签才能满足条件。",
           "desc_en": "A space separated string of tags. The node must match all passed tags for the condition to be met."
         }
-      ],
-      "display_zh": "离开流程 [i]{0}[/i] 的节点 [b]{1}[/b]",
-      "display_en": "On node [b]{1}[/b] exited in flowchart [i]{0}[/i]"
+      ]
     },
     {
       "id": "is-at-start-node-in-flowchart",
@@ -204,6 +204,8 @@
       "name_en": "Is at start node",
       "description_zh": "检查当前节点是否位于流程的起始节点。",
       "description_en": "Check if the current node is the starting one in the specified flowchart.",
+      "display_zh": "流程 [b]{0}[/b] 位于起始节点",
+      "display_en": "Is at start node in flowchart [b]{0}[/b]",
       "scriptName": "IsAtStartNodeInFlowchart",
       "category": "by-flowchart-tag",
       "params": [
@@ -215,9 +217,7 @@
           "desc_zh": "要定位的流程的标签。",
           "desc_en": "The tag of the flowchart to target."
         }
-      ],
-      "display_zh": "流程 [b]{0}[/b] 位于起始节点",
-      "display_en": "Is at start node in flowchart [b]{0}[/b]"
+      ]
     },
     {
       "id": "compare-output-count",
@@ -225,6 +225,8 @@
       "name_en": "Compare output count",
       "description_zh": "比较当前节点的输出数量。",
       "description_en": "Compare the output count of the current node to a value.",
+      "display_zh": "输出数量 {0} {1}",
+      "display_en": "Output count {0} {1}",
       "scriptName": "CompareOutputCount",
       "category": "current-node",
       "params": [
@@ -244,9 +246,7 @@
           "desc_zh": "要比较的值。",
           "desc_en": "The value to compare the output count of the current node against."
         }
-      ],
-      "display_zh": "输出数量 {0} {1}",
-      "display_en": "Output count {0} {1}"
+      ]
     },
     {
       "id": "compare-output-name",
@@ -254,6 +254,8 @@
       "name_en": "Compare output name",
       "description_zh": "比较当前节点的输出名称。",
       "description_en": "Compare an output's name of the current node to a value.",
+      "display_zh": "输出 {0} 名称 {1} {2}",
+      "display_en": "Output {0} name {1} {2}",
       "scriptName": "CompareOutputName",
       "category": "current-node",
       "params": [
@@ -281,9 +283,7 @@
           "desc_zh": "用于比较的字符串。",
           "desc_en": "The value to compare the output name against."
         }
-      ],
-      "display_zh": "输出 {0} 名称 {1} {2}",
-      "display_en": "Output {0} name {1} {2}"
+      ]
     },
     {
       "id": "compare-output-value",
@@ -291,6 +291,8 @@
       "name_en": "Compare output value",
       "description_zh": "比较当前节点中，指定输出名称的输出值。",
       "description_en": "Compare an output's value of the current node.",
+      "display_zh": "输出 {0} 值 {1} {2}",
+      "display_en": "Output {0} value {1} {2}",
       "scriptName": "CompareOutputValue",
       "category": "current-node",
       "params": [
@@ -318,9 +320,7 @@
           "desc_zh": "用于比较的值。",
           "desc_en": "The value to compare the output value against."
         }
-      ],
-      "display_zh": "输出 {0} 值 {1} {2}",
-      "display_en": "Output {0} value {1} {2}"
+      ]
     },
     {
       "id": "compare-node-tag",
@@ -328,6 +328,8 @@
       "name_en": "Compare node tags",
       "description_zh": "用于比较当前节点的标签。",
       "description_en": "Compare the tags of the current node.",
+      "display_zh": "节点标签 {0} {1}",
+      "display_en": "Node tags {0} {1}",
       "scriptName": "CompareNodeTag",
       "category": "current-node",
       "params": [
@@ -347,9 +349,7 @@
           "desc_zh": "与当前节点的标签进行比较的值，用空格分隔多个标签。",
           "desc_en": "The value to compare the tags of the current node against. A space separated string will be interpreted as multiple tags."
         }
-      ],
-      "display_zh": "节点标签 {0} {1}",
-      "display_en": "Node tags {0} {1}"
+      ]
     },
     {
       "id": "compare-node-tag-count",
@@ -357,6 +357,8 @@
       "name_en": "Compare node tag count",
       "description_zh": "比较当前节点的标签数量。",
       "description_en": "Compare the tag count of the current node.",
+      "display_zh": "节点标签数量 {0} {1}",
+      "display_en": "Node tag count {0} {1}",
       "scriptName": "CompareNodeTagCount",
       "category": "current-node",
       "params": [
@@ -376,9 +378,7 @@
           "desc_zh": "与节点标签数量进行比较的值。",
           "desc_en": "The value to compare the tag count of the current node against."
         }
-      ],
-      "display_zh": "节点标签数量 {0} {1}",
-      "display_en": "Node tag count {0} {1}"
+      ]
     },
     {
       "id": "has-output",
@@ -386,6 +386,8 @@
       "name_en": "Has output",
       "description_zh": "检查当前节点中，是否存在指定名称或编号的输出。",
       "description_en": "Check if there is an output with the provided name or index.",
+      "display_zh": "存在输出 [b]{0}[/b]",
+      "display_en": "Has output [b]{0}[/b]",
       "scriptName": "HasOutput",
       "category": "current-node",
       "params": [
@@ -397,9 +399,7 @@
           "desc_zh": "要检查的输出名称或编号，编号从 0 开始计数。",
           "desc_en": "The output name or index (0-based) to check for."
         }
-      ],
-      "display_zh": "存在输出 [b]{0}[/b]",
-      "display_en": "Has output [b]{0}[/b]"
+      ]
     },
     {
       "id": "output-name-match-regex",
@@ -407,6 +407,8 @@
       "name_en": "Output name match regex",
       "description_zh": "通过正则表达式，匹配指定编号的输出名称。",
       "description_en": "Check if the output name in the given index matches the provided regular expression",
+      "display_zh": "匹配输出名称: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "Output name at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])",
       "scriptName": "OutputNameMatchRegex",
       "category": "current-node",
       "params": [
@@ -431,13 +433,11 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式的修饰符",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
-      ],
-      "display_zh": "匹配输出名称: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
-      "display_en": "Output name at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])"
+      ]
     },
     {
       "id": "output-value-match-regex",
@@ -445,6 +445,8 @@
       "name_en": "Output value match regex",
       "description_zh": "通过正则表达式，匹配指定编号的输出值。",
       "description_en": "Check if the output value in the given index or name matches the provided regular expression",
+      "display_zh": "匹配输出值: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "Output value at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])",
       "scriptName": "OutputValueMatchRegex",
       "category": "current-node",
       "params": [
@@ -469,13 +471,11 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式的修饰符",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
-      ],
-      "display_zh": "匹配输出值: [b]{0}[/b], 正则表达式: [i]{1}[/i] ([i]{2}[/i])",
-      "display_en": "Output value at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])"
+      ]
     },
     {
       "id": "compare-output-name-default",
@@ -483,6 +483,8 @@
       "name_en": "Compare default output name",
       "description_zh": "与当前节点的默认输出名称进行比较。",
       "description_en": "Compare the default output's name of the current node to a value.",
+      "display_zh": "默认输出名称 {0} {1}",
+      "display_en": "Default output name {0} {1}",
       "scriptName": "CompareOutputNameDefault",
       "category": "current-node-default",
       "params": [
@@ -502,9 +504,7 @@
           "desc_zh": "用于比较的值。",
           "desc_en": "The value to compare the output name against."
         }
-      ],
-      "display_zh": "默认输出名称 {0} {1}",
-      "display_en": "Default output name {0} {1}"
+      ]
     },
     {
       "id": "compare-output-value-default",
@@ -512,6 +512,8 @@
       "name_en": "Compare default output value",
       "description_zh": "比较当前节点的默认输出值。",
       "description_en": "Compare the default output's value of the current node.",
+      "display_zh": "默认输出值 {0} {1}",
+      "display_en": "Default output value {0} {1}",
       "scriptName": "CompareOutputValueDefault",
       "category": "current-node-default",
       "params": [
@@ -531,9 +533,7 @@
           "desc_zh": "要与输出进行比较的值。",
           "desc_en": "The value to compare the output value against."
         }
-      ],
-      "display_zh": "默认输出值 {0} {1}",
-      "display_en": "Default output value {0} {1}"
+      ]
     },
     {
       "id": "has-output-default",
@@ -541,10 +541,10 @@
       "name_en": "Has default output",
       "description_zh": "检查是否有默认输出。",
       "description_en": "Check if there is a default output.",
-      "scriptName": "HasOutputDefault",
-      "category": "current-node-default",
       "display_zh": "存在默认输出",
-      "display_en": "Has default output"
+      "display_en": "Has default output",
+      "scriptName": "HasOutputDefault",
+      "category": "current-node-default"
     },
     {
       "id": "for-each-output",
@@ -552,10 +552,10 @@
       "name_en": "For Each Output",
       "description_zh": "在当前节点中，对每项输出重复执行一些动作。",
       "description_en": "Repeat the event for each output in the current node.",
-      "scriptName": "ForEachOutput",
-      "category": "loops",
       "display_zh": "遍历输出",
-      "display_en": "For Each Output"
+      "display_en": "For Each Output",
+      "scriptName": "ForEachOutput",
+      "category": "loops"
     },
     {
       "id": "on-flowchart-change",
@@ -563,11 +563,11 @@
       "name_en": "On any flowchart entered",
       "description_zh": "进入新的流程时触发。",
       "description_en": "Triggered when a new flowchart is entered.",
+      "display_zh": "进入任意流程",
+      "display_en": "On any flowchart entered",
       "scriptName": "OnFlowchartChange",
       "isTrigger": true,
-      "category": "flowchart-management",
-      "display_zh": "进入任意流程",
-      "display_en": "On any flowchart entered"
+      "category": "flowchart-management"
     },
     {
       "id": "on-before-flowchart-change",
@@ -575,11 +575,11 @@
       "name_en": "On any flowchart exited",
       "description_zh": "退出任意流程时触发。",
       "description_en": "Triggered when a flowchart is exited.",
+      "display_zh": "退出任意流程",
+      "display_en": "On any flowchart exited",
       "scriptName": "OnBeforeFlowchartChange",
       "isTrigger": true,
-      "category": "flowchart-management",
-      "display_zh": "退出任意流程",
-      "display_en": "On any flowchart exited"
+      "category": "flowchart-management"
     },
     {
       "id": "has-flow-chart",
@@ -587,6 +587,8 @@
       "name_en": "Has flowchart",
       "description_zh": "检查是否存在指定标签的流程",
       "description_en": "Check if there is a flowchart with the given tag",
+      "display_zh": "存在流程 [b]{0}[/b]",
+      "display_en": "Has flowchart [b]{0}[/b]",
       "scriptName": "HasFlowchart",
       "category": "flowchart-management",
       "params": [
@@ -598,9 +600,7 @@
           "desc_zh": "要检查的流程的标签。",
           "desc_en": "The tag of the flowchart to check for."
         }
-      ],
-      "display_zh": "存在流程 [b]{0}[/b]",
-      "display_en": "Has flowchart [b]{0}[/b]"
+      ]
     },
     {
       "id": "compare-flowchart-tag",
@@ -608,6 +608,8 @@
       "name_en": "Compare flowchart tag",
       "description_zh": "比较当前流程的标签。",
       "description_en": "Compare the tag of the current flowchart.",
+      "display_zh": "流程标签 {0} {1}",
+      "display_en": "Flowchart tag {0} {1}",
       "scriptName": "CompareFlowchartTag",
       "category": "flowchart-management",
       "params": [
@@ -627,9 +629,7 @@
           "desc_zh": "要比较的对应流程标签的值。",
           "desc_en": "The value to compare the flowchart tag of the current node against."
         }
-      ],
-      "display_zh": "流程标签 {0} {1}",
-      "display_en": "Flowchart tag {0} {1}"
+      ]
     }
   ],
   "actions": [
@@ -639,10 +639,10 @@
       "name_en": "End flowchart",
       "description_zh": "退出当前流程。这将立即结束已创建的流程，不再拥有当前流程图的信息。",
       "description_en": "End the current flowchart. This destroys the created flowchart and the plugin will no longer have a current flowchart.",
-      "scriptName": "EndFlowchart",
-      "category": "current-flowchart",
       "display_zh": "退出当前流程",
-      "display_en": "End current flowchart"
+      "display_en": "End current flowchart",
+      "scriptName": "EndFlowchart",
+      "category": "current-flowchart"
     },
     {
       "id": "reset-flowchart",
@@ -650,10 +650,10 @@
       "name_en": "Reset flowchart",
       "description_zh": "重置当前的流程。此操作将当前节点设置回默认起始节点，并清除之前的节点。",
       "description_en": "Reset the current flowchart, setting the current node to the default start node and clearing previous nodes.",
-      "scriptName": "ResetFlowchart",
-      "category": "current-flowchart",
       "display_zh": "重置当前流程",
-      "display_en": "Reset current flowchart"
+      "display_en": "Reset current flowchart",
+      "scriptName": "ResetFlowchart",
+      "category": "current-flowchart"
     },
     {
       "id": "goto-next-flowchart-node",
@@ -661,6 +661,8 @@
       "name_en": "Go to next node",
       "description_zh": "跳转到当前流程中的下一个节点。",
       "description_en": "Go to the next node of the current flowchart via an output name or index.",
+      "display_zh": "跳转到下一个节点(编号: [b]{0}[/b])",
+      "display_en": "Go to output [b]{0}[/b]",
       "scriptName": "GotoNextFlowchartNode",
       "category": "current-flowchart",
       "params": [
@@ -672,9 +674,7 @@
           "desc_zh": "要跳转到的目标输出名称或编号，编号从 0 开始计数。",
           "desc_en": "The name or index (0-based) of the output to follow."
         }
-      ],
-      "display_zh": "跳转到下一个节点(编号: [b]{0}[/b])",
-      "display_en": "Go to output [b]{0}[/b]"
+      ]
     },
     {
       "id": "goto-any-flowchart-node",
@@ -682,6 +682,8 @@
       "name_en": "Go to node",
       "description_zh": "跳转到当前流程图中的节点。",
       "description_en": "Jump to a node in the current flowchart.",
+      "display_zh": "跳转到节点 [b]{0}[/b]",
+      "display_en": "Go to node [b]{0}[/b]",
       "scriptName": "GotoAnyFlowchartNode",
       "category": "current-flowchart",
       "params": [
@@ -693,9 +695,7 @@
           "desc_zh": "要跳转到的节点标签。用空格分隔多个标签。如果匹配到多项结果，则选择第一个。",
           "desc_en": "The tags of the node the flowchart should move to. Flow will move to the first node found that matches all the passed in tags."
         }
-      ],
-      "display_zh": "跳转到节点 [b]{0}[/b]",
-      "display_en": "Go to node [b]{0}[/b]"
+      ]
     },
     {
       "id": "goto-previous-flowchart-node",
@@ -703,10 +703,10 @@
       "name_en": "Go to previous node",
       "description_zh": "转到当前流程的上一个节点。",
       "description_en": "Go to the previous node of the current flowchart.",
-      "scriptName": "GotoPreviousFlowchartNode",
-      "category": "current-flowchart",
       "display_zh": "跳转到上一个节点",
-      "display_en": "Go to previous node"
+      "display_en": "Go to previous node",
+      "scriptName": "GotoPreviousFlowchartNode",
+      "category": "current-flowchart"
     },
     {
       "id": "goto-parent-flowchart-node",
@@ -714,6 +714,8 @@
       "name_en": "Go to parent node",
       "description_zh": "转到当前流程节点的父节点。",
       "description_en": "Go to the parent node of the current node in the current flowchart.",
+      "display_zh": "跳转到父节点(编号: [b]{0}[/b])",
+      "display_en": "Go to parent node [b]{0}[/b]",
       "scriptName": "GotoParentFlowchartNode",
       "category": "current-flowchart",
       "params": [
@@ -725,9 +727,7 @@
           "desc_zh": "要跳转到父节点的索引或标签。使用标签时，用空格分隔多个标签。如果匹配到多项结果，则选择第一个。",
           "desc_en": "The index (0-based) or tags of the parent node the flowchart should move to. In the case of using tags, flow will move to the first parent node that matches all the passed in tags."
         }
-      ],
-      "display_zh": "跳转到父节点(编号: [b]{0}[/b])",
-      "display_en": "Go to parent node [b]{0}[/b]"
+      ]
     },
     {
       "id": "end-flowchart-by-tag",
@@ -735,6 +735,8 @@
       "name_en": "End flowchart by tag",
       "description_zh": "通过标签，结束指定流程。",
       "description_en": "End a flowchart by its tag.",
+      "display_zh": "结束流程 (标签: [b]{0}[/b])",
+      "display_en": "End the flowchart with tag [b]{0}[/b]",
       "scriptName": "EndFlowchartByTag",
       "category": "by-flowchart-tag",
       "params": [
@@ -746,9 +748,7 @@
           "desc_zh": "要结束的流程标签。",
           "desc_en": "The tag of the flowchart to end."
         }
-      ],
-      "display_zh": "结束流程 (标签: [b]{0}[/b])",
-      "display_en": "End the flowchart with tag [b]{0}[/b]"
+      ]
     },
     {
       "id": "reset-flowchart-by-tag",
@@ -756,6 +756,8 @@
       "name_en": "Reset flowchart by tag",
       "description_zh": "重置指定标签的流程。将当前节点重置到默认开始节点，并清除之前的节点。",
       "description_en": "Reset a flowchart by its tag.",
+      "display_zh": "重置流程 (标签: [b]{0}[/b])",
+      "display_en": "Reset the flowchart with tag [b]{0}[/b]",
       "scriptName": "ResetFlowchartByTag",
       "category": "by-flowchart-tag",
       "params": [
@@ -767,9 +769,7 @@
           "desc_zh": "要重置的流程的标签。",
           "desc_en": "The tag of the flowchart to reset."
         }
-      ],
-      "display_zh": "重置流程 (标签: [b]{0}[/b])",
-      "display_en": "Reset the flowchart with tag [b]{0}[/b]"
+      ]
     },
     {
       "id": "goto-next-flowchart-node-default",
@@ -777,10 +777,10 @@
       "name_en": "Go to default node",
       "description_zh": "通过默认输出转到当前流程图的下一个节点。如果不是默认，则不会发生任何事情。",
       "description_en": "Go to the next node of the current flowchart via the default output. If there is no default nothing will happen.",
-      "scriptName": "GotoNextFlowchartNodeDefault",
-      "category": "current-node-default",
       "display_zh": "跳转到默认输出",
-      "display_en": "Go to default output"
+      "display_en": "Go to default output",
+      "scriptName": "GotoNextFlowchartNodeDefault",
+      "category": "current-node-default"
     },
     {
       "id": "start-flowchart",
@@ -788,7 +788,10 @@
       "name_en": "Start flowchart",
       "description_zh": "开始新的流程。",
       "description_en": "Start a new flowchart.",
+      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i])",
+      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])",
       "scriptName": "StartFlowchart",
+      "highlight": true,
       "category": "flowchart-management",
       "params": [
         {
@@ -820,13 +823,11 @@
           "type": "boolean",
           "name_zh": "设为当前流程",
           "name_en": "Set as current",
-          "initialValue": "true",
           "desc_zh": "将此流程成为创建时的当前流程。",
-          "desc_en": "Make this flowchart the current one on creation."
+          "desc_en": "Make this flowchart the current one on creation.",
+          "initialValue": "true"
         }
-      ],
-      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i])",
-      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])"
+      ]
     },
     {
       "id": "start-flowchart-by-name",
@@ -834,7 +835,10 @@
       "name_en": "Start flowchart (by name)",
       "description_zh": "开始新的流程。",
       "description_en": "Start a new flowchart by a string of the flowchart name.",
+      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i]))",
+      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])",
       "scriptName": "StartFlowchartByName",
+      "highlight": true,
       "category": "flowchart-management",
       "params": [
         {
@@ -866,13 +870,11 @@
           "type": "boolean",
           "name_zh": "设为当前流程",
           "name_en": "Set as current",
-          "initialValue": "true",
           "desc_zh": "将此流程成为创建时的当前流程。",
-          "desc_en": "Make this flowchart the current one on creation."
+          "desc_en": "Make this flowchart the current one on creation.",
+          "initialValue": "true"
         }
-      ],
-      "display_zh": "开始流程 [b]{0}[/b] (起始节点: [i]{1}[/i], 标签 [i]{2}[/i], 设为当前流程: [i]{3}[/i]))",
-      "display_en": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])"
+      ]
     },
     {
       "id": "set-flowchart",
@@ -880,7 +882,10 @@
       "name_en": "Set flowchart",
       "description_zh": "设置当前流程，用于后续对节点的操作。",
       "description_en": "Set a flowchart to use in the following actions.",
+      "display_zh": "设置当前流程(标签:  [b]{0}[/b])",
+      "display_en": "Set flowchart with tag [b]{0}[/b]",
       "scriptName": "SetFlowchart",
+      "highlight": true,
       "category": "flowchart-management",
       "params": [
         {
@@ -891,9 +896,7 @@
           "desc_zh": "要设置为当前流程图的标签。",
           "desc_en": "The tag of the flowchart to set as the current one."
         }
-      ],
-      "display_zh": "设置当前流程(标签:  [b]{0}[/b])",
-      "display_en": "Set flowchart with tag [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

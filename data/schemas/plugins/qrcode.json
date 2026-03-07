@@ -17,6 +17,8 @@
       "name_en": "Set text",
       "description_zh": "设置二维码的文本内容。",
       "description_en": "Set the text content of the QR code.",
+      "display_zh": "设置文本内容为[i]{0}[/i]",
+      "display_en": "Set text to [i]{0}[/i]",
       "scriptName": "SetText",
       "category": "qrcode",
       "params": [
@@ -28,9 +30,7 @@
           "desc_zh": "二维码的文本内容。",
           "desc_en": "Text content of the QR code."
         }
-      ],
-      "display_zh": "设置文本内容为[i]{0}[/i]",
-      "display_en": "Set text to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-correction-level",
@@ -38,6 +38,8 @@
       "name_en": "Set correction level",
       "description_zh": "设置二维码的容错等级。容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
       "description_en": "Set the error correction level. Higher levels include more error correction data for reliability.",
+      "display_zh": "设置容错率为[i]{0}[/i]",
+      "display_en": "Set correction level to [i]{0}[/i]",
       "scriptName": "SetCorrectionLevel",
       "category": "qrcode",
       "params": [
@@ -46,6 +48,8 @@
           "type": "combo",
           "name_zh": "容错率",
           "name_en": "Correction level",
+          "desc_zh": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+          "desc_en": "The error correction level. Higher levels include more error correction data for reliability.",
           "items": [
             "l",
             "m",
@@ -69,13 +73,9 @@
               "zh": "30%",
               "en": "High (30%)"
             }
-          },
-          "desc_zh": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
-          "desc_en": "The error correction level. Higher levels include more error correction data for reliability."
+          }
         }
-      ],
-      "display_zh": "设置容错率为[i]{0}[/i]",
-      "display_en": "Set correction level to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [],

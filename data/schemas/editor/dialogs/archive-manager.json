@@ -55,9 +55,13 @@
       "zh": "无法导出到本地。可能因为此设备分配给 Construct 的存储空间已满，请尝试释放此设备的存储空间。",
       "en": "Unable to save export to disk. This build will not be available in the export manager past the end of this session. Your storage quota may be full. Try freeing up storage space on your device."
     },
+    "error.c2-no-longer-supported": {
+      "zh": "无法导入文件：早期 Construct 2 导出功能已不再支持。",
+      "en": "Unable to import file: legacy Construct 2 exports are no longer supported."
+    },
     "error.invalid-file": {
-      "zh": "无法导入文件， 仅支持由C2或C3导出的 Cordova 项目。",
-      "en": "Unable to import file. Only Cordova projects exported from C2 or C3 can be imported."
+      "zh": "无法导入文件。只支持从 Construct 3 导出的 Cordova 项目。",
+      "en": "Unable to import file. Only Cordova projects exported from Construct 3 can be imported."
     }
   },
   "buttons": {

@@ -1,19 +1,19 @@
 {
   "version": "1.0",
   "plugins": {
+    "system": {
+      "name_zh": "系统",
+      "name_en": "System",
+      "conditions": 56,
+      "actions": 85,
+      "expressions": 136
+    },
     "ninepatch": {
       "name_zh": "九宫图",
       "name_en": "9-patch",
       "conditions": 2,
       "actions": 8,
       "expressions": 6
-    },
-    "advancedrandom": {
-      "name_zh": "高级随机",
-      "name_en": "Advanced Random",
-      "conditions": 0,
-      "actions": 12,
-      "expressions": 19
     },
     "advert": {
       "name_zh": "激励广告",
@@ -22,19 +22,12 @@
       "actions": 18,
       "expressions": 7
     },
-    "system": {
-      "name_zh": "系统",
-      "name_en": "System",
-      "conditions": 56,
-      "actions": 81,
-      "expressions": 135
-    },
-    "ajax": {
-      "name_zh": "AJAX",
-      "name_en": "AJAX",
-      "conditions": 6,
-      "actions": 9,
-      "expressions": 4
+    "advancedrandom": {
+      "name_zh": "高级随机",
+      "name_en": "Advanced Random",
+      "conditions": 0,
+      "actions": 12,
+      "expressions": 19
     },
     "scirraarcadev4": {
       "name_zh": "",
@@ -43,18 +36,25 @@
       "actions": 1,
       "expressions": 0
     },
-    "arr": {
-      "name_zh": "数组",
-      "name_en": "Array",
-      "conditions": 8,
-      "actions": 16,
-      "expressions": 14
+    "ajax": {
+      "name_zh": "AJAX",
+      "name_en": "AJAX",
+      "conditions": 6,
+      "actions": 10,
+      "expressions": 4
     },
     "audio": {
       "name_zh": "音频",
       "name_en": "Audio",
       "conditions": 7,
       "actions": 43,
+      "expressions": 14
+    },
+    "arr": {
+      "name_zh": "数组",
+      "name_en": "Array",
+      "conditions": 8,
+      "actions": 16,
       "expressions": 14
     },
     "bbcmicrobit": {
@@ -99,19 +99,19 @@
       "actions": 8,
       "expressions": 37
     },
-    "constructgameservices": {
-      "name_zh": "游戏服务",
-      "name_en": "Construct Game Services",
-      "conditions": 10,
-      "actions": 11,
-      "expressions": 16
-    },
     "clipboard": {
       "name_zh": "剪贴板",
       "name_en": "Clipboard",
       "conditions": 5,
       "actions": 4,
       "expressions": 1
+    },
+    "constructgameservices": {
+      "name_zh": "游戏服务",
+      "name_en": "Construct Game Services",
+      "conditions": 10,
+      "actions": 11,
+      "expressions": 16
     },
     "cryptography": {
       "name_zh": "密码学",
@@ -120,6 +120,13 @@
       "actions": 3,
       "expressions": 3
     },
+    "csv": {
+      "name_zh": "CSV",
+      "name_en": "CSV",
+      "conditions": 2,
+      "actions": 2,
+      "expressions": 2
+    },
     "date": {
       "name_zh": "日期",
       "name_en": "Date",
@@ -127,12 +134,12 @@
       "actions": 0,
       "expressions": 54
     },
-    "csv": {
-      "name_zh": "CSV",
-      "name_en": "CSV",
-      "conditions": 2,
-      "actions": 2,
-      "expressions": 2
+    "dictionary": {
+      "name_zh": "字典",
+      "name_en": "Dictionary",
+      "conditions": 5,
+      "actions": 6,
+      "expressions": 6
     },
     "drawingcanvas": {
       "name_zh": "画布",
@@ -148,12 +155,12 @@
       "actions": 12,
       "expressions": 10
     },
-    "dictionary": {
-      "name_zh": "字典",
-      "name_en": "Dictionary",
-      "conditions": 5,
-      "actions": 6,
-      "expressions": 6
+    "filesystem": {
+      "name_zh": "文件系统",
+      "name_en": "File system",
+      "conditions": 11,
+      "actions": 15,
+      "expressions": 8
     },
     "filechooser": {
       "name_zh": "文件选择",
@@ -169,13 +176,6 @@
       "actions": 3,
       "expressions": 4
     },
-    "filesystem": {
-      "name_zh": "文件系统",
-      "name_en": "File system",
-      "conditions": 11,
-      "actions": 15,
-      "expressions": 8
-    },
     "gamepad": {
       "name_zh": "手柄",
       "name_en": "Gamepad",
@@ -183,19 +183,19 @@
       "actions": 3,
       "expressions": 13
     },
-    "gamecenter": {
-      "name_zh": "",
-      "name_en": "",
-      "conditions": 14,
-      "actions": 7,
-      "expressions": 6
-    },
     "gamerecorder": {
       "name_zh": "屏幕录制",
       "name_en": "Video recorder",
       "conditions": 9,
       "actions": 7,
       "expressions": 3
+    },
+    "gamecenter": {
+      "name_zh": "",
+      "name_en": "",
+      "conditions": 14,
+      "actions": 7,
+      "expressions": 6
     },
     "geolocation": {
       "name_zh": "地理位置",
@@ -211,13 +211,6 @@
       "actions": 14,
       "expressions": 28
     },
-    "iframe": {
-      "name_zh": "内嵌网页",
-      "name_en": "iframe",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
-    },
     "htmlelement": {
       "name_zh": "HTML",
       "name_en": "HTML Element",
@@ -231,6 +224,13 @@
       "conditions": 14,
       "actions": 5,
       "expressions": 7
+    },
+    "iframe": {
+      "name_zh": "内嵌网页",
+      "name_en": "iframe",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "instantgames": {
       "name_zh": "Instant Games",
@@ -260,19 +260,19 @@
       "actions": 2,
       "expressions": 3
     },
-    "localstorage": {
-      "name_zh": "本地存储",
-      "name_en": "Local storage",
-      "conditions": 18,
-      "actions": 10,
-      "expressions": 6
-    },
     "list": {
       "name_zh": "列表",
       "name_en": "List",
       "conditions": 6,
       "actions": 7,
       "expressions": 7
+    },
+    "localstorage": {
+      "name_zh": "本地存储",
+      "name_en": "Local storage",
+      "conditions": 18,
+      "actions": 10,
+      "expressions": 6
     },
     "midi": {
       "name_zh": "MIDI",
@@ -282,11 +282,11 @@
       "expressions": 22
     },
     "model3d": {
-      "name_zh": "",
-      "name_en": "",
-      "conditions": 7,
-      "actions": 12,
-      "expressions": 20
+      "name_zh": "3D 模型",
+      "name_en": "3D model",
+      "conditions": 10,
+      "actions": 15,
+      "expressions": 22
     },
     "mouse": {
       "name_zh": "鼠标",
@@ -316,19 +316,19 @@
       "actions": 22,
       "expressions": 18
     },
-    "qrcode": {
-      "name_zh": "二维码",
-      "name_en": "QR code",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
-    },
     "platforminfo": {
       "name_zh": "设备信息",
       "name_en": "Platform info",
       "conditions": 20,
       "actions": 2,
       "expressions": 26
+    },
+    "qrcode": {
+      "name_zh": "二维码",
+      "name_en": "QR code",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "progressbar": {
       "name_zh": "进度条",
@@ -351,13 +351,6 @@
       "actions": 5,
       "expressions": 3
     },
-    "shape3d": {
-      "name_zh": "3D形状",
-      "name_en": "3D shape",
-      "conditions": 3,
-      "actions": 7,
-      "expressions": 6
-    },
     "share": {
       "name_zh": "分享",
       "name_en": "Share",
@@ -371,6 +364,13 @@
       "conditions": 4,
       "actions": 5,
       "expressions": 4
+    },
+    "shape3d": {
+      "name_zh": "3D形状",
+      "name_en": "3D shape",
+      "conditions": 3,
+      "actions": 7,
+      "expressions": 6
     },
     "speechrecognition": {
       "name_zh": "语音识别",
@@ -393,13 +393,6 @@
       "actions": 16,
       "expressions": 15
     },
-    "svgpicture": {
-      "name_zh": "矢量图",
-      "name_en": "SVG Picture",
-      "conditions": 0,
-      "actions": 3,
-      "expressions": 0
-    },
     "spritefont2": {
       "name_zh": "位图字体",
       "name_en": "Sprite font",
@@ -407,12 +400,26 @@
       "actions": 13,
       "expressions": 15
     },
+    "svgpicture": {
+      "name_zh": "矢量图",
+      "name_en": "SVG Picture",
+      "conditions": 0,
+      "actions": 3,
+      "expressions": 0
+    },
     "text": {
       "name_zh": "文本",
       "name_en": "Text",
       "conditions": 4,
       "actions": 18,
       "expressions": 14
+    },
+    "textbox": {
+      "name_zh": "输入框",
+      "name_en": "Text input",
+      "conditions": 4,
+      "actions": 7,
+      "expressions": 2
     },
     "tiledbg": {
       "name_zh": "平铺图",
@@ -428,20 +435,6 @@
       "actions": 18,
       "expressions": 14
     },
-    "textbox": {
-      "name_zh": "输入框",
-      "name_en": "Text input",
-      "conditions": 4,
-      "actions": 7,
-      "expressions": 2
-    },
-    "twitter": {
-      "name_zh": "",
-      "name_en": "",
-      "conditions": 1,
-      "actions": 6,
-      "expressions": 0
-    },
     "flowchart": {
       "name_zh": "流程图",
       "name_en": "Flowchart controller",
@@ -455,6 +448,13 @@
       "conditions": 19,
       "actions": 23,
       "expressions": 9
+    },
+    "twitter": {
+      "name_zh": "",
+      "name_en": "",
+      "conditions": 1,
+      "actions": 6,
+      "expressions": 0
     },
     "touch": {
       "name_zh": "触控",
@@ -470,13 +470,6 @@
       "actions": 13,
       "expressions": 17
     },
-    "video": {
-      "name_zh": "视频",
-      "name_en": "Video",
-      "conditions": 5,
-      "actions": 9,
-      "expressions": 6
-    },
     "c2websocket": {
       "name_zh": "WebSocket",
       "name_en": "WebSocket",
@@ -484,12 +477,19 @@
       "actions": 4,
       "expressions": 4
     },
-    "xboxlive": {
-      "name_zh": "",
-      "name_en": "",
-      "conditions": 16,
+    "video": {
+      "name_zh": "视频",
+      "name_en": "Video",
+      "conditions": 5,
       "actions": 9,
-      "expressions": 24
+      "expressions": 6
+    },
+    "xml": {
+      "name_zh": "XML",
+      "name_en": "XML",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 3
     },
     "win8": {
       "name_zh": "",
@@ -498,18 +498,18 @@
       "actions": 17,
       "expressions": 5
     },
-    "xml": {
-      "name_zh": "XML",
-      "name_en": "XML",
-      "conditions": 1,
-      "actions": 1,
-      "expressions": 3
+    "xboxlive": {
+      "name_zh": "",
+      "name_en": "",
+      "conditions": 16,
+      "actions": 9,
+      "expressions": 24
     }
   },
   "stats": {
     "count": 72,
-    "conditions": 677,
-    "actions": 776,
-    "expressions": 957
+    "conditions": 680,
+    "actions": 784,
+    "expressions": 960
   }
 }

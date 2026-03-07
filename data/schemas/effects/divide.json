@@ -12,5 +12,9 @@
   ],
   "blendsBackground": true,
   "preservesOpaqueness": false,
-  "animated": false
+  "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  }
 }

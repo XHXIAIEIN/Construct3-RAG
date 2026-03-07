@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "line-height",
@@ -20,7 +24,8 @@
       "name_zh": "line-height",
       "name_en": "line-height",
       "initialValue": 2,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "lineHeight"
     }
   ]
 }

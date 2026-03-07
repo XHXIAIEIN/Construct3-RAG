@@ -31,6 +31,7 @@
       "description_en": "",
       "scriptName": "OnSignInSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -41,6 +42,7 @@
       "description_en": "",
       "scriptName": "OnSignInError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -51,6 +53,7 @@
       "description_en": "",
       "scriptName": "OnSilentSignInSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -61,6 +64,7 @@
       "description_en": "",
       "scriptName": "OnSilentSignInError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -80,6 +84,7 @@
       "description_en": "",
       "scriptName": "OnPresenceUpdateSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -90,6 +95,7 @@
       "description_en": "",
       "scriptName": "OnPresenceUpdateError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -100,6 +106,7 @@
       "description_en": "",
       "scriptName": "OnProfileInfoSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -110,6 +117,7 @@
       "description_en": "",
       "scriptName": "OnProfileInfoError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -120,6 +128,7 @@
       "description_en": "",
       "scriptName": "OnLocalUserAdded",
       "isTrigger": true,
+      "canDebug": true,
       "category": "xbox-live"
     },
     {
@@ -130,6 +139,7 @@
       "description_en": "",
       "scriptName": "OnLeaderboardSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "stats-leaderboards"
     },
     {
@@ -140,6 +150,7 @@
       "description_en": "",
       "scriptName": "OnUpdateAchievementSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -150,6 +161,7 @@
       "description_en": "",
       "scriptName": "OnUpdateAchievementError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -160,6 +172,7 @@
       "description_en": "",
       "scriptName": "OnAchievementListLoaded",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     },
     {
@@ -170,6 +183,7 @@
       "description_en": "",
       "scriptName": "OnAchievementListError",
       "isTrigger": true,
+      "canDebug": true,
       "category": "achievements"
     }
   ],

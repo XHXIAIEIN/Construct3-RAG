@@ -17,6 +17,8 @@
       "name_en": "Compare selection",
       "description_zh": "要比较的选项的索引。",
       "description_en": "Compare the index of the currently selected item.",
+      "display_zh": "当前选择项索引 {0} [b]{1}[/b]",
+      "display_en": "Selected item {0} [b]{1}[/b]",
       "scriptName": "CompareSelection",
       "category": "list",
       "params": [
@@ -36,9 +38,7 @@
           "desc_zh": "要比较的所选项的索引。",
           "desc_en": "The index of the selected item to compare to."
         }
-      ],
-      "display_zh": "当前选择项索引 {0} [b]{1}[/b]",
-      "display_en": "Selected item {0} [b]{1}[/b]"
+      ]
     },
     {
       "id": "on-selection-changed",
@@ -46,11 +46,12 @@
       "name_en": "On selection changed",
       "description_zh": "当前的选择项发生变化时触发。注意，这不包括重复点击相同的选项。",
       "description_en": "Triggered when the selected item changes.",
+      "display_zh": "选择项变更",
+      "display_en": "On selection changed",
       "scriptName": "OnSelectionChanged",
       "isTrigger": true,
-      "category": "list",
-      "display_zh": "选择项变更",
-      "display_en": "On selection changed"
+      "canDebug": true,
+      "category": "list"
     },
     {
       "id": "on-clicked",
@@ -58,11 +59,12 @@
       "name_en": "On clicked",
       "description_zh": "单击列表控件时触发。",
       "description_en": "Triggered when the list is clicked.",
+      "display_zh": "点击列表",
+      "display_en": "On clicked",
       "scriptName": "OnClicked",
       "isTrigger": true,
-      "category": "list",
-      "display_zh": "点击列表",
-      "display_en": "On clicked"
+      "canDebug": true,
+      "category": "list"
     },
     {
       "id": "on-double-clicked",
@@ -70,11 +72,12 @@
       "name_en": "On double-clicked",
       "description_zh": "双击列表控件时触发。",
       "description_en": "Triggered when the list is double-clicked.",
+      "display_zh": "双击列表",
+      "display_en": "On double-clicked",
       "scriptName": "OnDoubleClicked",
       "isTrigger": true,
-      "category": "list",
-      "display_zh": "双击列表",
-      "display_en": "On double-clicked"
+      "canDebug": true,
+      "category": "list"
     },
     {
       "id": "compare-selected-item-text",
@@ -82,6 +85,8 @@
       "name_en": "Compare selected item text",
       "description_zh": "比较当前已选择项的文本。",
       "description_en": "Compare the text of the currently selected item.",
+      "display_zh": "当前选择项内容为[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Selected item text is [b]{0}[/b] [i]({1})[/i]",
       "scriptName": "CompareSelectedText",
       "category": "list",
       "params": [
@@ -98,6 +103,8 @@
           "type": "combo",
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -111,13 +118,9 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          },
-          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
+          }
         }
-      ],
-      "display_zh": "当前选择项内容为[b]{0}[/b] [i]({1})[/i]",
-      "display_en": "Selected item text is [b]{0}[/b] [i]({1})[/i]"
+      ]
     },
     {
       "id": "compare-item-text-at",
@@ -125,6 +128,8 @@
       "name_en": "Compare item text at",
       "description_zh": "比较列表中选项的文本。",
       "description_en": "Compare the text of an item in the list.",
+      "display_zh": "选项[b]{0}[/b]是[b]{1}[/b] [i]({2})[/i]",
+      "display_en": "Item [b]{0}[/b] text is [b]{1}[/b] [i]({2})[/i]",
       "scriptName": "CompareTextAt",
       "category": "list",
       "params": [
@@ -149,6 +154,8 @@
           "type": "combo",
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -162,13 +169,9 @@
               "zh": "区分大小写",
               "en": "Case sensitive"
             }
-          },
-          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\"."
+          }
         }
-      ],
-      "display_zh": "选项[b]{0}[/b]是[b]{1}[/b] [i]({2})[/i]",
-      "display_en": "Item [b]{0}[/b] text is [b]{1}[/b] [i]({2})[/i]"
+      ]
     }
   ],
   "actions": [
@@ -178,6 +181,8 @@
       "name_en": "Set selection",
       "description_zh": "在列表中选择一个选项。",
       "description_en": "Select an item in the list.",
+      "display_zh": "选择列表第 [i]{0}[/i] 项",
+      "display_en": "Select item [i]{0}[/i]",
       "scriptName": "Select",
       "category": "items",
       "params": [
@@ -189,9 +194,7 @@
           "desc_zh": "要选择的选项在列表的索引位置，从 0 开始计数。",
           "desc_en": "The zero-based index of the item to select."
         }
-      ],
-      "display_zh": "选择列表第 [i]{0}[/i] 项",
-      "display_en": "Select item [i]{0}[/i]"
+      ]
     },
     {
       "id": "add-item",
@@ -199,6 +202,8 @@
       "name_en": "Add item",
       "description_zh": "添加选项到列表中。",
       "description_en": "Append a new item to the list.",
+      "display_zh": "添加选项 [i]{0}[/i]",
+      "display_en": "Add item [i]{0}[/i]",
       "scriptName": "AddItem",
       "category": "items",
       "params": [
@@ -210,9 +215,7 @@
           "desc_zh": "要添加的项目文本。",
           "desc_en": "The item text to add."
         }
-      ],
-      "display_zh": "添加选项 [i]{0}[/i]",
-      "display_en": "Add item [i]{0}[/i]"
+      ]
     },
     {
       "id": "add-item-at",
@@ -220,6 +223,8 @@
       "name_en": "Add item at",
       "description_zh": "添加待选项到列表指定位置。",
       "description_en": "Append a new item to a specific place in the list.",
+      "display_zh": "添加选项 [i]{0}[/i] 到位置 [i]{1}[/i]",
+      "display_en": "Add item [i]{1}[/i] at index [i]{0}[/i]",
       "scriptName": "AddItemAt",
       "category": "items",
       "params": [
@@ -239,9 +244,7 @@
           "desc_zh": "要添加的待选项的文本。",
           "desc_en": "The item text to add."
         }
-      ],
-      "display_zh": "添加选项 [i]{0}[/i] 到位置 [i]{1}[/i]",
-      "display_en": "Add item [i]{1}[/i] at index [i]{0}[/i]"
+      ]
     },
     {
       "id": "remove",
@@ -249,6 +252,8 @@
       "name_en": "Remove",
       "description_zh": "从列表中删除选项。",
       "description_en": "Remove an item from the list.",
+      "display_zh": "删除选项 [i]{0}[/i]",
+      "display_en": "Remove item [i]{0}[/i]",
       "scriptName": "Remove",
       "category": "items",
       "params": [
@@ -260,9 +265,7 @@
           "desc_zh": "要删除的项的从零开始的索引。",
           "desc_en": "The zero-based index of the item to remove."
         }
-      ],
-      "display_zh": "删除选项 [i]{0}[/i]",
-      "display_en": "Remove item [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-item-text",
@@ -270,6 +273,8 @@
       "name_en": "Set item text",
       "description_zh": "设置列表中选项的文本。",
       "description_en": "Set the text of an item in the list.",
+      "display_zh": "设置列表选项[i]{0}[/i]文本为[i]{1}[/i]",
+      "display_en": "Set item [i]{0}[/i] text to [i]{1}[/i]",
       "scriptName": "SetItemText",
       "category": "items",
       "params": [
@@ -289,9 +294,7 @@
           "desc_zh": "要设置的选项文本。",
           "desc_en": "The item text to set."
         }
-      ],
-      "display_zh": "设置列表选项[i]{0}[/i]文本为[i]{1}[/i]",
-      "display_en": "Set item [i]{0}[/i] text to [i]{1}[/i]"
+      ]
     },
     {
       "id": "clear",
@@ -299,10 +302,10 @@
       "name_en": "Clear",
       "description_zh": "删除列表中的所有待选项。",
       "description_en": "Remove all items from the list.",
-      "scriptName": "Clear",
-      "category": "items",
       "display_zh": "清空列表",
-      "display_en": "Clear all items"
+      "display_en": "Clear all items",
+      "scriptName": "Clear",
+      "category": "items"
     },
     {
       "id": "set-tooltip",
@@ -310,6 +313,8 @@
       "name_en": "Set tooltip",
       "description_zh": "设置列表的工具提示。",
       "description_en": "Set the list's tooltip.",
+      "display_zh": "设置工具提示为[i]{0}[/i]",
+      "display_en": "Set tooltip to [i]{0}[/i]",
       "scriptName": "SetTooltip",
       "category": "list",
       "params": [
@@ -321,9 +326,7 @@
           "desc_zh": "要弹出的工具提示信息。",
           "desc_en": "The tooltip to set on the list."
         }
-      ],
-      "display_zh": "设置工具提示为[i]{0}[/i]",
-      "display_en": "Set tooltip to [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "start-radius",
@@ -20,7 +24,8 @@
       "name_zh": "start-radius",
       "name_en": "start-radius",
       "initialValue": 0.3,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "vignetteStart"
     },
     {
       "id": "end-radius",
@@ -28,7 +33,8 @@
       "name_zh": "end-radius",
       "name_en": "end-radius",
       "initialValue": 0.75,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "vignetteEnd"
     }
   ]
 }

@@ -35,6 +35,8 @@
       "name_en": "Is within angle",
       "description_zh": "检测某个角度是否位于另一个角度的相差范围内，例如某个角度可能与90度相差0.5度。",
       "description_en": "Compare if an angle is within X degrees of another angle.",
+      "display_zh": "{0} 位于 {1} 相差 {2} 范围内",
+      "display_en": "{0} within {1} degrees of {2}",
       "scriptName": "AngleWithin",
       "category": "angles",
       "params": [
@@ -51,9 +53,9 @@
           "type": "number",
           "name_zh": "相差",
           "name_en": "Within",
-          "initialValue": "0.5",
           "desc_zh": "检查角度1是否位于角度2的相差范围内。",
-          "desc_en": "Number of degrees that angle 1 must be within angle 2."
+          "desc_en": "Number of degrees that angle 1 must be within angle 2.",
+          "initialValue": "0.5"
         },
         {
           "id": "angle-2",
@@ -63,9 +65,7 @@
           "desc_zh": "检查角度1是否接近这个角度。",
           "desc_en": "Angle in degrees to test angle 1 against."
         }
-      ],
-      "display_zh": "{0} 位于 {1} 相差 {2} 范围内",
-      "display_en": "{0} within {1} degrees of {2}"
+      ]
     },
     {
       "id": "is-clockwise-from",
@@ -73,6 +73,8 @@
       "name_en": "Is clockwise from",
       "description_zh": "比较角度是否是从另一个角度顺时针方向。",
       "description_en": "Compare if an angle is clockwise from another angle.",
+      "display_zh": "{0} 在 {1} 顺时针方向",
+      "display_en": "{0} is clockwise from {1}",
       "scriptName": "IsClockwiseFrom",
       "category": "angles",
       "params": [
@@ -92,9 +94,7 @@
           "desc_zh": "用于测试是否在角度1的顺时针方向的角度。",
           "desc_en": "Angle in degrees to test if angle 1 is clockwise from."
         }
-      ],
-      "display_zh": "{0} 在 {1} 顺时针方向",
-      "display_en": "{0} is clockwise from {1}"
+      ]
     },
     {
       "id": "is-between-angles",
@@ -102,6 +102,8 @@
       "name_en": "Is between angles",
       "description_zh": "比较角度是否位于两角度之间。",
       "description_en": "Compare if an angle is between two angles.",
+      "display_zh": "{0} 角度在 {1}° 与 {2}° 之间",
+      "display_en": "{0} is between {1} and {2} degrees",
       "scriptName": "IsBetweenAngles",
       "category": "angles",
       "params": [
@@ -126,13 +128,11 @@
           "type": "number",
           "name_zh": "角度2",
           "name_en": "Second angle",
-          "initialValue": "45",
           "desc_zh": "第二个角度，按顺时针方向顺序。",
-          "desc_en": "Second angle in degrees. Specify in clockwise order."
+          "desc_en": "Second angle in degrees. Specify in clockwise order.",
+          "initialValue": "45"
         }
-      ],
-      "display_zh": "{0} 角度在 {1}° 与 {2}° 之间",
-      "display_en": "{0} is between {1} and {2} degrees"
+      ]
     },
     {
       "id": "every-tick",
@@ -140,10 +140,11 @@
       "name_en": "Every tick",
       "description_zh": "在事件表运行的每帧执行一次，相当于 '总是执行'。与空白事件块的作用相同。",
       "description_en": "Run the actions once every tick, a.k.a. 'Always'.",
-      "scriptName": "EveryTick",
-      "category": "general",
       "display_zh": "每一帧",
-      "display_en": "Every tick"
+      "display_en": "Every tick",
+      "scriptName": "EveryTick",
+      "highlight": true,
+      "category": "general"
     },
     {
       "id": "compare-two-values",
@@ -151,7 +152,10 @@
       "name_en": "Compare two values",
       "description_zh": "比较两个任意值。此条件不会选择任何对象。",
       "description_en": "Compare two arbitrary values.  This condition does not pick any objects.",
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}",
       "scriptName": "Compare",
+      "highlight": true,
       "category": "general",
       "params": [
         {
@@ -178,9 +182,7 @@
           "desc_zh": "输入要比较的第二个值。",
           "desc_en": "Enter the second value to compare.  This condition does not pick any objects - it is a simple value comparison."
         }
-      ],
-      "display_zh": "{0} {1} {2}",
-      "display_en": "{0} {1} {2}"
+      ]
     },
     {
       "id": "is-group-active",
@@ -188,6 +190,8 @@
       "name_en": "Is group active",
       "description_zh": "检查事件组当前是否处于活动状态。",
       "description_en": "Test if an event group is currently active.",
+      "display_zh": "事件组 [b]{0}[/b] 已激活",
+      "display_en": "Group [b]{0}[/b] is active",
       "scriptName": "IsGroupActive",
       "category": "general",
       "params": [
@@ -199,9 +203,7 @@
           "desc_zh": "要检查的事件组的名称。",
           "desc_en": "The name of the event group to test if active."
         }
-      ],
-      "display_zh": "事件组 [b]{0}[/b] 已激活",
-      "display_en": "Group [b]{0}[/b] is active"
+      ]
     },
     {
       "id": "is-between-values",
@@ -209,6 +211,8 @@
       "name_en": "Is between values",
       "description_zh": "比较一个数字是否介于两个值之间。",
       "description_en": "Compare if a number is between two values.",
+      "display_zh": "{1} ≤ {0} ≤ {2}",
+      "display_en": "{1} ≤ {0} ≤ {2}",
       "scriptName": "CompareBetween",
       "category": "general",
       "params": [
@@ -233,13 +237,11 @@
           "type": "number",
           "name_zh": "上限",
           "name_en": "Upper bound",
-          "initialValue": "10",
           "desc_zh": "要比较的上限值。",
-          "desc_en": "The upper value to compare to."
+          "desc_en": "The upper value to compare to.",
+          "initialValue": "10"
         }
-      ],
-      "display_zh": "{1} ≤ {0} ≤ {2}",
-      "display_en": "{1} ≤ {0} ≤ {2}"
+      ]
     },
     {
       "id": "object-uid-exists",
@@ -247,6 +249,8 @@
       "name_en": "Object UID exists",
       "description_zh": "检查指定的UID对象当前是否存在。",
       "description_en": "Check if an object with a given UID currently exists.",
+      "display_zh": "存在UID为[b]{0}[/b]的对象",
+      "display_en": "Object with UID [b]{0}[/b] exists",
       "scriptName": "ObjectUIDExists",
       "category": "general",
       "params": [
@@ -258,9 +262,7 @@
           "desc_zh": "输入对象的UID以检查是否存在。",
           "desc_en": "Enter the UID of an object to check if exists."
         }
-      ],
-      "display_zh": "存在UID为[b]{0}[/b]的对象",
-      "display_en": "Object with UID [b]{0}[/b] exists"
+      ]
     },
     {
       "id": "test-regex",
@@ -268,6 +270,8 @@
       "name_en": "Test regex",
       "description_zh": "测试字符串是否与正则表达式匹配。",
       "description_en": "Test if a string matches a regular expression.",
+      "display_zh": "[i]{0}[/i] 匹配正则表达式 [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "[i]{0}[/i] matches regex [i]{1}[/i] ([i]{2}[/i])",
       "scriptName": "RegexTest",
       "category": "general",
       "params": [
@@ -292,13 +296,11 @@
           "type": "string",
           "name_zh": "标志",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行",
-          "desc_en": "Regular expression flags. i = ignore case, g = global match, m = multiline."
+          "desc_en": "Regular expression flags. i = ignore case, g = global match, m = multiline.",
+          "initialValue": "\"gi\""
         }
-      ],
-      "display_zh": "[i]{0}[/i] 匹配正则表达式 [i]{1}[/i] ([i]{2}[/i])",
-      "display_en": "[i]{0}[/i] matches regex [i]{1}[/i] ([i]{2}[/i])"
+      ]
     },
     {
       "id": "is-number-nan",
@@ -306,6 +308,8 @@
       "name_en": "Is number NaN",
       "description_zh": "检查数字是否为特殊的 NaN (非数字)值。",
       "description_en": "Check if a number is the special NaN (Not A Number) value.",
+      "display_zh": "{0} 非数字类型",
+      "display_en": "{0} is NaN",
       "scriptName": "IsNaN",
       "category": "general",
       "params": [
@@ -317,9 +321,7 @@
           "desc_zh": "一个数字，用于检查是否匹配特殊的NaN（非数字）值。",
           "desc_en": "A number to check if matching the special NaN (Not A Number) value."
         }
-      ],
-      "display_zh": "{0} 非数字类型",
-      "display_en": "{0} is NaN"
+      ]
     },
     {
       "id": "is-value-type",
@@ -327,6 +329,8 @@
       "name_en": "Is value type",
       "description_zh": "分辨一个值是数字还是字符串。",
       "description_en": "Test if a value is a number or a string.",
+      "display_zh": "{0} 是 {1}",
+      "display_en": "{0} is {1}",
       "scriptName": "IsValueType",
       "category": "general",
       "params": [
@@ -343,6 +347,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "检查值的类型。",
+          "desc_en": "Check which type the value is.",
           "items": [
             "number",
             "string"
@@ -356,13 +362,9 @@
               "zh": "字符串",
               "en": "String"
             }
-          },
-          "desc_zh": "检查值的类型。",
-          "desc_en": "Check which type the value is."
+          }
         }
-      ],
-      "display_zh": "{0} 是 {1}",
-      "display_en": "{0} is {1}"
+      ]
     },
     {
       "id": "evaluate-expression",
@@ -370,6 +372,8 @@
       "name_en": "Evaluate expression",
       "description_zh": "检测表达式是否有效，即为非零、非空的字符串。对布尔值的判断非常有帮助！",
       "description_en": "True if a given expression is non-zero, or not an empty string. Useful with boolean expressions.",
+      "display_zh": "{0}",
+      "display_en": "{0}",
       "scriptName": "EvaluateExpression",
       "category": "general",
       "params": [
@@ -381,9 +385,7 @@
           "desc_zh": "要检测的表达式。仅在该表达式返回的结果为非零或非空的字符串时有效。",
           "desc_en": "Enter the value to evaluate. The condition is true if this evaluates to a non-zero value or a non-empty string."
         }
-      ],
-      "display_zh": "{0}",
-      "display_en": "{0}"
+      ]
     },
     {
       "id": "compare-eventvar",
@@ -391,6 +393,8 @@
       "name_en": "Compare variable",
       "description_zh": "比较全局变量或局部变量的值。",
       "description_en": "Compare the value of a global or local variable.",
+      "display_zh": "[b]{0}[/b] {1} {2}",
+      "display_en": "[b]{0}[/b] {1} {2}",
       "scriptName": "CompareVar",
       "category": "global-local-variables",
       "params": [
@@ -418,9 +422,7 @@
           "desc_zh": "要与变量进行比较的值。",
           "desc_en": "Value to compare to the variable."
         }
-      ],
-      "display_zh": "[b]{0}[/b] {1} {2}",
-      "display_en": "[b]{0}[/b] {1} {2}"
+      ]
     },
     {
       "id": "compare-boolean-eventvar",
@@ -428,6 +430,8 @@
       "name_en": "Is boolean set",
       "description_zh": "检测布尔值是否为真。",
       "description_en": "Test if a boolean global or local variable is true.",
+      "display_zh": "如果[b]{0}[/b]",
+      "display_en": "Is [b]{0}[/b]",
       "scriptName": "CompareBoolVar",
       "category": "global-local-variables",
       "params": [
@@ -439,9 +443,7 @@
           "desc_zh": "选择要检测的布尔值。",
           "desc_en": "Choose the variable to test if true."
         }
-      ],
-      "display_zh": "如果[b]{0}[/b]",
-      "display_en": "Is [b]{0}[/b]"
+      ]
     },
     {
       "id": "layer-is-visible",
@@ -449,6 +451,8 @@
       "name_en": "Layer is visible",
       "description_zh": "测试图层当前在场景是否可见。",
       "description_en": "Test if a layer is currently visible.",
+      "display_zh": "图层[b]{0}[/b]可见",
+      "display_en": "Layer [b]{0}[/b] is visible",
       "scriptName": "LayerVisible",
       "category": "layers",
       "params": [
@@ -460,9 +464,7 @@
           "desc_zh": "要检查可见性的图层的名称或编号。",
           "desc_en": "Name or number of layer to check visibility for."
         }
-      ],
-      "display_zh": "图层[b]{0}[/b]可见",
-      "display_en": "Layer [b]{0}[/b] is visible"
+      ]
     },
     {
       "id": "layer-is-interactive",
@@ -470,6 +472,8 @@
       "name_en": "Layer is interactive",
       "description_zh": "检查指定的图层是否可以响应鼠标和触控的输入。",
       "description_en": "Test if a layer is currently responding to mouse and touch input.",
+      "display_zh": "图层 [b]{0}[/b] 可交互",
+      "display_en": "Layer [b]{0}[/b] is interactive",
       "scriptName": "LayerInteractive",
       "category": "layers",
       "params": [
@@ -481,9 +485,7 @@
           "desc_zh": "检查指定的图层是否允许响应用户的交互。",
           "desc_en": "Name or number of layer to check if interactive."
         }
-      ],
-      "display_zh": "图层 [b]{0}[/b] 可交互",
-      "display_en": "Layer [b]{0}[/b] is interactive"
+      ]
     },
     {
       "id": "layer-is-html",
@@ -491,6 +493,8 @@
       "name_en": "Layer is HTML",
       "description_zh": "检测图层是否为 HTML 图层。",
       "description_en": "Test if a layer is currently set to be an HTML layer.",
+      "display_zh": "图层 [b]{0}[/b] 是 HTML 图层",
+      "display_en": "Layer [b]{0}[/b] is HTML layer",
       "scriptName": "LayerIsHTML",
       "category": "layers",
       "params": [
@@ -502,9 +506,7 @@
           "desc_zh": "填写图层名称或编号，用于检查此图层是否为 HTML 层。",
           "desc_en": "Name or number of layer to check if an HTML layer."
         }
-      ],
-      "display_zh": "图层 [b]{0}[/b] 是 HTML 图层",
-      "display_en": "Layer [b]{0}[/b] is HTML layer"
+      ]
     },
     {
       "id": "layer-name-exists",
@@ -512,6 +514,8 @@
       "name_en": "Layer name exists",
       "description_zh": "检测指定名称的图层是否已经存在。",
       "description_en": "Test if a layer with a specific name currently exists.",
+      "display_zh": "图层 [b]{0}[/b] 已存在",
+      "display_en": "Layer [b]{0}[/b] exists",
       "scriptName": "LayerNameExists",
       "category": "layers",
       "params": [
@@ -523,9 +527,7 @@
           "desc_zh": "要检查是否存在的图层名称。",
           "desc_en": "The name of the layer to check exists."
         }
-      ],
-      "display_zh": "图层 [b]{0}[/b] 已存在",
-      "display_en": "Layer [b]{0}[/b] exists"
+      ]
     },
     {
       "id": "compare-layer-opacity",
@@ -533,6 +535,8 @@
       "name_en": "Compare opacity",
       "description_zh": "比较图层的不透明度。",
       "description_en": "Compare the opacity of a layer.",
+      "display_zh": "图层[b]{0}[/b]不透明度 {1} {2}",
+      "display_en": "Layer [b]{0}[/b] opacity {1} {2}",
       "scriptName": "LayerCmpOpacity",
       "category": "layers",
       "params": [
@@ -560,9 +564,7 @@
           "desc_zh": "要比较的不透明度，从0（透明）到100（不透明）。",
           "desc_en": "The opacity to compare to, from 0 (transparent) to 100 (opaque)."
         }
-      ],
-      "display_zh": "图层[b]{0}[/b]不透明度 {1} {2}",
-      "display_en": "Layer [b]{0}[/b] opacity {1} {2}"
+      ]
     },
     {
       "id": "layer-is-empty",
@@ -570,6 +572,8 @@
       "name_en": "Layer is empty",
       "description_zh": "测试图层是否不存在任何实例对象。",
       "description_en": "Test if a layer has no objects on it.",
+      "display_zh": "图层[b]{0}[/b]是空的",
+      "display_en": "Layer [b]{0}[/b] is empty",
       "scriptName": "LayerEmpty",
       "category": "layers",
       "params": [
@@ -581,9 +585,7 @@
           "desc_zh": "要检查的图层的名称或层数是否为空。",
           "desc_en": "Name or number of layer to check if empty."
         }
-      ],
-      "display_zh": "图层[b]{0}[/b]是空的",
-      "display_en": "Layer [b]{0}[/b] is empty"
+      ]
     },
     {
       "id": "on-canvas-snapshot",
@@ -591,11 +593,12 @@
       "name_en": "On canvas snapshot",
       "description_zh": "执行 '截屏' 动作后，成功截屏时触发。",
       "description_en": "Triggered after 'Snapshot canvas' when the snapshot is ready.",
+      "display_zh": "截屏完成",
+      "display_en": "On canvas snapshot",
       "scriptName": "OnCanvasSnapshot",
       "isTrigger": true,
-      "category": "layout",
-      "display_zh": "截屏完成",
-      "display_en": "On canvas snapshot"
+      "canDebug": true,
+      "category": "layout"
     },
     {
       "id": "effects-are-supported",
@@ -603,11 +606,11 @@
       "name_en": "Effects are supported",
       "description_zh": "检测当前设备是否支持着色器效果并且可以在游戏中显示。",
       "description_en": "True if shader effects are supported and can be displayed in the game.",
+      "display_zh": "设备支持滤镜",
+      "display_en": "Effects are supported",
       "scriptName": "EffectsSupported",
       "isDeprecated": true,
-      "category": "layout",
-      "display_zh": "设备支持滤镜",
-      "display_en": "Effects are supported"
+      "category": "layout"
     },
     {
       "id": "for",
@@ -615,7 +618,10 @@
       "name_en": "For",
       "description_zh": "根据数值区间的范围，重复执行多次动作。使用 loopindex 表达式获取当前索引（基于 0 开始计数）。",
       "description_en": "Repeat actions with an index variable.",
+      "display_zh": "循环 [b]{0}[/b] 从 [i]{1}[/i] 到 [i]{2}[/i]",
+      "display_en": "For [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i]",
       "scriptName": "For",
+      "canDebug": true,
       "category": "loops",
       "params": [
         {
@@ -631,22 +637,20 @@
           "type": "number",
           "name_zh": "初始值",
           "name_en": "Start index",
-          "initialValue": "1",
           "desc_zh": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。",
-          "desc_en": "Start index of the loop range (inclusive)."
+          "desc_en": "Start index of the loop range (inclusive).",
+          "initialValue": "1"
         },
         {
           "id": "end-index",
           "type": "number",
           "name_zh": "结束值",
           "name_en": "End index",
-          "initialValue": "10",
           "desc_zh": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。",
-          "desc_en": "End index of the loop range (inclusive)."
+          "desc_en": "End index of the loop range (inclusive).",
+          "initialValue": "10"
         }
-      ],
-      "display_zh": "循环 [b]{0}[/b] 从 [i]{1}[/i] 到 [i]{2}[/i]",
-      "display_en": "For [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i]"
+      ]
     },
     {
       "id": "for-each",
@@ -654,7 +658,10 @@
       "name_en": "For Each",
       "description_zh": "对每个实例对象重复执行一次动作。",
       "description_en": "Repeat actions once for each instance of an object.",
+      "display_zh": "遍历 {0}",
+      "display_en": "For each {0}",
       "scriptName": "ForEach",
+      "canDebug": true,
       "category": "loops",
       "params": [
         {
@@ -665,9 +672,7 @@
           "desc_zh": "选择循环的对象。 对于对象的每个实例，操作将重复一次。",
           "desc_en": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
         }
-      ],
-      "display_zh": "遍历 {0}",
-      "display_en": "For each {0}"
+      ]
     },
     {
       "id": "repeat",
@@ -675,7 +680,10 @@
       "name_en": "Repeat",
       "description_zh": "将动作重复执行多次。使用 loopindex 表达式获取每次循环的索引（基于0开始计数）。",
       "description_en": "Repeat actions a certain number of times.",
+      "display_zh": "重复[b]{0}[/b]次",
+      "display_en": "Repeat [b]{0}[/b] times",
       "scriptName": "Repeat",
+      "canDebug": true,
       "category": "loops",
       "params": [
         {
@@ -683,13 +691,11 @@
           "type": "number",
           "name_zh": "次数",
           "name_en": "Count",
-          "initialValue": "10",
           "desc_zh": "要重复执行的次数。",
-          "desc_en": "Number of times to repeat the actions."
+          "desc_en": "Number of times to repeat the actions.",
+          "initialValue": "10"
         }
-      ],
-      "display_zh": "重复[b]{0}[/b]次",
-      "display_en": "Repeat [b]{0}[/b] times"
+      ]
     },
     {
       "id": "while",
@@ -697,10 +703,11 @@
       "name_en": "While",
       "description_zh": "只要事件块的条件满足，就无限重复执行动作。",
       "description_en": "Repeat so long as the rest of the conditions in the event are true.",
-      "scriptName": "While",
-      "category": "loops",
       "display_zh": "重复",
-      "display_en": "While"
+      "display_en": "While",
+      "scriptName": "While",
+      "canDebug": true,
+      "category": "loops"
     },
     {
       "id": "for-each-ordered",
@@ -708,7 +715,10 @@
       "name_en": "For Each (ordered)",
       "description_zh": "根据表达式的结果排序，将指定对象的每个实例都重复一次动作。",
       "description_en": "Repeat actions once for each instance of an object ordered by an expression.",
+      "display_zh": "遍历 {0} 根据 [i]{1}[/i] {2}",
+      "display_en": "For each {0} order by [i]{1}[/i] {2}",
       "scriptName": "ForEachOrdered",
+      "canDebug": true,
       "category": "loops",
       "params": [
         {
@@ -732,6 +742,8 @@
           "type": "combo",
           "name_zh": "排序",
           "name_en": "Order",
+          "desc_zh": "使用升序或者降序。",
+          "desc_en": "Whether to loop in ascending or descending order.",
           "items": [
             "ascending",
             "descending"
@@ -745,13 +757,9 @@
               "zh": "降序",
               "en": "descending"
             }
-          },
-          "desc_zh": "使用升序或者降序。",
-          "desc_en": "Whether to loop in ascending or descending order."
+          }
         }
-      ],
-      "display_zh": "遍历 {0} 根据 [i]{1}[/i] {2}",
-      "display_en": "For each {0} order by [i]{1}[/i] {2}"
+      ]
     },
     {
       "id": "on-image-loading-complete",
@@ -759,11 +767,11 @@
       "name_en": "On image loading complete",
       "description_zh": "使用内存管理操作后，当图像加载完成时触发。",
       "description_en": "Triggered when images loaded with the memory management actions have finished loading.",
+      "display_zh": "图像加载完成",
+      "display_en": "On image loading complete",
       "scriptName": "OnImageLoadingComplete",
       "isTrigger": true,
-      "category": "memory-management",
-      "display_zh": "图像加载完成",
-      "display_en": "On image loading complete"
+      "category": "memory-management"
     },
     {
       "id": "is-loading-images",
@@ -771,10 +779,10 @@
       "name_en": "Is loading images",
       "description_zh": "使用内存管理操作后，用于检测当前是否正在加载图像的过程中。",
       "description_en": "Test if images loaded with the memory management actions are currently in the process of loading.",
-      "scriptName": "IsLoadingImages",
-      "category": "memory-management",
       "display_zh": "图像正在加载",
-      "display_en": "Is loading images"
+      "display_en": "Is loading images",
+      "scriptName": "IsLoadingImages",
+      "category": "memory-management"
     },
     {
       "id": "pick-nth-instance",
@@ -782,6 +790,8 @@
       "name_en": "Pick nth instance",
       "description_zh": "从当前已选取的实例中，选择第n个实例。",
       "description_en": "Pick just the nth instance from the currently picked instances of an object.",
+      "display_zh": "选择第 {1} 个 {0} 实例对象",
+      "display_en": "Pick {0} instance {1}",
       "scriptName": "PickNth",
       "category": "pick-instances",
       "params": [
@@ -801,9 +811,7 @@
           "desc_zh": "要选择的实例的索引，从 0 开始计数。",
           "desc_en": "Index of the instance to pick (0-based)."
         }
-      ],
-      "display_zh": "选择第 {1} 个 {0} 实例对象",
-      "display_en": "Pick {0} instance {1}"
+      ]
     },
     {
       "id": "pick-random-instance",
@@ -811,6 +819,8 @@
       "name_en": "Pick random instance",
       "description_zh": "从当前已选择的对象实例中随机选择一个实例。",
       "description_en": "Pick a single random instance from the currently picked instances of an object.",
+      "display_zh": "随机选择一个 {0} 实例",
+      "display_en": "Pick a random {0} instance",
       "scriptName": "PickRandom",
       "category": "pick-instances",
       "params": [
@@ -822,9 +832,7 @@
           "desc_zh": "选择要从中选择随机实例的对象。",
           "desc_en": "Choose the object to pick a random instance from."
         }
-      ],
-      "display_zh": "随机选择一个 {0} 实例",
-      "display_en": "Pick a random {0} instance"
+      ]
     },
     {
       "id": "pick-all",
@@ -832,6 +840,8 @@
       "name_en": "Pick all",
       "description_zh": "重置当前已选取的实例，再次选择所有实例。",
       "description_en": "Reset the picked instances to select all of them again.",
+      "display_zh": "再次选择全部 {0}",
+      "display_en": "Pick all {0}",
       "scriptName": "PickAll",
       "category": "pick-instances",
       "params": [
@@ -843,9 +853,7 @@
           "desc_zh": "选择要重置的对象以选择所有实例。",
           "desc_en": "Choose the object to reset to pick all instances."
         }
-      ],
-      "display_zh": "再次选择全部 {0}",
-      "display_en": "Pick all {0}"
+      ]
     },
     {
       "id": "pick-by-comparison",
@@ -853,6 +861,8 @@
       "name_en": "Pick by comparison",
       "description_zh": "选择满足比较的对象的实例。",
       "description_en": "Pick instances of an object that meet a comparison.",
+      "display_zh": "选择 {1} {2} {3} 的 {0}",
+      "display_en": "Pick {0} where {1} {2} {3}",
       "scriptName": "PickByComparison",
       "category": "pick-instances",
       "params": [
@@ -888,9 +898,7 @@
           "desc_zh": "通过表达式筛选出满足条件的实例对象。可以引用要选择的对象。",
           "desc_en": "Enter a value to compare the expression to for each instance. It can also reference the chosen object."
         }
-      ],
-      "display_zh": "选择 {1} {2} {3} 的 {0}",
-      "display_en": "Pick {0} where {1} {2} {3}"
+      ]
     },
     {
       "id": "pick-by-evaluate",
@@ -898,6 +906,8 @@
       "name_en": "Pick by evaluate",
       "description_zh": "通过计算表达式来选择对象的实例。",
       "description_en": "Pick instances of an object by evaluating an expression.",
+      "display_zh": "选择 {0} 根据 {1}",
+      "display_en": "Pick {0} by evaluating {1}",
       "scriptName": "PickByEvaluate",
       "category": "pick-instances",
       "params": [
@@ -917,9 +927,7 @@
           "desc_zh": "通过表达式的结果选择实例对象，如果结果非零，将选择实例。",
           "desc_en": "Enter an expression referencing the chosen object. If nonzero, the instance will be picked."
         }
-      ],
-      "display_zh": "选择 {0} 根据 {1}",
-      "display_en": "Pick {0} by evaluating {1}"
+      ]
     },
     {
       "id": "pick-by-highest-lowest-value",
@@ -927,6 +935,8 @@
       "name_en": "Pick by highest/lowest value",
       "description_zh": "根据表达式计算结果，选中数值最高或最低的实例。",
       "description_en": "Pick based on evaluating the highest or lowest expression.",
+      "display_zh": "选择 {2} {1}的 {0}  (包含并列结果: [i]{3}[/i])",
+      "display_en": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i]",
       "scriptName": "PickByHighestLowestValue",
       "category": "pick-instances",
       "params": [
@@ -943,6 +953,8 @@
           "type": "combo",
           "name_zh": "选择",
           "name_en": "Which",
+          "desc_zh": "选择最高或最低值结果的实例。",
+          "desc_en": "Choose whether to pick according to the highest or lowest expression.",
           "items": [
             "lowest",
             "highest"
@@ -956,9 +968,7 @@
               "zh": "最高",
               "en": "highest"
             }
-          },
-          "desc_zh": "选择最高或最低值结果的实例。",
-          "desc_en": "Choose whether to pick according to the highest or lowest expression."
+          }
         },
         {
           "id": "expression",
@@ -967,10 +977,16 @@
           "name_en": "Expression",
           "desc_zh": "引用所选对象的表达式。",
           "desc_en": "Enter an expression referencing the chosen object."
+        },
+        {
+          "id": "pick-all-tied",
+          "type": "boolean",
+          "name_zh": "包含并列结果",
+          "name_en": "Pick all tied",
+          "desc_zh": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。",
+          "desc_en": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
         }
-      ],
-      "display_zh": "选择 {2} {1}的 {0}  (包含并列结果: [i]{3}[/i])",
-      "display_en": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i]"
+      ]
     },
     {
       "id": "pick-overlapping-point",
@@ -978,6 +994,8 @@
       "name_en": "Pick overlapping point",
       "description_zh": "选取在场景中的重叠在一起的一类对象实例。",
       "description_en": "Pick the instances of an object type overlapping a point in the layout.",
+      "display_zh": "选择在位置([i]{1}[/i], [i]{2}[/i])重叠的 {0}",
+      "display_en": "Pick {0} overlapping ([i]{1}[/i], [i]{2}[/i])",
       "scriptName": "PickOverlappingPoint",
       "category": "pick-instances",
       "params": [
@@ -1005,9 +1023,7 @@
           "desc_zh": "Y坐标测试是否重叠。",
           "desc_en": "The Y co-ordinate to test if overlapping."
         }
-      ],
-      "display_zh": "选择在位置([i]{1}[/i], [i]{2}[/i])重叠的 {0}",
-      "display_en": "Pick {0} overlapping ([i]{1}[/i], [i]{2}[/i])"
+      ]
     },
     {
       "id": "pick-last-created",
@@ -1015,6 +1031,8 @@
       "name_en": "Pick last created",
       "description_zh": "选择对象类型最后一个创建的实例对象，用于 '创建对象 (按名称)' 一起使用。",
       "description_en": "Pick the last created instance of an object type. Useful with 'Create object (by name)'.",
+      "display_zh": "选择最后创建的{0}",
+      "display_en": "Pick last created {0}",
       "scriptName": "PickLastCreated",
       "category": "pick-instances",
       "params": [
@@ -1026,9 +1044,7 @@
           "desc_zh": "选择最后创建的对象实例。",
           "desc_en": "Choose the object to pick the last created instance from."
         }
-      ],
-      "display_zh": "选择最后创建的{0}",
-      "display_en": "Pick last created {0}"
+      ]
     },
     {
       "id": "on-save-complete",
@@ -1036,11 +1052,12 @@
       "name_en": "On save complete",
       "description_zh": "执行 '保存游戏' 动作后，返回的 '游戏保存数据' 表达式可用时触发。",
       "description_en": "Triggered after the 'Save' action when the save has completed.",
+      "display_zh": "保存完成",
+      "display_en": "On save complete",
       "scriptName": "OnSaveComplete",
       "isTrigger": true,
-      "category": "save-load",
-      "display_zh": "保存完成",
-      "display_en": "On save complete"
+      "canDebug": true,
+      "category": "save-load"
     },
     {
       "id": "on-save-failed",
@@ -1048,11 +1065,12 @@
       "name_en": "On save failed",
       "description_zh": "执行 '保存游戏' 动作后，游戏保存失败时触发。",
       "description_en": "Triggered after the 'Save' action if the attempt to save failed.",
+      "display_zh": "保存失败",
+      "display_en": "On save failed",
       "scriptName": "OnSaveFailed",
       "isTrigger": true,
-      "category": "save-load",
-      "display_zh": "保存失败",
-      "display_en": "On save failed"
+      "canDebug": true,
+      "category": "save-load"
     },
     {
       "id": "on-load-complete",
@@ -1060,11 +1078,12 @@
       "name_en": "On load complete",
       "description_zh": "执行 '加载游戏' 动作后，游戏加载完成时触发。",
       "description_en": "Triggered after the 'Load' action when the load has completed.",
+      "display_zh": "加载完成",
+      "display_en": "On load complete",
       "scriptName": "OnLoadComplete",
       "isTrigger": true,
-      "category": "save-load",
-      "display_zh": "加载完成",
-      "display_en": "On load complete"
+      "canDebug": true,
+      "category": "save-load"
     },
     {
       "id": "on-load-failed",
@@ -1072,11 +1091,12 @@
       "name_en": "On load failed",
       "description_zh": "执行 '加载游戏' 动作后，当插槽无法加载时触发，包括尚未保存的。",
       "description_en": "Triggered after the 'Load' action when the slot failed to load, including if it hasn't been saved to yet.",
+      "display_zh": "加载失败",
+      "display_en": "On load failed",
       "scriptName": "OnLoadFailed",
       "isTrigger": true,
-      "category": "save-load",
-      "display_zh": "加载失败",
-      "display_en": "On load failed"
+      "canDebug": true,
+      "category": "save-load"
     },
     {
       "id": "trigger-once-while-true",
@@ -1084,10 +1104,10 @@
       "name_en": "Trigger once while true",
       "description_zh": "当持续条件第一次触发时，添加此特殊条件仅触发一次。需注意，此条件需要放在其他条件的最后一个。",
       "description_en": "Make a continuously true event trigger once only, when it first becomes true.  Place as the last condition.",
-      "scriptName": "TriggerOnce",
-      "category": "special-conditions",
       "display_zh": "仅触发一次",
-      "display_en": "Trigger once"
+      "display_en": "Trigger once",
+      "scriptName": "TriggerOnce",
+      "category": "special-conditions"
     },
     {
       "id": "is-in-preview",
@@ -1095,10 +1115,10 @@
       "name_en": "Is in preview",
       "description_zh": "如果在预览模式中，则触发此条件。导出项目后此条件将失效。",
       "description_en": "True if the project is running as a preview rather than as an exported project.",
-      "scriptName": "IsPreview",
-      "category": "special-conditions",
       "display_zh": "在预览模式中",
-      "display_en": "Is in preview"
+      "display_en": "Is in preview",
+      "scriptName": "IsPreview",
+      "category": "special-conditions"
     },
     {
       "id": "is-on-mobile-device",
@@ -1106,11 +1126,11 @@
       "name_en": "Is on mobile device",
       "description_zh": "如果在移动设备上观看，则为True。 这是一个估计，可能不完全准确。",
       "description_en": "True if being viewed on a mobile device.  This is an estimate and may not be perfectly accurate.",
+      "display_zh": "在移动设备运行",
+      "display_en": "Is on mobile device",
       "scriptName": "IsMobile",
       "isDeprecated": true,
-      "category": "special-conditions",
-      "display_zh": "在移动设备运行",
-      "display_en": "Is on mobile device"
+      "category": "special-conditions"
     },
     {
       "id": "else",
@@ -1118,10 +1138,10 @@
       "name_en": "Else",
       "description_zh": "当上一个事件的触发条件不满足时，运行此条件的动作。需注意，此条件需要放在其他条件的第一个。且不会选择任何实例对象。",
       "description_en": "Run if the previous event was not true.  Note this does not pick any instances (logic only).",
-      "scriptName": "Else",
-      "category": "special-conditions",
       "display_zh": "否则",
-      "display_en": "Else"
+      "display_en": "Else",
+      "scriptName": "Else",
+      "category": "special-conditions"
     },
     {
       "id": "is-on-platform",
@@ -1129,6 +1149,8 @@
       "name_en": "Is on platform",
       "description_zh": "检查当前是否在特定平台上运行，例如Android系统。",
       "description_en": "Check if currently running on a specific platform, e.g. Android.",
+      "display_zh": "运行在[b]{0}[/b]平台",
+      "display_en": "Is on platform [b]{0}[/b]",
       "scriptName": "IsOnPlatform",
       "isDeprecated": true,
       "category": "special-conditions",
@@ -1138,6 +1160,8 @@
           "type": "combo",
           "name_zh": "运行平台",
           "name_en": "Platform",
+          "desc_zh": "要检查的运行平台。 请注意，多个选项可以同时触发（例如HTML5 + Android）。",
+          "desc_en": "The platform to check. Note multiple options can be true at once (e.g. HTML5 website + Android).",
           "items": [
             "html5-website",
             "ios",
@@ -1211,13 +1235,9 @@
               "zh": "Construct Arcade",
               "en": "Construct Arcade"
             }
-          },
-          "desc_zh": "要检查的运行平台。 请注意，多个选项可以同时触发（例如HTML5 + Android）。",
-          "desc_en": "The platform to check. Note multiple options can be true at once (e.g. HTML5 website + Android)."
+          }
         }
-      ],
-      "display_zh": "运行在[b]{0}[/b]平台",
-      "display_en": "Is on platform [b]{0}[/b]"
+      ]
     },
     {
       "id": "on-start-of-layout",
@@ -1225,11 +1245,13 @@
       "name_en": "On start of layout",
       "description_zh": "当前场景开始时触发。",
       "description_en": "Triggered at the start of the current layout.",
+      "display_zh": "场景开始",
+      "display_en": "On start of layout",
       "scriptName": "OnLayoutStart",
       "isTrigger": true,
-      "category": "start-end",
-      "display_zh": "场景开始",
-      "display_en": "On start of layout"
+      "canDebug": true,
+      "highlight": true,
+      "category": "start-end"
     },
     {
       "id": "on-end-of-layout",
@@ -1237,11 +1259,12 @@
       "name_en": "On end of layout",
       "description_zh": "在当前场景结束时触发。",
       "description_en": "Triggered at the end of the current layout.",
+      "display_zh": "场景结束",
+      "display_en": "On end of layout",
       "scriptName": "OnLayoutEnd",
       "isTrigger": true,
-      "category": "start-end",
-      "display_zh": "场景结束",
-      "display_en": "On end of layout"
+      "canDebug": true,
+      "category": "start-end"
     },
     {
       "id": "on-loader-layout-complete",
@@ -1249,11 +1272,11 @@
       "name_en": "On loader layout complete",
       "description_zh": "在加载器场景加载完成后触发。",
       "description_en": "Triggered on a loader layout when loading has finished.",
+      "display_zh": "加载页加载完成",
+      "display_en": "On loader layout complete",
       "scriptName": "OnLoadFinished",
       "isTrigger": true,
-      "category": "start-end",
-      "display_zh": "加载页加载完成",
-      "display_en": "On loader layout complete"
+      "category": "start-end"
     },
     {
       "id": "on-suspend",
@@ -1261,11 +1284,11 @@
       "name_en": "On suspended",
       "description_zh": "当窗口进入后台时触发，如切换浏览器标签页、或切换到其他应用程序。",
       "description_en": "Triggered when the app goes in to the background, e.g. when switching browser tab or app.",
+      "display_zh": "窗口暂停",
+      "display_en": "On suspended",
       "scriptName": "OnSuspend",
       "isTrigger": true,
-      "category": "start-end",
-      "display_zh": "窗口暂停",
-      "display_en": "On suspended"
+      "category": "start-end"
     },
     {
       "id": "on-resume",
@@ -1273,11 +1296,11 @@
       "name_en": "On resumed",
       "description_zh": "当游戏窗口已失去焦点正处于暂停状态，并恢复到前台运行前触发。",
       "description_en": "Triggered when the app is restored to the foreground after being suspended.",
+      "display_zh": "窗口恢复",
+      "display_en": "On resumed",
       "scriptName": "OnResume",
       "isTrigger": true,
-      "category": "start-end",
-      "display_zh": "窗口恢复",
-      "display_en": "On resumed"
+      "category": "start-end"
     },
     {
       "id": "is-suspended",
@@ -1285,10 +1308,10 @@
       "name_en": "Is suspended",
       "description_zh": "检测应用程序当前是否正处于暂停状态。",
       "description_en": "True if the app is currently suspended.",
-      "scriptName": "IsSuspended",
-      "category": "start-end",
       "display_zh": "正在暂停",
-      "display_en": "Is suspended"
+      "display_en": "Is suspended",
+      "scriptName": "IsSuspended",
+      "category": "start-end"
     },
     {
       "id": "every-x-seconds",
@@ -1296,6 +1319,8 @@
       "name_en": "Every X seconds",
       "description_zh": "以固定的时间间隔运行操作。",
       "description_en": "Run the actions at a regular time interval.",
+      "display_zh": "每 [b]{0}[/b] 秒",
+      "display_en": "Every [b]{0}[/b] seconds",
       "scriptName": "Every",
       "category": "time",
       "params": [
@@ -1304,13 +1329,11 @@
           "type": "number",
           "name_zh": "间隔（秒）",
           "name_en": "Interval (seconds)",
-          "initialValue": "1.0",
           "desc_zh": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。",
-          "desc_en": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick)."
+          "desc_en": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick).",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "每 [b]{0}[/b] 秒",
-      "display_en": "Every [b]{0}[/b] seconds"
+      ]
     },
     {
       "id": "compare-time",
@@ -1318,6 +1341,8 @@
       "name_en": "Compare time",
       "description_zh": "比较当前时间（启动后的秒数）",
       "description_en": "Compare the current time (seconds since startup)",
+      "display_zh": "时间 {0} [b]{1}[/b] 秒",
+      "display_en": "Time {0} [b]{1}[/b] seconds",
       "scriptName": "CompareTime",
       "category": "time",
       "params": [
@@ -1334,13 +1359,11 @@
           "type": "number",
           "name_zh": "秒",
           "name_en": "Time (seconds)",
-          "initialValue": "1.0",
           "desc_zh": "比较自游戏运行以来累计的秒数。",
-          "desc_en": "The time (seconds since starting) to compare to."
+          "desc_en": "The time (seconds since starting) to compare to.",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "时间 {0} [b]{1}[/b] 秒",
-      "display_en": "Time {0} [b]{1}[/b] seconds"
+      ]
     },
     {
       "id": "on-signal",
@@ -1348,6 +1371,8 @@
       "name_en": "On signal",
       "description_zh": "在执行 '发送信号' 动作后，接收对应的标签的信号。",
       "description_en": "Triggered by the 'Signal' action with a matching tag.",
+      "display_zh": "收到信号[i]{0}[/i]",
+      "display_en": "On signal [i]{0}[/i]",
       "scriptName": "OnSignal",
       "isTrigger": true,
       "category": "time",
@@ -1360,9 +1385,7 @@
           "desc_zh": "填写一个字符串，用于接收 '发送信号' 动作中对应的标签。",
           "desc_en": "The tag of the 'Signal' action."
         }
-      ],
-      "display_zh": "收到信号[i]{0}[/i]",
-      "display_en": "On signal [i]{0}[/i]"
+      ]
     },
     {
       "id": "template-exists",
@@ -1370,6 +1393,8 @@
       "name_en": "Template exists",
       "description_zh": "检测指定的对象模版名称是否存在。",
       "description_en": "Check if the provided template name exists.",
+      "display_zh": "{0} 存在模版对象 [b]{1}[/b]",
+      "display_en": "{0} has template [b]{1}[/b]",
       "scriptName": "TemplateExists",
       "category": "templates",
       "params": [
@@ -1389,9 +1414,7 @@
           "desc_zh": "要检查是否已存在的模板对象的名称。",
           "desc_en": "The name of the template to check exists."
         }
-      ],
-      "display_zh": "{0} 存在模版对象 [b]{1}[/b]",
-      "display_en": "{0} has template [b]{1}[/b]"
+      ]
     }
   ],
   "actions": [
@@ -1401,6 +1424,8 @@
       "name_en": "Snapshot canvas",
       "description_zh": "在 '截图完成' 条件中，返回的图像地址结果。",
       "description_en": "Take a snapshot of the current display.  Use the 'On canvas snapshot' trigger and 'CanvasSnapshot' expression to get the result.",
+      "display_zh": "保存画布快照 (格式: {0}, 品质: [i]{1}[/i], 偏移: [i]{2}[/i], [i]{3}[/i], 大小:[i]{4}[/i] x [i]{5}[/i])",
+      "display_en": "Take snapshot of canvas ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])",
       "scriptName": "SnapshotCanvas",
       "isAsync": true,
       "category": "display",
@@ -1410,6 +1435,8 @@
           "type": "combo",
           "name_zh": "格式",
           "name_en": "Format",
+          "desc_zh": "选择用于保存截图的文件格式。PNG是无损的，JPEG文件更小。",
+          "desc_en": "Choose the file format to save the snapshot with. PNG is lossless but JPEG files are smaller.",
           "items": [
             "png",
             "jpeg"
@@ -1423,18 +1450,16 @@
               "zh": "JPEG",
               "en": "JPEG"
             }
-          },
-          "desc_zh": "选择用于保存截图的文件格式。PNG是无损的，JPEG文件更小。",
-          "desc_en": "Choose the file format to save the snapshot with. PNG is lossless but JPEG files are smaller."
+          }
         },
         {
           "id": "jpeg-quality",
           "type": "number",
           "name_zh": "JPEG品质",
           "name_en": "JPEG quality",
-          "initialValue": "75",
           "desc_zh": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
-          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG."
+          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG.",
+          "initialValue": "75"
         },
         {
           "id": "x",
@@ -1468,9 +1493,7 @@
           "desc_zh": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。",
           "desc_en": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height."
         }
-      ],
-      "display_zh": "保存画布快照 (格式: {0}, 品质: [i]{1}[/i], 偏移: [i]{2}[/i], [i]{3}[/i], 大小:[i]{4}[/i] x [i]{5}[/i])",
-      "display_en": "Take snapshot of canvas ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])"
+      ]
     },
     {
       "id": "set-canvas-size",
@@ -1478,6 +1501,8 @@
       "name_en": "Set canvas size",
       "description_zh": "设置画布大小，同时也会改变项目属性的窗口大小。",
       "description_en": "Set the size of the canvas (also altering the 'Window size' project property).",
+      "display_zh": "设置画布大小为[b]{0}[/b] x [b]{1}[/b]",
+      "display_en": "Set canvas size to [b]{0}[/b] x [b]{1}[/b]",
       "scriptName": "SetCanvasSize",
       "category": "display",
       "params": [
@@ -1497,9 +1522,7 @@
           "desc_zh": "设置画布高度，以像素为单位。",
           "desc_en": "The new height of the canvas, in pixels."
         }
-      ],
-      "display_zh": "设置画布大小为[b]{0}[/b] x [b]{1}[/b]",
-      "display_en": "Set canvas size to [b]{0}[/b] x [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-half-framerate-mode",
@@ -1529,6 +1552,8 @@
       "name_en": "Set fullscreen scaling",
       "description_zh": "设置全屏缩放的质量。",
       "description_en": "Set the fullscreen scaling quality mode.",
+      "display_zh": "设置全屏质量为[i]{0}[/i]",
+      "display_en": "Set fullscreen scaling to [i]{0}[/i]",
       "scriptName": "SetFullscreenQuality",
       "category": "display",
       "params": [
@@ -1537,6 +1562,8 @@
           "type": "combo",
           "name_zh": "全屏质量",
           "name_en": "Fullscreen scaling",
+          "desc_zh": "高质量的缩放在高分辨率可以获得更好的视觉表现，低像素的缩放有助于改善低端设备的性能，也适用于临近采样的像素风格游戏。",
+          "desc_en": "The new fullscreen scaling quality: whether to scale before (high quality) or after (low quality) rendering.",
           "items": [
             "low-quality",
             "high-quality"
@@ -1550,13 +1577,9 @@
               "zh": "高质量",
               "en": "high quality"
             }
-          },
-          "desc_zh": "高质量的缩放在高分辨率可以获得更好的视觉表现，低像素的缩放有助于改善低端设备的性能，也适用于临近采样的像素风格游戏。",
-          "desc_en": "The new fullscreen scaling quality: whether to scale before (high quality) or after (low quality) rendering."
+          }
         }
-      ],
-      "display_zh": "设置全屏质量为[i]{0}[/i]",
-      "display_en": "Set fullscreen scaling to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-pixel-rounding",
@@ -1564,6 +1587,8 @@
       "name_en": "Set pixel rounding",
       "description_zh": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 \"临近采样\" 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
       "description_en": "Enable or disable pixel rounding mode at runtime.",
+      "display_zh": "[b]{0}[/b]像素对齐",
+      "display_en": "Set pixel rounding [b]{0}[/b]",
       "scriptName": "SetPixelRounding",
       "category": "display",
       "params": [
@@ -1572,6 +1597,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 '临近采样' 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+          "desc_en": "The pixel rounding mode to set.",
           "items": [
             "disabled",
             "enabled"
@@ -1585,13 +1612,109 @@
               "zh": "启用",
               "en": "enabled"
             }
-          },
-          "desc_zh": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 '临近采样' 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
-          "desc_en": "The pixel rounding mode to set."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b]像素对齐",
-      "display_en": "Set pixel rounding [b]{0}[/b]"
+      ]
+    },
+    {
+      "id": "set-project-sampling",
+      "name_zh": "设置项目采样",
+      "name_en": "Set project sampling",
+      "description_zh": "设置项目的采样模式。",
+      "description_en": "Set the project sampling mode.",
+      "display_zh": "设置项目采样为[b]{0}[/b]",
+      "display_en": "Set project sampling [b]{0}[/b]",
+      "scriptName": "SetProjectSampling",
+      "category": "display",
+      "params": [
+        {
+          "id": "sampling",
+          "type": "combo",
+          "name_zh": "采样",
+          "name_en": "Sampling",
+          "desc_zh": "调整图像时，使用的采样方式。",
+          "desc_en": "The quality to use when scaling images.",
+          "items": [
+            "nearest",
+            "bilinear",
+            "trilinear"
+          ],
+          "items_i18n": {
+            "nearest": {
+              "zh": "邻近",
+              "en": "Nearest"
+            },
+            "bilinear": {
+              "zh": "双线性",
+              "en": "Bilinear"
+            },
+            "trilinear": {
+              "zh": "三线性",
+              "en": "Trilinear"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-anisotropic-filtering",
+      "name_zh": "设置各向异性",
+      "name_en": "Set anisotropic filtering",
+      "description_zh": "设置各向异性的模式。",
+      "description_en": "Set the anisotropic filtering mode.",
+      "display_zh": "设置各向异性为 [b]{0}[/b]",
+      "display_en": "Set anisotropic filtering to [b]{0}[/b]",
+      "scriptName": "SetAnisotropicFiltering",
+      "category": "display",
+      "params": [
+        {
+          "id": "anisotropic-filtering",
+          "type": "combo",
+          "name_zh": "各向异性",
+          "name_en": "Anisotropic filtering",
+          "desc_zh": "要使用的各向异性程度。",
+          "desc_en": "The degree of anisotropy to use.",
+          "items": [
+            "auto",
+            "off",
+            "2x",
+            "3x",
+            "4x",
+            "8x",
+            "16x"
+          ],
+          "items_i18n": {
+            "auto": {
+              "zh": "自动",
+              "en": "Auto"
+            },
+            "off": {
+              "zh": "关闭",
+              "en": "Off"
+            },
+            "2x": {
+              "zh": "2x",
+              "en": "2x"
+            },
+            "3x": {
+              "zh": "3x",
+              "en": "3x"
+            },
+            "4x": {
+              "zh": "4x",
+              "en": "4x"
+            },
+            "8x": {
+              "zh": "8x",
+              "en": "8x"
+            },
+            "16x": {
+              "zh": "16x",
+              "en": "16x"
+            }
+          }
+        }
+      ]
     },
     {
       "id": "create-object",
@@ -1599,7 +1722,10 @@
       "name_en": "Create object",
       "description_zh": "在当前场景创建对象的实例。如果选择 '家族' 将从中随机创建一个成员。",
       "description_en": "Create a new instance of an object in the current layout.",
+      "display_zh": "创建对象 {0}, 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "display_en": "Create object {0} on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
       "scriptName": "CreateObject",
+      "highlight": true,
       "category": "general",
       "params": [
         {
@@ -1639,9 +1765,9 @@
           "type": "boolean",
           "name_zh": "创建子对象",
           "name_en": "Create hierarchy",
-          "initialValue": "false",
           "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
-          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         },
         {
           "id": "template-name",
@@ -1651,9 +1777,7 @@
           "desc_zh": "创建对象时，指定模版对象的名称，继承其所有属性。",
           "desc_en": "Use a specific instance as a template when creating a new object."
         }
-      ],
-      "display_zh": "创建对象 {0}, 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
-      "display_en": "Create object {0} on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]"
+      ]
     },
     {
       "id": "create-object-by-name",
@@ -1661,6 +1785,8 @@
       "name_en": "Create object (by name)",
       "description_zh": "使用字符串创建对应名称的对象实例，然后在下方添加 '选择最后创建的' 条件选择此对象。对于包含不同的对象类型，建议使用 '家族' 进行选择。",
       "description_en": "Create a new instance of an object in the current layout, using a string of the object name to create.",
+      "display_zh": "创建对象 [b]{0}[/b], 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "display_en": "Create object [b]{0}[/b] on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
       "scriptName": "CreateObjectByName",
       "category": "general",
       "params": [
@@ -1701,9 +1827,9 @@
           "type": "boolean",
           "name_zh": "创建子对象",
           "name_en": "Create hierarchy",
-          "initialValue": "false",
           "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
-          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         },
         {
           "id": "template-name",
@@ -1713,9 +1839,7 @@
           "desc_zh": "创建对象时，指定模版对象的名称，继承其所有属性。",
           "desc_en": "Use a specific instance as a template when creating a new object."
         }
-      ],
-      "display_zh": "创建对象 [b]{0}[/b], 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
-      "display_en": "Create object [b]{0}[/b] on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]"
+      ]
     },
     {
       "id": "set-group-active",
@@ -1723,6 +1847,8 @@
       "name_en": "Set group active",
       "description_zh": "启用或禁用事件组。",
       "description_en": "Activate or deactivate an event group.",
+      "display_zh": "{1}事件组 [b]{0}[/b]",
+      "display_en": "Set group [b]{0}[/b] {1}",
       "scriptName": "SetGroupActive",
       "category": "general",
       "params": [
@@ -1739,6 +1865,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "激活或冻结分组，还可以切换激活状态。",
+          "desc_en": "Choose whether to activate or deactivate the group.",
           "initialValue": "activated",
           "items": [
             "deactivated",
@@ -1758,13 +1886,9 @@
               "zh": "反转",
               "en": "Toggle active"
             }
-          },
-          "desc_zh": "激活或冻结分组，还可以切换激活状态。",
-          "desc_en": "Choose whether to activate or deactivate the group."
+          }
         }
-      ],
-      "display_zh": "{1}事件组 [b]{0}[/b]",
-      "display_en": "Set group [b]{0}[/b] {1}"
+      ]
     },
     {
       "id": "stop-loop",
@@ -1772,10 +1896,10 @@
       "name_en": "Stop loop",
       "description_zh": "停止当前正在运行的循环，仅对 '系统' 对象中的循环、重复条件有效。",
       "description_en": "Stop any currently running loop (for, for each, repeat).",
-      "scriptName": "StopLoop",
-      "category": "general",
       "display_zh": "停止循环",
-      "display_en": "Stop loop"
+      "display_en": "Stop loop",
+      "scriptName": "StopLoop",
+      "category": "general"
     },
     {
       "id": "reset-persisted-objects",
@@ -1783,10 +1907,10 @@
       "name_en": "Reset persisted objects",
       "description_zh": "重置所有场景具有持久化行为的对象，恢复到初始状态。",
       "description_en": "Reset all objects with the Persist behavior in all layouts to their initial state.",
-      "scriptName": "ResetPersisted",
-      "category": "general",
       "display_zh": "重置持久化对象",
-      "display_en": "Reset persisted objects"
+      "display_en": "Reset persisted objects",
+      "scriptName": "ResetPersisted",
+      "category": "general"
     },
     {
       "id": "sort-z-order",
@@ -1794,6 +1918,8 @@
       "name_en": "Sort Z order",
       "description_zh": "根据对象的实例变量，调整在Z轴的显示顺序。",
       "description_en": "Sort an object's instance's Z order according to an instance variable.",
+      "display_zh": "排序{0}显示顺序(根据[b]{1}[/b])",
+      "display_en": "Sort {0} Z order by [b]{1}[/b]",
       "scriptName": "SortZOrderByInstVar",
       "category": "general",
       "params": [
@@ -1813,9 +1939,7 @@
           "desc_zh": "指定一个实例变量，作为排序顺序的参考。通常会将此值设为实例对象的 Y 坐标或图像点。",
           "desc_en": "The instance variable to use for sorting Z order by."
         }
-      ],
-      "display_zh": "排序{0}显示顺序(根据[b]{1}[/b])",
-      "display_en": "Sort {0} Z order by [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-collision-cell-size",
@@ -1823,6 +1947,8 @@
       "name_en": "Set collision cell size",
       "description_zh": "通过碰撞单元优化更改移动对象和测试碰撞之间的性能权衡。",
       "description_en": "Change the performance trade-off between moving objects and testing collisions with the collision cells optimization.",
+      "display_zh": "设置碰撞单元大小 [i]{0}[/i] x [i]{1}[/i]",
+      "display_en": "Set collision cell size to [i]{0}[/i] x [i]{1}[/i]",
       "scriptName": "SetCollisionCellSize",
       "category": "general",
       "params": [
@@ -1842,9 +1968,7 @@
           "desc_zh": "要设置的碰撞单元格高度。",
           "desc_en": "Collision cell height to set."
         }
-      ],
-      "display_zh": "设置碰撞单元大小 [i]{0}[/i] x [i]{1}[/i]",
-      "display_en": "Set collision cell size to [i]{0}[/i] x [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-eventvar-value",
@@ -1852,6 +1976,8 @@
       "name_en": "Set value",
       "description_zh": "设置全局或本地变量的数值。",
       "description_en": "Set the value of a global or local variable.",
+      "display_zh": "设置变量[b]{0}[/b]为[i]{1}[/i]",
+      "display_en": "Set [b]{0}[/b] to [i]{1}[/i]",
       "scriptName": "SetVar",
       "category": "global-local-variables",
       "params": [
@@ -1871,9 +1997,7 @@
           "desc_zh": "存储在此变量中的值。",
           "desc_en": "Value to store in this variable."
         }
-      ],
-      "display_zh": "设置变量[b]{0}[/b]为[i]{1}[/i]",
-      "display_en": "Set [b]{0}[/b] to [i]{1}[/i]"
+      ]
     },
     {
       "id": "add-to-eventvar",
@@ -1881,6 +2005,8 @@
       "name_en": "Add to",
       "description_zh": "增加全局变量或局部变量的数值。",
       "description_en": "Add to the value of a global or local variable.",
+      "display_zh": "变量[b]{0}[/b]增加[i]{1}[/i]",
+      "display_en": "Add [i]{1}[/i] to [b]{0}[/b]",
       "scriptName": "AddVar",
       "category": "global-local-variables",
       "params": [
@@ -1897,13 +2023,11 @@
           "type": "any",
           "name_zh": "值",
           "name_en": "Value",
-          "initialValue": "1",
           "desc_zh": "要增加到此变量的值。",
-          "desc_en": "Value to add to this variable."
+          "desc_en": "Value to add to this variable.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "变量[b]{0}[/b]增加[i]{1}[/i]",
-      "display_en": "Add [i]{1}[/i] to [b]{0}[/b]"
+      ]
     },
     {
       "id": "subtract-from-eventvar",
@@ -1911,6 +2035,8 @@
       "name_en": "Subtract from",
       "description_zh": "减去全局变量或局部变量的值。",
       "description_en": "Subtract from the value of a global or local variable.",
+      "display_zh": "变量[b]{0}[/b]减少[i]{1}[/i]",
+      "display_en": "Subtract [i]{1}[/i] from [b]{0}[/b]",
       "scriptName": "SubVar",
       "category": "global-local-variables",
       "params": [
@@ -1927,13 +2053,11 @@
           "type": "any",
           "name_zh": "值",
           "name_en": "Value",
-          "initialValue": "1",
           "desc_zh": "要从此变量中减去的值。",
-          "desc_en": "Value to subtract from this variable."
+          "desc_en": "Value to subtract from this variable.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "变量[b]{0}[/b]减少[i]{1}[/i]",
-      "display_en": "Subtract [i]{1}[/i] from [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-boolean-eventvar",
@@ -1941,6 +2065,8 @@
       "name_en": "Set boolean",
       "description_zh": "设置全局或局部布尔值变量的状态。",
       "description_en": "Set the value of a boolean global or local variable.",
+      "display_zh": "设置[i]{0}[/i]为[b]{1}[/b]",
+      "display_en": "Set [b]{0}[/b] to [i]{1}[/i]",
       "scriptName": "SetBoolVar",
       "category": "global-local-variables",
       "params": [
@@ -1957,6 +2083,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "Value",
+          "desc_zh": "更改布尔值的状态。",
+          "desc_en": "Value to store in this boolean variable.",
           "initialValue": "true",
           "items": [
             "false",
@@ -1971,13 +2099,9 @@
               "zh": "是",
               "en": "True"
             }
-          },
-          "desc_zh": "更改布尔值的状态。",
-          "desc_en": "Value to store in this boolean variable."
+          }
         }
-      ],
-      "display_zh": "设置[i]{0}[/i]为[b]{1}[/b]",
-      "display_en": "Set [b]{0}[/b] to [i]{1}[/i]"
+      ]
     },
     {
       "id": "toggle-boolean-eventvar",
@@ -1985,6 +2109,8 @@
       "name_en": "Toggle boolean",
       "description_zh": "反转布尔值。如果为是，则变成否。",
       "description_en": "Invert the value of a boolean global or local variable.",
+      "display_zh": "反转[b]{0}[/b]",
+      "display_en": "Toggle [b]{0}[/b]",
       "scriptName": "ToggleBoolVar",
       "category": "global-local-variables",
       "params": [
@@ -1996,9 +2122,7 @@
           "desc_zh": "选择要切换状态的布尔值。",
           "desc_en": "Choose the variable to toggle."
         }
-      ],
-      "display_zh": "反转[b]{0}[/b]",
-      "display_en": "Toggle [b]{0}[/b]"
+      ]
     },
     {
       "id": "reset-global-variables",
@@ -2006,6 +2130,8 @@
       "name_en": "Reset global variables",
       "description_zh": "将项目中的所有全局变量重置为其初始值。",
       "description_en": "Reset all global variables in the project to their initial values.",
+      "display_zh": "重置全局变量 (包含静态变量: [i]{0}[/i])",
+      "display_en": "Reset global variables to default (include static: [i]{0}[/i])",
       "scriptName": "ResetGlobals",
       "category": "global-local-variables",
       "params": [
@@ -2017,9 +2143,7 @@
           "desc_zh": "勾选后，项目中的所有静态局部变量也会重置。",
           "desc_en": "Check to also reset all static local variables in the project."
         }
-      ],
-      "display_zh": "重置全局变量 (包含静态变量: [i]{0}[/i])",
-      "display_en": "Reset global variables to default (include static: [i]{0}[/i])"
+      ]
     },
     {
       "id": "reset-eventvar",
@@ -2027,6 +2151,8 @@
       "name_en": "Reset",
       "description_zh": "将指定的变量恢复为项目中的初始值。",
       "description_en": "Reset a specific variable in the project to its initial value.",
+      "display_zh": "重置变量 [b]{0}[/b]",
+      "display_en": "Reset [b]{0}[/b] to default",
       "scriptName": "ResetEventVar",
       "category": "global-local-variables",
       "params": [
@@ -2038,9 +2164,7 @@
           "desc_zh": "选择要重置的变量。",
           "desc_en": "Choose the variable to reset."
         }
-      ],
-      "display_zh": "重置变量 [b]{0}[/b]",
-      "display_en": "Reset [b]{0}[/b] to default"
+      ]
     },
     {
       "id": "set-function-return-value",
@@ -2048,6 +2172,8 @@
       "name_en": "Set return value",
       "description_zh": "将动作组作为表达式使用时可以返回的值，需要动作组的属性有设置返回值。注意，设置返回值不会中断执行。",
       "description_en": "In a function, set the value returned by the function when used as an expression.",
+      "display_zh": "设置返回值 [i]{0}[/i]",
+      "display_en": "Set return value [i]{0}[/i]",
       "scriptName": "SetFunctionReturnValue",
       "category": "global-local-variables",
       "params": [
@@ -2059,9 +2185,7 @@
           "desc_zh": "要从动作组中返回的值。",
           "desc_en": "The value to return from the function."
         }
-      ],
-      "display_zh": "设置返回值 [i]{0}[/i]",
-      "display_en": "Set return value [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-layer-visible",
@@ -2069,6 +2193,8 @@
       "name_en": "Set layer visible",
       "description_zh": "设置图层的可见性。",
       "description_en": "Set the visibility of a layer.",
+      "display_zh": "设置图层[b]{0}[/b][i]{1}[/i]",
+      "display_en": "Set layer [b]{0}[/b] [i]{1}[/i]",
       "scriptName": "SetLayerVisible",
       "category": "layers",
       "params": [
@@ -2085,6 +2211,8 @@
           "type": "combo",
           "name_zh": "可见性",
           "name_en": "Visibility",
+          "desc_zh": "选择是否绘制图层。",
+          "desc_en": "Choose whether the layer is drawn or not.",
           "initialValue": "visible",
           "items": [
             "invisible",
@@ -2099,13 +2227,9 @@
               "zh": "可见",
               "en": "Visible"
             }
-          },
-          "desc_zh": "选择是否绘制图层。",
-          "desc_en": "Choose whether the layer is drawn or not."
+          }
         }
-      ],
-      "display_zh": "设置图层[b]{0}[/b][i]{1}[/i]",
-      "display_en": "Set layer [b]{0}[/b] [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-interactive",
@@ -2113,6 +2237,8 @@
       "name_en": "Set layer interactive",
       "description_zh": "设置图层是否响应鼠标和触控的输入。",
       "description_en": "Set whether a layer responds to mouse and touch input.",
+      "display_zh": "启用图层[i]{0}[/i]交互: [b]{1}[/b]",
+      "display_en": "Set layer [b]{0}[/b] interactive [i]{1}[/i]",
       "scriptName": "SetLayerInteractive",
       "category": "layers",
       "params": [
@@ -2132,9 +2258,7 @@
           "desc_zh": "选择图层是否允许与用户交互，响应鼠标或触控的输入。",
           "desc_en": "Choose whether the layer is interactive or not."
         }
-      ],
-      "display_zh": "启用图层[i]{0}[/i]交互: [b]{1}[/b]",
-      "display_en": "Set layer [b]{0}[/b] interactive [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-html",
@@ -2142,6 +2266,8 @@
       "name_en": "Set layer HTML",
       "description_zh": "设置当前图层是否为 HTML 图层。",
       "description_en": "Set whether a layer is an HTML layer.",
+      "display_zh": "设置 HTML 图层 (图层: [b]{0}[/b], 启用: [i]{1}[/i])",
+      "display_en": "Set layer [b]{0}[/b] HTML layer [i]{1}[/i]",
       "scriptName": "SetLayerHTML",
       "category": "layers",
       "params": [
@@ -2161,9 +2287,7 @@
           "desc_zh": "设置当前图层是否为 HTML 图层。",
           "desc_en": "Choose whether the layer is an HTML layer or not."
         }
-      ],
-      "display_zh": "设置 HTML 图层 (图层: [b]{0}[/b], 启用: [i]{1}[/i])",
-      "display_en": "Set layer [b]{0}[/b] HTML layer [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-scale",
@@ -2171,6 +2295,8 @@
       "name_en": "Set layer scale",
       "description_zh": "设置图层的缩放倍数，使其看起来更大或更小。",
       "description_en": "Set an individual layer's scale (or 'zoom') to make it appear larger or smaller.",
+      "display_zh": "设置图层[b]{0}[/b]缩放为[i]{1}[/i]倍",
+      "display_en": "Set layer [b]{0}[/b] scale to [i]{1}[/i]",
       "scriptName": "SetLayerScale",
       "category": "layers",
       "params": [
@@ -2187,13 +2313,11 @@
           "type": "number",
           "name_zh": "大小",
           "name_en": "Scale",
-          "initialValue": "1.0",
           "desc_zh": "图层的缩放倍数。1.0 为原始尺寸，2.0为双倍尺寸。",
-          "desc_en": "The layer scale (or 'zoom').  1.0 for original size, 2.0 for double size, etc."
+          "desc_en": "The layer scale (or 'zoom').  1.0 for original size, 2.0 for double size, etc.",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "设置图层[b]{0}[/b]缩放为[i]{1}[/i]倍",
-      "display_en": "Set layer [b]{0}[/b] scale to [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-opacity",
@@ -2201,6 +2325,8 @@
       "name_en": "Set layer opacity",
       "description_zh": "设置单个图层的不透明度。",
       "description_en": "Set an individual layer's opacity.",
+      "display_zh": "设置图层 [b]{0}[/b] 不透明度为[i]{1}[/i]",
+      "display_en": "Set layer [b]{0}[/b] opacity to [i]{1}[/i]",
       "scriptName": "SetLayerOpacity",
       "category": "layers",
       "params": [
@@ -2220,9 +2346,7 @@
           "desc_zh": "图层不透明度，从0（透明）到100（不透明）。",
           "desc_en": "The layer opacity, from 0 (transparent) to 100 (opaque)."
         }
-      ],
-      "display_zh": "设置图层 [b]{0}[/b] 不透明度为[i]{1}[/i]",
-      "display_en": "Set layer [b]{0}[/b] opacity to [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-scale-rate",
@@ -2230,6 +2354,8 @@
       "name_en": "Set layer scale rate",
       "description_zh": "设置图层的缩放比例，使其在场景缩放时容易变得更大，或更难被放大，或者不缩放。",
       "description_en": "Set an individual layer's scale rate.",
+      "display_zh": "设置图层[b]{0}[/b]缩放比例为[i]{1}[/i]",
+      "display_en": "Set layer [b]{0}[/b] scale rate to [i]{1}[/i]",
       "scriptName": "SetLayerScaleRate",
       "category": "layers",
       "params": [
@@ -2246,13 +2372,11 @@
           "type": "number",
           "name_zh": "同步比例",
           "name_en": "Scale rate",
-          "initialValue": "1.0",
           "desc_zh": "跟随场景缩放的同步比例。1.0 为正常缩放。2.0为双倍缩放，0为不缩放。",
-          "desc_en": "The scale rate to set.  1.0 for ordinary zoom, 2.0 for twice as much zoom, 0 for no zoom etc."
+          "desc_en": "The scale rate to set.  1.0 for ordinary zoom, 2.0 for twice as much zoom, 0 for no zoom etc.",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "设置图层[b]{0}[/b]缩放比例为[i]{1}[/i]",
-      "display_en": "Set layer [b]{0}[/b] scale rate to [i]{1}[/i]"
+      ]
     },
     {
       "id": "set-layer-angle",
@@ -2260,6 +2384,8 @@
       "name_en": "Set layer angle",
       "description_zh": "设置单个图层的角度。",
       "description_en": "Set an individual layer's angle.",
+      "display_zh": "设置图层 [b]{0}[/b] 角度为[i]{1}[/i]°",
+      "display_en": "Set layer [b]{0}[/b] angle to [i]{1}[/i] degrees",
       "scriptName": "SetLayerAngle",
       "category": "layers",
       "params": [
@@ -2279,9 +2405,7 @@
           "desc_zh": "将图层旋转到指定的角度，以度为单位。",
           "desc_en": "The angle to rotate the layer to, in degrees."
         }
-      ],
-      "display_zh": "设置图层 [b]{0}[/b] 角度为[i]{1}[/i]°",
-      "display_en": "Set layer [b]{0}[/b] angle to [i]{1}[/i] degrees"
+      ]
     },
     {
       "id": "set-layer-effect-enabled",
@@ -2289,6 +2413,8 @@
       "name_en": "Set layer effect enabled",
       "description_zh": "启用或禁用图层上的滤镜。",
       "description_en": "Enable or disable an effect on a layer.",
+      "display_zh": "{1}图层{0}滤镜{2}",
+      "display_en": "{1} layer {0} effect {2}",
       "scriptName": "SetLayerEffectEnabled",
       "category": "layers",
       "params": [
@@ -2305,6 +2431,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "启用或禁用图层的滤镜。",
+          "desc_en": "Whether to enable or disable the layer effect.",
           "items": [
             "disable",
             "enable"
@@ -2318,9 +2446,7 @@
               "zh": "启用",
               "en": "Enable"
             }
-          },
-          "desc_zh": "启用或禁用图层的滤镜。",
-          "desc_en": "Whether to enable or disable the layer effect."
+          }
         },
         {
           "id": "effect",
@@ -2330,9 +2456,7 @@
           "desc_zh": "要修改的图层滤镜。 此滤镜必须先添加到图层的滤镜列表中。",
           "desc_en": "Choose the layer effect to modify."
         }
-      ],
-      "display_zh": "{1}图层{0}滤镜{2}",
-      "display_en": "{1} layer {0} effect {2}"
+      ]
     },
     {
       "id": "set-layer-effect-parameter",
@@ -2340,6 +2464,8 @@
       "name_en": "Set layer effect parameter",
       "description_zh": "设置图层的滤镜参数。",
       "description_en": "Set the value of a parameter in one of a layer's effects.",
+      "display_zh": "设置图层{0}滤镜{1}第{2}个参数为[b]{3}[/b]",
+      "display_en": "Set layer {0} effect {1} parameter {2} to [b]{3}[/b]",
       "scriptName": "SetLayerEffectParam",
       "category": "layers",
       "params": [
@@ -2375,9 +2501,7 @@
           "desc_zh": "要设置的数值。",
           "desc_en": "Enter the new parameter value."
         }
-      ],
-      "display_zh": "设置图层{0}滤镜{1}第{2}个参数为[b]{3}[/b]",
-      "display_en": "Set layer {0} effect {1} parameter {2} to [b]{3}[/b]"
+      ]
     },
     {
       "id": "set-layer-scroll",
@@ -2385,6 +2509,8 @@
       "name_en": "Set layer scroll",
       "description_zh": "单独滚动图层镜头到指定位置，而不跟随场景的滚动。直到执行 '复位图层滚动' 动作。",
       "description_en": "Scroll a layer independently of the rest of the layout.",
+      "display_zh": "设置图层{0}滚动到位置([b]{1}[/b], [b]{2}[/b])",
+      "display_en": "Scroll layer {0} to ([b]{1}[/b], [b]{2}[/b])",
       "scriptName": "SetLayerScroll",
       "category": "layers",
       "params": [
@@ -2412,9 +2538,7 @@
           "desc_zh": "将此图层滚动到指定的 Y 坐标。",
           "desc_en": "The Y co-ordinate to scroll to on this layer only."
         }
-      ],
-      "display_zh": "设置图层{0}滚动到位置([b]{1}[/b], [b]{2}[/b])",
-      "display_en": "Scroll layer {0} to ([b]{1}[/b], [b]{2}[/b])"
+      ]
     },
     {
       "id": "restore-layer-scroll",
@@ -2422,6 +2546,8 @@
       "name_en": "Restore layer scroll",
       "description_zh": "复位图层滚动位置，还原到场景当前的滚动位置。",
       "description_en": "Restore a layer's scroll position to follow the rest of the layout again.",
+      "display_zh": "复位图层{0}滚动位置",
+      "display_en": "Restore layer {0} scroll position",
       "scriptName": "RestoreLayerScroll",
       "category": "layers",
       "params": [
@@ -2433,9 +2559,7 @@
           "desc_zh": "要修改的图层的名称或编号。",
           "desc_en": "Name or number of the layer to modify."
         }
-      ],
-      "display_zh": "复位图层{0}滚动位置",
-      "display_en": "Restore layer {0} scroll position"
+      ]
     },
     {
       "id": "set-layer-parallax",
@@ -2443,6 +2567,8 @@
       "name_en": "Set layer parallax",
       "description_zh": "设置图层的视差比例。",
       "description_en": "Set the parallax rate of a layer.",
+      "display_zh": "设置图层{0}滚动视差为 ([b]{1}[/b], [b]{2}[/b])",
+      "display_en": "Set layer {0} parallax to ([b]{1}[/b], [b]{2}[/b])",
       "scriptName": "SetLayerParallax",
       "category": "layers",
       "params": [
@@ -2459,22 +2585,20 @@
           "type": "number",
           "name_zh": "滚动视差X",
           "name_en": "Parallax X",
-          "initialValue": "100",
           "desc_zh": "图层在水平方向跟随镜头移动的滚动速率百分比（例如，半速为50）。",
-          "desc_en": "The horizontal scroll rate as a percentage (e.g. 50 for half speed)."
+          "desc_en": "The horizontal scroll rate as a percentage (e.g. 50 for half speed).",
+          "initialValue": "100"
         },
         {
           "id": "parallax-y",
           "type": "number",
           "name_zh": "滚动视差Y",
           "name_en": "Parallax Y",
-          "initialValue": "100",
           "desc_zh": "图层在垂直方向跟随镜头移动的滚动速率百分比（例如，半速为50）。",
-          "desc_en": "The vertical scroll rate as a percentage (e.g. 50 for half speed)."
+          "desc_en": "The vertical scroll rate as a percentage (e.g. 50 for half speed).",
+          "initialValue": "100"
         }
-      ],
-      "display_zh": "设置图层{0}滚动视差为 ([b]{1}[/b], [b]{2}[/b])",
-      "display_en": "Set layer {0} parallax to ([b]{1}[/b], [b]{2}[/b])"
+      ]
     },
     {
       "id": "set-layer-background-color",
@@ -2482,6 +2606,8 @@
       "name_en": "Set layer background color",
       "description_zh": "设置图层的背景颜色。",
       "description_en": "Set the background color of a layer.",
+      "display_zh": "设置图层{0}背景颜色为[b]{1}[/b]",
+      "display_en": "Set layer {0} background color to [b]{1}[/b]",
       "scriptName": "SetLayerBackground",
       "category": "layers",
       "params": [
@@ -2498,13 +2624,11 @@
           "type": "number",
           "name_zh": "颜色",
           "name_en": "Color",
-          "initialValue": "rgbEx(0, 0, 0)",
           "desc_zh": "用于设置图层背景的颜色。",
-          "desc_en": "The color to set the layer background to."
+          "desc_en": "The color to set the layer background to.",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
-      ],
-      "display_zh": "设置图层{0}背景颜色为[b]{1}[/b]",
-      "display_en": "Set layer {0} background color to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-layer-transparent",
@@ -2512,6 +2636,8 @@
       "name_en": "Set layer transparent",
       "description_zh": "设置图层背景为透明或不透明。",
       "description_en": "Set a layer background to be transparent or opaque.",
+      "display_zh": "设置图层{0}背景[b]{1}[/b]",
+      "display_en": "Set layer {0} background [b]{1}[/b]",
       "scriptName": "SetLayerTransparent",
       "category": "layers",
       "params": [
@@ -2528,6 +2654,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "该图层是否为透明。",
+          "desc_en": "Whether or not the layer is transparent.",
           "items": [
             "opaque",
             "transparent"
@@ -2541,13 +2669,9 @@
               "zh": "透明",
               "en": "Transparent"
             }
-          },
-          "desc_zh": "该图层是否为透明。",
-          "desc_en": "Whether or not the layer is transparent."
+          }
         }
-      ],
-      "display_zh": "设置图层{0}背景[b]{1}[/b]",
-      "display_en": "Set layer {0} background [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-layer-blend-mode",
@@ -2555,6 +2679,8 @@
       "name_en": "Set layer blend mode",
       "description_zh": "将图层与背景混合。如果添加了滤镜，会应用到最后一个效果。",
       "description_en": "Change a layer's blend mode property.",
+      "display_zh": "设置图层{0}混合模式为[b]{1}[/b]",
+      "display_en": "Set layer {0} blend mode to [b]{1}[/b]",
       "scriptName": "SetLayerBlendMode",
       "category": "layers",
       "params": [
@@ -2571,6 +2697,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "为图层选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for the layer.",
           "items": [
             "normal",
             "additive",
@@ -2649,13 +2777,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "为图层选择新的混合模式。",
-          "desc_en": "Choose the new blend mode for the layer."
+          }
         }
-      ],
-      "display_zh": "设置图层{0}混合模式为[b]{1}[/b]",
-      "display_en": "Set layer {0} blend mode to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-layer-force-own-texture",
@@ -2663,6 +2787,8 @@
       "name_en": "Set layer force own texture",
       "description_zh": "设置图层的 '纹理缓冲' 模式。",
       "description_en": "Set a layer's 'Force own texture' mode.",
+      "display_zh": "[b]{1}[/b]图层{0}纹理缓冲",
+      "display_en": "Set layer {0} force own texture [b]{1}[/b]",
       "scriptName": "SetLayerForceOwnTexture",
       "category": "layers",
       "params": [
@@ -2679,6 +2805,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "启用后，图层将强制渲染到中间纹理层，而不是直接渲染到屏幕。适用于处理混合模式和部分滤镜。禁用可提升渲染性能。",
+          "desc_en": "Whether or not to force the layer to render via its own texture.",
           "items": [
             "off",
             "on"
@@ -2692,13 +2820,9 @@
               "zh": "启用",
               "en": "On"
             }
-          },
-          "desc_zh": "启用后，图层将强制渲染到中间纹理层，而不是直接渲染到屏幕。适用于处理混合模式和部分滤镜。禁用可提升渲染性能。",
-          "desc_en": "Whether or not to force the layer to render via its own texture."
+          }
         }
-      ],
-      "display_zh": "[b]{1}[/b]图层{0}纹理缓冲",
-      "display_en": "Set layer {0} force own texture [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-layer-z-elevation",
@@ -2706,6 +2830,8 @@
       "name_en": "Set layer Z elevation",
       "description_zh": "设置图层在Z轴的视距高度。",
       "description_en": "Set the Z elevation of a layer.",
+      "display_zh": "设置图层{0}视距高度为[b]{1}[/b]",
+      "display_en": "Set layer {0} Z elevation to [b]{1}[/b]",
       "scriptName": "SetLayerZElevation",
       "category": "layers",
       "params": [
@@ -2725,9 +2851,7 @@
           "desc_zh": "设置图层在Z轴的视距高度。",
           "desc_en": "The Z elevation to set for the layer."
         }
-      ],
-      "display_zh": "设置图层{0}视距高度为[b]{1}[/b]",
-      "display_en": "Set layer {0} Z elevation to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-layer-rendering-mode",
@@ -2735,6 +2859,8 @@
       "name_en": "Set layer rendering mode",
       "description_zh": "设置指定图层的渲染模式为 2D 或 3D。",
       "description_en": "Set whether to render a layer as 2D or 3D.",
+      "display_zh": "设置图层{0}渲染模式为[b]{1}[/b]",
+      "display_en": "Set layer {0} rendering mode [b]{1}[/b]",
       "scriptName": "SetLayerRenderingMode",
       "category": "layers",
       "params": [
@@ -2751,6 +2877,8 @@
           "type": "combo",
           "name_zh": "渲染模式",
           "name_en": "Rendering mode",
+          "desc_zh": "要设置的渲染模式",
+          "desc_en": "The rendering mode to set.",
           "items": [
             "2d",
             "3d"
@@ -2764,13 +2892,62 @@
               "zh": "3D",
               "en": "3D"
             }
-          },
-          "desc_zh": "要设置的渲染模式",
-          "desc_en": "The rendering mode to set."
+          }
         }
-      ],
-      "display_zh": "设置图层{0}渲染模式为[b]{1}[/b]",
-      "display_en": "Set layer {0} rendering mode [b]{1}[/b]"
+      ]
+    },
+    {
+      "id": "set-layer-sampling",
+      "name_zh": "设置图层采样",
+      "name_en": "Set layer sampling",
+      "description_zh": "设置图层的采样模式。",
+      "description_en": "Set the layer sampling mode.",
+      "display_zh": "设置图层 {0} 采样质量为 [b]{1}[/b]",
+      "display_en": "Set layer {0} sampling [b]{1}[/b]",
+      "scriptName": "SetLayerSampling",
+      "category": "layers",
+      "params": [
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_zh": "图层",
+          "name_en": "Layer",
+          "desc_zh": "要修改的图层的名称或编号。",
+          "desc_en": "Name or number of the layer to modify."
+        },
+        {
+          "id": "sampling",
+          "type": "combo",
+          "name_zh": "采样",
+          "name_en": "Sampling",
+          "desc_zh": "调整图像时，使用的采样方式。",
+          "desc_en": "The quality to use when scaling images.",
+          "items": [
+            "auto",
+            "nearest",
+            "bilinear",
+            "trilinear"
+          ],
+          "items_i18n": {
+            "auto": {
+              "zh": "自动",
+              "en": "Auto"
+            },
+            "nearest": {
+              "zh": "邻近",
+              "en": "Nearest"
+            },
+            "bilinear": {
+              "zh": "双线性",
+              "en": "Bilinear"
+            },
+            "trilinear": {
+              "zh": "三线性",
+              "en": "Trilinear"
+            }
+          }
+        }
+      ]
     },
     {
       "id": "add-layer",
@@ -2778,6 +2955,8 @@
       "name_en": "Add layer",
       "description_zh": "在当前场景的图层列表中创建一个新图层。",
       "description_en": "Create a new layer in the current layout's layer tree.",
+      "display_zh": "添加图层 [b]{0}[/b] 到 [i]{1}[/i] [i]{2}[/i]",
+      "display_en": "Add layer name [b]{0}[/b] at [i]{1}[/i] ([i]{2}[/i])",
       "scriptName": "AddLayer",
       "category": "layers",
       "params": [
@@ -2794,15 +2973,17 @@
           "type": "layer",
           "name_zh": "插入到",
           "name_en": "Insert by",
-          "initialValue": "\"\"",
           "desc_zh": "添加新图层的相对位置，指定另一个图层的名称或编号。",
-          "desc_en": "The name or index of an existing layer indicating where to add the new layer."
+          "desc_en": "The name or index of an existing layer indicating where to add the new layer.",
+          "initialValue": "\"\""
         },
         {
           "id": "where",
           "type": "combo",
           "name_zh": "位置",
           "name_en": "Where",
+          "desc_zh": "在另一个图层的相对位置添加新图层。",
+          "desc_en": "Where to add the new layer relative to the existing layer.",
           "items": [
             "above",
             "below",
@@ -2826,13 +3007,9 @@
               "zh": "添加子图层到底部",
               "en": "Add bottom sub-layer"
             }
-          },
-          "desc_zh": "在另一个图层的相对位置添加新图层。",
-          "desc_en": "Where to add the new layer relative to the existing layer."
+          }
         }
-      ],
-      "display_zh": "添加图层 [b]{0}[/b] 到 [i]{1}[/i] [i]{2}[/i]",
-      "display_en": "Add layer name [b]{0}[/b] at [i]{1}[/i] ([i]{2}[/i])"
+      ]
     },
     {
       "id": "move-layer",
@@ -2840,6 +3017,8 @@
       "name_en": "Move layer",
       "description_zh": "将图层移动到当前场景图层列表的新位置。",
       "description_en": "Move an existing layer to a new location in the current layout's layer tree.",
+      "display_zh": "移动图层[b]{0}[/b]到[i]{1}[/i][i]{2}[/i]",
+      "display_en": "Move layer [b]{0}[/b] to [i]{1}[/i] ([i]{2}[/i])",
       "scriptName": "MoveLayer",
       "category": "layers",
       "params": [
@@ -2848,24 +3027,26 @@
           "type": "layer",
           "name_zh": "图层",
           "name_en": "Layer",
-          "initialValue": "\"\"",
           "desc_zh": "要移动的图层的名称或编号。",
-          "desc_en": "The name or index of an existing layer to move."
+          "desc_en": "The name or index of an existing layer to move.",
+          "initialValue": "\"\""
         },
         {
           "id": "insert-by",
           "type": "layer",
           "name_zh": "插入到",
           "name_en": "Insert by",
-          "initialValue": "\"\"",
           "desc_zh": "要将图层移动到的相对位置，指定另一图层的名称或编号。",
-          "desc_en": "The name or index of another layer indicating where to move the layer to."
+          "desc_en": "The name or index of another layer indicating where to move the layer to.",
+          "initialValue": "\"\""
         },
         {
           "id": "where",
           "type": "combo",
           "name_zh": "位置",
           "name_en": "Where",
+          "desc_zh": "移动到另一个图层的相对位置。",
+          "desc_en": "Where to move the layer relative to the other layer.",
           "items": [
             "above",
             "below",
@@ -2889,13 +3070,9 @@
               "zh": "子图层底部",
               "en": "Bottom sub-layer"
             }
-          },
-          "desc_zh": "移动到另一个图层的相对位置。",
-          "desc_en": "Where to move the layer relative to the other layer."
+          }
         }
-      ],
-      "display_zh": "移动图层[b]{0}[/b]到[i]{1}[/i][i]{2}[/i]",
-      "display_en": "Move layer [b]{0}[/b] to [i]{1}[/i] ([i]{2}[/i])"
+      ]
     },
     {
       "id": "remove-layer",
@@ -2903,6 +3080,8 @@
       "name_en": "Remove layer",
       "description_zh": "移除当前场景的某个图层，并同时销毁位于该图层的所有实例对象。",
       "description_en": "Remove a layer on the current layout, also destroying all objects on the layer.",
+      "display_zh": "移除图层 [b]{0}[/b]",
+      "display_en": "Remove layer [b]{0}[/b]",
       "scriptName": "RemoveLayer",
       "category": "layers",
       "params": [
@@ -2911,13 +3090,11 @@
           "type": "layer",
           "name_zh": "图层",
           "name_en": "Layer",
-          "initialValue": "\"\"",
           "desc_zh": "要删除的图层名称或编号。",
-          "desc_en": "The name to or index of an existing layer to remove."
+          "desc_en": "The name to or index of an existing layer to remove.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "移除图层 [b]{0}[/b]",
-      "display_en": "Remove layer [b]{0}[/b]"
+      ]
     },
     {
       "id": "remove-all-dynamic-layers",
@@ -2925,10 +3102,10 @@
       "name_en": "Remove all dynamic layers",
       "description_zh": "移除所有通过 '添加图层' 生成的动态图层。",
       "description_en": "Remove all layers added with the 'Add layer' action.",
-      "scriptName": "RemoveAllDynamicLayers",
-      "category": "layers",
       "display_zh": "移除所有动态图层",
-      "display_en": "Remove all dynamic layers"
+      "display_en": "Remove all dynamic layers",
+      "scriptName": "RemoveAllDynamicLayers",
+      "category": "layers"
     },
     {
       "id": "map-function",
@@ -2936,6 +3113,8 @@
       "name_en": "Map function to string",
       "description_zh": "将字符串和动作组关联，通过字符串执行动作组。",
       "description_en": "Associate a function with a string, allowing it to be called by a string.",
+      "display_zh": "映射动作组 [b]{2}[/b] 到字符串 [i]{0}[/i] (名称: [i]{1}[/i])",
+      "display_en": "Map [i]{0}[/i] string [i]{1}[/i] to [b]{2}[/b]",
       "scriptName": "MapFunction",
       "category": "function-maps",
       "params": [
@@ -2963,9 +3142,7 @@
           "desc_zh": "要关联到字符串的动作组。",
           "desc_en": "A function in this project to associate with the string."
         }
-      ],
-      "display_zh": "映射动作组 [b]{2}[/b] 到字符串 [i]{0}[/i] (名称: [i]{1}[/i])",
-      "display_en": "Map [i]{0}[/i] string [i]{1}[/i] to [b]{2}[/b]"
+      ]
     },
     {
       "id": "map-function-default",
@@ -2973,6 +3150,8 @@
       "name_en": "Map default function",
       "description_zh": "在映射名称中，找不到相应的字符串时，默认调用这个动作组。",
       "description_en": "Add a default function to call if a provided string is not found in the map.",
+      "display_zh": "映射 [i]{0}[/i] 到[b]{1}[/b]",
+      "display_en": "Map [i]{0}[/i] default to [b]{1}[/b]",
       "scriptName": "MapFunctionDefault",
       "category": "function-maps",
       "params": [
@@ -2992,9 +3171,7 @@
           "desc_zh": "在映射的名称中，找不到相应的字符串时，默认调用这个动作组。",
           "desc_en": "A function in this project to call if a string is not found in the map."
         }
-      ],
-      "display_zh": "映射 [i]{0}[/i] 到[b]{1}[/b]",
-      "display_en": "Map [i]{0}[/i] default to [b]{1}[/b]"
+      ]
     },
     {
       "id": "call-mapped-function",
@@ -3002,7 +3179,10 @@
       "name_en": "Call mapped function",
       "description_zh": "从映射中的字符串调用动作组。",
       "description_en": "Call a function in a map from its string.",
+      "display_zh": "使用动作组映射(映射名称:  [i]{0}[/i], 关联字符串:  [i]{1}[/i]，起始参数: [i]{2}[/i])",
+      "display_en": "Call function from [i]{0}[/i] map with string [i]{1}[/i] (forward parameters from index [i]{2}[/i])",
       "scriptName": "CallMappedFunction",
+      "canDebug": true,
       "category": "function-maps",
       "params": [
         {
@@ -3029,9 +3209,7 @@
           "desc_zh": "从另一个带有参数的动作组中，使用动作组映射时，其参数也会传递到关联的动作组中，并通过此值来跳过前面的参数。注意，如果关联的字符串不存在，则默认动作组将转发所有参数。",
           "desc_en": "Parameter index of current function call to forward to this function call. Note all parameters are always forwarded if the default function is called."
         }
-      ],
-      "display_zh": "使用动作组映射(映射名称:  [i]{0}[/i], 关联字符串:  [i]{1}[/i]，起始参数: [i]{2}[/i])",
-      "display_en": "Call function from [i]{0}[/i] map with string [i]{1}[/i] (forward parameters from index [i]{2}[/i])"
+      ]
     },
     {
       "id": "go-to-layout",
@@ -3039,6 +3217,8 @@
       "name_en": "Go to layout",
       "description_zh": "跳转到项目中的另一个场景。",
       "description_en": "Jump to another layout in the project.",
+      "display_zh": "跳转到[b]{0}[/b]",
+      "display_en": "Go to [b]{0}[/b]",
       "scriptName": "GoToLayout",
       "category": "layout",
       "params": [
@@ -3050,9 +3230,7 @@
           "desc_zh": "选择跳转的场景",
           "desc_en": "Choose the layout to go to."
         }
-      ],
-      "display_zh": "跳转到[b]{0}[/b]",
-      "display_en": "Go to [b]{0}[/b]"
+      ]
     },
     {
       "id": "go-to-layout-by-name",
@@ -3060,6 +3238,8 @@
       "name_en": "Go to layout (by name)",
       "description_zh": "跳转到项目中的另一个场景，使用字符串作为场景名称。",
       "description_en": "Jump to another layout in the project, using a string for the layout name.",
+      "display_zh": "跳转到场景[b]{0}[/b]",
+      "display_en": "Go to layout [b]{0}[/b]",
       "scriptName": "GoToLayoutByName",
       "category": "layout",
       "params": [
@@ -3071,9 +3251,7 @@
           "desc_zh": "要跳转的场景的名称。",
           "desc_en": "The name of the layout to go to."
         }
-      ],
-      "display_zh": "跳转到场景[b]{0}[/b]",
-      "display_en": "Go to layout [b]{0}[/b]"
+      ]
     },
     {
       "id": "restart-layout",
@@ -3081,10 +3259,10 @@
       "name_en": "Restart layout",
       "description_zh": "重新进入当前场景，并将任何事件分组还原到初始激活状态。",
       "description_en": "Restart the current layout, and also restore any groups to their initial activation state.",
-      "scriptName": "RestartLayout",
-      "category": "layout",
       "display_zh": "重载场景",
-      "display_en": "Restart layout"
+      "display_en": "Restart layout",
+      "scriptName": "RestartLayout",
+      "category": "layout"
     },
     {
       "id": "go-to-nextprevious-layout",
@@ -3092,6 +3270,8 @@
       "name_en": "Go to next/previous layout",
       "description_zh": "跳转下一个或上一个场景。",
       "description_en": "Go to the next or previous layout.",
+      "display_zh": "跳转到{0}场景",
+      "display_en": "Go to {0} layout",
       "scriptName": "NextPrevLayout",
       "category": "layout",
       "params": [
@@ -3100,6 +3280,8 @@
           "type": "combo",
           "name_zh": "跳转到",
           "name_en": "Which",
+          "desc_zh": "是否转到下一个或上一个场景。",
+          "desc_en": "Whether to go to the next or the previous layout.",
           "items": [
             "next",
             "previous"
@@ -3113,13 +3295,9 @@
               "zh": "上一个",
               "en": "previous"
             }
-          },
-          "desc_zh": "是否转到下一个或上一个场景。",
-          "desc_en": "Whether to go to the next or the previous layout."
+          }
         }
-      ],
-      "display_zh": "跳转到{0}场景",
-      "display_en": "Go to {0} layout"
+      ]
     },
     {
       "id": "set-layout-scale",
@@ -3127,6 +3305,8 @@
       "name_en": "Set layout scale",
       "description_zh": "设置场景的缩放比例。",
       "description_en": "Set the scale of the entire layout.",
+      "display_zh": "设置场景缩放为[b]{0}[/b]倍",
+      "display_en": "Set layout scale to [b]{0}[/b]",
       "scriptName": "SetLayoutScale",
       "category": "layout",
       "params": [
@@ -3135,13 +3315,11 @@
           "type": "number",
           "name_zh": "大小",
           "name_en": "Scale",
-          "initialValue": "1.0",
           "desc_zh": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。",
-          "desc_en": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc."
+          "desc_en": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc.",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "设置场景缩放为[b]{0}[/b]倍",
-      "display_en": "Set layout scale to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-layout-angle",
@@ -3149,6 +3327,8 @@
       "name_en": "Set layout angle",
       "description_zh": "设置整个场景的角度。",
       "description_en": "Set the angle of the entire layout.",
+      "display_zh": "设置场景角度为[b]{0}[/b]",
+      "display_en": "Set layout angle to [b]{0}[/b]",
       "scriptName": "SetLayoutAngle",
       "category": "layout",
       "params": [
@@ -3160,9 +3340,7 @@
           "desc_zh": "旋转画布到指定的角度，以度为单位。",
           "desc_en": "The angle to rotate the canvas view to, in degrees."
         }
-      ],
-      "display_zh": "设置场景角度为[b]{0}[/b]",
-      "display_en": "Set layout angle to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-layout-effect-enabled",
@@ -3170,6 +3348,8 @@
       "name_en": "Set layout effect enabled",
       "description_zh": "启用或禁用当前场景的滤镜。",
       "description_en": "Enable or disable an effect on the current layout.",
+      "display_zh": "{0}场景滤镜{1}",
+      "display_en": "{0} layout effect {1}",
       "scriptName": "SetLayoutEffectEnabled",
       "category": "layout",
       "params": [
@@ -3178,6 +3358,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "启用或禁用场景的滤镜。",
+          "desc_en": "Whether to enable or disable the layout effect.",
           "items": [
             "disable",
             "enable"
@@ -3191,9 +3373,7 @@
               "zh": "启用",
               "en": "Enable"
             }
-          },
-          "desc_zh": "启用或禁用场景的滤镜。",
-          "desc_en": "Whether to enable or disable the layout effect."
+          }
         },
         {
           "id": "effect",
@@ -3203,9 +3383,7 @@
           "desc_zh": "要修改的场景滤镜。 此滤镜必须先添加到场景的滤镜列表中。",
           "desc_en": "Choose the layout effect to modify. The effect must be present on the currently running layout."
         }
-      ],
-      "display_zh": "{0}场景滤镜{1}",
-      "display_en": "{0} layout effect {1}"
+      ]
     },
     {
       "id": "set-layout-effect-parameter",
@@ -3213,6 +3391,8 @@
       "name_en": "Set layout effect parameter",
       "description_zh": "设置场景的滤镜参数。",
       "description_en": "Set the value of a parameter in one of the layout's effects.",
+      "display_zh": "设置场景滤镜{0}第{1}个参数为[b]{2}[/b]",
+      "display_en": "Set layout effect {0} parameter {1} to [b]{2}[/b]",
       "scriptName": "SetLayoutEffectParam",
       "category": "layout",
       "params": [
@@ -3240,9 +3420,7 @@
           "desc_zh": "要设置的数值。",
           "desc_en": "Enter the new parameter value."
         }
-      ],
-      "display_zh": "设置场景滤镜{0}第{1}个参数为[b]{2}[/b]",
-      "display_en": "Set layout effect {0} parameter {1} to [b]{2}[/b]"
+      ]
     },
     {
       "id": "set-layout-vanishing-point",
@@ -3250,6 +3428,8 @@
       "name_en": "Set layout vanishing point",
       "description_zh": "使用3D布局功能时，设置视区透视中心点的位置。",
       "description_en": "When using 3D features, set where the vanishing point is relative to the viewport area.",
+      "display_zh": "设置场景透视点为 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set layout vanishing point to ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "SetLayoutVanishingPoint",
       "category": "layout",
       "params": [
@@ -3258,22 +3438,20 @@
           "type": "number",
           "name_zh": "透视点X",
           "name_en": "Vanishing point X",
-          "initialValue": "50",
           "desc_zh": "透视点的X坐标，数值从 0-100，中间位置是50。",
-          "desc_en": "The vanishing point X in the viewport, from 0-100, with 50 being the middle."
+          "desc_en": "The vanishing point X in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
         },
         {
           "id": "vanishing-point-y",
           "type": "number",
           "name_zh": "透视点Y",
           "name_en": "Vanishing point Y",
-          "initialValue": "50",
           "desc_zh": "透视点的Y坐标，数值从 0-100，中间位置是50。",
-          "desc_en": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle."
+          "desc_en": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
         }
-      ],
-      "display_zh": "设置场景透视点为 ([i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Set layout vanishing point to ([i]{0}[/i], [i]{1}[/i])"
+      ]
     },
     {
       "id": "set-layout-projection",
@@ -3281,6 +3459,8 @@
       "name_en": "Set layout projection",
       "description_zh": "对于3D场景，相机视角使用透视投影，还是正交投影。",
       "description_en": "Set whether to render 3D features with perspective, or a flat orthographic projection.",
+      "display_zh": "设置场景投影类型为[i]{0}[/i]",
+      "display_en": "Set layout projection [i]{0}[/i]",
       "scriptName": "SetLayoutProjection",
       "category": "layout",
       "params": [
@@ -3289,6 +3469,8 @@
           "type": "combo",
           "name_zh": "投影类型",
           "name_en": "Projection",
+          "desc_zh": "要使用的投影类型",
+          "desc_en": "The type of projection to use.",
           "items": [
             "perspective",
             "orthographic"
@@ -3302,13 +3484,54 @@
               "zh": "正交投影",
               "en": "Orthographic"
             }
-          },
-          "desc_zh": "要使用的投影类型",
-          "desc_en": "The type of projection to use."
+          }
         }
-      ],
-      "display_zh": "设置场景投影类型为[i]{0}[/i]",
-      "display_en": "Set layout projection [i]{0}[/i]"
+      ]
+    },
+    {
+      "id": "set-layout-sampling",
+      "name_zh": "设置场景采样",
+      "name_en": "Set layout sampling",
+      "description_zh": "设置场景的采样模式。",
+      "description_en": "Set the layout sampling mode.",
+      "display_zh": "设置场景采样为 [b]{0}[/b]",
+      "display_en": "Set layout sampling [b]{0}[/b]",
+      "scriptName": "SetLayoutSampling",
+      "category": "layout",
+      "params": [
+        {
+          "id": "sampling",
+          "type": "combo",
+          "name_zh": "采样",
+          "name_en": "Sampling",
+          "desc_zh": "调整图像时，使用的采样方式。",
+          "desc_en": "The quality to use when scaling images.",
+          "items": [
+            "auto",
+            "nearest",
+            "bilinear",
+            "trilinear"
+          ],
+          "items_i18n": {
+            "auto": {
+              "zh": "自动",
+              "en": "Auto"
+            },
+            "nearest": {
+              "zh": "邻近",
+              "en": "Nearest"
+            },
+            "bilinear": {
+              "zh": "双线性",
+              "en": "Bilinear"
+            },
+            "trilinear": {
+              "zh": "三线性",
+              "en": "Trilinear"
+            }
+          }
+        }
+      ]
     },
     {
       "id": "recreate-initial-objects",
@@ -3316,6 +3539,8 @@
       "name_en": "Recreate initial objects",
       "description_zh": "在矩形区域内，重新创建场景中的对象并初始化。",
       "description_en": "Recreate the layout's initial objects within a rectangular area.",
+      "display_zh": "初始化对象 {0}, 原始场景: [i]{5}[/i], 原始位置: [i]{1}[/i], [i]{2}[/i]) 到 ([i]{3}[/i], [i]{4}[/i]), 原始图层: [i]{6}[/i], 目标图层: [i]{7}[/i], 位置偏移: ([i]{8}[/i], [i]{9}[/i]), 创建对象层级: [i]{10}[/i]",
+      "display_en": "Recreate initial {0} objects from ([i]{1}[/i], [i]{2}[/i]) to ([i]{3}[/i], [i]{4}[/i]) from layout [i]{5}[/i], source layer [i]{6}[/i], dest layer [i]{7}[/i], offset ([i]{8}[/i], [i]{9}[/i]), create hierarchy: [i]{10}[/i]",
       "scriptName": "RecreateInitialObjects",
       "category": "layout",
       "params": [
@@ -3372,18 +3597,18 @@
           "type": "any",
           "name_zh": "源图层",
           "name_en": "Source layer",
-          "initialValue": "-1",
           "desc_zh": "目标物体的所在图层名或零基编号 留空来选择当前层",
-          "desc_en": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers."
+          "desc_en": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers.",
+          "initialValue": "-1"
         },
         {
           "id": "dest-layer",
           "type": "any",
           "name_zh": "目标图层",
           "name_en": "Destination layer",
-          "initialValue": "-1",
           "desc_zh": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。",
-          "desc_en": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers."
+          "desc_en": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers.",
+          "initialValue": "-1"
         },
         {
           "id": "offset-x",
@@ -3406,13 +3631,11 @@
           "type": "boolean",
           "name_zh": "创建子对象",
           "name_en": "Create hierarchy",
-          "initialValue": "false",
           "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
-          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         }
-      ],
-      "display_zh": "初始化对象 {0}, 原始场景: [i]{5}[/i], 原始位置: [i]{1}[/i], [i]{2}[/i]) 到 ([i]{3}[/i], [i]{4}[/i]), 原始图层: [i]{6}[/i], 目标图层: [i]{7}[/i], 位置偏移: ([i]{8}[/i], [i]{9}[/i]), 创建对象层级: [i]{10}[/i]",
-      "display_en": "Recreate initial {0} objects from ([i]{1}[/i], [i]{2}[/i]) to ([i]{3}[/i], [i]{4}[/i]) from layout [i]{5}[/i], source layer [i]{6}[/i], dest layer [i]{7}[/i], offset ([i]{8}[/i], [i]{9}[/i]), create hierarchy: [i]{10}[/i]"
+      ]
     },
     {
       "id": "load-object-images",
@@ -3420,6 +3643,8 @@
       "name_en": "Load object images",
       "description_zh": "将对象的图像资源加载到内存中(如果它还没有被加载)。",
       "description_en": "Load the images for an object in to memory, if it isn't already loaded.",
+      "display_zh": "加载 {0} 图像资源到内存",
+      "display_en": "Load {0} images in to memory",
       "scriptName": "LoadObjectTextures",
       "isAsync": true,
       "category": "memory-management",
@@ -3432,9 +3657,7 @@
           "desc_zh": "需要加载图像的对象。",
           "desc_en": "The object to load images for."
         }
-      ],
-      "display_zh": "加载 {0} 图像资源到内存",
-      "display_en": "Load {0} images in to memory"
+      ]
     },
     {
       "id": "load-object-images-by-name",
@@ -3442,6 +3665,8 @@
       "name_en": "Load object images (by name)",
       "description_zh": "将指定名称的对象使用的图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
       "description_en": "Load the images for an object in to memory by a string of the object name.",
+      "display_zh": "加载 [i]{0}[/i] 图像资源到内存",
+      "display_en": "Load [i]{0}[/i] images in to memory",
       "scriptName": "LoadObjectTexturesByName",
       "isAsync": true,
       "category": "memory-management",
@@ -3454,9 +3679,7 @@
           "desc_zh": "需要加载图像的对象名称。",
           "desc_en": "The name of the object to load images for."
         }
-      ],
-      "display_zh": "加载 [i]{0}[/i] 图像资源到内存",
-      "display_en": "Load [i]{0}[/i] images in to memory"
+      ]
     },
     {
       "id": "unload-object-images",
@@ -3464,6 +3687,8 @@
       "name_en": "Unload object images",
       "description_zh": "从内存中挂载对象的图像资源(如果该对象已经加载，将会销毁它所有的实例)。",
       "description_en": "Unload the images for an object from memory, if it is loaded and all its instances are destroyed.",
+      "display_zh": "挂载 {0} 图像资源",
+      "display_en": "Unload {0} images from memory",
       "scriptName": "UnloadObjectTextures",
       "category": "memory-management",
       "params": [
@@ -3475,9 +3700,7 @@
           "desc_zh": "要挂载图像的对象。",
           "desc_en": "The object to unload images for."
         }
-      ],
-      "display_zh": "挂载 {0} 图像资源",
-      "display_en": "Unload {0} images from memory"
+      ]
     },
     {
       "id": "unload-object-images-by-name",
@@ -3485,6 +3708,8 @@
       "name_en": "Unload object images (by name)",
       "description_zh": "从内存中挂载指定对象名称的图像资源。",
       "description_en": "Unload the images for an object from memory by a string of the object name.",
+      "display_zh": "挂载 [i]{0}[/i] 图像资源",
+      "display_en": "Unload [i]{0}[/i] images from memory",
       "scriptName": "UnloadObjectTexturesByName",
       "category": "memory-management",
       "params": [
@@ -3496,9 +3721,7 @@
           "desc_zh": "需要挂载图像的对象名称。",
           "desc_en": "The name of the object to unload images for."
         }
-      ],
-      "display_zh": "挂载 [i]{0}[/i] 图像资源",
-      "display_en": "Unload [i]{0}[/i] images from memory"
+      ]
     },
     {
       "id": "unload-unused-images",
@@ -3506,10 +3729,10 @@
       "name_en": "Unload unused images",
       "description_zh": "挂载已加载的对象的图像，并销毁所有实例。",
       "description_en": "Unload the images for objects that are loaded and all instances are destroyed.",
-      "scriptName": "UnloadUnusedTextures",
-      "category": "memory-management",
       "display_zh": "挂载未使用的图像资源",
-      "display_en": "Unload unused images from memory"
+      "display_en": "Unload unused images from memory",
+      "scriptName": "UnloadUnusedTextures",
+      "category": "memory-management"
     },
     {
       "id": "load-layout-images",
@@ -3517,6 +3740,8 @@
       "name_en": "Load layout images",
       "description_zh": "将场景使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
       "description_en": "Load all the images used by a layout in to memory. Note this can result in high memory usage.",
+      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "display_en": "Load layout [b]{0}[/b] images in to memory",
       "scriptName": "LoadLayoutTextures",
       "isAsync": true,
       "category": "memory-management",
@@ -3529,9 +3754,7 @@
           "desc_zh": "需要加载所有图像的场景。",
           "desc_en": "The layout to load all images for."
         }
-      ],
-      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
-      "display_en": "Load layout [b]{0}[/b] images in to memory"
+      ]
     },
     {
       "id": "load-layout-images-by-name",
@@ -3539,6 +3762,8 @@
       "name_en": "Load layout images (by name)",
       "description_zh": "将指定名称的场景所使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
       "description_en": "Load all the images used by a layout (by a string of its name) in to memory. Note this can result in high memory usage.",
+      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "display_en": "Load layout [b]{0}[/b] images in to memory",
       "scriptName": "LoadLayoutTexturesByName",
       "isAsync": true,
       "category": "memory-management",
@@ -3551,9 +3776,7 @@
           "desc_zh": "需要加载所有图像的场景名称。",
           "desc_en": "The name of the layout to load all images for."
         }
-      ],
-      "display_zh": "加载场景 [b]{0}[/b] 图像资源到内存",
-      "display_en": "Load layout [b]{0}[/b] images in to memory"
+      ]
     },
     {
       "id": "save",
@@ -3561,6 +3784,8 @@
       "name_en": "Save",
       "description_zh": "将完整的游戏状态保存到本地计算机。",
       "description_en": "Save the full state of the game to the local computer.",
+      "display_zh": "保存游戏(插槽: [b]{0}[/b])",
+      "display_en": "Save game to slot [b]{0}[/b]",
       "scriptName": "SaveState",
       "category": "save-load",
       "params": [
@@ -3569,13 +3794,11 @@
           "type": "string",
           "name_zh": "插槽",
           "name_en": "Slot",
-          "initialValue": "\"mysave\"",
           "desc_zh": "标识此保存游戏状态的字符串。",
-          "desc_en": "A string identifying this save game state."
+          "desc_en": "A string identifying this save game state.",
+          "initialValue": "\"mysave\""
         }
-      ],
-      "display_zh": "保存游戏(插槽: [b]{0}[/b])",
-      "display_en": "Save game to slot [b]{0}[/b]"
+      ]
     },
     {
       "id": "load",
@@ -3583,6 +3806,8 @@
       "name_en": "Load",
       "description_zh": "从本地存储中加载先前保存的游戏状态。",
       "description_en": "Load the full state of the game from the local computer.",
+      "display_zh": "加载游戏(插槽: [b]{0}[/b])",
+      "display_en": "Load game from slot [b]{0}[/b]",
       "scriptName": "LoadState",
       "category": "save-load",
       "params": [
@@ -3591,13 +3816,11 @@
           "type": "string",
           "name_zh": "插槽",
           "name_en": "Slot",
-          "initialValue": "\"mysave\"",
           "desc_zh": "先前保存游戏时填写的插槽字符串。",
-          "desc_en": "The slot that was previously saved to, from which to load from."
+          "desc_en": "The slot that was previously saved to, from which to load from.",
+          "initialValue": "\"mysave\""
         }
-      ],
-      "display_zh": "加载游戏(插槽: [b]{0}[/b])",
-      "display_en": "Load game from slot [b]{0}[/b]"
+      ]
     },
     {
       "id": "save-to-json",
@@ -3605,10 +3828,10 @@
       "name_en": "Save to JSON",
       "description_zh": "将游戏的完整状态保存到 JSON 字符串。随后在 '保存完成' 条件中使用 '游戏储存数据' 表达式，并将其传输到其他地方，如本地存储。",
       "description_en": "Save the full state of the game to a JSON string.",
-      "scriptName": "SaveStateJSON",
-      "category": "save-load",
       "display_zh": "保存游戏数据",
-      "display_en": "Save game to JSON string"
+      "display_en": "Save game to JSON string",
+      "scriptName": "SaveStateJSON",
+      "category": "save-load"
     },
     {
       "id": "load-from-json",
@@ -3616,6 +3839,8 @@
       "name_en": "Load from JSON",
       "description_zh": "从先前导出的游戏状态数据加载游戏。",
       "description_en": "Load the full state of the game from a JSON string.",
+      "display_zh": "加载游戏数据 [i]{0}[/i]",
+      "display_en": "Load game from JSON string [i]{0}[/i]",
       "scriptName": "LoadStateJSON",
       "category": "save-load",
       "params": [
@@ -3627,9 +3852,7 @@
           "desc_zh": "填写先前通过系统 '游戏保存数据' 表达式保存的JSON字符串。",
           "desc_en": "A JSON string containing a save game state from which to load from."
         }
-      ],
-      "display_zh": "加载游戏数据 [i]{0}[/i]",
-      "display_en": "Load game from JSON string [i]{0}[/i]"
+      ]
     },
     {
       "id": "scroll-to-x",
@@ -3637,6 +3860,8 @@
       "name_en": "Scroll to X",
       "description_zh": "滚动到X坐标。",
       "description_en": "Scroll to an X co-ordinate.",
+      "display_zh": "设置视角位置到X坐标 [i]{0}[/i]",
+      "display_en": "Set scroll X to [i]{0}[/i]",
       "scriptName": "ScrollX",
       "category": "scrolling",
       "params": [
@@ -3648,9 +3873,7 @@
           "desc_zh": "要滚动到的X坐标，以像素为单位。",
           "desc_en": "X co-ordinate to scroll to, in pixels."
         }
-      ],
-      "display_zh": "设置视角位置到X坐标 [i]{0}[/i]",
-      "display_en": "Set scroll X to [i]{0}[/i]"
+      ]
     },
     {
       "id": "scroll-to-y",
@@ -3658,6 +3881,8 @@
       "name_en": "Scroll to Y",
       "description_zh": "滚动到Y坐标。",
       "description_en": "Scroll to an Y co-ordinate.",
+      "display_zh": "设置视角位置到Y坐标 [i]{0}[/i]",
+      "display_en": "Set scroll Y to [i]{0}[/i]",
       "scriptName": "ScrollY",
       "category": "scrolling",
       "params": [
@@ -3669,9 +3894,7 @@
           "desc_zh": "要滚动到的Y坐标，以像素为单位。",
           "desc_en": "Y co-ordinate to scroll to, in pixels."
         }
-      ],
-      "display_zh": "设置视角位置到Y坐标 [i]{0}[/i]",
-      "display_en": "Set scroll Y to [i]{0}[/i]"
+      ]
     },
     {
       "id": "scroll-to-position",
@@ -3679,6 +3902,8 @@
       "name_en": "Scroll to position",
       "description_zh": "滚动到坐标。",
       "description_en": "Scroll to a co-ordinate.",
+      "display_zh": "设置视角位置到坐标 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Scroll to ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "Scroll",
       "category": "scrolling",
       "params": [
@@ -3698,9 +3923,7 @@
           "desc_zh": "要滚动到的Y坐标，以像素为单位。",
           "desc_en": "Y co-ordinate to scroll to, in pixels."
         }
-      ],
-      "display_zh": "设置视角位置到坐标 ([i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Scroll to ([i]{0}[/i], [i]{1}[/i])"
+      ]
     },
     {
       "id": "scroll-to-object",
@@ -3708,6 +3931,8 @@
       "name_en": "Scroll to object",
       "description_zh": "将镜头位置滚动到对象",
       "description_en": "Scroll to an object.",
+      "display_zh": "设置镜头位置到对象 {0}",
+      "display_en": "Scroll to {0}",
       "scriptName": "ScrollToObject",
       "category": "scrolling",
       "params": [
@@ -3719,9 +3944,7 @@
           "desc_zh": "要将视角滚动到的对象",
           "desc_en": "Object to scroll to."
         }
-      ],
-      "display_zh": "设置镜头位置到对象 {0}",
-      "display_en": "Scroll to {0}"
+      ]
     },
     {
       "id": "set-time-scale",
@@ -3729,6 +3952,8 @@
       "name_en": "Set time scale",
       "description_zh": "更改游戏中的时间流逝速率，实现慢动作或暂停效果。",
       "description_en": "Change the rate time passes in the game, for slow-motion or pause effects.",
+      "display_zh": "设置全局时间速率为[i]{0}[/i]倍",
+      "display_en": "Set time scale to [i]{0}[/i]",
       "scriptName": "SetTimescale",
       "category": "time",
       "params": [
@@ -3737,13 +3962,11 @@
           "type": "number",
           "name_zh": "时间速率",
           "name_en": "Time scale",
-          "initialValue": "1.0",
           "desc_zh": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
-          "desc_en": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc."
+          "desc_en": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc.",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "设置全局时间速率为[i]{0}[/i]倍",
-      "display_en": "Set time scale to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-object-time-scale",
@@ -3751,6 +3974,8 @@
       "name_en": "Set object time scale",
       "description_zh": "更改特定对象的时间流逝速度，将覆盖全局时间速率。",
       "description_en": "Change the rate time passes for a specific object.  Overrides the game time scale.",
+      "display_zh": "设置 {0} 时间速率为[i]{1}[/i]倍",
+      "display_en": "Set {0} time scale to [i]{1}[/i]",
       "scriptName": "SetObjectTimescale",
       "category": "time",
       "params": [
@@ -3767,13 +3992,11 @@
           "type": "number",
           "name_zh": "时间速率",
           "name_en": "Time scale",
-          "initialValue": "1.0",
           "desc_zh": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
-          "desc_en": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc)."
+          "desc_en": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc).",
+          "initialValue": "1.0"
         }
-      ],
-      "display_zh": "设置 {0} 时间速率为[i]{1}[/i]倍",
-      "display_en": "Set {0} time scale to [i]{1}[/i]"
+      ]
     },
     {
       "id": "restore-object-time-scale",
@@ -3781,6 +4004,8 @@
       "name_en": "Restore object time scale",
       "description_zh": "将对象的时间刻度恢复为游戏时间。",
       "description_en": "Restore an object's time scale back to game time.",
+      "display_zh": "恢复 {0} 时间速率",
+      "display_en": "Restore {0} time scale",
       "scriptName": "RestoreObjectTimescale",
       "category": "time",
       "params": [
@@ -3792,9 +4017,7 @@
           "desc_zh": "选择要恢复正常时间速率的对象。",
           "desc_en": "The object to restore timescale for."
         }
-      ],
-      "display_zh": "恢复 {0} 时间速率",
-      "display_en": "Restore {0} time scale"
+      ]
     },
     {
       "id": "wait",
@@ -3802,6 +4025,8 @@
       "name_en": "Wait",
       "description_zh": "等待几秒钟后再继续运行下一个动作。",
       "description_en": "Wait a number of seconds before running the next action.",
+      "display_zh": "等待[b]{0}[/b]秒 (使用时间倍速: [i]{1}[/i])",
+      "display_en": "Wait [b]{0}[/b] seconds (use time scale: [i]{1}[/i])",
       "scriptName": "Wait",
       "category": "time",
       "params": [
@@ -3810,22 +4035,20 @@
           "type": "number",
           "name_zh": "秒",
           "name_en": "Seconds",
-          "initialValue": "1.0",
           "desc_zh": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数",
-          "desc_en": "The number of seconds to wait before running the next action."
+          "desc_en": "The number of seconds to wait before running the next action.",
+          "initialValue": "1.0"
         },
         {
           "id": "use-timescale",
           "type": "boolean",
           "name_zh": "使用时间倍数",
           "name_en": "Use time scale",
-          "initialValue": "true",
           "desc_zh": "是否使用当前的时间倍数。取消则使用真实时间速度。",
-          "desc_en": "Uncheck to ignore the current time scale and wait in wall-clock time."
+          "desc_en": "Uncheck to ignore the current time scale and wait in wall-clock time.",
+          "initialValue": "true"
         }
-      ],
-      "display_zh": "等待[b]{0}[/b]秒 (使用时间倍速: [i]{1}[/i])",
-      "display_en": "Wait [b]{0}[/b] seconds (use time scale: [i]{1}[/i])"
+      ]
     },
     {
       "id": "wait-for-signal",
@@ -3833,6 +4056,8 @@
       "name_en": "Wait for signal",
       "description_zh": "暂停后续动作，直到对应标签的 '发送信号' 动作触发后，再继续执行。",
       "description_en": "Wait until a corresponding 'Signal' action is used.",
+      "display_zh": "等待信号[b]{0}[/b]",
+      "display_en": "Wait for signal [b]{0}[/b]",
       "scriptName": "WaitForSignal",
       "category": "time",
       "params": [
@@ -3844,9 +4069,7 @@
           "desc_zh": "填写一个字符串，用于区分要等待的信号标签。添加该动作后，当前事件块后面的其他动作将暂停运行，直至此标签对应的 '发送信号' 动作触发后继续执行。",
           "desc_en": "The tag of the signal to wait for. This will wait until the corresponding 'Signal' action is used."
         }
-      ],
-      "display_zh": "等待信号[b]{0}[/b]",
-      "display_en": "Wait for signal [b]{0}[/b]"
+      ]
     },
     {
       "id": "wait-for-previous-actions",
@@ -3854,10 +4077,10 @@
       "name_en": "Wait for previous actions",
       "description_zh": "等待之前的异步动作运行完成，触发任意完成或失败都会返回。(异步动作在右侧有特殊的时间图标显示，它们往往需要一些时间才能处理完成)",
       "description_en": "Wait until any previous asynchronous actions (shown by an icon) have finished and run any completed or error triggers.",
-      "scriptName": "WaitForPreviousActions",
-      "category": "time",
       "display_zh": "等待前面异步动作完成",
-      "display_en": "Wait for previous actions to complete"
+      "display_en": "Wait for previous actions to complete",
+      "scriptName": "WaitForPreviousActions",
+      "category": "time"
     },
     {
       "id": "signal",
@@ -3865,6 +4088,8 @@
       "name_en": "Signal",
       "description_zh": "发送一个信号，触发对应标签的 '收到信号' 条件和 '等待信号' 动作。",
       "description_en": "Trigger 'On signal' and resume any 'Wait for signal' actions.",
+      "display_zh": "发送信号[b]{0}[/b]",
+      "display_en": "Signal [b]{0}[/b]",
       "scriptName": "Signal",
       "category": "time",
       "params": [
@@ -3876,9 +4101,7 @@
           "desc_zh": "在 \"双引号\" 里填写一个字符串。根据此标签触发对应的 '收到信号' 和 '等待信号' 动作。",
           "desc_en": "The tag to signal."
         }
-      ],
-      "display_zh": "发送信号[b]{0}[/b]",
-      "display_en": "Signal [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-minimum-framerate",
@@ -3912,6 +4135,8 @@
       "name_en": "Set min/max delta-time",
       "description_zh": "设置增量时间限制，若帧率低于最小值将进入慢速状态，若高于最大值则进入加速状态。",
       "description_en": "Set the limits on delta-time, causing the project to go in to slow motion or fast forward at extreme framerates.",
+      "display_zh": "设置增量时间：最小值[b]{0}[/b]，最大值[b]{1}[/b]",
+      "display_en": "Set delta-time minimum [b]{0}[/b], maximum [b]{1}[/b]",
       "scriptName": "SetDeltaTimeMinMax",
       "category": "time",
       "params": [
@@ -3920,22 +4145,20 @@
           "type": "number",
           "name_zh": "最小增量时间",
           "name_en": "Min delta-time",
-          "initialValue": "0",
           "desc_zh": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。",
-          "desc_en": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases."
+          "desc_en": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases.",
+          "initialValue": "0"
         },
         {
           "id": "maximum-dt",
           "type": "number",
           "name_zh": "最大增量时间",
           "name_en": "Max delta-time",
-          "initialValue": "1 / 30",
           "desc_zh": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。",
-          "desc_en": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases."
+          "desc_en": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases.",
+          "initialValue": "1 / 30"
         }
-      ],
-      "display_zh": "设置增量时间：最小值[b]{0}[/b]，最大值[b]{1}[/b]",
-      "display_en": "Set delta-time minimum [b]{0}[/b], maximum [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-framerate-mode",
@@ -3943,6 +4166,8 @@
       "name_en": "Set framerate mode",
       "description_zh": "设置当前帧率模式。",
       "description_en": "Set the current framerate mode.",
+      "display_zh": "设置帧率模式为 [b]{0}[/b] ([i]{1}[/i])",
+      "display_en": "Set framerate mode to [b]{0}[/b] ([i]{1}[/i])",
       "scriptName": "SetFramerateMode",
       "category": "time",
       "params": [
@@ -3951,8 +4176,11 @@
           "type": "combo",
           "name_zh": "帧率模式",
           "name_en": "Framerate mode",
+          "desc_zh": "要设置的帧率模式。",
+          "desc_en": "The framerate mode to set (corresponding to the project property).",
           "items": [
             "vsync",
+            "fixed",
             "unlimited-tick",
             "unlimited-frame"
           ],
@@ -3968,14 +4196,22 @@
             "unlimited-frame": {
               "zh": "无上限",
               "en": "Unlimited (full frames)"
+            },
+            "fixed": {
+              "zh": "固定",
+              "en": "Fixed"
             }
-          },
-          "desc_zh": "要设置的帧率模式。",
-          "desc_en": "The framerate mode to set (corresponding to the project property)."
+          }
+        },
+        {
+          "id": "fixed-framerate",
+          "type": "number",
+          "name_zh": "固定帧率",
+          "name_en": "Fixed framerate",
+          "desc_zh": "目标的每秒帧率。仅在 '固定帧率' 模式中可用。",
+          "desc_en": "For 'Fixed' mode only, the frames per second to target."
         }
-      ],
-      "display_zh": "设置帧率模式为 [b]{0}[/b] ([i]{1}[/i])",
-      "display_en": "Set framerate mode to [b]{0}[/b] ([i]{1}[/i])"
+      ]
     }
   ],
   "expressions": [
@@ -4610,9 +4846,9 @@
           "type": "layer",
           "name_zh": "图层",
           "name_en": "layer",
-          "initialValue": "\"\"",
           "desc_zh": "要获取的图层。可以是编号或者名字。",
-          "desc_en": "Layer name to get index for."
+          "desc_en": "Layer name to get index for.",
+          "initialValue": "\"\""
         }
       ]
     },
@@ -4644,6 +4880,7 @@
       "description_en": "Call a function in a map from its string, and return its value.",
       "expressionName": "CallMapped",
       "returnType": "any",
+      "isVariadicParameters": true,
       "category": "function-maps",
       "params": [
         {
@@ -4779,9 +5016,9 @@
           "type": "number",
           "name_zh": "数字",
           "name_en": "Number",
-          "initialValue": 1,
           "desc_zh": "取平方根的数",
-          "desc_en": "Number to take square root of"
+          "desc_en": "Number to take square root of",
+          "initialValue": 1
         }
       ]
     },
@@ -5101,6 +5338,7 @@
       "description_en": "Calculate maximum of a set of numbers.",
       "expressionName": "max",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "math",
       "params": [
         {
@@ -5129,6 +5367,7 @@
       "description_en": "Calculate minimum of a set of numbers.",
       "expressionName": "min",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "math",
       "params": [
         {
@@ -5190,6 +5429,66 @@
           "name_en": "y2",
           "desc_zh": "第二个坐标点的Y坐标。",
           "desc_en": "Y position of second point."
+        }
+      ]
+    },
+    {
+      "id": "distance3d",
+      "name_zh": "计算三维距离",
+      "name_en": "distance3d",
+      "description_zh": "计算三维空间中两点之间的距离。",
+      "description_en": "Calculate the distance between two points in 3D.",
+      "expressionName": "distance3d",
+      "returnType": "number",
+      "category": "math",
+      "params": [
+        {
+          "id": "x1",
+          "type": "number",
+          "name_zh": "x1",
+          "name_en": "x1",
+          "desc_zh": "第一个点的 X 坐标。",
+          "desc_en": "X position of first point."
+        },
+        {
+          "id": "y1",
+          "type": "number",
+          "name_zh": "y1",
+          "name_en": "y1",
+          "desc_zh": "第一个点的 Y 坐标。",
+          "desc_en": "Y position of first point."
+        },
+        {
+          "id": "z1",
+          "type": "number",
+          "name_zh": "z1",
+          "name_en": "z1",
+          "desc_zh": "第一个点的 Z 坐标。",
+          "desc_en": "Z position of first point."
+        },
+        {
+          "id": "x2",
+          "type": "number",
+          "name_zh": "x2",
+          "name_en": "x2",
+          "desc_zh": "第二个点的 X 坐标。",
+          "desc_en": "X position of second point."
+        },
+        {
+          "id": "y2",
+          "type": "number",
+          "name_zh": "y2",
+          "name_en": "y2",
+          "desc_zh": "第二个点的 Y 坐标。",
+          "desc_en": "Y position of second point."
+        },
+        {
+          "id": "z2",
+          "type": "number",
+          "name_zh": "z2",
+          "name_en": "z2",
+          "desc_zh": "第二个点的 Z 坐标。",
+          "desc_en": "Z position of second point."
         }
       ]
     },
@@ -5691,6 +5990,7 @@
       "description_en": "Retrieve the index of a currently running loop.",
       "expressionName": "loopindex",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "system"
     },
     {
@@ -6123,6 +6423,7 @@
       "description_en": "Replace placeholders {0}, {1}... in a string.",
       "expressionName": "StringSub",
       "returnType": "string",
+      "isVariadicParameters": true,
       "category": "text",
       "params": [
         {
@@ -6262,9 +6563,9 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式的修饰符。如 \"g\" 表示全局匹配，查找所有匹配项。留空则在匹配到第一个后停止。",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       ]
     },
@@ -6299,9 +6600,9 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式的修饰符",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         },
         {
           "id": "replace",
@@ -6344,9 +6645,9 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "用于指定额外匹配策略的标记符。",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       ]
     },
@@ -6381,9 +6682,9 @@
           "type": "string",
           "name_zh": "修饰符",
           "name_en": "Flags",
-          "initialValue": "\"gi\"",
           "desc_zh": "正则表达式的修饰符",
-          "desc_en": "Regular expression flags"
+          "desc_en": "Regular expression flags",
+          "initialValue": "\"gi\""
         },
         {
           "id": "index",
@@ -6592,6 +6893,7 @@
       "description_en": "Generate a random number.  Pass two numbers to generate within a range.",
       "expressionName": "random",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "values",
       "params": [
         {
@@ -6599,9 +6901,9 @@
           "type": "number",
           "name_zh": "范围",
           "name_en": "Range",
-          "initialValue": 10,
           "desc_zh": "要生成的随机浮点数范围，从 0 到小于此值。",
-          "desc_en": "Range of random numbers to generate, from 0 to one less than this value."
+          "desc_en": "Range of random numbers to generate, from 0 to one less than this value.",
+          "initialValue": 10
         }
       ]
     },
@@ -6649,6 +6951,7 @@
       "description_en": "Randomly choose one of the parameters.",
       "expressionName": "choose",
       "returnType": "any",
+      "isVariadicParameters": true,
       "category": "values",
       "params": [
         {
@@ -6677,6 +6980,7 @@
       "description_en": "Choose one of the parameters by an index.",
       "expressionName": "chooseindex",
       "returnType": "any",
+      "isVariadicParameters": true,
       "category": "values",
       "params": [
         {

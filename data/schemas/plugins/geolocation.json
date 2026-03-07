@@ -16,10 +16,10 @@
       "name_en": "Is supported",
       "description_zh": "检测当前运行设备是否支持获取地理位置信息。",
       "description_en": "True if the current platform supports geolocation.",
-      "scriptName": "IsSupported",
-      "category": "geolocation",
       "display_zh": "设备支持访问地理位置",
-      "display_en": "Is supported"
+      "display_en": "Is supported",
+      "scriptName": "IsSupported",
+      "category": "geolocation"
     },
     {
       "id": "is-watching-location",
@@ -27,10 +27,10 @@
       "name_en": "Is watching location",
       "description_zh": "检测当前是否正在跟踪用户的地理位置。",
       "description_en": "True if the user's location is currently being tracked.",
-      "scriptName": "IsWatching",
-      "category": "geolocation",
       "display_zh": "正在跟踪位置",
-      "display_en": "Is watching location"
+      "display_en": "Is watching location",
+      "scriptName": "IsWatching",
+      "category": "geolocation"
     },
     {
       "id": "on-location-update",
@@ -38,11 +38,12 @@
       "name_en": "On location update",
       "description_zh": "在更新位置时请求或观察用户位置时触发。",
       "description_en": "Triggered when requesting or watching the user's position when the location is updated.",
+      "display_zh": "位置更新时",
+      "display_en": "On location update",
       "scriptName": "OnUpdate",
       "isTrigger": true,
-      "category": "geolocation",
-      "display_zh": "位置更新时",
-      "display_en": "On location update"
+      "canDebug": true,
+      "category": "geolocation"
     },
     {
       "id": "on-error",
@@ -50,11 +51,12 @@
       "name_en": "On error",
       "description_zh": "发生地理位置错误时触发。",
       "description_en": "Triggered when a geolocation error occurs.",
+      "display_zh": "在出错时",
+      "display_en": "On error",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "geolocation",
-      "display_zh": "在出错时",
-      "display_en": "On error"
+      "canDebug": true,
+      "category": "geolocation"
     }
   ],
   "actions": [
@@ -64,6 +66,8 @@
       "name_en": "Request location",
       "description_zh": "获取一次性请求以获取用户的当前位置。",
       "description_en": "Make a one-off request to get the user's current location.",
+      "display_zh": "请求位置（{0}准确度，超时{1}，最大年龄{2}）",
+      "display_en": "Request location ({0} accuracy, timeout {1}, maximum age {2})",
       "scriptName": "RequestLocation",
       "category": "geolocation",
       "params": [
@@ -72,6 +76,8 @@
           "type": "combo",
           "name_zh": "准确性",
           "name_en": "Accuracy",
+          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery.",
           "items": [
             "normal",
             "high"
@@ -85,18 +91,16 @@
               "zh": "高度",
               "en": "High"
             }
-          },
-          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
-          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery."
+          }
         },
         {
           "id": "timeout",
           "type": "number",
           "name_zh": "超时",
           "name_en": "Timeout",
-          "initialValue": "60",
           "desc_zh": "设备返回位置的最大时长，以秒为单位。",
-          "desc_en": "The maximum length of time in seconds that the device can take to return a position."
+          "desc_en": "The maximum length of time in seconds that the device can take to return a position.",
+          "initialValue": "60"
         },
         {
           "id": "maximum-age",
@@ -106,9 +110,7 @@
           "desc_zh": "缓存结果可记录的最大时长，以秒为单位。使用 0 禁用缓存。",
           "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ],
-      "display_zh": "请求位置（{0}准确度，超时{1}，最大年龄{2}）",
-      "display_en": "Request location ({0} accuracy, timeout {1}, maximum age {2})"
+      ]
     },
     {
       "id": "watch-location",
@@ -116,6 +118,8 @@
       "name_en": "Watch location",
       "description_zh": "开始接收用户位置的定期更新。",
       "description_en": "Start receiving regular updates of the user's location.",
+      "display_zh": "监测位置（{0}准确度，超时{1}，最大时长{2}）",
+      "display_en": "Watch location ({0} accuracy, timeout {1}, maximum age {2})",
       "scriptName": "WatchLocation",
       "category": "geolocation",
       "params": [
@@ -124,6 +128,8 @@
           "type": "combo",
           "name_zh": "准确性",
           "name_en": "Accuracy",
+          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery.",
           "items": [
             "normal",
             "high"
@@ -137,18 +143,16 @@
               "zh": "高度",
               "en": "High"
             }
-          },
-          "desc_zh": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
-          "desc_en": "The position accuracy to request. 'High' may take longer to get results and consume more battery."
+          }
         },
         {
           "id": "timeout",
           "type": "number",
           "name_zh": "超时",
           "name_en": "Timeout",
-          "initialValue": "60",
           "desc_zh": "设备返回位置的最大时长，以秒为单位。",
-          "desc_en": "The maximum length of time in seconds that the device can take to return a position."
+          "desc_en": "The maximum length of time in seconds that the device can take to return a position.",
+          "initialValue": "60"
         },
         {
           "id": "maximum-age",
@@ -158,9 +162,7 @@
           "desc_zh": "缓存结果可保留的最长时间，以秒为单位。 使用 0 禁用缓存。",
           "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ],
-      "display_zh": "监测位置（{0}准确度，超时{1}，最大时长{2}）",
-      "display_en": "Watch location ({0} accuracy, timeout {1}, maximum age {2})"
+      ]
     },
     {
       "id": "stop-watching",
@@ -168,10 +170,10 @@
       "name_en": "Stop watching",
       "description_zh": "停止监测之前的发起的定位",
       "description_en": "Stop watching a previous 'Watch location' action.",
-      "scriptName": "StopWatching",
-      "category": "geolocation",
       "display_zh": "停止监测位置信息",
-      "display_en": "Stop watching location"
+      "display_en": "Stop watching location",
+      "scriptName": "StopWatching",
+      "category": "geolocation"
     }
   ],
   "expressions": [

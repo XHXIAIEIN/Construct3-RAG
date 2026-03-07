@@ -51,7 +51,5 @@
       "zh": "符合[b]{0}[/b]的项目:",
       "en": "Items matching [b]{0}[/b]:"
     }
-  },
-  "description_en": "The Expressions Dictionary lists all the expressions available in your project. This saves you having to remember them or look them up elsewhere. It is shown floating next to the Parameters dialog . It can be hidden or shown by clicking the Find expressions link on the Parameters dialog or by pressing F4 . By default it is semitransparent so it does not distract you while entering parameters. However on small screens if there is no room to display it without overlapping the Parameters dialog, th",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/expressions-dictionary"
+  }
 }

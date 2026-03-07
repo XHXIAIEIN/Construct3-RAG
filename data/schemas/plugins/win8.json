@@ -26,6 +26,7 @@
       "description_en": "",
       "scriptName": "OnLicenseChanged",
       "isTrigger": true,
+      "canDebug": true,
       "category": "purchases"
     },
     {
@@ -80,6 +81,7 @@
       "description_en": "",
       "scriptName": "OnPurchaseSuccess",
       "isTrigger": true,
+      "canDebug": true,
       "category": "purchases"
     },
     {
@@ -90,6 +92,7 @@
       "description_en": "",
       "scriptName": "OnPurchaseFail",
       "isTrigger": true,
+      "canDebug": true,
       "category": "purchases"
     },
     {
@@ -100,6 +103,7 @@
       "description_en": "",
       "scriptName": "OnStoreListing",
       "isTrigger": true,
+      "canDebug": true,
       "category": "purchases"
     },
     {
@@ -110,6 +114,7 @@
       "description_en": "",
       "scriptName": "OnDataChanged",
       "isTrigger": true,
+      "canDebug": true,
       "category": "roaming-storage"
     },
     {
@@ -137,6 +142,7 @@
       "description_en": "",
       "scriptName": "OnShare",
       "isTrigger": true,
+      "canDebug": true,
       "category": "sharing"
     },
     {

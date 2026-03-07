@@ -19,6 +19,7 @@
       "description_en": "",
       "scriptName": "OnLoaded",
       "isTrigger": true,
+      "canDebug": true,
       "category": "twitter"
     }
   ],

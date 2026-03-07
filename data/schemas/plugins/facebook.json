@@ -20,10 +20,10 @@
       "name_en": "Is ready",
       "description_zh": "检测 Facebook API 是否已加载完成，并随时可以使用。",
       "description_en": "True when the Facebook API has loaded and is ready to be used.",
-      "scriptName": "IsReady",
-      "category": "facebook",
       "display_zh": "准备就绪",
-      "display_en": "Is ready"
+      "display_en": "Is ready",
+      "scriptName": "IsReady",
+      "category": "facebook"
     },
     {
       "id": "is-user-logged-in",
@@ -31,10 +31,10 @@
       "name_en": "Is user logged in",
       "description_zh": "检测用户是否已登录 Facebook 账号。",
       "description_en": "True if currently being viewed inside Facebook by a logged in user.",
-      "scriptName": "IsLoggedIn",
-      "category": "facebook",
       "display_zh": "用户已登录",
-      "display_en": "Is user logged in"
+      "display_en": "Is user logged in",
+      "scriptName": "IsLoggedIn",
+      "category": "facebook"
     },
     {
       "id": "on-user-logged-in",
@@ -42,11 +42,11 @@
       "name_en": "On user logged in",
       "description_zh": "用户成功登录时触发。",
       "description_en": "Triggered when the user successfully logs in.",
+      "display_zh": "用户登录成功",
+      "display_en": "On user logged in",
       "scriptName": "OnLogIn",
       "isTrigger": true,
-      "category": "facebook",
-      "display_zh": "用户登录成功",
-      "display_en": "On user logged in"
+      "category": "facebook"
     },
     {
       "id": "on-user-logged-out",
@@ -54,11 +54,11 @@
       "name_en": "On user logged out",
       "description_zh": "用户注销完成时触发。",
       "description_en": "Triggered when the user logs out.",
+      "display_zh": "用户注销完成",
+      "display_en": "On user logged out",
       "scriptName": "OnLogOut",
       "isTrigger": true,
-      "category": "facebook",
-      "display_zh": "用户注销完成",
-      "display_en": "On user logged out"
+      "category": "facebook"
     },
     {
       "id": "on-name-available",
@@ -66,11 +66,11 @@
       "name_en": "On name available",
       "description_zh": "登录后，用户名称可用时触发。",
       "description_en": "Triggered after login when the user's name becomes available.",
+      "display_zh": "已获取到用户名",
+      "display_en": "On name available",
       "scriptName": "OnNameAvailable",
       "isTrigger": true,
-      "category": "facebook",
-      "display_zh": "已获取到用户名",
-      "display_en": "On name available"
+      "category": "facebook"
     },
     {
       "id": "on-ready",
@@ -156,10 +156,10 @@
       "name_en": "Log out",
       "description_zh": "用户注销登录。",
       "description_en": "Log the user out.",
-      "scriptName": "LogOut",
-      "category": "facebook",
       "display_zh": "注销",
-      "display_en": "Log out"
+      "display_en": "Log out",
+      "scriptName": "LogOut",
+      "category": "facebook"
     },
     {
       "id": "log-in",
@@ -167,6 +167,8 @@
       "name_en": "Log in",
       "description_zh": "登录到应用程序，以便访问用户详细信息。",
       "description_en": "Log the user in to the application so their details can be accessed.",
+      "display_zh": "登录 (权限：[i]{0}[/i])",
+      "display_en": "Log in (permissions: [i]{0}[/i])",
       "scriptName": "LogIn2",
       "category": "facebook",
       "params": [
@@ -178,9 +180,7 @@
           "desc_zh": "要请求的权限指令，使用逗号分割多个。如 \"public_profile",
           "desc_en": "Requested permissions, separated by a comma. E.g. \"public_profile\"."
         }
-      ],
-      "display_zh": "登录 (权限：[i]{0}[/i])",
-      "display_en": "Log in (permissions: [i]{0}[/i])"
+      ]
     },
     {
       "id": "prompt-wall-post",
@@ -188,10 +188,10 @@
       "name_en": "Prompt wall post",
       "description_zh": "弹出分享对话框，用户可以输入文字，也可以选择取消。",
       "description_en": "Bring up a dialog where the user can share some text on their wall or choose to cancel.",
-      "scriptName": "PromptWallPost",
-      "category": "prompt-no-permissions-required",
       "display_zh": "发表到动态",
-      "display_en": "Prompt wall post"
+      "display_en": "Prompt wall post",
+      "scriptName": "PromptWallPost",
+      "category": "prompt-no-permissions-required"
     },
     {
       "id": "prompt-to-share-this-app",
@@ -199,10 +199,10 @@
       "name_en": "Prompt to share this app",
       "description_zh": "弹出分享对话框，用户可以共享应用程序的链接，也可以选择取消。",
       "description_en": "Bring up a dialog where the user can share a link to the app on their wall or choose to cancel.",
-      "scriptName": "PromptToShareApp",
-      "category": "prompt-no-permissions-required",
       "display_zh": "提示分享此应用",
-      "display_en": "Prompt to share this app"
+      "display_en": "Prompt to share this app",
+      "scriptName": "PromptToShareApp",
+      "category": "prompt-no-permissions-required"
     },
     {
       "id": "prompt-to-share-link",
@@ -210,6 +210,8 @@
       "name_en": "Prompt to share link",
       "description_zh": "弹出分享对话框，用户可以共享指定的链接，也可以选择取消。",
       "description_en": "Bring up a dialog where the user can share a link on their wall or choose to cancel.",
+      "display_zh": "提示分享链接[b]{0}[/b]",
+      "display_en": "Prompt to share link [b]{0}[/b]",
       "scriptName": "PromptToShareLink",
       "category": "prompt-no-permissions-required",
       "params": [
@@ -218,13 +220,11 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\"",
           "desc_zh": "分享的链接。",
-          "desc_en": "The link to share."
+          "desc_en": "The link to share.",
+          "initialValue": "\"https://\""
         }
-      ],
-      "display_zh": "提示分享链接[b]{0}[/b]",
-      "display_en": "Prompt to share link [b]{0}[/b]"
+      ]
     },
     {
       "id": "publish-wall-post",
@@ -232,6 +232,8 @@
       "name_en": "Publish wall post",
       "description_zh": "将消息发布到用户的墙上。 用户应明确启动此操作。",
       "description_en": "Publish a message to the user's wall.  The user should explicitly initiate this.",
+      "display_zh": "发表文字动态: [i]{0}[/i]",
+      "display_en": "Publish wall post with text [i]{0}[/i]",
       "scriptName": "PublishToWall",
       "category": "publish-to-stream-when-logged-in-with-permission",
       "params": [
@@ -243,9 +245,7 @@
           "desc_zh": "要发布到用户动态中的文本。建议仅在用户发起该操作时才执行此操作。",
           "desc_en": "The text to publish to the user's feed.  It is recommended to only do this when the user initiates the action."
         }
-      ],
-      "display_zh": "发表文字动态: [i]{0}[/i]",
-      "display_en": "Publish wall post with text [i]{0}[/i]"
+      ]
     },
     {
       "id": "publish-link",
@@ -253,6 +253,8 @@
       "name_en": "Publish link",
       "description_zh": "发布指向用户墙的链接。 用户应明确启动此操作。",
       "description_en": "Publish a link to the user's wall.  The user should explicitly initiate this.",
+      "display_zh": "发表链接动态 [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "display_en": "Publish link [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
       "scriptName": "PublishLink",
       "category": "publish-to-stream-when-logged-in-with-permission",
       "params": [
@@ -269,9 +271,9 @@
           "type": "string",
           "name_zh": "URL",
           "name_en": "URL",
-          "initialValue": "\"https://\"",
           "desc_zh": "分享的链接。",
-          "desc_en": "The link to share."
+          "desc_en": "The link to share.",
+          "initialValue": "\"https://\""
         },
         {
           "id": "name",
@@ -305,9 +307,7 @@
           "desc_zh": "要在 '分享' 对话框中使用的图像的URL。必须包含 http://",
           "desc_en": "The URL of an image on your server to use on the Share dialog.  Must include the http://"
         }
-      ],
-      "display_zh": "发表链接动态 [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
-      "display_en": "Publish link [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])"
+      ]
     },
     {
       "id": "publish-score",
@@ -362,10 +362,10 @@
       "name_en": "On CTA click",
       "description_zh": "在 Facebook 可试玩广告中，当用户点击行动号召按钮 (CTA) 时，触发此动作。",
       "description_en": "In a Facebook Playable Ad, use this action when the user interacts with the call-to-action (CTA) in the ad.",
-      "scriptName": "OnCTAClick",
-      "category": "playable-ads",
       "display_zh": "点击行动号召按钮",
-      "display_en": "On CTA click"
+      "display_en": "On CTA click",
+      "scriptName": "OnCTAClick",
+      "category": "playable-ads"
     }
   ],
   "expressions": [

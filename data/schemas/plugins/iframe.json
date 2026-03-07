@@ -17,6 +17,8 @@
       "name_en": "Navigate to URL",
       "description_zh": "在框架中加载新链接",
       "description_en": "Load a new URL in the iframe.",
+      "display_zh": "跳转到 [b]{0}[/b]",
+      "display_en": "Navigate to [b]{0}[/b]",
       "scriptName": "NavigateURL",
       "category": "iframe",
       "params": [
@@ -28,9 +30,7 @@
           "desc_zh": "要加载的链接",
           "desc_en": "The URL to load."
         }
-      ],
-      "display_zh": "跳转到 [b]{0}[/b]",
-      "display_en": "Navigate to [b]{0}[/b]"
+      ]
     },
     {
       "id": "display-html-string",
@@ -38,6 +38,8 @@
       "name_en": "Display HTML string",
       "description_zh": "在框架中加载HTML 如有不受信任的内容请启用沙盒",
       "description_en": "Load a string of HTML content in the iframe. Enable sandbox if there is any untrusted content.",
+      "display_zh": "显示HTML内容 [b]{0}[/b]",
+      "display_en": "Display HTML string [b]{0}[/b]",
       "scriptName": "DisplayHTMLString",
       "category": "iframe",
       "params": [
@@ -49,9 +51,7 @@
           "desc_zh": "要加载的HTML内容字符串。如果有任何不可信任的内容，请启用沙盒模式。",
           "desc_en": "A string of HTML content to load. Enable sandbox if there is any untrusted content."
         }
-      ],
-      "display_zh": "显示HTML内容 [b]{0}[/b]",
-      "display_en": "Display HTML string [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [],

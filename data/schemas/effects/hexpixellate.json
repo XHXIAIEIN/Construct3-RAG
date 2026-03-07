@@ -14,6 +14,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "scale",
@@ -21,7 +25,8 @@
       "name_zh": "scale",
       "name_en": "scale",
       "initialValue": 16,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "scale"
     }
   ]
 }

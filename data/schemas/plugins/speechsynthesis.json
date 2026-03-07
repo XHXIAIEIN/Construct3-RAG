@@ -16,10 +16,10 @@
       "name_en": "Supports speech synthesis",
       "description_zh": "测试设备是否支持语音合成。",
       "description_en": "True if the current browser supports speech synthesis.",
-      "scriptName": "SupportsSpeechSynthesis",
-      "category": "speech-synthesis",
       "display_zh": "支持语音合成",
-      "display_en": "Supports speech synthesis"
+      "display_en": "Supports speech synthesis",
+      "scriptName": "SupportsSpeechSynthesis",
+      "category": "speech-synthesis"
     },
     {
       "id": "is-speaking",
@@ -27,10 +27,10 @@
       "name_en": "Is speaking",
       "description_zh": "检测当前是否正在讲话。",
       "description_en": "True if currently speaking some text.",
-      "scriptName": "IsSpeaking",
-      "category": "speech-synthesis",
       "display_zh": "正在讲话",
-      "display_en": "Is speaking"
+      "display_en": "Is speaking",
+      "scriptName": "IsSpeaking",
+      "category": "speech-synthesis"
     },
     {
       "id": "on-speech-ended",
@@ -38,11 +38,12 @@
       "name_en": "On speech ended",
       "description_zh": "在说完话后被触发",
       "description_en": "Triggered when a phrase finishes being spoken.",
+      "display_zh": "说话结束",
+      "display_en": "On speech ended",
       "scriptName": "OnSpeechEnded",
       "isTrigger": true,
-      "category": "speech-synthesis",
-      "display_zh": "说话结束",
-      "display_en": "On speech ended"
+      "canDebug": true,
+      "category": "speech-synthesis"
     },
     {
       "id": "on-speech-error",
@@ -50,11 +51,12 @@
       "name_en": "On speech error",
       "description_zh": "在语音合成失败时触发",
       "description_en": "Triggered if an error occurs when trying to speak text.",
+      "display_zh": "发声错误",
+      "display_en": "On speech error",
       "scriptName": "OnSpeechError",
       "isTrigger": true,
-      "category": "speech-synthesis",
-      "display_zh": "发声错误",
-      "display_en": "On speech error"
+      "canDebug": true,
+      "category": "speech-synthesis"
     }
   ],
   "actions": [
@@ -64,6 +66,8 @@
       "name_en": "Speak text",
       "description_zh": "用语音合成读出一些文本。",
       "description_en": "Read out some text with speech synthesis.",
+      "display_zh": "朗读文本 [b]{0}[/b] (语言: [i]{1}[/i], 声音来源: [i]{2}[/i], 音量: [i]{3}[/i]dB, 速度: [i]{4}[/i], 音高 [i]{5}[/i])",
+      "display_en": "Speak text [b]{0}[/b] (language [i]{1}[/i], voice URI [i]{2}[/i], volume [i]{3}[/i] dB, rate [i]{4}[/i], pitch [i]{5}[/i])",
       "scriptName": "SpeakText",
       "category": "speech-synthesis",
       "params": [
@@ -104,22 +108,20 @@
           "type": "number",
           "name_zh": "速率",
           "name_en": "Rate",
-          "initialValue": "1",
           "desc_zh": "说话的相对速度，例如 1为正常，0.5为一半快。",
-          "desc_en": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast."
+          "desc_en": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast.",
+          "initialValue": "1"
         },
         {
           "id": "pitch",
           "type": "number",
           "name_zh": "音高",
           "name_en": "Pitch",
-          "initialValue": "1",
           "desc_zh": "说话的相对音高，介于0和2之间。",
-          "desc_en": "The relative pitch at which to speak, between 0 and 2."
+          "desc_en": "The relative pitch at which to speak, between 0 and 2.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "朗读文本 [b]{0}[/b] (语言: [i]{1}[/i], 声音来源: [i]{2}[/i], 音量: [i]{3}[/i]dB, 速度: [i]{4}[/i], 音高 [i]{5}[/i])",
-      "display_en": "Speak text [b]{0}[/b] (language [i]{1}[/i], voice URI [i]{2}[/i], volume [i]{3}[/i] dB, rate [i]{4}[/i], pitch [i]{5}[/i])"
+      ]
     },
     {
       "id": "stop-speaking",
@@ -127,10 +129,10 @@
       "name_en": "Stop speaking",
       "description_zh": "取消任何活动的语音合成。",
       "description_en": "Cancel any active speech synthesis.",
-      "scriptName": "StopSpeaking",
-      "category": "speech-synthesis",
       "display_zh": "停止语音输入",
-      "display_en": "Stop speaking"
+      "display_en": "Stop speaking",
+      "scriptName": "StopSpeaking",
+      "category": "speech-synthesis"
     },
     {
       "id": "pause-speaking",
@@ -138,10 +140,10 @@
       "name_en": "Pause speaking",
       "description_zh": "暂停任何活动的语音合成。",
       "description_en": "Pause any active speech synthesis.",
-      "scriptName": "PauseSpeaking",
-      "category": "speech-synthesis",
       "display_zh": "暂停语音输入",
-      "display_en": "Pause speaking"
+      "display_en": "Pause speaking",
+      "scriptName": "PauseSpeaking",
+      "category": "speech-synthesis"
     },
     {
       "id": "resume-speaking",
@@ -149,10 +151,10 @@
       "name_en": "Resume speaking",
       "description_zh": "恢复先前暂停的语音合成。",
       "description_en": "Resume a previously paused speech synthesis.",
-      "scriptName": "ResumeSpeaking",
-      "category": "speech-synthesis",
       "display_zh": "恢复语音输入",
-      "display_en": "Resume speaking"
+      "display_en": "Resume speaking",
+      "scriptName": "ResumeSpeaking",
+      "category": "speech-synthesis"
     }
   ],
   "expressions": [

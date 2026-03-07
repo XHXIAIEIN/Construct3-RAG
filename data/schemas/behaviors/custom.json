@@ -17,9 +17,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving",
       "display_zh": "{my} 正在移动",
-      "display_en": "{my} is moving"
+      "display_en": "{my} is moving",
+      "scriptName": "IsMoving"
     },
     {
       "id": "compare-speed",
@@ -27,6 +27,8 @@
       "name_en": "Compare speed",
       "description_zh": "比较对象的当前速度。",
       "description_en": "Compare the current speed of the object.",
+      "display_zh": "{my} {0}速度 {1} {2}",
+      "display_en": "{my} {0} speed {1} {2}",
       "scriptName": "CompareSpeed",
       "params": [
         {
@@ -34,6 +36,8 @@
           "type": "combo",
           "name_zh": "比较",
           "name_en": "Which",
+          "desc_zh": "选择要进行比较的速度",
+          "desc_en": "Choose the speed to compare.",
           "items": [
             "overall",
             "horizontal",
@@ -52,9 +56,7 @@
               "zh": "垂直方向",
               "en": "Vertical"
             }
-          },
-          "desc_zh": "选择要进行比较的速度",
-          "desc_en": "Choose the speed to compare."
+          }
         },
         {
           "id": "comparison",
@@ -72,9 +74,7 @@
           "desc_zh": "要进行比较的速度，以像素/秒为单位。",
           "desc_en": "The speed, in pixels per second, to compare to."
         }
-      ],
-      "display_zh": "{my} {0}速度 {1} {2}",
-      "display_en": "{my} {0} speed {1} {2}"
+      ]
     },
     {
       "id": "on-step",
@@ -82,10 +82,10 @@
       "name_en": "On step",
       "description_zh": "对象进行步进运动时触发。",
       "description_en": "Triggered when stepping the object for motion.",
-      "scriptName": "OnCMStep",
-      "isTrigger": true,
       "display_zh": "{my} 触发步进",
-      "display_en": "On {my} step"
+      "display_en": "On {my} step",
+      "scriptName": "OnCMStep",
+      "isTrigger": true
     },
     {
       "id": "on-horizontal-step",
@@ -93,10 +93,10 @@
       "name_en": "On horizontal step",
       "description_zh": "对象在水平方向进行步进移动时触发。",
       "description_en": "Triggered when stepping the object horizontally for motion.",
-      "scriptName": "OnCMHorizStep",
-      "isTrigger": true,
       "display_zh": "{my} 向水平方向步进",
-      "display_en": "On {my} horizontal step"
+      "display_en": "On {my} horizontal step",
+      "scriptName": "OnCMHorizStep",
+      "isTrigger": true
     },
     {
       "id": "on-vertical-step",
@@ -104,10 +104,10 @@
       "name_en": "On vertical step",
       "description_zh": "对象在垂直方向进行步进移动时触发。",
       "description_en": "Triggered when stepping the object vertically for motion.",
-      "scriptName": "OnCMVertStep",
-      "isTrigger": true,
       "display_zh": "{my} 向垂直方向步进",
-      "display_en": "On {my} vertical step"
+      "display_en": "On {my} vertical step",
+      "scriptName": "OnCMVertStep",
+      "isTrigger": true
     },
     {
       "id": "is-enabled",
@@ -115,9 +115,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -127,6 +127,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -134,6 +136,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -147,13 +151,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-angle-of-motion",
@@ -161,6 +161,8 @@
       "name_en": "Set angle of motion",
       "description_zh": "设置对象当前正在移动的角度的角度。",
       "description_en": "Set the angle the object is currently moving at.",
+      "display_zh": "设置 {my}移动角度为[i]{0}[/i]°",
+      "display_en": "Set {my} angle of motion to [i]{0}[/i]",
       "scriptName": "SetAngleOfMotion",
       "category": "angle-of-motion",
       "params": [
@@ -172,9 +174,7 @@
           "desc_zh": "设置移动角度，以角度为单位。",
           "desc_en": "The new angle of motion, in degrees."
         }
-      ],
-      "display_zh": "设置 {my}移动角度为[i]{0}[/i]°",
-      "display_en": "Set {my} angle of motion to [i]{0}[/i]"
+      ]
     },
     {
       "id": "rotate-clockwise",
@@ -182,6 +182,8 @@
       "name_en": "Rotate clockwise",
       "description_zh": "将运动角度进行顺时针旋转",
       "description_en": "Rotate the angle of motion in a clockwise direction.",
+      "display_zh": "{my} 顺时针旋转[i]{0}[/i]°",
+      "display_en": "Rotate {my} angle of motion clockwise [i]{0}[/i] degrees",
       "scriptName": "RotateAngleOfMotionClockwise",
       "category": "angle-of-motion",
       "params": [
@@ -193,9 +195,7 @@
           "desc_zh": "顺时针旋转角度，以度数为单位。",
           "desc_en": "Amount to rotate clockwise, in degrees."
         }
-      ],
-      "display_zh": "{my} 顺时针旋转[i]{0}[/i]°",
-      "display_en": "Rotate {my} angle of motion clockwise [i]{0}[/i] degrees"
+      ]
     },
     {
       "id": "rotate-counter-clockwise",
@@ -203,6 +203,8 @@
       "name_en": "Rotate counter-clockwise",
       "description_zh": "将运动角度进行逆时针旋转",
       "description_en": "Rotate the angle of motion in a counter-clockwise direction.",
+      "display_zh": "{my} 逆时针旋转[i]{0}[/i]°",
+      "display_en": "Rotate {my} angle of motion counter-clockwise [i]{0}[/i] degrees",
       "scriptName": "RotateAngleOfMotionCounterClockwise",
       "category": "angle-of-motion",
       "params": [
@@ -214,9 +216,7 @@
           "desc_zh": "逆时针旋转的角度，以度数为单位。",
           "desc_en": "Amount to rotate counter-clockwise, in degrees."
         }
-      ],
-      "display_zh": "{my} 逆时针旋转[i]{0}[/i]°",
-      "display_en": "Rotate {my} angle of motion counter-clockwise [i]{0}[/i] degrees"
+      ]
     },
     {
       "id": "stop",
@@ -224,10 +224,10 @@
       "name_en": "Stop",
       "description_zh": "设置速度为0",
       "description_en": "Set the speed to zero.",
-      "scriptName": "Stop",
-      "category": "velocity",
       "display_zh": "停止 {my}",
-      "display_en": "Stop {my}"
+      "display_en": "Stop {my}",
+      "scriptName": "Stop",
+      "category": "velocity"
     },
     {
       "id": "reverse",
@@ -235,6 +235,8 @@
       "name_en": "Reverse",
       "description_zh": "进行反向移动",
       "description_en": "Invert the direction of motion.",
+      "display_zh": "反转{my} ({0})",
+      "display_en": "Reverse {my} ({0})",
       "scriptName": "Reverse",
       "category": "velocity",
       "params": [
@@ -243,6 +245,8 @@
           "type": "combo",
           "name_zh": "坐标轴",
           "name_en": "Axes",
+          "desc_zh": "选择要翻转的坐标轴",
+          "desc_en": "Choose which axes to reverse on.",
           "items": [
             "both",
             "horizontally",
@@ -261,13 +265,9 @@
               "zh": "垂直",
               "en": "Vertically"
             }
-          },
-          "desc_zh": "选择要翻转的坐标轴",
-          "desc_en": "Choose which axes to reverse on."
+          }
         }
-      ],
-      "display_zh": "反转{my} ({0})",
-      "display_en": "Reverse {my} ({0})"
+      ]
     },
     {
       "id": "set-speed",
@@ -275,6 +275,8 @@
       "name_en": "Set speed",
       "description_zh": "设置对象当前运动速度",
       "description_en": "Set the object's current speed.",
+      "display_zh": "设置 {my}{0}速度为[i]{1}[/i]",
+      "display_en": "Set {my} {0} speed to [i]{1}[/i]",
       "scriptName": "SetSpeed",
       "category": "velocity",
       "params": [
@@ -283,6 +285,8 @@
           "type": "combo",
           "name_zh": "选择",
           "name_en": "Which",
+          "desc_zh": "选择要设置的速度",
+          "desc_en": "Choose the speed to set.",
           "items": [
             "overall",
             "horizontal",
@@ -301,9 +305,7 @@
               "zh": "垂直方向",
               "en": "Vertical"
             }
-          },
-          "desc_zh": "选择要设置的速度",
-          "desc_en": "Choose the speed to set."
+          }
         },
         {
           "id": "speed",
@@ -313,9 +315,7 @@
           "desc_zh": "设置对象的新速度，以像素/秒为单位。",
           "desc_en": "The new speed of the object to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}{0}速度为[i]{1}[/i]",
-      "display_en": "Set {my} {0} speed to [i]{1}[/i]"
+      ]
     },
     {
       "id": "accelerate",
@@ -323,6 +323,8 @@
       "name_en": "Accelerate",
       "description_zh": "让对象向前或沿轴方向加速。",
       "description_en": "Accelerate the object forwards or on an axis.",
+      "display_zh": "{my}{0}加速 (加速度: [i]{1}[/i])",
+      "display_en": "Accelerate {my} {0} [i]{1}[/i]",
       "scriptName": "Accelerate",
       "category": "velocity",
       "params": [
@@ -331,6 +333,8 @@
           "type": "combo",
           "name_zh": "选择",
           "name_en": "Which",
+          "desc_zh": "选择加速的方式",
+          "desc_en": "Choose which way to accelerate.",
           "items": [
             "forwards",
             "horizontally",
@@ -349,9 +353,7 @@
               "zh": "垂直方向",
               "en": "Vertically"
             }
-          },
-          "desc_zh": "选择加速的方式",
-          "desc_en": "Choose which way to accelerate."
+          }
         },
         {
           "id": "acceleration",
@@ -361,9 +363,7 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The acceleration, in pixels per second per second."
         }
-      ],
-      "display_zh": "{my}{0}加速 (加速度: [i]{1}[/i])",
-      "display_en": "Accelerate {my} {0} [i]{1}[/i]"
+      ]
     },
     {
       "id": "accelerate-toward-angle",
@@ -371,6 +371,8 @@
       "name_en": "Accelerate toward angle",
       "description_zh": "使对象向指定角度的方向加速移动。",
       "description_en": "Accelerate the object at an angle.",
+      "display_zh": "{my} 朝角度加速 (加速度: [i]{0}[/i], 角度: [i]{1}[/i]°)",
+      "display_en": "Accelerate {my} [i]{0}[/i] at angle [i]{1}[/i]",
       "scriptName": "AccelerateAngle",
       "category": "velocity",
       "params": [
@@ -390,9 +392,7 @@
           "desc_zh": "向前加速移动的角度，以度数为单位。",
           "desc_en": "The angle, in degrees, to accelerate toward."
         }
-      ],
-      "display_zh": "{my} 朝角度加速 (加速度: [i]{0}[/i], 角度: [i]{1}[/i]°)",
-      "display_en": "Accelerate {my} [i]{0}[/i] at angle [i]{1}[/i]"
+      ]
     },
     {
       "id": "accelerate-toward-position",
@@ -400,6 +400,8 @@
       "name_en": "Accelerate toward position",
       "description_zh": "使对象向指定位置加速移动。",
       "description_en": "Accelerate the object toward a position.",
+      "display_zh": "{my} 朝位置加速 (加速度: [i]{0}[/i], 目标: [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Accelerate {my} [i]{0}[/i] toward ([i]{1}[/i], [i]{2}[/i])",
       "scriptName": "AcceleratePos",
       "category": "velocity",
       "params": [
@@ -427,9 +429,7 @@
           "desc_zh": "朝向场景Y轴方向加速。",
           "desc_en": "The Y co-ordinate in the layout to accelerate toward."
         }
-      ],
-      "display_zh": "{my} 朝位置加速 (加速度: [i]{0}[/i], 目标: [i]{1}[/i], [i]{2}[/i])",
-      "display_en": "Accelerate {my} [i]{0}[/i] toward ([i]{1}[/i], [i]{2}[/i])"
+      ]
     },
     {
       "id": "stop-stepping",
@@ -437,6 +437,8 @@
       "name_en": "Stop stepping",
       "description_zh": "停止当前的步进模式，防止在这一帧触发更多的步进。",
       "description_en": "Stop the current stepping, preventing any more step triggers firing this tick.",
+      "display_zh": "{my} 停止步进 ({0})",
+      "display_en": "Stop {my} stepping ({0})",
       "scriptName": "StopStepping",
       "category": "velocity",
       "params": [
@@ -445,6 +447,8 @@
           "type": "combo",
           "name_zh": "位置",
           "name_en": "Position",
+          "desc_zh": "选择生成的对象位置",
+          "desc_en": "Choose the resulting object position.",
           "items": [
             "go-back-a-step",
             "stay-at-current-position"
@@ -458,13 +462,9 @@
               "zh": "停留在当前位置",
               "en": "Stay at current position"
             }
-          },
-          "desc_zh": "选择生成的对象位置",
-          "desc_en": "Choose the resulting object position."
+          }
         }
-      ],
-      "display_zh": "{my} 停止步进 ({0})",
-      "display_en": "Stop {my} stepping ({0})"
+      ]
     },
     {
       "id": "push-out-solid",
@@ -472,6 +472,8 @@
       "name_en": "Push out solid",
       "description_zh": "此对象与具有 '实体' 的对象发生重叠时，将此对象朝向指定的方向推开。",
       "description_en": "Push the object to a space if it is overlapping a solid.",
+      "display_zh": "撞击到 {0} 后推开 {my}",
+      "display_en": "Push {my} out of solid ({0})",
       "scriptName": "PushOutSolid",
       "category": "velocity",
       "params": [
@@ -480,6 +482,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Direction",
+          "desc_zh": "选择推开的方式",
+          "desc_en": "Choose the method of push out.",
           "items": [
             "opposite-angle",
             "nearest",
@@ -513,13 +517,9 @@
               "zh": "向右",
               "en": "Right"
             }
-          },
-          "desc_zh": "选择推开的方式",
-          "desc_en": "Choose the method of push out."
+          }
         }
-      ],
-      "display_zh": "撞击到 {0} 后推开 {my}",
-      "display_en": "Push {my} out of solid ({0})"
+      ]
     },
     {
       "id": "push-out-solid-at-angle",
@@ -527,6 +527,8 @@
       "name_en": "Push out solid at angle",
       "description_zh": "此对象与具有 '实体' 的对象发生重叠时，将此对象朝向指定的角度方向推开。",
       "description_en": "Push the object to a space at an angle if it is overlapping a solid.",
+      "display_zh": "撞击到实体时朝 {0}° 推开{my}",
+      "display_en": "Push {my} out of solid at angle {0}",
       "scriptName": "PushOutSolidAngle",
       "category": "velocity",
       "params": [
@@ -538,9 +540,7 @@
           "desc_zh": "将对象反弹的角度。",
           "desc_en": "Angle, in degrees, to push the object out at."
         }
-      ],
-      "display_zh": "撞击到实体时朝 {0}° 推开{my}",
-      "display_en": "Push {my} out of solid at angle {0}"
+      ]
     }
   ],
   "expressions": [

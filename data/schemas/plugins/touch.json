@@ -18,11 +18,11 @@
       "name_en": "On hold",
       "description_zh": "按住屏幕任意位置并保持一段时间时触发。",
       "description_en": "Triggered when a touch held in the same place for a time.",
+      "display_zh": "长按屏幕",
+      "display_en": "On hold gesture",
       "scriptName": "OnHoldGesture",
       "isTrigger": true,
-      "category": "gestures",
-      "display_zh": "长按屏幕",
-      "display_en": "On hold gesture"
+      "category": "gestures"
     },
     {
       "id": "on-tap",
@@ -30,11 +30,11 @@
       "name_en": "On tap",
       "description_zh": "在屏幕任意位置进行点击手势时触发。（点击手势：在相同位置快速触摸并松开。）",
       "description_en": "Triggered when a touch is quickly released from its start location.",
+      "display_zh": "点击屏幕",
+      "display_en": "On tap gesture",
       "scriptName": "OnTapGesture",
       "isTrigger": true,
-      "category": "gestures",
-      "display_zh": "点击屏幕",
-      "display_en": "On tap gesture"
+      "category": "gestures"
     },
     {
       "id": "on-double-tap",
@@ -42,11 +42,11 @@
       "name_en": "On double-tap",
       "description_zh": "在屏幕任意位置，快速进行两次点击手势时触发。",
       "description_en": "Triggered when two taps occur in quick succession.",
+      "display_zh": "双击屏幕",
+      "display_en": "On double-tap gesture",
       "scriptName": "OnDoubleTapGesture",
       "isTrigger": true,
-      "category": "gestures",
-      "display_zh": "双击屏幕",
-      "display_en": "On double-tap gesture"
+      "category": "gestures"
     },
     {
       "id": "on-hold-over-object",
@@ -54,6 +54,8 @@
       "name_en": "On hold over object",
       "description_zh": "按住对象，并保持一段时间时触发。",
       "description_en": "Triggered when a hold gesture is made over an object.",
+      "display_zh": "长按 {0}",
+      "display_en": "On hold gesture over {0}",
       "scriptName": "OnHoldGestureObject",
       "isTrigger": true,
       "category": "gestures",
@@ -66,9 +68,7 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ],
-      "display_zh": "长按 {0}",
-      "display_en": "On hold gesture over {0}"
+      ]
     },
     {
       "id": "on-tap-object",
@@ -76,6 +76,8 @@
       "name_en": "On tap object",
       "description_zh": "在对象上进行点击手势时触发。（点击手势：在相同位置快速触摸并松开。）",
       "description_en": "Triggered when a tap gesture is made on an object.",
+      "display_zh": "点击 {0}",
+      "display_en": "On tap gesture on {0}",
       "scriptName": "OnTapGestureObject",
       "isTrigger": true,
       "category": "gestures",
@@ -88,9 +90,7 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ],
-      "display_zh": "点击 {0}",
-      "display_en": "On tap gesture on {0}"
+      ]
     },
     {
       "id": "on-double-tap-object",
@@ -98,6 +98,8 @@
       "name_en": "On double-tap object",
       "description_zh": "在对象上快速进行两次点击手势时触发。",
       "description_en": "Triggered when a double-tap gesture is made on an object.",
+      "display_zh": "双击 {0}",
+      "display_en": "On double-tap gesture on {0}",
       "scriptName": "OnDoubleTapGestureObject",
       "isTrigger": true,
       "category": "gestures",
@@ -110,9 +112,7 @@
           "desc_zh": "选择要检查的对象。",
           "desc_en": "Choose the object to check."
         }
-      ],
-      "display_zh": "双击 {0}",
-      "display_en": "On double-tap gesture on {0}"
+      ]
     },
     {
       "id": "device-orientation-supported",
@@ -140,6 +140,8 @@
       "name_en": "Compare orientation",
       "description_zh": "比较设备的当前方向，或倾斜角度。",
       "description_en": "Compare the current orientation (or tilt) of the device.",
+      "display_zh": "[b]{0}[/b] 方向 {1} [b]{2}[/b]",
+      "display_en": "[b]{0}[/b] orientation {1} [b]{2}[/b]",
       "scriptName": "CompareOrientation",
       "category": "orientation-motion",
       "params": [
@@ -148,6 +150,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Orientation",
+          "desc_zh": "要比较的方向。alpha: 水平方向, beta: 前后倾斜, gamma: 左右倾斜。",
+          "desc_en": "Choose the orientation to compare (alpha = compass direction, beta = front-to-back tilt, gamma = left-to-right tilt).",
           "items": [
             "alpha",
             "beta",
@@ -166,9 +170,7 @@
               "zh": "Gamma",
               "en": "Gamma"
             }
-          },
-          "desc_zh": "要比较的方向。alpha: 水平方向, beta: 前后倾斜, gamma: 左右倾斜。",
-          "desc_en": "Choose the orientation to compare (alpha = compass direction, beta = front-to-back tilt, gamma = left-to-right tilt)."
+          }
         },
         {
           "id": "comparison",
@@ -186,9 +188,7 @@
           "desc_zh": "要比较的角度方向，以度为单位。",
           "desc_en": "The orientation to compare to, in degrees."
         }
-      ],
-      "display_zh": "[b]{0}[/b] 方向 {1} [b]{2}[/b]",
-      "display_en": "[b]{0}[/b] orientation {1} [b]{2}[/b]"
+      ]
     },
     {
       "id": "compare-acceleration",
@@ -196,6 +196,8 @@
       "name_en": "Compare acceleration",
       "description_zh": "比较设备沿轴的加速度。",
       "description_en": "Compare the acceleration of the device along an axis.",
+      "display_zh": "{0} 加速度 {1} [b]{2}[/b]",
+      "display_en": "{0} acceleration {1} [b]{2}[/b]",
       "scriptName": "CompareAcceleration",
       "category": "orientation-motion",
       "params": [
@@ -204,6 +206,8 @@
           "type": "combo",
           "name_zh": "轴",
           "name_en": "Axis",
+          "desc_zh": "选择要比较加速度的轴，以及测量是否应包括重力。",
+          "desc_en": "Choose the axis to compare acceleration for, and whether the measurement should include the force of gravity.",
           "items": [
             "x-with-gravity",
             "y-with-gravity",
@@ -237,9 +241,7 @@
               "zh": "Z (不计算重力)",
               "en": "Z (without gravity)"
             }
-          },
-          "desc_zh": "选择要比较加速度的轴，以及测量是否应包括重力。",
-          "desc_en": "Choose the axis to compare acceleration for, and whether the measurement should include the force of gravity."
+          }
         },
         {
           "id": "comparison",
@@ -257,9 +259,7 @@
           "desc_zh": "要比较的加速度，单位为m/s^2。",
           "desc_en": "The acceleration to compare to, in m/s^2."
         }
-      ],
-      "display_zh": "{0} 加速度 {1} [b]{2}[/b]",
-      "display_en": "{0} acceleration {1} [b]{2}[/b]"
+      ]
     },
     {
       "id": "on-permission-granted",
@@ -267,6 +267,8 @@
       "name_en": "On permission granted",
       "description_zh": "执行 '请求权限' 动作后，权限被允许时触发。",
       "description_en": "Triggered after the 'Request permission' action if the permission was granted.",
+      "display_zh": "[i]{0}[/i]权限被允许",
+      "display_en": "On [i]{0}[/i] permission granted",
       "scriptName": "OnPermissionGranted",
       "isTrigger": true,
       "category": "orientation-motion",
@@ -276,6 +278,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "请求的权限类型。",
+          "desc_en": "The type of permission.",
           "items": [
             "orientation",
             "motion"
@@ -289,13 +293,9 @@
               "zh": "运动",
               "en": "Motion"
             }
-          },
-          "desc_zh": "请求的权限类型。",
-          "desc_en": "The type of permission."
+          }
         }
-      ],
-      "display_zh": "[i]{0}[/i]权限被允许",
-      "display_en": "On [i]{0}[/i] permission granted"
+      ]
     },
     {
       "id": "on-permission-denied",
@@ -303,6 +303,8 @@
       "name_en": "On permission denied",
       "description_zh": "执行 '请求权限' 动作后，权限请求被拒绝时触发。",
       "description_en": "Triggered after the 'Request permission' action if the permission was denied.",
+      "display_zh": "请求[i]{0}[/i]权限被拒绝",
+      "display_en": "On [i]{0}[/i] permission denied",
       "scriptName": "OnPermissionDenied",
       "isTrigger": true,
       "category": "orientation-motion",
@@ -312,6 +314,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "请求的权限类型。",
+          "desc_en": "The type of permission.",
           "items": [
             "orientation",
             "motion"
@@ -325,13 +329,9 @@
               "zh": "运动",
               "en": "Motion"
             }
-          },
-          "desc_zh": "请求的权限类型。",
-          "desc_en": "The type of permission."
+          }
         }
-      ],
-      "display_zh": "请求[i]{0}[/i]权限被拒绝",
-      "display_en": "On [i]{0}[/i] permission denied"
+      ]
     },
     {
       "id": "on-any-touch-start",
@@ -339,11 +339,11 @@
       "name_en": "On any touch start",
       "description_zh": "任何触摸手势输入开始时触发。",
       "description_en": "Triggered when any touch input begins.",
+      "display_zh": "任意按住开始",
+      "display_en": "On any touch start",
       "scriptName": "OnTouchStart",
       "isTrigger": true,
-      "category": "touch",
-      "display_zh": "任意按住开始",
-      "display_en": "On any touch start"
+      "category": "touch"
     },
     {
       "id": "on-any-touch-end",
@@ -351,11 +351,11 @@
       "name_en": "On any touch end",
       "description_zh": "任何触摸手势输入结束时触发。",
       "description_en": "Triggered when any touch input ends.",
+      "display_zh": "任意按住结束",
+      "display_en": "On any touch end",
       "scriptName": "OnTouchEnd",
       "isTrigger": true,
-      "category": "touch",
-      "display_zh": "任意按住结束",
-      "display_en": "On any touch end"
+      "category": "touch"
     },
     {
       "id": "is-in-touch",
@@ -363,10 +363,10 @@
       "name_en": "Is in touch",
       "description_zh": "检测当前是否有任意手指正在与设备接触。",
       "description_en": "True if any touch is currently in contact with the device.",
-      "scriptName": "IsInTouch",
-      "category": "touch",
       "display_zh": "正在按住",
-      "display_en": "Is in touch"
+      "display_en": "Is in touch",
+      "scriptName": "IsInTouch",
+      "category": "touch"
     },
     {
       "id": "on-touched-object",
@@ -374,6 +374,8 @@
       "name_en": "On touched object",
       "description_zh": "当对象被触摸时触发。",
       "description_en": "Triggered when an object is touched.",
+      "display_zh": "触摸{0} ([i]{1}[/i])",
+      "display_en": "On touched {0} ([i]{1}[/i])",
       "scriptName": "OnTouchObject",
       "isTrigger": true,
       "category": "touch",
@@ -391,6 +393,8 @@
           "type": "combo",
           "name_zh": "时机",
           "name_en": "Type",
+          "desc_zh": "在触摸对象开始或结束时触发。",
+          "desc_en": "Whether to trigger when starting or ending a touch on the object.",
           "items": [
             "start",
             "end"
@@ -404,13 +408,9 @@
               "zh": "结束",
               "en": "end"
             }
-          },
-          "desc_zh": "在触摸对象开始或结束时触发。",
-          "desc_en": "Whether to trigger when starting or ending a touch on the object."
+          }
         }
-      ],
-      "display_zh": "触摸{0} ([i]{1}[/i])",
-      "display_en": "On touched {0} ([i]{1}[/i])"
+      ]
     },
     {
       "id": "is-touching-object",
@@ -418,6 +418,8 @@
       "name_en": "Is touching object",
       "description_zh": "处于按住的状态且触摸点在对象上时触发。",
       "description_en": "Test if in a touch and the touch point is over an object.",
+      "display_zh": "正在触摸 {0}",
+      "display_en": "Is touching {0}",
       "scriptName": "IsTouchingObject",
       "category": "touch",
       "params": [
@@ -429,9 +431,7 @@
           "desc_zh": "选择要检查被触摸的对象。",
           "desc_en": "Choose the object to check for being touched."
         }
-      ],
-      "display_zh": "正在触摸 {0}",
-      "display_en": "Is touching {0}"
+      ]
     },
     {
       "id": "compare-touch-speed",
@@ -439,6 +439,8 @@
       "name_en": "Compare touch speed",
       "description_zh": "比较触控点的速度，用于检测特定的手势，如轻扫、滑动、捏合等。",
       "description_en": "Compare the speed of a touch, e.g. to detect a swipe.",
+      "display_zh": "触控点[b]{0}[/b]滑动速度 {1}[b]{2} [/b]",
+      "display_en": "Touch [b]{0}[/b] speed {1} [b]{2}[/b]",
       "scriptName": "CompareTouchSpeed",
       "category": "touch",
       "params": [
@@ -466,9 +468,7 @@
           "desc_zh": "要比较的速度，以每秒绝对像素为单位。",
           "desc_en": "Speed to compare to, in absolute pixels per second."
         }
-      ],
-      "display_zh": "触控点[b]{0}[/b]滑动速度 {1}[b]{2} [/b]",
-      "display_en": "Touch [b]{0}[/b] speed {1} [b]{2}[/b]"
+      ]
     },
     {
       "id": "on-nth-touch-start",
@@ -476,6 +476,8 @@
       "name_en": "On Nth touch start",
       "description_zh": "用于检测多指手势，是否开始触控。",
       "description_en": "Triggered when a particular touch input begins.",
+      "display_zh": "第 {0} 触控点按下",
+      "display_en": "On touch {0} start",
       "scriptName": "OnNthTouchStart",
       "isTrigger": true,
       "category": "touch",
@@ -488,9 +490,7 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ],
-      "display_zh": "第 {0} 触控点按下",
-      "display_en": "On touch {0} start"
+      ]
     },
     {
       "id": "on-nth-touch-end",
@@ -498,6 +498,8 @@
       "name_en": "On Nth touch end",
       "description_zh": "用于检测多指手势，是否结束触控。",
       "description_en": "Triggered when a particular touch input ends.",
+      "display_zh": "第 {0} 触控点松开",
+      "display_en": "On touch {0} end",
       "scriptName": "OnNthTouchEnd",
       "isTrigger": true,
       "category": "touch",
@@ -510,9 +512,7 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ],
-      "display_zh": "第 {0} 触控点松开",
-      "display_en": "On touch {0} end"
+      ]
     },
     {
       "id": "has-nth-touch",
@@ -520,6 +520,8 @@
       "name_en": "Has Nth touch",
       "description_zh": "用于检测当前是否有多个手指正在接触屏幕。",
       "description_en": "True if a particular touch is currently in contact with the device.",
+      "display_zh": "存在第 {0} 触控点",
+      "display_en": "Has touch {0}",
       "scriptName": "HasNthTouch",
       "category": "touch",
       "params": [
@@ -531,9 +533,7 @@
           "desc_zh": "要检测的触控点的索引，从 0 开始计数。如第 1 根手指的索引为 0，第 2 根手指的索引为1... 以此类推。",
           "desc_en": "Enter a zero-based index of the touch to test, e.g. 0 for first touch, 1 for second, etc."
         }
-      ],
-      "display_zh": "存在第 {0} 触控点",
-      "display_en": "Has touch {0}"
+      ]
     }
   ],
   "actions": [
@@ -543,6 +543,8 @@
       "name_en": "Request permission",
       "description_zh": "请求使用设备倾斜角传感器等的权限",
       "description_en": "Request permission to use device orientation or motion.",
+      "display_zh": "请求[b]{0}[/b]权限",
+      "display_en": "Request [b]{0}[/b] permission",
       "scriptName": "RequestPermission",
       "category": "orientation-motion",
       "params": [
@@ -551,6 +553,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "权限类型",
+          "desc_en": "The type of permission.",
           "items": [
             "orientation",
             "motion"
@@ -564,13 +568,9 @@
               "zh": "运动",
               "en": "Motion"
             }
-          },
-          "desc_zh": "权限类型",
-          "desc_en": "The type of permission."
+          }
         }
-      ],
-      "display_zh": "请求[b]{0}[/b]权限",
-      "display_en": "Request [b]{0}[/b] permission"
+      ]
     }
   ],
   "expressions": [
@@ -682,6 +682,7 @@
       "description_en": "Get the primary touch X co-ordinate in the layout.",
       "expressionName": "X",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch"
     },
     {
@@ -692,6 +693,7 @@
       "description_en": "Get the primary touch Y co-ordinate in the layout.",
       "expressionName": "Y",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch"
     },
     {
@@ -732,6 +734,7 @@
       "description_en": "Get a touch X co-ordinate in the layout from a zero-based index of the touch.",
       "expressionName": "XAt",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch",
       "params": [
         {
@@ -752,6 +755,7 @@
       "description_en": "Get a touch Y co-ordinate in the layout from a zero-based index of the touch.",
       "expressionName": "YAt",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch",
       "params": [
         {
@@ -872,6 +876,7 @@
       "description_en": "Get a touch X co-ordinate in the layout for a touch with a specific ID.",
       "expressionName": "XForID",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch",
       "params": [
         {
@@ -892,6 +897,7 @@
       "description_en": "Get a touch Y co-ordinate in the layout for a touch with a specific ID.",
       "expressionName": "YForID",
       "returnType": "number",
+      "isVariadicParameters": true,
       "category": "touch",
       "params": [
         {

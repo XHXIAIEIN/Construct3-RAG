@@ -3,10 +3,6 @@
   "name_zh": "Cordova 选项",
   "name_en": "Cordova options",
   "strings": {
-    "hide-status-bar": {
-      "zh": "隐藏状态栏",
-      "en": "Hide status bar"
-    },
     "permissions.vibrate": {
       "zh": "请求振动权限",
       "en": "Require Vibrate permission"
@@ -130,8 +126,10 @@
     "android-target-version-info": {
       "zh": "Android {0} (API level {1})",
       "en": "Android {0} (API level {1})"
+    },
+    "hide-status-bar": {
+      "zh": "隐藏状态栏",
+      "en": "Hide status bar"
     }
-  },
-  "description_en": "Paid plans only The Cordova options dialog is used to change settings for an Android or iOS export, both of which are built with Cordova. For more information, also refer to the tutorial How to publish mobile apps . The Cordova options dialog The dialog shown is for an Android export, but the appearance is similar for an iOS export. The following options are available. Min. version Choose the minimum Android or iOS version that the app will support. A lower minimum version will make your app ava",
-  "url": "/en/make-games/manuals/construct-3/interface/dialogs/cordova-options"
+  }
 }

@@ -408,23 +408,439 @@
       "name_en": "Asset Browser settings"
     }
   },
-  "views": {
-    "layout-view": {
-      "name_en": "The Layout View"
+  "views": {},
+  "mainMenu": {
+    "project-menu": {
+      "id": "project-menu",
+      "name_zh": "",
+      "name_en": "",
+      "items": [
+        {
+          "id": "menu-name",
+          "name_zh": "项目",
+          "name_en": "Project"
+        },
+        {
+          "id": "new",
+          "name_zh": "新建",
+          "name_en": "New"
+        },
+        {
+          "id": "new-tooltip",
+          "name_zh": "创建一个新的工程项目。",
+          "name_en": "Create a new project or template."
+        },
+        {
+          "id": "save",
+          "name_zh": "保存",
+          "name_en": "Save"
+        },
+        {
+          "id": "save-tooltip",
+          "name_zh": "将项目保存回其最后位置。",
+          "name_en": "Save the project back to its last location."
+        },
+        {
+          "id": "download-a-copy",
+          "name_zh": "下载副本",
+          "name_en": "Download a copy"
+        },
+        {
+          "id": "download-a-copy-tooltip",
+          "name_zh": "通过浏览器下载副本来保存当前项目。",
+          "name_en": "Save the current project by downloading a copy via the browser."
+        },
+        {
+          "id": "save-as",
+          "name_zh": "另存为",
+          "name_en": "Save as"
+        },
+        {
+          "id": "save-as-single-file",
+          "name_zh": "保存为单个文件...",
+          "name_en": "Save as single file..."
+        },
+        {
+          "id": "save-as-single-file-tooltip",
+          "name_zh": "将项目保存到新的本地文件 (.c3p)",
+          "name_en": "Save the project to a new local file (.c3p)."
+        },
+        {
+          "id": "save-as-folder",
+          "name_zh": "保存为项目文件夹...",
+          "name_en": "Save as project folder..."
+        },
+        {
+          "id": "save-as-folder-tooltip",
+          "name_zh": "将项目保存到文件夹。",
+          "name_en": "Save the project to a folder."
+        },
+        {
+          "id": "cloud-save",
+          "name_zh": "云储存",
+          "name_en": "Cloud save"
+        },
+        {
+          "id": "cloud-save-tooltip",
+          "name_zh": "保存到云存储服务。",
+          "name_en": "Save to a cloud storage service."
+        },
+        {
+          "id": "preview",
+          "name_zh": "预览项目",
+          "name_en": "Preview"
+        },
+        {
+          "id": "preview-tooltip",
+          "name_zh": "运行当前项目的预览。",
+          "name_en": "Run a preview of the current project."
+        },
+        {
+          "id": "preview-splitter",
+          "name_zh": "其他预览选项",
+          "name_en": "Other preview options"
+        },
+        {
+          "id": "debug",
+          "name_zh": "调试场景",
+          "name_en": "Debug"
+        },
+        {
+          "id": "debug-tooltip",
+          "name_zh": "使用额外的诊断和工具运行当前项目的调试预览。",
+          "name_en": "Run a debug preview of the current project with extra diagnostics and tools."
+        },
+        {
+          "id": "remote-preview",
+          "name_zh": "远程预览",
+          "name_en": "Remote preview"
+        },
+        {
+          "id": "remote-preview-tooltip",
+          "name_zh": "远程预览当前项目。",
+          "name_en": "Run a preview of the current project over the web."
+        },
+        {
+          "id": "export",
+          "name_zh": "导出项目",
+          "name_en": "Export"
+        },
+        {
+          "id": "export-tooltip",
+          "name_zh": "将你的游戏导出到特定的平台。",
+          "name_en": "Export the project for publishing to a platform."
+        },
+        {
+          "id": "close-project",
+          "name_zh": "关闭项目",
+          "name_en": "Close project"
+        },
+        {
+          "id": "close-project-tooltip",
+          "name_zh": "关闭当前项目。",
+          "name_en": "Close the current project."
+        },
+        {
+          "id": "open",
+          "name_zh": "打开",
+          "name_en": "Open"
+        },
+        {
+          "id": "open-tooltip",
+          "name_zh": "打开现有项目。",
+          "name_en": "Open an existing project."
+        },
+        {
+          "id": "open-local-file",
+          "name_zh": "打开本地文件",
+          "name_en": "Open local file"
+        },
+        {
+          "id": "open-local-file-tooltip",
+          "name_zh": "选择要在此设备上打开的文件。",
+          "name_en": "Choose a file on this device to open."
+        },
+        {
+          "id": "open-recent",
+          "name_zh": "最近打开",
+          "name_en": "Open recent"
+        },
+        {
+          "id": "open-recent-tooltip",
+          "name_zh": "打开最近查看的项目",
+          "name_en": "Open a recently viewed project"
+        },
+        {
+          "id": "open-recent-abort",
+          "name_zh": "项目下载已取消",
+          "name_en": "Project download cancelled"
+        },
+        {
+          "id": "open-recent-auth-cancelled",
+          "name_zh": "云服务身份验证已取消",
+          "name_en": "Cloud service authentication cancelled"
+        },
+        {
+          "id": "open-recent-fail",
+          "name_zh": "无法打开项目",
+          "name_en": "Failed to open project"
+        },
+        {
+          "id": "open-recent-not-found",
+          "name_zh": "项目不再存在",
+          "name_en": "Project no longer exists"
+        },
+        {
+          "id": "cloud-open",
+          "name_zh": "从云储存中打开",
+          "name_en": "Cloud open"
+        },
+        {
+          "id": "cloud-open-tooltip",
+          "name_zh": "从云存储服务打开。",
+          "name_en": "Open from a cloud storage service."
+        },
+        {
+          "id": "localstorage-open",
+          "name_zh": "从本地浏览器打开",
+          "name_en": "Open from local browser"
+        },
+        {
+          "id": "localstorage-open-tooltip",
+          "name_zh": "打开保存到本地浏览器存储的项目。",
+          "name_en": "Open a project saved to the local browser's storage."
+        },
+        {
+          "id": "localstorage-save",
+          "name_zh": "保存到本地浏览器",
+          "name_en": "Save to local browser"
+        },
+        {
+          "id": "localstorage-save-tooltip",
+          "name_zh": "将项目保存到本地浏览器的存储。",
+          "name_en": "Save project to the local browser's storage."
+        },
+        {
+          "id": "open-local-folder",
+          "name_zh": "打开本地项目文件夹",
+          "name_en": "Open local project folder"
+        },
+        {
+          "id": "open-local-folder-tooltip",
+          "name_zh": "选择要打开的本地文件夹项目。",
+          "name_en": "Choose a folder-based project on this device to open."
+        },
+        {
+          "id": "open-recent-webfs-error",
+          "name_zh": "此项目无法从最近文件中打开。请检查该文件或文件夹是否仍然存在，以及检查是否仍然具有该文件或文件夹路径的访问权限。",
+          "name_en": "Failed to load a local recent project. Check that the file or folder still exists, and that you have permission to access it."
+        },
+        {
+          "id": "share-with-admin",
+          "name_zh": "共享给管理员",
+          "name_en": "Share with admin"
+        },
+        {
+          "id": "share-with-admin-tooltip",
+          "name_zh": "上传项目的副本，以便您的账号管理员可以访问它。",
+          "name_en": "Upload a copy of your project so your subscription administrator can access it."
+        },
+        {
+          "id": "open-recent-item-with-name",
+          "name_zh": "{0} ({1})",
+          "name_en": "{0} ({1})"
+        }
+      ]
     },
-    "event-sheet-view": {
-      "name_en": "The Event Sheet View"
-    },
-    "animations-editor": {
-      "name_en": "The Animations Editor"
-    },
-    "debugger": {
-      "name_en": "The Debugger"
+    "view-menu": {
+      "id": "view-menu",
+      "name_zh": "",
+      "name_en": "",
+      "items": [
+        {
+          "id": "menu-name",
+          "name_zh": "视图",
+          "name_en": "View"
+        },
+        {
+          "id": "bars-menu.menu-name",
+          "name_zh": "窗口",
+          "name_en": "Bars"
+        },
+        {
+          "id": "bars-menu.properties",
+          "name_zh": "属性栏",
+          "name_en": "Properties Bar"
+        },
+        {
+          "id": "bars-menu.properties-tooltip",
+          "name_zh": "显示或隐藏属性栏",
+          "name_en": "Show or hide the properties bar"
+        },
+        {
+          "id": "bars-menu.projects",
+          "name_zh": "项目栏",
+          "name_en": "Project Bar"
+        },
+        {
+          "id": "bars-menu.projects-tooltip",
+          "name_zh": "显示或隐藏项目栏",
+          "name_en": "Show or hide the projects bar"
+        },
+        {
+          "id": "bars-menu.layers",
+          "name_zh": "图层栏",
+          "name_en": "Layers Bar"
+        },
+        {
+          "id": "bars-menu.layers-tooltip",
+          "name_zh": "显示或隐藏图层栏",
+          "name_en": "Show or hide the layers bar"
+        },
+        {
+          "id": "bars-menu.tilemaps",
+          "name_zh": "瓦片栏",
+          "name_en": "Tilemap Bar"
+        },
+        {
+          "id": "bars-menu.tilemaps-tooltip",
+          "name_zh": "显示或隐藏瓦片栏",
+          "name_en": "Show or hide the tilemap bar"
+        },
+        {
+          "id": "bars-menu.bookmarks",
+          "name_zh": "书签栏",
+          "name_en": "Bookmarks Bar"
+        },
+        {
+          "id": "bars-menu.bookmarks-tooltip",
+          "name_zh": "显示或隐藏书签栏",
+          "name_en": "Show or hide the bookmarks bar"
+        },
+        {
+          "id": "bars-menu.findresults",
+          "name_zh": "查找栏",
+          "name_en": "Find results"
+        },
+        {
+          "id": "bars-menu.findresults-tooltip",
+          "name_zh": "显示或隐藏查找结果栏。",
+          "name_en": "Show or hide the 'Find results' bar"
+        },
+        {
+          "id": "start-page",
+          "name_zh": "起始页",
+          "name_en": "Start page"
+        },
+        {
+          "id": "go-fullscreen",
+          "name_zh": "全屏",
+          "name_en": "Go fullscreen"
+        },
+        {
+          "id": "exit-fullscreen",
+          "name_zh": "退出全屏",
+          "name_en": "Exit fullscreen"
+        },
+        {
+          "id": "addon-manager",
+          "name_zh": "插件管理",
+          "name_en": "Addon manager"
+        },
+        {
+          "id": "archive-manager",
+          "name_zh": "导出管理",
+          "name_en": "Export manager"
+        },
+        {
+          "id": "display-scale",
+          "name_zh": "显示比例",
+          "name_en": "Display scale"
+        },
+        {
+          "id": "increase-scale",
+          "name_zh": "放大",
+          "name_en": "Increase scale"
+        },
+        {
+          "id": "decrease-scale",
+          "name_zh": "缩小",
+          "name_en": "Decrease scale"
+        },
+        {
+          "id": "reset-scale",
+          "name_zh": "重置",
+          "name_en": "Reset scale"
+        },
+        {
+          "id": "bars-menu.timelines",
+          "name_zh": "时间轴",
+          "name_en": "Timeline Bar"
+        },
+        {
+          "id": "bars-menu.timelines-tooltip",
+          "name_zh": "显示或隐藏时间轴窗口",
+          "name_en": "Show or hide the timeline bar"
+        },
+        {
+          "id": "bars-menu.zorder",
+          "name_zh": "层级栏",
+          "name_en": "Z Order Bar"
+        },
+        {
+          "id": "bars-menu.zorder-tooltip",
+          "name_zh": "显示或隐藏层级栏",
+          "name_en": "Show or hide the Z order bar"
+        },
+        {
+          "id": "storage-cleanup",
+          "name_zh": "缓存管理",
+          "name_en": "Storage cleanup"
+        },
+        {
+          "id": "example-browser",
+          "name_zh": "案例库",
+          "name_en": "Example browser"
+        },
+        {
+          "id": "bars-menu.instances",
+          "name_zh": "实例栏",
+          "name_en": "Instances Bar"
+        },
+        {
+          "id": "bars-menu.instances-tooltip",
+          "name_zh": "显示或隐藏实例栏",
+          "name_en": "Show or hide the instances bar"
+        },
+        {
+          "id": "bars-menu.assets",
+          "name_zh": "资源库",
+          "name_en": "Asset Browser"
+        },
+        {
+          "id": "bars-menu.assets-tooltip",
+          "name_zh": "显示/隐藏资源库",
+          "name_en": "Show or hide the asset browser"
+        },
+        {
+          "id": "asset-browser",
+          "name_zh": "资源库",
+          "name_en": "Asset browser"
+        }
+      ]
     }
+  },
+  "features": [],
+  "projectProperties": {
+    "project": [],
+    "layout": []
   },
   "stats": {
     "bars": 12,
     "dialogs": 89,
-    "views": 4
+    "views": 0,
+    "mainMenu": 2,
+    "features": 0,
+    "projectProperties": 0
   }
 }

@@ -17,11 +17,11 @@
       "name_en": "On image URL loaded",
       "description_zh": "使用 '加载远程图像' 动作后，当图像从远程服务器加载完成时触发。",
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_zh": "远程图像加载完成",
+      "display_en": "On image URL loaded",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "远程图像加载完成",
-      "display_en": "On image URL loaded"
+      "category": "web"
     },
     {
       "id": "on-image-url-failed",
@@ -29,11 +29,11 @@
       "name_en": "On image URL failed",
       "description_zh": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_zh": "网络图像加载失败",
+      "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "网络图像加载失败",
-      "display_en": "On image URL failed to load"
+      "category": "web"
     }
   ],
   "actions": [
@@ -43,6 +43,8 @@
       "name_en": "Set blend mode",
       "description_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
       "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
       "scriptName": "SetEffect",
       "category": "appearance",
       "params": [
@@ -51,6 +53,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "desc_en": "Choose the new blend mode for this object.",
           "items": [
             "normal",
             "additive",
@@ -129,13 +133,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
-          "desc_en": "Choose the new blend mode for this object."
+          }
         }
-      ],
-      "display_zh": "设置混合模式为[i]{0}[/i]",
-      "display_en": "Set blend mode to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-margins",
@@ -143,6 +143,8 @@
       "name_en": "Set margins",
       "description_zh": "设置图像边距大小，使边缘的图像不会被拉伸或平铺。",
       "description_en": "Set the image margin sizes in pixels.",
+      "display_zh": "设置图像边距 (左: [i]{0}[/i], 右: [i]{1}[/i], 上: [i]{2}[/i], 下: [i]{3}[/i])",
+      "display_en": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]",
       "scriptName": "SetMargins",
       "category": "appearance",
       "params": [
@@ -178,9 +180,7 @@
           "desc_zh": "底部边距大小，以像素为单位。",
           "desc_en": "The bottom margin size in pixels."
         }
-      ],
-      "display_zh": "设置图像边距 (左: [i]{0}[/i], 右: [i]{1}[/i], 上: [i]{2}[/i], 下: [i]{3}[/i])",
-      "display_en": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]"
+      ]
     },
     {
       "id": "set-edges",
@@ -188,6 +188,8 @@
       "name_en": "Set edges",
       "description_zh": "设置边缘的显示模式。",
       "description_en": "Set the style of the 9-patch edges.",
+      "display_zh": "设置边缘模式为 [i]{0}[/i]",
+      "display_en": "Set edges to [i]{0}[/i]",
       "scriptName": "SetEdges",
       "category": "appearance",
       "params": [
@@ -196,6 +198,8 @@
           "type": "combo",
           "name_zh": "边缘",
           "name_en": "Edges",
+          "desc_zh": "设置边缘部分的显示方式，选择平铺或拉伸。",
+          "desc_en": "Choose whether to tile or stretch the edges.",
           "items": [
             "tile",
             "stretch"
@@ -209,13 +213,9 @@
               "zh": "拉伸",
               "en": "Stretch"
             }
-          },
-          "desc_zh": "设置边缘部分的显示方式，选择平铺或拉伸。",
-          "desc_en": "Choose whether to tile or stretch the edges."
+          }
         }
-      ],
-      "display_zh": "设置边缘模式为 [i]{0}[/i]",
-      "display_en": "Set edges to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-fill",
@@ -223,6 +223,8 @@
       "name_en": "Set fill",
       "description_zh": "设置填充部分的显示模式。",
       "description_en": "Set the style of the 9-patch fill.",
+      "display_zh": "设置填充模式为 [i]{0}[/i]",
+      "display_en": "Set fill to [i]{0}[/i]",
       "scriptName": "SetFill",
       "category": "appearance",
       "params": [
@@ -231,6 +233,8 @@
           "type": "combo",
           "name_zh": "填充",
           "name_en": "Fill",
+          "desc_zh": "设置中间填充部分的显示方式，选择平铺、拉伸或透明。",
+          "desc_en": "Choose how to display the inside of the box.",
           "items": [
             "tile",
             "stretch",
@@ -249,13 +253,9 @@
               "zh": "透明",
               "en": "Transparent"
             }
-          },
-          "desc_zh": "设置中间填充部分的显示方式，选择平铺、拉伸或透明。",
-          "desc_en": "Choose how to display the inside of the box."
+          }
         }
-      ],
-      "display_zh": "设置填充模式为 [i]{0}[/i]",
-      "display_en": "Set fill to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-scale-x",
@@ -263,6 +263,8 @@
       "name_en": "Set image X scale",
       "description_zh": "设置图像在X轴的缩放比例。",
       "description_en": "Set the X scale of the image within the object.",
+      "display_zh": "设置图像缩放比例X为[i]{0}[/i]",
+      "display_en": "Set image X scale to [i]{0}[/i]",
       "scriptName": "SetImageScaleX",
       "category": "appearance",
       "params": [
@@ -271,13 +273,11 @@
           "type": "number",
           "name_zh": "缩放比例 X",
           "name_en": "X scale",
-          "initialValue": "100",
           "desc_zh": "图像在 X 轴的缩放比例，以百分比表示。",
-          "desc_en": "The X scale of the image within the object, as a percentage."
+          "desc_en": "The X scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
-      ],
-      "display_zh": "设置图像缩放比例X为[i]{0}[/i]",
-      "display_en": "Set image X scale to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-image-scale-y",
@@ -285,6 +285,8 @@
       "name_en": "Set image Y scale",
       "description_zh": "设置图像在Y轴的缩放比例。",
       "description_en": "Set the Y scale of the image within the object.",
+      "display_zh": "设置图像缩放比例Y为[i]{0}[/i]",
+      "display_en": "Set image Y scale to [i]{0}[/i]",
       "scriptName": "SetImageScaleY",
       "category": "appearance",
       "params": [
@@ -293,13 +295,11 @@
           "type": "number",
           "name_zh": "缩放比例 Y",
           "name_en": "Y scale",
-          "initialValue": "100",
           "desc_zh": "图像在 Y 轴的缩放比例，以百分比表示。",
-          "desc_en": "The Y scale of the image within the object, as a percentage."
+          "desc_en": "The Y scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
-      ],
-      "display_zh": "设置图像缩放比例Y为[i]{0}[/i]",
-      "display_en": "Set image Y scale to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-seams",
@@ -307,6 +307,8 @@
       "name_en": "Set seams",
       "description_zh": "更改边缘衔接的模式。",
       "description_en": "Change the 'Seams' property.",
+      "display_zh": "设置边缘衔接为[i]{0}[/i]",
+      "display_en": "Set seams to [i]{0}[/i]",
       "scriptName": "SetSeams",
       "category": "appearance",
       "params": [
@@ -315,6 +317,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Seams",
+          "desc_zh": "选择边缘衔接的渲染方式，用于实现无缝衔接效果。使用半透明的图像，建议使用 '精准匹配' 模式。",
+          "desc_en": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
           "items": [
             "exact",
             "overlap"
@@ -328,13 +332,9 @@
               "zh": "覆盖",
               "en": "Overlap"
             }
-          },
-          "desc_zh": "选择边缘衔接的渲染方式，用于实现无缝衔接效果。使用半透明的图像，建议使用 '精准匹配' 模式。",
-          "desc_en": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used."
+          }
         }
-      ],
-      "display_zh": "设置边缘衔接为[i]{0}[/i]",
-      "display_en": "Set seams to [i]{0}[/i]"
+      ]
     },
     {
       "id": "load-image-from-url",
@@ -342,6 +342,8 @@
       "name_en": "Load image from URL",
       "description_zh": "从远程服务器地址下载图像，或从数据地址加载图像。。",
       "description_en": "Load an image from a web address or data URI.",
+      "display_zh": "加载远程图像(地址: [i]{0}[/i])",
+      "display_en": "Load image from [i]{0}[/i]",
       "scriptName": "LoadURL",
       "isAsync": true,
       "category": "web",
@@ -351,13 +353,11 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\"",
           "desc_zh": "填入远程服务器的地址，或图像数据地址的表达式。",
-          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         }
-      ],
-      "display_zh": "加载远程图像(地址: [i]{0}[/i])",
-      "display_en": "Load image from [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

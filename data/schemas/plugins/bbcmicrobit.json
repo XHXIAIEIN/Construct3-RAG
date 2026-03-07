@@ -18,10 +18,10 @@
       "name_en": "Is supported",
       "description_zh": "检测当前运行设备是否支持蓝牙连接。",
       "description_en": "True if the current platform supports Bluetooth features.",
-      "scriptName": "IsSupported",
-      "category": "bluetooth",
       "display_zh": "设备受支持",
-      "display_en": "Is supported"
+      "display_en": "Is supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth"
     },
     {
       "id": "on-device-connected",
@@ -29,11 +29,12 @@
       "name_en": "On device connected",
       "description_zh": "执行 '请求连接设备' 动作后，成功连接到设备时触发。",
       "description_en": "Triggered after 'Request device' successfully connects to a device.",
+      "display_zh": "设备连接成功",
+      "display_en": "On device connected",
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "设备连接成功",
-      "display_en": "On device connected"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "on-device-disconnected",
@@ -41,11 +42,12 @@
       "name_en": "On device disconnected",
       "description_zh": "已连接的设备断开，无法继续访问时触发。",
       "description_en": "Triggered when a connected device disconnects and is no longer accessible.",
+      "display_zh": "设备断开连接",
+      "display_en": "On device disconnected",
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "设备断开连接",
-      "display_en": "On device disconnected"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "is-device-connected",
@@ -53,10 +55,10 @@
       "name_en": "Is device connected",
       "description_zh": "检测目前是否已连接到任意设备。",
       "description_en": "Test if any device is currently connected.",
-      "scriptName": "IsDeviceConnected",
-      "category": "bluetooth",
       "display_zh": "设备已连接",
-      "display_en": "Is device connected"
+      "display_en": "Is device connected",
+      "scriptName": "IsDeviceConnected",
+      "category": "bluetooth"
     },
     {
       "id": "on-request-device-failed",
@@ -64,11 +66,12 @@
       "name_en": "On request device failed",
       "description_zh": "执行 '请求连接设备' 后，如果用户取消或连接失败时触发。",
       "description_en": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "display_zh": "请求连接失败",
+      "display_en": "On request device failed",
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
-      "category": "bluetooth",
-      "display_zh": "请求连接失败",
-      "display_en": "On request device failed"
+      "canDebug": true,
+      "category": "bluetooth"
     },
     {
       "id": "on-accelerometer-reading",
@@ -76,11 +79,11 @@
       "name_en": "On accelerometer reading",
       "description_zh": "设备接收到加速度计读数时触发。",
       "description_en": "Triggered when an accelerometer reading is received from the device.",
+      "display_zh": "加速度计读数更新",
+      "display_en": "On accelerometer reading",
       "scriptName": "OnAccelerometerReading",
       "isTrigger": true,
-      "category": "readings",
-      "display_zh": "加速度计读数更新",
-      "display_en": "On accelerometer reading"
+      "category": "readings"
     },
     {
       "id": "on-button-pressed",
@@ -88,6 +91,8 @@
       "name_en": "On button pressed",
       "description_zh": "按下设备上的任意按钮时触发。",
       "description_en": "Triggered when one of the buttons on the device is pressed.",
+      "display_zh": "{1}按钮[b]{0}[/b]",
+      "display_en": "On button [b]{0}[/b] {1}",
       "scriptName": "OnButtonPressed",
       "isTrigger": true,
       "category": "readings",
@@ -97,6 +102,8 @@
           "type": "combo",
           "name_zh": "按钮",
           "name_en": "Button",
+          "desc_zh": "检测哪个按钮被按下",
+          "desc_en": "Which button to detect input from.",
           "items": [
             "a",
             "b"
@@ -110,15 +117,15 @@
               "zh": "B",
               "en": "B"
             }
-          },
-          "desc_zh": "检测哪个按钮被按下",
-          "desc_en": "Which button to detect input from."
+          }
         },
         {
           "id": "input",
           "type": "combo",
           "name_zh": "输入",
           "name_en": "Input",
+          "desc_zh": "要检测的输入类型。",
+          "desc_en": "The type of input to detect.",
           "items": [
             "pressed",
             "long-pressed",
@@ -137,13 +144,9 @@
               "zh": "松开",
               "en": "released"
             }
-          },
-          "desc_zh": "要检测的输入类型。",
-          "desc_en": "The type of input to detect."
+          }
         }
-      ],
-      "display_zh": "{1}按钮[b]{0}[/b]",
-      "display_en": "On button [b]{0}[/b] {1}"
+      ]
     },
     {
       "id": "on-bearing-reading",
@@ -151,11 +154,11 @@
       "name_en": "On bearing reading",
       "description_zh": "当设备接收到指南针读数时触发。",
       "description_en": "Triggered when a bearing reading is received from the device.",
+      "display_zh": "指南针读数更新",
+      "display_en": "On bearing reading",
       "scriptName": "OnBearingReading",
       "isTrigger": true,
-      "category": "readings",
-      "display_zh": "指南针读数更新",
-      "display_en": "On bearing reading"
+      "category": "readings"
     },
     {
       "id": "on-temperature-reading",
@@ -163,11 +166,11 @@
       "name_en": "On temperature reading",
       "description_zh": "当设备接收到温度读数时触发。",
       "description_en": "Triggered when a temperature reading is received from the device.",
+      "display_zh": "温度计读数更新",
+      "display_en": "On temperature reading",
       "scriptName": "OnTemperatureReading",
       "isTrigger": true,
-      "category": "readings",
-      "display_zh": "温度计读数更新",
-      "display_en": "On temperature reading"
+      "category": "readings"
     }
   ],
   "actions": [
@@ -177,10 +180,10 @@
       "name_en": "Request device",
       "description_zh": "请求通过蓝牙访问 BBC micro:bit 设备。必须在用户输入后才能使用。",
       "description_en": "Request access to a BBC micro:bit device over Bluetooth. Must be used in a user input trigger.",
-      "scriptName": "RequestDevice",
-      "category": "bluetooth",
       "display_zh": "请求连接",
-      "display_en": "Request device"
+      "display_en": "Request device",
+      "scriptName": "RequestDevice",
+      "category": "bluetooth"
     },
     {
       "id": "disconnect-device",
@@ -188,10 +191,10 @@
       "name_en": "Disconnect device",
       "description_zh": "断开当前连接的设备。",
       "description_en": "Disconnect a currently connected device.",
-      "scriptName": "DisconnectDevice",
-      "category": "bluetooth",
       "display_zh": "断开设备",
-      "display_en": "Disconnect device"
+      "display_en": "Disconnect device",
+      "scriptName": "DisconnectDevice",
+      "category": "bluetooth"
     },
     {
       "id": "clear-led-state",
@@ -199,10 +202,10 @@
       "name_en": "Clear LED state",
       "description_zh": "重置所有 LED 状态，使所有 LED 熄灭。",
       "description_en": "Reset the stored LED state, so all LEDs are off.",
-      "scriptName": "ClearLEDState",
-      "category": "led-display",
       "display_zh": "清除 LED 状态",
-      "display_en": "Clear LED state"
+      "display_en": "Clear LED state",
+      "scriptName": "ClearLEDState",
+      "category": "led-display"
     },
     {
       "id": "set-led-state",
@@ -210,6 +213,8 @@
       "name_en": "Set LED state",
       "description_zh": "设置单个 LED 是打开或关闭。",
       "description_en": "Set whether an individual LED is on or off in the stored LED state.",
+      "display_zh": "设置 LED ([i]{0}[/i], [i]{1}[/i]) 状态 [b]{2}[/b]",
+      "display_en": "Set LED ([i]{0}[/i], [i]{1}[/i]) state [b]{2}[/b]",
       "scriptName": "SetLEDState",
       "category": "led-display",
       "params": [
@@ -237,9 +242,7 @@
           "desc_zh": "打开或关闭 LED",
           "desc_en": "Whether the LED is on or off."
         }
-      ],
-      "display_zh": "设置 LED ([i]{0}[/i], [i]{1}[/i]) 状态 [b]{2}[/b]",
-      "display_en": "Set LED ([i]{0}[/i], [i]{1}[/i]) state [b]{2}[/b]"
+      ]
     },
     {
       "id": "update-leds",
@@ -247,10 +250,10 @@
       "name_en": "Update LEDs",
       "description_zh": "将设备上的 LED 更新为存储的 LED 状态。",
       "description_en": "Update the LEDs on the device to the stored LED state.",
-      "scriptName": "UpdateLEDs",
-      "category": "led-display",
       "display_zh": "更新LED",
-      "display_en": "Update LEDs"
+      "display_en": "Update LEDs",
+      "scriptName": "UpdateLEDs",
+      "category": "led-display"
     },
     {
       "id": "scroll-text",
@@ -258,6 +261,8 @@
       "name_en": "Scroll text",
       "description_zh": "在 LED 显示屏上显示一条消息。",
       "description_en": "Show a message on the LED display.",
+      "display_zh": "显示滚动文字 [i]{0}[/i]",
+      "display_en": "Scroll text [i]{0}[/i]",
       "scriptName": "ScrollText",
       "category": "led-display",
       "params": [
@@ -269,9 +274,7 @@
           "desc_zh": "要显示的消息，最多 20 个字符。",
           "desc_en": "The message to display, up to 20 characters."
         }
-      ],
-      "display_zh": "显示滚动文字 [i]{0}[/i]",
-      "display_en": "Scroll text [i]{0}[/i]"
+      ]
     }
   ],
   "expressions": [

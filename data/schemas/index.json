@@ -1,7 +1,7 @@
 {
   "version": "3.0",
   "source": "r466",
-  "generatedAt": "2026-01-02T08:17:30.490Z",
+  "generatedAt": "2026-03-07T04:18:02.023Z",
   "languages": [
     "zh",
     "en"
@@ -10,20 +10,19 @@
     "plugins": "plugins/",
     "behaviors": "behaviors/",
     "effects": "effects/",
-    "editor": "editor/",
-    "features": "features/"
+    "editor": "editor/"
   },
   "stats": {
     "plugins": {
       "count": 72,
-      "conditions": 677,
-      "actions": 776,
-      "expressions": 957
+      "conditions": 680,
+      "actions": 784,
+      "expressions": 960
     },
     "behaviors": {
       "count": 31,
       "conditions": 115,
-      "actions": 248,
+      "actions": 250,
       "expressions": 138
     },
     "effects": {
@@ -32,11 +31,11 @@
     "editor": {
       "bars": 12,
       "dialogs": 89,
-      "views": 4
+      "views": 0,
+      "mainMenu": 2,
+      "features": 0,
+      "projectProperties": 0
     },
-    "features": {
-      "count": 1
-    },
-    "total_aces": 2911
+    "total_aces": 2927
   }
 }

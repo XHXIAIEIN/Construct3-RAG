@@ -9,5 +9,24 @@
   "categories": [],
   "conditions": [],
   "actions": [],
-  "expressions": []
+  "expressions": [],
+  "properties": [
+    {
+      "id": "region",
+      "name_zh": "范围",
+      "name_en": "Region",
+      "description_zh": "选择要检测的区域。对象超出此范围将被销毁。",
+      "description_en": "Choose the region to destroy the object outside.",
+      "items": {
+        "layout": {
+          "zh": "场景",
+          "en": "Layout"
+        },
+        "viewport": {
+          "zh": "视区",
+          "en": "Viewport"
+        }
+      }
+    }
+  ]
 }

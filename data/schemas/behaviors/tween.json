@@ -11,6 +11,7 @@
     "setters",
     "one-property",
     "two-properties",
+    "three-properties",
     "value"
   ],
   "conditions": [
@@ -20,6 +21,8 @@
       "name_en": "On finished",
       "description_zh": "指定标签的补间动画播放完成时触发。",
       "description_en": "Triggered when a tween with a matching tag finishes.",
+      "display_zh": "{my} [b]{0}[/b]播放完成",
+      "display_en": "On {my} [b]{0}[/b] finished",
       "scriptName": "OnTweensFinished",
       "isTrigger": true,
       "params": [
@@ -28,13 +31,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the finished tweens."
+          "desc_en": "The tag or tags of the finished tweens.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b]播放完成",
-      "display_en": "On {my} [b]{0}[/b] finished"
+      ]
     },
     {
       "id": "on-any-tweens-finished",
@@ -42,10 +43,10 @@
       "name_en": "On any finished",
       "description_zh": "任意补间动画播放完成时触发。",
       "description_en": "Triggered when any tween finishes.",
-      "scriptName": "OnAnyTweensFinished",
-      "isTrigger": true,
       "display_zh": "{my} 任意播放完成",
-      "display_en": "On any {my} finished"
+      "display_en": "On any {my} finished",
+      "scriptName": "OnAnyTweensFinished",
+      "isTrigger": true
     },
     {
       "id": "on-tweens-released",
@@ -53,6 +54,8 @@
       "name_en": "On released",
       "description_zh": "当具有匹配标签的补间动画被释放时触发。如对象在播放动画期间删除或取消。",
       "description_en": "Triggered when a tween with a matching tag is released.",
+      "display_zh": "{my} [b]{0}[/b] 播放中止",
+      "display_en": "On {my} [b]{0}[/b] released",
       "scriptName": "OnTweensReleased",
       "isTrigger": true,
       "params": [
@@ -61,13 +64,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。",
-          "desc_en": "The tag or tags of the released tweens."
+          "desc_en": "The tag or tags of the released tweens.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b] 播放中止",
-      "display_en": "On {my} [b]{0}[/b] released"
+      ]
     },
     {
       "id": "on-any-tweens-released",
@@ -75,10 +76,10 @@
       "name_en": "On any released",
       "description_zh": "任意的补间动画被释放时触发。如在播放动画期间被停止。",
       "description_en": "Triggered when any tween is released.",
-      "scriptName": "OnAnyTweensReleased",
-      "isTrigger": true,
       "display_zh": "{my} 任意播放中止",
-      "display_en": "On any {my} released"
+      "display_en": "On any {my} released",
+      "scriptName": "OnAnyTweensReleased",
+      "isTrigger": true
     },
     {
       "id": "is-playing",
@@ -86,6 +87,8 @@
       "name_en": "Is playing",
       "description_zh": "检查指定标签的补间动画当前是否正在播放。",
       "description_en": "Test if a tween with a matching tag is playing.",
+      "display_zh": "{my} 正在播放 [b]{0}[/b]",
+      "display_en": "Is {my} [b]{0}[/b] playing",
       "scriptName": "IsPlaying",
       "params": [
         {
@@ -93,13 +96,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to check."
+          "desc_en": "The tag or tags of the tweens to check.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "{my} 正在播放 [b]{0}[/b]",
-      "display_en": "Is {my} [b]{0}[/b] playing"
+      ]
     },
     {
       "id": "is-any-playing",
@@ -107,9 +108,9 @@
       "name_en": "Is any playing",
       "description_zh": "检测当前是否正在播放任意补间动画。",
       "description_en": "Test if any tween is currently playing.",
-      "scriptName": "IsAnyPlaying",
       "display_zh": "{my} 正在播放任意动画",
-      "display_en": "Is any {my} playing"
+      "display_en": "Is any {my} playing",
+      "scriptName": "IsAnyPlaying"
     },
     {
       "id": "is-paused",
@@ -117,6 +118,8 @@
       "name_en": "Is paused",
       "description_zh": "检测含有匹配标签的补间动画当前是否暂停。",
       "description_en": "Test if a tween with a matching tag is paused.",
+      "display_zh": "{my} [b]{0}[/b] 正在暂停",
+      "display_en": "Is {my} [b]{0}[/b] paused",
       "scriptName": "IsPaused",
       "params": [
         {
@@ -124,13 +127,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to check."
+          "desc_en": "The tag or tags of the tweens to check.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b] 正在暂停",
-      "display_en": "Is {my} [b]{0}[/b] paused"
+      ]
     },
     {
       "id": "is-any-paused",
@@ -138,9 +139,9 @@
       "name_en": "Is any paused",
       "description_zh": "检测任意补间动画当前是否暂停。",
       "description_en": "Test if any tween is currently paused.",
-      "scriptName": "IsAnyPaused",
       "display_zh": "任意 {my} 正在暂停",
-      "display_en": "Is any {my} paused"
+      "display_en": "Is any {my} paused",
+      "scriptName": "IsAnyPaused"
     },
     {
       "id": "is-ping-pong",
@@ -148,6 +149,8 @@
       "name_en": "Is ping-pong",
       "description_zh": "检测指定标签的补间动画是否正在返程播放，需要开启 '反转播放' 属性。",
       "description_en": "Test for the ping-pong state of the tweens with the matching tag. If a tween is not set to ping-pong, the condition is always false.",
+      "display_zh": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
+      "display_en": "Is {my} [b]{0}[/b] in ping-pong [i]{1}[/i] state",
       "scriptName": "IsPingPong",
       "params": [
         {
@@ -155,15 +158,17 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the ping-ponged tweens."
+          "desc_en": "The tag or tags of the ping-ponged tweens.",
+          "initialValue": "\"\""
         },
         {
           "id": "state",
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "检查动画反转播放的状态",
+          "desc_en": "The state of ping-pong to check for.",
           "items": [
             "start",
             "end"
@@ -177,13 +182,9 @@
               "zh": "结束",
               "en": "end"
             }
-          },
-          "desc_zh": "检查动画反转播放的状态",
-          "desc_en": "The state of ping-pong to check for."
+          }
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
-      "display_en": "Is {my} [b]{0}[/b] in ping-pong [i]{1}[/i] state"
+      ]
     },
     {
       "id": "is-any-ping-pong",
@@ -191,6 +192,8 @@
       "name_en": "Is any ping-pong",
       "description_zh": "检测任意补间动画的返程状态，需要开启 '反转播放' 属性。",
       "description_en": "Test for the ping-pong state of any tween. If a tween is not set to ping-pong, the condition is always false.",
+      "display_zh": "任意 {my} [b]{0}[/b]反转",
+      "display_en": "Is any {my} in ping-pong [b]{0}[/b] state",
       "scriptName": "IsAnyPingPong",
       "params": [
         {
@@ -198,6 +201,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "检查动画反转播放的状态",
+          "desc_en": "The state of ping-pong to check for.",
           "items": [
             "start",
             "end"
@@ -211,13 +216,9 @@
               "zh": "结束",
               "en": "end"
             }
-          },
-          "desc_zh": "检查动画反转播放的状态",
-          "desc_en": "The state of ping-pong to check for."
+          }
         }
-      ],
-      "display_zh": "任意 {my} [b]{0}[/b]反转",
-      "display_en": "Is any {my} in ping-pong [b]{0}[/b] state"
+      ]
     },
     {
       "id": "on-any-tween-looped",
@@ -225,10 +226,10 @@
       "name_en": "On any looped",
       "description_zh": "任意补间动画到达循环时触发。",
       "description_en": "Triggered when any tween loops for any reason.",
-      "scriptName": "OnAnyTweenLoop",
-      "isTrigger": true,
       "display_zh": "任意 {my} 动画到达循环",
-      "display_en": "On any {my} looped"
+      "display_en": "On any {my} looped",
+      "scriptName": "OnAnyTweenLoop",
+      "isTrigger": true
     },
     {
       "id": "on-tweens-looped",
@@ -236,6 +237,8 @@
       "name_en": "On looped",
       "description_zh": "指定标签的补间动画进入循环播放时触发。",
       "description_en": "Triggered when a tween with a matching tag loops for any reason.",
+      "display_zh": "{my} [b]{0}[/b]到达循环",
+      "display_en": "On {my} [b]{0}[/b] looped",
       "scriptName": "OnTweensLoop",
       "isTrigger": true,
       "params": [
@@ -244,13 +247,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the looped tweens."
+          "desc_en": "The tag or tags of the looped tweens.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b]到达循环",
-      "display_en": "On {my} [b]{0}[/b] looped"
+      ]
     },
     {
       "id": "on-any-tween-ping-pong",
@@ -258,6 +259,8 @@
       "name_en": "On any ping-pong",
       "description_zh": "任意补间动画进入反转播放状态时触发。",
       "description_en": "Triggered when any tween ping-pongs.",
+      "display_zh": "任意 {my} [b]{0}[/b]反转播放",
+      "display_en": "On any {my} [b]{0}[/b] ping-pong",
       "scriptName": "OnAnyTweenPingPong",
       "isTrigger": true,
       "params": [
@@ -266,6 +269,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "反转播放的状态",
+          "desc_en": "The state of ping-pong to check for.",
           "items": [
             "start",
             "end",
@@ -284,13 +289,9 @@
               "zh": "任意",
               "en": "either"
             }
-          },
-          "desc_zh": "反转播放的状态",
-          "desc_en": "The state of ping-pong to check for."
+          }
         }
-      ],
-      "display_zh": "任意 {my} [b]{0}[/b]反转播放",
-      "display_en": "On any {my} [b]{0}[/b] ping-pong"
+      ]
     },
     {
       "id": "on-tweens-ping-pong",
@@ -298,6 +299,8 @@
       "name_en": "On ping-pong",
       "description_zh": "指定标签的补间动画进行返程播放时触发。",
       "description_en": "Triggered when a tween with a matching tag ping-pongs.",
+      "display_zh": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
+      "display_en": "On {my} [b]{0}[/b] [i]{1}[/i] ping-pong",
       "scriptName": "OnTweensPingPong",
       "isTrigger": true,
       "params": [
@@ -306,15 +309,17 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要检查的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the ping-ponged tweens."
+          "desc_en": "The tag or tags of the ping-ponged tweens.",
+          "initialValue": "\"\""
         },
         {
           "id": "state",
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "检查动画反转播放的状态",
+          "desc_en": "The state of ping-pong to check for.",
           "items": [
             "start",
             "end",
@@ -333,13 +338,9 @@
               "zh": "任意",
               "en": "either"
             }
-          },
-          "desc_zh": "检查动画反转播放的状态",
-          "desc_en": "The state of ping-pong to check for."
+          }
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b][i]{1}[/i]反转播放",
-      "display_en": "On {my} [b]{0}[/b] [i]{1}[/i] ping-pong"
+      ]
     }
   ],
   "actions": [
@@ -349,6 +350,8 @@
       "name_en": "Pause",
       "description_zh": "暂停播放指定的补间动画。",
       "description_en": "Pause tweens with the given tags.",
+      "display_zh": "暂停{my}[b]{0}[/b] 播放",
+      "display_en": "Pause {my} [b]{0}[/b]",
       "scriptName": "PauseTweens",
       "category": "playback",
       "params": [
@@ -357,13 +360,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要暂停播放的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to pause."
+          "desc_en": "The tag or tags of the tweens to pause.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "暂停{my}[b]{0}[/b] 播放",
-      "display_en": "Pause {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "pause-all-tweens",
@@ -371,10 +372,10 @@
       "name_en": "Pause all",
       "description_zh": "暂停播放所有补间动画。",
       "description_en": "Pause all tweens.",
-      "scriptName": "PauseAllTweens",
-      "category": "playback",
       "display_zh": "{my} 暂停全部",
-      "display_en": "{my}: Pause all"
+      "display_en": "{my}: Pause all",
+      "scriptName": "PauseAllTweens",
+      "category": "playback"
     },
     {
       "id": "resume-tweens",
@@ -382,6 +383,8 @@
       "name_en": "Resume",
       "description_zh": "恢复播放指定的补间动画。",
       "description_en": "Resume any paused tweens with the given tags.",
+      "display_zh": "恢复{my}[b]{0}[/b] 播放",
+      "display_en": "Resume {my} [b]{0}[/b]",
       "scriptName": "ResumeTweens",
       "category": "playback",
       "params": [
@@ -390,13 +393,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要恢复播放的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the paused tweens to resume."
+          "desc_en": "The tag or tags of the paused tweens to resume.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "恢复{my}[b]{0}[/b] 播放",
-      "display_en": "Resume {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "resume-all-tweens",
@@ -404,10 +405,10 @@
       "name_en": "Resume all",
       "description_zh": "恢复播放所有的补间动画。",
       "description_en": "Resume all paused tweens.",
-      "scriptName": "ResumeAllTweens",
-      "category": "playback",
       "display_zh": "{my} 恢复全部",
-      "display_en": "{my}: Resume all"
+      "display_en": "{my}: Resume all",
+      "scriptName": "ResumeAllTweens",
+      "category": "playback"
     },
     {
       "id": "stop-tweens",
@@ -415,6 +416,8 @@
       "name_en": "Stop",
       "description_zh": "停止播放指定的补间动画。注意，停止后将不能再次恢复。",
       "description_en": "Stop the tweens with the given tags. Tweens can no longer be referenced after stopping them.",
+      "display_zh": "停止{my}[b]{0}[/b] 播放",
+      "display_en": "Stop {my} [b]{0}[/b]",
       "scriptName": "StopTweens",
       "category": "playback",
       "params": [
@@ -423,13 +426,11 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要停止播放的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to stop."
+          "desc_en": "The tag or tags of the tweens to stop.",
+          "initialValue": "\"\""
         }
-      ],
-      "display_zh": "停止{my}[b]{0}[/b] 播放",
-      "display_en": "Stop {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "stop-all-tweens",
@@ -437,10 +438,10 @@
       "name_en": "Stop all",
       "description_zh": "停止播放所有补间动画。注意，停止后将不能再次恢复。",
       "description_en": "Stop all tweens. Tweens can no longer be referenced by tag after stopping them.",
-      "scriptName": "StopAllTweens",
-      "category": "playback",
       "display_zh": "{my} 停止全部",
-      "display_en": "{my}: Stop all"
+      "display_en": "{my}: Stop all",
+      "scriptName": "StopAllTweens",
+      "category": "playback"
     },
     {
       "id": "set-enabled",
@@ -448,6 +449,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。禁用时，将不会影响任何参数属性。",
       "description_en": "Set whether the behavior is enabled or disabled. When disabled the behavior will not affect any properties.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "category": "setters",
       "params": [
@@ -456,6 +459,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "要设置的状态",
+          "desc_en": "The state to set",
           "items": [
             "disabled",
             "enabled"
@@ -469,13 +474,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "要设置的状态",
-          "desc_en": "The state to set"
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-tweens-ease",
@@ -483,6 +484,8 @@
       "name_en": "Set ease",
       "description_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
       "description_en": "Set the easing function of the tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}[/b]曲线为[b]{1}[/b]",
+      "display_en": "Set {my} [b]{0}[/b] ease function to [b]{1}[/b]",
       "scriptName": "SetTweensEase",
       "category": "setters",
       "params": [
@@ -491,9 +494,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the easing function for."
+          "desc_en": "The tag or tags of the tweens to set the easing function for.",
+          "initialValue": "\"\""
         },
         {
           "id": "ease",
@@ -503,9 +506,7 @@
           "desc_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
           "desc_en": "The ease function to set."
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}[/b]曲线为[b]{1}[/b]",
-      "display_en": "Set {my} [b]{0}[/b] ease function to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-all-tweens-ease",
@@ -513,6 +514,8 @@
       "name_en": "Set all eases",
       "description_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
       "description_en": "Set the ease function of all tweens.",
+      "display_zh": "设置 {my}全部曲线为[b]{0}[/b]",
+      "display_en": "Set all {my} ease functions to [b]{0}[/b]",
       "scriptName": "SetAllTweensEase",
       "category": "setters",
       "params": [
@@ -524,9 +527,7 @@
           "desc_zh": "要设置的运动曲线。可在项目栏 '曲线' 文件夹新增自定义曲线。",
           "desc_en": "The easing function to set."
         }
-      ],
-      "display_zh": "设置 {my}全部曲线为[b]{0}[/b]",
-      "display_en": "Set all {my} ease functions to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-tweens-time",
@@ -534,6 +535,8 @@
       "name_en": "Set time",
       "description_zh": "要设置的持续时间。",
       "description_en": "Set the time of the tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}[/b]持续时间为[b]{1}[/b]秒",
+      "display_en": "Set {my} [b]{0}[/b] time to [b]{1}[/b] seconds",
       "scriptName": "SetTweensTime",
       "category": "setters",
       "params": [
@@ -542,9 +545,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the time of."
+          "desc_en": "The tag or tags of the tweens to set the time of.",
+          "initialValue": "\"\""
         },
         {
           "id": "time",
@@ -554,9 +557,7 @@
           "desc_zh": "要设置的持续时间，以秒为单位。",
           "desc_en": "The time to set, in seconds."
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}[/b]持续时间为[b]{1}[/b]秒",
-      "display_en": "Set {my} [b]{0}[/b] time to [b]{1}[/b] seconds"
+      ]
     },
     {
       "id": "set-all-tweens-time",
@@ -564,6 +565,8 @@
       "name_en": "Set all times",
       "description_zh": "设置所有动画的持续时间。",
       "description_en": "Set the time of all tweens.",
+      "display_zh": "设置 {my}全部持续时间为[b]{0}[/b]秒",
+      "display_en": "Set all {my} times to [b]{0}[/b] seconds",
       "scriptName": "SetAllTweensTime",
       "category": "setters",
       "params": [
@@ -575,9 +578,7 @@
           "desc_zh": "要设置的持续时间，以秒为单位。",
           "desc_en": "The time to set, in seconds."
         }
-      ],
-      "display_zh": "设置 {my}全部持续时间为[b]{0}[/b]秒",
-      "display_en": "Set all {my} times to [b]{0}[/b] seconds"
+      ]
     },
     {
       "id": "set-tweens-destroy-on-complete",
@@ -585,6 +586,8 @@
       "name_en": "Set destroy on complete",
       "description_zh": "设置是否要在补间动画完成后，销毁这个对象。",
       "description_en": "Set the 'destroy on complete' property of the tweens with the given tags.",
+      "display_zh": "[b]{1}[/b]{my}[b]{0}[/b]播放完成后销毁",
+      "display_en": "Set {my} [b]{0}[/b] to destroy on complete: [b]{1}[/b]",
       "scriptName": "SetTweensDestroyOnComplete",
       "category": "setters",
       "params": [
@@ -593,15 +596,17 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the property of."
+          "desc_en": "The tag or tags of the tweens to set the property of.",
+          "initialValue": "\"\""
         },
         {
           "id": "destroy-on-complete",
           "type": "combo",
           "name_zh": "播放完成后销毁",
           "name_en": "Destroy on complete",
+          "desc_zh": "补间动画播放完成后，是否销毁此对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
           "initialValue": "no",
           "items": [
             "no",
@@ -616,13 +621,9 @@
               "zh": "是",
               "en": "Yes"
             }
-          },
-          "desc_zh": "补间动画播放完成后，是否销毁此对象。",
-          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes."
+          }
         }
-      ],
-      "display_zh": "[b]{1}[/b]{my}[b]{0}[/b]播放完成后销毁",
-      "display_en": "Set {my} [b]{0}[/b] to destroy on complete: [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-all-tweens-destroy-on-complete",
@@ -630,6 +631,8 @@
       "name_en": "Set all destroy on complete",
       "description_zh": "设置所有补间的 '播放完成时销毁' 属性。",
       "description_en": "Set the 'destroy on complete' property of all tweens.",
+      "display_zh": "设置 {my}全部播放完成后销毁: [b]{0}[/b]",
+      "display_en": "Set all {my} to destroy on complete: [b]{0}[/b]",
       "scriptName": "SetAllTweensDestroyOnComplete",
       "category": "setters",
       "params": [
@@ -638,6 +641,8 @@
           "type": "combo",
           "name_zh": "播放完成后销毁",
           "name_en": "Destroy on complete",
+          "desc_zh": "补间动画播放完成后，是否销毁此对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
           "initialValue": "no",
           "items": [
             "no",
@@ -652,13 +657,9 @@
               "zh": "是",
               "en": "Yes"
             }
-          },
-          "desc_zh": "补间动画播放完成后，是否销毁此对象。",
-          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes."
+          }
         }
-      ],
-      "display_zh": "设置 {my}全部播放完成后销毁: [b]{0}[/b]",
-      "display_en": "Set all {my} to destroy on complete: [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-tweens-playback-rate",
@@ -666,6 +667,8 @@
       "name_en": "Set playback rate",
       "description_zh": "要设置的播放倍速。",
       "description_en": "Set the playback rate of the tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}[/b]播放速度为[b]{1}[/b]倍",
+      "display_en": "Set {my} [b]{0}[/b] playback rate to [b]{1}[/b]",
       "scriptName": "SetTweensPlaybackRate",
       "category": "setters",
       "params": [
@@ -674,22 +677,20 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the playback rate of."
+          "desc_en": "The tag or tags of the tweens to set the playback rate of.",
+          "initialValue": "\"\""
         },
         {
           "id": "rate",
           "type": "number",
           "name_zh": "倍数",
           "name_en": "Rate",
-          "initialValue": "1",
           "desc_zh": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
-          "desc_en": "The playback rate to set."
+          "desc_en": "The playback rate to set.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}[/b]播放速度为[b]{1}[/b]倍",
-      "display_en": "Set {my} [b]{0}[/b] playback rate to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-all-tweens-playback-rate",
@@ -697,6 +698,8 @@
       "name_en": "Set all playback rates",
       "description_zh": "设置全部动画的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
       "description_en": "Set the playback rate of all tweens.",
+      "display_zh": "设置 {my}全部播放速度为[b]{0}[/b]倍",
+      "display_en": "Set all {my} playback rates to [b]{0}[/b]",
       "scriptName": "SetAllTweensPlaybackRate",
       "category": "setters",
       "params": [
@@ -705,13 +708,11 @@
           "type": "number",
           "name_zh": "倍速",
           "name_en": "Rate",
-          "initialValue": "1",
           "desc_zh": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
-          "desc_en": "The playback rate to set."
+          "desc_en": "The playback rate to set.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "设置 {my}全部播放速度为[b]{0}[/b]倍",
-      "display_en": "Set all {my} playback rates to [b]{0}[/b]"
+      ]
     },
     {
       "id": "tween-one-property",
@@ -719,6 +720,8 @@
       "name_en": "Tween (one property)",
       "description_zh": "补间一个属性，如 X 坐标。",
       "description_en": "Tween one property such as the X co-ordinate.",
+      "display_zh": "{my} 在[b]{3}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数: [i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放结束后销毁: [i]{5}[/i]",
+      "display_en": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])",
       "scriptName": "TweenOneProperty",
       "isAsync": true,
       "category": "one-property",
@@ -728,25 +731,27 @@
           "type": "string",
           "name_zh": "标签(可选)",
           "name_en": "Tags",
-          "initialValue": "\"\"",
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
-          "desc_en": "A space-separated list of tags to identify a tween (optional)."
+          "desc_en": "A space-separated list of tags to identify a tween (optional).",
+          "initialValue": "\"\""
         },
         {
           "id": "property",
           "type": "combo",
           "name_zh": "属性",
           "name_en": "Property",
+          "desc_zh": "要进行补间的属性",
+          "desc_en": "The property to tween.",
           "initialValue": "offsetX",
           "items": [
             "offsetX",
             "offsetY",
+            "offsetZElevation",
             "offsetWidth",
             "offsetHeight",
             "offsetAngle",
             "offsetOpacity",
             "offsetColor",
-            "offsetZElevation",
             "offsetScaleX",
             "offsetScaleY"
           ],
@@ -783,10 +788,6 @@
               "zh": "颜色",
               "en": "Color"
             },
-            "offsetZElevation": {
-              "zh": "视距高度",
-              "en": "Z Elevation"
-            },
             "offsetScaleX": {
               "zh": "缩放比例 X",
               "en": "X Scale"
@@ -794,28 +795,30 @@
             "offsetScaleY": {
               "zh": "缩放比例 Y",
               "en": "Y Scale"
+            },
+            "offsetZElevation": {
+              "zh": "Z",
+              "en": "Z"
             }
-          },
-          "desc_zh": "要进行补间的属性",
-          "desc_en": "The property to tween."
+          }
         },
         {
           "id": "end-value",
           "type": "number",
           "name_zh": "结束值",
           "name_en": "End value",
-          "initialValue": "0",
           "desc_zh": "补间动画的目标值。若设置颜色，请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。",
-          "desc_en": "The end value of the tween. Specify colors with the rgbEx() expression."
+          "desc_en": "The end value of the tween. Specify colors with the rgbEx() expression.",
+          "initialValue": "0"
         },
         {
           "id": "time",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Time",
-          "initialValue": "5",
           "desc_zh": "补间动画的持续时间，以秒为单位。",
-          "desc_en": "The duration of the tween, in seconds."
+          "desc_en": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         {
           "id": "ease",
@@ -830,6 +833,8 @@
           "type": "combo",
           "name_zh": "播放完成后销毁",
           "name_en": "Destroy on complete",
+          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
           "initialValue": "no",
           "items": [
             "no",
@@ -844,15 +849,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
-          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes."
+          }
         },
         {
           "id": "loop",
           "type": "combo",
           "name_zh": "循环播放",
           "name_en": "Loop",
+          "desc_zh": "是否循环播放补间动画。",
+          "desc_en": "Whether to loop the tween or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -867,15 +872,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "是否循环播放补间动画。",
-          "desc_en": "Whether to loop the tween or not."
+          }
         },
         {
           "id": "ping-pong",
           "type": "combo",
           "name_zh": "反转播放",
           "name_en": "Ping pong",
+          "desc_zh": "动画播放结束时，是否反转播放。",
+          "desc_en": "Whether to tween back and forth or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -890,22 +895,18 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "动画播放结束时，是否反转播放。",
-          "desc_en": "Whether to tween back and forth or not."
+          }
         },
         {
           "id": "repeat-count",
           "type": "number",
           "name_zh": "重复次数",
           "name_en": "Repeat count",
-          "initialValue": "1",
           "desc_zh": "动画重复播放的次数。",
-          "desc_en": "The amount of times to repeat the animation"
+          "desc_en": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "{my} 在[b]{3}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数: [i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放结束后销毁: [i]{5}[/i]",
-      "display_en": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])"
+      ]
     },
     {
       "id": "set-one-property-tweens-end-value",
@@ -913,6 +914,8 @@
       "name_en": "Set end value",
       "description_zh": "要设置的结束值。",
       "description_en": "Set the end value of tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}{1}[/b] 结束值为[b]{2}[/b]",
+      "display_en": "Set {my} [b]{0} {1}[/b] end value to [b]{2}[/b]",
       "scriptName": "SetOnePropertyTweensEndValue",
       "category": "one-property",
       "params": [
@@ -921,25 +924,27 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the end value for."
+          "desc_en": "The tag or tags of the tweens to set the end value for.",
+          "initialValue": "\"\""
         },
         {
           "id": "property",
           "type": "combo",
           "name_zh": "属性",
           "name_en": "Property",
+          "desc_zh": "要更改的属性。",
+          "desc_en": "The property to change.",
           "initialValue": "offsetX",
           "items": [
             "offsetX",
             "offsetY",
+            "offsetZElevation",
             "offsetWidth",
             "offsetHeight",
             "offsetAngle",
             "offsetOpacity",
             "offsetColor",
-            "offsetZElevation",
             "offsetScaleX",
             "offsetScaleY"
           ],
@@ -972,10 +977,6 @@
               "zh": "颜色",
               "en": "Color"
             },
-            "offsetZElevation": {
-              "zh": "视距高度",
-              "en": "Z Elevation"
-            },
             "offsetScaleX": {
               "zh": "缩放比例 X",
               "en": "X Scale"
@@ -983,23 +984,23 @@
             "offsetScaleY": {
               "zh": "缩放比例 Y",
               "en": "Y Scale"
+            },
+            "offsetZElevation": {
+              "zh": "Z",
+              "en": "Z"
             }
-          },
-          "desc_zh": "要更改的属性。",
-          "desc_en": "The property to change."
+          }
         },
         {
           "id": "end-value",
           "type": "number",
           "name_zh": "结束值",
           "name_en": "End value",
-          "initialValue": "0",
           "desc_zh": "要设置的结束值。若目标为颜色，请用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0)  或 HexColor(\"#FF0\") 等。",
-          "desc_en": "The end value to set. Specify colors with the rgbEx() expression."
+          "desc_en": "The end value to set. Specify colors with the rgbEx() expression.",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}{1}[/b] 结束值为[b]{2}[/b]",
-      "display_en": "Set {my} [b]{0} {1}[/b] end value to [b]{2}[/b]"
+      ]
     },
     {
       "id": "tween-two-properties",
@@ -1007,6 +1008,8 @@
       "name_en": "Tween (two properties)",
       "description_zh": "使两个值同时平滑运动（如坐标：X和Y）",
       "description_en": "Tween two properties, such as the position (consisting of an X and Y co-ordinate).",
+      "display_zh": "{my} 在[b]{4}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}[/b], 曲线: [i]{5}[/i], 标签: [b]{0}[/b], 重复次数: [i]{9}[/i], 循环播放: [i]{7}[/i], 反转播放: [i]{8}[/i], 播放完成后销毁: [i]{6}[/i]",
+      "display_en": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}[/b] in [b]{4}[/b] seconds ([i]{5}[/i], destroy: [i]{6}[/i], loop: [i]{7}[/i], ping pong: [i]{8}[/i], repeat count: [i]{9}[/i])",
       "scriptName": "TweenTwoProperties",
       "isAsync": true,
       "category": "two-properties",
@@ -1016,15 +1019,17 @@
           "type": "string",
           "name_zh": "标签(可选)",
           "name_en": "Tags",
-          "initialValue": "\"\"",
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
-          "desc_en": "Optional space-separated list of many tags to identify a tween."
+          "desc_en": "Optional space-separated list of many tags to identify a tween.",
+          "initialValue": "\"\""
         },
         {
           "id": "property",
           "type": "combo",
           "name_zh": "属性",
           "name_en": "Property",
+          "desc_zh": "要进行补间的属性。",
+          "desc_en": "The properties to tween.",
           "initialValue": "position",
           "items": [
             "position",
@@ -1044,36 +1049,34 @@
               "zh": "比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "要进行补间的属性。",
-          "desc_en": "The properties to tween."
+          }
         },
         {
           "id": "end-x",
           "type": "number",
           "name_zh": "结束 X",
           "name_en": "End X",
-          "initialValue": "0",
           "desc_zh": "第一个属性的结束值",
-          "desc_en": "The end value of the first property."
+          "desc_en": "The end value of the first property.",
+          "initialValue": "0"
         },
         {
           "id": "end-y",
           "type": "number",
           "name_zh": "结束 Y",
           "name_en": "End Y",
-          "initialValue": "0",
           "desc_zh": "第二个属性的结束值",
-          "desc_en": "The end value of the second property."
+          "desc_en": "The end value of the second property.",
+          "initialValue": "0"
         },
         {
           "id": "time",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Time",
-          "initialValue": "5",
           "desc_zh": "补间动画的持续时间，以秒为单位。",
-          "desc_en": "The duration of the tween, in seconds."
+          "desc_en": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         {
           "id": "ease",
@@ -1088,6 +1091,8 @@
           "type": "combo",
           "name_zh": "播放完成后销毁",
           "name_en": "Destroy on complete",
+          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1102,15 +1107,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
-          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes."
+          }
         },
         {
           "id": "loop",
           "type": "combo",
           "name_zh": "循环播放",
           "name_en": "Loop",
+          "desc_zh": "是否循环播放补间动画。",
+          "desc_en": "Whether to loop the tween or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1125,15 +1130,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "是否循环播放补间动画。",
-          "desc_en": "Whether to loop the tween or not."
+          }
         },
         {
           "id": "ping-pong",
           "type": "combo",
           "name_zh": "反转播放",
           "name_en": "Ping pong",
+          "desc_zh": "动画播放结束时，是否反转播放。",
+          "desc_en": "Whether to tween back and forth or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1148,22 +1153,18 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "动画播放结束时，是否反转播放。",
-          "desc_en": "Whether to tween back and forth or not."
+          }
         },
         {
           "id": "repeat-count",
           "type": "number",
           "name_zh": "重复次数",
           "name_en": "Repeat count",
-          "initialValue": "1",
           "desc_zh": "动画重复播放的次数。",
-          "desc_en": "The amount of times to repeat the animation"
+          "desc_en": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "{my} 在[b]{4}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}[/b], 曲线: [i]{5}[/i], 标签: [b]{0}[/b], 重复次数: [i]{9}[/i], 循环播放: [i]{7}[/i], 反转播放: [i]{8}[/i], 播放完成后销毁: [i]{6}[/i]",
-      "display_en": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}[/b] in [b]{4}[/b] seconds ([i]{5}[/i], destroy: [i]{6}[/i], loop: [i]{7}[/i], ping pong: [i]{8}[/i], repeat count: [i]{9}[/i])"
+      ]
     },
     {
       "id": "set-two-properties-tweens-end-value",
@@ -1171,6 +1172,8 @@
       "name_en": "Set end values",
       "description_zh": "通过指定的标签，设置补间动画的目标值。",
       "description_en": "Set the end value of the tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}{1}[/b]目标值为[b]{2}, {3}[/b]",
+      "display_en": "Set {my} [b]{0} {1}[/b] end value to [b]{2}, {3}[/b]",
       "scriptName": "SetTwoPropertiesTweensEndValue",
       "category": "two-properties",
       "params": [
@@ -1179,15 +1182,17 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the end value of."
+          "desc_en": "The tag or tags of the tweens to set the end value of.",
+          "initialValue": "\"\""
         },
         {
           "id": "property",
           "type": "combo",
           "name_zh": "属性",
           "name_en": "Property",
+          "desc_zh": "要更改的属性。",
+          "desc_en": "The property to change",
           "initialValue": "position",
           "items": [
             "position",
@@ -1207,31 +1212,257 @@
               "zh": "缩放比例",
               "en": "Scale"
             }
-          },
-          "desc_zh": "要更改的属性。",
-          "desc_en": "The property to change"
+          }
         },
         {
           "id": "end-x",
           "type": "number",
           "name_zh": "结束 X",
           "name_en": "End X",
-          "initialValue": "0",
           "desc_zh": "在第一个属性中设置的结束值",
-          "desc_en": "The end value to set in the first property."
+          "desc_en": "The end value to set in the first property.",
+          "initialValue": "0"
         },
         {
           "id": "end-y",
           "type": "number",
           "name_zh": "结束 Y",
           "name_en": "End Y",
-          "initialValue": "0",
           "desc_zh": "在第二个属性中设置的结束值",
-          "desc_en": "The end value to set in the second property."
+          "desc_en": "The end value to set in the second property.",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}{1}[/b]目标值为[b]{2}, {3}[/b]",
-      "display_en": "Set {my} [b]{0} {1}[/b] end value to [b]{2}, {3}[/b]"
+      ]
+    },
+    {
+      "id": "tween-three-properties",
+      "name_zh": "补间 (三个属性)",
+      "name_en": "Tween (three properties)",
+      "description_zh": "补间三个属性，例如位置（由 X、Y、Z 坐标组成）。",
+      "description_en": "Tween three properties, such as the position (consisting of an X, Y and co-ordinates).",
+      "display_zh": "{my} 在[b]{5}[/b]秒内, 将属性[b]{1}[/b]补间至[b]{2}, {3}, {4}[/b], 曲线: [i]{6}[/i], 标签: [b]{0}[/b], 重复次数: [i]{10}[/i], 循环播放: [i]{8}[/i], 反转播放: [i]{9}[/i], 播放完成后销毁: [i]{7}[/i]",
+      "display_en": "{my} [b]{0}[/b] property [b]{1}[/b] to [b]{2}, {3}, {4}[/b] in [b]{5}[/b] seconds ([i]{6}[/i], destroy: [i]{7}[/i], loop: [i]{8}[/i], ping pong: [i]{9}[/i], repeat count: [i]{10}[/i])",
+      "scriptName": "TweenThreeProperties",
+      "isAsync": true,
+      "category": "three-properties",
+      "params": [
+        {
+          "id": "tags",
+          "type": "string",
+          "name_zh": "标签(可选)",
+          "name_en": "Tags",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
+          "desc_en": "Optional space-separated list of many tags to identify a tween.",
+          "initialValue": "\"\""
+        },
+        {
+          "id": "property",
+          "type": "combo",
+          "name_zh": "属性",
+          "name_en": "Property",
+          "desc_zh": "要进行补间的属性。",
+          "desc_en": "The properties to tween.",
+          "initialValue": "position3",
+          "items": [
+            "position3"
+          ],
+          "items_i18n": {
+            "position3": {
+              "zh": "位置",
+              "en": "Position"
+            }
+          }
+        },
+        {
+          "id": "end-x",
+          "type": "number",
+          "name_zh": "结束 X",
+          "name_en": "End X",
+          "desc_zh": "第一个属性的结束值",
+          "desc_en": "The end value of the first property.",
+          "initialValue": "0"
+        },
+        {
+          "id": "end-y",
+          "type": "number",
+          "name_zh": "结束 Y",
+          "name_en": "End Y",
+          "desc_zh": "第二个属性的结束值",
+          "desc_en": "The end value of the second property.",
+          "initialValue": "0"
+        },
+        {
+          "id": "end-z",
+          "type": "number",
+          "name_zh": "结束 Z",
+          "name_en": "End Z",
+          "desc_zh": "第三个属性的结束值",
+          "desc_en": "The end value of the third property.",
+          "initialValue": "0"
+        },
+        {
+          "id": "time",
+          "type": "number",
+          "name_zh": "时间",
+          "name_en": "Time",
+          "desc_zh": "补间动画的持续时间，以秒为单位。",
+          "desc_en": "The duration of the tween, in seconds.",
+          "initialValue": "5"
+        },
+        {
+          "id": "ease",
+          "type": "ease",
+          "name_zh": "缓动曲线",
+          "name_en": "Ease",
+          "desc_zh": "要使用的缓动曲线。",
+          "desc_en": "The easing function to use."
+        },
+        {
+          "id": "destroy-on-complete",
+          "type": "combo",
+          "name_zh": "播放完成后销毁",
+          "name_en": "Destroy on complete",
+          "desc_zh": "补间动画播放完成后，是否销毁此对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
+          "initialValue": "no",
+          "items": [
+            "no",
+            "yes"
+          ],
+          "items_i18n": {
+            "yes": {
+              "zh": "是",
+              "en": "Yes"
+            },
+            "no": {
+              "zh": "否",
+              "en": "No"
+            }
+          }
+        },
+        {
+          "id": "loop",
+          "type": "combo",
+          "name_zh": "循环播放",
+          "name_en": "Loop",
+          "desc_zh": "是否循环播放补间动画。",
+          "desc_en": "Whether to loop the tween or not.",
+          "initialValue": "no",
+          "items": [
+            "no",
+            "yes"
+          ],
+          "items_i18n": {
+            "yes": {
+              "zh": "是",
+              "en": "Yes"
+            },
+            "no": {
+              "zh": "否",
+              "en": "No"
+            }
+          }
+        },
+        {
+          "id": "ping-pong",
+          "type": "combo",
+          "name_zh": "反转播放",
+          "name_en": "Ping pong",
+          "desc_zh": "动画播放结束时，是否反转播放。",
+          "desc_en": "Whether to tween back and forth or not.",
+          "initialValue": "no",
+          "items": [
+            "no",
+            "yes"
+          ],
+          "items_i18n": {
+            "yes": {
+              "zh": "是",
+              "en": "Yes"
+            },
+            "no": {
+              "zh": "否",
+              "en": "No"
+            }
+          }
+        },
+        {
+          "id": "repeat-count",
+          "type": "number",
+          "name_zh": "重复次数",
+          "name_en": "Repeat count",
+          "desc_zh": "动画重复播放的次数。",
+          "desc_en": "The amount of times to repeat the animation",
+          "initialValue": "1"
+        }
+      ]
+    },
+    {
+      "id": "set-three-properties-tweens-end-value",
+      "name_zh": "设置结束值",
+      "name_en": "Set end values",
+      "description_zh": "设置指定标签的补间动画的目标值。",
+      "description_en": "Set the end value of the tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0} {1}[/b] 结束值为 [b]{2}, {3}, {4}[/b]",
+      "display_en": "Set {my} [b]{0} {1}[/b] end value to [b]{2}, {3}, {4}[/b]",
+      "scriptName": "SetThreePropertiesTweensEndValue",
+      "category": "three-properties",
+      "params": [
+        {
+          "id": "tags",
+          "type": "string",
+          "name_zh": "标签",
+          "name_en": "Tag",
+          "desc_zh": "要设置的补间动画的标签。使用空格分隔多个标签。",
+          "desc_en": "The tag or tags of the tweens to set the end value of.",
+          "initialValue": "\"\""
+        },
+        {
+          "id": "property",
+          "type": "combo",
+          "name_zh": "属性",
+          "name_en": "Property",
+          "desc_zh": "要更改的属性。",
+          "desc_en": "The property to change",
+          "initialValue": "position3",
+          "items": [
+            "position3"
+          ],
+          "items_i18n": {
+            "position3": {
+              "zh": "位置",
+              "en": "Position"
+            }
+          }
+        },
+        {
+          "id": "end-x",
+          "type": "number",
+          "name_zh": "结束 X",
+          "name_en": "End X",
+          "desc_zh": "设置第一个属性的结束值。",
+          "desc_en": "The end value to set in the first property.",
+          "initialValue": "0"
+        },
+        {
+          "id": "end-y",
+          "type": "number",
+          "name_zh": "结束 Y",
+          "name_en": "End Y",
+          "desc_zh": "设置第二个属性的结束值。",
+          "desc_en": "The end value to set in the second property.",
+          "initialValue": "0"
+        },
+        {
+          "id": "end-z",
+          "type": "number",
+          "name_zh": "结束 Z",
+          "name_en": "End Z",
+          "desc_zh": "设置第三个属性的结束值。",
+          "desc_en": "The end value to set in the third property.",
+          "initialValue": "0"
+        }
+      ]
     },
     {
       "id": "tween-value",
@@ -1239,6 +1470,8 @@
       "name_en": "Tween (value)",
       "description_zh": "针对一个数值进行补间，不同与对象的属性。",
       "description_en": "Tween a number value, independent of any properties.",
+      "display_zh": "{my} 在[b]{3}[/b]秒内, 将数值从[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数:[i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放完成后销毁: [i]{5}[/i]",
+      "display_en": "{my} [b]{0}[/b] value from [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])",
       "scriptName": "TweenValue",
       "isAsync": true,
       "category": "value",
@@ -1248,36 +1481,36 @@
           "type": "string",
           "name_zh": "标签(可选)",
           "name_en": "Tags",
-          "initialValue": "\"\"",
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
-          "desc_en": "A space-separated list of tags to identify a tween (optional)."
+          "desc_en": "A space-separated list of tags to identify a tween (optional).",
+          "initialValue": "\"\""
         },
         {
           "id": "start-value",
           "type": "number",
           "name_zh": "起始值",
           "name_en": "Start value",
-          "initialValue": "0",
           "desc_zh": "补间的起始值。",
-          "desc_en": "The start value of the tween."
+          "desc_en": "The start value of the tween.",
+          "initialValue": "0"
         },
         {
           "id": "end-value",
           "type": "number",
           "name_zh": "结束值",
           "name_en": "End value",
-          "initialValue": "0",
           "desc_zh": "补间的结束值。",
-          "desc_en": "The end value of the tween."
+          "desc_en": "The end value of the tween.",
+          "initialValue": "0"
         },
         {
           "id": "time",
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Time",
-          "initialValue": "5",
           "desc_zh": "补间动画的持续时间，以秒为单位。",
-          "desc_en": "The duration of the tween, in seconds."
+          "desc_en": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         {
           "id": "ease",
@@ -1292,6 +1525,8 @@
           "type": "combo",
           "name_zh": "播放完成后销毁",
           "name_en": "Destroy on complete",
+          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
+          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1306,15 +1541,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "在补间结束完成时，是否立即销毁相关的实例对象。",
-          "desc_en": "Whether the affected instance should be destroyed as soon as the tween finishes."
+          }
         },
         {
           "id": "loop",
           "type": "combo",
           "name_zh": "循环播放",
           "name_en": "Loop",
+          "desc_zh": "是否循环播放补间动画。",
+          "desc_en": "Whether to loop the tween or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1329,15 +1564,15 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "是否循环播放补间动画。",
-          "desc_en": "Whether to loop the tween or not."
+          }
         },
         {
           "id": "ping-pong",
           "type": "combo",
           "name_zh": "反转播放",
           "name_en": "Ping pong",
+          "desc_zh": "动画播放结束时，是否反转播放。",
+          "desc_en": "Whether to tween back and forth or not.",
           "initialValue": "no",
           "items": [
             "no",
@@ -1352,22 +1587,18 @@
               "zh": "否",
               "en": "No"
             }
-          },
-          "desc_zh": "动画播放结束时，是否反转播放。",
-          "desc_en": "Whether to tween back and forth or not."
+          }
         },
         {
           "id": "repeat-count",
           "type": "number",
           "name_zh": "重复次数",
           "name_en": "Repeat count",
-          "initialValue": "1",
           "desc_zh": "动画重复播放的次数。",
-          "desc_en": "The amount of times to repeat the animation"
+          "desc_en": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "{my} 在[b]{3}[/b]秒内, 将数值从[b]{1}[/b]补间至[b]{2}[/b], 曲线: [i]{4}[/i], 标签: [b]{0}[/b], 重复次数:[i]{8}[/i], 循环播放: [i]{6}[/i], 反转播放: [i]{7}[/i], 播放完成后销毁: [i]{5}[/i]",
-      "display_en": "{my} [b]{0}[/b] value from [b]{1}[/b] to [b]{2}[/b] in [b]{3}[/b] seconds ([i]{4}[/i], destroy: [i]{5}[/i], loop: [i]{6}[/i], ping pong: [i]{7}[/i], repeat count: [i]{8}[/i])"
+      ]
     },
     {
       "id": "set-value-property-tweens-start-value",
@@ -1375,6 +1606,8 @@
       "name_en": "Set start value",
       "description_zh": "要设置的起始值。",
       "description_en": "Set the start value of any value tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}[/b] 起始值为[b]{1}[/b]",
+      "display_en": "Set {my} [b]{0}, Value[/b] start value to [b]{1}[/b]",
       "scriptName": "SetValuePropertyTweensStartValue",
       "category": "value",
       "params": [
@@ -1383,22 +1616,20 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the start value for."
+          "desc_en": "The tag or tags of the tweens to set the start value for.",
+          "initialValue": "\"\""
         },
         {
           "id": "start-value",
           "type": "number",
           "name_zh": "起始值",
           "name_en": "Start value",
-          "initialValue": "0",
           "desc_zh": "设置起始值",
-          "desc_en": "The start value to set."
+          "desc_en": "The start value to set.",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}[/b] 起始值为[b]{1}[/b]",
-      "display_en": "Set {my} [b]{0}, Value[/b] start value to [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-value-property-tweens-end-value",
@@ -1406,6 +1637,8 @@
       "name_en": "Set end value",
       "description_zh": "要设置的目标值。",
       "description_en": "Set the end value of any value tweens with the given tags.",
+      "display_zh": "设置 {my} [b]{0}[/b]目标值为[b]{1}[/b]",
+      "display_en": "Set {my} [b]{0}, Value[/b] end value to [b]{1}[/b]",
       "scriptName": "SetValuePropertyTweensEndValue",
       "category": "value",
       "params": [
@@ -1414,22 +1647,20 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要操作的补间动画的标签。使用空格分隔多个标签。",
-          "desc_en": "The tag or tags of the tweens to set the end value for."
+          "desc_en": "The tag or tags of the tweens to set the end value for.",
+          "initialValue": "\"\""
         },
         {
           "id": "end-value",
           "type": "number",
           "name_zh": "目标值",
           "name_en": "End value",
-          "initialValue": "0",
           "desc_zh": "设置目标值",
-          "desc_en": "The end value to set."
+          "desc_en": "The end value to set.",
+          "initialValue": "0"
         }
-      ],
-      "display_zh": "设置 {my} [b]{0}[/b]目标值为[b]{1}[/b]",
-      "display_en": "Set {my} [b]{0}, Value[/b] end value to [b]{1}[/b]"
+      ]
     }
   ],
   "expressions": [
@@ -1447,9 +1678,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
-          "desc_en": "The tag of the tween to get the time from. Leave empty for the first tween."
+          "desc_en": "The tag of the tween to get the time from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       ]
     },
@@ -1467,9 +1698,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
-          "desc_en": "The tag of the tween to get the value from. Leave empty for the first 'Value' tween."
+          "desc_en": "The tag of the tween to get the value from. Leave empty for the first 'Value' tween.",
+          "initialValue": "\"\""
         }
       ]
     },
@@ -1487,9 +1718,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
-          "desc_en": "The tag of the tween to get the progress from. Leave empty for the first tween."
+          "desc_en": "The tag of the tween to get the progress from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       ]
     },
@@ -1507,9 +1738,9 @@
           "type": "string",
           "name_zh": "标签",
           "name_en": "Tag",
-          "initialValue": "\"\"",
           "desc_zh": "要获取的补间动画的标签。留空则指定第一个播放的动画。",
-          "desc_en": "The tag of the tween to get the playback rate from. Leave empty for the first tween."
+          "desc_en": "The tag of the tween to get the playback rate from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       ]
     },

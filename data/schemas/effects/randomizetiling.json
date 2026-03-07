@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "tile-width",
@@ -20,7 +24,8 @@
       "name_zh": "tile-width",
       "name_en": "tile-width",
       "initialValue": 256,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "tileWidth"
     },
     {
       "id": "tile-height",
@@ -28,7 +33,8 @@
       "name_zh": "tile-height",
       "name_en": "tile-height",
       "initialValue": 256,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "tileHeight"
     },
     {
       "id": "x-random",
@@ -36,7 +42,8 @@
       "name_zh": "x-random",
       "name_en": "x-random",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "xRandom"
     },
     {
       "id": "y-random",
@@ -44,7 +51,8 @@
       "name_zh": "y-random",
       "name_en": "y-random",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "yRandom"
     },
     {
       "id": "angle-random",
@@ -52,7 +60,8 @@
       "name_zh": "angle-random",
       "name_en": "angle-random",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "angleRandom"
     },
     {
       "id": "blend-margin-x",
@@ -60,7 +69,8 @@
       "name_zh": "blend-margin-x",
       "name_en": "blend-margin-x",
       "initialValue": 0.1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "blendMarginX"
     },
     {
       "id": "blend-margin-y",
@@ -68,7 +78,8 @@
       "name_zh": "blend-margin-y",
       "name_en": "blend-margin-y",
       "initialValue": 0.1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "blendMarginY"
     }
   ]
 }

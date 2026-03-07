@@ -22,10 +22,10 @@
       "name_en": "Is host",
       "description_zh": "检测玩家是否为当前房间的主机(Host)。",
       "description_en": "True if host of the current room.",
-      "scriptName": "IsHost",
-      "category": "room",
       "display_zh": "身份为主机",
-      "display_en": "Is host"
+      "display_en": "Is host",
+      "scriptName": "IsHost",
+      "category": "room"
     },
     {
       "id": "on-peer-connected",
@@ -33,11 +33,12 @@
       "name_en": "On peer connected",
       "description_zh": "当任意玩家连接到服务器时触发。(包括主机，或连接主机的其他玩家)",
       "description_en": "Triggered when connected to a peer (either to host or a peer joining the host).",
+      "display_zh": "玩家连接成功",
+      "display_en": "On peer connected",
       "scriptName": "OnPeerConnected",
       "isTrigger": true,
-      "category": "room",
-      "display_zh": "玩家连接成功",
-      "display_en": "On peer connected"
+      "canDebug": true,
+      "category": "room"
     },
     {
       "id": "on-peer-disconnected",
@@ -45,11 +46,12 @@
       "name_en": "On peer disconnected",
       "description_zh": "与对等设备断开连接时触发（从主机或对等设备离开主机）。",
       "description_en": "Triggered when disconnected from a peer (either from host or a peer leaving the host).",
+      "display_zh": "玩家断开连接",
+      "display_en": "On peer disconnected",
       "scriptName": "OnPeerDisconnected",
       "isTrigger": true,
-      "category": "room",
-      "display_zh": "玩家断开连接",
-      "display_en": "On peer disconnected"
+      "canDebug": true,
+      "category": "room"
     },
     {
       "id": "on-host-disconnected",
@@ -57,11 +59,12 @@
       "name_en": "On host disconnected",
       "description_zh": "当玩家与主机断开连接时触发。",
       "description_en": "Triggered when a peer gets disconnected from the host.",
+      "display_zh": "主机已断开",
+      "display_en": "On host disconnected",
       "scriptName": "OnHostDisconnected",
       "isTrigger": true,
-      "category": "room",
-      "display_zh": "主机已断开",
-      "display_en": "On host disconnected"
+      "canDebug": true,
+      "category": "room"
     },
     {
       "id": "on-kicked",
@@ -69,11 +72,12 @@
       "name_en": "On kicked",
       "description_zh": "从房间踢出时触发。",
       "description_en": "Triggered when kicked from a room.",
+      "display_zh": "被踢出",
+      "display_en": "On kicked",
       "scriptName": "OnSignallingKicked",
       "isTrigger": true,
-      "category": "room",
-      "display_zh": "被踢出",
-      "display_en": "On kicked"
+      "canDebug": true,
+      "category": "room"
     },
     {
       "id": "on-peer-message",
@@ -81,8 +85,11 @@
       "name_en": "On peer message",
       "description_zh": "收到其他玩家发送的包含特定标签消息时触发。",
       "description_en": "Triggered when received a message with a specific tag from a peer.",
+      "display_zh": "收到玩家消息 [i]{0}[/i]",
+      "display_en": "On peer message [i]{0}[/i]",
       "scriptName": "OnPeerMessage",
       "isTrigger": true,
+      "canDebug": true,
       "category": "room",
       "params": [
         {
@@ -93,9 +100,7 @@
           "desc_zh": "用于区分不同的消息类型的标签。",
           "desc_en": "The tag to identify the message type."
         }
-      ],
-      "display_zh": "收到玩家消息 [i]{0}[/i]",
-      "display_en": "On peer message [i]{0}[/i]"
+      ]
     },
     {
       "id": "on-any-peer-message",
@@ -103,11 +108,12 @@
       "name_en": "On any peer message",
       "description_zh": "收到玩家发送的任意消息时触发。",
       "description_en": "Triggered when received any message from a peer.",
+      "display_zh": "收到任意玩家消息",
+      "display_en": "On any peer message",
       "scriptName": "OnAnyPeerMessage",
       "isTrigger": true,
-      "category": "room",
-      "display_zh": "收到任意玩家消息",
-      "display_en": "On any peer message"
+      "canDebug": true,
+      "category": "room"
     },
     {
       "id": "on-peer-binary-message",
@@ -115,8 +121,11 @@
       "name_en": "On peer binary message",
       "description_zh": "收到玩家的二进制消息时触发。",
       "description_en": "Triggered when received a binary message from a peer.",
+      "display_zh": "收到二进制消息 (接收到 {0})",
+      "display_en": "On peer binary message (in {0})",
       "scriptName": "OnPeerBinaryMessage",
       "isTrigger": true,
+      "canDebug": true,
       "category": "room",
       "params": [
         {
@@ -127,9 +136,7 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ],
-      "display_zh": "收到二进制消息 (接收到 {0})",
-      "display_en": "On peer binary message (in {0})"
+      ]
     },
     {
       "id": "compare-peer-count",
@@ -137,6 +144,8 @@
       "name_en": "Compare peer count",
       "description_zh": "比较当前房间内的玩家人数。",
       "description_en": "Compare the number of peers currently in the room.",
+      "display_zh": "玩家数量 {0} {1}",
+      "display_en": "Peer count {0} {1}",
       "scriptName": "ComparePeerCount",
       "category": "room",
       "params": [
@@ -156,9 +165,7 @@
           "desc_zh": "要比较的数量。",
           "desc_en": "Number of peers to compare to."
         }
-      ],
-      "display_zh": "玩家数量 {0} {1}",
-      "display_en": "Peer count {0} {1}"
+      ]
     },
     {
       "id": "on-client-update",
@@ -166,11 +173,12 @@
       "name_en": "On client update",
       "description_zh": "向主机发送新的客户端状态时触发。",
       "description_en": "Triggered when sending the new client state to the host.",
+      "display_zh": "客户端更新",
+      "display_en": "On client update",
       "scriptName": "OnClientUpdate",
       "isTrigger": true,
-      "category": "room-peer",
-      "display_zh": "客户端更新",
-      "display_en": "On client update"
+      "canDebug": true,
+      "category": "room-peer"
     },
     {
       "id": "is-ready-for-input",
@@ -178,10 +186,10 @@
       "name_en": "Is ready for input",
       "description_zh": "检测是否已准备好向主机发送输入事件。 在此结果完成前不要移动本地玩家。",
       "description_en": "True when ready to send input to the host. Don't move the local player until this is true.",
-      "scriptName": "IsReadyForInput",
-      "category": "room-peer",
       "display_zh": "准备输入",
-      "display_en": "Is ready for input"
+      "display_en": "Is ready for input",
+      "scriptName": "IsReadyForInput",
+      "category": "room-peer"
     },
     {
       "id": "on-server-list-received",
@@ -200,11 +208,12 @@
       "name_en": "On error",
       "description_zh": "服务器列表或信令服务器发生错误时触发。",
       "description_en": "Triggered if an error occurs with the server list or signalling server.",
+      "display_zh": "信令发生错误",
+      "display_en": "On signalling error",
       "scriptName": "OnSignallingError",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令发生错误",
-      "display_en": "On signalling error"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-connected",
@@ -212,11 +221,12 @@
       "name_en": "On connected",
       "description_zh": "信令成功连接服务器时触发。",
       "description_en": "Triggered when successfully connected to the signalling server.",
+      "display_zh": "信令连接成功",
+      "display_en": "On signalling connected",
       "scriptName": "OnSignallingConnected",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令连接成功",
-      "display_en": "On signalling connected"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-disconnected",
@@ -224,11 +234,12 @@
       "name_en": "On disconnected",
       "description_zh": "信令连接服务器失败时触发。",
       "description_en": "Triggered when disconnected from the signalling server.",
+      "display_zh": "信令断开连接",
+      "display_en": "On signalling disconnected",
       "scriptName": "OnSignallingDisconnected",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令断开连接",
-      "display_en": "On signalling disconnected"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-logged-in",
@@ -236,11 +247,12 @@
       "name_en": "On logged in",
       "description_zh": "信令成功登录服务器时触发。",
       "description_en": "Triggered when successfully logged in to the signalling server.",
+      "display_zh": "信令已登录",
+      "display_en": "On signalling logged in",
       "scriptName": "OnSignallingLoggedIn",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令已登录",
-      "display_en": "On signalling logged in"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-joined-room",
@@ -248,11 +260,12 @@
       "name_en": "On joined room",
       "description_zh": "信令加入房间时触发。",
       "description_en": "Triggered upon successfully joining a room.",
+      "display_zh": "信令加入房间",
+      "display_en": "On signalling joined room",
       "scriptName": "OnSignallingJoinedRoom",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令加入房间",
-      "display_en": "On signalling joined room"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-left-room",
@@ -260,11 +273,12 @@
       "name_en": "On left room",
       "description_zh": "信令离开房间时触发。",
       "description_en": "Triggered upon successfully leaving a room.",
+      "display_zh": "信令离开房间",
+      "display_en": "On signalling left room",
       "scriptName": "OnSignallingLeftRoom",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "信令离开房间",
-      "display_en": "On signalling left room"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "is-connected",
@@ -272,10 +286,10 @@
       "name_en": "Is connected",
       "description_zh": "检测是否已连接信令服务器。",
       "description_en": "True if currently connected to a signalling server.",
-      "scriptName": "SignallingIsConnected",
-      "category": "signalling",
       "display_zh": "已连接到信令服务器",
-      "display_en": "Is connected to signalling server"
+      "display_en": "Is connected to signalling server",
+      "scriptName": "SignallingIsConnected",
+      "category": "signalling"
     },
     {
       "id": "is-logged-in",
@@ -283,10 +297,10 @@
       "name_en": "Is logged in",
       "description_zh": "检测是否已登录信令服务器。",
       "description_en": "True if currently logged in to a signalling server.",
-      "scriptName": "SignallingIsLoggedIn",
-      "category": "signalling",
       "display_zh": "已登录到信令服务器",
-      "display_en": "Is logged in to signalling server"
+      "display_en": "Is logged in to signalling server",
+      "scriptName": "SignallingIsLoggedIn",
+      "category": "signalling"
     },
     {
       "id": "is-in-room",
@@ -294,10 +308,10 @@
       "name_en": "Is in room",
       "description_zh": "检测当前是否已进入信号服务器上的房间。",
       "description_en": "True if currently in a room on the signalling server.",
-      "scriptName": "SignallingIsInRoom",
-      "category": "signalling",
       "display_zh": "在房间内",
-      "display_en": "Is in room"
+      "display_en": "Is in room",
+      "scriptName": "SignallingIsInRoom",
+      "category": "signalling"
     },
     {
       "id": "supports-multiplayer",
@@ -315,11 +329,12 @@
       "name_en": "On game instance list",
       "description_zh": "执行 '请求游戏大厅列表' 动作后，收到服务器返回的游戏大厅列表时触发。",
       "description_en": "Triggered after 'Request game instance list' when the list has been received from the server.",
+      "display_zh": "接收大厅列表",
+      "display_en": "On game instance list received",
       "scriptName": "OnGameInstanceList",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "接收大厅列表",
-      "display_en": "On game instance list received"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-room-list",
@@ -327,11 +342,12 @@
       "name_en": "On room list",
       "description_zh": "执行 '请求房间列表' 动作后，收到服务器返回的房间列表时触发。",
       "description_en": "Triggered after 'Request room list' when the list has been received from the server.",
+      "display_zh": "接收到房间列表",
+      "display_en": "On room list received",
       "scriptName": "OnRoomList",
       "isTrigger": true,
-      "category": "signalling",
-      "display_zh": "接收到房间列表",
-      "display_en": "On room list received"
+      "canDebug": true,
+      "category": "signalling"
     },
     {
       "id": "on-binary-transfer-event",
@@ -339,6 +355,8 @@
       "name_en": "On event",
       "description_zh": "监听指定标签的各种二进制传输事件时触发，例如传输完成、开始接收或被取消。",
       "description_en": "Triggered when various binary transfer events happen like a receive starting, or cancellation, for a specific transfer.",
+      "display_zh": "二进制传输 [i]{0}[/i] {1}",
+      "display_en": "On binary transfer [i]{0}[/i] {1}",
       "scriptName": "OnBinaryTransferEvent",
       "isTrigger": true,
       "category": "binary-transfers",
@@ -356,6 +374,8 @@
           "type": "combo",
           "name_zh": "事件",
           "name_en": "Type",
+          "desc_zh": "二进制传输事件。",
+          "desc_en": "The binary transfer event.",
           "items": [
             "receive-started",
             "progress",
@@ -379,13 +399,9 @@
               "zh": "发送完成",
               "en": "send complete"
             }
-          },
-          "desc_zh": "二进制传输事件。",
-          "desc_en": "The binary transfer event."
+          }
         }
-      ],
-      "display_zh": "二进制传输 [i]{0}[/i] {1}",
-      "display_en": "On binary transfer [i]{0}[/i] {1}"
+      ]
     },
     {
       "id": "on-any-binary-transfer-event",
@@ -393,6 +409,8 @@
       "name_en": "On any event",
       "description_zh": "监听任意二进制传输事件的触发，例如任意传输完成、开始接收或被取消。",
       "description_en": "Triggered when various binary transfer events happen like a receive starting, or cancellation, for any transfer.",
+      "display_zh": "任意二进制传输{0}",
+      "display_en": "On any binary transfer {0}",
       "scriptName": "OnAnyBinaryTransferEvent",
       "isTrigger": true,
       "category": "binary-transfers",
@@ -402,6 +420,8 @@
           "type": "combo",
           "name_zh": "事件",
           "name_en": "Type",
+          "desc_zh": "二进制传输事件",
+          "desc_en": "The binary transfer event.",
           "items": [
             "receive-started",
             "progress",
@@ -425,13 +445,9 @@
               "zh": "发送完成",
               "en": "send complete"
             }
-          },
-          "desc_zh": "二进制传输事件",
-          "desc_en": "The binary transfer event."
+          }
         }
-      ],
-      "display_zh": "任意二进制传输{0}",
-      "display_en": "On any binary transfer {0}"
+      ]
     },
     {
       "id": "on-binary-transfer-complete",
@@ -439,6 +455,8 @@
       "name_en": "On complete",
       "description_zh": "当带有特定标签的二进制数据传输成功时触发。",
       "description_en": "Triggered when a binary transfer with a specific tag has successfully been received.",
+      "display_zh": "传输完成(标签: [i]{0}[/i],  接收到:{1})",
+      "display_en": "On binary transfer [i]{0}[/i] complete (in {1})",
       "scriptName": "OnBinaryTransferComplete",
       "isTrigger": true,
       "category": "binary-transfers",
@@ -459,9 +477,7 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ],
-      "display_zh": "传输完成(标签: [i]{0}[/i],  接收到:{1})",
-      "display_en": "On binary transfer [i]{0}[/i] complete (in {1})"
+      ]
     },
     {
       "id": "on-any-binary-transfer-complete",
@@ -469,6 +485,8 @@
       "name_en": "On any complete",
       "description_zh": "当任意二进制数据传输完成时触发。",
       "description_en": "Triggered when any binary transfer has successfully been received.",
+      "display_zh": "任意传输完成(接收到:{0})",
+      "display_en": "On any binary transfer complete (in {0})",
       "scriptName": "OnAnyBinaryTransferComplete",
       "isTrigger": true,
       "category": "binary-transfers",
@@ -481,9 +499,7 @@
           "desc_zh": "选择一个二进制数据对象来接收数据。",
           "desc_en": "Choose a Binary Data object to write the received binary data to."
         }
-      ],
-      "display_zh": "任意传输完成(接收到:{0})",
-      "display_en": "On any binary transfer complete (in {0})"
+      ]
     }
   ],
   "actions": [
@@ -493,10 +509,10 @@
       "name_en": "Disconnect",
       "description_zh": "断开与房间的连接。若主机离开则房间内所有玩家都将被踢出。",
       "description_en": "Disconnect from peers in the current room, and also leave the room on the signalling server.",
-      "scriptName": "DisconnectRoom",
-      "category": "room",
       "display_zh": "离开房间",
-      "display_en": "Disconnect from room"
+      "display_en": "Disconnect from room",
+      "scriptName": "DisconnectRoom",
+      "category": "room"
     },
     {
       "id": "send-message",
@@ -504,6 +520,8 @@
       "name_en": "Send message",
       "description_zh": "向指定的玩家发送消息。",
       "description_en": "Send a message to a specific peer.",
+      "display_zh": "向玩家 [i]{0}[/i] 发送消息 [b]{2}[/b] (标签 [i]{1}[/i], 模式 [i]{3}[/i])",
+      "display_en": "Send to peer [i]{0}[/i] tag [i]{1}[/i] message [b]{2}[/b] (mode [i]{3}[/i])",
       "scriptName": "SendPeerMessage",
       "category": "room",
       "params": [
@@ -536,6 +554,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "发送此消息的传输模式。",
+          "desc_en": "The transmission mode to send this message with.",
           "items": [
             "reliable-ordered",
             "reliable-unordered",
@@ -554,13 +574,9 @@
               "zh": "不可靠",
               "en": "Unreliable"
             }
-          },
-          "desc_zh": "发送此消息的传输模式。",
-          "desc_en": "The transmission mode to send this message with."
+          }
         }
-      ],
-      "display_zh": "向玩家 [i]{0}[/i] 发送消息 [b]{2}[/b] (标签 [i]{1}[/i], 模式 [i]{3}[/i])",
-      "display_en": "Send to peer [i]{0}[/i] tag [i]{1}[/i] message [b]{2}[/b] (mode [i]{3}[/i])"
+      ]
     },
     {
       "id": "send-binary-message",
@@ -568,6 +584,8 @@
       "name_en": "Send binary message",
       "description_zh": "发送二进制数据给指定玩家。",
       "description_en": "Send binary data to a specific peer.",
+      "display_zh": "发送二进制消息 {1} (接收方: [i]{0}[/i], 模式: [i]{2}[/i])",
+      "display_en": "Send to peer [i]{0}[/i] binary message {1} (mode [i]{2}[/i])",
       "scriptName": "SendPeerBinaryMessage",
       "category": "room",
       "params": [
@@ -592,6 +610,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
+          "desc_en": "The transmission mode to send this message with.",
           "items": [
             "reliable-ordered",
             "reliable-unordered",
@@ -610,13 +630,9 @@
               "zh": "不可靠",
               "en": "Unreliable"
             }
-          },
-          "desc_zh": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
-          "desc_en": "The transmission mode to send this message with."
+          }
         }
-      ],
-      "display_zh": "发送二进制消息 {1} (接收方: [i]{0}[/i], 模式: [i]{2}[/i])",
-      "display_en": "Send to peer [i]{0}[/i] binary message {1} (mode [i]{2}[/i])"
+      ]
     },
     {
       "id": "simulate-latency",
@@ -624,6 +640,8 @@
       "name_en": "Simulate latency",
       "description_zh": "模拟发送与接收消息时产生的延迟和数据丢失的过程。用于在本地的房主端测试，模拟遇到现实中的网络延迟时可能出现的影响。",
       "description_en": "Simulate a delay and packet loss in sending/receiving messages. Useful for testing lag performance locally.",
+      "display_zh": "模拟网络延迟 [i]{0}[/i]秒 (随机波动:[i]{1}[/i], 丢包概率: [i]{2}[/i])",
+      "display_en": "Simulate latency [i]{0}[/i] seconds with variance [i]{1}[/i] and packet loss [i]{2}[/i]",
       "scriptName": "SimulateLatency",
       "category": "room",
       "params": [
@@ -632,31 +650,29 @@
           "type": "number",
           "name_zh": "延迟",
           "name_en": "Latency",
-          "initialValue": "0.1",
           "desc_zh": "要模拟的网络延迟，以秒为单位。这将导致发送和接收的消息都被人为进行延迟。",
-          "desc_en": "Enter a latency in seconds to simulate. Sent and received messages will be artificially delayed."
+          "desc_en": "Enter a latency in seconds to simulate. Sent and received messages will be artificially delayed.",
+          "initialValue": "0.1"
         },
         {
           "id": "pdv",
           "type": "number",
           "name_zh": "延迟波动",
           "name_en": "PDV",
-          "initialValue": "0.03",
           "desc_zh": "在标准网络延迟的基础上，增加一个从 0 到目标值之间的随机秒数 (PDV)，用于模拟真实环境中，玩家与本机发送或接受消息时的延迟。",
-          "desc_en": "Enter a packet delay variance in seconds to simulate. Sent and received messages will be artificially delayed."
+          "desc_en": "Enter a packet delay variance in seconds to simulate. Sent and received messages will be artificially delayed.",
+          "initialValue": "0.03"
         },
         {
           "id": "packet-loss",
           "type": "number",
           "name_zh": "丢包概率",
           "name_en": "Packet loss",
-          "initialValue": "0.05",
           "desc_zh": "模拟数据包丢失的百分比概率，数值范围从 0 到 1，如 0.05 表示有 5％ 的几率丢失数据。用于模拟在发送和接收的消息可能被人为的忽略或进一步延迟。",
-          "desc_en": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed."
+          "desc_en": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed.",
+          "initialValue": "0.05"
         }
-      ],
-      "display_zh": "模拟网络延迟 [i]{0}[/i]秒 (随机波动:[i]{1}[/i], 丢包概率: [i]{2}[/i])",
-      "display_en": "Simulate latency [i]{0}[/i] seconds with variance [i]{1}[/i] and packet loss [i]{2}[/i]"
+      ]
     },
     {
       "id": "sync-object",
@@ -717,6 +733,8 @@
       "name_en": "Sync object",
       "description_zh": "通过网络自动同步对象类型。",
       "description_en": "Automatically synchronise an object type over the network.",
+      "display_zh": "同步对象 {0}([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]角度[/b]: [i]{3}[/i], 精度 [i]{4}[/i], 带宽: [i]{5}[/i])",
+      "display_en": "Sync {0} ([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]angle[/b]: [i]{3}[/i], precision [i]{4}[/i] at [i]{5}[/i])",
       "scriptName": "SyncObject2",
       "category": "room",
       "params": [
@@ -757,6 +775,8 @@
           "type": "combo",
           "name_zh": "精度",
           "name_en": "Precision",
+          "desc_zh": "选择要同步的上述数据的精度，更高的精度需要使用更多的带宽。",
+          "desc_en": "Choose the precision of the above data to sync. Higher precision requires more bandwidth.",
           "initialValue": "normal-float-4-bytes",
           "items": [
             "high-double-8-bytes",
@@ -776,15 +796,15 @@
               "zh": "低 (16位整数, 2字节)",
               "en": "Low (int16, 2 bytes)"
             }
-          },
-          "desc_zh": "选择要同步的上述数据的精度，更高的精度需要使用更多的带宽。",
-          "desc_en": "Choose the precision of the above data to sync. Higher precision requires more bandwidth."
+          }
         },
         {
           "id": "bandwidth",
           "type": "combo",
           "name_zh": "带宽",
           "name_en": "Bandwidth",
+          "desc_zh": "选择此对象的带宽同步设置。建议只在运动峰值可预测的情况下选择 '低带宽' 模式 (例如匀速直线运动) 。",
+          "desc_en": "Choose the bandwidth setting for this object. Only choose 'Low' for highly predictable movement (e.g. linear constant speed).",
           "items": [
             "normal-bandwidth-unpredictable",
             "low-bandwidth-highly-predictable",
@@ -803,13 +823,9 @@
               "zh": "非常低 (几乎静态)",
               "en": "Very low bandwidth (essentially static)"
             }
-          },
-          "desc_zh": "选择此对象的带宽同步设置。建议只在运动峰值可预测的情况下选择 '低带宽' 模式 (例如匀速直线运动) 。",
-          "desc_en": "Choose the bandwidth setting for this object. Only choose 'Low' for highly predictable movement (e.g. linear constant speed)."
+          }
         }
-      ],
-      "display_zh": "同步对象 {0}([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]角度[/b]: [i]{3}[/i], 精度 [i]{4}[/i], 带宽: [i]{5}[/i])",
-      "display_en": "Sync {0} ([b]X[/b]: [i]{1}[/i], [b]Y[/b]: [i]{2}[/i], [b]angle[/b]: [i]{3}[/i], precision [i]{4}[/i] at [i]{5}[/i])"
+      ]
     },
     {
       "id": "sync-instance-variable",
@@ -817,6 +833,8 @@
       "name_en": "Sync instance variable",
       "description_zh": "添加同步对象的实例变量以通过网络同步。",
       "description_en": "Add a synced object's instance variable to also sync over the network.",
+      "display_zh": "同步 {0} 实例变量 [b]{1}[/b] (客户端标签: [i]{4}[/i], 精度: [i]{2}[/i], 插值: [i]{3}[/i])",
+      "display_en": "Sync {0} variable [b]{1}[/b] (precision [i]{2}[/i], interpolation: [i]{3}[/i], client value tag: [i]{4}[/i])",
       "scriptName": "SyncObjectInstanceVar",
       "category": "room",
       "params": [
@@ -841,6 +859,8 @@
           "type": "combo",
           "name_zh": "精度",
           "name_en": "Precision",
+          "desc_zh": "选择要同步的值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
+          "desc_en": "Choose the precision of the value to sync.",
           "initialValue": "normal-float-4-bytes",
           "items": [
             "high-double-8-bytes",
@@ -865,15 +885,15 @@
               "zh": "非常低 (uint8, 1 byte)",
               "en": "Very low (uint8, 1 byte)"
             }
-          },
-          "desc_zh": "选择要同步的值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
-          "desc_en": "Choose the precision of the value to sync."
+          }
         },
         {
           "id": "interpolation",
           "type": "combo",
           "name_zh": "插值",
           "name_en": "Interpolation",
+          "desc_zh": "选择客户端处理接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
+          "desc_en": "Choose the interpolation for clients to use between received values.",
           "items": [
             "none",
             "linear",
@@ -892,9 +912,7 @@
               "zh": "角度",
               "en": "Angular"
             }
-          },
-          "desc_zh": "选择客户端处理接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
-          "desc_en": "Choose the interpolation for clients to use between received values."
+          }
         },
         {
           "id": "client-value-tag",
@@ -904,9 +922,7 @@
           "desc_zh": "与相应的客户端输入值相应的标签(如果有)，用于帮助房主能以更小的延迟处理客户端实例变量的延迟同步。",
           "desc_en": "If this value corresponds to a client input value, the tag for the value. This allows the host to sync the value between peers with less latency."
         }
-      ],
-      "display_zh": "同步 {0} 实例变量 [b]{1}[/b] (客户端标签: [i]{4}[/i], 精度: [i]{2}[/i], 插值: [i]{3}[/i])",
-      "display_en": "Sync {0} variable [b]{1}[/b] (precision [i]{2}[/i], interpolation: [i]{3}[/i], client value tag: [i]{4}[/i])"
+      ]
     },
     {
       "id": "associate-object-with-peer",
@@ -914,6 +930,8 @@
       "name_en": "Associate object with peer",
       "description_zh": "将实例对象与已连接的玩家关联。玩家离开房间时，对应的实例对象也会销毁。",
       "description_en": "Indicate an object which represents a connected peer.",
+      "display_zh": "关联 {0} 到 [i]{1}[/i]",
+      "display_en": "Associate {0} with peer [i]{1}[/i]",
       "scriptName": "AssociateObjectWithPeer",
       "category": "room",
       "params": [
@@ -933,9 +951,7 @@
           "desc_zh": "与所选对象关联的玩家ID。",
           "desc_en": "The ID of the peer to associate the chosen object with."
         }
-      ],
-      "display_zh": "关联 {0} 到 [i]{1}[/i]",
-      "display_en": "Associate {0} with peer [i]{1}[/i]"
+      ]
     },
     {
       "id": "add-client-input-value",
@@ -943,6 +959,8 @@
       "name_en": "Add client input value",
       "description_zh": "向主机注册一个值，用于表示玩家本地的输入状态，并通过标签来指示不同的输入。",
       "description_en": "Add a value to send to the host representing the client input state.",
+      "display_zh": "注册客户端输入值 (标签: [b]{0}[/b], 精度: [i]{1}[/i], 插值: [i]{2}[/i])",
+      "display_en": "Add client input value tag [b]{0}[/b], precision [i]{1}[/i], interpolation [i]{2}[/i]",
       "scriptName": "AddClientInputValue",
       "category": "room",
       "params": [
@@ -959,6 +977,8 @@
           "type": "combo",
           "name_zh": "精度",
           "name_en": "Precision",
+          "desc_zh": "选择客户端输入状态值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
+          "desc_en": "Choose the precision of the client input value.",
           "initialValue": "normal-float-4-bytes",
           "items": [
             "high-double-8-bytes",
@@ -983,15 +1003,15 @@
               "zh": "非常低 (uint8, 1 byte)",
               "en": "Very low (uint8, 1 byte)"
             }
-          },
-          "desc_zh": "选择客户端输入状态值的精度。为了避免浪费带宽，建议尽可能选择可保存所需数值的最低精度。",
-          "desc_en": "Choose the precision of the client input value."
+          }
         },
         {
           "id": "interpolation",
           "type": "combo",
           "name_zh": "插值",
           "name_en": "Interpolation",
+          "desc_zh": "房主在接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
+          "desc_en": "Choose the interpolation for the host to use between values.",
           "items": [
             "none",
             "linear",
@@ -1010,13 +1030,9 @@
               "zh": "角度",
               "en": "Angular"
             }
-          },
-          "desc_zh": "房主在接收值之间使用的插值方式。对于二进制或字节位必须选择'无'，对于位置等数值可选择'线性'，对于角度应选择'角度'。",
-          "desc_en": "Choose the interpolation for the host to use between values."
+          }
         }
-      ],
-      "display_zh": "注册客户端输入值 (标签: [b]{0}[/b], 精度: [i]{1}[/i], 插值: [i]{2}[/i])",
-      "display_en": "Add client input value tag [b]{0}[/b], precision [i]{1}[/i], interpolation [i]{2}[/i]"
+      ]
     },
     {
       "id": "set-bandwidth-profile",
@@ -1024,6 +1040,8 @@
       "name_en": "Set bandwidth profile",
       "description_zh": "加入房间前设置，设置宽带配置为互联网(Internet)或局域网(LAN) 模式。",
       "description_en": "Before joining a room, set Internet or LAN mode to adapt the use of the network.",
+      "display_zh": "设置宽带配置为[b]{0}[/b]",
+      "display_en": "Set bandwidth profile to [b]{0}[/b]",
       "scriptName": "SetBandwidthProfile",
       "category": "room",
       "params": [
@@ -1032,6 +1050,8 @@
           "type": "combo",
           "name_zh": "配置",
           "name_en": "Profile",
+          "desc_zh": "要使用的带宽配置。不要在互联网使用局域网，但局域网中可以连接互联网。",
+          "desc_en": "The bandwidth profile to use. Do not use LAN mode over the Internet. However Internet mode is still suitable for LANs.",
           "items": [
             "internet-30-hz-updates-80ms-buffer",
             "lan-60-hz-updates-40ms-buffer"
@@ -1045,13 +1065,9 @@
               "zh": "局域网 (60Hz 更新, 40ms 缓冲)",
               "en": "LAN (60 Hz updates, 40ms buffer)"
             }
-          },
-          "desc_zh": "要使用的带宽配置。不要在互联网使用局域网，但局域网中可以连接互联网。",
-          "desc_en": "The bandwidth profile to use. Do not use LAN mode over the Internet. However Internet mode is still suitable for LANs."
+          }
         }
-      ],
-      "display_zh": "设置宽带配置为[b]{0}[/b]",
-      "display_en": "Set bandwidth profile to [b]{0}[/b]"
+      ]
     },
     {
       "id": "broadcast-message",
@@ -1059,6 +1075,8 @@
       "name_en": "Broadcast message",
       "description_zh": "通过主机向房间中的所有玩家发送消息。",
       "description_en": "Send a message from the host to every peer in the room.",
+      "display_zh": "广播消息: [b]{2}[/b] (标签: [i]{1}[/i], 发送方: [i]{0}[/i], 模式: [i]{3}[/i])",
+      "display_en": "Broadcast tag [i]{1}[/i] message [b]{2}[/b] (from [i]{0}[/i], mode [i]{3}[/i])",
       "scriptName": "HostBroadcastMessage",
       "category": "room-host",
       "params": [
@@ -1091,6 +1109,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
+          "desc_en": "The transmission mode to send this message with.",
           "items": [
             "reliable-ordered",
             "reliable-unordered",
@@ -1109,13 +1129,9 @@
               "zh": "不可靠",
               "en": "Unreliable"
             }
-          },
-          "desc_zh": "此消息的传输模式。'有序可靠' 和 '无序可靠' 均保证信息可以被送达，因延迟而推迟接收时间。'不可靠' 在网络不佳时可能被丢失。",
-          "desc_en": "The transmission mode to send this message with."
+          }
         }
-      ],
-      "display_zh": "广播消息: [b]{2}[/b] (标签: [i]{1}[/i], 发送方: [i]{0}[/i], 模式: [i]{3}[/i])",
-      "display_en": "Broadcast tag [i]{1}[/i] message [b]{2}[/b] (from [i]{0}[/i], mode [i]{3}[/i])"
+      ]
     },
     {
       "id": "kick-peer",
@@ -1123,6 +1139,8 @@
       "name_en": "Kick peer",
       "description_zh": "强制将玩家从房间中移除。仅主机使用有效。",
       "description_en": "Forcibly remove a peer from the room when host.",
+      "display_zh": "踢出玩家 [i]{0}[/i] (原因: [i]{1}[/i])",
+      "display_en": "Kick peer [i]{0}[/i] (reason: [i]{1}[/i])",
       "scriptName": "KickPeer",
       "category": "room-host",
       "params": [
@@ -1142,9 +1160,7 @@
           "desc_zh": "移除用户的理由。",
           "desc_en": "A string of the reason to give for kicking (optional)."
         }
-      ],
-      "display_zh": "踢出玩家 [i]{0}[/i] (原因: [i]{1}[/i])",
-      "display_en": "Kick peer [i]{0}[/i] (reason: [i]{1}[/i])"
+      ]
     },
     {
       "id": "set-client-state",
@@ -1152,6 +1168,8 @@
       "name_en": "Set client state",
       "description_zh": "设置玩家的本地输入状态，用于向主机指示它们的控制器。",
       "description_en": "Set the client input state for a peer to indicate to the host their controls.",
+      "display_zh": "设置客户端输入状态 [i]{0}[/i] 为 [b]{1}[/b]",
+      "display_en": "Set client input state [i]{0}[/i] to value [b]{1}[/b]",
       "scriptName": "SetClientState",
       "category": "room-peer",
       "params": [
@@ -1171,9 +1189,7 @@
           "desc_zh": "用于表示客户端的输入状态，必须是数字。",
           "desc_en": "A number representing the client input state."
         }
-      ],
-      "display_zh": "设置客户端输入状态 [i]{0}[/i] 为 [b]{1}[/b]",
-      "display_en": "Set client input state [i]{0}[/i] to value [b]{1}[/b]"
+      ]
     },
     {
       "id": "enable-local-input-prediction",
@@ -1181,6 +1197,8 @@
       "name_en": "Enable local input prediction",
       "description_zh": "为代表本地玩家的对象启用本地输入预测。",
       "description_en": "Enable local input prediction for an object representing the local player.",
+      "display_zh": "启用 {0} 本地输入预测 (忽略实体: [i]{1}[/i], 平台行为: [i]{2}[/i])",
+      "display_en": "Enable local input prediction for {0} (avoid solids: [i]{1}[/i], platform mode: [i]{2}[/i])",
       "scriptName": "InputPredictObject",
       "category": "room-peer",
       "params": [
@@ -1208,9 +1226,7 @@
           "desc_zh": "使用平台行为时请勾选此选项，避免对象站在地板时仍然对 Y 轴进行不必要的输入预测。",
           "desc_en": "Check when using the Platform behavior to avoid input predicting on the Y axis when standing on the floor."
         }
-      ],
-      "display_zh": "启用 {0} 本地输入预测 (忽略实体: [i]{1}[/i], 平台行为: [i]{2}[/i])",
-      "display_en": "Enable local input prediction for {0} (avoid solids: [i]{1}[/i], platform mode: [i]{2}[/i])"
+      ]
     },
     {
       "id": "request-server-list",
@@ -1237,6 +1253,8 @@
       "name_en": "Connect",
       "description_zh": "连接信令服务器，用于加入房间。",
       "description_en": "Connect to a signalling server to be able to join rooms.",
+      "display_zh": "连接服务器 [b]{0}[/b]",
+      "display_en": "Connect to signalling server [b]{0}[/b]",
       "scriptName": "SignallingConnect",
       "isAsync": true,
       "category": "signalling",
@@ -1246,13 +1264,11 @@
           "type": "string",
           "name_zh": "服务器",
           "name_en": "Server",
-          "initialValue": "\"wss://multiplayer.construct.net\"",
           "desc_zh": "要连接的信令服务器URL。",
-          "desc_en": "The signalling server URL to connect to."
+          "desc_en": "The signalling server URL to connect to.",
+          "initialValue": "\"wss://multiplayer.construct.net\""
         }
-      ],
-      "display_zh": "连接服务器 [b]{0}[/b]",
-      "display_en": "Connect to signalling server [b]{0}[/b]"
+      ]
     },
     {
       "id": "disconnect-signalling",
@@ -1260,10 +1276,10 @@
       "name_en": "Disconnect",
       "description_zh": "从当前的信令服务器断开连接。",
       "description_en": "Disconnect from the current signalling server.",
-      "scriptName": "SignallingDisconnect",
-      "category": "signalling",
       "display_zh": "断开连接",
-      "display_en": "Disconnect from signalling server"
+      "display_en": "Disconnect from signalling server",
+      "scriptName": "SignallingDisconnect",
+      "category": "signalling"
     },
     {
       "id": "add-ice-server",
@@ -1271,6 +1287,8 @@
       "name_en": "Add ICE server",
       "description_zh": "添加另一个ICE服务器以帮助建立连接。 内置了几个默认值。",
       "description_en": "Add another ICE server to help establish connectivity. Several defaults are built-in.",
+      "display_zh": "添加 ICE 服务器 [b]{0}[/b] (用户名: [i]{1}[/i], 证书: [i]{2}[/i])",
+      "display_en": "Add ICE server [b]{0}[/b] (username [i]{1}[/i], credential [i]{2}[/i])",
       "scriptName": "AddICEServer",
       "category": "signalling",
       "params": [
@@ -1279,9 +1297,9 @@
           "type": "string",
           "name_zh": "ICE 服务器",
           "name_en": "ICE server",
-          "initialValue": "\"stun:\"",
           "desc_zh": "自定义ICE服务器，例如 STUN或TURN，帮助建立连接。",
-          "desc_en": "A custom ICE server, e.g. STUN or TURN, to help establish connectivity."
+          "desc_en": "A custom ICE server, e.g. STUN or TURN, to help establish connectivity.",
+          "initialValue": "\"stun:\""
         },
         {
           "id": "username-optional",
@@ -1299,9 +1317,7 @@
           "desc_zh": "用于 TURN 服务器，该服务器使用的凭据证书。",
           "desc_en": "If a TURN server, then the credential to use with that server."
         }
-      ],
-      "display_zh": "添加 ICE 服务器 [b]{0}[/b] (用户名: [i]{1}[/i], 证书: [i]{2}[/i])",
-      "display_en": "Add ICE server [b]{0}[/b] (username [i]{1}[/i], credential [i]{2}[/i])"
+      ]
     },
     {
       "id": "log-in",
@@ -1309,6 +1325,8 @@
       "name_en": "Log in",
       "description_zh": "与信令服务器连接后，可登录信令服务器。",
       "description_en": "Once connected, log in to the signalling server with an alias.",
+      "display_zh": "登录服务器 (昵称: [b]{0}[/b])",
+      "display_en": "Log in with alias [b]{0}[/b]",
       "scriptName": "SignallingLogin",
       "isAsync": true,
       "category": "signalling",
@@ -1321,9 +1339,7 @@
           "desc_zh": "在服务器上使用的名称，如果名称被占用，服务器会分配不同的别名。",
           "desc_en": "The desired alias to use on the server. The server may assign you a different alias if it is taken."
         }
-      ],
-      "display_zh": "登录服务器 (昵称: [b]{0}[/b])",
-      "display_en": "Log in with alias [b]{0}[/b]"
+      ]
     },
     {
       "id": "join-room",
@@ -1331,6 +1347,8 @@
       "name_en": "Join room",
       "description_zh": "登录信令服务器后，加入房间即可与其他玩家会面。",
       "description_en": "Once logged in, join a room to meet other peers.",
+      "display_zh": "加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 最多人数: [i]{3}[/i])",
+      "display_en": "Join room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i])",
       "scriptName": "SignallingJoinRoom",
       "isAsync": true,
       "category": "signalling",
@@ -1340,18 +1358,18 @@
           "type": "string",
           "name_zh": "游戏",
           "name_en": "Game",
-          "initialValue": "\"MyCompany-MyGame\"",
           "desc_zh": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您公司的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。",
-          "desc_en": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+          "desc_en": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\".",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         {
           "id": "instance",
           "type": "string",
           "name_zh": "大厅",
           "name_en": "Instance",
-          "initialValue": "\"default\"",
           "desc_zh": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。",
-          "desc_en": "A string identifying an instance of the game, in case you wish to run separate instances."
+          "desc_en": "A string identifying an instance of the game, in case you wish to run separate instances.",
+          "initialValue": "\"default\""
         },
         {
           "id": "room",
@@ -1369,9 +1387,7 @@
           "desc_zh": "此房间可容纳的最大玩家数量。仅房主设置有效，保留 0 则无限制。",
           "desc_en": "The maximum number of peers that can join this room. Only the host's value is used. Leave 0 for unlimited."
         }
-      ],
-      "display_zh": "加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 最多人数: [i]{3}[/i])",
-      "display_en": "Join room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i])"
+      ]
     },
     {
       "id": "leave-room",
@@ -1379,11 +1395,11 @@
       "name_en": "Leave room",
       "description_zh": "向信令服务器请求离开当前房间。",
       "description_en": "Request to leave the current room on the signalling server. Peer connections are not affected.",
+      "display_zh": "离开房间",
+      "display_en": "Leave room",
       "scriptName": "SignallingLeaveRoom",
       "isAsync": true,
-      "category": "signalling",
-      "display_zh": "离开房间",
-      "display_en": "Leave room"
+      "category": "signalling"
     },
     {
       "id": "request-game-instance-list",
@@ -1391,6 +1407,8 @@
       "name_en": "Request game instance list",
       "description_zh": "请求当前服务器上，活跃的游戏大厅。",
       "description_en": "Request the list of game instances currently on the server.",
+      "display_zh": "请求大厅列表(游戏: [b]{0}[/b])",
+      "display_en": "Request game [b]{0}[/b] instance list",
       "scriptName": "SignallingRequestGameInstanceList",
       "isAsync": true,
       "category": "signalling",
@@ -1403,9 +1421,7 @@
           "desc_zh": "要请求的游戏。",
           "desc_en": "The game on the server to list instances for."
         }
-      ],
-      "display_zh": "请求大厅列表(游戏: [b]{0}[/b])",
-      "display_en": "Request game [b]{0}[/b] instance list"
+      ]
     },
     {
       "id": "auto-join-room",
@@ -1413,6 +1429,8 @@
       "name_en": "Auto-join room",
       "description_zh": "自动加入第一个未满员的房间。",
       "description_en": "Join the first room which is not full.",
+      "display_zh": "自动加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 房间最多人数: [i]{3}[/i], {4})",
+      "display_en": "Auto-join from room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i], {4})",
       "scriptName": "SignallingAutoJoinRoom",
       "isAsync": true,
       "category": "signalling",
@@ -1422,18 +1440,18 @@
           "type": "string",
           "name_zh": "游戏",
           "name_en": "Game",
-          "initialValue": "\"MyCompany-MyGame\"",
           "desc_zh": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您团队的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。",
-          "desc_en": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+          "desc_en": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\".",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         {
           "id": "instance",
           "type": "string",
           "name_zh": "大厅",
           "name_en": "Instance",
-          "initialValue": "\"default\"",
           "desc_zh": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。",
-          "desc_en": "A string identifying an instance of the game, in case you wish to run separate instances."
+          "desc_en": "A string identifying an instance of the game, in case you wish to run separate instances.",
+          "initialValue": "\"default\""
         },
         {
           "id": "first-room",
@@ -1448,15 +1466,17 @@
           "type": "number",
           "name_zh": "房间人数",
           "name_en": "Max peers",
-          "initialValue": "2",
           "desc_zh": "房间最大可容纳的用户数量。 若房间满员，后面的用户将被送到下一个房间。",
-          "desc_en": "The number of peers per room. Once full, later peers will be sent to the next room."
+          "desc_en": "The number of peers per room. Once full, later peers will be sent to the next room.",
+          "initialValue": "2"
         },
         {
           "id": "locking",
           "type": "combo",
           "name_zh": "锁定房间",
           "name_en": "Locking",
+          "desc_zh": "锁定房间将阻止其他用户再次加入。即使从房间离开也无法再次进入。",
+          "desc_en": "Locking the room prevents other peers joining again even after other peers leave.",
           "items": [
             "lock-when-full",
             "dont-lock"
@@ -1470,13 +1490,9 @@
               "zh": "不锁定",
               "en": "don't lock"
             }
-          },
-          "desc_zh": "锁定房间将阻止其他用户再次加入。即使从房间离开也无法再次进入。",
-          "desc_en": "Locking the room prevents other peers joining again even after other peers leave."
+          }
         }
-      ],
-      "display_zh": "自动加入房间 [b]{2}[/b] (游戏: [i]{0}[/i], 大厅: [i]{1}[/i], 房间最多人数: [i]{3}[/i], {4})",
-      "display_en": "Auto-join from room [b]{2}[/b] for game [i]{0}[/i] instance [i]{1}[/i] (max peers: [i]{3}[/i], {4})"
+      ]
     },
     {
       "id": "request-room-list",
@@ -1484,6 +1500,8 @@
       "name_en": "Request room list",
       "description_zh": "从当前服务器中，获取指定的游戏大厅的房间列表。",
       "description_en": "Request the list of rooms in a game instance currently on the server.",
+      "display_zh": "请求房间列表 (游戏:[b]{0}[/b], 大厅: [b]{1}[/b], 状态: [i]{2}[/i])",
+      "display_en": "Request game [b]{0}[/b] instance [b]{1}[/b] room list ([i]{2}[/i])",
       "scriptName": "SignallingRequestRoomList",
       "isAsync": true,
       "category": "signalling",
@@ -1509,6 +1527,8 @@
           "type": "combo",
           "name_zh": "方式",
           "name_en": "Which",
+          "desc_zh": "筛选房间的状态。",
+          "desc_en": "Optionally filter the returned rooms by their state.",
           "items": [
             "all",
             "unlocked",
@@ -1527,13 +1547,9 @@
               "zh": "可加入",
               "en": "available"
             }
-          },
-          "desc_zh": "筛选房间的状态。",
-          "desc_en": "Optionally filter the returned rooms by their state."
+          }
         }
-      ],
-      "display_zh": "请求房间列表 (游戏:[b]{0}[/b], 大厅: [b]{1}[/b], 状态: [i]{2}[/i])",
-      "display_en": "Request game [b]{0}[/b] instance [b]{1}[/b] room list ([i]{2}[/i])"
+      ]
     },
     {
       "id": "transfer-peer-binary",
@@ -1541,6 +1557,8 @@
       "name_en": "Transfer peer binary",
       "description_zh": "将二进制数据对象的内容传输给对方。",
       "description_en": "Transfer the content of a Binary Data object to a peer.",
+      "display_zh": "传输二进制数据 (接收方: [b]{0}[/b], 数据: {1},  标签: [i]{2}[/i], 文件名: [i]{3}[/i], 媒体类型: [i]{4}[/i]))",
+      "display_en": "Transfer peer [b]{0}[/b] binary {1} tag [i]{2}[/i] (filename [i]{3}[/i], MIME type [i]{4}[/i])",
       "scriptName": "TransferPeerBinary",
       "isAsync": true,
       "category": "binary-transfers",
@@ -1585,9 +1603,7 @@
           "desc_zh": "指定本次传输的媒体类型(MIME)。例如 PNG 表示为 \"image/png",
           "desc_en": "An optional string with a MIME type for this transfer, e.g. \"image/png\" for a PNG image."
         }
-      ],
-      "display_zh": "传输二进制数据 (接收方: [b]{0}[/b], 数据: {1},  标签: [i]{2}[/i], 文件名: [i]{3}[/i], 媒体类型: [i]{4}[/i]))",
-      "display_en": "Transfer peer [b]{0}[/b] binary {1} tag [i]{2}[/i] (filename [i]{3}[/i], MIME type [i]{4}[/i])"
+      ]
     },
     {
       "id": "cancel-binary-transfer",
@@ -1595,6 +1611,8 @@
       "name_en": "Cancel binary transfer",
       "description_zh": "取消包含指定标签的二进制数据传输任务。",
       "description_en": "Cancel an active binary data transfer.",
+      "display_zh": "取消传输任务 (标签: [i]{1}[/i], 玩家: [b]{0}[/b])",
+      "display_en": "Cancel binary transfer for peer [b]{0}[/b] tag [i]{1}[/i]",
       "scriptName": "CancelBinaryTransfer",
       "category": "binary-transfers",
       "params": [
@@ -1614,9 +1632,7 @@
           "desc_zh": "要取消传输的标签。",
           "desc_en": "The tag of the transfer to cancel."
         }
-      ],
-      "display_zh": "取消传输任务 (标签: [i]{1}[/i], 玩家: [b]{0}[/b])",
-      "display_en": "Cancel binary transfer for peer [b]{0}[/b] tag [i]{1}[/i]"
+      ]
     }
   ],
   "expressions": [

@@ -19,6 +19,8 @@
       "name_en": "Look at position",
       "description_zh": "设置相机的位置，并将相机镜头朝向另一个位置，观察不同的方向。",
       "description_en": "Orient the camera by setting the camera position and providing another position to point the camera towards.",
+      "display_zh": "设置相机位置 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 注视位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 上升向量 ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
+      "display_en": "Set camera position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), look at ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), up vector ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
       "scriptName": "LookAtPosition",
       "category": "3d-camera",
       "params": [
@@ -43,9 +45,9 @@
           "type": "number",
           "name_zh": "相机Z",
           "name_en": "Camera Z",
-          "initialValue": "100",
           "desc_zh": "相机位置的Z坐标。",
-          "desc_en": "The Z co-ordinate of the camera position."
+          "desc_en": "The Z co-ordinate of the camera position.",
+          "initialValue": "100"
         },
         {
           "id": "look-x",
@@ -84,9 +86,9 @@
           "type": "number",
           "name_zh": "上升向量Y",
           "name_en": "Up vector Y",
-          "initialValue": "1",
           "desc_zh": "一个三维矢量的Y向量，表示哪一边的方向朝上。",
-          "desc_en": "The Y component of a 3D vector indicating which way is up."
+          "desc_en": "The Y component of a 3D vector indicating which way is up.",
+          "initialValue": "1"
         },
         {
           "id": "up-z",
@@ -96,9 +98,7 @@
           "desc_zh": "一个三维矢量的Z向量，表示哪一边的方向朝上。",
           "desc_en": "The Z component of a 3D vector indicating which way is up."
         }
-      ],
-      "display_zh": "设置相机位置 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), 注视位置 ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), 上升向量 ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])",
-      "display_en": "Set camera position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]), look at ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), up vector ([i]{6}[/i], [i]{7}[/i], [i]{8}[/i])"
+      ]
     },
     {
       "id": "look-parallel-to-layout",
@@ -106,6 +106,8 @@
       "name_en": "Look parallel to layout",
       "description_zh": "使相机注视的方向与场景平行，而不是在场景上向下注视。",
       "description_en": "A shortcut to orient the camera looking parallel to the layout as opposed to down on to the layout.",
+      "display_zh": "设置相机注视平面 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) 朝向 [i]{3}[/i]",
+      "display_en": "Set camera parallel to layout at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) angle [i]{3}[/i]",
       "scriptName": "LookParallelToLayout",
       "category": "3d-camera",
       "params": [
@@ -130,9 +132,9 @@
           "type": "number",
           "name_zh": "相机Z",
           "name_en": "Camera Z",
-          "initialValue": "10",
           "desc_zh": "相机位置的Z坐标。",
-          "desc_en": "The Z co-ordinate of the camera position."
+          "desc_en": "The Z co-ordinate of the camera position.",
+          "initialValue": "10"
         },
         {
           "id": "look-angle",
@@ -142,9 +144,7 @@
           "desc_zh": "相机镜头朝向的角度。",
           "desc_en": "The angle in degrees to point the camera."
         }
-      ],
-      "display_zh": "设置相机注视平面 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) 朝向 [i]{3}[/i]",
-      "display_en": "Set camera parallel to layout at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) angle [i]{3}[/i]"
+      ]
     },
     {
       "id": "restore-2d-camera",
@@ -152,10 +152,10 @@
       "name_en": "Restore 2D camera",
       "description_zh": "恢复默认的2D相机行为，以当前滚动位置为中心。",
       "description_en": "Restore the default 2D camera behavior, centering on the scroll position.",
-      "scriptName": "Restore2DCamera",
-      "category": "3d-camera",
       "display_zh": "切换2D相机",
-      "display_en": "Restore 2D camera"
+      "display_en": "Restore 2D camera",
+      "scriptName": "Restore2DCamera",
+      "category": "3d-camera"
     },
     {
       "id": "set-position",
@@ -163,6 +163,8 @@
       "name_en": "Set position",
       "description_zh": "设置相机注视位置",
       "description_en": "Set the camera or look position.",
+      "display_zh": "设置 [b]{3}[/b] 到 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Set [b]{3}[/b] position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
       "scriptName": "SetPosition",
       "category": "3d-camera",
       "params": [
@@ -195,6 +197,8 @@
           "type": "combo",
           "name_zh": "应用于",
           "name_en": "Which",
+          "desc_zh": "设置相机位置或相机注视位置。",
+          "desc_en": "Whether to set the camera or the look position.",
           "items": [
             "camera",
             "look"
@@ -208,13 +212,9 @@
               "zh": "注视位置",
               "en": "Look"
             }
-          },
-          "desc_zh": "设置相机位置或相机注视位置。",
-          "desc_en": "Whether to set the camera or the look position."
+          }
         }
-      ],
-      "display_zh": "设置 [b]{3}[/b] 到 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
-      "display_en": "Set [b]{3}[/b] position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])"
+      ]
     },
     {
       "id": "move-along-layout-axis",
@@ -222,6 +222,8 @@
       "name_en": "Move along layout axis",
       "description_zh": "使相机位置或注视位置沿着相对于场景的轴线移动。",
       "description_en": "Move the camera and/or look position along axes relative to the layout.",
+      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis",
       "scriptName": "MoveAlongLayoutAxis",
       "category": "3d-camera",
       "params": [
@@ -238,6 +240,8 @@
           "type": "combo",
           "name_zh": "轴",
           "name_en": "Axis",
+          "desc_zh": "相对于场景的轴。",
+          "desc_en": "Which axis, relative to the layout, to move along.",
           "items": [
             "x",
             "y",
@@ -256,15 +260,15 @@
               "zh": "Z",
               "en": "Z"
             }
-          },
-          "desc_zh": "相对于场景的轴。",
-          "desc_en": "Which axis, relative to the layout, to move along."
+          }
         },
         {
           "id": "which",
           "type": "combo",
           "name_zh": "方式",
           "name_en": "Which",
+          "desc_zh": "移动相机位置，或注视位置，或者同时移动。",
+          "desc_en": "Whether to move the camera, the look position, or both.",
           "items": [
             "both",
             "camera",
@@ -283,13 +287,9 @@
               "zh": "注视位置",
               "en": "Look position"
             }
-          },
-          "desc_zh": "移动相机位置，或注视位置，或者同时移动。",
-          "desc_en": "Whether to move the camera, the look position, or both."
+          }
         }
-      ],
-      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
-      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis"
+      ]
     },
     {
       "id": "move-along-camera-axis",
@@ -297,6 +297,8 @@
       "name_en": "Move along camera axis",
       "description_zh": "沿着相对于相机注视位置的轴移动相机位置或朝向位置。",
       "description_en": "Move the camera and/or look position along axes relative to the direction the camera is pointing in.",
+      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
+      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis",
       "scriptName": "MoveAlongCameraAxis",
       "category": "3d-camera",
       "params": [
@@ -313,6 +315,8 @@
           "type": "combo",
           "name_zh": "轴",
           "name_en": "Axis",
+          "desc_zh": "相对于相机朝向的位置，沿着哪个轴移动。",
+          "desc_en": "Which axis, relative to the direction the camera is pointing in, to move along.",
           "items": [
             "forward",
             "up",
@@ -331,15 +335,15 @@
               "zh": "平移",
               "en": "Right"
             }
-          },
-          "desc_zh": "相对于相机朝向的位置，沿着哪个轴移动。",
-          "desc_en": "Which axis, relative to the direction the camera is pointing in, to move along."
+          }
         },
         {
           "id": "which",
           "type": "combo",
           "name_zh": "方式",
           "name_en": "Which",
+          "desc_zh": "要移动相机位置，还是注视位置，或者同时移动。",
+          "desc_en": "Whether to move the camera, the look position, or both.",
           "items": [
             "both",
             "camera",
@@ -358,13 +362,9 @@
               "zh": "注视位置",
               "en": "Look position"
             }
-          },
-          "desc_zh": "要移动相机位置，还是注视位置，或者同时移动。",
-          "desc_en": "Whether to move the camera, the look position, or both."
+          }
         }
-      ],
-      "display_zh": "[b]{2}[/b] 沿着 [b]{1}[/b]轴移动 [i]{0}[/i]",
-      "display_en": "Move [b]{2}[/b] distance [i]{0}[/i] along [b]{1}[/b] axis"
+      ]
     },
     {
       "id": "rotate-camera",
@@ -372,6 +372,8 @@
       "name_en": "Rotate camera",
       "description_zh": "旋转相机的X轴和Y轴注视方向。适用于鼠标。",
       "description_en": "Rotate the camera look direction by an X and Y amount. Useful for mouse look.",
+      "display_zh": "旋转相机 ([i]{0}[/i], [i]{1}[/i]), 极角范围 [i]{2}[/i] 到 [i]{3}[/i]",
+      "display_en": "Rotate camera by ([i]{0}[/i], [i]{1}[/i]), polar angle range [i]{2}[/i] to [i]{3}[/i]",
       "scriptName": "RotateCamera",
       "category": "3d-camera",
       "params": [
@@ -404,13 +406,11 @@
           "type": "number",
           "name_zh": "最大极角",
           "name_en": "Max polar angle",
-          "initialValue": "180",
           "desc_zh": "在Y轴旋转的最大角度，限制相机可以向下看的距离。",
-          "desc_en": "The maximum angle for Y rotation, limiting how far the camera can look downwards."
+          "desc_en": "The maximum angle for Y rotation, limiting how far the camera can look downwards.",
+          "initialValue": "180"
         }
-      ],
-      "display_zh": "旋转相机 ([i]{0}[/i], [i]{1}[/i]), 极角范围 [i]{2}[/i] 到 [i]{3}[/i]",
-      "display_en": "Rotate camera by ([i]{0}[/i], [i]{1}[/i]), polar angle range [i]{2}[/i] to [i]{3}[/i]"
+      ]
     },
     {
       "id": "set-field-of-view",
@@ -418,6 +418,8 @@
       "name_en": "Set field of view",
       "description_zh": "3D相机前方可见区域的角度，也被称为 FOV。仅适用于 '常规' Z轴刻度。",
       "description_en": "Set the angle of the visible area in front of the camera. Only applicable with 'regular' Z axis scale.",
+      "display_zh": "设置视区角度为[i]{0}[/i]°",
+      "display_en": "Set field of view to [i]{0}[/i]°",
       "scriptName": "SetFieldOfView",
       "category": "3d-camera",
       "params": [
@@ -429,9 +431,7 @@
           "desc_zh": "3D相机前方可见区域的角度，也被称为 FOV。",
           "desc_en": "Angle of the field of view, in degrees."
         }
-      ],
-      "display_zh": "设置视区角度为[i]{0}[/i]°",
-      "display_en": "Set field of view to [i]{0}[/i]°"
+      ]
     }
   ],
   "expressions": [

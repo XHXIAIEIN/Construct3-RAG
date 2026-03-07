@@ -20,11 +20,11 @@
       "name_en": "On achievement list success",
       "description_zh": "执行 '获取成就列表' 动作后，接收成功时触发。",
       "description_en": "Triggered after a 'List achievements' action if the list received successfully.",
+      "display_zh": "获取成就列表成功",
+      "display_en": "On achievement list success",
       "scriptName": "OnAchievementsRequestSuccess",
       "isTrigger": true,
-      "category": "achievements",
-      "display_zh": "获取成就列表成功",
-      "display_en": "On achievement list success"
+      "category": "achievements"
     },
     {
       "id": "on-achievement-list-fail",
@@ -32,11 +32,11 @@
       "name_en": "On achievement list fail",
       "description_zh": "执行 '获取成就列表' 动作后，接收失败时触发。",
       "description_en": "Triggered after a 'List achievements' action if the request failed.",
+      "display_zh": "获取成就列表失败",
+      "display_en": "On achievement list fail",
       "scriptName": "OnAchievementsRequestFail",
       "isTrigger": true,
-      "category": "achievements",
-      "display_zh": "获取成就列表失败",
-      "display_en": "On achievement list fail"
+      "category": "achievements"
     },
     {
       "id": "compare-achievement-state",
@@ -44,6 +44,8 @@
       "name_en": "Compare achievement state",
       "description_zh": "检查索引位置的成就当前的状态，是否隐藏、已揭秘、已达成。",
       "description_en": "Test if an achievement at an index is hidden, revealed or unlocked.",
+      "display_zh": "成就[i]{0}[/i]状态为{1}",
+      "display_en": "Achievement [i]{0}[/i] is {1}",
       "scriptName": "CompareAchievementState",
       "category": "achievements",
       "params": [
@@ -60,6 +62,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "要测试的成就状态。",
+          "desc_en": "The state of the achievement to test.",
           "items": [
             "hidden",
             "revealed",
@@ -78,13 +82,9 @@
               "zh": "已达成",
               "en": "unlocked"
             }
-          },
-          "desc_zh": "要测试的成就状态。",
-          "desc_en": "The state of the achievement to test."
+          }
         }
-      ],
-      "display_zh": "成就[i]{0}[/i]状态为{1}",
-      "display_en": "Achievement [i]{0}[/i] is {1}"
+      ]
     },
     {
       "id": "on-achievement-metadata-success",
@@ -92,11 +92,11 @@
       "name_en": "On achievement metadata success",
       "description_zh": "执行 '获取成就数据' 动作后，请求成功时触发。",
       "description_en": "Triggered after a 'Get metadata' action if the data received successfully.",
+      "display_zh": "获取成就数据成功",
+      "display_en": "On achievement metadata success",
       "scriptName": "OnAchievementsMetadataSuccess",
       "isTrigger": true,
-      "category": "achievements",
-      "display_zh": "获取成就数据成功",
-      "display_en": "On achievement metadata success"
+      "category": "achievements"
     },
     {
       "id": "on-achievement-metadata-fail",
@@ -104,11 +104,11 @@
       "name_en": "On achievement metadata fail",
       "description_zh": "执行 '获取成就数据' 动作后，请求失败时触发。",
       "description_en": "Triggered after a 'Get metadata' action if the request failed.",
+      "display_zh": "获取成就数据失败",
+      "display_en": "On achievement metadata fail",
       "scriptName": "OnAchievementsMetadataFail",
       "isTrigger": true,
-      "category": "achievements",
-      "display_zh": "获取成就数据失败",
-      "display_en": "On achievement metadata fail"
+      "category": "achievements"
     },
     {
       "id": "on-achievement-revealed",
@@ -116,6 +116,8 @@
       "name_en": "On achievement revealed",
       "description_zh": "执行 '揭秘成就' 动作后，揭示成功时触发。揭秘表示玩家可知道该成就，但尚未解锁。",
       "description_en": "Triggered after 'Reveal' when the achievement has been successfully revealed.",
+      "display_zh": "揭秘成就[b]{0}[/b]",
+      "display_en": "On achievement [b]{0}[/b] revealed",
       "scriptName": "OnAchievementRevealed",
       "isTrigger": true,
       "category": "achievements",
@@ -128,9 +130,7 @@
           "desc_zh": "已揭秘的成就ID。",
           "desc_en": "ID of the achievement that was revealed."
         }
-      ],
-      "display_zh": "揭秘成就[b]{0}[/b]",
-      "display_en": "On achievement [b]{0}[/b] revealed"
+      ]
     },
     {
       "id": "on-achievement-unlocked",
@@ -138,6 +138,8 @@
       "name_en": "On achievement unlocked",
       "description_zh": "执行 '解锁成就' 动作后，或 '成就阶段进度更新' 时触发。",
       "description_en": "Triggered after 'Unlock' or when an incremental achievement's steps have been fulfilled.",
+      "display_zh": "达成成就 [b]{0}[/b]",
+      "display_en": "On achievement [b]{0}[/b] unlocked",
       "scriptName": "OnAchievementUnlocked",
       "isTrigger": true,
       "category": "achievements",
@@ -150,9 +152,7 @@
           "desc_zh": "要达成的成就ID。",
           "desc_en": "ID of the achievement that was unlocked."
         }
-      ],
-      "display_zh": "达成成就 [b]{0}[/b]",
-      "display_en": "On achievement [b]{0}[/b] unlocked"
+      ]
     },
     {
       "id": "on-loaded",
@@ -171,10 +171,10 @@
       "name_en": "Is loaded",
       "description_zh": "执行 '加载成功' 动作后，Google Play 游戏服务处于可用状态时触发。",
       "description_en": "True if 'On loaded' has fired and the plugin is ready to use.",
-      "scriptName": "IsLoaded",
-      "category": "google-play-game-services",
       "display_zh": "服务已加载",
-      "display_en": "Is loaded"
+      "display_en": "Is loaded",
+      "scriptName": "IsLoaded",
+      "category": "google-play-game-services"
     },
     {
       "id": "on-signed-in",
@@ -182,11 +182,11 @@
       "name_en": "On signed in",
       "description_zh": "用户成功登录时触发。",
       "description_en": "Triggered when the user successfully signs in.",
+      "display_zh": "登录成功",
+      "display_en": "On signed in",
       "scriptName": "OnSignedIn",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "登录成功",
-      "display_en": "On signed in"
+      "category": "google-play-game-services"
     },
     {
       "id": "is-signed-in",
@@ -194,10 +194,10 @@
       "name_en": "Is signed in",
       "description_zh": "检测用户是否已登录账号。",
       "description_en": "True if the user is currently signed in.",
-      "scriptName": "IsSignedIn",
-      "category": "google-play-game-services",
       "display_zh": "账户已登录",
-      "display_en": "Is signed in"
+      "display_en": "Is signed in",
+      "scriptName": "IsSignedIn",
+      "category": "google-play-game-services"
     },
     {
       "id": "on-error",
@@ -205,11 +205,11 @@
       "name_en": "On error",
       "description_zh": "在 Google Play 游戏服务发生错误时触发。",
       "description_en": "Triggered if an error occurs in the game services.",
+      "display_zh": "服务出错",
+      "display_en": "On error",
       "scriptName": "OnError",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "服务出错",
-      "display_en": "On error"
+      "category": "google-play-game-services"
     },
     {
       "id": "on-player-details-received",
@@ -217,11 +217,11 @@
       "name_en": "On player details received",
       "description_zh": "执行 '请求玩家详细信息' 动作后，成功接收到数据时触发。",
       "description_en": "Triggered after 'Request player details', when the response has been received.",
+      "display_zh": "收到玩家详细信息",
+      "display_en": "On player details received",
       "scriptName": "OnPlayerDetails",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "收到玩家详细信息",
-      "display_en": "On player details received"
+      "category": "google-play-game-services"
     },
     {
       "id": "on-signed-out",
@@ -229,11 +229,11 @@
       "name_en": "On signed out",
       "description_zh": "用户退出登录时触发。",
       "description_en": "Triggered when the user signs out.",
+      "display_zh": "账户已登出",
+      "display_en": "On signed out",
       "scriptName": "OnSignedOut",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "账户已登出",
-      "display_en": "On signed out"
+      "category": "google-play-game-services"
     },
     {
       "id": "on-auto-sign-in-failed",
@@ -241,11 +241,11 @@
       "name_en": "On auto-sign in failed",
       "description_zh": "如果用户无法自动登录，则在启动时触发失败。需要使用 '登录' 动作。",
       "description_en": "Triggered on startup if the user could not be automatically logged in. It will be necessary to use the 'Sign in' action.",
+      "display_zh": "自动登录失败",
+      "display_en": "On auto-sign in failed",
       "scriptName": "OnAutoSignInFailed",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "自动登录失败",
-      "display_en": "On auto-sign in failed"
+      "category": "google-play-game-services"
     },
     {
       "id": "on-sign-in-fail",
@@ -253,11 +253,11 @@
       "name_en": "On sign in failed",
       "description_zh": "在用户没有登录Google时触发 有可能是因为用户取消或错误",
       "description_en": "Triggered when the user did not sign in. This might be because the user cancelled or due to an error.",
+      "display_zh": "登陆失败",
+      "display_en": "On sign in failed",
       "scriptName": "OnSignInFail",
       "isTrigger": true,
-      "category": "google-play-game-services",
-      "display_zh": "登陆失败",
-      "display_en": "On sign in failed"
+      "category": "google-play-game-services"
     },
     {
       "id": "on-score-submit-success",
@@ -265,11 +265,11 @@
       "name_en": "On score submit success",
       "description_zh": "执行 '提交分数' 动作后，提交成功时触发。",
       "description_en": "Triggered after a 'Submit score' action if the score was submitted successfully.",
+      "display_zh": "分数提交成功",
+      "display_en": "On score submit success",
       "scriptName": "OnScoreSubmitSuccess",
       "isTrigger": true,
-      "category": "leaderboards",
-      "display_zh": "分数提交成功",
-      "display_en": "On score submit success"
+      "category": "leaderboards"
     },
     {
       "id": "on-score-submit-fail",
@@ -277,11 +277,11 @@
       "name_en": "On score submit fail",
       "description_zh": "执行 '提交分数' 动作后，提交失败时触发。",
       "description_en": "Triggered after a 'Submit score' action if the score failed to submitted successfully.",
+      "display_zh": "分数提交失败",
+      "display_en": "On score submit fail",
       "scriptName": "OnScoreSubmitFail",
       "isTrigger": true,
-      "category": "leaderboards",
-      "display_zh": "分数提交失败",
-      "display_en": "On score submit fail"
+      "category": "leaderboards"
     },
     {
       "id": "on-hi-score-request-success",
@@ -289,11 +289,11 @@
       "name_en": "On hi-score request success",
       "description_zh": "执行 '请求最高得分' 动作后，请求成功时触发。",
       "description_en": "Triggered after a 'Request hi-scores' action if the scores were received successfully.",
+      "display_zh": "最高得分请求成功",
+      "display_en": "On hi-score request success",
       "scriptName": "OnHiScoreRequestSuccess",
       "isTrigger": true,
-      "category": "leaderboards",
-      "display_zh": "最高得分请求成功",
-      "display_en": "On hi-score request success"
+      "category": "leaderboards"
     },
     {
       "id": "on-hi-score-request-fail",
@@ -301,11 +301,11 @@
       "name_en": "On hi-score request fail",
       "description_zh": "执行 '请求最高得分' 动作后，请求失败时触发。",
       "description_en": "Triggered after a 'Request hi-scores' action if the request failed.",
+      "display_zh": "最高得分请求失败",
+      "display_en": "On hi-score request fail",
       "scriptName": "OnHiScoreRequestFail",
       "isTrigger": true,
-      "category": "leaderboards",
-      "display_zh": "最高得分请求失败",
-      "display_en": "On hi-score request fail"
+      "category": "leaderboards"
     }
   ],
   "actions": [
@@ -315,6 +315,8 @@
       "name_en": "List achievements",
       "description_zh": "请求当前玩家的成就列表。",
       "description_en": "Request a list of achievements for the current player.",
+      "display_zh": "获取{0}成就列表 (强制重新加载: {1})",
+      "display_en": "Request list of {0} achievements. Force reload: {1}",
       "scriptName": "RequestAchievements",
       "isAsync": true,
       "category": "achievements",
@@ -324,6 +326,8 @@
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Which",
+          "desc_zh": "要请求的成就类型。",
+          "desc_en": "Which achievements to request a list of.",
           "items": [
             "all",
             "hidden",
@@ -347,22 +351,18 @@
               "zh": "已达成",
               "en": "unlocked"
             }
-          },
-          "desc_zh": "要请求的成就类型。",
-          "desc_en": "Which achievements to request a list of."
+          }
         },
         {
           "id": "reload",
           "type": "boolean",
           "name_zh": "强制重新加载",
           "name_en": "Force reload",
-          "initialValue": "false",
           "desc_zh": "确保数据是最新的，而不是来自本地缓存的数据。",
-          "desc_en": "Ensure that the results are up to date, and not from the cache."
+          "desc_en": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
-      ],
-      "display_zh": "获取{0}成就列表 (强制重新加载: {1})",
-      "display_en": "Request list of {0} achievements. Force reload: {1}"
+      ]
     },
     {
       "id": "get-metadata",
@@ -370,6 +370,8 @@
       "name_en": "Get metadata",
       "description_zh": "请求成就元数据（名称，描述等），允许相应的表达式返回正确的值。",
       "description_en": "Request achievements metadata (name, description etc.) allowing the corresponding expressions to return the correct values.",
+      "display_zh": "请求成就列表元数据。强制重新加载: {0}",
+      "display_en": "Request achievements metadata. Force reload: {0}",
       "scriptName": "RequestAchievementMetadata",
       "isAsync": true,
       "category": "achievements",
@@ -379,13 +381,11 @@
           "type": "boolean",
           "name_zh": "强制重新加载",
           "name_en": "Force reload",
-          "initialValue": "false",
           "desc_zh": "确保数据是最新的，而不是之前来自本地缓存的数据。",
-          "desc_en": "Ensure that the results are up to date, and not from the cache."
+          "desc_en": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
-      ],
-      "display_zh": "请求成就列表元数据。强制重新加载: {0}",
-      "display_en": "Request achievements metadata. Force reload: {0}"
+      ]
     },
     {
       "id": "reveal",
@@ -393,6 +393,8 @@
       "name_en": "Reveal",
       "description_zh": "揭示隐藏的成就。",
       "description_en": "Reveal a hidden achievement.",
+      "display_zh": "揭示成就[b]{0}[/b]",
+      "display_en": "Reveal achievement [b]{0}[/b]",
       "scriptName": "RevealAchievement",
       "isAsync": true,
       "category": "achievements",
@@ -405,9 +407,7 @@
           "desc_zh": "要揭秘的成就ID。揭秘表示玩家可知道该成就，但尚未解锁。",
           "desc_en": "Achievement ID to reveal."
         }
-      ],
-      "display_zh": "揭示成就[b]{0}[/b]",
-      "display_en": "Reveal achievement [b]{0}[/b]"
+      ]
     },
     {
       "id": "unlock",
@@ -415,6 +415,8 @@
       "name_en": "Unlock",
       "description_zh": "解锁成就。玩家在离线状态仍然可以解锁成就，下次联网时通过 Google Play 更新解锁状态。",
       "description_en": "Unlock an achievement.",
+      "display_zh": "解锁成就 [b]{0}[/b]",
+      "display_en": "Unlock achievement [b]{0}[/b]",
       "scriptName": "UnlockAchievement",
       "isAsync": true,
       "category": "achievements",
@@ -427,9 +429,7 @@
           "desc_zh": "要达成的成就ID。",
           "desc_en": "Achievement ID to unlock."
         }
-      ],
-      "display_zh": "解锁成就 [b]{0}[/b]",
-      "display_en": "Unlock achievement [b]{0}[/b]"
+      ]
     },
     {
       "id": "increment",
@@ -437,6 +437,8 @@
       "name_en": "Increment",
       "description_zh": "增加分步成就的达成阶段。",
       "description_en": "Add steps to an incremental achievement.",
+      "display_zh": "增加成就 [b]{0}[/b] 达成 [i]{1}[/i] 阶段",
+      "display_en": "Increment achievement [b]{0}[/b] by [i]{1}[/i] steps",
       "scriptName": "IncrementAchievement",
       "isAsync": true,
       "category": "achievements",
@@ -457,9 +459,7 @@
           "desc_zh": "增加分布成就的步数。",
           "desc_en": "Number of steps to increment the achievement by."
         }
-      ],
-      "display_zh": "增加成就 [b]{0}[/b] 达成 [i]{1}[/i] 阶段",
-      "display_en": "Increment achievement [b]{0}[/b] by [i]{1}[/i] steps"
+      ]
     },
     {
       "id": "set-steps",
@@ -467,6 +467,8 @@
       "name_en": "Set steps",
       "description_zh": "设置增加成就的步骤进度。",
       "description_en": "Set the steps progress of an incremental achievement.",
+      "display_zh": "设置成就 [b]{0}[/b] 达成阶段 [i]{1}[/i]",
+      "display_en": "Set achievement [b]{0}[/b] steps to [i]{1}[/i]",
       "scriptName": "SetStepsAchievement",
       "isAsync": true,
       "category": "achievements",
@@ -487,9 +489,7 @@
           "desc_zh": "设置成就进度的步骤数。 这些步骤无法减少。",
           "desc_en": "Number of steps to set the achievement progress to. The steps cannot be reduced."
         }
-      ],
-      "display_zh": "设置成就 [b]{0}[/b] 达成阶段 [i]{1}[/i]",
-      "display_en": "Set achievement [b]{0}[/b] steps to [i]{1}[/i]"
+      ]
     },
     {
       "id": "show-achievements",
@@ -497,11 +497,11 @@
       "name_en": "Show native achievements dialog",
       "description_zh": "显示 Google Play 原生成就对话框。",
       "description_en": "Display the native google play games dialog for all achievements (only works in Android app).",
+      "display_zh": "显示成就",
+      "display_en": "Display achievements",
       "scriptName": "ShowAchievements",
       "isAsync": true,
-      "category": "achievements",
-      "display_zh": "显示成就",
-      "display_en": "Display achievements"
+      "category": "achievements"
     },
     {
       "id": "request-player-details",
@@ -509,11 +509,11 @@
       "name_en": "Request player details",
       "description_zh": "玩家登录账户后，需要通过此动作请求玩家的详细信息。",
       "description_en": "If signed in, request the details of the signed in player.",
+      "display_zh": "请求玩家信息",
+      "display_en": "Request player details",
       "scriptName": "RequestPlayerDetails",
       "isAsync": true,
-      "category": "google-play-game-services",
-      "display_zh": "请求玩家信息",
-      "display_en": "Request player details"
+      "category": "google-play-game-services"
     },
     {
       "id": "sign-in",
@@ -521,10 +521,10 @@
       "name_en": "Sign in",
       "description_zh": "请求玩家登录。",
       "description_en": "Request the player to sign in.",
-      "scriptName": "SignIn",
-      "category": "google-play-game-services",
       "display_zh": "登录",
-      "display_en": "Sign in"
+      "display_en": "Sign in",
+      "scriptName": "SignIn",
+      "category": "google-play-game-services"
     },
     {
       "id": "sign-out",
@@ -532,10 +532,10 @@
       "name_en": "Sign out",
       "description_zh": "注销登录，如果用户已经登录。注意：Android 应用程序不支持此功能。",
       "description_en": "Sign out if already signed in. NOTE: not supported in Android apps.",
-      "scriptName": "SignOut",
-      "category": "google-play-game-services",
       "display_zh": "退出登录",
-      "display_en": "Sign out"
+      "display_en": "Sign out",
+      "scriptName": "SignOut",
+      "category": "google-play-game-services"
     },
     {
       "id": "submit-score",
@@ -543,6 +543,8 @@
       "name_en": "Submit score",
       "description_zh": "提交分数到排行榜。如果分数低于榜单分数，则会被忽略。",
       "description_en": "Submit a score to a leaderboard.",
+      "display_zh": "提交分数到排行榜 (分数:  [b]{1}[/b], 排行榜ID: [i]{0}[/i], 标签: [i]{2}[/i])",
+      "display_en": "Submit score [b]{1}[/b] (tag [i]{2}[/i]) to leaderboard [i]{0}[/i]",
       "scriptName": "SubmitScore",
       "isAsync": true,
       "category": "leaderboards",
@@ -571,9 +573,7 @@
           "desc_zh": "用于后台备注此分数的额外信息，与分数一起提交，最多支持 64 个字符。",
           "desc_en": "Up to 64 extra characters to submit along with this score."
         }
-      ],
-      "display_zh": "提交分数到排行榜 (分数:  [b]{1}[/b], 排行榜ID: [i]{0}[/i], 标签: [i]{2}[/i])",
-      "display_en": "Submit score [b]{1}[/b] (tag [i]{2}[/i]) to leaderboard [i]{0}[/i]"
+      ]
     },
     {
       "id": "request-hi-scores",
@@ -581,6 +581,8 @@
       "name_en": "Request hi-scores",
       "description_zh": "从排行榜请求分数列表。",
       "description_en": "Request a list of scores from a leaderboard.",
+      "display_zh": "从[b]{0}[/b] 请求 {1} {2} 高分榜数据 ([i]{4}[/i][i]{3}[/i]个)。强制重新加载：{5}",
+      "display_en": "Request {1} {2} hi-scores from [b]{0}[/b] ([i]{3}[/i] results, [i]{4}[/i]). Force reload: {5}",
       "scriptName": "RequestHiScores",
       "isAsync": true,
       "category": "leaderboards",
@@ -598,6 +600,8 @@
           "type": "combo",
           "name_zh": "范围",
           "name_en": "Collection",
+          "desc_zh": "要获取分数的范围。获取所有分数，或当前玩家有关的分数。",
+          "desc_en": "Whether to return all scores, or scores relating to the current player.",
           "items": [
             "public",
             "social"
@@ -611,15 +615,15 @@
               "zh": "私人",
               "en": "social"
             }
-          },
-          "desc_zh": "要获取分数的范围。获取所有分数，或当前玩家有关的分数。",
-          "desc_en": "Whether to return all scores, or scores relating to the current player."
+          }
         },
         {
           "id": "time-span",
           "type": "combo",
           "name_zh": "时间",
           "name_en": "Time span",
+          "desc_zh": "返回指定时间段的最高得分。",
+          "desc_en": "Return the top scores in the given time span.",
           "items": [
             "all-time",
             "weekly",
@@ -638,24 +642,24 @@
               "zh": "每天",
               "en": "daily"
             }
-          },
-          "desc_zh": "返回指定时间段的最高得分。",
-          "desc_en": "Return the top scores in the given time span."
+          }
         },
         {
           "id": "results",
           "type": "number",
           "name_zh": "数量",
           "name_en": "Results",
-          "initialValue": "25",
           "desc_zh": "要返回的分数数量，从 1 到 25",
-          "desc_en": "The number of score results to return, from 1 to 25."
+          "desc_en": "The number of score results to return, from 1 to 25.",
+          "initialValue": "25"
         },
         {
           "id": "type",
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "最高得分的通知类型，用于展示不同的内容。横幅仅包含最高得分，弹窗可展示更多分数。",
+          "desc_en": "Return the top scores, or a window of the scores around the current player's best score.",
           "items": [
             "top",
             "window"
@@ -669,22 +673,18 @@
               "zh": "弹窗",
               "en": "window"
             }
-          },
-          "desc_zh": "最高得分的通知类型，用于展示不同的内容。横幅仅包含最高得分，弹窗可展示更多分数。",
-          "desc_en": "Return the top scores, or a window of the scores around the current player's best score."
+          }
         },
         {
           "id": "reload",
           "type": "boolean",
           "name_zh": "强制重新加载",
           "name_en": "Force reload",
-          "initialValue": "false",
           "desc_zh": "确保数据是最新的，而不是之前来自本地缓存的数据。",
-          "desc_en": "Ensure that the results are up to date, and not from the cache."
+          "desc_en": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
-      ],
-      "display_zh": "从[b]{0}[/b] 请求 {1} {2} 高分榜数据 ([i]{4}[/i][i]{3}[/i]个)。强制重新加载：{5}",
-      "display_en": "Request {1} {2} hi-scores from [b]{0}[/b] ([i]{3}[/i] results, [i]{4}[/i]). Force reload: {5}"
+      ]
     },
     {
       "id": "show-leaderboard",
@@ -692,6 +692,8 @@
       "name_en": "Show native leaderboard dialog",
       "description_zh": "显示原生Google Play指定计分板",
       "description_en": "Display the native google play games dialog for a specific leaderboard (only works in Android app).",
+      "display_zh": "显示排行榜 {0}",
+      "display_en": "Display leaderboard {0}",
       "scriptName": "ShowLeaderboard",
       "isAsync": true,
       "category": "leaderboards",
@@ -704,9 +706,7 @@
           "desc_zh": "要显示的排行榜ID",
           "desc_en": "Leaderboard ID to display."
         }
-      ],
-      "display_zh": "显示排行榜 {0}",
-      "display_en": "Display leaderboard {0}"
+      ]
     },
     {
       "id": "show-leaderboards",
@@ -714,11 +714,11 @@
       "name_en": "Show native leaderboards dialog",
       "description_zh": "显示原生Google Play所有计分板",
       "description_en": "Display the native google play games dialog for all leaderboards (only works in Android app).",
+      "display_zh": "显示计分板",
+      "display_en": "Display leaderboards",
       "scriptName": "ShowLeaderboards",
       "isAsync": true,
-      "category": "leaderboards",
-      "display_zh": "显示计分板",
-      "display_en": "Display leaderboards"
+      "category": "leaderboards"
     }
   ],
   "expressions": [

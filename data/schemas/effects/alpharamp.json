@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "upper-threshold",
@@ -20,7 +24,8 @@
       "name_zh": "upper-threshold",
       "name_en": "upper-threshold",
       "initialValue": 0.5,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "upperthreshold"
     },
     {
       "id": "lower-threshold",
@@ -28,7 +33,8 @@
       "name_zh": "lower-threshold",
       "name_en": "lower-threshold",
       "initialValue": 0.4,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "lowerthreshold"
     },
     {
       "id": "post-opacity",
@@ -36,7 +42,8 @@
       "name_zh": "post-opacity",
       "name_en": "post-opacity",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "postopacity"
     }
   ]
 }

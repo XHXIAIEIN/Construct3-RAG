@@ -21,6 +21,8 @@
       "name_en": "Compare tile at",
       "description_zh": "比较某个位置的图块编号。",
       "description_en": "Compare the tile number at a position.",
+      "display_zh": "图块 ({0}, {1}) {2} {3}",
+      "display_en": "Tile ({0}, {1}) {2} {3}",
       "scriptName": "CompareTileAt",
       "category": "tilemap",
       "params": [
@@ -56,9 +58,7 @@
           "desc_zh": "要比较的图块编号。",
           "desc_en": "The tile number to compare to."
         }
-      ],
-      "display_zh": "图块 ({0}, {1}) {2} {3}",
-      "display_en": "Tile ({0}, {1}) {2} {3}"
+      ]
     },
     {
       "id": "compare-tile-state-at",
@@ -66,6 +66,8 @@
       "name_en": "Compare tile state at",
       "description_zh": "比较某个位置的图块的翻转或旋转状态。",
       "description_en": "Compare the flipped or rotated state of a tile at a position.",
+      "display_zh": "图块 ({0}, {1}) 已{2}",
+      "display_en": "Tile ({0}, {1}) is {2}",
       "scriptName": "CompareTileStateAt",
       "category": "tilemap",
       "params": [
@@ -90,6 +92,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "检查给定图块是否匹配的状态。",
+          "desc_en": "The state to check if the given tile matches.",
           "items": [
             "normal",
             "flipped-horizontal",
@@ -133,13 +137,9 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          },
-          "desc_zh": "检查给定图块是否匹配的状态。",
-          "desc_en": "The state to check if the given tile matches."
+          }
         }
-      ],
-      "display_zh": "图块 ({0}, {1}) 已{2}",
-      "display_en": "Tile ({0}, {1}) is {2}"
+      ]
     },
     {
       "id": "brush-exists",
@@ -147,6 +147,8 @@
       "name_en": "Brush exists",
       "description_zh": "检测笔刷是否已存在。",
       "description_en": "Check if a brush exists.",
+      "display_zh": "笔刷 [b]{0}[/b] 已存在",
+      "display_en": "Brush [b]{0}[/b] exists",
       "scriptName": "BrushExists",
       "category": "tilemap-brushes",
       "params": [
@@ -158,9 +160,7 @@
           "desc_zh": "要检测的笔刷名称。",
           "desc_en": "The name of the brush to check for."
         }
-      ],
-      "display_zh": "笔刷 [b]{0}[/b] 已存在",
-      "display_en": "Brush [b]{0}[/b] exists"
+      ]
     },
     {
       "id": "on-image-url-loaded",
@@ -168,11 +168,12 @@
       "name_en": "On image URL loaded",
       "description_zh": "执行 '加载网络图像' 动作后，图像加载完成时触发。",
       "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_zh": "图像加载完成",
+      "display_en": "On image URL loaded",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "图像加载完成",
-      "display_en": "On image URL loaded"
+      "canDebug": true,
+      "category": "web"
     },
     {
       "id": "on-image-url-failed",
@@ -180,11 +181,11 @@
       "name_en": "On image URL failed",
       "description_zh": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
       "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_zh": "图像加载失败",
+      "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web",
-      "display_zh": "图像加载失败",
-      "display_en": "On image URL failed to load"
+      "category": "web"
     }
   ],
   "actions": [
@@ -194,6 +195,8 @@
       "name_en": "Set blend mode",
       "description_zh": "设置此对象的背景混合模式。",
       "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为 [i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
       "scriptName": "SetEffect",
       "category": "appearance",
       "params": [
@@ -202,6 +205,8 @@
           "type": "combo",
           "name_zh": "混合模式",
           "name_en": "Blend mode",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "desc_en": "Choose the new blend mode for this object.",
           "items": [
             "normal",
             "additive",
@@ -275,13 +280,9 @@
               "zh": "滤色",
               "en": "Screen"
             }
-          },
-          "desc_zh": "为此对象选择新的混合模式。",
-          "desc_en": "Choose the new blend mode for this object."
+          }
         }
-      ],
-      "display_zh": "设置混合模式为 [i]{0}[/i]",
-      "display_en": "Set blend mode to [i]{0}[/i]"
+      ]
     },
     {
       "id": "load",
@@ -289,6 +290,8 @@
       "name_en": "Load",
       "description_zh": "导入瓦片图数据。",
       "description_en": "Load tiles from a JSON string.",
+      "display_zh": "导入图块数据 [b]{0}[/b]",
+      "display_en": "Load tilemap from JSON [b]{0}[/b]",
       "scriptName": "LoadFromJSON",
       "category": "json",
       "params": [
@@ -300,9 +303,7 @@
           "desc_zh": "要加载的数据。来自瓦片图对象的 '导出图块数据' 表达式。",
           "desc_en": "A string to load tilemap tiles from in JSON format from a previous use of the TilesJSON expression."
         }
-      ],
-      "display_zh": "导入图块数据 [b]{0}[/b]",
-      "display_en": "Load tilemap from JSON [b]{0}[/b]"
+      ]
     },
     {
       "id": "download",
@@ -310,6 +311,8 @@
       "name_en": "Download",
       "description_zh": "下载瓦片图数据，保存到本地文件。",
       "description_en": "Download the tilemap data as a JSON file.",
+      "display_zh": "下载瓦片图数据 (文件名: [i]{0}[/i])",
+      "display_en": "Download as JSON data with filename [i]{0}[/i]",
       "scriptName": "JSONDownload",
       "category": "json",
       "params": [
@@ -318,13 +321,11 @@
           "type": "string",
           "name_zh": "文件名",
           "name_en": "Filename",
-          "initialValue": "\"tilemap.json\"",
           "desc_zh": "要下载的文件的名称。",
-          "desc_en": "The name of the file to download."
+          "desc_en": "The name of the file to download.",
+          "initialValue": "\"tilemap.json\""
         }
-      ],
-      "display_zh": "下载瓦片图数据 (文件名: [i]{0}[/i])",
-      "display_en": "Download as JSON data with filename [i]{0}[/i]"
+      ]
     },
     {
       "id": "erase-tile",
@@ -332,6 +333,8 @@
       "name_en": "Erase tile",
       "description_zh": "擦除某个位置的图块。",
       "description_en": "Erase a tile at a position.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "EraseTile",
       "category": "tilemap",
       "params": [
@@ -351,9 +354,7 @@
           "desc_zh": "要擦除的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
           "desc_en": "Y index of the tile to erase (in tiles)."
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i])"
+      ]
     },
     {
       "id": "set-tile",
@@ -361,6 +362,8 @@
       "name_en": "Set tile",
       "description_zh": "更改某个位置的图块。",
       "description_en": "Change a tile at a position.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 图块: [b]{2}[/b], 状态: [i]{3}[/i])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) to tile [b]{2}[/b] ([i]{3}[/i])",
       "scriptName": "SetTile",
       "category": "tilemap",
       "params": [
@@ -393,6 +396,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "选择旋转或翻转此图块。",
+          "desc_en": "Whether to rotate or flip this tile.",
           "items": [
             "normal",
             "flipped-horizontal",
@@ -436,13 +441,9 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          },
-          "desc_zh": "选择旋转或翻转此图块。",
-          "desc_en": "Whether to rotate or flip this tile."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 图块: [b]{2}[/b], 状态: [i]{3}[/i])",
-      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) to tile [b]{2}[/b] ([i]{3}[/i])"
+      ]
     },
     {
       "id": "erase-tile-range",
@@ -450,6 +451,8 @@
       "name_en": "Erase tile range",
       "description_zh": "擦除矩形区域的图块。",
       "description_en": "Erase a rectangular area of tiles.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 范围: [i]{2}[/i] x [i]{3}[/i])",
+      "display_en": "Erase tile range ([i]{0}[/i], [i]{1}[/i]) area [i]{2}[/i] x [i]{3}[/i]",
       "scriptName": "EraseTileRange",
       "category": "tilemap",
       "params": [
@@ -474,22 +477,20 @@
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1",
           "desc_zh": "要擦除的横向图块数量。",
-          "desc_en": "Number of tiles across to erase."
+          "desc_en": "Number of tiles across to erase.",
+          "initialValue": "1"
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1",
           "desc_zh": "要擦除的纵向图块数量。",
-          "desc_en": "Number of tiles down to erase."
+          "desc_en": "Number of tiles down to erase.",
+          "initialValue": "1"
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 范围: [i]{2}[/i] x [i]{3}[/i])",
-      "display_en": "Erase tile range ([i]{0}[/i], [i]{1}[/i]) area [i]{2}[/i] x [i]{3}[/i]"
+      ]
     },
     {
       "id": "set-tile-range",
@@ -497,6 +498,8 @@
       "name_en": "Set tile range",
       "description_zh": "设置矩形区域的图块。",
       "description_en": "Set a rectangular area of tiles.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i]),  范围: [i]{2}[/i] x [i]{3}[/i], 图块: [b]{4}[/b], 状态: [i]{5}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] to tile [b]{4}[/b] ([i]{5}[/i])",
       "scriptName": "SetTileRange",
       "category": "tilemap",
       "params": [
@@ -521,18 +524,18 @@
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1",
           "desc_zh": "要设置的横向图块数量。",
-          "desc_en": "Number of tiles across to set."
+          "desc_en": "Number of tiles across to set.",
+          "initialValue": "1"
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1",
           "desc_zh": "要擦除的纵向图块数量。",
-          "desc_en": "Number of tiles down to set."
+          "desc_en": "Number of tiles down to set.",
+          "initialValue": "1"
         },
         {
           "id": "tile",
@@ -547,6 +550,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "选择旋转或翻转图块。",
+          "desc_en": "Whether to rotate or flip the tiles.",
           "items": [
             "normal",
             "flipped-horizontal",
@@ -590,13 +595,9 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          },
-          "desc_zh": "选择旋转或翻转图块。",
-          "desc_en": "Whether to rotate or flip the tiles."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i]),  范围: [i]{2}[/i] x [i]{3}[/i], 图块: [b]{4}[/b], 状态: [i]{5}[/i])",
-      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] to tile [b]{4}[/b] ([i]{5}[/i])"
+      ]
     },
     {
       "id": "set-tile-state",
@@ -604,6 +605,8 @@
       "name_en": "Set tile state",
       "description_zh": "更改图块的翻转或旋转状态。",
       "description_en": "Change a tile's flipped or rotated state.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 状态: [i]{2}[/i])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) state [i]{2}[/i]",
       "scriptName": "SetTileState",
       "category": "tilemap",
       "params": [
@@ -628,6 +631,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "选择旋转或翻转此图块。",
+          "desc_en": "Whether to rotate or flip this tile.",
           "items": [
             "normal",
             "flipped-horizontal",
@@ -671,13 +676,9 @@
               "zh": "旋转270°, 上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          },
-          "desc_zh": "选择旋转或翻转此图块。",
-          "desc_en": "Whether to rotate or flip this tile."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 状态: [i]{2}[/i])",
-      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) state [i]{2}[/i]"
+      ]
     },
     {
       "id": "set-tile-state-range",
@@ -685,6 +686,8 @@
       "name_en": "Set tile state range",
       "description_zh": "改变图块的矩形区域的翻转或旋转状态。",
       "description_en": "Change the flipped or rotated state of a rectangular area of tiles.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 区域 [i]{2}[/i] x [i]{3}[/i], 状态: [i]{4}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] state [i]{4}[/i]",
       "scriptName": "SetTileStateRange",
       "category": "tilemap",
       "params": [
@@ -709,24 +712,26 @@
           "type": "number",
           "name_zh": "宽度",
           "name_en": "Width",
-          "initialValue": "1",
           "desc_zh": "要设置的图块在水平方向的数量。",
-          "desc_en": "Number of tiles across to set."
+          "desc_en": "Number of tiles across to set.",
+          "initialValue": "1"
         },
         {
           "id": "height",
           "type": "number",
           "name_zh": "高度",
           "name_en": "Height",
-          "initialValue": "1",
           "desc_zh": "要设置的图块在垂直方向的数量。",
-          "desc_en": "Number of tiles down to set."
+          "desc_en": "Number of tiles down to set.",
+          "initialValue": "1"
         },
         {
           "id": "state",
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "选择旋转或翻转图块。",
+          "desc_en": "Whether to rotate or flip the tiles.",
           "items": [
             "normal",
             "flipped-horizontal",
@@ -770,13 +775,9 @@
               "zh": "旋转270°，上下翻转",
               "en": "rotated 270°, flipped vertical"
             }
-          },
-          "desc_zh": "选择旋转或翻转图块。",
-          "desc_en": "Whether to rotate or flip the tiles."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 区域 [i]{2}[/i] x [i]{3}[/i], 状态: [i]{4}[/i])",
-      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with area [i]{2}[/i] x [i]{3}[/i] state [i]{4}[/i]"
+      ]
     },
     {
       "id": "set-tile-with-brush",
@@ -784,6 +785,8 @@
       "name_en": "Set tile with brush",
       "description_zh": "使用自动图块笔刷在指定的位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷 [b]{2}[/b])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
       "scriptName": "SetTileWithBrush",
       "category": "tilemap-brushes",
       "params": [
@@ -811,9 +814,7 @@
           "desc_zh": "要使用的图块笔刷。",
           "desc_en": "The brush to use."
         }
-      ],
-      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷 [b]{2}[/b])",
-      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
+      ]
     },
     {
       "id": "erase-tile-with-brush",
@@ -821,6 +822,8 @@
       "name_en": "Erase tile with brush",
       "description_zh": "使用自动图块笔刷擦除指定位置的图块。",
       "description_en": "Erase a tile at a position using a brush.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
       "scriptName": "EraseTileWithBrush",
       "category": "tilemap-brushes",
       "params": [
@@ -848,9 +851,7 @@
           "desc_zh": "要使用的图块笔刷。",
           "desc_en": "The brush to use."
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
-      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
+      ]
     },
     {
       "id": "set-tile-with-brush-by-name",
@@ -858,6 +859,8 @@
       "name_en": "Set tile with brush (by name)",
       "description_zh": "使用自动图块笔刷，在指定位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
       "scriptName": "SetTileWithBrushByName",
       "category": "tilemap-brushes",
       "params": [
@@ -885,9 +888,7 @@
           "desc_zh": "要使用的笔刷名称。",
           "desc_en": "The name of the brush to use."
         }
-      ],
-      "display_zh": "绘制图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
-      "display_en": "Set tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
+      ]
     },
     {
       "id": "erase-tile-with-brush-by-name",
@@ -895,6 +896,8 @@
       "name_en": "Erase tile with brush (by name)",
       "description_zh": "使用自动图块笔刷，擦除指定位置的图块。",
       "description_en": "Erase a tile at a position using a brush.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
+      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]",
       "scriptName": "EraseTileWithBrushByName",
       "category": "tilemap-brushes",
       "params": [
@@ -922,9 +925,7 @@
           "desc_zh": "要使用的笔刷名称。",
           "desc_en": "The name of the brush to use."
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b])",
-      "display_en": "Erase tile ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]"
+      ]
     },
     {
       "id": "set-tile-with-patch-brush",
@@ -932,6 +933,8 @@
       "name_en": "Set tiles with patch brush",
       "description_zh": "使用笔刷在指定位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]",
       "scriptName": "SetTileWithPatchBrush",
       "category": "tilemap-patch-brushes",
       "params": [
@@ -964,24 +967,26 @@
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false",
           "desc_zh": "笔刷是否左右翻转。",
-          "desc_en": "Whether to mirror the brush."
+          "desc_en": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false",
           "desc_zh": "笔刷是否上下翻转。",
-          "desc_en": "Whether to flip the brush."
+          "desc_en": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         {
           "id": "rotation",
           "type": "combo",
           "name_zh": "旋转图块",
           "name_en": "Rotation",
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush.",
           "items": [
             "0",
             "90",
@@ -1005,15 +1010,15 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          },
-          "desc_zh": "笔刷的旋转角度。",
-          "desc_en": "The rotation of the brush."
+          }
         },
         {
           "id": "invalid-indexes",
           "type": "combo",
           "name_zh": "无效索引",
           "name_en": "Invalid indexes",
+          "desc_zh": "画笔应该如何处理无效的索引。",
+          "desc_en": "What should the brush do with invalid indexes.",
           "items": [
             "erase",
             "ignore"
@@ -1027,13 +1032,9 @@
               "zh": "忽略",
               "en": "Ignore"
             }
-          },
-          "desc_zh": "画笔应该如何处理无效的索引。",
-          "desc_en": "What should the brush do with invalid indexes."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
-      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]"
+      ]
     },
     {
       "id": "erase-tile-with-patch-brush",
@@ -1041,6 +1042,8 @@
       "name_en": "Erase tiles with patch brush",
       "description_zh": "使用笔刷在指定位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]",
       "scriptName": "EraseTileWithPatchBrush",
       "category": "tilemap-patch-brushes",
       "params": [
@@ -1073,24 +1076,26 @@
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false",
           "desc_zh": "笔刷是否左右翻转。",
-          "desc_en": "Whether to mirror the brush."
+          "desc_en": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false",
           "desc_zh": "笔刷是否上下翻转。",
-          "desc_en": "Whether to flip the brush."
+          "desc_en": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         {
           "id": "rotation",
           "type": "combo",
           "name_zh": "旋转角度",
           "name_en": "Rotation",
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush.",
           "items": [
             "0",
             "90",
@@ -1114,13 +1119,9 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          },
-          "desc_zh": "笔刷的旋转角度。",
-          "desc_en": "The rotation of the brush."
+          }
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
-      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]"
+      ]
     },
     {
       "id": "set-tile-with-patch-brush-by-name",
@@ -1128,6 +1129,8 @@
       "name_en": "Set tiles with patch brush (by name)",
       "description_zh": "使用笔刷在指定位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
+      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]",
       "scriptName": "SetTileWithPatchBrushByName",
       "category": "tilemap-patch-brushes",
       "params": [
@@ -1160,24 +1163,26 @@
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false",
           "desc_zh": "笔刷是否左右翻转。",
-          "desc_en": "Whether to mirror the brush."
+          "desc_en": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false",
           "desc_zh": "笔刷是否上下翻转。",
-          "desc_en": "Whether to flip the brush."
+          "desc_en": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         {
           "id": "rotation",
           "type": "combo",
           "name_zh": "旋转角度",
           "name_en": "Rotation",
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush.",
           "items": [
             "0",
             "90",
@@ -1201,15 +1206,15 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          },
-          "desc_zh": "笔刷的旋转角度。",
-          "desc_en": "The rotation of the brush."
+          }
         },
         {
           "id": "invalid-indexes",
           "type": "combo",
           "name_zh": "无效索引",
           "name_en": "Invalid indexes",
+          "desc_zh": "画笔应该如何处理无效的索引。",
+          "desc_en": "What should the brush do with invalid indexes.",
           "items": [
             "erase",
             "ignore"
@@ -1223,13 +1228,9 @@
               "zh": "忽略",
               "en": "Ignore"
             }
-          },
-          "desc_zh": "画笔应该如何处理无效的索引。",
-          "desc_en": "What should the brush do with invalid indexes."
+          }
         }
-      ],
-      "display_zh": "设置图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b], 左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i], 无效索引: [i]{6}[/i])",
-      "display_en": "Set tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i] Invalid indexes: [i]{6}[/i]"
+      ]
     },
     {
       "id": "erase-tile-with-patch-brush-by-name",
@@ -1237,6 +1238,8 @@
       "name_en": "Erase tiles with patch brush (by name)",
       "description_zh": "使用自动图块笔刷，在指定位置绘制图块。",
       "description_en": "Change a tile at a position using a brush.",
+      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b],  左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
+      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]",
       "scriptName": "EraseTileWithPatchBrushByName",
       "category": "tilemap-patch-brushes",
       "params": [
@@ -1269,24 +1272,26 @@
           "type": "boolean",
           "name_zh": "左右翻转",
           "name_en": "Mirror",
-          "initialValue": "false",
           "desc_zh": "笔刷是否左右翻转。",
-          "desc_en": "Whether to mirror the brush."
+          "desc_en": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         {
           "id": "flip",
           "type": "boolean",
           "name_zh": "上下翻转",
           "name_en": "Flip",
-          "initialValue": "false",
           "desc_zh": "笔刷是否上下翻转。",
-          "desc_en": "Whether to flip the brush."
+          "desc_en": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         {
           "id": "rotation",
           "type": "combo",
           "name_zh": "旋转角度",
           "name_en": "Rotation",
+          "desc_zh": "笔刷的旋转角度。",
+          "desc_en": "The rotation of the brush.",
           "items": [
             "0",
             "90",
@@ -1310,13 +1315,9 @@
               "zh": "270°",
               "en": "270° degrees"
             }
-          },
-          "desc_zh": "笔刷的旋转角度。",
-          "desc_en": "The rotation of the brush."
+          }
         }
-      ],
-      "display_zh": "擦除图块 (位置: [i]{0}[/i], [i]{1}[/i], 笔刷: [b]{2}[/b],  左右翻转: [i]{3}[/i], 上下翻转: [i]{4}[/i], 旋转角度: [i]{5}[/i])",
-      "display_en": "Erase tiles at ([i]{0}[/i], [i]{1}[/i]) with brush [b]{2}[/b]. Mirror: [i]{3}[/i] Flip: [i]{4}[/i] Rotation: [i]{5}[/i]"
+      ]
     },
     {
       "id": "load-image-from-url",
@@ -1324,6 +1325,8 @@
       "name_en": "Load image from URL",
       "description_zh": "从远程服务器下载图块数据。",
       "description_en": "Load the tilemap source image from a web address or data URI.",
+      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
+      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})",
       "scriptName": "LoadURL",
       "isAsync": true,
       "category": "web",
@@ -1333,15 +1336,17 @@
           "type": "string",
           "name_zh": "URI",
           "name_en": "URI",
-          "initialValue": "\"https://\"",
           "desc_zh": "要下载图像或数据的远程服务器地址。",
-          "desc_en": "Enter the URL on the web, or data URI, of an image to load."
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         },
         {
           "id": "cross-origin",
           "type": "combo",
           "name_zh": "跨域",
           "name_en": "Cross-origin",
+          "desc_zh": "用于网络通信的跨域请求模式。",
+          "desc_en": "The cross-origin (CORS) mode to use for the request.",
           "items": [
             "anonymous",
             "none"
@@ -1355,13 +1360,9 @@
               "zh": "无",
               "en": "none"
             }
-          },
-          "desc_zh": "用于网络通信的跨域请求模式。",
-          "desc_en": "The cross-origin (CORS) mode to use for the request."
+          }
         }
-      ],
-      "display_zh": "加载远程图像 [i]{0}[/i] (跨域 {1})",
-      "display_en": "Load image from [i]{0}[/i] (cross-origin {1})"
+      ]
     }
   ],
   "expressions": [

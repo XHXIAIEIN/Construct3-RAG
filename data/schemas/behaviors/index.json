@@ -1,18 +1,25 @@
 {
   "version": "1.0",
   "behaviors": {
-    "bound": {
-      "name_zh": "边界约束",
-      "name_en": "Bound to layout",
-      "conditions": 0,
-      "actions": 0,
-      "expressions": 0
-    },
     "anchor": {
       "name_zh": "锚点",
       "name_en": "Anchor",
       "conditions": 1,
       "actions": 1,
+      "expressions": 0
+    },
+    "eightdir": {
+      "name_zh": "八方向",
+      "name_en": "8 Direction",
+      "conditions": 4,
+      "actions": 13,
+      "expressions": 7
+    },
+    "bound": {
+      "name_zh": "边界约束",
+      "name_en": "Bound to",
+      "conditions": 0,
+      "actions": 0,
       "expressions": 0
     },
     "bullet": {
@@ -22,12 +29,19 @@
       "actions": 9,
       "expressions": 5
     },
-    "eightdir": {
-      "name_zh": "八方向",
-      "name_en": "8 Direction",
-      "conditions": 4,
+    "car": {
+      "name_zh": "车辆",
+      "name_en": "Car",
+      "conditions": 3,
       "actions": 13,
-      "expressions": 7
+      "expressions": 10
+    },
+    "destroy": {
+      "name_zh": "出界销毁",
+      "name_en": "Destroy outside",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
     },
     "custom": {
       "name_zh": "自定义移动",
@@ -36,26 +50,12 @@
       "actions": 13,
       "expressions": 4
     },
-    "destroy": {
-      "name_zh": "出界销毁",
-      "name_en": "Destroy outside layout",
-      "conditions": 0,
-      "actions": 0,
-      "expressions": 0
-    },
     "fade": {
       "name_zh": "淡入淡出",
       "name_en": "Fade",
       "conditions": 3,
       "actions": 5,
       "expressions": 3
-    },
-    "car": {
-      "name_zh": "车辆",
-      "name_en": "Car",
-      "conditions": 3,
-      "actions": 13,
-      "expressions": 10
     },
     "dragndrop": {
       "name_zh": "拖放",
@@ -64,12 +64,12 @@
       "actions": 3,
       "expressions": 0
     },
-    "jumpthru": {
-      "name_zh": "跳跃穿透",
-      "name_en": "Jump-thru",
-      "conditions": 1,
-      "actions": 1,
-      "expressions": 0
+    "follow": {
+      "name_zh": "轨迹跟随",
+      "name_en": "Follow",
+      "conditions": 10,
+      "actions": 17,
+      "expressions": 6
     },
     "flash": {
       "name_zh": "闪烁",
@@ -78,12 +78,12 @@
       "actions": 2,
       "expressions": 0
     },
-    "follow": {
-      "name_zh": "轨迹跟随",
-      "name_en": "Follow",
-      "conditions": 10,
-      "actions": 17,
-      "expressions": 6
+    "jumpthru": {
+      "name_zh": "跳跃穿透",
+      "name_en": "Jump-thru",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 0
     },
     "los": {
       "name_zh": "视线",
@@ -120,12 +120,12 @@
       "actions": 21,
       "expressions": 13
     },
-    "persist": {
-      "name_zh": "持久化",
-      "name_en": "Persist",
-      "conditions": 0,
-      "actions": 0,
-      "expressions": 0
+    "pin": {
+      "name_zh": "固定",
+      "name_en": "Pin",
+      "conditions": 2,
+      "actions": 7,
+      "expressions": 1
     },
     "physics": {
       "name_zh": "物理",
@@ -134,12 +134,12 @@
       "actions": 32,
       "expressions": 14
     },
-    "pin": {
-      "name_zh": "固定",
-      "name_en": "Pin",
-      "conditions": 2,
-      "actions": 7,
-      "expressions": 1
+    "persist": {
+      "name_zh": "持久化",
+      "name_en": "Persist",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
     },
     "platform": {
       "name_zh": "平台",
@@ -162,13 +162,6 @@
       "actions": 2,
       "expressions": 0
     },
-    "shadowcaster": {
-      "name_zh": "投影对象",
-      "name_en": "Shadow caster",
-      "conditions": 2,
-      "actions": 3,
-      "expressions": 2
-    },
     "solid": {
       "name_zh": "实体",
       "name_en": "Solid",
@@ -176,12 +169,12 @@
       "actions": 2,
       "expressions": 0
     },
-    "sin": {
-      "name_zh": "正弦运动",
-      "name_en": "Sine",
-      "conditions": 5,
-      "actions": 7,
-      "expressions": 4
+    "shadowcaster": {
+      "name_zh": "投影对象",
+      "name_en": "Shadow caster",
+      "conditions": 2,
+      "actions": 3,
+      "expressions": 2
     },
     "tilemovement": {
       "name_zh": "网格移动",
@@ -195,6 +188,13 @@
       "name_en": "Timer",
       "conditions": 3,
       "actions": 5,
+      "expressions": 4
+    },
+    "sin": {
+      "name_zh": "正弦运动",
+      "name_en": "Sine",
+      "conditions": 5,
+      "actions": 7,
       "expressions": 4
     },
     "turret": {
@@ -215,14 +215,14 @@
       "name_zh": "补间动画",
       "name_en": "Tween",
       "conditions": 14,
-      "actions": 22,
+      "actions": 24,
       "expressions": 5
     }
   },
   "stats": {
     "count": 31,
     "conditions": 115,
-    "actions": 248,
+    "actions": 250,
     "expressions": 138
   }
 }

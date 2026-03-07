@@ -16,11 +16,13 @@
       "name_en": "On changed",
       "description_zh": "在进行文件选择时触发。",
       "description_en": "Triggered when a file selection is made.",
+      "display_zh": "选择新文件",
+      "display_en": "On changed",
       "scriptName": "OnChanged",
       "isTrigger": true,
-      "category": "file-chooser",
-      "display_zh": "选择新文件",
-      "display_en": "On changed"
+      "canDebug": true,
+      "highlight": true,
+      "category": "file-chooser"
     }
   ],
   "actions": [
@@ -30,6 +32,8 @@
       "name_en": "Release file",
       "description_zh": "释放文件，使其不再使用内存。",
       "description_en": "Release a file so it is no longer using memory.",
+      "display_zh": "释放文件 [i]{0}[/i]",
+      "display_en": "Release file [i]{0}[/i]",
       "scriptName": "ReleaseFile",
       "category": "file-chooser",
       "params": [
@@ -41,9 +45,7 @@
           "desc_zh": "要释放的文件的URL。",
           "desc_en": "The URL of the file to release."
         }
-      ],
-      "display_zh": "释放文件 [i]{0}[/i]",
-      "display_en": "Release file [i]{0}[/i]"
+      ]
     },
     {
       "id": "click",
@@ -51,10 +53,10 @@
       "name_en": "Click",
       "description_zh": "激活文件选择器，就像点击了文件选择器按钮一样。注意，这可能只在用户输入触发器中有效。",
       "description_en": "Activate the file picker as if the file chooser button was clicked. Note this may only work in a user input trigger.",
-      "scriptName": "Click",
-      "category": "file-chooser",
       "display_zh": "点击(激活文件选择器)",
-      "display_en": "Click (activate file picker)"
+      "display_en": "Click (activate file picker)",
+      "scriptName": "Click",
+      "category": "file-chooser"
     },
     {
       "id": "clear",
@@ -62,10 +64,10 @@
       "name_en": "Clear",
       "description_zh": "清除当前所有已选择的文件，恢复为初始状态。",
       "description_en": "Clear any existing file selection from the file picker, restoring it to its initial state.",
-      "scriptName": "Clear",
-      "category": "file-chooser",
       "display_zh": "清空",
-      "display_en": "Clear"
+      "display_en": "Clear",
+      "scriptName": "Clear",
+      "category": "file-chooser"
     }
   ],
   "expressions": [

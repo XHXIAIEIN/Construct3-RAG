@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "color1",
@@ -24,7 +28,8 @@
         0,
         0
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "color1"
     },
     {
       "id": "opacity1",
@@ -32,7 +37,8 @@
       "name_zh": "opacity1",
       "name_en": "opacity1",
       "initialValue": 0.25,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "opacity1"
     },
     {
       "id": "color2",
@@ -44,7 +50,8 @@
         1,
         0
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "color2"
     },
     {
       "id": "opacity2",
@@ -52,7 +59,8 @@
       "name_zh": "opacity2",
       "name_en": "opacity2",
       "initialValue": 0.25,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "opacity2"
     },
     {
       "id": "stripe-depth",
@@ -60,7 +68,8 @@
       "name_zh": "stripe-depth",
       "name_en": "stripe-depth",
       "initialValue": 10,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "stripeDepth"
     },
     {
       "id": "offset",
@@ -68,7 +77,8 @@
       "name_zh": "offset",
       "name_en": "offset",
       "initialValue": 0,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "stripeOffset"
     }
   ]
 }

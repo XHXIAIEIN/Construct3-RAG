@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "fog-color",
@@ -24,7 +28,8 @@
         1,
         1
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "fogColor"
     },
     {
       "id": "fog-density",
@@ -32,7 +37,8 @@
       "name_zh": "fog-density",
       "name_en": "fog-density",
       "initialValue": 0.02,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "fogDensity"
     },
     {
       "id": "near-dist",
@@ -40,7 +46,8 @@
       "name_zh": "near-dist",
       "name_en": "near-dist",
       "initialValue": 10,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "nearDist"
     }
   ]
 }

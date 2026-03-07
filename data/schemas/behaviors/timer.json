@@ -14,6 +14,8 @@
       "name_en": "On timer",
       "description_zh": "计时结束或开始下一个周期的计时时触发。",
       "description_en": "Triggered when a timer has elapsed.",
+      "display_zh": "{my} [i]{0}[/i]计时结束",
+      "display_en": "On {my} [i]{0}[/i]",
       "scriptName": "OnTimer",
       "params": [
         {
@@ -24,9 +26,7 @@
           "desc_zh": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。",
           "desc_en": "Enter the name of the timer."
         }
-      ],
-      "display_zh": "{my} [i]{0}[/i]计时结束",
-      "display_en": "On {my} [i]{0}[/i]"
+      ]
     },
     {
       "id": "is-timer-running",
@@ -34,6 +34,8 @@
       "name_en": "Is timer running",
       "description_zh": "检测指定标签的计时器当前是否正在运行。",
       "description_en": "True if a timer with the given tag is currently running.",
+      "display_zh": "{my} [i]{0}[/i] 正在计时",
+      "display_en": "Is {my} [i]{0}[/i] running",
       "scriptName": "IsTimerRunning",
       "params": [
         {
@@ -44,9 +46,7 @@
           "desc_zh": "计时器的标签。",
           "desc_en": "Enter the name of the timer."
         }
-      ],
-      "display_zh": "{my} [i]{0}[/i] 正在计时",
-      "display_en": "Is {my} [i]{0}[/i] running"
+      ]
     },
     {
       "id": "is-timer-paused",
@@ -54,6 +54,8 @@
       "name_en": "Is timer paused",
       "description_zh": "检测指定标签的计时器是否处于暂停状态。",
       "description_en": "True if a timer with the given tag is currently paused.",
+      "display_zh": "{my} [i]{0}[/i] 已暂停",
+      "display_en": "Is {my} [i]{0}[/i] paused",
       "scriptName": "IsTimerPaused",
       "params": [
         {
@@ -64,9 +66,7 @@
           "desc_zh": "要检测暂停的计时器的标签。",
           "desc_en": "Enter the name of the timer."
         }
-      ],
-      "display_zh": "{my} [i]{0}[/i] 已暂停",
-      "display_en": "Is {my} [i]{0}[/i] paused"
+      ]
     }
   ],
   "actions": [
@@ -76,6 +76,8 @@
       "name_en": "Start timer",
       "description_zh": "开始一个计时器，用于倒计时事件。",
       "description_en": "Start a one-off or regular timer.",
+      "display_zh": "{my}开始计时[b]{0}[/b]秒 (标签: [i]{2}[/i], 类型: {1})",
+      "display_en": "Start {my} [i]{2}[/i] for [b]{0}[/b] ({1})",
       "scriptName": "StartTimer",
       "params": [
         {
@@ -83,15 +85,17 @@
           "type": "number",
           "name_zh": "持续时间",
           "name_en": "Duration",
-          "initialValue": "1.0",
           "desc_zh": "要倒计时的时间，以秒为单位。",
-          "desc_en": "Enter the time in seconds after which to trigger 'On timer'."
+          "desc_en": "Enter the time in seconds after which to trigger 'On timer'.",
+          "initialValue": "1.0"
         },
         {
           "id": "type",
           "type": "combo",
           "name_zh": "类型",
           "name_en": "Type",
+          "desc_zh": "仅计时一次，或按周期计时直到手动停止。",
+          "desc_en": "Whether to run this timer once only, or regularly until cancelled.",
           "items": [
             "once",
             "regular"
@@ -105,9 +109,7 @@
               "zh": "重复",
               "en": "Regular"
             }
-          },
-          "desc_zh": "仅计时一次，或按周期计时直到手动停止。",
-          "desc_en": "Whether to run this timer once only, or regularly until cancelled."
+          }
         },
         {
           "id": "tag",
@@ -117,9 +119,7 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的计时器。",
           "desc_en": "Enter a name to identify this timer."
         }
-      ],
-      "display_zh": "{my}开始计时[b]{0}[/b]秒 (标签: [i]{2}[/i], 类型: {1})",
-      "display_en": "Start {my} [i]{2}[/i] for [b]{0}[/b] ({1})"
+      ]
     },
     {
       "id": "stop-timer",
@@ -127,6 +127,8 @@
       "name_en": "Stop timer",
       "description_zh": "取消某个计时器。不会触发 '计时结束' 事件。",
       "description_en": "Stop a timer.",
+      "display_zh": "{my} 取消计时 [i]{0}[/i]",
+      "display_en": "Stop {my} [i]{0}[/i]",
       "scriptName": "StopTimer",
       "params": [
         {
@@ -137,9 +139,7 @@
           "desc_zh": "要停止的计时器的标签。",
           "desc_en": "Enter the name of the timer to stop."
         }
-      ],
-      "display_zh": "{my} 取消计时 [i]{0}[/i]",
-      "display_en": "Stop {my} [i]{0}[/i]"
+      ]
     },
     {
       "id": "stop-all-timers",
@@ -147,9 +147,9 @@
       "name_en": "Stop all timers",
       "description_zh": "停止所有计时器。不会触发 '计时结束' 事件。",
       "description_en": "Stop all timers.",
-      "scriptName": "StopAllTimers",
       "display_zh": "{my} 停止所有计时",
-      "display_en": "Stop all {my} timers"
+      "display_en": "Stop all {my} timers",
+      "scriptName": "StopAllTimers"
     },
     {
       "id": "pause-resume-timer",
@@ -157,6 +157,8 @@
       "name_en": "Pause/resume timer",
       "description_zh": "暂停或恢复当前运行的计时器。",
       "description_en": "Pause or resume a currently running timer.",
+      "display_zh": "{my} {1} 计时器 [b]{0}[/b]",
+      "display_en": "Set {my} timer [b]{0}[/b] {1}",
       "scriptName": "PauseResumeTimer",
       "params": [
         {
@@ -172,6 +174,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "暂停或恢复计时器。",
+          "desc_en": "Whether to pause or resume this timer.",
           "items": [
             "paused",
             "resumed"
@@ -185,13 +189,9 @@
               "zh": "恢复",
               "en": "Resumed"
             }
-          },
-          "desc_zh": "暂停或恢复计时器。",
-          "desc_en": "Whether to pause or resume this timer."
+          }
         }
-      ],
-      "display_zh": "{my} {1} 计时器 [b]{0}[/b]",
-      "display_en": "Set {my} timer [b]{0}[/b] {1}"
+      ]
     },
     {
       "id": "pause-resume-all-timers",
@@ -199,6 +199,8 @@
       "name_en": "Pause/resume all timers",
       "description_zh": "暂停或恢复所有当前运行的计时器。",
       "description_en": "Pause or resume all currently running timers.",
+      "display_zh": "[b]{0}[/b] {my} 所有计时器",
+      "display_en": "Set all {my} timers [b]{0}[/b]",
       "scriptName": "PauseResumeAllTimers",
       "params": [
         {
@@ -206,6 +208,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "暂停或恢复计时器。",
+          "desc_en": "Whether to pause or resume timers.",
           "items": [
             "paused",
             "resumed"
@@ -219,13 +223,9 @@
               "zh": "恢复",
               "en": "Resumed"
             }
-          },
-          "desc_zh": "暂停或恢复计时器。",
-          "desc_en": "Whether to pause or resume timers."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my} 所有计时器",
-      "display_en": "Set all {my} timers [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

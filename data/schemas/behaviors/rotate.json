@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -26,6 +26,8 @@
       "name_en": "Set speed",
       "description_zh": "设置对象旋转的速率",
       "description_en": "Set the rate the object spins at.",
+      "display_zh": "设置 {my}每秒旋转速度为{0}°",
+      "display_en": "Set {my} speed to {0} degrees per second",
       "scriptName": "SetSpeed",
       "params": [
         {
@@ -36,9 +38,7 @@
           "desc_zh": "设置旋转速度，以每秒角度为单位。",
           "desc_en": "The new rotation speed, in degrees per second."
         }
-      ],
-      "display_zh": "设置 {my}每秒旋转速度为{0}°",
-      "display_en": "Set {my} speed to {0} degrees per second"
+      ]
     },
     {
       "id": "set-acceleration",
@@ -46,6 +46,8 @@
       "name_en": "Set acceleration",
       "description_zh": "设置每秒旋转角度变化的速率，正数则顺时针加速，负数逆时针加速。",
       "description_en": "Set the rate the object's spinning changes.",
+      "display_zh": "设置 {my}加速度为{0}",
+      "display_en": "Set {my} acceleration to {0} degrees per second per second",
       "scriptName": "SetAcceleration",
       "params": [
         {
@@ -56,9 +58,7 @@
           "desc_zh": "设置旋转加速度，以每秒角度为单位。",
           "desc_en": "The new rotation acceleration, in degrees per second per second."
         }
-      ],
-      "display_zh": "设置 {my}加速度为{0}",
-      "display_en": "Set {my} acceleration to {0} degrees per second per second"
+      ]
     },
     {
       "id": "set-enabled",
@@ -66,6 +66,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -73,6 +75,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -86,13 +90,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

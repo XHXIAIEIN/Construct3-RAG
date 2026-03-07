@@ -14,9 +14,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试该行为在当前是否启用",
       "description_en": "Test whether the behavior is currently enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     }
   ],
   "actions": [
@@ -26,6 +26,8 @@
       "name_en": "Set enabled",
       "description_zh": "该对象是否被视为平台。",
       "description_en": "Set whether the object counts as a platform or not.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -33,6 +35,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "设置对象是否被视为平台",
+          "desc_en": "Set whether the object counts as a platform or not.",
           "initialValue": "enabled",
           "items": [
             "disabled",
@@ -47,13 +51,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "设置对象是否被视为平台",
-          "desc_en": "Set whether the object counts as a platform or not."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [],

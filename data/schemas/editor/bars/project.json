@@ -612,17 +612,46 @@
       "id": "projectItem.rename-functions-object",
       "name_zh": "重命名 '动作组'",
       "name_en": "Rename Functions object"
+    },
+    {
+      "id": "model3dItem.import",
+      "name_zh": "导入模型",
+      "name_en": "Import"
+    },
+    {
+      "id": "model3dItem.import-from-folder",
+      "name_zh": "导入文件夹",
+      "name_en": "From folder"
+    },
+    {
+      "id": "model3dItem.import-from-file",
+      "name_zh": "导入文件",
+      "name_en": "From file"
+    },
+    {
+      "id": "model3dItem.duplicate",
+      "name_zh": "复制",
+      "name_en": "Duplicate"
+    },
+    {
+      "id": "model3dItem.help",
+      "name_zh": "查看 3D 模型文档",
+      "name_en": "Help on 3D model"
+    },
+    {
+      "id": "model3dFolderItem.add-model3d",
+      "name_zh": "创建 3D 模型",
+      "name_en": "Add 3D model"
+    },
+    {
+      "id": "model3dFolderItem.add-subfolder",
+      "name_zh": "创建子文件夹",
+      "name_en": "Add subfolder"
+    },
+    {
+      "id": "model3dFolderItem.help",
+      "name_zh": "查看 3D 模型文档",
+      "name_en": "Help on 3D models"
     }
-  ],
-  "description_en": "The Project Bar shows an overview of everything in your project. See Project Structure for a summary of the different elements that make up a project, or the manual section on Project Primitives for more detail. The Project Bar If something in the project has changed, it is displayed in italics . When you save the project, everything reverts to normal text, indicating nothing has changed since the last save. To view the project properties, select the project item. This is the item at the top of ",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/project-bar",
-  "sections": [
-    "Organising projects",
-    "Managing items in the project",
-    "Deleting objects",
-    "Searching the Project Bar",
-    "Importing audio",
-    "Importing files",
-    "Previewing files"
   ]
 }

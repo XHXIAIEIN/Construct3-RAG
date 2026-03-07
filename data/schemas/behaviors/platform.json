@@ -16,9 +16,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving",
       "display_zh": "{my} 正在移动",
-      "display_en": "{my} is moving"
+      "display_en": "{my} is moving",
+      "scriptName": "IsMoving"
     },
     {
       "id": "compare-speed",
@@ -26,6 +26,8 @@
       "name_en": "Compare speed",
       "description_zh": "比较对象的当前速度。",
       "description_en": "Compare the current speed of the object.",
+      "display_zh": "{my} 速度 {0} {1}",
+      "display_en": "{my} speed {0} {1}",
       "scriptName": "CompareSpeed",
       "params": [
         {
@@ -44,9 +46,7 @@
           "desc_zh": "每秒像素数 的速度，对比当前速度",
           "desc_en": "The speed, in pixels per second, to compare the current speed to."
         }
-      ],
-      "display_zh": "{my} 速度 {0} {1}",
-      "display_en": "{my} speed {0} {1}"
+      ]
     },
     {
       "id": "is-on-floor",
@@ -54,9 +54,9 @@
       "name_en": "Is on floor",
       "description_zh": "检测对象是否位于具有 '实体' 行为的对象平台上面。",
       "description_en": "True when the object is on top of a solid or platform.",
-      "scriptName": "IsOnFloor",
       "display_zh": "{my} 接触地面",
-      "display_en": "{my} is on floor"
+      "display_en": "{my} is on floor",
+      "scriptName": "IsOnFloor"
     },
     {
       "id": "is-jumping",
@@ -64,9 +64,9 @@
       "name_en": "Is jumping",
       "description_zh": "检测物体当前是否正在向上移动（即跳跃）",
       "description_en": "True when the object is moving upwards (i.e. jumping).",
-      "scriptName": "IsJumping",
       "display_zh": "{my} 正在跳跃",
-      "display_en": "{my} is jumping"
+      "display_en": "{my} is jumping",
+      "scriptName": "IsJumping"
     },
     {
       "id": "is-falling",
@@ -74,9 +74,9 @@
       "name_en": "Is falling",
       "description_zh": "检测物体当前是否正在向下移动（即坠落）",
       "description_en": "True when the object is moving downwards (i.e. falling).",
-      "scriptName": "IsFalling",
       "display_zh": "{my} 正在下落",
-      "display_en": "{my} is falling"
+      "display_en": "{my} is falling",
+      "scriptName": "IsFalling"
     },
     {
       "id": "is-by-wall",
@@ -84,6 +84,8 @@
       "name_en": "Is by wall",
       "description_zh": "检测对象的左边或右边是否有墙壁。",
       "description_en": "Test if the object has a wall to the left or right.",
+      "display_zh": "{my}{0}接触墙壁",
+      "display_en": "{my} has wall to {0}",
       "scriptName": "IsByWall",
       "params": [
         {
@@ -91,6 +93,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Side",
+          "desc_zh": "检测哪个方向有墙壁",
+          "desc_en": "Select the side to test for a wall.",
           "items": [
             "left",
             "right"
@@ -104,13 +108,9 @@
               "zh": "右边",
               "en": "right"
             }
-          },
-          "desc_zh": "检测哪个方向有墙壁",
-          "desc_en": "Select the side to test for a wall."
+          }
         }
-      ],
-      "display_zh": "{my}{0}接触墙壁",
-      "display_en": "{my} has wall to {0}"
+      ]
     },
     {
       "id": "is-double-jump-enabled",
@@ -118,9 +118,9 @@
       "name_en": "Is double-jump enabled",
       "description_zh": "检测当前是否已启用二段跳。",
       "description_en": "True if double-jump is currently enabled.",
-      "scriptName": "IsDoubleJumpEnabled",
       "display_zh": "{my} 已启用二段跳",
-      "display_en": "{my} double-jump is enabled"
+      "display_en": "{my} double-jump is enabled",
+      "scriptName": "IsDoubleJumpEnabled"
     },
     {
       "id": "is-enabled",
@@ -128,9 +128,9 @@
       "name_en": "Is enabled",
       "description_zh": "检测当前行为是否已启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     },
     {
       "id": "on-jump",
@@ -138,11 +138,11 @@
       "name_en": "On jump",
       "description_zh": "在即将进入跳跃状态之前触发一次。",
       "description_en": "Triggered when jumping.",
+      "display_zh": "{my} 准备起跳",
+      "display_en": "{my} On jump",
       "scriptName": "OnJump",
       "isTrigger": true,
-      "category": "animation-triggers",
-      "display_zh": "{my} 准备起跳",
-      "display_en": "{my} On jump"
+      "category": "animation-triggers"
     },
     {
       "id": "on-fall",
@@ -150,11 +150,11 @@
       "name_en": "On fall",
       "description_zh": "在即将进入自由落体状态之前触发一次。",
       "description_en": "Triggered when falling.",
+      "display_zh": "{my} 准备下落",
+      "display_en": "{my} On fall",
       "scriptName": "OnFall",
       "isTrigger": true,
-      "category": "animation-triggers",
-      "display_zh": "{my} 准备下落",
-      "display_en": "{my} On fall"
+      "category": "animation-triggers"
     },
     {
       "id": "on-stopped",
@@ -162,11 +162,11 @@
       "name_en": "On stopped",
       "description_zh": "在停止移动状态之前触发一次。",
       "description_en": "Triggered when stopped moving.",
+      "display_zh": "{my} 准备停下",
+      "display_en": "{my} On stopped",
       "scriptName": "OnStop",
       "isTrigger": true,
-      "category": "animation-triggers",
-      "display_zh": "{my} 准备停下",
-      "display_en": "{my} On stopped"
+      "category": "animation-triggers"
     },
     {
       "id": "on-moved",
@@ -174,11 +174,11 @@
       "name_en": "On moved",
       "description_zh": "即将进入移动状态之前触发一次。",
       "description_en": "Triggered when starting to move.",
+      "display_zh": "{my} 准备移动",
+      "display_en": "{my} On moved",
       "scriptName": "OnMove",
       "isTrigger": true,
-      "category": "animation-triggers",
-      "display_zh": "{my} 准备移动",
-      "display_en": "{my} On moved"
+      "category": "animation-triggers"
     },
     {
       "id": "on-landed",
@@ -186,11 +186,11 @@
       "name_en": "On landed",
       "description_zh": "从落体状态首次碰撞到地面时触发一次。",
       "description_en": "Triggered when first hitting the floor.",
+      "display_zh": "{my} 准备落地",
+      "display_en": "{my} On landed",
       "scriptName": "OnLand",
       "isTrigger": true,
-      "category": "animation-triggers",
-      "display_zh": "{my} 准备落地",
-      "display_en": "{my} On landed"
+      "category": "animation-triggers"
     }
   ],
   "actions": [
@@ -200,6 +200,8 @@
       "name_en": "Set ignoring input",
       "description_zh": "是否屏蔽玩家对该对象移动的控制行为。",
       "description_en": "Set whether to ignore the controls for this movement.",
+      "display_zh": "{0}控制 {my}",
+      "display_en": "{0} {my} user input",
       "scriptName": "SetIgnoreInput",
       "params": [
         {
@@ -207,6 +209,8 @@
           "type": "combo",
           "name_zh": "输入",
           "name_en": "Input",
+          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
+          "desc_en": "Set whether to ignore the controls for this movement.",
           "items": [
             "stop-ignoring",
             "start-ignoring"
@@ -220,13 +224,9 @@
               "zh": "开始屏蔽",
               "en": "Start ignoring"
             }
-          },
-          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
-          "desc_en": "Set whether to ignore the controls for this movement."
+          }
         }
-      ],
-      "display_zh": "{0}控制 {my}",
-      "display_en": "{0} {my} user input"
+      ]
     },
     {
       "id": "set-max-speed",
@@ -234,6 +234,8 @@
       "name_en": "Set max speed",
       "description_zh": "设置对象的最大移动速度。",
       "description_en": "Set the object's maximum speed.",
+      "display_zh": "设置 {my}最大速度为[i]{0}[/i]",
+      "display_en": "Set {my} maximum speed to [i]{0}[/i]",
       "scriptName": "SetMaxSpeed",
       "params": [
         {
@@ -244,9 +246,7 @@
           "desc_zh": "设置最大移动速度，以每秒像素为单位。",
           "desc_en": "The new maximum speed of the object to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}最大速度为[i]{0}[/i]",
-      "display_en": "Set {my} maximum speed to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-acceleration",
@@ -254,6 +254,8 @@
       "name_en": "Set acceleration",
       "description_zh": "设置对象的加速度。",
       "description_en": "Set the object's acceleration.",
+      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
+      "display_en": "Set {my} acceleration to [i]{0}[/i]",
       "scriptName": "SetAcceleration",
       "params": [
         {
@@ -264,9 +266,7 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
           "desc_en": "The new acceleration of the object to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}加速度为[i]{0}[/i]",
-      "display_en": "Set {my} acceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-deceleration",
@@ -274,6 +274,8 @@
       "name_en": "Set deceleration",
       "description_zh": "设置对象的减速速率",
       "description_en": "Set the object's deceleration.",
+      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
+      "display_en": "Set {my} deceleration to [i]{0}[/i]",
       "scriptName": "SetDeceleration",
       "params": [
         {
@@ -284,9 +286,7 @@
           "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
           "desc_en": "The new deceleration of the object to set, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}减速度为[i]{0}[/i]",
-      "display_en": "Set {my} deceleration to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-jump-strength",
@@ -294,6 +294,8 @@
       "name_en": "Set jump strength",
       "description_zh": "设置对象的跳跃高度，以每秒像素为单位。",
       "description_en": "Set the object's jump strength.",
+      "display_zh": "设置 {my}跳跃高度为[i]{0}[/i]",
+      "display_en": "Set {my} jump strength to [i]{0}[/i]",
       "scriptName": "SetJumpStrength",
       "params": [
         {
@@ -304,9 +306,7 @@
           "desc_zh": "跳跃的初始速度，以像素每秒为单位。",
           "desc_en": "The new speed at which jumps start, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}跳跃高度为[i]{0}[/i]",
-      "display_en": "Set {my} jump strength to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-gravity",
@@ -314,6 +314,8 @@
       "name_en": "Set gravity",
       "description_zh": "设置对象的重力",
       "description_en": "Set the object's gravity.",
+      "display_zh": "设置 {my}重力值为[i]{0}[/i]",
+      "display_en": "Set {my} gravity to [i]{0}[/i]",
       "scriptName": "SetGravity",
       "params": [
         {
@@ -324,9 +326,7 @@
           "desc_zh": "由重力产生的加速度，以像素/秒为单位。",
           "desc_en": "The new acceleration from gravity, in pixels per second per second."
         }
-      ],
-      "display_zh": "设置 {my}重力值为[i]{0}[/i]",
-      "display_en": "Set {my} gravity to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-max-fall-speed",
@@ -334,6 +334,8 @@
       "name_en": "Set max fall speed",
       "description_zh": "设置对象下落速度的最大最小值",
       "description_en": "Set the object's maximum fall speed.",
+      "display_zh": "设置 {my}最大下落速度为[i]{0}[/i]",
+      "display_en": "Set {my} max fall speed to [i]{0}[/i]",
       "scriptName": "SetMaxFallSpeed",
       "params": [
         {
@@ -344,9 +346,7 @@
           "desc_zh": "自由落体对象新速度的最大最小值",
           "desc_en": "The new maximum speed object can reach in freefall, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}最大下落速度为[i]{0}[/i]",
-      "display_en": "Set {my} max fall speed to [i]{0}[/i]"
+      ]
     },
     {
       "id": "simulate-control",
@@ -354,6 +354,8 @@
       "name_en": "Simulate control",
       "description_zh": "通过事件模拟玩家按下按键来控制角色的行动。",
       "description_en": "Control the movement by events.",
+      "display_zh": "控制 {my} {0}",
+      "display_en": "Simulate {my} pressing {0}",
       "scriptName": "SimulateControl",
       "params": [
         {
@@ -361,6 +363,8 @@
           "type": "combo",
           "name_zh": "控制",
           "name_en": "Control",
+          "desc_zh": "模拟玩家按下按键来控制角色行动。",
+          "desc_en": "The movement control to simulate pressing.",
           "items": [
             "left",
             "right",
@@ -379,13 +383,9 @@
               "zh": "跳跃",
               "en": "Jump"
             }
-          },
-          "desc_zh": "模拟玩家按下按键来控制角色行动。",
-          "desc_en": "The movement control to simulate pressing."
+          }
         }
-      ],
-      "display_zh": "控制 {my} {0}",
-      "display_en": "Simulate {my} pressing {0}"
+      ]
     },
     {
       "id": "set-vector-x",
@@ -393,6 +393,8 @@
       "name_en": "Set vector X",
       "description_zh": "设置运动的 X 分量。",
       "description_en": "Set the X component of motion.",
+      "display_zh": "设置 {my}运动向量X为[i]{0}[/i]",
+      "display_en": "Set {my} vector X to [i]{0}[/i]",
       "scriptName": "SetVectorX",
       "params": [
         {
@@ -403,9 +405,7 @@
           "desc_zh": "设置在X轴的运动向量，以每秒像素为单位。大于 0 将向右移动，小于 0 则向左移动。",
           "desc_en": "The new horizontal movement vector, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}运动向量X为[i]{0}[/i]",
-      "display_en": "Set {my} vector X to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-vector-y",
@@ -413,6 +413,8 @@
       "name_en": "Set vector Y",
       "description_zh": "设置在Y轴方向的运动向量，以每秒像素为单位。大于 0 将跳跃，小于 0 则掉落。",
       "description_en": "Set the Y component of motion.",
+      "display_zh": "设置 {my}运动向量Y为[i]{0}[/i]",
+      "display_en": "Set {my} vector Y to [i]{0}[/i]",
       "scriptName": "SetVectorY",
       "params": [
         {
@@ -423,9 +425,7 @@
           "desc_zh": "像素/秒的新垂直移动向量",
           "desc_en": "The new vertical movement vector, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}运动向量Y为[i]{0}[/i]",
-      "display_en": "Set {my} vector Y to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-angle-of-gravity",
@@ -433,6 +433,8 @@
       "name_en": "Set angle of gravity",
       "description_zh": "改变玩家下落角度",
       "description_en": "Change the angle the player falls at.",
+      "display_zh": "设置 {my}重力方向为[i]{0}[/i]°",
+      "display_en": "Set {my} angle of gravity to [i]{0}[/i] degrees",
       "scriptName": "SetGravityAngle",
       "params": [
         {
@@ -443,9 +445,7 @@
           "desc_zh": "重力方向的度数。",
           "desc_en": "The angle of gravity in degrees."
         }
-      ],
-      "display_zh": "设置 {my}重力方向为[i]{0}[/i]°",
-      "display_en": "Set {my} angle of gravity to [i]{0}[/i] degrees"
+      ]
     },
     {
       "id": "set-enabled",
@@ -453,6 +453,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -460,6 +462,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "启用或禁用此行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -473,13 +477,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "启用或禁用此行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "fall-through",
@@ -487,9 +487,9 @@
       "name_en": "Fall through",
       "description_zh": "下落穿过平台",
       "description_en": "Fall through a jump-thru platform.",
-      "scriptName": "FallThrough",
       "display_zh": "{my} 从穿透平台落下",
-      "display_en": "Fall {my} down through jump-thru"
+      "display_en": "Fall {my} down through jump-thru",
+      "scriptName": "FallThrough"
     },
     {
       "id": "set-double-jump",
@@ -497,6 +497,8 @@
       "name_en": "Set double-jump",
       "description_zh": "开启或禁用二段跳。",
       "description_en": "Set whether double-jump is enabled.",
+      "display_zh": "{my}[b]{0}[/b]二段跳",
+      "display_en": "Set {my} double-jump [b]{0}[/b]",
       "scriptName": "SetDoubleJumpEnabled",
       "params": [
         {
@@ -504,6 +506,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "禁用启动二段跳功能",
+          "desc_en": "Set whether to enable or disable double jumps.",
           "items": [
             "disabled",
             "enabled"
@@ -517,13 +521,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "禁用启动二段跳功能",
-          "desc_en": "Set whether to enable or disable double jumps."
+          }
         }
-      ],
-      "display_zh": "{my}[b]{0}[/b]二段跳",
-      "display_en": "Set {my} double-jump [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-jump-sustain",
@@ -531,6 +531,8 @@
       "name_en": "Set jump sustain",
       "description_zh": "根据按住跳跃键的时长，允许在空中可以保持更长的时间，以毫秒为单位。",
       "description_en": "Set the jump sustain property.",
+      "display_zh": "设置 {my}跳跃保持为[b]{0}[/b]毫秒",
+      "display_en": "Set {my} jump sustain to [b]{0}[/b] ms",
       "scriptName": "SetJumpSustain",
       "params": [
         {
@@ -541,9 +543,7 @@
           "desc_zh": "跳跃保持时间，以毫秒为单位。",
           "desc_en": "The new jump sustain, in milliseconds to sustain jump velocity for."
         }
-      ],
-      "display_zh": "设置 {my}跳跃保持为[b]{0}[/b]毫秒",
-      "display_en": "Set {my} jump sustain to [b]{0}[/b] ms"
+      ]
     },
     {
       "id": "set-ceiling-collision",
@@ -551,6 +551,8 @@
       "name_en": "Set ceiling collision",
       "description_zh": "如何处理碰撞到天花板后的反馈(立即停止，或保持动力)",
       "description_en": "Set how ceiling collisions are handled (stop or preserve momentum)",
+      "display_zh": "设置 {my}碰撞到天花板后[b]{0}[/b]",
+      "display_en": "Set {my} ceiling collision mode to [b]{0}[/b]",
       "scriptName": "SetCeilingCollision",
       "params": [
         {
@@ -558,6 +560,8 @@
           "type": "combo",
           "name_zh": "模式",
           "name_en": "Mode",
+          "desc_zh": "如何处理碰撞到天花板时的反馈。",
+          "desc_en": "Set how to handle collisions with the ceiling.",
           "items": [
             "stop",
             "preserve-momentum"
@@ -571,13 +575,9 @@
               "zh": "保持动力",
               "en": "Preserve momentum"
             }
-          },
-          "desc_zh": "如何处理碰撞到天花板时的反馈。",
-          "desc_en": "Set how to handle collisions with the ceiling."
+          }
         }
-      ],
-      "display_zh": "设置 {my}碰撞到天花板后[b]{0}[/b]",
-      "display_en": "Set {my} ceiling collision mode to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-default-controls",
@@ -585,6 +585,8 @@
       "name_en": "Set default controls",
       "description_zh": "更改默认开启控制的设置。",
       "description_en": "Change the default controls setting.",
+      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
+      "display_en": "Set {my} default controls [b]{0}[/b]",
       "scriptName": "SetDefaultControls",
       "params": [
         {
@@ -595,9 +597,7 @@
           "desc_zh": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。",
           "desc_en": "Whether to enable or disable the behavior default controls."
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
-      "display_en": "Set {my} default controls [b]{0}[/b]"
+      ]
     },
     {
       "id": "reset-double-jump",
@@ -605,6 +605,8 @@
       "name_en": "Reset double jump",
       "description_zh": "设置在跳跃时，是否允许再次跳跃。",
       "description_en": "Change whether a double jump is allowed during a jump.",
+      "display_zh": "重置 {my} 二段跳判定 [b]{0}[/b]",
+      "display_en": "Reset {my} double jump allowed [b]{0}[/b]",
       "scriptName": "ResetDoubleJump",
       "params": [
         {
@@ -615,9 +617,7 @@
           "desc_zh": "在当前跳跃状态是否允许二段跳。",
           "desc_en": "Whether a double jump is allowed during the current jump."
         }
-      ],
-      "display_zh": "重置 {my} 二段跳判定 [b]{0}[/b]",
-      "display_en": "Reset {my} double jump allowed [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

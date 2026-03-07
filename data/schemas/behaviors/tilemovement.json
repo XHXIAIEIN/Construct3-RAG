@@ -14,9 +14,9 @@
       "name_en": "Is moving",
       "description_zh": "检测对象是否正在移动。",
       "description_en": "True when the object is moving.",
-      "scriptName": "IsMoving",
       "display_zh": "{my} 正在移动",
-      "display_en": "{my} is moving"
+      "display_en": "{my} is moving",
+      "scriptName": "IsMoving"
     },
     {
       "id": "is-moving-direction",
@@ -24,6 +24,8 @@
       "name_en": "Is moving in direction",
       "description_zh": "检测对象当前是否沿着指定方向移动。",
       "description_en": "True when the object is moving in the specified direction.",
+      "display_zh": "{my} [b]{0}[/b]移动",
+      "display_en": "{my} is moving [b]{0}[/b]",
       "scriptName": "IsMovingDirection",
       "params": [
         {
@@ -31,6 +33,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Direction",
+          "desc_zh": "移动的方向。",
+          "desc_en": "The direction of movement.",
           "items": [
             "right",
             "left",
@@ -54,13 +58,9 @@
               "zh": "向上",
               "en": "Up"
             }
-          },
-          "desc_zh": "移动的方向。",
-          "desc_en": "The direction of movement."
+          }
         }
-      ],
-      "display_zh": "{my} [b]{0}[/b]移动",
-      "display_en": "{my} is moving [b]{0}[/b]"
+      ]
     },
     {
       "id": "is-enabled",
@@ -68,9 +68,9 @@
       "name_en": "Is enabled",
       "description_zh": "测试行为是否已经启用。",
       "description_en": "Test if the behavior is enabled.",
-      "scriptName": "IsEnabled",
       "display_zh": "{my} 已启用",
-      "display_en": "{my} is enabled"
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled"
     },
     {
       "id": "can-move-to",
@@ -78,6 +78,8 @@
       "name_en": "Can move to",
       "description_zh": "检测对象是否可以移动到网格位置。",
       "description_en": "Test if the object can move into a cell.",
+      "display_zh": "{my}可以移动到[b]({0},{1})[/b]",
+      "display_en": "{my} can move to [b]({0},{1})[/b]",
       "scriptName": "CanMoveTo",
       "params": [
         {
@@ -96,9 +98,7 @@
           "desc_zh": "要进行检测的网格行。",
           "desc_en": "The grid row to check."
         }
-      ],
-      "display_zh": "{my}可以移动到[b]({0},{1})[/b]",
-      "display_en": "{my} can move to [b]({0},{1})[/b]"
+      ]
     },
     {
       "id": "can-move-direction",
@@ -106,6 +106,8 @@
       "name_en": "Can move in direction",
       "description_zh": "测试物体是否能沿着指定方向移动一段距离，并检查沿途是否存在障碍物。",
       "description_en": "Test if the object can move a given distance in specified direction, checking for obstacles along the way.",
+      "display_zh": "{my} 可以[b]{0}[/b]移动 [b]{1}[/b]格",
+      "display_en": "{my} can move [b]{1}[/b] cells [b]{0}[/b]",
       "scriptName": "CanMoveDirection",
       "params": [
         {
@@ -113,6 +115,8 @@
           "type": "combo",
           "name_zh": "方向",
           "name_en": "Direction",
+          "desc_zh": "移动的方向。",
+          "desc_en": "The direction of movement.",
           "items": [
             "right",
             "left",
@@ -136,9 +140,7 @@
               "zh": "向上",
               "en": "Up"
             }
-          },
-          "desc_zh": "移动的方向。",
-          "desc_en": "The direction of movement."
+          }
         },
         {
           "id": "distance",
@@ -148,9 +150,7 @@
           "desc_zh": "移动的距离",
           "desc_en": "The distance of movement"
         }
-      ],
-      "display_zh": "{my} 可以[b]{0}[/b]移动 [b]{1}[/b]格",
-      "display_en": "{my} can move [b]{1}[/b] cells [b]{0}[/b]"
+      ]
     }
   ],
   "actions": [
@@ -160,6 +160,8 @@
       "name_en": "Set speed",
       "description_zh": "设置移动速度",
       "description_en": "Set the object's movement speed.",
+      "display_zh": "设置 {my}移动速度为[i]({0},{1})[/i]",
+      "display_en": "Set {my} speed to [i]({0},{1})[/i]",
       "scriptName": "SetSpeed",
       "params": [
         {
@@ -178,9 +180,7 @@
           "desc_zh": "设置垂直方向移动速度，以每秒像素为单位。",
           "desc_en": "The new vertical speed of the object to set, in pixels per second."
         }
-      ],
-      "display_zh": "设置 {my}移动速度为[i]({0},{1})[/i]",
-      "display_en": "Set {my} speed to [i]({0},{1})[/i]"
+      ]
     },
     {
       "id": "set-ignoring-input",
@@ -188,6 +188,8 @@
       "name_en": "Set ignoring input",
       "description_zh": "是否屏蔽玩家对该对象移动的控制行为。",
       "description_en": "Set whether to ignore the controls for this movement.",
+      "display_zh": "{0}控制 {my}",
+      "display_en": "{0} {my} user input",
       "scriptName": "SetIgnoreInput",
       "params": [
         {
@@ -195,6 +197,8 @@
           "type": "combo",
           "name_zh": "输入",
           "name_en": "Input",
+          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
+          "desc_en": "Set whether to ignore the controls for this movement.",
           "items": [
             "stop-ignoring",
             "start-ignoring"
@@ -208,13 +212,9 @@
               "zh": "开始忽略",
               "en": "Start ignoring"
             }
-          },
-          "desc_zh": "是否屏蔽玩家对该对象移动的控制行为。",
-          "desc_en": "Set whether to ignore the controls for this movement."
+          }
         }
-      ],
-      "display_zh": "{0}控制 {my}",
-      "display_en": "{0} {my} user input"
+      ]
     },
     {
       "id": "set-enabled",
@@ -222,6 +222,8 @@
       "name_en": "Set enabled",
       "description_zh": "启用或禁用此行为。",
       "description_en": "Set whether this behavior is enabled.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
       "scriptName": "SetEnabled",
       "params": [
         {
@@ -229,6 +231,8 @@
           "type": "combo",
           "name_zh": "状态",
           "name_en": "State",
+          "desc_zh": "设置是否启用或禁用该行为。",
+          "desc_en": "Set whether to enable or disable the behavior.",
           "items": [
             "disabled",
             "enabled"
@@ -242,13 +246,9 @@
               "zh": "启用",
               "en": "Enabled"
             }
-          },
-          "desc_zh": "设置是否启用或禁用该行为。",
-          "desc_en": "Set whether to enable or disable the behavior."
+          }
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my}",
-      "display_en": "Set {my} [b]{0}[/b]"
+      ]
     },
     {
       "id": "simulate-control",
@@ -256,6 +256,8 @@
       "name_en": "Simulate control",
       "description_zh": "通过事件模拟玩家按下按键来控制角色的行动。",
       "description_en": "Control the movement by events.",
+      "display_zh": "控制 {my} {0}",
+      "display_en": "Simulate {my} pressing {0}",
       "scriptName": "SimulateControl",
       "params": [
         {
@@ -263,6 +265,8 @@
           "type": "combo",
           "name_zh": "控制",
           "name_en": "Control",
+          "desc_zh": "模拟玩家按下按键来控制角色行动。",
+          "desc_en": "The movement control to simulate pressing.",
           "items": [
             "left",
             "right",
@@ -286,13 +290,9 @@
               "zh": "向下移动",
               "en": "Down"
             }
-          },
-          "desc_zh": "模拟玩家按下按键来控制角色行动。",
-          "desc_en": "The movement control to simulate pressing."
+          }
         }
-      ],
-      "display_zh": "控制 {my} {0}",
-      "display_en": "Simulate {my} pressing {0}"
+      ]
     },
     {
       "id": "set-grid-position",
@@ -300,6 +300,8 @@
       "name_en": "Set grid position",
       "description_zh": "设置对象的网格位置",
       "description_en": "Set the object's grid position.",
+      "display_zh": "设置 {my}网格位置 {2} [i]({0},{1})[/i]",
+      "display_en": "Set {my} grid position to {2} to the cell at [i]({0},{1})[/i]",
       "scriptName": "SetGridPosition",
       "params": [
         {
@@ -323,6 +325,8 @@
           "type": "combo",
           "name_zh": "方式",
           "name_en": "Movement",
+          "desc_zh": "选择立即将对象移动到该位置，还是正常移动。",
+          "desc_en": "Choose whether to move the object instantly to the location, or to animate over normally.",
           "items": [
             "animate",
             "instant"
@@ -336,13 +340,9 @@
               "zh": "瞬间到达",
               "en": "instant"
             }
-          },
-          "desc_zh": "选择立即将对象移动到该位置，还是正常移动。",
-          "desc_en": "Choose whether to move the object instantly to the location, or to animate over normally."
+          }
         }
-      ],
-      "display_zh": "设置 {my}网格位置 {2} [i]({0},{1})[/i]",
-      "display_en": "Set {my} grid position to {2} to the cell at [i]({0},{1})[/i]"
+      ]
     },
     {
       "id": "set-grid-dimensions",
@@ -350,6 +350,8 @@
       "name_en": "Set grid dimensions",
       "description_zh": "设置对象的网格大小和偏移量。",
       "description_en": "Set the object's grid size and offset",
+      "display_zh": "设置 {my}网格尺寸为[b]({0},{1})[/b], 偏移[i]({2},{3})[/i]",
+      "display_en": "Set {my} grid size to [b]({0},{1})[/b] and offset to [i]({2},{3})[/i]",
       "scriptName": "SetGridDimensions",
       "params": [
         {
@@ -384,9 +386,7 @@
           "desc_zh": "要设置的 Y 轴偏移。",
           "desc_en": "The new Y offset to set for the object's grid."
         }
-      ],
-      "display_zh": "设置 {my}网格尺寸为[b]({0},{1})[/b], 偏移[i]({2},{3})[/i]",
-      "display_en": "Set {my} grid size to [b]({0},{1})[/b] and offset to [i]({2},{3})[/i]"
+      ]
     },
     {
       "id": "set-default-controls",
@@ -394,6 +394,8 @@
       "name_en": "Set default controls",
       "description_zh": "开启后，默认允许通过键盘方向键进行控制。",
       "description_en": "Change the default controls setting.",
+      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
+      "display_en": "Set {my} default controls [b]{0}[/b]",
       "scriptName": "SetDefaultControls",
       "params": [
         {
@@ -404,9 +406,7 @@
           "desc_zh": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。",
           "desc_en": "Whether to enable or disable the behavior default controls."
         }
-      ],
-      "display_zh": "[b]{0}[/b] {my} 默认控制方式",
-      "display_en": "Set {my} default controls [b]{0}[/b]"
+      ]
     }
   ],
   "expressions": [

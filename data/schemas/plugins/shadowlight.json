@@ -17,6 +17,8 @@
       "name_en": "Set light height",
       "description_zh": "设置光源的位置高度。",
       "description_en": "Set the height of the light.",
+      "display_zh": "设置光源高度为[i]{0}[/i]",
+      "display_en": "Set light height to [i]{0}[/i]",
       "scriptName": "SetLightHeight",
       "category": "light",
       "params": [
@@ -28,9 +30,7 @@
           "desc_zh": "要设置的光源的高度，以像素为单位。",
           "desc_en": "The height of the light to set, in pixels."
         }
-      ],
-      "display_zh": "设置光源高度为[i]{0}[/i]",
-      "display_en": "Set light height to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-shadow-color",
@@ -38,6 +38,8 @@
       "name_en": "Set shadow color",
       "description_zh": "设置光源投射的阴影颜色。",
       "description_en": "Set the color of shadows cast by the light.",
+      "display_zh": "设置光源颜色为[i]{0}[/i]",
+      "display_en": "Set shadow color to [i]{0}[/i]",
       "scriptName": "SetLightColor",
       "category": "light",
       "params": [
@@ -46,13 +48,11 @@
           "type": "number",
           "name_zh": "颜色",
           "name_en": "Color",
-          "initialValue": "rgbEx(0, 0, 0)",
           "desc_zh": "此对象投射的阴影的颜色。",
-          "desc_en": "The color of the shadows cast by this object."
+          "desc_en": "The color of the shadows cast by this object.",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
-      ],
-      "display_zh": "设置光源颜色为[i]{0}[/i]",
-      "display_en": "Set shadow color to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-tag",
@@ -60,6 +60,8 @@
       "name_en": "Set tag",
       "description_zh": "设置光源的投影标签，以区分不同的投影对象。",
       "description_en": "Set the tag for the light.",
+      "display_zh": "设置投影标签为[i]{0}[/i]",
+      "display_en": "Set shadow tag to [i]{0}[/i]",
       "scriptName": "SetTag",
       "category": "light",
       "params": [
@@ -71,9 +73,7 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的投影对象。",
           "desc_en": "The new tag to set for the light."
         }
-      ],
-      "display_zh": "设置投影标签为[i]{0}[/i]",
-      "display_en": "Set shadow tag to [i]{0}[/i]"
+      ]
     },
     {
       "id": "set-cast-from",
@@ -81,6 +81,8 @@
       "name_en": "Set cast from",
       "description_zh": "根据投影对象的投影标签，决定哪些对象能被投射。",
       "description_en": "Set which objects to cast shadows from depending on their tags.",
+      "display_zh": "设置投影目标为[b]{0}[/b]",
+      "display_en": "Set cast from [b]{0}[/b]",
       "scriptName": "SetCastFrom",
       "category": "light",
       "params": [
@@ -89,6 +91,8 @@
           "type": "combo",
           "name_zh": "目标",
           "name_en": "Cast from",
+          "desc_zh": "设置光源的投影标签，以区分不同的投影对象。",
+          "desc_en": "Decide which objects to cast shadows from depending on their tags.",
           "items": [
             "all",
             "same-tag",
@@ -107,13 +111,9 @@
               "zh": "不同标签",
               "en": "Different tag"
             }
-          },
-          "desc_zh": "设置光源的投影标签，以区分不同的投影对象。",
-          "desc_en": "Decide which objects to cast shadows from depending on their tags."
+          }
         }
-      ],
-      "display_zh": "设置投影目标为[b]{0}[/b]",
-      "display_en": "Set cast from [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-light-position",
@@ -121,6 +121,8 @@
       "name_en": "Set light position",
       "description_zh": "设置阴影投射的位置。",
       "description_en": "Set the position from which shadows are cast from.",
+      "display_zh": "设置光源位置 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Set light position to ([i]{0}[/i], [i]{1}[/i])",
       "scriptName": "SetLightPosition",
       "category": "light",
       "params": [
@@ -140,9 +142,7 @@
           "desc_zh": "光源的Y坐标。",
           "desc_en": "The Y co-ordinate of the light."
         }
-      ],
-      "display_zh": "设置光源位置 ([i]{0}[/i], [i]{1}[/i])",
-      "display_en": "Set light position to ([i]{0}[/i], [i]{1}[/i])"
+      ]
     }
   ],
   "expressions": [

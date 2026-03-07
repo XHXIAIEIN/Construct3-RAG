@@ -43,13 +43,5 @@
       "name_zh": "关闭全部图块碰撞",
       "name_en": "Disable all tile collisions"
     }
-  ],
-  "description_en": "The Tilemap Bar allows editing tilemaps in the Tilemap object from the Layout View . It provides a toolbar with various tools and options, and a view of the current tileset image. The Tilemap Bar Basic usage To add a tilemap and start editing it, follow these steps: Add a Tilemap object to the layout and make sure it is selected Choose the Pencil or Rectangle tool from the Tilemap bar's toolbar Select a tile in the tileset showing in the Tilemap bar Click inside the Tilemap object to start drawi",
-  "url": "/en/make-games/manuals/construct-3/interface/bars/tilemap-bar",
-  "sections": [
-    "Basic usage",
-    "Toolbar tools",
-    "Editing tile collision polygons",
-    "The Tilemap object"
   ]
 }

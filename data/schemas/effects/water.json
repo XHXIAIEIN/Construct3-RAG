@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": false,
   "animated": true,
+  "extendBox": {
+    "horizontal": 40,
+    "vertical": 40
+  },
   "parameters": [
     {
       "id": "speed",
@@ -20,7 +24,8 @@
       "name_zh": "speed",
       "name_en": "speed",
       "initialValue": 0.1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speed"
     },
     {
       "id": "x-speed",
@@ -28,7 +33,8 @@
       "name_zh": "x-speed",
       "name_en": "x-speed",
       "initialValue": 0.3,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speed_x"
     },
     {
       "id": "y-speed",
@@ -36,7 +42,8 @@
       "name_zh": "y-speed",
       "name_en": "y-speed",
       "initialValue": 0.3,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "speed_y"
     },
     {
       "id": "intensity",
@@ -44,7 +51,8 @@
       "name_zh": "intensity",
       "name_en": "intensity",
       "initialValue": 3,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "intensity"
     },
     {
       "id": "frequency",
@@ -52,7 +60,8 @@
       "name_zh": "frequency",
       "name_en": "frequency",
       "initialValue": 4,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "frequency"
     },
     {
       "id": "angle",
@@ -60,7 +69,8 @@
       "name_zh": "angle",
       "name_en": "angle",
       "initialValue": 7,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "angle"
     },
     {
       "id": "delta",
@@ -68,7 +78,8 @@
       "name_zh": "delta",
       "name_en": "delta",
       "initialValue": 20,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "delta"
     },
     {
       "id": "reflectivity",
@@ -76,7 +87,8 @@
       "name_zh": "reflectivity",
       "name_en": "reflectivity",
       "initialValue": 400,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "intence"
     },
     {
       "id": "emboss",
@@ -84,7 +96,8 @@
       "name_zh": "emboss",
       "name_en": "emboss",
       "initialValue": 0.3,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "emboss"
     }
   ]
 }

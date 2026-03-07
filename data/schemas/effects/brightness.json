@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "brightness",
@@ -20,7 +24,8 @@
       "name_zh": "brightness",
       "name_en": "brightness",
       "initialValue": 1,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "brightness"
     }
   ]
 }

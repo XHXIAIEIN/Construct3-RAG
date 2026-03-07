@@ -16,6 +16,8 @@
       "name_en": "Compare shape",
       "description_zh": "测试当前设置的形状。",
       "description_en": "Test which shape is currently set.",
+      "display_zh": "形状为[i]{0}[/i]",
+      "display_en": "Shape is [i]{0}[/i]",
       "scriptName": "CompareShape",
       "category": "3d-shape",
       "params": [
@@ -24,6 +26,8 @@
           "type": "combo",
           "name_zh": "形状",
           "name_en": "Shape",
+          "desc_zh": "要检查的形状。",
+          "desc_en": "The shape to check.",
           "items": [
             "box",
             "prism",
@@ -57,13 +61,9 @@
               "zh": "尖角(外)",
               "en": "Corner (out)"
             }
-          },
-          "desc_zh": "要检查的形状。",
-          "desc_en": "The shape to check."
+          }
         }
-      ],
-      "display_zh": "形状为[i]{0}[/i]",
-      "display_en": "Shape is [i]{0}[/i]"
+      ]
     },
     {
       "id": "compare-z-height",
@@ -71,7 +71,10 @@
       "name_en": "Compare Z height",
       "description_zh": "比较形状在Z轴方向的高度。",
       "description_en": "Compare the current Z height of the shape.",
+      "display_zh": "形状高度 {0} {1}",
+      "display_en": "Z height {0} {1}",
       "scriptName": "CompareZHeight",
+      "isDeprecated": true,
       "category": "3d-shape",
       "params": [
         {
@@ -90,9 +93,7 @@
           "desc_zh": "比较形状在Z轴方向的高度。",
           "desc_en": "The Z height to compare to."
         }
-      ],
-      "display_zh": "形状高度 {0} {1}",
-      "display_en": "Z height {0} {1}"
+      ]
     },
     {
       "id": "is-face-visible",
@@ -100,6 +101,8 @@
       "name_en": "Is face visible",
       "description_zh": "检测对象某个朝面是否可见。",
       "description_en": "Test whether one of the six shape faces is currently visible.",
+      "display_zh": "[i]{0}[/i] 朝面可见",
+      "display_en": "[i]{0}[/i] face is visible",
       "scriptName": "IsFaceVisible",
       "category": "3d-shape",
       "params": [
@@ -108,6 +111,8 @@
           "type": "combo",
           "name_zh": "朝面",
           "name_en": "Face",
+          "desc_zh": "要检查的朝面。",
+          "desc_en": "The face to check.",
           "items": [
             "back",
             "front",
@@ -122,7 +127,7 @@
               "en": "Back"
             },
             "front": {
-              "zh": "正面",
+              "zh": "顶面",
               "en": "Front"
             },
             "left": {
@@ -141,13 +146,9 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          },
-          "desc_zh": "要检查的朝面。",
-          "desc_en": "The face to check."
+          }
         }
-      ],
-      "display_zh": "[i]{0}[/i] 朝面可见",
-      "display_en": "[i]{0}[/i] face is visible"
+      ]
     }
   ],
   "actions": [
@@ -157,6 +158,8 @@
       "name_en": "Set shape",
       "description_zh": "更改为不同的 3D 形状类型。",
       "description_en": "Change to a different 3D shape type.",
+      "display_zh": "设置形状为[b]{0}[/b]",
+      "display_en": "Set shape to [b]{0}[/b]",
       "scriptName": "SetShape",
       "category": "3d-shape",
       "params": [
@@ -165,6 +168,8 @@
           "type": "combo",
           "name_zh": "形状",
           "name_en": "Shape",
+          "desc_zh": "要设置的形状。",
+          "desc_en": "The shape to set.",
           "items": [
             "box",
             "prism",
@@ -198,13 +203,9 @@
               "zh": "尖角(外)",
               "en": "Corner (out)"
             }
-          },
-          "desc_zh": "要设置的形状。",
-          "desc_en": "The shape to set."
+          }
         }
-      ],
-      "display_zh": "设置形状为[b]{0}[/b]",
-      "display_en": "Set shape to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-z-height",
@@ -212,7 +213,10 @@
       "name_en": "Set Z height",
       "description_zh": "设置形状在Z轴方向的高度。",
       "description_en": "Set the current Z height of the shape.",
+      "display_zh": "设置形状高度为[b]{0}[/b]",
+      "display_en": "Set Z height to [b]{0}[/b]",
       "scriptName": "SetZHeight",
+      "isDeprecated": true,
       "category": "3d-shape",
       "params": [
         {
@@ -223,9 +227,7 @@
           "desc_zh": "要设置的形状的Z轴高度。",
           "desc_en": "The Z height of the shape to set."
         }
-      ],
-      "display_zh": "设置形状高度为[b]{0}[/b]",
-      "display_en": "Set Z height to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-face-visible",
@@ -233,6 +235,8 @@
       "name_en": "Set face visible",
       "description_zh": "设置形状的某个朝面是否可见。",
       "description_en": "Set whether one of the six shape faces is visible.",
+      "display_zh": "[b]{1}[/b][i]{0}[/i]可见",
+      "display_en": "Set [i]{0}[/i] face visible [b]{1}[/b]",
       "scriptName": "SetFaceVisible",
       "category": "3d-shape",
       "params": [
@@ -241,6 +245,8 @@
           "type": "combo",
           "name_zh": "朝面",
           "name_en": "Face",
+          "desc_zh": "要检查的朝面。",
+          "desc_en": "The face to check.",
           "items": [
             "back",
             "front",
@@ -255,7 +261,7 @@
               "en": "Back"
             },
             "front": {
-              "zh": "正面",
+              "zh": "顶面",
               "en": "Front"
             },
             "left": {
@@ -274,9 +280,7 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          },
-          "desc_zh": "要检查的朝面。",
-          "desc_en": "The face to check."
+          }
         },
         {
           "id": "visible",
@@ -286,9 +290,7 @@
           "desc_zh": "显示或隐藏形状的朝面。",
           "desc_en": "Whether to show or hide this face of the shape."
         }
-      ],
-      "display_zh": "[b]{1}[/b][i]{0}[/i]可见",
-      "display_en": "Set [i]{0}[/i] face visible [b]{1}[/b]"
+      ]
     },
     {
       "id": "set-back-face-culling",
@@ -296,6 +298,8 @@
       "name_en": "Set back face culling",
       "description_zh": "设置是否自动隐藏背对镜头的面部。",
       "description_en": "Set whether to automatically hide faces that are pointing away from the camera.",
+      "display_zh": "设置背面剔除(启用: [b]{0}[/b])",
+      "display_en": "Set back face culling [b]{0}[/b]",
       "scriptName": "SetBackFaceCulling",
       "category": "3d-shape",
       "params": [
@@ -307,9 +311,7 @@
           "desc_zh": "是否启用背面剔除。",
           "desc_en": "Whether to enable back face culling."
         }
-      ],
-      "display_zh": "设置背面剔除(启用: [b]{0}[/b])",
-      "display_en": "Set back face culling [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-face-image",
@@ -317,6 +319,8 @@
       "name_en": "Set face image",
       "description_zh": "设置形状朝面使用的对象图像。",
       "description_en": "Set a face of the shape to use the image of another face.",
+      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 图像:[i]{1}[/i])",
+      "display_en": "Set [i]{0}[/i] face to use image of [i]{1}[/i] face",
       "scriptName": "SetFaceImage",
       "category": "3d-shape",
       "params": [
@@ -325,6 +329,8 @@
           "type": "combo",
           "name_zh": "朝面",
           "name_en": "Face",
+          "desc_zh": "要更改图像的朝面。",
+          "desc_en": "The face to change the image for.",
           "items": [
             "back",
             "front",
@@ -339,7 +345,7 @@
               "en": "Back"
             },
             "front": {
-              "zh": "正面",
+              "zh": "顶面",
               "en": "Front"
             },
             "left": {
@@ -358,15 +364,15 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          },
-          "desc_zh": "要更改图像的朝面。",
-          "desc_en": "The face to change the image for."
+          }
         },
         {
           "id": "image",
           "type": "combo",
           "name_zh": "图像",
           "name_en": "Image",
+          "desc_zh": "用于朝面的图像。",
+          "desc_en": "The image to use for the chosen face.",
           "items": [
             "back",
             "front",
@@ -381,7 +387,7 @@
               "en": "Back"
             },
             "front": {
-              "zh": "正面",
+              "zh": "顶面",
               "en": "Front"
             },
             "left": {
@@ -400,13 +406,9 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          },
-          "desc_zh": "用于朝面的图像。",
-          "desc_en": "The image to use for the chosen face."
+          }
         }
-      ],
-      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 图像:[i]{1}[/i])",
-      "display_en": "Set [i]{0}[/i] face to use image of [i]{1}[/i] face"
+      ]
     },
     {
       "id": "set-z-tiling-factor",
@@ -414,6 +416,8 @@
       "name_en": "Set Z tiling factor",
       "description_zh": "设置应用于Z轴上的纹理平铺系数。数值越大，图像重复越密集。",
       "description_en": "Set the scale factor to apply for image repetition on the Z axis.",
+      "display_zh": "设置平铺系数为[b]{0}[/b]",
+      "display_en": "Set Z tiling factor to [b]{0}[/b]",
       "scriptName": "SetZTilingFactor",
       "category": "3d-shape",
       "params": [
@@ -425,9 +429,7 @@
           "desc_zh": "要设置的平铺系数。",
           "desc_en": "The Z tiling factor to set."
         }
-      ],
-      "display_zh": "设置平铺系数为[b]{0}[/b]",
-      "display_en": "Set Z tiling factor to [b]{0}[/b]"
+      ]
     },
     {
       "id": "set-face-object",
@@ -435,6 +437,8 @@
       "name_en": "Set face object",
       "description_zh": "选择一个对象，使用其图像作为3D形状朝向面的图像。注意，对象的实例必须放置在相同的场景中。后续想要操作此对象时，需先选择该3D形状对象。",
       "description_en": "Set a face of the shape to use the image of another object. An instance of the object must be in the same layout.",
+      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 对象:{1})",
+      "display_en": "Set [i]{0}[/i] face to use image of {1}",
       "scriptName": "SetFaceObject",
       "category": "3d-shape",
       "params": [
@@ -443,6 +447,8 @@
           "type": "combo",
           "name_zh": "朝面",
           "name_en": "Face",
+          "desc_zh": "要更改哪个朝面的图像。",
+          "desc_en": "The face to change the image for.",
           "items": [
             "back",
             "front",
@@ -457,7 +463,7 @@
               "en": "Back"
             },
             "front": {
-              "zh": "正面",
+              "zh": "顶面",
               "en": "Front"
             },
             "left": {
@@ -476,9 +482,7 @@
               "zh": "底面",
               "en": "Bottom"
             }
-          },
-          "desc_zh": "要更改哪个朝面的图像。",
-          "desc_en": "The face to change the image for."
+          }
         },
         {
           "id": "object",
@@ -488,9 +492,7 @@
           "desc_zh": "用于朝向显示的对象。",
           "desc_en": "The object to use for the face image."
         }
-      ],
-      "display_zh": "设置朝面图像 (朝面: [i]{0}[/i], 对象:{1})",
-      "display_en": "Set [i]{0}[/i] face to use image of {1}"
+      ]
     }
   ],
   "expressions": [
@@ -502,6 +504,7 @@
       "description_en": "The current Z height of the shape.",
       "expressionName": "ZHeight",
       "returnType": "number",
+      "isDeprecated": true,
       "category": "3d-shape"
     },
     {
@@ -661,13 +664,6 @@
       }
     },
     {
-      "id": "z-height",
-      "name_zh": "形状高度",
-      "name_en": "Z height",
-      "description_zh": "3D形状在 Z 轴上的高度。视角从 100 的高度向下看。",
-      "description_en": "The height of the shape on the Z axis. The view looks down from a height of 100."
-    },
-    {
       "id": "initially-visible",
       "name_zh": "初始可见",
       "name_en": "Initially visible",
@@ -785,6 +781,27 @@
       "name_en": "Back face culling",
       "description_zh": "自动隐藏背对相机的朝面。",
       "description_en": "Automatically hides faces that are pointing away from the camera."
+    },
+    {
+      "id": "z-origin",
+      "name_zh": "原点Z",
+      "name_en": "Z origin",
+      "description_zh": "物体位于 Z 轴上的位置。",
+      "description_en": "Where the object origin is on the Z axis.",
+      "items": {
+        "back": {
+          "zh": "背面",
+          "en": "Back"
+        },
+        "middle": {
+          "zh": "中间",
+          "en": "Middle"
+        },
+        "front": {
+          "zh": "顶面",
+          "en": "Front"
+        }
+      }
     }
   ]
 }

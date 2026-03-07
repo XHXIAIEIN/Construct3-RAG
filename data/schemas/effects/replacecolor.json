@@ -13,6 +13,10 @@
   "blendsBackground": false,
   "preservesOpaqueness": true,
   "animated": false,
+  "extendBox": {
+    "horizontal": 0,
+    "vertical": 0
+  },
   "parameters": [
     {
       "id": "source-color",
@@ -24,7 +28,8 @@
         1,
         1
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "sourceColor"
     },
     {
       "id": "replace-color",
@@ -36,7 +41,8 @@
         0,
         0
       ],
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "destColor"
     },
     {
       "id": "tolerance",
@@ -44,7 +50,8 @@
       "name_zh": "tolerance",
       "name_en": "tolerance",
       "initialValue": 0.01,
-      "interpolatable": true
+      "interpolatable": true,
+      "uniform": "tolerance"
     }
   ]
 }

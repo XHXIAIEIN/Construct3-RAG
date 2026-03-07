@@ -18,6 +18,8 @@
       "description_en": "",
       "scriptName": "OnFunction",
       "isTrigger": true,
+      "canDebug": true,
+      "highlight": true,
       "category": "function",
       "params": [
         {
@@ -66,6 +68,8 @@
       "description_zh": "",
       "description_en": "",
       "scriptName": "CallFunction",
+      "canDebug": true,
+      "highlight": true,
       "category": "function",
       "params": [
         {
@@ -164,6 +168,7 @@
       "description_en": "",
       "expressionName": "Call",
       "returnType": "any",
+      "isVariadicParameters": true,
       "category": "function",
       "params": [
         {
