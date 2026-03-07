@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, field
 
+from ._trace import _trace
+
 from src.config import SCHEMA_DIR, SOURCE_DIR, TRANSLATION_CSV
 from src.locale.keywords import (
     ACE_TYPE_ALIASES, ACE_INTENT_KEYWORDS, HOWTO_SKIP_WORDS,
@@ -313,6 +315,23 @@ _ACE_INFER_KEYWORDS = {
 }
 
 
+# Words that always block Tier 1.5, even when a plugin name is found.
+# "怎么" implies step-by-step intent (RAG is better); comparison/conceptual words have no ACE target.
+_HOWTO_HARD_SKIP: frozenset[str] = frozenset({
+    "区别", "对比", "是什么", "什么是", "概念", "原理", "介绍",
+    "怎么", "怎样", "怎么做", "怎么实现", "步骤", "流程", "教程",
+})
+
+# Words that only block when no plugin name is found.
+# "如何" queries about a specific plugin (e.g. "如何实现计时器") can still surface relevant ACEs.
+_HOWTO_SOFT_SKIP: frozenset[str] = frozenset(HOWTO_SKIP_WORDS - _HOWTO_HARD_SKIP)
+
+# Combined noise word set (lower-cased) for useful-token filtering
+_HOWTO_NOISE_LOWER: frozenset[str] = frozenset(
+    w.lower() for w in (_HOWTO_HARD_SKIP | _HOWTO_SOFT_SKIP)
+)
+
+
 def _infer_ace_types(query_tokens: set[str]) -> list[str]:
     """Infer ACE types from query tokens using keyword mapping.
 
@@ -355,7 +374,9 @@ class IntentClassifier:
         intent = self._rule_based(query)
         if intent:
             logger.info(f"[Lookup] Tier 1 hit: {intent.intent_type} plugin={intent.plugin_id}")
+            _trace(f"Tier1: 命中({intent.intent_type})", "lookup")
             return intent
+        _trace("Tier1: 未命中", "lookup")
 
         # Tier 1.5: Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
@@ -364,19 +385,25 @@ class IntentClassifier:
                 f"[Lookup] Tier 1.5 hit: ace_search plugin={intent.plugin_id} "
                 f"ace_type={intent.ace_type} filter={intent.filter_term}"
             )
+            _trace(f"Tier1.5: 命中(ace_search  plugin={intent.plugin_id})", "lookup")
             return intent
+        _trace("Tier1.5: 未命中", "lookup")
 
         # Tier 2: Embedding similarity
         intent = self._embedding_match(query)
         if intent:
             logger.info(f"[Lookup] Tier 2 hit: {intent.intent_type} plugin={intent.plugin_id}")
+            _trace(f"Tier2: 命中({intent.intent_type})", "lookup")
             return intent
+        _trace("Tier2: 未命中", "lookup")
 
         # Tier 3: Ollama small model
         intent = self._ollama_classify(query)
         if intent:
             logger.info(f"[Lookup] Tier 3 hit: {intent.intent_type} plugin={intent.plugin_id}")
+            _trace(f"Tier3: 命中({intent.intent_type})", "lookup")
             return intent
+        _trace("Tier3: 跳过(未配置)" if not self._ollama_model else "Tier3: 未命中", "lookup")
 
         return None
 
@@ -442,12 +469,21 @@ class IntentClassifier:
     def _keyword_infer(self, query: str) -> Optional[LookupIntent]:
         """
         Infer ACE type from plugin name + topic keywords.
-        Requires BOTH a plugin name AND remaining topic content to trigger.
-        Skips how-to / conceptual queries.
+
+        Skip rules (applied before tokenisation where possible):
+        - Hard-skip words (怎么, 区别, …): always return None, even with a plugin name.
+        - Soft-skip words (如何, …): return None only when no plugin name is found.
+
+        When a plugin is found with "如何" phrasing:
+        - If remaining non-noise Chinese tokens ≤ 2: proceed as ace_search.
+        - If remaining tokens > 2 (complex multi-concept query): return None.
+        - When remaining is empty: extract 2-char Chinese windows from the plugin
+          token itself and use them as the filter term.
         """
-        # Skip if query contains how-to / conceptual words
-        for skip_word in HOWTO_SKIP_WORDS:
-            if skip_word in query:
+        # Hard skip: always block, even if a plugin name is present
+        for word in _HOWTO_HARD_SKIP:
+            if word in query:
+                _trace(f"Tier1.5: 跳过(触发词'{word}')", "lookup")
                 return None
 
         # Tokenize query — split on whitespace, punctuation, AND Chinese particles
@@ -457,41 +493,86 @@ class IntentClassifier:
             return None
 
         # 1. Find plugin name in tokens
+        #    Require the matched plugin name to cover ≥40% of the token to avoid
+        #    false positives like "存档系统" matching the System plugin via "系统".
         plugin_id = ""
         is_behavior = False
         plugin_token_idx = -1
         for i, token in enumerate(tokens):
             resolved = self.schema.resolve_name(token)
-            if resolved:
-                plugin_id, is_behavior = resolved
-                plugin_token_idx = i
-                break
+            if not resolved:
+                continue
+            pid, is_beh = resolved
+            schema_data = self.schema.get_schema(pid, is_beh) or {}
+            known_names = [
+                schema_data.get("name_zh", ""),
+                schema_data.get("name_en", ""),
+                schema_data.get("originalId", ""),
+                pid,
+            ]
+            token_lower = token.lower()
+            coverage = max(
+                (len(n) / len(token) for n in known_names if n and n.lower() in token_lower),
+                default=0.0,
+            )
+            if coverage < 0.4:
+                continue  # too weak a match (e.g. "系统" inside "存档系统")
+            plugin_id, is_behavior = pid, is_beh
+            plugin_token_idx = i
+            break
 
+        # Soft skip: block only when no plugin name was found
         if not plugin_id:
+            for word in _HOWTO_SOFT_SKIP:
+                if word in query:
+                    return None
             return None
 
         # 2. Collect non-plugin tokens as topic/filter candidates
         remaining_tokens = [t for i, t in enumerate(tokens) if i != plugin_token_idx and t]
-        if not remaining_tokens:
-            return None  # plugin name only, no topic → skip
 
-        # 3. Build topic token set (with 2-char substrings for Chinese keyword matching)
+        # 3. Count meaningful Chinese tokens to detect complex multi-concept queries.
+        #    Tokens that are pure ASCII, pure digits, or exactly a skip word are noise.
+        def _is_useful(tok: str) -> bool:
+            if tok.lower() in _HOWTO_NOISE_LOWER:
+                return False
+            cleaned = tok.replace(" ", "").replace("\u3000", "")
+            return not cleaned.isascii()
+
+        useful_tokens = [t for t in remaining_tokens if _is_useful(t)]
+        if len(useful_tokens) > 2:
+            return None  # complex multi-concept query → fall through to RAG
+
+        # 4. Build filter term
+        if useful_tokens:
+            # Use full remaining tokens; _format_ace_search will generate 2-char windows
+            filter_term = " ".join(remaining_tokens)
+        else:
+            # No external content: extract 2-char Chinese windows from the plugin token
+            # so queries like "如何实现计时器" can search timer ACEs via "计时" etc.
+            plugin_token = tokens[plugin_token_idx]
+            zh_pairs = [
+                plugin_token[j:j + 2]
+                for j in range(len(plugin_token) - 1)
+                if all('\u4e00' <= c <= '\u9fff' for c in plugin_token[j:j + 2])
+            ]
+            filter_term = " ".join(zh_pairs)
+
+        if not filter_term:
+            return None  # no useful filter (e.g. ASCII-only plugin token)
+
+        # 5. Build topic token set (with 2-char substrings for ACE type inference)
         topic_tokens = set(remaining_tokens)
         for token in remaining_tokens:
-            # Generate 2-char sliding window for Chinese text
             for j in range(len(token) - 1):
                 pair = token[j:j + 2]
                 if all('\u4e00' <= c <= '\u9fff' for c in pair):
                     topic_tokens.add(pair)
 
-        # 4. Infer ACE types from topic tokens (narrow search if possible)
+        # 6. Infer ACE types from topic tokens (narrow search if possible)
         ace_types = _infer_ace_types(topic_tokens)
-        # If no ACE keyword matched, search ALL types (topic is still the filter)
         if not ace_types:
             ace_types = ["conditions", "actions", "expressions"]
-
-        # 5. Build filter term from remaining tokens
-        filter_term = " ".join(remaining_tokens)
 
         return LookupIntent(
             intent_type="ace_search",
@@ -773,6 +854,7 @@ class LookupEngine:
                 desc = desc[:57] + "..."
             lines.append(f"| {i} | {zh} | {en} | {desc} |")
 
+        lines.append(f"\n[来源: 1] 数据来源：{name_en} {kind} Schema")
         return "\n".join(lines)
 
     def _format_ace_detail(self, intent: LookupIntent) -> str:
@@ -803,6 +885,7 @@ class LookupEngine:
 
         name_zh = schema.get("name_zh", intent.plugin_id)
         name_en = schema.get("name_en", intent.plugin_id)
+        kind = PLUGIN_KIND_LABELS["behavior"] if intent.is_behavior else PLUGIN_KIND_LABELS["plugin"]
         type_label = ACE_SECTION_LABELS_SHORT.get(found_type, "")
 
         lines = [
@@ -836,6 +919,7 @@ class LookupEngine:
         else:
             lines.append(ACE_NO_PARAMS)
 
+        lines.append(f"\n[来源: 1] 数据来源：{name_en} {kind} Schema")
         return "\n".join(lines)
 
     def _format_ace_search(self, intent: LookupIntent) -> str:
@@ -907,7 +991,8 @@ class LookupEngine:
             name_zh=name_zh, name_en=name_en, kind=kind,
             filter_term=intent.filter_term, count=total_hits,
         )
-        return header + "\n\n".join(sections)
+        citation = f"\n[来源: 1] 数据来源：{name_en} {kind} Schema"
+        return header + "\n\n".join(sections) + citation
 
     def _format_term_translate(self, intent: LookupIntent) -> str:
         """Format translation term lookup."""
@@ -935,4 +1020,5 @@ class LookupEngine:
                 key = "..." + key[-47:]
             lines.append(f"| {count} | {r['zh']} | {r['en']} | `{key}` |")
 
+        lines.append("\n[来源: 1] 数据来源：Construct 3 翻译词表 (zh-CN_r473.csv)")
         return "\n".join(lines)
