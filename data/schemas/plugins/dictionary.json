@@ -4,7 +4,7 @@
   "name_zh": "字典",
   "name_en": "Dictionary",
   "description_zh": "将数据存储在对应的字段里。相比本地变量，字典的数据存储方式更自由。",
-  "description_en": "Store data under named keys, e.g. set \"\"key\"\" to \"\"value\"\".",
+  "description_en": "Store data under named keys, e.g. set \"key\" to \"value\".",
   "path": "data-and-storage/dictionary",
   "categories": [
     "dictionary",

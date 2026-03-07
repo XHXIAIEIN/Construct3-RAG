@@ -814,7 +814,7 @@
       "name_zh": "录制类型",
       "name_en": "RecordingType",
       "description_zh": "返回录制结果的MIME类型，如：\"video/webm",
-      "description_en": "Return the MIME type of the recording, e.g. \"\"video/webm\"\".",
+      "description_en": "Return the MIME type of the recording, e.g. \"video/webm\".",
       "expressionName": "RecordingType",
       "returnType": "string",
       "category": "recording"
@@ -824,7 +824,7 @@
       "name_zh": "录制文件扩展名",
       "name_en": "RecordingFileExtension",
       "description_zh": "返回录制结果的文件扩展名，如：\".webm",
-      "description_en": "Return the file extension for the recording, e.g. \"\".webm\"\".",
+      "description_en": "Return the file extension for the recording, e.g. \".webm\".",
       "expressionName": "RecordingFileExtension",
       "returnType": "string",
       "category": "recording"

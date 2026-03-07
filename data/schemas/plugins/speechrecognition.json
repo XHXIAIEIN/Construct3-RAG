@@ -151,7 +151,7 @@
     {
       "id": "on-install-on-device-recongition-result",
       "name_zh": "设备端识别结果安装完成",
-      "name_en": "On install on device recognition result",
+      "name_en": "On install on-device recognition result",
       "description_zh": "执行 '安装语言包' 动作后，根据安装结果返回的触发事件。",
       "description_en": "Triggered after the 'Install on-device recognition' action with the result of the install.",
       "scriptName": "OnInstallOnDeviceRecognitionResult",
@@ -307,7 +307,7 @@
       "name_zh": "安装语言包",
       "name_en": "Install on-device recognition",
       "description_zh": "为特定语言安装设备端语音识别，随后触发 \"设备端识别结果安装完成\"。",
-      "description_en": "Install on-device speech recognition for a specific language, subsequently triggering 'On install on device recognition result'.",
+      "description_en": "Install on-device speech recognition for a specific language, subsequently triggering 'On install on-device recognition result'.",
       "scriptName": "InstallOnDeviceRecognition",
       "isAsync": true,
       "category": "on-device-recognition",

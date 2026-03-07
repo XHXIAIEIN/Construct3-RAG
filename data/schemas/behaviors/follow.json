@@ -915,9 +915,9 @@
     {
       "id": "follow-z-elevation",
       "name_zh": "跟随Z坐标",
-      "name_en": "Follow Z elevation",
+      "name_en": "Follow Z",
       "description_zh": "是否需要跟随对象的Z坐标。",
-      "description_en": "Whether to follow the object Z elevation position."
+      "description_en": "Whether to follow the object Z position."
     },
     {
       "id": "follow-width",

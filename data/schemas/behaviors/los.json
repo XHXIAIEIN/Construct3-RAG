@@ -4,7 +4,7 @@
   "name_zh": "视线",
   "name_en": "Line of sight",
   "description_zh": "让对象可以看见某个位置或其他对象。",
-  "description_en": "Test if an object has line of sight to (if it can \"\"see\"\") an object or position.",
+  "description_en": "Test if an object has line of sight to (if it can \"see\") an object or position.",
   "path": "general/los",
   "categories": [],
   "conditions": [

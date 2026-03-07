@@ -1660,7 +1660,7 @@
       "name_zh": "显示模式",
       "name_en": "DisplayMode",
       "description_zh": "返回当前应用程序显示模式的字符串，例如 'browser' (浏览器) 或 'standalone' (应用程序)。",
-      "description_en": "A string of the current app display mode, e.g. \"\"browser\"\" or \"\"standalone\"\".",
+      "description_en": "A string of the current app display mode, e.g. \"browser\" or \"standalone\".",
       "expressionName": "DisplayMode",
       "returnType": "string",
       "category": "pwa"
@@ -1670,7 +1670,7 @@
       "name_zh": "安装结果",
       "name_en": "InstallResult",
       "description_zh": "在 '安装完成' 条件中，返回的安装结果字符串，例如 'accepted'(已接受) 或 'dismissed' (已拒绝)。",
-      "description_en": "In 'On install result', a string of the install result, e.g. \"\"accepted\"\" or \"\"dismissed\"\".",
+      "description_en": "In 'On install result', a string of the install result, e.g. \"accepted\" or \"dismissed\".",
       "expressionName": "InstallResult",
       "returnType": "string",
       "category": "pwa"
