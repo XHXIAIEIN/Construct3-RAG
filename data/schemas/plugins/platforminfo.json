@@ -269,7 +269,7 @@
       "name_zh": "渲染器",
       "name_en": "Renderer",
       "description_zh": "返回当前图形渲染器。如 'webgl2'",
-      "description_en": "The graphics rendering technology in use, e.g. \"\"webgl2\"\".",
+      "description_en": "The graphics rendering technology in use, e.g. \"webgl2\".",
       "expressionName": "Renderer",
       "returnType": "string",
       "category": "display"
@@ -459,7 +459,7 @@
       "name_zh": "网络类型",
       "name_en": "ConnectionType",
       "description_zh": "返回当前网络连接类型。如 'cellular' (蜂窝数据), 'wifi' (无线局域网), 或 'ethernet' (以太网)。",
-      "description_en": "The type of connection technology in use, e.g. \"\"cellular\"\", \"\"wifi\"\" or \"\"ethernet\"\".",
+      "description_en": "The type of connection technology in use, e.g. \"cellular\", \"wifi\" or \"ethernet\".",
       "expressionName": "ConnectionType",
       "returnType": "string",
       "category": "network"
@@ -469,7 +469,7 @@
       "name_zh": "蜂窝数据类型",
       "name_en": "ConnectionEffectiveType",
       "description_zh": "返回当前蜂窝数据类型。如 '2g',  '4g',  '5g'。",
-      "description_en": "A connection rating compared to cellular data connections, e.g. \"\"2g\"\", \"\"3g\"\", \"\"4g\"\".",
+      "description_en": "A connection rating compared to cellular data connections, e.g. \"2g\", \"3g\", \"4g\".",
       "expressionName": "ConnectionEffectiveType",
       "returnType": "string",
       "category": "network"

@@ -916,7 +916,7 @@
       "name_zh": "拆分字符串",
       "name_en": "Split string",
       "description_zh": "将字符串拆分并导入为一维数组，如 \"1,2,3",
-      "description_en": "Set to a one-dimensional array based on splitting a string, e.g. \"\"1,2,3\"\".",
+      "description_en": "Set to a one-dimensional array based on splitting a string, e.g. \"1,2,3\".",
       "scriptName": "SplitString",
       "category": "manipulation",
       "params": [

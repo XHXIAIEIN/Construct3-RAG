@@ -1126,7 +1126,7 @@
       "name_zh": "显示无广告选项",
       "name_en": "Show AD free option",
       "description_zh": "在用户授权弹窗上显示 '购买无广告' 选项",
-      "description_en": "On the user consent screen show the \"\"Purchase ad free\"\" option"
+      "description_en": "On the user consent screen show the \"Purchase ad free\" option"
     },
     {
       "id": "privacy-policy",

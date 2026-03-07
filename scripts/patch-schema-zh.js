@@ -55,11 +55,10 @@ function patch(obj, csvKey, t, fields) {
   for (const [objField, csvSuffix] of fields) {
     const entry = t[`${csvKey}.${csvSuffix}`];
     if (!entry) continue;
-    if (entry.zh && !obj[objField]) { obj[objField] = entry.zh; patched++; }
-    else if (entry.zh && obj[objField] !== entry.zh) { obj[objField] = entry.zh; patched++; }
-    // always update en too if missing
+    // always overwrite — CSV is the source of truth
+    if (entry.zh) { obj[objField] = entry.zh; patched++; }
     const enField = objField.replace('_zh', '_en');
-    if (entry.en && !obj[enField]) { obj[enField] = entry.en; }
+    if (entry.en) { obj[enField] = entry.en; }
   }
 }
 

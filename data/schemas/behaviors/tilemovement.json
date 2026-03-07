@@ -299,7 +299,7 @@
       "name_zh": "设置网格位置",
       "name_en": "Set grid position",
       "description_zh": "设置对象的网格位置",
-      "description_en": "Set the objects grid position",
+      "description_en": "Set the object's grid position.",
       "scriptName": "SetGridPosition",
       "params": [
         {

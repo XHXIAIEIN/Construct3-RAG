@@ -1745,7 +1745,7 @@
       "name_zh": "列表房间状态",
       "name_en": "ListRoomState",
       "description_zh": "在 '接收房间列表' 条件中，获取索引位置的房间状态。返回 available(可用),  locked(锁定),  full(已满)。",
-      "description_en": "The room state at an index (\"\"available\"\", \"\"locked\"\" or \"\"full\"\").",
+      "description_en": "The room state at an index (\"available\", \"locked\" or \"full\").",
       "expressionName": "ListRoomState",
       "returnType": "string",
       "category": "listings",
