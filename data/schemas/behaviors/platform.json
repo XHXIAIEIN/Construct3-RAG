@@ -9,6 +9,12 @@
   "categories": [
     "animation-triggers"
   ],
+  "aceCategories": {
+    "animation-triggers": {
+      "zh": "行为状态",
+      "en": "Animation triggers"
+    }
+  },
   "conditions": [
     {
       "id": "is-moving",
@@ -142,7 +148,9 @@
       "display_en": "{my} On jump",
       "scriptName": "OnJump",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "category_zh": "行为状态",
+      "category_en": "Animation triggers"
     },
     {
       "id": "on-fall",
@@ -154,7 +162,9 @@
       "display_en": "{my} On fall",
       "scriptName": "OnFall",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "category_zh": "行为状态",
+      "category_en": "Animation triggers"
     },
     {
       "id": "on-stopped",
@@ -166,7 +176,9 @@
       "display_en": "{my} On stopped",
       "scriptName": "OnStop",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "category_zh": "行为状态",
+      "category_en": "Animation triggers"
     },
     {
       "id": "on-moved",
@@ -178,7 +190,9 @@
       "display_en": "{my} On moved",
       "scriptName": "OnMove",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "category_zh": "行为状态",
+      "category_en": "Animation triggers"
     },
     {
       "id": "on-landed",
@@ -190,7 +204,9 @@
       "display_en": "{my} On landed",
       "scriptName": "OnLand",
       "isTrigger": true,
-      "category": "animation-triggers"
+      "category": "animation-triggers",
+      "category_zh": "行为状态",
+      "category_en": "Animation triggers"
     }
   ],
   "actions": [

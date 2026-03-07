@@ -442,7 +442,7 @@ query = "怎么在数组中查找特定数字？"
   ↓
 RAGChain.answer_smart()
   ├─→ LookupEngine ──→ SchemaIndex (data/schemas/*.json)
-  │                 └─→ TermIndex   (data/source/zh-CN_r473.csv)
+  │                 └─→ TermIndex   (data/source/zh_r475.csv)
   │
   ├─→ jieba 分词 → _extract_term_keywords()
   │     └─→ Qdrant c3_terms collection (向量搜索术语)

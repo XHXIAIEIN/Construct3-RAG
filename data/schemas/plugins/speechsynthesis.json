@@ -9,6 +9,12 @@
   "categories": [
     "speech-synthesis"
   ],
+  "aceCategories": {
+    "speech-synthesis": {
+      "zh": "语音合成",
+      "en": "Speech synthesis"
+    }
+  },
   "conditions": [
     {
       "id": "supports-speech-synthesis",
@@ -19,7 +25,9 @@
       "display_zh": "支持语音合成",
       "display_en": "Supports speech synthesis",
       "scriptName": "SupportsSpeechSynthesis",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "is-speaking",
@@ -30,7 +38,9 @@
       "display_zh": "正在讲话",
       "display_en": "Is speaking",
       "scriptName": "IsSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "on-speech-ended",
@@ -43,7 +53,9 @@
       "scriptName": "OnSpeechEnded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "on-speech-error",
@@ -56,7 +68,9 @@
       "scriptName": "OnSpeechError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     }
   ],
   "actions": [
@@ -121,7 +135,9 @@
           "desc_en": "The relative pitch at which to speak, between 0 and 2.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "stop-speaking",
@@ -132,7 +148,9 @@
       "display_zh": "停止语音输入",
       "display_en": "Stop speaking",
       "scriptName": "StopSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "pause-speaking",
@@ -143,7 +161,9 @@
       "display_zh": "暂停语音输入",
       "display_en": "Pause speaking",
       "scriptName": "PauseSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "resume-speaking",
@@ -154,7 +174,9 @@
       "display_zh": "恢复语音输入",
       "display_en": "Resume speaking",
       "scriptName": "ResumeSpeaking",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     }
   ],
   "expressions": [
@@ -166,7 +188,9 @@
       "description_en": "Return the number of available voices.",
       "expressionName": "VoiceCount",
       "returnType": "number",
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voicenameat",
@@ -186,7 +210,9 @@
           "desc_zh": "基于零的语音索引。",
           "desc_en": "Zero-based index of the voice."
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voicelangat",
@@ -206,7 +232,9 @@
           "desc_zh": "基于零的语音索引。",
           "desc_en": "Zero-based index of the voice."
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voiceuriat",
@@ -226,7 +254,9 @@
           "desc_zh": "基于零的语音索引。",
           "desc_en": "Zero-based index of the voice."
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     }
   ],
   "productTypes": "games"

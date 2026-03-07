@@ -12,6 +12,24 @@
     "folder-operations",
     "desktop-only"
   ],
+  "aceCategories": {
+    "file-pickers": {
+      "zh": "文件读写",
+      "en": "File pickers"
+    },
+    "file-system": {
+      "zh": "文件读写",
+      "en": "File system"
+    },
+    "folder-operations": {
+      "zh": "文件操作",
+      "en": "Folder operations"
+    },
+    "desktop-only": {
+      "zh": "客户端功能 (仅桌面导出)",
+      "en": "Desktop exports only"
+    }
+  },
   "conditions": [
     {
       "id": "on-picker-complete",
@@ -34,7 +52,9 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "on-picker-error",
@@ -57,7 +77,9 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "has-picker-tag",
@@ -78,7 +100,9 @@
           "desc_zh": "在 '打开文件' 动作中，填写的选取器标签。",
           "desc_en": "Tag of the corresponding picker."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "is-supported",
@@ -89,7 +113,9 @@
       "display_zh": "设备支持访问文件系统",
       "display_en": "Is supported",
       "scriptName": "IsSupported",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "on-file-operation-complete",
@@ -112,7 +138,9 @@
           "desc_zh": "对应文件操作的标签。",
           "desc_en": "Tag of the corresponding file operation."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "on-file-operation-error",
@@ -135,7 +163,9 @@
           "desc_zh": "对应文件操作的标签。",
           "desc_en": "Tag of the corresponding file operation."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "on-any-file-operation-complete",
@@ -148,7 +178,9 @@
       "scriptName": "OnAnyFileOperationComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "on-any-file-operation-error",
@@ -161,7 +193,9 @@
       "scriptName": "OnAnyFileOperationError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "on-dropped-files",
@@ -174,7 +208,9 @@
       "scriptName": "OnDroppedFiles",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "has-file-or-folder",
@@ -225,7 +261,9 @@
           "desc_zh": "检查名称时是否区分大小写。请注意，某些文件系统必须区分大小写。",
           "desc_en": "Whether to check the name case-sensitively. Note some file systems are case-sensitive."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "desktop-features-supported",
@@ -236,7 +274,9 @@
       "display_zh": "支持客户端功能",
       "display_en": "Desktop features supported",
       "scriptName": "DesktopFeaturesSupported",
-      "category": "desktop-only"
+      "category": "desktop-only",
+      "category_zh": "客户端功能 (仅桌面导出)",
+      "category_en": "Desktop exports only"
     }
   ],
   "actions": [
@@ -275,7 +315,9 @@
           "desc_zh": "显示在打开对话框右下角的文件类型的描述信息，用于提示用户。例如: 图像文件。",
           "desc_en": "A description to show to the user for this category, e.g. \"Image files\"."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "show-save-file-picker",
@@ -369,7 +411,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "show-open-file-picker",
@@ -463,7 +507,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "show-folder-picker",
@@ -562,7 +608,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File pickers"
     },
     {
       "id": "write-text-file",
@@ -630,7 +678,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "write-binary-file",
@@ -676,7 +726,9 @@
           "desc_zh": "要写入文件的二进制数据对象。",
           "desc_en": "The Binary Data object to write to the file."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "read-text-file",
@@ -714,7 +766,9 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "read-binary-file",
@@ -760,7 +814,9 @@
           "desc_zh": "要读取文件内容的二进制数据对象。",
           "desc_en": "The Binary Data object to read the content of the file in to."
         }
-      ]
+      ],
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "create-folder",
@@ -798,7 +854,9 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "copy-file",
@@ -844,7 +902,9 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "move-file",
@@ -890,7 +950,9 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "delete",
@@ -936,7 +998,9 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "list-content",
@@ -982,7 +1046,9 @@
           "desc_zh": "文件标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "shell-open",
@@ -1020,7 +1086,9 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "客户端功能 (仅桌面导出)",
+      "category_en": "Desktop exports only"
     },
     {
       "id": "run-file",
@@ -1066,7 +1134,9 @@
           "desc_zh": "可选的字符串标签，用于识别这个特定文件的操作状态。",
           "desc_en": "An optional tag to identify this specific file operation."
         }
-      ]
+      ],
+      "category_zh": "客户端功能 (仅桌面导出)",
+      "category_en": "Desktop exports only"
     }
   ],
   "expressions": [
@@ -1078,7 +1148,9 @@
       "description_en": "The text content of a file after a successful read.",
       "expressionName": "FileText",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "file-tag",
@@ -1088,7 +1160,9 @@
       "description_en": "Get the tag for a file system operation in a trigger.",
       "expressionName": "FileTag",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "picker-tag",
@@ -1098,7 +1172,9 @@
       "description_en": "The associated picker tag in a trigger.",
       "expressionName": "PickerTag",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "folder-path",
@@ -1108,7 +1184,9 @@
       "description_en": "The associated path to the file/folder in a trigger for a folder operation.",
       "expressionName": "FolderPath",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件读写",
+      "category_en": "File system"
     },
     {
       "id": "file-name-at",
@@ -1128,7 +1206,9 @@
           "desc_zh": "在文件列表中的索引值，从0开始计算。",
           "desc_en": "Zero-based index of file."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "file-count",
@@ -1138,7 +1218,9 @@
       "description_en": "The number of files.",
       "expressionName": "FileCount",
       "returnType": "number",
-      "category": "folder-operations"
+      "category": "folder-operations",
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "folder-name-at",
@@ -1158,7 +1240,9 @@
           "desc_zh": "在文件列表中的索引值，从0开始计算。",
           "desc_en": "Zero-based index of folder."
         }
-      ]
+      ],
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     },
     {
       "id": "folder-count",
@@ -1168,7 +1252,9 @@
       "description_en": "The number of folders.",
       "expressionName": "FolderCount",
       "returnType": "number",
-      "category": "folder-operations"
+      "category": "folder-operations",
+      "category_zh": "文件操作",
+      "category_en": "Folder operations"
     }
   ],
   "productTypes": "games"

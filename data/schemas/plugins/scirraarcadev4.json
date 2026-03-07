@@ -9,6 +9,12 @@
   "categories": [
     "arcade"
   ],
+  "aceCategories": {
+    "arcade": {
+      "zh": "",
+      "en": "arcade"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -32,7 +38,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "arcade"
     }
   ],
   "expressions": [],

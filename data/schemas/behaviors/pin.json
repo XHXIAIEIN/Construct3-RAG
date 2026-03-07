@@ -7,6 +7,7 @@
   "description_en": "Stick to another object maintaining a relative distance and angle.",
   "path": "general/pin",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-pinned",

@@ -15,6 +15,36 @@
     "memory",
     "web"
   ],
+  "aceCategories": {
+    "advanced": {
+      "zh": "高级选项",
+      "en": "Advanced"
+    },
+    "scheduling": {
+      "zh": "调度",
+      "en": "Scheduling"
+    },
+    "effects": {
+      "zh": "效果器",
+      "en": "Effects"
+    },
+    "panning-positioning": {
+      "zh": "空间音频",
+      "en": "Panning / positioning"
+    },
+    "audio": {
+      "zh": "播放",
+      "en": "Audio"
+    },
+    "memory": {
+      "zh": "内存",
+      "en": "Memory"
+    },
+    "web": {
+      "zh": "Web",
+      "en": "Web"
+    }
+  },
   "conditions": [
     {
       "id": "advanced-audio-supported",
@@ -24,7 +54,9 @@
       "description_en": "",
       "scriptName": "AdvancedAudioSupported",
       "isDeprecated": true,
-      "category": "advanced"
+      "category": "advanced",
+      "category_zh": "高级选项",
+      "category_en": "Advanced"
     },
     {
       "id": "on-ended",
@@ -47,7 +79,9 @@
           "desc_zh": "要检测的音频标签。",
           "desc_en": "The audio tag that finished."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "on-fade-ended",
@@ -70,7 +104,9 @@
           "desc_zh": "要检测淡出动作完成的声音标签。",
           "desc_en": "The audio tag that finished a fade."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "preloads-complete",
@@ -81,7 +117,9 @@
       "display_zh": "所有预加载完成",
       "display_en": "All preloads complete",
       "scriptName": "PreloadsComplete",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "is-silent",
@@ -92,7 +130,9 @@
       "display_zh": "如果已静音",
       "display_en": "Is silent",
       "scriptName": "IsSilent",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "is-any-playing",
@@ -103,7 +143,9 @@
       "display_zh": "任意音频正在播放",
       "display_en": "Is any playing",
       "scriptName": "IsAnyPlaying",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "is-tag-playing",
@@ -124,7 +166,9 @@
           "desc_zh": "要播放的测试文件的音频标签。",
           "desc_en": "The audio tag of the file to test if playing."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     }
   ],
   "actions": [
@@ -147,7 +191,9 @@
           "desc_zh": "准确安排下一首播放的时间。通常这是 Audio.CurrentTime + N的形式。",
           "desc_en": "Time in seconds at which to sample-accurately schedule the next Play. Normally this is of the form Audio.CurrentTime + N."
         }
-      ]
+      ],
+      "category_zh": "调度",
+      "category_en": "Scheduling"
     },
     {
       "id": "add-filter-effect",
@@ -263,7 +309,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "remove-all-effects",
@@ -284,7 +332,9 @@
           "desc_zh": "要移除所有音频效果的音频标签。",
           "desc_en": "The audio tag to remove effects from."
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-delay-effect",
@@ -332,7 +382,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-convolution-effect",
@@ -392,7 +444,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "set-effect-parameter",
@@ -526,7 +580,9 @@
           "desc_zh": "控制声音频率变化的曲线，让声音过渡更加自然。",
           "desc_en": "The duration of the ramp in seconds, or the delay before stepping the value."
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-flanger-effect",
@@ -592,7 +648,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-phaser-effect",
@@ -666,7 +724,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-gain-effect",
@@ -696,7 +756,9 @@
           "desc_en": "The volume adjustment, in decibels.",
           "initialValue": "-10"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-stereo-pan-effect",
@@ -726,7 +788,9 @@
           "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-compressor-effect",
@@ -792,7 +856,9 @@
           "desc_en": "The time in which to increase gain by 10dB, in milliseconds.",
           "initialValue": "250"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-tremolo-effect",
@@ -831,7 +897,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-analyser-effect",
@@ -869,7 +937,9 @@
           "desc_zh": "平滑时间常数，从0（不与最后分析帧平均）到1（平均）。",
           "desc_en": "The smoothing time constant, from 0 (no averaging with last analysis frame) to 1 (averaging)."
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-ring-mod-effect",
@@ -908,7 +978,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-distortion-effect",
@@ -974,7 +1046,9 @@
           "desc_en": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "add-mute-effect",
@@ -995,7 +1069,9 @@
           "desc_zh": "要静音的音频标签。",
           "desc_en": "The audio tag to mute."
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "play-at-position",
@@ -1112,7 +1188,9 @@
           "desc_zh": "填写一个字符串，用于方便自己区分不同的音频。用于控制不同标签的音频。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "play-at-object",
@@ -1205,7 +1283,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "set-listener-object",
@@ -1226,7 +1306,9 @@
           "desc_zh": "选择要表示监听器的对象。",
           "desc_en": "Choose the object to represent the listener."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "set-listener-z",
@@ -1247,7 +1329,9 @@
           "desc_zh": "监听器位于场景Z轴的高度，以像素为单位。",
           "desc_en": "The new listener Z (height above the layout), in pixels."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "set-listener-orientation",
@@ -1314,7 +1398,9 @@
           "desc_en": "The Z component of the up vector.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "play-at-object-by-name",
@@ -1429,7 +1515,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "play-at-position-by-name",
@@ -1568,7 +1656,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容。用于区分不同的音频。使用空格分隔多个标签。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "set-stereo-pan",
@@ -1598,7 +1688,9 @@
           "desc_en": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "空间音频",
+      "category_en": "Panning / positioning"
     },
     {
       "id": "play",
@@ -1667,7 +1759,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-looping",
@@ -1710,7 +1804,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-muted",
@@ -1753,7 +1849,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-volume",
@@ -1783,7 +1881,9 @@
           "desc_en": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc.",
           "initialValue": "-10"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "fade-volume",
@@ -1844,7 +1944,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "preload",
@@ -1866,7 +1968,9 @@
           "desc_zh": "选择要预加载的音频文件。 它将从服务器下载但不播放。",
           "desc_en": "Choose the audio file to preload.  It will be downloaded from the server but not played."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-playback-rate",
@@ -1896,7 +2000,9 @@
           "desc_en": "The rate of playback.  1.0 is normal speed, 0.5 half speed, 2.0 double speed, etc.",
           "initialValue": "1.0"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "stop",
@@ -1917,7 +2023,9 @@
           "desc_zh": "要停止播放的标签。留空则指定最后一次播放的声音。",
           "desc_en": "The tag identifying the sound to stop.  Leave empty to affect the last played sound."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "play-by-name",
@@ -2007,7 +2115,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的音频。使用空格分隔多个标签。",
           "desc_en": "A tag, which can be anything you like, to use to reference this sound in future."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-silent",
@@ -2047,7 +2157,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "preload-by-name",
@@ -2091,7 +2203,9 @@
           "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
           "desc_en": "A string with the name of the audio file to preload, without the file extension.  For example, to load myfile.webm, use only \"myfile\"."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-master-volume",
@@ -2113,7 +2227,9 @@
           "desc_en": "The master attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc.",
           "initialValue": "-10"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "set-paused",
@@ -2156,7 +2272,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "seek-to",
@@ -2185,7 +2303,9 @@
           "desc_zh": "跳转到音频指定的时间位置，以秒为单位。结合 Audio.CurrentTime 表达式使用，可实现快进或后退几秒的效果。",
           "desc_en": "The time in the audio to seek to, in seconds."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "stop-all",
@@ -2196,7 +2316,9 @@
       "display_zh": "停止所有",
       "display_en": "Stop all",
       "scriptName": "StopAll",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "unload-audio",
@@ -2217,7 +2339,9 @@
           "desc_zh": "选择要卸载的音频文件。",
           "desc_en": "Choose the audio file to unload."
         }
-      ]
+      ],
+      "category_zh": "内存",
+      "category_en": "Memory"
     },
     {
       "id": "unload-audio-by-name",
@@ -2260,7 +2384,9 @@
           "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
           "desc_en": "A string with the name of the audio file to unload, without the file extension.  For example, to unload myfile.webm, use only \"myfile\"."
         }
-      ]
+      ],
+      "category_zh": "内存",
+      "category_en": "Memory"
     },
     {
       "id": "unload-all",
@@ -2271,7 +2397,9 @@
       "display_zh": "卸载全部音频",
       "display_en": "Unload all",
       "scriptName": "UnloadAll",
-      "category": "memory"
+      "category": "memory",
+      "category_zh": "内存",
+      "category_en": "Memory"
     },
     {
       "id": "add-remote-url",
@@ -2310,7 +2438,9 @@
           "desc_zh": "分配此链接的名称。分配后可以使用此名称的字符串进行操作。",
           "desc_en": "The name to assign this URL. This name can then be used in the actions that use a string for the name."
         }
-      ]
+      ],
+      "category_zh": "Web",
+      "category_en": "Web"
     }
   ],
   "expressions": [
@@ -2332,7 +2462,9 @@
           "desc_zh": "要使用的声音标签。",
           "desc_en": "Tag of the sound to use"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "analyserfreqbincount",
@@ -2360,7 +2492,9 @@
           "desc_zh": "在分析器中，采样点的索引。",
           "desc_en": "Index of the analyser effect"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "analyserfreqbinat",
@@ -2396,7 +2530,9 @@
           "desc_zh": "在分析器中，采样点的索引。",
           "desc_en": "Index of the frequency bin"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "analyserpeaklevel",
@@ -2424,7 +2560,9 @@
           "desc_zh": "在分析器中，采样点的索引。",
           "desc_en": "Index of the analyser effect"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "analyserrmslevel",
@@ -2452,7 +2590,9 @@
           "desc_zh": "在分析器中，采样点的索引。",
           "desc_en": "Index of the analyser effect"
         }
-      ]
+      ],
+      "category_zh": "效果器",
+      "category_en": "Effects"
     },
     {
       "id": "duration",
@@ -2472,7 +2612,9 @@
           "desc_zh": "要使用的声音的标签",
           "desc_en": "Tag of the sound to use"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "playbacktime",
@@ -2492,7 +2634,9 @@
           "desc_zh": "要使用的声音的标签",
           "desc_en": "Tag of the sound to use"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "playbackrate",
@@ -2512,7 +2656,9 @@
           "desc_zh": "要使用的音频的标签",
           "desc_en": "Tag of the sound to use"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "volume",
@@ -2532,7 +2678,9 @@
           "desc_zh": "要使用的声音的标签",
           "desc_en": "Tag of the sound to use"
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "mastervolume",
@@ -2542,7 +2690,9 @@
       "description_en": "Get the current master volume, in decibels.",
       "expressionName": "MasterVolume",
       "returnType": "number",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "samplerate",
@@ -2552,7 +2702,9 @@
       "description_en": "Get the audio output sample rate in Hz.",
       "expressionName": "SampleRate",
       "returnType": "number",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "currenttime",
@@ -2562,7 +2714,9 @@
       "description_en": "Get the audio clock time in seconds.",
       "expressionName": "CurrentTime",
       "returnType": "number",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "output-latency",
@@ -2572,7 +2726,9 @@
       "description_en": "Time delay in seconds for audio to actually be played on output device (or -1 if not known).",
       "expressionName": "OutputLatency",
       "returnType": "number",
-      "category": "audio"
+      "category": "audio",
+      "category_zh": "播放",
+      "category_en": "Audio"
     },
     {
       "id": "normalized-volume",
@@ -2600,7 +2756,9 @@
           "desc_zh": "音量在 10 百分比位置时，低于阈值分贝的声音将线性淡出直到听静音。建议值为 -40。",
           "desc_en": "dB level at volume 10, below which it reverts to linear ramp."
         }
-      ]
+      ],
+      "category_zh": "播放",
+      "category_en": "Audio"
     }
   ],
   "properties": [

@@ -1,0 +1,405 @@
+{
+  "id": "system-display",
+  "originalId": "system",
+  "name_zh": "系统 - 显示",
+  "name_en": "System - Display",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "display",
+  "category_zh": "显示",
+  "category_en": "Display",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "snapshot-canvas",
+      "name_zh": "截屏",
+      "name_en": "Snapshot canvas",
+      "description_zh": "在 '截图完成' 条件中，返回的图像地址结果。",
+      "description_en": "Take a snapshot of the current display.  Use the 'On canvas snapshot' trigger and 'CanvasSnapshot' expression to get the result.",
+      "display_zh": "保存画布快照 (格式: {0}, 品质: [i]{1}[/i], 偏移: [i]{2}[/i], [i]{3}[/i], 大小:[i]{4}[/i] x [i]{5}[/i])",
+      "display_en": "Take snapshot of canvas ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])",
+      "scriptName": "SnapshotCanvas",
+      "isAsync": true,
+      "category": "display",
+      "params": [
+        {
+          "id": "format",
+          "type": "combo",
+          "name_zh": "格式",
+          "name_en": "Format",
+          "desc_zh": "选择用于保存截图的文件格式。PNG是无损的，JPEG文件更小。",
+          "desc_en": "Choose the file format to save the snapshot with. PNG is lossless but JPEG files are smaller.",
+          "items": [
+            "png",
+            "jpeg"
+          ],
+          "items_i18n": {
+            "png": {
+              "zh": "PNG",
+              "en": "PNG"
+            },
+            "jpeg": {
+              "zh": "JPEG",
+              "en": "JPEG"
+            }
+          }
+        },
+        {
+          "id": "jpeg-quality",
+          "type": "number",
+          "name_zh": "JPEG品质",
+          "name_en": "JPEG quality",
+          "desc_zh": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
+          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG.",
+          "initialValue": "75"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "X",
+          "name_en": "X",
+          "desc_zh": "截取快照区域的X偏移量，基于设备画布像素。",
+          "desc_en": "The X offset of the area to snapshot, in canvas device pixels."
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_zh": "Y",
+          "name_en": "Y",
+          "desc_zh": "截取快照区域的Y偏移量，基于设备画布像素。",
+          "desc_en": "The Y offset of the area to snapshot, in canvas device pixels."
+        },
+        {
+          "id": "width",
+          "type": "number",
+          "name_zh": "宽度",
+          "name_en": "Width",
+          "desc_zh": "截屏区域的宽度，以画布设备像素为单位，使用 0 则使用完整宽度。",
+          "desc_en": "The width of the area to snapshot, in canvas device pixels. Leave 0 to use the full width."
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_zh": "高度",
+          "name_en": "Height",
+          "desc_zh": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。",
+          "desc_en": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height."
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-canvas-size",
+      "name_zh": "设置画布大小",
+      "name_en": "Set canvas size",
+      "description_zh": "设置画布大小，同时也会改变项目属性的窗口大小。",
+      "description_en": "Set the size of the canvas (also altering the 'Window size' project property).",
+      "display_zh": "设置画布大小为[b]{0}[/b] x [b]{1}[/b]",
+      "display_en": "Set canvas size to [b]{0}[/b] x [b]{1}[/b]",
+      "scriptName": "SetCanvasSize",
+      "category": "display",
+      "params": [
+        {
+          "id": "width",
+          "type": "number",
+          "name_zh": "宽度",
+          "name_en": "Width",
+          "desc_zh": "设置画布宽度，以像素为单位。",
+          "desc_en": "The new width of the canvas, in pixels."
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_zh": "高度",
+          "name_en": "Height",
+          "desc_zh": "设置画布高度，以像素为单位。",
+          "desc_en": "The new height of the canvas, in pixels."
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-half-framerate-mode",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "",
+      "description_en": "",
+      "scriptName": "SetHalfFramerateMode",
+      "isDeprecated": true,
+      "category": "display",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_zh": "",
+          "name_en": "",
+          "items": [
+            "disabled",
+            "enabled"
+          ]
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-fullscreen-scaling",
+      "name_zh": "设置全屏质量",
+      "name_en": "Set fullscreen scaling",
+      "description_zh": "设置全屏缩放的质量。",
+      "description_en": "Set the fullscreen scaling quality mode.",
+      "display_zh": "设置全屏质量为[i]{0}[/i]",
+      "display_en": "Set fullscreen scaling to [i]{0}[/i]",
+      "scriptName": "SetFullscreenQuality",
+      "category": "display",
+      "params": [
+        {
+          "id": "fullscreen-scaling",
+          "type": "combo",
+          "name_zh": "全屏质量",
+          "name_en": "Fullscreen scaling",
+          "desc_zh": "高质量的缩放在高分辨率可以获得更好的视觉表现，低像素的缩放有助于改善低端设备的性能，也适用于临近采样的像素风格游戏。",
+          "desc_en": "The new fullscreen scaling quality: whether to scale before (high quality) or after (low quality) rendering.",
+          "items": [
+            "low-quality",
+            "high-quality"
+          ],
+          "items_i18n": {
+            "low-quality": {
+              "zh": "低像素",
+              "en": "low quality"
+            },
+            "high-quality": {
+              "zh": "高质量",
+              "en": "high quality"
+            }
+          }
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-pixel-rounding",
+      "name_zh": "设置像素对齐",
+      "name_en": "Set pixel rounding",
+      "description_zh": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 \"\"临近采样\"\" 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+      "description_en": "Enable or disable pixel rounding mode at runtime.",
+      "display_zh": "[b]{0}[/b]像素对齐",
+      "display_en": "Set pixel rounding [b]{0}[/b]",
+      "scriptName": "SetPixelRounding",
+      "category": "display",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_zh": "模式",
+          "name_en": "Mode",
+          "desc_zh": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 '临近采样' 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+          "desc_en": "The pixel rounding mode to set.",
+          "items": [
+            "disabled",
+            "enabled"
+          ],
+          "items_i18n": {
+            "disabled": {
+              "zh": "禁用",
+              "en": "disabled"
+            },
+            "enabled": {
+              "zh": "启用",
+              "en": "enabled"
+            }
+          }
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-project-sampling",
+      "name_zh": "设置项目采样",
+      "name_en": "Set project sampling",
+      "description_zh": "设置项目的采样模式。",
+      "description_en": "Set the project sampling mode.",
+      "display_zh": "设置项目采样为[b]{0}[/b]",
+      "display_en": "Set project sampling [b]{0}[/b]",
+      "scriptName": "SetProjectSampling",
+      "category": "display",
+      "params": [
+        {
+          "id": "sampling",
+          "type": "combo",
+          "name_zh": "采样",
+          "name_en": "Sampling",
+          "desc_zh": "调整图像时，使用的采样方式。",
+          "desc_en": "The quality to use when scaling images.",
+          "items": [
+            "nearest",
+            "bilinear",
+            "trilinear"
+          ],
+          "items_i18n": {
+            "nearest": {
+              "zh": "邻近",
+              "en": "Nearest"
+            },
+            "bilinear": {
+              "zh": "双线性",
+              "en": "Bilinear"
+            },
+            "trilinear": {
+              "zh": "三线性",
+              "en": "Trilinear"
+            }
+          }
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "set-anisotropic-filtering",
+      "name_zh": "设置各向异性",
+      "name_en": "Set anisotropic filtering",
+      "description_zh": "设置各向异性的模式。",
+      "description_en": "Set the anisotropic filtering mode.",
+      "display_zh": "设置各向异性为 [b]{0}[/b]",
+      "display_en": "Set anisotropic filtering to [b]{0}[/b]",
+      "scriptName": "SetAnisotropicFiltering",
+      "category": "display",
+      "params": [
+        {
+          "id": "anisotropic-filtering",
+          "type": "combo",
+          "name_zh": "各向异性",
+          "name_en": "Anisotropic filtering",
+          "desc_zh": "要使用的各向异性程度。",
+          "desc_en": "The degree of anisotropy to use.",
+          "items": [
+            "auto",
+            "off",
+            "2x",
+            "3x",
+            "4x",
+            "8x",
+            "16x"
+          ],
+          "items_i18n": {
+            "auto": {
+              "zh": "自动",
+              "en": "Auto"
+            },
+            "off": {
+              "zh": "关闭",
+              "en": "Off"
+            },
+            "2x": {
+              "zh": "2x",
+              "en": "2x"
+            },
+            "3x": {
+              "zh": "3x",
+              "en": "3x"
+            },
+            "4x": {
+              "zh": "4x",
+              "en": "4x"
+            },
+            "8x": {
+              "zh": "8x",
+              "en": "8x"
+            },
+            "16x": {
+              "zh": "16x",
+              "en": "16x"
+            }
+          }
+        }
+      ],
+      "category_zh": "显示",
+      "category_en": "Display"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "windowwidth",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "窗口宽度，用于显示游戏窗口区域的宽度。",
+      "description_en": "Width of the window area used to display the game.",
+      "expressionName": "WindowWidth",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "windowheight",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "窗口高度，用于显示游戏窗口区域的高度。",
+      "description_en": "Height of the window area used to display the game.",
+      "expressionName": "WindowHeight",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "originalwindowwidth",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "",
+      "description_en": "",
+      "expressionName": "OriginalWindowWidth",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "originalwindowheight",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "",
+      "description_en": "",
+      "expressionName": "OriginalWindowHeight",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "originalviewportwidth",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取项目属性中填写的 '视区宽度' 值。",
+      "description_en": "The 'Viewport width' project property value.",
+      "expressionName": "OriginalViewportWidth",
+      "returnType": "number",
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    },
+    {
+      "id": "originalviewportheight",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "获取项目属性中填写的 '视区高度' 值。",
+      "description_en": "The 'Viewport height' project property value.",
+      "expressionName": "OriginalViewportHeight",
+      "returnType": "number",
+      "category": "display",
+      "category_zh": "显示",
+      "category_en": "Display"
+    }
+  ]
+}

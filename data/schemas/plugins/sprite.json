@@ -14,6 +14,32 @@
     "size-position",
     "web"
   ],
+  "aceCategories": {
+    "animations": {
+      "zh": "动画",
+      "en": "Animations"
+    },
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "collisions": {
+      "zh": "碰撞",
+      "en": "Collisions"
+    },
+    "misc": {
+      "zh": "其他",
+      "en": "Misc"
+    },
+    "size-position": {
+      "zh": "尺寸和位置",
+      "en": "Size & Position"
+    },
+    "web": {
+      "zh": "网络图像",
+      "en": "Web"
+    }
+  },
   "conditions": [
     {
       "id": "is-animation-playing",
@@ -34,7 +60,9 @@
           "desc_zh": "要检测的动画名称。",
           "desc_en": "Enter the name of the animation to check if playing."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "compare-animation-frame",
@@ -63,7 +91,9 @@
           "desc_zh": "要比较的动画帧编号（从0开始计数）。",
           "desc_en": "The animation frame number to compare to (0-based)."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "on-animation-finished",
@@ -85,7 +115,9 @@
           "desc_zh": "要检测的动画名称。",
           "desc_en": "Enter the name of the animation that has finished."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "on-any-animation-finished",
@@ -97,7 +129,9 @@
       "display_en": "On any animation finished",
       "scriptName": "OnAnyAnimFinished",
       "isTrigger": true,
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "on-animation-frame-changed",
@@ -109,7 +143,9 @@
       "display_en": "On frame changed",
       "scriptName": "OnFrameChanged",
       "isTrigger": true,
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "compare-animation-speed",
@@ -138,7 +174,9 @@
           "desc_zh": "要比较的动画速度。",
           "desc_en": "The animation speed to compare to."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "compare-animation-frame-tag",
@@ -168,7 +206,9 @@
           "desc_en": "The animation frame tag to compare against.",
           "initialValue": "\"\""
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "is-mirrored",
@@ -179,7 +219,9 @@
       "display_zh": "已左右翻转",
       "display_en": "Is mirrored",
       "scriptName": "IsMirrored",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "is-flipped",
@@ -190,7 +232,9 @@
       "display_zh": "已上下翻转",
       "display_en": "Is flipped",
       "scriptName": "IsFlipped",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "collisions-enabled",
@@ -201,7 +245,9 @@
       "display_zh": "已启用碰撞",
       "display_en": "Collisions enabled",
       "scriptName": "IsCollisionEnabled",
-      "category": "collisions"
+      "category": "collisions",
+      "category_zh": "碰撞",
+      "category_en": "Collisions"
     },
     {
       "id": "on-image-url-loaded",
@@ -213,7 +259,9 @@
       "display_en": "On image URL loaded",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络图像",
+      "category_en": "Web"
     },
     {
       "id": "on-image-url-failed",
@@ -225,7 +273,9 @@
       "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络图像",
+      "category_en": "Web"
     }
   ],
   "actions": [
@@ -238,7 +288,9 @@
       "display_zh": "停止播放动画",
       "display_en": "Stop animation",
       "scriptName": "StopAnim",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "start-animation",
@@ -273,7 +325,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "set-animation",
@@ -317,7 +371,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "set-animation-frame",
@@ -338,7 +394,9 @@
           "desc_zh": "要设置的动画帧编号（从0开始），或标签。",
           "desc_en": "The animation frame index (0-based), or a string of the frame tag."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "set-animation-speed",
@@ -359,7 +417,9 @@
           "desc_zh": "新动画速度，每秒动画帧数。",
           "desc_en": "The new animation speed, in animation frames per second."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "set-repeat-to-frame",
@@ -380,7 +440,9 @@
           "desc_zh": "要重复的动画帧编号（从0开始）。",
           "desc_en": "The animation frame number to repeat to (0-based)."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "add-remove-animation",
@@ -424,7 +486,9 @@
           "desc_zh": "添加或删除的动画名称。",
           "desc_en": "The animation name to add or remove."
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "add-remove-animation-frame",
@@ -477,7 +541,9 @@
           "desc_en": "The index or tag at which to insert or delete an animation frame. Use -1 for last frame.",
           "initialValue": "-1"
         }
-      ]
+      ],
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "set-blend-mode",
@@ -577,7 +643,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-mirrored",
@@ -612,7 +680,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-flipped",
@@ -647,7 +717,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "spawn-another-object",
@@ -701,7 +773,9 @@
           "desc_zh": "在生成对象时，继承特定的模板对象。模板可在实例对象的属性栏中定义。",
           "desc_en": "Use a specific instance as a template when spawning a new object."
         }
-      ]
+      ],
+      "category_zh": "其他",
+      "category_en": "Misc"
     },
     {
       "id": "set-collisions-enabled",
@@ -736,7 +810,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "其他",
+      "category_en": "Misc"
     },
     {
       "id": "set-solid-collision-filter",
@@ -779,7 +855,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。",
           "desc_en": "A space-separated list of tags to filter collisions with."
         }
-      ]
+      ],
+      "category_zh": "其他",
+      "category_en": "Misc"
     },
     {
       "id": "set-scale",
@@ -801,7 +879,9 @@
           "desc_en": "The object width and height to set, based on a multiple of its original dimensions, e.g. 1 = original size, 2 = double size, 0.5 = half size etc.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "尺寸和位置",
+      "category_en": "Size & Position"
     },
     {
       "id": "load-image-from-url",
@@ -868,7 +948,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "网络图像",
+      "category_en": "Web"
     }
   ],
   "expressions": [
@@ -880,7 +962,9 @@
       "description_en": "The current animation frame number (0-based).",
       "expressionName": "AnimationFrame",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "animationframecount",
@@ -890,7 +974,9 @@
       "description_en": "The number of animation frames in the current animation.",
       "expressionName": "AnimationFrameCount",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "animationname",
@@ -900,7 +986,9 @@
       "description_en": "The name of the current animation.",
       "expressionName": "AnimationName",
       "returnType": "string",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "animationspeed",
@@ -910,7 +998,9 @@
       "description_en": "The speed of the current animation, in animation frames per second.",
       "expressionName": "AnimationSpeed",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "originalanimationspeed",
@@ -920,7 +1010,9 @@
       "description_en": "The original speed of the current animation as set in the Animations Editor, in animation frames per second.",
       "expressionName": "OriginalAnimationSpeed",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "imagewidth",
@@ -930,7 +1022,9 @@
       "description_en": "The width of the current animation frame image, in pixels.",
       "expressionName": "ImageWidth",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "imageheight",
@@ -940,7 +1034,9 @@
       "description_en": "The height of the current animation frame image, in pixels.",
       "expressionName": "ImageHeight",
       "returnType": "number",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "animationframetag",
@@ -950,7 +1046,9 @@
       "description_en": "A string tag to identify an animation frame.",
       "expressionName": "AnimationFrameTag",
       "returnType": "string",
-      "category": "animations"
+      "category": "animations",
+      "category_zh": "动画",
+      "category_en": "Animations"
     },
     {
       "id": "poly-point-x-at",
@@ -970,7 +1068,9 @@
           "desc_zh": "要获取的碰撞多边形点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the collision poly point to get."
         }
-      ]
+      ],
+      "category_zh": "碰撞",
+      "category_en": "Collisions"
     },
     {
       "id": "poly-point-y-at",
@@ -990,7 +1090,9 @@
           "desc_zh": "要获取的碰撞多边形点的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the collision poly point to get."
         }
-      ]
+      ],
+      "category_zh": "碰撞",
+      "category_en": "Collisions"
     },
     {
       "id": "poly-point-count",
@@ -1000,7 +1102,9 @@
       "description_en": "The number of collision polygon points the current frame has.",
       "expressionName": "PolyPointCount",
       "returnType": "number",
-      "category": "collisions"
+      "category": "collisions",
+      "category_zh": "碰撞",
+      "category_en": "Collisions"
     },
     {
       "id": "imagepointx",
@@ -1020,7 +1124,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "尺寸和位置",
+      "category_en": "Size & Position"
     },
     {
       "id": "imagepointy",
@@ -1040,7 +1146,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "尺寸和位置",
+      "category_en": "Size & Position"
     },
     {
       "id": "imagepointz",
@@ -1060,7 +1168,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "尺寸和位置",
+      "category_en": "Size & Position"
     },
     {
       "id": "imagepointcount",
@@ -1070,7 +1180,9 @@
       "description_en": "The number of image points the current frame has.",
       "expressionName": "ImagePointCount",
       "returnType": "number",
-      "category": "size-position"
+      "category": "size-position",
+      "category_zh": "尺寸和位置",
+      "category_en": "Size & Position"
     }
   ],
   "properties": [

@@ -9,6 +9,12 @@
   "categories": [
     "csv"
   ],
+  "aceCategories": {
+    "csv": {
+      "zh": "CSV",
+      "en": "CSV"
+    }
+  },
   "conditions": [
     {
       "id": "on-parse-error",
@@ -20,7 +26,9 @@
       "display_en": "On parse error",
       "scriptName": "OnParseError",
       "isTrigger": true,
-      "category": "csv"
+      "category": "csv",
+      "category_zh": "CSV",
+      "category_en": "CSV"
     },
     {
       "id": "on-parse-success",
@@ -32,7 +40,9 @@
       "display_en": "On parse success",
       "scriptName": "OnParseSuccess",
       "isTrigger": true,
-      "category": "csv"
+      "category": "csv",
+      "category_zh": "CSV",
+      "category_en": "CSV"
     }
   ],
   "actions": [
@@ -99,7 +109,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "CSV",
+      "category_en": "CSV"
     },
     {
       "id": "generate-csv",
@@ -129,7 +141,9 @@
           "desc_en": "The character that separates values.",
           "initialValue": "\",\""
         }
-      ]
+      ],
+      "category_zh": "CSV",
+      "category_en": "CSV"
     }
   ],
   "expressions": [
@@ -141,7 +155,9 @@
       "description_en": "Get the generated string of CSV data after the 'Generate CSV' action.",
       "expressionName": "GeneratedCSV",
       "returnType": "string",
-      "category": "csv"
+      "category": "csv",
+      "category_zh": "CSV",
+      "category_en": "CSV"
     },
     {
       "id": "tab-character",
@@ -151,7 +167,9 @@
       "description_en": "A tab character, which can be useful as a delimiter.",
       "expressionName": "TabCharacter",
       "returnType": "string",
-      "category": "csv"
+      "category": "csv",
+      "category_zh": "CSV",
+      "category_en": "CSV"
     }
   ]
 }

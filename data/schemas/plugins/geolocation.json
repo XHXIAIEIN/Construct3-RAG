@@ -9,6 +9,12 @@
   "categories": [
     "geolocation"
   ],
+  "aceCategories": {
+    "geolocation": {
+      "zh": "地理位置",
+      "en": "Geolocation"
+    }
+  },
   "conditions": [
     {
       "id": "is-supported",
@@ -19,7 +25,9 @@
       "display_zh": "设备支持访问地理位置",
       "display_en": "Is supported",
       "scriptName": "IsSupported",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "is-watching-location",
@@ -30,7 +38,9 @@
       "display_zh": "正在跟踪位置",
       "display_en": "Is watching location",
       "scriptName": "IsWatching",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "on-location-update",
@@ -43,7 +53,9 @@
       "scriptName": "OnUpdate",
       "isTrigger": true,
       "canDebug": true,
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "on-error",
@@ -56,7 +68,9 @@
       "scriptName": "OnError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     }
   ],
   "actions": [
@@ -110,7 +124,9 @@
           "desc_zh": "缓存结果可记录的最大时长，以秒为单位。使用 0 禁用缓存。",
           "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ]
+      ],
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "watch-location",
@@ -162,7 +178,9 @@
           "desc_zh": "缓存结果可保留的最长时间，以秒为单位。 使用 0 禁用缓存。",
           "desc_en": "The maximum age in seconds of a cached result that can be returned. Use 0 to disable caching."
         }
-      ]
+      ],
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "stop-watching",
@@ -173,7 +191,9 @@
       "display_zh": "停止监测位置信息",
       "display_en": "Stop watching location",
       "scriptName": "StopWatching",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     }
   ],
   "expressions": [
@@ -185,7 +205,9 @@
       "description_en": "In 'On error', the relevant error message.",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "timestamp",
@@ -195,7 +217,9 @@
       "description_en": "The timestamp at which the current details were retrieved.",
       "expressionName": "Timestamp",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "latitude",
@@ -205,7 +229,9 @@
       "description_en": "The latitude position in decimal degrees.",
       "expressionName": "Latitude",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "longitude",
@@ -215,7 +241,9 @@
       "description_en": "The longitude position in decimal degrees.",
       "expressionName": "Longitude",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "altitude",
@@ -225,7 +253,9 @@
       "description_en": "The altitude above sea-level in meters, if available.",
       "expressionName": "Altitude",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "accuracy",
@@ -235,7 +265,9 @@
       "description_en": "The estimated accuracy in meters of the latitude and longitude.",
       "expressionName": "Accuracy",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "altitudeaccuracy",
@@ -245,7 +277,9 @@
       "description_en": "The estimated accuracy in meters of the altitude, if available.",
       "expressionName": "AltitudeAccuracy",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "heading",
@@ -255,7 +289,9 @@
       "description_en": "The direction of travel in degrees relative to due north, if available.",
       "expressionName": "Heading",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     },
     {
       "id": "speed",
@@ -265,7 +301,9 @@
       "description_en": "The speed of travel in meters per second, if available.",
       "expressionName": "Speed",
       "returnType": "number",
-      "category": "geolocation"
+      "category": "geolocation",
+      "category_zh": "地理位置",
+      "category_en": "Geolocation"
     }
   ],
   "productTypes": "games"

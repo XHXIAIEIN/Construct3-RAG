@@ -1,0 +1,175 @@
+{
+  "id": "system-loops",
+  "originalId": "system",
+  "name_zh": "系统 - 循环",
+  "name_en": "System - Loops",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "loops",
+  "category_zh": "循环",
+  "category_en": "Loops",
+  "conditions": [
+    {
+      "id": "for",
+      "name_zh": "循环",
+      "name_en": "For",
+      "description_zh": "根据数值区间的范围，重复执行多次动作。使用 loopindex 表达式获取当前索引（基于 0 开始计数）。",
+      "description_en": "Repeat actions with an index variable.",
+      "display_zh": "循环 [b]{0}[/b] 从 [i]{1}[/i] 到 [i]{2}[/i]",
+      "display_en": "For [b]{0}[/b] from [i]{1}[/i] to [i]{2}[/i]",
+      "scriptName": "For",
+      "canDebug": true,
+      "category": "loops",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_zh": "名称",
+          "name_en": "Name",
+          "desc_zh": "用于区分不同循环的名称，并通过 loopindex(\"\"\"\") 表达式获取循环的索引。留空则表示当前事件块范围的循环索引。",
+          "desc_en": "Choose the name of the loop.  This can be an empty string."
+        },
+        {
+          "id": "start-index",
+          "type": "number",
+          "name_zh": "初始值",
+          "name_en": "Start index",
+          "desc_zh": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。",
+          "desc_en": "Start index of the loop range (inclusive).",
+          "initialValue": "1"
+        },
+        {
+          "id": "end-index",
+          "type": "number",
+          "name_zh": "结束值",
+          "name_en": "End index",
+          "desc_zh": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。",
+          "desc_en": "End index of the loop range (inclusive).",
+          "initialValue": "10"
+        }
+      ],
+      "category_zh": "循环",
+      "category_en": "Loops"
+    },
+    {
+      "id": "for-each",
+      "name_zh": "遍历对象",
+      "name_en": "For Each",
+      "description_zh": "对每个实例对象重复执行一次动作。",
+      "description_en": "Repeat actions once for each instance of an object.",
+      "display_zh": "遍历 {0}",
+      "display_en": "For each {0}",
+      "scriptName": "ForEach",
+      "canDebug": true,
+      "category": "loops",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "选择循环的对象。 对于对象的每个实例，操作将重复一次。",
+          "desc_en": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
+        }
+      ],
+      "category_zh": "循环",
+      "category_en": "Loops"
+    },
+    {
+      "id": "repeat",
+      "name_zh": "重复 X 次",
+      "name_en": "Repeat",
+      "description_zh": "将动作重复执行多次。使用 loopindex 表达式获取每次循环的索引（基于0开始计数）。",
+      "description_en": "Repeat actions a certain number of times.",
+      "display_zh": "重复[b]{0}[/b]次",
+      "display_en": "Repeat [b]{0}[/b] times",
+      "scriptName": "Repeat",
+      "canDebug": true,
+      "category": "loops",
+      "params": [
+        {
+          "id": "count",
+          "type": "number",
+          "name_zh": "次数",
+          "name_en": "Count",
+          "desc_zh": "要重复执行的次数。",
+          "desc_en": "Number of times to repeat the actions.",
+          "initialValue": "10"
+        }
+      ],
+      "category_zh": "循环",
+      "category_en": "Loops"
+    },
+    {
+      "id": "while",
+      "name_zh": "重复",
+      "name_en": "While",
+      "description_zh": "只要事件块的条件满足，就无限重复执行动作。",
+      "description_en": "Repeat so long as the rest of the conditions in the event are true.",
+      "display_zh": "重复",
+      "display_en": "While",
+      "scriptName": "While",
+      "canDebug": true,
+      "category": "loops",
+      "category_zh": "循环",
+      "category_en": "Loops"
+    },
+    {
+      "id": "for-each-ordered",
+      "name_zh": "遍历对象 (排序)",
+      "name_en": "For Each (ordered)",
+      "description_zh": "根据表达式的结果排序，将指定对象的每个实例都重复一次动作。",
+      "description_en": "Repeat actions once for each instance of an object ordered by an expression.",
+      "display_zh": "遍历 {0} 根据 [i]{1}[/i] {2}",
+      "display_en": "For each {0} order by [i]{1}[/i] {2}",
+      "scriptName": "ForEachOrdered",
+      "canDebug": true,
+      "category": "loops",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "选择要遍历的对象，对此对象的每个实例都执行一次动作。",
+          "desc_en": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
+        },
+        {
+          "id": "expression",
+          "type": "any",
+          "name_zh": "表达式",
+          "name_en": "Expression",
+          "desc_zh": "输入一个表达式来对循环进行排序，例如：Sprite.X",
+          "desc_en": "Enter an expression to order the loop with, e.g. Sprite.X"
+        },
+        {
+          "id": "order",
+          "type": "combo",
+          "name_zh": "排序",
+          "name_en": "Order",
+          "desc_zh": "使用升序或者降序。",
+          "desc_en": "Whether to loop in ascending or descending order.",
+          "items": [
+            "ascending",
+            "descending"
+          ],
+          "items_i18n": {
+            "ascending": {
+              "zh": "升序",
+              "en": "ascending"
+            },
+            "descending": {
+              "zh": "降序",
+              "en": "descending"
+            }
+          }
+        }
+      ],
+      "category_zh": "循环",
+      "category_en": "Loops"
+    }
+  ],
+  "actions": [],
+  "expressions": []
+}

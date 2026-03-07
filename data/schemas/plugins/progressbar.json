@@ -9,6 +9,12 @@
   "categories": [
     "progress-bar"
   ],
+  "aceCategories": {
+    "progress-bar": {
+      "zh": "进度条",
+      "en": "Progress bar"
+    }
+  },
   "conditions": [
     {
       "id": "on-clicked",
@@ -21,7 +27,9 @@
       "scriptName": "OnClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     },
     {
       "id": "compare-progress",
@@ -50,7 +58,9 @@
           "desc_zh": "要比较的进度值。",
           "desc_en": "Progress value to compare to."
         }
-      ]
+      ],
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     }
   ],
   "actions": [
@@ -73,7 +83,9 @@
           "desc_zh": "要在进度条上设置的工具提示。",
           "desc_en": "The tooltip to set on the progress bar."
         }
-      ]
+      ],
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     },
     {
       "id": "set-progress",
@@ -95,7 +107,9 @@
           "desc_zh": "要设置的进度值。",
           "desc_en": "The value to set for the progress."
         }
-      ]
+      ],
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     },
     {
       "id": "set-maximum",
@@ -116,7 +130,9 @@
           "desc_zh": "进度的新最大值。",
           "desc_en": "The new maximum value for the progress."
         }
-      ]
+      ],
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     },
     {
       "id": "make-indeterminate",
@@ -127,7 +143,9 @@
       "display_zh": "使不确定",
       "display_en": "Make indeterminate",
       "scriptName": "SetIndeterminate",
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     }
   ],
   "expressions": [
@@ -139,7 +157,9 @@
       "description_en": "Current progress value.",
       "expressionName": "Progress",
       "returnType": "number",
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     },
     {
       "id": "maximum",
@@ -149,7 +169,9 @@
       "description_en": "Current maximum progress value.",
       "expressionName": "Maximum",
       "returnType": "number",
-      "category": "progress-bar"
+      "category": "progress-bar",
+      "category_zh": "进度条",
+      "category_en": "Progress bar"
     }
   ],
   "properties": [

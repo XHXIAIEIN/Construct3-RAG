@@ -10,6 +10,16 @@
     "ajax",
     "binary-data"
   ],
+  "aceCategories": {
+    "ajax": {
+      "zh": "AJAX",
+      "en": "AJAX"
+    },
+    "binary-data": {
+      "zh": "二进制",
+      "en": "Binary data"
+    }
+  },
   "conditions": [
     {
       "id": "on-completed",
@@ -33,7 +43,9 @@
           "desc_zh": "填写在 AJAX 请求动作中的标签，用于区分不同的AJAX请求。",
           "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "on-any-completed",
@@ -46,7 +58,9 @@
       "scriptName": "OnAnyComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "on-error",
@@ -69,7 +83,9 @@
           "desc_zh": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
           "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "on-any-error",
@@ -82,7 +98,9 @@
       "scriptName": "OnAnyError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "on-progress",
@@ -105,7 +123,9 @@
           "desc_zh": "填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
           "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "on-upload-progress",
@@ -128,7 +148,9 @@
           "desc_zh": "填写一个字符串，填写在 AJAX 请求动作中填写的标签，用于区分不同的AJAX请求。",
           "desc_en": "A tag, which can be anything you like, to distinguish between different AJAX requests."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     }
   ],
   "actions": [
@@ -162,7 +184,9 @@
           "desc_en": "The URL to request.  Note: most browsers prevent cross-domain requests.",
           "initialValue": "\"https://\""
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "request-project-file",
@@ -193,7 +217,9 @@
           "desc_zh": "选择要请求的项目文件。",
           "desc_en": "Select a project file to request."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "post-to-url",
@@ -241,7 +267,9 @@
           "desc_en": "The HTTP method to use, typically \"POST\".",
           "initialValue": "\"POST\""
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "set-timeout",
@@ -262,7 +290,9 @@
           "desc_zh": "AJAX请求的超时时间，以秒为单位。使用 -1 表示没有超时。",
           "desc_en": "The timeout for AJAX requests in seconds. Use -1 for no timeout."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "set-request-header",
@@ -291,7 +321,9 @@
           "desc_zh": "要设置的标头值。",
           "desc_en": "A string of the value to set the header to."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "override-mime-type",
@@ -312,7 +344,9 @@
           "desc_zh": "要设置的媒体类型。如 \"text/plain;charset=UTF-8\",  \"image/png\",   \"application/json",
           "desc_en": "The MIME type to interpret the response as."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "set-with-credentials",
@@ -333,7 +367,9 @@
           "desc_zh": "设置下次请求是否发送凭证信息。",
           "desc_en": "Whether the next request is sent with credentials."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "set-upload-progress-enabled",
@@ -354,7 +390,9 @@
           "desc_zh": "是否启用上传进度跟踪。",
           "desc_en": "Whether to enable tracking upload progress."
         }
-      ]
+      ],
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "post-binary",
@@ -402,7 +440,9 @@
           "desc_en": "The HTTP method to use, typically \"POST\".",
           "initialValue": "\"POST\""
         }
-      ]
+      ],
+      "category_zh": "二进制",
+      "category_en": "Binary data"
     },
     {
       "id": "set-response-binary",
@@ -423,7 +463,9 @@
           "desc_zh": "要发送的二进制数据对象",
           "desc_en": "The Binary Data object to receive the response in to."
         }
-      ]
+      ],
+      "category_zh": "二进制",
+      "category_en": "Binary data"
     }
   ],
   "expressions": [
@@ -435,7 +477,9 @@
       "description_en": "Get the data returned by the last successful request.",
       "expressionName": "LastData",
       "returnType": "string",
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "laststatuscode",
@@ -445,7 +489,9 @@
       "description_en": "Get the HTTP status code of the last request.",
       "expressionName": "LastStatusCode",
       "returnType": "number",
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "progress",
@@ -455,7 +501,9 @@
       "description_en": "Get the progress, from 0 to 1, of the request in 'On progress'.",
       "expressionName": "Progress",
       "returnType": "number",
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     },
     {
       "id": "tag",
@@ -465,7 +513,9 @@
       "description_en": "Get the tag for the request in a trigger.",
       "expressionName": "Tag",
       "returnType": "string",
-      "category": "ajax"
+      "category": "ajax",
+      "category_zh": "AJAX",
+      "category_en": "AJAX"
     }
   ]
 }

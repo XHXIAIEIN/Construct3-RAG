@@ -1,0 +1,556 @@
+{
+  "id": "system-general",
+  "originalId": "system",
+  "name_zh": "系统 - 常规",
+  "name_en": "System - General",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "general",
+  "category_zh": "常规",
+  "category_en": "General",
+  "conditions": [
+    {
+      "id": "every-tick",
+      "name_zh": "每一帧",
+      "name_en": "Every tick",
+      "description_zh": "在事件表运行的每帧执行一次，相当于 '总是执行'。与空白事件块的作用相同。",
+      "description_en": "Run the actions once every tick, a.k.a. 'Always'.",
+      "display_zh": "每一帧",
+      "display_en": "Every tick",
+      "scriptName": "EveryTick",
+      "highlight": true,
+      "category": "general",
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "compare-two-values",
+      "name_zh": "比较两值",
+      "name_en": "Compare two values",
+      "description_zh": "比较两个任意值。此条件不会选择任何对象。",
+      "description_en": "Compare two arbitrary values.  This condition does not pick any objects.",
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}",
+      "scriptName": "Compare",
+      "highlight": true,
+      "category": "general",
+      "params": [
+        {
+          "id": "first-value",
+          "type": "any",
+          "name_zh": "a",
+          "name_en": "First value",
+          "desc_zh": "输入要比较的第一个值。",
+          "desc_en": "Enter the first value to compare.  This condition does not pick any objects - it is a simple value comparison."
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_zh": "比较",
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Select the way to compare the values."
+        },
+        {
+          "id": "second-value",
+          "type": "any",
+          "name_zh": "b",
+          "name_en": "Second value",
+          "desc_zh": "输入要比较的第二个值。",
+          "desc_en": "Enter the second value to compare.  This condition does not pick any objects - it is a simple value comparison."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "is-group-active",
+      "name_zh": "事件组已激活",
+      "name_en": "Is group active",
+      "description_zh": "检查事件组当前是否处于活动状态。",
+      "description_en": "Test if an event group is currently active.",
+      "display_zh": "事件组 [b]{0}[/b] 已激活",
+      "display_en": "Group [b]{0}[/b] is active",
+      "scriptName": "IsGroupActive",
+      "category": "general",
+      "params": [
+        {
+          "id": "group-name",
+          "type": "groupname",
+          "name_zh": "名称",
+          "name_en": "Group name",
+          "desc_zh": "要检查的事件组的名称。",
+          "desc_en": "The name of the event group to test if active."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "is-between-values",
+      "name_zh": "在两值之间",
+      "name_en": "Is between values",
+      "description_zh": "比较一个数字是否介于两个值之间。",
+      "description_en": "Compare if a number is between two values.",
+      "display_zh": "{1} ≤ {0} ≤ {2}",
+      "display_en": "{1} ≤ {0} ≤ {2}",
+      "scriptName": "CompareBetween",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "number",
+          "name_zh": "数值",
+          "name_en": "Value",
+          "desc_zh": "输入要比较的值。",
+          "desc_en": "Enter the value to compare."
+        },
+        {
+          "id": "lower-bound",
+          "type": "number",
+          "name_zh": "下限",
+          "name_en": "Lower bound",
+          "desc_zh": "要比较的下限值。",
+          "desc_en": "The lower value to compare to."
+        },
+        {
+          "id": "upper-bound",
+          "type": "number",
+          "name_zh": "上限",
+          "name_en": "Upper bound",
+          "desc_zh": "要比较的上限值。",
+          "desc_en": "The upper value to compare to.",
+          "initialValue": "10"
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "object-uid-exists",
+      "name_zh": "检测UID对象存在",
+      "name_en": "Object UID exists",
+      "description_zh": "检查指定的UID对象当前是否存在。",
+      "description_en": "Check if an object with a given UID currently exists.",
+      "display_zh": "存在UID为[b]{0}[/b]的对象",
+      "display_en": "Object with UID [b]{0}[/b] exists",
+      "scriptName": "ObjectUIDExists",
+      "category": "general",
+      "params": [
+        {
+          "id": "uid",
+          "type": "number",
+          "name_zh": "UID",
+          "name_en": "UID",
+          "desc_zh": "输入对象的UID以检查是否存在。",
+          "desc_en": "Enter the UID of an object to check if exists."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "test-regex",
+      "name_zh": "比较字符串 (正则表达式)",
+      "name_en": "Test regex",
+      "description_zh": "测试字符串是否与正则表达式匹配。",
+      "description_en": "Test if a string matches a regular expression.",
+      "display_zh": "[i]{0}[/i] 匹配正则表达式 [i]{1}[/i] ([i]{2}[/i])",
+      "display_en": "[i]{0}[/i] matches regex [i]{1}[/i] ([i]{2}[/i])",
+      "scriptName": "RegexTest",
+      "category": "general",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_zh": "字符串",
+          "name_en": "String",
+          "desc_zh": "要匹配的字符串。",
+          "desc_en": "Enter a string to test the regular expression against."
+        },
+        {
+          "id": "regex",
+          "type": "string",
+          "name_zh": "正则表达式",
+          "name_en": "Regex",
+          "desc_zh": "输入正则表达式以测试字符串。",
+          "desc_en": "Enter the regular expression to test the string with."
+        },
+        {
+          "id": "flags",
+          "type": "string",
+          "name_zh": "标志",
+          "name_en": "Flags",
+          "desc_zh": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行",
+          "desc_en": "Regular expression flags. i = ignore case, g = global match, m = multiline.",
+          "initialValue": "\"gi\""
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "is-number-nan",
+      "name_zh": "检测非数字(NaN)",
+      "name_en": "Is number NaN",
+      "description_zh": "检查数字是否为特殊的 NaN (非数字)值。",
+      "description_en": "Check if a number is the special NaN (Not A Number) value.",
+      "display_zh": "{0} 非数字类型",
+      "display_en": "{0} is NaN",
+      "scriptName": "IsNaN",
+      "category": "general",
+      "params": [
+        {
+          "id": "number",
+          "type": "number",
+          "name_zh": "数字",
+          "name_en": "Number",
+          "desc_zh": "一个数字，用于检查是否匹配特殊的NaN（非数字）值。",
+          "desc_en": "A number to check if matching the special NaN (Not A Number) value."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "is-value-type",
+      "name_zh": "检测数值类型",
+      "name_en": "Is value type",
+      "description_zh": "分辨一个值是数字还是字符串。",
+      "description_en": "Test if a value is a number or a string.",
+      "display_zh": "{0} 是 {1}",
+      "display_en": "{0} is {1}",
+      "scriptName": "IsValueType",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "要检查类型的值。",
+          "desc_en": "The value to check the type of."
+        },
+        {
+          "id": "type",
+          "type": "combo",
+          "name_zh": "类型",
+          "name_en": "Type",
+          "desc_zh": "检查值的类型。",
+          "desc_en": "Check which type the value is.",
+          "items": [
+            "number",
+            "string"
+          ],
+          "items_i18n": {
+            "number": {
+              "zh": "数字",
+              "en": "Number"
+            },
+            "string": {
+              "zh": "字符串",
+              "en": "String"
+            }
+          }
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "evaluate-expression",
+      "name_zh": "比较表达式",
+      "name_en": "Evaluate expression",
+      "description_zh": "检测表达式是否有效，即为非零、非空的字符串。对布尔值的判断非常有帮助！",
+      "description_en": "True if a given expression is non-zero, or not an empty string. Useful with boolean expressions.",
+      "display_zh": "{0}",
+      "display_en": "{0}",
+      "scriptName": "EvaluateExpression",
+      "category": "general",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_zh": "表达式",
+          "name_en": "Value",
+          "desc_zh": "要检测的表达式。仅在该表达式返回的结果为非零或非空的字符串时有效。",
+          "desc_en": "Enter the value to evaluate. The condition is true if this evaluates to a non-zero value or a non-empty string."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    }
+  ],
+  "actions": [
+    {
+      "id": "create-object",
+      "name_zh": "创建对象",
+      "name_en": "Create object",
+      "description_zh": "在当前场景创建对象的实例。如果选择 '家族' 将从中随机创建一个成员。",
+      "description_en": "Create a new instance of an object in the current layout.",
+      "display_zh": "创建对象 {0}, 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "display_en": "Create object {0} on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
+      "scriptName": "CreateObject",
+      "highlight": true,
+      "category": "general",
+      "params": [
+        {
+          "id": "object-to-create",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object to create",
+          "desc_zh": "选择要创建的新实例的对象类型。",
+          "desc_en": "Choose the object type of the new instance to create."
+        },
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_zh": "图层",
+          "name_en": "Layer",
+          "desc_zh": "要在其上创建实例的图层的名称或编号。",
+          "desc_en": "Name or number of the layer to create the instance on."
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "X",
+          "name_en": "X",
+          "desc_zh": "X坐标，用于放置创建的实例。",
+          "desc_en": "X co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_zh": "Y",
+          "name_en": "Y",
+          "desc_zh": "Y坐标，用于放置创建的实例。",
+          "desc_en": "Y co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_zh": "创建子对象",
+          "name_en": "Create hierarchy",
+          "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_zh": "模版名称",
+          "name_en": "Template name",
+          "desc_zh": "创建对象时，指定模版对象的名称，继承其所有属性。",
+          "desc_en": "Use a specific instance as a template when creating a new object."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "create-object-by-name",
+      "name_zh": "创建对象(按名称)",
+      "name_en": "Create object (by name)",
+      "description_zh": "使用字符串创建对应名称的对象实例，然后在下方添加 '选择最后创建的' 条件选择此对象。对于包含不同的对象类型，建议使用 '家族' 进行选择。",
+      "description_en": "Create a new instance of an object in the current layout, using a string of the object name to create.",
+      "display_zh": "创建对象 [b]{0}[/b], 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "display_en": "Create object [b]{0}[/b] on layer [b]{1}[/b] at ([i]{2}[/i], [i]{3}[/i]), create hierarchy: [i]{4}[/i], template: [i]{5}[/i]",
+      "scriptName": "CreateObjectByName",
+      "category": "general",
+      "params": [
+        {
+          "id": "object-name",
+          "type": "objectname",
+          "name_zh": "对象名称",
+          "name_en": "Object name",
+          "desc_zh": "要创建的新实例的对象类型的名称。",
+          "desc_en": "The name of the object type of the new instance to create."
+        },
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_zh": "图层",
+          "name_en": "Layer",
+          "desc_zh": "要在其上创建实例的图层的名称或编号。",
+          "desc_en": "Name or number of the layer to create the instance on."
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "X",
+          "name_en": "X",
+          "desc_zh": "X坐标，用于放置创建的实例。",
+          "desc_en": "X co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_zh": "Y",
+          "name_en": "Y",
+          "desc_zh": "Y坐标，用于放置创建的实例。",
+          "desc_en": "Y co-ordinate at which to place the created instance."
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_zh": "创建子对象",
+          "name_en": "Create hierarchy",
+          "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_zh": "模版名称",
+          "name_en": "Template name",
+          "desc_zh": "创建对象时，指定模版对象的名称，继承其所有属性。",
+          "desc_en": "Use a specific instance as a template when creating a new object."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "set-group-active",
+      "name_zh": "启用事件组",
+      "name_en": "Set group active",
+      "description_zh": "启用或禁用事件组。",
+      "description_en": "Activate or deactivate an event group.",
+      "display_zh": "{1}事件组 [b]{0}[/b]",
+      "display_en": "Set group [b]{0}[/b] {1}",
+      "scriptName": "SetGroupActive",
+      "category": "general",
+      "params": [
+        {
+          "id": "group-name",
+          "type": "groupname",
+          "name_zh": "名称",
+          "name_en": "Group name",
+          "desc_zh": "要设置的事件组的名称。",
+          "desc_en": "The name of the event group to set active."
+        },
+        {
+          "id": "state",
+          "type": "combo",
+          "name_zh": "状态",
+          "name_en": "State",
+          "desc_zh": "激活或冻结分组，还可以切换激活状态。",
+          "desc_en": "Choose whether to activate or deactivate the group.",
+          "initialValue": "activated",
+          "items": [
+            "deactivated",
+            "activated",
+            "toggle-active"
+          ],
+          "items_i18n": {
+            "deactivated": {
+              "zh": "禁用",
+              "en": "Deactivated"
+            },
+            "activated": {
+              "zh": "启用",
+              "en": "Activated"
+            },
+            "toggle-active": {
+              "zh": "反转",
+              "en": "Toggle active"
+            }
+          }
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "stop-loop",
+      "name_zh": "停止循环",
+      "name_en": "Stop loop",
+      "description_zh": "停止当前正在运行的循环，仅对 '系统' 对象中的循环、重复条件有效。",
+      "description_en": "Stop any currently running loop (for, for each, repeat).",
+      "display_zh": "停止循环",
+      "display_en": "Stop loop",
+      "scriptName": "StopLoop",
+      "category": "general",
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "reset-persisted-objects",
+      "name_zh": "重置持久化对象",
+      "name_en": "Reset persisted objects",
+      "description_zh": "重置所有场景具有持久化行为的对象，恢复到初始状态。",
+      "description_en": "Reset all objects with the Persist behavior in all layouts to their initial state.",
+      "display_zh": "重置持久化对象",
+      "display_en": "Reset persisted objects",
+      "scriptName": "ResetPersisted",
+      "category": "general",
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "sort-z-order",
+      "name_zh": "排序显示顺序",
+      "name_en": "Sort Z order",
+      "description_zh": "根据对象的实例变量，调整在Z轴的显示顺序。",
+      "description_en": "Sort an object's instance's Z order according to an instance variable.",
+      "display_zh": "排序{0}显示顺序(根据[b]{1}[/b])",
+      "display_en": "Sort {0} Z order by [b]{1}[/b]",
+      "scriptName": "SortZOrderByInstVar",
+      "category": "general",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "要进行排序的对象，建议使用家族。",
+          "desc_en": "The object whose instances will have their Z order sorted."
+        },
+        {
+          "id": "instance-variable",
+          "type": "objinstancevar",
+          "name_zh": "实例变量",
+          "name_en": "Instance variable",
+          "desc_zh": "指定一个实例变量，作为排序顺序的参考。通常会将此值设为实例对象的 Y 坐标或图像点。",
+          "desc_en": "The instance variable to use for sorting Z order by."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    },
+    {
+      "id": "set-collision-cell-size",
+      "name_zh": "设置碰撞单元大小",
+      "name_en": "Set collision cell size",
+      "description_zh": "通过碰撞单元优化更改移动对象和测试碰撞之间的性能权衡。",
+      "description_en": "Change the performance trade-off between moving objects and testing collisions with the collision cells optimization.",
+      "display_zh": "设置碰撞单元大小 [i]{0}[/i] x [i]{1}[/i]",
+      "display_en": "Set collision cell size to [i]{0}[/i] x [i]{1}[/i]",
+      "scriptName": "SetCollisionCellSize",
+      "category": "general",
+      "params": [
+        {
+          "id": "width",
+          "type": "number",
+          "name_zh": "宽度",
+          "name_en": "Width",
+          "desc_zh": "要设置的碰撞单元格宽度。",
+          "desc_en": "Collision cell width to set."
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_zh": "高度",
+          "name_en": "Height",
+          "desc_zh": "要设置的碰撞单元格高度。",
+          "desc_en": "Collision cell height to set."
+        }
+      ],
+      "category_zh": "常规",
+      "category_en": "General"
+    }
+  ],
+  "expressions": []
+}

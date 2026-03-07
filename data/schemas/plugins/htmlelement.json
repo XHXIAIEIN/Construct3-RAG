@@ -9,6 +9,12 @@
   "categories": [
     "html-content"
   ],
+  "aceCategories": {
+    "html-content": {
+      "zh": "HTML 内容",
+      "en": "HTML content"
+    }
+  },
   "conditions": [
     {
       "id": "on-clicked",
@@ -21,7 +27,9 @@
       "scriptName": "OnClicked",
       "isTrigger": true,
       "canDebug": true,
-      "category": "html-content"
+      "category": "html-content",
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "on-clicked-id",
@@ -44,7 +52,9 @@
           "desc_zh": "指定的ID。",
           "desc_en": "The ID of the element that was clicked."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "on-clicked-class",
@@ -67,7 +77,9 @@
           "desc_zh": "指定的Class类名。 使用空格匹配多个类名称。",
           "desc_en": "The class of the element that was clicked. Use space-separated class names to match multiple classes."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "on-css-animation-ended",
@@ -90,7 +102,9 @@
           "desc_zh": "CSS动画的名称，不区分大小写。",
           "desc_en": "The name of the CSS animation (as defined by the @keyframes rule), case insensitive."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     }
   ],
   "actions": [
@@ -171,7 +185,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "insert-content",
@@ -273,7 +289,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "remove-content",
@@ -339,7 +357,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "set-content-class",
@@ -418,7 +438,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "set-content-attribute",
@@ -501,7 +523,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "set-content-css-style",
@@ -563,7 +587,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "position-object-at-element",
@@ -593,7 +619,9 @@
           "desc_zh": "CSS 选择器，用于标识要将对象定位到的HTML元素。",
           "desc_en": "A CSS selector identifying the element to position the object to."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "create-sprite-img-element",
@@ -666,7 +694,9 @@
           "desc_zh": "(可选) 为新创建的图像元素设置 class。",
           "desc_en": "An optional class to set for the created image element."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "set-scroll-position",
@@ -719,7 +749,9 @@
           "desc_zh": "设置滚动到的位置，以CSS像素为单位。",
           "desc_en": "The scroll position to set in CSS pixels."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     }
   ],
   "expressions": [
@@ -731,7 +763,9 @@
       "description_en": "String with HTML content of the element.",
       "expressionName": "HTMLContent",
       "returnType": "string",
-      "category": "html-content"
+      "category": "html-content",
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "text-content",
@@ -741,7 +775,9 @@
       "description_en": "String with plain text content of the element.",
       "expressionName": "TextContent",
       "returnType": "string",
-      "category": "html-content"
+      "category": "html-content",
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "target-id",
@@ -751,7 +787,9 @@
       "description_en": "In a trigger, the ID of the targeted element.",
       "expressionName": "TargetID",
       "returnType": "string",
-      "category": "html-content"
+      "category": "html-content",
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "target-class",
@@ -761,7 +799,9 @@
       "description_en": "In a trigger, the class of the targeted element.",
       "expressionName": "TargetClass",
       "returnType": "string",
-      "category": "html-content"
+      "category": "html-content",
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     },
     {
       "id": "escape-html",
@@ -781,7 +821,9 @@
           "desc_zh": "要转义的HTML字符串",
           "desc_en": "String of HTML to escape."
         }
-      ]
+      ],
+      "category_zh": "HTML 内容",
+      "category_en": "HTML content"
     }
   ],
   "properties": [

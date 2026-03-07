@@ -9,6 +9,12 @@
   "categories": [
     "file-chooser"
   ],
+  "aceCategories": {
+    "file-chooser": {
+      "zh": "文件选择器",
+      "en": "File chooser"
+    }
+  },
   "conditions": [
     {
       "id": "on-changed",
@@ -22,7 +28,9 @@
       "isTrigger": true,
       "canDebug": true,
       "highlight": true,
-      "category": "file-chooser"
+      "category": "file-chooser",
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     }
   ],
   "actions": [
@@ -45,7 +53,9 @@
           "desc_zh": "要释放的文件的URL。",
           "desc_en": "The URL of the file to release."
         }
-      ]
+      ],
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "click",
@@ -56,7 +66,9 @@
       "display_zh": "点击(激活文件选择器)",
       "display_en": "Click (activate file picker)",
       "scriptName": "Click",
-      "category": "file-chooser"
+      "category": "file-chooser",
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "clear",
@@ -67,7 +79,9 @@
       "display_zh": "清空",
       "display_en": "Clear",
       "scriptName": "Clear",
-      "category": "file-chooser"
+      "category": "file-chooser",
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     }
   ],
   "expressions": [
@@ -79,7 +93,9 @@
       "description_en": "The number of chosen files.",
       "expressionName": "FileCount",
       "returnType": "number",
-      "category": "file-chooser"
+      "category": "file-chooser",
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "filenameat",
@@ -99,7 +115,9 @@
           "desc_zh": "文件在列表的索引，从 0 开始计数。",
           "desc_en": "Index of file"
         }
-      ]
+      ],
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "filesizeat",
@@ -119,7 +137,9 @@
           "desc_zh": "文件在列表的索引，从 0 开始计数。",
           "desc_en": "Index of file"
         }
-      ]
+      ],
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "filetypeat",
@@ -139,7 +159,9 @@
           "desc_zh": "文件在列表的索引，从 0 开始计数。",
           "desc_en": "Index of file"
         }
-      ]
+      ],
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     },
     {
       "id": "fileurlat",
@@ -159,7 +181,9 @@
           "desc_zh": "文件在列表的索引，从 0 开始计数。",
           "desc_en": "Index of file"
         }
-      ]
+      ],
+      "category_zh": "文件选择器",
+      "category_en": "File chooser"
     }
   ],
   "properties": [

@@ -7,6 +7,7 @@
   "description_en": "Manage multiple timers which work per instance.",
   "path": "general/timer",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "on-timer",

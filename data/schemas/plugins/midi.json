@@ -13,6 +13,28 @@
     "utilities",
     "midi-output"
   ],
+  "aceCategories": {
+    "midi-access": {
+      "zh": "MIDI 连接",
+      "en": "MIDI access"
+    },
+    "midi-devices": {
+      "zh": "MIDI 设备",
+      "en": "MIDI devices"
+    },
+    "midi-input": {
+      "zh": "MIDI 输入",
+      "en": "MIDI input"
+    },
+    "utilities": {
+      "zh": "公共",
+      "en": "Utilities"
+    },
+    "midi-output": {
+      "zh": "MIDI 输出",
+      "en": "MIDI output"
+    }
+  },
   "conditions": [
     {
       "id": "is-supported",
@@ -23,7 +45,9 @@
       "display_zh": "设备受支持",
       "display_en": "Is supported",
       "scriptName": "IsSupported",
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "has-access",
@@ -34,7 +58,9 @@
       "display_zh": "有访问权限",
       "display_en": "Has access",
       "scriptName": "HasAccess",
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "on-request-access-success",
@@ -46,7 +72,9 @@
       "display_en": "On request access success",
       "scriptName": "OnRequestAccessSuccess",
       "isTrigger": true,
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "on-request-access-failed",
@@ -58,7 +86,9 @@
       "display_en": "On request access failed",
       "scriptName": "OnRequestAccessFailed",
       "isTrigger": true,
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "on-devices-state-changed",
@@ -70,7 +100,9 @@
       "display_en": "On devices state changed",
       "scriptName": "OnDevicesStateChanged",
       "isTrigger": true,
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "on-device-opened",
@@ -114,7 +146,9 @@
           "desc_zh": "设备ID",
           "desc_en": "The device ID."
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-device-closed",
@@ -158,7 +192,9 @@
           "desc_zh": "设备ID",
           "desc_en": "The device ID."
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-device-error",
@@ -202,7 +238,9 @@
           "desc_zh": "设备ID。",
           "desc_en": "The device ID."
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-any-device-opened",
@@ -238,7 +276,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-any-device-closed",
@@ -274,7 +314,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-any-device-error",
@@ -310,7 +352,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "on-any-binary-message",
@@ -332,7 +376,9 @@
           "desc_zh": "选择二进制数据对象，将接收到的二进制消息写入其中。",
           "desc_en": "Choose a Binary Data object to write the received binary message to."
         }
-      ]
+      ],
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "on-any-message",
@@ -393,7 +439,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "on-message",
@@ -462,7 +510,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "compare-parameter",
@@ -543,7 +593,9 @@
           "desc_zh": "要比较的值。",
           "desc_en": "The value to compare to."
         }
-      ]
+      ],
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     }
   ],
   "actions": [
@@ -575,7 +627,9 @@
           "desc_zh": "允许系统使用任何已安装的软件合成器。",
           "desc_en": "Allow the system to utilize any installed software synthesizers."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "open-device",
@@ -619,7 +673,9 @@
           "desc_zh": "设备 ID。留空则使用第一个可用设备。",
           "desc_en": "The device ID. Leave empty to use the first available device."
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "close-device",
@@ -663,7 +719,9 @@
           "desc_zh": "设备 ID。留空则关闭上次打开的设备。",
           "desc_en": "The device ID. Leave empty to close the last opened device."
         }
-      ]
+      ],
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "send-binary-message",
@@ -692,7 +750,9 @@
           "desc_zh": "选择要作为 MIDI 信息发送的二进制数据对象。",
           "desc_en": "Choose a Binary Data object to send as a MIDI message."
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     },
     {
       "id": "send-note-message",
@@ -758,7 +818,9 @@
           "desc_en": "The velocity, or pressure for aftertouch messages, from 0-127.",
           "initialValue": "64"
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     },
     {
       "id": "send-control-change-message",
@@ -797,7 +859,9 @@
           "desc_en": "The controller value to set, from 0-127.",
           "initialValue": "64"
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     },
     {
       "id": "send-message",
@@ -854,7 +918,9 @@
           "desc_en": "The value to send, from 0-127 for program change or channel pressure messages, or 0-16383 for pitch wheel messages.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     },
     {
       "id": "schedule-next-message",
@@ -875,7 +941,9 @@
           "desc_zh": "下一条消息发送的延迟时间，以秒为单位。0 表示没有延迟。",
           "desc_en": "The time delay for the next message in seconds. Zero means no delay."
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     },
     {
       "id": "set-midi-channel",
@@ -896,7 +964,9 @@
           "desc_zh": "MIDI 通道，范围从 0 至 15。",
           "desc_en": "The MIDI channel, from 0-15."
         }
-      ]
+      ],
+      "category_zh": "MIDI 输出",
+      "category_en": "MIDI output"
     }
   ],
   "expressions": [
@@ -908,7 +978,9 @@
       "description_en": "Number of available MIDI input devices.",
       "expressionName": "InputCount",
       "returnType": "number",
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "input-id-at",
@@ -928,7 +1000,9 @@
           "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI input."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "input-manufacturer-at",
@@ -948,7 +1022,9 @@
           "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI input."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "input-name-at",
@@ -968,7 +1044,9 @@
           "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI input."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "output-count",
@@ -978,7 +1056,9 @@
       "description_en": "Number of available MIDI output devices.",
       "expressionName": "OutputCount",
       "returnType": "number",
-      "category": "midi-access"
+      "category": "midi-access",
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "output-id-at",
@@ -998,7 +1078,9 @@
           "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI output."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "output-manufacturer-at",
@@ -1018,7 +1100,9 @@
           "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI output."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "output-name-at",
@@ -1038,7 +1122,9 @@
           "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。",
           "desc_en": "Zero-based index of MIDI output."
         }
-      ]
+      ],
+      "category_zh": "MIDI 连接",
+      "category_en": "MIDI access"
     },
     {
       "id": "current-device-id",
@@ -1048,7 +1134,9 @@
       "description_en": "In a trigger, the associated device ID.",
       "expressionName": "CurrentDeviceID",
       "returnType": "string",
-      "category": "midi-devices"
+      "category": "midi-devices",
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "current-device-manufacturer",
@@ -1058,7 +1146,9 @@
       "description_en": "In a trigger, the associated device manufacturer.",
       "expressionName": "CurrentDeviceManufacturer",
       "returnType": "string",
-      "category": "midi-devices"
+      "category": "midi-devices",
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "current-device-name",
@@ -1068,7 +1158,9 @@
       "description_en": "In a trigger, the associated device name.",
       "expressionName": "CurrentDeviceName",
       "returnType": "string",
-      "category": "midi-devices"
+      "category": "midi-devices",
+      "category_zh": "MIDI 设备",
+      "category_en": "MIDI devices"
     },
     {
       "id": "note-number",
@@ -1078,7 +1170,9 @@
       "description_en": "The MIDI note number (0-127, middle C is 60).",
       "expressionName": "NoteNumber",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "note-name",
@@ -1088,7 +1182,9 @@
       "description_en": "The MIDI note name, e.g. \"C4\" for middle C.",
       "expressionName": "NoteName",
       "returnType": "string",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "channel",
@@ -1098,7 +1194,9 @@
       "description_en": "The MIDI channel.",
       "expressionName": "Channel",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "velocity",
@@ -1108,7 +1206,9 @@
       "description_en": "Velocity for note on/off messages (0-127).",
       "expressionName": "Velocity",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "pressure",
@@ -1118,7 +1218,9 @@
       "description_en": "Pressure for AfterTouch/Channel Pressure messages (0-127).",
       "expressionName": "Pressure",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "controller-number",
@@ -1128,7 +1230,9 @@
       "description_en": "Controller number for a Control Change message (0-127).",
       "expressionName": "ControllerNumber",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "controller-value",
@@ -1138,7 +1242,9 @@
       "description_en": "Controller value for a Control Change message (0-127).",
       "expressionName": "ControllerValue",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "program-number",
@@ -1148,7 +1254,9 @@
       "description_en": "Program number for a Program Change message (0-127).",
       "expressionName": "ProgramNumber",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "pitch-wheel-value",
@@ -1158,7 +1266,9 @@
       "description_en": "Pitch wheel position for Pitch Wheel messages (0-16383).",
       "expressionName": "PitchWheelValue",
       "returnType": "number",
-      "category": "midi-input"
+      "category": "midi-input",
+      "category_zh": "MIDI 输入",
+      "category_en": "MIDI input"
     },
     {
       "id": "note-number-to-name",
@@ -1178,7 +1288,9 @@
           "desc_zh": "MIDI 音符编号",
           "desc_en": "MIDI note number"
         }
-      ]
+      ],
+      "category_zh": "公共",
+      "category_en": "Utilities"
     },
     {
       "id": "note-name-to-number",
@@ -1198,7 +1310,9 @@
           "desc_zh": "音符的名称， 例如 'C4'",
           "desc_en": "Note name e.g. \"C4\"."
         }
-      ]
+      ],
+      "category_zh": "公共",
+      "category_en": "Utilities"
     }
   ]
 }

@@ -1,0 +1,116 @@
+{
+  "id": "system-scrolling",
+  "originalId": "system",
+  "name_zh": "系统 - 滚动",
+  "name_en": "System - Scrolling",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "scrolling",
+  "category_zh": "滚动",
+  "category_en": "Scrolling",
+  "conditions": [],
+  "actions": [
+    {
+      "id": "scroll-to-x",
+      "name_zh": "滚动到X",
+      "name_en": "Scroll to X",
+      "description_zh": "滚动到X坐标。",
+      "description_en": "Scroll to an X co-ordinate.",
+      "display_zh": "设置视角位置到X坐标 [i]{0}[/i]",
+      "display_en": "Set scroll X to [i]{0}[/i]",
+      "scriptName": "ScrollX",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "X",
+          "name_en": "X",
+          "desc_zh": "要滚动到的X坐标，以像素为单位。",
+          "desc_en": "X co-ordinate to scroll to, in pixels."
+        }
+      ],
+      "category_zh": "滚动",
+      "category_en": "Scrolling"
+    },
+    {
+      "id": "scroll-to-y",
+      "name_zh": "滚动到Y",
+      "name_en": "Scroll to Y",
+      "description_zh": "滚动到Y坐标。",
+      "description_en": "Scroll to an Y co-ordinate.",
+      "display_zh": "设置视角位置到Y坐标 [i]{0}[/i]",
+      "display_en": "Set scroll Y to [i]{0}[/i]",
+      "scriptName": "ScrollY",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "y",
+          "type": "number",
+          "name_zh": "Y",
+          "name_en": "Y",
+          "desc_zh": "要滚动到的Y坐标，以像素为单位。",
+          "desc_en": "Y co-ordinate to scroll to, in pixels."
+        }
+      ],
+      "category_zh": "滚动",
+      "category_en": "Scrolling"
+    },
+    {
+      "id": "scroll-to-position",
+      "name_zh": "滚动到位置",
+      "name_en": "Scroll to position",
+      "description_zh": "滚动到坐标。",
+      "description_en": "Scroll to a co-ordinate.",
+      "display_zh": "设置视角位置到坐标 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Scroll to ([i]{0}[/i], [i]{1}[/i])",
+      "scriptName": "Scroll",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "X",
+          "name_en": "X",
+          "desc_zh": "要滚动到的X坐标，以像素为单位。",
+          "desc_en": "X co-ordinate to scroll to, in pixels."
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_zh": "Y",
+          "name_en": "Y",
+          "desc_zh": "要滚动到的Y坐标，以像素为单位。",
+          "desc_en": "Y co-ordinate to scroll to, in pixels."
+        }
+      ],
+      "category_zh": "滚动",
+      "category_en": "Scrolling"
+    },
+    {
+      "id": "scroll-to-object",
+      "name_zh": "滚动到对象",
+      "name_en": "Scroll to object",
+      "description_zh": "将镜头位置滚动到对象",
+      "description_en": "Scroll to an object.",
+      "display_zh": "设置镜头位置到对象 {0}",
+      "display_en": "Scroll to {0}",
+      "scriptName": "ScrollToObject",
+      "category": "scrolling",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "目标",
+          "name_en": "Object",
+          "desc_zh": "要将视角滚动到的对象",
+          "desc_en": "Object to scroll to."
+        }
+      ],
+      "category_zh": "滚动",
+      "category_en": "Scrolling"
+    }
+  ],
+  "expressions": []
+}

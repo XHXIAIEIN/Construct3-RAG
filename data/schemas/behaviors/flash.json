@@ -7,6 +7,7 @@
   "description_en": "Make an object temporarily flash, alternately becoming visible and invisible.",
   "path": "general/flash",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-flashing",

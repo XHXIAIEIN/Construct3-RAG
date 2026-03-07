@@ -11,6 +11,20 @@
     "readings",
     "led-display"
   ],
+  "aceCategories": {
+    "bluetooth": {
+      "zh": "蓝牙",
+      "en": "Bluetooth"
+    },
+    "readings": {
+      "zh": "读数",
+      "en": "Readings"
+    },
+    "led-display": {
+      "zh": "LED显示屏",
+      "en": "LED display"
+    }
+  },
   "conditions": [
     {
       "id": "is-supported",
@@ -21,7 +35,9 @@
       "display_zh": "设备受支持",
       "display_en": "Is supported",
       "scriptName": "IsSupported",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-device-connected",
@@ -34,7 +50,9 @@
       "scriptName": "OnDeviceConnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-device-disconnected",
@@ -47,7 +65,9 @@
       "scriptName": "OnDeviceDisconnected",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "is-device-connected",
@@ -58,7 +78,9 @@
       "display_zh": "设备已连接",
       "display_en": "Is device connected",
       "scriptName": "IsDeviceConnected",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-request-device-failed",
@@ -71,7 +93,9 @@
       "scriptName": "OnRequestDeviceFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "on-accelerometer-reading",
@@ -83,7 +107,9 @@
       "display_en": "On accelerometer reading",
       "scriptName": "OnAccelerometerReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "on-button-pressed",
@@ -146,7 +172,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "on-bearing-reading",
@@ -158,7 +186,9 @@
       "display_en": "On bearing reading",
       "scriptName": "OnBearingReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "on-temperature-reading",
@@ -170,7 +200,9 @@
       "display_en": "On temperature reading",
       "scriptName": "OnTemperatureReading",
       "isTrigger": true,
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     }
   ],
   "actions": [
@@ -183,7 +215,9 @@
       "display_zh": "请求连接",
       "display_en": "Request device",
       "scriptName": "RequestDevice",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "disconnect-device",
@@ -194,7 +228,9 @@
       "display_zh": "断开设备",
       "display_en": "Disconnect device",
       "scriptName": "DisconnectDevice",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "clear-led-state",
@@ -205,7 +241,9 @@
       "display_zh": "清除 LED 状态",
       "display_en": "Clear LED state",
       "scriptName": "ClearLEDState",
-      "category": "led-display"
+      "category": "led-display",
+      "category_zh": "LED显示屏",
+      "category_en": "LED display"
     },
     {
       "id": "set-led-state",
@@ -242,7 +280,9 @@
           "desc_zh": "打开或关闭 LED",
           "desc_en": "Whether the LED is on or off."
         }
-      ]
+      ],
+      "category_zh": "LED显示屏",
+      "category_en": "LED display"
     },
     {
       "id": "update-leds",
@@ -253,7 +293,9 @@
       "display_zh": "更新LED",
       "display_en": "Update LEDs",
       "scriptName": "UpdateLEDs",
-      "category": "led-display"
+      "category": "led-display",
+      "category_zh": "LED显示屏",
+      "category_en": "LED display"
     },
     {
       "id": "scroll-text",
@@ -274,7 +316,9 @@
           "desc_zh": "要显示的消息，最多 20 个字符。",
           "desc_en": "The message to display, up to 20 characters."
         }
-      ]
+      ],
+      "category_zh": "LED显示屏",
+      "category_en": "LED display"
     }
   ],
   "expressions": [
@@ -286,7 +330,9 @@
       "description_en": "The ID of a connected device (if any).",
       "expressionName": "DeviceID",
       "returnType": "string",
-      "category": "bluetooth"
+      "category": "bluetooth",
+      "category_zh": "蓝牙",
+      "category_en": "Bluetooth"
     },
     {
       "id": "accelerometer-raw-x",
@@ -296,7 +342,9 @@
       "description_en": "The raw accelerometer X reading.",
       "expressionName": "AccelerometerRawX",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "accelerometer-raw-y",
@@ -306,7 +354,9 @@
       "description_en": "The raw accelerometer Y reading.",
       "expressionName": "AccelerometerRawY",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "accelerometer-raw-z",
@@ -316,7 +366,9 @@
       "description_en": "The raw accelerometer Z reading.",
       "expressionName": "AccelerometerRawZ",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "accelerometer-smoothed-x",
@@ -326,7 +378,9 @@
       "description_en": "The smoothed accelerometer X reading.",
       "expressionName": "AccelerometerSmoothedX",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "accelerometer-smoothed-y",
@@ -336,7 +390,9 @@
       "description_en": "The smoothed accelerometer Y reading.",
       "expressionName": "AccelerometerSmoothedY",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "accelerometer-smoothed-z",
@@ -346,7 +402,9 @@
       "description_en": "The smoothed accelerometer Z reading.",
       "expressionName": "AccelerometerSmoothedZ",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "bearing",
@@ -356,7 +414,9 @@
       "description_en": "The magnetometer bearing reading, in degrees from due north.",
       "expressionName": "Bearing",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     },
     {
       "id": "temperature",
@@ -366,7 +426,9 @@
       "description_en": "The temperature reading, in degrees celcius.",
       "expressionName": "Temperature",
       "returnType": "number",
-      "category": "readings"
+      "category": "readings",
+      "category_zh": "读数",
+      "category_en": "Readings"
     }
   ],
   "properties": [

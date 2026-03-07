@@ -7,6 +7,7 @@
   "description_en": "Move an object ahead at its current angle.  Typically used for bullets and projectiles.",
   "path": "movements/bullet",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "compare-speed",

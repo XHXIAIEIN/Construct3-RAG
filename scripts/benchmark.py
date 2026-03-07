@@ -11,6 +11,8 @@ Construct 3 RAG Benchmark
     python scripts/benchmark.py --output report.md
 """
 
+from src.config import QDRANT_HOST, QDRANT_PORT, LLM_MODEL, LLM_BASE_URL, LLM_PROVIDER, LLM_API_KEY
+from src.rag.chain import RAGChain, RAGResponse
 import sys
 import time
 import argparse
@@ -19,9 +21,6 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.rag.chain import RAGChain, RAGResponse
-from src.config import QDRANT_HOST, QDRANT_PORT, LLM_MODEL, LLM_BASE_URL, LLM_PROVIDER, LLM_API_KEY
 
 
 # =============================================================================
@@ -48,21 +47,21 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
         id="B01",
         category="概念",
         question="Sprite 对象是什么？它的主要用途是什么？",
-        expected_keywords=["Sprite", "图像", "动画"],
+        expected_keywords=["Sprite", "图像", "动画", "精灵", "碰撞"],
         note="基础插件概念"
     ),
     BenchmarkCase(
         id="B02",
         category="概念",
         question="事件表（Event Sheet）是什么？",
-        expected_keywords=["事件", "条件", "动作"],
+        expected_keywords=["事件", "条件", "动作", "表达式"],
         note="核心概念"
     ),
     BenchmarkCase(
         id="B03",
         category="概念",
         question="实例变量和全局变量的区别是什么？",
-        expected_keywords=["实例", "全局"],
+        expected_keywords=["实例", "全局", "静态", "作用域"],
         note="变量作用域"
     ),
 
@@ -70,22 +69,23 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
     BenchmarkCase(
         id="B04",
         category="插件",
-        question="Platform 行为有哪些主要参数？",
-        expected_keywords=["Platform", "跳跃", "速度"],
+        question="平台(Platform) 行为有哪些主要参数？",
+        expected_keywords=["平台", "最大移动速度", "加速度", "减速度", "重力",
+                           "跳跃高度", "最大下落速度", "跳跃维持", "二段跳"],
         note="Platform 行为配置"
     ),
     BenchmarkCase(
         id="B05",
         category="插件",
-        question="Tween 行为怎么用？如何让对象移动到指定位置？",
-        expected_keywords=["Tween"],
+        question="补间(Tween) 行为怎么用？如何让对象移动到指定位置？",
+        expected_keywords=["补间", "两个参数", "位置", "过渡",  "时间", "曲线"],
         note="Tween 行为用法"
     ),
     BenchmarkCase(
         id="B06",
         category="插件",
-        question="Keyboard 插件如何检测按键？on key pressed 和 is key down 的区别？",
-        expected_keywords=["Keyboard", "按键"],
+        question="键盘(Keyboard) 插件如何检测按键？按住(on key pressed) 和按下(is key down) 的区别？",
+        expected_keywords=["键盘", "按键", "按键码", "按住", "按下", "持续", "单次"],
         note="输入检测差异"
     ),
 
@@ -93,22 +93,23 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
     BenchmarkCase(
         id="B07",
         category="系统",
-        question="System 对象的 For each 条件如何使用？",
-        expected_keywords=["For each", "每个", "循环"],
+        question="系统(System) 对象的遍历(For each) 条件如何使用？",
+        expected_keywords=["条件", "循环", "遍历",
+                           "对象", "实例", "范围", "跳出", "loopindex"],
         note="循环遍历对象"
     ),
     BenchmarkCase(
         id="B08",
         category="系统",
         question="如何在 Construct 3 中实现计时器？",
-        expected_keywords=["计时", "Timer"],
+        expected_keywords=["计时", "正在计时", "计时结束", "遍历"],
         note="计时器实现方式"
     ),
     BenchmarkCase(
         id="B09",
         category="系统",
-        question="Wait for signal 和 Wait X seconds 有什么区别？",
-        expected_keywords=["Wait"],
+        question="等待信号(Wait for signal) 和 等待X秒(Wait X seconds) 有什么区别？",
+        expected_keywords=["信号", "异步", "秒", "时间", "等待"],
         note="等待机制"
     ),
 
@@ -116,22 +117,23 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
     BenchmarkCase(
         id="B10",
         category="工作流",
-        question="如何让玩家按空格键跳跃？用 Platform 行为的 Simulate control 动作实现",
-        expected_keywords=["Platform", "simulate", "跳跃", "空格"],
+        question="如何让玩家按空格键跳跃？并且播放跳跃动画？",
+        expected_keywords=["键盘", "空格", "模拟控制",
+                           "跳跃", "平台", "条件", "正在跳跃", "准备起跳", "动画"],
         note="经典平台游戏跳跃"
     ),
     BenchmarkCase(
         id="B11",
         category="工作流",
         question="如何实现碰撞检测？Sprite 和 Sprite 碰撞时触发事件",
-        expected_keywords=["碰撞", "Overlapping"],
+        expected_keywords=["碰撞", "重叠", "家族"],
         note="碰撞事件"
     ),
     BenchmarkCase(
         id="B12",
         category="工作流",
         question="如何用事件表实现分数系统？包括变量定义和 UI 更新",
-        expected_keywords=["变量", "分数", "Text"],
+        expected_keywords=["变量", "分数", "设置文本", "动作组"],
         note="分数系统工作流"
     ),
 
@@ -140,11 +142,12 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
         id="B13",
         category="脚本",
         question="在 Construct 3 脚本中如何获取一个对象的实例？",
-        expected_keywords=["runtime", "script"],
-        note="脚本 API 基础"
+        expected_keywords=["runtime", "objects", "getInstance",
+                           "getInstanceByUid", "getFirstInstance", "getAllInstances", "getPickedInstances", "getPairedInstance"],
+        note="脚本 API 基础。相关文档：https://www.construct.net/en/make-games/manuals/construct-3/plugin-reference/runtime-object#getinstance; https://www.construct.net/en/make-games/manuals/construct-3/scripting/scripting-reference/object-interfaces/iobjectclass"
     ),
 
-    # --- 边界测试（验证不幻觉） ---
+    # --- 边界测试 ---
     BenchmarkCase(
         id="B14",
         category="边界",
@@ -160,7 +163,7 @@ BENCHMARK_CASES: List[BenchmarkCase] = [
         question="Construct 3 r999 版本有哪些新功能？",
         expected_keywords=[],
         forbidden_phrases=["r999"],
-        note="不存在的版本，应说明无法找到",
+        note="不存在的版本，应说明无法找到。并从官方网址(https://www.construct.net/en/make-games/releases) 的版本列表检查最新版本。如最新的测试版本是{0}, 发布于{1}。 最新正式版是{2}, 发布于{3}。",
         has_answer=False
     ),
 ]
@@ -250,7 +253,8 @@ def score_citations(answer: str, case: BenchmarkCase) -> float:
 
 def score_confidence(confidence: str) -> float:
     """置信度质量评分"""
-    mapping = {"high": 1.0, "medium": 0.6, "low": 0.3, "none": 0.0, "unknown": 0.0}
+    mapping = {"high": 1.0, "medium": 0.6,
+               "low": 0.3, "none": 0.0, "unknown": 0.0}
     return mapping.get(confidence, 0.0)
 
 
@@ -302,10 +306,12 @@ def evaluate_case(case: BenchmarkCase, chain: RAGChain, mode: str) -> EvalResult
         elapsed=elapsed,
     )
 
-    result.keyword_score = score_keywords(response.answer, case.expected_keywords, case)
+    result.keyword_score = score_keywords(
+        response.answer, case.expected_keywords, case)
     result.citation_score = score_citations(response.answer, case)
     result.confidence_score = score_confidence(response.confidence)
-    result.hallucination_penalty = score_hallucination(response.answer, case.forbidden_phrases)
+    result.hallucination_penalty = score_hallucination(
+        response.answer, case.forbidden_phrases)
 
     return result
 
@@ -414,16 +420,20 @@ def generate_report(results: List[EvalResult], cases: List[BenchmarkCase], mode:
             f"",
         ]
         if case.expected_keywords:
-            found = [kw for kw in case.expected_keywords if kw.lower() in r.answer.lower()]
-            missing = [kw for kw in case.expected_keywords if kw.lower() not in r.answer.lower()]
+            found = [kw for kw in case.expected_keywords if kw.lower()
+                     in r.answer.lower()]
+            missing = [kw for kw in case.expected_keywords if kw.lower()
+                       not in r.answer.lower()]
             if found:
                 lines.append(f"✓ 命中关键词: {', '.join(found)}")
             if missing:
                 lines.append(f"✗ 缺失关键词: {', '.join(missing)}")
             lines.append("")
         if r.hallucination_penalty > 0:
-            found_forbidden = [p for p in case.forbidden_phrases if p.lower() in r.answer.lower()]
-            lines.append(f"⚠ 幻觉警告: 出现禁词 {found_forbidden} (扣分 {r.hallucination_penalty:.2f})")
+            found_forbidden = [
+                p for p in case.forbidden_phrases if p.lower() in r.answer.lower()]
+            lines.append(
+                f"⚠ 幻觉警告: 出现禁词 {found_forbidden} (扣分 {r.hallucination_penalty:.2f})")
             lines.append("")
 
     return "\n".join(lines)

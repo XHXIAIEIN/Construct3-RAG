@@ -10,6 +10,16 @@
     "appearance",
     "web"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "web": {
+      "zh": "网络",
+      "en": "Web"
+    }
+  },
   "conditions": [
     {
       "id": "on-image-url-loaded",
@@ -21,7 +31,9 @@
       "display_en": "On image URL loaded",
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     },
     {
       "id": "on-image-url-failed",
@@ -33,7 +45,9 @@
       "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "actions": [
@@ -135,7 +149,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-margins",
@@ -180,7 +196,9 @@
           "desc_zh": "底部边距大小，以像素为单位。",
           "desc_en": "The bottom margin size in pixels."
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-edges",
@@ -215,7 +233,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-fill",
@@ -255,7 +275,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-image-scale-x",
@@ -277,7 +299,9 @@
           "desc_en": "The X scale of the image within the object, as a percentage.",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-image-scale-y",
@@ -299,7 +323,9 @@
           "desc_en": "The Y scale of the image within the object, as a percentage.",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-seams",
@@ -334,7 +360,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "load-image-from-url",
@@ -357,7 +385,9 @@
           "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
           "initialValue": "\"https://\""
         }
-      ]
+      ],
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "expressions": [
@@ -369,7 +399,9 @@
       "description_en": "Left border margin on the image in pixels.",
       "expressionName": "LeftMargin",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "right-margin",
@@ -379,7 +411,9 @@
       "description_en": "Right border margin on the image in pixels.",
       "expressionName": "RightMargin",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "top-margin",
@@ -389,7 +423,9 @@
       "description_en": "Top border margin on the image in pixels.",
       "expressionName": "TopMargin",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "bottom-margin",
@@ -399,7 +435,9 @@
       "description_en": "Bottom border margin on the image in pixels.",
       "expressionName": "BottomMargin",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "image-scale-x",
@@ -409,7 +447,9 @@
       "description_en": "The X scale of the image within the object.",
       "expressionName": "ImageScaleX",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "image-scale-y",
@@ -419,7 +459,9 @@
       "description_en": "The Y scale of the image within the object.",
       "expressionName": "ImageScaleY",
       "returnType": "number",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     }
   ],
   "properties": [

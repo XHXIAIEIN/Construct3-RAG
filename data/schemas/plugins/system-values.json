@@ -1,0 +1,457 @@
+{
+  "id": "system-values",
+  "originalId": "system",
+  "name_zh": "系统 - 数值",
+  "name_en": "System - Values",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "values",
+  "category_zh": "数值",
+  "category_en": "Values",
+  "conditions": [],
+  "actions": [],
+  "expressions": [
+    {
+      "id": "int",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "将字符串或浮点数转换为整数。",
+      "description_en": "Convert a string or float to an integer.",
+      "expressionName": "int",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "要转换为整数的值",
+          "desc_en": "Value to convert to integer"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "float",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "将字符串或整数转换为浮点数。",
+      "description_en": "Convert a string or integer to a float.",
+      "expressionName": "float",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "要转换为浮点数的值",
+          "desc_en": "Value to convert to float"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "str",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "将整数或浮点数转换为字符串。 您还可以使用＆运算符进行连接。",
+      "description_en": "Convert an integer or float to a string. You can also use the & operator for concatenation.",
+      "expressionName": "str",
+      "returnType": "string",
+      "category": "values",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "要转换为字符串的值",
+          "desc_en": "Value to convert to string"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "random",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "从 0 到小于 X 之间随机生成一个浮点数。如果传入 2 个参数，随机数在包含 a 但不包含 b 范围之间。",
+      "description_en": "Generate a random number.  Pass two numbers to generate within a range.",
+      "expressionName": "random",
+      "returnType": "number",
+      "isVariadicParameters": true,
+      "category": "values",
+      "params": [
+        {
+          "id": "range",
+          "type": "number",
+          "name_zh": "范围",
+          "name_en": "Range",
+          "desc_zh": "要生成的随机浮点数范围，从 0 到小于此值。",
+          "desc_en": "Range of random numbers to generate, from 0 to one less than this value.",
+          "initialValue": 10
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "clamp",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "约束数值在一个范围内。若小于最小值，则返回最小值。若大于最大值，则返回最大值。",
+      "description_en": "Return x if between two numbers, else the upper or lower bound.",
+      "expressionName": "clamp",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_zh": "当前值",
+          "name_en": "x",
+          "desc_zh": "被约束在范围的数值。",
+          "desc_en": "Number to clamp."
+        },
+        {
+          "id": "lower",
+          "type": "number",
+          "name_zh": "最小值",
+          "name_en": "lower",
+          "desc_zh": "若数值小于最小值，则返回最小值。",
+          "desc_en": "Lower bound."
+        },
+        {
+          "id": "upper",
+          "type": "number",
+          "name_zh": "最大值",
+          "name_en": "upper",
+          "desc_zh": "若数值大于最大值，则返回最大值。",
+          "desc_en": "Upper bound."
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "choose",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "从提供的参数中，随机选择一个值。",
+      "description_en": "Randomly choose one of the parameters.",
+      "expressionName": "choose",
+      "returnType": "any",
+      "isVariadicParameters": true,
+      "category": "values",
+      "params": [
+        {
+          "id": "value1",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "要被随机选择的值。",
+          "desc_en": "A random value to choose from."
+        },
+        {
+          "id": "value2",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "另一个可以随机选择的值。",
+          "desc_en": "Another random value to choose from."
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "chooseindex",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "从提供的参数中，根据索引选择对应值。",
+      "description_en": "Choose one of the parameters by an index.",
+      "expressionName": "chooseindex",
+      "returnType": "any",
+      "isVariadicParameters": true,
+      "category": "values",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_zh": "索引",
+          "name_en": "Index",
+          "desc_zh": "选择第几个参数，从 0 开始计数。",
+          "desc_en": "A zero-based index of the parameter to choose."
+        },
+        {
+          "id": "value1",
+          "type": "any",
+          "name_zh": "值",
+          "name_en": "Value",
+          "desc_zh": "用于被索引选择的值。",
+          "desc_en": "A value to select by index."
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "rgb",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "description_en": "Generate an RGB value (number representing a color).",
+      "expressionName": "rgb",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "values",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_zh": "红",
+          "name_en": "Red",
+          "desc_zh": "红色值，0-255",
+          "desc_en": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_zh": "绿",
+          "name_en": "Green",
+          "desc_zh": "绿色值，0-255",
+          "desc_en": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_zh": "蓝",
+          "name_en": "Blue",
+          "desc_zh": "蓝色值，0-255",
+          "desc_en": "Blue value, 0-255"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "rgbex",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "生成RGB颜色值，数值在 0 - 100 范围。",
+      "description_en": "Generate an extended-range RGB value (0-100 range).",
+      "expressionName": "rgbEx",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_zh": "红",
+          "name_en": "Red",
+          "desc_zh": "红色值, 0-100",
+          "desc_en": "Red value, 0-100"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_zh": "绿",
+          "name_en": "Green",
+          "desc_zh": "绿色值, 0-100",
+          "desc_en": "Green value, 0-100"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_zh": "蓝",
+          "name_en": "Blue",
+          "desc_zh": "蓝色值, 0-100",
+          "desc_en": "Blue value, 0-100"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "rgba",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "生成RGBA颜色值，数值在 0 - 100 范围。",
+      "description_en": "Generate an extended-range RGBA value (0-100 range).",
+      "expressionName": "rgba",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_zh": "红",
+          "name_en": "Red",
+          "desc_zh": "红色值, 0-100",
+          "desc_en": "Red value, 0-100"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_zh": "绿",
+          "name_en": "Green",
+          "desc_zh": "绿色值, 0-100",
+          "desc_en": "Green value, 0-100"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_zh": "蓝",
+          "name_en": "Blue",
+          "desc_zh": "蓝色值, 0-100",
+          "desc_en": "Blue value, 0-100"
+        },
+        {
+          "id": "alpha",
+          "type": "number",
+          "name_zh": "不透明度",
+          "name_en": "Alpha",
+          "desc_zh": "不透明度值，0-100",
+          "desc_en": "Alpha value, 0-100"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "rgbex255",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "description_en": "Generate an extended-range RGB value (0-255 range).",
+      "expressionName": "rgbEx255",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_zh": "红",
+          "name_en": "Red",
+          "desc_zh": "红色值，0-255",
+          "desc_en": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_zh": "绿",
+          "name_en": "Green",
+          "desc_zh": "绿色值，0-255",
+          "desc_en": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_zh": "蓝",
+          "name_en": "Blue",
+          "desc_zh": "蓝色值，0-255",
+          "desc_en": "Blue value, 0-255"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "rgba255",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "生成RGBA颜色值，数值在 0 - 255 范围。",
+      "description_en": "Generate an extended-range RGBA value (0-255 range).",
+      "expressionName": "rgba255",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "red",
+          "type": "number",
+          "name_zh": "红",
+          "name_en": "Red",
+          "desc_zh": "红色值，0-255",
+          "desc_en": "Red value, 0-255"
+        },
+        {
+          "id": "green",
+          "type": "number",
+          "name_zh": "绿",
+          "name_en": "Green",
+          "desc_zh": "绿色值，0-255",
+          "desc_en": "Green value, 0-255"
+        },
+        {
+          "id": "blue",
+          "type": "number",
+          "name_zh": "蓝",
+          "name_en": "Blue",
+          "desc_zh": "蓝色值，0-255",
+          "desc_en": "Blue value, 0-255"
+        },
+        {
+          "id": "alpha",
+          "type": "number",
+          "name_zh": "不透明度",
+          "name_en": "Alpha",
+          "desc_zh": "不透明度的值，0-255",
+          "desc_en": "Alpha value, 0-255"
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "hex-color",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "将十六进制颜色值转换为 RGBA 颜色值格式。",
+      "description_en": "Generate an RGBA value from a CSS-style hexadecimal string.",
+      "expressionName": "HexColor",
+      "returnType": "number",
+      "category": "values",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_zh": "十六进制颜色值",
+          "name_en": "String",
+          "desc_zh": "十六进制字符串，例如 \"\"#FF0000\"\"。",
+          "desc_en": "A CSS-style hexadecimal string, e.g. \"\"#FF0000\"\"."
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    },
+    {
+      "id": "color-to-hex-string",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "将 RGBA 值生成 CSS 样式的十六进制字符串。",
+      "description_en": "Generate a CSS-style hexadecimal string from an RGBA value.",
+      "expressionName": "ColorToHexString",
+      "returnType": "string",
+      "category": "values",
+      "params": [
+        {
+          "id": "color-value",
+          "type": "number",
+          "name_zh": "颜色",
+          "name_en": "Color",
+          "desc_zh": "要转换为十六进制字符串的 RGBA 颜色值。",
+          "desc_en": "An RGBA color value to convert to a hex string."
+        }
+      ],
+      "category_zh": "数值",
+      "category_en": "Values"
+    }
+  ]
+}

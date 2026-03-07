@@ -11,6 +11,20 @@
     "authentication",
     "leaderboards"
   ],
+  "aceCategories": {
+    "achievements": {
+      "zh": "",
+      "en": "achievements"
+    },
+    "authentication": {
+      "zh": "",
+      "en": "authentication"
+    },
+    "leaderboards": {
+      "zh": "",
+      "en": "leaderboards"
+    }
+  },
   "conditions": [
     {
       "id": "on-achievement-report-success",
@@ -21,7 +35,8 @@
       "scriptName": "OnAchievementReportSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-achievement-report-error",
@@ -32,7 +47,8 @@
       "scriptName": "OnAchievementReportError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-achievement-reset-success",
@@ -43,7 +59,8 @@
       "scriptName": "OnAchievementResetSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-achievement-reset-error",
@@ -54,7 +71,8 @@
       "scriptName": "OnAchievementResetError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-achievement-list-received",
@@ -65,7 +83,8 @@
       "scriptName": "OnAchievementList",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-achievement-list-error",
@@ -76,7 +95,8 @@
       "scriptName": "OnAchievementListError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "on-auth-success",
@@ -87,7 +107,8 @@
       "scriptName": "OnAuthSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "on-auth-fail",
@@ -98,7 +119,8 @@
       "scriptName": "OnAuthFail",
       "isTrigger": true,
       "canDebug": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "on-player-image-received",
@@ -109,7 +131,8 @@
       "scriptName": "OnPlayerImageSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "on-player-image-fail",
@@ -120,7 +143,8 @@
       "scriptName": "OnPlayerImageError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "on-score-submit-success",
@@ -131,7 +155,8 @@
       "scriptName": "OnScoreSubmitSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_en": "leaderboards"
     },
     {
       "id": "on-score-submit-fail",
@@ -142,7 +167,8 @@
       "scriptName": "OnScoreSubmitFail",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_en": "leaderboards"
     },
     {
       "id": "on-leaderboard-displayed",
@@ -153,7 +179,8 @@
       "scriptName": "OnShowLeaderboardSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_en": "leaderboards"
     },
     {
       "id": "on-leaderboard-error",
@@ -164,7 +191,8 @@
       "scriptName": "OnShowLeaderboardError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_en": "leaderboards"
     }
   ],
   "actions": [
@@ -191,7 +219,8 @@
           "name_en": "",
           "initialValue": "100"
         }
-      ]
+      ],
+      "category_en": "achievements"
     },
     {
       "id": "reset-achievements",
@@ -201,7 +230,8 @@
       "description_en": "",
       "scriptName": "ResetAchievements",
       "isAsync": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "request-achievements",
@@ -211,7 +241,8 @@
       "description_en": "",
       "scriptName": "RequestAchievements",
       "isAsync": true,
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "authenticate",
@@ -221,7 +252,8 @@
       "description_en": "",
       "scriptName": "Auth",
       "isAsync": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "request-player-image",
@@ -231,7 +263,8 @@
       "description_en": "",
       "scriptName": "RequestPlayerImage",
       "isAsync": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "submit-score",
@@ -255,7 +288,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "leaderboards"
     },
     {
       "id": "show-leaderboard",
@@ -273,7 +307,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "leaderboards"
     }
   ],
   "expressions": [
@@ -285,7 +320,8 @@
       "description_en": "",
       "expressionName": "AchievementCount",
       "returnType": "number",
-      "category": "achievements"
+      "category": "achievements",
+      "category_en": "achievements"
     },
     {
       "id": "achievementat",
@@ -303,7 +339,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "achievements"
     },
     {
       "id": "useralias",
@@ -313,7 +350,8 @@
       "description_en": "",
       "expressionName": "UserAlias",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "playerid",
@@ -323,7 +361,8 @@
       "description_en": "",
       "expressionName": "PlayerID",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "userdisplayname",
@@ -333,7 +372,8 @@
       "description_en": "",
       "expressionName": "UserDisplayName",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     },
     {
       "id": "playerimageurl",
@@ -343,7 +383,8 @@
       "description_en": "",
       "expressionName": "PlayerImageURL",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_en": "authentication"
     }
   ],
   "productTypes": "games"

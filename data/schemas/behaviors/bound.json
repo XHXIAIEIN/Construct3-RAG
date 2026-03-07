@@ -7,6 +7,7 @@
   "description_en": "Stop an object leaving the layout or viewport.",
   "path": "general/bound",
   "categories": [],
+  "aceCategories": {},
   "conditions": [],
   "actions": [],
   "expressions": [],

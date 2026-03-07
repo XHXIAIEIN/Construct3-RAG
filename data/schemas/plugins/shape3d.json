@@ -9,6 +9,12 @@
   "categories": [
     "3d-shape"
   ],
+  "aceCategories": {
+    "3d-shape": {
+      "zh": "3D形状",
+      "en": "3D shape"
+    }
+  },
   "conditions": [
     {
       "id": "compare-shape",
@@ -63,7 +69,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "compare-z-height",
@@ -93,7 +101,9 @@
           "desc_zh": "比较形状在Z轴方向的高度。",
           "desc_en": "The Z height to compare to."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "is-face-visible",
@@ -148,7 +158,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     }
   ],
   "actions": [
@@ -205,7 +217,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-z-height",
@@ -227,7 +241,9 @@
           "desc_zh": "要设置的形状的Z轴高度。",
           "desc_en": "The Z height of the shape to set."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-face-visible",
@@ -290,7 +306,9 @@
           "desc_zh": "显示或隐藏形状的朝面。",
           "desc_en": "Whether to show or hide this face of the shape."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-back-face-culling",
@@ -311,7 +329,9 @@
           "desc_zh": "是否启用背面剔除。",
           "desc_en": "Whether to enable back face culling."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-face-image",
@@ -408,7 +428,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-z-tiling-factor",
@@ -429,7 +451,9 @@
           "desc_zh": "要设置的平铺系数。",
           "desc_en": "The Z tiling factor to set."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "set-face-object",
@@ -492,7 +516,9 @@
           "desc_zh": "用于朝向显示的对象。",
           "desc_en": "The object to use for the face image."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     }
   ],
   "expressions": [
@@ -505,7 +531,9 @@
       "expressionName": "ZHeight",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "3d-shape"
+      "category": "3d-shape",
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "z-tiling-factor",
@@ -515,7 +543,9 @@
       "description_en": "The current Z tiling factor for image repetition on the Z axis.",
       "expressionName": "ZTilingFactor",
       "returnType": "number",
-      "category": "3d-shape"
+      "category": "3d-shape",
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "face-image-point-x",
@@ -543,7 +573,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "face-image-point-y",
@@ -571,7 +603,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "face-image-point-z",
@@ -599,7 +633,9 @@
           "desc_zh": "要获取的图像点的名称或编号。",
           "desc_en": "Name or number of image point to get."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     },
     {
       "id": "face-image-point-count",
@@ -619,7 +655,9 @@
           "desc_zh": "朝面的数字编号(0-5)",
           "desc_en": "Number of face (0-5)."
         }
-      ]
+      ],
+      "category_zh": "3D形状",
+      "category_en": "3D shape"
     }
   ],
   "properties": [

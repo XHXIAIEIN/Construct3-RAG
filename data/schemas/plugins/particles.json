@@ -12,6 +12,24 @@
     "particle-lifetime-properties",
     "particle-spray"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "initial-particle-properties": {
+      "zh": "粒子初始属性",
+      "en": "Initial particle properties"
+    },
+    "particle-lifetime-properties": {
+      "zh": "粒子生命周期",
+      "en": "Particle lifetime properties"
+    },
+    "particle-spray": {
+      "zh": "粒子喷射属性",
+      "en": "Particle spray"
+    }
+  },
   "conditions": [
     {
       "id": "is-spraying",
@@ -22,7 +40,9 @@
       "display_zh": "正在喷射",
       "display_en": "Is spraying",
       "scriptName": "IsSpraying",
-      "category": "particle-spray"
+      "category": "particle-spray",
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     }
   ],
   "actions": [
@@ -124,7 +144,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-particle-object",
@@ -145,7 +167,9 @@
           "desc_zh": "要将图像作为粒子生成的对象。",
           "desc_en": "The object to spawn as particles."
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "unset-particle-object",
@@ -156,7 +180,9 @@
       "display_zh": "取消设置粒子对象",
       "display_en": "Unset particle object",
       "scriptName": "UnsetParticleObject",
-      "category": "appearance"
+      "category": "appearance",
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "fast-forward",
@@ -178,7 +204,9 @@
           "desc_en": "The amount of time in seconds to advance the particle effect by.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-speed",
@@ -199,7 +227,9 @@
           "desc_zh": "初始粒子速度，以每秒像素为单位。",
           "desc_en": "Initial particle speed, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-size",
@@ -220,7 +250,9 @@
           "desc_zh": "每个粒子的初始大小，以像素为单位。",
           "desc_en": "Initial size of each particle, in pixels."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-init-opacity",
@@ -241,7 +273,9 @@
           "desc_zh": "每个粒子初始不透明度，从0到100，数值越大越不透明。",
           "desc_en": "Initial opacity of each particle, from 0 (transparent) to 100 (opaque)."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-grow-rate",
@@ -262,7 +296,9 @@
           "desc_zh": "评估大小随时间的变化，以每秒像素为单位。",
           "desc_en": "Rate the size changes over time, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-x-randomiser",
@@ -283,7 +319,9 @@
           "desc_zh": "粒子在X轴初始位置的随机值。",
           "desc_en": "Random X co-ordinate offset on creation."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-y-randomiser",
@@ -304,7 +342,9 @@
           "desc_zh": "粒子在Y轴初始位置的随机偏移值。",
           "desc_en": "Random Y co-ordinate offset on creation."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-initial-speed-randomiser",
@@ -325,7 +365,9 @@
           "desc_zh": "在创建时随机添加粒子速度。",
           "desc_en": "Random addition to particle speed on creation."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-size-randomiser",
@@ -346,7 +388,9 @@
           "desc_zh": "在创建时随机添加粒度。",
           "desc_en": "Random addition to particle size on creation."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-grow-rate-randomiser",
@@ -367,7 +411,9 @@
           "desc_zh": "在创建时随机添加粒子生长率。",
           "desc_en": "Random addition to particle grow rate on creation."
         }
-      ]
+      ],
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "set-acceleration",
@@ -388,7 +434,9 @@
           "desc_zh": "粒子加速度，以像素/每秒为单位。",
           "desc_en": "Particle acceleration, in pixels per second per second."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-gravity",
@@ -409,7 +457,9 @@
           "desc_zh": "重力，以每秒像素/秒为单位。",
           "desc_en": "Force of gravity, in pixels per second per second."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-angle-randomiser",
@@ -430,7 +480,9 @@
           "desc_zh": "调整随机偏移角度，以度数/秒为单位。",
           "desc_en": "Random angle deflection over time."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-life-speed-randomiser",
@@ -451,7 +503,9 @@
           "desc_zh": "调整随机偏移速度，以像素/秒为单位。",
           "desc_en": "Random speed adjustment over time."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-opacity-randomiser",
@@ -472,7 +526,9 @@
           "desc_zh": "根据时间变化随机调整不透明度。",
           "desc_en": "Random opacity adjustment over time."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-timeout",
@@ -493,7 +549,9 @@
           "desc_zh": "超时或淡出至不可见的时间，以秒为单位。(取决于销毁模式)。",
           "desc_en": "Time in seconds for timeout or fade to invisible (depending on destroy mode)."
         }
-      ]
+      ],
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "set-spraying",
@@ -528,7 +586,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     },
     {
       "id": "set-rate",
@@ -549,7 +609,9 @@
           "desc_zh": "每秒创建的粒子数。",
           "desc_en": "Number of particles to create per second."
         }
-      ]
+      ],
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     },
     {
       "id": "set-spray-cone",
@@ -570,7 +632,9 @@
           "desc_zh": "粒子被创建时发射角度范围。",
           "desc_en": "Number of degrees through which particles are created."
         }
-      ]
+      ],
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     }
   ],
   "expressions": [
@@ -582,7 +646,9 @@
       "description_en": "The initial particle speed, in pixels per second.",
       "expressionName": "InitSpeed",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initsize",
@@ -592,7 +658,9 @@
       "description_en": "The initial particle size, in pixels.",
       "expressionName": "InitSize",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initopacity",
@@ -602,7 +670,9 @@
       "description_en": "The initial particle opacity, from 0 (transparent) to 100 (opaque).",
       "expressionName": "InitOpacity",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initgrowrate",
@@ -612,7 +682,9 @@
       "description_en": "The initial particle grow rate, in pixels per second.",
       "expressionName": "InitGrowRate",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "xrandom",
@@ -622,7 +694,9 @@
       "description_en": "The random X offset on creation.",
       "expressionName": "XRandom",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "yrandom",
@@ -632,7 +706,9 @@
       "description_en": "The random Y offset on creation.",
       "expressionName": "YRandom",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initspeedrandom",
@@ -642,7 +718,9 @@
       "description_en": "The random addition to particle speed on creation.",
       "expressionName": "InitSpeedRandom",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initsizerandom",
@@ -652,7 +730,9 @@
       "description_en": "The random addition to particle size on creation.",
       "expressionName": "InitSizeRandom",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "initgrowrandom",
@@ -662,7 +742,9 @@
       "description_en": "The random addition to particle grow rate on creation.",
       "expressionName": "InitGrowRandom",
       "returnType": "number",
-      "category": "initial-particle-properties"
+      "category": "initial-particle-properties",
+      "category_zh": "粒子初始属性",
+      "category_en": "Initial particle properties"
     },
     {
       "id": "particleacceleration",
@@ -672,7 +754,9 @@
       "description_en": "The particle acceleration in pixels per second per second.",
       "expressionName": "ParticleAcceleration",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "gravity",
@@ -682,7 +766,9 @@
       "description_en": "The force of gravity in pixels per second per second.",
       "expressionName": "Gravity",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "particleanglerandom",
@@ -692,7 +778,9 @@
       "description_en": "The maximum random angle deflection in degrees per second.",
       "expressionName": "ParticleAngleRandom",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "particlespeedrandom",
@@ -702,7 +790,9 @@
       "description_en": "The maximum random change in speed in pixels per second per second.",
       "expressionName": "ParticleSpeedRandom",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "particleopacityrandom",
@@ -712,7 +802,9 @@
       "description_en": "The maximum change in opacity per second.",
       "expressionName": "ParticleOpacityRandom",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "timeout",
@@ -722,7 +814,9 @@
       "description_en": "The destroy or fade to invisible timeout.",
       "expressionName": "Timeout",
       "returnType": "number",
-      "category": "particle-lifetime-properties"
+      "category": "particle-lifetime-properties",
+      "category_zh": "粒子生命周期",
+      "category_en": "Particle lifetime properties"
     },
     {
       "id": "particlecount",
@@ -732,7 +826,9 @@
       "description_en": "Return the number of particles.",
       "expressionName": "ParticleCount",
       "returnType": "number",
-      "category": "particle-spray"
+      "category": "particle-spray",
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     },
     {
       "id": "rate",
@@ -742,7 +838,9 @@
       "description_en": "The number of particles created per second.",
       "expressionName": "Rate",
       "returnType": "number",
-      "category": "particle-spray"
+      "category": "particle-spray",
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     },
     {
       "id": "spraycone",
@@ -752,7 +850,9 @@
       "description_en": "The number of degrees through which particles are created.",
       "expressionName": "SprayCone",
       "returnType": "number",
-      "category": "particle-spray"
+      "category": "particle-spray",
+      "category_zh": "粒子喷射属性",
+      "category_en": "Particle spray"
     }
   ],
   "properties": [

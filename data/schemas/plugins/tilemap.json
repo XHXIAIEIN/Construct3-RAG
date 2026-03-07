@@ -14,6 +14,32 @@
     "tilemap-patch-brushes",
     "web"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "json": {
+      "zh": "JSON",
+      "en": "JSON"
+    },
+    "tilemap": {
+      "zh": "瓦片图",
+      "en": "Tilemap"
+    },
+    "tilemap-brushes": {
+      "zh": "瓦片图: 自动笔刷",
+      "en": "Tilemap brushes"
+    },
+    "tilemap-patch-brushes": {
+      "zh": "瓦片图: 印章笔刷",
+      "en": "Tilemap \"\"patch\"\" brushes"
+    },
+    "web": {
+      "zh": "网络",
+      "en": "Web"
+    }
+  },
   "conditions": [
     {
       "id": "compare-tile-at",
@@ -58,7 +84,9 @@
           "desc_zh": "要比较的图块编号。",
           "desc_en": "The tile number to compare to."
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "compare-tile-state-at",
@@ -139,7 +167,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "brush-exists",
@@ -160,7 +190,9 @@
           "desc_zh": "要检测的笔刷名称。",
           "desc_en": "The name of the brush to check for."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "on-image-url-loaded",
@@ -173,7 +205,9 @@
       "scriptName": "OnURLLoaded",
       "isTrigger": true,
       "canDebug": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     },
     {
       "id": "on-image-url-failed",
@@ -185,7 +219,9 @@
       "display_en": "On image URL failed to load",
       "scriptName": "OnURLFailed",
       "isTrigger": true,
-      "category": "web"
+      "category": "web",
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "actions": [
@@ -282,7 +318,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "load",
@@ -303,7 +341,9 @@
           "desc_zh": "要加载的数据。来自瓦片图对象的 '导出图块数据' 表达式。",
           "desc_en": "A string to load tilemap tiles from in JSON format from a previous use of the TilesJSON expression."
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "download",
@@ -325,7 +365,9 @@
           "desc_en": "The name of the file to download.",
           "initialValue": "\"tilemap.json\""
         }
-      ]
+      ],
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "erase-tile",
@@ -354,7 +396,9 @@
           "desc_zh": "要擦除的图块位于瓦片图 Y 轴的序列。使用 PositionToTileY() 表达式可转换场景坐标到图块序列。",
           "desc_en": "Y index of the tile to erase (in tiles)."
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "set-tile",
@@ -443,7 +487,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "erase-tile-range",
@@ -490,7 +536,9 @@
           "desc_en": "Number of tiles down to erase.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "set-tile-range",
@@ -597,7 +645,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "set-tile-state",
@@ -678,7 +728,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "set-tile-state-range",
@@ -777,7 +829,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "set-tile-with-brush",
@@ -814,7 +868,9 @@
           "desc_zh": "要使用的图块笔刷。",
           "desc_en": "The brush to use."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "erase-tile-with-brush",
@@ -851,7 +907,9 @@
           "desc_zh": "要使用的图块笔刷。",
           "desc_en": "The brush to use."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "set-tile-with-brush-by-name",
@@ -888,7 +946,9 @@
           "desc_zh": "要使用的笔刷名称。",
           "desc_en": "The name of the brush to use."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "erase-tile-with-brush-by-name",
@@ -925,7 +985,9 @@
           "desc_zh": "要使用的笔刷名称。",
           "desc_en": "The name of the brush to use."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "set-tile-with-patch-brush",
@@ -1034,7 +1096,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 印章笔刷",
+      "category_en": "Tilemap \"\"patch\"\" brushes"
     },
     {
       "id": "erase-tile-with-patch-brush",
@@ -1121,7 +1185,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 印章笔刷",
+      "category_en": "Tilemap \"\"patch\"\" brushes"
     },
     {
       "id": "set-tile-with-patch-brush-by-name",
@@ -1230,7 +1296,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 印章笔刷",
+      "category_en": "Tilemap \"\"patch\"\" brushes"
     },
     {
       "id": "erase-tile-with-patch-brush-by-name",
@@ -1317,7 +1385,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 印章笔刷",
+      "category_en": "Tilemap \"\"patch\"\" brushes"
     },
     {
       "id": "load-image-from-url",
@@ -1362,7 +1432,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "网络",
+      "category_en": "Web"
     }
   ],
   "expressions": [
@@ -1374,7 +1446,9 @@
       "description_en": "Get tilemap data as a JSON-formatted string.",
       "expressionName": "TilesJSON",
       "returnType": "string",
-      "category": "json"
+      "category": "json",
+      "category_zh": "JSON",
+      "category_en": "JSON"
     },
     {
       "id": "tileat",
@@ -1402,7 +1476,9 @@
           "desc_zh": "图块的Y位置",
           "desc_en": "Y position in tiles"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "positiontotilex",
@@ -1422,7 +1498,9 @@
           "desc_zh": "X坐标",
           "desc_en": "X co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "positiontotiley",
@@ -1442,7 +1520,9 @@
           "desc_zh": "Y坐标",
           "desc_en": "Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "tiletopositionx",
@@ -1462,7 +1542,9 @@
           "desc_zh": "图块的X位置",
           "desc_en": "X position in tiles"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "tiletopositiony",
@@ -1482,7 +1564,9 @@
           "desc_zh": "图块中的Y位置",
           "desc_en": "Y position in tiles"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "snapx",
@@ -1502,7 +1586,9 @@
           "desc_zh": "X坐标",
           "desc_en": "X co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "snapy",
@@ -1522,7 +1608,9 @@
           "desc_zh": "Y坐标",
           "desc_en": "Y co-ordinate"
         }
-      ]
+      ],
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "tile-width",
@@ -1532,7 +1620,9 @@
       "description_en": "The width of a tile, in pixels.",
       "expressionName": "TileWidth",
       "returnType": "number",
-      "category": "tilemap"
+      "category": "tilemap",
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "tile-height",
@@ -1542,7 +1632,9 @@
       "description_en": "The height of a tile, in pixels.",
       "expressionName": "TileHeight",
       "returnType": "number",
-      "category": "tilemap"
+      "category": "tilemap",
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "map-display-width",
@@ -1552,7 +1644,9 @@
       "description_en": "The horizontal number of tiles shown by the tilemap.",
       "expressionName": "MapDisplayWidth",
       "returnType": "number",
-      "category": "tilemap"
+      "category": "tilemap",
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "map-display-height",
@@ -1562,7 +1656,9 @@
       "description_en": "The vertical number of tiles shown by the tilemap.",
       "expressionName": "MapDisplayHeight",
       "returnType": "number",
-      "category": "tilemap"
+      "category": "tilemap",
+      "category_zh": "瓦片图",
+      "category_en": "Tilemap"
     },
     {
       "id": "brush-width",
@@ -1582,7 +1678,9 @@
           "desc_zh": "要获取其宽度的笔刷名称。",
           "desc_en": "The name of the brush to get the width of."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     },
     {
       "id": "brush-height",
@@ -1602,7 +1700,9 @@
           "desc_zh": "要获取其高度的笔刷名称。",
           "desc_en": "The name of the brush to get the height of."
         }
-      ]
+      ],
+      "category_zh": "瓦片图: 自动笔刷",
+      "category_en": "Tilemap brushes"
     }
   ],
   "properties": [

@@ -9,6 +9,12 @@
   "categories": [
     "iframe"
   ],
+  "aceCategories": {
+    "iframe": {
+      "zh": "内嵌网页",
+      "en": "iframe"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -30,7 +36,9 @@
           "desc_zh": "要加载的链接",
           "desc_en": "The URL to load."
         }
-      ]
+      ],
+      "category_zh": "内嵌网页",
+      "category_en": "iframe"
     },
     {
       "id": "display-html-string",
@@ -51,7 +59,9 @@
           "desc_zh": "要加载的HTML内容字符串。如果有任何不可信任的内容，请启用沙盒模式。",
           "desc_en": "A string of HTML content to load. Enable sandbox if there is any untrusted content."
         }
-      ]
+      ],
+      "category_zh": "内嵌网页",
+      "category_en": "iframe"
     }
   ],
   "expressions": [],

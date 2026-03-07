@@ -9,6 +9,12 @@
   "categories": [
     "qrcode"
   ],
+  "aceCategories": {
+    "qrcode": {
+      "zh": "二维码",
+      "en": "QR code"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -30,7 +36,9 @@
           "desc_zh": "二维码的文本内容。",
           "desc_en": "Text content of the QR code."
         }
-      ]
+      ],
+      "category_zh": "二维码",
+      "category_en": "QR code"
     },
     {
       "id": "set-correction-level",
@@ -75,7 +83,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "二维码",
+      "category_en": "QR code"
     }
   ],
   "expressions": [],

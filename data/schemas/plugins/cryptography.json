@@ -11,6 +11,20 @@
     "encryption",
     "random"
   ],
+  "aceCategories": {
+    "hashing": {
+      "zh": "单向加密",
+      "en": "Hashing"
+    },
+    "encryption": {
+      "zh": "加密",
+      "en": "Encryption"
+    },
+    "random": {
+      "zh": "随机数",
+      "en": "Random"
+    }
+  },
   "conditions": [
     {
       "id": "on-hash-finished",
@@ -33,7 +47,9 @@
           "desc_zh": "要检测的哈希加密动作的标签。",
           "desc_en": "Tag of the hash operation that finished."
         }
-      ]
+      ],
+      "category_zh": "单向加密",
+      "category_en": "Hashing"
     },
     {
       "id": "on-any-hash-finished",
@@ -46,7 +62,9 @@
       "scriptName": "OnAnyHashFinished",
       "isTrigger": true,
       "canDebug": true,
-      "category": "hashing"
+      "category": "hashing",
+      "category_zh": "单向加密",
+      "category_en": "Hashing"
     },
     {
       "id": "on-encryption-finished",
@@ -69,7 +87,9 @@
           "desc_zh": "要检测的加密动作的标签。",
           "desc_en": "Tag of the encryption operation that finished."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-encryption-failed",
@@ -92,7 +112,9 @@
           "desc_zh": "要检测的加密动作的标签。",
           "desc_en": "Tag of the encryption operation that failed."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-decryption-finished",
@@ -115,7 +137,9 @@
           "desc_zh": "要检测的解密动作的标签。",
           "desc_en": "Tag of the decryption operation that finished."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-decryption-failed",
@@ -138,7 +162,9 @@
           "desc_zh": "要检测的解密动作的标签。",
           "desc_en": "Tag of the decryption operation that failed."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-any-encryption-finished",
@@ -151,7 +177,9 @@
       "scriptName": "OnAnyEncryptionFinished",
       "isTrigger": true,
       "canDebug": true,
-      "category": "encryption"
+      "category": "encryption",
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-any-encryption-failed",
@@ -164,7 +192,9 @@
       "scriptName": "OnAnyEncryptionFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "encryption"
+      "category": "encryption",
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-any-decryption-finished",
@@ -177,7 +207,9 @@
       "scriptName": "OnAnyDecryptionFinished",
       "isTrigger": true,
       "canDebug": true,
-      "category": "encryption"
+      "category": "encryption",
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "on-any-decryption-failed",
@@ -190,7 +222,9 @@
       "scriptName": "OnAnyDecryptionFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "encryption"
+      "category": "encryption",
+      "category_zh": "加密",
+      "category_en": "Encryption"
     }
   ],
   "actions": [
@@ -249,7 +283,9 @@
           "desc_zh": "用于识别不同的哈希加密动作，方便进行管理。",
           "desc_en": "An optional tag to identify different hashing operations."
         }
-      ]
+      ],
+      "category_zh": "单向加密",
+      "category_en": "Hashing"
     },
     {
       "id": "encrypt-binary",
@@ -313,7 +349,9 @@
           "desc_zh": "用于识别不同的加密动作，方便进行管理。",
           "desc_en": "An optional tag to identify different encryption operations."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "decrypt-binary",
@@ -368,7 +406,9 @@
           "desc_zh": "用于识别不同的解密动作，方便进行管理。",
           "desc_en": "An optional tag to identify different decryption operations."
         }
-      ]
+      ],
+      "category_zh": "加密",
+      "category_en": "Encryption"
     }
   ],
   "expressions": [
@@ -380,7 +420,9 @@
       "description_en": "Hexadecimal string of a resulting hash.",
       "expressionName": "Hash",
       "returnType": "string",
-      "category": "hashing"
+      "category": "hashing",
+      "category_zh": "单向加密",
+      "category_en": "Hashing"
     },
     {
       "id": "tag",
@@ -390,7 +432,9 @@
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "Tag",
       "returnType": "string",
-      "category": "encryption"
+      "category": "encryption",
+      "category_zh": "加密",
+      "category_en": "Encryption"
     },
     {
       "id": "random-uuid",
@@ -400,7 +444,9 @@
       "description_en": "Generate a v4 UUID using a cryptographically secure random number generator.",
       "expressionName": "RandomUUID",
       "returnType": "string",
-      "category": "random"
+      "category": "random",
+      "category_zh": "随机数",
+      "category_en": "Random"
     }
   ],
   "productTypes": "games"

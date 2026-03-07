@@ -12,6 +12,24 @@
     "keyboard-lock",
     "left-right-keys"
   ],
+  "aceCategories": {
+    "key-codes": {
+      "zh": "按键码",
+      "en": "Key codes"
+    },
+    "keyboard": {
+      "zh": "键盘",
+      "en": "Keyboard"
+    },
+    "keyboard-lock": {
+      "zh": "键盘锁",
+      "en": "Keyboard lock"
+    },
+    "left-right-keys": {
+      "zh": "功能键",
+      "en": "Left/right keys"
+    }
+  },
   "conditions": [
     {
       "id": "on-key-code-pressed",
@@ -33,7 +51,9 @@
           "desc_zh": "输入要测试的按键码。",
           "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     },
     {
       "id": "key-code-is-down",
@@ -54,7 +74,9 @@
           "desc_zh": "输入要测试的按键码。",
           "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     },
     {
       "id": "on-key-code-released",
@@ -76,7 +98,9 @@
           "desc_zh": "输入要测试的按键码。",
           "desc_en": "Choose a numeric key code to test."
         }
-      ]
+      ],
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     },
     {
       "id": "on-key-pressed",
@@ -99,7 +123,9 @@
           "desc_zh": "选择一个键盘上的按键。注意：请避免使用一些不常用的按键。因为在不同的地区、不同操作系统、不同输入设备，用户使用的键盘可能并不相同，可能没有部分按键或按键的位置布局也不一致。",
           "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "category_zh": "键盘",
+      "category_en": "Keyboard"
     },
     {
       "id": "on-any-key-pressed",
@@ -111,7 +137,9 @@
       "display_en": "On any key pressed",
       "scriptName": "OnAnyKey",
       "isTrigger": true,
-      "category": "keyboard"
+      "category": "keyboard",
+      "category_zh": "键盘",
+      "category_en": "Keyboard"
     },
     {
       "id": "on-any-key-released",
@@ -123,7 +151,9 @@
       "display_en": "On any key released",
       "scriptName": "OnAnyKeyReleased",
       "isTrigger": true,
-      "category": "keyboard"
+      "category": "keyboard",
+      "category_zh": "键盘",
+      "category_en": "Keyboard"
     },
     {
       "id": "key-is-down",
@@ -144,7 +174,9 @@
           "desc_zh": "选择一个按键。 请注意，在不同国际、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。",
           "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "category_zh": "键盘",
+      "category_en": "Keyboard"
     },
     {
       "id": "on-key-released",
@@ -166,7 +198,9 @@
           "desc_zh": "选择一个按键。 请注意，在不同地区、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。",
           "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available."
         }
-      ]
+      ],
+      "category_zh": "键盘",
+      "category_en": "Keyboard"
     },
     {
       "id": "is-keyboard-lock-supported",
@@ -177,7 +211,9 @@
       "display_zh": "支持键盘锁功能",
       "display_en": "Is keyboard lock supported",
       "scriptName": "IsKeyboardLockSupported",
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "category_zh": "键盘锁",
+      "category_en": "Keyboard lock"
     },
     {
       "id": "on-keyboard-locked",
@@ -189,7 +225,9 @@
       "display_en": "On keyboard locked",
       "scriptName": "OnKeyboardLocked",
       "isTrigger": true,
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "category_zh": "键盘锁",
+      "category_en": "Keyboard lock"
     },
     {
       "id": "on-keyboard-lock-error",
@@ -201,7 +239,9 @@
       "display_en": "On keyboard lock error",
       "scriptName": "OnKeyboardLockError",
       "isTrigger": true,
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "category_zh": "键盘锁",
+      "category_en": "Keyboard lock"
     },
     {
       "id": "on-left-right-key-pressed",
@@ -267,7 +307,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "功能键",
+      "category_en": "Left/right keys"
     },
     {
       "id": "on-left-right-key-released",
@@ -333,7 +375,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "功能键",
+      "category_en": "Left/right keys"
     },
     {
       "id": "is-left-right-key-down",
@@ -398,7 +442,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "功能键",
+      "category_en": "Left/right keys"
     }
   ],
   "actions": [
@@ -423,7 +469,9 @@
           "desc_en": "A comma-separated array of keys to lock. Leave empty to request to lock all keys.",
           "initialValue": "\"KeyW,KeyA,KeyS,KeyD\""
         }
-      ]
+      ],
+      "category_zh": "键盘锁",
+      "category_en": "Keyboard lock"
     },
     {
       "id": "unlock-keyboard",
@@ -434,7 +482,9 @@
       "display_zh": "解锁键盘",
       "display_en": "Unlock keyboard",
       "scriptName": "UnlockKeyboard",
-      "category": "keyboard-lock"
+      "category": "keyboard-lock",
+      "category_zh": "键盘锁",
+      "category_en": "Keyboard lock"
     }
   ],
   "expressions": [
@@ -446,7 +496,9 @@
       "description_en": "Get the key code for the last pressed key.",
       "expressionName": "LastKeyCode",
       "returnType": "number",
-      "category": "key-codes"
+      "category": "key-codes",
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     },
     {
       "id": "stringfromkeycode",
@@ -466,7 +518,9 @@
           "desc_zh": "用于获取对应字符串的按键码。",
           "desc_en": "The key code to get a string from"
         }
-      ]
+      ],
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     },
     {
       "id": "typed-key",
@@ -476,7 +530,9 @@
       "description_en": "Get the typed key string for the last pressed key.",
       "expressionName": "TypedKey",
       "returnType": "string",
-      "category": "key-codes"
+      "category": "key-codes",
+      "category_zh": "按键码",
+      "category_en": "Key codes"
     }
   ]
 }

@@ -13,6 +13,28 @@
     "all",
     "misc"
   ],
+  "aceCategories": {
+    "timeline": {
+      "zh": "时间轴",
+      "en": "Timeline"
+    },
+    "triggers": {
+      "zh": "触发器",
+      "en": "Triggers"
+    },
+    "by-timeline": {
+      "zh": "按时间轴",
+      "en": "By timeline"
+    },
+    "all": {
+      "zh": "所有时间轴",
+      "en": "All timelines"
+    },
+    "misc": {
+      "zh": "其他",
+      "en": "Miscellaneous"
+    }
+  },
   "conditions": [
     {
       "id": "on-timeline-started",
@@ -42,7 +64,9 @@
             "resume-only"
           ]
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-timeline-started-by-name",
@@ -72,7 +96,9 @@
             "resume-only"
           ]
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-timeline-started-by-tags",
@@ -121,7 +147,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-any-timeline-started",
@@ -162,7 +190,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-timeline-finished",
@@ -181,7 +211,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-timeline-finished-by-name",
@@ -200,7 +232,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-timeline-finished-by-tags",
@@ -222,7 +256,9 @@
           "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-any-timeline-finished",
@@ -234,7 +270,9 @@
       "display_en": "On any finished",
       "scriptName": "OnAnyTimelineFinished",
       "isTrigger": true,
-      "category": "timeline"
+      "category": "timeline",
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-playing",
@@ -252,7 +290,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-playing-by-name",
@@ -270,7 +310,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-playing-by-tags",
@@ -291,7 +333,9 @@
           "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-any-playing",
@@ -302,7 +346,9 @@
       "display_zh": "任意动画正在播放",
       "display_en": "Is any playing",
       "scriptName": "IsAnyPlaying",
-      "category": "timeline"
+      "category": "timeline",
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-paused-by-tags",
@@ -323,7 +369,9 @@
           "desc_zh": "要检测的时间轴标签。使用空格分隔多个标签。",
           "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "is-any-paused",
@@ -334,7 +382,9 @@
       "display_zh": "任意时间轴正在暂停",
       "display_en": "Is any paused",
       "scriptName": "IsAnyPaused",
-      "category": "timeline"
+      "category": "timeline",
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-time-set",
@@ -353,7 +403,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-time-set-by-name",
@@ -372,7 +424,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-time-set-by-tags",
@@ -394,7 +448,9 @@
           "desc_zh": "要检查的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Timeline tags to check for."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-any-keyframe-reached",
@@ -406,7 +462,9 @@
       "display_en": "On any keyframe reached",
       "scriptName": "OnAnyKeyframeReached",
       "isTrigger": true,
-      "category": "timeline"
+      "category": "timeline",
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "on-keyframe-reached",
@@ -450,7 +508,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     }
   ],
   "actions": [
@@ -483,7 +543,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。",
           "desc_en": "Optional space separated list of tags to identify a timeline later on."
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "pause-timeline",
@@ -501,7 +563,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "resume-timeline",
@@ -519,7 +583,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "stop-timeline",
@@ -537,7 +603,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-time",
@@ -562,7 +630,9 @@
           "name_en": "",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-playback-rate",
@@ -587,7 +657,9 @@
           "name_en": "",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "play-timeline-by-name",
@@ -617,7 +689,9 @@
           "desc_zh": "可选。填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。",
           "desc_en": "Optional space separated list of tags to identify a timeline later on."
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "pause-timeline-by-name",
@@ -635,7 +709,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "resume-timeline-by-name",
@@ -653,7 +729,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "stop-timeline-by-name",
@@ -671,7 +749,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-time-by-name",
@@ -696,7 +776,9 @@
           "name_en": "",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-playback-rate-by-name",
@@ -721,7 +803,9 @@
           "name_en": "",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "pause-timeline-by-tags",
@@ -742,7 +826,9 @@
           "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "resume-timeline-by-tags",
@@ -763,7 +849,9 @@
           "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "stop-timeline-by-tags",
@@ -784,7 +872,9 @@
           "desc_zh": "要操作的时间轴的标签。使用空格分隔多个标签。",
           "desc_en": "Space separated list of timeline tags to change."
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-time-by-tags",
@@ -814,7 +904,9 @@
           "desc_en": "The time to set in seconds, or a string with a keyframe's tags, to set the time to the first keyframe that matches all the tags.",
           "initialValue": "0"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "set-timeline-playback-rate-by-tags",
@@ -844,7 +936,9 @@
           "desc_en": "The rate to set, 1 being normal speed, 0.5 half speed, etc. Negative values produce backwards playback.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     },
     {
       "id": "play-all-timelines",
@@ -856,7 +950,9 @@
       "display_en": "Play all",
       "scriptName": "PlayAllTimelines",
       "isAsync": true,
-      "category": "all"
+      "category": "all",
+      "category_zh": "所有时间轴",
+      "category_en": "All timelines"
     },
     {
       "id": "pause-all-timelines",
@@ -867,7 +963,9 @@
       "display_zh": "暂停全部",
       "display_en": "Pause all",
       "scriptName": "PauseAllTimelines",
-      "category": "all"
+      "category": "all",
+      "category_zh": "所有时间轴",
+      "category_en": "All timelines"
     },
     {
       "id": "resume-all-timelines",
@@ -878,7 +976,9 @@
       "display_zh": "恢复所有",
       "display_en": "Resume all",
       "scriptName": "ResumeAllTimelines",
-      "category": "all"
+      "category": "all",
+      "category_zh": "所有时间轴",
+      "category_en": "All timelines"
     },
     {
       "id": "stop-all-timelines",
@@ -889,7 +989,9 @@
       "display_zh": "停止所有",
       "display_en": "Stop all",
       "scriptName": "StopAllTimelines",
-      "category": "all"
+      "category": "all",
+      "category_zh": "所有时间轴",
+      "category_en": "All timelines"
     },
     {
       "id": "set-instance",
@@ -918,7 +1020,9 @@
           "desc_zh": "设置实例对象的轨道ID。如果为空，将被设置为找到的第一个轨道，以前没有被设置过的。",
           "desc_en": "The ID of the track to set the instance to. If empty, the instance will be set to the first track found, which hasn't been previously set."
         }
-      ]
+      ],
+      "category_zh": "其他",
+      "category_en": "Miscellaneous"
     },
     {
       "id": "unset-instances",
@@ -929,7 +1033,9 @@
       "display_zh": "取消设置所有实例",
       "display_en": "Unset all instances",
       "scriptName": "UnsetInstances",
-      "category": "misc"
+      "category": "misc",
+      "category_zh": "其他",
+      "category_en": "Miscellaneous"
     }
   ],
   "expressions": [
@@ -951,7 +1057,9 @@
           "desc_zh": "获取时间的时间轴的名称或标记",
           "desc_en": "Name or tags of the timeline to get the time from."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "total-time",
@@ -971,7 +1079,9 @@
           "desc_zh": "获取时间轴的总时长",
           "desc_en": "Name or tags of the timeline to get the total time from."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "progress",
@@ -991,7 +1101,9 @@
           "desc_zh": "获取时间轴的名称或标签",
           "desc_en": "Name or tags of the timeline to get the progress for."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "ease",
@@ -1019,7 +1131,9 @@
           "desc_zh": "数值范围在0-1之间。",
           "desc_en": "A value in the range 0-1."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "keyframe-time",
@@ -1047,7 +1161,9 @@
           "desc_zh": "获取关键帧时间戳的标签",
           "desc_en": "Tags of the keyframe to get the time of."
         }
-      ]
+      ],
+      "category_zh": "时间轴",
+      "category_en": "Timeline"
     },
     {
       "id": "keyframe-tags",
@@ -1057,7 +1173,9 @@
       "description_en": "In a trigger, the tags of the relevant keyframe.",
       "expressionName": "KeyframeTags",
       "returnType": "string",
-      "category": "triggers"
+      "category": "triggers",
+      "category_zh": "触发器",
+      "category_en": "Triggers"
     },
     {
       "id": "timeline-name",
@@ -1067,7 +1185,9 @@
       "description_en": "In a trigger, the name of the relevant timeline.",
       "expressionName": "TimelineName",
       "returnType": "string",
-      "category": "triggers"
+      "category": "triggers",
+      "category_zh": "触发器",
+      "category_en": "Triggers"
     },
     {
       "id": "timeline-tags",
@@ -1077,7 +1197,9 @@
       "description_en": "In a trigger, the tags of the relevant timeline.",
       "expressionName": "TimelineTags",
       "returnType": "string",
-      "category": "triggers"
+      "category": "triggers",
+      "category_zh": "触发器",
+      "category_en": "Triggers"
     },
     {
       "id": "value",
@@ -1107,7 +1229,9 @@
           "desc_en": "Name or id of the track to get the value for.",
           "initialValue": ""
         }
-      ]
+      ],
+      "category_zh": "按时间轴",
+      "category_en": "By timeline"
     }
   ]
 }

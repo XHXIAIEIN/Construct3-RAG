@@ -1,0 +1,506 @@
+{
+  "id": "system-time",
+  "originalId": "system",
+  "name_zh": "系统 - 时间",
+  "name_en": "System - Time",
+  "description_zh": "提供对 Construc 引擎的生命周期的访问。",
+  "description_en": "The System plugin provides access to the Construct engine.",
+  "path": "system",
+  "category": "time",
+  "category_zh": "时间",
+  "category_en": "Time",
+  "conditions": [
+    {
+      "id": "every-x-seconds",
+      "name_zh": "每隔 X 秒",
+      "name_en": "Every X seconds",
+      "description_zh": "以固定的时间间隔运行操作。",
+      "description_en": "Run the actions at a regular time interval.",
+      "display_zh": "每 [b]{0}[/b] 秒",
+      "display_en": "Every [b]{0}[/b] seconds",
+      "scriptName": "Every",
+      "category": "time",
+      "params": [
+        {
+          "id": "interval-seconds",
+          "type": "number",
+          "name_zh": "间隔（秒）",
+          "name_en": "Interval (seconds)",
+          "desc_zh": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。",
+          "desc_en": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick).",
+          "initialValue": "1.0"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "compare-time",
+      "name_zh": "比较时间",
+      "name_en": "Compare time",
+      "description_zh": "比较当前时间（启动后的秒数）",
+      "description_en": "Compare the current time (seconds since startup)",
+      "display_zh": "时间 {0} [b]{1}[/b] 秒",
+      "display_en": "Time {0} [b]{1}[/b] seconds",
+      "scriptName": "CompareTime",
+      "category": "time",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_zh": "比较",
+          "name_en": "Comparison",
+          "desc_zh": "选择一种比较方式。",
+          "desc_en": "Choose the way to compare the current time."
+        },
+        {
+          "id": "time-seconds",
+          "type": "number",
+          "name_zh": "秒",
+          "name_en": "Time (seconds)",
+          "desc_zh": "比较自游戏运行以来累计的秒数。",
+          "desc_en": "The time (seconds since starting) to compare to.",
+          "initialValue": "1.0"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "on-signal",
+      "name_zh": "收到信号",
+      "name_en": "On signal",
+      "description_zh": "在执行 '发送信号' 动作后，接收对应的标签的信号。",
+      "description_en": "Triggered by the 'Signal' action with a matching tag.",
+      "display_zh": "收到信号[i]{0}[/i]",
+      "display_en": "On signal [i]{0}[/i]",
+      "scriptName": "OnSignal",
+      "isTrigger": true,
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_zh": "标签",
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，用于接收 '发送信号' 动作中对应的标签。",
+          "desc_en": "The tag of the 'Signal' action."
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-time-scale",
+      "name_zh": "设置时间速率",
+      "name_en": "Set time scale",
+      "description_zh": "更改游戏中的时间流逝速率，实现慢动作或暂停效果。",
+      "description_en": "Change the rate time passes in the game, for slow-motion or pause effects.",
+      "display_zh": "设置全局时间速率为[i]{0}[/i]倍",
+      "display_en": "Set time scale to [i]{0}[/i]",
+      "scriptName": "SetTimescale",
+      "category": "time",
+      "params": [
+        {
+          "id": "time-scale",
+          "type": "number",
+          "name_zh": "时间速率",
+          "name_en": "Time scale",
+          "desc_zh": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+          "desc_en": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc.",
+          "initialValue": "1.0"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "set-object-time-scale",
+      "name_zh": "设置对象速率",
+      "name_en": "Set object time scale",
+      "description_zh": "更改特定对象的时间流逝速度，将覆盖全局时间速率。",
+      "description_en": "Change the rate time passes for a specific object.  Overrides the game time scale.",
+      "display_zh": "设置 {0} 时间速率为[i]{1}[/i]倍",
+      "display_en": "Set {0} time scale to [i]{1}[/i]",
+      "scriptName": "SetObjectTimescale",
+      "category": "time",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "选择要更改时间速率的对象。",
+          "desc_en": "The object to change timescale for."
+        },
+        {
+          "id": "time-scale",
+          "type": "number",
+          "name_zh": "时间速率",
+          "name_en": "Time scale",
+          "desc_zh": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+          "desc_en": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc).",
+          "initialValue": "1.0"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "restore-object-time-scale",
+      "name_zh": "恢复对象速率",
+      "name_en": "Restore object time scale",
+      "description_zh": "将对象的时间刻度恢复为游戏时间。",
+      "description_en": "Restore an object's time scale back to game time.",
+      "display_zh": "恢复 {0} 时间速率",
+      "display_en": "Restore {0} time scale",
+      "scriptName": "RestoreObjectTimescale",
+      "category": "time",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_zh": "对象",
+          "name_en": "Object",
+          "desc_zh": "选择要恢复正常时间速率的对象。",
+          "desc_en": "The object to restore timescale for."
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "wait",
+      "name_zh": "等待",
+      "name_en": "Wait",
+      "description_zh": "等待几秒钟后再继续运行下一个动作。",
+      "description_en": "Wait a number of seconds before running the next action.",
+      "display_zh": "等待[b]{0}[/b]秒 (使用时间倍速: [i]{1}[/i])",
+      "display_en": "Wait [b]{0}[/b] seconds (use time scale: [i]{1}[/i])",
+      "scriptName": "Wait",
+      "category": "time",
+      "params": [
+        {
+          "id": "seconds",
+          "type": "number",
+          "name_zh": "秒",
+          "name_en": "Seconds",
+          "desc_zh": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数",
+          "desc_en": "The number of seconds to wait before running the next action.",
+          "initialValue": "1.0"
+        },
+        {
+          "id": "use-timescale",
+          "type": "boolean",
+          "name_zh": "使用时间倍数",
+          "name_en": "Use time scale",
+          "desc_zh": "是否使用当前的时间倍数。取消则使用真实时间速度。",
+          "desc_en": "Uncheck to ignore the current time scale and wait in wall-clock time.",
+          "initialValue": "true"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "wait-for-signal",
+      "name_zh": "等待信号",
+      "name_en": "Wait for signal",
+      "description_zh": "暂停后续动作，直到对应标签的 '发送信号' 动作触发后，再继续执行。",
+      "description_en": "Wait until a corresponding 'Signal' action is used.",
+      "display_zh": "等待信号[b]{0}[/b]",
+      "display_en": "Wait for signal [b]{0}[/b]",
+      "scriptName": "WaitForSignal",
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_zh": "标签",
+          "name_en": "Tag",
+          "desc_zh": "填写一个字符串，用于区分要等待的信号标签。添加该动作后，当前事件块后面的其他动作将暂停运行，直至此标签对应的 '发送信号' 动作触发后继续执行。",
+          "desc_en": "The tag of the signal to wait for. This will wait until the corresponding 'Signal' action is used."
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "wait-for-previous-actions",
+      "name_zh": "等待前面异步动作完成",
+      "name_en": "Wait for previous actions",
+      "description_zh": "等待之前的异步动作运行完成，触发任意完成或失败都会返回。(异步动作在右侧有特殊的时间图标显示，它们往往需要一些时间才能处理完成)",
+      "description_en": "Wait until any previous asynchronous actions (shown by an icon) have finished and run any completed or error triggers.",
+      "display_zh": "等待前面异步动作完成",
+      "display_en": "Wait for previous actions to complete",
+      "scriptName": "WaitForPreviousActions",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "signal",
+      "name_zh": "发送信号",
+      "name_en": "Signal",
+      "description_zh": "发送一个信号，触发对应标签的 '收到信号' 条件和 '等待信号' 动作。",
+      "description_en": "Trigger 'On signal' and resume any 'Wait for signal' actions.",
+      "display_zh": "发送信号[b]{0}[/b]",
+      "display_en": "Signal [b]{0}[/b]",
+      "scriptName": "Signal",
+      "category": "time",
+      "params": [
+        {
+          "id": "tag",
+          "type": "string",
+          "name_zh": "标签",
+          "name_en": "Tag",
+          "desc_zh": "在 \"\"双引号\"\" 里填写一个字符串。根据此标签触发对应的 '收到信号' 和 '等待信号' 动作。",
+          "desc_en": "The tag to signal."
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "set-minimum-framerate",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "",
+      "description_en": "",
+      "scriptName": "SetFramerateMinMax",
+      "isDeprecated": true,
+      "category": "time",
+      "params": [
+        {
+          "id": "minimum-fps",
+          "type": "number",
+          "name_zh": "",
+          "name_en": "",
+          "initialValue": "30"
+        },
+        {
+          "id": "maximum-fps",
+          "type": "number",
+          "name_zh": "",
+          "name_en": "",
+          "initialValue": "Infinity"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "set-min-max-dt",
+      "name_zh": "设置增量时间",
+      "name_en": "Set min/max delta-time",
+      "description_zh": "设置增量时间限制，若帧率低于最小值将进入慢速状态，若高于最大值则进入加速状态。",
+      "description_en": "Set the limits on delta-time, causing the project to go in to slow motion or fast forward at extreme framerates.",
+      "display_zh": "设置增量时间：最小值[b]{0}[/b]，最大值[b]{1}[/b]",
+      "display_en": "Set delta-time minimum [b]{0}[/b], maximum [b]{1}[/b]",
+      "scriptName": "SetDeltaTimeMinMax",
+      "category": "time",
+      "params": [
+        {
+          "id": "minimum-dt",
+          "type": "number",
+          "name_zh": "最小增量时间",
+          "name_en": "Min delta-time",
+          "desc_zh": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。",
+          "desc_en": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases.",
+          "initialValue": "0"
+        },
+        {
+          "id": "maximum-dt",
+          "type": "number",
+          "name_zh": "最大增量时间",
+          "name_en": "Max delta-time",
+          "desc_zh": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。",
+          "desc_en": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases.",
+          "initialValue": "1 / 30"
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "set-framerate-mode",
+      "name_zh": "设置帧率模式",
+      "name_en": "Set framerate mode",
+      "description_zh": "设置当前帧率模式。",
+      "description_en": "Set the current framerate mode.",
+      "display_zh": "设置帧率模式为 [b]{0}[/b] ([i]{1}[/i])",
+      "display_en": "Set framerate mode to [b]{0}[/b] ([i]{1}[/i])",
+      "scriptName": "SetFramerateMode",
+      "category": "time",
+      "params": [
+        {
+          "id": "framerate-mode",
+          "type": "combo",
+          "name_zh": "帧率模式",
+          "name_en": "Framerate mode",
+          "desc_zh": "要设置的帧率模式。",
+          "desc_en": "The framerate mode to set (corresponding to the project property).",
+          "items": [
+            "vsync",
+            "fixed",
+            "unlimited-tick",
+            "unlimited-frame"
+          ],
+          "items_i18n": {
+            "vsync": {
+              "zh": "垂直同步",
+              "en": "V-synced"
+            },
+            "unlimited-tick": {
+              "zh": "无上限(仅每帧)",
+              "en": "Unlimited (ticks only)"
+            },
+            "unlimited-frame": {
+              "zh": "无上限",
+              "en": "Unlimited (full frames)"
+            },
+            "fixed": {
+              "zh": "固定",
+              "en": "Fixed"
+            }
+          }
+        },
+        {
+          "id": "fixed-framerate",
+          "type": "number",
+          "name_zh": "固定帧率",
+          "name_en": "Fixed framerate",
+          "desc_zh": "目标的每秒帧率。仅在 '固定帧率' 模式中可用。",
+          "desc_en": "For 'Fixed' mode only, the frames per second to target."
+        }
+      ],
+      "category_zh": "时间",
+      "category_en": "Time"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "dt",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "时间增量，从上一帧到这一帧的时间差 (delta-time)。",
+      "description_en": "Retrieve the time, in seconds, since the last tick (a.k.a. time delta)",
+      "expressionName": "dt",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "wallclockdt",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "真实时间增量，即不受时间倍速影响的 dt 值。",
+      "description_en": "Real-world delta-time, i.e. dt ignoring the time scale.",
+      "expressionName": "wallclockdt",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "timescale",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "时间速率，用于加快或减慢游戏整体运行速度。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+      "description_en": "Retrieve the time scaling factor.",
+      "expressionName": "timescale",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "time",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "自游戏启动后，累计运行的秒数。受到时间速率的影响。",
+      "description_en": "Time in seconds since the game began, taking in to account the time scale.",
+      "expressionName": "time",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "tickcount",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "自游戏启动后，累计的帧数。",
+      "description_en": "Retrieve the number of ticks elapsed since the start of the application.",
+      "expressionName": "tickcount",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "fps",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "预估的每秒刷新帧数速率。",
+      "description_en": "Retrieve the current frames per second rate.",
+      "expressionName": "fps",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "wallclocktime",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "自游戏启动后，累计运行的真实世界秒数。不受到时间速率的影响。",
+      "description_en": "Real-world time in seconds since the game began (i.e. not affected by the time scale).",
+      "expressionName": "wallclocktime",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "cpuutilisation",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "预估上一秒在运算逻辑所花费的时间，以秒为单位。",
+      "description_en": "Retrieve the time in seconds spent in the application logic during the last second.",
+      "expressionName": "cpuutilisation",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "gpuutilisation",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "预估上一秒在渲染所花费的时间，以秒为单位。",
+      "description_en": "Retrieve the time in seconds spent in rendering during the last second.",
+      "expressionName": "gpuutilisation",
+      "returnType": "number",
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    },
+    {
+      "id": "unixtime",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "",
+      "description_en": "",
+      "expressionName": "unixtime",
+      "returnType": "number",
+      "isDeprecated": true,
+      "category": "time",
+      "category_zh": "时间",
+      "category_en": "Time"
+    }
+  ]
+}

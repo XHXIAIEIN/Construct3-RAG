@@ -7,6 +7,7 @@
   "description_en": "Moves an object around a 2D grid.",
   "path": "movements/tilemovement",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-moving",

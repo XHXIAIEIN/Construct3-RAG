@@ -9,6 +9,12 @@
   "categories": [
     "function"
   ],
+  "aceCategories": {
+    "function": {
+      "zh": "",
+      "en": "function"
+    }
+  },
   "conditions": [
     {
       "id": "on-function",
@@ -28,7 +34,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     },
     {
       "id": "compare-parameter",
@@ -57,7 +64,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     }
   ],
   "actions": [
@@ -84,7 +92,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     },
     {
       "id": "set-return-value",
@@ -101,7 +110,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     },
     {
       "id": "call-expression",
@@ -118,7 +128,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     }
   ],
   "expressions": [
@@ -130,7 +141,8 @@
       "description_en": "",
       "expressionName": "ReturnValue",
       "returnType": "any",
-      "category": "function"
+      "category": "function",
+      "category_en": "function"
     },
     {
       "id": "paramcount",
@@ -140,7 +152,8 @@
       "description_en": "",
       "expressionName": "ParamCount",
       "returnType": "number",
-      "category": "function"
+      "category": "function",
+      "category_en": "function"
     },
     {
       "id": "param",
@@ -158,7 +171,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     },
     {
       "id": "call",
@@ -177,7 +191,8 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_en": "function"
     }
   ],
   "productTypes": "games"

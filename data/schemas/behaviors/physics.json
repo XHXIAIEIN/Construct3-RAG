@@ -13,6 +13,28 @@
     "object-settings",
     "torque"
   ],
+  "aceCategories": {
+    "forces": {
+      "zh": "动量",
+      "en": "Forces"
+    },
+    "global-settings": {
+      "zh": "全局设置",
+      "en": "Global settings"
+    },
+    "joints": {
+      "zh": "关节",
+      "en": "Joints"
+    },
+    "object-settings": {
+      "zh": "对象设置",
+      "en": "Object settings"
+    },
+    "torque": {
+      "zh": "力矩",
+      "en": "Torque"
+    }
+  },
   "conditions": [
     {
       "id": "is-sleeping",
@@ -192,7 +214,9 @@
           "desc_zh": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "apply-force-towards-position",
@@ -237,7 +261,9 @@
           "desc_zh": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "apply-force-at-angle",
@@ -274,7 +300,9 @@
           "desc_zh": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "apply-impulse",
@@ -311,7 +339,9 @@
           "desc_zh": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "apply-impulse-towards-position",
@@ -356,7 +386,9 @@
           "desc_zh": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "apply-impulse-at-angle",
@@ -393,7 +425,9 @@
           "desc_zh": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。",
           "desc_en": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "set-velocity",
@@ -422,7 +456,9 @@
           "desc_zh": "在Y轴方向的运动向量，以每秒像素为单位。",
           "desc_en": "The Y component of the velocity to set, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "teleport",
@@ -451,7 +487,9 @@
           "desc_zh": "要传送到的Y位置。",
           "desc_en": "The Y position to teleport to."
         }
-      ]
+      ],
+      "category_zh": "动量",
+      "category_en": "Forces"
     },
     {
       "id": "set-world-gravity",
@@ -473,7 +511,9 @@
           "desc_en": "The new force of gravity to set.",
           "initialValue": "10"
         }
-      ]
+      ],
+      "category_zh": "全局设置",
+      "category_en": "Global settings"
     },
     {
       "id": "set-stepping-mode",
@@ -508,7 +548,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "全局设置",
+      "category_en": "Global settings"
     },
     {
       "id": "set-stepping-iterations",
@@ -539,7 +581,9 @@
           "desc_en": "Iterations for the position constraint solver.  Lower is fast and inaccurate, higher is slow and accurate.",
           "initialValue": "3"
         }
-      ]
+      ],
+      "category_zh": "全局设置",
+      "category_en": "Global settings"
     },
     {
       "id": "enabledisable-collisions",
@@ -582,7 +626,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "全局设置",
+      "category_en": "Global settings"
     },
     {
       "id": "create-distance-joint",
@@ -635,7 +681,9 @@
           "desc_zh": "质量 - 弹簧 - 阻尼器频率，以赫兹为单位",
           "desc_en": "The mass-spring-damper frequency, in Hertz."
         }
-      ]
+      ],
+      "category_zh": "关节",
+      "category_en": "Joints"
     },
     {
       "id": "create-revolute-joint",
@@ -664,7 +712,9 @@
           "desc_zh": "要铰接的对象",
           "desc_en": "The object to attach."
         }
-      ]
+      ],
+      "category_zh": "关节",
+      "category_en": "Joints"
     },
     {
       "id": "create-limited-revolute-joint",
@@ -709,7 +759,9 @@
           "desc_zh": "允许更高的旋转角度",
           "desc_en": "The upper angle of rotation allowed, in degrees."
         }
-      ]
+      ],
+      "category_zh": "关节",
+      "category_en": "Joints"
     },
     {
       "id": "create-prismatic-joint",
@@ -825,7 +877,9 @@
           "desc_zh": "马达力矩的最大转动速度。",
           "desc_en": "The maximum motor torque."
         }
-      ]
+      ],
+      "category_zh": "关节",
+      "category_en": "Joints"
     },
     {
       "id": "remove-all-joints",
@@ -836,7 +890,9 @@
       "display_zh": "移除 {my} 所有关节",
       "display_en": "Remove all {my} joints",
       "scriptName": "RemoveJoints",
-      "category": "joints"
+      "category": "joints",
+      "category_zh": "关节",
+      "category_en": "Joints"
     },
     {
       "id": "set-density",
@@ -858,7 +914,9 @@
           "desc_en": "The new object density.  Only has effect when 'Immovable' is 'No'.",
           "initialValue": "1.0"
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-friction",
@@ -880,7 +938,9 @@
           "desc_en": "The new object friction coefficient, between 0 and 1.",
           "initialValue": "0.5"
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-elasticity",
@@ -902,7 +962,9 @@
           "desc_en": "The new object elasticity (restitution or 'bounciness') coefficient, between 0 and 1.",
           "initialValue": "0.2"
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-linear-damping",
@@ -923,7 +985,9 @@
           "desc_zh": "物体运动时，随时间逐渐减速的系数，介于0到1之间。",
           "desc_en": "The new object linear damping, between 0 and 1."
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-angular-damping",
@@ -945,7 +1009,9 @@
           "desc_en": "The new object angular damping, between 0 and 1.",
           "initialValue": "0.01"
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-immovable",
@@ -980,7 +1046,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-prevent-rotation",
@@ -1015,7 +1083,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-bullet",
@@ -1050,7 +1120,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-awake",
@@ -1071,7 +1143,9 @@
           "desc_zh": "设置物理引擎是否要主动运算该对象。",
           "desc_en": "Set whether the Physics engine is actively simulating this object."
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-enabled",
@@ -1106,7 +1180,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "set-collision-filter",
@@ -1149,7 +1225,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。",
           "desc_en": "A space-separated list of tags to filter collisions with."
         }
-      ]
+      ],
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "apply-torque",
@@ -1170,7 +1248,9 @@
           "desc_zh": "要施加的力矩。使对象朝向场景的位置做旋转运动。",
           "desc_en": "The torque to apply to the object."
         }
-      ]
+      ],
+      "category_zh": "力矩",
+      "category_en": "Torque"
     },
     {
       "id": "apply-torque-towards-angle",
@@ -1199,7 +1279,9 @@
           "desc_zh": "施加扭矩的角度。",
           "desc_en": "The angle, in degrees, to apply torque towards."
         }
-      ]
+      ],
+      "category_zh": "力矩",
+      "category_en": "Torque"
     },
     {
       "id": "apply-torque-towards-position",
@@ -1236,7 +1318,9 @@
           "desc_zh": "对象将朝向场景中的Y坐标位置做旋转运动。",
           "desc_en": "The Y co-ordinate in the layout to apply torque towards."
         }
-      ]
+      ],
+      "category_zh": "力矩",
+      "category_en": "Torque"
     },
     {
       "id": "set-angular-velocity",
@@ -1257,7 +1341,9 @@
           "desc_zh": "设置对象每秒旋转的角度向量。",
           "desc_en": "The angular velocity to set, in degrees per second."
         }
-      ]
+      ],
+      "category_zh": "力矩",
+      "category_en": "Torque"
     }
   ],
   "expressions": [
@@ -1370,7 +1456,9 @@
       "description_en": "The current density of the physics object.",
       "expressionName": "Density",
       "returnType": "number",
-      "category": "object-settings"
+      "category": "object-settings",
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "friction",
@@ -1380,7 +1468,9 @@
       "description_en": "The current friction of the physics object.",
       "expressionName": "Friction",
       "returnType": "number",
-      "category": "object-settings"
+      "category": "object-settings",
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "elasticity",
@@ -1390,7 +1480,9 @@
       "description_en": "The current elasticity ('bounciness') of the physics object.",
       "expressionName": "Elasticity",
       "returnType": "number",
-      "category": "object-settings"
+      "category": "object-settings",
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "lineardamping",
@@ -1400,7 +1492,9 @@
       "description_en": "The current linear damping coefficient.",
       "expressionName": "LinearDamping",
       "returnType": "number",
-      "category": "object-settings"
+      "category": "object-settings",
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     },
     {
       "id": "angulardamping",
@@ -1410,7 +1504,9 @@
       "description_en": "The current angular damping coefficient.",
       "expressionName": "AngularDamping",
       "returnType": "number",
-      "category": "object-settings"
+      "category": "object-settings",
+      "category_zh": "对象设置",
+      "category_en": "Object settings"
     }
   ],
   "properties": [

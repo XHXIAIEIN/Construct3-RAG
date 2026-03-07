@@ -9,6 +9,12 @@
   "categories": [
     "internationalization"
   ],
+  "aceCategories": {
+    "internationalization": {
+      "zh": "本地化",
+      "en": "Internationalization"
+    }
+  },
   "conditions": [
     {
       "id": "compare-current-locale",
@@ -37,7 +43,9 @@
           "desc_zh": "与当前区域比较的语言区域标识符。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
           "desc_en": "The locale string to compare against the locale string of the internationalization object"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     }
   ],
   "actions": [
@@ -60,7 +68,9 @@
           "desc_zh": "要设置的区域。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
           "desc_en": "The locale to use."
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "set-context",
@@ -81,7 +91,9 @@
           "desc_zh": "设置本地化对象的路径，可以是绝对路径或是相对路径。",
           "desc_en": "The new current context, can be absolute or relative."
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "push-context",
@@ -102,7 +114,9 @@
           "desc_zh": "要追加的路径，可以是绝对路径或是相对路径。",
           "desc_en": "The new context to push, can be absolute or relative."
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "pop-context",
@@ -113,7 +127,9 @@
       "display_zh": "弹出路径",
       "display_en": "Pop context",
       "scriptName": "PopContext",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "add-string",
@@ -142,7 +158,9 @@
           "desc_zh": "用于添加到本地化对象的字符串。",
           "desc_en": "The string that will be added to the internationalization object."
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "load-from-json",
@@ -163,7 +181,9 @@
           "desc_zh": "包含翻译数据的JSON字符串。特定格式请阅读文档。",
           "desc_en": "JSON string with translation data"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     }
   ],
   "expressions": [
@@ -186,7 +206,9 @@
           "desc_zh": "本地化对象的路径",
           "desc_en": "Location within the internationalization object"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "look-up-plural",
@@ -215,7 +237,9 @@
           "desc_zh": "用于获取复数形式的值。",
           "desc_en": "The value used to get the plural form"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "current-context",
@@ -225,7 +249,9 @@
       "description_en": "Get the current context of the internationalization object.",
       "expressionName": "CurrentContext",
       "returnType": "string",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "select-plural",
@@ -245,7 +271,9 @@
           "desc_zh": "获取复数形式的数字。",
           "desc_en": "Number to get a plural category for"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "plural-categorie-count",
@@ -255,7 +283,9 @@
       "description_en": "Get amount of plural categories for the current locale.",
       "expressionName": "PluralCategoryCount",
       "returnType": "number",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "plural-category-at",
@@ -275,7 +305,9 @@
           "desc_zh": "获取复数形式",
           "desc_en": "Index of the plural category"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "save-to-json",
@@ -285,7 +317,9 @@
       "description_en": "Get the translation strings for the current locale in JSON format.",
       "expressionName": "SaveToJSON",
       "returnType": "string",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "locale",
@@ -295,7 +329,9 @@
       "description_en": "Get the current locale of the internationalization object.",
       "expressionName": "Locale",
       "returnType": "string",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "default-locale",
@@ -305,7 +341,9 @@
       "description_en": "Get the default system locale.",
       "expressionName": "DefaultLocale",
       "returnType": "string",
-      "category": "internationalization"
+      "category": "internationalization",
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "format-number-as-decimal",
@@ -325,7 +363,9 @@
           "desc_zh": "要格式化的数字。",
           "desc_en": "The number to format"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "format-number-as-percent",
@@ -345,7 +385,9 @@
           "desc_zh": "要格式化的数字",
           "desc_en": "The number to format"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "format-number-as-currency",
@@ -381,7 +423,9 @@
           "desc_zh": "货币的显示格式。可以是 'symbol'、'narrowSymbol'、'code' 或 'name' 中的任意一种。默认为 'symbol'。",
           "desc_en": "The currency display format. Can be any of 'symbol', 'narrowSymbol', 'code' or 'name'. Defaults to 'symbol'"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "format-number-with-unit",
@@ -417,7 +461,9 @@
           "desc_zh": "单位显示格式。可以是 'long', 'short' or 'narrow'。默认为 'short'。",
           "desc_en": "The unit display format. Can be any of 'long', 'short' or 'narrow'. Defaults to 'short'"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "region-name",
@@ -437,7 +483,9 @@
           "desc_zh": "区域代码，用于获取对应的本地化名称。",
           "desc_en": "The region code to the get a localized name for"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "language-name",
@@ -457,7 +505,9 @@
           "desc_zh": "根据当前的语言环境，获取语言的区域。",
           "desc_en": "The locale to the get a localized language name for"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     },
     {
       "id": "currency-name",
@@ -477,7 +527,9 @@
           "desc_zh": "获取本地区域货币的货币符号。",
           "desc_en": "The currency code to the get a localized currency name for"
         }
-      ]
+      ],
+      "category_zh": "本地化",
+      "category_en": "Internationalization"
     }
   ]
 }

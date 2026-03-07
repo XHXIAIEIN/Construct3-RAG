@@ -24,7 +24,7 @@ SCHEMA_DIR = DATA_DIR / "schemas"
 # =============================================================================
 
 # Translation CSV (from POEditor)
-TRANSLATION_CSV = "zh-CN_r473.csv"
+TRANSLATION_CSV = "zh_r475.csv"
 
 # External repos (sibling directories of this repo)
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual

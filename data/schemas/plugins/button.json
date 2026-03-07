@@ -9,6 +9,12 @@
   "categories": [
     "button"
   ],
+  "aceCategories": {
+    "button": {
+      "zh": "按钮",
+      "en": "Button"
+    }
+  },
   "conditions": [
     {
       "id": "on-clicked",
@@ -22,7 +28,9 @@
       "isTrigger": true,
       "canDebug": true,
       "highlight": true,
-      "category": "button"
+      "category": "button",
+      "category_zh": "按钮",
+      "category_en": "Button"
     },
     {
       "id": "is-checked",
@@ -33,7 +41,9 @@
       "display_zh": "已勾选",
       "display_en": "Is checked",
       "scriptName": "IsChecked",
-      "category": "button"
+      "category": "button",
+      "category_zh": "按钮",
+      "category_en": "Button"
     },
     {
       "id": "compare-text",
@@ -76,7 +86,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "按钮",
+      "category_en": "Button"
     }
   ],
   "actions": [
@@ -99,7 +111,9 @@
           "desc_zh": "在按钮上显示的文本。",
           "desc_en": "The text to set in the button."
         }
-      ]
+      ],
+      "category_zh": "按钮",
+      "category_en": "Button"
     },
     {
       "id": "set-tooltip",
@@ -120,7 +134,9 @@
           "desc_zh": "在按钮上设置的工具提示。",
           "desc_en": "The tooltip to set on the button."
         }
-      ]
+      ],
+      "category_zh": "按钮",
+      "category_en": "Button"
     },
     {
       "id": "set-checked",
@@ -155,7 +171,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "按钮",
+      "category_en": "Button"
     },
     {
       "id": "toggle-checked",
@@ -166,7 +184,9 @@
       "display_zh": "反转勾选",
       "display_en": "Toggle checked",
       "scriptName": "ToggleChecked",
-      "category": "button"
+      "category": "button",
+      "category_zh": "按钮",
+      "category_en": "Button"
     }
   ],
   "expressions": [
@@ -178,7 +198,9 @@
       "description_en": "Get the button text.",
       "expressionName": "Text",
       "returnType": "string",
-      "category": "button"
+      "category": "button",
+      "category_zh": "按钮",
+      "category_en": "Button"
     }
   ],
   "properties": [

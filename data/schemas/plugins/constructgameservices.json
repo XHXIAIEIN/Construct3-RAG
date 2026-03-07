@@ -12,6 +12,24 @@
     "leaderboards",
     "cloud-save"
   ],
+  "aceCategories": {
+    "construct-game-services": {
+      "zh": "Construct 游戏服务",
+      "en": "Construct Game Services"
+    },
+    "authentication": {
+      "zh": "用户登录",
+      "en": "Authentication"
+    },
+    "leaderboards": {
+      "zh": "排行榜",
+      "en": "Leaderboards"
+    },
+    "cloud-save": {
+      "zh": "云存储",
+      "en": "Cloud save"
+    }
+  },
   "conditions": [
     {
       "id": "on-success",
@@ -72,7 +90,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "Construct 游戏服务",
+      "category_en": "Construct Game Services"
     },
     {
       "id": "on-error",
@@ -133,7 +153,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "Construct 游戏服务",
+      "category_en": "Construct Game Services"
     },
     {
       "id": "on-sign-in-popup-blocked",
@@ -145,7 +167,9 @@
       "display_en": "On sign in popup blocked",
       "scriptName": "OnSignInPopupBlocked",
       "isTrigger": true,
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "is-signed-in",
@@ -156,7 +180,9 @@
       "display_zh": "已登录",
       "display_en": "Is signed in",
       "scriptName": "IsSignedIn",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "can-sign-in-persistent",
@@ -167,7 +193,9 @@
       "display_zh": "可保持登录状态",
       "display_en": "Can sign in persistent",
       "scriptName": "CanSignInPersistent",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "on-create-cloud-save-success",
@@ -197,7 +225,9 @@
           "desc_zh": "存储桶的 Bucket ID。用于指定数据保存的存储容器。",
           "desc_en": "The storage bucket ID (optional)."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "on-create-cloud-save-error",
@@ -227,7 +257,9 @@
           "desc_zh": "存储桶的 Bucket ID。用于指定数据保存的存储容器。",
           "desc_en": "The storage bucket ID (optional)."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "on-get-cloud-save-success",
@@ -257,7 +289,9 @@
           "desc_zh": "存储桶的 Bucket ID。用于指定数据保存的存储容器。",
           "desc_en": "The storage bucket ID (optional)."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "on-get-cloud-save-binary-success",
@@ -295,7 +329,9 @@
           "desc_zh": "用于接收云端存储数据的二进制对象。",
           "desc_en": "The Binary Data object to receive the cloud save data."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "on-get-cloud-save-error",
@@ -325,7 +361,9 @@
           "desc_zh": "存储桶的 Bucket ID。用于指定数据保存的存储容器。",
           "desc_en": "The storage bucket ID (optional)."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     }
   ],
   "actions": [
@@ -466,7 +504,9 @@
           "desc_en": "The height of the authentication popup window.",
           "initialValue": "800"
         }
-      ]
+      ],
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "sign-in-persistent",
@@ -488,7 +528,9 @@
           "desc_zh": "要登录的游戏 ID。需要开发者前往 Construct Game Services 创建应用。",
           "desc_en": "The ID of the game to sign in to."
         }
-      ]
+      ],
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "retry-open-sign-in-popup",
@@ -499,7 +541,9 @@
       "display_zh": "重试登录弹窗",
       "display_en": "Retry sign in popup",
       "scriptName": "RetryOpenSignInPopup",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "sign-out",
@@ -510,7 +554,9 @@
       "display_zh": "退出登录",
       "display_en": "Sign out",
       "scriptName": "SignOut",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "set-player-name",
@@ -532,7 +578,9 @@
           "desc_zh": "要设置的玩家名称。",
           "desc_en": "The player name to set for the currently signed in player."
         }
-      ]
+      ],
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "submit-score",
@@ -562,7 +610,9 @@
           "desc_zh": "要提交的排行榜的 ID。留空则默认选择 Construct Arcade。",
           "desc_en": "The ID of the leaderboard to modify. Leave empty for the Construct Arcade."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "get-leaderboard-scores",
@@ -662,7 +712,9 @@
           "desc_zh": "本地语言环境，影响本地化的显示格式。如 zh-CN, zh-HK, zh-TW... 留空则使用预设的文化环境。",
           "desc_en": "The locale to use for returned values. Leave empty to use the leaderboard's default culture."
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "set-player-id",
@@ -680,7 +732,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "create-cloud-save-text",
@@ -726,7 +780,9 @@
           "desc_zh": "要保存到云端的文本数据。",
           "desc_en": "A string of the data to save."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "create-cloud-save-binary",
@@ -772,7 +828,9 @@
           "desc_zh": "选择要将保存的二进制数据对象。",
           "desc_en": "The Binary Data object to use as the data to save."
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "get-cloud-save",
@@ -824,7 +882,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     }
   ],
   "expressions": [
@@ -836,7 +896,9 @@
       "description_en": "A unique ID for the currently signed in player.",
       "expressionName": "PlayerID",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "player-name",
@@ -846,7 +908,9 @@
       "description_en": "The display name for the currently signed in player.",
       "expressionName": "PlayerName",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "game-id",
@@ -856,7 +920,9 @@
       "description_en": "The ID of the game currently signed in to.",
       "expressionName": "GameID",
       "returnType": "string",
-      "category": "authentication"
+      "category": "authentication",
+      "category_zh": "用户登录",
+      "category_en": "Authentication"
     },
     {
       "id": "total-page-count",
@@ -866,7 +932,9 @@
       "description_en": "The total number of pages when retrieving scores.",
       "expressionName": "TotalPageCount",
       "returnType": "number",
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-count",
@@ -876,7 +944,9 @@
       "description_en": "The number of scores retrieved.",
       "expressionName": "ScoreCount",
       "returnType": "number",
-      "category": "leaderboards"
+      "category": "leaderboards",
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-at",
@@ -896,7 +966,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-formatted-at",
@@ -916,7 +988,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-rank-at",
@@ -936,7 +1010,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-formatted-rank-at",
@@ -956,7 +1032,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-country-at",
@@ -976,7 +1054,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-player-id-at",
@@ -996,7 +1076,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "score-player-name-at",
@@ -1016,7 +1098,9 @@
           "desc_zh": "分数位于列表的索引，从 0 开始计数。",
           "desc_en": "Score index"
         }
-      ]
+      ],
+      "category_zh": "排行榜",
+      "category_en": "Leaderboards"
     },
     {
       "id": "cloud-save-text",
@@ -1026,7 +1110,9 @@
       "description_en": "The text data retrieved for a cloud save.",
       "expressionName": "CloudSaveText",
       "returnType": "string",
-      "category": "cloud-save"
+      "category": "cloud-save",
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "cloud-save-key",
@@ -1036,7 +1122,9 @@
       "description_en": "The key of the cloud save.",
       "expressionName": "CloudSaveKey",
       "returnType": "string",
-      "category": "cloud-save"
+      "category": "cloud-save",
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "cloud-save-bucket-id",
@@ -1046,7 +1134,9 @@
       "description_en": "The bucket ID of the cloud save.",
       "expressionName": "CloudSaveBucketID",
       "returnType": "string",
-      "category": "cloud-save"
+      "category": "cloud-save",
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     },
     {
       "id": "cloud-save-name",
@@ -1056,7 +1146,9 @@
       "description_en": "The name of the cloud save (if specified).",
       "expressionName": "CloudSaveName",
       "returnType": "string",
-      "category": "cloud-save"
+      "category": "cloud-save",
+      "category_zh": "云存储",
+      "category_en": "Cloud save"
     }
   ],
   "properties": [

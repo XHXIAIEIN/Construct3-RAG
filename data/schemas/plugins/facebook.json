@@ -13,6 +13,28 @@
     "scores-when-logged-in-with-permission",
     "playable-ads"
   ],
+  "aceCategories": {
+    "facebook": {
+      "zh": "Facebook",
+      "en": "Facebook"
+    },
+    "prompt-no-permissions-required": {
+      "zh": "提示 (无需权限)",
+      "en": "Prompt (no permissions required)"
+    },
+    "publish-to-stream-when-logged-in-with-permission": {
+      "zh": "发布到动态 (需用户登录授权)",
+      "en": "Publish to stream (when logged in with permission)"
+    },
+    "scores-when-logged-in-with-permission": {
+      "zh": "分数 (需用户登录授权)",
+      "en": "Scores (when logged in with permission)"
+    },
+    "playable-ads": {
+      "zh": "可试玩广告",
+      "en": "Playable Ads"
+    }
+  },
   "conditions": [
     {
       "id": "is-ready",
@@ -23,7 +45,9 @@
       "display_zh": "准备就绪",
       "display_en": "Is ready",
       "scriptName": "IsReady",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "is-user-logged-in",
@@ -34,7 +58,9 @@
       "display_zh": "用户已登录",
       "display_en": "Is user logged in",
       "scriptName": "IsLoggedIn",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "on-user-logged-in",
@@ -46,7 +72,9 @@
       "display_en": "On user logged in",
       "scriptName": "OnLogIn",
       "isTrigger": true,
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "on-user-logged-out",
@@ -58,7 +86,9 @@
       "display_en": "On user logged out",
       "scriptName": "OnLogOut",
       "isTrigger": true,
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "on-name-available",
@@ -70,7 +100,9 @@
       "display_en": "On name available",
       "scriptName": "OnNameAvailable",
       "isTrigger": true,
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "on-ready",
@@ -81,7 +113,9 @@
       "scriptName": "OnReady",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "on-user-top-score-available",
@@ -92,7 +126,9 @@
       "scriptName": "OnUserTopScoreAvailable",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "on-hi-score",
@@ -103,7 +139,9 @@
       "scriptName": "OnHiscore",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "on-score-submitted",
@@ -114,7 +152,9 @@
       "scriptName": "OnScoreSubmitted",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     }
   ],
   "actions": [
@@ -148,7 +188,9 @@
             "publish-scores"
           ]
         }
-      ]
+      ],
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "log-out",
@@ -159,7 +201,9 @@
       "display_zh": "注销",
       "display_en": "Log out",
       "scriptName": "LogOut",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "log-in",
@@ -180,7 +224,9 @@
           "desc_zh": "要请求的权限指令，使用逗号分割多个。如 \"public_profile",
           "desc_en": "Requested permissions, separated by a comma. E.g. \"public_profile\"."
         }
-      ]
+      ],
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "prompt-wall-post",
@@ -191,7 +237,9 @@
       "display_zh": "发表到动态",
       "display_en": "Prompt wall post",
       "scriptName": "PromptWallPost",
-      "category": "prompt-no-permissions-required"
+      "category": "prompt-no-permissions-required",
+      "category_zh": "提示 (无需权限)",
+      "category_en": "Prompt (no permissions required)"
     },
     {
       "id": "prompt-to-share-this-app",
@@ -202,7 +250,9 @@
       "display_zh": "提示分享此应用",
       "display_en": "Prompt to share this app",
       "scriptName": "PromptToShareApp",
-      "category": "prompt-no-permissions-required"
+      "category": "prompt-no-permissions-required",
+      "category_zh": "提示 (无需权限)",
+      "category_en": "Prompt (no permissions required)"
     },
     {
       "id": "prompt-to-share-link",
@@ -224,7 +274,9 @@
           "desc_en": "The link to share.",
           "initialValue": "\"https://\""
         }
-      ]
+      ],
+      "category_zh": "提示 (无需权限)",
+      "category_en": "Prompt (no permissions required)"
     },
     {
       "id": "publish-wall-post",
@@ -245,7 +297,9 @@
           "desc_zh": "要发布到用户动态中的文本。建议仅在用户发起该操作时才执行此操作。",
           "desc_en": "The text to publish to the user's feed.  It is recommended to only do this when the user initiates the action."
         }
-      ]
+      ],
+      "category_zh": "发布到动态 (需用户登录授权)",
+      "category_en": "Publish to stream (when logged in with permission)"
     },
     {
       "id": "publish-link",
@@ -307,7 +361,9 @@
           "desc_zh": "要在 '分享' 对话框中使用的图像的URL。必须包含 http://",
           "desc_en": "The URL of an image on your server to use on the Share dialog.  Must include the http://"
         }
-      ]
+      ],
+      "category_zh": "发布到动态 (需用户登录授权)",
+      "category_en": "Publish to stream (when logged in with permission)"
     },
     {
       "id": "publish-score",
@@ -325,7 +381,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "request-user-top-score",
@@ -335,7 +393,9 @@
       "description_en": "",
       "scriptName": "RequestUserHiscore",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "request-hi-score-board",
@@ -354,7 +414,9 @@
           "name_en": "",
           "initialValue": "10"
         }
-      ]
+      ],
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "on-cta-click",
@@ -365,7 +427,9 @@
       "display_zh": "点击行动号召按钮",
       "display_en": "On CTA click",
       "scriptName": "OnCTAClick",
-      "category": "playable-ads"
+      "category": "playable-ads",
+      "category_zh": "可试玩广告",
+      "category_en": "Playable Ads"
     }
   ],
   "expressions": [
@@ -377,7 +441,9 @@
       "description_en": "Get the user's full name, if they are logged in.",
       "expressionName": "FullName",
       "returnType": "string",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "firstname",
@@ -387,7 +453,9 @@
       "description_en": "Get the user's first name, if they are logged in.",
       "expressionName": "FirstName",
       "returnType": "string",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "lastname",
@@ -397,7 +465,9 @@
       "description_en": "Get the user's last name, if they are logged in.",
       "expressionName": "LastName",
       "returnType": "string",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "userid",
@@ -408,7 +478,9 @@
       "expressionName": "UserID",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "useridstr",
@@ -418,7 +490,9 @@
       "description_en": "Get the user's ID as a string, which is different even for users with the same name.",
       "expressionName": "UserIDStr",
       "returnType": "string",
-      "category": "facebook"
+      "category": "facebook",
+      "category_zh": "Facebook",
+      "category_en": "Facebook"
     },
     {
       "id": "score",
@@ -429,7 +503,9 @@
       "expressionName": "Score",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "hiscorename",
@@ -440,7 +516,9 @@
       "expressionName": "HiscoreName",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "hiscorerank",
@@ -451,7 +529,9 @@
       "expressionName": "HiscoreRank",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "hiscoreuserid",
@@ -462,7 +542,9 @@
       "expressionName": "HiscoreUserID",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     },
     {
       "id": "hiscoreuseridstr",
@@ -473,7 +555,9 @@
       "expressionName": "HiscoreUserIDStr",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "scores-when-logged-in-with-permission"
+      "category": "scores-when-logged-in-with-permission",
+      "category_zh": "分数 (需用户登录授权)",
+      "category_en": "Scores (when logged in with permission)"
     }
   ],
   "properties": [

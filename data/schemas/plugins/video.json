@@ -9,6 +9,12 @@
   "categories": [
     "video"
   ],
+  "aceCategories": {
+    "video": {
+      "zh": "视频",
+      "en": "Video"
+    }
+  },
   "conditions": [
     {
       "id": "is-playing",
@@ -19,7 +25,9 @@
       "display_zh": "正在播放",
       "display_en": "Is playing",
       "scriptName": "IsPlaying",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "is-paused",
@@ -30,7 +38,9 @@
       "display_zh": "暂停",
       "display_en": "Is paused",
       "scriptName": "IsPaused",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "has-ended",
@@ -41,7 +51,9 @@
       "display_zh": "播放完成",
       "display_en": "Has ended",
       "scriptName": "HasEnded",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "is-muted",
@@ -52,7 +64,9 @@
       "display_zh": "已静音",
       "display_en": "Is muted",
       "scriptName": "IsMuted",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "on-playback-event",
@@ -119,7 +133,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     }
   ],
   "actions": [
@@ -145,7 +161,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-source-2",
@@ -260,7 +278,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-playback-time",
@@ -281,7 +301,9 @@
           "desc_zh": "查找的播放时间，以秒为单位。",
           "desc_en": "Playback time in seconds to seek to."
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-playback-rate",
@@ -303,7 +325,9 @@
           "desc_en": "The playback rate to set. 1 is original speed, 2 is double speed, etc.",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-looping",
@@ -338,7 +362,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-muted",
@@ -373,7 +399,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "set-volume",
@@ -395,7 +423,9 @@
           "desc_en": "The volume of the audio to set, in dB attenuation.",
           "initialValue": "-6"
         }
-      ]
+      ],
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "pause",
@@ -406,7 +436,9 @@
       "display_zh": "暂停",
       "display_en": "Pause",
       "scriptName": "Pause",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "play",
@@ -418,7 +450,9 @@
       "display_en": "Play",
       "scriptName": "Play",
       "highlight": true,
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     }
   ],
   "expressions": [
@@ -430,7 +464,9 @@
       "description_en": "Current playback time in seconds.",
       "expressionName": "PlaybackTime",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "playbackrate",
@@ -440,7 +476,9 @@
       "description_en": "Current playback rate, 1 being normal speed.",
       "expressionName": "PlaybackRate",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "duration",
@@ -450,7 +488,9 @@
       "description_en": "Video duration in seconds, if known.",
       "expressionName": "Duration",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "volume",
@@ -460,7 +500,9 @@
       "description_en": "Current video volume in dB attenuation.",
       "expressionName": "Volume",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "videowidth",
@@ -470,7 +512,9 @@
       "description_en": "The width of the source video.",
       "expressionName": "VideoWidth",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     },
     {
       "id": "videoheight",
@@ -480,7 +524,9 @@
       "description_en": "The height of the source video.",
       "expressionName": "VideoHeight",
       "returnType": "number",
-      "category": "video"
+      "category": "video",
+      "category_zh": "视频",
+      "category_en": "Video"
     }
   ],
   "properties": [

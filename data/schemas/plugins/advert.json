@@ -14,6 +14,32 @@
     "rewarded-interstitial",
     "advert"
   ],
+  "aceCategories": {
+    "banner": {
+      "zh": "横幅广告",
+      "en": "Banner"
+    },
+    "interstitial": {
+      "zh": "插页式广告",
+      "en": "Interstitial"
+    },
+    "rewarded-video": {
+      "zh": "激励视频",
+      "en": "Rewarded video"
+    },
+    "rewarded": {
+      "zh": "激励视频",
+      "en": "Rewarded"
+    },
+    "rewarded-interstitial": {
+      "zh": "激励插屏",
+      "en": "Rewarded interstitial"
+    },
+    "advert": {
+      "zh": "广告单元",
+      "en": "Advert"
+    }
+  },
   "conditions": [
     {
       "id": "on-banner-ready",
@@ -26,7 +52,9 @@
       "scriptName": "OnBannerReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "on-banner-failed-to-load",
@@ -39,7 +67,9 @@
       "scriptName": "OnBannerFailedToLoad",
       "isTrigger": true,
       "canDebug": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "on-banner-shown",
@@ -52,7 +82,9 @@
       "scriptName": "OnBannerShown",
       "isTrigger": true,
       "canDebug": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "on-banner-hidden",
@@ -65,7 +97,9 @@
       "scriptName": "OnBannerHidden",
       "isTrigger": true,
       "canDebug": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "is-showing-banner",
@@ -76,7 +110,9 @@
       "display_zh": "正在展示横幅广告",
       "display_en": "is showing banner",
       "scriptName": "IsShowingBanner",
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "is-loaded-banner",
@@ -87,7 +123,9 @@
       "display_zh": "横幅广告已加载",
       "display_en": "is banner loaded",
       "scriptName": "IsBannerLoaded",
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "on-interstitial-ready",
@@ -100,7 +138,9 @@
       "scriptName": "OnInterstitialReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "on-interstitial-failed-to-load",
@@ -113,7 +153,9 @@
       "scriptName": "OnInterstitialFailedToLoad",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "on-interstitial-complete",
@@ -126,7 +168,9 @@
       "scriptName": "OnInterstitialComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "on-interstitial-cancelled",
@@ -139,7 +183,9 @@
       "scriptName": "OnInterstitialCancelled",
       "isTrigger": true,
       "canDebug": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "is-showing-interstitial",
@@ -150,7 +196,9 @@
       "display_zh": "正在展示插页式广告",
       "display_en": "is showing interstitial",
       "scriptName": "IsShowingInterstitial",
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "is-loaded-interstitial",
@@ -161,7 +209,9 @@
       "display_zh": "插页式广告已加载",
       "display_en": "is interstitial loaded",
       "scriptName": "IsInterstitialLoaded",
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "on-video-ready",
@@ -173,7 +223,9 @@
       "isTrigger": true,
       "isDeprecated": true,
       "canDebug": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "on-video-failed-to-load",
@@ -185,7 +237,9 @@
       "isTrigger": true,
       "isDeprecated": true,
       "canDebug": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "on-video-complete",
@@ -197,7 +251,9 @@
       "isTrigger": true,
       "isDeprecated": true,
       "canDebug": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "on-video-cancelled",
@@ -209,7 +265,9 @@
       "isTrigger": true,
       "isDeprecated": true,
       "canDebug": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "is-showing-video",
@@ -219,7 +277,9 @@
       "description_en": "",
       "scriptName": "IsShowingVideo",
       "isDeprecated": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "is-loaded-video",
@@ -229,7 +289,9 @@
       "description_en": "",
       "scriptName": "IsVideoLoaded",
       "isDeprecated": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "on-rewarded-ready",
@@ -242,7 +304,9 @@
       "scriptName": "OnRewardedReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "on-rewarded-failed-to-load",
@@ -255,7 +319,9 @@
       "scriptName": "OnRewardedFailedToLoad",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "on-rewarded-complete",
@@ -268,7 +334,9 @@
       "scriptName": "OnRewardedComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "on-rewarded-cancelled",
@@ -281,7 +349,9 @@
       "scriptName": "OnRewardedCancelled",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "is-showing-rewarded",
@@ -292,7 +362,9 @@
       "display_zh": "正在展示激励广告",
       "display_en": "is showing rewarded",
       "scriptName": "IsShowingRewarded",
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "is-loaded-rewarded",
@@ -303,7 +375,9 @@
       "display_zh": "激励视频已加载",
       "display_en": "is rewarded loaded",
       "scriptName": "IsRewardedLoaded",
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "on-rewarded-interstitial-ready",
@@ -316,7 +390,9 @@
       "scriptName": "OnRewardedInterstitialReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "on-rewarded-interstitial-failed-to-load",
@@ -329,7 +405,9 @@
       "scriptName": "OnRewardedInterstitialFailedToLoad",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "on-rewarded-interstitial-complete",
@@ -342,7 +420,9 @@
       "scriptName": "OnRewardedInterstitialComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "on-rewarded-interstitial-cancelled",
@@ -355,7 +435,9 @@
       "scriptName": "OnRewardedInterstitialCancelled",
       "isTrigger": true,
       "canDebug": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "is-showing-rewarded-interstitial",
@@ -366,7 +448,9 @@
       "display_zh": "正在展示插页式激励广告",
       "display_en": "is showing rewarded interstitial",
       "scriptName": "IsShowingRewardedInterstitial",
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "is-loaded-rewarded-interstitial",
@@ -377,7 +461,9 @@
       "display_zh": "插页式激励广告已加载",
       "display_en": "is rewarded interstitial loaded",
       "scriptName": "IsRewardedInterstitialLoaded",
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "on-configuration-failed",
@@ -390,7 +476,9 @@
       "scriptName": "OnConfigurationFailed",
       "isTrigger": true,
       "canDebug": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "on-configuration-complete",
@@ -403,7 +491,9 @@
       "scriptName": "OnConfigurationComplete",
       "isTrigger": true,
       "canDebug": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "is-configured",
@@ -414,7 +504,9 @@
       "display_zh": "已配置",
       "display_en": "is configured",
       "scriptName": "IsConfigured",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "on-user-personalization-updated",
@@ -426,7 +518,9 @@
       "isTrigger": true,
       "isDeprecated": true,
       "canDebug": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "is-in-eea-or-unknown",
@@ -437,7 +531,9 @@
       "display_zh": "位于欧洲经济特区或未知地区",
       "display_en": "is in EEA or unknown",
       "scriptName": "IsInEeaOrUnknown",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "on-idfa-request-complete",
@@ -449,7 +545,9 @@
       "display_en": "On IDFA request complete",
       "scriptName": "OnIDFARequestComplete",
       "isTrigger": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     }
   ],
   "actions": [
@@ -619,7 +717,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "show-banner",
@@ -631,7 +731,9 @@
       "display_en": "Show the current banner advert",
       "scriptName": "ShowBanner",
       "isAsync": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "hide-banner",
@@ -643,7 +745,9 @@
       "display_en": "Hide the current banner advert",
       "scriptName": "HideBanner",
       "isAsync": true,
-      "category": "banner"
+      "category": "banner",
+      "category_zh": "横幅广告",
+      "category_en": "Banner"
     },
     {
       "id": "create-interstitial",
@@ -687,7 +791,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "show-interstitial",
@@ -699,7 +805,9 @@
       "display_en": "Show interstitial advert",
       "scriptName": "ShowInterstitial",
       "isAsync": true,
-      "category": "interstitial"
+      "category": "interstitial",
+      "category_zh": "插页式广告",
+      "category_en": "Interstitial"
     },
     {
       "id": "create-video",
@@ -728,7 +836,9 @@
             "false"
           ]
         }
-      ]
+      ],
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "show-video",
@@ -739,7 +849,9 @@
       "scriptName": "ShowVideo",
       "isAsync": true,
       "isDeprecated": true,
-      "category": "rewarded-video"
+      "category": "rewarded-video",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded video"
     },
     {
       "id": "create-rewarded",
@@ -783,7 +895,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "show-rewarded",
@@ -795,7 +909,9 @@
       "display_en": "Show rewarded advert",
       "scriptName": "ShowRewarded",
       "isAsync": true,
-      "category": "rewarded"
+      "category": "rewarded",
+      "category_zh": "激励视频",
+      "category_en": "Rewarded"
     },
     {
       "id": "create-rewarded-interstitial",
@@ -839,7 +955,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "show-rewarded-interstitial",
@@ -851,7 +969,9 @@
       "display_en": "Show rewarded interstitial advert",
       "scriptName": "ShowRewardedInterstitial",
       "isAsync": true,
-      "category": "rewarded-interstitial"
+      "category": "rewarded-interstitial",
+      "category_zh": "激励插屏",
+      "category_en": "Rewarded interstitial"
     },
     {
       "id": "set-public-key",
@@ -913,7 +1033,9 @@
             "outside-eea"
           ]
         }
-      ]
+      ],
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "show-consent-dialog",
@@ -925,7 +1047,9 @@
       "display_en": "Show user consent dialog",
       "scriptName": "ShowConsentDialog",
       "isAsync": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "set-user-personalisation",
@@ -949,7 +1073,9 @@
             "no-ads"
           ]
         }
-      ]
+      ],
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "set-max-ad-content-rating",
@@ -996,7 +1122,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "tag-for-child-directed-treatment",
@@ -1019,7 +1147,9 @@
           "desc_en": "Specifies if the Admob SDK should return child directed content",
           "initialValue": "true"
         }
-      ]
+      ],
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "tag-for-under-age-of-consent",
@@ -1042,7 +1172,9 @@
           "desc_en": "Specifies if the user is under the age of consent",
           "initialValue": "true"
         }
-      ]
+      ],
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "request-idfa",
@@ -1054,7 +1186,9 @@
       "display_en": "Request IDFA",
       "scriptName": "RequestIDFA",
       "isAsync": true,
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     }
   ],
   "expressions": [
@@ -1066,7 +1200,9 @@
       "description_en": "In a trigger, an error message if available",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "reward-type",
@@ -1076,7 +1212,9 @@
       "description_en": "In a trigger, the reward type if available",
       "expressionName": "RewardType",
       "returnType": "string",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "reward-value",
@@ -1086,7 +1224,9 @@
       "description_en": "In a trigger, the reward value if available",
       "expressionName": "RewardValue",
       "returnType": "number",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "reward-interstitial-type",
@@ -1096,7 +1236,9 @@
       "description_en": "In a trigger, the reward type of an interstitial advert if available",
       "expressionName": "RewardInterstitialType",
       "returnType": "string",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "reward-interstitial-value",
@@ -1106,7 +1248,9 @@
       "description_en": "In a trigger, the reward value of an interstitial advert if available",
       "expressionName": "RewardInterstitialValue",
       "returnType": "number",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "consent-status",
@@ -1116,7 +1260,9 @@
       "description_en": "The current user consent status for adverts",
       "expressionName": "ConsentStatus",
       "returnType": "string",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     },
     {
       "id": "idfa-status",
@@ -1126,7 +1272,9 @@
       "description_en": "The current user consent status for the identifier for advertisers (IDFA)",
       "expressionName": "IDFAStatus",
       "returnType": "string",
-      "category": "advert"
+      "category": "advert",
+      "category_zh": "广告单元",
+      "category_en": "Advert"
     }
   ],
   "properties": [

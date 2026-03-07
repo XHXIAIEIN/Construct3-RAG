@@ -9,6 +9,12 @@
   "categories": [
     "clipboard"
   ],
+  "aceCategories": {
+    "clipboard": {
+      "zh": "剪贴板",
+      "en": "Clipboard"
+    }
+  },
   "conditions": [
     {
       "id": "on-copy-success",
@@ -21,7 +27,9 @@
       "scriptName": "OnCopySuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "on-copy-error",
@@ -34,7 +42,9 @@
       "scriptName": "OnCopyError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "on-paste-text",
@@ -47,7 +57,9 @@
       "scriptName": "OnPasteText",
       "isTrigger": true,
       "canDebug": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "on-paste-binary",
@@ -79,7 +91,9 @@
           "desc_en": "The content type (aka MIME type) of the pasted data.",
           "initialValue": "\"image/png\""
         }
-      ]
+      ],
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "on-paste-error",
@@ -92,7 +106,9 @@
       "scriptName": "OnPasteError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     }
   ],
   "actions": [
@@ -116,7 +132,9 @@
           "desc_zh": "要复制到剪贴板的文本。",
           "desc_en": "The text to copy to the clipboard."
         }
-      ]
+      ],
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "copy-binary",
@@ -147,7 +165,9 @@
           "desc_en": "The content type (aka MIME type) of the data being copied.",
           "initialValue": "\"image/png\""
         }
-      ]
+      ],
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "request-paste-text",
@@ -159,7 +179,9 @@
       "display_en": "Request paste text",
       "scriptName": "RequestPasteText",
       "isAsync": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "request-paste-binary",
@@ -171,7 +193,9 @@
       "display_en": "Request paste binary",
       "scriptName": "RequestPasteBinary",
       "isAsync": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     }
   ],
   "expressions": [
@@ -183,7 +207,9 @@
       "description_en": "In 'On paste text', the text that was read from the clipboard.",
       "expressionName": "PastedText",
       "returnType": "string",
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     }
   ]
 }

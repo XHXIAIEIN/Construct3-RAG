@@ -9,6 +9,12 @@
   "categories": [
     "properties"
   ],
+  "aceCategories": {
+    "properties": {
+      "zh": "属性",
+      "en": "Properties"
+    }
+  },
   "conditions": [
     {
       "id": "is-moving",
@@ -387,7 +393,9 @@
           "desc_zh": "设置最大移动速度，以每秒像素为单位。",
           "desc_en": "The new maximum speed of the object to set, in pixels per second."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "set-acceleration",
@@ -408,7 +416,9 @@
           "desc_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。使用 0 表示瞬间加速。",
           "desc_en": "The new acceleration of the object to set, in pixels per second per second. Use 0 for instant acceleration."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "set-deceleration",
@@ -429,7 +439,9 @@
           "desc_zh": "从正常移动至完全停止的减速度，以像素/秒为单位。",
           "desc_en": "The new deceleration of the object to set, in pixels per second per second. Use 0 for instant deceleration."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "set-rotate-speed",
@@ -450,7 +462,9 @@
           "desc_zh": "转向速度，以度数每秒为单位，使用 0 可以禁用转向。",
           "desc_en": "The turn speed to set, in degrees per second. Use 0 to disable turning."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "set-stop-on-solids",
@@ -471,7 +485,9 @@
           "desc_zh": "设置是否被实体阻止",
           "desc_en": "Set whether to stop on solids."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "set-enabled",
@@ -492,7 +508,9 @@
           "desc_zh": "启用或禁用此行为。",
           "desc_en": "Set whether to enable or disable the behavior."
         }
-      ]
+      ],
+      "category_zh": "属性",
+      "category_en": "Properties"
     }
   ],
   "expressions": [
@@ -587,7 +605,9 @@
       "description_en": "The maximum speed setting, in pixels per second.",
       "expressionName": "MaxSpeed",
       "returnType": "number",
-      "category": "properties"
+      "category": "properties",
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "acceleration",
@@ -597,7 +617,9 @@
       "description_en": "The acceleration setting, in pixels per second per second.",
       "expressionName": "Acceleration",
       "returnType": "number",
-      "category": "properties"
+      "category": "properties",
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "deceleration",
@@ -607,7 +629,9 @@
       "description_en": "The deceleration setting, in pixels per second per second.",
       "expressionName": "Deceleration",
       "returnType": "number",
-      "category": "properties"
+      "category": "properties",
+      "category_zh": "属性",
+      "category_en": "Properties"
     },
     {
       "id": "rotatespeed",
@@ -617,7 +641,9 @@
       "description_en": "The current maximum turn speed in degrees per second.",
       "expressionName": "RotateSpeed",
       "returnType": "number",
-      "category": "properties"
+      "category": "properties",
+      "category_zh": "属性",
+      "category_en": "Properties"
     }
   ],
   "properties": [

@@ -9,6 +9,12 @@
   "categories": [
     "recording"
   ],
+  "aceCategories": {
+    "recording": {
+      "zh": "录制阶段",
+      "en": "Recording"
+    }
+  },
   "conditions": [
     {
       "id": "on-recording-ready",
@@ -21,7 +27,9 @@
       "scriptName": "OnRecordingReady",
       "isTrigger": true,
       "canDebug": true,
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "on-recording-error",
@@ -34,7 +42,9 @@
       "scriptName": "OnRecordingError",
       "isTrigger": true,
       "canDebug": true,
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-recording-supported",
@@ -45,7 +55,9 @@
       "display_zh": "设备支持屏幕录制",
       "display_en": "Is recording supported",
       "scriptName": "SupportsRecording",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-screen-recording-supported",
@@ -56,7 +68,9 @@
       "display_zh": "设备支持屏幕录制",
       "display_en": "Is screen recording supported",
       "scriptName": "SupportsScreenRecording",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-video-format-supported",
@@ -79,7 +93,9 @@
             "mpeg4-h264"
           ]
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-audio-format-supported",
@@ -102,7 +118,9 @@
             "mpeg4-aac"
           ]
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-video-format-supported-2",
@@ -169,7 +187,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-audio-format-supported-2",
@@ -226,7 +246,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "is-recording",
@@ -237,7 +259,9 @@
       "display_zh": "正在录制",
       "display_en": "Is recording",
       "scriptName": "IsRecording",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     }
   ],
   "actions": [
@@ -292,7 +316,9 @@
           "name_en": "",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "start-recording-2",
@@ -426,7 +452,9 @@
           "desc_en": "The data rate to encode in kilobits per second (kbps).",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "start-screen-recording",
@@ -479,7 +507,9 @@
           "name_en": "",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "start-screen-recording-2",
@@ -613,7 +643,9 @@
           "desc_en": "The data rate to encode in kilobits per second (kbps).",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "start-user-media-recording",
@@ -660,7 +692,9 @@
           "name_en": "",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "start-user-media-recording-2",
@@ -786,7 +820,9 @@
           "desc_en": "The data rate to encode in kilobits per second (kbps).",
           "initialValue": "2500"
         }
-      ]
+      ],
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "stop-recording",
@@ -797,7 +833,9 @@
       "display_zh": "停止录制",
       "display_en": "Stop recording",
       "scriptName": "StopRecording",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     }
   ],
   "expressions": [
@@ -809,7 +847,9 @@
       "description_en": "Return a URL of the recording that can be downloaded with the Browser object.",
       "expressionName": "RecordingURL",
       "returnType": "string",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "recording-type",
@@ -819,7 +859,9 @@
       "description_en": "Return the MIME type of the recording, e.g. \"video/webm\".",
       "expressionName": "RecordingType",
       "returnType": "string",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     },
     {
       "id": "recording-file-extension",
@@ -829,7 +871,9 @@
       "description_en": "Return the file extension for the recording, e.g. \".webm\".",
       "expressionName": "RecordingFileExtension",
       "returnType": "string",
-      "category": "recording"
+      "category": "recording",
+      "category_zh": "录制阶段",
+      "category_en": "Recording"
     }
   ]
 }

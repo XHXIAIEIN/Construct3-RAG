@@ -13,6 +13,28 @@
     "window",
     "command-line"
   ],
+  "aceCategories": {
+    "clipboard": {
+      "zh": "剪贴板",
+      "en": "Clipboard"
+    },
+    "file-dialogs": {
+      "zh": "文件对话框",
+      "en": "File dialogs"
+    },
+    "file-system": {
+      "zh": "文件系统",
+      "en": "File system"
+    },
+    "window": {
+      "zh": "窗口",
+      "en": "Window"
+    },
+    "command-line": {
+      "zh": "命令行",
+      "en": "Command line"
+    }
+  },
   "conditions": [
     {
       "id": "on-open-dialog-ok",
@@ -25,7 +47,9 @@
       "scriptName": "OnOpenDlg",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "on-folder-dialog-ok",
@@ -38,7 +62,9 @@
       "scriptName": "OnFolderDlg",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "on-save-dialog-ok",
@@ -51,7 +77,9 @@
       "scriptName": "OnSaveDlg",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "on-open-dialog-cancel",
@@ -64,7 +92,9 @@
       "scriptName": "OnOpenDlgCancel",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "on-folder-dialog-cancel",
@@ -77,7 +107,9 @@
       "scriptName": "OnFolderDlgCancel",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "on-save-dialog-cancel",
@@ -90,7 +122,9 @@
       "scriptName": "OnSaveDlgCancel",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "path-exists",
@@ -111,7 +145,9 @@
           "desc_zh": "要检测的文件路径。",
           "desc_en": "Enter a file path to test if exists."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-file-dropped",
@@ -124,7 +160,9 @@
       "scriptName": "OnFileDrop",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-binary-file-read",
@@ -147,7 +185,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
           "desc_en": "A tag to distinguish between different file actions."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-binary-file-written",
@@ -170,7 +210,9 @@
           "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的文件。",
           "desc_en": "A tag to distinguish between different file actions."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-any-binary-file-read",
@@ -183,7 +225,9 @@
       "scriptName": "OnAnyBinaryFileRead",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-any-binary-file-written",
@@ -196,7 +240,9 @@
       "scriptName": "OnAnyBinaryFileWritten",
       "isTrigger": true,
       "canDebug": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "on-file-system-error",
@@ -208,7 +254,9 @@
       "display_en": "On file system error",
       "scriptName": "OnFileSystemError",
       "isTrigger": true,
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     }
   ],
   "actions": [
@@ -228,7 +276,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "clear-clipboard",
@@ -238,7 +288,9 @@
       "description_en": "",
       "scriptName": "ClearClipboard",
       "isDeprecated": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "show-open-dialog",
@@ -259,7 +311,9 @@
           "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
           "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
         }
-      ]
+      ],
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "show-folder-dialog",
@@ -270,7 +324,9 @@
       "display_zh": "显示文件夹对话框",
       "display_en": "Show folder dialog",
       "scriptName": "ShowFolderDlg",
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "show-save-dialog",
@@ -291,7 +347,9 @@
           "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
           "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
         }
-      ]
+      ],
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "write-file",
@@ -320,7 +378,9 @@
           "desc_zh": "输入要写入文件的文本内容。",
           "desc_en": "Enter the text content to write to the file."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "rename-file",
@@ -349,7 +409,9 @@
           "desc_zh": "输入要重命名为的新文件路径。",
           "desc_en": "Enter the new file path to rename to."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "delete-file",
@@ -370,7 +432,9 @@
           "desc_zh": "要删除的文件路径。",
           "desc_en": "Enter the file path to delete."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "create-folder",
@@ -391,7 +455,9 @@
           "desc_zh": "要创建的文件夹路径。",
           "desc_en": "Enter the folder path to create."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "append-file",
@@ -420,7 +486,9 @@
           "desc_zh": "要附加到文件的文本内容。",
           "desc_en": "Enter the text content to append to the file."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "list-files",
@@ -441,7 +509,9 @@
           "desc_zh": "要获取的文件夹路径。",
           "desc_en": "Enter the folder path to list files from."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "copy-file",
@@ -470,7 +540,9 @@
           "desc_zh": "输入要复制到的文件路径。",
           "desc_en": "Enter the file path to copy to."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "move-file",
@@ -499,7 +571,9 @@
           "desc_zh": "输入要移动到的文件路径。",
           "desc_en": "Enter the file path to move to."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "run-file",
@@ -520,7 +594,9 @@
           "desc_zh": "要执行文件的路径，用空格分隔附加参数。如果路径包含空格，需使用连续2个双引号进行转义，例如 \"\"\"C:\\Program Files\\file.exe\"\"",
           "desc_en": "Enter the path of the file to execute. This can also include space-separated arguments. To execute a path with spaces in it, wrap in double-quotes (e.g. \"\"\"C:\\Program Files\\file.exe\"\"\")."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "shell-open",
@@ -541,7 +617,9 @@
           "desc_zh": "要打开的文件路径。这将会打开与该文件关联的默认应用程序。",
           "desc_en": "File path to open. The default app associated with the file will be opened."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "open-browser",
@@ -562,7 +640,9 @@
           "desc_zh": "要在浏览器中打开的Web地址。",
           "desc_en": "The web address to open in a browser."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "read-binary-file",
@@ -600,7 +680,9 @@
           "desc_zh": "要读取的二进制数据",
           "desc_en": "The Binary Data object to read data in to."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "write-binary-file",
@@ -638,7 +720,9 @@
           "desc_zh": "要写入该文件的二进制数据",
           "desc_en": "The Binary Data object to write into the file."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "set-x",
@@ -659,7 +743,9 @@
           "desc_zh": "将窗口移动到屏幕上的X坐标。",
           "desc_en": "The X co-ordinate to move the window to on the screen."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-y",
@@ -680,7 +766,9 @@
           "desc_zh": "将窗口移动到屏幕上的Y坐标。",
           "desc_en": "The Y co-ordinate to move the window to on the screen."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-width",
@@ -701,7 +789,9 @@
           "desc_zh": "窗口的新宽度。",
           "desc_en": "The new width of the window."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-height",
@@ -722,7 +812,9 @@
           "desc_zh": "窗口的新高度。",
           "desc_en": "The new height of the window."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-title",
@@ -743,7 +835,9 @@
           "desc_zh": "要在窗口标题栏中显示的字符串。",
           "desc_en": "A string to display in the window title bar."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "minimize",
@@ -754,7 +848,9 @@
       "display_zh": "最小化窗口",
       "display_en": "Minimize window",
       "scriptName": "WindowMinimize",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "maximize",
@@ -765,7 +861,9 @@
       "display_zh": "最大化窗口",
       "display_en": "Maximize window",
       "scriptName": "WindowMaximize",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "unmaximize",
@@ -776,7 +874,9 @@
       "display_zh": "取消最大化窗口",
       "display_en": "Unmaximize window",
       "scriptName": "WindowUnmaximize",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "restore",
@@ -787,7 +887,9 @@
       "display_zh": "恢复窗口",
       "display_en": "Restore window",
       "scriptName": "WindowRestore",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "request-attention",
@@ -822,7 +924,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-maximum-size",
@@ -851,7 +955,9 @@
           "desc_zh": "要设置的窗口最大高度，以像素为单位。",
           "desc_en": "The maximum window height to set, in pixels."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-minimum-size",
@@ -880,7 +986,9 @@
           "desc_zh": "要设置的窗口最小高度，以像素为单位。",
           "desc_en": "The minimum window height to set, in pixels."
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-resizable",
@@ -915,7 +1023,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "set-always-on-top",
@@ -950,7 +1060,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "show-dev-tools",
@@ -961,7 +1073,9 @@
       "display_zh": "显示开发者工具",
       "display_en": "Show dev tools",
       "scriptName": "ShowDevTools",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     }
   ],
   "expressions": [
@@ -974,7 +1088,9 @@
       "expressionName": "ClipboardText",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "clipboard"
+      "category": "clipboard",
+      "category_zh": "剪贴板",
+      "category_en": "Clipboard"
     },
     {
       "id": "chosenpath",
@@ -984,7 +1100,9 @@
       "description_en": "Return the chosen path after a file dialog.",
       "expressionName": "ChosenPath",
       "returnType": "string",
-      "category": "file-dialogs"
+      "category": "file-dialogs",
+      "category_zh": "文件对话框",
+      "category_en": "File dialogs"
     },
     {
       "id": "appfolder",
@@ -994,7 +1112,9 @@
       "description_en": "Return the application's folder path. Note it may not have write permission.",
       "expressionName": "AppFolder",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "appfolderurl",
@@ -1004,7 +1124,9 @@
       "description_en": "Return the application's folder as a file URL. Use this for any URL parameters.",
       "expressionName": "AppFolderURL",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "projectfilesfolder",
@@ -1014,7 +1136,9 @@
       "description_en": "Return the folder path to project files (i.e. where index.html is). Note it may not have write permission.",
       "expressionName": "ProjectFilesFolder",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "projectfilesfolderurl",
@@ -1024,7 +1148,9 @@
       "description_en": "Return the folder path to project files as a file URL. Use this for any URL parameters.",
       "expressionName": "ProjectFilesFolderURL",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "userfolder",
@@ -1034,7 +1160,9 @@
       "description_en": "Return the current user's folder.",
       "expressionName": "UserFolder",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "readfile",
@@ -1054,7 +1182,9 @@
           "desc_zh": "要加载的文件路径。",
           "desc_en": "The file path to load."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "filesize",
@@ -1074,7 +1204,9 @@
           "desc_zh": "要获取的文件路径。",
           "desc_en": "The file path to get the size of."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "listcount",
@@ -1084,7 +1216,9 @@
       "description_en": "Return the number of files after 'List files'.",
       "expressionName": "ListCount",
       "returnType": "number",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "listat",
@@ -1104,7 +1238,9 @@
           "desc_zh": "文件在列表的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of file to retrieve."
         }
-      ]
+      ],
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "droppedfile",
@@ -1114,7 +1250,9 @@
       "description_en": "Return the filename of a file dropped in to the window.",
       "expressionName": "DroppedFile",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "fileerror",
@@ -1124,7 +1262,9 @@
       "description_en": "In 'On file system error', the related error message.",
       "expressionName": "FileError",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "file-tag",
@@ -1134,7 +1274,9 @@
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "FileTag",
       "returnType": "string",
-      "category": "file-system"
+      "category": "file-system",
+      "category_zh": "文件系统",
+      "category_en": "File system"
     },
     {
       "id": "windowx",
@@ -1144,7 +1286,9 @@
       "description_en": "The X position of the window on the screen.",
       "expressionName": "WindowX",
       "returnType": "number",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "windowy",
@@ -1154,7 +1298,9 @@
       "description_en": "The Y position of the window on the screen.",
       "expressionName": "WindowY",
       "returnType": "number",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "windowwidth",
@@ -1164,7 +1310,9 @@
       "description_en": "The width of the UI window in the operating system.",
       "expressionName": "WindowWidth",
       "returnType": "number",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "windowheight",
@@ -1174,7 +1322,9 @@
       "description_en": "The height of the UI window in the operating system.",
       "expressionName": "WindowHeight",
       "returnType": "number",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "windowtitle",
@@ -1184,7 +1334,9 @@
       "description_en": "The current window title bar text.",
       "expressionName": "WindowTitle",
       "returnType": "string",
-      "category": "window"
+      "category": "window",
+      "category_zh": "窗口",
+      "category_en": "Window"
     },
     {
       "id": "argument-count",
@@ -1194,7 +1346,9 @@
       "description_en": "The number of command-line arguments.",
       "expressionName": "ArgumentCount",
       "returnType": "number",
-      "category": "command-line"
+      "category": "command-line",
+      "category_zh": "命令行",
+      "category_en": "Command line"
     },
     {
       "id": "argument-at",
@@ -1214,7 +1368,9 @@
           "desc_zh": "参数是从0开始计数的",
           "desc_en": "Zero-based index of argument"
         }
-      ]
+      ],
+      "category_zh": "命令行",
+      "category_en": "Command line"
     }
   ],
   "productTypes": "games"

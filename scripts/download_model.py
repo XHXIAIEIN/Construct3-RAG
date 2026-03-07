@@ -3,7 +3,7 @@ HuggingFace 模型下载器
 
 用法:
     python scripts/download_model.py Qwen/Qwen2.5-14B-Instruct
-    python scripts/download_model.py Qwen/Qwen2.5-14B-Instruct --cache-dir D:/models
+    python scripts/download_model.py Qwen/Qwen2.5-14B-Instruct --cache-dir D:/Agent/models
     python scripts/download_model.py Qwen/Qwen2.5-14B-Instruct --token hf_xxx
     python scripts/download_model.py --list-cached
 """
@@ -147,9 +147,9 @@ def main():
         epilog="""
 示例:
   python scripts/download_model.py Qwen/Qwen2.5-14B-Instruct
-  python scripts/download_model.py Qwen/Qwen2.5-7B-Instruct --cache-dir D:/models
+  python scripts/download_model.py Qwen/Qwen2.5-7B-Instruct --cache-dir D:/Agent/models
   python scripts/download_model.py --list-cached
-  python scripts/download_model.py --list-cached --cache-dir D:/models
+  python scripts/download_model.py --list-cached --cache-dir D:/Agent/models
         """
     )
     parser.add_argument("model_id", nargs="?", help="HuggingFace 模型 ID，如 Qwen/Qwen2.5-14B-Instruct")

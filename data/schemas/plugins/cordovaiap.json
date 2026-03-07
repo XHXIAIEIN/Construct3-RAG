@@ -9,6 +9,12 @@
   "categories": [
     "cordovaiap"
   ],
+  "aceCategories": {
+    "cordovaiap": {
+      "zh": "Cordova IAP",
+      "en": "Cordova IAP"
+    }
+  },
   "conditions": [
     {
       "id": "on-purchase-success",
@@ -31,7 +37,9 @@
           "desc_zh": "已成功购买的产品ID。",
           "desc_en": "Product ID that has been purchased successfully."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-any-purchase-success",
@@ -44,7 +52,9 @@
       "scriptName": "OnAnyPurchaseSuccess",
       "isTrigger": true,
       "canDebug": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-purchase-failed",
@@ -67,7 +77,9 @@
           "desc_zh": "无法购买的产品ID。",
           "desc_en": "Product ID that has failed to purchase."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-any-purchase-failed",
@@ -80,7 +92,9 @@
       "scriptName": "OnAnyPurchaseFail",
       "isTrigger": true,
       "canDebug": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-registration-success",
@@ -92,7 +106,9 @@
       "display_en": "On store registration success",
       "scriptName": "OnRegistrationSuccess",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-registration-failure",
@@ -104,7 +120,9 @@
       "display_en": "On store registration failed",
       "scriptName": "OnRegistrationFail",
       "isTrigger": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "product-owned",
@@ -125,7 +143,9 @@
           "desc_zh": "要检查是否拥有的产品ID。",
           "desc_en": "Product ID to check if owned."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "product-available",
@@ -146,7 +166,9 @@
           "desc_zh": "要检查的产品ID是否可用。",
           "desc_en": "Product ID to check if available."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "store-registered",
@@ -157,7 +179,9 @@
       "display_zh": "商店注册完成",
       "display_en": "Is registration complete",
       "scriptName": "StoreRegistered",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-product-available",
@@ -180,7 +204,9 @@
           "desc_zh": "要检查的产品ID。",
           "desc_en": "Product ID to check if available."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-any-product-available",
@@ -193,7 +219,9 @@
       "scriptName": "OnAnyProductAvailable",
       "isTrigger": true,
       "canDebug": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-product-owned",
@@ -216,7 +244,9 @@
           "desc_zh": "要检查的产品ID。",
           "desc_en": "Product ID to check if owned."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-any-product-owned",
@@ -229,7 +259,9 @@
       "scriptName": "OnAnyProductOwned",
       "isTrigger": true,
       "canDebug": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "on-transaction-finished",
@@ -242,7 +274,9 @@
       "scriptName": "OnTransactionFinished",
       "isTrigger": true,
       "canDebug": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     }
   ],
   "actions": [
@@ -287,7 +321,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "complete-registration",
@@ -298,7 +334,9 @@
       "display_zh": "完成产品注册",
       "display_en": "Complete product registration",
       "scriptName": "CompleteRegistration",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "purchase-product",
@@ -319,7 +357,9 @@
           "desc_zh": "要购买的产品ID。",
           "desc_en": "The product ID to purchase."
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "restore-purchases",
@@ -330,7 +370,9 @@
       "display_zh": "恢复购买",
       "display_en": "Restore purchases",
       "scriptName": "RestorePurchases",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "set-public-key",
@@ -348,7 +390,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     }
   ],
   "expressions": [
@@ -370,7 +414,9 @@
           "desc_zh": "用于获取名称的产品ID。",
           "desc_en": "Product ID to get name from"
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "product-price",
@@ -390,7 +436,9 @@
           "desc_zh": "用于获取价格的产品ID。",
           "desc_en": "Product ID to get price from"
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "product-description",
@@ -410,7 +458,9 @@
           "desc_zh": "用于获取描述的产品ID。",
           "desc_en": "Product ID to get description from"
         }
-      ]
+      ],
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "product-id",
@@ -420,7 +470,9 @@
       "description_en": "In a trigger, the relevant product ID.",
       "expressionName": "ProductID",
       "returnType": "string",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "error-message",
@@ -430,7 +482,9 @@
       "description_en": "In a trigger, an error message if available.",
       "expressionName": "ErrorMessage",
       "returnType": "string",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "transaction-id",
@@ -440,7 +494,9 @@
       "description_en": "After 'On transaction finished', the ID of the last finished transaction.",
       "expressionName": "TransactionID",
       "returnType": "string",
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     },
     {
       "id": "transaction",
@@ -451,7 +507,9 @@
       "expressionName": "Transaction",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "cordovaiap"
+      "category": "cordovaiap",
+      "category_zh": "Cordova IAP",
+      "category_en": "Cordova IAP"
     }
   ],
   "properties": [

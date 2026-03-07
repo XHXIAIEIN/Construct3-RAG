@@ -33,7 +33,7 @@ git clone https://github.com/Scirra/Construct-Example-Projects.git
 
 | 数据源 | 获取方式 | 用途 |
 |--------|----------|------|
-| `zh-CN_r473.csv` | POEditor | ACE Schema 生成 |
+| `zh_r475.csv` | POEditor | ACE Schema 生成 |
 | `Construct3-Manual` | [GitHub](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown |
 | `Construct-Example-Projects` | [GitHub](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 
@@ -90,7 +90,7 @@ cp .env.example .env
 Construct3-RAG/
 ├── data/
 │   ├── source/                # 外部资料 (需手动获取)
-│   │   └── zh-CN_r473.csv     # 官方翻译文件
+│   │   └── zh_r475.csv     # 官方翻译文件
 │   └── schemas/               # ACE Schema (72 插件 + 31 行为)
 ├── docs/                      # 设计文档、指南、知识库
 ├── scripts/                   # 运维脚本 (启动/索引/清理)

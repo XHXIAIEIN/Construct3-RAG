@@ -7,6 +7,7 @@
   "description_en": "Drag and drop objects either by mouse or touch.",
   "path": "general/dragndrop",
   "categories": [],
+  "aceCategories": {},
   "conditions": [
     {
       "id": "is-dragging",

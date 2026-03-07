@@ -10,6 +10,16 @@
     "appearance",
     "svg"
   ],
+  "aceCategories": {
+    "appearance": {
+      "zh": "显示",
+      "en": "Appearance"
+    },
+    "svg": {
+      "zh": "SVG",
+      "en": "SVG"
+    }
+  },
   "conditions": [],
   "actions": [
     {
@@ -110,7 +120,9 @@
             }
           }
         }
-      ]
+      ],
+      "category_zh": "显示",
+      "category_en": "Appearance"
     },
     {
       "id": "set-image",
@@ -132,7 +144,9 @@
           "desc_zh": "从项目文件中加载SVG图像。",
           "desc_en": "A project file to load an SVG image from."
         }
-      ]
+      ],
+      "category_zh": "SVG",
+      "category_en": "SVG"
     },
     {
       "id": "set-image-by-name",
@@ -154,7 +168,9 @@
           "desc_zh": "用于加载SVG图像的项目文件的名称字符串",
           "desc_en": "A string of the name of a project file to load an SVG image from."
         }
-      ]
+      ],
+      "category_zh": "SVG",
+      "category_en": "SVG"
     }
   ],
   "expressions": [],

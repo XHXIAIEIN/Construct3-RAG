@@ -14,6 +14,32 @@
     "speech-synthesis",
     "user-media"
   ],
+  "aceCategories": {
+    "ambient-light": {
+      "zh": "环境光",
+      "en": "Ambient light"
+    },
+    "canvas-recording": {
+      "zh": "屏幕录制",
+      "en": "Canvas recording"
+    },
+    "media-request": {
+      "zh": "媒体捕获",
+      "en": "Media request"
+    },
+    "speech-recognition": {
+      "zh": "语音识别",
+      "en": "Speech recognition"
+    },
+    "speech-synthesis": {
+      "zh": "语音合成",
+      "en": "Speech synthesis"
+    },
+    "user-media": {
+      "zh": "用户媒体",
+      "en": "User Media"
+    }
+  },
   "conditions": [
     {
       "id": "on-reading-update",
@@ -24,7 +50,9 @@
       "scriptName": "OnDeviceLight",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "ambient-light"
+      "category": "ambient-light",
+      "category_zh": "环境光",
+      "category_en": "Ambient light"
     },
     {
       "id": "on-canvas-recording-ready",
@@ -35,7 +63,9 @@
       "scriptName": "OnCanvasRecordingReady",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "canvas-recording"
+      "category": "canvas-recording",
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "is-canvas-recording-supported",
@@ -45,7 +75,9 @@
       "description_en": "",
       "scriptName": "SupportsCanvasRecording",
       "isDeprecated": true,
-      "category": "canvas-recording"
+      "category": "canvas-recording",
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "is-recording-format-supported",
@@ -67,7 +99,9 @@
             "webm-vp9"
           ]
         }
-      ]
+      ],
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "on-media-request-approved",
@@ -80,7 +114,9 @@
       "scriptName": "OnApproved",
       "isTrigger": true,
       "canDebug": true,
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "on-media-request-declined",
@@ -93,7 +129,9 @@
       "scriptName": "OnDeclined",
       "isTrigger": true,
       "canDebug": true,
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "on-retrieved-media-sources",
@@ -106,7 +144,9 @@
       "scriptName": "OnMediaSources",
       "isTrigger": true,
       "canDebug": true,
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "on-snapshot",
@@ -119,7 +159,9 @@
       "scriptName": "OnSnapshot",
       "isTrigger": true,
       "canDebug": true,
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "supports-speech-recognition",
@@ -129,7 +171,9 @@
       "description_en": "",
       "scriptName": "SupportsSpeechRecognition",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-start",
@@ -140,7 +184,9 @@
       "scriptName": "OnSpeechRecognitionStart",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-end",
@@ -151,7 +197,9 @@
       "scriptName": "OnSpeechRecognitionEnd",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-error",
@@ -162,7 +210,9 @@
       "scriptName": "OnSpeechRecognitionError",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "on-result",
@@ -173,7 +223,9 @@
       "scriptName": "OnSpeechRecognitionResult",
       "isTrigger": true,
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "is-recognising-speech",
@@ -183,7 +235,9 @@
       "description_en": "",
       "scriptName": "IsRecognisingSpeech",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "supports-speech-synthesis",
@@ -193,7 +247,9 @@
       "description_en": "",
       "scriptName": "SupportsSpeechSynthesis",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "is-speaking",
@@ -203,7 +259,9 @@
       "description_en": "",
       "scriptName": "IsSpeaking",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "supports-user-media",
@@ -213,7 +271,9 @@
       "description_en": "",
       "scriptName": "SupportsUserMedia",
       "isDeprecated": true,
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     }
   ],
   "actions": [
@@ -250,7 +310,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "stop-recording-canvas",
@@ -260,7 +322,9 @@
       "description_en": "",
       "scriptName": "StopRecordingCanvas",
       "isDeprecated": true,
-      "category": "canvas-recording"
+      "category": "canvas-recording",
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "request-camera",
@@ -341,7 +405,9 @@
           "desc_zh": "使用麦克风时，指定麦克风设备源的索引，从 0 开始计数。",
           "desc_en": "The zero-based index of the audio source to use, if microphone is included."
         }
-      ]
+      ],
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "stop",
@@ -352,7 +418,9 @@
       "display_zh": "结束",
       "display_en": "Stop",
       "scriptName": "Stop",
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "snapshot",
@@ -397,7 +465,9 @@
           "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG.",
           "initialValue": "75"
         }
-      ]
+      ],
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "request-microphone",
@@ -428,7 +498,9 @@
           "desc_zh": "要使用的音频源的从零开始的索引。",
           "desc_en": "The zero-based index of the audio source to use."
         }
-      ]
+      ],
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "get-media-sources",
@@ -440,7 +512,9 @@
       "display_en": "Get media sources",
       "scriptName": "GetMediaSources",
       "isAsync": true,
-      "category": "media-request"
+      "category": "media-request",
+      "category_zh": "媒体捕获",
+      "category_en": "Media request"
     },
     {
       "id": "request-speech-recognition",
@@ -479,7 +553,9 @@
             "final"
           ]
         }
-      ]
+      ],
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "stop-speech-recognition",
@@ -489,7 +565,9 @@
       "description_en": "",
       "scriptName": "StepSpeechRecognition",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "speak-text",
@@ -539,7 +617,9 @@
           "name_en": "",
           "initialValue": "1"
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "stop-speaking",
@@ -549,7 +629,9 @@
       "description_en": "",
       "scriptName": "StopSpeaking",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "pause-speaking",
@@ -559,7 +641,9 @@
       "description_en": "",
       "scriptName": "PauseSpeaking",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "resume-speaking",
@@ -569,7 +653,9 @@
       "description_en": "",
       "scriptName": "ResumeSpeaking",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     }
   ],
   "expressions": [
@@ -582,7 +668,9 @@
       "expressionName": "AmbientLux",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "ambient-light"
+      "category": "ambient-light",
+      "category_zh": "环境光",
+      "category_en": "Ambient light"
     },
     {
       "id": "canvasrecordingurl",
@@ -593,7 +681,9 @@
       "expressionName": "CanvasRecordingURL",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "canvas-recording"
+      "category": "canvas-recording",
+      "category_zh": "屏幕录制",
+      "category_en": "Canvas recording"
     },
     {
       "id": "finaltranscript",
@@ -604,7 +694,9 @@
       "expressionName": "FinalTranscript",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "interimtranscript",
@@ -615,7 +707,9 @@
       "expressionName": "InterimTranscript",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "speecherror",
@@ -626,7 +720,9 @@
       "expressionName": "SpeechError",
       "returnType": "string",
       "isDeprecated": true,
-      "category": "speech-recognition"
+      "category": "speech-recognition",
+      "category_zh": "语音识别",
+      "category_en": "Speech recognition"
     },
     {
       "id": "voicecount",
@@ -637,7 +733,9 @@
       "expressionName": "VoiceCount",
       "returnType": "number",
       "isDeprecated": true,
-      "category": "speech-synthesis"
+      "category": "speech-synthesis",
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voicenameat",
@@ -656,7 +754,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voicelangat",
@@ -675,7 +775,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "voiceuriat",
@@ -694,7 +796,9 @@
           "name_zh": "",
           "name_en": ""
         }
-      ]
+      ],
+      "category_zh": "语音合成",
+      "category_en": "Speech synthesis"
     },
     {
       "id": "videowidth",
@@ -704,7 +808,9 @@
       "description_en": "Return the width of the image from the device camera.",
       "expressionName": "VideoWidth",
       "returnType": "number",
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "videoheight",
@@ -714,7 +820,9 @@
       "description_en": "Return the height of the image from the device camera.",
       "expressionName": "VideoHeight",
       "returnType": "number",
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "snapshoturl",
@@ -724,7 +832,9 @@
       "description_en": "Return a data URI containing image data from a snapshot. Can be set to a Sprite or Tiled Background.",
       "expressionName": "SnapshotURL",
       "returnType": "string",
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "audiosourcecount",
@@ -734,7 +844,9 @@
       "description_en": "Return the number of audio sources available.",
       "expressionName": "AudioSourceCount",
       "returnType": "number",
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "audiosourcelabelat",
@@ -754,7 +866,9 @@
           "desc_zh": "音频源的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the audio source."
         }
-      ]
+      ],
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "camerasourcecount",
@@ -764,7 +878,9 @@
       "description_en": "Return the number of camera sources available.",
       "expressionName": "CameraSourceCount",
       "returnType": "number",
-      "category": "user-media"
+      "category": "user-media",
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "camerasourcelabelat",
@@ -784,7 +900,9 @@
           "desc_zh": "相机源的索引，从 0 开始的计数。",
           "desc_en": "Zero-based index of the camera source."
         }
-      ]
+      ],
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     },
     {
       "id": "camerasourcefacingat",
@@ -804,7 +922,9 @@
           "desc_zh": "多个摄像头设备的索引，从 0 开始计数。",
           "desc_en": "Zero-based index of the camera source."
         }
-      ]
+      ],
+      "category_zh": "用户媒体",
+      "category_en": "User Media"
     }
   ],
   "productTypes": "games"
