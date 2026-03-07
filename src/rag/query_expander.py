@@ -296,8 +296,12 @@ class DictExpander(BaseExpander):
         try:
             import numpy as np
             data = np.load(self._path, allow_pickle=True)
-            self._words = list(data["words"])
-            self._vectors = data["vectors"]      # float32, shape (N, D)
+            self._words = [str(w) for w in data["words"]]   # ensure plain str
+            vecs = data["vectors"].astype(np.float32)
+            # Normalize rows so cosine sim = dot product
+            norms = np.linalg.norm(vecs, axis=1, keepdims=True)
+            norms[norms == 0] = 1.0
+            self._vectors = vecs / norms
             logger.info(f"[DictExpander] Loaded {len(self._words)} words")
         except Exception as e:
             logger.warning(f"[DictExpander] Load failed: {e}")
@@ -315,15 +319,17 @@ class DictExpander(BaseExpander):
         """Embed tokens with bge-m3 and find Top-K nearest words."""
         import numpy as np
         try:
-            from src.ingest.indexer import get_embedder
-            embedder = get_embedder()
+            embedder = _get_shared_embedder()
         except Exception:
             return set()
 
         result: set[str] = set()
         for tok in tokens:
             try:
-                vec = np.array(embedder.embed_query(tok), dtype=np.float32)
+                vec = np.array(embedder.encode_single(tok), dtype=np.float32)
+                norm = np.linalg.norm(vec)
+                if norm > 0:
+                    vec = vec / norm
                 sims = self._vectors @ vec
                 top_idx = np.argsort(sims)[::-1][:EXPANDER_TOP_K]
                 for i in top_idx:
@@ -333,6 +339,19 @@ class DictExpander(BaseExpander):
             except Exception as e:
                 logger.debug(f"[DictExpander] embed error for '{tok}': {e}")
         return result
+
+
+_shared_embedder = None
+
+
+def _get_shared_embedder():
+    """Return module-level cached embedder to avoid repeated model loads."""
+    global _shared_embedder
+    if _shared_embedder is None:
+        from src.ingest.indexer import EmbeddingModel
+        from src.config import EMBEDDING_MODEL
+        _shared_embedder = EmbeddingModel(model_name=EMBEDDING_MODEL)
+    return _shared_embedder
 
 
 def create_expander() -> BaseExpander:
