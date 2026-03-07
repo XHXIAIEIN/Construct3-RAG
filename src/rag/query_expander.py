@@ -473,9 +473,11 @@ class SchemaZhEnIndex:
 
         for param in ace.get("params", []):
             zh.update(_tokenize_zh(param.get("name_zh", "")))
-            en_tok = param.get("name_en", "").strip()
-            if en_tok and len(en_tok) >= 2:
-                en.add(en_tok)
+            for key in ("name_en", "id"):
+                en_tok = param.get(key, "").strip().replace("-", " ")
+                for part in en_tok.split():
+                    if len(part) >= 2:
+                        en.add(part)
             for item_val in param.get("items_i18n", {}).values():
                 if isinstance(item_val, dict):
                     zh.update(_tokenize_zh(item_val.get("zh", "")))
