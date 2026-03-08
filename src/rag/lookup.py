@@ -1033,6 +1033,16 @@ class LookupEngine:
                 zh_pairs.append((name_en, name_zh))
 
         lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+
+        # Append related examples from inverted index
+        canonical_id = schema.get("originalId", plugin_en)
+        example_tag = f"behavior-{canonical_id}" if intent.is_behavior else f"plugin-{canonical_id}"
+        example_records = self.examples_index.search([example_tag], max_results=3)
+        example_line = ExamplesIndex.format_for_ace(example_records)
+        if example_line:
+            lines.append("")
+            lines.append(example_line)
+
         return "\n".join(l for l in lines if l)
 
     def _format_ace_detail(self, intent: LookupIntent) -> str:
@@ -1086,6 +1096,16 @@ class LookupEngine:
 
         zh_pairs = [(name_en, name_zh)] if name_zh and name_zh != name_en else []
         lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+
+        # Append related examples from inverted index
+        canonical_id = schema.get("originalId", plugin_en)
+        example_tag = f"behavior-{canonical_id}" if intent.is_behavior else f"plugin-{canonical_id}"
+        example_records = self.examples_index.search([example_tag], max_results=3)
+        example_line = ExamplesIndex.format_for_ace(example_records)
+        if example_line:
+            lines.append("")
+            lines.append(example_line)
+
         return "\n".join(l for l in lines if l)
 
     def _format_ace_search(self, intent: LookupIntent) -> str:

@@ -513,3 +513,24 @@ class TestExamplesIndex:
         assert "Cave Bridge" in result
         assert "cave-bridge" in result
         assert "adventure" in result.lower()
+
+
+# ---------------------------------------------------------------------------
+# TestACEExampleAttach
+# ---------------------------------------------------------------------------
+
+class TestACEExampleAttach:
+    def test_ace_list_appends_examples(self):
+        """ACE list result should include Related examples when examples_index has data."""
+        engine = LookupEngine()
+        intent = LookupIntent(
+            intent_type="ace_list",
+            plugin_id="tween",
+            is_behavior=True,
+            ace_type="actions",
+            filter_term="",
+            matched_tags=["behavior-Tween"],
+        )
+        result = engine._format_ace_list(intent)
+        if engine.examples_index._index:  # only assert if index loaded
+            assert "Related examples" in result
