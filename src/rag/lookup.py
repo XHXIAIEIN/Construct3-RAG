@@ -336,7 +336,7 @@ class ExamplesIndex:
             try:
                 self._index = json.loads(path.read_text(encoding="utf-8"))
                 logger.info(f"[ExamplesIndex] Loaded {len(self._index)} tags")
-            except Exception as e:
+            except (json.JSONDecodeError, OSError) as e:
                 logger.warning(f"[ExamplesIndex] Failed to load: {e}")
         else:
             logger.warning(f"[ExamplesIndex] Index not found: {path}")
@@ -569,10 +569,10 @@ class IntentClassifier:
         # Match plugin/behavior names from schema
         self.schema._load()
         matched_tags: List[str] = []
-        for plugin_id, schema_data in self.schema._plugins.items():
+        for plugin_id, _ in self.schema._plugins.items():
             if plugin_id.lower() in q_lower:
                 matched_tags.append(f"plugin-{plugin_id}")
-        for behavior_id, schema_data in self.schema._behaviors.items():
+        for behavior_id, _ in self.schema._behaviors.items():
             if behavior_id.lower() in q_lower:
                 matched_tags.append(f"behavior-{behavior_id}")
         return LookupIntent(
