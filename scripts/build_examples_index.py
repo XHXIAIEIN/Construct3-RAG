@@ -10,7 +10,12 @@ OUT_FILE = DATA_DIR / "examples_index.json"
 
 
 def _parse_tags(tags: list[str]) -> dict:
-    """Split data-tags into categorized lists."""
+    """Split data-tags into categorized lists.
+
+    Returns a dict with keys: plugins, behaviors, effects, genres, levels,
+    categories, coding, misc — all list[str]. 'level' in the record is
+    derived as levels[0] (str) or '' when building each record.
+    """
     plugins, behaviors, effects, genres, levels, categories, coding, misc = [], [], [], [], [], [], [], []
     for t in tags:
         if t.startswith("plugin-"):
@@ -36,7 +41,9 @@ def _parse_tags(tags: list[str]) -> dict:
                 coding=coding, misc=misc)
 
 
-def build_index():
+def build_index() -> None:
+    if not EN_FILE.exists():
+        raise FileNotFoundError(f"Input file not found: {EN_FILE}")
     en_items = json.loads(EN_FILE.read_text(encoding="utf-8"))
 
     index = defaultdict(list)
@@ -65,6 +72,8 @@ def build_index():
         unique = []
         for r in records:
             key = r["slug"]
+            if not key:  # skip records without slug
+                continue
             if key not in seen:
                 seen.add(key)
                 unique.append(r)
