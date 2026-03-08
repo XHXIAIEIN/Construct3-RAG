@@ -532,5 +532,7 @@ class TestACEExampleAttach:
             matched_tags=["behavior-Tween"],
         )
         result = engine._format_ace_list(intent)
-        if engine.examples_index._index:  # only assert if index loaded
-            assert "Related examples" in result
+        if not engine.examples_index._index:
+            import pytest
+            pytest.skip("examples_index.json not found")
+        assert "Related examples" in result

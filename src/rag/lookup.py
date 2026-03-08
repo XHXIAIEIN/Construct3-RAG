@@ -1001,6 +1001,12 @@ class LookupEngine:
             return self._format_example_find(intent)
         return ""
 
+    def _get_example_tag(self, schema: dict, intent: "LookupIntent") -> str:
+        """Derive the examples_index tag key for a plugin/behavior schema."""
+        canonical_id = schema.get("originalId", schema.get("name_en", intent.plugin_id))
+        prefix = "behavior" if intent.is_behavior else "plugin"
+        return f"{prefix}-{canonical_id}"
+
     def _format_ace_list(self, intent: LookupIntent) -> str:
         """Format ACE list in compact English format for LLM context."""
         schema = self.schema_index.get_schema(intent.plugin_id, intent.is_behavior)
@@ -1035,8 +1041,7 @@ class LookupEngine:
         lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
 
         # Append related examples from inverted index
-        canonical_id = schema.get("originalId", plugin_en)
-        example_tag = f"behavior-{canonical_id}" if intent.is_behavior else f"plugin-{canonical_id}"
+        example_tag = self._get_example_tag(schema, intent)
         example_records = self.examples_index.search([example_tag], max_results=3)
         example_line = ExamplesIndex.format_for_ace(example_records)
         if example_line:
@@ -1098,8 +1103,7 @@ class LookupEngine:
         lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
 
         # Append related examples from inverted index
-        canonical_id = schema.get("originalId", plugin_en)
-        example_tag = f"behavior-{canonical_id}" if intent.is_behavior else f"plugin-{canonical_id}"
+        example_tag = self._get_example_tag(schema, intent)
         example_records = self.examples_index.search([example_tag], max_results=3)
         example_line = ExamplesIndex.format_for_ace(example_records)
         if example_line:
