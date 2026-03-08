@@ -44,6 +44,27 @@ from .prompts import (
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# ── Context structuring constants ──────────────────────────────────────────────
+# Source collections grouped by semantic role
+_ACE_SOURCES     = frozenset({"c3_ace", "c3_effects"})
+_DOC_SOURCES     = frozenset({"c3_guide", "c3_interface", "c3_project",
+                               "c3_plugins", "c3_behaviors", "c3_scripting"})
+_TERM_SOURCES    = frozenset({"c3_terms"})
+_EXAMPLE_SOURCES = frozenset({"c3_examples"})
+
+# Ordered groups: (source_set, section_header, description_line)
+_CONTEXT_GROUPS: list[tuple[frozenset, str, str]] = [
+    (_ACE_SOURCES,     "编辑器 ACE 参考",
+     "以下是 Construct 3 编辑器中实际可用的动作/条件/表达式定义（名称、参数、简述）："),
+    (_DOC_SOURCES,     "官方文档说明",
+     "以下是 Construct 3 Manual 对相关功能的详细解释与用法："),
+    (_TERM_SOURCES,    "术语对照", ""),
+    (_EXAMPLE_SOURCES, "示例项目", ""),
+]
+
+_CONTEXT_CHAR_BUDGET = 8000   # ~3000–4000 tokens for mixed ZH/EN
+_DEDUP_THRESHOLD     = 0.70   # Jaccard word-overlap above this → duplicate
+
 _jieba_c3_loaded = False
 
 
@@ -495,6 +516,13 @@ class RAGChain:
 
         return indicator_count >= 2 or word_count > 15
 
+    _EXAMPLE_KEYWORDS = frozenset({"示例", "example", "案例", "样例", "模板", "template"})
+
+    def _wants_examples(self, query: str) -> bool:
+        """Return True if the query is seeking example projects."""
+        q = query.lower()
+        return any(kw in q for kw in self._EXAMPLE_KEYWORDS)
+
     # ── Query enhancement (migrated from gradio_ui.py) ───────────────────────
 
     @staticmethod
@@ -556,6 +584,12 @@ class RAGChain:
                 if en:
                     seen_en.add(en.lower())
                 if r.score >= threshold and en:
+                    # Lexical filter: for Chinese segments, zh result must share
+                    # at least one Chinese character with the query segment.
+                    # Prevents semantic drift (e.g. "生物" → "Web", "Algorithm").
+                    seg_zh_chars = {c for c in seg if '\u4e00' <= c <= '\u9fff'}
+                    if seg_zh_chars and not seg_zh_chars.intersection(zh):
+                        continue
                     keywords.append({"zh": zh, "en": en, "score": r.score})
                     seg_hits.append(f"{zh}→{en}({r.score:.2f})")
             if seg_hits:
@@ -691,38 +725,83 @@ class RAGChain:
     # section_type → context label (from locale)
     _SECTION_TYPE_LABELS = ACE_SECTION_LABELS
 
+    def _format_single_result(self, r: SearchResult, idx: int) -> str:
+        """Format one search result as a numbered context block."""
+        source = r.metadata.get("source", "")
+        source_path = source[:-3] if source.endswith(".md") else source
+        breadcrumb = source_path.replace("/", " > ")
+
+        h2 = r.metadata.get("h2_heading", "")
+        header = f"[{idx}] {breadcrumb}"
+        if h2:
+            header += f" > {h2}"
+
+        section_type = r.metadata.get("section_type", "")
+        type_label = self._SECTION_TYPE_LABELS.get(section_type, "")
+        if type_label:
+            header += f"  [{type_label}]"
+
+        return f"{header}\n{r.text}\n{SOURCE_LABEL.format(source=source)}\n"
+
+    def _deduplicate_results(self, results: List[SearchResult]) -> List[SearchResult]:
+        """Remove near-duplicate chunks using word-level Jaccard similarity."""
+        kept: List[SearchResult] = []
+        for r in results:
+            words_r = set(r.text.split())
+            is_dup = False
+            for k in kept:
+                words_k = set(k.text.split())
+                union = words_r | words_k
+                if union and len(words_r & words_k) / len(union) > _DEDUP_THRESHOLD:
+                    is_dup = True
+                    break
+            if not is_dup:
+                kept.append(r)
+        return kept
+
     def _format_reranked_context(self, results: List[SearchResult]) -> str:
-        """Format reranked results as context with clear numbering"""
-        context_parts = []
+        """Format results grouped by source type, deduplicated, within char budget."""
+        if not results:
+            return ""
 
-        def format_reranked_result(r: SearchResult, idx: int) -> str:
-            source = r.metadata.get("source", "")
-            if source.endswith(".md"):
-                source_path = source[:-3]
-            else:
-                source_path = source
-            breadcrumb = source_path.replace("/", " > ")
+        # 1. Deduplicate near-identical chunks
+        results = self._deduplicate_results(results)
 
-            h2 = r.metadata.get("h2_heading", "")
-            header = f"[{idx}] {breadcrumb}"
-            if h2:
-                header += f" > {h2}"
+        # 2. Group by source collection
+        grouped: dict[str, List[SearchResult]] = {}
+        for r in results:
+            grouped.setdefault(r.source, []).append(r)
 
-            # ACE type tag: let LLM know if this is a condition/action/expression
-            section_type = r.metadata.get("section_type", "")
-            type_label = self._SECTION_TYPE_LABELS.get(section_type, "")
-            if type_label:
-                header += f"  [{type_label}]"
+        # 3. Build grouped sections within char budget
+        sections: list[str] = []
+        idx = 1
+        total_chars = 0
 
-            return f"{header}\n{r.text}\n{SOURCE_LABEL.format(source=source)}\n"
+        for src_set, header, desc in _CONTEXT_GROUPS:
+            group_results = [
+                r for src in src_set
+                for r in grouped.get(src, [])
+            ]
+            if not group_results:
+                continue
 
-        # Show all results (not just top 5) to avoid hallucinated citations
-        if results:
-            context_parts.append(f"{CONTEXT_HEADER.format(count=len(results))}\n")
-            for i, r in enumerate(results, start=1):
-                context_parts.append(format_reranked_result(r, i))
+            lines: list[str] = [f"### {header}"]
+            if desc:
+                lines.append(desc)
+            lines.append("")
 
-        return "\n".join(context_parts)
+            for r in group_results:
+                entry = self._format_single_result(r, idx)
+                if total_chars + len(entry) > _CONTEXT_CHAR_BUDGET:
+                    lines.append(f"[{idx}] （已达上下文长度限制，更多结果省略）\n")
+                    break
+                lines.append(entry)
+                total_chars += len(entry)
+                idx += 1
+
+            sections.append("\n".join(lines))
+
+        return "\n---\n\n".join(sections)
 
     def classify_query(self, query: str) -> str:
         """Classify query type (qa/code)"""
@@ -1097,7 +1176,7 @@ class RAGChain:
         search_query = query
         term_keywords: list[dict] = []
         if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query, threshold=0.3)
+            term_keywords = self._extract_term_keywords(query, threshold=0.65)
             if term_keywords:
                 en_terms = " ".join(kw["en"] for kw in term_keywords)
                 search_query = f"{query} {en_terms}"
@@ -1109,7 +1188,7 @@ class RAGChain:
                 term_set = self.query_expander.get_term_set(segments)
                 schema_matches = self.query_expander.search(term_set)
                 high = [m for m in schema_matches if m.score > 0.7]
-                mid  = [m for m in schema_matches if 0.3 <= m.score <= 0.7]
+                mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
                 if high or mid:
                     boost_matches = high if high else mid[:3]
                     en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
@@ -1145,6 +1224,12 @@ class RAGChain:
             if sq_results:
                 all_result_lists.append(sq_results)
                 logger.info(f"[Complex] Sub-query '{sq[:30]}...' returned {len(sq_results)} results")
+
+        # Extra examples retrieval for example-seeking queries
+        if self._wants_examples(query):
+            extra_examples = self.retriever.search_examples(query, top_k=3)
+            if extra_examples:
+                all_result_lists.append(extra_examples)
 
         # Step 3: Combine with RRF
         logger.info("[Complex] Fusing results with RRF...")
@@ -1198,7 +1283,7 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
-    def answer_with_fallback(self, query: str, include_js: bool = False) -> RAGResponse:
+    def answer_with_fallback(self, query: str, include_js: bool = False, schema_context: str = "") -> RAGResponse:
         """
         Answer query with graceful fallback for service unavailability.
 
@@ -1242,28 +1327,31 @@ class RAGChain:
         schema_matches: list[SchemaMatch] = []
 
         if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query, threshold=0.3)
+            term_keywords = self._extract_term_keywords(query, threshold=0.65)
             if term_keywords:
                 en_terms = " ".join(kw["en"] for kw in term_keywords)
                 search_query = f"{query} {en_terms}"
                 logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
 
             # Schema zh→en bridge via QueryExpander
-            segments = self._split_zh_segments(query)
-            if segments:
-                term_set = self.query_expander.get_term_set(segments)
-                schema_matches = self.query_expander.search(term_set)
-                high = [m for m in schema_matches if m.score > 0.7]
-                mid  = [m for m in schema_matches if 0.3 <= m.score <= 0.7]
-                if high or mid:
-                    boost_matches = high if high else mid[:3]
-                    en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
-                    search_query = f"{search_query} {en_boost}".strip()
-                    logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
-                if schema_matches:
-                    top3 = schema_matches[:3]
-                    summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
-                    _trace(summary, "schema_match")
+            # Skip when dict lookup already provided precise plugin context —
+            # schema_match searches ALL plugins and may add noise (e.g. "数字"→sqrt)
+            if not schema_context:
+                segments = self._split_zh_segments(query)
+                if segments:
+                    term_set = self.query_expander.get_term_set(segments)
+                    schema_matches = self.query_expander.search(term_set)
+                    high = [m for m in schema_matches if m.score > 0.7]
+                    mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
+                    if high or mid:
+                        boost_matches = high if high else mid[:3]
+                        en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
+                        search_query = f"{search_query} {en_boost}".strip()
+                        logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
+                    if schema_matches:
+                        top3 = schema_matches[:3]
+                        summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
+                        _trace(summary, "schema_match")
 
             if search_query != query:
                 _trace(f"\"{search_query[:80]}\"", "query")
@@ -1272,6 +1360,10 @@ class RAGChain:
         results = self.retriever.search_all_with_rerank(
             search_query, top_k_per_collection=5, final_top_k=10
         )
+
+        # Extra examples retrieval for example-seeking queries
+        if self._wants_examples(query):
+            results += self.retriever.search_examples(query, top_k=3)
 
         # Enrich with plugin-specific ACE search based on term hits
         results = self._enrich_with_ace_search(query, term_keywords, results)
@@ -1325,6 +1417,15 @@ class RAGChain:
 
         # Full answer generation (both services available)
         context = self._format_reranked_context(filtered_results)
+        if schema_context:
+            context = (
+                "### 编辑器功能定义（ACE Schema）\n"
+                "以下是 Construct 3 编辑器中实际显示的功能，包含精确名称、参数及简短说明。"
+                "与下方官方文档说明互为补充，共同构成完整的功能描述。\n\n"
+                f"{schema_context}\n\n---\n\n"
+                f"{context}"
+            )
+            _trace("字典数据已注入上下文", "info")
         prompt = STRICT_QA_PROMPT.format(context=context, question=query)
         prompt = self._append_js_note(prompt, include_js)
 
@@ -1389,21 +1490,20 @@ class RAGChain:
             from src.rag.lookup import LookupEngine
             self._lookup = LookupEngine()
         lookup_resp = self._lookup.try_lookup(query)
+        schema_context = ""
         if lookup_resp:
-            _trace(f"路由: Lookup命中({lookup_resp.intent.intent_type})", "route")
-            resp = RAGResponse(
-                answer=lookup_resp.answer,
-                sources=[],
-                query_type=lookup_resp.query_type,
-                confidence="high",
-            )
-            resp.trace = list(_trace_local.events)
-            return resp
+            _intent = lookup_resp.intent
+            _schema = self._lookup.schema_index.get_schema(_intent.plugin_id, _intent.is_behavior)
+            _name = _schema.get("name_en", _intent.plugin_id) if _schema else _intent.plugin_id
+            _trace("路由: 字典注入", "route")
+            _trace(f"{_intent.intent_type} · {_name}", "route")
+            schema_context = lookup_resp.answer
 
         # Route based on complexity
         if self._is_complex_query(query):
             logger.info("[Smart] Complex query detected, using decomposition")
-            word_count = len(query.split())
+            import jieba
+            word_count = len([w for w in jieba.cut(query) if w.strip()])
             indicators = [ind for ind in COMPLEXITY_INDICATORS if ind in query.lower()]
             reason_parts = [f"词数={word_count}"]
             if indicators:
@@ -1411,9 +1511,11 @@ class RAGChain:
             _trace(f"路由: QA 复杂（{'，'.join(reason_parts)}）", "route")
             resp = self.answer_complex_workflow(query, include_js=include_js)
         else:
+            import jieba
+            word_count = len([w for w in jieba.cut(query) if w.strip()])
             logger.info("[Smart] Standard query, using fallback strategy")
-            _trace(f"路由: QA 简单（词数={len(query.split())}）", "route")
-            resp = self.answer_with_fallback(query, include_js=include_js)
+            _trace(f"路由: QA 简单（词数={word_count}）", "route")
+            resp = self.answer_with_fallback(query, include_js=include_js, schema_context=schema_context)
 
         resp.trace = list(_trace_local.events)
         return resp
