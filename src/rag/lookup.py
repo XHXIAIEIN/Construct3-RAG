@@ -38,13 +38,74 @@ logger = logging.getLogger(__name__)
 
 
 # =============================================================================
+# Compact format helpers (ACE lines for LLM context)
+# =============================================================================
+
+_ACE_PREFIX: dict[str, str] = {
+    "conditions": "C",
+    "actions": "A",
+    "expressions": "E",
+}
+
+_ACE_SORT_ORDER: dict[str, int] = {
+    "conditions": 0,
+    "actions": 1,
+    "expressions": 2,
+}
+
+# Param types where the name carries no semantic value (drop from signature)
+_GENERIC_PARAM_TYPES = frozenset({"cmp"})
+
+
+def _format_params(params: list) -> str:
+    """Build param signature for actions/expressions: empty for 0–1 params, 'p1,p2' for 2+.
+
+    Single params produce empty string (just `()` in caller).
+    Multi-params list their English names, skipping comparison operators.
+    """
+    semantic = [p for p in params if p.get("type", "") not in _GENERIC_PARAM_TYPES]
+    if len(semantic) <= 1:
+        return ""
+    return ",".join(p.get("name_en", "").strip() for p in semantic if p.get("name_en", "").strip())
+
+
+def _format_condition_sig(name_en: str, params: list) -> str:
+    """Build condition signature: show params when present so LLM knows the call signature.
+
+    Conditions without params → 'Name' (no parens)
+    Conditions with params    → 'Name(p1,p2)' (parens with param names, skipping cmp type)
+    """
+    semantic = [p for p in params if p.get("type", "") not in _GENERIC_PARAM_TYPES]
+    if not semantic:
+        return name_en
+    param_str = ",".join(p.get("name_en", "").strip() for p in semantic if p.get("name_en", "").strip())
+    return f"{name_en}({param_str})" if param_str else name_en
+
+
+def _build_zh_line(plugin_en: str, plugin_zh: str, zh_pairs: list[tuple[str, str]]) -> str:
+    """Build 'zh: PluginEn=PluginZh,AceEn=AceZh,...' mapping line.
+
+    Returns empty string if there are no mappings.
+    """
+    parts: list[str] = []
+    if plugin_zh and plugin_zh != plugin_en:
+        parts.append(f"{plugin_en}={plugin_zh}")
+    seen: set[str] = set()
+    for en, zh in zh_pairs:
+        if en and en not in seen:
+            seen.add(en)
+            parts.append(f"{en}={zh}")
+    return f"zh: {','.join(parts)}" if parts else ""
+
+
+# =============================================================================
 # Data Models
 # =============================================================================
 
 @dataclass
 class LookupIntent:
     """Classified intent from a user query."""
-    intent_type: str       # ace_list | ace_detail | prop_list | term_translate | ace_search
+    intent_type: str       # ace_list | ace_detail | prop_list | term_translate | ace_search | example_find
     plugin_id: str = ""    # matched plugin/behavior id (e.g. "sprite")
     ace_type: str = ""     # actions | conditions | expressions (or comma-sep for ace_search)
     ace_name: str = ""     # specific ACE name for detail queries
@@ -52,6 +113,7 @@ class LookupIntent:
     filter_term: str = ""  # topic keyword for ace_search filtering
     tier: int = 0          # which tier matched (1/2/3)
     is_behavior: bool = False  # True if matched a behavior, not plugin
+    matched_tags: List[str] = field(default_factory=list)  # tags for example_find intent
 
 
 @dataclass
@@ -256,6 +318,73 @@ class TermIndex:
 
 
 # =============================================================================
+# ExamplesIndex — inverted tag index for example browser entries
+# =============================================================================
+
+class ExamplesIndex:
+    """
+    Inverted index: data-tag -> example records.
+    Loaded from data/examples_index.json (built by scripts/build_examples_index.py).
+    """
+
+    _INDEX_PATH = Path(__file__).parent.parent.parent / "data" / "examples_index.json"
+
+    def __init__(self, index_path: Optional[Path] = None):
+        path = index_path or self._INDEX_PATH
+        self._index: Dict[str, List[Dict]] = {}
+        if path.exists():
+            try:
+                self._index = json.loads(path.read_text(encoding="utf-8"))
+                logger.info(f"[ExamplesIndex] Loaded {len(self._index)} tags")
+            except Exception as e:
+                logger.warning(f"[ExamplesIndex] Failed to load: {e}")
+        else:
+            logger.warning(f"[ExamplesIndex] Index not found: {path}")
+
+    def search(self, tags: List[str], max_results: int = 5) -> List[Dict]:
+        """Find examples matching any of the given tags, ranked by overlap count."""
+        if not tags:
+            return []
+        scores: Dict[str, Dict] = {}
+        for tag in tags:
+            for record in self._index.get(tag, []):
+                slug = record.get("slug", "")
+                if not slug:
+                    continue
+                if slug not in scores:
+                    scores[slug] = {"record": record, "score": 0}
+                scores[slug]["score"] += 1
+        ranked = sorted(scores.values(), key=lambda x: x["score"], reverse=True)
+        return [r["record"] for r in ranked[:max_results]]
+
+    @staticmethod
+    def format_for_ace(records: List[Dict]) -> str:
+        """Compact format for appending to ACE query results (no tags)."""
+        if not records:
+            return ""
+        parts = [f"{r['title']} ({r['slug']})" for r in records if r.get("slug")]
+        if not parts:
+            return ""
+        return "Related examples: " + ", ".join(parts)
+
+    @staticmethod
+    def format_for_find(records: List[Dict]) -> str:
+        """Format for example_find intent results (with genre/behavior tags)."""
+        if not records:
+            return ""
+        parts = []
+        for r in records:
+            if not r.get("slug"):
+                continue
+            tag_parts = r.get("genres", []) + r.get("behaviors", [])
+            tag_str = f" [{', '.join(tag_parts[:3])}]" if tag_parts else ""
+            parts.append(f"{r['title']} ({r['slug']}){tag_str}")
+        if not parts:
+            return ""
+        return "Related examples: " + ", ".join(parts)
+
+
+# =============================================================================
 # IntentClassifier — three-tier classification
 # =============================================================================
 
@@ -316,10 +445,12 @@ _ACE_INFER_KEYWORDS = {
 
 
 # Words that always block Tier 1.5, even when a plugin name is found.
-# "怎么" implies step-by-step intent (RAG is better); comparison/conceptual words have no ACE target.
+# Conceptual/comparison words have no ACE target. Compound how-to forms imply
+# step-by-step intent. Bare "怎么"/"怎样" are moved to SOFT_SKIP so that
+# "怎么在数组中查找" (plugin name present) can still reach Schema search.
 _HOWTO_HARD_SKIP: frozenset[str] = frozenset({
     "区别", "对比", "是什么", "什么是", "概念", "原理", "介绍",
-    "怎么", "怎样", "怎么做", "怎么实现", "步骤", "流程", "教程",
+    "怎么做", "怎么实现", "步骤", "流程", "教程",
 })
 
 # Words that only block when no plugin name is found.
@@ -365,18 +496,33 @@ class IntentClassifier:
         self._ollama_url = ollama_url
         self._template_vectors: Optional[Dict[str, Any]] = None
 
+    def _display_name(self, plugin_id: str, is_behavior: bool) -> str:
+        """Return human-readable name_en for a plugin/behavior ID."""
+        data = self.schema.get_schema(plugin_id, is_behavior)
+        if data:
+            return data.get("name_en", plugin_id)
+        return plugin_id
+
     def classify(self, query: str) -> Optional[LookupIntent]:
         """
         Classify query through three tiers.
         Returns LookupIntent if matched, None if should go to RAG.
         """
+        # Pre-Tier: Example-find detection
+        intent = self._detect_example_find(query)
+        if intent:
+            logger.info(f"[Lookup] example_find hit: tags={intent.matched_tags}")
+            _trace(f"示例查找: tags={intent.matched_tags}", "lookup")
+            return intent
+
         # Tier 1: Rule-based
         intent = self._rule_based(query)
         if intent:
             logger.info(f"[Lookup] Tier 1 hit: {intent.intent_type} plugin={intent.plugin_id}")
-            _trace(f"Tier1: 命中({intent.intent_type})", "lookup")
+            name = self._display_name(intent.plugin_id, intent.is_behavior)
+            _trace(f"精确匹配: {intent.intent_type} · {name}", "lookup")
             return intent
-        _trace("Tier1: 未命中", "lookup")
+        _trace("精确匹配: 未命中", "lookup")
 
         # Tier 1.5: Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
@@ -385,27 +531,56 @@ class IntentClassifier:
                 f"[Lookup] Tier 1.5 hit: ace_search plugin={intent.plugin_id} "
                 f"ace_type={intent.ace_type} filter={intent.filter_term}"
             )
-            _trace(f"Tier1.5: 命中(ace_search  plugin={intent.plugin_id})", "lookup")
+            name = self._display_name(intent.plugin_id, intent.is_behavior)
+            _trace(f"字典搜索: {name}", "lookup")
+            if intent.filter_term:
+                _trace(f"关键词: {intent.filter_term}", "lookup")
             return intent
-        _trace("Tier1.5: 未命中", "lookup")
+        _trace("字典搜索: 未命中", "lookup")
 
         # Tier 2: Embedding similarity
         intent = self._embedding_match(query)
         if intent:
             logger.info(f"[Lookup] Tier 2 hit: {intent.intent_type} plugin={intent.plugin_id}")
-            _trace(f"Tier2: 命中({intent.intent_type})", "lookup")
+            name = self._display_name(intent.plugin_id, intent.is_behavior)
+            _trace(f"语义模板: {intent.intent_type} · {name}", "lookup")
             return intent
-        _trace("Tier2: 未命中", "lookup")
+        _trace("语义模板: 未命中", "lookup")
 
         # Tier 3: Ollama small model
         intent = self._ollama_classify(query)
         if intent:
             logger.info(f"[Lookup] Tier 3 hit: {intent.intent_type} plugin={intent.plugin_id}")
-            _trace(f"Tier3: 命中({intent.intent_type})", "lookup")
+            name = self._display_name(intent.plugin_id, intent.is_behavior)
+            _trace(f"LLM分类: {intent.intent_type} · {name}", "lookup")
             return intent
-        _trace("Tier3: 跳过(未配置)" if not self._ollama_model else "Tier3: 未命中", "lookup")
+        _trace("LLM分类: 跳过(未配置)" if not self._ollama_model else "LLM分类: 未命中", "lookup")
 
         return None
+
+    # -- Pre-Tier: Example-find detection ---------------------------------
+
+    def _detect_example_find(self, query: str) -> Optional[LookupIntent]:
+        """Detect example-seeking queries like '有没有Tween的示例'."""
+        q_lower = query.lower()
+        example_kws = ("示例", "example", "案例", "样例", "模板", "template")
+        if not any(kw in q_lower for kw in example_kws):
+            return None
+        # Match plugin/behavior names from schema
+        self.schema._load()
+        matched_tags: List[str] = []
+        for plugin_id, schema_data in self.schema._plugins.items():
+            if plugin_id.lower() in q_lower:
+                matched_tags.append(f"plugin-{plugin_id}")
+        for behavior_id, schema_data in self.schema._behaviors.items():
+            if behavior_id.lower() in q_lower:
+                matched_tags.append(f"behavior-{behavior_id}")
+        return LookupIntent(
+            intent_type="example_find",
+            plugin_id="",
+            filter_term=query,
+            matched_tags=matched_tags,
+        )
 
     # -- Tier 1: Rule-based -----------------------------------------------
 
@@ -483,7 +658,7 @@ class IntentClassifier:
         # Hard skip: always block, even if a plugin name is present
         for word in _HOWTO_HARD_SKIP:
             if word in query:
-                _trace(f"Tier1.5: 跳过(触发词'{word}')", "lookup")
+                _trace(f"字典搜索: 跳过 [概念词'{word}']", "lookup")
                 return None
 
         # Tokenize query — split on whitespace, punctuation, AND Chinese particles
@@ -777,6 +952,7 @@ class LookupEngine:
     ):
         self.schema_index = SchemaIndex(schema_dir)
         self.term_index = TermIndex(source_dir)
+        self.examples_index = ExamplesIndex()
         self.classifier = IntentClassifier(
             schema_index=self.schema_index,
             embedder=embedder,
@@ -810,21 +986,23 @@ class LookupEngine:
         )
 
     def _execute(self, intent: LookupIntent) -> str:
-        """Execute lookup and format as markdown."""
+        """Execute lookup and format as compact English text for LLM context."""
         if intent.intent_type == "ace_list":
             return self._format_ace_list(intent)
         elif intent.intent_type == "prop_list":
-            return self._format_ace_list(intent)
+            return self._format_prop_list(intent)
         elif intent.intent_type == "ace_detail":
             return self._format_ace_detail(intent)
         elif intent.intent_type == "ace_search":
             return self._format_ace_search(intent)
         elif intent.intent_type == "term_translate":
             return self._format_term_translate(intent)
+        elif intent.intent_type == "example_find":
+            return self._format_example_find(intent)
         return ""
 
     def _format_ace_list(self, intent: LookupIntent) -> str:
-        """Format ACE list as markdown table."""
+        """Format ACE list in compact English format for LLM context."""
         schema = self.schema_index.get_schema(intent.plugin_id, intent.is_behavior)
         if not schema:
             return ""
@@ -834,31 +1012,31 @@ class LookupEngine:
         if not items:
             return ""
 
-        kind = PLUGIN_KIND_LABELS["behavior"] if intent.is_behavior else PLUGIN_KIND_LABELS["plugin"]
-        name_zh = schema.get("name_zh", intent.plugin_id)
-        name_en = schema.get("name_en", schema.get("originalId", intent.plugin_id))
-        type_label = ACE_SECTION_LABELS.get(ace_type, ace_type)
+        prefix = _ACE_PREFIX.get(ace_type, "?")
+        plugin_en = schema.get("name_en", schema.get("originalId", intent.plugin_id))
+        plugin_zh = schema.get("name_zh", "")
 
-        lines = [
-            ACE_LIST_HEADER.format(name_zh=name_zh, name_en=name_en, kind=kind, type_label=type_label, count=len(items)),
-            ACE_TABLE_HEADER,
-            ACE_TABLE_SEPARATOR,
-        ]
+        lines = []
+        zh_pairs: list[tuple[str, str]] = []
 
-        for i, item in enumerate(items, 1):
-            zh = item.get("name_zh", "")
-            en = item.get("name_en", "")
-            desc = item.get("description_zh", "")
-            # Truncate long descriptions
-            if len(desc) > 60:
-                desc = desc[:57] + "..."
-            lines.append(f"| {i} | {zh} | {en} | {desc} |")
+        for item in items:
+            name_en = item.get("name_en", "")
+            name_zh = item.get("name_zh", "")
+            desc = item.get("description_en", "") or item.get("description_zh", "")
+            params = item.get("params", [])
+            if ace_type == "conditions":
+                sig = _format_condition_sig(name_en, params)
+            else:
+                sig = f"{name_en}({_format_params(params)})"
+            lines.append(f"{prefix}: {sig}: {desc}")
+            if name_zh and name_zh != name_en:
+                zh_pairs.append((name_en, name_zh))
 
-        lines.append(f"\n[来源: 1] 数据来源：{name_en} {kind} Schema")
-        return "\n".join(lines)
+        lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        return "\n".join(l for l in lines if l)
 
     def _format_ace_detail(self, intent: LookupIntent) -> str:
-        """Format ACE detail with parameters."""
+        """Format single ACE with full parameter details in compact English format."""
         schema = self.schema_index.get_schema(intent.plugin_id, intent.is_behavior)
         if not schema:
             return ""
@@ -883,47 +1061,35 @@ class LookupEngine:
         if not found_item:
             return ""
 
-        name_zh = schema.get("name_zh", intent.plugin_id)
-        name_en = schema.get("name_en", intent.plugin_id)
-        kind = PLUGIN_KIND_LABELS["behavior"] if intent.is_behavior else PLUGIN_KIND_LABELS["plugin"]
-        type_label = ACE_SECTION_LABELS_SHORT.get(found_type, "")
-
-        lines = [
-            ACE_DETAIL_HEADER.format(
-                name_zh=name_zh, name_en=name_en, type_label=type_label,
-                item_zh=found_item.get('name_zh', ''), item_en=found_item.get('name_en', ''),
-            ),
-            ACE_DESCRIPTION_LABEL.format(description=found_item.get('description_zh', '')),
-        ]
-
-        # Script name
-        script = found_item.get("scriptName", "")
-        if script:
-            lines.append(ACE_SCRIPT_NAME.format(script=script))
-
-        # Is trigger?
-        if found_item.get("isTrigger"):
-            lines.append(ACE_TRIGGER_TYPE)
-
-        # Parameters
+        plugin_en = schema.get("name_en", intent.plugin_id)
+        plugin_zh = schema.get("name_zh", "")
+        prefix = _ACE_PREFIX.get(found_type, "?")
+        name_en = found_item.get("name_en", "")
+        name_zh = found_item.get("name_zh", "")
+        desc = found_item.get("description_en", "") or found_item.get("description_zh", "")
         params = found_item.get("params", [])
+
+        if found_type == "conditions":
+            sig = _format_condition_sig(name_en, params)
+        else:
+            sig = f"{name_en}({_format_params(params)})"
+
+        lines = [f"{prefix}: {sig}: {desc}"]
+
+        # Full param details
         if params:
-            lines.append(ACE_PARAMS_HEADER.format(count=len(params)))
-            lines.append(ACE_PARAM_TABLE_HEADER)
-            lines.append(ACE_PARAM_TABLE_SEPARATOR)
-            for j, p in enumerate(params, 1):
-                pzh = p.get("name_zh", "")
+            for p in params:
                 pen = p.get("name_en", "")
                 ptype = p.get("type", "")
-                lines.append(f"| {j} | {pzh} | {pen} | {ptype} |")
-        else:
-            lines.append(ACE_NO_PARAMS)
+                pdesc = p.get("desc_en", "") or p.get("desc_zh", "")
+                lines.append(f"  - {pen} ({ptype}): {pdesc}")
 
-        lines.append(f"\n[来源: 1] 数据来源：{name_en} {kind} Schema")
-        return "\n".join(lines)
+        zh_pairs = [(name_en, name_zh)] if name_zh and name_zh != name_en else []
+        lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        return "\n".join(l for l in lines if l)
 
     def _format_ace_search(self, intent: LookupIntent) -> str:
-        """Format filtered ACE search results as markdown tables grouped by type."""
+        """Format filtered ACE search results in compact English format for LLM context."""
         schema = self.schema_index.get_schema(intent.plugin_id, intent.is_behavior)
         if not schema:
             return ""
@@ -931,6 +1097,7 @@ class LookupEngine:
         raw_words = [w for w in intent.filter_term.lower().split() if w]
         if not raw_words:
             return ""
+
         # Build filter set: original words + 2-char substrings for Chinese matching
         filter_words = set(raw_words)
         for w in raw_words:
@@ -938,61 +1105,82 @@ class LookupEngine:
                 pair = w[j:j + 2]
                 if all('\u4e00' <= c <= '\u9fff' for c in pair):
                     filter_words.add(pair)
-        ace_types = [t.strip() for t in intent.ace_type.split(",") if t.strip()]
 
-        kind = PLUGIN_KIND_LABELS["behavior"] if intent.is_behavior else PLUGIN_KIND_LABELS["plugin"]
-        name_zh = schema.get("name_zh", intent.plugin_id)
-        name_en = schema.get("name_en", schema.get("originalId", intent.plugin_id))
+        plugin_en = schema.get("name_en", schema.get("originalId", intent.plugin_id))
+        plugin_zh = schema.get("name_zh", "")
 
-        sections = []
-        total_hits = 0
+        # Sort C → A → E
+        ace_types = sorted(
+            [t.strip() for t in intent.ace_type.split(",") if t.strip()],
+            key=lambda t: _ACE_SORT_ORDER.get(t, 99),
+        )
+
+        lines = []
+        zh_pairs: list[tuple[str, str]] = []
 
         for ace_type in ace_types:
             items = schema.get(ace_type, [])
             if not items:
                 continue
+            prefix = _ACE_PREFIX.get(ace_type, "?")
 
-            # Filter items: any filter word matches name_zh/name_en/description_zh/category
-            matched = []
             for item in items:
                 searchable = " ".join([
                     item.get("name_zh", ""),
                     item.get("name_en", ""),
                     item.get("description_zh", ""),
+                    item.get("description_en", ""),
                     item.get("category", ""),
                 ]).lower()
-                if any(fw in searchable for fw in filter_words):
-                    matched.append(item)
+                if not any(fw in searchable for fw in filter_words):
+                    continue
 
-            if not matched:
-                continue
+                name_en = item.get("name_en", "")
+                name_zh = item.get("name_zh", "")
+                desc = item.get("description_en", "") or item.get("description_zh", "")
+                params = item.get("params", [])
 
-            total_hits += len(matched)
-            label = ACE_SECTION_LABELS.get(ace_type, ace_type)
-            lines = [
-                f"**{label}**",
-                ACE_TABLE_HEADER,
-                ACE_TABLE_SEPARATOR,
-            ]
-            for i, item in enumerate(matched, 1):
-                zh = item.get("name_zh", "")
-                en = item.get("name_en", "")
-                desc = item.get("description_zh", "")
-                if len(desc) > 60:
-                    desc = desc[:57] + "..."
-                lines.append(f"| {i} | {zh} | {en} | {desc} |")
+                if ace_type == "conditions":
+                    sig = name_en
+                else:
+                    sig = f"{name_en}({_format_params(params)})"
 
-            sections.append("\n".join(lines))
+                lines.append(f"{prefix}: {sig}: {desc}")
+                if name_zh and name_zh != name_en:
+                    zh_pairs.append((name_en, name_zh))
 
-        if not sections:
+        if not lines:
             return ""
 
-        header = ACE_SEARCH_HEADER.format(
-            name_zh=name_zh, name_en=name_en, kind=kind,
-            filter_term=intent.filter_term, count=total_hits,
-        )
-        citation = f"\n[来源: 1] 数据来源：{name_en} {kind} Schema"
-        return header + "\n\n".join(sections) + citation
+        lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        return "\n".join(l for l in lines if l)
+
+    def _format_prop_list(self, intent: LookupIntent) -> str:
+        """Format property list in compact English format for LLM context."""
+        schema = self.schema_index.get_schema(intent.plugin_id, intent.is_behavior)
+        if not schema:
+            return ""
+
+        items = schema.get("properties", [])
+        if not items:
+            return ""
+
+        plugin_en = schema.get("name_en", schema.get("originalId", intent.plugin_id))
+        plugin_zh = schema.get("name_zh", "")
+
+        lines = []
+        zh_pairs: list[tuple[str, str]] = []
+
+        for item in items:
+            name_en = item.get("name_en", "")
+            name_zh = item.get("name_zh", "")
+            desc = item.get("description_en", "") or item.get("description_zh", "")
+            lines.append(f"P: {name_en}: {desc}")
+            if name_zh and name_zh != name_en:
+                zh_pairs.append((name_en, name_zh))
+
+        lines.append(_build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        return "\n".join(l for l in lines if l)
 
     def _format_term_translate(self, intent: LookupIntent) -> str:
         """Format translation term lookup."""
@@ -1022,3 +1210,14 @@ class LookupEngine:
 
         lines.append("\n[来源: 1] 数据来源：Construct 3 翻译词表 (zh_r475.csv)")
         return "\n".join(lines)
+
+    def _format_example_find(self, intent: LookupIntent) -> str:
+        """Format example recommendations for example_find intent."""
+        tags = intent.matched_tags or []
+        results = self.examples_index.search(tags, max_results=5)
+        if not results and intent.filter_term:
+            # Fallback: search all tags for any genre/behavior keyword match
+            q_lower = intent.filter_term.lower()
+            fallback_tags = [t for t in self.examples_index._index if q_lower in t.lower()][:3]
+            results = self.examples_index.search(fallback_tags, max_results=5)
+        return ExamplesIndex.format_for_find(results)

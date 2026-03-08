@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.rag.lookup import (
     SchemaIndex, TermIndex, IntentClassifier, LookupEngine,
-    LookupIntent,
+    LookupIntent, ExamplesIndex,
 )
 
 
@@ -302,13 +302,13 @@ class TestLookupEngineDetail:
 class TestLookupEngine:
     """End-to-end tests: query → markdown output."""
 
-    def test_ace_list_returns_markdown_table(self):
+    def test_ace_list_returns_compact_format(self):
         engine = make_engine()
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert resp is not None
         assert resp.query_type == "lookup_ace_list"
-        assert "|" in resp.answer  # markdown table
-        assert "动作 (Actions)" in resp.answer
+        assert "A:" in resp.answer  # compact action prefix
+        assert "zh:" in resp.answer  # zh mapping line
 
     def test_prop_list(self):
         engine = make_engine()
@@ -342,7 +342,8 @@ class TestLookupEngine:
         engine = make_engine()
         resp = engine.try_lookup("Bullet 有哪些 action")
         assert resp is not None
-        assert "行为" in resp.answer
+        assert resp.intent.is_behavior is True
+        assert "A:" in resp.answer
 
     def test_nonexistent_plugin_falls_through(self):
         """Query with fake plugin name should fallback to RAG."""
@@ -370,8 +371,8 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 碰撞")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert "碰撞" in resp.answer
-        assert "|" in resp.answer  # markdown table
+        assert "碰撞" in resp.answer  # appears in zh: mapping line
+        assert ("C:" in resp.answer or "A:" in resp.answer)  # compact format
 
     def test_array_sort(self):
         """'Array 排序' → ace_search with actions (排序 is an actions keyword)."""
@@ -395,13 +396,16 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 是什么")
         assert resp is None  # falls through to RAG
 
-    def test_array_find_howto_fallthrough(self):
-        """'怎么在数组中查找特定数字？' is a how-to → should fall through to RAG.
-        Users asking '怎么...' want step-by-step guidance, not just an ACE table.
-        The RAG pipeline provides both ACE info and explanatory context."""
+    def test_array_find_howto_hits_schema(self):
+        """'怎么在数组中查找特定数字？' — '怎么' is now SOFT_SKIP.
+        Plugin 'Array' is found → Tier1.5 runs and hits find/indexOf ACEs.
+        Result is injected as schema_context into LLM, not returned directly to user."""
         engine = make_engine()
         resp = engine.try_lookup("怎么在数组中查找特定数字？")
-        assert resp is None  # falls through to RAG
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert resp.intent.plugin_id == "arr"
+        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
 
     def test_array_find_without_howto(self):
         """'数组 查找数字' (no 怎么) → ace_search on Array, still triggers lookup."""
@@ -410,13 +414,17 @@ class TestKeywordInfer:
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.plugin_id == "arr"
-        assert "|" in resp.answer  # markdown table
+        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
 
-    def test_howto_with_plugin_fallthrough(self):
-        """'怎么检测Sprite碰撞' has a plugin name but is how-to → should fall through."""
+    def test_howto_with_plugin_hits_schema(self):
+        """'怎么检测Sprite碰撞' — plugin 'Sprite' found + '怎么' is SOFT_SKIP.
+        Tier1.5 runs and hits collision-related ACEs for schema_context injection."""
         engine = make_engine()
         resp = engine.try_lookup("怎么检测Sprite碰撞")
-        assert resp is None  # falls through to RAG
+        assert resp is not None
+        assert resp.query_type == "lookup_ace_search"
+        assert resp.intent.plugin_id == "sprite"
+        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
 
     def test_zenyang_fallthrough(self):
         """'怎样用数组存储数据' — '怎样' is also a how-to word → should fall through."""
@@ -459,3 +467,49 @@ class TestKeywordInfer:
         assert intent.intent_type == "ace_search"
         assert intent.tier == 1
         assert "碰撞" in intent.filter_term
+
+
+# ---------------------------------------------------------------------------
+# TestExamplesIndex
+# ---------------------------------------------------------------------------
+
+class TestExamplesIndex:
+    def setup_method(self):
+        self.index = ExamplesIndex()
+
+    def test_search_by_behavior_tag(self):
+        results = self.index.search(["behavior-Tween"])
+        assert isinstance(results, list)
+
+    def test_search_returns_records_with_slug(self):
+        results = self.index.search(["behavior-Tween"])
+        if results:
+            assert "slug" in results[0]
+            assert "title" in results[0]
+
+    def test_search_empty_tags(self):
+        results = self.index.search([])
+        assert results == []
+
+    def test_search_unknown_tag(self):
+        results = self.index.search(["behavior-Nonexistent99999"])
+        assert results == []
+
+    def test_format_for_ace_context(self):
+        records = [
+            {"title": "Cave Bridge", "slug": "cave-bridge", "genres": ["adventure"], "behaviors": ["Tween"]},
+            {"title": "Kiwi Story", "slug": "kiwi-story", "genres": ["platformer"], "behaviors": ["Platform"]},
+        ]
+        result = ExamplesIndex.format_for_ace(records)
+        assert "Cave Bridge" in result
+        assert "cave-bridge" in result
+        assert "Kiwi Story" in result
+
+    def test_format_for_example_find(self):
+        records = [
+            {"title": "Cave Bridge", "slug": "cave-bridge", "genres": ["adventure"], "behaviors": ["Tween"]},
+        ]
+        result = ExamplesIndex.format_for_find(records)
+        assert "Cave Bridge" in result
+        assert "cave-bridge" in result
+        assert "adventure" in result.lower()
