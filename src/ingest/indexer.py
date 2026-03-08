@@ -363,7 +363,6 @@ def index_all_data(rebuild: bool = False):
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.ingest.markdown_parser import MarkdownParser
     from src.ingest.csv_parser import CSVParser
-    from src.ingest.project_parser import process_example_projects
 
     indexer = Indexer(
         qdrant_host=QDRANT_HOST,
@@ -422,13 +421,17 @@ def index_all_data(rebuild: bool = False):
         ]
         indexer.index_documents(COLLECTIONS["terms"], docs)
 
-    # Index example projects
+    # Index example projects (browser data)
     print("\n=== Indexing Example Projects ===")
     indexer.create_collection(COLLECTIONS["examples"], recreate=rebuild)
-    project_parser = process_example_projects()
-    if project_parser:
-        docs = project_parser.export_for_vectordb()
-        indexer.index_documents(COLLECTIONS["examples"], docs)
+    from src.ingest.examples_parser import load_examples_for_vectordb
+    try:
+        example_docs = load_examples_for_vectordb()
+        if example_docs:
+            indexer.index_documents(COLLECTIONS["examples"], example_docs)
+            print(f"  Indexed {len(example_docs)} examples")
+    except FileNotFoundError as e:
+        print(f"  Skipping examples: {e}")
 
     # Index ACE Schema (from Construct3-Schema - 完整双语数据)
     print("\n=== Indexing ACE Schema (from Construct3-Schema) ===")
