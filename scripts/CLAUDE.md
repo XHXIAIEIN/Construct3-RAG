@@ -51,7 +51,8 @@ Server auto-shuts after 30s with no active clients. Port: `RAG_SERVER_PORT` (def
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `benchmark.py` | RAG quality evaluation (15 questions, 4 scoring dimensions) | `python scripts/benchmark.py --mode smart` |
+| `evaluate.py` | Unified evaluation (heuristic + RAGAS). Replaces benchmark.py | `python scripts/evaluate.py --all` |
+| `benchmark.py` | **DEPRECATED** — thin wrapper calling `evaluate.py --heuristic` | `python scripts/benchmark.py --mode smart` |
 | `download_model.py` | Download HuggingFace model to local cache | `python scripts/download_model.py Qwen/Qwen3.5-9B` |
 | `analyze_eventsheets.py` | Deep analysis of C3 event sheet structures (incremental) | `python scripts/analyze_eventsheets.py` |
 | `analyze_projects.py` | Full analysis of C3 project structures (incremental) | `python scripts/analyze_projects.py` |
