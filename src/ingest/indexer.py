@@ -49,6 +49,79 @@ class EmbeddingModel:
         return self.model.get_sentence_embedding_dimension()
 
 
+class BM25Vectorizer:
+    """
+    Simple BM25 vectorizer for sparse vector indexing.
+    Produces {term_index: bm25_score} dicts compatible with Qdrant sparse vectors.
+
+    k1=1.5, b=0.75 (standard BM25 parameters)
+    """
+
+    def __init__(self, k1: float = 1.5, b: float = 0.75):
+        self.k1 = k1
+        self.b = b
+        self.vocab: dict[str, int] = {}
+        self.idf: dict[int, float] = {}
+        self._avg_dl: float = 0.0
+        self._fitted = False
+
+    def _tokenize(self, text: str) -> list[str]:
+        import jieba
+        return [t for t in jieba.cut(text) if len(t.strip()) > 1]
+
+    def fit(self, corpus: list[str]) -> "BM25Vectorizer":
+        """Build vocabulary and IDF from corpus."""
+        import math
+        tokenized = [self._tokenize(doc) for doc in corpus]
+        N = len(tokenized)
+        self._avg_dl = sum(len(d) for d in tokenized) / max(N, 1)
+
+        all_terms: set[str] = set()
+        for doc in tokenized:
+            all_terms.update(doc)
+        self.vocab = {t: i for i, t in enumerate(sorted(all_terms))}
+
+        df: dict[int, int] = {}
+        for doc in tokenized:
+            seen: set[int] = set()
+            for t in doc:
+                idx = self.vocab[t]
+                if idx not in seen:
+                    df[idx] = df.get(idx, 0) + 1
+                    seen.add(idx)
+
+        self.idf = {
+            idx: math.log(1 + (N - freq + 0.5) / (freq + 0.5))
+            for idx, freq in df.items()
+        }
+        self._fitted = True
+        return self
+
+    def encode(self, text: str) -> dict[int, float]:
+        """Encode text to BM25 sparse vector {term_index: score}."""
+        if not self._fitted:
+            return {}
+        tokens = self._tokenize(text)
+        dl = len(tokens)
+        tf: dict[str, int] = {}
+        for t in tokens:
+            tf[t] = tf.get(t, 0) + 1
+
+        vec: dict[int, float] = {}
+        for term, freq in tf.items():
+            if term not in self.vocab:
+                continue
+            idx = self.vocab[term]
+            idf = self.idf.get(idx, 0.0)
+            tf_norm = (freq * (self.k1 + 1)) / (
+                freq + self.k1 * (1 - self.b + self.b * dl / max(self._avg_dl, 1))
+            )
+            score = idf * tf_norm
+            if score > 0:
+                vec[idx] = round(score, 6)
+        return vec
+
+
 class Indexer:
     """Index documents into Qdrant vector database"""
 
@@ -155,6 +228,22 @@ class Indexer:
             }
             for result in results
         ]
+
+    def _load_chunk_contexts(self, cache_path=None) -> None:
+        """Load pre-generated contextual chunk summaries from JSON cache."""
+        from src.config import CONTEXTUAL_CHUNKING_CACHE
+        path = Path(cache_path or CONTEXTUAL_CHUNKING_CACHE)
+        if path.exists():
+            self._chunk_contexts = json.loads(path.read_text(encoding="utf-8"))
+            print(f"[ContextualChunking] Loaded {len(self._chunk_contexts)} contexts from {path}")
+        else:
+            self._chunk_contexts = {}
+            print(f"[ContextualChunking] Cache not found at {path}, using raw chunks")
+
+    def _prepend_context(self, chunk_key: str, chunk_text: str) -> str:
+        """Prepend cached context summary to chunk text for embedding."""
+        ctx = getattr(self, "_chunk_contexts", {}).get(chunk_key, "")
+        return ctx + chunk_text if ctx else chunk_text
 
 
 def index_scripting_api(indexer: "Indexer", collection: str):
