@@ -1,6 +1,7 @@
 from src.evaluation import MetricResult, EvalResult
 from src.evaluation.dataset import EvalDataset, EvalCase
 from src.evaluation.heuristic_evaluator import HeuristicEvaluator
+from src.evaluation.ragas_evaluator import RagasEvaluator
 from src.rag.chain import RAGResponse
 
 
@@ -151,3 +152,111 @@ def test_heuristic_diagnostic_metrics_present():
     for r in results:
         if r.name in ("latency_ms", "lookup_hit"):
             assert r.weight == 0.0
+
+
+# ── Task 5: RagasEvaluator ────────────────────────────────────────────────────
+
+def test_ragas_returns_expected_metric_names():
+    import numpy as np
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+    ev._embedder = None
+    ev._llm = None
+
+    resp = _mock_response("答案。[来源: 1]", confidence="high")
+
+    # Patch all compute methods
+    from unittest.mock import patch
+    with patch.object(ev, '_compute_context_precision', return_value=0.8), \
+         patch.object(ev, '_compute_context_recall', return_value=0.6), \
+         patch.object(ev, '_compute_answer_correctness', return_value=0.7), \
+         patch.object(ev, '_compute_answer_completeness', return_value=0.7), \
+         patch.object(ev, '_compute_faithfulness', return_value=0.9), \
+         patch.object(ev, '_compute_answer_relevance', return_value=0.85):
+        results = ev.evaluate("q", resp, contexts=["ctx"], ground_truth="gt")
+
+    names = {r.name for r in results}
+    assert "context_precision" in names
+    assert "context_recall" in names
+    assert "faithfulness" in names
+    assert "answer_relevance" in names
+    assert "answer_correctness" in names
+    assert "answer_completeness" in names
+
+
+def test_ragas_metric_weights():
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+    assert ev._metric_weight("faithfulness") == 0.20
+    assert ev._metric_weight("answer_relevance") == 0.20
+    assert ev._metric_weight("answer_correctness") == 0.20
+    assert ev._metric_weight("context_precision") == 0.15
+    assert ev._metric_weight("context_recall") == 0.10
+    assert ev._metric_weight("answer_completeness") == 0.0  # diagnostic
+
+
+def test_ragas_context_precision_perfect():
+    import numpy as np
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+
+    class MockEmbedder:
+        def encode(self, texts):
+            # Return identical vectors → cosine sim = 1.0
+            return np.ones((len(texts), 3))
+
+    ev._embedder = MockEmbedder()
+    score = ev._compute_context_precision("q", ["ctx1", "ctx2"], threshold=0.5)
+    assert score == 1.0
+
+
+def test_ragas_context_precision_none_relevant():
+    import numpy as np
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+
+    call_count = [0]
+
+    class MockEmbedder:
+        def encode(self, texts):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                return np.array([[1.0, 0.0, 0.0]])   # query
+            return np.zeros((len(texts), 3))           # contexts → sim=0
+
+    ev._embedder = MockEmbedder()
+    score = ev._compute_context_precision("q", ["ctx1", "ctx2"], threshold=0.5)
+    assert score == 0.0
+
+
+def test_ragas_answer_correctness_no_ground_truth():
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+    ev._embedder = None
+    score = ev._compute_answer_correctness("answer", "")
+    assert score == 0.0
+
+
+def test_ragas_faithfulness_no_llm():
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+    ev._llm = None
+    score = ev._compute_faithfulness("answer", ["ctx"])
+    assert score == 0.0
+
+
+def test_ragas_answer_completeness_is_diagnostic():
+    import numpy as np
+    ev = RagasEvaluator.__new__(RagasEvaluator)
+
+    class MockEmbedder:
+        def encode(self, texts):
+            return np.ones((len(texts), 3))
+
+    ev._embedder = MockEmbedder()
+    resp = _mock_response("答案")
+    from unittest.mock import patch
+    with patch.object(ev, '_compute_context_precision', return_value=0.8), \
+         patch.object(ev, '_compute_context_recall', return_value=0.6), \
+         patch.object(ev, '_compute_answer_correctness', return_value=0.7), \
+         patch.object(ev, '_compute_answer_completeness', return_value=0.5), \
+         patch.object(ev, '_compute_faithfulness', return_value=0.0), \
+         patch.object(ev, '_compute_answer_relevance', return_value=0.0):
+        results = ev.evaluate("q", resp, contexts=["ctx"], ground_truth="gt")
+
+    completeness = next(r for r in results if r.name == "answer_completeness")
+    assert completeness.weight == 0.0
