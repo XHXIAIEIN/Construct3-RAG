@@ -108,3 +108,24 @@ EXPANDER_DEVICE      = os.getenv("EXPANDER_DEVICE",      "cpu")
 EXPANDER_TIMEOUT_S  = float(os.getenv("EXPANDER_TIMEOUT_S",  "5.0"))
 EXPANDER_MAX_TOKENS = int(os.getenv("EXPANDER_MAX_TOKENS",   "80"))
 EXPANDER_TOP_K      = int(os.getenv("EXPANDER_TOP_K",        "12"))
+
+# =============================================================================
+# Cross-Encoder Reranking
+# =============================================================================
+RERANKER_ENABLED = os.getenv("RERANKER_ENABLED", "true").lower() == "true"
+RERANKER_TOP_K   = int(os.getenv("RERANKER_TOP_K", "10"))   # candidates fed to reranker
+RERANKER_MODEL   = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
+
+# =============================================================================
+# BM25 Hybrid Search
+# =============================================================================
+# Set to True after rebuilding index with sparse vectors
+BM25_ENABLED = os.getenv("BM25_ENABLED", "false").lower() == "true"
+
+# =============================================================================
+# Contextual Chunking
+# =============================================================================
+# Set to True after generating contexts via scripts/generate_chunk_contexts.py
+CONTEXTUAL_CHUNKING_ENABLED = os.getenv("CONTEXTUAL_CHUNKING_ENABLED", "false").lower() == "true"
+CONTEXTUAL_CHUNKING_CACHE   = Path(os.getenv("CONTEXTUAL_CHUNKING_CACHE",
+                                              str(BASE_DIR / "data" / "chunk_contexts.json")))
