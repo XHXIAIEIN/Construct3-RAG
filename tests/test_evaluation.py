@@ -1,7 +1,9 @@
 from src.evaluation import MetricResult, EvalResult
 from src.evaluation.dataset import EvalDataset, EvalCase
+from unittest.mock import MagicMock
 from src.evaluation.heuristic_evaluator import HeuristicEvaluator
 from src.evaluation.ragas_evaluator import RagasEvaluator
+from src.evaluation.runner import EvaluationRunner
 from src.rag.chain import RAGResponse
 
 
@@ -260,3 +262,75 @@ def test_ragas_answer_completeness_is_diagnostic():
 
     completeness = next(r for r in results if r.name == "answer_completeness")
     assert completeness.weight == 0.0
+
+
+# ── Task 6: EvaluationRunner ──────────────────────────────────────────────────
+
+def _make_mock_chain(answer="答案。[来源: 1][来源: 2][来源: 3]", confidence="high"):
+    chain = MagicMock()
+    chain.answer_smart.return_value = MagicMock(
+        answer=answer, sources=["doc1"], query_type="qa", confidence=confidence,
+    )
+    chain.retriever = MagicMock()
+    chain.retriever.search_all_with_rerank.return_value = []
+    return chain
+
+
+def test_runner_heuristic_mode(tmp_path):
+    import json
+    data = [{"id": "B01", "query": "Sprite 是什么？", "ground_truth": "",
+             "expected_keywords": ["Sprite"], "category": "概念",
+             "forbidden_phrases": [], "has_answer": True, "note": ""}]
+    ds_path = tmp_path / "dataset.json"
+    ds_path.write_text(json.dumps(data), encoding="utf-8")
+
+    runner = EvaluationRunner(chain=_make_mock_chain(), dataset_path=ds_path)
+    results = runner.run(mode="heuristic")
+    assert len(results) == 1
+    assert results[0].query_id == "B01"
+    assert results[0].composite_score > 0
+
+
+def test_runner_filters_by_ids(tmp_path):
+    import json
+    data = [
+        {"id": "B01", "query": "q1", "ground_truth": "", "expected_keywords": [],
+         "category": "概念", "forbidden_phrases": [], "has_answer": True, "note": ""},
+        {"id": "B02", "query": "q2", "ground_truth": "", "expected_keywords": [],
+         "category": "概念", "forbidden_phrases": [], "has_answer": True, "note": ""},
+    ]
+    ds_path = tmp_path / "dataset.json"
+    ds_path.write_text(json.dumps(data), encoding="utf-8")
+
+    runner = EvaluationRunner(chain=_make_mock_chain(), dataset_path=ds_path)
+    results = runner.run(mode="heuristic", case_ids=["B01"])
+    assert len(results) == 1
+    assert results[0].query_id == "B01"
+
+
+def test_runner_all_mode_merges_both_evaluators(tmp_path):
+    import json
+    data = [{"id": "B01", "query": "q", "ground_truth": "gt",
+             "expected_keywords": [], "category": "概念",
+             "forbidden_phrases": [], "has_answer": True, "note": ""}]
+    ds_path = tmp_path / "dataset.json"
+    ds_path.write_text(json.dumps(data), encoding="utf-8")
+
+    mock_ragas = MagicMock()
+    mock_ragas.evaluate.return_value = [
+        MetricResult("faithfulness", 0.9, 0.20),
+        MetricResult("answer_relevance", 0.8, 0.20),
+        MetricResult("answer_correctness", 0.7, 0.20),
+        MetricResult("context_precision", 0.6, 0.15),
+        MetricResult("context_recall", 0.5, 0.10),
+        MetricResult("answer_completeness", 0.7, 0.0),
+    ]
+
+    runner = EvaluationRunner(chain=_make_mock_chain(), dataset_path=ds_path,
+                              ragas_evaluator=mock_ragas)
+    results = runner.run(mode="all")
+    assert len(results) == 1
+    names = {r.name for r in results[0].metrics}
+    assert "faithfulness" in names
+    assert "instruction_following" in names  # from heuristic
+    assert results[0].composite_score > 0
