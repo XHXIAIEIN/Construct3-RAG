@@ -670,6 +670,10 @@ class SchemaZhEnIndex:
                 if not node.zh_tokens:
                     continue
                 overlap = len(term_set & node.zh_tokens)
+                # Skip small-token nodes with only 1 overlap — prevents coincidental
+                # 1.0 scores (e.g. "始终" in term_set matching set-always-on-top).
+                if overlap < 2 and len(node.zh_tokens) < 3:
+                    continue
                 raw = overlap / len(node.zh_tokens)
                 scores[node_id] = max(scores.get(node_id, 0.0), raw * node.weight)
 

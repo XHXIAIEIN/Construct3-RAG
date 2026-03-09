@@ -389,6 +389,40 @@ CLIPBOARD_FORMAT_REFERENCE = """
 3. objectClass 必须匹配项目中的对象类型名称
 4. behaviorType 使用行为的显示名称 (如 "Platform", "Tween", "Timer")
 5. 条件/动作的 id 必须来自 Schema 定义
+
+---
+
+## object-types 格式（对象类型定义）
+
+三种变体，根据 plugin-id 选择：
+
+**世界对象（Sprite, Text, TiledBg, Tilemap 等）**：
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,
+   "instanceVariables":[],"behaviorTypes":[{"behaviorId":"Platform","name":"Platform"}],
+   "effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}
+],"folders":[]}
+```
+
+**单例全局对象（Keyboard, Mouse, Audio, Touch, Browser 等）**：
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Keyboard","plugin-id":"Keyboard","singleglobal-inst":{"type":"Keyboard","properties":{},"tags":""}}
+],"folders":[]}
+```
+
+**非世界数据对象（Array→Arr, Dictionary, BinaryData 等）**：
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Scores","plugin-id":"Arr","isGlobal":true,"editorNewInstanceIsReplica":true,
+   "instanceVariables":[],"nonworld-inst":{"type":"Arr","properties":{},"tags":"","instanceVariables":{}}}
+],"folders":[]}
+```
+
+**behaviorTypes 字段**：`[{"behaviorId":"EightDir","name":"8Direction"}]` — behaviorId 是内部ID，name 是显示名
+**effectTypes 字段**：`[{"id":"blur","name":"Blur"}]`
+**常见 plugin-id**：Sprite, Text, TiledBg, Tilemap, Keyboard, Mouse, Audio, Touch, Browser, AJAX, Arr, Dictionary
 """
 
 
