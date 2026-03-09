@@ -38,22 +38,22 @@ console = Console(highlight=False, no_color=True)
 
 # ── Trace display ─────────────────────────────────────────────────────────────
 _TRACE_LABEL: dict[str, str] = {
-    "lookup":        "Lookup",
-    "route":         "路由",
-    "tokenize":      "分词",
-    "term_hit":      "",        # sub-item: indented, no label
+    "lookup":        "直接查找",
+    "route":         "路由决策",
+    "tokenize":      "分词结果",
+    "term_hit":      "术语命中",
     "expand":        "术语扩展",
-    "schema_match":  "Schema命中",
-    "query":         "检索查询",
-    "retrieve":      "检索",
-    "ace":           "ACE增强",
-    "filter":        "过滤",
-    "filter_drop":   "",        # sub-item
-    "context":       "上下文",
-    "reflect":       "反思",
-    "reflect_issue": "",        # sub-item
-    "confidence":    "置信度",
-    "info":          "",
+    "schema_match":  "字典匹配",
+    "query":         "改写查询",
+    "retrieve":      "检索结果",
+    "ace":           "ACE补充",
+    "filter":        "过滤结果",
+    "filter_drop":   "已丢弃",
+    "context":       "输入上下文",
+    "reflect":       "验证结论",
+    "reflect_issue": "验证问题",
+    "confidence":    "最终置信度",
+    "info":          "信息",
 }
 
 # 逻辑分组编号 — 组号变化时插入空行
@@ -68,90 +68,111 @@ _TRACE_GROUP: dict[str, int] = {
     "confidence":    8,
 }
 
+# 缩进子项（在主项下展示细节）
+_TRACE_SUB = {"term_hit", "filter_drop", "reflect_issue"}
 
-def _abbrev_tier(msg: str) -> str:
-    """Shorten a Tier trace message for compact single-line display.
-
-    Examples:
-        "Tier1: 未命中"                     → "T1:✗"
-        "Tier1.5: 跳过(触发词'怎么')"       → "T1.5:跳过('怎么')"
-        "Tier1.5: 未命中"                   → "T1.5:✗"
-        "Tier3: 跳过(未配置)"               → "T3:跳过"
-        "Tier2: 命中(ace_detail)"           → "T2:✓(ace_detail)"
-    """
-    import re
-    m = re.match(r"Tier(\S+?): (.+)", msg)
-    if not m:
-        return msg
-    tier, rest = m.group(1), m.group(2)
-    if rest == "未命中":
-        return f"T{tier}:✗"
-    if rest == "跳过(未配置)":
-        return f"T{tier}:跳过"
-    wm = re.search(r"触发词'([^']+)'", rest)
-    if wm:
-        return f"T{tier}:跳过('{wm.group(1)}')"
-    if rest.startswith("命中"):
-        return f"T{tier}:✓{rest[2:]}"
-    return f"T{tier}:{rest}"
+_GROUP_NAME: dict[int, str] = {
+    1: "直接查找",
+    2: "路由决策",
+    3: "查询分析",
+    4: "向量检索",
+    5: "结果过滤",
+    6: "输入上下文",
+    7: "自我验证",
+    8: "最终置信度",
+}
 
 
-def _collapse_lookup(events: list) -> list:
-    """Merge all lookup-phase events into a single compact row."""
-    result: list = []
-    lookup_buf: list[str] = []
-    for phase, msg in events:
-        if phase == "lookup":
-            lookup_buf.append(_abbrev_tier(msg))
-        else:
-            if lookup_buf:
-                result.append(("lookup", "  ".join(lookup_buf)))
-                lookup_buf = []
-            result.append((phase, msg))
-    if lookup_buf:
-        result.append(("lookup", "  ".join(lookup_buf)))
-    return result
+def _wlen(s: str) -> int:
+    """Terminal display width: CJK chars count as 2, others as 1."""
+    return sum(2 if '\u2e80' <= c <= '\u9fff' else 1 for c in s)
 
 
 def _print_trace(events: list) -> None:
-    """Render trace events as a spaced two-column table grouped by phase."""
+    """Section headers + globally aligned label/value columns."""
     if not events:
         return
 
     from rich.markup import escape
 
-    events = _collapse_lookup(events)
-
-    table = Table(
-        show_header=False, box=None,
-        padding=(0, 2, 0, 1), show_edge=False,
-    )
-    table.add_column("label", style="dim", no_wrap=True, min_width=6)
-    table.add_column("value", style="dim")
-
-    last_phase = None
-    last_group = None
+    # Collect events into ordered groups
+    groups: dict[int, list[tuple[str, str]]] = {}
+    group_order: list[int] = []
     for phase, msg in events:
-        label = _TRACE_LABEL.get(phase, "")
-        safe = escape(msg)
-        group = _TRACE_GROUP.get(phase, 99)
+        g = _TRACE_GROUP.get(phase, 99)
+        if g not in groups:
+            groups[g] = []
+            group_order.append(g)
+        groups[g].append((phase, msg))
 
-        if last_group is not None and group != last_group:
-            table.add_row("", "")       # blank row between sections
+    # Global max label width (skip sub-items and single-value groups)
+    max_lw = max(
+        (_wlen(_TRACE_LABEL.get(phase, phase))
+         for g, evts in groups.items() if g != 1
+         for phase, _ in evts if phase not in _TRACE_SUB),
+        default=4,
+    )
 
-        last_group = group
-        is_sub = not label
-        if is_sub:
-            table.add_row("", "  " + safe)
-        elif phase == last_phase:
-            table.add_row("", safe)
+    first = True
+    for g in group_order:
+        if not first:
+            console.print()
+        first = False
+
+        name = _GROUP_NAME.get(g, f"步骤{g}")
+        console.print(Rule(name, style="dim", align="left"))
+
+        evts = groups[g]
+
+        if g == 1:  # lookup: one line per tier, aligned
+            for _, msg in evts:
+                console.print(f"  {escape(msg)}")
         else:
-            table.add_row(label, safe)
-            last_phase = phase
-
-    console.print(Rule("处理路径", style="dim"))
-    console.print(table)
-    console.print(Rule(style="dim"))
+            # Use table only when at least one row needs an explicit label
+            needs_table = any(
+                _TRACE_LABEL.get(ph, ph) != name and ph not in _TRACE_SUB
+                for ph, _ in evts
+            )
+            if needs_table:
+                tbl = Table(show_header=False, box=None, padding=(0, 2, 0, 2), show_edge=False)
+                tbl.add_column("label", style="dim", no_wrap=True, min_width=max_lw)
+                tbl.add_column("value")
+                for phase, msg in evts:
+                    label = _TRACE_LABEL.get(phase, phase)
+                    safe = escape(msg)
+                    if phase in _TRACE_SUB:
+                        tbl.add_row("", safe, style="dim")
+                    elif label == name:
+                        tbl.add_row("", safe)
+                    else:
+                        tbl.add_row(label, safe)
+                # Context section: append score distribution summary
+                if g == 6:
+                    import re as _re
+                    scores = []
+                    for _, msg in evts:
+                        m = _re.search(r'\s(0\.\d+)\s', msg)
+                        if m:
+                            scores.append(float(m.group(1)))
+                    if len(scores) >= 2:
+                        tbl.add_row(
+                            "分数分布",
+                            f"max {max(scores):.2f}  min {min(scores):.2f}  "
+                            f"avg {sum(scores)/len(scores):.2f}  共{len(scores)}条",
+                            style="dim",
+                        )
+                console.print(tbl)
+            else:
+                # All rows are same-label or sub-items — print directly, strip redundant prefix
+                prefix = f"{name}: "
+                for phase, msg in evts:
+                    safe = escape(msg)
+                    if safe.startswith(prefix):
+                        safe = safe[len(prefix):]
+                    if phase in _TRACE_SUB:
+                        console.print(f"    {safe}", style="dim")
+                    else:
+                        console.print(f"  {safe}")
 
 # ── Log file ──────────────────────────────────────────────────────────────────
 log_dir = Path(__file__).parent.parent / ".log"
@@ -245,9 +266,9 @@ try:
                 trace = resp.trace
 
         console.print()
+        _print_trace(trace)
         console.print(Panel(Markdown(answer), padding=(0, 1)))
         console.print(f"[dim] 模式: {query_type}  |  置信度: {confidence}[/dim]")
-        _print_trace(trace)
 
         trace_log = "\n".join(f"  [{p}] {m}" for p, m in trace) if trace else ""
         log(answer + f"\n[模式: {query_type} | 置信度: {confidence}]"
