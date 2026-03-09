@@ -352,6 +352,24 @@ class TestSelfReflect:
 
 
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Adaptive filter integration tests
+# ---------------------------------------------------------------------------
+
+class TestAdaptiveFilter:
+    """Verify filter_by_adaptive_threshold is wired into answer paths."""
+
+    def test_answer_qa_calls_filter(self):
+        chain = make_chain()
+        chain.answer_qa("timer 怎么用")
+        chain.retriever.filter_by_adaptive_threshold.assert_called_once()
+
+    def test_answer_high_confidence_calls_filter(self):
+        chain = make_chain()
+        chain.answer_high_confidence("timer 怎么用")
+        assert chain.retriever.filter_by_adaptive_threshold.call_count >= 1
+
+
 # Entry point
 # ---------------------------------------------------------------------------
 
