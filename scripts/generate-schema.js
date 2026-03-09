@@ -849,7 +849,7 @@ function generateEditor() {
 function generateMainIndex(pluginStats, behaviorStats, effectStats, editorStats) {
   const index = {
     version: '3.0',
-    source: 'r466',
+    source: 'r475',
     generatedAt: new Date().toISOString(),
     languages: ['zh', 'en'],
     directories: {
