@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 from src.evaluation.heuristic_evaluator import HeuristicEvaluator
 from src.evaluation.ragas_evaluator import RagasEvaluator
 from src.evaluation.runner import EvaluationRunner
+from src.evaluation.report import generate_report
 from src.rag.chain import RAGResponse
 
 
@@ -334,3 +335,49 @@ def test_runner_all_mode_merges_both_evaluators(tmp_path):
     assert "faithfulness" in names
     assert "instruction_following" in names  # from heuristic
     assert results[0].composite_score > 0
+
+
+# ── Task 7: Report Generator ──────────────────────────────────────────────────
+
+def _make_full_metrics():
+    return [
+        MetricResult("faithfulness", 0.9, 0.20),
+        MetricResult("answer_relevance", 0.8, 0.20),
+        MetricResult("answer_correctness", 0.7, 0.20),
+        MetricResult("context_precision", 0.6, 0.15),
+        MetricResult("context_recall", 0.5, 0.10),
+        MetricResult("instruction_following", 1.0, 0.10),
+        MetricResult("citation_rate", 0.8, 0.03),
+        MetricResult("confidence_quality", 1.0, 0.02),
+        MetricResult("answer_completeness", 0.7, 0.0),  # diagnostic
+    ]
+
+
+def test_report_contains_summary():
+    results = [EvalResult("B01", "Sprite 是什么？", "Sprite 是基础对象。",
+                          _make_full_metrics(), latency_ms=1200)]
+    report = generate_report(results, mode="all")
+    assert "综合得分" in report
+    assert "B01" in report
+    assert "faithfulness" in report
+
+
+def test_report_grade_distribution():
+    results = [
+        EvalResult("B01", "q1", "a1", [MetricResult("x", 0.9, 1.0)], 100),
+        EvalResult("B02", "q2", "a2", [MetricResult("x", 0.5, 1.0)], 200),
+    ]
+    report = generate_report(results, mode="heuristic")
+    assert "A=1" in report
+    assert "C=1" in report
+
+
+def test_report_diagnostic_marked():
+    results = [EvalResult("B01", "q", "a", _make_full_metrics(), 500)]
+    report = generate_report(results, mode="all")
+    assert "诊断" in report  # diagnostic metrics labeled
+
+
+def test_report_empty():
+    report = generate_report([], mode="all")
+    assert "无评估结果" in report
