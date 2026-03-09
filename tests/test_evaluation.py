@@ -1,5 +1,19 @@
 from src.evaluation import MetricResult, EvalResult
 from src.evaluation.dataset import EvalDataset, EvalCase
+from src.evaluation.heuristic_evaluator import HeuristicEvaluator
+from src.rag.chain import RAGResponse
+
+
+def _mock_response(answer: str, confidence: str = "high") -> RAGResponse:
+    return RAGResponse(answer=answer, sources=[], query_type="qa",
+                       confidence=confidence)
+
+
+def _make_case(**kwargs) -> EvalCase:
+    defaults = dict(id="B01", query="q", ground_truth="", expected_keywords=[],
+                    category="概念", forbidden_phrases=[], has_answer=True, note="")
+    defaults.update(kwargs)
+    return EvalCase(**defaults)
 
 
 def test_metric_result_fields():
@@ -76,3 +90,64 @@ def test_dataset_get_by_id(tmp_path):
     assert case is not None
     assert case.query == "q1"
     assert ds.get("B99") is None
+
+
+# ── Task 3: HeuristicEvaluator ────────────────────────────────────────────────
+
+def test_heuristic_keyword_hit():
+    ev = HeuristicEvaluator()
+    case = _make_case(expected_keywords=["Sprite", "动画"])
+    resp = _mock_response("Sprite 是一种支持动画的对象。[来源: 1]")
+    results = ev.evaluate("q", resp, case)
+    kw = next(r for r in results if r.name == "keyword_coverage")
+    assert kw.score == 1.0
+
+
+def test_heuristic_keyword_miss():
+    ev = HeuristicEvaluator()
+    case = _make_case(expected_keywords=["Sprite", "动画", "碰撞"])
+    resp = _mock_response("Sprite 是基础对象。[来源: 1]")
+    results = ev.evaluate("q", resp, case)
+    kw = next(r for r in results if r.name == "keyword_coverage")
+    assert abs(kw.score - 1/3) < 0.01
+
+
+def test_heuristic_citation_full():
+    ev = HeuristicEvaluator()
+    case = _make_case()
+    resp = _mock_response("[来源: 1] 说明A。[来源: 2] 说明B。[来源: 3] 说明C。")
+    results = ev.evaluate("q", resp, case)
+    cite = next(r for r in results if r.name == "citation_rate")
+    assert cite.score == 1.0
+
+
+def test_heuristic_confidence_mapping():
+    ev = HeuristicEvaluator()
+    case = _make_case()
+    for conf, expected in [("high", 1.0), ("medium", 0.6), ("low", 0.3), ("none", 0.0)]:
+        resp = _mock_response("answer", confidence=conf)
+        results = ev.evaluate("q", resp, case)
+        conf_m = next(r for r in results if r.name == "confidence_quality")
+        assert conf_m.score == expected, f"failed for {conf}"
+
+
+def test_heuristic_instruction_following_with_citation():
+    ev = HeuristicEvaluator()
+    case = _make_case()
+    resp = _mock_response("答案内容。[来源: 1][来源: 2][来源: 3]", confidence="high")
+    results = ev.evaluate("q", resp, case)
+    instr = next(r for r in results if r.name == "instruction_following")
+    assert instr.score == 1.0
+
+
+def test_heuristic_diagnostic_metrics_present():
+    ev = HeuristicEvaluator()
+    case = _make_case()
+    resp = _mock_response("answer [来源: 1]", confidence="high")
+    results = ev.evaluate("q", resp, case)
+    names = {r.name for r in results}
+    assert "latency_ms" in names
+    assert "lookup_hit" in names
+    for r in results:
+        if r.name in ("latency_ms", "lookup_hit"):
+            assert r.weight == 0.0
