@@ -16,6 +16,7 @@ from typing import List, Dict, Any, Set, Tuple
 from dataclasses import dataclass
 
 from ._trace import _trace
+from src.config import RERANKER_ENABLED, RERANKER_TOP_K, RERANKER_MODEL
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -145,6 +146,56 @@ class HybridRetriever:
 
         # Clamp to reasonable bounds
         return max(self.MIN_SCORE_THRESHOLD, min(threshold, mean_score))
+
+    @property
+    def reranker(self):
+        """Lazy-load cross-encoder reranker model on first use."""
+        if not hasattr(self, "_reranker") or self._reranker is None:
+            import os
+            os.environ.setdefault("HF_HUB_OFFLINE", "1")
+            os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+            from FlagEmbedding import FlagReranker
+            logger.info(f"[Load] Reranker: {RERANKER_MODEL} ...")
+            self._reranker = FlagReranker(RERANKER_MODEL, use_fp16=True)
+        return self._reranker
+
+    def _rerank_with_cross_encoder(
+        self,
+        query: str,
+        results: List[SearchResult]
+    ) -> List[SearchResult]:
+        """
+        Rerank results using cross-encoder (joint query-document scoring).
+
+        Cross-encoders see both query and document together, capturing interaction
+        signals that independent bi-encoder embeddings miss. Typical accuracy
+        improvement: +0.1 to +0.2 on precision@k.
+
+        Args:
+            query: Original user query
+            results: Candidates to rerank (typically top-k from RRF)
+
+        Returns:
+            Results reordered by cross-encoder relevance score
+        """
+        if not RERANKER_ENABLED or not results:
+            return results
+
+        pairs = [[query, r.text] for r in results]
+        scores = self.reranker.compute_score(pairs)
+
+        reranked = sorted(
+            zip(results, scores),
+            key=lambda x: x[1],
+            reverse=True
+        )
+        return [SearchResult(
+            text=r.text,
+            score=float(score),
+            source=r.source,
+            metadata={**r.metadata, "reranker_score": float(score),
+                      "original_score": r.score}
+        ) for r, score in reranked]
 
     def filter_by_adaptive_threshold(
         self,
@@ -480,7 +531,13 @@ class HybridRetriever:
 
         # Sort by final score and return top-k
         reranked.sort(key=lambda x: x.score, reverse=True)
-        final_results = reranked[:final_top_k]
+
+        # Cross-encoder reranking for more accurate relevance ordering
+        if RERANKER_ENABLED:
+            candidates = reranked[:RERANKER_TOP_K]
+            final_results = self._rerank_with_cross_encoder(query, candidates)
+        else:
+            final_results = reranked[:final_top_k]
 
         logger.info(f"[Rerank] Done, returning top-{len(final_results)}")
         return final_results
