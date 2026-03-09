@@ -1,0 +1,17 @@
+[
+  {"id":"B01","query":"Sprite 对象是什么？它的主要用途是什么？","ground_truth":"","expected_keywords":["Sprite","图像","动画","精灵","碰撞"],"category":"概念","forbidden_phrases":[],"has_answer":true,"note":"基础插件概念"},
+  {"id":"B02","query":"事件表（Event Sheet）是什么？","ground_truth":"","expected_keywords":["事件","条件","动作","表达式"],"category":"概念","forbidden_phrases":[],"has_answer":true,"note":"核心概念"},
+  {"id":"B03","query":"实例变量和全局变量的区别是什么？","ground_truth":"","expected_keywords":["实例","全局","静态","作用域"],"category":"概念","forbidden_phrases":[],"has_answer":true,"note":"变量作用域"},
+  {"id":"B04","query":"平台(Platform) 行为有哪些主要参数？","ground_truth":"","expected_keywords":["平台","最大移动速度","加速度","减速度","重力","跳跃高度","最大下落速度","跳跃维持","二段跳"],"category":"插件","forbidden_phrases":[],"has_answer":true,"note":"Platform 行为配置"},
+  {"id":"B05","query":"补间(Tween) 行为怎么用？如何让对象移动到指定位置？","ground_truth":"","expected_keywords":["补间","两个参数","位置","过渡","时间","曲线"],"category":"插件","forbidden_phrases":[],"has_answer":true,"note":"Tween 行为用法"},
+  {"id":"B06","query":"键盘(Keyboard) 插件如何检测按键？按住(on key pressed) 和按下(is key down) 的区别？","ground_truth":"","expected_keywords":["键盘","按键","按键码","按住","按下","持续","单次"],"category":"插件","forbidden_phrases":[],"has_answer":true,"note":"输入检测差异"},
+  {"id":"B07","query":"系统(System) 对象的遍历(For each) 条件如何使用？","ground_truth":"","expected_keywords":["条件","循环","遍历","对象","实例","范围","跳出","loopindex"],"category":"系统","forbidden_phrases":[],"has_answer":true,"note":"循环遍历对象"},
+  {"id":"B08","query":"如何在 Construct 3 中实现计时器？","ground_truth":"","expected_keywords":["计时","正在计时","计时结束","遍历"],"category":"系统","forbidden_phrases":[],"has_answer":true,"note":"计时器实现方式"},
+  {"id":"B09","query":"等待信号(Wait for signal) 和 等待X秒(Wait X seconds) 有什么区别？","ground_truth":"","expected_keywords":["信号","异步","秒","时间","等待"],"category":"系统","forbidden_phrases":[],"has_answer":true,"note":"等待机制"},
+  {"id":"B10","query":"如何让玩家按空格键跳跃？并且播放跳跃动画？","ground_truth":"","expected_keywords":["键盘","空格","模拟控制","跳跃","平台","条件","正在跳跃","准备起跳","动画"],"category":"工作流","forbidden_phrases":[],"has_answer":true,"note":"经典平台游戏跳跃"},
+  {"id":"B11","query":"如何实现碰撞检测？Sprite 和 Sprite 碰撞时触发事件","ground_truth":"","expected_keywords":["碰撞","重叠","家族"],"category":"工作流","forbidden_phrases":[],"has_answer":true,"note":"碰撞事件"},
+  {"id":"B12","query":"如何用事件表实现分数系统？包括变量定义和 UI 更新","ground_truth":"","expected_keywords":["变量","分数","设置文本","动作组"],"category":"工作流","forbidden_phrases":[],"has_answer":true,"note":"分数系统工作流"},
+  {"id":"B13","query":"在 Construct 3 脚本中如何获取一个对象的实例？","ground_truth":"","expected_keywords":["runtime","objects","getInstance","getInstanceByUid","getFirstInstance","getAllInstances","getPickedInstances","getPairedInstance"],"category":"脚本","forbidden_phrases":[],"has_answer":true,"note":"脚本 API 基础"},
+  {"id":"B14","query":"Construct 3 支持 WebGPU 渲染吗？有什么限制？","ground_truth":"","expected_keywords":[],"category":"边界","forbidden_phrases":["完全支持","没有限制"],"has_answer":false,"note":"边界知识，防止幻觉"},
+  {"id":"B15","query":"Construct 3 r999 版本有哪些新功能？","ground_truth":"","expected_keywords":[],"category":"边界","forbidden_phrases":["r999"],"has_answer":false,"note":"不存在的版本"}
+]
