@@ -1,4 +1,5 @@
 from src.evaluation import MetricResult, EvalResult
+from src.evaluation.dataset import EvalDataset, EvalCase
 
 
 def test_metric_result_fields():
@@ -44,3 +45,34 @@ def test_diagnostic_metrics_excluded_from_composite():
     ]
     result = EvalResult("B01", "q", "a", metrics, latency_ms=500)
     assert abs(result.composite_score - 0.8) < 0.001
+
+
+# ── Task 2: Dataset ───────────────────────────────────────────────────────────
+
+def test_dataset_loads_from_json(tmp_path):
+    import json
+    data = [{"id": "B01", "query": "q1", "ground_truth": "",
+             "expected_keywords": ["kw1"], "category": "概念",
+             "forbidden_phrases": [], "has_answer": True, "note": ""}]
+    f = tmp_path / "dataset.json"
+    f.write_text(json.dumps(data), encoding="utf-8")
+
+    ds = EvalDataset.load(f)
+    assert len(ds.cases) == 1
+    assert ds.cases[0].id == "B01"
+    assert ds.cases[0].query == "q1"
+
+
+def test_dataset_get_by_id(tmp_path):
+    import json
+    data = [{"id": "B01", "query": "q1", "ground_truth": "",
+             "expected_keywords": [], "category": "概念",
+             "forbidden_phrases": [], "has_answer": True, "note": ""}]
+    f = tmp_path / "dataset.json"
+    f.write_text(json.dumps(data), encoding="utf-8")
+
+    ds = EvalDataset.load(f)
+    case = ds.get("B01")
+    assert case is not None
+    assert case.query == "q1"
+    assert ds.get("B99") is None
