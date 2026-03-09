@@ -24,8 +24,10 @@ qdrant_storage/
 
 # 日志
 *.log
+.log/
 .local/
 .history/
+.playwright-mcp/
 
 # Claude Code
 # .claude
