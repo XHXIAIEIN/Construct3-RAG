@@ -303,7 +303,11 @@ class SchemaLoader:
 class ClipboardValidator:
     """Validate Construct 3 clipboard JSON format"""
 
-    VALID_CLIPBOARD_TYPES = {"events", "conditions", "actions"}
+    VALID_CLIPBOARD_TYPES = {
+        "events", "conditions", "actions",
+        "object-types", "world-instances",
+        "layouts", "event-sheets", "timelines", "flowcharts",
+    }
     VALID_EVENT_TYPES = {"comment", "variable", "group", "block", "function-block"}
     VALID_VAR_TYPES = {"number", "string", "boolean"}
     VALID_FUNCTION_RETURN_TYPES = {"none", "number", "string", "any"}
@@ -351,6 +355,16 @@ class ClipboardValidator:
         elif clip_type == "actions":
             for i, item in enumerate(items):
                 self._validate_action(item, f"items[{i}]")
+        elif clip_type == "object-types":
+            for i, item in enumerate(items):
+                self._validate_object_type(item, f"items[{i}]")
+        elif clip_type == "event-sheets":
+            for i, item in enumerate(items):
+                if "name" not in item:
+                    self.errors.append(f"items[{i}]: missing 'name' field")
+                if "events" not in item:
+                    self.warnings.append(f"items[{i}]: missing 'events' field (should be array)")
+        # layouts / world-instances / timelines / flowcharts: basic structure check only
 
         return len(self.errors) == 0, self.errors, self.warnings
 
@@ -466,6 +480,228 @@ class ClipboardValidator:
 
         if "objectClass" not in action:
             self.errors.append(VALIDATION_ERRORS["action_missing_object"].format(path=path))
+
+    def _validate_object_type(self, obj: Dict, path: str):
+        """Validate a single object-type entry"""
+        if "name" not in obj:
+            self.errors.append(f"{path}: missing 'name' field")
+        if "plugin-id" not in obj:
+            self.errors.append(f"{path}: missing 'plugin-id' field")
+
+        has_singleton = "singleglobal-inst" in obj
+        has_nonworld = "nonworld-inst" in obj
+        has_animations = "animations" in obj
+
+        variant_count = sum([has_singleton, has_nonworld, has_animations])
+        if variant_count == 0:
+            self.warnings.append(
+                f"{path}: no variant key ('singleglobal-inst', 'nonworld-inst', or 'animations')"
+            )
+        elif variant_count > 1:
+            self.errors.append(f"{path}: multiple variant keys present; only one allowed")
+
+
+# ============================================================
+# Object Type Builder
+# ============================================================
+
+
+class ObjectTypeBuilder:
+    """
+    Build Construct 3 object-types clipboard JSON.
+
+    C3 has three plugin variants:
+    - Singleton (Keyboard, Mouse, Audio…): singleglobal-inst, no layout placement
+    - Non-world data (Array, Dictionary…): nonworld-inst, not positioned in layout
+    - World object (Sprite, Text, TiledBg…): animations, placed in layout
+    """
+
+    SINGLETON_PLUGIN_IDS: Set[str] = {
+        "Keyboard", "Mouse", "Touch", "Gamepad",
+        "Audio", "Browser", "AJAX", "XHR2",
+        "LocalStorage", "SessionStorage",
+        "Multiplayer", "AdvancedRandom", "Date",
+        "Cryptography", "CSV", "Internationalization",
+        "PlatformInfo", "ShareDialog", "SpeechSynthesis",
+        "SpeechRecognition", "NodeWebkit", "FileSystem",
+        "FileChooser", "Clipboard", "MIDI",
+        "Geolocation", "Bluetooth",
+    }
+
+    NONWORLD_PLUGIN_IDS: Set[str] = {
+        "Arr", "Dictionary", "BinaryData",
+        "JSON", "XML", "Function",
+    }
+
+    _BLANK_ANIMATION: Dict[str, Any] = {
+        "items": [{
+            "frames": [{
+                "width": 32, "height": 32,
+                "originX": 0.5, "originY": 0.5,
+                "originalSource": "",
+                "exportFormat": "lossless",
+                "exportQuality": 0.8,
+                "fileType": "image/png",
+                "imageDataIndex": 0,
+                "useCollisionPoly": True,
+                "duration": 1,
+                "tag": "",
+            }],
+            "name": "Animation 1",
+            "isLooping": False,
+            "isPingPong": False,
+            "repeatCount": 1,
+            "repeatTo": 0,
+            "speed": 5,
+        }],
+        "subfolders": [],
+        "name": "Animations",
+    }
+
+    def build(
+        self,
+        name: str,
+        plugin_id: str,
+        *,
+        behaviors: Optional[List[Dict[str, str]]] = None,
+        effects: Optional[List[Dict[str, str]]] = None,
+        instance_vars: Optional[List[Dict]] = None,
+        is_global: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        Build a single object-type item dict.
+
+        Args:
+            name: Object display name (e.g. "Player")
+            plugin_id: C3 originalId (e.g. "Sprite", "Arr", "Keyboard")
+            behaviors: [{"behaviorId": "EightDir", "name": "8Direction"}, ...]
+            effects: [{"id": "blur", "name": "Blur"}, ...]
+            instance_vars: [{"name": "Health", "type": "number", "value": 100}, ...]
+            is_global: Whether the object is global across layouts
+        """
+        item: Dict[str, Any] = {"name": name, "plugin-id": plugin_id}
+
+        if plugin_id in self.SINGLETON_PLUGIN_IDS:
+            item["singleglobal-inst"] = {"type": plugin_id, "properties": {}, "tags": ""}
+        elif plugin_id in self.NONWORLD_PLUGIN_IDS:
+            item["isGlobal"] = is_global
+            item["editorNewInstanceIsReplica"] = True
+            item["instanceVariables"] = instance_vars or []
+            item["nonworld-inst"] = {
+                "type": plugin_id,
+                "properties": {},
+                "tags": "",
+                "instanceVariables": {},
+            }
+        else:
+            # World object (Sprite, Text, TiledBg, …)
+            item["isGlobal"] = is_global
+            item["editorNewInstanceIsReplica"] = True
+            item["instanceVariables"] = instance_vars or []
+            item["behaviorTypes"] = behaviors or []
+            item["effectTypes"] = effects or []
+            item["animations"] = self._BLANK_ANIMATION
+
+        return item
+
+    def build_clipboard(self, objects: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Wrap object-type items in the clipboard envelope."""
+        return {
+            "is-c3-clipboard-data": True,
+            "type": "object-types",
+            "families": [],
+            "items": objects,
+            "folders": [],
+        }
+
+    def build_from_spec(
+        self,
+        specs: List[Dict[str, Any]],
+        schema_loader: Optional["SchemaLoader"] = None,
+    ) -> Dict[str, Any]:
+        """
+        Build object-types clipboard from a list of object specs.
+
+        Each spec: {
+            "name": "Player",
+            "plugin": "Sprite",            # display name or originalId
+            "behaviors": ["8Direction"],   # behavior display names
+            "effects": [],
+            "instance_vars": [{"name": "HP", "type": "number", "value": 100}],
+            "is_global": False,
+        }
+        """
+        items = []
+        for spec in specs:
+            plugin_name = spec.get("plugin", "Sprite")
+            plugin_id = self._resolve_plugin_id(plugin_name, schema_loader)
+            behaviors = self._resolve_behaviors(spec.get("behaviors", []), schema_loader)
+            effects = [{"id": e.lower(), "name": e} for e in spec.get("effects", [])]
+
+            item = self.build(
+                spec.get("name", "Object"),
+                plugin_id,
+                behaviors=behaviors,
+                effects=effects,
+                instance_vars=spec.get("instance_vars", []),
+                is_global=spec.get("is_global", False),
+            )
+            items.append(item)
+
+        return self.build_clipboard(items)
+
+    def _resolve_plugin_id(
+        self, plugin_name: str, schema_loader: Optional["SchemaLoader"]
+    ) -> str:
+        """Map plugin display name to originalId."""
+        if schema_loader:
+            result = schema_loader.find_schema_by_keyword(plugin_name)
+            if result:
+                schema_id, _ = result
+                schema = schema_loader.load_plugin(schema_id)
+                if schema and schema.original_id:
+                    return schema.original_id
+        return plugin_name
+
+    def _resolve_behaviors(
+        self, names: List[str], schema_loader: Optional["SchemaLoader"]
+    ) -> List[Dict[str, str]]:
+        """Map behavior display names to {behaviorId, name} pairs."""
+        result = []
+        for name in names:
+            behavior_id = self._find_behavior_original_id(name, schema_loader)
+            result.append({"behaviorId": behavior_id, "name": name})
+        return result
+
+    def _find_behavior_original_id(
+        self, name: str, schema_loader: Optional["SchemaLoader"]
+    ) -> str:
+        """Find behavior originalId by display name, with normalized fallback."""
+        if not schema_loader:
+            return name
+
+        schema_loader.build_keyword_index()
+        name_norm = re.sub(r"[\s_-]", "", name).lower()
+
+        for keyword, (schema_id, kind) in schema_loader._keyword_index.items():
+            if kind != "behavior":
+                continue
+            # Exact or normalized match against keyword or originalId
+            if keyword.replace(" ", "") == name_norm:
+                schema = schema_loader.load_behavior(schema_id)
+                if schema and schema.original_id:
+                    return schema.original_id
+
+        # Direct schema id lookup
+        found = schema_loader.find_schema_by_keyword(name)
+        if found:
+            schema_id, kind = found
+            if kind == "behavior":
+                schema = schema_loader.load_behavior(schema_id)
+                if schema and schema.original_id:
+                    return schema.original_id
+
+        return name
 
 
 # ============================================================
@@ -673,3 +909,22 @@ def validate_clipboard_json(
     loader = SchemaLoader(schema_dir)
     validator = ClipboardValidator(loader)
     return validator.validate(json_str)
+
+
+def build_object_types(
+    specs: List[Dict[str, Any]], schema_dir: str = None
+) -> Dict[str, Any]:
+    """
+    Build object-types clipboard JSON from a list of specs.
+
+    Example::
+
+        result = build_object_types([
+            {"name": "Player", "plugin": "Sprite", "behaviors": ["8Direction"]},
+            {"name": "Keyboard", "plugin": "Keyboard"},
+            {"name": "Score", "plugin": "Arr"},
+        ])
+    """
+    loader = SchemaLoader(schema_dir)
+    builder = ObjectTypeBuilder()
+    return builder.build_from_spec(specs, schema_loader=loader)

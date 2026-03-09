@@ -389,6 +389,40 @@ CLIPBOARD_FORMAT_REFERENCE = """
 3. objectClass must match the object type name in the project
 4. behaviorType uses the behavior's display name (e.g. "Platform", "Tween", "Timer")
 5. Condition/action ids must come from Schema definitions
+
+---
+
+## object-types Format (Object Type Definitions)
+
+Three variants — choose based on plugin-id:
+
+**World objects (Sprite, Text, TiledBg, Tilemap, etc.)**:
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Player","plugin-id":"Sprite","isGlobal":false,"editorNewInstanceIsReplica":true,
+   "instanceVariables":[],"behaviorTypes":[{"behaviorId":"Platform","name":"Platform"}],
+   "effectTypes":[],"animations":{"items":[{"frames":[{"width":32,"height":32,"originX":0.5,"originY":0.5,"originalSource":"","exportFormat":"lossless","exportQuality":0.8,"fileType":"image/png","imageDataIndex":0,"useCollisionPoly":true,"duration":1,"tag":""}],"name":"Animation 1","isLooping":false,"isPingPong":false,"repeatCount":1,"repeatTo":0,"speed":5}],"subfolders":[],"name":"Animations"}}
+],"folders":[]}
+```
+
+**Singleton global objects (Keyboard, Mouse, Audio, Touch, Browser, etc.)**:
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Keyboard","plugin-id":"Keyboard","singleglobal-inst":{"type":"Keyboard","properties":{},"tags":""}}
+],"folders":[]}
+```
+
+**Non-world data objects (Array→Arr, Dictionary, BinaryData, etc.)**:
+```json
+{"is-c3-clipboard-data":true,"type":"object-types","families":[],"items":[
+  {"name":"Scores","plugin-id":"Arr","isGlobal":true,"editorNewInstanceIsReplica":true,
+   "instanceVariables":[],"nonworld-inst":{"type":"Arr","properties":{},"tags":"","instanceVariables":{}}}
+],"folders":[]}
+```
+
+**behaviorTypes field**: `[{"behaviorId":"EightDir","name":"8Direction"}]` — behaviorId is internal ID, name is display name
+**effectTypes field**: `[{"id":"blur","name":"Blur"}]`
+**Common plugin-ids**: Sprite, Text, TiledBg, Tilemap, Keyboard, Mouse, Audio, Touch, Browser, AJAX, Arr, Dictionary
 """
 
 
