@@ -851,6 +851,9 @@ class RAGChain:
                     confidence="none"
                 )
 
+        # Step 1.5: Filter noise via adaptive threshold
+        results = self.retriever.filter_by_adaptive_threshold(results)
+
         # Step 2: Format context
         context = self._format_reranked_context(results)
 
@@ -1026,6 +1029,9 @@ class RAGChain:
 
         # Sort by score
         unique_results.sort(key=lambda x: x.score, reverse=True)
+
+        # Filter noise via adaptive threshold
+        unique_results = self.retriever.filter_by_adaptive_threshold(unique_results)
 
         # Use strict mode with expanded context
         context = self._format_reranked_context(unique_results)
