@@ -27,9 +27,9 @@ Project source code. 2 top-level modules and 2 subpackages.
 |------|---------|
 | `chain.py` | RAGChain main class (`answer_smart`/`answer_high_confidence`/`answer_stream`) |
 | `retriever.py` | HybridRetriever (cross-collection retrieval + RRF fusion) |
-| `prompts.py` | Prompt re-exports from active locale + `format_context_blocks()` |
+| `prompts.py` | Prompt re-exports from active locale |
 | `lookup.py` | Query routing + direct lookup (SchemaIndex, TermIndex, LookupEngine) |
-| `eventsheet_generator.py` | C3 event sheet JSON generator |
+| `eventsheet_generator.py` | C3 event sheet JSON generator (SchemaLoader + ClipboardValidator + EventGenerator)，由 `chain.answer_code()` 调用 |
 
 ## Entry Points
 
