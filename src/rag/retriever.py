@@ -380,50 +380,67 @@ class HybridRetriever:
             for r in results
         ]
 
+    # (collection_key, default_top_k, score_threshold)
+    _COLLECTION_DEFAULTS: Dict[str, tuple] = {
+        "guide":      (5,  0.5),
+        "interface":  (5,  0.5),
+        "project":    (5,  0.5),
+        "plugins":    (5,  0.5),
+        "behaviors":  (5,  0.5),
+        "scripting":  (5,  0.5),
+        "ace":        (5,  0.3),
+        "terms":      (10, 0.3),
+        "examples":   (5,  0.5),
+    }
+
+    def _search(
+        self, key: str, query: str, top_k: int | None = None, score_threshold: float | None = None
+    ) -> List[SearchResult]:
+        """Search a named collection using its registered defaults."""
+        from src.collections import COLLECTIONS
+        default_top_k, default_threshold = self._COLLECTION_DEFAULTS[key]
+        return self.search_collection(
+            COLLECTIONS[key],
+            query,
+            top_k if top_k is not None else default_top_k,
+            score_threshold if score_threshold is not None else default_threshold,
+        )
+
     def search_guide(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search guide documentation (getting started, tips, overview)"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["guide"], query, top_k)
+        return self._search("guide", query, top_k)
 
     def search_interface(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search interface documentation (editor UI, dialogs, debugger)"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["interface"], query, top_k)
+        return self._search("interface", query, top_k)
 
     def search_project(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search project primitives (events, objects, timelines)"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["project"], query, top_k)
+        return self._search("project", query, top_k)
 
     def search_plugins(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search plugin reference documentation"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["plugins"], query, top_k)
+        return self._search("plugins", query, top_k)
 
     def search_behaviors(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search behavior reference documentation"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["behaviors"], query, top_k)
+        return self._search("behaviors", query, top_k)
 
     def search_scripting(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search scripting API documentation"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["scripting"], query, top_k)
+        return self._search("scripting", query, top_k)
 
     def search_terms(self, query: str, top_k: int = 10) -> List[SearchResult]:
         """Search translation terms"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["terms"], query, top_k, score_threshold=0.3)
+        return self._search("terms", query, top_k)
 
     def search_examples(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search example projects"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["examples"], query, top_k)
+        return self._search("examples", query, top_k)
 
     def search_ace(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search ACE schema (Actions/Conditions/Expressions per plugin)"""
-        from src.collections import COLLECTIONS
-        return self.search_collection(COLLECTIONS["ace"], query, top_k, score_threshold=0.3)
+        return self._search("ace", query, top_k)
 
     def search_plugin_by_name(
         self,
@@ -518,23 +535,10 @@ class HybridRetriever:
         # Collect all results from all collections
         all_results: List[SearchResult] = []
 
-        # Define collection mapping
-        collection_map = {
-            "guide": self.search_guide,
-            "interface": self.search_interface,
-            "project": self.search_project,
-            "plugins": self.search_plugins,
-            "behaviors": self.search_behaviors,
-            "scripting": self.search_scripting,
-            "ace": self.search_ace,
-            "terms": self.search_terms,
-            "examples": self.search_examples,
-        }
-
         coll_hit_summaries = []
-        for coll_name, search_fn in collection_map.items():
+        for coll_name in self._COLLECTION_DEFAULTS:
             try:
-                results = search_fn(query, top_k_per_collection)
+                results = self._search(coll_name, query, top_k_per_collection)
                 for r in results:
                     all_results.append(r)
                 logger.info(f"[Search] {coll_name}: {len(results)} hits")
