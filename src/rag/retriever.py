@@ -69,6 +69,22 @@ class HybridRetriever:
         self.embedding_model_name = embedding_model_name
         self._embedder = None
         self._qdrant_available = None  # Cache for health check
+        self._bm25 = None             # Lazy-loaded when BM25_ENABLED
+
+    @property
+    def bm25(self):
+        """Lazy-load BM25 vectorizer from saved vocab if BM25_ENABLED."""
+        if self._bm25 is None:
+            from src.config import BM25_ENABLED, DATA_DIR
+            if not BM25_ENABLED:
+                return None
+            from src.ingest.indexer import BM25Vectorizer
+            vocab_path = DATA_DIR / "bm25_vocab.json"
+            if vocab_path.exists():
+                self._bm25 = BM25Vectorizer().load(vocab_path)
+            else:
+                logger.warning("[BM25] Vocab file not found at %s — BM25 disabled", vocab_path)
+        return self._bm25
 
     @property
     def embedder(self):
@@ -313,16 +329,42 @@ class HybridRetriever:
         top_k: int = 5,
         score_threshold: float = 0.5
     ) -> List[SearchResult]:
-        """Search a single collection"""
+        """Search a single collection.
+
+        When BM25_ENABLED and vocab is loaded: uses Qdrant prefetch + RRF
+        fusion over both dense and sparse vectors.
+        Otherwise: plain dense vector search (legacy).
+        """
+        from src.config import BM25_ENABLED
         query_vector = self.embedder.encode_single(query)
 
         try:
-            response = self.client.query_points(
-                collection_name=collection_name,
-                query=query_vector,
-                limit=top_k,
-                score_threshold=score_threshold
-            )
+            if BM25_ENABLED and self.bm25 is not None:
+                from qdrant_client.models import Prefetch, FusionQuery, Fusion, SparseVector
+                sparse = self.bm25.encode(query)
+                response = self.client.query_points(
+                    collection_name=collection_name,
+                    prefetch=[
+                        Prefetch(query=query_vector, using="dense", limit=top_k * 2),
+                        Prefetch(
+                            query=SparseVector(
+                                indices=list(sparse.keys()),
+                                values=list(sparse.values()),
+                            ),
+                            using="sparse",
+                            limit=top_k * 2,
+                        ),
+                    ],
+                    query=FusionQuery(fusion=Fusion.RRF),
+                    limit=top_k,
+                )
+            else:
+                response = self.client.query_points(
+                    collection_name=collection_name,
+                    query=query_vector,
+                    limit=top_k,
+                    score_threshold=score_threshold,
+                )
             results = response.points
         except Exception as e:
             print(f"Search error in {collection_name}: {e}")

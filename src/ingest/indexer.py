@@ -121,6 +121,26 @@ class BM25Vectorizer:
                 vec[idx] = round(score, 6)
         return vec
 
+    def save(self, path: Path) -> None:
+        """Persist vocab and IDF to JSON for later loading by the retriever."""
+        data = {
+            "vocab": self.vocab,
+            "idf": {str(k): v for k, v in self.idf.items()},
+            "avg_dl": self._avg_dl,
+        }
+        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        print(f"[BM25] Saved vocab ({len(self.vocab)} terms) → {path}")
+
+    def load(self, path: Path) -> "BM25Vectorizer":
+        """Load vocab and IDF from JSON file."""
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.vocab = data["vocab"]
+        self.idf = {int(k): v for k, v in data["idf"].items()}
+        self._avg_dl = data["avg_dl"]
+        self._fitted = True
+        print(f"[BM25] Loaded vocab ({len(self.vocab)} terms) from {path}")
+        return self
+
 
 class Indexer:
     """Index documents into Qdrant vector database"""
@@ -133,13 +153,30 @@ class Indexer:
     ):
         self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
         self.embedder = EmbeddingModel(embedding_model, device="cpu")
+        self._bm25: BM25Vectorizer | None = None
 
     def _generate_id(self, text: str) -> str:
         """Generate stable ID from text"""
         return hashlib.md5(text.encode()).hexdigest()
 
+    def fit_bm25(self, corpus: list[str], vocab_path: Path | None = None) -> None:
+        """Fit BM25 on corpus and save vocab to disk for retriever use."""
+        from src.config import DATA_DIR, BM25_ENABLED
+        if not BM25_ENABLED:
+            return
+        print(f"[BM25] Fitting on {len(corpus)} documents...")
+        self._bm25 = BM25Vectorizer()
+        self._bm25.fit(corpus)
+        path = vocab_path or (DATA_DIR / "bm25_vocab.json")
+        self._bm25.save(path)
+
     def create_collection(self, collection_name: str, recreate: bool = False):
-        """Create or recreate a collection"""
+        """Create or recreate a collection.
+
+        When BM25_ENABLED: uses named dense + sparse vectors.
+        Otherwise:         uses a single unnamed dense vector (legacy).
+        """
+        from src.config import BM25_ENABLED
         collections = [c.name for c in self.client.get_collections().collections]
 
         if collection_name in collections:
@@ -151,13 +188,26 @@ class Indexer:
                 return
 
         print(f"Creating collection: {collection_name}")
-        self.client.create_collection(
-            collection_name=collection_name,
-            vectors_config=VectorParams(
-                size=self.embedder.dimension,
-                distance=Distance.COSINE
+        if BM25_ENABLED:
+            from qdrant_client.http.models import SparseVectorParams, SparseIndexParams
+            self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config={"dense": VectorParams(
+                    size=self.embedder.dimension,
+                    distance=Distance.COSINE
+                )},
+                sparse_vectors_config={"sparse": SparseVectorParams(
+                    index=SparseIndexParams()
+                )},
             )
-        )
+        else:
+            self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config=VectorParams(
+                    size=self.embedder.dimension,
+                    distance=Distance.COSINE
+                )
+            )
 
     def index_documents(
         self,
@@ -165,40 +215,47 @@ class Indexer:
         documents: List[Dict[str, Any]],
         batch_size: int = 100
     ):
-        """Index documents into collection"""
-        print(f"Indexing {len(documents)} documents to {collection_name}")
+        """Index documents into collection.
 
-        # Process in batches
+        When self._bm25 is fitted (BM25_ENABLED=True), each point is stored
+        with both a named dense vector and a named sparse vector.
+        """
+        from src.config import BM25_ENABLED
+        use_bm25 = BM25_ENABLED and self._bm25 is not None
+        print(f"Indexing {len(documents)} documents to {collection_name}"
+              + (" [dense+sparse]" if use_bm25 else ""))
+
         for i in range(0, len(documents), batch_size):
             batch = documents[i:i + batch_size]
-
-            # Extract texts for embedding
             texts = [doc["text"] for doc in batch]
-            vectors = self.embedder.encode(texts)
+            dense_vectors = self.embedder.encode(texts)
 
-            # Create points
             points = []
-            for j, (doc, vector) in enumerate(zip(batch, vectors)):
+            for doc, dense_vec in zip(batch, dense_vectors):
                 point_id = doc.get("id", self._generate_id(doc["text"]))
-                # Convert string ID to integer if needed
                 if isinstance(point_id, str):
                     point_id = int(hashlib.md5(point_id.encode()).hexdigest()[:15], 16)
 
-                point = PointStruct(
+                if use_bm25:
+                    from qdrant_client.http.models import SparseVector
+                    sparse = self._bm25.encode(doc["text"])
+                    vector = {
+                        "dense": dense_vec,
+                        "sparse": SparseVector(
+                            indices=list(sparse.keys()),
+                            values=list(sparse.values()),
+                        ),
+                    }
+                else:
+                    vector = dense_vec
+
+                points.append(PointStruct(
                     id=point_id,
                     vector=vector,
-                    payload={
-                        "text": doc["text"],
-                        **doc.get("metadata", {})
-                    }
-                )
-                points.append(point)
+                    payload={"text": doc["text"], **doc.get("metadata", {})}
+                ))
 
-            # Upsert batch
-            self.client.upsert(
-                collection_name=collection_name,
-                points=points
-            )
+            self.client.upsert(collection_name=collection_name, points=points)
 
             if (i + batch_size) % 500 == 0:
                 print(f"  Indexed {i + batch_size}/{len(documents)}")
@@ -394,6 +451,23 @@ def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = Fal
         indexer.index_documents(collection, docs)
 
 
+def index_properties_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
+    """Index plugin/behavior properties from Construct3-Schema into the ACE collection."""
+    from src.ingest.schema_parser import SchemaParser
+
+    print("  Parsing property schema from Construct3-Schema...")
+    parser = SchemaParser()
+    entries = parser.parse_properties()
+
+    if not entries:
+        print("  No property entries found, skipping...")
+        return
+
+    print(f"  Found {len(entries)} property entries")
+    docs = parser.export_properties_for_vectordb(entries)
+    indexer.index_documents(collection, docs)
+
+
 def index_ace_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
     """Index ACE schema from Construct3-Schema (使用 Schema 数据)"""
     from src.ingest.schema_parser import SchemaParser
@@ -444,10 +518,11 @@ def index_effects_schema(indexer: "Indexer", collection: str, rebuild: bool = Fa
 
 
 def index_all_data(rebuild: bool = False):
-    """Index all Construct 3 data into Qdrant"""
+    """Index all Construct 3 data into Qdrant."""
     from src.config import (
         QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL,
         SOURCE_DIR, TRANSLATION_CSV,
+        CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.ingest.markdown_parser import MarkdownParser
@@ -459,58 +534,64 @@ def index_all_data(rebuild: bool = False):
         embedding_model=EMBEDDING_MODEL
     )
 
-    # Parse all markdown files once
+    if CONTEXTUAL_CHUNKING_ENABLED:
+        indexer._load_chunk_contexts()
+
+    # ── Parse markdown docs ────────────────────────────────────────────────────
     print("\n=== Parsing Markdown Documentation ===")
     md_parser = MarkdownParser()
     all_chunks = md_parser.parse_directory()
 
-    # Group chunks by collection
-    chunks_by_collection = {col: [] for col in DOC_COLLECTIONS}
+    chunks_by_collection: dict[str, list] = {col: [] for col in DOC_COLLECTIONS}
     for chunk in all_chunks:
-        collection = chunk.metadata.get('collection')
-        if collection in chunks_by_collection:
-            chunks_by_collection[collection].append(chunk)
+        col = chunk.metadata.get("collection")
+        if col in chunks_by_collection:
+            chunks_by_collection[col].append(chunk)
 
-    # Index each document collection
+    # ── BM25: collect full corpus and fit ─────────────────────────────────────
+    if BM25_ENABLED:
+        print("\n=== Fitting BM25 on full corpus ===")
+        from src.ingest.examples_parser import load_examples_for_vectordb
+        from src.ingest.schema_parser import SchemaParser
+        corpus: list[str] = [c.text for c in all_chunks]
+        try:
+            corpus += [d["text"] for d in load_examples_for_vectordb()]
+        except FileNotFoundError:
+            pass
+        sp = SchemaParser()
+        corpus += [d["text"] for d in sp.export_ace_for_vectordb()]
+        corpus += [d["text"] for d in sp.export_effects_for_vectordb()]
+        corpus += [d["text"] for d in sp.export_properties_for_vectordb()]
+        csv_parser_bm25 = CSVParser()
+        csv_path_bm25 = SOURCE_DIR / TRANSLATION_CSV
+        if csv_path_bm25.exists():
+            csv_parser_bm25.parse_file(csv_path_bm25)
+            corpus += [d["text"] for d in csv_parser_bm25.export_for_vectordb()]
+        indexer.fit_bm25(corpus)
+
+    # ── Index each markdown doc collection ────────────────────────────────────
     for collection in DOC_COLLECTIONS:
         chunks = chunks_by_collection[collection]
         print(f"\n=== Indexing {collection} ({len(chunks)} chunks) ===")
         indexer.create_collection(collection, recreate=rebuild)
         if chunks:
-            docs = [
-                {
-                    "id": f"{collection}_{i}",
-                    "text": chunk.text,
-                    "metadata": chunk.metadata
-                }
-                for i, chunk in enumerate(chunks)
-            ]
+            docs = []
+            for i, chunk in enumerate(chunks):
+                chunk_key = hashlib.md5(chunk.text[:500].encode()).hexdigest()
+                text = indexer._prepend_context(chunk_key, chunk.text)
+                docs.append({"id": f"{collection}_{i}", "text": text, "metadata": chunk.metadata})
             indexer.index_documents(collection, docs)
 
-    # Index translation terms
+    # ── Translation terms (via CSVParser.export_for_vectordb) ─────────────────
     print("\n=== Indexing Translation Terms ===")
     indexer.create_collection(COLLECTIONS["terms"], recreate=rebuild)
     csv_parser = CSVParser()
     csv_path = SOURCE_DIR / TRANSLATION_CSV
     if csv_path.exists():
-        entries = csv_parser.parse_file(csv_path)
-        docs = [
-            {
-                "id": f"term_{i}",
-                "text": entry.full_text,
-                "metadata": {
-                    "term_key": entry.term_key,
-                    "category": entry.category,
-                    "type": entry.term_type,
-                    "zh": entry.zh,
-                    "en": entry.en
-                }
-            }
-            for i, entry in enumerate(entries)
-        ]
-        indexer.index_documents(COLLECTIONS["terms"], docs)
+        csv_parser.parse_file(csv_path)
+        indexer.index_documents(COLLECTIONS["terms"], csv_parser.export_for_vectordb())
 
-    # Index example projects (browser data)
+    # ── Example projects ──────────────────────────────────────────────────────
     print("\n=== Indexing Example Projects ===")
     indexer.create_collection(COLLECTIONS["examples"], recreate=rebuild)
     from src.ingest.examples_parser import load_examples_for_vectordb
@@ -522,19 +603,26 @@ def index_all_data(rebuild: bool = False):
     except FileNotFoundError as e:
         print(f"  Skipping examples: {e}")
 
-    # Index ACE Schema (from Construct3-Schema - 完整双语数据)
+    # ── ACE Schema ────────────────────────────────────────────────────────────
     print("\n=== Indexing ACE Schema (from Construct3-Schema) ===")
     indexer.create_collection(COLLECTIONS["ace"], recreate=rebuild)
     index_ace_schema(indexer, COLLECTIONS["ace"], rebuild)
 
-    # Index Effects Schema (from Construct3-Schema)
+    # ── Plugin/Behavior Properties ────────────────────────────────────────────
+    print("\n=== Indexing Properties Schema (from Construct3-Schema) ===")
+    index_properties_schema(indexer, COLLECTIONS["ace"], rebuild)
+
+    # ── Effects Schema ────────────────────────────────────────────────────────
     print("\n=== Indexing Effects Schema (from Construct3-Schema) ===")
     indexer.create_collection(COLLECTIONS["effects"], recreate=rebuild)
     index_effects_schema(indexer, COLLECTIONS["effects"], rebuild)
 
-    print("\n=== Indexing Complete ===")
+    # ── Scripting API ─────────────────────────────────────────────────────────
+    print("\n=== Indexing Scripting API ===")
+    indexer.create_collection(COLLECTIONS["scripting"], recreate=rebuild)
+    index_scripting_api(indexer, COLLECTIONS["scripting"])
 
-    # Print collection stats
+    print("\n=== Indexing Complete ===")
     for collection in ALL_COLLECTIONS:
         try:
             info = indexer.client.get_collection(collection)

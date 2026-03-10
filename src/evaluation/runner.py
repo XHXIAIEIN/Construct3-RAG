@@ -109,7 +109,7 @@ class EvaluationRunner:
                 continue
             try:
                 prompt = prompt_tpl.format(query=case.query)
-                answer = self._chain.llm.generate(prompt, max_tokens=200)
+                answer = self._chain.llm.generate(prompt)
                 case.ground_truth = answer.strip()
                 logger.info("Generated ground truth for %s", case.id)
             except Exception:
