@@ -942,29 +942,62 @@ class RAGChain:
         )
 
     def answer_code(self, query: str) -> RAGResponse:
-        """Handle code/event generation queries"""
-        # Search example projects
-        results = self.retriever.search_examples(query, top_k=5)
+        """Generate Construct 3 clipboard JSON via schema-driven EventGenerator pipeline.
 
-        # Format examples
-        examples = "\n\n".join([
-            f"### {r.metadata.get('project', 'Example')}\n{r.text}"
-            for r in results
-        ])
+        Pipeline:
+          1. EventGenerator extracts relevant ACE schemas from query keywords
+          2. Builds a schema-aware prompt (EVENT_JSON_GENERATION_PROMPT)
+          3. Optionally appends retrieved example project snippets
+          4. LLM generates clipboard JSON
+          5. ClipboardValidator extracts and validates the JSON
+        """
+        from src.rag.eventsheet_generator import EventGenerator
 
-        prompt = EVENT_GENERATION_PROMPT.format(
-            similar_examples=examples,
-            user_requirement=query
-        )
-        answer = self.llm.generate(prompt)
+        generator = EventGenerator()
 
-        sources = [{"type": "example", "text": r.text[:100], "metadata": r.metadata} for r in results]
+        # 1. Build schema-aware prompt with ACE context
+        prompt = generator.build_prompt(query)
+
+        # 2. Append retrieved example snippets as additional context
+        example_results = self.retriever.search_examples(query, top_k=3)
+        if example_results:
+            examples_text = "\n\n".join([
+                f"### {r.metadata.get('project', 'Example')}\n{r.text}"
+                for r in example_results
+            ])
+            prompt += f"\n\n## 相关示例项目（供参考）\n{examples_text}"
+
+        # 3. Generate
+        llm_response = self.llm.generate(prompt)
+
+        # 4. Extract JSON and validate via ClipboardValidator
+        result = generator.process_response(llm_response)
+
+        # 5. Format RAGResponse based on validation outcome
+        if result["success"]:
+            answer = result["json"]
+            confidence = "high"
+            warning_note = f"，{len(result['warnings'])} 个警告" if result["warnings"] else ""
+            notes = f"ClipboardValidator 验证通过{warning_note}"
+        else:
+            # Return best-effort JSON (or raw response) with error notes
+            answer = result["json"] or llm_response
+            confidence = "low"
+            error_summary = "；".join(result["errors"][:3])
+            notes = f"验证未通过：{error_summary}"
+            if result["warnings"]:
+                notes += f"（{len(result['warnings'])} 个警告）"
+
+        sources = [
+            {"type": "example", "text": r.text[:100], "metadata": r.metadata}
+            for r in example_results
+        ]
         return RAGResponse(
             answer=answer,
             sources=sources,
             query_type="code",
-            confidence="medium",
-            verification_notes="Event generation not verified by Self-Reflection"
+            confidence=confidence,
+            verification_notes=notes,
         )
 
     def answer(self, query: str) -> RAGResponse:
