@@ -338,6 +338,43 @@ class SchemaParser:
 
         return docs
 
+    def export_properties_for_vectordb(self, entries: Optional[List[PropertyEntry]] = None) -> List[Dict[str, Any]]:
+        """导出属性为向量数据库格式"""
+        if entries is None:
+            entries = self.parse_properties()
+
+        plugin_type_zh = {"plugin": "插件", "behavior": "行为"}
+        docs = []
+        for entry in entries:
+            text_parts = [
+                f"{plugin_type_zh.get(entry.plugin_type, entry.plugin_type)} "
+                f"{entry.plugin_name_zh}({entry.plugin_name}) 的属性: "
+                f"{entry.name_zh} ({entry.name_en})"
+            ]
+            if entry.description_zh:
+                text_parts.append(f"描述: {entry.description_zh}")
+            if entry.description_en and entry.description_en != entry.description_zh:
+                text_parts.append(f"Description: {entry.description_en}")
+            if entry.items:
+                item_labels = [str(v) for v in list(entry.items.values())[:5]]
+                text_parts.append(f"选项: {', '.join(item_labels)}")
+
+            docs.append({
+                "id": f"prop_{entry.plugin_type}_{entry.plugin_name}_{entry.prop_id}",
+                "text": "\n".join(text_parts),
+                "metadata": {
+                    "source": "construct3-schema",
+                    "plugin_name": entry.plugin_name,
+                    "plugin_name_zh": entry.plugin_name_zh,
+                    "plugin_type": entry.plugin_type,
+                    "prop_id": entry.prop_id,
+                    "name_zh": entry.name_zh,
+                    "name_en": entry.name_en,
+                    "section_type": "properties",
+                }
+            })
+        return docs
+
     def get_stats(self, ace_entries: Optional[List[ACEEntry]] = None) -> Dict[str, Any]:
         """获取统计信息"""
         if ace_entries is None:
