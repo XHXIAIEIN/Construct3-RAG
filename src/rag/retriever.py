@@ -529,6 +529,13 @@ class HybridRetriever:
         Returns:
             Reranked list of SearchResults
         """
+        # Guard: bge-m3 silently truncates at 8192 tokens; a bloated expanded query
+        # degrades the embedding vector. Hard-cap at 500 chars to preserve intent.
+        _MAX_QUERY_CHARS = 500
+        if len(query) > _MAX_QUERY_CHARS:
+            logger.warning(f"[Search] Query truncated {len(query)} → {_MAX_QUERY_CHARS} chars")
+            query = query[:_MAX_QUERY_CHARS]
+
         logger.info(f"[Search] Multi-collection search (per-collection top_k={top_k_per_collection})...")
         t0 = time.time()
 
