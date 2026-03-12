@@ -1,9 +1,21 @@
-"""Parse examples_browser_en_r475.json + examples_browser.json for vector indexing."""
+"""Parse examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json for vector indexing."""
 import json
+import re
 from pathlib import Path
 from typing import Optional
 
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
+
+
+def _find_latest_browser_json(prefix: str) -> Optional[Path]:
+    """Return the highest-versioned examples_browser_{prefix}_rXXX.json in DATA_DIR."""
+    candidates = list(DATA_DIR.glob(f"examples_browser_{prefix}_r*.json"))
+    if not candidates:
+        return None
+    def _version(p: Path) -> int:
+        m = re.search(r"_r(\d+)", p.name)
+        return int(m.group(1)) if m else 0
+    return max(candidates, key=_version)
 
 
 def _parse_tags(tags: list[str]) -> dict:
@@ -64,17 +76,18 @@ def load_examples_for_vectordb(
 ) -> list[dict]:
     """Return list of {id, text, metadata} dicts for Qdrant indexing.
 
-    The zh file (examples_browser.json) contains Chinese-titled items in the same
-    order as the en file (examples_browser_en_r475.json). Match by index position.
+    Auto-detects the latest versioned examples_browser_en_rXXX.json and
+    examples_browser_cn_rXXX.json files. Explicit paths override auto-detection.
+    Match zh titles to en items by index position (same order).
     """
-    en_path = en_path or DATA_DIR / "examples_browser_en_r475.json"
-    zh_path = zh_path or DATA_DIR / "examples_browser.json"
+    en_path = en_path or _find_latest_browser_json("en") or DATA_DIR / "examples_browser_en_r475.json"
+    zh_path = zh_path or _find_latest_browser_json("cn")
 
     if not en_path.exists():
         raise FileNotFoundError(f"English examples file not found: {en_path}")
 
     en_items = json.loads(en_path.read_text(encoding="utf-8"))
-    zh_items = json.loads(zh_path.read_text(encoding="utf-8")) if zh_path.exists() else []
+    zh_items = json.loads(zh_path.read_text(encoding="utf-8")) if zh_path and zh_path.exists() else []
 
     # zh file uses "title" for Chinese title; match by index position (same order)
     zh_titles: list[str] = [item.get("title", "") for item in zh_items]
