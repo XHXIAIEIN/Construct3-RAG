@@ -21,31 +21,102 @@ except ImportError:
     print("Warning: sentence-transformers not installed. Run: pip install sentence-transformers")
 
 
-class EmbeddingModel:
-    """Wrapper for embedding model"""
+# Query instruction for Qwen3-Embedding (applied only during retrieval, not indexing).
+# Improves retrieval accuracy for asymmetric query-document pairs.
+_QWEN3_QUERY_INSTRUCTION = (
+    "Instruct: Retrieve relevant Construct 3 documentation for the following query\nQuery: "
+)
 
-    def __init__(self, model_name: str = "BAAI/bge-m3", device: str = "cpu"):
+
+class EmbeddingModel:
+    """Wrapper for embedding model.
+
+    Supports three backends:
+    - Qwen3-Embedding (default): SentenceTransformer with query instruction, trust_remote_code=True
+    - bge-m3 native sparse: FlagEmbedding BGEM3FlagModel with dense + lexical sparse vectors
+    - Other models: plain SentenceTransformer
+    """
+
+    def __init__(
+        self,
+        model_name: str = "Qwen/Qwen3-Embedding-0.6B",
+        device: str = "cpu",
+        native_sparse: bool = False,
+    ):
         self.model_name = model_name
         self.device = device
         self._model = None
+        self._is_qwen3 = "qwen3-embedding" in model_name.lower()
+        self._is_bge_m3_native = (model_name == "BAAI/bge-m3") and native_sparse
 
     @property
     def model(self):
         if self._model is None:
-            self._model = SentenceTransformer(self.model_name, device=self.device)
+            if self._is_bge_m3_native:
+                try:
+                    from FlagEmbedding import BGEM3FlagModel
+                    self._model = BGEM3FlagModel(
+                        self.model_name, use_fp16=True, device=self.device
+                    )
+                except ImportError:
+                    print(
+                        "Warning: FlagEmbedding not installed. "
+                        "Falling back to SentenceTransformer (no native sparse). "
+                        "Run: pip install FlagEmbedding"
+                    )
+                    self._is_bge_m3_native = False
+                    self._model = SentenceTransformer(self.model_name, device=self.device)
+            elif self._is_qwen3:
+                self._model = SentenceTransformer(
+                    self.model_name, device=self.device, trust_remote_code=True
+                )
+            else:
+                self._model = SentenceTransformer(self.model_name, device=self.device)
         return self._model
 
     def encode(self, texts: List[str], batch_size: int = 8) -> List[List[float]]:
-        """Encode texts to vectors"""
-        return self.model.encode(texts, show_progress_bar=False, batch_size=batch_size).tolist()
+        """Encode document texts to dense vectors (no instruction prefix)."""
+        if self._is_bge_m3_native:
+            output = self.model.encode(
+                texts, batch_size=batch_size,
+                return_dense=True, return_sparse=False, return_colbert_vecs=False,
+            )
+            return output["dense_vecs"].tolist()
+        return self.model.encode(
+            texts, show_progress_bar=False, batch_size=batch_size
+        ).tolist()
 
     def encode_single(self, text: str) -> List[float]:
-        """Encode single text to vector"""
+        """Encode a single query to a dense vector (with instruction prefix for Qwen3)."""
+        if self._is_bge_m3_native:
+            output = self.model.encode(
+                [text], return_dense=True, return_sparse=False, return_colbert_vecs=False
+            )
+            return output["dense_vecs"][0].tolist()
+        if self._is_qwen3:
+            return self.model.encode(
+                _QWEN3_QUERY_INSTRUCTION + text, show_progress_bar=False
+            ).tolist()
         return self.model.encode([text], show_progress_bar=False)[0].tolist()
+
+    def encode_sparse(self, texts: List[str]) -> Optional[List[dict]]:
+        """Return sparse vectors as list of {token_id: weight} dicts.
+
+        Returns None when the backend does not support native sparse retrieval.
+        Only available when EMBEDDING_MODEL=BAAI/bge-m3 and BGE_M3_NATIVE_SPARSE=true.
+        """
+        if not self._is_bge_m3_native:
+            return None
+        output = self.model.encode(
+            texts, return_dense=False, return_sparse=True, return_colbert_vecs=False
+        )
+        return [dict(w) for w in output["lexical_weights"]]
 
     @property
     def dimension(self) -> int:
-        """Get embedding dimension"""
+        """Get embedding dimension."""
+        if self._is_bge_m3_native:
+            return 1024  # bge-m3 dense dimension is always 1024
         return self.model.get_sentence_embedding_dimension()
 
 
@@ -149,10 +220,18 @@ class Indexer:
         self,
         qdrant_host: str = "localhost",
         qdrant_port: int = 6333,
-        embedding_model: str = "BAAI/bge-m3"
+        embedding_model: str = "Qwen/Qwen3-Embedding-0.6B"
     ):
+        from src.config import BGE_M3_NATIVE_SPARSE
+        try:
+            import torch
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        except ImportError:
+            device = "cpu"
         self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
-        self.embedder = EmbeddingModel(embedding_model, device="cpu")
+        self.embedder = EmbeddingModel(
+            embedding_model, device=device, native_sparse=BGE_M3_NATIVE_SPARSE
+        )
         self._bm25: BM25Vectorizer | None = None
 
     def _generate_id(self, text: str) -> str:
@@ -221,29 +300,35 @@ class Indexer:
         with both a named dense vector and a named sparse vector.
         """
         from src.config import BM25_ENABLED
-        use_bm25 = BM25_ENABLED and self._bm25 is not None
-        print(f"Indexing {len(documents)} documents to {collection_name}"
-              + (" [dense+sparse]" if use_bm25 else ""))
+        use_native_sparse = self.embedder._is_bge_m3_native
+        use_bm25 = BM25_ENABLED and self._bm25 is not None and not use_native_sparse
+        use_sparse = use_native_sparse or use_bm25
+        label = " [dense+native-sparse]" if use_native_sparse else (" [dense+bm25]" if use_bm25 else "")
+        print(f"Indexing {len(documents)} documents to {collection_name}{label}")
 
         for i in range(0, len(documents), batch_size):
             batch = documents[i:i + batch_size]
             texts = [doc["text"] for doc in batch]
             dense_vectors = self.embedder.encode(texts)
+            sparse_vecs = self.embedder.encode_sparse(texts) if use_native_sparse else None
 
             points = []
-            for doc, dense_vec in zip(batch, dense_vectors):
+            for j, (doc, dense_vec) in enumerate(zip(batch, dense_vectors)):
                 point_id = doc.get("id", self._generate_id(doc["text"]))
                 if isinstance(point_id, str):
                     point_id = int(hashlib.md5(point_id.encode()).hexdigest()[:15], 16)
 
-                if use_bm25:
+                if use_sparse:
                     from qdrant_client.http.models import SparseVector
-                    sparse = self._bm25.encode(doc["text"])
+                    if use_native_sparse and sparse_vecs:
+                        sv = sparse_vecs[j]
+                    else:
+                        sv = self._bm25.encode(doc["text"])
                     vector = {
                         "dense": dense_vec,
                         "sparse": SparseVector(
-                            indices=list(sparse.keys()),
-                            values=list(sparse.values()),
+                            indices=list(sv.keys()),
+                            values=list(sv.values()),
                         ),
                     }
                 else:
@@ -655,11 +740,6 @@ def index_all_data(rebuild: bool = False):
 if __name__ == "__main__":
     import argparse
     import os
-
-    # Prevent SentenceTransformer from contacting HuggingFace Hub at runtime.
-    # The model is cached locally; network access causes tiktoken tokenizer errors.
-    os.environ.setdefault("HF_HUB_OFFLINE", "1")
-    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
     parser = argparse.ArgumentParser(description="Index Construct 3 data into Qdrant")
     parser.add_argument("--rebuild", action="store_true", help="Recreate collections")
