@@ -19,6 +19,7 @@ import jieba
 from src.config import (
     QDRANT_HOST, QDRANT_PORT,
     LLM_MODEL, LLM_BASE_URL, LLM_API_KEY, LLM_PROVIDER,
+    EMBEDDING_MODEL,
 )
 from .retriever import HybridRetriever, SearchResult
 from src.locale.keywords import (
@@ -433,7 +434,7 @@ class RAGChain:
         llm_provider: str = LLM_PROVIDER,
         enable_query_rewrite: bool = True
     ):
-        self.retriever = HybridRetriever(qdrant_host, qdrant_port)
+        self.retriever = HybridRetriever(qdrant_host, qdrant_port, embedding_model_name=EMBEDDING_MODEL)
         self.llm = LLMClient(
             model=llm_model,
             base_url=llm_base_url,
