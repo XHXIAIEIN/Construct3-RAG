@@ -1479,14 +1479,37 @@ class RAGChain:
                 verification_notes=llm_msg
             )
 
-        # No results found
+        # No results found — try query rewrite before giving up
         if not filtered_results:
-            return RAGResponse(
-                answer=NO_RESULTS_RESPONSE,
-                sources=[],
-                query_type="qa_no_results",
-                confidence="none"
-            )
+            if self.enable_query_rewrite:
+                logger.info("[Fallback] No results, trying query rewrite...")
+                rewritten_queries = self._rewrite_query(query)
+                logger.info(f"[Fallback] Rewritten queries: {rewritten_queries}")
+                for rq in rewritten_queries:
+                    rq_results = self.retriever.search_all_with_rerank(
+                        rq, top_k_per_collection=5, final_top_k=10
+                    )
+                    rq_filtered = self.retriever.filter_by_adaptive_threshold(rq_results)
+                    substantive_rq = [r for r in rq_filtered if r.source not in _TERM_SOURCES]
+                    if substantive_rq:
+                        logger.info(f"[Fallback] Rewritten query '{rq}' found results")
+                        filtered_results = rq_filtered
+                        context_results = rq_filtered
+                        sources = [
+                            {"id": i, "type": r.source,
+                             "text": r.text[:150] + "..." if len(r.text) > 150 else r.text,
+                             "score": r.score, "metadata": r.metadata}
+                            for i, r in enumerate(rq_filtered[:10], 1)
+                        ]
+                        break
+
+            if not filtered_results:
+                return RAGResponse(
+                    answer=NO_RESULTS_RESPONSE,
+                    sources=[],
+                    query_type="qa_no_results",
+                    confidence="none"
+                )
 
         # Full answer generation (both services available)
         context = self._format_reranked_context(context_results)
