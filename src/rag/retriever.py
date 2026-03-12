@@ -63,7 +63,7 @@ class HybridRetriever:
         self,
         qdrant_host: str = "localhost",
         qdrant_port: int = 6333,
-        embedding_model_name: str = "BAAI/bge-m3"
+        embedding_model_name: str = "Qwen/Qwen3-Embedding-0.6B"
     ):
         self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
         self.embedding_model_name = embedding_model_name
@@ -94,13 +94,16 @@ class HybridRetriever:
             os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
             logger.info(f"[Load] Embedding model: {self.embedding_model_name} ...")
             t0 = time.time()
+            from src.config import BGE_M3_NATIVE_SPARSE
             from src.ingest.indexer import EmbeddingModel
             try:
                 import torch
                 device = "cuda" if torch.cuda.is_available() else "cpu"
             except ImportError:
                 device = "cpu"
-            self._embedder = EmbeddingModel(self.embedding_model_name, device=device)
+            self._embedder = EmbeddingModel(
+                self.embedding_model_name, device=device, native_sparse=BGE_M3_NATIVE_SPARSE
+            )
             logger.info(f"[Load] Embedding model ready ({time.time()-t0:.1f}s)")
         return self._embedder
 
@@ -337,19 +340,23 @@ class HybridRetriever:
         """
         from src.config import BM25_ENABLED
         query_vector = self.embedder.encode_single(query)
+        use_native_sparse = self.embedder._is_bge_m3_native
 
         try:
-            if BM25_ENABLED and self.bm25 is not None:
+            if use_native_sparse or (BM25_ENABLED and self.bm25 is not None):
                 from qdrant_client.models import Prefetch, FusionQuery, Fusion, SparseVector
-                sparse = self.bm25.encode(query)
+                if use_native_sparse:
+                    sv = self.embedder.encode_sparse([query])[0]
+                else:
+                    sv = self.bm25.encode(query)
                 response = self.client.query_points(
                     collection_name=collection_name,
                     prefetch=[
                         Prefetch(query=query_vector, using="dense", limit=top_k * 2),
                         Prefetch(
                             query=SparseVector(
-                                indices=list(sparse.keys()),
-                                values=list(sparse.values()),
+                                indices=list(sv.keys()),
+                                values=list(sv.values()),
                             ),
                             using="sparse",
                             limit=top_k * 2,
@@ -529,8 +536,9 @@ class HybridRetriever:
         Returns:
             Reranked list of SearchResults
         """
-        # Guard: bge-m3 silently truncates at 8192 tokens; a bloated expanded query
-        # degrades the embedding vector. Hard-cap at 500 chars to preserve intent.
+        # Guard: hard-cap query length to protect embedding quality.
+        # bge-m3 truncates at 8192 tokens; Qwen3-Embedding supports 32K but bloated
+        # queries still degrade retrieval precision.
         _MAX_QUERY_CHARS = 500
         if len(query) > _MAX_QUERY_CHARS:
             logger.warning(f"[Search] Query truncated {len(query)} → {_MAX_QUERY_CHARS} chars")

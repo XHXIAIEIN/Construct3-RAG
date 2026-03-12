@@ -43,9 +43,17 @@ QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 # =============================================================================
 # Embedding Model
 # =============================================================================
-# Options: BAAI/bge-m3 (multilingual), BAAI/bge-large-zh-v1.5 (Chinese-optimized)
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
-EMBEDDING_DIMENSION = 1024
+# Options:
+#   Qwen/Qwen3-Embedding-0.6B  — multilingual SOTA, 1024 dims, instruction-tuned (default)
+#   Qwen/Qwen3-Embedding-4B    — higher quality, 2560 dims
+#   Qwen/Qwen3-Embedding-8B    — MTEB multilingual #1, 4096 dims
+#   BAAI/bge-m3                — multilingual, 1024 dims; supports native sparse (BGE_M3_NATIVE_SPARSE)
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B")
+EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
+
+# Enable bge-m3 native lexical sparse vectors (FlagEmbedding) instead of BM25.
+# Only applies when EMBEDDING_MODEL=BAAI/bge-m3. Requires: pip install FlagEmbedding
+BGE_M3_NATIVE_SPARSE = os.getenv("BGE_M3_NATIVE_SPARSE", "false").lower() == "true"
 
 # =============================================================================
 # LLM Configuration
