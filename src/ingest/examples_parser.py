@@ -76,7 +76,13 @@ def _parse_tags(tags: list[str]) -> dict:
     )
 
 
-def build_embed_text(title_zh: str, title_en: str, parsed: dict, c3proj: Optional[dict] = None) -> str:
+def build_embed_text(
+    title_zh: str,
+    title_en: str,
+    parsed: dict,
+    c3proj: Optional[dict] = None,
+    extra: Optional[dict] = None,
+) -> str:
     """Build embed text for bge-m3 vector indexing."""
     parts = []
     if title_zh and title_zh != title_en:
@@ -107,6 +113,18 @@ def build_embed_text(title_zh: str, title_en: str, parsed: dict, c3proj: Optiona
             parts.append("layouts: " + ", ".join(c3proj["layouts"]))
         if c3proj["event_sheets"]:
             parts.append("event-sheets: " + ", ".join(c3proj["event_sheets"]))
+
+    # Extra structure from project directories
+    if extra:
+        if extra.get("timeline_names"):
+            parts.append("timelines: " + ", ".join(extra["timeline_names"]))
+        if extra.get("families"):
+            fnames = [f["name"] for f in extra["families"]]
+            parts.append("families: " + ", ".join(fnames))
+        if extra.get("flowchart_names"):
+            parts.append("flowcharts: " + ", ".join(extra["flowchart_names"]))
+        if extra.get("script_languages"):
+            parts.append("scripts: " + ", ".join(extra["script_languages"]))
 
     return " | ".join(parts)
 
@@ -145,6 +163,13 @@ def load_examples_for_vectordb(
     # zh file uses "title" for Chinese title; match by index position (same order)
     zh_titles: list[str] = [item.get("title", "") for item in zh_items]
 
+    # Lazy import to avoid circular deps
+    try:
+        from src.ingest.event_parser import load_project_extra_metadata
+        _extra_meta_fn = load_project_extra_metadata
+    except ImportError:
+        _extra_meta_fn = None
+
     c3proj_hits = 0
     docs = []
     for i, item in enumerate(en_items):
@@ -153,15 +178,18 @@ def load_examples_for_vectordb(
         slug = item.get("slug", "")
         parsed = _parse_tags(item.get("tags", []))
 
+        proj_dir = (projects_dir / slug) if projects_dir and slug else None
         c3proj = _load_c3proj_metadata(projects_dir, slug) if projects_dir and slug else None
+        extra = _extra_meta_fn(proj_dir) if (_extra_meta_fn and proj_dir and proj_dir.exists()) else None
         if c3proj:
             c3proj_hits += 1
 
-        embed_text = build_embed_text(title_zh, title_en, parsed, c3proj)
+        embed_text = build_embed_text(title_zh, title_en, parsed, c3proj, extra)
         docs.append({
             "id": f"example_{i}",
             "text": embed_text,
             "metadata": {
+                "source": "example",
                 "title_en": title_en,
                 "title_zh": title_zh,
                 "slug": slug,
@@ -174,6 +202,11 @@ def load_examples_for_vectordb(
                 "layouts": c3proj["layouts"] if c3proj else [],
                 "event_sheets": c3proj["event_sheets"] if c3proj else [],
                 "c3_version": c3proj["c3_version"] if c3proj else "",
+                "families": [f["name"] for f in extra["families"]] if extra else [],
+                "timeline_names": extra["timeline_names"] if extra else [],
+                "flowchart_names": extra["flowchart_names"] if extra else [],
+                "has_scripts": extra["has_scripts"] if extra else False,
+                "script_languages": extra["script_languages"] if extra else [],
                 "slug_derived": item.get("slug_derived", False),
             },
         })
