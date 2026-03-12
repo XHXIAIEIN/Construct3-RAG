@@ -18,16 +18,90 @@ _LOW_INFO_ACE_IDS = frozenset({
 # Max parameters to include per ACE in embed text
 _MAX_PARAMS = 3
 
+# Heuristic suffix/prefix patterns for inferring plugin-id when objectTypes
+# files are absent (newer project format). Maps lowercase pattern → plugin-id.
+_NAME_PLUGIN_HINTS: list[tuple[str, str]] = [
+    ("arr",   "Arr"),
+    ("array", "Arr"),
+    ("dict",  "Dictionary"),
+    ("json",  "JSON"),
+    ("ajax",  "AJAX"),
+    ("xhr",   "AJAX"),
+    ("ls",    "LocalStorage"),
+    ("save",  "LocalStorage"),
+    ("storage", "LocalStorage"),
+    ("xml",   "XML"),
+    ("csv",   "CSV"),
+]
+
+
+# ── Plugin map ──────────────────────────────────────────────────────────────────
+
+def _build_plugin_map(proj_dir: Path) -> dict[str, str]:
+    """Build {instance_name → plugin_id} map from objectTypes/*.json.
+
+    For projects where the JSON files exist (older format), this gives exact
+    mappings. For newer-format projects the directory may be sparse; a
+    heuristic fallback is applied at render time for unmapped names.
+    """
+    name_to_plugin: dict[str, str] = {}
+    ot_dir = proj_dir / "objectTypes"
+    if not ot_dir.exists():
+        return name_to_plugin
+    for f in ot_dir.glob("*.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+            name = d.get("name") or f.stem
+            plugin_id = d.get("plugin-id", "")
+            if plugin_id:
+                name_to_plugin[name] = plugin_id
+        except (json.JSONDecodeError, OSError):
+            pass
+    return name_to_plugin
+
+
+def _resolve_plugin(obj: str, plugin_map: dict[str, str]) -> str:
+    """Return plugin_id for an objectClass instance name.
+
+    Priority:
+    1. Exact match in plugin_map (from objectTypes/*.json)
+    2. Heuristic pattern match on the instance name
+    3. Return original name unchanged
+    """
+    if not obj:
+        return obj
+    # Exact match
+    if obj in plugin_map:
+        return plugin_map[obj]
+    # Heuristic: check if any known pattern appears in the lowercase name
+    obj_lower = obj.lower()
+    for pattern, plugin_id in _NAME_PLUGIN_HINTS:
+        if pattern in obj_lower:
+            return plugin_id
+    return obj
+
 
 # ── ACE rendering ──────────────────────────────────────────────────────────────
 
-def _render_ace(ace: dict) -> str:
-    """Render a condition or action as a compact readable string."""
+def _render_ace(ace: dict, plugin_map: Optional[dict[str, str]] = None) -> str:
+    """Render a condition or action as a compact readable string.
+
+    When plugin_map is provided, instance names are resolved to plugin IDs.
+    Format: PluginId(InstanceName).ace_id(params) when name ≠ plugin_id,
+    or PluginId.ace_id(params) when name = plugin_id (singleton).
+    """
     obj = ace.get("objectClass", "")
     ace_id = ace.get("id", "")
     params = ace.get("parameters", {}) or {}
     if not isinstance(params, dict):
         params = {}
+
+    # Resolve instance name → plugin id
+    if plugin_map is not None:
+        plugin_id = _resolve_plugin(obj, plugin_map)
+        display = f"{plugin_id}({obj})" if plugin_id != obj else obj
+    else:
+        display = obj
 
     # Keep only non-trivial parameter values
     meaningful = {
@@ -36,12 +110,14 @@ def _render_ace(ace: dict) -> str:
     }
     if meaningful:
         kv = ", ".join(f"{k}={v}" for k, v in list(meaningful.items())[:_MAX_PARAMS])
-        return f"{obj}.{ace_id}({kv})"
-    return f"{obj}.{ace_id}"
+        return f"{display}.{ace_id}({kv})"
+    return f"{display}.{ace_id}"
 
 
-def _render_ace_list(aces: list[dict]) -> str:
-    return "; ".join(_render_ace(a) for a in aces if a.get("id") not in _LOW_INFO_ACE_IDS) or "(none)"
+def _render_ace_list(aces: list[dict], plugin_map: Optional[dict[str, str]] = None) -> str:
+    return "; ".join(
+        _render_ace(a, plugin_map) for a in aces if a.get("id") not in _LOW_INFO_ACE_IDS
+    ) or "(none)"
 
 
 # ── Event block extraction ─────────────────────────────────────────────────────
@@ -52,6 +128,7 @@ def _extract_blocks(
     sheet_name: str,
     depth: int = 0,
     parent_comment: str = "",
+    plugin_map: Optional[dict[str, str]] = None,
 ) -> list[dict]:
     """Recursively extract block/function-block events as indexable docs.
 
@@ -66,6 +143,15 @@ def _extract_blocks(
 
         if etype == "comment":
             pending_comment = event.get("text", "").replace("\n", " ").strip()[:200]
+            continue
+
+        # Groups are structural containers — recurse transparently, preserving depth
+        if etype == "group":
+            docs.extend(_extract_blocks(
+                event.get("children", []), project_meta, sheet_name,
+                depth=depth, parent_comment=pending_comment, plugin_map=plugin_map,
+            ))
+            pending_comment = ""
             continue
 
         if etype not in ("block", "function-block"):
@@ -89,8 +175,8 @@ def _extract_blocks(
         if pending_comment:
             parts.append(f"[{pending_comment}]")
 
-        cond_text = _render_ace_list(conditions)
-        act_text = _render_ace_list(actions)
+        cond_text = _render_ace_list(conditions, plugin_map)
+        act_text = _render_ace_list(actions, plugin_map)
         parts.append(f"IF {cond_text}")
         parts.append(f"THEN {act_text}")
 
@@ -100,16 +186,17 @@ def _extract_blocks(
             if child_blocks:
                 child_summaries = []
                 for cb in child_blocks[:4]:  # max 4 sub-events in summary
-                    cb_cond = _render_ace_list(cb.get("conditions", []))
-                    cb_act = _render_ace_list(cb.get("actions", []))
+                    cb_cond = _render_ace_list(cb.get("conditions", []), plugin_map)
+                    cb_act = _render_ace_list(cb.get("actions", []), plugin_map)
                     child_summaries.append(f"({cb_cond} → {cb_act})")
                 parts.append("sub: " + "; ".join(child_summaries))
 
         text = " | ".join(parts)
 
-        # ── Collect objectClasses ──
-        condition_objs = list({c.get("objectClass", "") for c in conditions if c.get("objectClass")})
-        action_objs = list({a.get("objectClass", "") for a in actions if a.get("objectClass")})
+        # ── Collect objectClasses (resolved to plugin IDs) ──
+        pm = plugin_map or {}
+        condition_objs = list({_resolve_plugin(c.get("objectClass", ""), pm) for c in conditions if c.get("objectClass")})
+        action_objs = list({_resolve_plugin(a.get("objectClass", ""), pm) for a in actions if a.get("objectClass")})
 
         slug = project_meta.get("slug", "")
         doc_id = f"event_{slug}_{re.sub(r'[^a-z0-9]', '_', sheet_name.lower())}_{depth}_{idx}"
@@ -133,21 +220,25 @@ def _extract_blocks(
 
         # Recurse into children (depth + 1, no deeper than 1 to limit volume)
         if depth == 0 and children:
-            docs.extend(_extract_blocks(children, project_meta, sheet_name, depth=1))
+            docs.extend(_extract_blocks(children, project_meta, sheet_name, depth=1, plugin_map=plugin_map))
 
         pending_comment = ""
 
     return docs
 
 
-def parse_event_sheet(sheet_path: Path, project_meta: dict) -> list[dict]:
+def parse_event_sheet(
+    sheet_path: Path,
+    project_meta: dict,
+    plugin_map: Optional[dict[str, str]] = None,
+) -> list[dict]:
     """Return indexable docs extracted from a single event sheet JSON file."""
     try:
         data = json.loads(sheet_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return []
     sheet_name = data.get("name") or sheet_path.stem
-    return _extract_blocks(data.get("events", []), project_meta, sheet_name)
+    return _extract_blocks(data.get("events", []), project_meta, sheet_name, plugin_map=plugin_map)
 
 
 # ── Script parsing ─────────────────────────────────────────────────────────────
@@ -322,12 +413,15 @@ def load_event_and_script_docs(
         except (json.JSONDecodeError, OSError):
             continue
 
+        # Build instance-name → plugin-id map from objectTypes/*.json
+        plugin_map = _build_plugin_map(proj_dir)
+
         # Event sheets
         sheet_names = c3proj.get("eventSheets", {}).get("items", [])
         for sheet_name in sheet_names:
             sheet_path = proj_dir / "eventSheets" / f"{sheet_name}.json"
             if sheet_path.exists():
-                sheet_docs = parse_event_sheet(sheet_path, project_meta)
+                sheet_docs = parse_event_sheet(sheet_path, project_meta, plugin_map)
                 docs.extend(sheet_docs)
                 event_count += len(sheet_docs)
 
