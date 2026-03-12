@@ -523,6 +523,7 @@ def index_all_data(rebuild: bool = False):
         QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL,
         SOURCE_DIR, TRANSLATION_CSV,
         CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
+        EXAMPLE_PROJECTS_DIR,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.ingest.markdown_parser import MarkdownParser
@@ -595,11 +596,31 @@ def index_all_data(rebuild: bool = False):
     print("\n=== Indexing Example Projects ===")
     indexer.create_collection(COLLECTIONS["examples"], recreate=rebuild)
     from src.ingest.examples_parser import load_examples_for_vectordb
+    from src.ingest.event_parser import load_event_and_script_docs
     try:
+        # 1. Project metadata (one doc per example, from browser JSON + c3proj)
         example_docs = load_examples_for_vectordb()
         if example_docs:
             indexer.index_documents(COLLECTIONS["examples"], example_docs)
-            print(f"  Indexed {len(example_docs)} examples")
+            print(f"  Indexed {len(example_docs)} project metadata docs")
+
+        # 2. Event blocks + scripts (from actual project files)
+        if EXAMPLE_PROJECTS_DIR.exists():
+            slug_title_map = {
+                d["metadata"]["slug"]: {
+                    "title_en": d["metadata"]["title_en"],
+                    "title_zh": d["metadata"]["title_zh"],
+                }
+                for d in example_docs
+                if d["metadata"].get("slug")
+            }
+            event_docs = load_event_and_script_docs(EXAMPLE_PROJECTS_DIR, slug_title_map)
+            if event_docs:
+                indexer.index_documents(COLLECTIONS["examples"], event_docs)
+                print(f"  Indexed {len(event_docs)} event/script docs")
+        else:
+            print(f"  Skipping event/script indexing: {EXAMPLE_PROJECTS_DIR} not found")
+
     except FileNotFoundError as e:
         print(f"  Skipping examples: {e}")
 
