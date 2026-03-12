@@ -1434,8 +1434,16 @@ class RAGChain:
         # Filter irrelevant results
         filtered_results = self.retriever.filter_by_adaptive_threshold(results)
 
+        # c3_terms is supplementary (translation dict), not primary content.
+        # Only include term entries in LLM context when at least one substantive
+        # result (doc / ACE / example) was also retrieved. When terms are the only
+        # results, they add noise without semantic value; the LLM will fall back
+        # to general-knowledge Path B via the empty context.
+        substantive = [r for r in filtered_results if r.source not in _TERM_SOURCES]
+        context_results = filtered_results if substantive else []
+
         # Trace top results going to LLM
-        for i, r in enumerate(filtered_results[:3], 1):
+        for i, r in enumerate(context_results[:3], 1):
             src = r.metadata.get("source", r.source)
             src_name = src.split("/")[-1].replace(".md", "")[:18] if "/" in src else src[:18]
             h2 = r.metadata.get("h2_heading", "")
@@ -1443,6 +1451,8 @@ class RAGChain:
             loc = src_name + (f" > {h2[:12]}" if h2 else "") + (f" ({section})" if section else "")
             snippet = r.text[:30].replace("\n", " ")
             _trace(f"#{i} [{r.source}] {loc}  {r.score:.2f}  {snippet}…", "context")
+        if not context_results and filtered_results:
+            _trace(f"仅词典词条 ({len(filtered_results)} 条)，已从 LLM 上下文排除", "context")
 
         # Format sources for potential fallback
         sources = []
@@ -1479,7 +1489,7 @@ class RAGChain:
             )
 
         # Full answer generation (both services available)
-        context = self._format_reranked_context(filtered_results)
+        context = self._format_reranked_context(context_results)
         if schema_context:
             context = (
                 "### 编辑器功能定义（ACE Schema）\n"
