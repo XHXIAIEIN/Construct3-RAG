@@ -55,7 +55,7 @@
 │  ├─────────┤ ├──────────┤ ├──────────┤ ├──────────┤           │
 │  │c3_inter-│ │c3_script-│ │c3_ace    │ │c3_effects│           │
 │  │face     │ │ing       │ │ACE Schema│ │效果定义   │           │
-│  │编辑器界面│ │脚本 API  │ │2701 条   │ │          │           │
+│  │编辑器界面│ │脚本 API  │ │2927 条   │ │          │           │
 │  ├─────────┤ ├──────────┤                                      │
 │  │c3_terms │ │c3_examples│                                     │
 │  │术语翻译  │ │示例代码   │                                      │
@@ -89,7 +89,7 @@
 | `c3_scripting` | 脚本 API 文档 | Markdown 手册 |
 | `c3_ace` | ACE Schema（Actions/Conditions/Expressions） | JSON Schema |
 | `c3_effects` | 效果定义 | JSON Schema |
-| `c3_terms` | 术语翻译（23,513 条） | CSV 翻译词条 |
+| `c3_terms` | 术语翻译（23,824 条） | CSV 翻译词条 |
 | `c3_examples` | 示例项目代码 | C3 示例项目 |
 
 ### 2. 查询处理策略
