@@ -169,6 +169,19 @@ Construct3-RAG/
 
 - [RAG 详细原理讲解](docs/rag-introduction.md)
 
+## 参考与致谢
+
+以下项目对本系统的设计与实现提供了直接参考：
+
+| 项目 | 用途 |
+|------|------|
+| [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | 哈工大同义词词林（`cilin.txt`），用于查询扩展器的同义词字典（`DictExpander`） |
+| [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) | 反 AI 写作风格指南，内化到 `SYSTEM_MESSAGE` Prompt 以降低回答的模板感 |
+| [Anthropic: Lessons from Building Claude Code](https://www.anthropic.com/engineering/claude-code-lessons) | 上下文感知分块策略（Contextual Chunking，49% 检索精度提升）与渐进式检索设计灵感 |
+| [explodinggradients/ragas](https://github.com/explodinggradients/ragas) | 评估指标体系参考（faithfulness / answer_relevance / context_precision 等），`RagasEvaluator` 基于相同指标用本地 LLM + 余弦相似度自行实现 |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Construct 3 官方手册 Markdown 版，所有文档类集合（guide / interface / project / plugins / behaviors / scripting）的原始数据来源 |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 3 官方示例项目，`c3_examples` 集合（490 个项目，7,148 个向量）的数据来源 |
+
 ## License
 
 [MIT](LICENSE)
