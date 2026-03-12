@@ -35,7 +35,8 @@ class TestCrossEncoderReranker(unittest.TestCase):
         mock_model.compute_score.return_value = [0.95, 0.1, 0.88]
         retriever._reranker = mock_model
 
-        reranked = retriever._rerank_with_cross_encoder(query, results)
+        with patch("src.rag.retriever.RERANKER_ENABLED", True):
+            reranked = retriever._rerank_with_cross_encoder(query, results)
         # Timer docs should now be at top
         assert reranked[0].text.startswith("Timer: 等待"), \
             f"Expected timer doc first, got: {reranked[0].text}"
@@ -66,7 +67,8 @@ class TestCrossEncoderReranker(unittest.TestCase):
         mock_model.compute_score.return_value = [0.5, 0.95]
         retriever._reranker = mock_model
 
-        reranked = retriever._rerank_with_cross_encoder("query", results)
+        with patch("src.rag.retriever.RERANKER_ENABLED", True):
+            reranked = retriever._rerank_with_cross_encoder("query", results)
         assert "original_score" in reranked[0].metadata
         assert "reranker_score" in reranked[0].metadata
 

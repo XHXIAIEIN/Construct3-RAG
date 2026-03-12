@@ -1224,13 +1224,19 @@ class RAGChain:
             # Schema zh→en bridge via QueryExpander
             segments = self._split_zh_segments(query)
             if segments:
-                term_set = self.query_expander.get_term_set(segments)
-                schema_matches = self.query_expander.search(term_set)
+                schema_term_set = self.query_expander.schema_term_set(segments)
+                schema_matches = self.query_expander.search(schema_term_set)
                 high = [m for m in schema_matches if m.score > 0.7]
                 mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
                 if high or mid:
-                    boost_matches = high if high else mid[:3]
-                    en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
+                    # Cap at top-5 nodes. Use node_id path tokens.
+                    boost_matches = (high if high else mid)[:5]
+                    en_boost = " ".join(
+                        part
+                        for m in boost_matches
+                        for part in m.node_id.replace("/", " ").replace("-", " ").split()
+                        if len(part) >= 3
+                    )
                     search_query = f"{search_query} {en_boost}".strip()
                     logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
                 if schema_matches:
@@ -1378,13 +1384,24 @@ class RAGChain:
             if not schema_context:
                 segments = self._split_zh_segments(query)
                 if segments:
-                    term_set = self.query_expander.get_term_set(segments)
-                    schema_matches = self.query_expander.search(term_set)
+                    # Selective auto_expand: only expand tokens with few matching nodes
+                    # (specific terms). Generic tokens like "系统"/"碰撞" skip auto_expand
+                    # to prevent co-occurrence cascade that pollutes schema matches.
+                    schema_term_set = self.query_expander.schema_term_set(segments)
+                    schema_matches = self.query_expander.search(schema_term_set)
                     high = [m for m in schema_matches if m.score > 0.7]
                     mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
                     if high or mid:
-                        boost_matches = high if high else mid[:3]
-                        en_boost = " ".join(tok for m in boost_matches for tok in m.en_tokens)
+                        # Cap at top-5 nodes. Use node_id path tokens (e.g.
+                        # "sprite/collisions-enabled" → "sprite collisions enabled")
+                        # instead of en_tokens which mixes description stop-words.
+                        boost_matches = (high if high else mid)[:5]
+                        en_boost = " ".join(
+                            part
+                            for m in boost_matches
+                            for part in m.node_id.replace("/", " ").replace("-", " ").split()
+                            if len(part) >= 3
+                        )
                         search_query = f"{search_query} {en_boost}".strip()
                         logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
                     if schema_matches:

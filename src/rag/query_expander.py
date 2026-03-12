@@ -39,6 +39,28 @@ _EXPAND_PROMPT = (
 # Schema root directory
 _SCHEMA_DIR = Path(DATA_DIR) / "schemas"
 
+# Tokens that should NOT trigger auto_expand even when they match few schema nodes.
+# These are common Chinese query words that appear in node *descriptions* incidentally,
+# producing spurious co-occurrence expansions that pollute schema matching.
+_SCHEMA_EXPAND_STOPWORDS: frozenset[str] = frozenset({
+    # Question / method words
+    "如何", "怎么", "怎样", "怎样的", "如果", "是否",
+    # Action / process words that are too generic
+    "实现", "定义", "包括", "包含", "完成", "执行", "操作", "进行",
+    "方法", "方式", "步骤", "功能", "作用",
+    # Auxiliary / modifier words
+    "使用", "通过", "根据", "基于", "用于", "用来",
+    "可以", "需要", "应该", "能够", "允许",
+    "一个", "多个", "各种", "某个", "所有", "每个",
+    # Generic action results
+    "获取", "返回", "显示", "加载", "保存",
+    # English abbreviations that map to specific niche plugins (not general UI)
+    "UI",
+    # C3 structural meta-terms (describe the editing environment, not ACE actions)
+    # Expanding these always leads to system/flowchart structural nodes, not ACE
+    "事件表", "事件组", "对象类型", "布局",
+})
+
 # English word → Chinese zh_tokens bridge.
 # Used to make English-only ACE nodes (no name_zh / description_zh) reachable
 # from Chinese user queries. Keys are lowercase English words from name_en / id.
@@ -670,9 +692,10 @@ class SchemaZhEnIndex:
                 if not node.zh_tokens:
                     continue
                 overlap = len(term_set & node.zh_tokens)
-                # Skip small-token nodes with only 1 overlap — prevents coincidental
-                # 1.0 scores (e.g. "始终" in term_set matching set-always-on-top).
-                if overlap < 2 and len(node.zh_tokens) < 3:
+                # Skip small-token nodes with only partial overlap — prevents coincidental
+                # 1.0 scores (e.g. "始终" in term_set partially matching "始终置顶").
+                # Exception: perfect matches (all node tokens hit) are always kept.
+                if overlap < 2 and len(node.zh_tokens) < 3 and overlap < len(node.zh_tokens):
                     continue
                 raw = overlap / len(node.zh_tokens)
                 scores[node_id] = max(scores.get(node_id, 0.0), raw * node.weight)
@@ -771,3 +794,20 @@ class QueryExpander:
     def search(self, term_set: set[str]) -> list[SchemaMatch]:
         """Score schema nodes by term_set overlap. Returns sorted matches."""
         return self._index.search(term_set)
+
+    def schema_term_set(self, segments: list[str], max_nodes: int = 10) -> set[str]:
+        """Build term set for schema matching using selective auto_expand.
+
+        Only tokens that (a) are not generic query stop-words, and (b) match
+        <= max_nodes schema nodes, get auto-expanded.  Generic tokens like
+        "系统" (36), "碰撞" (31), "变量" (16), or query function words like
+        "如何"/"实现" are kept as-is to prevent co-occurrence cascade that
+        matches unrelated plugins.
+        """
+        result = set(segments)
+        for tok in segments:
+            if tok in _SCHEMA_EXPAND_STOPWORDS:
+                continue
+            if len(self._index.token_to_nodes.get(tok, set())) <= max_nodes:
+                result.update(self._index.auto_expand(tok))
+        return result
