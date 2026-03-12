@@ -276,7 +276,7 @@ class TestAnswerSmart:
         chain.answer_smart(complex_query)
 
         # Should have routed to complex workflow
-        chain.answer_complex_workflow.assert_called_once_with(complex_query, include_js=False)
+        chain.answer_complex_workflow.assert_called_once_with(complex_query, include_js=False, schema_context="")
 
 
 # ---------------------------------------------------------------------------

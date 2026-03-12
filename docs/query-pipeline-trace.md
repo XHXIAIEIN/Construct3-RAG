@@ -396,7 +396,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 | 入口方法 | 路径 | 特点 |
 |----------|------|------|
 | `answer_smart()` | Lookup → 复杂度检测 → fallback/decompose | 生产推荐，自动路由 |
-| `answer_stream()` | 检索 → 流式 LLM | 实时输出，无 Self-Reflection |
+| `answer_stream()` | 查询增强 → 检索 → 流式 LLM | 实时输出，使用完整增强管道，无 Self-Reflection |
 | `answer_high_confidence()` | 多查询检索 → LLM → Self-Reflection | 最慢最准 |
 | `answer_with_fallback()` | 健康检查 → 检索 → LLM → Self-Reflection | 服务降级 |
 
@@ -411,7 +411,7 @@ query = "怎么在数组中查找特定数字？"
 如果 Lookup 未命中:
 2. _is_complex_query(query):
    complexity_indicators 匹配数 = 0（无 "步骤/流程/实现/和/然后"）
-   word_count = 9（< 15）
+   jieba 有效词数 = 5（< 12，中文使用 jieba 词数阈值）
    → False → 走 answer_with_fallback()
 
 3. answer_with_fallback():
@@ -420,7 +420,7 @@ query = "怎么在数组中查找特定数字？"
    c. filter_by_adaptive_threshold() → 保留 8 条
    d. check LLM → OK
    e. STRICT_QA_PROMPT + context → LLM.generate()
-   f. _self_reflect() → 验证回答可靠性
+   f. _self_reflect() → 验证回答可靠性（答案含 ≥3 引用时跳过）
    g. 返回 RAGResponse(confidence="high"/"medium")
 ```
 

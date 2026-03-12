@@ -511,10 +511,15 @@ class RAGChain:
         # Check for complexity indicators
         indicator_count = sum(1 for ind in COMPLEXITY_INDICATORS if ind in query_lower)
 
-        # Check query length (longer queries tend to be more complex)
-        word_count = len(query.split())
-
-        return indicator_count >= 2 or word_count > 15
+        # Use jieba word count for Chinese (space-split badly underestimates density);
+        # threshold 12 ≈ equivalent density to English 20 words.
+        if self._is_chinese(query):
+            _load_jieba_c3_dict()
+            word_count = len([w for w in jieba.lcut(query) if len(w.strip()) >= 2])
+            return indicator_count >= 2 or word_count > 12
+        else:
+            word_count = len(query.split())
+            return indicator_count >= 2 or word_count > 20
 
     _EXAMPLE_KEYWORDS = frozenset({"示例", "example", "案例", "样例", "模板", "template"})
 
@@ -644,6 +649,53 @@ class RAGChain:
 
         return existing_results + extra
 
+    def _enrich_query(
+        self, query: str, skip_schema: bool = False
+    ) -> tuple[str, list[dict]]:
+        """Expand a Chinese query with English term and schema tokens.
+
+        Returns (search_query, term_keywords).
+        Non-Chinese queries are returned unchanged with an empty keyword list.
+        When *skip_schema* is True, the schema expansion step is skipped
+        (used when a dict-lookup has already supplied precise plugin context).
+        """
+        if not self._is_chinese(query):
+            return query, []
+
+        search_query = query
+        term_keywords = self._extract_term_keywords(query, threshold=0.65)
+        if term_keywords:
+            en_terms = " ".join(kw["en"] for kw in term_keywords)
+            search_query = f"{query} {en_terms}"
+            logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
+
+        if not skip_schema:
+            segments = self._split_zh_segments(query)
+            if segments:
+                schema_term_set = self.query_expander.schema_term_set(segments)
+                schema_matches = self.query_expander.search(schema_term_set)
+                high = [m for m in schema_matches if m.score > 0.7]
+                mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
+                if high or mid:
+                    boost_matches = (high if high else mid)[:5]
+                    en_boost = " ".join(
+                        part
+                        for m in boost_matches
+                        for part in m.node_id.replace("/", " ").replace("-", " ").split()
+                        if len(part) >= 3
+                    )
+                    search_query = f"{search_query} {en_boost}".strip()
+                    logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
+                if schema_matches:
+                    top3 = schema_matches[:3]
+                    summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
+                    _trace(summary, "schema_match")
+
+        if search_query != query:
+            _trace(f'"{search_query[:80]}"', "query")
+
+        return search_query, term_keywords
+
     def _format_sources_summary(self, results: List[SearchResult]) -> str:
         """Format search results as a readable summary for fallback responses."""
         if not results:
@@ -684,7 +736,14 @@ class RAGChain:
         """
         Self-reflection: Verify if answer is supported by sources.
         Returns: (reflection_result, is_reliable)
+
+        Fast-path: skip LLM verification when the answer already cites 3+ sources —
+        well-cited answers are unlikely to contain unsupported claims.
         """
+        if len(re.findall(r'\[来源', answer)) >= 3:
+            _trace("引用充足 (≥3)，跳过验证", "reflect")
+            return "", True
+
         logger.info("[Reflect] Verifying answer reliability...")
         t_reflect = time.time()
         prompt = SELF_REFLECTION_PROMPT.format(
@@ -1117,9 +1176,10 @@ class RAGChain:
             )
             system = ""
         else:
-            # QA with anti-hallucination retrieval
+            # QA: use the same enrichment pipeline as answer_with_fallback
+            search_query, term_keywords = self._enrich_query(query)
             results = self.retriever.search_all_with_rerank(
-                query, top_k_per_collection=5, final_top_k=10
+                search_query, top_k_per_collection=5, final_top_k=10
             )
 
             # Try query rewrite if no results
@@ -1137,6 +1197,9 @@ class RAGChain:
             if len(results) == 0:
                 yield NO_RESULTS_RESPONSE
                 return
+
+            results = self._enrich_with_ace_search(query, term_keywords, results)
+            results = self.retriever.filter_by_adaptive_threshold(results)
 
             context = self._format_reranked_context(results)
 
@@ -1180,7 +1243,7 @@ class RAGChain:
         else:
             return self.llm.chat(messages)
 
-    def answer_complex_workflow(self, query: str, include_js: bool = False) -> RAGResponse:
+    def answer_complex_workflow(self, query: str, include_js: bool = False, schema_context: str = "") -> RAGResponse:
         """
         Answer complex multi-step workflow queries using query decomposition.
 
@@ -1211,41 +1274,8 @@ class RAGChain:
         """
         logger.info(f"[Complex] Processing: {query[:50]}...")
 
-        # Query enhancement: term keyword expansion via TermIndex
-        search_query = query
-        term_keywords: list[dict] = []
-        if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query, threshold=0.65)
-            if term_keywords:
-                en_terms = " ".join(kw["en"] for kw in term_keywords)
-                search_query = f"{query} {en_terms}"
-                logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
-
-            # Schema zh→en bridge via QueryExpander
-            segments = self._split_zh_segments(query)
-            if segments:
-                schema_term_set = self.query_expander.schema_term_set(segments)
-                schema_matches = self.query_expander.search(schema_term_set)
-                high = [m for m in schema_matches if m.score > 0.7]
-                mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
-                if high or mid:
-                    # Cap at top-5 nodes. Use node_id path tokens.
-                    boost_matches = (high if high else mid)[:5]
-                    en_boost = " ".join(
-                        part
-                        for m in boost_matches
-                        for part in m.node_id.replace("/", " ").replace("-", " ").split()
-                        if len(part) >= 3
-                    )
-                    search_query = f"{search_query} {en_boost}".strip()
-                    logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
-                if schema_matches:
-                    top3 = schema_matches[:3]
-                    summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
-                    _trace(summary, "schema_match")
-
-            if search_query != query:
-                _trace(f"\"{search_query[:80]}\"", "query")
+        # Query enhancement: term + schema expansion
+        search_query, term_keywords = self._enrich_query(query, skip_schema=bool(schema_context))
 
         # Step 1: Decompose query
         logger.info("[Complex] Decomposing query...")
@@ -1299,6 +1329,15 @@ class RAGChain:
 
         # Step 5: Generate answer
         context = self._format_reranked_context(filtered_results[:15])
+        if schema_context:
+            context = (
+                "### 编辑器功能定义（ACE Schema）\n"
+                "以下是 Construct 3 编辑器中实际显示的功能，包含精确名称、参数及简短说明。"
+                "与下方官方文档说明互为补充，共同构成完整的功能描述。\n\n"
+                f"{schema_context}\n\n---\n\n"
+                f"{context}"
+            )
+            _trace("字典数据已注入上下文", "info")
         prompt = STRICT_QA_PROMPT.format(context=context, question=query)
         prompt = self._append_js_note(prompt, include_js)
 
@@ -1366,51 +1405,10 @@ class RAGChain:
                 verification_notes=qdrant_msg
             )
 
-        # Query enhancement: term keyword expansion via TermIndex
-        search_query = query
-        term_keywords: list[dict] = []
-        schema_matches: list[SchemaMatch] = []
-
-        if self._is_chinese(query):
-            term_keywords = self._extract_term_keywords(query, threshold=0.65)
-            if term_keywords:
-                en_terms = " ".join(kw["en"] for kw in term_keywords)
-                search_query = f"{query} {en_terms}"
-                logger.info(f"[TermExpand] +{[kw['en'] for kw in term_keywords]}")
-
-            # Schema zh→en bridge via QueryExpander
-            # Skip when dict lookup already provided precise plugin context —
-            # schema_match searches ALL plugins and may add noise (e.g. "数字"→sqrt)
-            if not schema_context:
-                segments = self._split_zh_segments(query)
-                if segments:
-                    # Selective auto_expand: only expand tokens with few matching nodes
-                    # (specific terms). Generic tokens like "系统"/"碰撞" skip auto_expand
-                    # to prevent co-occurrence cascade that pollutes schema matches.
-                    schema_term_set = self.query_expander.schema_term_set(segments)
-                    schema_matches = self.query_expander.search(schema_term_set)
-                    high = [m for m in schema_matches if m.score > 0.7]
-                    mid  = [m for m in schema_matches if 0.5 <= m.score <= 0.7]
-                    if high or mid:
-                        # Cap at top-5 nodes. Use node_id path tokens (e.g.
-                        # "sprite/collisions-enabled" → "sprite collisions enabled")
-                        # instead of en_tokens which mixes description stop-words.
-                        boost_matches = (high if high else mid)[:5]
-                        en_boost = " ".join(
-                            part
-                            for m in boost_matches
-                            for part in m.node_id.replace("/", " ").replace("-", " ").split()
-                            if len(part) >= 3
-                        )
-                        search_query = f"{search_query} {en_boost}".strip()
-                        logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
-                    if schema_matches:
-                        top3 = schema_matches[:3]
-                        summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
-                        _trace(summary, "schema_match")
-
-            if search_query != query:
-                _trace(f"\"{search_query[:80]}\"", "query")
+        # Query enhancement: term + schema expansion
+        # Skip schema expansion when dict-lookup already provided precise plugin context
+        # (schema_match searches all plugins and may add noise, e.g. "数字"→sqrt)
+        search_query, term_keywords = self._enrich_query(query, skip_schema=bool(schema_context))
 
         # Retrieve results (Qdrant is available)
         results = self.retriever.search_all_with_rerank(
@@ -1565,7 +1563,7 @@ class RAGChain:
             if indicators:
                 reason_parts.append(f"指标=[{', '.join(indicators[:3])}]")
             _trace(f"路由: QA 复杂（{'，'.join(reason_parts)}）", "route")
-            resp = self.answer_complex_workflow(query, include_js=include_js)
+            resp = self.answer_complex_workflow(query, include_js=include_js, schema_context=schema_context)
         else:
             import jieba
             word_count = len([w for w in jieba.cut(query) if w.strip()])

@@ -7,10 +7,12 @@
 ## 功能
 
 - **文档问答**: 回答 Construct 3 使用问题，标注来源与置信度
-- **语义搜索**: 基于向量数据库的智能检索，跨集合重排序
+- **混合检索**: 向量语义检索 + BM25 关键词检索 + 跨集合 RRF 重排序
+- **查询扩展**: 自动将中文查询扩展为 ACE Schema 术语，提升检索精度
 - **多轮对话**: 带上下文记忆的连续问答
 - **流式输出**: 实时显示 LLM 生成过程
 - **防幻觉**: Self-Reflection 验证 + 严格引用模式
+- **评估系统**: 启发式 + RAGAS 语义指标，综合得分 0.96–0.98
 
 ## 快速开始
 
@@ -46,17 +48,47 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. 启动服务
+### 3. 启动 Qdrant
 
 ```bash
-# 启动 Qdrant (Docker)
 docker run -d -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-
-# 安装 Ollama 并拉取模型
-ollama pull qwen2.5:7b   # 或 qwen3:30b (更强但更慢)
 ```
 
-### 4. 索引数据
+### 4. 配置 LLM
+
+选择以下任一方式：
+
+**方式 A：HuggingFace 本地模型（默认）**
+```bash
+# 下载模型（示例：Qwen3.5-9B）
+# 推荐放在 D:/Models/ 或其他本地路径
+```
+`.env` 配置：
+```
+LLM_PROVIDER=huggingface
+LLM_MODEL=D:/Models/Qwen3.5-9B
+```
+
+**方式 B：Ollama**
+```bash
+ollama pull qwen2.5:7b   # 或 qwen3:8b、qwen3:30b
+```
+`.env` 配置：
+```
+LLM_PROVIDER=ollama
+LLM_MODEL=qwen2.5:7b
+LLM_BASE_URL=http://localhost:11434
+```
+
+**方式 C：OpenAI 兼容 API**
+```
+LLM_PROVIDER=openai
+LLM_MODEL=your-model-name
+LLM_BASE_URL=https://your-api-endpoint
+LLM_API_KEY=your-api-key
+```
+
+### 5. 索引数据
 
 ```bash
 # 生成 ACE Schema (可选，已包含在仓库中)
@@ -66,23 +98,23 @@ node scripts/generate-schema.js
 python -m src.ingest.indexer --rebuild
 ```
 
-### 5. 配置环境变量（可选）
+### 6. 启动对话
 
 ```bash
-cp .env.example .env
-# 按需编辑 .env（修改 LLM 模型、端口等）
+python scripts/chat.py
 ```
 
-> **注意**: 向量数据库数据保存在 Docker volume 中，不包含在 Git 仓库内。首次使用需执行 `--rebuild` 重建索引。
+> **注意**: 向量数据库数据保存在 Docker volume 中，不包含在 Git 仓库内。首次使用需执行步骤 5 重建索引。
 
 ## 技术栈
 
 | 组件       | 选择          | 说明                          |
 |-----------|--------------|-------------------------------|
-| LLM       | Qwen3.5-9B   | 本地运行，HuggingFace / Ollama |
+| LLM       | Qwen3.5-9B   | 本地运行，HuggingFace / Ollama / OpenAI 兼容 |
 | 向量数据库 | Qdrant       | 高性能向量搜索                  |
 | Embedding | BAAI/bge-m3  | 多语言嵌入模型，1024 维          |
 | 分块策略   | H2 语义分块   | 按文档结构切分                  |
+| 混合检索   | BM25 + 向量  | 关键词 + 语义双路召回             |
 
 ## 项目结构
 
@@ -93,31 +125,45 @@ Construct3-RAG/
 │   │   └── zh_r475.csv     # 官方翻译文件
 │   └── schemas/               # ACE Schema (72 插件 + 31 行为)
 ├── docs/                      # 设计文档、指南、知识库
-├── scripts/                   # 运维脚本 (启动/索引/清理)
+├── scripts/                   # 运维脚本 (启动/索引/评估)
+│   ├── chat.py                # 对话客户端入口
+│   └── evaluate.py            # 评估系统入口
 ├── src/
 │   ├── config.py              # 全局配置
 │   ├── collections.py         # 集合定义
 │   ├── ingest/                # 数据处理与索引
 │   ├── rag/                   # RAG 核心
 │   └── locale/                # 多语言 (zh/en)
-├── tests/                     # 单元测试
+├── tests/                     # 单元测试 (206 个)
 ├── .env.example               # 环境变量示例
 └── requirements.txt
 ```
 
 ## 向量集合
 
-| 集合 | 源目录 | 内容 |
-|------|--------|------|
-| `c3_guide` | `getting-started/`, `overview/`, `tips-and-guides/` | 入门教程、概述、技巧 |
-| `c3_interface` | `interface/` | 编辑器界面、工具栏、对话框 |
-| `c3_project` | `project-primitives/` | 事件、对象、时间轴、流程图 |
-| `c3_plugins` | `plugin-reference/` | 插件参考 (65 个) |
-| `c3_behaviors` | `behavior-reference/`, `system-reference/` | 行为参考 (31 个) |
-| `c3_scripting` | `scripting/` | JavaScript/TypeScript API |
-| `c3_examples` | 官方示例项目 | 示例事件 (490 项目, 7,148 事件) |
+| 集合 | 内容 | 向量数 |
+|------|------|--------|
+| `c3_guide` | 入门教程、概述、技巧 | 124 |
+| `c3_interface` | 编辑器界面、工具栏、对话框 | 146 |
+| `c3_project` | 事件、对象、时间轴、流程图 | 136 |
+| `c3_plugins` | 插件参考 (65 个) | 420 |
+| `c3_behaviors` | 行为参考 (31 个) | 156 |
+| `c3_effects` | 特效参考 | 89 |
+| `c3_scripting` | JavaScript/TypeScript API | 201 |
+| `c3_ace` | ACE Schema（动作/条件/表达式定义） | 2,927 |
+| `c3_terms` | 术语对照表（中英文） | 23,824 |
+| `c3_examples` | 官方示例事件（490 个项目） | 7,148 |
 
-**统计**: 8,328 向量
+**统计**: 35,171 向量，10 个集合
+
+## 评估结果
+
+在 15 个典型问题上的评估结果（启发式指标，Qwen3.5-9B，smart 模式）：
+
+| 指标 | 得分 |
+|------|------|
+| 综合得分 | **0.96–0.98** |
+| 等级分布 | 15/15 A |
 
 ## 更多文档
 
