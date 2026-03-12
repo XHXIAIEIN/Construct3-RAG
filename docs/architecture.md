@@ -87,10 +87,10 @@
 | `c3_plugins` | 插件参考（72 个） | Markdown 手册 |
 | `c3_behaviors` | 行为参考 + 系统参考（31 个） | Markdown 手册 |
 | `c3_scripting` | 脚本 API 文档 | Markdown 手册 |
-| `c3_ace` | ACE Schema（Actions/Conditions/Expressions） | JSON Schema |
+| `c3_ace` | ACE Schema（Actions/Conditions/Expressions，2,927 条） | JSON Schema |
 | `c3_effects` | 效果定义 | JSON Schema |
 | `c3_terms` | 术语翻译（23,824 条） | CSV 翻译词条 |
-| `c3_examples` | 示例项目代码 | C3 示例项目 |
+| `c3_examples` | 示例项目（r476，524 个项目，2,912 向量）：元数据 + 事件块 + 脚本代码 | C3 示例项目 |
 
 ### 2. 查询处理策略
 
