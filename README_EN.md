@@ -175,7 +175,8 @@ The following projects directly informed the design and implementation of this s
 | Project | Usage |
 |---------|-------|
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | Harbin Institute of Technology synonym dictionary (`cilin.txt`), used by `DictExpander` for query expansion |
-| [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) | Anti-AI writing style guidelines, internalized into `SYSTEM_MESSAGE` prompt to reduce formulaic responses |
+| [blader/humanizer](https://github.com/blader/humanizer) | Anti-AI writing style guidelines (English original); source for English `SYSTEM_MESSAGE` writing rules |
+| [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) | Anti-AI writing style guidelines (Chinese adaptation of blader/humanizer); source for Chinese `SYSTEM_MESSAGE` writing rules |
 | [Anthropic: Lessons from Building Claude Code](https://www.anthropic.com/engineering/claude-code-lessons) | Contextual chunking strategy (49% retrieval accuracy improvement) and progressive disclosure design inspiration |
 | [explodinggradients/ragas](https://github.com/explodinggradients/ragas) | Evaluation metric framework reference (faithfulness / answer_relevance / context_precision etc.); `RagasEvaluator` reimplements the same metrics using local LLM + cosine similarity |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Construct 3 official manual in Markdown format; primary data source for all documentation collections (guide / interface / project / plugins / behaviors / scripting) |
