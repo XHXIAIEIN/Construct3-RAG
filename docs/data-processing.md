@@ -4,10 +4,10 @@
 
 | 数据源 | 格式 | 用途 |
 |--------|------|------|
-| Construct3-Manual/ | Markdown | 主手册文档 (334 文件) |
-| Construct3-Addon-SDK/ | Markdown | 插件开发文档 (62 文件) |
-| zh_r475.csv | CSV | 23,513 条中英翻译 |
-| example-projects/ | C3 项目 | 490 个示例项目 |
+| Construct3-Manual/ | Markdown | 主手册文档 |
+| zh_r475.csv | CSV | 23,824 条中英翻译 |
+| example-projects/ | C3 项目 | 524 个示例项目（r476） |
+| data/schemas/ | JSON Schema | ACE Schema（72 插件 + 31 行为） |
 
 ## 1. Markdown 手册处理
 
@@ -122,33 +122,32 @@ example-projects/
 ### 处理流程
 
 ```
-项目目录
+项目目录（524 个，r476）
     │
     ▼
-┌─────────────────┐
-│ 遍历 490 项目   │
-└─────────────────┘
+┌──────────────────────┐
+│ examples_parser.py   │  browser JSON + project.c3proj
+│ 元数据文档（529 条） │  标题/插件/行为/布局/事件表/
+│                      │  families/timelines/flowcharts/scripts
+└──────────────────────┘
     │
     ▼
-┌─────────────────┐
-│ 解析 c3proj     │  提取项目描述、插件依赖
-└─────────────────┘
+┌──────────────────────┐
+│ event_parser.py      │  eventSheets/*.json → 条件/动作块
+│ 事件块（1,821 条）   │  IF {条件} THEN {动作} + 注释上下文
+└──────────────────────┘
     │
     ▼
-┌─────────────────┐
-│ 解析事件表      │  eventSheets/*.json
-│                 │  提取条件、动作、表达式
-└─────────────────┘
+┌──────────────────────┐
+│ event_parser.py      │  scripts/*.js / *.ts → 函数级分块
+│ 脚本块（783 条）     │
+└──────────────────────┘
     │
     ▼
-┌─────────────────┐
-│ 语义化转换      │  JSON -> 自然语言描述
-└─────────────────┘
-    │
-    ▼
-┌─────────────────┐
-│ 向量化入库      │
-└─────────────────┘
+┌──────────────────────┐
+│ 向量化入库           │  bge-m3 → Qdrant c3_examples
+│ 合计 2,912 向量      │
+└──────────────────────┘
 ```
 
 ### 事件表 JSON 示例
@@ -172,25 +171,28 @@ example-projects/
   - 设置 Player 位置为 (100, 200)
 ```
 
-## 4. 数据统计预估
+## 4. 数据统计（实际）
 
-| 数据类型 | 原始条目 | 分块后条目 | 向量维度 |
-|----------|----------|-----------|---------|
-| 手册文档 | ~500 页 | ~2,000 chunks | 1024 |
-| 术语表 | 23,513 条 | 23,513 条 | 1024 |
-| 示例项目 | 490 项目 | ~5,000 事件 | 1024 |
-| **总计** | - | ~30,500 向量 | - |
+| 集合 | 向量数 | 数据来源 |
+|------|--------|---------|
+| c3_guide + c3_interface + c3_project + c3_plugins + c3_behaviors + c3_scripting | 1,183 | Markdown 手册（H2 分块） |
+| c3_ace | 2,927 | ACE Schema JSON |
+| c3_effects | 89 | Effects Schema JSON |
+| c3_terms | 23,824 | CSV 翻译词条 |
+| c3_examples | 2,912 | 示例元数据 + 事件块 + 脚本 |
+| **合计** | **31,935** | — |
 
 ## 脚本位置
 
 ```
 src/ingest/
-├── markdown_parser.py # Markdown 解析 + H2 分块
-├── csv_parser.py      # CSV 术语解析 (RAG 检索用)
-├── schema_parser.py   # ACE Schema 解析
-├── project_parser.py  # 示例项目解析
-└── indexer.py         # 向量化入库
+├── markdown_parser.py  # Markdown 解析 + H2 分块
+├── csv_parser.py       # CSV 术语解析
+├── schema_parser.py    # ACE Schema 解析
+├── examples_parser.py  # 示例元数据（browser JSON + c3proj）
+├── event_parser.py     # 事件块 + 脚本代码解析
+└── indexer.py          # 向量化入库（统一调度）
 
 scripts/
-└── generate-schema.js  # Schema 生成
+└── generate-schema.js  # ACE Schema 生成
 ```

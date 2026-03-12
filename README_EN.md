@@ -151,7 +151,7 @@ Construct3-RAG/
 | `c3_scripting` | JavaScript/TypeScript API | 201 |
 | `c3_ace` | ACE Schema (action/condition/expression definitions) | 2,927 |
 | `c3_terms` | Terminology table (Chinese/English) | 23,824 |
-| `c3_examples` | Official examples (r476): project metadata + event blocks + script code | 2,912 |
+| `c3_examples` | Official examples (r476, 524 projects): metadata + event blocks + script code | 2,912 |
 
 **Statistics**: 31,935 vectors, 10 collections
 
