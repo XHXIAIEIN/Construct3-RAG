@@ -59,6 +59,11 @@ _SCHEMA_EXPAND_STOPWORDS: frozenset[str] = frozenset({
     # C3 structural meta-terms (describe the editing environment, not ACE actions)
     # Expanding these always leads to system/flowchart structural nodes, not ACE
     "事件表", "事件组", "对象类型", "布局",
+    # Domain concepts not present in C3 itself — expanding only produces misleading
+    # matches to unrelated plugins (e.g. "埋点"→googleplay achievements).
+    "埋点", "统计", "分析", "监控", "上报", "打点",
+    # Conversational filler words that appear in informal queries
+    "大佬", "知道", "里边", "那个", "这个",
 })
 
 # English word → Chinese zh_tokens bridge.

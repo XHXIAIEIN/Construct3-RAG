@@ -589,12 +589,21 @@ class RAGChain:
                 if en:
                     seen_en.add(en.lower())
                 if r.score >= threshold and en:
-                    # Lexical filter: for Chinese segments, zh result must share
-                    # at least one Chinese character with the query segment.
-                    # Prevents semantic drift (e.g. "生物" → "Web", "Algorithm").
+                    # Lexical filter: zh result must share enough characters
+                    # with the query segment to prevent semantic drift.
+                    # Rule: intersection must cover ≥50% of seg's chars,
+                    # or be ≥ 2 unique characters — whichever is less strict.
+                    # This blocks single-char accidents like "里边"→"右边" (only '边' shared)
+                    # while still accepting "数组"→"数组" (100% overlap).
                     seg_zh_chars = {c for c in seg if '\u4e00' <= c <= '\u9fff'}
-                    if seg_zh_chars and not seg_zh_chars.intersection(zh):
-                        continue
+                    if seg_zh_chars:
+                        overlap = seg_zh_chars.intersection(zh)
+                        overlap_ratio = len(overlap) / len(seg_zh_chars)
+                        # Require strict majority (>50%) or at least 2 shared chars.
+                        # Blocks accidental single-char matches like "里边"→"右边" (only '边')
+                        # while accepting "查找"→"查找值" (2 chars) and "数组"→"数组" (100%).
+                        if overlap_ratio <= 0.5 and len(overlap) < 2:
+                            continue
                     keywords.append({"zh": zh, "en": en, "score": r.score})
                     seg_hits.append(f"{zh}→{en}({r.score:.2f})")
             if seg_hits:
