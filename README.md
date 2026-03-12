@@ -152,9 +152,9 @@ Construct3-RAG/
 | `c3_scripting` | JavaScript/TypeScript API | 201 |
 | `c3_ace` | ACE Schema（动作/条件/表达式定义） | 2,927 |
 | `c3_terms` | 术语对照表（中英文） | 23,824 |
-| `c3_examples` | 官方示例事件（490 个项目） | 7,148 |
+| `c3_examples` | 官方示例元数据（r476，524 个项目） | 529 |
 
-**统计**: 35,171 向量，10 个集合
+**统计**: 28,552 向量，10 个集合
 
 ## 评估结果
 
