@@ -88,7 +88,49 @@ class Handler(BaseHTTPRequestHandler):
                 _last_heartbeat.pop(sid, None)
             self._respond({"ok": True})
 
-        else:  # /query
+        elif path == "/decompose":
+            query = body.get("query", "")
+            dq = chain.semantic_chain.decompose(query) if chain.semantic_chain else None
+            if dq:
+                self._respond({
+                    "query_type": dq.query_type,
+                    "c3_objects": dq.c3_objects,
+                    "action_verbs": dq.action_verbs,
+                    "intents": [
+                        {"label": i.label, "keywords": i.keywords, "weight": i.weight}
+                        for i in dq.intents
+                    ],
+                    "solution_rewrite": dq.solution_rewrite,
+                    "confidence": dq.confidence,
+                })
+            else:
+                self._respond({"error": "semantic chain unavailable"})
+
+        elif path == "/search":
+            query = body.get("query", "")
+            top_k = int(body.get("top_k", 8))
+            with _infer_lock:
+                results = chain.retriever.search_all_with_rerank(
+                    query, top_k_per_collection=3, final_top_k=top_k
+                )
+                dq = chain.semantic_chain.decompose(query) if chain.semantic_chain else None
+            self._respond({
+                "results": [
+                    {"text": r.text, "source": r.source, "score": r.score}
+                    for r in results
+                ],
+                "decomposed": {
+                    "query_type": dq.query_type if dq else "unknown",
+                    "c3_objects": dq.c3_objects if dq else [],
+                    "intents": [
+                        {"label": i.label, "keywords": i.keywords}
+                        for i in dq.intents
+                    ] if dq else [],
+                    "confidence": dq.confidence if dq else 0.0,
+                }
+            })
+
+        else:  # /  (answer_smart)
             query = body.get("query", "")
             with _infer_lock:
                 resp = chain.answer_smart(query)
