@@ -431,8 +431,8 @@
   "expressions": [
     {
       "id": "cycleposition",
-      "name_zh": "周期位置",
-      "name_en": "CyclePosition",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前在周期的进度位置，使用 0 到 1 表示，若 0.5 则为周期一半的位置。",
       "description_en": "Return the current position in the cycle (phase) as a number from 0 to 1.",
       "expressionName": "CyclePosition",
@@ -440,8 +440,8 @@
     },
     {
       "id": "period",
-      "name_zh": "周期",
-      "name_en": "Period",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的周期持续时间，以秒为单位。",
       "description_en": "Return the current period, in seconds.",
       "expressionName": "Period",
@@ -449,8 +449,8 @@
     },
     {
       "id": "magnitude",
-      "name_zh": "振幅",
-      "name_en": "Magnitude",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前移动的幅度。",
       "description_en": "Return the current magnitude of the movement.",
       "expressionName": "Magnitude",
@@ -458,8 +458,8 @@
     },
     {
       "id": "value",
-      "name_zh": "值",
-      "name_en": "Value",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的波形函数的数值。",
       "description_en": "Return the current oscillating value.",
       "expressionName": "Value",

@@ -398,8 +398,8 @@
   "expressions": [
     {
       "id": "product-name",
-      "name_zh": "产品名称",
-      "name_en": "ProductName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "根据产品 ID 获取产品名称。",
       "description_en": "Return the name of a product from its ID.",
       "expressionName": "ProductName",
@@ -420,8 +420,8 @@
     },
     {
       "id": "product-price",
-      "name_zh": "产品价格",
-      "name_en": "ProductPrice",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "根据产品ID获取产品的格式化价格。",
       "description_en": "Return the formatted price of a product from its ID.",
       "expressionName": "ProductPrice",
@@ -442,8 +442,8 @@
     },
     {
       "id": "product-description",
-      "name_zh": "产品描述",
-      "name_en": "ProductDescription",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，相关的产品描述。",
       "description_en": "Return the description of a product from its ID.",
       "expressionName": "ProductDescription",
@@ -464,8 +464,8 @@
     },
     {
       "id": "product-id",
-      "name_zh": "产品ID",
-      "name_en": "ProductID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，相关的产品ID。",
       "description_en": "In a trigger, the relevant product ID.",
       "expressionName": "ProductID",
@@ -476,8 +476,8 @@
     },
     {
       "id": "error-message",
-      "name_zh": "错误信息",
-      "name_en": "ErrorMessage",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，返回相关的错误消息。",
       "description_en": "In a trigger, an error message if available.",
       "expressionName": "ErrorMessage",
@@ -488,8 +488,8 @@
     },
     {
       "id": "transaction-id",
-      "name_zh": "订单ID",
-      "name_en": "TransactionID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '交易完成' 条件中，完成的订单ID。",
       "description_en": "After 'On transaction finished', the ID of the last finished transaction.",
       "expressionName": "TransactionID",

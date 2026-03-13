@@ -232,8 +232,8 @@
   "expressions": [
     {
       "id": "currenttime",
-      "name_zh": "当前时间",
-      "name_en": "CurrentTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "计时器经过的秒数。对于周期类型计时器，则是自上次 '计时结束' 事件以来经过的秒数。",
       "description_en": "Seconds since last 'On timer' event.",
       "expressionName": "CurrentTime",
@@ -251,8 +251,8 @@
     },
     {
       "id": "normalized-progress",
-      "name_zh": "进度值",
-      "name_en": "NormalizedProgress",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取计时器当前进度，返回 0 到 1 的值。",
       "description_en": "The progress of a given timer on a scale of 0 to 1.",
       "expressionName": "NormalizedProgress",
@@ -270,8 +270,8 @@
     },
     {
       "id": "totaltime",
-      "name_zh": "总计时间",
-      "name_en": "TotalTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对于周期计时器，自上次 '开始计时' 事件以来累计的秒数。",
       "description_en": "Seconds since timer was started.",
       "expressionName": "TotalTime",
@@ -289,8 +289,8 @@
     },
     {
       "id": "duration",
-      "name_zh": "持续时间",
-      "name_en": "Duration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "计时器的持续秒数，到达此时间触发 '计时结束' 事件。",
       "description_en": "Duration in seconds of a timer that is running.",
       "expressionName": "Duration",

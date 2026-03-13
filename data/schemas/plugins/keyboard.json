@@ -490,8 +490,8 @@
   "expressions": [
     {
       "id": "lastkeycode",
-      "name_zh": "按键码",
-      "name_en": "LastKeyCode",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取最后按下的键的键代码。",
       "description_en": "Get the key code for the last pressed key.",
       "expressionName": "LastKeyCode",
@@ -502,8 +502,8 @@
     },
     {
       "id": "stringfromkeycode",
-      "name_zh": "按键码字符串",
-      "name_en": "StringFromKeyCode",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取对应按键码的字符串。",
       "description_en": "Get a character string representing a key code.",
       "expressionName": "StringFromKeyCode",
@@ -524,8 +524,8 @@
     },
     {
       "id": "typed-key",
-      "name_zh": "功能键",
-      "name_en": "TypedKey",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取最后按下的按键的类型字符串。",
       "description_en": "Get the typed key string for the last pressed key.",
       "expressionName": "TypedKey",

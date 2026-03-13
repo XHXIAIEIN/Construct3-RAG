@@ -458,8 +458,8 @@
   "expressions": [
     {
       "id": "playbacktime",
-      "name_zh": "播放进度",
-      "name_en": "PlaybackTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前播放时间（秒）。",
       "description_en": "Current playback time in seconds.",
       "expressionName": "PlaybackTime",
@@ -470,8 +470,8 @@
     },
     {
       "id": "playbackrate",
-      "name_zh": "播放速度",
-      "name_en": "PlaybackRate",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
       "description_en": "Current playback rate, 1 being normal speed.",
       "expressionName": "PlaybackRate",
@@ -482,8 +482,8 @@
     },
     {
       "id": "duration",
-      "name_zh": "持续时间",
-      "name_en": "Duration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获得视频的时长(秒)。需要视频加载到一定进度时可用。",
       "description_en": "Video duration in seconds, if known.",
       "expressionName": "Duration",
@@ -494,8 +494,8 @@
     },
     {
       "id": "volume",
-      "name_zh": "音量",
-      "name_en": "Volume",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前视频音量以dB为单位衰减。",
       "description_en": "Current video volume in dB attenuation.",
       "expressionName": "Volume",
@@ -506,8 +506,8 @@
     },
     {
       "id": "videowidth",
-      "name_zh": "视频宽度",
-      "name_en": "VideoWidth",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "原视频宽度",
       "description_en": "The width of the source video.",
       "expressionName": "VideoWidth",
@@ -518,8 +518,8 @@
     },
     {
       "id": "videoheight",
-      "name_zh": "视频高度",
-      "name_en": "VideoHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "原视频高度",
       "description_en": "The height of the source video.",
       "expressionName": "VideoHeight",

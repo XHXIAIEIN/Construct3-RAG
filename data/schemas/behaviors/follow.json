@@ -826,8 +826,8 @@
   "expressions": [
     {
       "id": "delay",
-      "name_zh": "延迟",
-      "name_en": "Delay",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前延迟，以秒或像素为单位。",
       "description_en": "The current delay in seconds or pixels.",
       "expressionName": "Delay",
@@ -838,8 +838,8 @@
     },
     {
       "id": "max-delay",
-      "name_zh": "最大同步时长",
-      "name_en": "MaxDelay",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "最大同步时长，以秒或像素为单位。",
       "description_en": "The current maximum delay in seconds or pixels.",
       "expressionName": "MaxDelay",
@@ -850,8 +850,8 @@
     },
     {
       "id": "history-rate",
-      "name_zh": "同步频率",
-      "name_en": "HistoryRate",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "每秒记录跟随对象属性的次数。",
       "description_en": "The current history rate in entries per second.",
       "expressionName": "HistoryRate",
@@ -862,8 +862,8 @@
     },
     {
       "id": "delayed-custom-property-value",
-      "name_zh": "自定义属性延迟",
-      "name_en": "DelayedCustomPropertyValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "跟随的自定义属性的延迟值。",
       "description_en": "The delayed value of a custom property being followed.",
       "expressionName": "DelayedCustomPropertyValue",
@@ -884,8 +884,8 @@
     },
     {
       "id": "follow-uid",
-      "name_zh": "跟随对象UID",
-      "name_en": "FollowUID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前跟踪对象的UID，如果没有，则为-1。",
       "description_en": "The UID of the currently followed object (or -1 if none).",
       "expressionName": "FollowUID",
@@ -893,8 +893,8 @@
     },
     {
       "id": "history-as-json",
-      "name_zh": "导出历史记录",
-      "name_en": "HistoryAsJSON",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将对象跟随的历史记录保存到 JSON 数据字符串中。",
       "description_en": "Save the history of the followed object to a string of JSON data.",
       "expressionName": "HistoryAsJSON",

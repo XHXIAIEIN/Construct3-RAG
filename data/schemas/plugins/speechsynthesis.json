@@ -98,8 +98,8 @@
           "type": "string",
           "name_zh": "语言",
           "name_en": "Language",
-          "desc_zh": "文字的语言代码，如 \"en-US\" 为美式英语，\"zh-CN\"为简体中文。留空则使用设备默认语言。",
-          "desc_en": "The language of the text, e.g. \"en-US\" for US English. Leave empty to use the default language."
+          "desc_zh": "文字的语言代码，如 \"\"en-US\"\" 为美式英语，\"\"zh-CN\"\"为简体中文。留空则使用设备默认语言。",
+          "desc_en": "The language of the text, e.g. \"\"en-US\"\" for US English. Leave empty to use the default language."
         },
         {
           "id": "voice-uri",
@@ -182,8 +182,8 @@
   "expressions": [
     {
       "id": "voicecount",
-      "name_zh": "声音数量",
-      "name_en": "VoiceCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回可用语音的数量。",
       "description_en": "Return the number of available voices.",
       "expressionName": "VoiceCount",
@@ -194,8 +194,8 @@
     },
     {
       "id": "voicenameat",
-      "name_zh": "语音名称索引",
-      "name_en": "VoiceNameAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回索引处的语音名称。",
       "description_en": "Return the name of a voice at an index.",
       "expressionName": "VoiceNameAt",
@@ -216,8 +216,8 @@
     },
     {
       "id": "voicelangat",
-      "name_zh": "语音语言索引",
-      "name_en": "VoiceLangAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在索引处返回语音的语言。",
       "description_en": "Return the language of a voice at an index.",
       "expressionName": "VoiceLangAt",
@@ -238,8 +238,8 @@
     },
     {
       "id": "voiceuriat",
-      "name_zh": "语音链接索引",
-      "name_en": "VoiceURIAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回索引处语音的URI。",
       "description_en": "Return the URI of a voice at an index.",
       "expressionName": "VoiceURIAt",

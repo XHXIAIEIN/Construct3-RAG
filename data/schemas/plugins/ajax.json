@@ -263,8 +263,8 @@
           "type": "string",
           "name_zh": "请求方法",
           "name_en": "Method",
-          "desc_zh": "要使用的HTTP请求方法。通常是 \"Get\" 或 \"POST\"。",
-          "desc_en": "The HTTP method to use, typically \"POST\".",
+          "desc_zh": "要使用的HTTP请求方法。通常是 \"\"Get\"\" 或 \"\"POST\"\"。",
+          "desc_en": "The HTTP method to use, typically \"\"POST\"\".",
           "initialValue": "\"POST\""
         }
       ],
@@ -341,7 +341,7 @@
           "type": "string",
           "name_zh": "MIME类型",
           "name_en": "MIME type",
-          "desc_zh": "要设置的媒体类型。如 \"text/plain;charset=UTF-8\",  \"image/png\",   \"application/json",
+          "desc_zh": "要设置的媒体类型。如 \"\"text/plain;charset=UTF-8\"\",  \"\"image/png\"\",   \"\"application/json\"\"",
           "desc_en": "The MIME type to interpret the response as."
         }
       ],
@@ -436,8 +436,8 @@
           "type": "string",
           "name_zh": "方法",
           "name_en": "Method",
-          "desc_zh": "要使用的HTTP请求方法，通常是 \"Get\" 或 \"POST\"。",
-          "desc_en": "The HTTP method to use, typically \"POST\".",
+          "desc_zh": "要使用的HTTP请求方法，通常是 \"\"Get\"\" 或 \"\"POST\"\"。",
+          "desc_en": "The HTTP method to use, typically \"\"POST\"\".",
           "initialValue": "\"POST\""
         }
       ],
@@ -471,8 +471,8 @@
   "expressions": [
     {
       "id": "lastdata",
-      "name_zh": "请求数据",
-      "name_en": "LastData",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取上次成功请求返回的数据。",
       "description_en": "Get the data returned by the last successful request.",
       "expressionName": "LastData",
@@ -483,8 +483,8 @@
     },
     {
       "id": "laststatuscode",
-      "name_zh": "状态码",
-      "name_en": "LastStatusCode",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取上一次 HTTP 请求返回的状态码。",
       "description_en": "Get the HTTP status code of the last request.",
       "expressionName": "LastStatusCode",
@@ -495,8 +495,8 @@
     },
     {
       "id": "progress",
-      "name_zh": "请求进度",
-      "name_en": "Progress",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '进度更新' 条件中，返回当前的请求进度，范围在 0 到 1 之间。",
       "description_en": "Get the progress, from 0 to 1, of the request in 'On progress'.",
       "expressionName": "Progress",
@@ -507,8 +507,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "请求标签",
-      "name_en": "Tag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "要获取的 AJAX 对应标签的请求数据。",
       "description_en": "Get the tag for the request in a trigger.",
       "expressionName": "Tag",

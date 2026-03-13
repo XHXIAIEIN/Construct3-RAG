@@ -149,8 +149,8 @@
   "expressions": [
     {
       "id": "generated-csv",
-      "name_zh": "生成CSV",
-      "name_en": "GeneratedCSV",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "执行 '生成CSV' 动作后，获取生成的CSV数据字符串。",
       "description_en": "Get the generated string of CSV data after the 'Generate CSV' action.",
       "expressionName": "GeneratedCSV",
@@ -161,8 +161,8 @@
     },
     {
       "id": "tab-character",
-      "name_zh": "制表符",
-      "name_en": "TabCharacter",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "一个制表符，可以作为分隔符，有时非常有用。",
       "description_en": "A tab character, which can be useful as a delimiter.",
       "expressionName": "TabCharacter",

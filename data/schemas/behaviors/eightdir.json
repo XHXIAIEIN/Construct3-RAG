@@ -365,8 +365,8 @@
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "移动速度",
-      "name_en": "Speed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的移动速度，以像素每秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -374,8 +374,8 @@
     },
     {
       "id": "maxspeed",
-      "name_zh": "最大移动速度",
-      "name_en": "MaxSpeed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "最大移动速度，以像素每秒为单位。",
       "description_en": "The maximum speed setting, in pixels per second.",
       "expressionName": "MaxSpeed",
@@ -383,8 +383,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "加速度",
-      "name_en": "Acceleration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从静止状态到正常移动速度的加速度，以像素每秒为单位。",
       "description_en": "The acceleration setting, in pixels per second per second.",
       "expressionName": "Acceleration",
@@ -392,8 +392,8 @@
     },
     {
       "id": "deceleration",
-      "name_zh": "减速度",
-      "name_en": "Deceleration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从正常移动至完全停止的减速度，以像素每秒为单位。",
       "description_en": "The deceleration setting, in pixels per second per second.",
       "expressionName": "Deceleration",
@@ -401,8 +401,8 @@
     },
     {
       "id": "movingangle",
-      "name_zh": "移动角度",
-      "name_en": "MovingAngle",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前移动的方向，以角度为单位。",
       "description_en": "The current angle of motion, in degrees.",
       "expressionName": "MovingAngle",
@@ -410,8 +410,8 @@
     },
     {
       "id": "vectorx",
-      "name_zh": "向量X",
-      "name_en": "VectorX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在X轴方向的运动向量，以每秒像素为单位。大于 0 将向右运动，小于 0 则向左运动。",
       "description_en": "The current X component of motion, in pixels per second.",
       "expressionName": "VectorX",
@@ -419,8 +419,8 @@
     },
     {
       "id": "vectory",
-      "name_zh": "向量Y",
-      "name_en": "VectorY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在Y轴方向的运动向量，以每秒像素为单位。大于 0 将向上运动，小于 0 则向下运动。",
       "description_en": "The current Y component of motion, in pixels per second.",
       "expressionName": "VectorY",

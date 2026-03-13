@@ -4,7 +4,7 @@
   "name_zh": "字典",
   "name_en": "Dictionary",
   "description_zh": "将数据存储在对应的字段里。相比本地变量，字典的数据存储方式更自由。",
-  "description_en": "Store data under named keys, e.g. set \"key\" to \"value\".",
+  "description_en": "Store data under named keys, e.g. set \"\"key\"\" to \"\"value\"\".",
   "path": "data-and-storage/dictionary",
   "categories": [
     "dictionary",
@@ -296,8 +296,8 @@
   "expressions": [
     {
       "id": "get",
-      "name_zh": "读取",
-      "name_en": "Get",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定字段的值。 如果字段不存在，则返回0。",
       "description_en": "Get the value from a key.  0 is returned if it does not exist.",
       "expressionName": "Get",
@@ -318,8 +318,8 @@
     },
     {
       "id": "get-default",
-      "name_zh": "安全读取",
-      "name_en": "GetDefault",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定字段的值，或者字段不存在时返回的自定义字符。",
       "description_en": "Get the value from a key, or return a custom value if it does not exist.",
       "expressionName": "GetDefault",
@@ -348,8 +348,8 @@
     },
     {
       "id": "keycount",
-      "name_zh": "字段数量",
-      "name_en": "KeyCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取本地存储中已存在的字段总数。",
       "description_en": "Get the number of keys in storage.",
       "expressionName": "KeyCount",
@@ -360,8 +360,8 @@
     },
     {
       "id": "currentkey",
-      "name_zh": "当前字段",
-      "name_en": "CurrentKey",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在循环中获取当前字段的名称。",
       "description_en": "Get the current key name in a for-each loop.",
       "expressionName": "CurrentKey",
@@ -372,8 +372,8 @@
     },
     {
       "id": "currentvalue",
-      "name_zh": "当前值",
-      "name_en": "CurrentValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在循环中获取当前字段的值。",
       "description_en": "Get the current key value in a for-each loop.",
       "expressionName": "CurrentValue",
@@ -384,8 +384,8 @@
     },
     {
       "id": "asjson",
-      "name_zh": "导出对象数据",
-      "name_en": "AsJSON",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将字典导出为JSON格式的字符串。后续在 '导入数据' 动作中使用，常用于保存在本地存储中。",
       "description_en": "Return the contents of the dictionary in JSON format.",
       "expressionName": "AsJSON",

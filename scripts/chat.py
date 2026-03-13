@@ -127,6 +127,40 @@ def _print_trace(events: list) -> None:
         if g == 1:  # lookup: one line per tier, aligned
             for _, msg in evts:
                 console.print(f"  {escape(msg)}")
+        elif g == 3:  # 查询分析 — segment-per-row layout
+            import re as _re3
+            tbl3 = Table(show_header=False, box=None, padding=(0, 2, 0, 0), show_edge=False)
+            tbl3.add_column("seg", style="dim", no_wrap=True, min_width=6)
+            tbl3.add_column("result", overflow="fold")
+            has_term_hit = any(ph == "term_hit" for ph, _ in evts)
+            for phase, msg in evts:
+                if phase == "tokenize":
+                    if not has_term_hit:
+                        tbl3.add_row("分词", escape(msg))
+                elif phase == "term_hit":
+                    m = _re3.match(r'\[(.+?)\]:\s*(.*)', msg)
+                    seg_name, rest = (m.group(1), m.group(2)) if m else ("?", msg)
+                    is_miss = "→丢弃" in rest or "<阈值" in rest
+                    if is_miss:
+                        # strip "<阈值  " prefix and "→丢弃" suffix, keep en(score) only
+                        rest2 = _re3.sub(r'<阈值\s*', '', rest).replace('→丢弃', '').strip()
+                        # "zh/en(score)" → "en(score)"
+                        rest2 = _re3.sub(r'[^/\s]+/(\S+\(\d+\.\d+\))', r'\1', rest2)
+                        tbl3.add_row(seg_name, f"[dim]{escape(rest2.strip())}  →丢弃[/dim]")
+                    else:
+                        # hit: "zh→en(score)" → "en(score)"
+                        rest2 = _re3.sub(r'[^→\s]+→(\S+)', r'\1', rest)
+                        tbl3.add_row(seg_name, escape(rest2.strip()))
+                elif phase == "expand":
+                    if msg and msg != "无":
+                        tbl3.add_row("[dim]扩展[/dim]", escape(msg))
+                elif phase == "schema_match":
+                    parts = [p.strip() for p in msg.split("  ") if p.strip()]
+                    tbl3.add_row("[dim]字典[/dim]", escape("  ".join(parts)), style="dim")
+                else:
+                    label = _TRACE_LABEL.get(phase, phase)
+                    tbl3.add_row(f"[dim]{label}[/dim]", escape(msg))
+            console.print(tbl3)
         else:
             # Use table only when at least one row needs an explicit label
             needs_table = any(
@@ -218,7 +252,8 @@ except Exception:
     from src.rag.chain import RAGChain
     with Progress(SpinnerColumn(), TextColumn("{task.description}"),
                   TimeElapsedColumn(), console=console) as p:
-        emb_name = Path(EMBEDDING_MODEL).name
+        _ep = Path(EMBEDDING_MODEL)
+        emb_name = _ep.parent.name if _ep.name in ("merged", "checkpoint") else _ep.name
         t = p.add_task(f"加载 Embedding 模型 ({emb_name})")
         chain = RAGChain()
         chain.retriever.embedder.encode_single("warmup")
@@ -281,6 +316,7 @@ try:
 
         log(f"[{now.strftime('%H:%M:%S')}] >> {log_query}")
 
+        t0 = time.time()
         with thinking:
             thinking.add_task("思考中")
             if use_server:
@@ -291,12 +327,13 @@ try:
                 resp = chain.answer_smart(query)
                 answer, query_type, confidence = resp.answer, resp.query_type, resp.confidence
                 trace = resp.trace
+        elapsed = time.time() - t0
 
         console.print()
         _print_trace(trace)
         console.print(Panel(Markdown(answer), padding=(0, 1)))
         _confidence_label = {"high": "高 ✓", "medium": "中", "low": "低 ✗"}.get(confidence, confidence)
-        console.print(Rule(f"[dim]{query_type}  置信度: {_confidence_label}[/dim]", style="dim"))
+        console.print(Rule(f"[dim]{query_type}  置信度: {_confidence_label}  耗时: {elapsed:.1f}s[/dim]", style="dim"))
 
         trace_log = "\n".join(f"  [{p}] {m}" for p, m in trace) if trace else ""
         log(answer + f"\n[模式: {query_type} | 置信度: {confidence}]"

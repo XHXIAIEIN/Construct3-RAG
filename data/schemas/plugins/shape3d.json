@@ -524,8 +524,8 @@
   "expressions": [
     {
       "id": "z-height",
-      "name_zh": "形状高度",
-      "name_en": "ZHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "形状在 Z 轴上的高度。视角从 100 的高度向下看。",
       "description_en": "The current Z height of the shape.",
       "expressionName": "ZHeight",
@@ -537,8 +537,8 @@
     },
     {
       "id": "z-tiling-factor",
-      "name_zh": "平铺系数",
-      "name_en": "ZTilingFactor",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "应用于Z轴的纹理平铺系数。数值越大，图像重复越密集。",
       "description_en": "The current Z tiling factor for image repetition on the Z axis.",
       "expressionName": "ZTilingFactor",
@@ -549,8 +549,8 @@
     },
     {
       "id": "face-image-point-x",
-      "name_zh": "朝面图像点X",
-      "name_en": "FaceImagePointX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在3D形状朝面的一个图像点的X坐标。",
       "description_en": "The X position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointX",
@@ -579,8 +579,8 @@
     },
     {
       "id": "face-image-point-y",
-      "name_zh": "朝面图像点Y",
-      "name_en": "FaceImagePointY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在3D形状朝面的一个图像点的Y坐标。",
       "description_en": "The Y position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointY",
@@ -609,8 +609,8 @@
     },
     {
       "id": "face-image-point-z",
-      "name_zh": "朝面图像点Z",
-      "name_en": "FaceImagePointZ",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在3D形状朝面的一个图像点的Z轴位置。",
       "description_en": "The Z position of an image point on one of the shape's faces.",
       "expressionName": "FaceImagePointZ",
@@ -639,8 +639,8 @@
     },
     {
       "id": "face-image-point-count",
-      "name_zh": "朝面图像点数量",
-      "name_en": "FaceImagePointCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在3D形状朝面的图像点数量。",
       "description_en": "The number of image points on one of the shape's faces.",
       "expressionName": "FaceImagePointCount",

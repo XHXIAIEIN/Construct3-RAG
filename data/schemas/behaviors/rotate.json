@@ -99,8 +99,8 @@
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "移动速度",
-      "name_en": "Speed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前旋转速度，以度数/每秒为单位。",
       "description_en": "The current rotation speed in degrees per second.",
       "expressionName": "Speed",
@@ -108,8 +108,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "加速度",
-      "name_en": "Acceleration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的旋转加速度，以度数/秒为单位。",
       "description_en": "The current rotation acceleration in degrees per second per second.",
       "expressionName": "Acceleration",

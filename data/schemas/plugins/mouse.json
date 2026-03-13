@@ -562,8 +562,8 @@
   "expressions": [
     {
       "id": "x",
-      "name_zh": "X",
-      "name_en": "X",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标在场景的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
       "description_en": "Get the mouse cursor X co-ordinate in the layout.",
       "expressionName": "X",
@@ -575,8 +575,8 @@
     },
     {
       "id": "y",
-      "name_zh": "Y",
-      "name_en": "Y",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标在场景中的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
       "description_en": "Get the mouse cursor Y co-ordinate in the layout.",
       "expressionName": "Y",
@@ -588,8 +588,8 @@
     },
     {
       "id": "absolutex",
-      "name_zh": "绝对坐标X",
-      "name_en": "AbsoluteX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标在画布中的绝对坐标X。",
       "description_en": "Get the mouse cursor X co-ordinate on the canvas.",
       "expressionName": "AbsoluteX",
@@ -600,8 +600,8 @@
     },
     {
       "id": "absolutey",
-      "name_zh": "绝对坐标Y",
-      "name_en": "AbsoluteY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标在画布中的绝对坐标Y。",
       "description_en": "Get the mouse cursor Y co-ordinate on the canvas.",
       "expressionName": "AbsoluteY",
@@ -612,8 +612,8 @@
     },
     {
       "id": "movement-x",
-      "name_zh": "移动向量X",
-      "name_en": "MovementX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "开启指针锁定时，获得指针的水平运动量。",
       "description_en": "Get the horizontal movement when using pointer lock.",
       "expressionName": "MovementX",
@@ -624,8 +624,8 @@
     },
     {
       "id": "movement-y",
-      "name_zh": "移动向量Y",
-      "name_en": "MovementY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "开启指针锁定时，获得指针的垂直运动量。",
       "description_en": "Get the vertical movement when using pointer lock.",
       "expressionName": "MovementY",
@@ -636,8 +636,8 @@
     },
     {
       "id": "wheel-delta-x",
-      "name_zh": "滚轮增量X",
-      "name_en": "WheelDeltaX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标滚轮在当前触发器的X轴滚动量。",
       "description_en": "Get the X change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaX",
@@ -648,8 +648,8 @@
     },
     {
       "id": "wheel-delta-y",
-      "name_zh": "滚轮增量Y",
-      "name_en": "WheelDeltaY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标滚轮在当前触发器的Y轴滚动量。",
       "description_en": "Get the Y change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaY",
@@ -660,8 +660,8 @@
     },
     {
       "id": "wheel-delta-z",
-      "name_zh": "滚轮增量Z",
-      "name_en": "WheelDeltaZ",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取鼠标滚轮在当前触发器的Z轴滚动量。",
       "description_en": "Get the Z change in a mouse wheel trigger.",
       "expressionName": "WheelDeltaZ",

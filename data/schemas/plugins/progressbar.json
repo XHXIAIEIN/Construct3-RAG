@@ -151,8 +151,8 @@
   "expressions": [
     {
       "id": "progress",
-      "name_zh": "进度",
-      "name_en": "Progress",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前进度值。",
       "description_en": "Current progress value.",
       "expressionName": "Progress",
@@ -163,8 +163,8 @@
     },
     {
       "id": "maximum",
-      "name_zh": "最大值",
-      "name_en": "Maximum",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前最大进度值。",
       "description_en": "Current maximum progress value.",
       "expressionName": "Maximum",

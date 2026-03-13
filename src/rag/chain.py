@@ -630,9 +630,11 @@ class RAGChain:
             if seg_hits:
                 _trace(f"[{seg}]: {', '.join(seg_hits)}", "term_hit")
             elif results:
-                top = results[0]
-                top_en = top.metadata.get("en", "?")
-                _trace(f"[{seg}]: 最高分 {top.score:.2f}<阈值 ({top_en}，丢弃)", "term_hit")
+                candidates = "  ".join(
+                    f"{r.metadata.get('zh', '')}/{r.metadata.get('en', '?')}({r.score:.2f})"
+                    for r in results[:3]
+                )
+                _trace(f"[{seg}]: <阈值  {candidates}  →丢弃", "term_hit")
             else:
                 _trace(f"[{seg}]: 无结果", "term_hit")
 
@@ -716,8 +718,8 @@ class RAGChain:
                     )
                     search_query = f"{search_query} {en_boost}".strip()
                     logger.info(f"[SchemaExpand] +{[m.node_id for m in boost_matches]}")
-                if schema_matches:
-                    top3 = schema_matches[:3]
+                if high or mid:
+                    top3 = (high if high else mid)[:3]
                     summary = "  ".join(f"{m.node_id}({m.score:.2f})" for m in top3)
                     _trace(summary, "schema_match")
 
@@ -805,7 +807,7 @@ class RAGChain:
             for line in reflection.split("\n"):
                 stripped = line.strip()
                 if stripped and REFLECTION_VERDICT_KEY not in stripped and len(stripped) > 5:
-                    _trace(f"问题: {stripped[:80]}", "reflect_issue")
+                    _trace(f"问题: {stripped}", "reflect_issue")
                     break
         logger.info(f"[Reflect] Reliability: {'reliable' if is_reliable else 'unreliable'}")
 

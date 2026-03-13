@@ -625,8 +625,8 @@
   "expressions": [
     {
       "id": "itemvalue",
-      "name_zh": "词条数据",
-      "name_en": "ItemValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '词条获取完成' 条件中，返回的词条数据。",
       "description_en": "In 'On item get', the item value retrieved.",
       "expressionName": "ItemValue",
@@ -637,8 +637,8 @@
     },
     {
       "id": "key",
-      "name_zh": "词条",
-      "name_en": "Key",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，当前的词条名称。",
       "description_en": "The current key name in a storage trigger.",
       "expressionName": "Key",
@@ -649,8 +649,8 @@
     },
     {
       "id": "keycount",
-      "name_zh": "词条数量",
-      "name_en": "KeyCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '所有词条加载完成' 条件中，返回列表的词条数量。",
       "description_en": "After 'On all key names loaded', the key count.",
       "expressionName": "KeyCount",
@@ -661,8 +661,8 @@
     },
     {
       "id": "keyat",
-      "name_zh": "获取词条",
-      "name_en": "KeyAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '所有字段加载完成' 条件后，返回词条索引位置的词条名称。",
       "description_en": "After 'On all key names loaded', the key name at an index.",
       "expressionName": "KeyAt",
@@ -683,8 +683,8 @@
     },
     {
       "id": "errormessage",
-      "name_zh": "错误信息",
-      "name_en": "ErrorMessage",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '发生错误' 条件中，返回的错误消息。",
       "description_en": "In 'On error', an error message if any available.",
       "expressionName": "ErrorMessage",
@@ -695,8 +695,8 @@
     },
     {
       "id": "memory-storage-as-json",
-      "name_zh": "临时内存数据",
-      "name_en": "MemoryStorageAsJSON",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "勾选 '仅储存在内存' 属性后，本地储存数据将储存在这个表达式中。",
       "description_en": "When using in-memory storage, a JSON string representing all stored data.",
       "expressionName": "MemoryStorageAsJSON",

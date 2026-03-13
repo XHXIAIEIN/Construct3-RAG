@@ -128,8 +128,8 @@
   "expressions": [
     {
       "id": "fadeintime",
-      "name_zh": "淡入时间",
-      "name_en": "FadeInTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "淡入持续时间，以秒为单位。如果为 0，则跳过淡入。",
       "description_en": "The fade-in time in seconds.",
       "expressionName": "FadeInTime",
@@ -137,8 +137,8 @@
     },
     {
       "id": "waittime",
-      "name_zh": "等待时间",
-      "name_en": "WaitTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "等待持续时间，以秒为单位。如果为 0，则跳过等待。",
       "description_en": "The wait time in seconds.",
       "expressionName": "WaitTime",
@@ -146,8 +146,8 @@
     },
     {
       "id": "fadeouttime",
-      "name_zh": "淡出时间",
-      "name_en": "FadeOutTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "淡出持续时间，以秒为单位。如果为 0，则跳过淡出。",
       "description_en": "The fade-out time in seconds.",
       "expressionName": "FadeOutTime",

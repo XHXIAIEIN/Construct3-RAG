@@ -164,8 +164,8 @@
   "expressions": [
     {
       "id": "lightx",
-      "name_zh": "光源X",
-      "name_en": "LightX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "光源的X位置。",
       "description_en": "The X position of the light source.",
       "expressionName": "LightX",
@@ -176,8 +176,8 @@
     },
     {
       "id": "lighty",
-      "name_zh": "光源Y",
-      "name_en": "LightY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "光源的Y位置。",
       "description_en": "The Y position of the light source.",
       "expressionName": "LightY",
@@ -188,8 +188,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "投影标签",
-      "name_en": "Tag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "光源的投影标签。",
       "description_en": "The tag of the light.",
       "expressionName": "Tag",

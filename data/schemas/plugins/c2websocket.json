@@ -245,8 +245,8 @@
   "expressions": [
     {
       "id": "errormsg",
-      "name_zh": "错误信息",
-      "name_en": "ErrorMsg",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发事件 '连接出错' 中的错误消息。",
       "description_en": "The error message in 'On error'.",
       "expressionName": "ErrorMsg",
@@ -257,8 +257,8 @@
     },
     {
       "id": "closecode",
-      "name_zh": "错误代码",
-      "name_en": "CloseCode",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "触发事件 '已关闭' 的关闭代码。",
       "description_en": "The close code in 'On closed'.",
       "expressionName": "CloseCode",
@@ -269,8 +269,8 @@
     },
     {
       "id": "closereason",
-      "name_zh": "错误理由",
-      "name_en": "CloseReason",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "触发事件 '连接被关闭' 的关闭原因。",
       "description_en": "The reason for closing in 'On closed'.",
       "expressionName": "CloseReason",
@@ -281,8 +281,8 @@
     },
     {
       "id": "messagetext",
-      "name_zh": "信息文本",
-      "name_en": "MessageText",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '收到文字消息' 条件中，收到的文本内容。",
       "description_en": "The text content of the message in 'On message'.",
       "expressionName": "MessageText",

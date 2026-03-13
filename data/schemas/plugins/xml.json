@@ -74,8 +74,8 @@
   "expressions": [
     {
       "id": "numbervalue",
-      "name_zh": "数字值",
-      "name_en": "NumberValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从XPath表达式中检索单个数值",
       "description_en": "Retrieve a single number value from an XPath expression.",
       "expressionName": "NumberValue",
@@ -96,8 +96,8 @@
     },
     {
       "id": "stringvalue",
-      "name_zh": "字符串值",
-      "name_en": "StringValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从XPath表达式中检索单个字符串",
       "description_en": "Retrieve a single string from an XPath expression.",
       "expressionName": "StringValue",
@@ -118,8 +118,8 @@
     },
     {
       "id": "nodecount",
-      "name_zh": "节点数量",
-      "name_en": "NodeCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "计算XPath表达式返回的节点数",
       "description_en": "Count the number of nodes returned by an XPath expression.",
       "expressionName": "NodeCount",

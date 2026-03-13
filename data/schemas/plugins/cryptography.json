@@ -414,8 +414,8 @@
   "expressions": [
     {
       "id": "hash",
-      "name_zh": "哈希加密",
-      "name_en": "Hash",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "产生的十六进制字符串哈希值。",
       "description_en": "Hexadecimal string of a resulting hash.",
       "expressionName": "Hash",
@@ -426,8 +426,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "标签",
-      "name_en": "Tag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在执行动作中相应的标签。",
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "Tag",
@@ -438,9 +438,9 @@
     },
     {
       "id": "random-uuid",
-      "name_zh": "随机序列码",
-      "name_en": "RandomUUID",
-      "description_zh": "使用密码学生成一个安全的 v4 UUID 随机数，格式类似 \"36b8f84d-df4e-4d49-b662-bcde71a8764f",
+      "name_zh": "",
+      "name_en": "",
+      "description_zh": "使用密码学生成一个安全的 v4 UUID 随机数，格式类似 \"\"36b8f84d-df4e-4d49-b662-bcde71a8764f\"\"",
       "description_en": "Generate a v4 UUID using a cryptographically secure random number generator.",
       "expressionName": "RandomUUID",
       "returnType": "string",

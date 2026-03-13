@@ -213,8 +213,8 @@
   "expressions": [
     {
       "id": "value",
-      "name_zh": "值",
-      "name_en": "Value",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前滑块值",
       "description_en": "Current slider value.",
       "expressionName": "Value",
@@ -225,8 +225,8 @@
     },
     {
       "id": "maximum",
-      "name_zh": "最大值",
-      "name_en": "Maximum",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前最大值。",
       "description_en": "Current maximum value.",
       "expressionName": "Maximum",
@@ -237,8 +237,8 @@
     },
     {
       "id": "minimum",
-      "name_zh": "最小值",
-      "name_en": "Minimum",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前最小值。",
       "description_en": "Current minimum value.",
       "expressionName": "Minimum",
@@ -249,8 +249,8 @@
     },
     {
       "id": "step",
-      "name_zh": "步长",
-      "name_en": "Step",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前步长。",
       "description_en": "Current step value.",
       "expressionName": "Step",

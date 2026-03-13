@@ -365,8 +365,8 @@
   "expressions": [
     {
       "id": "targetuid",
-      "name_zh": "目标UID",
-      "name_en": "TargetUID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前目标对象的唯一识别码(UID)",
       "description_en": "Get the unique ID (UID) of the current target object.",
       "expressionName": "TargetUID",
@@ -374,8 +374,8 @@
     },
     {
       "id": "range",
-      "name_zh": "发射范围",
-      "name_en": "Range",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前的射击范围，以像素为单位。",
       "description_en": "Get the current range in pixels.",
       "expressionName": "Range",
@@ -383,8 +383,8 @@
     },
     {
       "id": "rateoffire",
-      "name_zh": "发射频率",
-      "name_en": "RateOfFire",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前的射击频率，以每秒次数为单位。",
       "description_en": "Get the current rate of fire in seconds.",
       "expressionName": "RateOfFire",
@@ -392,8 +392,8 @@
     },
     {
       "id": "rotatespeed",
-      "name_zh": "旋转速度",
-      "name_en": "RotateSpeed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前的旋转速度，以每秒角度为单位。",
       "description_en": "Get the current rotate speed in degrees per second.",
       "expressionName": "RotateSpeed",
