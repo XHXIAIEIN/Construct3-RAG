@@ -71,3 +71,48 @@ def test_normalize_intents_zero_total():
     assert abs(total - 1.0) < 1e-9
     # Equal weights when all are zero
     assert abs(normalized[0].weight - 0.5) < 1e-9
+
+
+from unittest.mock import MagicMock
+
+
+class TestRawLLMBackend:
+    def _make_llm(self, response: str) -> MagicMock:
+        llm = MagicMock()
+        llm.generate.return_value = response
+        return llm
+
+    def test_parses_valid_json(self):
+        from src.rag.semantic_chain import RawLLMBackend
+        llm = self._make_llm(
+            '```json\n{"query_type":"howto","c3_objects":["Sprite"],'
+            '"action_verbs":["跟随"],"intents":[{"label":"follow",'
+            '"keywords":["set position"],"weight":1.0}],'
+            '"solution_rewrite":"Sprite set position","confidence":0.9}\n```'
+        )
+        backend = RawLLMBackend(llm, "test-prompt {query}")
+        dq = backend.decompose("test query")
+        assert dq.query_type == "howto"
+        assert "Sprite" in dq.c3_objects
+        assert dq.confidence == 0.9
+
+    def test_returns_fallback_on_invalid_json(self):
+        from src.rag.semantic_chain import RawLLMBackend
+        llm = self._make_llm("sorry I cannot help")
+        backend = RawLLMBackend(llm, "{query}")
+        dq = backend.decompose("test")
+        assert dq.query_type == "unknown"
+        assert dq.confidence == 0.0
+
+    def test_normalizes_intent_weights(self):
+        from src.rag.semantic_chain import RawLLMBackend
+        llm = self._make_llm(
+            '{"query_type":"howto","c3_objects":[],"action_verbs":[],'
+            '"intents":[{"label":"a","keywords":[],"weight":0.9},'
+            '{"label":"b","keywords":[],"weight":0.7}],'
+            '"solution_rewrite":"","confidence":0.8}'
+        )
+        backend = RawLLMBackend(llm, "{query}")
+        dq = backend.decompose("q")
+        total = sum(i.weight for i in dq.intents)
+        assert abs(total - 1.0) < 1e-9
