@@ -222,7 +222,21 @@ __pycache__/
 .pytest_cache/
 ```
 
-- [ ] **Step 5: Create `tests/conftest.py`**
+- [ ] **Step 5: Create `pytest.ini`**
+
+Without this, `import src.*` fails when running pytest from repo root.
+
+```ini
+[pytest]
+testpaths = tests
+```
+
+Also create `src/__init__.py` (should already exist from Step 2, but confirm):
+```bash
+touch src/__init__.py src/collect/__init__.py src/embedding/__init__.py
+```
+
+- [ ] **Step 6: Create `tests/conftest.py`**
 
 ```python
 import json
@@ -306,7 +320,7 @@ def sample_chunk():
     }
 ```
 
-- [ ] **Step 6: Initial commit**
+- [ ] **Step 7: Initial commit**
 
 ```bash
 cd D:/Users/Administrator/Documents/GitHub/Construct3-LoRA
@@ -1089,7 +1103,7 @@ def process_chunks(
                     "positive": chunk["text"],
                     "chunk_id": chunk_id,
                     "source": chunk.get("source", ""),
-                    "ace_type": "knowledge_transfer",  # used for curriculum stage filtering + upsampling
+                    "ace_type": "manual_chunk",  # manual chunk queries — not KT pairs
                 }
                 f.write(json.dumps(pair, ensure_ascii=False) + "\n")
                 total += 1
@@ -1187,6 +1201,98 @@ if __name__ == "__main__":
 ```bash
 git add src/collect/synthetic_gen.py tests/test_synthetic_gen.py scripts/generate_synthetic.py
 git commit -m "feat: add synthetic query generator with resume support"
+```
+
+- [ ] **Step 7: Create `scripts/generate_kt_pairs.py` (Knowledge Transfer pairs)**
+
+The spec requires ~500 Unity/Godot→C3 analogy pairs with `ace_type="knowledge_transfer"`. These are
+*separate* from the manual chunk queries above. Create this script:
+
+```python
+"""CLI: generate Knowledge Transfer pairs (game-dev analogies → C3 concepts).
+
+Generates ~500 pairs mapping Unity/Godot/GameMaker vocabulary to Construct 3
+equivalents. Output: data/pairs/kt_pairs.jsonl
+
+Usage:
+    python scripts/generate_kt_pairs.py [--count N] [--output PATH]
+"""
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+import yaml
+
+
+_PROMPT = """\
+You are building training data for a Construct 3 embedding model.
+
+Generate {count} training pairs mapping general game development concepts to Construct 3
+equivalents. Each pair should be a JSON object with "query" and "positive" fields.
+
+Rules:
+- query: A natural Chinese question using Unity/Godot/GameMaker/JS terminology
+- positive: A Chinese explanation of the equivalent Construct 3 concept
+- Cover: Unity MonoBehaviour → C3 event sheets, Update() → Every tick,
+  physics callbacks → collision conditions, Godot signals → C3 events, etc.
+- Vary phrasing. No duplicates.
+
+Output as a JSON array only.
+"""
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--count", type=int, default=500)
+    parser.add_argument("--output", default=None)
+    args = parser.parse_args()
+
+    config = yaml.safe_load(Path("config.yaml").read_text())
+    pairs_dir = Path(config["paths"]["pairs_dir"])
+    output_path = Path(args.output) if args.output else pairs_dir / "kt_pairs.jsonl"
+
+    api_key = os.environ.get(config["api"]["claude_api_key_env"])
+    if not api_key:
+        print(f"ERROR: {config['api']['claude_api_key_env']} not set", file=sys.stderr)
+        sys.exit(1)
+
+    import anthropic
+    client = anthropic.Anthropic(api_key=api_key)
+
+    # Generate in batches of 50 to stay within token limits
+    batch_size = 50
+    all_pairs = []
+    for i in range(0, args.count, batch_size):
+        n = min(batch_size, args.count - i)
+        resp = client.messages.create(
+            model=config["api"]["claude_model"],
+            max_tokens=4096,
+            messages=[{"role": "user", "content": _PROMPT.format(count=n)}],
+        )
+        try:
+            batch = json.loads(resp.content[0].text)
+            all_pairs.extend(batch)
+        except (json.JSONDecodeError, IndexError) as e:
+            print(f"Parse error in batch {i//batch_size}: {e}", file=sys.stderr)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
+        for pair in all_pairs:
+            pair["ace_type"] = "knowledge_transfer"
+            f.write(json.dumps(pair, ensure_ascii=False) + "\n")
+
+    print(f"Wrote {len(all_pairs)} KT pairs to {output_path}")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+```bash
+git add scripts/generate_kt_pairs.py
+git commit -m "feat: add knowledge transfer pair generator (game-dev analogies → C3)"
 ```
 
 ---
@@ -1525,9 +1631,16 @@ def train_stage(
     learning_rate: float,
     warmup_ratio: float,
     bf16: bool,
-    resume_from: Path | None = None,
 ) -> None:
-    """Run one curriculum stage."""
+    """Run one curriculum stage.
+
+    Model weights carry forward in-memory across stages — caller must not pass
+    resume_from_checkpoint between stages (that would restore a different run's
+    optimizer state and epoch counter).
+
+    For crash recovery within a stage: use SentenceTransformerTrainer's
+    resume_from_checkpoint pointing to the crashed stage's checkpoint subdir.
+    """
     from sentence_transformers.losses import MultipleNegativesRankingLoss
     from sentence_transformers.trainer import SentenceTransformerTrainer
     from sentence_transformers.training_args import SentenceTransformerTrainingArguments
@@ -1553,12 +1666,7 @@ def train_stage(
         train_dataset=train_dataset,
         loss=loss,
     )
-
-    if resume_from and resume_from.exists():
-        logger.info("Resuming from checkpoint: %s", resume_from)
-        trainer.train(resume_from_checkpoint=str(resume_from))
-    else:
-        trainer.train()
+    trainer.train()
 
 
 def export_merged_model(model, output_dir: Path) -> None:
@@ -1630,23 +1738,27 @@ def main():
     # Stage-specific filtering
     # Knowledge transfer pairs (ace_type="knowledge_transfer") are included in ALL stages
     # so they appear 3× total across the curriculum (spec requirement).
+    kt_pairs = [p for p in all_pairs if p.get("ace_type") == "knowledge_transfer"]
+    print(f"Knowledge transfer pairs: {len(kt_pairs)} (will appear in all 3 stages = 3× effective)")
+
     def stage1_pairs():
-        # Easy negatives: non-triggered ACE + manual chunks + KT pairs
+        # Stage 1: easy in-batch negatives only. Base = non-triggered ACE + manual chunks + KT.
         base = [p for p in all_pairs if p.get("ace_type") not in ("triggered", "knowledge_transfer")]
         return base + kt_pairs
 
     def stage2_pairs():
-        # Hard negatives: triggered ACE pairs + KT pairs
-        base = [p for p in all_pairs if p.get("ace_type") == "triggered"]
+        # Stage 2: hard negatives. Use ALL lookup-chain pairs that have populated negatives fields.
+        # (These are the ACE pairs from lookup_chain_miner — both triggered and non_triggered.)
+        # include_negatives=True in build_dataset activates the explicit negatives column.
+        base = [p for p in all_pairs if p.get("negatives")]
         return base + kt_pairs
 
     def stage3_pairs():
-        # Full mix: all pairs (KT at 1× here; cumulative 3× across all stages)
+        # Stage 3: full mix (KT at 1× here; cumulative 3× across all stages)
         return all_pairs
 
-    # Knowledge transfer pairs: appear in every stage (3 stages × 1×  = 3× total, per spec)
-    kt_pairs = [p for p in all_pairs if p.get("ace_type") == "knowledge_transfer"]
-    print(f"Knowledge transfer pairs: {len(kt_pairs)} (will appear in all 3 stages = 3× effective)")
+    # Stage 2 uses include_negatives=True; stages 1 and 3 use in-batch negatives only
+    stage_include_negatives = {"1": False, "2": True, "3": False}
 
     stage_map = {"1": (stage1_pairs, cc["stage1_epochs"]),
                  "2": (stage2_pairs, cc["stage2_epochs"]),
@@ -1654,7 +1766,10 @@ def main():
 
     stages = ["1", "2", "3"] if args.stage == "all" else [args.stage]
 
-    # Build model once
+    # Build model once — LoRA weights stay in-memory across all stages.
+    # NOTE: do NOT use resume_from_checkpoint between stages. That parameter restores
+    # optimizer state + epoch counters from a previous run, causing wrong behavior when
+    # chaining curriculum stages. Model weights carry forward automatically via Python object.
     model = build_lora_model(
         base_model=config["model"]["base_model"],
         lora_config_dict=config["lora"],
@@ -1667,13 +1782,15 @@ def main():
         print("Dry run: model built successfully. Exiting.")
         return
 
-    checkpoint_path = None
     for stage_num in stages:
         pairs_fn, num_epochs = stage_map[stage_num]
         pairs = pairs_fn()
         print(f"\n=== Stage {stage_num}: {len(pairs)} pairs, {num_epochs} epochs ===")
 
-        train_ds = build_dataset(pairs, instruction, include_negatives=True)
+        train_ds = build_dataset(
+            pairs, instruction,
+            include_negatives=stage_include_negatives[stage_num],
+        )
 
         stage_out = output_dir / f"stage{stage_num}"
         train_stage(
@@ -1685,9 +1802,12 @@ def main():
             learning_rate=tc["learning_rate"],
             warmup_ratio=tc["warmup_ratio"],
             bf16=tc["bf16"],
-            resume_from=checkpoint_path,
         )
-        checkpoint_path = stage_out
+        # Save LoRA adapter after each stage for crash recovery.
+        # To resume from a crash at Stage N: reload base model + PeftModel.from_pretrained(stage_N-1_adapter)
+        adapter_dir = stage_out / "lora_adapter"
+        model[0].auto_model.save_pretrained(str(adapter_dir))
+        print(f"Stage {stage_num} complete. LoRA adapter saved to {adapter_dir}")
 
     # Export merged model
     merged_dir = output_dir / "merged"
@@ -1730,6 +1850,18 @@ git commit -m "feat: add LoRA trainer with curriculum stages and merge export"
 - Create: `scripts/evaluate_embedding.py`
 
 Computes Recall@K and MRR@K. Compares fine-tuned model vs baseline (unmodified `Qwen3-Embedding-4B`). Uses the eval split from `build_dataset`.
+
+> ⚠️ **Eval set limitation:** The auto-split eval set is derived from the same Claude generation
+> process as the training set — this measures whether the model memorised Claude's style, not true
+> retrieval quality. Before running a real evaluation, create a manually curated eval set:
+>
+> 1. Collect 30-50 real user questions from the Scirra forum (https://www.construct.net/en/forum)
+>    that have clear answers in the manual.
+> 2. Save to `data/eval_manual.jsonl` format: `{"query": str, "positive": str}` (document chunk text).
+> 3. Pass to `evaluate_model` in addition to the auto-split: `--eval-set data/eval_manual.jsonl`
+>
+> The manual set is the authoritative signal for whether fine-tuning improved real-world retrieval.
+> The auto-split provides a quick sanity check only.
 
 - [ ] **Step 1: Write failing tests**
 
