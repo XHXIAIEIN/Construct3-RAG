@@ -28,7 +28,7 @@ from rich.rule import Rule
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
-from src.config import LLM_MODEL, RAG_SERVER_PORT
+from src.config import LLM_MODEL, EMBEDDING_MODEL, RAG_SERVER_PORT
 
 SERVER_URL = f"http://localhost:{RAG_SERVER_PORT}"
 SESSION_ID = str(uuid.uuid4())
@@ -218,10 +218,11 @@ except Exception:
     from src.rag.chain import RAGChain
     with Progress(SpinnerColumn(), TextColumn("{task.description}"),
                   TimeElapsedColumn(), console=console) as p:
-        t = p.add_task("加载 Embedding 模型 (bge-m3)")
+        emb_name = Path(EMBEDDING_MODEL).name
+        t = p.add_task(f"加载 Embedding 模型 ({emb_name})")
         chain = RAGChain()
         chain.retriever.embedder.encode_single("warmup")
-        p.update(t, description="Embedding 模型 (bge-m3)  ✓", completed=100, total=100)
+        p.update(t, description=f"Embedding 模型 ({emb_name})  ✓", completed=100, total=100)
 
         t = p.add_task(f"加载 LLM ({model_name})")
         chain.llm._load_hf() if chain.llm.provider == "huggingface" else chain.llm.check_health()
@@ -252,7 +253,33 @@ try:
         if query.lower() in ("q", "quit", "exit"):
             break
 
-        log(f"[{now.strftime('%H:%M:%S')}] >> {query}")
+        # /paste — multi-line input mode for event sheet JSON or "Copy as text"
+        if query.lower() == "/paste":
+            console.print("[dim]粘贴事件表内容（JSON 或 Copy as text），输入空行结束:[/dim]")
+            lines = []
+            try:
+                while True:
+                    line = input()
+                    if line == "" and lines and lines[-1] == "":
+                        lines.pop()  # remove trailing empty line
+                        break
+                    lines.append(line)
+            except (EOFError, KeyboardInterrupt):
+                pass
+            if not lines:
+                continue
+            pasted = "\n".join(lines)
+            console.print("[dim]你的问题（直接回车跳过）:[/dim]")
+            try:
+                follow_up = input().strip()
+            except (EOFError, KeyboardInterrupt):
+                follow_up = ""
+            query = pasted + ("\n---\n" + follow_up if follow_up else "")
+            log_query = f"/paste ({len(lines)} 行)" + (f" + {follow_up}" if follow_up else "")
+        else:
+            log_query = query
+
+        log(f"[{now.strftime('%H:%M:%S')}] >> {log_query}")
 
         with thinking:
             thinking.add_task("思考中")
@@ -268,7 +295,8 @@ try:
         console.print()
         _print_trace(trace)
         console.print(Panel(Markdown(answer), padding=(0, 1)))
-        console.print(f"[dim] 模式: {query_type}  |  置信度: {confidence}[/dim]")
+        _confidence_label = {"high": "高 ✓", "medium": "中", "low": "低 ✗"}.get(confidence, confidence)
+        console.print(Rule(f"[dim]{query_type}  置信度: {_confidence_label}[/dim]", style="dim"))
 
         trace_log = "\n".join(f"  [{p}] {m}" for p, m in trace) if trace else ""
         log(answer + f"\n[模式: {query_type} | 置信度: {confidence}]"

@@ -1570,9 +1570,7 @@ class RAGChain:
         confidence = "high" if is_reliable else "medium"
         _trace(confidence, "confidence")
 
-        # Add low confidence warning if needed
-        if not is_reliable:
-            answer = answer + "\n\n" + LOW_CONFIDENCE_WARNING
+        # Confidence is surfaced via RAGResponse.confidence; UI handles display.
 
         return RAGResponse(
             answer=answer,
