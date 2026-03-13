@@ -107,7 +107,7 @@ def _parse_dq_from_json(raw: str) -> DecomposedQuery | None:
             confidence=float(data.get("confidence", 0.5)),
         )
         return ensure_intents(dq)
-    except Exception as e:
+    except (TypeError, KeyError, AttributeError, ValueError) as e:
         logger.debug("DecomposedQuery parse error: %s", e)
         return None
 
@@ -128,4 +128,4 @@ class RawLLMBackend(StructuredOutputBackend):
                 return result
         except Exception as e:
             logger.debug("RawLLMBackend error: %s", e)
-        return copy.copy(_FALLBACK_DQ)
+        return copy.deepcopy(_FALLBACK_DQ)
