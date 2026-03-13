@@ -55,7 +55,7 @@ paths:
   output_dir: "./output/qwen3-embedding-4b-c3/"
 model:
   base_model: "Qwen/Qwen3-Embedding-4B"
-  query_instruction: "Instruct: Retrieve relevant Construct 3 documentation for the query.\nQuery: "
+  query_instruction: "Instruct: Retrieve relevant Construct 3 documentation for the following query\nQuery: "  # must match _QWEN3_QUERY_INSTRUCTION in src/ingest/indexer.py exactly
 api:
   claude_api_key_env: "ANTHROPIC_API_KEY"
 training:
@@ -77,7 +77,7 @@ Traverses the existing RAG lookup chain systematically:
 Chinese term (zh_r475.csv)
   → English translation
     → ACE Schema (ACE name, type, description, plugin)
-      → Construct3-Manual (full H2 section text)
+      → Construct3-Manual (full H2 section text, ~72% coverage via fuzzy filename match)
 ```
 
 **Output format** (`pairs/lookup_chain.jsonl`):
@@ -92,9 +92,11 @@ Chinese term (zh_r475.csv)
 
 The `positive` field must be the full Manual H2 section text — the same format indexed in Qdrant — not the short ACE schema description. If no Manual section is found for an ACE, fall back to: ACE description + parameter list from the schema JSON.
 
+**Manual file resolution:** Schema `path` field (e.g. `"general/anchor"`) maps to Manual filename (e.g. `anchor.md`) via: strip directory prefix → normalize (lowercase, remove hyphens/underscores) → fuzzy match against all `.md` filenames in the Manual repo. Known edge cases: `eightdir` → `8-direction.md` require a small override table. Expected coverage ~72%; remaining ~28% use the schema fallback.
+
 For each ACE, generate 3-5 Chinese paraphrase queries using Claude API (varying vocabulary and phrasing) to expand coverage. This is necessary to reach useful training volume.
 
-**Hard negative strategy:** Within the same plugin, ACEs of the same type (e.g. other triggered conditions) serve as hard negatives. This uses C3's own taxonomy — looping / triggered / normal conditions — as a natural difficulty gradient, without requiring manual annotation.
+**Hard negative strategy:** Within the same plugin, ACEs of the same type serve as hard negatives. The ACE schema contains an `isTrigger` boolean field, enabling a two-tier taxonomy: triggered conditions vs non-triggered conditions. Note: the three-way looping/triggered/normal distinction described in the C3 manual is not directly available as a schema field — looping conditions (e.g. `For each`, `Repeat`) must be identified by name/description heuristic. For Phase 1, the two-tier split (trigger vs non-trigger) is sufficient.
 
 **Scale:** ~2,400 unique ACE names × 3-5 query variants → **~8k-12k pairs** after deduplication (not 24k × direct traversal, as many CSV entries map to the same ACE).
 
@@ -141,6 +143,8 @@ Training proceeds easy → hard to avoid early overfitting. Knowledge transfer p
 1. **Epochs 1-2:** Translation-derived pairs + manual chunks (easy in-batch negatives, establish baseline alignment)
 2. **Epochs 3-4:** ACE Schema type-stratified pairs (medium hard negatives — same plugin, same ACE type)
 3. **Epoch 5:** Full mix including explicit hard negatives from lookup chain (same plugin, different ACE type boundary)
+
+**Implementation note:** `SentenceTransformerTrainer` (ST 5.x) does not natively support mid-training dataset swaps. For Phase 1, implement curriculum as three sequential training runs, each loading from the previous checkpoint. This is simpler and more debuggable than using HuggingFace `Trainer` callbacks.
 
 ---
 
