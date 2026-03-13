@@ -1041,8 +1041,8 @@
   "expressions": [
     {
       "id": "time",
-      "name_zh": "时间",
-      "name_en": "Time",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "时间轴当前的播放时间，以秒为单位。",
       "description_en": "The current playback time of a timeline in seconds.",
       "expressionName": "Time",
@@ -1063,8 +1063,8 @@
     },
     {
       "id": "total-time",
-      "name_zh": "总长时间",
-      "name_en": "TotalTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "时间线已播放总长度",
       "description_en": "The total playing time of a timeline in seconds.",
       "expressionName": "TotalTime",
@@ -1085,8 +1085,8 @@
     },
     {
       "id": "progress",
-      "name_zh": "进度",
-      "name_en": "Progress",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "时间轴当前的播放进度，在 0-1 范围内。",
       "description_en": "The current playback progress of a timeline in the range 0-1.",
       "expressionName": "Progress",
@@ -1107,8 +1107,8 @@
     },
     {
       "id": "ease",
-      "name_zh": "曲线",
-      "name_en": "Ease",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取曲线的值。",
       "description_en": "Get the value of an easing function.",
       "expressionName": "Ease",
@@ -1137,8 +1137,8 @@
     },
     {
       "id": "keyframe-time",
-      "name_zh": "获取关键帧时间",
-      "name_en": "KeyframeTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定时间轴上关键帧的时间。",
       "description_en": "Get the time of a keyframe in the specified timeline.",
       "expressionName": "KeyframeTime",
@@ -1167,8 +1167,8 @@
     },
     {
       "id": "keyframe-tags",
-      "name_zh": "关键帧标签",
-      "name_en": "KeyframeTags",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，相关的关键帧标签。",
       "description_en": "In a trigger, the tags of the relevant keyframe.",
       "expressionName": "KeyframeTags",
@@ -1179,8 +1179,8 @@
     },
     {
       "id": "timeline-name",
-      "name_zh": "时间轴名称",
-      "name_en": "TimelineName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，相关的时间轴名称。",
       "description_en": "In a trigger, the name of the relevant timeline.",
       "expressionName": "TimelineName",
@@ -1191,8 +1191,8 @@
     },
     {
       "id": "timeline-tags",
-      "name_zh": "时间轴标签",
-      "name_en": "TimelineTags",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，与相关时间轴的标签",
       "description_en": "In a trigger, the tags of the relevant timeline.",
       "expressionName": "TimelineTags",
@@ -1203,8 +1203,8 @@
     },
     {
       "id": "value",
-      "name_zh": "数值",
-      "name_en": "Value",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "作用于指定时间轴内的变量的数值。",
       "description_en": "The value of a value track in the specified timeline",
       "expressionName": "Value",

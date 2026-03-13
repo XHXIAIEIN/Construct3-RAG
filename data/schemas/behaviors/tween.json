@@ -1054,7 +1054,7 @@
           "type": "number",
           "name_zh": "结束值",
           "name_en": "End value",
-          "desc_zh": "要设置的结束值。若目标为颜色，请用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0)  或 HexColor(\"#FF0\") 等。",
+          "desc_zh": "要设置的结束值。若目标为颜色，请用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0)  或 HexColor(\"\"#FF0\"\") 等。",
           "desc_en": "The end value to set. Specify colors with the rgbEx() expression.",
           "initialValue": "0"
         }
@@ -1740,8 +1740,8 @@
   "expressions": [
     {
       "id": "time",
-      "name_zh": "时间",
-      "name_en": "Time",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "补间的当前时间",
       "description_en": "The current time of the tween.",
       "expressionName": "Time",
@@ -1760,8 +1760,8 @@
     },
     {
       "id": "value",
-      "name_zh": "数值",
-      "name_en": "Value",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '补间正在播放' 条件中，补间的当前值。",
       "description_en": "The current value of a 'Value' tween",
       "expressionName": "Value",
@@ -1780,8 +1780,8 @@
     },
     {
       "id": "progress",
-      "name_zh": "进度",
-      "name_en": "Progress",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "补间的进度在0-1范围内",
       "description_en": "The progress of the tween in the range 0-1.",
       "expressionName": "Progress",
@@ -1800,8 +1800,8 @@
     },
     {
       "id": "playback-rate",
-      "name_zh": "播放速度",
-      "name_en": "PlaybackRate",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "补间动画的播放速度。1 为正常速度，0.5 为慢动作，2为双倍加速。",
       "description_en": "The playback rate of the tween.",
       "expressionName": "PlaybackRate",
@@ -1820,8 +1820,8 @@
     },
     {
       "id": "tags",
-      "name_zh": "标签",
-      "name_en": "Tags",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "用于触发补间完成、到达循环、反复时使用的补间标签。",
       "description_en": "The tags of a tween in 'On any tween finished', 'On any tween looped' and 'On any tween ping pong' triggers.",
       "expressionName": "Tags",

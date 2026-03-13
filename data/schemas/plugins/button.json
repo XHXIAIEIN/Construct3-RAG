@@ -70,7 +70,7 @@
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
           "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"\"ABC\"\" matches \"\"abc\"\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -192,8 +192,8 @@
   "expressions": [
     {
       "id": "text",
-      "name_zh": "文本",
-      "name_en": "Text",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取按钮文字",
       "description_en": "Get the button text.",
       "expressionName": "Text",

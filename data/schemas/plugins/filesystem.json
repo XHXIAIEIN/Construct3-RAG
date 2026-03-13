@@ -296,16 +296,16 @@
           "type": "string",
           "name_zh": "媒体类型",
           "name_en": "MIME type",
-          "desc_zh": "指定文件的媒体类型(MIME)。例如 \"image/png\", \"image/*\" 等。",
-          "desc_en": "A MIME type for this category of files, such as \"image/png\", \"image/*\", or \"application/octet-stream\"."
+          "desc_zh": "指定文件的媒体类型(MIME)。例如 \"\"image/png\"\", \"\"image/*\"\" 等。",
+          "desc_en": "A MIME type for this category of files, such as \"\"image/png\"\", \"\"image/*\"\", or \"\"application/octet-stream\"\"."
         },
         {
           "id": "file-extensions",
           "type": "string",
           "name_zh": "文件扩展名",
           "name_en": "File extensions",
-          "desc_zh": "指定文件的文件扩展名，多个类型使用分号隔开。例如: \".png;.jpg\" 等。",
-          "desc_en": "A list of file extensions allowed in this category separated by semicolons, e.g. \".png;.jpg\"."
+          "desc_zh": "指定文件的文件扩展名，多个类型使用分号隔开。例如: \"\".png;.jpg\"\" 等。",
+          "desc_en": "A list of file extensions allowed in this category separated by semicolons, e.g. \"\".png;.jpg\"\"."
         },
         {
           "id": "description",
@@ -313,7 +313,7 @@
           "name_zh": "类型描述",
           "name_en": "Description",
           "desc_zh": "显示在打开对话框右下角的文件类型的描述信息，用于提示用户。例如: 图像文件。",
-          "desc_en": "A description to show to the user for this category, e.g. \"Image files\"."
+          "desc_en": "A description to show to the user for this category, e.g. \"\"Image files\"\"."
         }
       ],
       "category_zh": "文件读写",
@@ -637,8 +637,8 @@
           "type": "string",
           "name_zh": "文件夹路径(可选)",
           "name_en": "Folder path (optional)",
-          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。",
-          "desc_en": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"folder/file.txt\"."
+          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"\"file.txt\"\" 或 \"\"folder/file.txt\"\"。",
+          "desc_en": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"\"folder/file.txt\"\"."
         },
         {
           "id": "file-tag",
@@ -707,8 +707,8 @@
           "type": "string",
           "name_zh": "文件夹路径(可选)",
           "name_en": "Folder path (optional)",
-          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。",
-          "desc_en": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"folder/file.txt\"."
+          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"\"file.txt\"\" 或 \"\"folder/file.txt\"\"。",
+          "desc_en": "When the picker was a folder or open multiple picker, the name or path to write to, e.g. \"\"folder/file.txt\"\"."
         },
         {
           "id": "file-tag",
@@ -755,8 +755,8 @@
           "type": "string",
           "name_zh": "文件夹路径(可选)",
           "name_en": "Folder path (optional)",
-          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。",
-          "desc_en": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"folder/file.txt\"."
+          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"\"file.txt\"\" 或 \"\"folder/file.txt\"\"。",
+          "desc_en": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"\"folder/file.txt\"\"."
         },
         {
           "id": "file-tag",
@@ -795,8 +795,8 @@
           "type": "string",
           "name_zh": "文件夹路径(可选)",
           "name_en": "Folder path (optional)",
-          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"file.txt\" 或 \"folder/file.txt\"。",
-          "desc_en": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"folder/file.txt\"."
+          "desc_zh": "当选取器窗口的路径指定是文件夹或允许多选文件时，窗口默认显示的文件名或路径，例如 \"\"file.txt\"\" 或 \"\"folder/file.txt\"\"。",
+          "desc_en": "When the picker was a folder or open multiple picker, the name or path to read from, e.g. \"\"folder/file.txt\"\"."
         },
         {
           "id": "file-tag",
@@ -843,8 +843,8 @@
           "type": "string",
           "name_zh": "文件夹路径",
           "name_en": "Folder path",
-          "desc_zh": "要创建的文件夹的路径。可以包括多个子文件夹，例如，\"folder/subfolder\"。",
-          "desc_en": "The path of the folder to create. This can include multiple subfolders, e.g. \"folder\\subfolder\"."
+          "desc_zh": "要创建的文件夹的路径。可以包括多个子文件夹，例如，\"\"folder/subfolder\"\"。",
+          "desc_en": "The path of the folder to create. This can include multiple subfolders, e.g. \"\"folder\\subfolder\"\"."
         },
         {
           "id": "file-tag",
@@ -1107,8 +1107,8 @@
           "type": "string",
           "name_zh": "选取器标签",
           "name_en": "Picker tag",
-          "desc_zh": "要使用的文件夹选择器的标签。留空则指定系统内置路径。(如用于 \"cmd.exe\")。",
-          "desc_en": "The tag of the folder picker to work in. For this action specifically, this can be left empty to specify a path that can be found on the system (e.g. \"cmd.exe\")."
+          "desc_zh": "要使用的文件夹选择器的标签。留空则指定系统内置路径。(如用于 \"\"cmd.exe\"\")。",
+          "desc_en": "The tag of the folder picker to work in. For this action specifically, this can be left empty to specify a path that can be found on the system (e.g. \"\"cmd.exe\"\")."
         },
         {
           "id": "file-path",
@@ -1142,8 +1142,8 @@
   "expressions": [
     {
       "id": "file-text",
-      "name_zh": "文本内容",
-      "name_en": "FileText",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "文件读取成功后，返回的文本内容。",
       "description_en": "The text content of a file after a successful read.",
       "expressionName": "FileText",
@@ -1154,8 +1154,8 @@
     },
     {
       "id": "file-tag",
-      "name_zh": "文件标签",
-      "name_en": "FileTag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在执行动作中相应的文件系统的文件标签。",
       "description_en": "Get the tag for a file system operation in a trigger.",
       "expressionName": "FileTag",
@@ -1166,8 +1166,8 @@
     },
     {
       "id": "picker-tag",
-      "name_zh": "选择器标签",
-      "name_en": "PickerTag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在事件触发器中相关的选择器标签。",
       "description_en": "The associated picker tag in a trigger.",
       "expressionName": "PickerTag",
@@ -1178,8 +1178,8 @@
     },
     {
       "id": "folder-path",
-      "name_zh": "文件夹路径",
-      "name_en": "FolderPath",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发文件或文件夹的动作中，相关的文件夹路径。",
       "description_en": "The associated path to the file/folder in a trigger for a folder operation.",
       "expressionName": "FolderPath",
@@ -1190,8 +1190,8 @@
     },
     {
       "id": "file-name-at",
-      "name_zh": "文件名称索引",
-      "name_en": "FileNameAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "执行 '获取文件列表' 动作后，根据指定的索引值，获取对应的文件名称。",
       "description_en": "The name of a file at a given index.",
       "expressionName": "FileNameAt",
@@ -1212,8 +1212,8 @@
     },
     {
       "id": "file-count",
-      "name_zh": "文件数量",
-      "name_en": "FileCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "执行 '获取文件列表' 动作后，获得的文件数量。",
       "description_en": "The number of files.",
       "expressionName": "FileCount",
@@ -1224,8 +1224,8 @@
     },
     {
       "id": "folder-name-at",
-      "name_zh": "文件夹名称索引",
-      "name_en": "FolderNameAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "执行 '获取文件列表' 动作后，根据指定的索引值，获取对应的文件夹名称。",
       "description_en": "The name of a folder at a given index.",
       "expressionName": "FolderNameAt",
@@ -1246,8 +1246,8 @@
     },
     {
       "id": "folder-count",
-      "name_zh": "文件夹数量",
-      "name_en": "FolderCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "文件夹的数量。",
       "description_en": "The number of folders.",
       "expressionName": "FolderCount",

@@ -221,8 +221,8 @@
           "type": "string",
           "name_zh": "权限",
           "name_en": "Permissions",
-          "desc_zh": "要请求的权限指令，使用逗号分割多个。如 \"public_profile",
-          "desc_en": "Requested permissions, separated by a comma. E.g. \"public_profile\"."
+          "desc_zh": "要请求的权限指令，使用逗号分割多个。如 \"\"public_profile\"\"",
+          "desc_en": "Requested permissions, separated by a comma. E.g. \"\"public_profile\"\"."
         }
       ],
       "category_zh": "Facebook",
@@ -435,8 +435,8 @@
   "expressions": [
     {
       "id": "fullname",
-      "name_zh": "完整名称",
-      "name_en": "FullName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取用户的全名，如果用户已登录。",
       "description_en": "Get the user's full name, if they are logged in.",
       "expressionName": "FullName",
@@ -447,8 +447,8 @@
     },
     {
       "id": "firstname",
-      "name_zh": "姓氏",
-      "name_en": "FirstName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取用户的名字，如果用户已登录。",
       "description_en": "Get the user's first name, if they are logged in.",
       "expressionName": "FirstName",
@@ -459,8 +459,8 @@
     },
     {
       "id": "lastname",
-      "name_zh": "姓氏",
-      "name_en": "LastName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取用户的姓氏，如果用户已登录。",
       "description_en": "Get the user's last name, if they are logged in.",
       "expressionName": "LastName",
@@ -484,8 +484,8 @@
     },
     {
       "id": "useridstr",
-      "name_zh": "用户ID",
-      "name_en": "UserIDStr",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取用户ID作为字符串，即使对于具有相同名称的用户也是如此。",
       "description_en": "Get the user's ID as a string, which is different even for users with the same name.",
       "expressionName": "UserIDStr",

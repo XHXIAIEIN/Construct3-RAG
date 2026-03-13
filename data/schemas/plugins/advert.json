@@ -1194,8 +1194,8 @@
   "expressions": [
     {
       "id": "error-message",
-      "name_zh": "错误信息",
-      "name_en": "ErrorMessage",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中的错误消息（如果可用）",
       "description_en": "In a trigger, an error message if available",
       "expressionName": "ErrorMessage",
@@ -1206,8 +1206,8 @@
     },
     {
       "id": "reward-type",
-      "name_zh": "激励广告类型",
-      "name_en": "RewardType",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中的奖励类型（如果可用）",
       "description_en": "In a trigger, the reward type if available",
       "expressionName": "RewardType",
@@ -1218,8 +1218,8 @@
     },
     {
       "id": "reward-value",
-      "name_zh": "激励广告价值",
-      "name_en": "RewardValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中调用，返回值是否可用",
       "description_en": "In a trigger, the reward value if available",
       "expressionName": "RewardValue",
@@ -1230,8 +1230,8 @@
     },
     {
       "id": "reward-interstitial-type",
-      "name_zh": "插页式激励广告类型",
-      "name_en": "RewardInterstitialType",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "广告展示完成时，返回相关的广告激励类型。",
       "description_en": "In a trigger, the reward type of an interstitial advert if available",
       "expressionName": "RewardInterstitialType",
@@ -1242,8 +1242,8 @@
     },
     {
       "id": "reward-interstitial-value",
-      "name_zh": "插页式激励广告价值",
-      "name_en": "RewardInterstitialValue",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "广告展示完成时，返回相关的广告激励价值。",
       "description_en": "In a trigger, the reward value of an interstitial advert if available",
       "expressionName": "RewardInterstitialValue",
@@ -1254,8 +1254,8 @@
     },
     {
       "id": "consent-status",
-      "name_zh": "同意状态",
-      "name_en": "ConsentStatus",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前用户同意广告的状态",
       "description_en": "The current user consent status for adverts",
       "expressionName": "ConsentStatus",
@@ -1266,8 +1266,8 @@
     },
     {
       "id": "idfa-status",
-      "name_zh": "广告标识状态",
-      "name_en": "IDFAStatus",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前用户同意开启广告标识符(IDFA)的状态。",
       "description_en": "The current user consent status for the identifier for advertisers (IDFA)",
       "expressionName": "IDFAStatus",
@@ -1297,7 +1297,7 @@
       "name_zh": "显示无广告选项",
       "name_en": "Show AD free option",
       "description_zh": "在用户授权弹窗上显示 '购买无广告' 选项",
-      "description_en": "On the user consent screen show the \"Purchase ad free\" option"
+      "description_en": "On the user consent screen show the \"\"Purchase ad free\"\" option"
     },
     {
       "id": "privacy-policy",

@@ -40,7 +40,7 @@
           "type": "string",
           "name_zh": "区域设置",
           "name_en": "Locale",
-          "desc_zh": "与当前区域比较的语言区域标识符。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
+          "desc_zh": "与当前区域比较的语言区域标识符。如 \"\"zh-CN\"\",  \"\"en-US\"\",  \"\"ja-JP\"\"。",
           "desc_en": "The locale string to compare against the locale string of the internationalization object"
         }
       ],
@@ -65,7 +65,7 @@
           "type": "string",
           "name_zh": "区域",
           "name_en": "Locale",
-          "desc_zh": "要设置的区域。如 \"zh-CN\",  \"en-US\",  \"ja-JP\"。",
+          "desc_zh": "要设置的区域。如 \"\"zh-CN\"\",  \"\"en-US\"\",  \"\"ja-JP\"\"。",
           "desc_en": "The locale to use."
         }
       ],
@@ -189,8 +189,8 @@
   "expressions": [
     {
       "id": "look-up",
-      "name_zh": "查找",
-      "name_en": "Lookup",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前路径中的本地化字符串。",
       "description_en": "Get the internationalized string at the current context.",
       "expressionName": "Lookup",
@@ -212,8 +212,8 @@
     },
     {
       "id": "look-up-plural",
-      "name_zh": "查找复数",
-      "name_en": "LookupPlural",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "根据定义的复数形式规则，在当前路径获取本地化字符串。",
       "description_en": "Get the internationalized string at the current context using the defined pluralization rules.",
       "expressionName": "LookupPlural",
@@ -243,8 +243,8 @@
     },
     {
       "id": "current-context",
-      "name_zh": "当前路径",
-      "name_en": "CurrentContext",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取本地化对象的当前路径。",
       "description_en": "Get the current context of the internationalization object.",
       "expressionName": "CurrentContext",
@@ -255,8 +255,8 @@
     },
     {
       "id": "select-plural",
-      "name_zh": "选择复数",
-      "name_en": "SelectPlural",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定数字的复数形式。",
       "description_en": "Get the plural category for the provided number.",
       "expressionName": "SelectPlural",
@@ -277,8 +277,8 @@
     },
     {
       "id": "plural-categorie-count",
-      "name_zh": "复数数量",
-      "name_en": "PluralCategoryCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前语言环境的复数形式的数量。",
       "description_en": "Get amount of plural categories for the current locale.",
       "expressionName": "PluralCategoryCount",
@@ -289,8 +289,8 @@
     },
     {
       "id": "plural-category-at",
-      "name_zh": "获取复数形式类型",
-      "name_en": "PluralCategoryAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定的复数形式类型",
       "description_en": "Get the plural category for the given index.",
       "expressionName": "PluralCategoryAt",
@@ -311,8 +311,8 @@
     },
     {
       "id": "save-to-json",
-      "name_zh": "导出到JSON",
-      "name_en": "SaveToJSON",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前语言环境的翻译字符串，返回JSON格式。",
       "description_en": "Get the translation strings for the current locale in JSON format.",
       "expressionName": "SaveToJSON",
@@ -323,8 +323,8 @@
     },
     {
       "id": "locale",
-      "name_zh": "区域",
-      "name_en": "Locale",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取本地化对象的区域设置。",
       "description_en": "Get the current locale of the internationalization object.",
       "expressionName": "Locale",
@@ -335,8 +335,8 @@
     },
     {
       "id": "default-locale",
-      "name_zh": "默认区域",
-      "name_en": "DefaultLocale",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取系统默认的区域设置。",
       "description_en": "Get the default system locale.",
       "expressionName": "DefaultLocale",
@@ -347,8 +347,8 @@
     },
     {
       "id": "format-number-as-decimal",
-      "name_zh": "格式化数字",
-      "name_en": "FormatNumberAsDecimal",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将数字格式化为本地区域设置的小数格式。",
       "description_en": "Format a number as a decimal using the current locale.",
       "expressionName": "FormatNumberAsDecimal",
@@ -369,8 +369,8 @@
     },
     {
       "id": "format-number-as-percent",
-      "name_zh": "格式化百分数",
-      "name_en": "FormatNumberAsPercent",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将数字格式化为本地区域设置的百分比。",
       "description_en": "Format a number as a percentage using the current locale.",
       "expressionName": "FormatNumberAsPercent",
@@ -391,8 +391,8 @@
     },
     {
       "id": "format-number-as-currency",
-      "name_zh": "转换货币格式",
-      "name_en": "FormatNumberAsCurrency",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将数字格式化为本地区域设置的货币。",
       "description_en": "Format a number as a currency using the current locale.",
       "expressionName": "FormatNumberAsCurrency",
@@ -429,8 +429,8 @@
     },
     {
       "id": "format-number-with-unit",
-      "name_zh": "格式化数字单位",
-      "name_en": "FormatNumberWithUnit",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将数字格式化为当前区域的货币格式。",
       "description_en": "Format a number using a specific unit and the current locale.",
       "expressionName": "FormatNumberWithUnit",
@@ -467,8 +467,8 @@
     },
     {
       "id": "region-name",
-      "name_zh": "区域名称",
-      "name_en": "RegionName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定区域的本地化名称。",
       "description_en": "Get the localized name of the provided locale's region",
       "expressionName": "RegionName",
@@ -489,8 +489,8 @@
     },
     {
       "id": "language-name",
-      "name_zh": "语言名称",
-      "name_en": "LanguageName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "根据当前的语言环境，获取语言的名称。",
       "description_en": "Get the localized name of a language according to the current locale",
       "expressionName": "LanguageName",
@@ -511,8 +511,8 @@
     },
     {
       "id": "currency-name",
-      "name_zh": "货币名称",
-      "name_en": "CurrencyName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "根据当前的语言环境，获取货币的本地化名称。",
       "description_en": "Get the localized name of a currency according to the current locale",
       "expressionName": "CurrencyName",

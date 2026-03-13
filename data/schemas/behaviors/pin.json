@@ -393,8 +393,8 @@
   "expressions": [
     {
       "id": "pinneduid",
-      "name_zh": "固定对象UID",
-      "name_en": "PinnedUID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获得当前被固定对象的UID，如果没有，则返回 -1",
       "description_en": "Get the UID of the object pinned to, or -1 if not pinned.",
       "expressionName": "PinnedUID",

@@ -46,7 +46,7 @@
           "name_zh": "区分大小写",
           "name_en": "Case sensitivity",
           "desc_zh": "是否区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
-          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"\"ABC\"\" matches \"\"abc\"\".",
           "items": [
             "ignore-case",
             "case-sensitive"
@@ -322,8 +322,8 @@
           "type": "string",
           "name_zh": "字符",
           "name_en": "Character",
-          "desc_zh": "输入一个或多个字符以更改宽度，如 \"abcd\"。",
-          "desc_en": "Enter one or more characters to change the width for (e.g. \"abcd\")."
+          "desc_zh": "输入一个或多个字符以更改宽度，如 \"\"abcd\"\"。",
+          "desc_en": "Enter one or more characters to change the width for (e.g. \"\"abcd\"\")."
         },
         {
           "id": "width",
@@ -481,7 +481,7 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "desc_zh": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。",
+          "desc_zh": "在 \"\"双引号\"\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。",
           "desc_en": "Enter the text to set the object's content to.",
           "initialValue": "\"\""
         }
@@ -505,7 +505,7 @@
           "type": "any",
           "name_zh": "文本",
           "name_en": "Text",
-          "desc_zh": "当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2",
+          "desc_zh": "当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"\"文本1\"\" & newline & \"\"文本2\"\"",
           "desc_en": "Enter the text to append to the object's content.",
           "initialValue": "\"\""
         }
@@ -585,8 +585,8 @@
   "expressions": [
     {
       "id": "characterwidth",
-      "name_zh": "字符宽度",
-      "name_en": "CharacterWidth",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取字符的宽度。",
       "description_en": "Get the width of a character.",
       "expressionName": "CharacterWidth",
@@ -607,8 +607,8 @@
     },
     {
       "id": "characterheight",
-      "name_zh": "字符高度",
-      "name_en": "CharacterHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取字符的高度。",
       "description_en": "Get the height of a character.",
       "expressionName": "CharacterHeight",
@@ -619,8 +619,8 @@
     },
     {
       "id": "characterscale",
-      "name_zh": "字符缩放倍数",
-      "name_en": "CharacterScale",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取字符的缩放比例。",
       "description_en": "Get the scale of the characters.",
       "expressionName": "CharacterScale",
@@ -631,8 +631,8 @@
     },
     {
       "id": "characterspacing",
-      "name_zh": "字符间距",
-      "name_en": "CharacterSpacing",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取字符之间的间距。",
       "description_en": "Get the spacing between characters.",
       "expressionName": "CharacterSpacing",
@@ -643,8 +643,8 @@
     },
     {
       "id": "lineheight",
-      "name_zh": "行距",
-      "name_en": "LineHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取行高",
       "description_en": "Get the line height.",
       "expressionName": "LineHeight",
@@ -655,8 +655,8 @@
     },
     {
       "id": "textwidth",
-      "name_zh": "文本宽度",
-      "name_en": "TextWidth",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取文本的实际内容宽度，以像素为单位。",
       "description_en": "Get the width extent of the text in the object in pixels.",
       "expressionName": "TextWidth",
@@ -667,8 +667,8 @@
     },
     {
       "id": "textheight",
-      "name_zh": "文本高度",
-      "name_en": "TextHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取文本的实际内容高度，以像素为单位。",
       "description_en": "Get the height extent of the text in the object in pixels.",
       "expressionName": "TextHeight",
@@ -679,8 +679,8 @@
     },
     {
       "id": "text",
-      "name_zh": "文本内容",
-      "name_en": "Text",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取对象的文本。",
       "description_en": "Get the object's text.",
       "expressionName": "Text",
@@ -691,8 +691,8 @@
     },
     {
       "id": "plaintext",
-      "name_zh": "纯文本",
-      "name_en": "PlainText",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取带有任何BBcode标记的对象的文本",
       "description_en": "Get the object's text with any BBcode tags stripped out.",
       "expressionName": "PlainText",
@@ -703,8 +703,8 @@
     },
     {
       "id": "tag-at-position",
-      "name_zh": "获取标签",
-      "name_en": "TagAtPosition",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定位置的BBcode的标签，如果没有则返回空字符串。",
       "description_en": "Get the BBcode tag style at a given position, or an empty string if none.",
       "expressionName": "TagAtPosition",
@@ -733,8 +733,8 @@
     },
     {
       "id": "tag-count",
-      "name_zh": "标签数量",
-      "name_en": "TagCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定的标签的数量。",
       "description_en": "Get the number of BBcode style tags for a specific tag.",
       "expressionName": "TagCount",
@@ -755,8 +755,8 @@
     },
     {
       "id": "tag-x",
-      "name_zh": "标签位置X",
-      "name_en": "TagX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定标签的X坐标。",
       "description_en": "Get X co-ordinate of a BBcode style tag.",
       "expressionName": "TagX",
@@ -785,8 +785,8 @@
     },
     {
       "id": "tag-y",
-      "name_zh": "标签位置Y",
-      "name_en": "TagY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定标签的Y坐标。",
       "description_en": "Get Y co-ordinate of a BBcode style tag.",
       "expressionName": "TagY",
@@ -815,8 +815,8 @@
     },
     {
       "id": "tag-width",
-      "name_zh": "标签宽度",
-      "name_en": "TagWidth",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定的标签的宽度。",
       "description_en": "Get width of a BBcode style tag.",
       "expressionName": "TagWidth",
@@ -845,8 +845,8 @@
     },
     {
       "id": "tag-height",
-      "name_zh": "标签高度",
-      "name_en": "TagHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定的标签的高度。",
       "description_en": "Get height of a BBcode style tag.",
       "expressionName": "TagHeight",

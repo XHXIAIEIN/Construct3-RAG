@@ -87,8 +87,8 @@
   "expressions": [
     {
       "id": "filecount",
-      "name_zh": "文件数量",
-      "name_en": "FileCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "所选文件的数量。",
       "description_en": "The number of chosen files.",
       "expressionName": "FileCount",
@@ -99,8 +99,8 @@
     },
     {
       "id": "filenameat",
-      "name_zh": "获取文件名称",
-      "name_en": "FileNameAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "索引中所选文件的名称。",
       "description_en": "Name of chosen file at an index.",
       "expressionName": "FileNameAt",
@@ -121,8 +121,8 @@
     },
     {
       "id": "filesizeat",
-      "name_zh": "获取文件大小",
-      "name_en": "FileSizeAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "索引处所选文件的大小。",
       "description_en": "Size of chosen file at an index.",
       "expressionName": "FileSizeAt",
@@ -143,8 +143,8 @@
     },
     {
       "id": "filetypeat",
-      "name_zh": "获取文件类型",
-      "name_en": "FileTypeAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "索引中所选文件的MIME类型。",
       "description_en": "MIME type of chosen file at an index.",
       "expressionName": "FileTypeAt",
@@ -165,8 +165,8 @@
     },
     {
       "id": "fileurlat",
-      "name_zh": "获取文件链接",
-      "name_en": "FileURLAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "用于在索引处访问所选文件数据的URL。",
       "description_en": "A URL to access the data of the chosen file at an index.",
       "expressionName": "FileURLAt",

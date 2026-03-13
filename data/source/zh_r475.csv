@@ -8671,7 +8671,7 @@ text.plugins.system.expressions.atan.description,三角函数，计算角度的�
 text.plugins.system.expressions.atan.params.number.name,数字,,,,Number
 text.plugins.system.expressions.atan.params.number.desc,三角函数，计算角度的反正切值。,,,,"Number (degrees) to calculate arctangent of."
 text.plugins.system.expressions.atan.translated-name,atan,,,,atan
-text.plugins.system.expressions.exp.description,"计算 e 的 n 次幂。",,,,"Calculate e raised to the power of a number."
+text.plugins.system.expressions.exp.description,"计算 e 的 n 次幂。若需计算任意底数的次方，请使用 ^ 运算符：A ^ B。",,,,"Calculate e raised to the power of a number."
 text.plugins.system.expressions.exp.params.number.name,数字,,,,Number
 text.plugins.system.expressions.exp.params.number.desc,"计算以 e 为底数时，此数字作为 e 的指数的结果。",,,,"Number to raise e to the power."
 text.plugins.system.expressions.exp.translated-name,exp,,,,exp

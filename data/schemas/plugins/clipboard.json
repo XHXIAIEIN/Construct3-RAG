@@ -201,8 +201,8 @@
   "expressions": [
     {
       "id": "pasted-text",
-      "name_zh": "剪贴文本",
-      "name_en": "PastedText",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "触发 '粘贴文本' 动作后，从剪贴板中读取到的文本。",
       "description_en": "In 'On paste text', the text that was read from the clipboard.",
       "expressionName": "PastedText",

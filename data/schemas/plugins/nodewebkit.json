@@ -308,8 +308,8 @@
           "type": "string",
           "name_zh": "同意",
           "name_en": "Accept",
-          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
-          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
+          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \"\".txt\"\" 或 \"\".txt,.json\"\" 或者 \"\"text/*\"\"",
+          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \"\".txt\"\" or \"\".txt,.json\"\" or \"\"text/*\"\""
         }
       ],
       "category_zh": "文件对话框",
@@ -344,8 +344,8 @@
           "type": "string",
           "name_zh": "同意",
           "name_en": "Accept",
-          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \".txt\" 或 \".txt,.json\" 或者 \"text/*",
-          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \".txt\" or \".txt,.json\" or \"text/*"
+          "desc_zh": "要过滤的文件类型，留空则显示所有文件。用逗号分隔多个类型，允许使用通配符。例如 \"\".txt\"\" 或 \"\".txt,.json\"\" 或者 \"\"text/*\"\"",
+          "desc_en": "The file types to filter by. Leave empty to show all files, or e.g. \"\".txt\"\" or \"\".txt,.json\"\" or \"\"text/*\"\""
         }
       ],
       "category_zh": "文件对话框",
@@ -591,8 +591,8 @@
           "type": "string",
           "name_zh": "路径",
           "name_en": "Path",
-          "desc_zh": "要执行文件的路径，用空格分隔附加参数。如果路径包含空格，需使用连续2个双引号进行转义，例如 \"\"\"C:\\Program Files\\file.exe\"\"",
-          "desc_en": "Enter the path of the file to execute. This can also include space-separated arguments. To execute a path with spaces in it, wrap in double-quotes (e.g. \"\"\"C:\\Program Files\\file.exe\"\"\")."
+          "desc_zh": "要执行文件的路径，用空格分隔附加参数。如果路径包含空格，需使用连续2个双引号进行转义，例如 \"\"\"\"\"\"C:\\Program Files\\file.exe\"\"\"\"\"\"",
+          "desc_en": "Enter the path of the file to execute. This can also include space-separated arguments. To execute a path with spaces in it, wrap in double-quotes (e.g. \"\"\"\"\"\"C:\\Program Files\\file.exe\"\"\"\"\"\")."
         }
       ],
       "category_zh": "文件系统",
@@ -1094,8 +1094,8 @@
     },
     {
       "id": "chosenpath",
-      "name_zh": "选择路径",
-      "name_en": "ChosenPath",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在文件对话框后返回所选路径。",
       "description_en": "Return the chosen path after a file dialog.",
       "expressionName": "ChosenPath",
@@ -1106,8 +1106,8 @@
     },
     {
       "id": "appfolder",
-      "name_zh": "应用文件夹",
-      "name_en": "AppFolder",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回应用程序的文件夹路径。 请注意，它可能没有写入权限。",
       "description_en": "Return the application's folder path. Note it may not have write permission.",
       "expressionName": "AppFolder",
@@ -1118,8 +1118,8 @@
     },
     {
       "id": "appfolderurl",
-      "name_zh": "应用文件夹链接",
-      "name_en": "AppFolderURL",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将应用程序的文件夹作为文件URL返回。 用于任何URL参数。",
       "description_en": "Return the application's folder as a file URL. Use this for any URL parameters.",
       "expressionName": "AppFolderURL",
@@ -1130,8 +1130,8 @@
     },
     {
       "id": "projectfilesfolder",
-      "name_zh": "项目文件夹",
-      "name_en": "ProjectFilesFolder",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回项目文件的文件夹根路径，即 index.html 的位置。注意，可能因权限问题而无法写入文件。",
       "description_en": "Return the folder path to project files (i.e. where index.html is). Note it may not have write permission.",
       "expressionName": "ProjectFilesFolder",
@@ -1142,8 +1142,8 @@
     },
     {
       "id": "projectfilesfolderurl",
-      "name_zh": "项目文件夹链接",
-      "name_en": "ProjectFilesFolderURL",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回项目文件的文件夹路径 URL。",
       "description_en": "Return the folder path to project files as a file URL. Use this for any URL parameters.",
       "expressionName": "ProjectFilesFolderURL",
@@ -1154,8 +1154,8 @@
     },
     {
       "id": "userfolder",
-      "name_zh": "用户文件夹",
-      "name_en": "UserFolder",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回当前用户文件夹",
       "description_en": "Return the current user's folder.",
       "expressionName": "UserFolder",
@@ -1166,8 +1166,8 @@
     },
     {
       "id": "readfile",
-      "name_zh": "读取文件",
-      "name_en": "ReadFile",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回磁盘上文件的文本内容。",
       "description_en": "Return the text content of a file on disk.",
       "expressionName": "ReadFile",
@@ -1188,8 +1188,8 @@
     },
     {
       "id": "filesize",
-      "name_zh": "文件大小",
-      "name_en": "FileSize",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回磁盘上文件的大小，以字节为单位。",
       "description_en": "Return the size of a file on disk, in bytes.",
       "expressionName": "FileSize",
@@ -1210,8 +1210,8 @@
     },
     {
       "id": "listcount",
-      "name_zh": "列表数量",
-      "name_en": "ListCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '获取文件列表完成' 条件中，返回列表的文件数量。",
       "description_en": "Return the number of files after 'List files'.",
       "expressionName": "ListCount",
@@ -1222,8 +1222,8 @@
     },
     {
       "id": "listat",
-      "name_zh": "列表索引",
-      "name_en": "ListAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '获取文件列表完成' 条件中，获取列表中索引位置的文件名。",
       "description_en": "Return the filename at an index after 'List files'.",
       "expressionName": "ListAt",
@@ -1244,8 +1244,8 @@
     },
     {
       "id": "droppedfile",
-      "name_zh": "已拖放文件",
-      "name_en": "DroppedFile",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "返回放入窗口的文件的文件名。",
       "description_en": "Return the filename of a file dropped in to the window.",
       "expressionName": "DroppedFile",
@@ -1256,8 +1256,8 @@
     },
     {
       "id": "fileerror",
-      "name_zh": "文件错误信息",
-      "name_en": "FileError",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在当文件系统错误时返回的错误信息",
       "description_en": "In 'On file system error', the related error message.",
       "expressionName": "FileError",
@@ -1268,8 +1268,8 @@
     },
     {
       "id": "file-tag",
-      "name_zh": "文件标签",
-      "name_en": "FileTag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在执行动作中相应的标签。",
       "description_en": "Tag of a corresponding action in a trigger.",
       "expressionName": "FileTag",
@@ -1280,8 +1280,8 @@
     },
     {
       "id": "windowx",
-      "name_zh": "窗口X坐标",
-      "name_en": "WindowX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "屏幕上窗口的X位置。",
       "description_en": "The X position of the window on the screen.",
       "expressionName": "WindowX",
@@ -1292,8 +1292,8 @@
     },
     {
       "id": "windowy",
-      "name_zh": "窗口Y坐标",
-      "name_en": "WindowY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "屏幕上窗口的Y位置。",
       "description_en": "The Y position of the window on the screen.",
       "expressionName": "WindowY",
@@ -1304,8 +1304,8 @@
     },
     {
       "id": "windowwidth",
-      "name_zh": "窗口宽度",
-      "name_en": "WindowWidth",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "操作系统中UI窗口的宽度。",
       "description_en": "The width of the UI window in the operating system.",
       "expressionName": "WindowWidth",
@@ -1316,8 +1316,8 @@
     },
     {
       "id": "windowheight",
-      "name_zh": "窗口高度",
-      "name_en": "WindowHeight",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "操作系统中UI窗口的高度。",
       "description_en": "The height of the UI window in the operating system.",
       "expressionName": "WindowHeight",
@@ -1328,8 +1328,8 @@
     },
     {
       "id": "windowtitle",
-      "name_zh": "窗口标题",
-      "name_en": "WindowTitle",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前窗口标题栏文本。",
       "description_en": "The current window title bar text.",
       "expressionName": "WindowTitle",
@@ -1340,8 +1340,8 @@
     },
     {
       "id": "argument-count",
-      "name_zh": "参数数量",
-      "name_en": "ArgumentCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "命令行参数的数量",
       "description_en": "The number of command-line arguments.",
       "expressionName": "ArgumentCount",
@@ -1352,8 +1352,8 @@
     },
     {
       "id": "argument-at",
-      "name_zh": "获取参数",
-      "name_en": "ArgumentAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取命令行索引位置的参数，从 0 开始计数。",
       "description_en": "The command-line argument at an index.",
       "expressionName": "ArgumentAt",

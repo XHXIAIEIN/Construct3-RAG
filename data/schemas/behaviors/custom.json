@@ -580,8 +580,8 @@
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "移动速度",
-      "name_en": "Speed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前对象的移动速度，以像素/秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -589,8 +589,8 @@
     },
     {
       "id": "movingangle",
-      "name_zh": "移动角度",
-      "name_en": "MovingAngle",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前的移动方向，以度数为单位。",
       "description_en": "The current angle of motion, in degrees.",
       "expressionName": "MovingAngle",
@@ -598,8 +598,8 @@
     },
     {
       "id": "dx",
-      "name_zh": "移动速度X",
-      "name_en": "dx",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前在水平方向移动速度，以像素/秒为单位。",
       "description_en": "The current X component of motion, in pixels per second.",
       "expressionName": "dx",
@@ -607,8 +607,8 @@
     },
     {
       "id": "dy",
-      "name_zh": "移动速度Y",
-      "name_en": "dy",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前在垂直方向的移动速度，以像素/秒为单位。",
       "description_en": "The current Y component of motion, in pixels per second.",
       "expressionName": "dy",

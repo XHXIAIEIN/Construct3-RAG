@@ -757,8 +757,8 @@
   "expressions": [
     {
       "id": "html-content",
-      "name_zh": "HTML内容",
-      "name_en": "HTMLContent",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "包含HTML元素内容的字符串。",
       "description_en": "String with HTML content of the element.",
       "expressionName": "HTMLContent",
@@ -769,8 +769,8 @@
     },
     {
       "id": "text-content",
-      "name_zh": "文本内容",
-      "name_en": "TextContent",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "包含HTML元素的纯文本内容的字符串。",
       "description_en": "String with plain text content of the element.",
       "expressionName": "TextContent",
@@ -781,8 +781,8 @@
     },
     {
       "id": "target-id",
-      "name_zh": "目标ID",
-      "name_en": "TargetID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，目标元素的ID。",
       "description_en": "In a trigger, the ID of the targeted element.",
       "expressionName": "TargetID",
@@ -793,8 +793,8 @@
     },
     {
       "id": "target-class",
-      "name_zh": "目标Class",
-      "name_en": "TargetClass",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在触发器中，目标元素的类。",
       "description_en": "In a trigger, the class of the targeted element.",
       "expressionName": "TargetClass",
@@ -805,8 +805,8 @@
     },
     {
       "id": "escape-html",
-      "name_zh": "转义HTML",
-      "name_en": "EscapeHTML",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将HTML的标签字符(如 < ) 转换为实体(如 &lt; )， 所以文本不能改变HTML。",
       "description_en": "Convert HTML tag characters like < to entities like &lt; so text cannot alter HTML.",
       "expressionName": "EscapeHTML",

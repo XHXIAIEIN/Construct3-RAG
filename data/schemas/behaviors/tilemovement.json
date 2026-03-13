@@ -413,8 +413,8 @@
   "expressions": [
     {
       "id": "grid-x",
-      "name_zh": "网格X",
-      "name_en": "GridX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前所在的网格列。",
       "description_en": "The grid column the object is currently in.",
       "expressionName": "GridX",
@@ -422,8 +422,8 @@
     },
     {
       "id": "grid-y",
-      "name_zh": "网格Y",
-      "name_en": "GridY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前所在的网格行。",
       "description_en": "The grid row the object is currently in.",
       "expressionName": "GridY",
@@ -431,8 +431,8 @@
     },
     {
       "id": "speed-x",
-      "name_zh": "速度X",
-      "name_en": "SpeedX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前水平方向的移动速度，以像素/秒为单位。",
       "description_en": "The current object horizontal speed, in pixels per second.",
       "expressionName": "SpeedX",
@@ -440,8 +440,8 @@
     },
     {
       "id": "speed-y",
-      "name_zh": "速度Y",
-      "name_en": "SpeedY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前垂直方向的移动速度，以像素/秒为单位。",
       "description_en": "The current object vertical speed, in pixels per second.",
       "expressionName": "SpeedY",
@@ -449,8 +449,8 @@
     },
     {
       "id": "target-x",
-      "name_zh": "目标X",
-      "name_en": "TargetX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前朝向的网格列的场景坐标。",
       "description_en": "The layout co-ordinates of the grid column the object is currently heading towards.",
       "expressionName": "TargetX",
@@ -458,8 +458,8 @@
     },
     {
       "id": "target-y",
-      "name_zh": "目标Y",
-      "name_en": "TargetY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前朝向的网格行的场景坐标。",
       "description_en": "The layout co-ordinates of the grid row the object is currently heading towards.",
       "expressionName": "TargetY",
@@ -467,8 +467,8 @@
     },
     {
       "id": "target-grid-x",
-      "name_zh": "网格目标X",
-      "name_en": "GridTargetX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前朝向的网格列。",
       "description_en": "The grid column the object is currently heading towards.",
       "expressionName": "GridTargetX",
@@ -476,8 +476,8 @@
     },
     {
       "id": "target-grid-y",
-      "name_zh": "网格目标Y",
-      "name_en": "GridTargetY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象当前朝向的网格行。",
       "description_en": "The grid row the object is currently heading towards.",
       "expressionName": "GridTargetY",

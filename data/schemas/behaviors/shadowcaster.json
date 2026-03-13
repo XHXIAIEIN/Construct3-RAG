@@ -128,8 +128,8 @@
   "expressions": [
     {
       "id": "height",
-      "name_zh": "投影高度",
-      "name_en": "Height",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象的投影高度，用于确定阴影投射的距离，以像素为单位。",
       "description_en": "The shadow caster object height.",
       "expressionName": "Height",
@@ -137,8 +137,8 @@
     },
     {
       "id": "tag",
-      "name_zh": "投影标签",
-      "name_en": "Tag",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "对象的阴影标签。",
       "description_en": "The tag of the object.",
       "expressionName": "Tag",

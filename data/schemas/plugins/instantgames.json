@@ -494,7 +494,7 @@
           "name_zh": "CTA",
           "name_en": "CTA",
           "desc_zh": "可选。引导按钮文字，留空则使用默认的 'play'。",
-          "desc_en": "Optional \"call to action\" (CTA) button text. Leave empty to use the default (\"Play\")."
+          "desc_en": "Optional \"\"call to action\"\" (CTA) button text. Leave empty to use the default (\"\"Play\"\")."
         },
         {
           "id": "image",
@@ -1070,8 +1070,8 @@
   "expressions": [
     {
       "id": "locale",
-      "name_zh": "地区",
-      "name_en": "Locale",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前玩家地区",
       "description_en": "Locale of the current player.",
       "expressionName": "Locale",
@@ -1082,8 +1082,8 @@
     },
     {
       "id": "platform",
-      "name_zh": "平台",
-      "name_en": "Platform",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "用来解释当前游戏平台的文本",
       "description_en": "A string describing the current platform the game is being played on.",
       "expressionName": "Platform",
@@ -1094,8 +1094,8 @@
     },
     {
       "id": "sdk-version",
-      "name_zh": "开发工具版本",
-      "name_en": "SDKVersion",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前 Instant Games SDK 版本。",
       "description_en": "The version of the Instant Games SDK in use.",
       "expressionName": "SDKVersion",
@@ -1106,8 +1106,8 @@
     },
     {
       "id": "entry-point-data",
-      "name_zh": "入口数据",
-      "name_en": "EntryPointData",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当游戏启动时显示的游戏来源，例如来自分享链接启动。",
       "description_en": "A string of data associated with this launch of the game, e.g. from a share.",
       "expressionName": "EntryPointData",
@@ -1118,8 +1118,8 @@
     },
     {
       "id": "context-id",
-      "name_zh": "环境ID",
-      "name_en": "ContextID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "游戏内容的ID",
       "description_en": "A unique identifier for the current game context.",
       "expressionName": "ContextID",
@@ -1143,8 +1143,8 @@
     },
     {
       "id": "player-name",
-      "name_zh": "玩家名称",
-      "name_en": "PlayerName",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当前玩家名",
       "description_en": "The name of the current player.",
       "expressionName": "PlayerName",
@@ -1155,8 +1155,8 @@
     },
     {
       "id": "player-photo",
-      "name_zh": "玩家头像链接",
-      "name_en": "PlayerPhotoURL",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "玩家的头像链接",
       "description_en": "A URL to the player's current profile image.",
       "expressionName": "PlayerPhotoURL",
@@ -1167,8 +1167,8 @@
     },
     {
       "id": "player-id",
-      "name_zh": "玩家ID",
-      "name_en": "PlayerID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "玩家的ID",
       "description_en": "A unique identifier for the current player.",
       "expressionName": "PlayerID",
@@ -1179,8 +1179,8 @@
     },
     {
       "id": "player-data",
-      "name_zh": "玩家数据",
-      "name_en": "PlayerData",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当加载完玩家数据后，将返回玩家数据的文本",
       "description_en": "In 'On loaded player data', the string of the loaded player data.",
       "expressionName": "PlayerData",
@@ -1191,8 +1191,8 @@
     },
     {
       "id": "connected-player-count",
-      "name_zh": "已连接玩家数量",
-      "name_en": "ConnectedPlayerCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在 '已连接玩家加载完成' 条件中，返回已连接玩家的数量。",
       "description_en": "After 'On connected players loaded', the number of connected players.",
       "expressionName": "ConnectedPlayerCount",
@@ -1203,8 +1203,8 @@
     },
     {
       "id": "connected-player-id-at",
-      "name_zh": "已连接编号为X的玩家ID",
-      "name_en": "ConnectedPlayerIDAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "编号为X玩家的名字",
       "description_en": "The player ID of a connected player at an index.",
       "expressionName": "ConnectedPlayerIDAt",
@@ -1267,8 +1267,8 @@
     },
     {
       "id": "player-score",
-      "name_zh": "玩家分数",
-      "name_en": "PlayerScore",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当加载玩家分数后，将返回玩家目前分数",
       "description_en": "After 'On player score loaded', the player's current score.",
       "expressionName": "PlayerScore",
@@ -1279,8 +1279,8 @@
     },
     {
       "id": "player-rank",
-      "name_zh": "玩家排名",
-      "name_en": "PlayerRank",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当加载玩家分数后，将返回玩家目前排名",
       "description_en": "After 'On player score loaded', the player's current rank on the leaderboard.",
       "expressionName": "PlayerRank",
@@ -1291,8 +1291,8 @@
     },
     {
       "id": "leaderboard-result-count",
-      "name_zh": "高分榜结果数量",
-      "name_en": "LeaderboardResultCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "当加载计分板后，将返回计分板条目数量",
       "description_en": "After 'On leaderboard loaded', the number of results on the leaderboard.",
       "expressionName": "LeaderboardResultCount",
@@ -1324,8 +1324,8 @@
     },
     {
       "id": "leaderboard-player-id-at",
-      "name_zh": "排行榜玩家ID索引",
-      "name_en": "LeaderboardPlayerIDAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取比赛结果排行榜的玩家ID。",
       "description_en": "The session-scoped player ID for a result at an index on a leaderboard.",
       "expressionName": "LeaderboardPlayerIDAt",
@@ -1367,8 +1367,8 @@
     },
     {
       "id": "leaderboard-score-at",
-      "name_zh": "获取高分榜分数",
-      "name_en": "LeaderboardScoreAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "计分板中编号为X的结果分数",
       "description_en": "The score of a result at an index on a leaderboard.",
       "expressionName": "LeaderboardScoreAt",

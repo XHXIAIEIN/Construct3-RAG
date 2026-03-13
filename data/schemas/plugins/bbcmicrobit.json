@@ -324,8 +324,8 @@
   "expressions": [
     {
       "id": "device-id",
-      "name_zh": "设备ID",
-      "name_en": "DeviceID",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "连接的设备ID（如果有）。",
       "description_en": "The ID of a connected device (if any).",
       "expressionName": "DeviceID",
@@ -336,8 +336,8 @@
     },
     {
       "id": "accelerometer-raw-x",
-      "name_zh": "原始加速度X",
-      "name_en": "AccelerometerRawX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计原始 X 读数。",
       "description_en": "The raw accelerometer X reading.",
       "expressionName": "AccelerometerRawX",
@@ -348,8 +348,8 @@
     },
     {
       "id": "accelerometer-raw-y",
-      "name_zh": "原始加速度Y",
-      "name_en": "AccelerometerRawY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计原始 Y 读数。",
       "description_en": "The raw accelerometer Y reading.",
       "expressionName": "AccelerometerRawY",
@@ -360,8 +360,8 @@
     },
     {
       "id": "accelerometer-raw-z",
-      "name_zh": "原始加速度Z",
-      "name_en": "AccelerometerRawZ",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计原始 Z 读数。",
       "description_en": "The raw accelerometer Z reading.",
       "expressionName": "AccelerometerRawZ",
@@ -372,8 +372,8 @@
     },
     {
       "id": "accelerometer-smoothed-x",
-      "name_zh": "平滑加速度X",
-      "name_en": "AccelerometerSmoothedX",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计平滑后的 X 读数。",
       "description_en": "The smoothed accelerometer X reading.",
       "expressionName": "AccelerometerSmoothedX",
@@ -384,8 +384,8 @@
     },
     {
       "id": "accelerometer-smoothed-y",
-      "name_zh": "平滑加速度Y",
-      "name_en": "AccelerometerSmoothedY",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计平滑后的 Y 读数。",
       "description_en": "The smoothed accelerometer Y reading.",
       "expressionName": "AccelerometerSmoothedY",
@@ -396,8 +396,8 @@
     },
     {
       "id": "accelerometer-smoothed-z",
-      "name_zh": "平滑加速度Z",
-      "name_en": "AccelerometerSmoothedZ",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "加速度计平滑后的 Z 读数。",
       "description_en": "The smoothed accelerometer Z reading.",
       "expressionName": "AccelerometerSmoothedZ",
@@ -408,8 +408,8 @@
     },
     {
       "id": "bearing",
-      "name_zh": "轴承",
-      "name_en": "Bearing",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "磁力计的方位读数，以距离正北的度数相差为单位。",
       "description_en": "The magnetometer bearing reading, in degrees from due north.",
       "expressionName": "Bearing",
@@ -420,8 +420,8 @@
     },
     {
       "id": "temperature",
-      "name_zh": "温度",
-      "name_en": "Temperature",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "温度计的读数，以摄氏度为单位。",
       "description_en": "The temperature reading, in degrees celcius.",
       "expressionName": "Temperature",

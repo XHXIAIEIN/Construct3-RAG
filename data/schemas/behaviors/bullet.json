@@ -276,8 +276,8 @@
   "expressions": [
     {
       "id": "speed",
-      "name_zh": "移动速度",
-      "name_en": "Speed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "子弹的移动速度，以像素/秒为单位。",
       "description_en": "The current object speed, in pixels per second.",
       "expressionName": "Speed",
@@ -285,8 +285,8 @@
     },
     {
       "id": "acceleration",
-      "name_zh": "加速度",
-      "name_en": "Acceleration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
       "description_en": "The acceleration setting, in pixels per second per second.",
       "expressionName": "Acceleration",
@@ -294,8 +294,8 @@
     },
     {
       "id": "angleofmotion",
-      "name_zh": "移动角度",
-      "name_en": "AngleOfMotion",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "子弹的移动角度，以像素/秒为单位。",
       "description_en": "The angle the object is currently moving at, in degrees.",
       "expressionName": "AngleOfMotion",
@@ -303,8 +303,8 @@
     },
     {
       "id": "distancetravelled",
-      "name_zh": "移动距离",
-      "name_en": "DistanceTravelled",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "子弹累计的移动距离，以像素为单位。",
       "description_en": "The distance, in pixels, the object has travelled so far.",
       "expressionName": "DistanceTravelled",
@@ -312,8 +312,8 @@
     },
     {
       "id": "gravity",
-      "name_zh": "重力",
-      "name_en": "Gravity",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "子弹的重力，以像素/秒为单位。",
       "description_en": "The current gravity in pixels per second per second.",
       "expressionName": "Gravity",

@@ -1440,8 +1440,8 @@
           "type": "string",
           "name_zh": "音频文件名",
           "name_en": "Audio file name",
-          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
-          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"\"myfile\"\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"\"myfile\"\"."
         },
         {
           "id": "loop",
@@ -1557,8 +1557,8 @@
           "type": "string",
           "name_zh": "音频文件名",
           "name_en": "Audio file name",
-          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
-          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"\"myfile\"\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"\"myfile\"\"."
         },
         {
           "id": "loop",
@@ -2065,8 +2065,8 @@
           "type": "string",
           "name_zh": "音频文件名",
           "name_en": "Audio file name",
-          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
-          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"myfile\"."
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"\"myfile\"\"。",
+          "desc_en": "A string with the name of the audio file to play, without the file extension.  For example, to play myfile.webm, use only \"\"myfile\"\"."
         },
         {
           "id": "loop",
@@ -2200,8 +2200,8 @@
           "type": "string",
           "name_zh": "音频文件名",
           "name_en": "Audio file name",
-          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
-          "desc_en": "A string with the name of the audio file to preload, without the file extension.  For example, to load myfile.webm, use only \"myfile\"."
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"\"myfile\"\"。",
+          "desc_en": "A string with the name of the audio file to preload, without the file extension.  For example, to load myfile.webm, use only \"\"myfile\"\"."
         }
       ],
       "category_zh": "播放",
@@ -2381,8 +2381,8 @@
           "type": "string",
           "name_zh": "音频文件名",
           "name_en": "Audio file name",
-          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"myfile\"。",
-          "desc_en": "A string with the name of the audio file to unload, without the file extension.  For example, to unload myfile.webm, use only \"myfile\"."
+          "desc_zh": "要播放的音频文件的名称字符串，不包含文件扩展名。 例如，要播放myfile.webm，只需要填写\"\"myfile\"\"。",
+          "desc_en": "A string with the name of the audio file to unload, without the file extension.  For example, to unload myfile.webm, use only \"\"myfile\"\"."
         }
       ],
       "category_zh": "内存",
@@ -2446,8 +2446,8 @@
   "expressions": [
     {
       "id": "effectcount",
-      "name_zh": "效果器数量",
-      "name_en": "EffectCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取音频标签已添加的声音效果的数量。",
       "description_en": "Get the current number of effects added to a tag.",
       "expressionName": "EffectCount",
@@ -2468,8 +2468,8 @@
     },
     {
       "id": "analyserfreqbincount",
-      "name_zh": "分析采样点数量",
-      "name_en": "AnalyserFreqBinCount",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从音频分析器中，获取采样点的数量。",
       "description_en": "Get the number of frequency bins returned by an analyser effect.",
       "expressionName": "AnalyserFreqBinCount",
@@ -2498,8 +2498,8 @@
     },
     {
       "id": "analyserfreqbinat",
-      "name_zh": "分析采样频率",
-      "name_en": "AnalyserFreqBinAt",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从音频分析器中，获取采样点的幅度。",
       "description_en": "Get the magnitude of an analyser's Nth frequency bin.",
       "expressionName": "AnalyserFreqBinAt",
@@ -2536,8 +2536,8 @@
     },
     {
       "id": "analyserpeaklevel",
-      "name_zh": "分析采样峰值",
-      "name_en": "AnalyserPeakLevel",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从音频分析器中，获取采样点的峰值水平。",
       "description_en": "Get the peak level from an analyser.",
       "expressionName": "AnalyserPeakLevel",
@@ -2566,8 +2566,8 @@
     },
     {
       "id": "analyserrmslevel",
-      "name_zh": "分析采样平均功率",
-      "name_en": "AnalyserRMSLevel",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "从音频分析器中，获取采样点的平均功率级别。",
       "description_en": "Get the RMS level from an analyser.",
       "expressionName": "AnalyserRMSLevel",
@@ -2596,8 +2596,8 @@
     },
     {
       "id": "duration",
-      "name_zh": "持续时间",
-      "name_en": "Duration",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定标签的声音的持续时间，以秒为单位。",
       "description_en": "Get the duration in seconds of a sound with a tag.",
       "expressionName": "Duration",
@@ -2618,8 +2618,8 @@
     },
     {
       "id": "playbacktime",
-      "name_zh": "播放时间",
-      "name_en": "PlaybackTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定标签声音的播放位置，以秒为单位。",
       "description_en": "Get the playback position in seconds of a sound with a tag.",
       "expressionName": "PlaybackTime",
@@ -2640,8 +2640,8 @@
     },
     {
       "id": "playbackrate",
-      "name_zh": "播放速度",
-      "name_en": "PlaybackRate",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "设置指定标签的声音的播放速度。",
       "description_en": "Get the playback rate of a sound with a tag.",
       "expressionName": "PlaybackRate",
@@ -2662,8 +2662,8 @@
     },
     {
       "id": "volume",
-      "name_zh": "音量",
-      "name_en": "Volume",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取指定标签的声音的当前音量，以分贝为单位。",
       "description_en": "Get the current volume, in decibels, of a sound with a tag.",
       "expressionName": "Volume",
@@ -2684,8 +2684,8 @@
     },
     {
       "id": "mastervolume",
-      "name_zh": "主音量",
-      "name_en": "MasterVolume",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前主音量，以分贝为单位。",
       "description_en": "Get the current master volume, in decibels.",
       "expressionName": "MasterVolume",
@@ -2696,8 +2696,8 @@
     },
     {
       "id": "samplerate",
-      "name_zh": "采样率",
-      "name_en": "SampleRate",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取音频输出采样率，以赫兹为单位。",
       "description_en": "Get the audio output sample rate in Hz.",
       "expressionName": "SampleRate",
@@ -2708,8 +2708,8 @@
     },
     {
       "id": "currenttime",
-      "name_zh": "当前时间",
-      "name_en": "CurrentTime",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "获取当前音频的真实时间，以秒为单位。常用于安排音频播放的准确时间，对 '安排下一首播放' 动作非常重要。",
       "description_en": "Get the audio clock time in seconds.",
       "expressionName": "CurrentTime",
@@ -2720,8 +2720,8 @@
     },
     {
       "id": "output-latency",
-      "name_zh": "输出延迟",
-      "name_en": "OutputLatency",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "音频在输出设备上实际播放的延迟，以秒为单位。如果延迟未知，则返回为 -1。",
       "description_en": "Time delay in seconds for audio to actually be played on output device (or -1 if not known).",
       "expressionName": "OutputLatency",
@@ -2732,8 +2732,8 @@
     },
     {
       "id": "normalized-volume",
-      "name_zh": "音量转换分贝",
-      "name_en": "NormalizedVolume",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "将音量转换为分贝，音量在 0-100 范围。",
       "description_en": "Convert a volume in the range 0-100 to dB.",
       "expressionName": "NormalizedVolume",

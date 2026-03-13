@@ -199,8 +199,8 @@
   "expressions": [
     {
       "id": "errormessage",
-      "name_zh": "错误信息",
-      "name_en": "ErrorMessage",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "在出错时返回的相关的错误消息。",
       "description_en": "In 'On error', the relevant error message.",
       "expressionName": "ErrorMessage",
@@ -211,8 +211,8 @@
     },
     {
       "id": "timestamp",
-      "name_zh": "时间戳",
-      "name_en": "Timestamp",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "检索当前详细信息的时间戳。",
       "description_en": "The timestamp at which the current details were retrieved.",
       "expressionName": "Timestamp",
@@ -223,8 +223,8 @@
     },
     {
       "id": "latitude",
-      "name_zh": "纬度",
-      "name_en": "Latitude",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "纬度位置以十进制度表示。",
       "description_en": "The latitude position in decimal degrees.",
       "expressionName": "Latitude",
@@ -235,8 +235,8 @@
     },
     {
       "id": "longitude",
-      "name_zh": "经度",
-      "name_en": "Longitude",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "十进制度的经度位置。",
       "description_en": "The longitude position in decimal degrees.",
       "expressionName": "Longitude",
@@ -247,8 +247,8 @@
     },
     {
       "id": "altitude",
-      "name_zh": "海拔",
-      "name_en": "Altitude",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "海拔高度以米为单位（如果有）。",
       "description_en": "The altitude above sea-level in meters, if available.",
       "expressionName": "Altitude",
@@ -259,8 +259,8 @@
     },
     {
       "id": "accuracy",
-      "name_zh": "精度",
-      "name_en": "Accuracy",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "纬度和经度的估计精度（米）。",
       "description_en": "The estimated accuracy in meters of the latitude and longitude.",
       "expressionName": "Accuracy",
@@ -271,8 +271,8 @@
     },
     {
       "id": "altitudeaccuracy",
-      "name_zh": "海拔精度",
-      "name_en": "AltitudeAccuracy",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "如果可用，获取预估的海拔精度，以米为单位。",
       "description_en": "The estimated accuracy in meters of the altitude, if available.",
       "expressionName": "AltitudeAccuracy",
@@ -283,8 +283,8 @@
     },
     {
       "id": "heading",
-      "name_zh": "前进方向",
-      "name_en": "Heading",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "相对于正北方向的行进方向（如果有）。",
       "description_en": "The direction of travel in degrees relative to due north, if available.",
       "expressionName": "Heading",
@@ -295,8 +295,8 @@
     },
     {
       "id": "speed",
-      "name_zh": "前进速度",
-      "name_en": "Speed",
+      "name_zh": "",
+      "name_en": "",
       "description_zh": "以米为单位的行程速度（如果可用）。",
       "description_en": "The speed of travel in meters per second, if available.",
       "expressionName": "Speed",
