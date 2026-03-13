@@ -21,7 +21,7 @@ from src.config import (
     LLM_MODEL, LLM_BASE_URL, LLM_API_KEY, LLM_PROVIDER,
     EMBEDDING_MODEL,
 )
-from .retriever import HybridRetriever, SearchResult
+from .retriever import HybridRetriever, SearchResult, weighted_rrf
 from src.locale.keywords import (
     ACE_INTENT_KEYWORDS, ZH_STOP_WORDS,
     COMPLEXITY_INDICATORS, CODE_GENERATION_KEYWORDS,
@@ -451,16 +451,18 @@ class RAGChain:
 
         # SemanticChain: zero-dictionary LLM-driven query decomposition
         import os as _os
-        _instructor_b = InstructorBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
-        _active_backend = _instructor_b if _instructor_b.available else RawLLMBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
-        _router = CollectionRouter(self.retriever.embedder)
         _sc_enabled = _os.getenv("SEMANTIC_CHAIN_ENABLED", "true").lower() != "false"
-        self.semantic_chain: SemanticChain | None = SemanticChain(
-            backend=_active_backend,
-            router=_router,
-            retriever=self.retriever,
-            enabled=_sc_enabled,
-        )
+        if _sc_enabled:
+            _instructor_b = InstructorBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
+            _active_backend = _instructor_b if _instructor_b.available else RawLLMBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
+            _router = CollectionRouter(self.retriever.embedder)
+            self.semantic_chain: SemanticChain | None = SemanticChain(
+                backend=_active_backend,
+                router=_router,
+                retriever=self.retriever,
+            )
+        else:
+            self.semantic_chain = None
 
     @property
     def query_expander(self) -> QueryExpander:
@@ -1697,7 +1699,6 @@ class RAGChain:
             if _sc_result is not None:
                 sc_result_lists, sc_weights = _sc_result
                 if sc_result_lists:
-                    from src.rag.retriever import weighted_rrf
                     existing = self.retriever.search_all_with_rerank(
                         self._enrich_query(query)[0],
                         top_k_per_collection=5, final_top_k=10,
