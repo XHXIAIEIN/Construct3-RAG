@@ -3,9 +3,11 @@
 from __future__ import annotations
 import copy
 import dataclasses
+import hashlib
 import json
 import logging
 import re
+import unicodedata
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Literal
@@ -279,3 +281,109 @@ class CollectionRouter:
             w = min(1.0, max(0.0, sim + bias.get(name, 0.0)))
             weights[name] = w if w >= thr else 0.0
         return weights
+
+
+def _normalize_query(query: str) -> str:
+    """Normalize query for cache key: NFKC + strip + lowercase."""
+    q = unicodedata.normalize("NFKC", query)
+    q = " ".join(q.split())
+    q = q.lower()
+    return q
+
+
+def _cache_key(query: str) -> str:
+    return hashlib.sha256(_normalize_query(query).encode()).hexdigest()
+
+
+class SemanticChain:
+    """Orchestrates semantic decomposition → collection routing → multi-path retrieval."""
+
+    def __init__(
+        self,
+        backend: StructuredOutputBackend | None,
+        router: CollectionRouter | None,
+        retriever,  # HybridRetriever instance
+        enabled: bool = True,
+        threshold: float = 0.2,
+        top_k_per_intent: int = 5,
+        top_k_hyde: int = 5,
+        top_k_keyword: int = 3,
+    ):
+        self._backend = backend
+        self._router = router
+        self._retriever = retriever
+        self._enabled = enabled
+        self._threshold = threshold
+        self._top_k_intent = top_k_per_intent
+        self._top_k_hyde = top_k_hyde
+        self._top_k_keyword = top_k_keyword
+        self._cache: dict[str, DecomposedQuery] = {}
+
+    def decompose(self, query: str) -> DecomposedQuery | None:
+        if not self._enabled or self._backend is None:
+            return None
+        key = _cache_key(query)
+        if key not in self._cache:
+            self._cache[key] = self._backend.decompose(query)
+        return self._cache[key]
+
+    def run(self, query: str) -> tuple[list, list] | None:
+        """Run full semantic chain. Returns (result_lists, weights) or None if disabled."""
+        if not self._enabled or self._backend is None:
+            return None
+
+        dq = self.decompose(query)
+        if dq is None:
+            return None
+
+        assert self._router is not None
+        collection_weights = self._router.route(query, dq.query_type, self._threshold)
+        top_collections = [
+            c for c, w in sorted(collection_weights.items(), key=lambda x: x[1], reverse=True)
+            if w >= self._threshold
+        ][:3]
+
+        result_lists: list = []
+        weights: list[float] = []
+
+        # Path A: intent keyword search
+        semantic_blend = max(0.2, dq.confidence * 0.5)
+        for intent in dq.intents[:3]:
+            if not intent.keywords or not top_collections:
+                continue
+            search_query = " ".join(intent.keywords[:6])
+            for col in top_collections[:2]:
+                try:
+                    results = self._retriever.search_collection(
+                        col, search_query, top_k=self._top_k_intent
+                    )
+                    result_lists.append(results)
+                    weights.append(intent.weight * semantic_blend)
+                except Exception:
+                    pass
+
+        # Path B: HyDE vector search (embed solution_rewrite)
+        if dq.solution_rewrite and top_collections:
+            for col in top_collections[:2]:
+                try:
+                    results = self._retriever.search_collection(
+                        col, dq.solution_rewrite, top_k=self._top_k_hyde
+                    )
+                    result_lists.append(results)
+                    weights.append(0.4 * semantic_blend)
+                except Exception:
+                    pass
+
+        # Path C: solution_rewrite keyword fallback (lower weight)
+        if dq.solution_rewrite:
+            for col in top_collections[:1]:
+                try:
+                    results = self._retriever.search_collection(
+                        col, dq.solution_rewrite, top_k=self._top_k_keyword
+                    )
+                    result_lists.append(results)
+                    weights.append(0.2 * semantic_blend)
+                except Exception:
+                    pass
+
+        return result_lists, weights
