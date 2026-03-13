@@ -36,7 +36,7 @@ User Query
     │
     ▼
 [Step 1] Semantic Decomposer  (Qwen3.5-9B + pluggable backend)
-    │   Output: DecomposedQuery {roles, intents[], solution_rewrite}
+    │   Output: DecomposedQuery {c3_objects, action_verbs, intents[], solution_rewrite}
     ▼
 [Step 2] Collection Router  (reuses HybridRetriever.embedder, cosine similarity)
     │   Output: {collection → weight} map
@@ -73,11 +73,12 @@ class QueryIntent:
 
 @dataclass
 class DecomposedQuery:
-    subject_objects: list[str]         # ["Sprite"]
-    action_verbs: list[str]            # ["跟随"]
-    target_objects: list[str]          # ["鼠标"]
-    intents: list[QueryIntent]         # 1–3 intents
-    solution_rewrite: str              # solution-perspective rewrite
+    c3_objects: list[str]    # all C3 objects/plugins mentioned — subject/target merged
+                             # (Chinese word order ambiguity makes subject/target
+                             # distinction unreliable; union is used for retrieval)
+    action_verbs: list[str]  # ["跟随", "每 X 秒"]
+    intents: list[QueryIntent]   # 1–3 intents
+    solution_rewrite: str        # solution-perspective rewrite
 ```
 
 ---
@@ -139,18 +140,22 @@ You are a Construct 3 query analyzer. Extract the semantic structure of the user
 
 Output JSON:
 {
-  "subject_objects": [...],
+  "c3_objects": [...],
   "action_verbs": [...],
-  "target_objects": [...],
   "intents": [
     {"label": "...", "keywords": ["...", "..."], "weight": 0.0–1.0}
   ],
   "solution_rewrite": "..."
 }
 
+Note: c3_objects contains ALL Construct 3 objects/plugins mentioned in the query.
+Do NOT try to distinguish subject from target — Chinese word order makes this ambiguous
+and both are searched equally.
+
 Examples:
 Q: "怎么让 Sprite 跟随鼠标"
-→ {"subject_objects":["Sprite"], "action_verbs":["跟随"], "target_objects":["鼠标"],
+→ {"c3_objects":["Sprite","Mouse"],
+   "action_verbs":["跟随"],
    "intents":[
      {"label":"immediate follow","keywords":["set position","Mouse.X","Mouse.Y"],"weight":0.6},
      {"label":"smooth follow","keywords":["lerp","every tick"],"weight":0.4}
@@ -158,7 +163,8 @@ Q: "怎么让 Sprite 跟随鼠标"
    "solution_rewrite":"Sprite set position Mouse.X Mouse.Y every tick lerp smooth"}
 
 Q: "每 0.1 秒执行一次"
-→ {"subject_objects":["System"], "action_verbs":["计时","执行"], "target_objects":["事件"],
+→ {"c3_objects":["System"],
+   "action_verbs":["计时","每 X 秒","执行","触发"],
    "intents":[
      {"label":"repeating timer","keywords":["every","seconds","timer","wait"],"weight":0.8},
      {"label":"variable timer","keywords":["variable","multiply","delta time"],"weight":0.2}
