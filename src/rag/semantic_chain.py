@@ -327,28 +327,12 @@ class SemanticChain:
             self._cache[key] = self._backend.decompose(query)
         return self._cache[key]
 
-    def run(self, query: str) -> tuple[list, list] | None:
-        """Run full semantic chain. Returns (result_lists, weights) or None if disabled."""
-        if not self._enabled or self._backend is None:
-            return None
-
-        dq = self.decompose(query)
-        if dq is None:
-            return None
-
-        assert self._router is not None
-        collection_weights = self._router.route(query, dq.query_type, self._threshold)
-        top_collections = [
-            c for c, w in sorted(collection_weights.items(), key=lambda x: x[1], reverse=True)
-            if w >= self._threshold
-        ][:3]
-
+    def _path_a_intent_search(
+        self, intents: list, top_collections: list, semantic_blend: float
+    ) -> tuple[list, list]:
         result_lists: list = []
         weights: list[float] = []
-
-        # Path A: intent keyword search
-        semantic_blend = max(0.2, dq.confidence * 0.5)
-        for intent in dq.intents[:3]:
+        for intent in intents[:3]:
             if not intent.keywords or not top_collections:
                 continue
             search_query = " ".join(intent.keywords[:6])
@@ -361,29 +345,63 @@ class SemanticChain:
                     weights.append(intent.weight * semantic_blend)
                 except Exception:
                     pass
+        return result_lists, weights
 
-        # Path B: HyDE vector search (embed solution_rewrite)
-        if dq.solution_rewrite and top_collections:
+    def _path_b_hyde_search(
+        self, solution_rewrite: str, top_collections: list, semantic_blend: float
+    ) -> tuple[list, list]:
+        result_lists: list = []
+        weights: list[float] = []
+        if solution_rewrite and top_collections:
             for col in top_collections[:2]:
                 try:
                     results = self._retriever.search_collection(
-                        col, dq.solution_rewrite, top_k=self._top_k_hyde
+                        col, solution_rewrite, top_k=self._top_k_hyde
                     )
                     result_lists.append(results)
                     weights.append(0.4 * semantic_blend)
                 except Exception:
                     pass
+        return result_lists, weights
 
-        # Path C: solution_rewrite keyword fallback (lower weight)
-        if dq.solution_rewrite:
+    def _path_c_keyword_fallback(
+        self, solution_rewrite: str, top_collections: list, semantic_blend: float
+    ) -> tuple[list, list]:
+        result_lists: list = []
+        weights: list[float] = []
+        if solution_rewrite and top_collections:
             for col in top_collections[:1]:
                 try:
                     results = self._retriever.search_collection(
-                        col, dq.solution_rewrite, top_k=self._top_k_keyword
+                        col, solution_rewrite, top_k=self._top_k_keyword
                     )
                     result_lists.append(results)
                     weights.append(0.2 * semantic_blend)
                 except Exception:
                     pass
+        return result_lists, weights
 
+    def run(self, query: str) -> tuple[list, list] | None:
+        """Run full semantic chain. Returns (result_lists, weights) or None if disabled."""
+        if not self._enabled or self._backend is None:
+            return None
+
+        dq = self.decompose(query)
+        if self._router is None:
+            return [], []
+
+        collection_weights = self._router.route(query, dq.query_type, self._threshold)
+        top_collections = [
+            c for c, w in sorted(collection_weights.items(), key=lambda x: x[1], reverse=True)
+            if w >= self._threshold
+        ][:3]
+
+        semantic_blend = max(0.2, dq.confidence * 0.5)
+
+        a_lists, a_weights = self._path_a_intent_search(dq.intents, top_collections, semantic_blend)
+        b_lists, b_weights = self._path_b_hyde_search(dq.solution_rewrite, top_collections, semantic_blend)
+        c_lists, c_weights = self._path_c_keyword_fallback(dq.solution_rewrite, top_collections, semantic_blend)
+
+        result_lists = a_lists + b_lists + c_lists
+        weights = a_weights + b_weights + c_weights
         return result_lists, weights
