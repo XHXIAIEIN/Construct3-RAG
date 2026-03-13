@@ -90,7 +90,8 @@ class Handler(BaseHTTPRequestHandler):
 
         elif path == "/decompose":
             query = body.get("query", "")
-            dq = chain.semantic_chain.decompose(query) if chain.semantic_chain else None
+            with _infer_lock:
+                dq = chain.semantic_chain.decompose(query) if chain.semantic_chain else None
             if dq:
                 self._respond({
                     "query_type": dq.query_type,

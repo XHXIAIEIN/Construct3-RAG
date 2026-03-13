@@ -28,3 +28,6 @@ pypdf>=4.0.0
 
 # Evaluation
 ragas>=0.2.0
+
+# Optional: structured output for InstructorBackend (Ollama provider only)
+instructor>=1.14.0
