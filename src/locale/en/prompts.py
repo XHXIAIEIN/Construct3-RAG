@@ -500,6 +500,35 @@ JS_HINT_FOOTER = """
 >
 > To learn about scripting approaches, ask again with the "Include JS" option enabled."""
 
+
+# ----------------------------
+# Clipboard event sheet analysis (injected as schema_context header)
+# ----------------------------
+
+CLIPBOARD_CONTEXT_HEADER = """### User-Provided Event Sheet (from Construct 3 Editor)
+
+The content below is a Construct 3 event sheet pasted directly from the editor. It uses this compact text format:
+- `// comment text` — event comment or group label
+- `+ ObjectClass: conditionId(param=value, ...)` — condition (evaluates true/false)
+- `-> ObjectClass: actionId(param=value, ...)` — action (performs an operation)
+- `System:` prefix = built-in engine conditions/actions (no plugin required)
+- `ObjectClass` = plugin name (Sprite, Audio, Array, AJAX…) or behavior name (Platform, Tween…)
+
+When analyzing this event sheet:
+1. Identify which plugins, behaviors, and System ACEs appear
+2. Describe what the overall logic does
+3. Explain any non-obvious conditions or actions, especially parameter meanings
+4. Cross-reference with the documentation provided — use [来源: N] citations for factual statements
+5. Point out potential issues or improvement suggestions if relevant
+
+Event sheet content:"""
+
+CLIPBOARD_DEFAULT_QUERY = (
+    "Analyze this Construct 3 event sheet: explain what it does, "
+    "identify the key plugins / behaviors / System objects used, "
+    "and describe how the conditions and actions work together."
+)
+
 JS_INCLUDE_INSTRUCTION = """
 ## JavaScript Supplement
 In addition to the event sheet solution, please also provide JavaScript implementation (if applicable):
@@ -537,3 +566,48 @@ LOOKUP_CLASSIFY_PROMPT = (
 REFLECTION_VERDICT_KEY = "Reliability"
 REFLECTION_UNRELIABLE = "Unreliable"
 REFLECTION_RELIABLE = "Reliable"
+
+
+# ----------------------------
+# Semantic decomposition prompt (LLM-facing, identical in zh and en)
+# ----------------------------
+
+SEMANTIC_DECOMPOSE_PROMPT = """You are a Construct 3 query analyzer. Extract the semantic structure of the user's question.
+
+Output JSON:
+{
+  "query_type": "howto|explain|troubleshoot|translate|list_ace|code_gen|unknown",
+  "c3_objects": [...],
+  "action_verbs": [...],
+  "intents": [
+    {"label": "...", "keywords": ["...", "..."], "weight": 0.0}
+  ],
+  "solution_rewrite": "...",
+  "confidence": 0.0
+}
+
+Rules:
+- c3_objects: ALL Construct 3 objects/plugins mentioned. Do NOT distinguish subject/target.
+- intents.weights: must sum to 1.0
+- solution_rewrite: describe what the SOLUTION looks like in C3 terms (howto/code_gen only); empty string "" for other types
+- confidence: how certain you are about this decomposition (1.0 = very clear query)
+
+Examples:
+Q: "怎么让 Sprite 跟随鼠标"
+→ {{"query_type":"howto","c3_objects":["Sprite","Mouse"],"action_verbs":["跟随"],"intents":[{{"label":"immediate follow","keywords":["set position","Mouse.X","Mouse.Y"],"weight":0.6}},{{"label":"smooth follow","keywords":["lerp","every tick"],"weight":0.4}}],"solution_rewrite":"Sprite set position Mouse.X Mouse.Y every tick lerp smooth follow cursor","confidence":0.95}}
+
+Q: "每 0.1 秒执行一次"
+→ {{"query_type":"howto","c3_objects":["System"],"action_verbs":["计时","每 X 秒","执行","触发"],"intents":[{{"label":"repeating timer","keywords":["every","seconds","timer","wait"],"weight":0.8}},{{"label":"variable timer","keywords":["variable","multiply","delta time"],"weight":0.2}}],"solution_rewrite":"System every 0.1 seconds trigger repeating timer condition","confidence":0.9}}
+
+Q: "为什么我的碰撞检测不准"
+→ {{"query_type":"troubleshoot","c3_objects":["Solid","Physics","Sprite"],"action_verbs":["碰撞","重叠","检测"],"intents":[{{"label":"collision mask mismatch","keywords":["collision polygon","bounding box","image point"],"weight":0.5}},{{"label":"physics vs solid","keywords":["Solid behavior","Physics behavior","overlap"],"weight":0.3}},{{"label":"z-order or layer issue","keywords":["layer","Z order","initial layer"],"weight":0.2}}],"solution_rewrite":"","confidence":0.7}}
+
+Q: "什么是事件表"
+→ {{"query_type":"explain","c3_objects":[],"action_verbs":["解释","了解"],"intents":[{{"label":"event sheet concept","keywords":["event sheet","events","conditions","actions","logic"],"weight":1.0}}],"solution_rewrite":"","confidence":0.99}}
+
+Q: "用 Array 实现背包系统"
+→ {{"query_type":"code_gen","c3_objects":["Array","Sprite","Text"],"action_verbs":["存储","添加","删除","显示","实现"],"intents":[{{"label":"array as inventory data","keywords":["Array push","Array at","Array size","index"],"weight":0.5}},{{"label":"UI item display","keywords":["Sprite","Text","set text","for each"],"weight":0.3}},{{"label":"add/remove item logic","keywords":["condition compare","action set","variable"],"weight":0.2}}],"solution_rewrite":"Array store item name quantity Sprite display inventory slot for each element","confidence":0.85}}
+
+Now analyze:
+Q: "{query}"
+"""
