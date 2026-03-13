@@ -69,17 +69,46 @@ method is modified.
 class QueryIntent:
     label: str           # "immediate follow" / "smooth follow (lerp)"
     keywords: list[str]  # ["set position", "Mouse.X", "Mouse.Y"]
-    weight: float        # 0.0–1.0
+    weight: float        # 0.0–1.0 (normalized to sum=1.0 across all intents at runtime)
+
+QUERY_TYPES = Literal[
+    "howto",       # 操作步骤: 怎么让 Sprite 跟随鼠标
+    "explain",     # 概念解释: 什么是事件表
+    "troubleshoot",# 排错诊断: 为什么碰撞检测不准
+    "translate",   # 术语翻译: Tween 是什么
+    "list_ace",    # ACE 列表: Sprite 有哪些动作
+    "code_gen",    # 代码生成: 帮我写一个计分系统
+    "unknown",     # fallback
+]
 
 @dataclass
 class DecomposedQuery:
-    c3_objects: list[str]    # all C3 objects/plugins mentioned — subject/target merged
-                             # (Chinese word order ambiguity makes subject/target
-                             # distinction unreliable; union is used for retrieval)
-    action_verbs: list[str]  # ["跟随", "每 X 秒"]
-    intents: list[QueryIntent]   # 1–3 intents
-    solution_rewrite: str        # solution-perspective rewrite
+    query_type: str           # one of QUERY_TYPES — drives collection routing bias
+    c3_objects: list[str]     # all C3 objects/plugins mentioned (may be empty for
+                              # pure concept queries like "什么是事件表")
+    action_verbs: list[str]   # ["跟随", "每 X 秒"]
+    intents: list[QueryIntent] # 1–3 intents; weights normalized to sum=1.0
+                               # if empty (e.g. simple translation), a single
+                               # default intent {label:"default", keywords:[], weight:1.0}
+                               # is inserted at runtime
+    solution_rewrite: str     # HyDE: hypothetical answer text — embedded directly
+                              # for vector search AND used as keyword fallback
+                              # empty string for non-howto queries (translate/list_ace)
+    confidence: float         # 0.0–1.0 — LLM self-assessed decomposition confidence
+                              # low confidence → reduce SemanticChain blend weight
+                              # in final weighted_rrf call
 ```
+
+### Edge case handling
+
+| Condition | Runtime behavior |
+|-----------|-----------------|
+| `c3_objects` empty | Use `action_verbs` only for retrieval keywords; skip object-based routing bias |
+| `intents` empty | Insert `{label:"default", keywords: c3_objects + action_verbs, weight:1.0}` |
+| `intents` weights don't sum to 1.0 | Normalize: `w_i = w_i / sum(weights)` |
+| `solution_rewrite` empty | Skip HyDE path entirely; use keyword path only |
+| `confidence < 0.4` | Set SemanticChain blend weight to 0.2 (vs default 0.5); rely more on existing path |
+| All backends fail | `SemanticChain.run()` returns `None`; `answer_smart` falls back to `pre_fetched=None` |
 
 ---
 
@@ -140,36 +169,79 @@ You are a Construct 3 query analyzer. Extract the semantic structure of the user
 
 Output JSON:
 {
+  "query_type": "howto|explain|troubleshoot|translate|list_ace|code_gen|unknown",
   "c3_objects": [...],
   "action_verbs": [...],
   "intents": [
     {"label": "...", "keywords": ["...", "..."], "weight": 0.0–1.0}
   ],
-  "solution_rewrite": "..."
+  "solution_rewrite": "...",
+  "confidence": 0.0–1.0
 }
 
-Note: c3_objects contains ALL Construct 3 objects/plugins mentioned in the query.
-Do NOT try to distinguish subject from target — Chinese word order makes this ambiguous
-and both are searched equally.
+Rules:
+- c3_objects: ALL Construct 3 objects/plugins mentioned. Do NOT distinguish subject/target.
+- intents.weights: must sum to 1.0
+- solution_rewrite: describe what the SOLUTION looks like in C3 terms (for howto/code_gen);
+  leave empty string "" for translate/list_ace queries
+- confidence: how certain you are about the decomposition (1.0 = very clear query)
 
 Examples:
 Q: "怎么让 Sprite 跟随鼠标"
-→ {"c3_objects":["Sprite","Mouse"],
+→ {"query_type":"howto",
+   "c3_objects":["Sprite","Mouse"],
    "action_verbs":["跟随"],
    "intents":[
      {"label":"immediate follow","keywords":["set position","Mouse.X","Mouse.Y"],"weight":0.6},
      {"label":"smooth follow","keywords":["lerp","every tick"],"weight":0.4}
    ],
-   "solution_rewrite":"Sprite set position Mouse.X Mouse.Y every tick lerp smooth"}
+   "solution_rewrite":"Sprite set position Mouse.X Mouse.Y every tick lerp smooth follow cursor",
+   "confidence":0.95}
 
 Q: "每 0.1 秒执行一次"
-→ {"c3_objects":["System"],
+→ {"query_type":"howto",
+   "c3_objects":["System"],
    "action_verbs":["计时","每 X 秒","执行","触发"],
    "intents":[
      {"label":"repeating timer","keywords":["every","seconds","timer","wait"],"weight":0.8},
      {"label":"variable timer","keywords":["variable","multiply","delta time"],"weight":0.2}
    ],
-   "solution_rewrite":"System every 0.1 seconds trigger repeating timer condition"}
+   "solution_rewrite":"System every 0.1 seconds trigger repeating timer condition",
+   "confidence":0.9}
+
+Q: "为什么我的碰撞检测不准"
+→ {"query_type":"troubleshoot",
+   "c3_objects":["Solid","Physics","Sprite"],
+   "action_verbs":["碰撞","重叠","检测"],
+   "intents":[
+     {"label":"collision mask mismatch","keywords":["collision polygon","bounding box","image point"],"weight":0.5},
+     {"label":"physics vs solid collision","keywords":["Solid behavior","Physics behavior","overlap"],"weight":0.3},
+     {"label":"z-order or layer issue","keywords":["layer","Z order","initial layer"],"weight":0.2}
+   ],
+   "solution_rewrite":"",
+   "confidence":0.7}
+
+Q: "什么是事件表"
+→ {"query_type":"explain",
+   "c3_objects":[],
+   "action_verbs":["解释","了解"],
+   "intents":[
+     {"label":"event sheet concept","keywords":["event sheet","events","conditions","actions","logic"],"weight":1.0}
+   ],
+   "solution_rewrite":"",
+   "confidence":0.99}
+
+Q: "用 Array 实现背包系统"
+→ {"query_type":"code_gen",
+   "c3_objects":["Array","Sprite","Text"],
+   "action_verbs":["存储","添加","删除","显示","实现"],
+   "intents":[
+     {"label":"array as inventory data","keywords":["Array push","Array at","Array size","index"],"weight":0.5},
+     {"label":"UI item display","keywords":["Sprite","Text","set text","for each"],"weight":0.3},
+     {"label":"add/remove item logic","keywords":["condition compare","action set","variable"],"weight":0.2}
+   ],
+   "solution_rewrite":"Array store item name quantity Sprite display inventory slot for each element",
+   "confidence":0.85}
 
 Now analyze:
 Q: "{query}"
@@ -200,8 +272,25 @@ COLLECTION_DESCRIPTORS: dict[str, str] = {
 }
 ```
 
-**Routing logic**: embed query → cosine similarity with each descriptor → weight map.
-Collections below `weight_threshold` (default 0.2) are skipped (dynamic pruning).
+**Routing logic**: two-signal fusion:
+
+1. **Embedding similarity**: embed query → cosine similarity with each descriptor
+2. **`query_type` bias** (additive): hard-boost collections that match the query type
+
+```python
+QUERY_TYPE_BIAS: dict[str, dict[str, float]] = {
+    "howto":        {"c3_ace": +0.3, "c3_guide": +0.2},
+    "explain":      {"c3_guide": +0.3, "c3_project": +0.2},
+    "troubleshoot": {"c3_guide": +0.2, "c3_examples": +0.3},
+    "translate":    {"c3_terms": +0.6},
+    "list_ace":     {"c3_ace": +0.5},
+    "code_gen":     {"c3_scripting": +0.3, "c3_examples": +0.3},
+    "unknown":      {},   # no bias; rely on embedding only
+}
+# Final weight = cosine_similarity + query_type_bias (clamped to [0, 1])
+```
+
+Collections with final weight below `weight_threshold` (default 0.2) are skipped.
 
 ---
 
@@ -209,11 +298,25 @@ Collections below `weight_threshold` (default 0.2) are skipped (dynamic pruning)
 
 ### Retrieval
 
+Three parallel search paths:
+
 ```
-intent[0] (weight w0) × top-2 collections → search(keywords, top_k=5)
-intent[1] (weight w1) × top-2 collections → search(keywords, top_k=5)
-solution_rewrite (fixed weight=0.3)        → all collections, top_k=3
+Path A — Intent keyword search (1 per intent):
+  intent[i] (weight w_i) × top-2 collections → search(keywords, top_k=5)
+
+Path B — HyDE vector search (solution_rewrite as hypothetical document):
+  embed(solution_rewrite) → vector search across top-weighted collections (top_k=5)
+  weight = 0.4 (only when solution_rewrite is non-empty, i.e. howto/code_gen)
+  This is more powerful than keyword path for semantic matches.
+
+Path C — solution_rewrite keyword fallback (weight=0.2):
+  solution_rewrite text → keyword search, all collections, top_k=3
+  Provides lexical coverage when HyDE embedding doesn't match exact terms.
 ```
+
+`SemanticChain.retrieve()` returns `(result_lists, weights)` for all active paths.
+The caller (`answer_smart`) passes these to `weighted_rrf` along with the existing
+search results.
 
 ### Intent-weight-aware RRF
 
@@ -289,6 +392,38 @@ else:
 Both `answer_with_fallback` and `answer_complex_workflow` receive `pre_fetched_results`
 as an optional parameter (new parameter with default `None` — backward-compatible).
 When provided, they skip their internal `search_all_with_rerank` call.
+
+### Confidence-adaptive blending
+
+The `confidence` field from `DecomposedQuery` adjusts how much the semantic path
+contributes to the final merge:
+
+```python
+semantic_blend = max(0.2, dq.confidence * 0.5)   # 0.2–0.5 range
+existing_blend = 1.0 - semantic_blend
+
+pre_fetched = weighted_rrf(
+    [existing_results, *semantic_result_lists],
+    [existing_blend, *[w * semantic_blend for w in semantic_weights]],
+)
+```
+
+Low-confidence decomposition (e.g. ambiguous colloquial query) → existing path
+dominates. High-confidence decomposition → equal blend.
+
+---
+
+## Trace Integration
+
+All semantic chain steps emit `_trace()` events visible in chat.py's trace display:
+
+| Phase key | Group | Example message |
+|-----------|-------|-----------------|
+| `semantic_decompose` | 查询分析 | `type=howto objects=[Sprite,Mouse] verbs=[跟随] conf=0.95` |
+| `semantic_intents` | 查询分析 | `intent[0] immediate_follow(0.6): set position Mouse.X` |
+| `semantic_route` | 向量检索 | `c3_ace=0.82 c3_guide=0.71 c3_terms=0.18(skipped)` |
+| `semantic_hyde` | 向量检索 | `HyDE: "Sprite set position Mouse.X..." → 5 results` |
+| `semantic_blend` | 结果过滤 | `blend: existing=0.5 semantic=0.5 (conf=0.95)` |
 
 ---
 
