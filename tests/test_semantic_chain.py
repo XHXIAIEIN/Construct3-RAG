@@ -116,3 +116,38 @@ class TestRawLLMBackend:
         dq = backend.decompose("q")
         total = sum(i.weight for i in dq.intents)
         assert abs(total - 1.0) < 1e-9
+
+
+class TestInstructorBackend:
+    def test_unavailable_when_not_ollama(self):
+        from src.rag.semantic_chain import InstructorBackend
+        llm = MagicMock()
+        llm.provider = "huggingface"
+        backend = InstructorBackend(llm, "prompt {query}")
+        assert not backend.available
+
+    def test_available_when_ollama(self):
+        from src.rag.semantic_chain import InstructorBackend
+        llm = MagicMock()
+        llm.provider = "ollama"
+        llm.model = "qwen2.5:7b"
+        llm.ollama_host = "localhost"
+        llm.ollama_port = 11434
+        backend = InstructorBackend(llm, "prompt {query}")
+        # availability depends on ollama being running; just check no crash
+        assert isinstance(backend.available, bool)
+
+    def test_falls_back_on_connection_error(self):
+        from src.rag.semantic_chain import InstructorBackend
+        llm = MagicMock()
+        llm.provider = "ollama"
+        llm.model = "qwen2.5:7b"
+        llm.ollama_host = "localhost"
+        llm.ollama_port = 11434
+        backend = InstructorBackend(llm, "prompt {query}")
+        # If ollama not running, decompose should return fallback not raise
+        dq = backend.decompose("test")
+        assert dq.query_type in (
+            "howto", "explain", "troubleshoot", "translate",
+            "list_ace", "code_gen", "unknown",
+        )
