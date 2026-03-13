@@ -204,3 +204,69 @@ class TestCollectionRouter:
         router = CollectionRouter(self._make_embedder())
         weights = router.route("test query", "howto")
         assert all(v >= 0 for v in weights.values())
+
+
+class TestSemanticChain:
+    def _make_chain(self):
+        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter
+        llm = MagicMock()
+        llm.provider = "huggingface"
+        llm.generate.return_value = (
+            '{"query_type":"howto","c3_objects":["Sprite"],'
+            '"action_verbs":["跟随"],'
+            '"intents":[{"label":"follow","keywords":["set position"],"weight":1.0}],'
+            '"solution_rewrite":"Sprite set position Mouse.X","confidence":0.9}'
+        )
+        embedder = MagicMock()
+        embedder.encode_single.return_value = [0.5] * 10
+        embedder.encode_batch.return_value = [[0.5] * 10] * 10
+
+        retriever = MagicMock()
+        retriever.search_collection.return_value = []
+
+        router = CollectionRouter(embedder)
+        backend = RawLLMBackend(llm, "{query}")
+        return SemanticChain(backend=backend, router=router, retriever=retriever)
+
+    def test_run_returns_result_lists_and_weights(self):
+        chain = self._make_chain()
+        result_lists, weights = chain.run("怎么让 Sprite 跟随鼠标")
+        assert isinstance(result_lists, list)
+        assert isinstance(weights, list)
+        assert len(result_lists) == len(weights)
+
+    def test_run_with_disabled_returns_none(self):
+        from src.rag.semantic_chain import SemanticChain
+        chain = SemanticChain(backend=None, router=None, retriever=None, enabled=False)
+        result = chain.run("test")
+        assert result is None
+
+    def test_cache_avoids_duplicate_decomposition(self):
+        chain = self._make_chain()
+        chain.run("Sprite 跟随鼠标")
+        call_count_after_first = chain._backend._llm.generate.call_count
+        chain.run("Sprite 跟随鼠标")  # same query
+        # LLM should not be called again
+        assert chain._backend._llm.generate.call_count == call_count_after_first
+
+    def test_low_confidence_reduces_blend_weight(self):
+        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter
+        llm = MagicMock()
+        llm.provider = "huggingface"
+        llm.generate.return_value = (
+            '{"query_type":"unknown","c3_objects":[],"action_verbs":[],'
+            '"intents":[],"solution_rewrite":"","confidence":0.2}'
+        )
+        embedder = MagicMock()
+        embedder.encode_single.return_value = [0.3] * 10
+        embedder.encode_batch.return_value = [[0.3] * 10] * 10
+        retriever = MagicMock()
+        retriever.search_collection.return_value = []
+        chain = SemanticChain(
+            backend=RawLLMBackend(llm, "{query}"),
+            router=CollectionRouter(embedder),
+            retriever=retriever,
+        )
+        _, weights = chain.run("vague query")
+        # All weights should be ≤ max(0.2, 0.2*0.5) * some_factor — just assert <= 0.6
+        assert all(w <= 0.6 for w in weights)
