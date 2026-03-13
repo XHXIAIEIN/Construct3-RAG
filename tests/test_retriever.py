@@ -137,5 +137,40 @@ class TestContextualChunking(unittest.TestCase):
         assert "帧速率设置" in result
 
 
+class TestWeightedRRF(unittest.TestCase):
+    def make_sr(self, text: str, score: float = 0.8) -> SearchResult:
+        return SearchResult(text=text, score=score, source="c3_guide", metadata={})
+
+    def test_single_list_returns_sorted(self):
+        from src.rag.retriever import weighted_rrf
+        results = [self.make_sr("a", 0.9), self.make_sr("b", 0.7), self.make_sr("c", 0.5)]
+        out = weighted_rrf([results], [1.0])
+        assert [r.text for r in out] == ["a", "b", "c"]
+
+    def test_higher_weight_ranks_higher(self):
+        from src.rag.retriever import weighted_rrf
+        list_high = [self.make_sr("important")]
+        list_low  = [self.make_sr("noise")]
+        out = weighted_rrf([list_low, list_high], [0.2, 0.8])
+        assert out[0].text == "important"
+
+    def test_deduplication(self):
+        from src.rag.retriever import weighted_rrf
+        r = self.make_sr("same text")
+        out = weighted_rrf([[r], [r]], [0.5, 0.5])
+        texts = [x.text for x in out]
+        assert texts.count("same text") == 1
+
+    def test_empty_lists_handled(self):
+        from src.rag.retriever import weighted_rrf
+        out = weighted_rrf([[], [self.make_sr("x")]], [0.5, 0.5])
+        assert len(out) == 1
+
+    def test_zero_weight_floor(self):
+        from src.rag.retriever import weighted_rrf
+        out = weighted_rrf([[self.make_sr("x")]], [0.0])
+        assert len(out) == 1
+
+
 if __name__ == "__main__":
     unittest.main()

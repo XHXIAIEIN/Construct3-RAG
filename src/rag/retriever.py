@@ -603,3 +603,29 @@ class HybridRetriever:
         logger.info(f"[Rerank] Done, returning top-{len(final_results)}")
         return final_results
 
+
+def weighted_rrf(
+    result_lists: list[list[SearchResult]],
+    weights: list[float],
+) -> list[SearchResult]:
+    """RRF fusion where each list's contribution is scaled by its weight.
+
+    Higher weight → smaller k → higher RRF score contribution.
+    Dedup key: text[:150].lower().strip() — same as HybridRetriever.reciprocal_rank_fusion.
+
+    Args:
+        result_lists: parallel list of ranked result lists
+        weights: per-list importance weights (need not sum to 1; 0 uses floor 0.1)
+    """
+    rrf_scores: dict[str, float] = {}
+    result_map: dict[str, SearchResult] = {}
+    for results, w in zip(result_lists, weights):
+        k = round(60 / max(w, 0.1))
+        for rank, r in enumerate(results):
+            key = r.text[:150].lower().strip()
+            rrf_scores[key] = rrf_scores.get(key, 0) + 1.0 / (k + rank + 1)
+            result_map.setdefault(key, r)
+    return [
+        result_map[key]
+        for key in sorted(rrf_scores, key=rrf_scores.__getitem__, reverse=True)
+    ]
