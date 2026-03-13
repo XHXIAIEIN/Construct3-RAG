@@ -233,7 +233,7 @@ QUERY_TYPE_BIAS: dict[str, dict[str, float]] = {
 }
 
 
-def _cosine(a: list[float], b: list[float]) -> float:
+def _cosine(a: list[float] | np.ndarray, b: list[float] | np.ndarray) -> float:
     na, nb = np.linalg.norm(a), np.linalg.norm(b)
     if na == 0 or nb == 0:
         return 0.0
@@ -264,14 +264,18 @@ class CollectionRouter:
         query_type: str = "unknown",
         threshold: float | None = None,
     ) -> dict[str, float]:
-        """Return weight map for all collections."""
+        """Return weight map for all collections.
+
+        Collections with weight below threshold are zeroed out.
+        """
         self._ensure_descriptors()
         assert self._descriptor_vecs is not None
         query_vec = self._embedder.encode_single(query)
         bias = QUERY_TYPE_BIAS.get(query_type, {})
+        thr = threshold if threshold is not None else self._default_threshold
         weights = {}
         for name, desc_vec in self._descriptor_vecs.items():
             sim = _cosine(query_vec, desc_vec)
             w = min(1.0, max(0.0, sim + bias.get(name, 0.0)))
-            weights[name] = w
+            weights[name] = w if w >= thr else 0.0
         return weights

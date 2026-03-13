@@ -179,14 +179,25 @@ class TestCollectionRouter:
     def test_threshold_filters_low_collections(self):
         from src.rag.semantic_chain import CollectionRouter
         embedder = MagicMock()
-        # Very low similarity for all
-        embedder.encode_single.return_value = [0.0] * 10
-        embedder.encode_batch.return_value = [[0.0] * 10] * 10
+        # Non-zero embeddings produce non-zero cosine similarity (~1.0 for identical vecs)
+        embedder.encode_single.return_value = [1.0] * 10
+        embedder.encode_batch.return_value = [[1.0] * 10] * 10
         router = CollectionRouter(embedder)
-        weights = router.route("test", "unknown", threshold=0.8)
-        active = {k for k, v in weights.items() if v >= 0.8}
-        # With all-zero embeddings and no bias, nothing should pass threshold=0.8
+        # With threshold=1.1 (above max possible weight of 1.0), all should be zeroed out
+        weights = router.route("test", "unknown", threshold=1.1)
+        active = {k for k, v in weights.items() if v > 0}
         assert len(active) == 0
+
+    def test_threshold_allows_above_threshold(self):
+        from src.rag.semantic_chain import CollectionRouter
+        embedder = MagicMock()
+        embedder.encode_single.return_value = [1.0] * 10
+        embedder.encode_batch.return_value = [[1.0] * 10] * 10
+        router = CollectionRouter(embedder)
+        # With threshold=0.0, all collections with any weight are kept
+        weights = router.route("test", "unknown", threshold=0.0)
+        active = {k for k, v in weights.items() if v > 0}
+        assert len(active) > 0
 
     def test_weights_are_non_negative(self):
         from src.rag.semantic_chain import CollectionRouter
