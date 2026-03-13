@@ -9,6 +9,7 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Literal
+import numpy as np
 from pydantic import BaseModel, Field
 
 QUERY_TYPES = Literal[
@@ -154,10 +155,14 @@ class InstructorBackend(StructuredOutputBackend):
         self._llm = llm
         self._prompt = prompt_template
         self._client = None
+        self._available: bool | None = None  # cached; None = not yet checked
 
     @property
     def available(self) -> bool:
+        if self._available is not None:
+            return self._available
         if getattr(self._llm, "provider", None) != "ollama":
+            self._available = False
             return False
         try:
             import instructor
@@ -168,12 +173,15 @@ class InstructorBackend(StructuredOutputBackend):
                 Client(host=f"http://{host}:{port}"),
                 mode=instructor.Mode.JSON,
             )
+            self._available = True
             return True
         except Exception:
+            self._available = False
             return False
 
     def decompose(self, query: str) -> DecomposedQuery:
-        if not self.available or self._client is None:
+        # Use cached _client directly — avoids re-triggering network call via available
+        if self._client is None:
             return copy.deepcopy(_FALLBACK_DQ)
         try:
             model_name = getattr(self._llm, "model", "qwen2.5:7b")
@@ -199,3 +207,71 @@ class InstructorBackend(StructuredOutputBackend):
         except Exception as e:
             logger.debug("InstructorBackend error: %s", e)
             return copy.deepcopy(_FALLBACK_DQ)
+
+
+COLLECTION_DESCRIPTORS: dict[str, str] = {
+    "c3_guide":     "Construct 3 manual tutorial guide how-to concept explanation documentation",
+    "c3_interface": "Construct 3 editor interface UI toolbar menu layout panel dialog",
+    "c3_project":   "Construct 3 project structure events objects timelines flowcharts families",
+    "c3_plugins":   "Construct 3 plugin object type properties behavior scripting SDK",
+    "c3_behaviors": "Construct 3 behavior platform movement physics collision tween pathfinding",
+    "c3_scripting": "Construct 3 JavaScript TypeScript runtime API script module",
+    "c3_ace":       "Construct 3 plugin action condition expression API parameter reference",
+    "c3_effects":   "Construct 3 visual effect shader WebGL blend parameter",
+    "c3_terms":     "Construct 3 Chinese English translation term glossary vocabulary",
+    "c3_examples":  "Construct 3 example project game template event sheet code sample",
+}
+
+QUERY_TYPE_BIAS: dict[str, dict[str, float]] = {
+    "howto":        {"c3_ace": 0.3, "c3_guide": 0.2},
+    "explain":      {"c3_guide": 0.3, "c3_project": 0.2},
+    "troubleshoot": {"c3_guide": 0.2, "c3_examples": 0.3},
+    "translate":    {"c3_terms": 0.6},
+    "list_ace":     {"c3_ace": 0.5},
+    "code_gen":     {"c3_scripting": 0.3, "c3_examples": 0.3},
+    "unknown":      {},
+}
+
+
+def _cosine(a: list[float], b: list[float]) -> float:
+    na, nb = np.linalg.norm(a), np.linalg.norm(b)
+    if na == 0 or nb == 0:
+        return 0.0
+    return float(np.dot(a, b) / (na * nb))
+
+
+class CollectionRouter:
+    """Routes queries to Qdrant collections via embedding similarity + query_type bias."""
+
+    def __init__(self, embedder, threshold: float = 0.2):
+        self._embedder = embedder
+        self._default_threshold = threshold
+        self._descriptor_vecs: dict[str, list[float]] | None = None
+
+    def _ensure_descriptors(self) -> None:
+        if self._descriptor_vecs is not None:
+            return
+        texts = list(COLLECTION_DESCRIPTORS.values())
+        vecs = self._embedder.encode_batch(texts)
+        self._descriptor_vecs = {
+            name: vecs[i]
+            for i, name in enumerate(COLLECTION_DESCRIPTORS)
+        }
+
+    def route(
+        self,
+        query: str,
+        query_type: str = "unknown",
+        threshold: float | None = None,
+    ) -> dict[str, float]:
+        """Return weight map for all collections."""
+        self._ensure_descriptors()
+        assert self._descriptor_vecs is not None
+        query_vec = self._embedder.encode_single(query)
+        bias = QUERY_TYPE_BIAS.get(query_type, {})
+        weights = {}
+        for name, desc_vec in self._descriptor_vecs.items():
+            sim = _cosine(query_vec, desc_vec)
+            w = min(1.0, max(0.0, sim + bias.get(name, 0.0)))
+            weights[name] = w
+        return weights
