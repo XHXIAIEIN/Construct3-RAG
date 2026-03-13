@@ -56,7 +56,7 @@ class HybridRetriever:
 
     # Score threshold configuration
     DEFAULT_SCORE_THRESHOLD = 0.3
-    MIN_SCORE_THRESHOLD = 0.2
+    MIN_SCORE_THRESHOLD = 0.005  # RRF scores are 1/(60+rank) ≈ 0.01-0.016; 0.2 would filter everything
     HIGH_RELEVANCE_THRESHOLD = 0.6
 
     def __init__(
