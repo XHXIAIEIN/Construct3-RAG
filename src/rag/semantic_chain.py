@@ -13,6 +13,12 @@ from dataclasses import dataclass, field
 from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
+from src.collections import DOC_COLLECTIONS
+
+# Doc collections always searched at minimum weight — ensures manual content is
+# never excluded by the threshold even when the query doesn't match a descriptor.
+_DOC_COLLECTION_FLOOR = 0.05
+_DOC_COLLECTION_SET = set(DOC_COLLECTIONS)
 
 QUERY_TYPES = Literal[
     "howto", "explain", "troubleshoot", "translate",
@@ -124,7 +130,7 @@ class RawLLMBackend(StructuredOutputBackend):
         self._prompt = prompt_template
 
     def decompose(self, query: str) -> DecomposedQuery:
-        prompt = self._prompt.format(query=query)
+        prompt = self._prompt.replace("{query}", query)
         try:
             raw = self._llm.generate(prompt)
             result = _parse_dq_from_json(raw)
@@ -187,7 +193,7 @@ class InstructorBackend(StructuredOutputBackend):
             return copy.deepcopy(_FALLBACK_DQ)
         try:
             model_name = getattr(self._llm, "model", "qwen2.5:7b")
-            prompt = self._prompt.format(query=query)
+            prompt = self._prompt.replace("{query}", query)
             result: _DecomposedQueryModel = self._client.chat.completions.create(
                 model=model_name,
                 response_model=_DecomposedQueryModel,
@@ -254,7 +260,7 @@ class CollectionRouter:
         if self._descriptor_vecs is not None:
             return
         texts = list(COLLECTION_DESCRIPTORS.values())
-        vecs = self._embedder.encode_batch(texts)
+        vecs = self._embedder.encode(texts)
         self._descriptor_vecs = {
             name: vecs[i]
             for i, name in enumerate(COLLECTION_DESCRIPTORS)
@@ -279,7 +285,11 @@ class CollectionRouter:
         for name, desc_vec in self._descriptor_vecs.items():
             sim = _cosine(query_vec, desc_vec)
             w = min(1.0, max(0.0, sim + bias.get(name, 0.0)))
-            weights[name] = w if w >= thr else 0.0
+            if w < thr:
+                # Doc collections: apply floor so manual content is always searched.
+                # Non-doc collections (ace, terms, examples, effects): zero out.
+                w = _DOC_COLLECTION_FLOOR if name in _DOC_COLLECTION_SET else 0.0
+            weights[name] = w
         return weights
 
 
