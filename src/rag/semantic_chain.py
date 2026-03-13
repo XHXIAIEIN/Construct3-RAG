@@ -9,6 +9,7 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Literal
+from pydantic import BaseModel, Field
 
 QUERY_TYPES = Literal[
     "howto", "explain", "troubleshoot", "translate",
@@ -129,3 +130,72 @@ class RawLLMBackend(StructuredOutputBackend):
         except Exception as e:
             logger.debug("RawLLMBackend error: %s", e)
         return copy.deepcopy(_FALLBACK_DQ)
+
+
+class _IntentModel(BaseModel):
+    label: str
+    keywords: list[str] = Field(default_factory=list)
+    weight: float = 1.0
+
+
+class _DecomposedQueryModel(BaseModel):
+    query_type: str = "unknown"
+    c3_objects: list[str] = Field(default_factory=list)
+    action_verbs: list[str] = Field(default_factory=list)
+    intents: list[_IntentModel] = Field(default_factory=list)
+    solution_rewrite: str = ""
+    confidence: float = 0.5
+
+
+class InstructorBackend(StructuredOutputBackend):
+    """Pydantic validation via instructor library (Ollama provider only)."""
+
+    def __init__(self, llm, prompt_template: str):
+        self._llm = llm
+        self._prompt = prompt_template
+        self._client = None
+
+    @property
+    def available(self) -> bool:
+        if getattr(self._llm, "provider", None) != "ollama":
+            return False
+        try:
+            import instructor
+            from ollama import Client
+            host = getattr(self._llm, "ollama_host", "localhost")
+            port = getattr(self._llm, "ollama_port", 11434)
+            self._client = instructor.from_ollama(
+                Client(host=f"http://{host}:{port}"),
+                mode=instructor.Mode.JSON,
+            )
+            return True
+        except Exception:
+            return False
+
+    def decompose(self, query: str) -> DecomposedQuery:
+        if not self.available or self._client is None:
+            return copy.deepcopy(_FALLBACK_DQ)
+        try:
+            model_name = getattr(self._llm, "model", "qwen2.5:7b")
+            prompt = self._prompt.format(query=query)
+            result: _DecomposedQueryModel = self._client.chat.completions.create(
+                model=model_name,
+                response_model=_DecomposedQueryModel,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            intents = [
+                QueryIntent(i.label, i.keywords, i.weight)
+                for i in result.intents
+            ]
+            dq = DecomposedQuery(
+                query_type=result.query_type,
+                c3_objects=result.c3_objects,
+                action_verbs=result.action_verbs,
+                intents=normalize_intents(intents),
+                solution_rewrite=result.solution_rewrite,
+                confidence=result.confidence,
+            )
+            return ensure_intents(dq)
+        except Exception as e:
+            logger.debug("InstructorBackend error: %s", e)
+            return copy.deepcopy(_FALLBACK_DQ)
