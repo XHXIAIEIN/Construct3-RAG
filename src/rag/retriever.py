@@ -389,15 +389,15 @@ class HybridRetriever:
 
     # (collection_key, default_top_k, score_threshold)
     _COLLECTION_DEFAULTS: Dict[str, tuple] = {
-        "guide":      (5,  0.5),
-        "interface":  (5,  0.5),
-        "project":    (5,  0.5),
-        "plugins":    (5,  0.5),
-        "behaviors":  (5,  0.5),
-        "scripting":  (5,  0.5),
+        "guide":      (5,  0.3),
+        "interface":  (5,  0.3),
+        "project":    (5,  0.3),
+        "plugins":    (5,  0.3),
+        "behaviors":  (5,  0.3),
+        "scripting":  (5,  0.3),
         "ace":        (5,  0.3),
         "terms":      (10, 0.3),
-        "examples":   (5,  0.5),
+        "examples":   (5,  0.3),
     }
 
     def _search(
