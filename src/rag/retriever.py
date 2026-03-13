@@ -626,6 +626,11 @@ def weighted_rrf(
             rrf_scores[key] = rrf_scores.get(key, 0) + 1.0 / (k + rank + 1)
             result_map.setdefault(key, r)
     return [
-        result_map[key]
+        SearchResult(
+            text=result_map[key].text,
+            score=rrf_scores[key],
+            source=result_map[key].source,
+            metadata={**result_map[key].metadata, "original_score": result_map[key].score},
+        )
         for key in sorted(rrf_scores, key=rrf_scores.__getitem__, reverse=True)
     ]
