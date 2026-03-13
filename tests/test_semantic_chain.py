@@ -145,12 +145,11 @@ class TestInstructorBackend:
         llm.ollama_host = "localhost"
         llm.ollama_port = 11434
         backend = InstructorBackend(llm, "prompt {query}")
-        # If ollama not running, decompose should return fallback not raise
+        # If ollama not running, available returns False and decompose returns fallback
         dq = backend.decompose("test")
-        assert dq.query_type in (
-            "howto", "explain", "troubleshoot", "translate",
-            "list_ace", "code_gen", "unknown",
-        )
+        # When not available (_client is None), fallback DQ is returned
+        assert dq.query_type == "unknown"
+        assert dq.confidence == 0.0
 
 
 class TestCollectionRouter:
