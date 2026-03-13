@@ -131,7 +131,7 @@ class Handler(BaseHTTPRequestHandler):
                 }
             })
 
-        else:  # /  (answer_smart)
+        elif path == "/":  # answer_smart
             query = body.get("query", "")
             with _infer_lock:
                 resp = chain.answer_smart(query)
@@ -143,6 +143,9 @@ class Handler(BaseHTTPRequestHandler):
             })
             preview = query[:LOG_QUERY_MAX] + ("…" if len(query) > LOG_QUERY_MAX else "")
             console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}  {preview}[/dim]")
+
+        else:
+            self._respond({"error": f"unknown path: {path}"}, status=404)
 
     def log_message(self, *args):
         pass
