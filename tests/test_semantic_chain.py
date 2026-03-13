@@ -51,3 +51,23 @@ def test_empty_intents_returns_default():
     assert len(result.intents) == 1
     assert result.intents[0].weight == 1.0
     assert "解释" in result.intents[0].keywords
+
+
+def test_ensure_intents_non_empty_unchanged():
+    from src.rag.semantic_chain import ensure_intents
+    intents = [QueryIntent("follow", ["set position"], 1.0)]
+    dq = DecomposedQuery(
+        query_type="howto", c3_objects=["Sprite"], action_verbs=["跟随"],
+        intents=intents, solution_rewrite="", confidence=0.8,
+    )
+    result = ensure_intents(dq)
+    assert result is dq  # fast-path: returns original unchanged
+
+
+def test_normalize_intents_zero_total():
+    intents = [QueryIntent("a", [], 0.0), QueryIntent("b", [], 0.0)]
+    normalized = normalize_intents(intents)
+    total = sum(i.weight for i in normalized)
+    assert abs(total - 1.0) < 1e-9
+    # Equal weights when all are zero
+    assert abs(normalized[0].weight - 0.5) < 1e-9

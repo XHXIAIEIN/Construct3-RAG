@@ -1,10 +1,9 @@
 # src/rag/semantic_chain.py
 """Semantic decomposition chain for zero-dictionary query understanding."""
 from __future__ import annotations
-from abc import ABC, abstractmethod
+import dataclasses
 from dataclasses import dataclass, field
 from typing import Literal
-import copy
 
 QUERY_TYPES = Literal[
     "howto", "explain", "troubleshoot", "translate",
@@ -32,7 +31,7 @@ class DecomposedQuery:
 def normalize_intents(intents: list[QueryIntent]) -> list[QueryIntent]:
     """Normalize intent weights to sum to 1.0."""
     if not intents:
-        return intents
+        return []
     total = sum(i.weight for i in intents)
     if total <= 0:
         equal = 1.0 / len(intents)
@@ -45,5 +44,5 @@ def ensure_intents(dq: DecomposedQuery) -> DecomposedQuery:
     if dq.intents:
         return dq
     keywords = list(dq.c3_objects) + list(dq.action_verbs)
-    result = copy.replace(dq, intents=[QueryIntent("default", keywords, 1.0)])
+    result = dataclasses.replace(dq, intents=[QueryIntent("default", keywords, 1.0)])
     return result
