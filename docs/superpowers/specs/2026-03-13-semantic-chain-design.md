@@ -446,6 +446,59 @@ All semantic chain steps emit `_trace()` events visible in chat.py's trace displ
 
 ---
 
+## Integration Point: RAG as Service for Construct3-Copilot
+
+RAG 对外暴露两个新 HTTP 端点，供 Copilot 调用。现有 `POST /`（answer_smart）保持不变。
+
+### 新增端点
+
+**`POST /search`** — 原始检索，不生成答案
+
+```json
+// 请求
+{"query": "平台跳跃角色控制", "top_k": 8, "collections": ["c3_ace","c3_examples"]}
+
+// 响应
+{
+  "results": [{"text": "...", "source": "c3_ace", "score": 0.87}],
+  "decomposed": {
+    "query_type": "howto",
+    "c3_objects": ["Sprite"],
+    "intents": [...],
+    "confidence": 0.91
+  }
+}
+```
+
+**`POST /decompose`** — 仅语义分解，无检索无生成
+
+```json
+// 请求
+{"query": "怎么让 Array 存储玩家背包"}
+
+// 响应
+{
+  "query_type": "code_gen",
+  "c3_objects": ["Array","Sprite"],
+  "action_verbs": ["存储","实现"],
+  "intents": [...],
+  "solution_rewrite": "Array push item name quantity slot...",
+  "confidence": 0.88
+}
+```
+
+### Copilot 调用时机
+
+| 场景 | 端点 | 用途 |
+|------|------|------|
+| 用户描述游戏需求 | `POST /decompose` | 理解意图，辅助生成 Clarification 问题 |
+| 生成 JSON 之前 | `POST /search` | 拉取相关 ACE 文档 + 示例项目作为生成上下文 |
+| 答疑 / 解释错误 | `POST /` | 完整 Q&A，直接给用户展示 |
+
+随着 RAG 语义链进化（检索更准），Copilot 拿到的上下文质量自动提升——无需修改 Copilot 代码。
+
+---
+
 ## Non-goals
 
 - No LangChain dependency (Pydantic v1/v2 conflict with Python 3.14)
