@@ -40,6 +40,11 @@ from .prompts import (
     QUERY_DECOMPOSITION_PROMPT, LLM_UNAVAILABLE_RESPONSE,
     QDRANT_UNAVAILABLE_RESPONSE, LOW_CONFIDENCE_WARNING,
     JS_HINT_FOOTER, JS_INCLUDE_INSTRUCTION,
+    CLIPBOARD_CONTEXT_HEADER, CLIPBOARD_DEFAULT_QUERY,
+    SEMANTIC_DECOMPOSE_PROMPT,
+)
+from .semantic_chain import (
+    SemanticChain, CollectionRouter, RawLLMBackend, InstructorBackend,
 )
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -443,6 +448,19 @@ class RAGChain:
         )
         self.enable_query_rewrite = enable_query_rewrite
         self._query_expander: QueryExpander | None = None  # lazy init
+
+        # SemanticChain: zero-dictionary LLM-driven query decomposition
+        import os as _os
+        _instructor_b = InstructorBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
+        _active_backend = _instructor_b if _instructor_b.available else RawLLMBackend(self.llm, SEMANTIC_DECOMPOSE_PROMPT)
+        _router = CollectionRouter(self.retriever.embedder)
+        _sc_enabled = _os.getenv("SEMANTIC_CHAIN_ENABLED", "true").lower() != "false"
+        self.semantic_chain: SemanticChain | None = SemanticChain(
+            backend=_active_backend,
+            router=_router,
+            retriever=self.retriever,
+            enabled=_sc_enabled,
+        )
 
     @property
     def query_expander(self) -> QueryExpander:
@@ -1253,7 +1271,7 @@ class RAGChain:
         else:
             return self.llm.chat(messages)
 
-    def answer_complex_workflow(self, query: str, include_js: bool = False, schema_context: str = "") -> RAGResponse:
+    def answer_complex_workflow(self, query: str, include_js: bool = False, schema_context: str = "", pre_fetched_results: list | None = None) -> RAGResponse:
         """
         Answer complex multi-step workflow queries using query decomposition.
 
@@ -1296,9 +1314,12 @@ class RAGChain:
         all_result_lists: List[List[SearchResult]] = []
 
         # Original query (with term enrichment)
-        original_results = self.retriever.search_all_with_rerank(
-            search_query, top_k_per_collection=5, final_top_k=10
-        )
+        if pre_fetched_results is not None:
+            original_results = pre_fetched_results
+        else:
+            original_results = self.retriever.search_all_with_rerank(
+                search_query, top_k_per_collection=5, final_top_k=10
+            )
         all_result_lists.append(original_results)
 
         # Sub-queries
@@ -1377,7 +1398,7 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
-    def answer_with_fallback(self, query: str, include_js: bool = False, schema_context: str = "") -> RAGResponse:
+    def answer_with_fallback(self, query: str, include_js: bool = False, schema_context: str = "", pre_fetched_results: list | None = None) -> RAGResponse:
         """
         Answer query with graceful fallback for service unavailability.
 
@@ -1421,9 +1442,12 @@ class RAGChain:
         search_query, term_keywords = self._enrich_query(query, skip_schema=bool(schema_context))
 
         # Retrieve results (Qdrant is available)
-        results = self.retriever.search_all_with_rerank(
-            search_query, top_k_per_collection=5, final_top_k=10
-        )
+        if pre_fetched_results is not None:
+            results = pre_fetched_results
+        else:
+            results = self.retriever.search_all_with_rerank(
+                search_query, top_k_per_collection=5, final_top_k=10
+            )
 
         # Extra examples retrieval for example-seeking queries
         if self._wants_examples(query):
@@ -1556,6 +1580,52 @@ class RAGChain:
             verification_notes=reflection if not is_reliable else ""
         )
 
+    # ------------------------------------------------------------------
+    # Clipboard / event-sheet parsing helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _is_clipboard_json(text: str) -> bool:
+        """Return True if text looks like a C3 clipboard JSON payload."""
+        s = text.strip()
+        return s.startswith("{") and '"is-c3-clipboard-data"' in s and '"type":"events"' in s
+
+    @staticmethod
+    def _is_clipboard_text(text: str) -> bool:
+        """Return True if text looks like C3 'Copy as text' output."""
+        lines = [l for l in text.splitlines() if l.strip()]
+        markers = sum(1 for l in lines if l.startswith(("+ ", "-> ", "// ")))
+        return markers >= 2
+
+    @staticmethod
+    def _clipboard_json_to_text(json_str: str) -> str:
+        """Convert C3 clipboard JSON to a compact human-readable event sheet."""
+        import json as _json
+        try:
+            data = _json.loads(json_str)
+        except Exception:
+            return json_str
+        lines = []
+        for item in data.get("items", []):
+            etype = item.get("eventType")
+            if etype == "comment":
+                lines.append(f"// {item.get('text', '')}")
+            elif etype == "block":
+                for c in item.get("conditions", []):
+                    obj = c.get("objectClass", "System")
+                    cid = c.get("id", "")
+                    params = c.get("parameters", {})
+                    param_str = ", ".join(f"{k}={v}" for k, v in params.items()) if params else ""
+                    lines.append(f"+ {obj}: {cid}" + (f"({param_str})" if param_str else ""))
+                for a in item.get("actions", []):
+                    obj = a.get("objectClass", "")
+                    aid = a.get("id", "")
+                    params = a.get("parameters", {})
+                    param_str = ", ".join(f"{k}={v}" for k, v in params.items()) if params else ""
+                    lines.append(f"-> {obj}: {aid}" + (f"({param_str})" if param_str else ""))
+                lines.append("")
+        return "\n".join(lines).strip()
+
     def answer_smart(self, query: str, include_js: bool = False) -> RAGResponse:
         """
         Smart answer routing with automatic complexity detection and fallback.
@@ -1582,6 +1652,30 @@ class RAGChain:
         """
         _trace_local.events = []
 
+        # Clipboard detection — handle C3 event sheet pasted as JSON or text
+        # Format: "<clipboard content>\n---\n<user question>"
+        # OR just clipboard alone (infers "explain this")
+        clipboard_context = ""
+        if "\n---\n" in query:
+            parts = query.split("\n---\n", 1)
+            clipboard_raw, user_question = parts[0].strip(), parts[1].strip()
+            if self._is_clipboard_json(clipboard_raw):
+                clipboard_context = self._clipboard_json_to_text(clipboard_raw)
+                _trace("clipboard: JSON converted", "route")
+            elif self._is_clipboard_text(clipboard_raw):
+                clipboard_context = clipboard_raw
+                _trace("clipboard: text format", "route")
+            if clipboard_context:
+                query = user_question or CLIPBOARD_DEFAULT_QUERY
+        elif self._is_clipboard_json(query):
+            clipboard_context = self._clipboard_json_to_text(query)
+            query = CLIPBOARD_DEFAULT_QUERY
+            _trace("clipboard: JSON converted", "route")
+        elif self._is_clipboard_text(query):
+            clipboard_context = query
+            query = CLIPBOARD_DEFAULT_QUERY
+            _trace("clipboard: text format", "route")
+
         # Lookup shortcut — direct JSON/CSV lookup, no LLM needed
         if not hasattr(self, '_lookup'):
             from src.rag.lookup import LookupEngine
@@ -1596,8 +1690,34 @@ class RAGChain:
             _trace(f"{_intent.intent_type} · {_name}", "route")
             schema_context = lookup_resp.answer
 
+        # Semantic chain pre-dispatch (after lookup, before complexity routing)
+        pre_fetched: list | None = None
+        if self.semantic_chain:
+            _sc_result = self.semantic_chain.run(query)
+            if _sc_result is not None:
+                sc_result_lists, sc_weights = _sc_result
+                if sc_result_lists:
+                    from src.rag.retriever import weighted_rrf
+                    existing = self.retriever.search_all_with_rerank(
+                        self._enrich_query(query)[0],
+                        top_k_per_collection=5, final_top_k=10,
+                    )
+                    blend = max(0.2, (sc_weights[0] if sc_weights else 0.3))
+                    pre_fetched = weighted_rrf(
+                        [existing, *sc_result_lists],
+                        [1.0 - blend, *sc_weights],
+                    )
+                    _trace(f"semantic: {len(pre_fetched)} results merged", "retrieve")
+
+        # Prepend clipboard event sheet to schema_context so LLM sees it as structured input
+        if clipboard_context:
+            clipboard_header = CLIPBOARD_CONTEXT_HEADER + "\n\n" + clipboard_context
+            schema_context = clipboard_header + ("\n\n---\n\n" + schema_context if schema_context else "")
+            # Clipboard queries always use complex path for better analysis
+            _trace("route: clipboard analysis (forced complex path)", "route")
+            resp = self.answer_complex_workflow(query, include_js=include_js, schema_context=schema_context)
         # Route based on complexity
-        if self._is_complex_query(query):
+        elif self._is_complex_query(query):
             logger.info("[Smart] Complex query detected, using decomposition")
             import jieba
             word_count = len([w for w in jieba.cut(query) if w.strip()])
@@ -1606,13 +1726,13 @@ class RAGChain:
             if indicators:
                 reason_parts.append(f"指标=[{', '.join(indicators[:3])}]")
             _trace(f"路由: QA 复杂（{'，'.join(reason_parts)}）", "route")
-            resp = self.answer_complex_workflow(query, include_js=include_js, schema_context=schema_context)
+            resp = self.answer_complex_workflow(query, include_js=include_js, schema_context=schema_context, pre_fetched_results=pre_fetched)
         else:
             import jieba
             word_count = len([w for w in jieba.cut(query) if w.strip()])
             logger.info("[Smart] Standard query, using fallback strategy")
             _trace(f"路由: QA 简单（词数={word_count}）", "route")
-            resp = self.answer_with_fallback(query, include_js=include_js, schema_context=schema_context)
+            resp = self.answer_with_fallback(query, include_js=include_js, schema_context=schema_context, pre_fetched_results=pre_fetched)
 
         resp.trace = list(_trace_local.events)
         return resp

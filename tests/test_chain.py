@@ -38,8 +38,13 @@ def make_chain() -> RAGChain:
         make_result("Sprite 是一个可视对象，用于显示图片。", score=0.9),
         make_result("使用 Sprite 插件可以添加动画帧。", score=0.75),
     ]
+    chain.retriever.search_terms.return_value = []
+    chain.retriever.search_examples.return_value = []
     chain.retriever.filter_by_adaptive_threshold.side_effect = lambda r, **kw: r
     chain.retriever.reciprocal_rank_fusion.side_effect = lambda lists, **kw: lists[0] if lists else []
+
+    # Disable SemanticChain by default so tests aren't affected by it
+    chain.semantic_chain = None
 
     # Mock LLM
     chain.llm = MagicMock()
@@ -276,7 +281,9 @@ class TestAnswerSmart:
         chain.answer_smart(complex_query)
 
         # Should have routed to complex workflow
-        chain.answer_complex_workflow.assert_called_once_with(complex_query, include_js=False, schema_context="")
+        chain.answer_complex_workflow.assert_called_once_with(
+            complex_query, include_js=False, schema_context="", pre_fetched_results=None
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -376,3 +383,21 @@ class TestAdaptiveFilter:
 if __name__ == "__main__":
     import pytest
     pytest.main([__file__, "-v"])
+
+
+class TestSemanticChainIntegration:
+    def test_answer_smart_with_semantic_chain_disabled(self):
+        """SemanticChain disabled → behaves exactly like before."""
+        chain = make_chain()
+        chain.semantic_chain = None
+        resp = chain.answer_smart("Sprite 跟随鼠标")
+        assert resp is not None
+
+    def test_pre_fetched_results_skips_internal_search(self):
+        """answer_with_fallback with pre_fetched skips search_all_with_rerank."""
+        chain = make_chain()
+        pre = [make_result("pre-fetched content", score=0.9)]
+        with patch.object(chain.retriever, "search_all_with_rerank") as mock_search:
+            resp = chain.answer_with_fallback("test", pre_fetched_results=pre)
+        mock_search.assert_not_called()
+        assert resp is not None
