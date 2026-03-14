@@ -20,6 +20,10 @@ class EvalCase:
     forbidden_phrases: List[str] = field(default_factory=list)
     has_answer: bool = True
     note: str = ""
+    # Retrieval evaluation fields
+    expected_sources: List[str] = field(default_factory=list)
+    expected_collections: List[str] = field(default_factory=list)
+    retrieval_difficulty: str = ""
 
 
 @dataclass
