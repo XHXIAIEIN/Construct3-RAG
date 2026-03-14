@@ -1,1 +1,0 @@
-"""Chinese locale package."""

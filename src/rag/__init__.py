@@ -1,3 +1,2 @@
-# RAG system modules
+# RAG retrieval modules
 from .retriever import HybridRetriever
-from .chain import RAGChain
