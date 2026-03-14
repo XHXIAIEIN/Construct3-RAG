@@ -8,8 +8,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "基础插件概念",
-    "expected_sources": ["plugin-reference/sprite.md"],
-    "expected_collections": ["plugins"],
+    "expected_sources": ["plugin-reference/sprite.md", "construct3-schema"],
+    "expected_collections": ["plugins", "ace", "terms"],
     "retrieval_difficulty": "easy"
   },
   {
@@ -21,8 +21,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "核心概念",
-    "expected_sources": ["project-primitives/events.md"],
-    "expected_collections": ["project"],
+    "expected_sources": ["project-primitives/events", "overview/project-structure.md", "project-primitives/events/event-sheets.md"],
+    "expected_collections": ["project", "guide"],
     "retrieval_difficulty": "easy"
   },
   {
@@ -34,8 +34,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "变量作用域",
-    "expected_sources": ["project-primitives/objects/instance-variables.md", "project-primitives/events.md"],
-    "expected_collections": ["project"],
+    "expected_sources": ["project-primitives/objects/instance-variables.md", "project-primitives/events/variables.md", "project-primitives/events.md"],
+    "expected_collections": ["project", "ace"],
     "retrieval_difficulty": "medium"
   },
   {
@@ -47,7 +47,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "Platform 行为配置",
-    "expected_sources": ["behavior-reference/platform.md"],
+    "expected_sources": ["behavior-reference/platform.md", "construct3-schema"],
     "expected_collections": ["behaviors", "ace"],
     "retrieval_difficulty": "easy"
   },
@@ -60,7 +60,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "Tween 行为用法",
-    "expected_sources": ["behavior-reference/tween.md"],
+    "expected_sources": ["behavior-reference/tween.md", "construct3-schema"],
     "expected_collections": ["behaviors", "ace"],
     "retrieval_difficulty": "easy"
   },
@@ -73,7 +73,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "输入检测差异",
-    "expected_sources": ["plugin-reference/keyboard.md"],
+    "expected_sources": ["plugin-reference/keyboard.md", "construct3-schema"],
     "expected_collections": ["plugins", "ace"],
     "retrieval_difficulty": "medium"
   },
@@ -86,8 +86,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "循环遍历对象",
-    "expected_sources": ["system-reference/system-conditions.md"],
-    "expected_collections": ["behaviors", "ace"],
+    "expected_sources": ["system-reference/system-conditions.md", "construct3-schema", "project-primitives/events/how-events-work.md"],
+    "expected_collections": ["behaviors", "ace", "project"],
     "retrieval_difficulty": "medium"
   },
   {
@@ -99,7 +99,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "计时器实现方式",
-    "expected_sources": ["behavior-reference/timer.md"],
+    "expected_sources": ["behavior-reference/timer.md", "construct3-schema"],
     "expected_collections": ["behaviors", "ace"],
     "retrieval_difficulty": "hard"
   },
@@ -112,7 +112,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "等待机制",
-    "expected_sources": ["system-reference/system-actions.md"],
+    "expected_sources": ["system-reference/system-actions.md", "construct3-schema"],
     "expected_collections": ["behaviors", "ace"],
     "retrieval_difficulty": "medium"
   },
@@ -125,8 +125,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "经典平台游戏跳跃",
-    "expected_sources": ["plugin-reference/keyboard.md", "behavior-reference/platform.md", "plugin-reference/sprite.md"],
-    "expected_collections": ["plugins", "behaviors", "ace"],
+    "expected_sources": ["plugin-reference/keyboard.md", "behavior-reference/platform.md", "plugin-reference/sprite.md", "construct3-schema"],
+    "expected_collections": ["plugins", "behaviors", "ace", "examples"],
     "retrieval_difficulty": "hard"
   },
   {
@@ -138,8 +138,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "碰撞事件",
-    "expected_sources": ["plugin-reference/sprite.md", "project-primitives/events.md"],
-    "expected_collections": ["plugins", "ace", "project"],
+    "expected_sources": ["plugin-reference/sprite.md", "plugin-reference/common-features/common-conditions.md", "construct3-schema"],
+    "expected_collections": ["plugins", "ace"],
     "retrieval_difficulty": "medium"
   },
   {
@@ -151,8 +151,8 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "分数系统工作流",
-    "expected_sources": ["project-primitives/events.md", "plugin-reference/text.md", "project-primitives/objects/instance-variables.md"],
-    "expected_collections": ["project", "plugins"],
+    "expected_sources": ["project-primitives/events.md", "plugin-reference/text.md", "project-primitives/objects/instance-variables.md", "project-primitives/events/variables.md", "construct3-schema"],
+    "expected_collections": ["project", "plugins", "ace", "examples"],
     "retrieval_difficulty": "hard"
   },
   {
@@ -164,7 +164,7 @@
     "forbidden_phrases": [],
     "has_answer": true,
     "note": "脚本 API 基础",
-    "expected_sources": ["scripting/scripting-reference"],
+    "expected_sources": ["scripting/scripting-reference", "scripting-api"],
     "expected_collections": ["scripting"],
     "retrieval_difficulty": "medium"
   },
