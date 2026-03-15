@@ -37,6 +37,14 @@ def client():
     """Create test client with mocked retriever and lookup engine."""
     mock_retriever = MagicMock()
     mock_retriever.check_health.return_value = (True, "Qdrant is healthy")
+    mock_retriever.health_check.return_value = {
+        "status": "healthy",
+        "qdrant_connected": True,
+        "collections": {"c3_plugins": 100, "c3_guide": 50},
+        "total_documents": 150,
+        "missing_collections": [],
+        "message": "2 collections, 150 documents",
+    }
     mock_retriever.search_all_with_rerank.return_value = _mock_search_results()
     mock_retriever.filter_by_adaptive_threshold.side_effect = lambda r, **kw: r
     mock_retriever.search_plugin_by_name.return_value = _mock_search_results()[:1]
@@ -66,16 +74,25 @@ def test_health_ok(client):
     resp = c.get("/health")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["status"] == "ok"
+    assert data["status"] == "healthy"
     assert data["qdrant"] is True
+    assert data["total_documents"] == 150
+    assert "c3_plugins" in data["collections"]
 
 
 def test_health_degraded(client):
     c, retriever, _ = client
-    retriever.check_health.return_value = (False, "Connection refused")
+    retriever.health_check.return_value = {
+        "status": "unavailable",
+        "qdrant_connected": False,
+        "collections": {},
+        "total_documents": 0,
+        "missing_collections": [],
+        "message": "Qdrant connection failed: Connection refused",
+    }
     resp = c.get("/health")
     data = resp.json()
-    assert data["status"] == "degraded"
+    assert data["status"] == "unavailable"
     assert data["qdrant"] is False
 
 

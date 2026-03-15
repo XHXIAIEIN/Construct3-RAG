@@ -106,6 +106,9 @@ class HealthResponse(BaseModel):
     qdrant: bool
     embedding_model: str
     message: str
+    collections: dict = {}
+    total_documents: int = 0
+    missing_collections: list = []
 
 
 # ---------------------------------------------------------------------------
@@ -155,12 +158,15 @@ def _try_lookup(query: str):
 @app.get("/health", response_model=HealthResponse)
 def health():
     retriever = _get_retriever()
-    ok, msg = retriever.check_health()
+    detail = retriever.health_check()
     return HealthResponse(
-        status="ok" if ok else "degraded",
-        qdrant=ok,
+        status=detail["status"],
+        qdrant=detail["qdrant_connected"],
         embedding_model=EMBEDDING_MODEL,
-        message=msg,
+        message=detail["message"],
+        collections=detail["collections"],
+        total_documents=detail["total_documents"],
+        missing_collections=detail["missing_collections"],
     )
 
 
