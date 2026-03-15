@@ -113,21 +113,84 @@ class HybridRetriever:
 
         Returns:
             Tuple of (is_available, status_message)
-
-        Example:
-            >>> retriever = HybridRetriever()
-            >>> available, msg = retriever.check_health()
-            >>> if not available:
-            ...     print(f"Qdrant unavailable: {msg}")
         """
         try:
-            # Try to get collections list as health check
             self.client.get_collections()
             self._qdrant_available = True
             return True, "Qdrant is healthy"
         except Exception as e:
             self._qdrant_available = False
             return False, f"Qdrant connection failed: {str(e)}"
+
+    def health_check(self) -> Dict[str, Any]:
+        """
+        Detailed health check: connection status, collections, and document counts.
+
+        Returns:
+            Dict with keys:
+                - status: "healthy" | "degraded" | "unavailable"
+                - qdrant_connected: bool
+                - collections: dict mapping collection name to point count
+                - total_documents: int
+                - missing_collections: list of expected but missing collections
+                - message: str
+        """
+        from src.collections import ALL_COLLECTIONS
+
+        result: Dict[str, Any] = {
+            "status": "unavailable",
+            "qdrant_connected": False,
+            "collections": {},
+            "total_documents": 0,
+            "missing_collections": [],
+            "message": "",
+        }
+
+        # Step 1: connection check
+        try:
+            response = self.client.get_collections()
+            existing = {c.name for c in response.collections}
+        except Exception as e:
+            result["message"] = f"Qdrant connection failed: {e}"
+            self._qdrant_available = False
+            return result
+
+        result["qdrant_connected"] = True
+        self._qdrant_available = True
+
+        # Step 2: per-collection point counts
+        total = 0
+        for name in ALL_COLLECTIONS:
+            if name in existing:
+                try:
+                    info = self.client.get_collection(name)
+                    count = info.points_count or 0
+                    result["collections"][name] = count
+                    total += count
+                except Exception:
+                    result["collections"][name] = -1  # error reading
+            else:
+                result["missing_collections"].append(name)
+
+        result["total_documents"] = total
+
+        # Step 3: determine status
+        if result["missing_collections"]:
+            result["status"] = "degraded"
+            result["message"] = (
+                f"{len(result['missing_collections'])} collection(s) missing: "
+                f"{', '.join(result['missing_collections'])}"
+            )
+        elif total == 0:
+            result["status"] = "degraded"
+            result["message"] = "All collections exist but contain 0 documents"
+        else:
+            result["status"] = "healthy"
+            result["message"] = (
+                f"{len(result['collections'])} collections, {total} documents"
+            )
+
+        return result
 
     def compute_adaptive_threshold(self, results: List[SearchResult]) -> float:
         """
