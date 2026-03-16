@@ -30,7 +30,7 @@ Base URL: `https://editor.construct.net/r{version}/`
 
 **Cache strategy:** Local file cache with weekly expiry aligned to Scirra's release schedule.
 Scirra typically releases updates on Tuesday evenings (Beijing time, UTC+8),
-so cache expires every **Wednesday 00:00 Beijing time** (= Tuesday 16:00 UTC).
+so cache expires every **Wednesday 08:00 Beijing time** (= Wednesday 00:00 UTC).
 Within one cache period, CDN is hit at most once per file. Across the entire
 lifecycle of a version, total CDN requests ≈ 6 JSON files × 1 = negligible.
 
@@ -155,7 +155,7 @@ def test_get_latest_version(fetcher):
 
 
 def test_cache_expires_on_wednesday(fetcher, tmp_path):
-    """Cache files older than last Wednesday 00:00 Beijing time are refetched."""
+    """Cache files older than last Wednesday 08:00 Beijing time are refetched."""
     from src.ingest.c3_fetcher import _cache_expired
     cache_file = tmp_path / "test_cache"
     cache_file.write_text("old")
@@ -190,7 +190,7 @@ def test_fetch_all_aces(fetcher):
 # src/ingest/c3_fetcher.py
 """Fetch Construct 3 data from official CDN with local caching.
 
-Cache expires every Wednesday 00:00 Beijing time (UTC+8), aligned with
+Cache expires every Wednesday 08:00 Beijing time (UTC+8), aligned with
 Scirra's typical Tuesday-evening release schedule. Within one cache
 period, each file is fetched from CDN at most once.
 """
@@ -207,7 +207,7 @@ _BEIJING = timezone(timedelta(hours=8))
 
 
 def _cache_expired(cache_path: Path) -> bool:
-    """Check if cache file is from before the most recent Wednesday 00:00 Beijing time.
+    """Check if cache file is from before the most recent Wednesday 08:00 Beijing time.
 
     Scirra releases updates on Tuesday evenings (Beijing time).
     Cache invalidates every Wednesday 00:00 CST so that a rebuild
@@ -217,9 +217,12 @@ def _cache_expired(cache_path: Path) -> bool:
         return True
     mtime = datetime.fromtimestamp(cache_path.stat().st_mtime, tz=_BEIJING)
     now = datetime.now(_BEIJING)
-    # Find the most recent Wednesday 00:00 (weekday 2 = Wednesday)
+    # Find the most recent Wednesday 08:00 Beijing time (weekday 2 = Wednesday)
+    # = Wednesday 00:00 UTC, after Scirra's typical Tuesday evening (UK) releases
     days_since_wed = (now.weekday() - 2) % 7
-    last_wed = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=days_since_wed)
+    last_wed = now.replace(hour=8, minute=0, second=0, microsecond=0) - timedelta(days=days_since_wed)
+    if last_wed > now:
+        last_wed -= timedelta(days=7)
     return mtime < last_wed
 
 
