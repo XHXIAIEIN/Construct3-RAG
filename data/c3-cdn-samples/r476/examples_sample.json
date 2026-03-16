@@ -1,0 +1,96 @@
+[
+  {
+    "id": "3d-castle-maze",
+    "thumbnail": "examples/3d-castle-maze.png",
+    "project": "examples/3d-castle-maze.c3p",
+    "tags": [
+      "advanced",
+      "3d",
+      "game-template",
+      "adventure",
+      "puzzle"
+    ],
+    "used-addons": {
+      "plugins": [
+        "Sprite",
+        "Keyboard",
+        "Shape3D",
+        "TiledBg",
+        "gamepad",
+        "Particles",
+        "PlatformInfo",
+        "Spritefont2",
+        "Camera3D"
+      ],
+      "behaviors": [
+        "Tween",
+        "solid",
+        "Fade"
+      ],
+      "effects": [
+        "hsladjustmask",
+        "blurhorizontal",
+        "warpobject",
+        "vignette",
+        "bulge",
+        "pixellate",
+        "alphaclamp",
+        "hsladjust",
+        "posterize",
+        "replacecolor"
+      ]
+    }
+  },
+  {
+    "id": "3d-platformer",
+    "thumbnail": "templates/3d-platformer.webp",
+    "project": "templates/3d-platformer.c3p",
+    "product-types": "games",
+    "tags": [
+      "intermediate",
+      "game-template",
+      "platformer",
+      "3d"
+    ],
+    "used-addons": {
+      "plugins": [
+        "Camera3D",
+        "Keyboard",
+        "NinePatch",
+        "Shape3D",
+        "Sprite",
+        "Spritefont2",
+        "TiledBg"
+      ],
+      "behaviors": [
+        "Flash",
+        "Sin",
+        "Tween"
+      ],
+      "effects": []
+    }
+  },
+  {
+    "id": "3d-platforms",
+    "thumbnail": "examples/3d-platforms.png",
+    "project": "examples/3d-platforms.c3p",
+    "tags": [
+      "beginner",
+      "3d",
+      "barebones-template",
+      "platformer"
+    ],
+    "used-addons": {
+      "plugins": [
+        "Shape3D",
+        "Sprite"
+      ],
+      "behaviors": [
+        "solid",
+        "Platform",
+        "scrollto"
+      ],
+      "effects": []
+    }
+  }
+]

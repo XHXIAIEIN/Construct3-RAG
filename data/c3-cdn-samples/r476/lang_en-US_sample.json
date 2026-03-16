@@ -1,0 +1,530 @@
+{
+  "text": {
+    "plugins": {
+      "sprite": {
+        "name": "Sprite",
+        "description": "An animated object that is the building block of most projects.",
+        "help-url": "plugin-reference/sprite",
+        "properties": {
+          "edit-animations": {
+            "name": "Animations",
+            "desc": "Click to edit the object's animations.",
+            "link-text": "Edit"
+          },
+          "make-original-size": {
+            "name": "Size",
+            "desc": "Click to set the object to the same size as its image.",
+            "link-text": "Make 1:1"
+          },
+          "initially-visible": {
+            "name": "Initially visible",
+            "desc": "Choose whether the object is visible when the layout starts."
+          },
+          "initial-animation": {
+            "name": "Initial animation",
+            "desc": "The initial animation showing."
+          },
+          "initial-frame": {
+            "name": "Initial frame",
+            "desc": "The initial animation frame showing."
+          },
+          "enable-collisions": {
+            "name": "Enable collisions",
+            "desc": "Whether the object will register collision events or not."
+          },
+          "live-preview": {
+            "name": "Preview",
+            "desc": "Tick to run a live preview in the editor."
+          }
+        },
+        "debugger": {
+          "animation-properties": {
+            "title": "Sprite animation",
+            "current-animation": "Current animation",
+            "current-frame": "Current frame",
+            "is-playing": "Is playing",
+            "speed": "Speed",
+            "repeats": "Repeats"
+          }
+        },
+        "aceCategories": {
+          "animations": "Animations",
+          "appearance": "Appearance",
+          "collisions": "Collisions",
+          "misc": "Misc",
+          "size-position": "Size & Position",
+          "web": "Web"
+        },
+        "conditions": {
+          "is-animation-playing": {
+            "list-name": "Is playing",
+            "display-text": "Is animation {0} playing",
+            "description": "Test which of the object's animations is currently playing.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "Enter the name of the animation to check if playing."
+              }
+            }
+          },
+          "compare-animation-frame": {
+            "list-name": "Compare frame",
+            "display-text": "Animation frame {0} {1}",
+            "description": "Test which animation frame is currently showing.",
+            "params": {
+              "comparison": {
+                "name": "Comparison",
+                "desc": "How to compare the current animation frame number (0-based)."
+              },
+              "number": {
+                "name": "Number",
+                "desc": "The animation frame number to compare to (0-based)."
+              }
+            }
+          },
+          "compare-animation-frame-tag": {
+            "list-name": "Compare frame tag",
+            "display-text": "Animation frame tag {0} {1}",
+            "description": "Compare against the current animation frame's tag.",
+            "params": {
+              "comparison": {
+                "name": "Comparison",
+                "desc": "How to compare the current animation frame's tag."
+              },
+              "tag": {
+                "name": "tag",
+                "desc": "The animation frame tag to compare against."
+              }
+            }
+          },
+          "on-animation-finished": {
+            "list-name": "On finished",
+            "display-text": "On animation {0} finished",
+            "description": "Triggered when an animation has finished.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "Enter the name of the animation that has finished."
+              }
+            }
+          },
+          "on-any-animation-finished": {
+            "list-name": "On any finished",
+            "display-text": "On any animation finished",
+            "description": "Triggered when any animation has finished."
+          },
+          "on-animation-frame-changed": {
+            "list-name": "On frame changed",
+            "display-text": "On frame changed",
+            "description": "Triggered when the current animation frame changes."
+          },
+          "compare-animation-speed": {
+            "list-name": "Compare speed",
+            "display-text": "Animation speed {0} {1}",
+            "description": "Compare the current animation speed.",
+            "params": {
+              "comparison": {
+                "name": "Comparison",
+                "desc": "How to compare the current animation speed."
+              },
+              "number": {
+                "name": "Number",
+                "desc": "The animation speed to compare to."
+              }
+            }
+          },
+          "is-mirrored": {
+            "list-name": "Is mirrored",
+            "display-text": "Is mirrored",
+            "description": "True if the object has been mirrored with the 'Set Mirrored' action."
+          },
+          "is-flipped": {
+            "list-name": "Is flipped",
+            "display-text": "Is flipped",
+            "description": "True if the object has been flipped with the 'Set Flipped' action."
+          },
+          "collisions-enabled": {
+            "list-name": "Collisions enabled",
+            "display-text": "Collisions enabled",
+            "description": "True if the object's collisions are enabled and will fire collision events."
+          },
+          "on-image-url-loaded": {
+            "list-name": "On image URL loaded",
+            "display-text": "On image URL loaded",
+            "description": "Triggered after 'Load image from URL' when the image has finished loading."
+          },
+          "on-image-url-failed": {
+            "list-name": "On image URL failed",
+            "display-text": "On image URL failed to load",
+            "description": "Triggered after 'Load image from URL' if the image fails to load."
+          }
+        },
+        "actions": {
+          "stop-animation": {
+            "list-name": "Stop",
+            "display-text": "Stop animation",
+            "description": "Stop the current animation from playing."
+          },
+          "start-animation": {
+            "list-name": "Start",
+            "display-text": "Start animation from {0}",
+            "description": "Start the current animation, if it was stopped.",
+            "params": {
+              "from": {
+                "name": "From",
+                "desc": "Choose whether to resume or rewind the animation back to the first frame.",
+                "items": {
+                  "current-frame": "current frame",
+                  "beginning": "beginning"
+                }
+              }
+            }
+          },
+          "set-animation": {
+            "list-name": "Set animation",
+            "display-text": "Set animation to [b]{0}[/b] (play from {1})",
+            "description": "Set the current animation",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The name of the animation to set."
+              },
+              "from": {
+                "name": "From",
+                "desc": "Choose whether to play from the same frame number or rewind the animation back to the first frame.",
+                "items": {
+                  "current-frame": "current frame",
+                  "beginning": "beginning"
+                }
+              }
+            }
+          },
+          "set-animation-frame": {
+            "list-name": "Set frame",
+            "display-text": "Set animation frame to [b]{0}[/b]",
+            "description": "Set the current animation frame by its index or tag.",
+            "params": {
+              "frame-number": {
+                "name": "Frame",
+                "desc": "The animation frame index (0-based), or a string of the frame tag."
+              }
+            }
+          },
+          "set-animation-speed": {
+            "list-name": "Set speed",
+            "display-text": "Set animation speed to [b]{0}[/b]",
+            "description": "Set the current animation speed.",
+            "params": {
+              "speed": {
+                "name": "Speed",
+                "desc": "The new animation speed, in animation frames per second."
+              }
+            }
+          },
+          "set-repeat-to-frame": {
+            "list-name": "Set repeat-to frame",
+            "display-text": "Set repeat-to frame to [b]{0}[/b]",
+            "description": "Set the animation frame number to repeat to in a looping animation.",
+            "params": {
+              "frame-number": {
+                "name": "Frame number",
+                "desc": "The animation frame number to repeat to (0-based)."
+              }
+            }
+          },
+          "add-remove-animation": {
+            "list-name": "Add/remove animation",
+            "display-text": "{0} animation [b]{1}[/b]",
+            "description": "Add or remove an animation in the object.",
+            "params": {
+              "which": {
+                "name": "Which",
+                "desc": "Whether to add a new animation or remove an existing animation.",
+                "items": {
+                  "add": "Add",
+                  "remove": "Remove"
+                }
+              },
+              "name": {
+                "name": "Name",
+                "desc": "The animation name to add or remove."
+              }
+            }
+          },
+          "add-remove-animation-frame": {
+            "list-name": "Add/remove animation frame",
+            "display-text": "{0} animation frame to [b]{1}[/b] at [i]{2}[/i]",
+            "description": "Add or remove an animation frame in the current animation.",
+            "params": {
+              "which": {
+                "name": "Which",
+                "desc": "Whether to add a new animation frame or remove an existing animation frame.",
+                "items": {
+                  "add": "Add",
+                  "remove": "Remove"
+                }
+              },
+              "animation": {
+                "name": "Animation",
+                "desc": "The name of the animation to modify."
+              },
+              "where": {
+                "name": "Where",
+                "desc": "The index or tag at which to insert or delete an animation frame. Use -1 for last frame."
+              }
+            }
+          },
+          "set-blend-mode": {
+            "list-name": "Set blend mode",
+            "display-text": "Set blend mode to [i]{0}[/i]",
+            "description": "Set the background blend mode for this object.",
+            "params": {
+              "blend-mode": {
+                "name": "Blend mode",
+                "desc": "Choose the new blend mode for this object.",
+                "items": {
+                  "normal": "Normal",
+                  "additive": "Additive",
+                  "xor": "XOR",
+                  "copy": "Copy",
+                  "destination-over": "Destination over",
+                  "source-in": "Source in",
+                  "destination-in": "Destination in",
+                  "source-out": "Source out",
+                  "destination-out": "Destination out",
+                  "source-atop": "Source atop",
+                  "destination-atop": "Destination atop",
+                  "lighten": "Lighten",
+                  "darken": "Darken",
+                  "multiply": "Multiply",
+                  "screen": "Screen"
+                }
+              }
+            }
+          },
+          "set-mirrored": {
+            "list-name": "Set mirrored",
+            "display-text": "Set [b]{0}[/b]",
+            "description": "Set the object horizontally mirrored or back to normal.",
+            "params": {
+              "state": {
+                "name": "State",
+                "desc": "Choose whether to horizontally mirror the object or set it back to normal.",
+                "items": {
+                  "mirrored": "Mirrored",
+                  "not-mirrored": "Not mirrored"
+                }
+              }
+            }
+          },
+          "set-flipped": {
+            "list-name": "Set flipped",
+            "display-text": "Set [b]{0}[/b]",
+            "description": "Set the object vertically flipped or back to normal.",
+            "params": {
+              "state": {
+                "name": "State",
+                "desc": "Choose whether to vertically flip the object or set it back to normal.",
+                "items": {
+                  "flipped": "Flipped",
+                  "not-flipped": "Not flipped"
+                }
+              }
+            }
+          },
+          "spawn-another-object": {
+            "list-name": "Spawn another object",
+            "display-text": "Spawn {0} on layer [b]{1}[/b] (image point [i]{2}[/i], create hierarchy: [i]{3}[/i], template: [i]{4}[/i])",
+            "description": "Create another object at this object.",
+            "params": {
+              "object": {
+                "name": "Object",
+                "desc": "Choose the object type of the new instance to create."
+              },
+              "layer": {
+                "name": "Layer",
+                "desc": "The layer name or number to create the instance on."
+              },
+              "image-point": {
+                "name": "Image point",
+                "desc": "Use 0 for the object's origin, or the name or number of an image point to spawn the object from."
+              },
+              "create-hierarchy": {
+                "name": "Create hierarchy",
+                "desc": "Whether to also create all child instances according to the hierarchy in the Layout View."
+              },
+              "template-name": {
+                "name": "Template name",
+                "desc": "Use a specific instance as a template when spawning a new object."
+              }
+            }
+          },
+          "set-collisions-enabled": {
+            "list-name": "Set collisions enabled",
+            "display-text": "Set collisions [b]{0}[/b]",
+            "description": "Set whether the object will register collision events or not.",
+            "params": {
+              "collisions": {
+                "name": "Collisions",
+                "desc": "Whether to enable or disable collisions for this object.",
+                "items": {
+                  "disabled": "Disabled",
+                  "enabled": "Enabled"
+                }
+              }
+            }
+          },
+          "set-solid-collision-filter": {
+            "list-name": "Set solid collision filter",
+            "display-text": "Set solid collision filter to [b]{1}[/b] [i]{0}[/i]",
+            "description": "Use a list of tags to filter collisions with the 'Solid' behavior.",
+            "params": {
+              "mode": {
+                "name": "Mode",
+                "desc": "Use 'Inclusive' to only collide with solids with the given tags. Use 'Exclusive' to ignore solids with the given tags.",
+                "items": {
+                  "inclusive": "Inclusive",
+                  "exclusive": "Exclusive"
+                }
+              },
+              "tags": {
+                "name": "Tags",
+                "desc": "A space-separated list of tags to filter collisions with."
+              }
+            }
+          },
+          "set-scale": {
+            "list-name": "Set scale",
+            "display-text": "Set scale to [i]{0}[/i]",
+            "description": "Set the width and height as a multiple of its original size.",
+            "params": {
+              "scale": {
+                "name": "Scale",
+                "desc": "The object width and height to set, based on a multiple of its original dimensions, e.g. 1 = original size, 2 = double size, 0.5 = half size etc."
+              }
+            }
+          },
+          "load-image-from-url": {
+            "list-name": "Load image from URL",
+            "display-text": "Load image from [i]{0}[/i] ({1}, cross-origin {2})",
+            "description": "Replace the currently displaying animation frame with an image loaded from a web address or data URI.",
+            "params": {
+              "uri": {
+                "name": "URI",
+                "desc": "Enter the URL on the web, or data URI, of an image to load."
+              },
+              "size": {
+                "name": "Size",
+                "desc": "Whether to resize the sprite to the size of the loaded image, or stretch it to the current size.",
+                "items": {
+                  "resize-to-image-size": "Resize to image size",
+                  "keep-current-size": "Keep current size"
+                }
+              },
+              "cross-origin": {
+                "name": "Cross-origin",
+                "desc": "The cross-origin (CORS) mode to use for the request.",
+                "items": {
+                  "anonymous": "anonymous",
+                  "none": "none"
+                }
+              }
+            }
+          }
+        },
+        "expressions": {
+          "animationframe": {
+            "description": "The current animation frame number (0-based).",
+            "translated-name": "AnimationFrame"
+          },
+          "animationframecount": {
+            "description": "The number of animation frames in the current animation.",
+            "translated-name": "AnimationFrameCount"
+          },
+          "animationframetag": {
+            "description": "A string tag to identify an animation frame.",
+            "translated-name": "AnimationFrameTag"
+          },
+          "animationname": {
+            "description": "The name of the current animation.",
+            "translated-name": "AnimationName"
+          },
+          "animationspeed": {
+            "description": "The speed of the current animation, in animation frames per second.",
+            "translated-name": "AnimationSpeed"
+          },
+          "originalanimationspeed": {
+            "description": "The original speed of the current animation as set in the Animations Editor, in animation frames per second.",
+            "translated-name": "OriginalAnimationSpeed"
+          },
+          "imagewidth": {
+            "description": "The width of the current animation frame image, in pixels.",
+            "translated-name": "ImageWidth"
+          },
+          "imageheight": {
+            "description": "The height of the current animation frame image, in pixels.",
+            "translated-name": "ImageHeight"
+          },
+          "imagepointx": {
+            "description": "The X position of one of the object's image points.",
+            "params": {
+              "imagepoint": {
+                "name": "ImagePoint",
+                "desc": "Name or number of image point to get."
+              }
+            },
+            "translated-name": "ImagePointX"
+          },
+          "imagepointy": {
+            "description": "The Y position of one of the object's image points.",
+            "params": {
+              "imagepoint": {
+                "name": "ImagePoint",
+                "desc": "Name or number of image point to get."
+              }
+            },
+            "translated-name": "ImagePointY"
+          },
+          "imagepointz": {
+            "description": "The Z position of one of the object's image points.",
+            "params": {
+              "imagepoint": {
+                "name": "ImagePoint",
+                "desc": "Name or number of image point to get."
+              }
+            },
+            "translated-name": "ImagePointZ"
+          },
+          "imagepointcount": {
+            "description": "The number of image points the current frame has.",
+            "translated-name": "ImagePointCount"
+          },
+          "poly-point-x-at": {
+            "description": "The X position of one of the object's collision polygon points.",
+            "params": {
+              "index": {
+                "name": "Index",
+                "desc": "Zero-based index of the collision poly point to get."
+              }
+            },
+            "translated-name": "PolyPointXAt"
+          },
+          "poly-point-y-at": {
+            "description": "The Y position of one of the object's collision polygon points.",
+            "params": {
+              "index": {
+                "name": "Index",
+                "desc": "Zero-based index of the collision poly point to get."
+              }
+            },
+            "translated-name": "PolyPointYAt"
+          },
+          "poly-point-count": {
+            "description": "The number of collision polygon points the current frame has.",
+            "translated-name": "PolyPointCount"
+          }
+        }
+      }
+    }
+  }
+}

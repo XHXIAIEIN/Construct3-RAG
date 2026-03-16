@@ -1,0 +1,92 @@
+[
+  {
+    "json": {
+      "id": "alphaclamp",
+      "category": "color",
+      "author": "Scirra",
+      "supported-renderers": [
+        "webgl",
+        "webgpu"
+      ],
+      "blends-background": false,
+      "cross-sampling": false,
+      "preserves-opaqueness": true,
+      "animated": false,
+      "extend-box": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "parameters": [
+        {
+          "id": "threshold",
+          "type": "percent",
+          "initial-value": 0.5,
+          "interpolatable": true,
+          "uniform": "alphathreshold"
+        },
+        {
+          "id": "lower-clamp",
+          "type": "percent",
+          "initial-value": 0,
+          "interpolatable": true,
+          "uniform": "lowerclamp"
+        },
+        {
+          "id": "upper-clamp",
+          "type": "percent",
+          "initial-value": 1,
+          "interpolatable": true,
+          "uniform": "upperclamp"
+        }
+      ]
+    },
+    "glsl": "/////////////////////////////////////////////////////////\r\n// Alpha cutoff effect\r\n// NOTE: this effect is essentially a broken 'Alpha clamp' effect.\r\n// It accidentally multiplies the premultiplied RGB by the clamped\r\n// alpha again, essentially meaning the RGB is premultiplied twice over.\r\n// That causes a darkening effect towards the edges as the alpha\r\n// reduces. The effect was originally named 'Alpha clamp' and widely\r\n// used for years, so changing it causes an awkward backward compatibility\r\n// problem. Therefore the legacy alpha clamp effect is left as-is but \r\n// renamed to \"Alpha cutoff\"; the alphaclamp2 effect is a new effect\r\n// that works correctly and is named \"Alpha clamp\", taking the old name.\r\nprecision mediump float;\r\nvarying mediump vec2 vTex;\r\nuniform lowp sampler2D samplerFront;\r\nuniform lowp float alphathreshold;\r\nuniform lowp float lowerclamp;\r\nuniform lowp float upperclamp;\r\n\r\nvoid main(void)\r\n{\r\n\t// Retrieve source pixel\r\n\tlowp vec4 front = texture2D(samplerFront, vTex);\r\n\t\r\n\t// Extract alpha\r\n\tlowp float a = front.a;\r\n\r\n\t// Mistake: this code was in the original shader, but it\r\n\t// does not actually use the unpremultiplied RGB value.\r\n\t//lowp vec4 unpremultiplied = front / a;\r\n\t\r\n\t// Apply threshold\r\n\ta = (a < alphathreshold ? lowerclamp : upperclamp);\r\n\t\r\n\t// Premultiply the RGB a second time (incorrect!) and then\r\n\t// assign the clamped alpha.\r\n\tfront *= a;\r\n\tfront.a = a;\r\n\t\r\n\tgl_FragColor = front;\r\n}\r\n",
+    "glslWebGL2": "",
+    "wgsl": "/////////////////////////////////////////////////////////\r\n// Texture and sampler\r\n%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\r\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\r\n\r\n/////////////////////////////////////////////////////////\r\n// Shader custom parameters\r\nstruct ShaderParams {\r\n\talphathreshold : f32,\r\n\tlowerclamp : f32,\r\n\tupperclamp : f32\r\n};\r\n%%SHADERPARAMS_BINDING%% var<uniform> shaderParams : ShaderParams;\r\n\r\n%%C3_UTILITY_FUNCTIONS%%\r\n\r\n%%FRAGMENTINPUT_STRUCT%%\r\n%%FRAGMENTOUTPUT_STRUCT%%\r\n\r\n/////////////////////////////////////////////////////////\r\n// Main method\r\n@fragment\r\nfn main(input : FragmentInput) -> FragmentOutput\r\n{\r\n\t// Retrieve source pixel\r\n\tvar front : vec4<f32> = textureSample(textureFront, samplerFront, input.fragUV);\r\n\r\n\t// Apply alpha threshold\r\n\tfront.a = select(shaderParams.upperclamp, shaderParams.lowerclamp, front.a < shaderParams.alphathreshold);\r\n\r\n\t// Output premultiplied a second time. NOTE: this is replicating the same mistake\r\n\t// the WebGL shader makes for compatibility.\r\n\tvar output : FragmentOutput;\r\n\toutput.color = vec4<f32>(front.rgb * front.a, front.a);\r\n\treturn output;\r\n}\r\n"
+  },
+  {
+    "json": {
+      "id": "alphaclamp2",
+      "category": "color",
+      "author": "Scirra",
+      "supported-renderers": [
+        "webgl",
+        "webgpu"
+      ],
+      "blends-background": false,
+      "cross-sampling": false,
+      "preserves-opaqueness": true,
+      "animated": false,
+      "extend-box": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "parameters": [
+        {
+          "id": "threshold",
+          "type": "percent",
+          "initial-value": 0.5,
+          "interpolatable": true,
+          "uniform": "alphathreshold"
+        },
+        {
+          "id": "lower-clamp",
+          "type": "percent",
+          "initial-value": 0,
+          "interpolatable": true,
+          "uniform": "lowerclamp"
+        },
+        {
+          "id": "upper-clamp",
+          "type": "percent",
+          "initial-value": 1,
+          "interpolatable": true,
+          "uniform": "upperclamp"
+        }
+      ]
+    },
+    "glsl": "/////////////////////////////////////////////////////////\r\n// Alpha clamp effect\r\n// Note: this supersedes the old alphaclamp effect which\r\n// turned out to be broken and so was renamed \"Alpha cutoff\".\r\nprecision mediump float;\r\nvarying mediump vec2 vTex;\r\nuniform lowp sampler2D samplerFront;\r\nuniform lowp float alphathreshold;\r\nuniform lowp float lowerclamp;\r\nuniform lowp float upperclamp;\r\n\r\nvoid main(void)\r\n{\r\n\t// Retrieve source pixel\r\n\tlowp vec4 front = texture2D(samplerFront, vTex);\r\n\t\r\n\t// Extract alpha and unpremultiply\r\n\tlowp float a = front.a;\r\n\tlowp vec3 unpremultiplied = front.rgb / a;\r\n\t\r\n\t// Apply threshold\r\n\ta = (a < alphathreshold ? lowerclamp : upperclamp);\r\n\t\r\n\t// Premultiply with clamped alpha\r\n\tgl_FragColor = vec4(unpremultiplied * a, a);\r\n}\r\n",
+    "glslWebGL2": "",
+    "wgsl": "/////////////////////////////////////////////////////////\r\n// Texture and sampler\r\n%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\r\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\r\n\r\n/////////////////////////////////////////////////////////\r\n// Shader custom parameters\r\nstruct ShaderParams {\r\n\talphathreshold : f32,\r\n\tlowerclamp : f32,\r\n\tupperclamp : f32\r\n};\r\n%%SHADERPARAMS_BINDING%% var<uniform> shaderParams : ShaderParams;\r\n\r\n%%C3_UTILITY_FUNCTIONS%%\r\n\r\n%%FRAGMENTINPUT_STRUCT%%\r\n%%FRAGMENTOUTPUT_STRUCT%%\r\n\r\n/////////////////////////////////////////////////////////\r\n// Main method\r\n@fragment\r\nfn main(input : FragmentInput) -> FragmentOutput\r\n{\r\n\t// Retrieve source pixel and unpremultiply\r\n\tvar front : vec4<f32> = c3_unpremultiply(textureSample(textureFront, samplerFront, input.fragUV));\r\n\r\n\t// Apply alpha threshold\r\n\tfront.a = select(shaderParams.upperclamp, shaderParams.lowerclamp, front.a < shaderParams.alphathreshold);\r\n\r\n\t// Output premultiplied with clamped alpha\r\n\tvar output : FragmentOutput;\r\n\toutput.color = vec4<f32>(front.rgb * front.a, front.a);\r\n\treturn output;\r\n}\r\n"
+  }
+]
