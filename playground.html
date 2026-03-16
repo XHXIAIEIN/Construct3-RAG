@@ -91,6 +91,21 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .json-bool{color:var(--orange)}
 .json-null{color:var(--dis)}
 .json-brace{color:var(--secondFg)}
+
+/* Trace log */
+.trace-panel{max-height:140px;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;font-size:10px;line-height:1.6;display:none}
+.trace-panel.open{display:block}
+.trace-step{padding:1px 8px;border-bottom:1px solid #2a2a2a;display:flex;gap:6px}
+.trace-phase{color:var(--accent);min-width:50px;font-weight:bold}
+.trace-phase.lookup{color:var(--yellow)}
+.trace-phase.search{color:var(--green)}
+.trace-phase.filter{color:var(--purple)}
+.trace-phase.retrieve{color:var(--blue)}
+.trace-phase.done{color:var(--green)}
+.trace-phase.input{color:var(--dis)}
+.trace-msg{color:var(--fg)}
+.trace-toggle{font-size:10px;color:var(--secondFg);cursor:pointer;user-select:none;padding:2px 0}
+.trace-toggle:hover{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -139,6 +154,12 @@ function canvasMove(e) {
 }
 function canvasUp() { panning = false; canvas.classList.remove('grabbing'); }
 function canvasWheel(e) {
+  // Let scrollable card content handle its own scroll
+  let el = e.target;
+  while (el && el !== canvas) {
+    if (el.scrollHeight > el.clientHeight + 2 || el.tagName === 'TEXTAREA') return;
+    el = el.parentElement;
+  }
   e.preventDefault();
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
@@ -258,6 +279,8 @@ function createCard(apiKey, posX, posY) {
     </div>
     <div class="card-body">
       ${bodySection}
+      <div class="trace-toggle" onclick="this.nextElementSibling.classList.toggle('open')">▶ Trace log</div>
+      <div class="trace-panel" id="${id}-trace"></div>
       <div class="section-label" style="margin-top:4px">Response</div>
       <div class="response-wrap" id="${id}-resp-wrap">
         <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
@@ -349,6 +372,18 @@ async function sendRequest(cardId, apiKey) {
     statusEl.className = 'status-badge ' + (res.ok ? 'ok' : 'err');
     statusEl.style.display = 'inline';
     latencyEl.textContent = ms + 'ms';
+
+    // Populate trace log if available
+    const traceEl = document.getElementById(cardId + '-trace');
+    if (traceEl && data?.diagnostics?.trace?.length) {
+      traceEl.innerHTML = data.diagnostics.trace.map(s =>
+        `<div class="trace-step"><span class="trace-phase ${s.phase}">${s.phase}</span><span class="trace-msg">${s.message}</span></div>`
+      ).join('');
+      traceEl.classList.add('open');
+    } else if (traceEl) {
+      traceEl.innerHTML = '';
+      traceEl.classList.remove('open');
+    }
 
     if (typeof data === 'string') {
       respEl.textContent = data;

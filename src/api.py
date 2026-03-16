@@ -108,6 +108,10 @@ class LookupDetail(BaseModel):
     intent_detail: dict
 
 
+class TraceStep(BaseModel):
+    phase: str
+    message: str
+
 class SearchDiagnostics(BaseModel):
     route: str  # "lookup" | "semantic" | "plugin_filter" | "collection_filter"
     lang: str = "en"  # detected or explicit language
@@ -115,6 +119,7 @@ class SearchDiagnostics(BaseModel):
     after_rerank: int
     after_threshold: int
     latency_ms: float
+    trace: List[TraceStep] = []
     lookup_detail: Optional[LookupDetail] = None
 
 
@@ -230,11 +235,18 @@ def health():
 def search(req: SearchRequest):
     t0 = time.time()
 
+    # Initialize trace collection for this request
+    from src.rag._trace import _trace_local, _trace
+    _trace_local.events = []
+    _trace(f"query: {req.query[:60]}", "input")
+
     # ── Step 1: Try lookup (unless skipped or filters are set) ──────────
     use_lookup = not req.skip_lookup and not req.plugin and not req.collections
     if use_lookup:
+        _trace("尝试 lookup 直查...", "lookup")
         lookup_result, lookup_detail = _try_lookup(req.query)
         if lookup_result is not None:
+            _trace(f"lookup 命中: {lookup_detail.intent}", "lookup")
             latency_ms = (time.time() - t0) * 1000
             return SearchResponse(
                 results=[
@@ -252,15 +264,18 @@ def search(req: SearchRequest):
                     after_rerank=1,
                     after_threshold=1,
                     latency_ms=round(latency_ms, 1),
+                    trace=[TraceStep(phase=p, message=m) for p, m in _trace_local.events],
                     lookup_detail=lookup_detail,
                 ),
             )
+        _trace("lookup 未命中，转语义搜索", "lookup")
 
     # ── Step 2: Semantic search ─────────────────────────────────────────
     retriever = _get_retriever()
 
     # Branch: plugin-specific filtered search
     if req.plugin:
+        _trace(f"插件过滤: {req.plugin} types={req.section_types}", "search")
         results = retriever.search_plugin_by_name(
             query=req.query,
             plugin_en=req.plugin,
@@ -270,6 +285,7 @@ def search(req: SearchRequest):
         total = len(results)
         after_rerank = total
         route = "plugin_filter"
+        _trace(f"返回 {total} 条结果", "search")
 
     # Branch: collection-scoped search
     elif req.collections:
@@ -299,9 +315,9 @@ def search(req: SearchRequest):
 
     # Default: full cross-collection search with rerank
     else:
-        # Determine language → skip terms for English-only queries
         lang = req.lang or _detect_lang(req.query)
         exclude = {"terms"} if lang not in _TERMS_USEFUL_LANGS else None
+        _trace(f"语义搜索: lang={lang}, exclude={exclude or 'none'}", "search")
 
         results = retriever.search_all_with_rerank(
             query=req.query,
@@ -313,13 +329,17 @@ def search(req: SearchRequest):
         after_rerank = total
         route = "semantic"
 
+    _trace(f"检索完成: {total} 候选, rerank 后 {after_rerank}", "search")
+
     # Adaptive threshold filtering
     after_threshold = len(results)
     if req.apply_threshold and results:
         results = retriever.filter_by_adaptive_threshold(results)
         after_threshold = len(results)
+        _trace(f"阈值过滤: {after_rerank} → {after_threshold}", "filter")
 
     latency_ms = (time.time() - t0) * 1000
+    _trace(f"完成: {after_threshold} 条结果, {latency_ms:.0f}ms", "done")
 
     detected_lang = req.lang or _detect_lang(req.query)
 
@@ -341,5 +361,6 @@ def search(req: SearchRequest):
             after_rerank=after_rerank,
             after_threshold=after_threshold,
             latency_ms=round(latency_ms, 1),
+            trace=[TraceStep(phase=p, message=m) for p, m in getattr(_trace_local, 'events', [])],
         ),
     )
