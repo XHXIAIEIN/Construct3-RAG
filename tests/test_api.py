@@ -116,12 +116,12 @@ def test_search_routes_to_lookup(client):
     resp = c.post("/search", json={"query": "列出 Sprite 的 action"})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "lookup"
+    assert data["diagnostics"]["route"] == "lookup+semantic"
     assert data["results"][0]["collection"] == "lookup"
     assert "Set animation" in data["results"][0]["text"]
     assert data["diagnostics"]["lookup_detail"]["intent"] == "ace_list"
-    # Retriever should NOT be called
-    retriever.search_all_with_rerank.assert_not_called()
+    # Retriever IS called (semantic search supplements lookup)
+    retriever.search_all_with_rerank.assert_called_once()
 
 
 def test_search_lookup_miss_falls_to_semantic(client):
