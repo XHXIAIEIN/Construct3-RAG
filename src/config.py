@@ -17,7 +17,9 @@ except ImportError:
 BASE_DIR = Path(__file__).parent.parent
 SOURCE_DIR = BASE_DIR / "data" / "source"
 DATA_DIR = BASE_DIR / "data"
-SCHEMA_DIR = DATA_DIR / "schemas"
+# Schema directory: prefer CDN-exported schemas, fall back to local data/schemas/
+_CDN_SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))) / os.getenv("C3_VERSION", "r476") / "schemas"
+SCHEMA_DIR = _CDN_SCHEMA_DIR if _CDN_SCHEMA_DIR.exists() else DATA_DIR / "schemas"
 
 # =============================================================================
 # External Sources
