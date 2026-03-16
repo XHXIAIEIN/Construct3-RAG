@@ -166,6 +166,7 @@ def test_search_top_k(client):
     assert resp.status_code == 200
     retriever.search_all_with_rerank.assert_called_once_with(
         query="test", top_k_per_collection=5, final_top_k=3,
+        exclude_collections={"terms"},
     )
 
 

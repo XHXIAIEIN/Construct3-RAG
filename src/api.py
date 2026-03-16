@@ -56,6 +56,11 @@ def _get_lookup_engine():
 class SearchRequest(BaseModel):
     query: str = Field(..., max_length=500, description="Search query")
     top_k: int = Field(10, ge=1, le=50, description="Max results to return")
+    lang: Optional[str] = Field(
+        None,
+        description="Language hint: 'zh'/'ja'/'ko' includes terms collection (bilingual), "
+                    "'en' skips terms. Auto-detected from query characters if omitted.",
+    )
     collections: Optional[List[str]] = Field(
         None, description="Limit search to specific collections (e.g. ['plugins', 'ace'])"
     )
@@ -89,6 +94,7 @@ class LookupDetail(BaseModel):
 
 class SearchDiagnostics(BaseModel):
     route: str  # "lookup" | "semantic" | "plugin_filter" | "collection_filter"
+    lang: str = "en"  # detected or explicit language
     total_candidates: int
     after_rerank: int
     after_threshold: int
@@ -114,6 +120,31 @@ class HealthResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _detect_lang(query: str) -> str:
+    """Detect query language from character ranges.
+
+    Returns 'zh' for Chinese, 'ja' for Japanese, 'ko' for Korean,
+    'en' for Latin-only text.
+    """
+    for ch in query:
+        cp = ord(ch)
+        # CJK Unified Ideographs (shared by zh/ja/ko, default to zh)
+        if 0x4e00 <= cp <= 0x9fff:
+            return "zh"
+        # Hiragana / Katakana → Japanese
+        if 0x3040 <= cp <= 0x30ff:
+            return "ja"
+        # Hangul → Korean
+        if 0xac00 <= cp <= 0xd7af or 0x1100 <= cp <= 0x11ff:
+            return "ko"
+    return "en"
+
+
+# terms collection contains bilingual translation pairs —
+# only useful when query is in a non-English language
+_TERMS_USEFUL_LANGS = {"zh", "ja", "ko"}
+
 
 def _collection_key(source_name: str) -> str:
     from src.collections import COLLECTIONS
@@ -243,10 +274,15 @@ def search(req: SearchRequest):
 
     # Default: full cross-collection search with rerank
     else:
+        # Determine language → skip terms for English-only queries
+        lang = req.lang or _detect_lang(req.query)
+        exclude = {"terms"} if lang not in _TERMS_USEFUL_LANGS else None
+
         results = retriever.search_all_with_rerank(
             query=req.query,
             top_k_per_collection=5,
             final_top_k=req.top_k,
+            exclude_collections=exclude,
         )
         total = len(results)
         after_rerank = total
@@ -259,6 +295,8 @@ def search(req: SearchRequest):
         after_threshold = len(results)
 
     latency_ms = (time.time() - t0) * 1000
+
+    detected_lang = req.lang or _detect_lang(req.query)
 
     return SearchResponse(
         results=[
@@ -273,6 +311,7 @@ def search(req: SearchRequest):
         ],
         diagnostics=SearchDiagnostics(
             route=route,
+            lang=detected_lang,
             total_candidates=total,
             after_rerank=after_rerank,
             after_threshold=after_threshold,
