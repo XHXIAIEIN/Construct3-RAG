@@ -231,14 +231,17 @@ class HybridRetriever:
 
     @property
     def reranker(self):
-        """Lazy-load cross-encoder reranker model on first use."""
+        """Lazy-load cross-encoder reranker model on first use.
+
+        Uses sentence-transformers CrossEncoder (compatible with Python 3.14)
+        instead of FlagEmbedding FlagReranker which requires older Python.
+        """
         if not hasattr(self, "_reranker") or self._reranker is None:
-            import os
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
-            os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
-            from FlagEmbedding import FlagReranker
+            from sentence_transformers import CrossEncoder
             logger.info(f"[Load] Reranker: {RERANKER_MODEL} ...")
-            self._reranker = FlagReranker(RERANKER_MODEL, use_fp16=True)
+            t0 = time.time()
+            self._reranker = CrossEncoder(RERANKER_MODEL)
+            logger.info(f"[Load] Reranker ready ({time.time()-t0:.1f}s)")
         return self._reranker
 
     def _rerank_with_cross_encoder(
@@ -264,7 +267,7 @@ class HybridRetriever:
             return results
 
         pairs = [[query, r.text] for r in results]
-        scores = self.reranker.compute_score(pairs)
+        scores = self.reranker.predict(pairs).tolist()
 
         reranked = sorted(
             zip(results, scores),
