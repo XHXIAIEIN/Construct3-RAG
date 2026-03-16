@@ -272,7 +272,10 @@ def main():
     parser.add_argument("--top-k", type=int, default=10, help="Number of results to evaluate")
     parser.add_argument("--verbose", "-v", action="store_true", help="Print per-case details")
     parser.add_argument("--output", "-o", type=str, help="Write markdown report to file")
+    parser.add_argument("--model", type=str, help="Override EMBEDDING_MODEL (e.g. Qwen/Qwen3-Embedding-0.6B)")
     args = parser.parse_args()
+
+    embedding_model = args.model or EMBEDDING_MODEL
 
     # Load dataset
     dataset = EvalDataset.load()
@@ -286,12 +289,12 @@ def main():
             sys.exit(1)
 
     # Initialize retriever
-    print(f"Initializing retriever (embedding: {EMBEDDING_MODEL})...")
+    print(f"Initializing retriever (embedding: {embedding_model})...")
     from src.rag.retriever import HybridRetriever
     retriever = HybridRetriever(
         qdrant_host=QDRANT_HOST,
         qdrant_port=QDRANT_PORT,
-        embedding_model_name=EMBEDDING_MODEL,
+        embedding_model_name=embedding_model,
     )
 
     ok, msg = retriever.check_health()
