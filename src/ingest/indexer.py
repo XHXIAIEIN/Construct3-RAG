@@ -609,10 +609,16 @@ def index_all_data(rebuild: bool = False):
         SOURCE_DIR, TRANSLATION_CSV,
         CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
         EXAMPLE_PROJECTS_DIR,
+        C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.ingest.markdown_parser import MarkdownParser
     from src.ingest.csv_parser import CSVParser
+    from src.ingest.c3_fetcher import C3Fetcher
+
+    # Initialize CDN fetcher for ACE schemas and example metadata
+    fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    print(f"[CDN] Construct 3 version: {C3_VERSION}")
 
     indexer = Indexer(
         qdrant_host=QDRANT_HOST,
@@ -641,10 +647,10 @@ def index_all_data(rebuild: bool = False):
         from src.ingest.schema_parser import SchemaParser
         corpus: list[str] = [c.text for c in all_chunks]
         try:
-            corpus += [d["text"] for d in load_examples_for_vectordb()]
+            corpus += [d["text"] for d in load_examples_for_vectordb(fetcher=fetcher)]
         except FileNotFoundError:
             pass
-        sp = SchemaParser()
+        sp = SchemaParser(fetcher=fetcher)
         corpus += [d["text"] for d in sp.export_ace_for_vectordb()]
         corpus += [d["text"] for d in sp.export_effects_for_vectordb()]
         corpus += [d["text"] for d in sp.export_properties_for_vectordb()]
@@ -683,8 +689,8 @@ def index_all_data(rebuild: bool = False):
     from src.ingest.examples_parser import load_examples_for_vectordb
     from src.ingest.event_parser import load_event_and_script_docs
     try:
-        # 1. Project metadata (one doc per example, from browser JSON + c3proj)
-        example_docs = load_examples_for_vectordb()
+        # 1. Project metadata (from CDN + c3proj)
+        example_docs = load_examples_for_vectordb(fetcher=fetcher)
         if example_docs:
             indexer.index_documents(COLLECTIONS["examples"], example_docs)
             print(f"  Indexed {len(example_docs)} project metadata docs")
@@ -709,19 +715,30 @@ def index_all_data(rebuild: bool = False):
     except FileNotFoundError as e:
         print(f"  Skipping examples: {e}")
 
-    # ── ACE Schema ────────────────────────────────────────────────────────────
-    print("\n=== Indexing ACE Schema (from Construct3-Schema) ===")
+    # ── ACE Schema (from CDN) ─────────────────────────────────────────────────
+    print(f"\n=== Indexing ACE Schema (from CDN {C3_VERSION}) ===")
     indexer.create_collection(COLLECTIONS["ace"], recreate=rebuild)
-    index_ace_schema(indexer, COLLECTIONS["ace"], rebuild)
+    from src.ingest.schema_parser import SchemaParser
+    schema_parser = SchemaParser(fetcher=fetcher)
+    ace_entries = schema_parser.parse_ace_entries()
+    ace_docs = schema_parser.export_ace_for_vectordb(ace_entries)
+    indexer.index_documents(COLLECTIONS["ace"], ace_docs)
+    print(f"  Indexed {len(ace_docs)} ACE docs")
 
-    # ── Plugin/Behavior Properties ────────────────────────────────────────────
-    print("\n=== Indexing Properties Schema (from Construct3-Schema) ===")
-    index_properties_schema(indexer, COLLECTIONS["ace"], rebuild)
+    # ── Plugin/Behavior Properties (from CDN) ─────────────────────────────────
+    print(f"\n=== Indexing Properties (from CDN {C3_VERSION}) ===")
+    prop_docs = schema_parser.export_properties_for_vectordb()
+    if prop_docs:
+        indexer.index_documents(COLLECTIONS["ace"], prop_docs)
+        print(f"  Indexed {len(prop_docs)} property docs")
 
-    # ── Effects Schema ────────────────────────────────────────────────────────
-    print("\n=== Indexing Effects Schema (from Construct3-Schema) ===")
+    # ── Effects Schema (from CDN) ──────────────────────────────────────────────
+    print(f"\n=== Indexing Effects (from CDN {C3_VERSION}) ===")
     indexer.create_collection(COLLECTIONS["effects"], recreate=rebuild)
-    index_effects_schema(indexer, COLLECTIONS["effects"], rebuild)
+    effect_docs = schema_parser.export_effects_for_vectordb()
+    if effect_docs:
+        indexer.index_documents(COLLECTIONS["effects"], effect_docs)
+        print(f"  Indexed {len(effect_docs)} effect docs")
 
     # ── Scripting API (append to markdown-indexed c3_scripting) ──────────────
     print("\n=== Indexing Scripting API ===")
