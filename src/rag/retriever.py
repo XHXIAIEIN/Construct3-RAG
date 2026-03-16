@@ -610,17 +610,29 @@ class HybridRetriever:
         logger.info(f"[Search] Multi-collection search (per-collection top_k={top_k_per_collection})...")
         t0 = time.time()
 
-        # Collect all results from all collections
-        all_results: List[SearchResult] = []
+        # Per-collection importance weights for weighted RRF fusion.
+        # Reference docs (plugins, behaviors, project, scripting) get higher
+        # weight because they contain authoritative documentation.
+        # High-volume collections (terms: 24K, examples: 7K) get lower weight
+        # to prevent drowning out reference material.
+        _COLL_WEIGHTS: Dict[str, float] = {
+            "plugins": 1.0, "behaviors": 1.0, "project": 1.0,
+            "scripting": 1.0, "interface": 1.0, "guide": 1.0,
+            "ace": 1.0, "effects": 0.8,
+            "examples": 0.6, "terms": 0.5,
+        }
+
+        result_lists: List[List[SearchResult]] = []
+        weights: List[float] = []
 
         coll_hit_summaries = []
         for coll_name in self._COLLECTION_DEFAULTS:
             try:
                 results = self._search(coll_name, query, top_k_per_collection)
-                for r in results:
-                    all_results.append(r)
                 logger.info(f"[Search] {coll_name}: {len(results)} hits")
                 if results:
+                    result_lists.append(results)
+                    weights.append(_COLL_WEIGHTS.get(coll_name, 0.5))
                     top_r = max(results, key=lambda r: r.score)
                     max_score = top_r.score
                     src = top_r.metadata.get("source", "")
@@ -633,35 +645,22 @@ class HybridRetriever:
         if coll_hit_summaries:
             _trace(' '.join(coll_hit_summaries), "retrieve")
 
-        logger.info(f"[Search] Raw results: {len(all_results)} total ({time.time()-t0:.1f}s)")
+        logger.info(f"[Search] Raw lists: {len(result_lists)} collections ({time.time()-t0:.1f}s)")
 
-        if not all_results:
+        if not result_lists:
             return []
 
-        # Cross-collection reranking using raw cosine similarity scores.
-        # bge-m3 returns comparable cosine similarity scores across collections,
-        # so per-collection min-max normalization is not needed and would distort ranking.
-        logger.info(f"[Rerank] Cross-collection reranking...")
+        # Weighted RRF fusion: reference collections contribute more to ranking
+        fused = weighted_rrf(result_lists, weights)
 
-        reranked: List[SearchResult] = []
-        seen_texts: Set[str] = set()  # Deduplication
+        logger.info(f"[Rerank] Weighted RRF: {len(fused)} unique results")
 
-        for r in all_results:
-            # Deduplication by text content
-            text_key = r.text[:100].lower().strip()
-            if text_key not in seen_texts:
-                seen_texts.add(text_key)
-                reranked.append(r)
-
-        # Sort by final score and return top-k
-        reranked.sort(key=lambda x: x.score, reverse=True)
-
-        # Cross-encoder reranking for more accurate relevance ordering
+        # Cross-encoder reranking if available
         if RERANKER_ENABLED:
-            candidates = reranked[:RERANKER_TOP_K]
+            candidates = fused[:RERANKER_TOP_K]
             final_results = self._rerank_with_cross_encoder(query, candidates)
         else:
-            final_results = reranked[:final_top_k]
+            final_results = fused[:final_top_k]
 
         logger.info(f"[Rerank] Done, returning top-{len(final_results)}")
         return final_results
