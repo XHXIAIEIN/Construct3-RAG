@@ -1,7 +1,7 @@
 # 查询处理全流程追踪
 
 > 示例查询：**"怎么在数组中查找特定数字？"**
-> 入口：`RAGChain.answer_smart()` (`src/rag/chain.py`)
+> 入口：`POST /search` (`src/api.py`)
 
 ---
 
@@ -18,27 +18,18 @@
            │ 未命中
            ▼
 ┌─────────────────────────────────┐
-│  Stage 1: 查询分析               │  ← 语言检测 + 术语映射
+│  Stage 1: 向量检索               │  ← Qdrant 跨 collection 搜索
+│  HybridRetriever (weighted RRF) │     + cross-encoder reranking
 └──────────┬──────────────────────┘
            │
            ▼
 ┌─────────────────────────────────┐
-│  Stage 2: 向量检索               │  ← Qdrant 跨 collection 搜索
+│  Stage 2: 自适应阈值过滤          │  ← filter_by_adaptive_threshold()
 └──────────┬──────────────────────┘
            │
            ▼
 ┌─────────────────────────────────┐
-│  Stage 3: 插件精确检索（可选）    │  ← 术语命中插件时触发
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│  Stage 4: LLM 生成回答           │  ← Qwen3.5-9B 推理
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│  Stage 5: 格式化输出              │  ← 分析面板 + 回答
+│  Stage 3: 返回结果 + 诊断信息     │  ← SearchResponse + diagnostics
 └─────────────────────────────────┘
 ```
 
@@ -46,7 +37,7 @@
 
 ## Stage 0: Direct Lookup 快捷路径
 
-**代码入口**: `chain.py` → `LookupEngine.try_lookup()`
+**代码入口**: `api.py` → `LookupEngine.try_lookup()`
 
 **目的**：对于"列出 Sprite 的所有动作"、"翻译 Destroy"等精确查询，直接从本地 JSON/CSV 查找，跳过整个 RAG 流程。
 
@@ -142,7 +133,7 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 
 ### 格式化输出
 
-**代码**: 格式化输出（原 `formatters.py`，已迁入 `chain.py`）
+**代码**: 格式化输出（`api.py` SearchResponse）
 
 ```html
 <details class="rag-analysis">
@@ -168,63 +159,9 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
 > 假设查询改为 **"怎么在数组中实现排序后的二分查找？"**
 > 这种问题 Lookup 可能不会命中（或命中后结果为空 fallback 到 RAG）
 
-### Stage 1: 查询分析
+### Stage 1: 向量检索
 
-**代码**: `chain.py` — 查询增强逻辑
-
-```
-1. 语言检测:
-   _is_chinese("怎么在数组中实现排序后的二分查找？")
-   → 中文字符占比 > 15% → query_is_zh = True
-
-2. 搜索查询:
-   模型非英文 → search_query = 原始查询（不翻译）
-
-3. 术语映射 _extract_term_keywords():
-   a. jieba 分词:
-      _split_zh_segments("怎么在数组中实现排序后的二分查找")
-      → ["数组", "实现", "排序", "二分", "查找"]
-      （过滤停用词 "怎么/在/中/后/的"）
-
-   b. 逐词搜索 terms 集合 (Qdrant c3_terms collection):
-
-      "数组" → search_terms("数组", top_k=3):
-        结果: [{zh: "数组", en: "Array", score: 0.92}]  ✅ 采用
-
-      "实现" → search_terms("实现", top_k=3):
-        结果: [{zh: "实现", en: "Implement", score: 0.41}]  ❌ 低于阈值 0.50
-
-      "排序" → search_terms("排序", top_k=3):
-        结果: [{zh: "排序", en: "Sort", score: 0.88}]  ✅ 采用
-
-      "二分" → search_terms("二分", top_k=3):
-        结果: []  ❌ 无匹配
-
-      "查找" → search_terms("查找", top_k=3):
-        结果: [{zh: "查找", en: "Find", score: 0.85}]  ✅ 采用
-
-   c. 最终采用的关键词:
-      term_keywords = [
-        {zh: "数组", en: "Array", score: 0.92},
-        {zh: "排序", en: "Sort",  score: 0.88},
-        {zh: "查找", en: "Find",  score: 0.85},
-      ]
-
-   d. 增强搜索查询:
-      search_query = "怎么在数组中实现排序后的二分查找？ Array Sort Find"
-
-4. ACE 意图分类 _classify_ace_intent():
-   jieba 词集 ∩ 关键词集:
-     "查找" ∈ conditions关键词 → ✓
-     "查找" ∈ expressions关键词 → ✓
-     "排序" ∈ actions关键词 → ✓
-   → ace_intents = ["conditions", "actions", "expressions", "properties"]
-   （expressions 命中自动关联 properties）
-```
-
-### Stage 2: 向量检索
-
-**代码**: `chain.py` → `HybridRetriever.search_all_with_rerank()`
+**代码**: `api.py` → `HybridRetriever.search_all_with_rerank()`
 
 ```
 1. 健康检查:
@@ -264,164 +201,63 @@ _DETAIL_PATTERNS → 不匹配（无 "怎么用/参数" 后缀）
    | ... | ...      | ...   | ...                                    |
 ```
 
-### Stage 3: 插件精确检索
+### Stage 2: 自适应阈值过滤
 
-**代码**: `chain.py` — 插件精确检索
-
-```
-因为 term_keywords 命中了 Array/Sort/Find，触发 search_plugin_by_name():
-
-对每个关键词的英文术语:
-  retriever.search_plugin_by_name(
-    query="怎么在数组中实现排序后的二分查找？",
-    plugin_en="Array",
-    section_types=["conditions", "actions", "expressions", "properties"]
-  )
-  → 在 c3_plugins 中用 Qdrant Filter:
-    must: [source contains "array"]
-    should: [section_type = "conditions" | "actions" | "expressions" | "properties"]
-  → 返回 Array 插件中与查询最相关的 5 条
-
-  去重后将新结果追加到 results 末尾
-```
-
-### Stage 4: LLM 生成回答
-
-**代码**: `chain.py` — LLM 调用
+**代码**: `retriever.py` → `filter_by_adaptive_threshold()`
 
 ```
-1. 格式化上下文:
-   chain._format_reranked_context(results)
-   →
-   ## 参考资料（共 12 条）
-
-   [1] plugin-reference > array > 查找值
-   Array 插件的 IndexOf 条件...
-   来源: plugin-reference/array.md
-
-   [2] scripting > IArrayInstance
-   indexOf(value) 方法：返回值在数组中的索引...
-   来源: scripting/iarrayinstance.md
-
-   [3] ...
-
-2. 构建消息:
-   messages = [
-     {role: "system", content: SYSTEM_MESSAGE + "\n\n" + context},
-     ...历史消息...,
-     {role: "user", content: "怎么在数组中实现排序后的二分查找？"}
-   ]
-
-3. LLM 推理 (Qwen3.5-9B, bf16, GPU):
-   a. apply_chat_template(messages, enable_thinking=False)
-   b. tokenize → input_ids → GPU
-   c. model.generate(max_new_tokens=2048, temperature=0.7, top_p=0.8)
-   d. decode → 回答文本
-
-   模型输出示例:
-   """
-   在 Construct 3 的 Array 插件中，可以使用以下方式查找特定数字：
-
-   **方法 1：使用 IndexOf 条件**
-   Array 对象的「查找值」(IndexOf) 条件可以检查某个值是否存在于数组中 [来源: 1]。
-
-   **方法 2：使用 Contains 条件**
-   使用「包含值」(Contains) 条件直接判断数组中是否包含指定值 [来源: 3]。
-
-   **方法 3：脚本方式**
-   在 JavaScript 脚本中，可以使用 `IArrayInstance.indexOf(value)` 方法 [来源: 2]。
-   返回值为该数字在数组中的索引，-1 表示未找到。
-
-   > 注意：Array 插件本身不提供原生二分查找，如需排序后查找，
-   > 需先使用「排序」(Sort) 动作排序数组 [来源: 4]，
-   > 然后结合 For each / While 循环自行实现二分逻辑。
-   """
+输入: 10 条 RRF 融合后的结果
+计算: mean - 0.5 * std_dev 作为阈值（下限 MIN_SCORE_THRESHOLD=0.005）
+输出: 过滤后保留 8 条结果（至少保留 min_results=2）
 ```
 
-### Stage 5: 格式化输出
+### Stage 3: 返回结果
 
-**代码**: 格式化输出 + 拼接回答
+**代码**: `api.py` → `SearchResponse`
 
-最终用户看到的完整输出：
-
-```html
-<details class="rag-analysis">
-<summary>🔍 分析过程 · 检索到 12 篇文档 · 最高相关度 0.82</summary>
-
-**查询分析**
-- 查询语言: 中文
-- 搜索查询: `怎么在数组中实现排序后的二分查找？ Array Sort Find`
-
-**关键词映射**
-| 中文 | 英文术语 |
-|------|---------|
-| 数组 | Array |
-| 排序 | Sort |
-| 查找 | Find |
-
-**术语映射过程**（阈值 ≥ 0.50）
-| # | 查询词 | 匹配术语 | 英文 | 相关度 | 状态 |
-|---|--------|----------|------|--------|------|
-| 1 | 数组   | 数组     | Array | 0.92  | ✅ 采用 |
-| 2 | 实现   | 实现     | Implement | 0.41 | ❌ 低于阈值 |
-| 3 | 排序   | 排序     | Sort  | 0.88  | ✅ 采用 |
-| 4 | 二分   | -        | -     | 0.00  | ❌ 无匹配 |
-| 5 | 查找   | 查找     | Find  | 0.85  | ✅ 采用 |
-
-共 5 个词段，采用 3 个术语
-- ACE 意图: 条件(Conditions) · 动作(Actions) · 表达式(Expressions) · 属性(Properties)
-
-**文档检索**
-- 共检索到 12 篇相关文档
-- 相关度范围: 0.52 ~ 0.82
-
-**参考来源**
-| # | 来源 | 相关度 |
-|---|------|--------|
-| 1 | plugin-reference > array > 查找值 | 0.82 |
-| 2 | scripting > iarrayinstance | 0.78 |
-| 3 | plugin-reference > array > 包含值 | 0.75 |
-| ... | ... | ... |
-
-</details>
-
-在 Construct 3 的 Array 插件中，可以使用以下方式查找特定数字：
-...（LLM 生成的回答）
+API 返回 JSON：
+```json
+{
+  "results": [
+    {"text": "...", "score": 0.82, "collection": "plugins", "source": "...", "metadata": {}},
+    ...
+  ],
+  "diagnostics": {
+    "route": "semantic",
+    "total_candidates": 20,
+    "after_rerank": 10,
+    "after_threshold": 8,
+    "latency_ms": 245.3
+  }
+}
 ```
 
 ---
 
-## 不同入口的差异
+## API 路由逻辑
 
-| 入口方法 | 路径 | 特点 |
-|----------|------|------|
-| `answer_smart()` | Lookup → 复杂度检测 → fallback/decompose | 生产推荐，自动路由 |
-| `answer_stream()` | 查询增强 → 检索 → 流式 LLM | 实时输出，使用完整增强管道，无 Self-Reflection |
-| `answer_high_confidence()` | 多查询检索 → LLM → Self-Reflection | 最慢最准 |
-| `answer_with_fallback()` | 健康检查 → 检索 → LLM → Self-Reflection | 服务降级 |
-
-### answer_smart() 的路由逻辑
+`POST /search` 端点处理流程（`api.py`）：
 
 ```
-query = "怎么在数组中查找特定数字？"
+request = SearchRequest(query="怎么在数组中查找特定数字？")
 
-1. LookupEngine.try_lookup(query)
-   → Tier 1.5 命中 → 返回 LookupResponse → 直接返回（不走 LLM）
+1. 如果 skip_lookup=false 且无 plugin/collections 过滤:
+   LookupEngine.try_lookup(query)
+   → Tier 1.5 命中 → 返回 LookupResponse → route="lookup"
 
-如果 Lookup 未命中:
-2. _is_complex_query(query):
-   complexity_indicators 匹配数 = 0（无 "步骤/流程/实现/和/然后"）
-   jieba 有效词数 = 5（< 12，中文使用 jieba 词数阈值）
-   → False → 走 answer_with_fallback()
+2. 如果指定 plugin 过滤:
+   retriever.search_plugin_by_name(query, plugin_en, section_types)
+   → route="plugin_filter"
 
-3. answer_with_fallback():
-   a. check Qdrant → OK
-   b. search_all_with_rerank() → 10 条结果
-   c. filter_by_adaptive_threshold() → 保留 8 条
-   d. check LLM → OK
-   e. STRICT_QA_PROMPT + context → LLM.generate()
-   f. _self_reflect() → 验证回答可靠性（答案含 ≥3 引用时跳过）
-   g. 返回 RAGResponse(confidence="high"/"medium")
+3. 如果指定 collections 过滤:
+   逐 collection 搜索 → 去重排序
+   → route="collection_filter"
+
+4. 默认（Lookup 未命中，无过滤）:
+   retriever.search_all_with_rerank(query)
+   → weighted RRF 融合 → cross-encoder reranking
+   → filter_by_adaptive_threshold()
+   → route="semantic"
 ```
 
 ---
@@ -430,34 +266,30 @@ query = "怎么在数组中查找特定数字？"
 
 | 组件 | 文件 | 职责 |
 |------|------|------|
+| `FastAPI app` | `src/api.py` | REST API 端点（/health, /search）、查询路由 |
 | `LookupEngine` | `src/rag/lookup.py` | 三层意图分类 + 本地 JSON/CSV 直接查找 |
-| `HybridRetriever` | `src/rag/retriever.py` | Qdrant 向量检索 + 跨 collection 重排 + RRF 融合 |
-| `RAGChain` | `src/rag/chain.py` | 查询路由 + LLM 调用 + Self-Reflection |
-| `LLMClient` | `src/rag/chain.py` | 多 provider 推理（HuggingFace/Ollama/OpenAI） |
+| `HybridRetriever` | `src/rag/retriever.py` | Qdrant 向量检索 + 跨 collection weighted RRF + cross-encoder reranking |
+| `SemanticChain` | `src/rag/semantic_chain.py` | 查询分解 + 集合路由 + 多路径检索 |
 
 ## 数据流向
 
 ```
-用户查询
+POST /search (api.py)
   ↓
-RAGChain.answer_smart()
-  ├─→ LookupEngine ──→ SchemaIndex (data/schemas/*.json)
-  │                 └─→ TermIndex   (data/source/zh_r475.csv)
-  │
-  ├─→ jieba 分词 → _extract_term_keywords()
-  │     └─→ Qdrant c3_terms collection (向量搜索术语)
+  ├─→ LookupEngine.try_lookup() ──→ SchemaIndex (CDN cache / data/schemas/)
+  │                              └─→ TermIndex   (data/source/zh_r475.csv)
+  │     命中 → 直接返回 route="lookup"
   │
   ├─→ HybridRetriever.search_all_with_rerank()
-  │     ├─→ EmbeddingModel (BAAI/bge-m3) 编码查询
-  │     └─→ Qdrant 9 个 collection 并行搜索
+  │     ├─→ EmbeddingModel (Qwen3-Embedding-0.6B) 编码查询
+  │     ├─→ Qdrant 9+ 个 collection 搜索
+  │     ├─→ weighted RRF 融合（按 collection 重要性加权）
+  │     └─→ cross-encoder reranking（可选）
   │
-  ├─→ search_plugin_by_name() (术语命中插件时)
-  │     └─→ Qdrant c3_plugins (带 Filter)
+  ├─→ filter_by_adaptive_threshold()
+  │     └─→ 自适应阈值过滤低分结果
   │
-  └─→ LLMClient.chat()
-        └─→ Qwen3.5-9B (GPU, bf16)
-              ↓
-        格式化回答（Markdown）
-              ↓
-         返回给用户
+  └─→ SearchResponse (JSON)
+        ├─→ results: [{text, score, collection, source, metadata}]
+        └─→ diagnostics: {route, latency_ms, ...}
 ```

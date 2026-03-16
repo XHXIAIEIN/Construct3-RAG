@@ -7,7 +7,7 @@
 | Construct3-Manual/ | Markdown | 主手册文档 |
 | zh_r475.csv | CSV | 23,824 条中英翻译 |
 | example-projects/ | C3 项目 | 524 个示例项目（r476） |
-| data/schemas/ | JSON Schema | ACE Schema（72 插件 + 31 行为） |
+| C3 CDN (allAces.json + lang) | JSON (CDN) | ACE Schema（72 插件 + 31 行为） |
 
 ## 1. Markdown 手册处理
 
@@ -126,7 +126,7 @@ example-projects/
     │
     ▼
 ┌──────────────────────┐
-│ examples_parser.py   │  browser JSON + project.c3proj
+│ examples_parser.py   │  CDN example-project-data.json + project.c3proj
 │ 元数据文档（529 条） │  标题/插件/行为/布局/事件表/
 │                      │  families/timelines/flowcharts/scripts
 └──────────────────────┘
@@ -176,10 +176,10 @@ example-projects/
 | 集合 | 向量数 | 数据来源 |
 |------|--------|---------|
 | c3_guide + c3_interface + c3_project + c3_plugins + c3_behaviors + c3_scripting | 1,183 | Markdown 手册（H2 分块） |
-| c3_ace | 2,927 | ACE Schema JSON |
-| c3_effects | 89 | Effects Schema JSON |
+| c3_ace | 2,927 | CDN allAces.json + lang files |
+| c3_effects | 89 | CDN allEffects.json + lang files |
 | c3_terms | 23,824 | CSV 翻译词条 |
-| c3_examples | 2,912 | 示例元数据 + 事件块 + 脚本 |
+| c3_examples | 2,912 | CDN example-project-data + 事件块 + 脚本 |
 | **合计** | **31,935** | — |
 
 ## 脚本位置
@@ -188,11 +188,9 @@ example-projects/
 src/ingest/
 ├── markdown_parser.py  # Markdown 解析 + H2 分块
 ├── csv_parser.py       # CSV 术语解析
-├── schema_parser.py    # ACE Schema 解析
-├── examples_parser.py  # 示例元数据（browser JSON + c3proj）
+├── schema_parser.py    # ACE Schema 解析（CDN + legacy 双模式）
+├── examples_parser.py  # 示例元数据（CDN example-project-data + c3proj）
 ├── event_parser.py     # 事件块 + 脚本代码解析
+├── c3_fetcher.py       # CDN 数据获取 + 本地缓存（周三过期）
 └── indexer.py          # 向量化入库（统一调度）
-
-scripts/
-└── generate-schema.js  # ACE Schema 生成
 ```

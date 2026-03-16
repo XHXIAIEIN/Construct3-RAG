@@ -322,28 +322,25 @@ def search_collection(query):
     return results                              # 返回最相关的 5 条
 ```
 
-### 第三阶段：生成回答
+### 第三阶段：返回结果
 
 ```python
-# chain.py 的核心逻辑
-def answer(query):
-    # 1. 检索相关文档
-    context = retriever.search_all(query)
+# api.py 的核心逻辑
+@app.post("/search")
+def search(req: SearchRequest):
+    # 1. 尝试 Direct Lookup
+    lookup_result = lookup_engine.try_lookup(req.query)
+    if lookup_result:
+        return lookup_result
 
-    # 2. 拼接提示词
-    prompt = f"""
-    参考资料：
-    {context}
+    # 2. 向量检索 + 重排序
+    results = retriever.search_all_with_rerank(req.query)
 
-    用户问题：
-    {query}
+    # 3. 自适应阈值过滤
+    results = retriever.filter_by_adaptive_threshold(results)
 
-    请基于以上资料回答：
-    """
-
-    # 3. 让 LLM 生成回答
-    answer = llm.generate(prompt)
-    return answer
+    # 4. 返回结构化结果（由调用方决定是否送入 LLM）
+    return SearchResponse(results=results, diagnostics=...)
 ```
 
 ---
@@ -357,10 +354,10 @@ def answer(query):
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────┐
-│                    RAGChain (chain.py)                   │
+│                  FastAPI /search (api.py)                │
 │  ┌──────────────┐    ┌──────────────┐    ┌───────────┐ │
-│  │ 问题分类      │ → │ 检索上下文    │ → │ LLM 生成   │ │
-│  │ (qa/翻译/代码)│    │ (多集合搜索)  │    │ (Qwen3)   │ │
+│  │ Direct Lookup │ → │ 向量检索      │ → │ RRF 重排   │ │
+│  │ (lookup.py)  │    │ (多集合搜索)  │    │ + 阈值过滤 │ │
 │  └──────────────┘    └──────────────┘    └───────────┘ │
 └─────────────────────────────────────────────────────────┘
                             │
@@ -390,7 +387,8 @@ def answer(query):
 | 解析器 | `markdown_parser.py` | Markdown → 小块文本 |
 | 索引器 | `indexer.py` | 文本 → 向量 → 存入 Qdrant |
 | 检索器 | `retriever.py` | 问题 → 向量 → 搜索相似文档 |
-| 生成链 | `chain.py` | 组合检索结果 + LLM 生成回答 |
+| API 层 | `api.py` | FastAPI 端点、查询路由、返回检索结果 |
+| 语义链 | `semantic_chain.py` | 查询分解 + 集合路由 + 多路径检索 |
 
 ---
 

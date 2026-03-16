@@ -30,10 +30,10 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      RAG 引擎层 (chain.py)                      │
+│                   语义分解层 (semantic_chain.py)                   │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ 查询分类      │  │ 多查询改写   │  │  Self-Reflection     │   │
-│  │ (qa/code)    │  │ (复杂查询)   │  │  可靠性自检           │   │
+│  │ 查询分解      │  │ 集合路由      │  │  多路径检索           │   │
+│  │ DecomposedQ  │  │ CollRouter   │  │  Intent/HyDE/KW      │   │
 │  └──────────────┘  └──────────────┘  └──────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -71,7 +71,7 @@
 │  │ qwen2.5:7b   │  │ Qwen3.5-9B   │  │  moonshot / gpt-4o   │   │
 │  │ (默认)       │  │ (本地 GPU)    │  │  (需 API Key)        │   │
 │  └──────────────┘  └──────────────┘  └──────────────────────┘   │
-│                     LLMClient (多 Provider)                      │
+│                Ollama / OpenAI-compatible (多 Provider)            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -87,10 +87,10 @@
 | `c3_plugins` | 插件参考（72 个） | Markdown 手册 |
 | `c3_behaviors` | 行为参考 + 系统参考（31 个） | Markdown 手册 |
 | `c3_scripting` | 脚本 API 文档 | Markdown 手册 |
-| `c3_ace` | ACE Schema（Actions/Conditions/Expressions，2,927 条） | JSON Schema |
-| `c3_effects` | 效果定义 | JSON Schema |
+| `c3_ace` | ACE Schema（Actions/Conditions/Expressions，2,927 条） | CDN allAces.json + lang files |
+| `c3_effects` | 效果定义 | CDN allEffects.json + lang files |
 | `c3_terms` | 术语翻译（23,824 条） | CSV 翻译词条 |
-| `c3_examples` | 示例项目（r476，524 个项目，2,912 向量）：元数据 + 事件块 + 脚本代码 | C3 示例项目 |
+| `c3_examples` | 示例项目（r476，524 个项目，2,912 向量）：元数据 + 事件块 + 脚本代码 | CDN example-project-data.json + c3proj |
 
 ### 2. 查询处理策略
 
@@ -105,8 +105,8 @@
     │ 未命中
     ▼
 ┌─────────────────┐
-│ 术语映射        │ ─── 中文→插件名，提取 plugin filter
-│ (chain.py)      │     "精灵碰撞" → plugin_filter=["sprite"]
+│ 语义分解        │ ─── 查询分解 + 集合路由 + 多路径检索
+│ (semantic_chain) │     DecomposedQuery → CollectionRouter → RRF 融合
 └─────────────────┘
     │
     ▼
@@ -117,8 +117,8 @@
     │
     ▼
 ┌─────────────────┐
-│ LLM 生成        │ ─── 基于检索结果 + prompt 模板生成回答
-│ (chain.py)      │     含 Self-Reflection 可靠性自检
+│ API 返回        │ ─── FastAPI /search 端点返回检索结果
+│ (api.py)        │     含诊断信息（route/latency/threshold）
 └─────────────────┘
 ```
 
@@ -128,9 +128,9 @@
 |------|------|------|
 | **LLM** | 多 Provider（Ollama / HuggingFace / OpenAI） | 灵活切换，本地或 API 均可 |
 | **向量库** | Qdrant | Rust 高性能、易部署、Docker 一键启动 |
-| **Embedding** | BAAI/bge-m3 | 多语言、1024 维、支持中英混合场景 |
+| **Embedding** | Qwen/Qwen3-Embedding-0.6B (默认) / BAAI/bge-m3 | 多语言、支持中英混合场景 |
 | **框架** | 纯 Python（无 LangChain） | 轻量、可控、无额外依赖 |
-| **接口** | Python API | 纯代码调用，无 Web UI 依赖 |
+| **接口** | FastAPI REST API | GET /health, POST /search |
 
 ## 硬件需求
 
