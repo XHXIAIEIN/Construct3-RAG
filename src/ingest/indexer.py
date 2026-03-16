@@ -678,14 +678,28 @@ def index_all_data(rebuild: bool = False):
                 docs.append({"id": f"{collection}_{i}", "text": text, "metadata": chunk.metadata})
             indexer.index_documents(collection, docs)
 
-    # ── Translation terms (via CSVParser.export_for_vectordb) ─────────────────
-    print("\n=== Indexing Translation Terms ===")
+    # ── Translation terms (from CDN lang, fallback to CSV) ──────────────────
+    print(f"\n=== Indexing Translation Terms (from CDN {C3_VERSION}) ===")
     indexer.create_collection(COLLECTIONS["terms"], recreate=rebuild)
-    csv_parser = CSVParser()
-    csv_path = SOURCE_DIR / TRANSLATION_CSV
-    if csv_path.exists():
-        csv_parser.parse_file(csv_path)
-        indexer.index_documents(COLLECTIONS["terms"], csv_parser.export_for_vectordb())
+    cdn_terms = fetcher.export_terms()
+    if cdn_terms:
+        term_docs = [
+            {"id": f"term_{i}", "text": t["full_text"], "metadata": {
+                "term_key": t["term_key"], "category": t["category"],
+                "term_type": t["term_type"], "zh": t["zh"], "en": t["en"],
+                "path": "/".join(t["path"]),
+            }}
+            for i, t in enumerate(cdn_terms)
+        ]
+        indexer.index_documents(COLLECTIONS["terms"], term_docs)
+    else:
+        # Fallback to CSV if CDN failed
+        print("  CDN terms empty, falling back to CSV...")
+        csv_parser = CSVParser()
+        csv_path = SOURCE_DIR / TRANSLATION_CSV
+        if csv_path.exists():
+            csv_parser.parse_file(csv_path)
+            indexer.index_documents(COLLECTIONS["terms"], csv_parser.export_for_vectordb())
 
     # ── Example projects ──────────────────────────────────────────────────────
     print("\n=== Indexing Example Projects ===")

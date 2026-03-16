@@ -248,6 +248,47 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
         return schemas_dir
 
+    def export_terms(self) -> list[dict]:
+        """Export CDN lang data as term entries for c3_terms indexing.
+
+        Flattens the nested precompiled-zh-CN.json + en-US.json into
+        TermEntry-compatible dicts: {term_key, path, category, term_type, zh, en}.
+        """
+        en_text = self.fetch_lang("en-US").get("text", {})
+        zh_text = self.fetch_lang("zh-CN").get("text", {})
+
+        terms = []
+
+        def _flatten(en_obj, zh_obj, path_parts):
+            if isinstance(en_obj, str):
+                zh_val = zh_obj if isinstance(zh_obj, str) else en_obj
+                if en_obj.strip() and zh_val.strip():
+                    term_key = "text." + ".".join(path_parts)
+                    # Detect category and term_type from path
+                    category = path_parts[0] if path_parts else "unknown"
+                    term_type = "unknown"
+                    for p in path_parts:
+                        if p in ("actions", "conditions", "expressions", "properties", "params"):
+                            term_type = p
+                            break
+                    terms.append({
+                        "term_key": term_key,
+                        "path": ["text"] + list(path_parts),
+                        "category": category,
+                        "term_type": term_type,
+                        "zh": zh_val,
+                        "en": en_obj,
+                        "full_text": f"{zh_val} | {en_obj}",
+                    })
+            elif isinstance(en_obj, dict):
+                zh_dict = zh_obj if isinstance(zh_obj, dict) else {}
+                for k, v in en_obj.items():
+                    _flatten(v, zh_dict.get(k, v), list(path_parts) + [k])
+
+        _flatten(en_text, zh_text, [])
+        logger.info(f"[CDN] Exported {len(terms)} translation terms")
+        return terms
+
     # ── Convenience methods ──────────────────────────────────────────────
 
     def fetch_all_aces(self) -> dict:
