@@ -101,7 +101,7 @@ def test_health_degraded(client):
 # ---------------------------------------------------------------------------
 
 def test_search_routes_to_lookup(client):
-    """When lookup matches, returns lookup result with route='lookup'."""
+    """When lookup matches, returns lookup result with route='lookup+semantic'."""
     c, retriever, lookup = client
     from src.rag.lookup import LookupResponse as LR, LookupIntent
     intent = LookupIntent(
@@ -116,10 +116,9 @@ def test_search_routes_to_lookup(client):
     resp = c.post("/search", json={"query": "列出 Sprite 的 action"})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "lookup+semantic"
-    assert data["results"][0]["collection"] == "lookup"
-    assert "Set animation" in data["results"][0]["text"]
-    assert data["diagnostics"]["lookup_detail"]["intent"] == "ace_list"
+    assert data["route"] == "lookup+semantic"
+    assert data["results"][0]["type"] == "lookup"
+    assert "Set animation" in data["results"][0]["content"]
     # Retriever IS called (semantic search supplements lookup)
     retriever.search_all_with_rerank.assert_called_once()
 
@@ -131,7 +130,7 @@ def test_search_lookup_miss_falls_to_semantic(client):
     resp = c.post("/search", json={"query": "怎么实现碰撞检测"})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "semantic"
+    assert data["route"] == "semantic"
     retriever.search_all_with_rerank.assert_called_once()
 
 
@@ -141,7 +140,7 @@ def test_search_skip_lookup(client):
     resp = c.post("/search", json={"query": "列出 Sprite 的 action", "skip_lookup": True})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "semantic"
+    assert data["route"] == "semantic"
     lookup.try_lookup.assert_not_called()
 
 
@@ -155,9 +154,9 @@ def test_search_semantic_basic(client):
     assert resp.status_code == 200
     data = resp.json()
     assert len(data["results"]) == 2
-    assert data["results"][0]["collection"] == "plugins"
+    assert data["results"][0]["type"] == "doc"
     assert data["results"][0]["source"] == "plugin-reference/sprite.md"
-    assert data["diagnostics"]["route"] == "semantic"
+    assert data["route"] == "semantic"
 
 
 def test_search_top_k(client):
@@ -197,7 +196,7 @@ def test_search_plugin_filter(client):
     })
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "plugin_filter"
+    assert data["route"] == "plugin_filter"
     retriever.search_plugin_by_name.assert_called_once_with(
         query="Set animation",
         plugin_en="Sprite",
@@ -220,7 +219,7 @@ def test_search_collection_filter(client):
     })
     assert resp.status_code == 200
     data = resp.json()
-    assert data["diagnostics"]["route"] == "collection_filter"
+    assert data["route"] == "collection_filter"
     retriever._search.assert_called_once_with("plugins", "test", top_k=10)
     lookup.try_lookup.assert_not_called()
 
@@ -233,6 +232,24 @@ def test_search_invalid_collection(client):
     })
     assert resp.status_code == 400
     assert "Unknown collection" in resp.json()["detail"]
+
+
+# ---------------------------------------------------------------------------
+# /search — response structure
+# ---------------------------------------------------------------------------
+
+def test_search_response_structure(client):
+    """Verify flat response structure with query, lang, route, latency_ms."""
+    c, _, _ = client
+    resp = c.post("/search", json={"query": "Sprite", "skip_lookup": True})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "query" in data
+    assert "lang" in data
+    assert "route" in data
+    assert "latency_ms" in data
+    assert "results" in data
+    assert "diagnostics" not in data  # old format removed
 
 
 # ---------------------------------------------------------------------------

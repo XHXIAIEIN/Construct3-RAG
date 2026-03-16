@@ -86,6 +86,9 @@ class SearchRequest(BaseModel):
     section_types: Optional[List[str]] = Field(
         None, description="Filter by section type (e.g. ['actions', 'conditions'])"
     )
+    debug: bool = Field(
+        False, description="Include trace log in diagnostics"
+    )
     apply_threshold: bool = Field(
         True, description="Apply adaptive score threshold filtering"
     )
@@ -94,38 +97,78 @@ class SearchRequest(BaseModel):
     )
 
 
-class SearchResultItem(BaseModel):
-    text: str
+# ── Result types (discriminated by "type" field) ──
+
+class PluginInfo(BaseModel):
+    id: str
+    name: str
+    name_zh: str = ""
+
+class ACEParam(BaseModel):
+    name: str
+    name_zh: str = ""
+    type: str = "any"
+    desc: str = ""
+
+class ACEResult(BaseModel):
+    type: str = "ace"
     score: float
-    collection: str
+    plugin: PluginInfo
+    ace_type: str  # condition | action | expression
+    id: str
+    name: str
+    name_zh: str = ""
+    description: str = ""
+    description_zh: str = ""
+    script_name: str = ""
+    params: List[ACEParam] = []
+    is_trigger: bool = False
+    is_async: bool = False
+    return_type: Optional[str] = None
+    category: str = ""
+
+class DocResult(BaseModel):
+    type: str = "doc"
+    score: float
     source: str
-    metadata: dict
+    collection: str
+    title: str = ""
+    section: str = ""
+    content: str
 
+class ExampleResult(BaseModel):
+    type: str = "example"
+    score: float
+    source: str
+    project: str = ""
+    project_zh: str = ""
+    content: str
 
-class LookupDetail(BaseModel):
+class TermResult(BaseModel):
+    type: str = "term"
+    score: float
+    zh: str
+    en: str
+    category: str = ""
+
+class LookupResult(BaseModel):
+    type: str = "lookup"
+    score: float = 1.0
     intent: str
-    query_type: str
-    intent_detail: dict
-
+    plugin: str = ""
+    content: str
 
 class TraceStep(BaseModel):
     phase: str
     message: str
 
-class SearchDiagnostics(BaseModel):
-    route: str  # "lookup" | "semantic" | "plugin_filter" | "collection_filter"
-    lang: str = "en"  # detected or explicit language
-    total_candidates: int
-    after_rerank: int
-    after_threshold: int
-    latency_ms: float
-    trace: List[TraceStep] = []
-    lookup_detail: Optional[LookupDetail] = None
-
-
 class SearchResponse(BaseModel):
-    results: List[SearchResultItem]
-    diagnostics: SearchDiagnostics
+    query: str
+    lang: str
+    route: str
+    latency_ms: float
+    results: list  # mixed types: ACEResult | DocResult | ExampleResult | TermResult | LookupResult
+    trace: List[TraceStep] = []
 
 
 class HealthResponse(BaseModel):
@@ -184,32 +227,75 @@ def _collection_key(source_name: str) -> str:
     return source_name
 
 
+def _convert_result(r, score_override=None) -> dict:
+    """Convert internal SearchResult to typed response dict."""
+    score = score_override if score_override is not None else round(r.score, 4)
+    meta = r.metadata
+    source = meta.get("source", r.source)
+    collection = _collection_key(r.source)
+
+    # ACE results (from c3_ace collection)
+    if collection == "ace" and meta.get("ace_type"):
+        return ACEResult(
+            score=score,
+            plugin=PluginInfo(
+                id=meta.get("plugin_name", ""),
+                name=meta.get("plugin_name_en", meta.get("plugin_name", "")),
+                name_zh=meta.get("plugin_name_zh", ""),
+            ),
+            ace_type=meta.get("ace_type", ""),
+            id=meta.get("ace_id", ""),
+            name=meta.get("name_en", ""),
+            name_zh=meta.get("name_zh", ""),
+            description=meta.get("description_en", "") if meta.get("description_en") else "",
+            description_zh=meta.get("description_zh", "") if meta.get("description_zh") else "",
+            script_name=meta.get("script_name", ""),
+            is_trigger=meta.get("is_trigger", False),
+            is_async=meta.get("is_async", False),
+            return_type=meta.get("return_type") or None,
+            category=meta.get("category", ""),
+        ).model_dump()
+
+    # Example results
+    if collection == "examples":
+        return ExampleResult(
+            score=score,
+            source=source,
+            project=meta.get("title_en", meta.get("slug", "")),
+            project_zh=meta.get("title_zh", ""),
+            content=r.text,
+        ).model_dump()
+
+    # Term results
+    if collection == "terms":
+        return TermResult(
+            score=score,
+            zh=meta.get("zh", ""),
+            en=meta.get("en", ""),
+            category=meta.get("category", ""),
+        ).model_dump()
+
+    # Doc results (plugins, behaviors, guide, interface, project, scripting)
+    return DocResult(
+        score=score,
+        source=source,
+        collection=collection,
+        title=meta.get("h1_heading", meta.get("title", "")),
+        section=meta.get("h2_heading", meta.get("section_type", "")),
+        content=r.text,
+    ).model_dump()
+
+
 def _try_lookup(query: str):
-    """Try structured lookup. Returns (LookupResponse, LookupDetail) or (None, None)."""
+    """Try structured lookup. Returns LookupResponse or None."""
     try:
         engine = _get_lookup_engine()
         result = engine.try_lookup(query)
     except Exception as e:
         logger.warning(f"Lookup failed: {e}")
-        return None, None
+        return None
 
-    if result is None:
-        return None, None
-
-    detail = LookupDetail(
-        intent=result.intent.intent_type,
-        query_type=result.query_type,
-        intent_detail={
-            "intent_type": result.intent.intent_type,
-            "plugin_id": result.intent.plugin_id,
-            "ace_type": result.intent.ace_type,
-            "ace_name": result.intent.ace_name,
-            "term": result.intent.term,
-            "tier": result.intent.tier,
-            "is_behavior": result.intent.is_behavior,
-        },
-    )
-    return result, detail
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -241,21 +327,18 @@ def search(req: SearchRequest):
     _trace(f"query: {req.query[:60]}", "input")
 
     # ── Step 1: Try lookup (unless skipped or filters are set) ──────────
-    lookup_item = None
-    lookup_detail_data = None
+    lookup_answer = None
+    lookup_intent = None
+    lookup_plugin = ""
     use_lookup = not req.skip_lookup and not req.plugin and not req.collections
     if use_lookup:
         _trace("尝试 lookup 直查...", "lookup")
-        lookup_result, lookup_detail_data = _try_lookup(req.query)
+        lookup_result = _try_lookup(req.query)
         if lookup_result is not None:
-            _trace(f"lookup 命中: {lookup_detail_data.intent}，继续语义搜索补充", "lookup")
-            lookup_item = SearchResultItem(
-                text=lookup_result.answer,
-                score=1.0,
-                collection="lookup",
-                source="structured",
-                metadata={},
-            )
+            lookup_answer = lookup_result.answer
+            lookup_intent = lookup_result.intent.intent_type
+            lookup_plugin = lookup_result.intent.plugin_id or ""
+            _trace(f"lookup 命中: {lookup_intent}，继续语义搜索补充", "lookup")
         else:
             _trace("lookup 未命中，转语义搜索", "lookup")
 
@@ -334,29 +417,24 @@ def search(req: SearchRequest):
 
     # Merge: lookup result (if any) goes first, then semantic results
     result_items = []
-    if lookup_item:
-        result_items.append(lookup_item)
+    if lookup_answer:
+        result_items.append(LookupResult(
+            intent=lookup_intent or "",
+            plugin=lookup_plugin,
+            content=lookup_answer,
+        ).model_dump())
         route = "lookup+semantic"
+
     for r in results:
-        result_items.append(SearchResultItem(
-            text=r.text,
-            score=round(r.score, 4),
-            collection=_collection_key(r.source),
-            source=r.metadata.get("source", ""),
-            metadata={k: v for k, v in r.metadata.items() if k != "source"},
-        ))
+        result_items.append(_convert_result(r))
+
     result_items = result_items[:req.top_k]
 
     return SearchResponse(
+        query=req.query,
+        lang=detected_lang,
+        route=route,
+        latency_ms=round(latency_ms, 1),
         results=result_items,
-        diagnostics=SearchDiagnostics(
-            route=route,
-            lang=detected_lang,
-            total_candidates=total + (1 if lookup_item else 0),
-            after_rerank=after_rerank,
-            after_threshold=after_threshold + (1 if lookup_item else 0),
-            latency_ms=round(latency_ms, 1),
-            trace=[TraceStep(phase=p, message=m) for p, m in getattr(_trace_local, 'events', [])],
-            lookup_detail=lookup_detail_data,
-        ),
+        trace=[TraceStep(phase=p, message=m) for p, m in getattr(_trace_local, 'events', [])] if req.debug else [],
     )
