@@ -244,8 +244,12 @@ class SchemaParser:
         return entries
 
     def parse_effects(self) -> List[EffectEntry]:
-        """解析所有效果"""
+        """Parse all effects from CDN or local schemas."""
+        if self._fetcher is not None:
+            return self._parse_effects_from_cdn()
         entries = []
+        if self.schema_dir is None:
+            return entries
         effects_dir = self.schema_dir / "effects"
 
         if not effects_dir.exists():
@@ -268,9 +272,33 @@ class SchemaParser:
 
         return entries
 
-    def parse_properties(self) -> List[PropertyEntry]:
-        """解析所有属性"""
+    def _parse_effects_from_cdn(self) -> List[EffectEntry]:
+        """CDN mode: parse effects from allEffects.json + lang files."""
+        effects_raw = self._fetcher.fetch_effects()
+        en_text = self._fetcher.fetch_lang("en-US").get("text", {}).get("effects", {})
+        zh_text = self._fetcher.fetch_lang("zh-CN").get("text", {}).get("effects", {})
         entries = []
+        for item in effects_raw:
+            data = item.get("json", item)
+            eid = data.get("id", "")
+            en_fx = en_text.get(eid, {})
+            zh_fx = zh_text.get(eid, {})
+            entries.append(EffectEntry(
+                id=eid,
+                name_en=en_fx.get("name", eid),
+                name_zh=zh_fx.get("name", en_fx.get("name", eid)),
+                description_en=en_fx.get("description", ""),
+                description_zh=zh_fx.get("description", ""),
+                category=data.get("category", ""),
+                parameters=data.get("parameters", []),
+            ))
+        return entries
+
+    def parse_properties(self) -> List[PropertyEntry]:
+        """Parse all properties. Currently only legacy mode (schema_dir)."""
+        entries = []
+        if self.schema_dir is None:
+            return entries
 
         for plugin_type, dir_name in [("plugin", "plugins"), ("behavior", "behaviors")]:
             type_dir = self.schema_dir / dir_name
