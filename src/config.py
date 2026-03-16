@@ -35,6 +35,13 @@ MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO
 EXAMPLE_PROJECTS_DIR = BASE_DIR.parent / EXAMPLE_REPO / "example-projects"
 
 # =============================================================================
+# Construct 3 CDN (official data source)
+# =============================================================================
+C3_VERSION = os.getenv("C3_VERSION", "r476")
+C3_CDN_BASE = os.getenv("C3_CDN_BASE", "https://editor.construct.net")
+C3_CACHE_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn")))
+
+# =============================================================================
 # Vector Database
 # =============================================================================
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
