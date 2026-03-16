@@ -69,19 +69,6 @@ def test_loads_from_cdn_plus_c3proj(mock_fetcher, fake_projects):
     assert d["metadata"]["c3_version"] == 47600
 
 
-def test_falls_back_without_fetcher():
-    """Without fetcher, uses old browser JSON path (backward compat)."""
-    from src.ingest.examples_parser import _find_latest_browser_json
-    if _find_latest_browser_json("en") is None:
-        pytest.skip("examples_browser JSON files not present (CDN migration)")
-    docs = load_examples_for_vectordb()
-    assert isinstance(docs, list)
-    assert len(docs) > 0
-    assert "id" in docs[0]
-    assert "text" in docs[0]
-    assert "metadata" in docs[0]
-    assert "slug" in docs[0]["metadata"]
-
 
 def test_skips_missing_c3proj(mock_fetcher, tmp_path):
     """Examples without matching c3proj still load using CDN data."""

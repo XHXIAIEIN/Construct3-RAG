@@ -15,18 +15,13 @@ except ImportError:
 # Directory Structure
 # =============================================================================
 BASE_DIR = Path(__file__).parent.parent
-SOURCE_DIR = BASE_DIR / "data" / "source"
 DATA_DIR = BASE_DIR / "data"
-# Schema directory: prefer CDN-exported schemas, fall back to local data/schemas/
-_CDN_SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))) / os.getenv("C3_VERSION", "r476") / "schemas"
-SCHEMA_DIR = _CDN_SCHEMA_DIR if _CDN_SCHEMA_DIR.exists() else DATA_DIR / "schemas"
+# Schema directory: CDN-exported schemas
+SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))) / os.getenv("C3_VERSION", "r476") / "schemas"
 
 # =============================================================================
 # External Sources
 # =============================================================================
-
-# Translation CSV (from POEditor)
-TRANSLATION_CSV = "zh_r475.csv"
 
 # External repos (sibling directories of this repo)
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual

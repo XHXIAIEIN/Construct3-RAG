@@ -1,25 +1,10 @@
 """Parse example project metadata for vector indexing.
 
-Primary path: C3Fetcher CDN data (media/example-project-data.json) + local c3proj enrichment.
-Fallback path: examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json (backward compat).
+Data source: C3Fetcher CDN data (media/example-project-data.json) + local c3proj enrichment.
 """
 import json
-import re
 from pathlib import Path
 from typing import Optional
-
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
-
-
-def _find_latest_browser_json(prefix: str) -> Optional[Path]:
-    """Return the highest-versioned examples_browser_{prefix}_rXXX.json in DATA_DIR."""
-    candidates = list(DATA_DIR.glob(f"examples_browser_{prefix}_r*.json"))
-    if not candidates:
-        return None
-    def _version(p: Path) -> int:
-        m = re.search(r"_r(\d+)", p.name)
-        return int(m.group(1)) if m else 0
-    return max(candidates, key=_version)
 
 
 def _load_c3proj_metadata(projects_dir: Path, slug: str) -> Optional[dict]:
@@ -210,103 +195,18 @@ def _load_from_cdn(fetcher, projects_dir: Optional[Path]) -> list[dict]:
     return docs
 
 
-def _load_from_browser_json(
-    en_path: Optional[Path],
-    zh_path: Optional[Path],
-    projects_dir: Optional[Path],
-) -> list[dict]:
-    """Load examples from legacy examples_browser JSON files (backward compat)."""
-    en_path = en_path or _find_latest_browser_json("en") or DATA_DIR / "examples_browser_en_r475.json"
-    zh_path = zh_path or _find_latest_browser_json("cn")
-
-    if projects_dir is None:
-        try:
-            from src.config import EXAMPLE_PROJECTS_DIR
-            projects_dir = Path(EXAMPLE_PROJECTS_DIR) if EXAMPLE_PROJECTS_DIR.exists() else None
-        except (ImportError, AttributeError):
-            projects_dir = None
-
-    if not en_path.exists():
-        raise FileNotFoundError(f"English examples file not found: {en_path}")
-
-    en_items = json.loads(en_path.read_text(encoding="utf-8"))
-    zh_items = json.loads(zh_path.read_text(encoding="utf-8")) if zh_path and zh_path.exists() else []
-
-    # zh file uses "title" for Chinese title; match by index position (same order)
-    zh_titles: list[str] = [item.get("title", "") for item in zh_items]
-
-    # Lazy import to avoid circular deps
-    try:
-        from src.ingest.event_parser import load_project_extra_metadata
-        _extra_meta_fn = load_project_extra_metadata
-    except ImportError:
-        _extra_meta_fn = None
-
-    c3proj_hits = 0
-    docs = []
-    for i, item in enumerate(en_items):
-        title_en = item.get("title", "")
-        title_zh = zh_titles[i] if i < len(zh_titles) and zh_titles[i] else title_en
-        slug = item.get("slug", "")
-        parsed = _parse_tags(item.get("tags", []))
-
-        proj_dir = (projects_dir / slug) if projects_dir and slug else None
-        c3proj = _load_c3proj_metadata(projects_dir, slug) if projects_dir and slug else None
-        extra = _extra_meta_fn(proj_dir) if (_extra_meta_fn and proj_dir and proj_dir.exists()) else None
-        if c3proj:
-            c3proj_hits += 1
-
-        embed_text = build_embed_text(title_zh, title_en, parsed, c3proj, extra)
-        docs.append({
-            "id": f"example_{i}",
-            "text": embed_text,
-            "metadata": {
-                "source": "example",
-                "title_en": title_en,
-                "title_zh": title_zh,
-                "slug": slug,
-                "example_type": item.get("exampleType", ""),
-                "plugins": c3proj["plugins"] if c3proj else parsed["plugins"],
-                "behaviors": c3proj["behaviors"] if c3proj else parsed["behaviors"],
-                "genres": parsed["genres"],
-                "level": parsed["level"],
-                "coding": parsed["coding"],
-                "layouts": c3proj["layouts"] if c3proj else [],
-                "event_sheets": c3proj["event_sheets"] if c3proj else [],
-                "c3_version": c3proj["c3_version"] if c3proj else "",
-                "families": [f["name"] for f in extra["families"]] if extra else [],
-                "timeline_names": extra["timeline_names"] if extra else [],
-                "flowchart_names": extra["flowchart_names"] if extra else [],
-                "has_scripts": extra["has_scripts"] if extra else False,
-                "script_languages": extra["script_languages"] if extra else [],
-                "slug_derived": item.get("slug_derived", False),
-            },
-        })
-
-    if projects_dir:
-        print(f"  c3proj enrichment: {c3proj_hits}/{len(docs)} examples")
-    return docs
-
-
 def load_examples_for_vectordb(
-    fetcher=None,
+    fetcher,
     projects_dir: Optional[Path] = None,
-    *,
-    # Legacy parameters for backward compatibility
-    en_path: Optional[Path] = None,
-    zh_path: Optional[Path] = None,
 ) -> list[dict]:
     """Return list of {id, text, metadata} dicts for Qdrant indexing.
 
-    When fetcher (C3Fetcher) is provided:
-        Uses CDN example-project-data.json for metadata (tags, used-addons).
-        Enriches with local project.c3proj when projects_dir is available.
-        Title comes from c3proj "name" field, falling back to slug.
+    Uses CDN example-project-data.json for metadata (tags, used-addons).
+    Enriches with local project.c3proj when projects_dir is available.
+    Title comes from c3proj "name" field, falling back to slug.
 
-    When fetcher is NOT provided (backward compat):
-        Falls back to examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json.
+    Args:
+        fetcher: C3Fetcher instance (required).
+        projects_dir: optional path to local example project directories.
     """
-    if fetcher is not None:
-        return _load_from_cdn(fetcher, projects_dir)
-    else:
-        return _load_from_browser_json(en_path, zh_path, projects_dir)
+    return _load_from_cdn(fetcher, projects_dir)

@@ -2,7 +2,34 @@
 import json
 import pytest
 from pathlib import Path
+from unittest.mock import MagicMock
 from src.ingest.examples_parser import build_embed_text, load_examples_for_vectordb, _parse_tags
+
+
+@pytest.fixture
+def mock_fetcher():
+    f = MagicMock()
+    f.fetch_examples.return_value = [
+        {
+            "id": "platformer-basics",
+            "tags": ["beginner", "game-template", "platformer"],
+            "used-addons": {
+                "plugins": ["Sprite", "Keyboard"],
+                "behaviors": ["Platform", "Solid"],
+                "effects": [],
+            },
+        },
+        {
+            "id": "particle-demo",
+            "tags": ["intermediate", "effect-blur"],
+            "used-addons": {
+                "plugins": ["Particles"],
+                "behaviors": [],
+                "effects": ["blur"],
+            },
+        },
+    ]
+    return f
 
 
 class TestParseTagsAndEmbed:
@@ -36,11 +63,8 @@ class TestParseTagsAndEmbed:
         text = build_embed_text("Cave Bridge", "Cave Bridge", parsed)
         assert text.count("Cave Bridge") == 1  # not duplicated
 
-    def test_load_returns_list(self):
-        from src.ingest.examples_parser import _find_latest_browser_json
-        if _find_latest_browser_json("en") is None:
-            pytest.skip("examples_browser JSON files not present (CDN migration)")
-        docs = load_examples_for_vectordb()
+    def test_load_returns_list(self, mock_fetcher):
+        docs = load_examples_for_vectordb(fetcher=mock_fetcher)
         assert isinstance(docs, list)
         assert len(docs) > 0
         assert "id" in docs[0]
@@ -48,10 +72,7 @@ class TestParseTagsAndEmbed:
         assert "metadata" in docs[0]
         assert "slug" in docs[0]["metadata"]
 
-    def test_load_embed_text_not_empty(self):
-        from src.ingest.examples_parser import _find_latest_browser_json
-        if _find_latest_browser_json("en") is None:
-            pytest.skip("examples_browser JSON files not present (CDN migration)")
-        docs = load_examples_for_vectordb()
+    def test_load_embed_text_not_empty(self, mock_fetcher):
+        docs = load_examples_for_vectordb(fetcher=mock_fetcher)
         for doc in docs:
             assert doc["text"].strip(), f"Empty embed text for {doc['id']}"
