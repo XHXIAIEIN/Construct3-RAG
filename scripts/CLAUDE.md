@@ -31,12 +31,6 @@ Operations and development scripts. All scripts are in the `scripts/` root (no s
 | `index-terms.sh` | Index translation glossary only | `./scripts/index-terms.sh` |
 | `clear-all.sh` | Clear all Qdrant collections | `./scripts/clear-all.sh` |
 
-### Schema Generation
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `generate-schema.js` | Generate ACE Schema JSON from C3 source (output to `data/schemas/`) | `node scripts/generate-schema.js` |
-
 ### Interactive Chat
 
 | Script | Purpose | Usage |

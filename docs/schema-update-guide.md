@@ -1,97 +1,96 @@
 # Schema 更新流程
 
-每次 Construct 3 发布新版本时，按以下步骤更新 `data/schemas/`。
+每次 Construct 3 发布新版本时，按以下步骤更新 ACE/效果/示例数据。
 
 ## 前置条件
 
-- Node.js（用于 generate-schema.js、patch-schema-zh.js）
-- Python + 项目依赖（用于 download_expander_dict.py）
+- Python + 项目依赖
+- Qdrant 运行中
+
+## 架构说明
+
+ACE Schema 数据现在通过 **CDN 直接获取**（`src/ingest/c3_fetcher.py`），不再使用 `generate-schema.js`。
+`C3Fetcher` 从 `editor.construct.net/<version>/` 获取 `allAces.json`、`precompiled-{locale}.json` 等数据，
+`SchemaParser` 在 CDN 模式下将 allAces + en-US lang + zh-CN lang 三方 join 为双语 ACE 条目。
+
+缓存策略：每周三 08:00 北京时间自动过期（对齐 Scirra 的周二晚发布节奏）。
 
 ## 步骤
 
 ### 1. 确认新版本号
 
 打开 https://editor.construct.net/beta，在页面源码或网络请求中找到版本号，
-格式为 `r<版本>-<修订>` 例如 `r475-2`。
+格式为 `r<版本>` 例如 `r476`。
 
-### 2. 下载新版源码 JSON
+### 2. 更新版本号配置
+
+编辑 `.env` 或设置环境变量：
 
 ```bash
-VERSION="r475-2"   # ← 改成新版本号
-BASE="https://editor.construct.net/$VERSION"
-LOCAL=".local/construct-source/$VERSION"
-
-mkdir -p "$LOCAL/plugins" "$LOCAL/behaviors" "$LOCAL/effects"
-
-curl -s "$BASE/plugins/allAces.json"        -o "$LOCAL/plugins/allAces.json"
-curl -s "$BASE/plugins/pluginList.json"     -o "$LOCAL/plugins/pluginList.json"
-curl -s "$BASE/behaviors/allAces.json"      -o "$LOCAL/behaviors/allAces.json"
-curl -s "$BASE/behaviors/behaviorList.json" -o "$LOCAL/behaviors/behaviorList.json"
-curl -s "$BASE/effects/allEffects.json"     -o "$LOCAL/effects/allEffects.json"
+C3_VERSION=r476   # ← 改成新版本号
 ```
 
-文件保存在 `.local/`（不纳入版本控制）。
+对应配置在 `src/config.py` 中的 `C3_VERSION`。
 
-### 3. 更新 CSV 翻译文件
+### 3. 清除 CDN 缓存（可选）
+
+CDN 缓存位于 `data/c3-cdn-cache/<version>/`。如果需要强制刷新：
+
+```bash
+rm -rf data/c3-cdn-cache/r476/
+```
+
+正常情况下无需手动清除，缓存会按周三 08:00 自动过期。
+
+### 4. 更新 CSV 翻译文件
 
 从 POEditor 导出最新中文翻译，保存为 `data/source/zh_r<版本>.csv`。
 
-### 4. 更新脚本路径
-
-编辑 `scripts/generate-schema.js`，将两处路径改为新版本：
-
-```js
-const TRANSLATION_CSV = 'zh_r475.csv';          // ← 新 CSV 文件名
-const R466_SOURCE = 'construct-source/r475-2';  // ← 新源码目录
-```
-
-### 5. 全量生成 Schema
+### 5. 重建索引
 
 ```bash
-node scripts/generate-schema.js
+python -m src.ingest.indexer --rebuild
 ```
 
-输出到 `data/schemas/`（72 插件 / 31 行为 / 89 特效）。
+这会自动：
+- 通过 `C3Fetcher` 从 CDN 获取最新 ACE/效果/示例数据
+- 解析 allAces.json + en-US/zh-CN lang 文件生成双语 ACE 条目
+- 解析 allEffects.json 生成效果条目
+- 从 CDN example-project-data.json 获取示例元数据
+- 索引所有数据到 Qdrant
 
-### 6. 覆盖中文翻译
-
-```bash
-node scripts/patch-schema-zh.js
-```
-
-用 CSV 覆盖所有 `name_zh` / `description_zh` / `display_zh` 字段。
-目标覆盖率 ≥ 90%。
-
-### 7. 重建字典向量
-
-```bash
-python scripts/download_expander_dict.py
-```
-
-从更新后的 schema zh_tokens 重新嵌入，保存到 `data/expander/dict_vectors.npz`。
-
-### 8. 运行测试
+### 6. 运行测试
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-### 9. Commit
+### 7. Commit
 
 ```bash
-git add data/schemas/ data/expander/dict_vectors.npz scripts/generate-schema.js
-git commit -m "feat: update schemas to r<版本> and rebuild dict vectors"
+git add .env data/source/
+git commit -m "feat: update to r<版本>"
 ```
+
+## CDN 数据端点
+
+| 端点 | 用途 |
+|------|------|
+| `plugins/allAces.json` | 所有插件 ACE 结构定义 |
+| `behaviors/allAces.json` | 所有行为 ACE 结构定义 |
+| `effects/allEffects.json` | 所有效果定义和着色器 |
+| `loader/lang/precompiled-en-US.json` | 英文名称/描述 |
+| `loader/lang/precompiled-zh-CN.json` | 中文名称/描述 |
+| `media/example-project-data.json` | 示例项目元数据 |
+| `plugins/pluginList.json` | 插件 ID → 路径映射 |
+| `behaviors/behaviorList.json` | 行为 ID → 路径映射 |
+| `versions.json` | 所有发布版本 |
 
 ## 文件说明
 
 | 文件 | 来源 | 说明 |
 |------|------|------|
-| `.local/construct-source/<版本>/plugins/allAces.json` | C3 编辑器 CDN | 所有插件 ACE 结构定义 |
-| `.local/construct-source/<版本>/plugins/pluginList.json` | C3 编辑器 CDN | 插件列表和路径 |
-| `.local/construct-source/<版本>/behaviors/allAces.json` | C3 编辑器 CDN | 所有行为 ACE 结构定义 |
-| `.local/construct-source/<版本>/behaviors/behaviorList.json` | C3 编辑器 CDN | 行为列表和路径 |
-| `.local/construct-source/<版本>/effects/allEffects.json` | C3 编辑器 CDN | 所有特效定义和着色器 |
+| `data/c3-cdn-cache/<version>/` | C3 编辑器 CDN | 本地缓存（自动管理，不纳入版本控制） |
 | `data/source/zh_r<版本>.csv` | POEditor 导出 | 中文翻译（key,zh,,,,en 格式） |
-| `data/schemas/` | 生成产物 | 最终 schema JSON，纳入版本控制 |
-| `data/expander/dict_vectors.npz` | 生成产物 | bge-m3 向量字典，纳入版本控制 |
+| `src/ingest/c3_fetcher.py` | 本项目 | CDN 获取 + 缓存逻辑 |
+| `src/ingest/schema_parser.py` | 本项目 | ACE/效果解析（CDN + legacy 双模式） |
