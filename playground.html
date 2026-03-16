@@ -52,12 +52,15 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .method-badge.post{background:#1a2a3a;color:var(--blue)}
 .hdr-btn{background:none;border:none;color:var(--dis);cursor:pointer;font-size:15px;padding:2px 4px;line-height:1}
 .hdr-btn:hover{color:var(--fg)}
-.card-body{padding:12px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:10px;min-height:0}
+.card-body{padding:12px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0;min-height:0}
 
 /* Sections */
-.section-label{font-size:10px;color:var(--secondFg);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.no-body{font-size:11px;color:var(--dis);font-style:italic;padding:8px 0}
-.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 inherit;resize:none;outline:none;tab-size:2;flex:1;min-height:80px}
+.section-label{font-size:10px;color:var(--secondFg);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
+.no-body{font-size:11px;color:var(--dis);font-style:italic;padding:8px 0;flex-shrink:0}
+
+/* Request section: shrinks to content, doesn't grow beyond it */
+.request-section{flex-shrink:0;display:flex;flex-direction:column;gap:4px;margin-bottom:0}
+.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 inherit;resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
 .json-editor:focus{border-color:var(--accent)}
 .json-editor.invalid{border-color:var(--red);color:var(--red)}
 
@@ -65,6 +68,11 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
 .preset-btn{padding:3px 8px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:10px inherit;cursor:pointer;white-space:nowrap}
 .preset-btn:hover{background:var(--selBg);color:var(--fg);border-color:var(--accent)}
+
+/* Splitter between request and response */
+.panel-splitter{height:6px;cursor:row-resize;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none}
+.panel-splitter::after{content:'';width:32px;height:2px;background:var(--border);border-radius:1px}
+.panel-splitter:hover::after{background:var(--accent)}
 
 /* Actions */
 .card-actions{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border)}
@@ -76,8 +84,9 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .status-badge.err{display:inline;background:#3a1a1a;color:var(--red)}
 .latency{font-size:10px;color:var(--dis)}
 
-/* Response */
-.response-wrap{flex:2;min-height:60px;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
+/* Response: takes ALL remaining space */
+.response-section{flex:1;min-height:60px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.response-wrap{flex:1;min-height:0;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
 .response-json{padding:8px;font:11px/1.5 inherit;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
 .response-placeholder{padding:8px;color:var(--dis);font-size:11px;font-style:italic}
 .copy-btn{position:absolute;top:4px;right:4px;padding:2px 8px;background:var(--second);border:1px solid var(--border);border-radius:3px;color:var(--dis);font:10px inherit;cursor:pointer;opacity:0;transition:opacity .15s}
@@ -170,6 +179,30 @@ function canvasWheel(e) {
   applyTransform();
 }
 function resetView() { pan = { x: 40, y: 40 }; zoom = 1; applyTransform(); }
+
+// ─── Panel splitter drag ───
+let splitState = null;
+function startSplit(e, splitter) {
+  e.preventDefault(); e.stopPropagation();
+  const reqSection = splitter.previousElementSibling;
+  const editor = reqSection?.querySelector('.json-editor');
+  if (!editor) return;
+  splitState = { editor, startY: e.clientY, startH: editor.offsetHeight };
+  document.addEventListener('mousemove', onSplitMove);
+  document.addEventListener('mouseup', onSplitUp);
+}
+function onSplitMove(e) {
+  if (!splitState) return;
+  const dy = (e.clientY - splitState.startY) / zoom;
+  const h = Math.max(40, splitState.startH + dy);
+  splitState.editor.style.maxHeight = h + 'px';
+  splitState.editor.style.minHeight = h + 'px';
+}
+function onSplitUp() {
+  splitState = null;
+  document.removeEventListener('mousemove', onSplitMove);
+  document.removeEventListener('mouseup', onSplitUp);
+}
 applyTransform();
 
 // ─── Card dragging ───
@@ -257,18 +290,18 @@ function createCard(apiKey, posX, posY) {
 
   const methodClass = api.method.toLowerCase();
 
-  let bodySection = '';
+  let requestSection = '';
   if (api.body !== null) {
-    bodySection = `
-      <div class="section-label">Request Body</div>
-      <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>`;
-    if (api.presets) {
-      bodySection += `<div class="presets">${api.presets.map((p, i) =>
-        `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
-      ).join('')}</div>`;
-    }
+    requestSection = `
+      <div class="request-section">
+        <div class="section-label">Request Body</div>
+        <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
+        ${api.presets ? `<div class="presets">${api.presets.map((p, i) =>
+          `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
+        ).join('')}</div>` : ''}
+      </div>`;
   } else {
-    bodySection = `<div class="no-body">No request body</div>`;
+    requestSection = `<div class="no-body">No request body</div>`;
   }
 
   card.innerHTML = `
@@ -278,13 +311,16 @@ function createCard(apiKey, posX, posY) {
       <button class="hdr-btn" onclick="this.closest('.card').remove()" title="Close">×</button>
     </div>
     <div class="card-body">
-      ${bodySection}
-      <div class="trace-toggle" onclick="this.nextElementSibling.classList.toggle('open')">▶ Trace log</div>
-      <div class="trace-panel" id="${id}-trace"></div>
-      <div class="section-label" style="margin-top:4px">Response</div>
-      <div class="response-wrap" id="${id}-resp-wrap">
-        <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
-        <button class="copy-btn" onclick="copyResponse('${id}')">Copy</button>
+      ${requestSection}
+      <div class="panel-splitter" onmousedown="startSplit(event, this)"></div>
+      <div class="response-section">
+        <div class="trace-toggle" onclick="this.nextElementSibling.classList.toggle('open')">▶ Trace log</div>
+        <div class="trace-panel" id="${id}-trace"></div>
+        <div class="section-label">Response</div>
+        <div class="response-wrap" id="${id}-resp-wrap">
+          <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
+          <button class="copy-btn" onclick="copyResponse('${id}')">Copy</button>
+        </div>
       </div>
     </div>
     <div class="card-actions">
