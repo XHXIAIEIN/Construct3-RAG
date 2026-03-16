@@ -350,7 +350,7 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 播放 动画")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert "动画" in resp.answer
+        assert "animation" in resp.answer.lower()
 
     def test_no_keyword_fallthrough(self):
         """'Sprite 是什么' contains skip word → should NOT trigger ace_search."""

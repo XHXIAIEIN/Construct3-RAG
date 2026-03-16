@@ -1143,7 +1143,11 @@ class LookupEngine:
                     item.get("description_en", ""),
                     item.get("category", ""),
                 ]).lower()
-                if not any(fw in searchable for fw in filter_words):
+                # Require at least half of the filter words to match.
+                # Pure OR lets generic words like "检测" match everything;
+                # pure AND is too strict for multi-word queries.
+                hits = sum(1 for fw in filter_words if fw in searchable)
+                if hits < max(1, len(raw_words) // 2 + 1):
                     continue
 
                 name_en = item.get("name_en", "")
