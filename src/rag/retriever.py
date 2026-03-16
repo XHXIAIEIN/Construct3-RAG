@@ -706,8 +706,22 @@ class HybridRetriever:
         else:
             final_results = fused[:final_top_k]
 
-        logger.info(f"[Rerank] Done, returning top-{len(final_results)}")
-        return final_results
+        # Source dedup: keep only the best chunk per source document.
+        # Without this, different H2 sections of the same .md file
+        # (e.g. Timer actions, Timer conditions, Timer expressions)
+        # can fill up all top-K slots with near-duplicate content.
+        seen_sources: Set[str] = set()
+        deduped: List[SearchResult] = []
+        for r in final_results:
+            src = r.metadata.get("source", r.source)
+            if src in seen_sources:
+                continue
+            seen_sources.add(src)
+            deduped.append(r)
+
+        result = deduped[:final_top_k]
+        logger.info(f"[Rerank] Done, returning {len(result)} (deduped from {len(final_results)})")
+        return result
 
 
 def weighted_rrf(
