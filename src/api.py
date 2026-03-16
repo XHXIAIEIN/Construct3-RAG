@@ -241,36 +241,25 @@ def search(req: SearchRequest):
     _trace(f"query: {req.query[:60]}", "input")
 
     # ── Step 1: Try lookup (unless skipped or filters are set) ──────────
+    lookup_item = None
+    lookup_detail_data = None
     use_lookup = not req.skip_lookup and not req.plugin and not req.collections
     if use_lookup:
         _trace("尝试 lookup 直查...", "lookup")
-        lookup_result, lookup_detail = _try_lookup(req.query)
+        lookup_result, lookup_detail_data = _try_lookup(req.query)
         if lookup_result is not None:
-            _trace(f"lookup 命中: {lookup_detail.intent}", "lookup")
-            latency_ms = (time.time() - t0) * 1000
-            return SearchResponse(
-                results=[
-                    SearchResultItem(
-                        text=lookup_result.answer,
-                        score=1.0,
-                        collection="lookup",
-                        source="structured",
-                        metadata={},
-                    )
-                ],
-                diagnostics=SearchDiagnostics(
-                    route="lookup",
-                    total_candidates=1,
-                    after_rerank=1,
-                    after_threshold=1,
-                    latency_ms=round(latency_ms, 1),
-                    trace=[TraceStep(phase=p, message=m) for p, m in _trace_local.events],
-                    lookup_detail=lookup_detail,
-                ),
+            _trace(f"lookup 命中: {lookup_detail_data.intent}，继续语义搜索补充", "lookup")
+            lookup_item = SearchResultItem(
+                text=lookup_result.answer,
+                score=1.0,
+                collection="lookup",
+                source="structured",
+                metadata={},
             )
-        _trace("lookup 未命中，转语义搜索", "lookup")
+        else:
+            _trace("lookup 未命中，转语义搜索", "lookup")
 
-    # ── Step 2: Semantic search ─────────────────────────────────────────
+    # ── Step 2: Semantic search (always runs) ─────────────────────────
     retriever = _get_retriever()
 
     # Branch: plugin-specific filtered search
@@ -343,24 +332,31 @@ def search(req: SearchRequest):
 
     detected_lang = req.lang or _detect_lang(req.query)
 
+    # Merge: lookup result (if any) goes first, then semantic results
+    result_items = []
+    if lookup_item:
+        result_items.append(lookup_item)
+        route = "lookup+semantic"
+    for r in results:
+        result_items.append(SearchResultItem(
+            text=r.text,
+            score=round(r.score, 4),
+            collection=_collection_key(r.source),
+            source=r.metadata.get("source", ""),
+            metadata={k: v for k, v in r.metadata.items() if k != "source"},
+        ))
+    result_items = result_items[:req.top_k]
+
     return SearchResponse(
-        results=[
-            SearchResultItem(
-                text=r.text,
-                score=round(r.score, 4),
-                collection=_collection_key(r.source),
-                source=r.metadata.get("source", ""),
-                metadata={k: v for k, v in r.metadata.items() if k != "source"},
-            )
-            for r in results
-        ],
+        results=result_items,
         diagnostics=SearchDiagnostics(
             route=route,
             lang=detected_lang,
-            total_candidates=total,
+            total_candidates=total + (1 if lookup_item else 0),
             after_rerank=after_rerank,
-            after_threshold=after_threshold,
+            after_threshold=after_threshold + (1 if lookup_item else 0),
             latency_ms=round(latency_ms, 1),
             trace=[TraceStep(phase=p, message=m) for p, m in getattr(_trace_local, 'events', [])],
+            lookup_detail=lookup_detail_data,
         ),
     )
