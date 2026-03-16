@@ -1129,50 +1129,53 @@ class LookupEngine:
         lines = []
         zh_pairs: list[tuple[str, str]] = []
 
-        for ace_type in ace_types:
-            items = schema.get(ace_type, [])
-            if not items:
-                continue
-            prefix = _ACE_PREFIX.get(ace_type, "?")
+        # Also search _common ACEs (shared by all World instances)
+        common_schema = self.schema_index.get_schema("_common", False)
+        schemas_to_search = [schema]
+        if common_schema:
+            schemas_to_search.append(common_schema)
 
-            for item in items:
-                searchable = " ".join([
-                    item.get("name_zh", ""),
-                    item.get("name_en", ""),
-                    item.get("description_zh", ""),
-                    item.get("description_en", ""),
-                    item.get("category", ""),
-                ]).lower()
-                # Require majority of 2-char Chinese windows to match.
-                # This prevents single generic words like "检测" from matching
-                # unrelated ACEs, while allowing partial matches for compound
-                # Chinese terms like "碰撞检测" (needs both "碰撞" AND "检测").
-                zh_windows = [fw for fw in filter_words if len(fw) == 2 and all('\u4e00' <= c <= '\u9fff' for c in fw)]
-                en_words = [fw for fw in raw_words if fw.isascii()]
-                if zh_windows:
-                    zh_hits = sum(1 for w in zh_windows if w in searchable)
-                    if zh_hits < max(1, (len(zh_windows) + 1) // 2):
-                        continue
-                elif en_words:
-                    if not any(w in searchable for w in en_words):
-                        continue
-                else:
-                    if not any(fw in searchable for fw in filter_words):
-                        continue
+        for cur_schema in schemas_to_search:
+            for ace_type in ace_types:
+                items = cur_schema.get(ace_type, [])
+                if not items:
+                    continue
+                prefix = _ACE_PREFIX.get(ace_type, "?")
 
-                name_en = item.get("name_en", "")
-                name_zh = item.get("name_zh", "")
-                desc = item.get("description_en", "") or item.get("description_zh", "")
-                params = item.get("params", [])
+                for item in items:
+                    searchable = " ".join([
+                        item.get("name_zh", ""),
+                        item.get("name_en", ""),
+                        item.get("description_zh", ""),
+                        item.get("description_en", ""),
+                        item.get("category", ""),
+                    ]).lower()
+                    zh_windows = [fw for fw in filter_words if len(fw) == 2 and all('\u4e00' <= c <= '\u9fff' for c in fw)]
+                    en_words = [fw for fw in raw_words if fw.isascii()]
+                    if zh_windows:
+                        zh_hits = sum(1 for w in zh_windows if w in searchable)
+                        if zh_hits < max(1, (len(zh_windows) + 1) // 2):
+                            continue
+                    elif en_words:
+                        if not any(w in searchable for w in en_words):
+                            continue
+                    else:
+                        if not any(fw in searchable for fw in filter_words):
+                            continue
 
-                if ace_type == "conditions":
-                    sig = name_en
-                else:
-                    sig = f"{name_en}({_format_params(params)})"
+                    name_en = item.get("name_en", "")
+                    name_zh = item.get("name_zh", "")
+                    desc = item.get("description_en", "") or item.get("description_zh", "")
+                    params = item.get("params", [])
 
-                lines.append(f"{prefix}: {sig}: {desc}")
-                if name_zh and name_zh != name_en:
-                    zh_pairs.append((name_en, name_zh))
+                    if ace_type == "conditions":
+                        sig = name_en
+                    else:
+                        sig = f"{name_en}({_format_params(params)})"
+
+                    lines.append(f"{prefix}: {sig}: {desc}")
+                    if name_zh and name_zh != name_en:
+                        zh_pairs.append((name_en, name_zh))
 
         if not lines:
             return ""
