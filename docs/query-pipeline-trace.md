@@ -276,8 +276,8 @@ request = SearchRequest(query="怎么在数组中查找特定数字？")
 ```
 POST /search (api.py)
   ↓
-  ├─→ LookupEngine.try_lookup() ──→ SchemaIndex (CDN cache / data/schemas/)
-  │                              └─→ TermIndex   (data/source/zh_r475.csv)
+  ├─→ LookupEngine.try_lookup() ──→ SchemaIndex (CDN cache)
+  │                              └─→ TermIndex   (CDN lang)
   │     命中 → 直接返回 route="lookup"
   │
   ├─→ HybridRetriever.search_all_with_rerank()
