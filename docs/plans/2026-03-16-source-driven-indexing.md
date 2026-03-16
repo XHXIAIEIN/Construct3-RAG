@@ -28,6 +28,12 @@ Base URL: `https://editor.construct.net/r{version}/`
 
 **Key constraint:** CDN returns 403 without a browser User-Agent header.
 
+**Cache strategy:** Local file cache with weekly expiry aligned to Scirra's release schedule.
+Scirra typically releases updates on Tuesday evenings (Beijing time, UTC+8),
+so cache expires every **Wednesday 00:00 Beijing time** (= Tuesday 16:00 UTC).
+Within one cache period, CDN is hit at most once per file. Across the entire
+lifecycle of a version, total CDN requests ≈ 6 JSON files × 1 = negligible.
+
 ## Data Join Logic
 
 ACE indexing requires joining 3 sources:
@@ -113,6 +119,7 @@ C3_CACHE_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"
 ```python
 # tests/test_c3_fetcher.py
 import json
+import time
 import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -147,6 +154,26 @@ def test_get_latest_version(fetcher):
         assert fetcher.get_latest_stable_version() == "r476"
 
 
+def test_cache_expires_on_wednesday(fetcher, tmp_path):
+    """Cache files older than last Wednesday 00:00 Beijing time are refetched."""
+    from src.ingest.c3_fetcher import _cache_expired
+    cache_file = tmp_path / "test_cache"
+    cache_file.write_text("old")
+    # Backdate to 10 days ago — guaranteed to cross a Wednesday
+    import os
+    old_time = time.time() - 10 * 86400
+    os.utime(cache_file, (old_time, old_time))
+    assert _cache_expired(cache_file) is True
+
+
+def test_fresh_cache_not_expired(fetcher, tmp_path):
+    """Cache files written just now should not be expired."""
+    from src.ingest.c3_fetcher import _cache_expired
+    cache_file = tmp_path / "test_cache"
+    cache_file.write_text("fresh")
+    assert _cache_expired(cache_file) is False
+
+
 def test_fetch_all_aces(fetcher):
     """Convenience method returns joined plugin + behavior ACEs."""
     mock_plugin_aces = {"Sprite": {"": {"conditions": [{"id": "c1"}]}}}
@@ -161,15 +188,39 @@ def test_fetch_all_aces(fetcher):
 
 ```python
 # src/ingest/c3_fetcher.py
-"""Fetch Construct 3 data from official CDN with local caching."""
+"""Fetch Construct 3 data from official CDN with local caching.
+
+Cache expires every Wednesday 00:00 Beijing time (UTC+8), aligned with
+Scirra's typical Tuesday-evening release schedule. Within one cache
+period, each file is fetched from CDN at most once.
+"""
 import json
 import logging
 import urllib.request
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
+_BEIJING = timezone(timedelta(hours=8))
+
+
+def _cache_expired(cache_path: Path) -> bool:
+    """Check if cache file is from before the most recent Wednesday 00:00 Beijing time.
+
+    Scirra releases updates on Tuesday evenings (Beijing time).
+    Cache invalidates every Wednesday 00:00 CST so that a rebuild
+    after that point will pick up any new release.
+    """
+    if not cache_path.exists():
+        return True
+    mtime = datetime.fromtimestamp(cache_path.stat().st_mtime, tz=_BEIJING)
+    now = datetime.now(_BEIJING)
+    # Find the most recent Wednesday 00:00 (weekday 2 = Wednesday)
+    days_since_wed = (now.weekday() - 2) % 7
+    last_wed = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=days_since_wed)
+    return mtime < last_wed
 
 
 class C3Fetcher:
@@ -192,7 +243,7 @@ class C3Fetcher:
 
     def fetch(self, path: str, force: bool = False) -> dict | list:
         cache_path = self.cache_dir / path.replace("/", "_")
-        if not force and cache_path.exists():
+        if not force and cache_path.exists() and not _cache_expired(cache_path):
             raw = cache_path.read_bytes()
         else:
             url = f"{self.base_url}/{self.version}/{path}"
