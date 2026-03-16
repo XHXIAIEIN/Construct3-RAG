@@ -25,6 +25,19 @@ logger = logging.getLogger(__name__)
 _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
 _BEIJING = timezone(timedelta(hours=8))
 
+# CDN endpoint paths — update here if Scirra changes URL structure.
+# See data/c3-cdn-samples/ for expected response schemas.
+ENDPOINTS = {
+    "versions":      "versions.json",
+    "plugin_aces":   "plugins/allAces.json",
+    "behavior_aces": "behaviors/allAces.json",
+    "effects":       "effects/allEffects.json",
+    "lang":          "loader/lang/precompiled-{locale}.json",
+    "examples":      "media/example-project-data.json",
+    "plugin_list":   "plugins/pluginList.json",
+    "behavior_list": "behaviors/behaviorList.json",
+}
+
 
 def _cache_expired(cache_path: Path) -> bool:
     """Check if cache file is from before the most recent Wednesday 08:00 Beijing time.
@@ -105,30 +118,30 @@ class C3Fetcher:
     def fetch_all_aces(self) -> dict:
         """Return {"plugins": {...}, "behaviors": {...}} ACE definitions."""
         return {
-            "plugins": self.fetch("plugins/allAces.json"),
-            "behaviors": self.fetch("behaviors/allAces.json"),
+            "plugins": self.fetch(ENDPOINTS["plugin_aces"]),
+            "behaviors": self.fetch(ENDPOINTS["behavior_aces"]),
         }
 
     def fetch_lang(self, locale: str = "en-US") -> dict:
         """Fetch precompiled language file (en-US or zh-CN)."""
-        return self.fetch(f"loader/lang/precompiled-{locale}.json")
+        return self.fetch(ENDPOINTS["lang"].format(locale=locale))
 
     def fetch_effects(self) -> list:
         """Fetch all effect definitions."""
-        data = self.fetch("effects/allEffects.json")
+        data = self.fetch(ENDPOINTS["effects"])
         return data.get("all", data) if isinstance(data, dict) else data
 
     def fetch_examples(self) -> list:
         """Fetch example project metadata list."""
-        data = self.fetch("media/example-project-data.json")
+        data = self.fetch(ENDPOINTS["examples"])
         return data.get("projects", data) if isinstance(data, dict) else data
 
     def fetch_plugin_list(self) -> dict:
         """Fetch plugin ID → path mapping."""
-        data = self.fetch("plugins/pluginList.json")
+        data = self.fetch(ENDPOINTS["plugin_list"])
         return data.get("pluginList", data) if isinstance(data, dict) else data
 
     def fetch_behavior_list(self) -> dict:
         """Fetch behavior ID → path mapping."""
-        data = self.fetch("behaviors/behaviorList.json")
+        data = self.fetch(ENDPOINTS["behavior_list"])
         return data.get("behaviorList", data) if isinstance(data, dict) else data
