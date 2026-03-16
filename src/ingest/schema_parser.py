@@ -1,11 +1,9 @@
 """
-Schema Parser - 从 Construct3-Schema 读取数据用于向量索引
+Schema Parser - 从 CDN 读取 Construct 3 ACE/effect/property 数据用于向量索引
 
-数据来源: data/schemas/
-包含: plugins, behaviors, effects, editor 的完整双语数据
+数据来源: C3Fetcher CDN (allAces.json, allEffects.json, lang files)
+包含: plugins, behaviors, effects 的完整双语数据
 """
-import json
-from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 
@@ -58,53 +56,17 @@ class PropertyEntry:
 
 
 class SchemaParser:
-    """Parse Construct 3 ACE/effect/property data.
+    """Parse Construct 3 ACE/effect/property data from CDN.
 
-    Two modes:
-    - CDN mode (fetcher provided): reads allAces.json + precompiled lang from CDN
-    - Legacy mode (no fetcher): reads data/schemas/ JSON files
+    Requires a C3Fetcher instance. Reads allAces.json + precompiled lang from CDN.
     """
 
-    def __init__(self, schema_dir: Optional[Path] = None, fetcher=None):
+    def __init__(self, fetcher):
         self._fetcher = fetcher
-        if fetcher is None:
-            if schema_dir is None:
-                from src.config import SCHEMA_DIR
-                schema_dir = SCHEMA_DIR
-            self.schema_dir = schema_dir
-        else:
-            self.schema_dir = None
-
-    def _read_json(self, path: Path) -> Dict:
-        """读取 JSON 文件"""
-        with open(path, encoding='utf-8') as f:
-            return json.load(f)
 
     def parse_ace_entries(self) -> List[ACEEntry]:
-        """Parse all ACE data from CDN or local schemas."""
-        if self._fetcher is not None:
-            return self._parse_ace_from_cdn()
-        return self._parse_ace_from_schemas()
-
-    def _parse_ace_from_schemas(self) -> List[ACEEntry]:
-        """Legacy: parse from data/schemas/ JSON files."""
-        entries = []
-        plugins_dir = self.schema_dir / "plugins"
-        if plugins_dir.exists():
-            for json_file in plugins_dir.glob("*.json"):
-                if json_file.name == "index.json":
-                    continue
-                plugin_data = self._read_json(json_file)
-                entries.extend(self._parse_plugin_aces(plugin_data, "plugin"))
-
-        behaviors_dir = self.schema_dir / "behaviors"
-        if behaviors_dir.exists():
-            for json_file in behaviors_dir.glob("*.json"):
-                if json_file.name == "index.json":
-                    continue
-                behavior_data = self._read_json(json_file)
-                entries.extend(self._parse_plugin_aces(behavior_data, "behavior"))
-        return entries
+        """Parse all ACE data from CDN."""
+        return self._parse_ace_from_cdn()
 
     def _parse_ace_from_cdn(self) -> List[ACEEntry]:
         """CDN mode: join allAces + en-US lang + zh-CN lang."""
@@ -174,103 +136,9 @@ class SchemaParser:
                             ))
         return entries
 
-    def _parse_plugin_aces(self, data: Dict, plugin_type: str) -> List[ACEEntry]:
-        """解析单个插件/行为的 ACE"""
-        entries = []
-        plugin_name = data.get("id", "")
-        plugin_name_zh = data.get("name_zh", "")
-        plugin_name_en = data.get("name_en", "")
-
-        # 解析 conditions
-        for ace in data.get("conditions", []):
-            entry = ACEEntry(
-                plugin_name=plugin_name,
-                plugin_name_zh=plugin_name_zh,
-                plugin_name_en=plugin_name_en,
-                plugin_type=plugin_type,
-                category=ace.get("category", ""),
-                ace_type="condition",
-                ace_id=ace.get("id", ""),
-                name_zh=ace.get("name_zh", ""),
-                name_en=ace.get("name_en", ""),
-                description_zh=ace.get("description_zh", ""),
-                description_en=ace.get("description_en", ""),
-                script_name=ace.get("scriptName", ""),
-                params=ace.get("params", []),
-                is_trigger=ace.get("isTrigger", False)
-            )
-            entries.append(entry)
-
-        # 解析 actions
-        for ace in data.get("actions", []):
-            entry = ACEEntry(
-                plugin_name=plugin_name,
-                plugin_name_zh=plugin_name_zh,
-                plugin_name_en=plugin_name_en,
-                plugin_type=plugin_type,
-                category=ace.get("category", ""),
-                ace_type="action",
-                ace_id=ace.get("id", ""),
-                name_zh=ace.get("name_zh", ""),
-                name_en=ace.get("name_en", ""),
-                description_zh=ace.get("description_zh", ""),
-                description_en=ace.get("description_en", ""),
-                script_name=ace.get("scriptName", ""),
-                params=ace.get("params", []),
-                is_async=ace.get("isAsync", False)
-            )
-            entries.append(entry)
-
-        # 解析 expressions
-        for ace in data.get("expressions", []):
-            entry = ACEEntry(
-                plugin_name=plugin_name,
-                plugin_name_zh=plugin_name_zh,
-                plugin_name_en=plugin_name_en,
-                plugin_type=plugin_type,
-                category=ace.get("category", ""),
-                ace_type="expression",
-                ace_id=ace.get("id", ""),
-                name_zh=ace.get("name_zh", ""),
-                name_en=ace.get("name_en", ""),
-                description_zh=ace.get("description_zh", ""),
-                description_en=ace.get("description_en", ""),
-                script_name=ace.get("expressionName", ace.get("scriptName", "")),
-                params=ace.get("params", []),
-                return_type=ace.get("returnType")
-            )
-            entries.append(entry)
-
-        return entries
-
     def parse_effects(self) -> List[EffectEntry]:
-        """Parse all effects from CDN or local schemas."""
-        if self._fetcher is not None:
-            return self._parse_effects_from_cdn()
-        entries = []
-        if self.schema_dir is None:
-            return entries
-        effects_dir = self.schema_dir / "effects"
-
-        if not effects_dir.exists():
-            return entries
-
-        for json_file in effects_dir.glob("*.json"):
-            if json_file.name == "index.json":
-                continue
-            data = self._read_json(json_file)
-            entry = EffectEntry(
-                id=data.get("id", ""),
-                name_zh=data.get("name_zh", ""),
-                name_en=data.get("name_en", ""),
-                description_zh=data.get("description_zh", ""),
-                description_en=data.get("description_en", ""),
-                category=data.get("category", ""),
-                parameters=data.get("parameters", [])
-            )
-            entries.append(entry)
-
-        return entries
+        """Parse all effects from CDN."""
+        return self._parse_effects_from_cdn()
 
     def _parse_effects_from_cdn(self) -> List[EffectEntry]:
         """CDN mode: parse effects from allEffects.json + lang files."""
@@ -295,38 +163,8 @@ class SchemaParser:
         return entries
 
     def parse_properties(self) -> List[PropertyEntry]:
-        """Parse all properties. Currently only legacy mode (schema_dir)."""
-        entries = []
-        if self.schema_dir is None:
-            return entries
-
-        for plugin_type, dir_name in [("plugin", "plugins"), ("behavior", "behaviors")]:
-            type_dir = self.schema_dir / dir_name
-            if not type_dir.exists():
-                continue
-
-            for json_file in type_dir.glob("*.json"):
-                if json_file.name == "index.json":
-                    continue
-                data = self._read_json(json_file)
-                plugin_name = data.get("id", "")
-                plugin_name_zh = data.get("name_zh", "")
-
-                for prop in data.get("properties", []):
-                    entry = PropertyEntry(
-                        plugin_name=plugin_name,
-                        plugin_name_zh=plugin_name_zh,
-                        plugin_type=plugin_type,
-                        prop_id=prop.get("id", ""),
-                        name_zh=prop.get("name_zh", ""),
-                        name_en=prop.get("name_en", ""),
-                        description_zh=prop.get("description_zh", ""),
-                        description_en=prop.get("description_en", ""),
-                        items=prop.get("items")
-                    )
-                    entries.append(entry)
-
-        return entries
+        """Parse all properties. CDN properties not yet implemented; returns empty list."""
+        return []
 
     def export_ace_for_vectordb(self, entries: Optional[List[ACEEntry]] = None) -> List[Dict[str, Any]]:
         """导出 ACE 为向量数据库格式"""
@@ -516,7 +354,10 @@ class SchemaParser:
 
 def main():
     """测试解析器"""
-    parser = SchemaParser()
+    from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+    from src.ingest.c3_fetcher import C3Fetcher
+    fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    parser = SchemaParser(fetcher=fetcher)
 
     print("=== 解析 Construct3-Schema ===\n")
 

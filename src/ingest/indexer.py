@@ -536,12 +536,12 @@ def index_ace_reference(indexer: "Indexer", collection: str, rebuild: bool = Fal
         indexer.index_documents(collection, docs)
 
 
-def index_properties_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index plugin/behavior properties from Construct3-Schema into the ACE collection."""
+def index_properties_schema(indexer: "Indexer", collection: str, fetcher=None, rebuild: bool = False):
+    """Index plugin/behavior properties from CDN into the ACE collection."""
     from src.ingest.schema_parser import SchemaParser
 
-    print("  Parsing property schema from Construct3-Schema...")
-    parser = SchemaParser()
+    print("  Parsing property schema from CDN...")
+    parser = SchemaParser(fetcher=fetcher)
     entries = parser.parse_properties()
 
     if not entries:
@@ -553,12 +553,12 @@ def index_properties_schema(indexer: "Indexer", collection: str, rebuild: bool =
     indexer.index_documents(collection, docs)
 
 
-def index_ace_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index ACE schema from Construct3-Schema (使用 Schema 数据)"""
+def index_ace_schema(indexer: "Indexer", collection: str, fetcher=None, rebuild: bool = False):
+    """Index ACE schema from CDN"""
     from src.ingest.schema_parser import SchemaParser
 
-    print(f"  Parsing ACE schema from Construct3-Schema...")
-    parser = SchemaParser()
+    print(f"  Parsing ACE schema from CDN...")
+    parser = SchemaParser(fetcher=fetcher)
     entries = parser.parse_ace_entries()
 
     if not entries:
@@ -576,12 +576,12 @@ def index_ace_schema(indexer: "Indexer", collection: str, rebuild: bool = False)
     indexer.index_documents(collection, docs)
 
 
-def index_effects_schema(indexer: "Indexer", collection: str, rebuild: bool = False):
-    """Index effects schema from Construct3-Schema (使用 Schema 数据)"""
+def index_effects_schema(indexer: "Indexer", collection: str, fetcher=None, rebuild: bool = False):
+    """Index effects schema from CDN"""
     from src.ingest.schema_parser import SchemaParser
 
-    print(f"  Parsing Effects schema from Construct3-Schema...")
-    parser = SchemaParser()
+    print(f"  Parsing Effects schema from CDN...")
+    parser = SchemaParser(fetcher=fetcher)
     entries = parser.parse_effects()
 
     if not entries:
@@ -606,14 +606,12 @@ def index_all_data(rebuild: bool = False):
     """Index all Construct 3 data into Qdrant."""
     from src.config import (
         QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL,
-        SOURCE_DIR, TRANSLATION_CSV,
         CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
         EXAMPLE_PROJECTS_DIR,
         C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
     from src.ingest.markdown_parser import MarkdownParser
-    from src.ingest.csv_parser import CSVParser
     from src.ingest.c3_fetcher import C3Fetcher
 
     # Initialize CDN fetcher for ACE schemas and example metadata
@@ -658,11 +656,9 @@ def index_all_data(rebuild: bool = False):
         corpus += [d["text"] for d in sp.export_ace_for_vectordb()]
         corpus += [d["text"] for d in sp.export_effects_for_vectordb()]
         corpus += [d["text"] for d in sp.export_properties_for_vectordb()]
-        csv_parser_bm25 = CSVParser()
-        csv_path_bm25 = SOURCE_DIR / TRANSLATION_CSV
-        if csv_path_bm25.exists():
-            csv_parser_bm25.parse_file(csv_path_bm25)
-            corpus += [d["text"] for d in csv_parser_bm25.export_for_vectordb()]
+        cdn_terms_bm25 = fetcher.export_terms()
+        if cdn_terms_bm25:
+            corpus += [t["full_text"] for t in cdn_terms_bm25]
         indexer.fit_bm25(corpus)
 
     # ── Index each markdown doc collection ────────────────────────────────────
@@ -678,7 +674,7 @@ def index_all_data(rebuild: bool = False):
                 docs.append({"id": f"{collection}_{i}", "text": text, "metadata": chunk.metadata})
             indexer.index_documents(collection, docs)
 
-    # ── Translation terms (from CDN lang, fallback to CSV) ──────────────────
+    # ── Translation terms (from CDN lang) ────────────────────────────────────
     print(f"\n=== Indexing Translation Terms (from CDN {C3_VERSION}) ===")
     indexer.create_collection(COLLECTIONS["terms"], recreate=rebuild)
     cdn_terms = fetcher.export_terms()
@@ -692,14 +688,6 @@ def index_all_data(rebuild: bool = False):
             for i, t in enumerate(cdn_terms)
         ]
         indexer.index_documents(COLLECTIONS["terms"], term_docs)
-    else:
-        # Fallback to CSV if CDN failed
-        print("  CDN terms empty, falling back to CSV...")
-        csv_parser = CSVParser()
-        csv_path = SOURCE_DIR / TRANSLATION_CSV
-        if csv_path.exists():
-            csv_parser.parse_file(csv_path)
-            indexer.index_documents(COLLECTIONS["terms"], csv_parser.export_for_vectordb())
 
     # ── Example projects ──────────────────────────────────────────────────────
     print("\n=== Indexing Example Projects ===")

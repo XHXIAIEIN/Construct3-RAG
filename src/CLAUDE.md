@@ -16,7 +16,6 @@ Project source code. 2 top-level modules and 2 subpackages.
 | File | Purpose |
 |------|---------|
 | `indexer.py` | Main indexing pipeline (`--rebuild` for full rebuild) |
-| `csv_parser.py` | Translation CSV parser |
 | `markdown_parser.py` | Markdown document parser and chunker |
 | `project_parser.py` | C3 project file parser |
 | `schema_parser.py` | ACE Schema JSON parser |

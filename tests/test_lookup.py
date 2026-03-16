@@ -1,6 +1,6 @@
 """
 Tests for the Query Routing & Direct Lookup System.
-Uses real JSON schemas from data/schemas/ but no external services.
+Uses real JSON schemas from CDN cache but no external services.
 """
 import sys
 import pytest
@@ -19,17 +19,12 @@ from src.rag.lookup import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
-from src.config import SCHEMA_DIR, SOURCE_DIR
+from src.config import SCHEMA_DIR
 
 
 def make_schema_index() -> SchemaIndex:
-    """Return a SchemaIndex pointing at schema data (CDN cache or local)."""
+    """Return a SchemaIndex pointing at schema data (CDN cache)."""
     return SchemaIndex(SCHEMA_DIR)
-
-
-def make_term_index() -> TermIndex:
-    """Return a TermIndex pointing at translation source."""
-    return TermIndex(SOURCE_DIR)
 
 
 def make_classifier(embedder=None) -> IntentClassifier:
@@ -42,7 +37,6 @@ def make_classifier(embedder=None) -> IntentClassifier:
 def make_engine(embedder=None) -> LookupEngine:
     return LookupEngine(
         schema_dir=SCHEMA_DIR,
-        source_dir=SOURCE_DIR,
         embedder=embedder,
     )
 
@@ -114,44 +108,6 @@ class TestSchemaIndex:
         idx = make_schema_index()
         props = idx.get_ace_list("sprite", "properties")
         assert len(props) > 0
-
-
-# ---------------------------------------------------------------------------
-# TestTermIndex
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(not SOURCE_DIR.exists(), reason="CSV source not available (CDN replaces it)")
-class TestTermIndex:
-    def test_load(self):
-        idx = make_term_index()
-        idx._load()
-        assert len(idx._terms) > 1000
-
-    def test_search_exact_zh(self):
-        idx = make_term_index()
-        results = idx.search("精灵")
-        assert len(results) > 0
-        assert any("精灵" in r["zh"] for r in results)
-
-    def test_search_exact_en(self):
-        idx = make_term_index()
-        results = idx.search("Sprite")
-        assert len(results) > 0
-
-    def test_search_partial(self):
-        idx = make_term_index()
-        results = idx.search("动画")
-        assert len(results) > 0
-
-    def test_search_empty(self):
-        idx = make_term_index()
-        results = idx.search("")
-        assert results == []
-
-    def test_search_no_match(self):
-        idx = make_term_index()
-        results = idx.search("xyznonexistentterm123")
-        assert results == []
 
 
 # ---------------------------------------------------------------------------
@@ -326,9 +282,13 @@ class TestLookupEngine:
         assert "跳跃" in resp.answer
         assert "速度" in resp.answer
 
-    @pytest.mark.skipif(not SOURCE_DIR.exists(), reason="CSV source not available")
-    def test_term_translate(self):
-        engine = make_engine()
+    def test_term_translate_with_cdn_terms(self):
+        """Term translate works when CDN terms are provided."""
+        terms = [
+            {"term_key": "text.plugins.sprite.name", "zh": "精灵", "en": "Sprite"},
+            {"term_key": "text.plugins.sprite.actions.destroy.list-name", "zh": "销毁", "en": "Destroy"},
+        ]
+        engine = LookupEngine(terms=terms)
         resp = engine.try_lookup("翻译 Sprite")
         assert resp is not None
         assert resp.query_type == "lookup_term_translate"
@@ -522,9 +482,17 @@ class TestExamplesIndex:
 # ---------------------------------------------------------------------------
 
 class TestACEExampleAttach:
-    def test_ace_list_appends_examples(self):
+    def test_ace_list_appends_examples(self, tmp_path):
         """ACE list result should include Related examples when examples_index has data."""
+        import json
+        index_file = tmp_path / "examples_index.json"
+        index_file.write_text(json.dumps({
+            "behavior-Tween": [
+                {"title": "Tween Demo", "slug": "tween-demo", "genres": ["animation"], "behaviors": ["Tween"]},
+            ]
+        }), encoding="utf-8")
         engine = LookupEngine()
+        engine.examples_index = ExamplesIndex(index_path=index_file)
         intent = LookupIntent(
             intent_type="ace_list",
             plugin_id="tween",
@@ -534,7 +502,4 @@ class TestACEExampleAttach:
             matched_tags=["behavior-Tween"],
         )
         result = engine._format_ace_list(intent)
-        if not engine.examples_index._index:
-            import pytest
-            pytest.skip("examples_index.json not found")
         assert "Related examples" in result

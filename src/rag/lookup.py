@@ -1,7 +1,7 @@
 """
 Query Routing & Direct Lookup System for Construct 3 RAG
 
-Three-tier intent classification + direct JSON/CSV lookup:
+Three-tier intent classification + direct JSON lookup:
 - Tier 1: Rule-based regex matching (instant, 0 cost)
 - Tier 2: bge-m3 embedding similarity (~50ms)
 - Tier 3: Ollama small model classification (~1-2s, optional)
@@ -10,7 +10,6 @@ If all tiers miss → fallback to standard RAG pipeline.
 """
 import re
 import json
-import csv
 import logging
 import time
 from pathlib import Path
@@ -19,7 +18,7 @@ from dataclasses import dataclass, field
 
 from ._trace import _trace
 
-from src.config import SCHEMA_DIR, SOURCE_DIR, TRANSLATION_CSV
+from src.config import SCHEMA_DIR
 from src.locale.keywords import (
     ACE_TYPE_ALIASES, ACE_INTENT_KEYWORDS, HOWTO_SKIP_WORDS,
     ZH_PARTICLES, INTENT_TEMPLATES,
@@ -251,36 +250,25 @@ class SchemaIndex:
 
 class TermIndex:
     """
-    Index of translation terms from the POEditor CSV.
-    Format: key, zh, _, _, _, en (6 columns)
+    Index of translation terms from CDN lang data.
+    Accepts pre-loaded terms (from C3Fetcher.export_terms()).
     """
 
-    def __init__(self, source_dir: Optional[Path] = None, csv_name: Optional[str] = None):
-        self._source_dir = source_dir or SOURCE_DIR
-        self._csv_name = csv_name or TRANSLATION_CSV
+    def __init__(self, terms: Optional[List[Dict]] = None):
         self._terms: List[Dict[str, str]] = []  # [{"key": ..., "zh": ..., "en": ...}]
         self._loaded = False
+        if terms is not None:
+            self._ingest(terms)
 
-    def _load(self):
-        if self._loaded:
-            return
+    def _ingest(self, terms: List[Dict]):
+        """Load terms from CDN export_terms() format into internal index."""
         self._loaded = True
-
-        csv_path = self._source_dir / self._csv_name
-        if not csv_path.exists():
-            logger.warning(f"[TermIndex] CSV not found: {csv_path}")
-            return
-
-        with open(csv_path, encoding="utf-8") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                if len(row) < 6:
-                    continue
-                key, zh = row[0], row[1].strip()
-                en = row[5].strip()
-                if zh and en:
-                    self._terms.append({"key": key, "zh": zh, "en": en})
-
+        for t in terms:
+            zh = t.get("zh", "").strip()
+            en = t.get("en", "").strip()
+            key = t.get("term_key", "")
+            if zh and en:
+                self._terms.append({"key": key, "zh": zh, "en": en})
         logger.info(f"[TermIndex] Loaded {len(self._terms)} terms")
 
     def search(self, query: str, max_results: int = 20) -> List[Dict[str, str]]:
@@ -294,7 +282,6 @@ class TermIndex:
         Returns:
             List of {"key", "zh", "en"} dicts
         """
-        self._load()
         query_lower = query.strip().lower()
         if not query_lower:
             return []
@@ -945,13 +932,13 @@ class LookupEngine:
     def __init__(
         self,
         schema_dir: Optional[Path] = None,
-        source_dir: Optional[Path] = None,
+        terms: Optional[List[Dict]] = None,
         embedder=None,
         ollama_model: str = "",
         ollama_url: str = "",
     ):
         self.schema_index = SchemaIndex(schema_dir)
-        self.term_index = TermIndex(source_dir)
+        self.term_index = TermIndex(terms=terms)
         self.examples_index = ExamplesIndex()
         self.classifier = IntentClassifier(
             schema_index=self.schema_index,
@@ -1232,7 +1219,7 @@ class LookupEngine:
                 key = "..." + key[-47:]
             lines.append(f"| {count} | {r['zh']} | {r['en']} | `{key}` |")
 
-        lines.append("\n[来源: 1] 数据来源：Construct 3 翻译词表 (zh_r475.csv)")
+        lines.append("\n[来源: 1] 数据来源：Construct 3 CDN 翻译词表")
         return "\n".join(lines)
 
     def _format_example_find(self, intent: LookupIntent) -> str:

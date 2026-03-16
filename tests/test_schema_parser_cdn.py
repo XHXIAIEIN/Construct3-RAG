@@ -167,11 +167,12 @@ def test_export_vectordb_format(mock_fetcher):
     assert "Sprite" in sprite_doc["text"]
 
 
-def test_legacy_mode_still_works():
-    """SchemaParser without fetcher should use schema_dir (backward compat)."""
-    from src.config import SCHEMA_DIR
-    if not SCHEMA_DIR.exists():
-        pytest.skip("data/schemas/ not available")
-    parser = SchemaParser()  # no fetcher → legacy mode
-    entries = parser.parse_ace_entries()
-    assert len(entries) > 0
+def test_effects_from_cdn(mock_fetcher):
+    """Effects are parsed from CDN allEffects.json + lang."""
+    mock_fetcher.fetch_effects.return_value = [{
+        "json": {"id": "blur", "category": "blending", "parameters": []}
+    }]
+    parser = SchemaParser(fetcher=mock_fetcher)
+    effects = parser.parse_effects()
+    assert len(effects) >= 1
+    assert effects[0].id == "blur"

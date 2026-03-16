@@ -45,7 +45,10 @@ def _get_lookup_engine():
     global _lookup_engine
     if _lookup_engine is None:
         from src.rag.lookup import LookupEngine
-        _lookup_engine = LookupEngine()
+        from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+        from src.ingest.c3_fetcher import C3Fetcher
+        fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+        _lookup_engine = LookupEngine(terms=fetcher.export_terms())
     return _lookup_engine
 
 
