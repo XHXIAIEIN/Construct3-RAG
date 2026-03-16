@@ -723,9 +723,10 @@ def index_all_data(rebuild: bool = False):
     indexer.create_collection(COLLECTIONS["effects"], recreate=rebuild)
     index_effects_schema(indexer, COLLECTIONS["effects"], rebuild)
 
-    # ── Scripting API ─────────────────────────────────────────────────────────
+    # ── Scripting API (append to markdown-indexed c3_scripting) ──────────────
     print("\n=== Indexing Scripting API ===")
-    indexer.create_collection(COLLECTIONS["scripting"], recreate=rebuild)
+    # NOTE: Do NOT recreate here — markdown scripting docs are already indexed
+    # in the DOC_COLLECTIONS loop above. This only appends structured API data.
     index_scripting_api(indexer, COLLECTIONS["scripting"])
 
     print("\n=== Indexing Complete ===")
