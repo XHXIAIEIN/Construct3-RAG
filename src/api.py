@@ -12,6 +12,9 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from pathlib import Path
+from fastapi.responses import HTMLResponse
+
 from src.config import QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL
 
 logger = logging.getLogger(__name__)
@@ -157,6 +160,15 @@ def _detect_lang(query: str) -> str:
 # terms collection contains bilingual translation pairs —
 # only useful when query is in a non-English language
 _TERMS_USEFUL_LANGS = {"zh", "ja", "ko"}
+
+
+_PLAYGROUND_HTML = Path(__file__).parent.parent / "playground.html"
+
+
+@app.get("/playground", response_class=HTMLResponse)
+def playground():
+    """Interactive API Playground UI."""
+    return _PLAYGROUND_HTML.read_text(encoding="utf-8")
 
 
 def _collection_key(source_name: str) -> str:
