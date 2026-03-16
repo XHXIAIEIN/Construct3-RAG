@@ -1,7 +1,7 @@
-"""Parse examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json for vector indexing.
+"""Parse example project metadata for vector indexing.
 
-Also enriches each entry with project.c3proj metadata (layouts, event sheets, usedAddons)
-when the corresponding example project directory is available.
+Primary path: C3Fetcher CDN data (media/example-project-data.json) + local c3proj enrichment.
+Fallback path: examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json (backward compat).
 """
 import json
 import re
@@ -25,7 +25,7 @@ def _find_latest_browser_json(prefix: str) -> Optional[Path]:
 def _load_c3proj_metadata(projects_dir: Path, slug: str) -> Optional[dict]:
     """Load metadata from project.c3proj for the given slug.
 
-    Returns dict with keys: layouts, event_sheets, plugins, behaviors, c3_version.
+    Returns dict with keys: layouts, event_sheets, plugins, behaviors, c3_version, name.
     Returns None if the project directory or file does not exist.
     """
     c3proj_path = projects_dir / slug / "project.c3proj"
@@ -38,6 +38,7 @@ def _load_c3proj_metadata(projects_dir: Path, slug: str) -> Optional[dict]:
 
     addons = data.get("usedAddons", [])
     return {
+        "name": data.get("name", ""),
         "layouts": data.get("layouts", {}).get("items", []),
         "event_sheets": data.get("eventSheets", {}).get("items", []),
         "plugins": [a["id"] for a in addons if a.get("type") == "plugin"],
@@ -129,21 +130,92 @@ def build_embed_text(
     return " | ".join(parts)
 
 
-def load_examples_for_vectordb(
-    en_path: Optional[Path] = None,
-    zh_path: Optional[Path] = None,
-    projects_dir: Optional[Path] = None,
+def _load_from_cdn(fetcher, projects_dir: Optional[Path]) -> list[dict]:
+    """Load examples using C3Fetcher CDN data + optional c3proj enrichment."""
+    cdn_items = fetcher.fetch_examples()
+
+    # Lazy import to avoid circular deps
+    try:
+        from src.ingest.event_parser import load_project_extra_metadata
+        _extra_meta_fn = load_project_extra_metadata
+    except ImportError:
+        _extra_meta_fn = None
+
+    c3proj_hits = 0
+    docs = []
+    for i, item in enumerate(cdn_items):
+        slug = item.get("id", "")
+        tags = item.get("tags", [])
+        parsed = _parse_tags(tags)
+
+        # used-addons from CDN provide authoritative plugin/behavior lists
+        used_addons = item.get("used-addons", {})
+        cdn_plugins = used_addons.get("plugins", [])
+        cdn_behaviors = used_addons.get("behaviors", [])
+
+        # Try c3proj enrichment for layouts, event sheets, version, and title
+        c3proj = None
+        if projects_dir and slug:
+            c3proj = _load_c3proj_metadata(projects_dir, slug)
+        if c3proj:
+            c3proj_hits += 1
+
+        # Title: prefer c3proj "name", fallback to slug
+        title_en = (c3proj["name"] if c3proj and c3proj.get("name") else "") or slug
+
+        # Use CDN addons as authoritative; c3proj addons override if available
+        plugins = c3proj["plugins"] if c3proj else cdn_plugins
+        behaviors = c3proj["behaviors"] if c3proj else cdn_behaviors
+
+        proj_dir = (projects_dir / slug) if projects_dir and slug else None
+        extra = _extra_meta_fn(proj_dir) if (_extra_meta_fn and proj_dir and proj_dir.exists()) else None
+
+        # Build parsed dict with CDN data merged in for build_embed_text
+        merged_parsed = dict(parsed)
+        # If CDN provides addon lists directly, use them as fallback plugins/behaviors
+        if not merged_parsed["plugins"] and cdn_plugins:
+            merged_parsed["plugins"] = cdn_plugins
+        if not merged_parsed["behaviors"] and cdn_behaviors:
+            merged_parsed["behaviors"] = cdn_behaviors
+
+        embed_text = build_embed_text(title_en, title_en, merged_parsed, c3proj, extra)
+        docs.append({
+            "id": f"example_{i}",
+            "text": embed_text,
+            "metadata": {
+                "source": "example",
+                "title_en": title_en,
+                "title_zh": title_en,  # CDN has no Chinese titles
+                "slug": slug,
+                "example_type": item.get("exampleType", ""),
+                "plugins": plugins,
+                "behaviors": behaviors,
+                "genres": parsed["genres"],
+                "level": parsed["level"],
+                "coding": parsed["coding"],
+                "layouts": c3proj["layouts"] if c3proj else [],
+                "event_sheets": c3proj["event_sheets"] if c3proj else [],
+                "c3_version": c3proj["c3_version"] if c3proj else "",
+                "families": [f["name"] for f in extra["families"]] if extra else [],
+                "timeline_names": extra["timeline_names"] if extra else [],
+                "flowchart_names": extra["flowchart_names"] if extra else [],
+                "has_scripts": extra["has_scripts"] if extra else False,
+                "script_languages": extra["script_languages"] if extra else [],
+                "slug_derived": False,
+            },
+        })
+
+    if projects_dir:
+        print(f"  c3proj enrichment: {c3proj_hits}/{len(docs)} examples")
+    return docs
+
+
+def _load_from_browser_json(
+    en_path: Optional[Path],
+    zh_path: Optional[Path],
+    projects_dir: Optional[Path],
 ) -> list[dict]:
-    """Return list of {id, text, metadata} dicts for Qdrant indexing.
-
-    Auto-detects the latest versioned examples_browser_en_rXXX.json and
-    examples_browser_cn_rXXX.json files. Explicit paths override auto-detection.
-    Match zh titles to en items by index position (same order).
-
-    When projects_dir is provided (or auto-detected via EXAMPLE_PROJECTS_DIR config),
-    each entry is enriched with project.c3proj metadata: layouts, event sheets,
-    and authoritative plugin/behavior lists.
-    """
+    """Load examples from legacy examples_browser JSON files (backward compat)."""
     en_path = en_path or _find_latest_browser_json("en") or DATA_DIR / "examples_browser_en_r475.json"
     zh_path = zh_path or _find_latest_browser_json("cn")
 
@@ -214,3 +286,27 @@ def load_examples_for_vectordb(
     if projects_dir:
         print(f"  c3proj enrichment: {c3proj_hits}/{len(docs)} examples")
     return docs
+
+
+def load_examples_for_vectordb(
+    fetcher=None,
+    projects_dir: Optional[Path] = None,
+    *,
+    # Legacy parameters for backward compatibility
+    en_path: Optional[Path] = None,
+    zh_path: Optional[Path] = None,
+) -> list[dict]:
+    """Return list of {id, text, metadata} dicts for Qdrant indexing.
+
+    When fetcher (C3Fetcher) is provided:
+        Uses CDN example-project-data.json for metadata (tags, used-addons).
+        Enriches with local project.c3proj when projects_dir is available.
+        Title comes from c3proj "name" field, falling back to slug.
+
+    When fetcher is NOT provided (backward compat):
+        Falls back to examples_browser_en_rXXX.json + examples_browser_cn_rXXX.json.
+    """
+    if fetcher is not None:
+        return _load_from_cdn(fetcher, projects_dir)
+    else:
+        return _load_from_browser_json(en_path, zh_path, projects_dir)
