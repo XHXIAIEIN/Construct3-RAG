@@ -27,6 +27,18 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 _retriever = None
 _lookup_engine = None
+_fetcher = None
+
+
+def _get_fetcher():
+    """Lazy-init CDN fetcher. Ensures schemas are exported on first call."""
+    global _fetcher
+    if _fetcher is None:
+        from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+        from src.ingest.c3_fetcher import C3Fetcher
+        _fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+        _fetcher.ensure_ready()
+    return _fetcher
 
 
 def _get_retriever():
@@ -45,9 +57,7 @@ def _get_lookup_engine():
     global _lookup_engine
     if _lookup_engine is None:
         from src.rag.lookup import LookupEngine
-        from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
-        from src.ingest.c3_fetcher import C3Fetcher
-        fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+        fetcher = _get_fetcher()
         _lookup_engine = LookupEngine(terms=fetcher.export_terms())
     return _lookup_engine
 
