@@ -58,13 +58,22 @@ class PropertyEntry:
 
 
 class SchemaParser:
-    """解析 Construct3-Schema 目录"""
+    """Parse Construct 3 ACE/effect/property data.
 
-    def __init__(self, schema_dir: Optional[Path] = None):
-        if schema_dir is None:
-            from src.config import SCHEMA_DIR
-            schema_dir = SCHEMA_DIR
-        self.schema_dir = schema_dir
+    Two modes:
+    - CDN mode (fetcher provided): reads allAces.json + precompiled lang from CDN
+    - Legacy mode (no fetcher): reads data/schemas/ JSON files
+    """
+
+    def __init__(self, schema_dir: Optional[Path] = None, fetcher=None):
+        self._fetcher = fetcher
+        if fetcher is None:
+            if schema_dir is None:
+                from src.config import SCHEMA_DIR
+                schema_dir = SCHEMA_DIR
+            self.schema_dir = schema_dir
+        else:
+            self.schema_dir = None
 
     def _read_json(self, path: Path) -> Dict:
         """读取 JSON 文件"""
@@ -72,10 +81,14 @@ class SchemaParser:
             return json.load(f)
 
     def parse_ace_entries(self) -> List[ACEEntry]:
-        """解析所有 ACE 数据"""
-        entries = []
+        """Parse all ACE data from CDN or local schemas."""
+        if self._fetcher is not None:
+            return self._parse_ace_from_cdn()
+        return self._parse_ace_from_schemas()
 
-        # 解析 plugins
+    def _parse_ace_from_schemas(self) -> List[ACEEntry]:
+        """Legacy: parse from data/schemas/ JSON files."""
+        entries = []
         plugins_dir = self.schema_dir / "plugins"
         if plugins_dir.exists():
             for json_file in plugins_dir.glob("*.json"):
@@ -84,7 +97,6 @@ class SchemaParser:
                 plugin_data = self._read_json(json_file)
                 entries.extend(self._parse_plugin_aces(plugin_data, "plugin"))
 
-        # 解析 behaviors
         behaviors_dir = self.schema_dir / "behaviors"
         if behaviors_dir.exists():
             for json_file in behaviors_dir.glob("*.json"):
@@ -92,7 +104,74 @@ class SchemaParser:
                     continue
                 behavior_data = self._read_json(json_file)
                 entries.extend(self._parse_plugin_aces(behavior_data, "behavior"))
+        return entries
 
+    def _parse_ace_from_cdn(self) -> List[ACEEntry]:
+        """CDN mode: join allAces + en-US lang + zh-CN lang."""
+        aces_data = self._fetcher.fetch_all_aces()
+        en_text = self._fetcher.fetch_lang("en-US").get("text", {})
+        zh_text = self._fetcher.fetch_lang("zh-CN").get("text", {})
+
+        entries = []
+        type_map = {"plugins": "plugin", "behaviors": "behavior"}
+
+        for addon_type, plugin_type in type_map.items():
+            for plugin_id, categories in aces_data.get(addon_type, {}).items():
+                pid_lower = plugin_id.lower()
+                en_plugin = en_text.get(addon_type, {}).get(pid_lower, {})
+                zh_plugin = zh_text.get(addon_type, {}).get(pid_lower, {})
+                plugin_name_en = en_plugin.get("name", plugin_id)
+                plugin_name_zh = zh_plugin.get("name", plugin_name_en)
+
+                for category, ace_types in categories.items():
+                    for ace_type in ("conditions", "actions", "expressions"):
+                        for ace in ace_types.get(ace_type, []):
+                            ace_id = ace.get("id", "")
+                            en_ace = en_plugin.get(ace_type, {}).get(ace_id, {})
+                            zh_ace = zh_plugin.get(ace_type, {}).get(ace_id, {})
+
+                            # Expression names use "translated-name", not "list-name"
+                            if ace_type == "expressions":
+                                name_en = en_ace.get("translated-name", ace_id)
+                                name_zh = zh_ace.get("translated-name", name_en)
+                            else:
+                                name_en = en_ace.get("list-name", ace_id)
+                                name_zh = zh_ace.get("list-name", name_en)
+
+                            # Build params with zh names
+                            params = []
+                            for p in ace.get("params", []):
+                                pid_param = p.get("id", "")
+                                en_p = en_ace.get("params", {}).get(pid_param, {})
+                                zh_p = zh_ace.get("params", {}).get(pid_param, {})
+                                param = {
+                                    "id": pid_param,
+                                    "type": p.get("type", "any"),
+                                    "name_en": en_p.get("name", pid_param),
+                                    "name_zh": zh_p.get("name", en_p.get("name", pid_param)),
+                                }
+                                if "items" in p:
+                                    param["items"] = p["items"]
+                                params.append(param)
+
+                            entries.append(ACEEntry(
+                                plugin_name=plugin_id,
+                                plugin_name_zh=plugin_name_zh,
+                                plugin_name_en=plugin_name_en,
+                                plugin_type=plugin_type,
+                                category=category,
+                                ace_type=ace_type[:-1],  # "conditions"→"condition"
+                                ace_id=ace_id,
+                                name_zh=name_zh,
+                                name_en=name_en,
+                                description_zh=zh_ace.get("description", ""),
+                                description_en=en_ace.get("description", ""),
+                                script_name=ace.get("scriptName", ace.get("expressionName", "")),
+                                params=params,
+                                return_type=ace.get("returnType"),
+                                is_trigger=ace.get("isTrigger", False),
+                                is_async=ace.get("isAsync", False),
+                            ))
         return entries
 
     def _parse_plugin_aces(self, data: Dict, plugin_type: str) -> List[ACEEntry]:
