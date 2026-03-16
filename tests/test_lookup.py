@@ -3,6 +3,7 @@ Tests for the Query Routing & Direct Lookup System.
 Uses real JSON schemas from data/schemas/ but no external services.
 """
 import sys
+import pytest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -18,17 +19,16 @@ from src.rag.lookup import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
-DATA_DIR = Path(__file__).parent.parent / "data"
-SOURCE_DIR = Path(__file__).parent.parent / "data" / "source"
+from src.config import SCHEMA_DIR, SOURCE_DIR
 
 
 def make_schema_index() -> SchemaIndex:
-    """Return a SchemaIndex pointing at real schema data."""
-    return SchemaIndex(DATA_DIR / "schemas")
+    """Return a SchemaIndex pointing at schema data (CDN cache or local)."""
+    return SchemaIndex(SCHEMA_DIR)
 
 
 def make_term_index() -> TermIndex:
-    """Return a TermIndex pointing at real CSV."""
+    """Return a TermIndex pointing at translation source."""
     return TermIndex(SOURCE_DIR)
 
 
@@ -41,7 +41,7 @@ def make_classifier(embedder=None) -> IntentClassifier:
 
 def make_engine(embedder=None) -> LookupEngine:
     return LookupEngine(
-        schema_dir=DATA_DIR / "schemas",
+        schema_dir=SCHEMA_DIR,
         source_dir=SOURCE_DIR,
         embedder=embedder,
     )
@@ -120,6 +120,7 @@ class TestSchemaIndex:
 # TestTermIndex
 # ---------------------------------------------------------------------------
 
+@pytest.mark.skipif(not SOURCE_DIR.exists(), reason="CSV source not available (CDN replaces it)")
 class TestTermIndex:
     def test_load(self):
         idx = make_term_index()
@@ -325,6 +326,7 @@ class TestLookupEngine:
         assert "跳跃" in resp.answer
         assert "速度" in resp.answer
 
+    @pytest.mark.skipif(not SOURCE_DIR.exists(), reason="CSV source not available")
     def test_term_translate(self):
         engine = make_engine()
         resp = engine.try_lookup("翻译 Sprite")
