@@ -532,12 +532,8 @@ async function sendRequest(cardId, apiKey) {
       traceEl.classList.remove('open');
     }
 
-    // Render typed results for /search, raw JSON for everything else
     if (typeof data === 'string') {
       respEl.textContent = data;
-    } else if (data?.results && data?.route) {
-      respEl.innerHTML = renderSearchResults(data);
-      respEl.dataset.raw = JSON.stringify(data, null, 2);
     } else {
       respEl.innerHTML = highlightJSON(data);
       respEl.dataset.raw = JSON.stringify(data, null, 2);
