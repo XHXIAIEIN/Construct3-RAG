@@ -27,15 +27,6 @@ _BEIJING = timezone(timedelta(hours=8))
 
 # CDN endpoint paths — update here if Scirra changes URL structure.
 # See data/c3-cdn-samples/ for expected response schemas.
-# Available locales on the CDN (verified r476, 2026-03-16).
-# Lazy-loaded by the editor; format: precompiled-{locale}.json
-AVAILABLE_LOCALES = [
-    "en-US", "zh-CN", "ja-JP", "ko-KR",
-    "de-DE", "fr-FR", "es-ES", "pt-BR", "it-IT",
-    "ru-RU", "uk-UA", "pl-PL", "cs-CZ", "hu-HU",
-    "tr-TR", "nl-NL", "sv-SE", "ro-RO", "th-TH", "id-ID",
-]
-
 ENDPOINTS = {
     "versions":      "versions.json",
     "plugin_aces":   "plugins/allAces.json",
@@ -256,6 +247,27 @@ class C3Fetcher:
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
         return schemas_dir
+
+    def fetch_available_locales(self) -> list[str]:
+        """Extract available locale codes from the editor's main.js.
+
+        Parses locale patterns like "zh-CN", "ja-JP" from the JavaScript source.
+        Results are cached alongside other CDN data.
+        """
+        import re
+        cache_path = self.cache_dir / "_locales.json"
+        if cache_path.exists() and not _cache_expired(cache_path):
+            return json.loads(cache_path.read_text(encoding="utf-8"))
+
+        url = f"{self.base_url}/{self.version}/main.js"
+        logger.info(f"[CDN] Fetching locales from {url}")
+        raw = self._http_get(url).decode("utf-8", errors="ignore")
+        locales = sorted(set(re.findall(r'"([a-z]{2}-[A-Z]{2})"', raw)))
+        if not locales:
+            locales = ["en-US"]  # fallback
+        cache_path.write_text(json.dumps(locales), encoding="utf-8")
+        logger.info(f"[CDN] Found {len(locales)} locales: {', '.join(locales)}")
+        return locales
 
     def export_terms(self) -> list[dict]:
         """Export CDN lang data as term entries for c3_terms indexing.
