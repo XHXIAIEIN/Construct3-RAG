@@ -310,6 +310,15 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported {len(terms)} translation terms")
         return terms
 
+    def ensure_ready(self) -> None:
+        """Ensure CDN data is fetched and exported. Safe to call multiple times.
+
+        Called automatically on first use in api.py and indexer.py.
+        Fetches all required CDN endpoints and exports schemas for lookup.py.
+        """
+        self.export_schemas()
+        logger.info(f"[CDN] Ready: {self.version}")
+
     # ── Convenience methods ──────────────────────────────────────────────
 
     def fetch_all_aces(self) -> dict:
