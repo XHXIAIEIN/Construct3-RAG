@@ -706,17 +706,21 @@ class HybridRetriever:
         else:
             final_results = fused[:final_top_k]
 
-        # Source dedup: keep only the best chunk per source document.
-        # Without this, different H2 sections of the same .md file
-        # (e.g. Timer actions, Timer conditions, Timer expressions)
-        # can fill up all top-K slots with near-duplicate content.
-        seen_sources: Set[str] = set()
+        # Dedup: keep only the best result per unique document.
+        # For doc chunks: dedup by source file path (prevents timer.md H2 sections
+        # filling all slots). For ACE entries: dedup by plugin+ace_id (all ACEs share
+        # source="construct3-schema" but are distinct entries).
+        seen_keys: Set[str] = set()
         deduped: List[SearchResult] = []
         for r in final_results:
-            src = r.metadata.get("source", r.source)
-            if src in seen_sources:
+            meta = r.metadata
+            if meta.get("ace_id"):
+                key = f"{meta.get('plugin_name', '')}:{meta['ace_id']}"
+            else:
+                key = meta.get("source", r.source)
+            if key in seen_keys:
                 continue
-            seen_sources.add(src)
+            seen_keys.add(key)
             deduped.append(r)
 
         result = deduped[:final_top_k]
