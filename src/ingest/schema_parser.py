@@ -77,6 +77,38 @@ class SchemaParser:
         entries = []
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
 
+        # _common ACEs (shared by all World instances: collision, position, etc.)
+        # Not in allAces.json, but lang files have the full list.
+        en_common = en_text.get("plugins", {}).get("_common", {})
+        zh_common = zh_text.get("plugins", {}).get("_common", {})
+        if en_common:
+            for ace_type_plural in ("conditions", "actions", "expressions"):
+                en_aces = en_common.get(ace_type_plural, {})
+                zh_aces = zh_common.get(ace_type_plural, {})
+                for ace_id, en_ace in en_aces.items():
+                    zh_ace = zh_aces.get(ace_id, {})
+                    if ace_type_plural == "expressions":
+                        name_en = en_ace.get("translated-name", ace_id)
+                        name_zh = zh_ace.get("translated-name", name_en)
+                    else:
+                        name_en = en_ace.get("list-name", ace_id)
+                        name_zh = zh_ace.get("list-name", name_en)
+                    entries.append(ACEEntry(
+                        plugin_name="_common",
+                        plugin_name_zh="公共",
+                        plugin_name_en="Common",
+                        plugin_type="plugin",
+                        category="common",
+                        ace_type=ace_type_plural[:-1],
+                        ace_id=ace_id,
+                        name_zh=name_zh,
+                        name_en=name_en,
+                        description_zh=zh_ace.get("description", ""),
+                        description_en=en_ace.get("description", ""),
+                        script_name=ace_id,
+                        params=[],
+                    ))
+
         for addon_type, plugin_type in type_map.items():
             for plugin_id, categories in aces_data.get(addon_type, {}).items():
                 pid_lower = plugin_id.lower()
