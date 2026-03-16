@@ -71,6 +71,9 @@ def test_loads_from_cdn_plus_c3proj(mock_fetcher, fake_projects):
 
 def test_falls_back_without_fetcher():
     """Without fetcher, uses old browser JSON path (backward compat)."""
+    from src.ingest.examples_parser import _find_latest_browser_json
+    if _find_latest_browser_json("en") is None:
+        pytest.skip("examples_browser JSON files not present (CDN migration)")
     docs = load_examples_for_vectordb()
     assert isinstance(docs, list)
     assert len(docs) > 0
