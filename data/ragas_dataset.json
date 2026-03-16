@@ -1,1255 +1,1057 @@
 [
   {
-    "id": "B01",
-    "query": "Sprite 对象是什么？它的主要用途是什么？",
-    "ground_truth": "",
+    "id": "L001",
+    "query": "Cellular2d",
+    "ground_truth": "## Advanced random expressions\n**Billow2d(x, y)**  \n**Billow3d(x, y, z)**  \nGenerate a random number using billow noise in the range 0-1, using either 2D or 3D co-ordinates.\n\n**Cellular2d(x, y)**  \n**Cellular3d(x, y, z)**  \nGenerate a random number using cellular noise in the range 0-1, using either 2D or 3D co-ordinates.\n\n**Classic2d(x, y)**  \n**Classic3d(x, y, z)**  \nGenerate a random number using classic (perlin) noise in the range 0-1, using either 2D or 3D co-ordinates.\n\n**Random**  \nGenera",
     "expected_keywords": [
-      "Sprite",
-      "图像",
-      "动画",
-      "精灵",
-      "碰撞"
+      "Cellular2d"
     ],
-    "category": "概念",
+    "category": "ace_lookup",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "基础插件概念",
+    "note": "lookup_chain, plugin=advancedrandom",
     "expected_sources": [
-      "plugin-reference/sprite.md",
       "construct3-schema"
     ],
     "expected_collections": [
-      "plugins",
-      "ace",
-      "terms"
+      "ace"
     ],
     "retrieval_difficulty": "easy"
   },
   {
-    "id": "B02",
-    "query": "事件表（Event Sheet）是什么？",
-    "ground_truth": "",
+    "id": "L002",
+    "query": "横幅广告准备完成",
+    "ground_truth": "On banner ready: Trigger when banner advert is ready to display",
     "expected_keywords": [
-      "事件",
-      "条件",
-      "动作",
-      "表达式"
+      "横幅广告准备完成"
     ],
-    "category": "概念",
+    "category": "ace_lookup",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "核心概念",
+    "note": "lookup_chain, plugin=advert",
     "expected_sources": [
-      "project-primitives/events",
-      "overview/project-structure.md",
-      "project-primitives/events/event-sheets.md"
+      "construct3-schema"
     ],
     "expected_collections": [
-      "project",
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L003",
+    "query": "上传进度更新",
+    "ground_truth": "## AJAX conditions\n**On completed**  \nTriggered when a request with the same tag has completed successfully. The *LastData* expression contains the response, unless the *Set response binary* action was used, in which case the selected [Binary Data](binary-data.md) object now contains the response.\n\n**On any completed**  \nTriggered when any request has completed successfully. The *Tag* expression identifies the request, and *LastData* contains the response.\n\n**On error**  \nTriggered when a reques",
+    "expected_keywords": [
+      "上传进度更新"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=ajax",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L004",
+    "query": "停止所有",
+    "ground_truth": "## Audio general actions\n**Play**  \n**Play (by name)**  \nStart playing an audio file with a given tag. The latter action gives you the opportunity to use an expression for the audio file name. The sound can optionally be set to looping when it starts playing. A volume can also be set, given in decibels (dB). A volume of 0 dB is original volume, and below 0 dB attenuates the sound. Note amplification is not supported. For example, entering a value of -10 plays the audio back 10 dB quieter (about ",
+    "expected_keywords": [
+      "停止所有"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=audio",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L005",
+    "query": "语言环境",
+    "ground_truth": "## Browser expressions\n**Language**  \nGet the browser's current language setting, e.g. *en-US*.\n\n**Platform**  \nGet the current platform the browser reports itself running on, e.g. *Win32* for Windows.\n\n**UserAgent**  \nReturn the full user agent string for the browser, e.g. *Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36*.\n\n**CSSStyleValue(tag)**  \nGet the CSS style value retrieved from a prior call to the *Get CSS style* actio",
+    "expected_keywords": [
+      "语言环境"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=browser",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L006",
+    "query": "停止",
+    "ground_truth": "Stop: Set the speed to zero.",
+    "expected_keywords": [
+      "停止"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=custom",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L007",
+    "query": "结束拖动",
+    "ground_truth": "On drop: Triggered when the object is dropped (the drag stops).",
+    "expected_keywords": [
+      "结束拖动"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=dragndrop",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L008",
+    "query": "请求位置",
+    "ground_truth": "## Geolocation conditions\n**Is supported**  \nTrue if the current device supports reporting the user position with geolocation. If false, none of the features of the object will work.\n\n**Is watching location**  \nTrue after a successful *Watch location* action, until the *Stop watching* action is used.\n\n**On error**  \nTriggered if an error occurs when requesting permission for, or retrieving, the user's location. The *ErrorMessage* expression contains more information about the problem in this tri",
+    "expected_keywords": [
+      "请求位置"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=geolocation",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L009",
+    "query": "自动登录失败",
+    "ground_truth": "## Basic usage\nOn startup, the plugin automatically attempts to load Google Play Services. If this is successful, then *Is loaded* will be true when the project starts running. If it failed then *Is loaded* will be false and none of the plugin's features will work.\nNext the Google Play plugin will automatically try to sign the user in. If they have successfully signed in before, *On signed in* will trigger soon after startup. If they have never signed in before, *On auto-sign in failed* will tri",
+    "expected_keywords": [
+      "自动登录失败"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=googleplay",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L010",
+    "query": "选择复数",
+    "ground_truth": "## Internationalization expressions\n**Locale**  \nReturns the locale string the plugin is currently using.\n\n**DefaultLocale**  \nReturn the default locale for the current system. This can be used to select the default language.\n\n**Lookup(Context [, ...])**  \nLooks up a localized string based on the current locale and a passed in context. Supports a variable list of arguments for substitution.\n\n**LookupPlural(Context, Count [, ...])**  \nLooks up the plural form of a localized string based on the cu",
+    "expected_keywords": [
+      "选择复数"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=internationalization",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L011",
+    "query": "松开鼠标键",
+    "ground_truth": "## Mouse conditions\n**Cursor is over object**  \nTrue if the mouse cursor is hovering over an object.\n\n**Mouse button is down**  \nTrue if a given mouse button is currently being held down.\n\n**On any click**  \nTriggered when any mouse button is clicked. This can be useful for title screens or cut-scenes where any input will continue to the next step.\n\n**On button released**  \nTriggered when a given mouse button is released.\n\n**On click**  \nTriggered when a given mouse button is pressed. This can a",
+    "expected_keywords": [
+      "松开鼠标键"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=mouse",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L012",
+    "query": "已启用",
+    "ground_truth": "Is enabled: Test if the behavior is enabled.",
+    "expected_keywords": [
+      "已启用"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=moveto",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L013",
+    "query": "设置加速度",
+    "ground_truth": "## Pathfinding actions\n**Add obstacle**  \nIf the *Obstacles* property is *Custom*, add an object type to mark as an obstacle in the pathfinding grid. If this is done during the game (after *Start of layout*), you must also use *Regenerate obstacle map* for it to take effect.\n\n> **Tip**  \n> Note this applies to all instances of both object types involved. This action does not affect individual instances.\n\n**Add path cost**  \nAdd an object to increase the path cost in the pathfinding grid. This ca",
+    "expected_keywords": [
+      "设置加速度"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=pathfinding",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L014",
+    "query": "施加作用力",
+    "ground_truth": "## Physics actions\n\n### Forces\n**Apply force**  \n**Apply force at angle**  \n**Apply force towards position**  \nApply a force on the object, either at an angle, towards a position, or with custom X and Y axis forces. Applying a force causes the object to accelerate in the direction of the force. \nForces can be applied at an image point, which normally also causes the object to rotate. Using `0` for the image point uses the object's center of mass, which does not cause rotation. Use `-1` to use th",
+    "expected_keywords": [
+      "施加作用力"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=physics",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L015",
+    "query": "设备像素比",
+    "ground_truth": "## Platform info expressions\n**DeviceMemory**  \nReturn the approximate amount of device memory (RAM) in gigabytes. For privacy reasons some platforms will round the result, so it may not match the exact amount installed on the system. Additionally this value is not available on some browsers or platforms, in which case it will return 0.\n\n**HardwareConcurrency**  \nReturn the number of hardware threads supported by the CPU. This is normally at least the number of CPU cores. Many modern CPUs suppor",
+    "expected_keywords": [
+      "设备像素比"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=platforminfo",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L016",
+    "query": "设置容错率",
+    "ground_truth": "## QR code actions\n**Set text**  \nChange the text encoded within the QR code. This allows dynamically creating a QR code, such as to represent a unique link for joining a multiplayer game.\n\n**Set correction level**  \nChange the correction level of the QR code. See the *Correction level* property above for more details.",
+    "expected_keywords": [
+      "设置容错率"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=qrcode",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L017",
+    "query": "移动速度",
+    "ground_truth": "## Rotate properties\n**Speed**  \nThe rate of rotation, in degrees per second. Use a positive value for clockwise rotation and negative for anticlockwise rotation.\n\n**Acceleration**  \nThe rate the rotation speed changes, in degrees per second per second. Use a positive value to accelerate clockwise and a negative to accelerate anticlockwise.\n\n**Enabled**  \nWhether the behavior is initially enabled or disabled. If disabled, it can be enabled at runtime using the *Set enabled* action.\n\n**Preview  `",
+    "expected_keywords": [
+      "移动速度"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=rotate",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L018",
+    "query": "设置工具提示",
+    "ground_truth": "## Slider bar actions\nSee [common actions](common-features/common-actions.md) for features shared between form control objects.\n\n**Set maximum**  \nSet the maximum value that can be chosen from the slider bar.\n\n**Set minimum**  \nSet the minimum value that can be chosen from the slider bar.\n\n**Set step**  \nSet the increment step of the slider bar.\n\n**Set tooltip**  \nSet the tooltip that appears when the mouse hovers over the slider bar.\n\n**Set value**  \nSet the currently selected value of the slid",
+    "expected_keywords": [
+      "设置工具提示"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=sliderbar",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L019",
+    "query": "支持语音合成",
+    "ground_truth": "## On this page\n- [Speech synthesis conditions](#internalH1Link0)\n- [Speech synthesis actions](#internalH1Link1)\n- [Speech synthesis expressions](#internalH1Link2)\n\n---\nThe **Speech synthesis** object can automatically speak some text using a synthetic voice, also known as text-to-speech (TTS).\nSpeech synthesis may not be supported by all browsers or platforms. Use the *Supports speech synthesis* condition to check if speech synthesis can be used.\n\n> **Tip**  \n> Starting speech synthesis is trea",
+    "expected_keywords": [
+      "支持语音合成"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=speechsynthesis",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L020",
+    "query": "在角度范围内",
+    "ground_truth": "Is between angles: Compare if an angle is between two angles.",
+    "expected_keywords": [
+      "在角度范围内"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-angles",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L021",
+    "query": "设置图层滤镜参数",
+    "ground_truth": "Set layer effect parameter: Set the value of a parameter in one of a layer's effects.",
+    "expected_keywords": [
+      "设置图层滤镜参数"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-layers",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L022",
+    "query": "启用场景滤镜",
+    "ground_truth": "Set layout effect enabled: Enable or disable an effect on the current layout.",
+    "expected_keywords": [
+      "启用场景滤镜"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-layout",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L023",
+    "query": "保存失败",
+    "ground_truth": "On save failed: Triggered after the 'Save' action if the attempt to save failed.",
+    "expected_keywords": [
+      "保存失败"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-save-load",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L024",
+    "query": "滚动到对象",
+    "ground_truth": "Scroll to object: Scroll to an object.",
+    "expected_keywords": [
+      "滚动到对象"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-scrolling",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L025",
+    "query": "场景开始",
+    "ground_truth": "On start of layout: Triggered at the start of the current layout.",
+    "expected_keywords": [
+      "场景开始"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=system-start-end",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L026",
+    "query": "更换图标集",
+    "ground_truth": "## Text actions\nFor actions common to other objects, see [common actions](common-features/common-actions.md).\n\n**Set font color**  \nSet the color of the text. Use an expression in the form `rgb(red, green, blue)`.\n\n**Set font face**  \nChange the font used to display the text. This must be the name of a web font imported to the project, or a local font that is pre-installed on the user's device.\n\n**Set font size**  \nSet the size of the text in points (pt).\n\n**Set horizontal alignment**  \n**Set ve",
+    "expected_keywords": [
+      "更换图标集"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=text",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L027",
+    "query": "图像角度",
+    "ground_truth": "ImageAngle: The angle of the image within the object, in degrees.",
+    "expected_keywords": [
+      "图像角度"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=tiledbg",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L028",
+    "query": "触点速度",
+    "ground_truth": "## Touch expressions\n**AccelerationX**  \n**AccelerationY**  \n**AccelerationZ**  \nRequires motion permission. Get the current device's motion as its acceleration on each axis in m/s^2 (meters per second per second) excluding the effect of gravity. The expressions which include gravity (below) are more widely supported; these will return 0 at all times on devices which do not support them.\n\n**AccelerationXWithG**  \n**AccelerationYWithG**  \n**AccelerationZWithG**  \nRequires motion permission. Get t",
+    "expected_keywords": [
+      "触点速度"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=touch",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L029",
+    "query": "设置持续时间",
+    "ground_truth": "## Tween actions - setters\n**Set destroy on complete**  \n**Set all destroy on complete**  \n**Set ease**  \n**Set all eases**  \nSet the *Destroy on complete* and *Ease* parameters specified in the *Tween* action for existing tweens matching all the given tags. The *all* variants modify all tweens regardless of tags.\n\n**Set playback rate**  \n**Set all playback rates**  \nSet the playback rate of existing tweens matching all the given tags, or all tweens regardless of tags. A playback rate of 1 is no",
+    "expected_keywords": [
+      "设置持续时间"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=tween",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "L030",
+    "query": "截屏",
+    "ground_truth": "## On this page\n- [In the layout](#internalH1Link0)\n- [User Media conditions](#internalH1Link1)\n- [User Media actions](#internalH1Link2)\n- [User Media expressions](#internalH1Link3)\n\n---\nThe **User Media** object allows retrieving camera or microphone input from a user. This requires appropriate hardware being installed on the user's system, such as a webcam for a PC, a phone camera on a mobile, or a microphone. Camera snapshots can be taken and transferred in to Sprite or Tiled Background objec",
+    "expected_keywords": [
+      "截屏"
+    ],
+    "category": "ace_lookup",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "lookup_chain, plugin=usermedia",
+    "expected_sources": [
+      "construct3-schema"
+    ],
+    "expected_collections": [
+      "ace"
+    ],
+    "retrieval_difficulty": "easy"
+  },
+  {
+    "id": "D001",
+    "query": "Construct 3 Manual All Plugin Names (65 files in `plugin-reference/`)",
+    "ground_truth": "## All Plugin Names (65 files in `plugin-reference/`)\n\n3d-camera, 3d-shape, 9-patch, advanced-random, ajax, array, audio,\nbbc-micro-bit, binary-data, bluetooth, browser, button, clipboard,\nconstruct-game-services, cryptography, csv, date, dictionary, drawing-canvas,\nfacebook, file-chooser, filesystem, flowchart-controller, function, gamepad,\ngeolocation, google-play, html-element, iframe, instant-games,\ninternationalization, json, keyboard, list, local-storage, midi, mobile-advert,\nmobile-iap, m",
+    "expected_keywords": [
+      "Construct",
+      "Manual",
+      "All",
+      "Plugin",
+      "Names"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=CLAUDE.md",
+    "expected_sources": [
+      "CLAUDE.md"
+    ],
+    "expected_collections": [
       "guide"
     ],
-    "retrieval_difficulty": "easy"
+    "retrieval_difficulty": "medium"
   },
   {
-    "id": "B03",
-    "query": "实例变量和全局变量的区别是什么？",
-    "ground_truth": "",
+    "id": "D002",
+    "query": "Platform behavior Implementing reliable platform movements",
+    "ground_truth": "## Implementing reliable platform movements\nFor the most reliable platform movement, it is recommended to use a **invisible rectangle sprite with no animations** with the Platform movement. Then, the animated player object can be positioned on top of that. Otherwise, the changing size and collision polygon of the object as its animation plays can interfere with the Platform movement's floor, wall and slope detection, causing a shaking or glitchy movement. For more information and a complete guid",
     "expected_keywords": [
-      "实例",
-      "全局",
-      "静态",
-      "作用域"
+      "Platform",
+      "behavior",
+      "Implementing",
+      "reliable",
+      "platform"
     ],
-    "category": "概念",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "变量作用域",
+    "note": "manual_chunks, source=behavior-reference/platform.md",
     "expected_sources": [
-      "project-primitives/objects/instance-variables.md",
-      "project-primitives/events/variables.md",
-      "project-primitives/events.md"
+      "behavior-reference\\platform.md"
     ],
     "expected_collections": [
-      "project",
-      "ace"
+      "behaviors"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B04",
-    "query": "平台(Platform) 行为有哪些主要参数？",
-    "ground_truth": "",
+    "id": "D003",
+    "query": "Timer behavior Timer conditions",
+    "ground_truth": "## Timer conditions\n**Is timer paused**  \nTrue if a timer with the given tag has been started and then subsequently paused with the *Pause/resume timer* action.\n\n**Is timer running**  \nTrue if a timer with the given tag has been started with the *Start timer* action. Once *Stop timer* is used, the timer no longer counts as running. Paused timers also count as running - use the *Is timer paused* condition to identify these timers separately.\n\n**On timer**  \nTriggers either regularly, or once off,",
     "expected_keywords": [
-      "平台",
-      "最大移动速度",
-      "加速度",
-      "减速度",
-      "重力",
-      "跳跃高度",
-      "最大下落速度",
-      "跳跃维持",
-      "二段跳"
+      "Timer",
+      "behavior",
+      "Timer",
+      "conditions"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "Platform 行为配置",
+    "note": "manual_chunks, source=behavior-reference/timer.md",
     "expected_sources": [
-      "behavior-reference/platform.md",
-      "construct3-schema"
+      "behavior-reference\\timer.md"
     ],
     "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B05",
-    "query": "补间(Tween) 行为怎么用？如何让对象移动到指定位置？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "补间",
-      "两个参数",
-      "位置",
-      "过渡",
-      "时间",
-      "曲线"
-    ],
-    "category": "插件",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "Tween 行为用法",
-    "expected_sources": [
-      "behavior-reference/tween.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B06",
-    "query": "键盘(Keyboard) 插件如何检测按键？按住(on key pressed) 和按下(is key down) 的区别？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "键盘",
-      "按键",
-      "按键码",
-      "按住",
-      "按下",
-      "持续",
-      "单次"
-    ],
-    "category": "插件",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "输入检测差异",
-    "expected_sources": [
-      "plugin-reference/keyboard.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
+      "behaviors"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B07",
-    "query": "系统(System) 对象的遍历(For each) 条件如何使用？",
-    "ground_truth": "",
+    "id": "D004",
+    "query": "Instances Bar Global Layers",
+    "ground_truth": "## Global Layers\nWhen a layout is showing instances that are coming from a global layer a few unique items will appear in the bar to make it more clear where those instances are coming from.\nIn the image below you can see the special **Global instances** folder and a **Layout** item showing which instances are coming from a global layer.\n\n![](https://construct-static.com/images/v1721/uploads/articleuploadobject/0/images/124590/global-layers-overview.png)\n\nIn that example the current layout is **",
     "expected_keywords": [
-      "条件",
-      "循环",
-      "遍历",
-      "对象",
-      "实例",
-      "范围",
-      "跳出",
-      "loopindex"
+      "Instances",
+      "Bar",
+      "Global",
+      "Layers"
     ],
-    "category": "系统",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "循环遍历对象",
+    "note": "manual_chunks, source=interface/bars/instance-bar.md",
     "expected_sources": [
-      "system-reference/system-conditions.md",
-      "construct3-schema",
-      "project-primitives/events/how-events-work.md"
+      "interface\\bars\\instance-bar.md"
     ],
     "expected_collections": [
-      "behaviors",
-      "ace",
-      "project"
+      "interface"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B08",
-    "query": "如何在 Construct 3 中实现计时器？",
-    "ground_truth": "",
+    "id": "D005",
+    "query": "The Layers Bar The Layers list",
+    "ground_truth": "## The Layers list\nEach layer in the list has the following:\n\n- A **checkbox** to toggle whether the layer is **visible in the editor** (this does not affect the game when previewing or exporting)\n- A **padlock icon.** Clicking this toggles the layer's **locked** status. If a layer is locked, objects on that layer cannot be selected in the editor. This is useful to prevent accidental selections on rarely-used layers like backgrounds.\n- An optional **globe icon** to denote global layers.\n- An opt",
     "expected_keywords": [
-      "计时",
-      "正在计时",
-      "计时结束",
-      "遍历"
+      "The",
+      "Layers",
+      "Bar",
+      "The",
+      "Layers"
     ],
-    "category": "系统",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "计时器实现方式",
+    "note": "manual_chunks, source=interface/bars/layers-bar.md",
     "expected_sources": [
-      "behavior-reference/timer.md",
-      "construct3-schema"
+      "interface\\bars\\layers-bar.md"
     ],
     "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B09",
-    "query": "等待信号(Wait for signal) 和 等待X秒(Wait X seconds) 有什么区别？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "信号",
-      "异步",
-      "秒",
-      "时间",
-      "等待"
-    ],
-    "category": "系统",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "等待机制",
-    "expected_sources": [
-      "system-reference/system-actions.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "ace"
+      "interface"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B10",
-    "query": "如何让玩家按空格键跳跃？并且播放跳跃动画？",
-    "ground_truth": "",
+    "id": "D006",
+    "query": "The Tilemap bar The Tilemap object",
+    "ground_truth": "## The Tilemap object\nFor more information on how to use tilemaps, see the manual entry on the [Tilemap object](../../plugin-reference/tilemap.md).",
     "expected_keywords": [
-      "键盘",
-      "空格",
-      "模拟控制",
-      "跳跃",
-      "平台",
-      "条件",
-      "正在跳跃",
-      "准备起跳",
-      "动画"
+      "The",
+      "Tilemap",
+      "bar",
+      "The",
+      "Tilemap"
     ],
-    "category": "工作流",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "经典平台游戏跳跃",
+    "note": "manual_chunks, source=interface/bars/tilemap-bar.md",
     "expected_sources": [
-      "plugin-reference/keyboard.md",
-      "behavior-reference/platform.md",
-      "plugin-reference/sprite.md",
-      "construct3-schema"
+      "interface\\bars\\tilemap-bar.md"
     ],
     "expected_collections": [
-      "plugins",
-      "behaviors",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B11",
-    "query": "如何实现碰撞检测？Sprite 和 Sprite 碰撞时触发事件",
-    "ground_truth": "",
-    "expected_keywords": [
-      "碰撞",
-      "重叠",
-      "家族"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "碰撞事件",
-    "expected_sources": [
-      "plugin-reference/sprite.md",
-      "plugin-reference/common-features/common-conditions.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
+      "interface"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B12",
-    "query": "如何用事件表实现分数系统？包括变量定义和 UI 更新",
-    "ground_truth": "",
+    "id": "D007",
+    "query": "The Import Audio dialog Playback preference",
+    "ground_truth": "## Playback preference\nProjects only need to use WebM Opus files to support all platforms. However in some cases, especially with older projects, audio files may be available in multiple formats in the project. In that case Construct uses the following order of preference to pick which to play at runtime. The first format in the list that has built-in support is used. If none of the available formats has built-in support, and there is a WebM Opus file available, then Construct falls back to the ",
     "expected_keywords": [
-      "变量",
-      "分数",
-      "设置文本",
-      "动作组"
+      "The",
+      "Import",
+      "Audio",
+      "dialog",
+      "Playback"
     ],
-    "category": "工作流",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "分数系统工作流",
+    "note": "manual_chunks, source=interface/dialogs/import-audio.md",
     "expected_sources": [
-      "project-primitives/events.md",
-      "plugin-reference/text.md",
-      "project-primitives/objects/instance-variables.md",
-      "project-primitives/events/variables.md",
-      "construct3-schema"
+      "interface\\dialogs\\import-audio.md"
     ],
     "expected_collections": [
-      "project",
-      "plugins",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B13",
-    "query": "在 Construct 3 脚本中如何获取一个对象的实例？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "runtime",
-      "objects",
-      "getInstance",
-      "getInstanceByUid",
-      "getFirstInstance",
-      "getAllInstances",
-      "getPickedInstances",
-      "getPairedInstance"
-    ],
-    "category": "脚本",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "脚本 API 基础",
-    "expected_sources": [
-      "scripting/scripting-reference",
-      "scripting-api"
-    ],
-    "expected_collections": [
-      "scripting"
+      "interface"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B14",
-    "query": "Construct 3 支持 WebGPU 渲染吗？有什么限制？",
-    "ground_truth": "",
-    "expected_keywords": [],
-    "category": "边界",
-    "forbidden_phrases": [
-      "完全支持",
-      "没有限制"
-    ],
-    "has_answer": false,
-    "note": "边界知识，防止幻觉",
-    "expected_sources": [],
-    "expected_collections": [
-      "guide",
-      "project"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B15",
-    "query": "Construct 3 r999 版本有哪些新功能？",
-    "ground_truth": "",
-    "expected_keywords": [],
-    "category": "边界",
-    "forbidden_phrases": [
-      "r999"
-    ],
-    "has_answer": false,
-    "note": "不存在的版本",
-    "expected_sources": [],
-    "expected_collections": [],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B16",
-    "query": "动画编辑器(Animations Editor)如何使用？怎么设置动画帧速率和循环？",
-    "ground_truth": "",
+    "id": "D008",
+    "query": "Cryptography Cryptography expressions",
+    "ground_truth": "## Cryptography expressions\n**Hash**  \nAfter *On hash finished* triggers, a hexadecimal string of the resulting hash. For example the SHA-256 hash of the string \"Construct\" is `67e7c6e28e540b4fd412ad663b634a38572b98d3f4608fc5792f2600d32c1eb9`.\n\n**Tag**  \nIn a trigger such as *On any decryption finished* or *On any hash finished*, this returns the associated tag of the action that resulted in the trigger.\n\n**RandomUUID**  \nReturns a random v4 [UUID](https://www.construct.net/out?u=https%3a%2f%2fe",
     "expected_keywords": [
-      "动画编辑器",
-      "帧",
-      "速率",
-      "循环",
-      "速度",
-      "帧率",
-      "预览"
+      "Cryptography",
+      "Cryptography",
+      "expressions"
     ],
-    "category": "界面",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "编辑器界面 - 动画编辑器",
+    "note": "manual_chunks, source=plugin-reference/cryptography.md",
     "expected_sources": [
-      "interface\\animations-editor.md",
-      "plugin-reference\\sprite.md"
+      "plugin-reference\\cryptography.md"
     ],
     "expected_collections": [
-      "interface",
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B17",
-    "query": "布局(Layout)是什么？如何在不同布局之间切换？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "布局",
-      "场景",
-      "切换",
-      "Go to layout",
-      "关卡"
-    ],
-    "category": "概念",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "布局核心概念",
-    "expected_sources": [
-      "project-primitives\\layouts.md",
-      "system-reference\\system-actions.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "project",
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B18",
-    "query": "家族(Family)是什么？如何把多个对象分组到同一个家族？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "家族",
-      "分组",
-      "共享",
-      "事件",
-      "实例变量",
-      "行为"
-    ],
-    "category": "概念",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "家族核心概念",
-    "expected_sources": [
-      "project-primitives\\objects\\families.md",
-      "project-primitives\\objects.md"
-    ],
-    "expected_collections": [
-      "project",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B19",
-    "query": "函数(Functions)在 Construct 3 事件表中怎么定义和调用？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "函数",
-      "调用",
-      "参数",
-      "返回值",
-      "事件",
-      "映射"
-    ],
-    "category": "概念",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "事件表函数",
-    "expected_sources": [
-      "project-primitives\\events\\functions.md",
-      "project-primitives\\events.md"
-    ],
-    "expected_collections": [
-      "project",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B20",
-    "query": "效果(Effects)如何给对象或图层添加？有哪些常用效果？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "效果",
-      "混合模式",
-      "图层",
-      "WebGL",
-      "模糊",
-      "着色"
-    ],
-    "category": "概念",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "效果系统",
-    "expected_sources": [
-      "project-primitives\\objects\\effects.md",
-      "plugin-reference\\common-features.md"
-    ],
-    "expected_collections": [
-      "project",
-      "effects",
       "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B21",
-    "query": "Audio 插件如何播放音效和背景音乐？如何控制音量？",
-    "ground_truth": "",
+    "id": "D009",
+    "query": "Drawing canvas Co-ordinate systems",
+    "ground_truth": "## Co-ordinate systems\nThe *Drawing canvas* object allows you to draw shapes and lines at specific positions. In automatic resolution mode it uses a co-ordinate system relative to the object in layout co-ordinates. For example if the object is sized 100x100 in the layout, then the point (50, 50) is always in the middle of the canvas, regardless of the resolution. This means you don't need to change the drawing co-ordinates depending on the canvas resolution: everything scales automatically, so i",
     "expected_keywords": [
-      "Audio",
-      "播放",
-      "音效",
-      "音乐",
-      "音量",
-      "循环",
-      "标签"
+      "Drawing",
+      "canvas",
+      "Co-ordinate",
+      "systems"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "Audio 插件用法",
+    "note": "manual_chunks, source=plugin-reference/drawing-canvas.md",
     "expected_sources": [
-      "plugin-reference\\audio.md",
-      "construct3-schema"
+      "plugin-reference\\drawing-canvas.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B22",
-    "query": "Array 插件怎么用？如何创建二维数组并读写数据？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "Array",
-      "数组",
-      "维度",
-      "宽",
-      "高",
-      "At",
-      "Set",
-      "Push"
-    ],
-    "category": "插件",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "Array 插件",
-    "expected_sources": [
-      "plugin-reference\\array.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B23",
-    "query": "Touch 插件和 Mouse 插件有什么区别？移动端应该用哪个？",
-    "ground_truth": "",
+    "id": "D010",
+    "query": "Mouse Mouse actions",
+    "ground_truth": "## Mouse actions\n**Set cursor from sprite**  \nSet the cursor image from a [Sprite](sprite.md) object. This is preferable to setting a sprite to the mouse co-ordinates, because the input lag is significantly lower. Various limitations apply: the sprite image is used as it appears in the image editor, not taking in to account size or rotation in the layout; the image cannot be too large (64x64 is usually the limit); the cursor may not be applied close to the edges of the browser window; and suppor",
     "expected_keywords": [
-      "Touch",
       "Mouse",
-      "触摸",
-      "鼠标",
-      "移动端",
-      "手指",
-      "多点触控"
+      "Mouse",
+      "actions"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "输入插件对比",
+    "note": "manual_chunks, source=plugin-reference/mouse.md",
     "expected_sources": [
-      "plugin-reference\\touch.md",
-      "plugin-reference\\mouse.md",
-      "construct3-schema"
+      "plugin-reference\\mouse.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B24",
-    "query": "Tilemap 插件如何使用？怎么绘制地图并设置碰撞？",
-    "ground_truth": "",
+    "id": "D011",
+    "query": "QR code QR code conditions",
+    "ground_truth": "## QR code conditions\nThe QR code object does not have any of its own conditions. However see [Common conditions](common-features/common-conditions.md) for features shared with other objects.",
     "expected_keywords": [
-      "Tilemap",
-      "瓦片",
-      "地图",
-      "碰撞",
-      "图块",
-      "图集"
+      "code",
+      "code",
+      "conditions"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "Tilemap 地图编辑",
+    "note": "manual_chunks, source=plugin-reference/qrcode.md",
     "expected_sources": [
-      "plugin-reference\\tilemap.md",
-      "construct3-schema"
+      "plugin-reference\\qrcode.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace",
-      "interface"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B25",
-    "query": "Text Input 插件怎么用？如何获取用户输入的文本？",
-    "ground_truth": "",
+    "id": "D012",
+    "query": "Speech recognition Speech recognition conditions",
+    "ground_truth": "## Speech recognition conditions\n**Is recognising speech**  \nTrue if a speech recognition request has been approved, and speech input through a microphone is actively being recognised.\n\n**On end**  \nTriggered after the *Stop speech recognition* action, or after the user stops speaking in *Single phrase* mode speech recognition.\n\n**On error**  \nTriggered if there is an error approving speech recognition, or during speech recognition. The *SpeechError* expression is set to a string which describes",
     "expected_keywords": [
-      "TextInput",
-      "文本输入",
-      "表单",
-      "值",
-      "HTML"
+      "Speech",
+      "recognition",
+      "Speech",
+      "recognition",
+      "conditions"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "HTML 文本输入",
+    "note": "manual_chunks, source=plugin-reference/speech-recognition.md",
     "expected_sources": [
-      "plugin-reference\\text-input.md",
-      "construct3-schema"
+      "plugin-reference\\speech-recognition.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B26",
-    "query": "Local Storage 插件如何保存和读取游戏存档？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "LocalStorage",
-      "保存",
-      "读取",
-      "键",
-      "值",
-      "异步",
-      "回调"
-    ],
-    "category": "插件",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "本地存储",
-    "expected_sources": [
-      "plugin-reference\\local-storage.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B27",
-    "query": "Multiplayer 插件如何实现多人联机？基本的房间创建和加入流程是怎样的？",
-    "ground_truth": "",
+    "id": "D013",
+    "query": "Speech synthesis Speech synthesis expressions",
+    "ground_truth": "## Speech synthesis expressions\n**VoiceCount**  \nReturn the number of voices available for use with speech synthesis.\n\n**VoiceLangAt(index)**  \n**VoiceNameAt(index)**  \n**VoiceURIAt(index)**  \nReturn the language, name, or URI of the voice at the given zero-based index. This can be used to show the user a list of possible voices to choose. To select a different voice, pass the appropriate voice URI to the *Speak text* action.",
     "expected_keywords": [
-      "Multiplayer",
-      "多人",
-      "信令",
-      "房间",
-      "主机",
-      "对等",
-      "同步"
+      "Speech",
+      "synthesis",
+      "Speech",
+      "synthesis",
+      "expressions"
     ],
-    "category": "插件",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "多人联机",
+    "note": "manual_chunks, source=plugin-reference/speech-synthesis.md",
     "expected_sources": [
-      "plugin-reference\\multiplayer.md",
-      "construct3-schema"
+      "plugin-reference\\speech-synthesis.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B28",
-    "query": "调试器(Debugger)怎么用？如何在运行时查看和修改对象属性？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "调试器",
-      "断点",
-      "监视",
-      "属性",
-      "暂停",
-      "性能"
-    ],
-    "category": "界面",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "调试器界面",
-    "expected_sources": [
-      "interface\\debugger.md",
-      "interface\\debugger\\inspect-tab.md"
-    ],
-    "expected_collections": [
-      "interface"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B29",
-    "query": "图层(Layer)有什么作用？如何设置图层的视差滚动效果？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "图层",
-      "视差",
-      "滚动",
-      "透明度",
-      "混合模式",
-      "可见"
-    ],
-    "category": "概念",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "图层与视差",
-    "expected_sources": [
-      "project-primitives\\layers.md",
-      "project-primitives\\layouts.md"
-    ],
-    "expected_collections": [
-      "project",
-      "ace"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B30",
-    "query": "Physics 行为如何实现物理模拟？怎么设置重力和碰撞弹性？",
-    "ground_truth": "",
+    "id": "D014",
+    "query": "Sprite Sprite actions",
+    "ground_truth": "## Sprite actions\nFor actions common to other objects, see [Common actions](common-features/common-actions.md).\n\n**Add/remove animation**  \nAdd or remove an animation with the provided animation name. When adding a new animation, the animation name must be unique, and the new animation will have a single transparent frame sized 100x100. The last animation cannot be removed, as Sprite objects must have at least one animation. \n\n> **Tip**  \n> Animations are shared between all instances of the same",
     "expected_keywords": [
-      "Physics",
-      "物理",
-      "重力",
-      "碰撞",
-      "弹性",
-      "密度",
-      "摩擦",
-      "关节"
+      "Sprite",
+      "Sprite",
+      "actions"
     ],
-    "category": "系统",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "Physics 行为",
+    "note": "manual_chunks, source=plugin-reference/sprite.md",
     "expected_sources": [
-      "behavior-reference\\physics.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B31",
-    "query": "Pathfinding 行为如何让对象自动寻路到目标位置？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "Pathfinding",
-      "寻路",
-      "障碍物",
-      "路径",
-      "网格",
-      "对角线"
-    ],
-    "category": "系统",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "Pathfinding 行为",
-    "expected_sources": [
-      "behavior-reference\\pathfinding.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B32",
-    "query": "事件表中的子事件(Sub-event)和事件组(Group)有什么区别？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "子事件",
-      "事件组",
-      "嵌套",
-      "条件",
-      "组织",
-      "启用",
-      "禁用"
-    ],
-    "category": "系统",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "事件结构",
-    "expected_sources": [
-      "project-primitives\\events\\how-events-work.md",
-      "project-primitives\\events\\event-sheets.md"
-    ],
-    "expected_collections": [
-      "project"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B33",
-    "query": "System 对象有哪些常用表达式？比如随机数、三角函数、取整",
-    "ground_truth": "",
-    "expected_keywords": [
-      "random",
-      "floor",
-      "ceil",
-      "round",
-      "sin",
-      "cos",
-      "sqrt",
-      "clamp",
-      "lerp"
-    ],
-    "category": "系统",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "系统表达式",
-    "expected_sources": [
-      "system-reference\\system-expressions.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "ace"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B34",
-    "query": "如何用 Pick 条件筛选特定实例？比如找到最近的敌人",
-    "ground_truth": "",
-    "expected_keywords": [
-      "Pick",
-      "选取",
-      "最近",
-      "距离",
-      "比较",
-      "实例"
-    ],
-    "category": "系统",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "实例选取系统",
-    "expected_sources": [
-      "system-reference\\system-conditions.md",
-      "project-primitives\\events\\how-events-work.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "project",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B35",
-    "query": "如何实现一个简单的对话系统？NPC 对话框显示文字并等待玩家点击继续",
-    "ground_truth": "",
-    "expected_keywords": [
-      "文本",
-      "数组",
-      "索引",
-      "点击",
-      "显示",
-      "隐藏",
-      "对话"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "多步骤对话系统",
-    "expected_sources": [
-      "plugin-reference\\text.md",
-      "plugin-reference\\array.md",
-      "plugin-reference\\mouse.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B36",
-    "query": "如何用 Construct 3 制作一个生命值血条 UI？显示在屏幕固定位置",
-    "ground_truth": "",
-    "expected_keywords": [
-      "血条",
-      "宽度",
-      "图层",
-      "视差",
-      "变量",
-      "9-patch",
-      "进度条",
-      "固定"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "UI 血条制作流程",
-    "expected_sources": [
-      "plugin-reference\\9-patch.md",
-      "project-primitives\\layers.md",
-      "plugin-reference\\sprite.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "project",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B37",
-    "query": "如何实现敌人的简单 AI —— 巡逻、发现玩家后追击？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "巡逻",
-      "追击",
-      "视线",
-      "距离",
-      "变量",
-      "状态",
-      "移动"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "敌人 AI 工作流",
-    "expected_sources": [
-      "behavior-reference\\line-of-sight.md",
-      "behavior-reference\\move.md",
-      "plugin-reference\\sprite.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "behaviors",
-      "plugins",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B38",
-    "query": "如何实现存档和读档？用 Local Storage 保存多个关卡进度",
-    "ground_truth": "",
-    "expected_keywords": [
-      "LocalStorage",
-      "JSON",
-      "保存",
-      "读取",
-      "序列化",
-      "关卡",
-      "进度"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "存档系统工作流",
-    "expected_sources": [
-      "plugin-reference\\local-storage.md",
-      "plugin-reference\\json.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B39",
-    "query": "如何制作一个物品栏(Inventory)系统？用 Array 或 Dictionary 管理道具",
-    "ground_truth": "",
-    "expected_keywords": [
-      "物品栏",
-      "数组",
-      "字典",
-      "道具",
-      "数量",
-      "拾取",
-      "装备"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "物品栏系统",
-    "expected_sources": [
-      "plugin-reference\\array.md",
-      "plugin-reference\\dictionary.md",
-      "plugin-reference\\sprite.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace",
-      "examples"
-    ],
-    "retrieval_difficulty": "hard"
-  },
-  {
-    "id": "B40",
-    "query": "Construct 3 如何发起网络请求？用 AJAX 插件获取 JSON 数据",
-    "ground_truth": "",
-    "expected_keywords": [
-      "AJAX",
-      "请求",
-      "JSON",
-      "URL",
-      "回调",
-      "响应",
-      "异步"
-    ],
-    "category": "工作流",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "网络请求工作流",
-    "expected_sources": [
-      "plugin-reference\\ajax.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "plugins",
-      "ace"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B41",
-    "query": "项目栏(Project Bar)中有哪些管理功能？如何组织文件结构？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "项目栏",
-      "文件夹",
-      "事件表",
-      "布局",
-      "对象",
-      "音频",
-      "文件"
-    ],
-    "category": "界面",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "项目栏界面",
-    "expected_sources": [
-      "interface\\bars\\project-bar.md",
-      "overview\\project-structure.md"
-    ],
-    "expected_collections": [
-      "interface",
-      "guide"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B42",
-    "query": "属性栏(Properties Bar)可以设置哪些内容？怎么修改对象的位置和大小？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "属性栏",
-      "位置",
-      "大小",
-      "角度",
-      "不透明度",
-      "实例变量"
-    ],
-    "category": "界面",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "属性栏界面",
-    "expected_sources": [
-      "interface\\bars\\properties-bar.md"
-    ],
-    "expected_collections": [
-      "interface"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B43",
-    "query": "图层栏(Layers Bar)如何使用？怎么调整图层顺序和属性？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "图层栏",
-      "顺序",
-      "可见",
-      "锁定",
-      "视差",
-      "透明度"
-    ],
-    "category": "界面",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "图层栏界面",
-    "expected_sources": [
-      "interface\\bars\\layers-bar.md",
-      "project-primitives\\layers.md"
-    ],
-    "expected_collections": [
-      "interface",
-      "project"
-    ],
-    "retrieval_difficulty": "easy"
-  },
-  {
-    "id": "B44",
-    "query": "时间轴(Timeline)编辑器怎么用？如何制作关键帧动画？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "时间轴",
-      "关键帧",
-      "动画",
-      "属性",
-      "缓动",
-      "播放"
-    ],
-    "category": "界面",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "时间轴编辑器",
-    "expected_sources": [
-      "project-primitives\\timelines.md",
-      "plugin-reference\\timeline-controller.md",
-      "construct3-schema"
-    ],
-    "expected_collections": [
-      "project",
-      "plugins",
-      "ace",
-      "interface"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B45",
-    "query": "在 Construct 3 脚本中如何监听事件和调用动作？",
-    "ground_truth": "",
-    "expected_keywords": [
-      "addEventListener",
-      "runtime",
-      "tick",
-      "脚本",
-      "动作",
-      "behavior",
-      "instVars"
-    ],
-    "category": "脚本",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "脚本事件监听",
-    "expected_sources": [
-      "scripting\\using-scripting\\coding-in-construct.md",
-      "scripting\\scripting-reference"
-    ],
-    "expected_collections": [
-      "scripting"
-    ],
-    "retrieval_difficulty": "medium"
-  },
-  {
-    "id": "B46",
-    "query": "如何在脚本中操作 Sprite 的动画？播放、停止、切换动画帧",
-    "ground_truth": "",
-    "expected_keywords": [
-      "animation",
-      "setAnimation",
-      "animationFrame",
-      "speed",
-      "脚本",
-      "Sprite"
-    ],
-    "category": "脚本",
-    "forbidden_phrases": [],
-    "has_answer": true,
-    "note": "脚本操作动画",
-    "expected_sources": [
-      "scripting\\scripting-reference",
       "plugin-reference\\sprite.md"
     ],
     "expected_collections": [
-      "scripting",
-      "plugins",
-      "ace"
+      "plugins"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B47",
-    "query": "脚本中如何创建和销毁对象实例？",
-    "ground_truth": "",
+    "id": "D015",
+    "query": "Timeline controller Timeline controller actions",
+    "ground_truth": "## Timeline controller actions\n**Play**  \nStart playing a timeline, with tags to identify this playback.\n\n**Play all**  \nPlay all the timelines in the layout.\n\n**Pause**  \nPause a timeline by its tag. Paused timelines can subsequently be resumed.\n\n**Pause all**  \nPause all currently playing timelines.\n\n**Resume**  \nResume a paused timeline by its tag.\n\n**Resume all**  \nResume all paused timelines.\n\n**Stop**  \nStop a timeline and reset it to its initial state.\n\n**Stop all**  \nStop all timelines, ",
     "expected_keywords": [
-      "createInstance",
-      "destroy",
-      "runtime",
-      "objects",
-      "layer",
-      "脚本"
+      "Timeline",
+      "controller",
+      "Timeline",
+      "controller",
+      "actions"
     ],
-    "category": "脚本",
+    "category": "doc_section",
     "forbidden_phrases": [],
     "has_answer": true,
-    "note": "脚本创建销毁",
+    "note": "manual_chunks, source=plugin-reference/timeline-controller.md",
     "expected_sources": [
-      "scripting\\scripting-reference",
-      "scripting\\using-scripting\\coding-in-construct.md"
+      "plugin-reference\\timeline-controller.md"
+    ],
+    "expected_collections": [
+      "plugins"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D016",
+    "query": "Custom actions Family custom actions",
+    "ground_truth": "## Family custom actions\nA custom action can be created for a [family](../objects/families.md). This allows some more advanced uses of custom actions.\nMuch like with inheriting family instance variables, behaviors and effects, family custom actions can also be used as actions for every object type in the family. This allows every member of the family to share the same custom action.\n\n### Overrides\nWhen a family has a custom action, it's still possible to create a custom action with the same name",
+    "expected_keywords": [
+      "Custom",
+      "actions",
+      "Family",
+      "custom",
+      "actions"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/events/custom-actions.md",
+    "expected_sources": [
+      "project-primitives\\events\\custom-actions.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D017",
+    "query": "Expressions Object expressions",
+    "ground_truth": "## Object expressions\nObjects have their own expressions to retrieve information about the object. These are written in the form `Sprite.X` (the object name, a dot, then the expression name). The [Expressions dictionary](../../interface/dialogs/expressions-dictionary.md) lists all the available expressions in the project, and they are further documented in the reference section of the manual.\nThe expression `Self` can be used as a short-cut to refer to the current object. For example, in an acti",
+    "expected_keywords": [
+      "Expressions",
+      "Object",
+      "expressions"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/events/expressions.md",
+    "expected_sources": [
+      "project-primitives\\events\\expressions.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D018",
+    "query": "Sub-events Adding and removing sub-events",
+    "ground_truth": "## Adding and removing sub-events\nTo add a sub-event, **right-click** the event margin and choose `Add › Add sub-event`. Alternatively choose the `Add sub-event` option from the **Add...** link on the right, or press the <kbd>S</kbd> [keyboard shortcut](../../interface/keyboard-shortcuts.md).\n\nAdding and editing conditions to sub-events works identically to ordinary events. You can also create more deeply nested sub-events by adding a sub-event to a sub-event.",
+    "expected_keywords": [
+      "Sub-events",
+      "Adding",
+      "and",
+      "removing",
+      "sub-events"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/events/sub-events.md",
+    "expected_sources": [
+      "project-primitives\\events\\sub-events.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D019",
+    "query": "Node Creating nodes",
+    "ground_truth": "## Creating nodes\nTo create a node in a flowchart, open a [Flowchart View](../../interface/flowchart-view.md) for it from the [Project Bar](../../interface/bars/project-bar.md) and then right-click in any empty space of the Flowchart View and select the **Add** option from the context menu. Doing that will create a node at the position of the pointer.\nFor more information on further editing of nodes, see the [Flowchart View](../../interface/flowchart-view.md) section of the manual.",
+    "expected_keywords": [
+      "Node",
+      "Creating",
+      "nodes"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/flowcharts/flowchart-node.md",
+    "expected_sources": [
+      "project-primitives\\flowcharts\\flowchart-node.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D020",
+    "query": "Timeline property keyframe Property Keyframe",
+    "ground_truth": "## Property Keyframe\nIn the [Timeline Bar](../../interface/bars/timeline-bar.md), property keyframes are represented by a mark in the same row as the property track they belong to.\nProperty keyframes hold the values the [timeline](timeline.md) uses when it is playing. They are at the end of the timeline hierarchy so any changes made at this level will only affect the property keyframe itself.\nA [property track](property-track.md) can have many different property keyframes, one for each position ",
+    "expected_keywords": [
+      "Timeline",
+      "property",
+      "keyframe",
+      "Property",
+      "Keyframe"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/timelines/property-keyframe.md",
+    "expected_sources": [
+      "project-primitives\\timelines\\property-keyframe.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D021",
+    "query": "Timeline Timeline Properties",
+    "ground_truth": "## Timeline Properties\n**Name**  \nThe name of the timeline. It is a unique identifier and is used to refer to the timeline from an event sheet.\n\n**Animation mode**  \n**Result mode**  \n**Ease**  \n**Path mode**  \nSee the section on common timeline element properties in [Timelines](../timelines.md). These properties follow an inheritance pattern.\n\n**Time**  \nThe current time of the main time marker. This only affects the editor.\n\n**Total time**  \nThe total time for the timeline to be completed.\n\n**",
+    "expected_keywords": [
+      "Timeline",
+      "Timeline",
+      "Properties"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=project-primitives/timelines/timeline.md",
+    "expected_sources": [
+      "project-primitives\\timelines\\timeline.md"
+    ],
+    "expected_collections": [
+      "project"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D022",
+    "query": "Addon SDK script interfaces Coding conventions",
+    "ground_truth": "## Coding conventions\nAs JavaScript has limited support for encapsulation, some methods which are only intended for use by the Construct runtime can still be accessed from Construct's scripting feature. With JavaScript, properties and methods are public by default, or can use [private properties](https://www.construct.net/out?u=https%3a%2f%2fdeveloper.mozilla.org%2fen-US%2fdocs%2fWeb%2fJavaScript%2fReference%2fClasses%2fPrivate_properties) with the `#` prefix which can only be used by the same c",
+    "expected_keywords": [
+      "Addon",
+      "SDK",
+      "script",
+      "interfaces",
+      "Coding"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=scripting/scripting-reference/addon-sdk-interfaces.md",
+    "expected_sources": [
+      "scripting\\scripting-reference\\addon-sdk-interfaces.md"
     ],
     "expected_collections": [
       "scripting"
@@ -1257,88 +1059,186 @@
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B48",
-    "query": "Construct 3 能做 3D 游戏吗？3D 功能有哪些限制？",
-    "ground_truth": "",
+    "id": "D023",
+    "query": "ISDKBehaviorTypeBase addon SDK interface ISDKBehaviorTypeBase APIs",
+    "ground_truth": "## ISDKBehaviorTypeBase APIs\n**_onCreate()**  \nOptional override called when the runtime starts up and creates all behavior types before the project starts.",
     "expected_keywords": [
-      "3D",
-      "摄像机",
-      "图层",
-      "高度",
-      "Z轴",
-      "限制",
-      "2.5D"
+      "ISDKBehaviorTypeBase",
+      "addon",
+      "SDK",
+      "interface",
+      "ISDKBehaviorTypeBase"
     ],
-    "category": "边界",
-    "forbidden_phrases": [
-      "完整3D引擎",
-      "没有限制"
-    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
     "has_answer": true,
-    "note": "3D 能力边界",
+    "note": "manual_chunks, source=scripting/scripting-reference/addon-sdk-interfaces/isdkbehaviortypebase.md",
     "expected_sources": [
-      "plugin-reference\\3d-camera.md",
-      "plugin-reference\\3d-shape.md"
+      "scripting\\scripting-reference\\addon-sdk-interfaces\\isdkbehaviortypebase.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace",
-      "guide"
+      "scripting"
     ],
     "retrieval_difficulty": "medium"
   },
   {
-    "id": "B49",
-    "query": "Construct 3 支持自定义着色器(Shader)吗？如何编写自己的效果？",
-    "ground_truth": "",
+    "id": "D024",
+    "query": "ISDKPluginBase addon SDK interface ISDKPluginBase APIs",
+    "ground_truth": "## ISDKPluginBase APIs\nThe `ISDKPluginBase` interface does not currently have any of its own APIs.",
     "expected_keywords": [
-      "着色器",
-      "Shader",
-      "WebGL",
-      "GLSL",
-      "效果",
-      "addon"
+      "ISDKPluginBase",
+      "addon",
+      "SDK",
+      "interface",
+      "ISDKPluginBase"
     ],
-    "category": "边界",
-    "forbidden_phrases": [
-      "内置编辑器编写"
-    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
     "has_answer": true,
-    "note": "自定义着色器边界",
+    "note": "manual_chunks, source=scripting/scripting-reference/addon-sdk-interfaces/isdkpluginbase.md",
     "expected_sources": [
-      "project-primitives\\objects\\effects.md"
+      "scripting\\scripting-reference\\addon-sdk-interfaces\\isdkpluginbase.md"
     ],
     "expected_collections": [
-      "project",
-      "effects"
+      "scripting"
     ],
-    "retrieval_difficulty": "hard"
+    "retrieval_difficulty": "medium"
   },
   {
-    "id": "B50",
-    "query": "Construct 3 能实现服务器端逻辑吗？比如防作弊的排行榜",
-    "ground_truth": "",
+    "id": "D025",
+    "query": "Drag & Drop behavior script interface Drag & Drop behavior events",
+    "ground_truth": "## Drag & Drop behavior events\nSee [behavior instance event](../interfaces/behavior-instance-event.md) for standard behavior instance event object properties.\n\n**\"dragstart\"**  \nFired when the object starts being dragged.\n\n**\"drop\"**  \nFired when the object is dropped after being dragged.",
     "expected_keywords": [
-      "服务器",
-      "客户端",
-      "AJAX",
-      "后端",
-      "API"
+      "Drag",
+      "Drop",
+      "behavior",
+      "script",
+      "interface"
     ],
-    "category": "边界",
-    "forbidden_phrases": [
-      "内置服务器"
-    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
     "has_answer": true,
-    "note": "服务器端边界",
+    "note": "manual_chunks, source=scripting/scripting-reference/behavior-interfaces/drag-drop.md",
     "expected_sources": [
-      "plugin-reference\\ajax.md",
-      "plugin-reference\\multiplayer.md"
+      "scripting\\scripting-reference\\behavior-interfaces\\drag-drop.md"
     ],
     "expected_collections": [
-      "plugins",
-      "ace"
+      "scripting"
     ],
-    "retrieval_difficulty": "hard"
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D026",
+    "query": "Rotate behavior script interface Rotate behavior APIs",
+    "ground_truth": "## Rotate behavior APIs\n**speed**  \nSet or get the rotation speed in radians per second. Positive values rotate clockwise and negative values rotate counter-clockwise.\n\n**acceleration**  \nSet or get the rotation acceleration rate in radians per second per second.\n\n**isEnabled**  \nA boolean indicating if the behavior is enabled. If disabled, the behavior no longer has any effect on the object.",
+    "expected_keywords": [
+      "Rotate",
+      "behavior",
+      "script",
+      "interface",
+      "Rotate"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=scripting/scripting-reference/behavior-interfaces/rotate.md",
+    "expected_sources": [
+      "scripting\\scripting-reference\\behavior-interfaces\\rotate.md"
+    ],
+    "expected_collections": [
+      "scripting"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D027",
+    "query": "DOMInstance script interface DOMInstance APIs",
+    "ground_truth": "## DOMInstance APIs\n**focus()**  \n**blur()**  \nFocus or blur the DOM element represented by this instance.\n\n**setCssStyle(prop, val)**  \nApply a CSS style to the DOM element, using a string of the property name (in CSS format, e.g. `\"background-color\"` and a string of the property value (e.g. `\"red\"`).\n\n**getElement()**  \nReturn the HTML element used to represent the object.\n\n> **Warning**  \n> Since the DOM APIs are not available in worker mode, this will throw an exception when running in a Web",
+    "expected_keywords": [
+      "DOMInstance",
+      "script",
+      "interface",
+      "DOMInstance",
+      "APIs"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=scripting/scripting-reference/object-interfaces/idominstance.md",
+    "expected_sources": [
+      "scripting\\scripting-reference\\object-interfaces\\idominstance.md"
+    ],
+    "expected_collections": [
+      "scripting"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D028",
+    "query": "Instance script interface Instance APIs",
+    "ground_truth": "## Instance APIs\n**addEventListener(type, func, capture)**  \n**removeEventListener(type, func, capture)**  \nAdd or remove an event handler for a particular type of event fired by an addon's script interface. An event object is passed as a parameter to the handler function. See [instance event](../interfaces/instance-event.md) for standard event object properties. For information on which events are fired by specific addons and which additional event object properties are available, see the docum",
+    "expected_keywords": [
+      "Instance",
+      "script",
+      "interface",
+      "Instance",
+      "APIs"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=scripting/scripting-reference/object-interfaces/iinstance.md",
+    "expected_sources": [
+      "scripting\\scripting-reference\\object-interfaces\\iinstance.md"
+    ],
+    "expected_collections": [
+      "scripting"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D029",
+    "query": "Debugging script The console",
+    "ground_truth": "## The console\nThe *Console* tab provides a list of messages, used for development purposes. Calling `console.log(\"Hello!\")` will add the message *Hello!* here. For more console features available in code, see the [Console API](https://www.construct.net/out?u=https%3a%2f%2fdeveloper.mozilla.org%2fen-US%2fdocs%2fWeb%2fAPI%2fconsole). Adding console messages to indicate which parts of the code have been reached, and the contents of any important variables, can be a useful way to diagnose code.\n\n![",
+    "expected_keywords": [
+      "Debugging",
+      "script",
+      "The",
+      "console"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=scripting/using-scripting/debugging-script.md",
+    "expected_sources": [
+      "scripting\\using-scripting\\debugging-script.md"
+    ],
+    "expected_collections": [
+      "scripting"
+    ],
+    "retrieval_difficulty": "medium"
+  },
+  {
+    "id": "D030",
+    "query": "Importing Construct 2 projects Replaced features",
+    "ground_truth": "## Replaced features\nConstruct 3 originally inherited all of Construct 2's features. Over the years some key features have been replaced and the old feature retired. These include:\n\n- The entire runtime was rewritten and upgraded to an enhanced, modernized and faster engine, referred to as the **C3 runtime**. This is highly compatible with the old runtime but there are some compatibility differences.\n- The Function plugin has been replaced with a **built-in functions** feature\n- Construct 3 now ",
+    "expected_keywords": [
+      "Importing",
+      "Construct",
+      "projects",
+      "Replaced",
+      "features"
+    ],
+    "category": "doc_section",
+    "forbidden_phrases": [],
+    "has_answer": true,
+    "note": "manual_chunks, source=tips-and-guides/importing-c2-projects.md",
+    "expected_sources": [
+      "tips-and-guides\\importing-c2-projects.md"
+    ],
+    "expected_collections": [
+      "guide"
+    ],
+    "retrieval_difficulty": "medium"
   }
 ]
