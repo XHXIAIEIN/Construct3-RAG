@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construct 3 RAG Playground</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#4d4e5190;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#6e6f7a}
+*{scrollbar-width:thin;scrollbar-color:#4d4e5190 transparent}
+
+:root{
+  --bg:#1e1f22;--second:#37393c;--fg:#d0d0d9;--secondFg:#96969d;
+  --selBg:#464b50;--selFg:#e0e0e9;--border:#3f3f3f;--dis:#666;
+  --accent:#5378c8;--shadow:#212121;--deepBg:#1e1f22;
+  --blue:#70b0ff;--red:#ff757f;--yellow:#ffbd76;
+  --green:#7af8ca;--gray:#7e8eda;--purple:#baacff;--orange:#ff9668;
+  --error:#dd3962;
+}
+body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--bg);color:var(--fg);overflow:hidden;height:100vh}
+
+/* Toolbar */
+#toolbar{position:fixed;top:0;left:0;right:0;z-index:200;height:44px;background:var(--second);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px}
+.logo{color:var(--accent);font-weight:bold;font-size:13px;white-space:nowrap;letter-spacing:.3px}
+.logo span{color:var(--green)}
+.sep{width:1px;height:22px;background:var(--border)}
+.tb-input{padding:5px 10px;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;color:var(--fg);font:12px inherit;outline:none;width:240px}
+.tb-input:focus{border-color:var(--accent)}
+.tb-select{padding:5px 10px;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;color:var(--fg);font:12px inherit;outline:none;cursor:pointer}
+.tb-select:focus{border-color:var(--accent)}
+.tb-btn{padding:5px 12px;background:transparent;color:var(--secondFg);border:1px solid var(--border);border-radius:4px;cursor:pointer;font:12px inherit;white-space:nowrap}
+.tb-btn:hover{background:var(--selBg);color:var(--fg)}
+.tb-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tb-btn.primary:hover{background:#6488d8}
+
+/* Canvas */
+#canvas{position:absolute;top:44px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;background-image:radial-gradient(circle,var(--second) 1px,transparent 1px);background-size:24px 24px}
+#canvas.grabbing{cursor:grabbing}
+#world{position:absolute;transform-origin:0 0}
+#zoom-info{position:fixed;bottom:8px;right:12px;color:var(--dis);font-size:10px;z-index:100;user-select:none}
+
+/* Card */
+.card{position:absolute;width:480px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;max-height:700px}
+.card:hover{border-color:#505050}
+.card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:8px;background:var(--deepBg);border-radius:8px 8px 0 0;user-select:none}
+.card-title{flex:1;font-size:12px;font-weight:bold;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.method-badge{font-size:10px;font-weight:bold;padding:2px 8px;border-radius:3px;letter-spacing:.5px}
+.method-badge.get{background:#1a3a2a;color:var(--green)}
+.method-badge.post{background:#1a2a3a;color:var(--blue)}
+.hdr-btn{background:none;border:none;color:var(--dis);cursor:pointer;font-size:15px;padding:2px 4px;line-height:1}
+.hdr-btn:hover{color:var(--fg)}
+.card-body{padding:12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+
+/* Sections */
+.section-label{font-size:10px;color:var(--secondFg);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.no-body{font-size:11px;color:var(--dis);font-style:italic;padding:8px 0}
+.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 inherit;resize:vertical;outline:none;tab-size:2;min-height:120px}
+.json-editor:focus{border-color:var(--accent)}
+.json-editor.invalid{border-color:var(--red);color:var(--red)}
+
+/* Presets */
+.presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.preset-btn{padding:3px 8px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:10px inherit;cursor:pointer;white-space:nowrap}
+.preset-btn:hover{background:var(--selBg);color:var(--fg);border-color:var(--accent)}
+
+/* Actions */
+.card-actions{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border)}
+.send-btn{padding:5px 16px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font:11px/1 inherit;font-weight:bold}
+.send-btn:hover{background:#6488d8}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+.status-badge{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:bold;display:none}
+.status-badge.ok{display:inline;background:#1a3a2a;color:var(--green)}
+.status-badge.err{display:inline;background:#3a1a1a;color:var(--red)}
+.latency{font-size:10px;color:var(--dis)}
+
+/* Response */
+.response-wrap{flex:1;min-height:80px;max-height:320px;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
+.response-json{padding:8px;font:11px/1.5 inherit;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
+.response-placeholder{padding:8px;color:var(--dis);font-size:11px;font-style:italic}
+.copy-btn{position:absolute;top:4px;right:4px;padding:2px 8px;background:var(--second);border:1px solid var(--border);border-radius:3px;color:var(--dis);font:10px inherit;cursor:pointer;opacity:0;transition:opacity .15s}
+.response-wrap:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--fg);border-color:var(--accent)}
+
+/* Syntax highlighting */
+.json-key{color:var(--blue)}
+.json-str{color:var(--green)}
+.json-num{color:var(--purple)}
+.json-bool{color:var(--orange)}
+.json-null{color:var(--dis)}
+.json-brace{color:var(--secondFg)}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <div class="logo">Construct 3 <span>RAG</span> Playground</div>
+  <div class="sep"></div>
+  <input id="baseUrl" class="tb-input" value="http://localhost:8765" placeholder="Base URL" />
+  <select id="apiSelect" class="tb-select">
+    <option value="health">GET /health</option>
+    <option value="search">POST /search</option>
+  </select>
+  <button class="tb-btn primary" onclick="addCardFromSelect()">+ Add Card</button>
+  <div style="flex:1"></div>
+  <button class="tb-btn" onclick="resetView()">Reset View</button>
+</div>
+
+<div id="canvas" onmousedown="canvasDown(event)" onmousemove="canvasMove(event)" onmouseup="canvasUp(event)" onwheel="canvasWheel(event)">
+  <div id="world"></div>
+</div>
+<div id="zoom-info">100%</div>
+
+<script>
+// ─── Canvas pan/zoom ───
+const canvas = document.getElementById('canvas');
+const world = document.getElementById('world');
+const zoomInfo = document.getElementById('zoom-info');
+let pan = { x: 40, y: 40 }, zoom = 1, panning = false, panStart = {};
+
+function applyTransform() {
+  world.style.transform = `translate(${pan.x}px,${pan.y}px) scale(${zoom})`;
+  canvas.style.backgroundPosition = `${pan.x}px ${pan.y}px`;
+  canvas.style.backgroundSize = `${24 * zoom}px ${24 * zoom}px`;
+  zoomInfo.textContent = Math.round(zoom * 100) + '%';
+}
+
+function canvasDown(e) {
+  if (e.target !== canvas) return;
+  panning = true; panStart = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+  canvas.classList.add('grabbing');
+}
+function canvasMove(e) {
+  if (!panning) return;
+  pan.x = e.clientX - panStart.x; pan.y = e.clientY - panStart.y;
+  applyTransform();
+}
+function canvasUp() { panning = false; canvas.classList.remove('grabbing'); }
+function canvasWheel(e) {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const wx = (mx - pan.x) / zoom, wy = (my - pan.y) / zoom;
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  zoom = Math.min(3, Math.max(0.2, zoom * delta));
+  pan.x = mx - wx * zoom; pan.y = my - wy * zoom;
+  applyTransform();
+}
+function resetView() { pan = { x: 40, y: 40 }; zoom = 1; applyTransform(); }
+applyTransform();
+
+// ─── Card dragging ───
+let dragCard = null, dragOff = {};
+function startDrag(e, card) {
+  if (e.button !== 0) return;
+  dragCard = card;
+  const x = parseFloat(card.style.left) || 0, y = parseFloat(card.style.top) || 0;
+  dragOff = { x: e.clientX / zoom - x, y: e.clientY / zoom - y };
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', endDrag);
+  e.preventDefault();
+}
+function onDrag(e) {
+  if (!dragCard) return;
+  dragCard.style.left = (e.clientX / zoom - dragOff.x) + 'px';
+  dragCard.style.top = (e.clientY / zoom - dragOff.y) + 'px';
+}
+function endDrag() { dragCard = null; document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', endDrag); }
+
+// ─── API definitions ───
+const APIS = {
+  health: {
+    method: 'GET', path: '/health', body: null
+  },
+  search: {
+    method: 'POST', path: '/search',
+    body: {
+      query: "Sprite 碰撞检测",
+      top_k: 5,
+      lang: null,
+      collections: null,
+      plugin: null,
+      section_types: null,
+      apply_threshold: true,
+      skip_lookup: false
+    },
+    presets: [
+      { label: 'Sprite 碰撞', query: 'Sprite 碰撞检测' },
+      { label: 'Platform 跳跃', query: 'Platform 跳跃行为' },
+      { label: '计时器', query: '计时器 Timer 使用' },
+      { label: 'Play animation', query: 'how to play animation' },
+      { label: '翻译 Destroy', query: '翻译 Destroy' }
+    ]
+  }
+};
+
+// ─── JSON syntax highlighting ───
+function highlightJSON(obj, indent) {
+  indent = indent || 0;
+  const pad = '  '.repeat(indent);
+  if (obj === null) return `<span class="json-null">null</span>`;
+  if (typeof obj === 'boolean') return `<span class="json-bool">${obj}</span>`;
+  if (typeof obj === 'number') return `<span class="json-num">${obj}</span>`;
+  if (typeof obj === 'string') {
+    const escaped = obj.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return `<span class="json-str">"${escaped}"</span>`;
+  }
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return `<span class="json-brace">[]</span>`;
+    const items = obj.map(v => pad + '  ' + highlightJSON(v, indent + 1));
+    return `<span class="json-brace">[</span>\n${items.join(',\n')}\n${pad}<span class="json-brace">]</span>`;
+  }
+  const keys = Object.keys(obj);
+  if (keys.length === 0) return `<span class="json-brace">{}</span>`;
+  const entries = keys.map(k => {
+    const ek = k.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return pad + '  ' + `<span class="json-key">"${ek}"</span><span class="json-brace">:</span> ` + highlightJSON(obj[k], indent + 1);
+  });
+  return `<span class="json-brace">{</span>\n${entries.join(',\n')}\n${pad}<span class="json-brace">}</span>`;
+}
+
+// ─── Card creation ───
+let cardCount = 0;
+
+function createCard(apiKey, posX, posY) {
+  const api = APIS[apiKey];
+  if (!api) return;
+  const id = 'card-' + (++cardCount);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.id = id;
+  card.style.left = posX + 'px';
+  card.style.top = posY + 'px';
+
+  const methodClass = api.method.toLowerCase();
+
+  let bodySection = '';
+  if (api.body !== null) {
+    bodySection = `
+      <div class="section-label">Request Body</div>
+      <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>`;
+    if (api.presets) {
+      bodySection += `<div class="presets">${api.presets.map((p, i) =>
+        `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
+      ).join('')}</div>`;
+    }
+  } else {
+    bodySection = `<div class="no-body">No request body</div>`;
+  }
+
+  card.innerHTML = `
+    <div class="card-header" onmousedown="startDrag(event, this.parentElement)">
+      <span class="method-badge ${methodClass}">${api.method}</span>
+      <span class="card-title">${api.path}</span>
+      <button class="hdr-btn" onclick="this.closest('.card').remove()" title="Close">×</button>
+    </div>
+    <div class="card-body">
+      ${bodySection}
+      <div class="section-label" style="margin-top:4px">Response</div>
+      <div class="response-wrap" id="${id}-resp-wrap">
+        <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
+        <button class="copy-btn" onclick="copyResponse('${id}')">Copy</button>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
+      <span class="status-badge" id="${id}-status"></span>
+      <span class="latency" id="${id}-latency"></span>
+    </div>`;
+
+  world.appendChild(card);
+
+  // Validate JSON on input
+  const editor = document.getElementById(id + '-editor');
+  if (editor) {
+    editor.addEventListener('input', () => {
+      try { JSON.parse(editor.value); editor.classList.remove('invalid'); }
+      catch { editor.classList.add('invalid'); }
+    });
+  }
+
+  return id;
+}
+
+function applyPreset(cardId, presetIdx, apiKey) {
+  const editor = document.getElementById(cardId + '-editor');
+  if (!editor) return;
+  const preset = APIS[apiKey].presets[presetIdx];
+  try {
+    const body = JSON.parse(editor.value);
+    body.query = preset.query;
+    editor.value = JSON.stringify(body, null, 2);
+    editor.classList.remove('invalid');
+  } catch {
+    // If current JSON is broken, reset to default with preset query
+    const body = { ...APIS[apiKey].body, query: preset.query };
+    editor.value = JSON.stringify(body, null, 2);
+    editor.classList.remove('invalid');
+  }
+}
+
+async function sendRequest(cardId, apiKey) {
+  const api = APIS[apiKey];
+  const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
+  const url = baseUrl + api.path;
+  const respEl = document.getElementById(cardId + '-resp');
+  const statusEl = document.getElementById(cardId + '-status');
+  const latencyEl = document.getElementById(cardId + '-latency');
+  const sendBtn = document.getElementById(cardId + '-send');
+
+  sendBtn.disabled = true;
+  sendBtn.textContent = '...';
+  statusEl.className = 'status-badge';
+  statusEl.style.display = 'none';
+  latencyEl.textContent = '';
+  respEl.innerHTML = '<span class="response-placeholder">Loading...</span>';
+
+  const opts = { method: api.method, headers: {} };
+  if (api.method === 'POST') {
+    const editor = document.getElementById(cardId + '-editor');
+    if (editor) {
+      try {
+        const parsed = JSON.parse(editor.value);
+        opts.headers['Content-Type'] = 'application/json';
+        opts.body = JSON.stringify(parsed);
+      } catch {
+        respEl.innerHTML = '<span class="response-placeholder" style="color:var(--red)">Invalid JSON in request body</span>';
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+        return;
+      }
+    }
+  }
+
+  const t0 = performance.now();
+  try {
+    const res = await fetch(url, opts);
+    const ms = Math.round(performance.now() - t0);
+    let data;
+    const ct = res.headers.get('content-type') || '';
+    if (ct.includes('json')) {
+      data = await res.json();
+    } else {
+      data = await res.text();
+    }
+
+    statusEl.textContent = res.status + ' ' + res.statusText;
+    statusEl.className = 'status-badge ' + (res.ok ? 'ok' : 'err');
+    statusEl.style.display = 'inline';
+    latencyEl.textContent = ms + 'ms';
+
+    if (typeof data === 'string') {
+      respEl.textContent = data;
+    } else {
+      respEl.innerHTML = highlightJSON(data);
+      respEl.dataset.raw = JSON.stringify(data, null, 2);
+    }
+  } catch (err) {
+    const ms = Math.round(performance.now() - t0);
+    statusEl.textContent = 'Error';
+    statusEl.className = 'status-badge err';
+    statusEl.style.display = 'inline';
+    latencyEl.textContent = ms + 'ms';
+    respEl.innerHTML = `<span class="response-placeholder" style="color:var(--red)">${err.message}</span>`;
+  }
+
+  sendBtn.disabled = false;
+  sendBtn.textContent = 'Send';
+}
+
+function copyResponse(cardId) {
+  const respEl = document.getElementById(cardId + '-resp');
+  const raw = respEl.dataset.raw || respEl.textContent;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = respEl.parentElement.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1200);
+  });
+}
+
+function addCardFromSelect() {
+  const key = document.getElementById('apiSelect').value;
+  const existing = world.children.length;
+  createCard(key, 20 + existing * 520, 20);
+}
+
+// ─── Init: create default cards and auto-send health ───
+const healthId = createCard('health', 20, 20);
+createCard('search', 540, 20);
+applyTransform();
+
+// Auto-send health check
+setTimeout(() => sendRequest(healthId, 'health'), 300);
+</script>
+</body>
+</html>
