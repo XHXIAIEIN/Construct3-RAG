@@ -27,6 +27,15 @@ _BEIJING = timezone(timedelta(hours=8))
 
 # CDN endpoint paths — update here if Scirra changes URL structure.
 # See data/c3-cdn-samples/ for expected response schemas.
+# Available locales on the CDN (verified r476, 2026-03-16).
+# Lazy-loaded by the editor; format: precompiled-{locale}.json
+AVAILABLE_LOCALES = [
+    "en-US", "zh-CN", "ja-JP", "ko-KR",
+    "de-DE", "fr-FR", "es-ES", "pt-BR", "it-IT",
+    "ru-RU", "uk-UA", "pl-PL", "cs-CZ", "hu-HU",
+    "tr-TR", "nl-NL", "sv-SE", "ro-RO", "th-TH", "id-ID",
+]
+
 ENDPOINTS = {
     "versions":      "versions.json",
     "plugin_aces":   "plugins/allAces.json",

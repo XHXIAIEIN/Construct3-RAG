@@ -615,34 +615,31 @@ class HybridRetriever:
         self,
         query: str,
         top_k_per_collection: int = 5,
-        final_top_k: int = 10
+        final_top_k: int = 10,
+        exclude_collections: set | None = None,
     ) -> List[SearchResult]:
         """
         Search all collections with cross-collection reranking.
-
-        For compound queries (multiple sub-questions), automatically
-        decomposes into sub-queries, retrieves each independently,
-        and fuses results via RRF for better multi-topic coverage.
 
         Args:
             query: Search query
             top_k_per_collection: Results per collection before reranking
             final_top_k: Final number of results after reranking
+            exclude_collections: Collection keys to skip (e.g. {"terms"})
 
         Returns:
             Reranked list of SearchResults
         """
-        # NOTE: Rule-based query splitting was tested but reduced Recall by 3.4%
-        # (81.5% → 78.1%). Chinese question marks often separate related clauses,
-        # not independent questions. LLM-based decomposition (SemanticChain) is
-        # needed for accurate splitting. See semantic_chain.py for the full impl.
-        return self._search_single_query(query, top_k_per_collection, final_top_k)
+        return self._search_single_query(
+            query, top_k_per_collection, final_top_k, exclude_collections
+        )
 
     def _search_single_query(
         self,
         query: str,
         top_k_per_collection: int = 5,
         final_top_k: int = 10,
+        exclude_collections: set | None = None,
     ) -> List[SearchResult]:
         """Core retrieval for a single query: weighted RRF + optional reranker."""
         # Guard: hard-cap query length to protect embedding quality.
@@ -670,7 +667,10 @@ class HybridRetriever:
         weights: List[float] = []
 
         coll_hit_summaries = []
+        _exclude = exclude_collections or set()
         for coll_name in self._COLLECTION_DEFAULTS:
+            if coll_name in _exclude:
+                continue
             try:
                 results = self._search(coll_name, query, top_k_per_collection)
                 logger.info(f"[Search] {coll_name}: {len(results)} hits")
