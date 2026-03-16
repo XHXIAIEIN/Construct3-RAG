@@ -157,7 +157,7 @@ class TestCollectionRouter:
         """Embedder that returns fixed similarity for all collections."""
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.1] * 10
-        embedder.encode_batch.return_value = [[0.1] * 10] * 10
+        embedder.encode.return_value = [[0.1] * 10] * 10
         return embedder
 
     def test_returns_weights_for_all_collections(self):
@@ -177,22 +177,27 @@ class TestCollectionRouter:
         assert weights["c3_terms"] >= 0.5  # bias +0.6 applied
 
     def test_threshold_filters_low_collections(self):
-        from src.rag.semantic_chain import CollectionRouter
+        from src.rag.semantic_chain import CollectionRouter, _DOC_COLLECTION_SET
         embedder = MagicMock()
         # Non-zero embeddings produce non-zero cosine similarity (~1.0 for identical vecs)
         embedder.encode_single.return_value = [1.0] * 10
-        embedder.encode_batch.return_value = [[1.0] * 10] * 10
+        embedder.encode.return_value = [[1.0] * 10] * 10
         router = CollectionRouter(embedder)
-        # With threshold=1.1 (above max possible weight of 1.0), all should be zeroed out
+        # With threshold=1.1 (above max possible weight of 1.0), non-doc collections
+        # are zeroed out; doc collections get floor weight (0.05)
         weights = router.route("test", "unknown", threshold=1.1)
-        active = {k for k, v in weights.items() if v > 0}
-        assert len(active) == 0
+        non_doc_active = {k for k, v in weights.items() if v > 0 and k not in _DOC_COLLECTION_SET}
+        assert len(non_doc_active) == 0
+        # Doc collections should have floor weight
+        for k, v in weights.items():
+            if k in _DOC_COLLECTION_SET:
+                assert v == pytest.approx(0.05)
 
     def test_threshold_allows_above_threshold(self):
         from src.rag.semantic_chain import CollectionRouter
         embedder = MagicMock()
         embedder.encode_single.return_value = [1.0] * 10
-        embedder.encode_batch.return_value = [[1.0] * 10] * 10
+        embedder.encode.return_value = [[1.0] * 10] * 10
         router = CollectionRouter(embedder)
         # With threshold=0.0, all collections with any weight are kept
         weights = router.route("test", "unknown", threshold=0.0)
@@ -219,7 +224,7 @@ class TestSemanticChain:
         )
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.5] * 10
-        embedder.encode_batch.return_value = [[0.5] * 10] * 10
+        embedder.encode.return_value = [[0.5] * 10] * 10
 
         retriever = MagicMock()
         retriever.search_collection.return_value = []
@@ -259,7 +264,7 @@ class TestSemanticChain:
         )
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.3] * 10
-        embedder.encode_batch.return_value = [[0.3] * 10] * 10
+        embedder.encode.return_value = [[0.3] * 10] * 10
         retriever = MagicMock()
         retriever.search_collection.return_value = []
         chain = SemanticChain(

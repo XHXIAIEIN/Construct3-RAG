@@ -3,6 +3,7 @@ import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -32,7 +33,7 @@ class TestCrossEncoderReranker(unittest.TestCase):
 
         # Simulate cross-encoder scores: timer docs get higher scores
         mock_model = MagicMock()
-        mock_model.compute_score.return_value = [0.95, 0.1, 0.88]
+        mock_model.predict.return_value = np.array([0.95, 0.1, 0.88])
         retriever._reranker = mock_model
 
         with patch("src.rag.retriever.RERANKER_ENABLED", True):
@@ -57,14 +58,14 @@ class TestCrossEncoderReranker(unittest.TestCase):
         retriever._reranker = MagicMock()
         out = retriever._rerank_with_cross_encoder("query", [])
         assert out == []
-        retriever._reranker.compute_score.assert_not_called()
+        retriever._reranker.predict.assert_not_called()
 
     def test_rerank_preserves_metadata(self):
         """Reranked results should carry original_score in metadata."""
         retriever = HybridRetriever.__new__(HybridRetriever)
         results = _make_results([("doc A", 0.9), ("doc B", 0.7)])
         mock_model = MagicMock()
-        mock_model.compute_score.return_value = [0.5, 0.95]
+        mock_model.predict.return_value = np.array([0.5, 0.95])
         retriever._reranker = mock_model
 
         with patch("src.rag.retriever.RERANKER_ENABLED", True):

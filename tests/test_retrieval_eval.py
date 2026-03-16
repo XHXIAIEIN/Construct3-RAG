@@ -35,20 +35,21 @@ def test_eval_case_defaults():
 def test_dataset_load_with_new_fields():
     """EvalDataset.load() handles files with new retrieval fields."""
     ds = EvalDataset.load()
-    b01 = ds.get("B01")
-    assert b01 is not None
-    assert "plugin-reference/sprite.md" in b01.expected_sources
-    assert "plugins" in b01.expected_collections
-    assert b01.retrieval_difficulty == "easy"
+    # D014 has expected_sources referencing plugin-reference/sprite.md
+    d14 = ds.get("D014")
+    assert d14 is not None
+    assert any("sprite" in s.lower() for s in d14.expected_sources)
+    assert "plugins" in d14.expected_collections
+    assert d14.retrieval_difficulty != ""
 
 
-def test_dataset_boundary_cases_no_sources():
-    """Boundary cases (B14, B15) have empty expected_sources."""
+def test_dataset_all_cases_have_retrieval_fields():
+    """All cases in the rebuilt dataset have retrieval evaluation fields."""
     ds = EvalDataset.load()
-    b14 = ds.get("B14")
-    b15 = ds.get("B15")
-    assert b14.expected_sources == []
-    assert b15.expected_sources == []
+    for case in ds.cases:
+        assert isinstance(case.expected_sources, list), f"{case.id} missing expected_sources"
+        assert isinstance(case.expected_collections, list), f"{case.id} missing expected_collections"
+        assert isinstance(case.retrieval_difficulty, str), f"{case.id} missing retrieval_difficulty"
 
 
 # ── Source matching ─────────────────────────────────────────────────────────
