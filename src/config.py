@@ -121,7 +121,7 @@ EXPANDER_TOP_K      = int(os.getenv("EXPANDER_TOP_K",        "12"))
 # Cross-Encoder Reranking
 # =============================================================================
 RERANKER_ENABLED = os.getenv("RERANKER_ENABLED", "true").lower() == "true"
-RERANKER_TOP_K   = int(os.getenv("RERANKER_TOP_K", "10"))   # candidates fed to reranker
+RERANKER_TOP_K   = int(os.getenv("RERANKER_TOP_K", "20"))   # candidates fed to reranker
 RERANKER_MODEL   = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
 
 # =============================================================================
