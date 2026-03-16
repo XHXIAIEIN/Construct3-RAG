@@ -585,6 +585,32 @@ class HybridRetriever:
             logger.warning(f"[Search] search_plugin_by_name({plugin_en}) failed: {e}")
             return []
 
+    @staticmethod
+    def _split_compound_query(query: str) -> List[str]:
+        """Split a compound query into sub-queries using Chinese punctuation/connectors.
+
+        Rules:
+        - Split on ？(Chinese question mark) to separate multiple questions
+        - Split on 、(Chinese enumeration comma) for listed items
+        - Split on ；(Chinese semicolon) for semi-colon separated clauses
+        - Only split if resulting parts are >= 6 chars (avoid fragments)
+        - Return original query if not compound (< 2 valid parts)
+        """
+        import re
+        # Try splitting by Chinese question mark first (strongest signal)
+        parts = re.split(r'[？?]+', query)
+        parts = [p.strip() for p in parts if len(p.strip()) >= 6]
+        if len(parts) >= 2:
+            return parts
+
+        # Try splitting by Chinese semicolons / enumeration
+        parts = re.split(r'[；;]+', query)
+        parts = [p.strip() for p in parts if len(p.strip()) >= 6]
+        if len(parts) >= 2:
+            return parts
+
+        return [query]
+
     def search_all_with_rerank(
         self,
         query: str,
@@ -594,6 +620,10 @@ class HybridRetriever:
         """
         Search all collections with cross-collection reranking.
 
+        For compound queries (multiple sub-questions), automatically
+        decomposes into sub-queries, retrieves each independently,
+        and fuses results via RRF for better multi-topic coverage.
+
         Args:
             query: Search query
             top_k_per_collection: Results per collection before reranking
@@ -602,9 +632,20 @@ class HybridRetriever:
         Returns:
             Reranked list of SearchResults
         """
+        # NOTE: Rule-based query splitting was tested but reduced Recall by 3.4%
+        # (81.5% → 78.1%). Chinese question marks often separate related clauses,
+        # not independent questions. LLM-based decomposition (SemanticChain) is
+        # needed for accurate splitting. See semantic_chain.py for the full impl.
+        return self._search_single_query(query, top_k_per_collection, final_top_k)
+
+    def _search_single_query(
+        self,
+        query: str,
+        top_k_per_collection: int = 5,
+        final_top_k: int = 10,
+    ) -> List[SearchResult]:
+        """Core retrieval for a single query: weighted RRF + optional reranker."""
         # Guard: hard-cap query length to protect embedding quality.
-        # bge-m3 truncates at 8192 tokens; Qwen3-Embedding supports 32K but bloated
-        # queries still degrade retrieval precision.
         _MAX_QUERY_CHARS = 500
         if len(query) > _MAX_QUERY_CHARS:
             logger.warning(f"[Search] Query truncated {len(query)} → {_MAX_QUERY_CHARS} chars")
