@@ -620,6 +620,10 @@ def index_all_data(rebuild: bool = False):
     fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
     print(f"[CDN] Construct 3 version: {C3_VERSION}")
 
+    # Export CDN data to per-plugin JSON (for lookup.py / query_expander.py)
+    schemas_dir = fetcher.export_schemas()
+    print(f"[CDN] Schemas exported to {schemas_dir}")
+
     indexer = Indexer(
         qdrant_host=QDRANT_HOST,
         qdrant_port=QDRANT_PORT,
