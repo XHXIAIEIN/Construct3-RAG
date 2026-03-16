@@ -1143,12 +1143,22 @@ class LookupEngine:
                     item.get("description_en", ""),
                     item.get("category", ""),
                 ]).lower()
-                # Require at least half of the filter words to match.
-                # Pure OR lets generic words like "检测" match everything;
-                # pure AND is too strict for multi-word queries.
-                hits = sum(1 for fw in filter_words if fw in searchable)
-                if hits < max(1, len(raw_words) // 2 + 1):
-                    continue
+                # Require majority of 2-char Chinese windows to match.
+                # This prevents single generic words like "检测" from matching
+                # unrelated ACEs, while allowing partial matches for compound
+                # Chinese terms like "碰撞检测" (needs both "碰撞" AND "检测").
+                zh_windows = [fw for fw in filter_words if len(fw) == 2 and all('\u4e00' <= c <= '\u9fff' for c in fw)]
+                en_words = [fw for fw in raw_words if fw.isascii()]
+                if zh_windows:
+                    zh_hits = sum(1 for w in zh_windows if w in searchable)
+                    if zh_hits < max(1, (len(zh_windows) + 1) // 2):
+                        continue
+                elif en_words:
+                    if not any(w in searchable for w in en_words):
+                        continue
+                else:
+                    if not any(fw in searchable for fw in filter_words):
+                        continue
 
                 name_en = item.get("name_en", "")
                 name_zh = item.get("name_zh", "")

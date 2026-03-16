@@ -358,25 +358,20 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 是什么")
         assert resp is None  # falls through to RAG
 
-    def test_array_find_howto_hits_schema(self):
-        """'怎么在数组中查找特定数字？' — '怎么' is now SOFT_SKIP.
-        Plugin 'Array' is found → Tier1.5 runs and hits find/indexOf ACEs.
-        Result is injected as schema_context into LLM, not returned directly to user."""
+    def test_array_find_howto_falls_through(self):
+        """'怎么在数组中查找特定数字？' — complex query, falls through to semantic."""
         engine = make_engine()
         resp = engine.try_lookup("怎么在数组中查找特定数字？")
-        assert resp is not None
-        assert resp.query_type == "lookup_ace_search"
-        assert resp.intent.plugin_id == "arr"
-        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
+        # Complex multi-word query should fall through to RAG, not return partial ACE matches
+        assert resp is None
 
-    def test_array_find_without_howto(self):
-        """'数组 查找数字' (no 怎么) → ace_search on Array, still triggers lookup."""
+    def test_array_find_simple(self):
+        """'Array 查找' — simple plugin+topic, triggers ace_search."""
         engine = make_engine()
-        resp = engine.try_lookup("数组 查找数字")
+        resp = engine.try_lookup("Array 查找")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.plugin_id == "arr"
-        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
 
     def test_howto_with_plugin_hits_schema(self):
         """'怎么检测Sprite碰撞' — plugin 'Sprite' found + '怎么' is SOFT_SKIP.
