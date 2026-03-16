@@ -243,6 +243,50 @@ class C3Fetcher:
                     encoding="utf-8",
                 )
 
+        # Export _common (shared ACEs for all World instances: collision, position, etc.)
+        # allAces.json doesn't include these; definitions come from lang files only.
+        en_common = en_text.get("plugins", {}).get("_common", {})
+        zh_common = zh_text.get("plugins", {}).get("_common", {})
+        if en_common:
+            common_json = {
+                "id": "_common",
+                "originalId": "_common",
+                "name_zh": zh_common.get("name", "公共"),
+                "name_en": en_common.get("name", "Common"),
+                "description_zh": zh_common.get("description", ""),
+                "description_en": en_common.get("description", ""),
+                "plugin_type": "plugin",
+                "aceCategories": list(en_common.get("aceCategories", {}).keys()),
+                "conditions": [],
+                "actions": [],
+                "expressions": [],
+                "properties": [],
+            }
+            for ace_type_plural in ("conditions", "actions", "expressions"):
+                en_aces = en_common.get(ace_type_plural, {})
+                zh_aces = zh_common.get(ace_type_plural, {})
+                for ace_id, en_ace in en_aces.items():
+                    zh_ace = zh_aces.get(ace_id, {})
+                    if ace_type_plural == "expressions":
+                        name_en = en_ace.get("translated-name", ace_id)
+                        name_zh = zh_ace.get("translated-name", name_en)
+                    else:
+                        name_en = en_ace.get("list-name", ace_id)
+                        name_zh = zh_ace.get("list-name", name_en)
+                    common_json[ace_type_plural].append({
+                        "id": ace_id,
+                        "name_en": name_en,
+                        "name_zh": name_zh,
+                        "description_en": en_ace.get("description", ""),
+                        "description_zh": zh_ace.get("description", ""),
+                        "scriptName": ace_id,
+                        "category": "common",
+                    })
+            out_path = schemas_dir / "plugins" / "_common.json"
+            out_path.write_text(json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8")
+            logger.info(f"[CDN] Exported _common: {len(common_json['conditions'])}C "
+                        f"{len(common_json['actions'])}A {len(common_json['expressions'])}E")
+
         # Write marker
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
