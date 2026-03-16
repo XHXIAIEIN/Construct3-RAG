@@ -5,7 +5,7 @@
 | 数据源 | 格式 | 用途 |
 |--------|------|------|
 | Construct3-Manual/ | Markdown | 主手册文档 |
-| zh_r475.csv | CSV | 23,824 条中英翻译 |
+| C3 CDN (precompiled-zh-CN.json) | JSON (CDN) | 25,362 条中英翻译 |
 | example-projects/ | C3 项目 | 524 个示例项目（r476） |
 | C3 CDN (allAces.json + lang) | JSON (CDN) | ACE Schema（72 插件 + 31 行为） |
 
@@ -187,8 +187,8 @@ example-projects/
 ```
 src/ingest/
 ├── markdown_parser.py  # Markdown 解析 + H2 分块
-├── csv_parser.py       # CSV 术语解析
-├── schema_parser.py    # ACE Schema 解析（CDN + legacy 双模式）
+├── c3_fetcher.py       # CDN 数据获取 + 缓存
+├── schema_parser.py    # ACE Schema 解析（CDN）
 ├── examples_parser.py  # 示例元数据（CDN example-project-data + c3proj）
 ├── event_parser.py     # 事件块 + 脚本代码解析
 ├── c3_fetcher.py       # CDN 数据获取 + 本地缓存（周三过期）
