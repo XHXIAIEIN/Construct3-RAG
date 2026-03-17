@@ -7,6 +7,51 @@ Schema Parser - 从 CDN 读取 Construct 3 ACE/effect/property 数据用于向�
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 
+# Semantic enrichment for _common ACEs whose descriptions are too terse
+# to compete with longer plugin-specific documents in embedding similarity.
+_COMMON_ACE_ENRICHMENT: dict[str, str] = {
+    "on-collision-with-another-object": (
+        "用途: 碰撞检测、碰撞判定、碰撞事件。"
+        "当两个对象接触/碰到时自动触发。"
+        "常见用法: 子弹碰到敌人、角色碰到墙壁、物体间接触判断。"
+        "Usage: collision detection event between two game objects."
+    ),
+    "is-overlapping-another-object": (
+        "用途: 重叠检测、重叠判定。"
+        "检测两个对象当前是否重叠在一起。"
+        "常见用法: 判断角色是否站在平台上、物体是否在某个区域内。"
+        "Usage: overlap detection, test if two objects currently overlap."
+    ),
+    "is-overlapping-at-offset": (
+        "用途: 偏移位置重叠检测。"
+        "在指定偏移坐标检测对象是否与另一个对象重叠。"
+        "常见用法: 预判移动后是否会碰到障碍物。"
+        "Usage: overlap check at an offset position, predictive collision."
+    ),
+    "destroy": (
+        "用途: 销毁对象、删除对象、移除实例。"
+        "从场景中删除对象并释放资源。"
+        "Usage: remove/delete an object instance from the layout."
+    ),
+    "on-destroyed": (
+        "用途: 销毁事件、删除回调。"
+        "对象被 Destroy 动作删除时触发。"
+        "Usage: triggered when an object is destroyed/removed."
+    ),
+    "set-position": (
+        "用途: 设置位置、移动对象到指定坐标。"
+        "Usage: move object to specific X,Y coordinates."
+    ),
+    "set-visible": (
+        "用途: 显示/隐藏对象、设置可见性。"
+        "Usage: show or hide an object in the layout."
+    ),
+    "is-visible": (
+        "用途: 判断对象是否可见。"
+        "Usage: test if the object is currently visible."
+    ),
+}
+
 
 @dataclass
 class ACEEntry:
@@ -248,6 +293,15 @@ class SchemaParser:
                 text_parts.append("[触发器/Trigger]")
             if entry.is_async:
                 text_parts.append("[异步/Async]")
+
+            # Semantic enrichment for _common ACEs with short descriptions.
+            # These shared ACEs (collision, overlap, destroy, position) have
+            # very terse descriptions that lose to longer plugin-specific docs
+            # in embedding similarity. Add synonyms and usage context.
+            if entry.plugin_name == "_common":
+                enrichment = _COMMON_ACE_ENRICHMENT.get(entry.ace_id)
+                if enrichment:
+                    text_parts.append(enrichment)
 
             text = "\n".join(text_parts)
 
