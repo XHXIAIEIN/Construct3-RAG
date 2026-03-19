@@ -52,6 +52,16 @@ QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 #   Qwen/Qwen3-Embedding-4B    — higher quality, 2560 dims
 #   Qwen/Qwen3-Embedding-8B    — MTEB multilingual #1, 4096 dims
 #   BAAI/bge-m3                — multilingual, 1024 dims; supports native sparse (BGE_M3_NATIVE_SPARSE)
+#
+# Model registry (name → expected dimension) for validation and quick reference.
+# Dimension is auto-detected from the model; this dict is informational + used by eval scripts.
+EMBEDDING_MODEL_REGISTRY: dict[str, int] = {
+    "BAAI/bge-m3": 1024,
+    "Qwen/Qwen3-Embedding-0.6B": 1024,
+    "Qwen/Qwen3-Embedding-4B": 2560,
+    "Qwen/Qwen3-Embedding-8B": 4096,
+}
+
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B")
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 
