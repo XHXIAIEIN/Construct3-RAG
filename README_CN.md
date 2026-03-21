@@ -159,8 +159,9 @@ Construct3-RAG/
 | 来源 | 用途 |
 |------|------|
 | [Construct 3 编辑器 CDN](https://editor.construct.net) | ACE 定义、TypeScript 接口、多语言翻译 |
-| [Construct 3 官方手册](https://www.construct.net/en/make-games/manuals/construct-3) | 官方文档（通过 [Markdown 镜像](https://github.com/XHXIAIEIN/Construct3-Manual)） |
+| [Construct 3 官方手册](https://www.construct.net/en/make-games/manuals/construct-3) | 官方文档 |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown 镜像 |
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | 哈工大同义词词林，查询扩展 |
 
 ## License
