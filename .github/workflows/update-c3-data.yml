@@ -117,8 +117,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "C3 ${{ steps.check.outputs.latest }}: update ACE schemas + TS defs"
-          title: "C3 ${{ steps.check.outputs.latest }}"
+          commit-message: "Construct 3 ${{ steps.check.outputs.latest }}"
+          title: "Construct 3 ${{ steps.check.outputs.latest }}"
           body: "${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}"
           branch: c3-${{ steps.check.outputs.latest }}
           delete-branch: true
