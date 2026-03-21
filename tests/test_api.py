@@ -256,7 +256,7 @@ def test_search_invalid_collection(client):
 # ---------------------------------------------------------------------------
 
 def test_search_response_structure(client):
-    """Verify response structure with query, lang, mode, latency_ms, lookup, semantic."""
+    """Verify response structure with query, lang, mode, ms, lookup, semantic."""
     c, _, _ = client
     resp = c.post("/search", json={"query": "Sprite", "mode": "semantic"})
     assert resp.status_code == 200
@@ -264,7 +264,7 @@ def test_search_response_structure(client):
     assert "query" in data
     assert "lang" in data
     assert "mode" in data
-    assert "latency_ms" in data
+    assert "ms" in data
     assert "semantic" in data
     # lookup excluded when None (mode=semantic skips it)
     assert "diagnostics" not in data  # old format removed
