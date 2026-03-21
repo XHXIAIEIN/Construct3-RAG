@@ -92,18 +92,13 @@ class SearchRequest(BaseModel):
     apply_threshold: bool = Field(True, description="Apply adaptive score threshold filtering")
     mode: str = Field(
         "auto",
-        pattern="^(auto|lookup|semantic)$",
-        description="Execution mode: auto (both), lookup (keyword only), semantic (vector only)",
+        pattern="^(auto|lookup|semantic|list)$",
+        description="auto (lookup+semantic), lookup (keyword only), semantic (vector only), list (ACE id+name only)",
     )
     scope: str = Field(
         "eventsheet",
         pattern="^(eventsheet|scripts|js|ts|all)$",
         description="Search scope: eventsheet (default), scripts (js+ts), js, ts, all",
-    )
-    detail: str = Field(
-        "full",
-        pattern="^(full|list)$",
-        description="Detail level: full (default), list (id + name only)",
     )
 
 
@@ -379,7 +374,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     # Scope controls which fields are included
     include_scripts = req.scope in ("scripts", "js", "ts", "all")
     include_display = req.scope in ("eventsheet", "all")
-    is_list = req.detail == "list"
+    is_list = req.mode == "list"
 
     if is_list:
         matches = [
@@ -588,7 +583,7 @@ def search(req: SearchRequest):
     timing: dict[str, float] = {}
 
     # ── Lookup phase ──
-    if req.mode in ("auto", "lookup"):
+    if req.mode in ("auto", "lookup", "list"):
         t_lk = time.time()
         lookup_section = _do_lookup(req, _noop)
         timing["lookup"] = round((time.time() - t_lk) * 1000, 1)
