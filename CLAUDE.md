@@ -1,60 +1,62 @@
 # Construct3-RAG
 
-RAG assistant for Construct 3 game engine documentation. Local LLM + Qdrant vector store, providing Chinese Q&A and event sheet generation.
+Construct 3 documentation retrieval service. Fetches ACE definitions from official CDN, indexes with Qdrant, provides structured search API.
 
 ## Tech Stack
 
 | Component | Technology |
 |-----------|------------|
-| LLM | HuggingFace / Ollama (default: Qwen3.5-9B) |
-| Embedding | BAAI/bge-m3 |
 | Vector DB | Qdrant |
-| Language | Python 3.14 |
+| Embedding | BAAI/bge-m3 |
+| Data source | Construct 3 CDN (live) + Markdown manual |
+| Language | Python 3.11+ |
 
 ## Directory Structure
 
 | Directory | Purpose |
 |-----------|---------|
-| `src/` | Source code (config, ingest, rag, locale) |
-| `data/` | Data files (translation CSV, ACE schemas, analysis artifacts) |
-| `docs/` | Documentation (architecture, quick start, domain knowledge) |
-| `scripts/` | Operations scripts (startup, indexing, benchmarking) |
-| `tests/` | Unit tests (all mocked, no external services required) |
+| `src/` | Source code (api, ingest, rag) |
+| `src/ingest/` | CDN fetching, parsing, indexing |
+| `src/rag/` | Lookup engine, vector retriever, query expander |
+| `scripts/` | Setup, init, evaluation |
+| `tests/` | Unit tests (no external services required) |
+| `docs/` | Architecture, API reference, data pipeline |
+| `.cache/c3-cdn/` | CDN cache + exported schemas (auto-generated) |
 
 ## Common Commands
 
 ```bash
-# Index data (requires Qdrant running)
-python -m src.ingest.indexer --rebuild
+# One-command setup (deps + CDN + index + server)
+python scripts/setup.py
 
-# Run tests (no external services needed)
+# Run tests
 python -m pytest tests/ -v
 
-# Run benchmark (requires Qdrant + LLM)
-python scripts/benchmark.py --mode smart
-```
+# Rebuild index only
+python -m src.ingest.indexer --rebuild
 
-## Setup
-
-```bash
-pip install -r requirements.txt
-
-# Start Qdrant
-docker run -d -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
+# Start server only
+python -m uvicorn src.api:app --port 8765 --reload
 ```
 
 ## Configuration
 
-All config is managed via environment variables, defined in `src/config.py`, with `.env` file support.
-Key variables: `LLM_PROVIDER`, `LLM_MODEL`, `QDRANT_HOST`, `EMBEDDING_MODEL`.
+Environment variables (`.env` file supported), defined in `src/config.py`:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `C3_VERSION` | `r476` | Construct 3 editor version for CDN |
+| `EMBEDDING_MODEL` | `BAAI/bge-m3` | Embedding model |
+| `QDRANT_HOST` | `localhost` | Qdrant host |
+| `RAG_SERVER_PORT` | `8765` | API server port |
 
 ## Code Style
 
 - Python PEP 8; `snake_case` for functions/variables, `PascalCase` for classes, `UPPER_SNAKE_CASE` for constants
 - `_leading_underscore` for private methods
-- Use type hints for function signatures
-- Use `pathlib.Path` for file operations
-- Keep functions under 50 lines; return early for error cases
+- Type hints for function signatures
+- `pathlib.Path` for file operations
+- Functions under 50 lines; return early for error cases
 - Catch specific exceptions, not bare `except:`
 - Comments only for non-obvious logic
 
@@ -66,15 +68,16 @@ Key variables: `LLM_PROVIDER`, `LLM_MODEL`, `QDRANT_HOST`, `EMBEDDING_MODEL`.
 # 3. Local (from src.xxx import ...)
 ```
 
-### Locale Convention
+## API Overview
 
-- `src/locale/zh/` and `src/locale/en/` contain language-specific `prompts.py` and `messages.py`
-- `src/locale/__init__.py` routes exports based on `UI_LANGUAGE` config (default: `zh`)
-- `src/locale/keywords.py` stays top-level (Chinese NLP keywords, not i18n-dependent)
-- `src/rag/prompts.py` is a thin re-export layer (imports from active locale)
-- Developer-facing text (logs, comments, docstrings) should be in English
-- `src/locale/keywords.py` comments should be in Chinese (describing Chinese keyword semantics)
-- New user-facing strings must be added to **both** `zh/` and `en/` with the same constant name
+`POST /search` with `mode`: `auto` | `lookup` | `semantic`
+
+Response splits into:
+- `lookup` — structured ACE matches with `en`/`zh` locale (name, desc, display, params)
+- `semantic` — vector search results (docs, examples, terms)
+- `debug` — timing and collection stats (when `debug=true`)
+
+Full spec: `docs/api-reference.md`
 
 ## Construct 3 Knowledge Lookup
 
@@ -82,15 +85,13 @@ When answering questions about Construct 3 (plugins, behaviors, ACEs, events, sc
 
 ### Quick lookup (API running)
 
-API port is configured via `RAG_SERVER_PORT` env var (default `8765`).
-
 ```bash
-# Keyword lookup — instant, no embedding needed
+# Keyword lookup — instant, no GPU needed
 curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
   -H "Content-Type: application/json" \
   -d '{"query":"Sprite collision","mode":"lookup"}'
 
-# Full search — lookup + semantic vector search
+# Full search — lookup + semantic
 curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
   -H "Content-Type: application/json" \
   -d '{"query":"how to detect collision","mode":"auto"}'
@@ -98,32 +99,28 @@ curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
 
 ### Offline lookup (no API needed)
 
-Schema files at `.cache/c3-cdn/` under the version directory configured by `C3_VERSION` in `.env` or `src/config.py`:
+Schema files at `.cache/c3-cdn/{C3_VERSION}/schemas/`:
+- `plugins/{name}.json` — plugin ACE definitions
+- `behaviors/{name}.json` — behavior ACE definitions
 
-```
-.cache/c3-cdn/{C3_VERSION}/schemas/
-  plugins/{name}.json   — plugin ACE definitions
-  behaviors/{name}.json — behavior ACE definitions
-```
-
-Generate them if missing: `python scripts/init.py`
+Generate if missing: `python scripts/init.py`
 
 ```bash
-# Find the schema directory (version from config)
+# Find schemas
 ls .cache/c3-cdn/*/schemas/plugins/
 
-# Search ACEs by keyword across all schemas
+# Search by keyword
 grep -rl "collision\|overlap" .cache/c3-cdn/*/schemas/
 ```
 
-### What to look up vs. what to answer from knowledge
+### When to look up vs. answer from knowledge
 
 | Question type | Source |
 |--------------|--------|
-| Plugin/behavior ACE list | API `mode=lookup` or read `schemas/plugins/{name}.json` |
-| How-to questions | API `mode=auto` (lookup + docs) |
-| Term translation | API `mode=lookup` with translation query |
-| General C3 concepts | OK to answer from training data |
+| Plugin/behavior ACE list | API `mode=lookup` or read schema JSON |
+| How-to questions | API `mode=auto` |
+| Term translation | API `mode=lookup` |
+| General C3 concepts | Training data is fine |
 
 ## Related Files
 
