@@ -81,9 +81,13 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 
 # =============================================================================
-# Chat Server
+# Server
 # =============================================================================
 RAG_SERVER_PORT = int(os.getenv("RAG_SERVER_PORT", "8765"))
+
+# Lite mode: lookup only, skip Qdrant/embedding/reranker.
+# Set LITE_MODE=true to run without Docker or GPU.
+LITE_MODE = os.getenv("LITE_MODE", "false").lower() == "true"
 
 # =============================================================================
 # Lookup Classifier (Tier 3: Ollama small model)

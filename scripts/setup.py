@@ -122,10 +122,8 @@ def main():
         if not args.skip_deps:
             install_deps(lite=True)
         fetch_cdn(args.version)
-        print()
-        print("  Lite mode: only mode=lookup is available.")
-        print("  For full semantic search, run without --lite.")
-        print()
+        import os
+        os.environ["LITE_MODE"] = "true"
         start_server(args.port)
     else:
         print("=" * 50)

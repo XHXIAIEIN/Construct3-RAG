@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from pathlib import Path
 from fastapi.responses import HTMLResponse
 
-from src.config import QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL
+from src.config import QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL, LITE_MODE
 
 logger = logging.getLogger(__name__)
 
@@ -430,6 +430,8 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
 
 def _do_semantic(req: SearchRequest, _trace) -> list:
     """Execute semantic search phase. Returns list of result dicts."""
+    if LITE_MODE:
+        return []
     try:
         retriever = _get_retriever()
     except Exception as e:
@@ -504,6 +506,13 @@ def _do_semantic(req: SearchRequest, _trace) -> list:
 
 @app.get("/health", response_model=HealthResponse)
 def health():
+    if LITE_MODE:
+        return HealthResponse(
+            status="lite",
+            qdrant=False,
+            embedding_model="",
+            message="Lite mode: lookup only",
+        )
     try:
         retriever = _get_retriever()
         detail = retriever.health_check()
@@ -512,7 +521,7 @@ def health():
             status="lite",
             qdrant=False,
             embedding_model=EMBEDDING_MODEL,
-            message="Lite mode: lookup only (no Qdrant/embedding)",
+            message="Qdrant unavailable, falling back to lookup only",
         )
     return HealthResponse(
         status=detail["status"],
