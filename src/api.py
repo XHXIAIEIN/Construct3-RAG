@@ -100,6 +100,11 @@ class SearchRequest(BaseModel):
         pattern="^(eventsheet|scripts|js|ts|all)$",
         description="Search scope: eventsheet (default), scripts (js+ts), js, ts, all",
     )
+    detail: str = Field(
+        "full",
+        pattern="^(full|list)$",
+        description="Detail level: full (default), list (id + name only)",
+    )
 
 
 # ── Result types (discriminated by "type" field) ──
@@ -374,29 +379,42 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     # Scope controls which fields are included
     include_scripts = req.scope in ("scripts", "js", "ts", "all")
     include_display = req.scope in ("eventsheet", "all")
+    is_list = req.detail == "list"
 
-    matches = [
-        LookupMatchResult(
-            ace_id=m.ace_id,
-            ace_type=m.ace_type,
-            plugin_id=m.plugin_id,
-            en=ACELocaleResult(
-                name=m.en.name, desc=m.en.desc,
-                display=m.en.display or None if include_display else None,
-            ),
-            localized=ACELocaleResult(
-                name=m.zh.name, desc=m.zh.desc,
-                display=m.zh.display or None if include_display else None,
-            ) if include_localized else None,
-            script_name=m.script_name if include_scripts else None,
-            category=m.category,
-            relevance=m.relevance,
-            params=_convert_params(m.params),
-            is_trigger=m.is_trigger,
-            is_async=m.is_async,
-            return_type=m.return_type or None,
-        ) for m in lookup_result.matches
-    ]
+    if is_list:
+        matches = [
+            LookupMatchResult(
+                ace_id=m.ace_id,
+                ace_type=m.ace_type,
+                plugin_id=m.plugin_id,
+                en=ACELocaleResult(name=m.en.name),
+                localized=ACELocaleResult(name=m.zh.name) if include_localized else None,
+                script_name=m.script_name if include_scripts else None,
+            ) for m in lookup_result.matches
+        ]
+    else:
+        matches = [
+            LookupMatchResult(
+                ace_id=m.ace_id,
+                ace_type=m.ace_type,
+                plugin_id=m.plugin_id,
+                en=ACELocaleResult(
+                    name=m.en.name, desc=m.en.desc,
+                    display=m.en.display or None if include_display else None,
+                ),
+                localized=ACELocaleResult(
+                    name=m.zh.name, desc=m.zh.desc,
+                    display=m.zh.display or None if include_display else None,
+                ) if include_localized else None,
+                script_name=m.script_name if include_scripts else None,
+                category=m.category,
+                relevance=m.relevance,
+                params=_convert_params(m.params),
+                is_trigger=m.is_trigger,
+                is_async=m.is_async,
+                return_type=m.return_type or None,
+            ) for m in lookup_result.matches
+        ]
 
     # Keywords from filter_term
     filter_term = intent.filter_term or ""
