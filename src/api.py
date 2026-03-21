@@ -427,7 +427,11 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
 
 def _do_semantic(req: SearchRequest, _trace) -> list:
     """Execute semantic search phase. Returns list of result dicts."""
-    retriever = _get_retriever()
+    try:
+        retriever = _get_retriever()
+    except Exception as e:
+        logger.warning(f"Semantic search unavailable: {e}")
+        return []
 
     # Branch: plugin-specific filtered search
     if req.plugin:
@@ -497,8 +501,16 @@ def _do_semantic(req: SearchRequest, _trace) -> list:
 
 @app.get("/health", response_model=HealthResponse)
 def health():
-    retriever = _get_retriever()
-    detail = retriever.health_check()
+    try:
+        retriever = _get_retriever()
+        detail = retriever.health_check()
+    except Exception:
+        return HealthResponse(
+            status="lite",
+            qdrant=False,
+            embedding_model=EMBEDDING_MODEL,
+            message="Lite mode: lookup only (no Qdrant/embedding)",
+        )
     return HealthResponse(
         status=detail["status"],
         qdrant=detail["qdrant_connected"],
