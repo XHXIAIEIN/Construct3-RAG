@@ -156,8 +156,9 @@ This project uses data from [Construct 3](https://www.construct.net) by [Scirra 
 | Source | Usage |
 |--------|-------|
 | [Construct 3 Editor CDN](https://editor.construct.net) | ACE definitions, TypeScript interfaces, multilingual translations |
-| [Construct 3 Manual](https://www.construct.net/en/make-games/manuals/construct-3) | Official documentation (via [Markdown mirror](https://github.com/XHXIAIEIN/Construct3-Manual)) |
+| [Construct 3 Manual](https://www.construct.net/en/make-games/manuals/construct-3) | Official documentation |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Markdown mirror of the official manual |
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | Chinese synonym dictionary for query expansion |
 
 ## License
