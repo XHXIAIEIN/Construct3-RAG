@@ -213,12 +213,8 @@ function canvasMove(e) {
 }
 function canvasUp() { panning = false; canvas.classList.remove('grabbing'); }
 function canvasWheel(e) {
-  // Let scrollable card content handle its own scroll
-  let el = e.target;
-  while (el && el !== canvas) {
-    if (el.scrollHeight > el.clientHeight + 2 || el.tagName === 'TEXTAREA') return;
-    el = el.parentElement;
-  }
+  // Only zoom when scrolling on canvas background, not inside cards
+  if (e.target !== canvas) return;
   e.preventDefault();
   // Zoom from canvas center for consistent feel
   const rect = canvas.getBoundingClientRect();
