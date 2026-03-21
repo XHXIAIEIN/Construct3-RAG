@@ -95,6 +95,11 @@ class SearchRequest(BaseModel):
         pattern="^(auto|lookup|semantic)$",
         description="Execution mode: auto (both), lookup (keyword only), semantic (vector only)",
     )
+    scope: str = Field(
+        "eventsheet",
+        pattern="^(eventsheet|scripts|js|ts|all)$",
+        description="Search scope: eventsheet (default), scripts (js+ts), js, ts, all",
+    )
 
 
 # ── Result types (discriminated by "type" field) ──
@@ -153,7 +158,7 @@ class TermResult(BaseModel):
 class ACELocaleResult(BaseModel):
     name: str = ""
     desc: str = ""
-    display: str = ""
+    display: Optional[str] = None  # editor display template, only when scope=eventsheet|all
 
 class LookupMatchResult(BaseModel):
     """Structured ACE/property match from lookup."""
@@ -162,7 +167,7 @@ class LookupMatchResult(BaseModel):
     plugin_id: str
     en: ACELocaleResult = ACELocaleResult()
     localized: Optional[ACELocaleResult] = None
-    script_name: str = ""
+    script_name: Optional[str] = None  # only when scope includes scripts
     category: str = ""
     relevance: int = 0
     params: List[ACEParam] = []
@@ -366,14 +371,24 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             ) for p in raw_params
         ]
 
+    # Scope controls which fields are included
+    include_scripts = req.scope in ("scripts", "js", "ts", "all")
+    include_display = req.scope in ("eventsheet", "all")
+
     matches = [
         LookupMatchResult(
             ace_id=m.ace_id,
             ace_type=m.ace_type,
             plugin_id=m.plugin_id,
-            en=ACELocaleResult(name=m.en.name, desc=m.en.desc, display=m.en.display),
-            localized=ACELocaleResult(name=m.zh.name, desc=m.zh.desc, display=m.zh.display) if include_localized else None,
-            script_name=m.script_name,
+            en=ACELocaleResult(
+                name=m.en.name, desc=m.en.desc,
+                display=m.en.display or None if include_display else None,
+            ),
+            localized=ACELocaleResult(
+                name=m.zh.name, desc=m.zh.desc,
+                display=m.zh.display or None if include_display else None,
+            ) if include_localized else None,
+            script_name=m.script_name if include_scripts else None,
             category=m.category,
             relevance=m.relevance,
             params=_convert_params(m.params),
