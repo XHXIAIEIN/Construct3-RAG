@@ -151,9 +151,12 @@ Construct3-RAG/
 
 ## Credits
 
-| Project | Usage |
-|---------|-------|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Official manual in Markdown |
+This project uses data from [Construct 3](https://www.construct.net) by [Scirra Ltd](https://www.scirra.com). Construct 3 is a trademark of Scirra Ltd. ACE definitions, TypeScript interfaces, and language files are fetched from the official Construct 3 editor CDN for educational and tooling purposes.
+
+| Source | Usage |
+|--------|-------|
+| [Construct 3 Editor CDN](https://editor.construct.net) | ACE definitions, TypeScript interfaces, multilingual translations |
+| [Construct 3 Manual](https://www.construct.net/en/make-games/manuals/construct-3) | Official documentation (via [Markdown mirror](https://github.com/XHXIAIEIN/Construct3-Manual)) |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Official example projects |
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | Chinese synonym dictionary for query expansion |
 
