@@ -44,6 +44,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 
 /* Card */
 .card{position:absolute;width:480px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
+.card.wide{width:640px}
 .card:hover{border-color:#505050}
 .card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:8px;background:var(--deepBg);border-radius:8px 8px 0 0;user-select:none}
 .card-title{flex:1;font-size:12px;font-weight:bold;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -66,7 +67,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 
 /* Presets */
 .presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
-.preset-btn{padding:3px 8px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:10px inherit;cursor:pointer;white-space:nowrap}
+.preset-btn{padding:2px 6px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:9px inherit;cursor:pointer;white-space:nowrap}
 .preset-btn:hover{background:var(--selBg);color:var(--fg);border-color:var(--accent)}
 
 /* Splitter between request and response */
@@ -75,7 +76,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .panel-splitter:hover::after{background:var(--accent)}
 
 /* Actions */
-.card-actions{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border)}
+.card-actions{display:flex;align-items:center;gap:8px;padding:6px 0;flex-shrink:0}
 .send-btn{padding:5px 16px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font:11px/1 inherit;font-weight:bold}
 .send-btn:hover{background:#6488d8}
 .send-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -85,7 +86,11 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .latency{font-size:10px;color:var(--dis)}
 
 /* Response: takes ALL remaining space */
-.response-section{flex:1;min-height:60px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.response-section{flex:1;min-height:30px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.response-section.collapsed .response-wrap{display:none}
+.response-section.collapsed .section-label::before{content:'▶ '}
+.response-section:not(.collapsed) .section-label::before{content:'▼ '}
+.resp-header{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
 .response-wrap{flex:1;min-height:0;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
 .response-json{padding:8px;font:11px/1.5 inherit;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
 .response-placeholder{padding:8px;color:var(--dis);font-size:11px;font-style:italic}
@@ -317,7 +322,7 @@ function createCard(apiKey, posX, posY) {
   if (!api) return;
   const id = 'card-' + (++cardCount);
   const card = document.createElement('div');
-  card.className = 'card';
+  card.className = 'card' + (apiKey === 'search' ? ' wide' : '');
   card.id = id;
   card.style.left = posX + 'px';
   card.style.top = posY + 'px';
@@ -346,21 +351,20 @@ function createCard(apiKey, posX, posY) {
     </div>
     <div class="card-body">
       ${requestSection}
-      <div class="panel-splitter" onmousedown="startSplit(event, this)"></div>
+      <div class="card-actions">
+        <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
+        <span class="status-badge" id="${id}-status"></span>
+        <span class="latency" id="${id}-latency"></span>
+      </div>
       <div class="response-section">
-        <div class="trace-toggle" onclick="this.nextElementSibling.classList.toggle('open')">▶ Trace log</div>
-        <div class="trace-panel" id="${id}-trace"></div>
-        <div class="section-label">Response</div>
+        <div class="resp-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="section-label" style="cursor:pointer">Response</span>
+          <button class="copy-btn" style="opacity:1;position:static;margin-left:auto" onclick="event.stopPropagation();copyResponse('${id}')">Copy</button>
+        </div>
         <div class="response-wrap" id="${id}-resp-wrap">
           <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
-          <button class="copy-btn" onclick="copyResponse('${id}')">Copy</button>
         </div>
       </div>
-    </div>
-    <div class="card-actions">
-      <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
-      <span class="status-badge" id="${id}-status"></span>
-      <span class="latency" id="${id}-latency"></span>
     </div>`;
 
   world.appendChild(card);
