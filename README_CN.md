@@ -37,7 +37,12 @@ python scripts/setup.py
 
 ## 完整模式（语义搜索）
 
-在关键词查找基础上增加向量语义搜索。需要 Docker 和 ~4GB 磁盘空间。
+在关键词查找基础上增加向量语义搜索。
+
+环境要求：
+- Docker（用于 Qdrant 向量数据库）
+- ~4GB 磁盘空间（embedding 模型 + 向量索引）
+- 推荐 GPU（CPU 可用但较慢，embedding 耗时约 10 倍）
 
 ```bash
 # 1. 安装全部依赖
