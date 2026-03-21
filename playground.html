@@ -352,6 +352,11 @@ function createCard(apiKey, posX, posY) {
       ${hasBody ? `
       <div class="query-bar">
         <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
+        <select class="tb-select" id="${id}-mode" style="font-size:10px;padding:4px 6px">
+          <option value="auto">auto</option>
+          <option value="lookup">lookup</option>
+          <option value="semantic">semantic</option>
+        </select>
         ${presetOptions ? `<select class="tb-select" style="font-size:10px;padding:4px 6px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">presets</option>${presetOptions}</select>` : ''}
         <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
         <span class="latency" id="${id}-latency"></span>
@@ -532,13 +537,15 @@ async function sendRequest(cardId, apiKey) {
   const latencyEl = document.getElementById(cardId + '-latency');
   const sendBtn = document.getElementById(cardId + '-send');
 
-  // Sync query input → editor body
+  // Sync query input + mode dropdown → editor body
   const queryInput = document.getElementById(cardId + '-query');
+  const modeSelect = document.getElementById(cardId + '-mode');
   const editor = document.getElementById(cardId + '-editor');
-  if (queryInput && editor) {
+  if (editor) {
     try {
       const body = JSON.parse(editor.value);
-      body.query = queryInput.value;
+      if (queryInput) body.query = queryInput.value;
+      if (modeSelect) body.mode = modeSelect.value;
       editor.value = JSON.stringify(body, null, 2);
     } catch {}
   }
