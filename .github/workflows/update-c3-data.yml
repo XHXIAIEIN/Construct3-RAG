@@ -117,16 +117,15 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "data: update C3 data to ${{ steps.check.outputs.latest }}"
-          title: "Update Construct 3 data: ${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}"
+          commit-message: "chore: update Construct 3 API definitions to ${{ steps.check.outputs.latest }}"
+          title: "Construct 3 ${{ steps.check.outputs.latest }}: update API definitions"
           body: |
-            Automated update from [Construct 3 CDN](https://editor.construct.net).
+            New Construct 3 stable release detected.
 
-            **Version**: ${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}
+            `${{ steps.check.outputs.current }}` → `${{ steps.check.outputs.latest }}`
 
-            Updated:
-            - `data/c3-schemas/` — ACE definitions (plugins + behaviors)
-            - `data/c3-ts-defs/` — TypeScript interface definitions
-            - `src/config.py` — default C3_VERSION
-          branch: update-c3-${{ steps.check.outputs.latest }}
+            - `data/c3-schemas/` — ACE definitions (conditions, actions, expressions)
+            - `data/c3-ts-defs/` — TypeScript scripting interfaces
+            - `src/config.py` — default version updated
+          branch: c3-${{ steps.check.outputs.latest }}
           delete-branch: true
