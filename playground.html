@@ -74,15 +74,22 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .panel-splitter::after{content:'';width:32px;height:2px;background:var(--border);border-radius:1px}
 .panel-splitter:hover::after{background:var(--accent)}
 
-/* Actions */
-.card-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:6px 0;flex-shrink:0;border-bottom:1px solid var(--border);margin-bottom:6px}
-.send-btn{padding:5px 16px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font:11px/1 inherit;font-weight:bold}
+/* Query bar: input + dropdown + send */
+.query-bar{display:flex;align-items:center;gap:6px;padding:0 0 6px;flex-shrink:0}
+.query-input{flex:1;padding:5px 8px;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;color:var(--fg);font:12px inherit;outline:none}
+.query-input:focus{border-color:var(--accent)}
+.query-input::placeholder{color:var(--dis)}
+.send-btn{padding:5px 14px;border:none;border-radius:4px;cursor:pointer;font:11px/1 inherit;font-weight:bold;color:#fff;background:var(--accent);transition:background .15s}
 .send-btn:hover{background:#6488d8}
 .send-btn:disabled{opacity:.5;cursor:not-allowed}
-.status-badge{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:bold;display:none}
-.status-badge.ok{display:inline;background:#1a3a2a;color:var(--green)}
-.status-badge.err{display:inline;background:#3a1a1a;color:var(--red)}
+.send-btn.ok{background:#1a6a3a}
+.send-btn.err{background:#6a1a2a}
 .latency{font-size:10px;color:var(--dis)}
+
+/* Request body: collapsible */
+.request-section.collapsed .json-editor{display:none}
+.req-toggle{font-size:10px;color:var(--secondFg);cursor:pointer;user-select:none;padding:2px 0}
+.req-toggle:hover{color:var(--accent)}
 
 /* Response: takes ALL remaining space */
 .response-section{flex:1;min-height:30px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
@@ -156,8 +163,8 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 
 <div id="toolbar">
   <div class="logo">Construct 3 <span>RAG</span> Playground</div>
+  <input id="baseUrl" type="hidden" value="" />
   <div class="sep"></div>
-  <input id="baseUrl" class="tb-input" value="http://localhost:8765" placeholder="Base URL" />
   <select id="apiSelect" class="tb-select">
     <option value="health">GET /health</option>
     <option value="search">POST /search</option>
@@ -328,19 +335,12 @@ function createCard(apiKey, posX, posY) {
 
   const methodClass = api.method.toLowerCase();
 
-  let requestSection = '';
-  if (api.body !== null) {
-    requestSection = `
-      <div class="request-section">
-        <div class="section-label">Request Body</div>
-        <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
-      </div>`;
-  } else {
-    requestSection = `<div class="no-body">No request body</div>`;
-  }
+  const hasBody = api.body !== null;
+  const defaultQuery = api.body?.query || '';
 
-  const presetsHtml = api.presets ? api.presets.map((p, i) =>
-    `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
+  // Presets as <option> for dropdown
+  const presetOptions = api.presets ? api.presets.map((p, i) =>
+    `<option value="${i}">${p.label}</option>`
   ).join('') : '';
 
   card.innerHTML = `
@@ -350,13 +350,22 @@ function createCard(apiKey, posX, posY) {
       <button class="hdr-btn" onclick="this.closest('.card').remove()" title="Close">×</button>
     </div>
     <div class="card-body">
-      ${requestSection}
-      <div class="card-toolbar">
+      ${hasBody ? `
+      <div class="query-bar">
+        <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
+        ${presetOptions ? `<select class="tb-select" style="font-size:10px;padding:4px 6px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">presets</option>${presetOptions}</select>` : ''}
         <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
-        <span class="status-badge" id="${id}-status"></span>
         <span class="latency" id="${id}-latency"></span>
-        ${presetsHtml ? `<div class="sep" style="height:14px"></div>${presetsHtml}` : ''}
-      </div>
+      </div>` : ''}
+      ${hasBody ? `
+      <div class="request-section collapsed" id="${id}-req-section">
+        <div class="req-toggle" onclick="this.parentElement.classList.toggle('collapsed')">▶ Request Body</div>
+        <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
+      </div>` : `
+      <div class="query-bar">
+        <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
+        <span class="latency" id="${id}-latency"></span>
+      </div>`}
       <div class="response-section">
         <div class="resp-header" onclick="this.parentElement.classList.toggle('collapsed')">
           <span class="section-label" style="cursor:pointer">Response</span>
@@ -383,19 +392,19 @@ function createCard(apiKey, posX, posY) {
 }
 
 function applyPreset(cardId, presetIdx, apiKey) {
-  const editor = document.getElementById(cardId + '-editor');
-  if (!editor) return;
   const preset = APIS[apiKey].presets[presetIdx];
-  try {
-    const body = JSON.parse(editor.value);
-    body.query = preset.query;
-    editor.value = JSON.stringify(body, null, 2);
-    editor.classList.remove('invalid');
-  } catch {
-    // If current JSON is broken, reset to default with preset query
-    const body = { ...APIS[apiKey].body, query: preset.query };
-    editor.value = JSON.stringify(body, null, 2);
-    editor.classList.remove('invalid');
+  if (!preset) return;
+  // Set query input
+  const queryInput = document.getElementById(cardId + '-query');
+  if (queryInput) queryInput.value = preset.query;
+  // Also sync to editor body
+  const editor = document.getElementById(cardId + '-editor');
+  if (editor) {
+    try {
+      const body = JSON.parse(editor.value);
+      body.query = preset.query;
+      editor.value = JSON.stringify(body, null, 2);
+    } catch {}
   }
 }
 
@@ -521,30 +530,36 @@ async function sendRequest(cardId, apiKey) {
   const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
   const url = baseUrl + api.path;
   const respEl = document.getElementById(cardId + '-resp');
-  const statusEl = document.getElementById(cardId + '-status');
   const latencyEl = document.getElementById(cardId + '-latency');
   const sendBtn = document.getElementById(cardId + '-send');
 
+  // Sync query input → editor body
+  const queryInput = document.getElementById(cardId + '-query');
+  const editor = document.getElementById(cardId + '-editor');
+  if (queryInput && editor) {
+    try {
+      const body = JSON.parse(editor.value);
+      body.query = queryInput.value;
+      editor.value = JSON.stringify(body, null, 2);
+    } catch {}
+  }
+
   sendBtn.disabled = true;
   sendBtn.textContent = '...';
-  statusEl.className = 'status-badge';
-  statusEl.style.display = 'none';
+  sendBtn.className = 'send-btn';
   latencyEl.textContent = '';
   respEl.innerHTML = '<span class="response-placeholder">Loading...</span>';
 
   const opts = { method: api.method, headers: {} };
-  if (api.method === 'POST') {
-    const editor = document.getElementById(cardId + '-editor');
-    if (editor) {
-      try {
-        const parsed = JSON.parse(editor.value);
-        opts.headers['Content-Type'] = 'application/json';
-        opts.body = JSON.stringify(parsed);
-      } catch {
-        respEl.innerHTML = '<span class="response-placeholder" style="color:var(--red)">Invalid JSON in request body</span>';
-        sendBtn.disabled = false; sendBtn.textContent = 'Send';
-        return;
-      }
+  if (api.method === 'POST' && editor) {
+    try {
+      const parsed = JSON.parse(editor.value);
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(parsed);
+    } catch {
+      respEl.innerHTML = '<span class="response-placeholder" style="color:var(--red)">Invalid JSON in request body</span>';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send'; sendBtn.className = 'send-btn';
+      return;
     }
   }
 
@@ -560,29 +575,9 @@ async function sendRequest(cardId, apiKey) {
       data = await res.text();
     }
 
-    statusEl.textContent = res.status + ' ' + res.statusText;
-    statusEl.className = 'status-badge ' + (res.ok ? 'ok' : 'err');
-    statusEl.style.display = 'inline';
-    latencyEl.textContent = ms + 'ms';
-
-    // Populate trace log if available
-    const traceEl = document.getElementById(cardId + '-trace');
-    if (traceEl && data?.trace?.length) {
-      traceEl.innerHTML = data.trace.map(s => {
-        // Highlight conf= values with color coding
-        const msg = s.message.replace(/conf=(\d+\.\d+)/g, (_, v) => {
-          const n = parseFloat(v);
-          const cls = n >= 0.85 ? 'high' : n >= 0.65 ? 'mid' : 'low';
-          return `<span class="trace-conf ${cls}">conf=${v}</span>`;
-        });
-        return `<div class="trace-step"><span class="trace-phase ${s.phase}">${s.phase}</span><span class="trace-msg">${msg}</span></div>`;
-      }
-      ).join('');
-      traceEl.classList.add('open');
-    } else if (traceEl) {
-      traceEl.innerHTML = '';
-      traceEl.classList.remove('open');
-    }
+    sendBtn.textContent = res.status;
+    sendBtn.className = 'send-btn ' + (res.ok ? 'ok' : 'err');
+    latencyEl.textContent = ms >= 1000 ? (ms/1000).toFixed(1) + 's' : ms + 'ms';
 
     if (typeof data === 'string') {
       respEl.textContent = data;
@@ -592,15 +587,16 @@ async function sendRequest(cardId, apiKey) {
     }
   } catch (err) {
     const ms = Math.round(performance.now() - t0);
-    statusEl.textContent = 'Error';
-    statusEl.className = 'status-badge err';
-    statusEl.style.display = 'inline';
-    latencyEl.textContent = ms + 'ms';
+    const ms = Math.round(performance.now() - t0);
+    sendBtn.textContent = 'ERR';
+    sendBtn.className = 'send-btn err';
+    latencyEl.textContent = ms >= 1000 ? (ms/1000).toFixed(1) + 's' : ms + 'ms';
     respEl.innerHTML = `<span class="response-placeholder" style="color:var(--red)">${err.message}</span>`;
   }
 
   sendBtn.disabled = false;
-  sendBtn.textContent = 'Send';
+  // Reset button after 3s
+  setTimeout(() => { if (!sendBtn.disabled) { sendBtn.textContent = 'Send'; sendBtn.className = 'send-btn'; } }, 3000);
 }
 
 function copyResponse(cardId) {
