@@ -70,7 +70,24 @@ curl -X POST localhost:8765/search \
   -d '{"query":"Sprite collision","mode":"lookup"}'
 ```
 
-### Response
+### Response — mode=list
+
+```json
+{
+  "query": "Sprite",
+  "mode": "list",
+  "ms": 0.5,
+  "lookup": {
+    "hit": true,
+    "plugin": {"id": "sprite", "name": "Sprite"},
+    "conditions": ["Is playing", "On finished", "Collisions enabled"],
+    "actions": ["Set animation", "Stop", "Start", "Set frame"],
+    "expressions": ["AnimationFrame", "AnimationName", "AnimationSpeed"]
+  }
+}
+```
+
+### Response — mode=lookup
 
 ```json
 {
@@ -79,8 +96,6 @@ curl -X POST localhost:8765/search \
   "ms": 0.5,
   "lookup": {
     "hit": true,
-    "tier": 1,
-    "confidence": 0.85,
     "intent": "ace_search",
     "plugin": {"id": "sprite", "name": "Sprite"},
     "matches": [
@@ -89,7 +104,6 @@ curl -X POST localhost:8765/search \
         "ace_type": "condition",
         "plugin_id": "_common",
         "en": {"name": "On collision with another object", "desc": "...", "display": "On collision with {0}"},
-        "script_name": "on-collision-with-another-object",
         "category": "common",
         "params": [{"name": "Object", "type": "object", "desc": "..."}]
       }

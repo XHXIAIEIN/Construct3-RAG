@@ -70,7 +70,25 @@ curl -X POST localhost:8765/search \
   -d '{"query":"Sprite 碰撞检测","mode":"lookup"}'
 ```
 
-### 响应
+### 响应 — mode=list
+
+```json
+{
+  "query": "Sprite",
+  "mode": "list",
+  "ms": 0.5,
+  "lookup": {
+    "hit": true,
+    "lang": "zh",
+    "plugin": {"id": "sprite", "name": "Sprite", "name_localized": "精灵"},
+    "conditions": ["Is playing", "On finished", "Collisions enabled"],
+    "actions": ["Set animation", "Stop", "Start"],
+    "expressions": ["AnimationFrame", "AnimationName", "AnimationSpeed"]
+  }
+}
+```
+
+### 响应 — mode=lookup
 
 ```json
 {
@@ -79,8 +97,6 @@ curl -X POST localhost:8765/search \
   "ms": 0.5,
   "lookup": {
     "hit": true,
-    "tier": 1,
-    "confidence": 0.85,
     "intent": "ace_search",
     "lang": "zh",
     "plugin": {"id": "sprite", "name": "Sprite", "name_localized": "精灵"},
@@ -91,7 +107,6 @@ curl -X POST localhost:8765/search \
         "plugin_id": "_common",
         "en": {"name": "On collision with another object", "desc": "...", "display": "On collision with {0}"},
         "localized": {"name": "碰撞到其他对象", "desc": "...", "display": "碰撞到 {0}"},
-        "script_name": "on-collision-with-another-object",
         "category": "common",
         "params": [{"name": "Object", "type": "object", "desc": "..."}]
       }
