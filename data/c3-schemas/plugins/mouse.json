@@ -1,0 +1,608 @@
+{
+  "id": "mouse",
+  "originalId": "Mouse",
+  "name_zh": "鼠标",
+  "name_en": "Mouse",
+  "description_zh": "读取用户鼠标的相关操作。",
+  "description_en": "Retrieve input from the mouse.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "cursor",
+    "mouse",
+    "pointer-lock",
+    "wheel"
+  ],
+  "conditions": [
+    {
+      "id": "on-click",
+      "name_zh": "鼠标点击",
+      "name_en": "On click",
+      "description_zh": "单击或双击鼠标按键时触发。",
+      "description_en": "Triggered when a mouse button clicked or double-clicked.",
+      "display_zh": "[b]{1}[/b]鼠标[b]{0}[/b]",
+      "display_en": "On [b]{0}[/b] button [b]{1}[/b]",
+      "scriptName": "OnClick",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "mouse-button",
+          "type": "combo",
+          "name_en": "Mouse button",
+          "name_zh": "鼠标键",
+          "desc_en": "Select the mouse button to check.",
+          "desc_zh": "选择要检查的鼠标按键。",
+          "items": [
+            "left",
+            "middle",
+            "right",
+            "button-4",
+            "button-5"
+          ],
+          "items_i18n": {
+            "left": {
+              "en": "Left",
+              "zh": "左键"
+            },
+            "middle": {
+              "en": "Middle",
+              "zh": "中键"
+            },
+            "right": {
+              "en": "Right",
+              "zh": "右键"
+            },
+            "button-4": {
+              "en": "Button 4",
+              "zh": "鼠标键4"
+            },
+            "button-5": {
+              "en": "Button 5",
+              "zh": "鼠标键5"
+            }
+          }
+        },
+        {
+          "id": "click-type",
+          "type": "combo",
+          "name_en": "Click type",
+          "name_zh": "动作",
+          "desc_en": "Select which kind of click to check for.",
+          "desc_zh": "选择要检查的点击类型。注意，只有 '左键' 可以触发 '双击' 动作。",
+          "items": [
+            "clicked",
+            "double-clicked"
+          ],
+          "items_i18n": {
+            "clicked": {
+              "en": "Clicked",
+              "zh": "点击"
+            },
+            "double-clicked": {
+              "en": "Double-clicked",
+              "zh": "双击"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-click",
+      "name_zh": "任意点击",
+      "name_en": "On any click",
+      "description_zh": "单击或双击任意鼠标按键时触发。",
+      "description_en": "Triggered when any mouse button clicked or double-clicked.",
+      "display_zh": "任意点击",
+      "display_en": "On any click",
+      "scriptName": "OnAnyClick",
+      "category": "mouse",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "mouse-button-is-down",
+      "name_zh": "按住鼠标键",
+      "name_en": "Mouse button is down",
+      "description_zh": "检测当前是否按下鼠标按钮。",
+      "description_en": "Test if a mouse button is currently held down.",
+      "display_zh": "按住鼠标[b]{0}[/b]",
+      "display_en": "[b]{0}[/b] button is down",
+      "scriptName": "IsButtonDown",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "mouse-button",
+          "type": "combo",
+          "name_en": "Mouse button",
+          "name_zh": "鼠标键",
+          "desc_en": "Select the mouse button to check.",
+          "desc_zh": "选择要检查的鼠标按钮。",
+          "items": [
+            "left",
+            "middle",
+            "right",
+            "button-4",
+            "button-5"
+          ],
+          "items_i18n": {
+            "left": {
+              "en": "Left",
+              "zh": "左键"
+            },
+            "middle": {
+              "en": "Middle",
+              "zh": "中键"
+            },
+            "right": {
+              "en": "Right",
+              "zh": "右键"
+            },
+            "button-4": {
+              "en": "Button 4",
+              "zh": "鼠标键4"
+            },
+            "button-5": {
+              "en": "Button 5",
+              "zh": "鼠标键5"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "on-button-released",
+      "name_zh": "松开鼠标键",
+      "name_en": "On button released",
+      "description_zh": "释放鼠标按钮时触发。",
+      "description_en": "Triggered when a mouse button released.",
+      "display_zh": "松开鼠标[b]{0}[/b]",
+      "display_en": "On [b]{0}[/b] button released",
+      "scriptName": "OnRelease",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "mouse-button",
+          "type": "combo",
+          "name_en": "Mouse button",
+          "name_zh": "鼠标键",
+          "desc_en": "Select the mouse button to check.",
+          "desc_zh": "选择要检查的鼠标按钮。",
+          "items": [
+            "left",
+            "middle",
+            "right",
+            "button-4",
+            "button-5"
+          ],
+          "items_i18n": {
+            "left": {
+              "en": "Left",
+              "zh": "左键"
+            },
+            "middle": {
+              "en": "Middle",
+              "zh": "中键"
+            },
+            "right": {
+              "en": "Right",
+              "zh": "右键"
+            },
+            "button-4": {
+              "en": "Button 4",
+              "zh": "鼠标键4"
+            },
+            "button-5": {
+              "en": "Button 5",
+              "zh": "鼠标键5"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-object-clicked",
+      "name_zh": "点击对象",
+      "name_en": "On object clicked",
+      "description_zh": "单击或双击对象时触发。",
+      "description_en": "Triggered when a mouse button clicked or double-clicked on an object.",
+      "display_zh": "[b]{1}[/b]鼠标[b]{0}[/b] {2}",
+      "display_en": "On [b]{0}[/b] button [b]{1}[/b] on {2}",
+      "scriptName": "OnObjectClicked",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "mouse-button",
+          "type": "combo",
+          "name_en": "Mouse button",
+          "name_zh": "鼠标键",
+          "desc_en": "Select the mouse button to check.",
+          "desc_zh": "选择要检查的鼠标按钮。",
+          "items": [
+            "left",
+            "middle",
+            "right",
+            "button-4",
+            "button-5"
+          ],
+          "items_i18n": {
+            "left": {
+              "en": "Left",
+              "zh": "左键"
+            },
+            "middle": {
+              "en": "Middle",
+              "zh": "中键"
+            },
+            "right": {
+              "en": "Right",
+              "zh": "右键"
+            },
+            "button-4": {
+              "en": "Button 4",
+              "zh": "鼠标键4"
+            },
+            "button-5": {
+              "en": "Button 5",
+              "zh": "鼠标键5"
+            }
+          }
+        },
+        {
+          "id": "click-type",
+          "type": "combo",
+          "name_en": "Click type",
+          "name_zh": "动作",
+          "desc_en": "Select which kind of click to check for.",
+          "desc_zh": "选择要检查的点击类型。注意，只有 '左键' 可以触发 '双击' 动作。",
+          "items": [
+            "clicked",
+            "double-clicked"
+          ],
+          "items_i18n": {
+            "clicked": {
+              "en": "Clicked",
+              "zh": "点击"
+            },
+            "double-clicked": {
+              "en": "Double-clicked",
+              "zh": "双击"
+            }
+          }
+        },
+        {
+          "id": "object-clicked",
+          "type": "object",
+          "name_en": "Object clicked",
+          "name_zh": "被点击的对象",
+          "desc_en": "Choose the object to check for a click on.",
+          "desc_zh": "选择要检查单击的对象。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "cursor-is-over-object",
+      "name_zh": "悬停在对象",
+      "name_en": "Cursor is over object",
+      "description_zh": "检查鼠标光标是否在对象上。",
+      "description_en": "Check if the mouse cursor is over an object.",
+      "display_zh": "悬停在 {0}",
+      "display_en": "Cursor is over {0}",
+      "scriptName": "IsOverObject",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object",
+          "name_zh": "对象",
+          "desc_en": "Choose the object to check for mouse over.",
+          "desc_zh": "选择要检查鼠标悬停的对象。"
+        }
+      ]
+    },
+    {
+      "id": "on-mouse-wheel",
+      "name_zh": "转动滚轮",
+      "name_en": "On mouse wheel",
+      "description_zh": "滚动鼠标滚轮时触发。",
+      "description_en": "Triggered when the mouse wheel is scrolled.",
+      "display_zh": "滚轮{0}转动",
+      "display_en": "On mouse wheel {0}",
+      "scriptName": "OnWheel",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "direction",
+          "type": "combo",
+          "name_en": "Direction",
+          "name_zh": "方向",
+          "desc_en": "Select which direction to detect the mouse wheel scrolling.",
+          "desc_zh": "选择检测鼠标滚轮滚动的方向。",
+          "items": [
+            "down",
+            "up",
+            "any"
+          ],
+          "items_i18n": {
+            "down": {
+              "en": "down",
+              "zh": "向下"
+            },
+            "up": {
+              "en": "up",
+              "zh": "向上"
+            },
+            "any": {
+              "en": "any",
+              "zh": "任意"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-pointer-locked",
+      "name_zh": "光标锁启用",
+      "name_en": "On pointer locked",
+      "description_zh": "执行 '锁定光标' 动作后，光标锁定成功时触发。",
+      "description_en": "Triggered after 'Request pointer lock' if the pointer was successfully locked.",
+      "display_zh": "光标锁启用",
+      "display_en": "On pointer locked",
+      "scriptName": "OnPointerLocked",
+      "category": "pointer-lock",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-pointer-unlocked",
+      "name_zh": "光标锁解除",
+      "name_en": "On pointer unlocked",
+      "description_zh": "在 '启用光标锁' 条件触发后，再次将光标锁解除时触发。",
+      "description_en": "Triggered after 'On pointer locked' when the pointer is unlocked.",
+      "display_zh": "光标锁解除",
+      "display_en": "On pointer unlocked",
+      "scriptName": "OnPointerUnlocked",
+      "category": "pointer-lock",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-pointer-lock-error",
+      "name_zh": "光标锁异常",
+      "name_en": "On pointer lock error",
+      "description_zh": "光标锁出现异常错误时触发。",
+      "description_en": "Triggered if an error occurs with pointer lock.",
+      "display_zh": "光标锁异常",
+      "display_en": "On pointer lock error",
+      "scriptName": "OnPointerLockError",
+      "category": "pointer-lock",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "has-pointer-lock",
+      "name_zh": "已启用光标锁",
+      "name_en": "Has pointer lock",
+      "description_zh": "光标已经被锁定时触发。",
+      "description_en": "True if the pointer is currently locked.",
+      "display_zh": "已启用光标锁",
+      "display_en": "Has pointer lock",
+      "scriptName": "HasPointerLock",
+      "category": "pointer-lock",
+      "params": []
+    },
+    {
+      "id": "on-movement",
+      "name_zh": "移动鼠标",
+      "name_en": "On movement",
+      "description_zh": "鼠标每次发生移动时触发。注意，这也适用于没有光标锁的情况。",
+      "description_en": "Triggered every time the mouse moves. Note this also works without pointer lock.",
+      "display_zh": "移动鼠标",
+      "display_en": "On movement",
+      "scriptName": "OnMovement",
+      "category": "pointer-lock",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-cursor-style2",
+      "name_zh": "设置光标样式",
+      "name_en": "Set cursor style",
+      "description_zh": "更改鼠标的光标样式。",
+      "description_en": "Change the style of the mouse cursor.",
+      "display_zh": "设置光标样式为[b]{0}[/b]",
+      "display_en": "Set cursor to [b]{0}[/b]",
+      "scriptName": "SetCursor2",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "cursor-style",
+          "type": "combo-grouped",
+          "name_en": "Cursor style",
+          "name_zh": "光标样式",
+          "desc_en": "Choose the cursor style to set.",
+          "desc_zh": "选择要设置的光标样式。"
+        }
+      ]
+    },
+    {
+      "id": "set-cursor-from-sprite",
+      "name_zh": "设置指针样式为精灵",
+      "name_en": "Set cursor from sprite",
+      "description_zh": "将鼠标指针样式设置为精灵当前播放动画的图像。注意，此精灵对象需要放置在场景中。",
+      "description_en": "Set the mouse cursor to the same image used by a Sprite.",
+      "display_zh": "设置指针样式为{0}",
+      "display_en": "Set cursor from sprite {0}",
+      "scriptName": "SetCursorSprite",
+      "category": "mouse",
+      "params": [
+        {
+          "id": "sprite",
+          "type": "object",
+          "name_en": "Sprite",
+          "name_zh": "精灵",
+          "desc_en": "Choose a Sprite object to use as the cursor image.",
+          "desc_zh": "选择一个精灵对象作为指针的图像。"
+        }
+      ]
+    },
+    {
+      "id": "request-pointer-lock",
+      "name_zh": "启用光标锁",
+      "name_en": "Request pointer lock",
+      "description_zh": "请求锁定光标指针，通常用于控制3D相机。",
+      "description_en": "Request to lock the mouse pointer in order to use it for camera control. Usually this only works in a user input trigger.",
+      "display_zh": "启用光标锁 (禁用指针加速: [i]{0}[/i])",
+      "display_en": "Request pointer lock (unadjusted movement: [i]{0}[/i])",
+      "scriptName": "RequestPointerLock",
+      "category": "pointer-lock",
+      "params": [
+        {
+          "id": "unadjusted-movement",
+          "type": "boolean",
+          "name_en": "Unadjusted movement",
+          "name_zh": "禁用指针加速",
+          "desc_en": "Check to disable the system-level adjustment for mouse acceleration, and access raw mouse input instead.",
+          "desc_zh": "禁用系统的指针加速调整，以访问原始鼠标输入。"
+        }
+      ]
+    },
+    {
+      "id": "release-pointer-lock",
+      "name_zh": "解除光标锁",
+      "name_en": "Release pointer lock",
+      "description_zh": "释放光标锁，恢复正常的鼠标光标行为。",
+      "description_en": "Release any active pointer lock, restoring normal mouse pointer behavior.",
+      "display_zh": "解除光标锁",
+      "display_en": "Release pointer lock",
+      "scriptName": "ReleasePointerLock",
+      "category": "pointer-lock",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "x",
+      "name_zh": "X",
+      "name_en": "X",
+      "description_zh": "获取鼠标在场景的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "description_en": "Get the mouse cursor X co-ordinate in the layout.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "X",
+      "category": "cursor",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "y",
+      "name_zh": "Y",
+      "name_en": "Y",
+      "description_zh": "获取鼠标在场景中的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
+      "description_en": "Get the mouse cursor Y co-ordinate in the layout.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Y",
+      "category": "cursor",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "absolutex",
+      "name_zh": "绝对坐标X",
+      "name_en": "AbsoluteX",
+      "description_zh": "获取鼠标在画布中的绝对坐标X。",
+      "description_en": "Get the mouse cursor X co-ordinate on the canvas.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AbsoluteX",
+      "category": "cursor",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "absolutey",
+      "name_zh": "绝对坐标Y",
+      "name_en": "AbsoluteY",
+      "description_zh": "获取鼠标在画布中的绝对坐标Y。",
+      "description_en": "Get the mouse cursor Y co-ordinate on the canvas.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AbsoluteY",
+      "category": "cursor",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "movement-x",
+      "name_zh": "移动向量X",
+      "name_en": "MovementX",
+      "description_zh": "开启指针锁定时，获得指针的水平运动量。",
+      "description_en": "Get the horizontal movement when using pointer lock.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "MovementX",
+      "category": "pointer-lock",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "movement-y",
+      "name_zh": "移动向量Y",
+      "name_en": "MovementY",
+      "description_zh": "开启指针锁定时，获得指针的垂直运动量。",
+      "description_en": "Get the vertical movement when using pointer lock.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "MovementY",
+      "category": "pointer-lock",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "wheel-delta-x",
+      "name_zh": "滚轮增量X",
+      "name_en": "WheelDeltaX",
+      "description_zh": "获取鼠标滚轮在当前触发器的X轴滚动量。",
+      "description_en": "Get the X change in a mouse wheel trigger.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "WheelDeltaX",
+      "category": "wheel",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "wheel-delta-y",
+      "name_zh": "滚轮增量Y",
+      "name_en": "WheelDeltaY",
+      "description_zh": "获取鼠标滚轮在当前触发器的Y轴滚动量。",
+      "description_en": "Get the Y change in a mouse wheel trigger.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "WheelDeltaY",
+      "category": "wheel",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "wheel-delta-z",
+      "name_zh": "滚轮增量Z",
+      "name_en": "WheelDeltaZ",
+      "description_zh": "获取鼠标滚轮在当前触发器的Z轴滚动量。",
+      "description_en": "Get the Z change in a mouse wheel trigger.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "WheelDeltaZ",
+      "category": "wheel",
+      "params": [],
+      "returnType": "number"
+    }
+  ],
+  "properties": []
+}

@@ -1,0 +1,495 @@
+{
+  "id": "keyboard",
+  "originalId": "Keyboard",
+  "name_zh": "键盘",
+  "name_en": "Keyboard",
+  "description_zh": "识别键盘的按键输入。",
+  "description_en": "Retrieve input from the keyboard.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "key-codes",
+    "keyboard",
+    "keyboard-lock",
+    "left-right-keys"
+  ],
+  "conditions": [
+    {
+      "id": "on-key-code-pressed",
+      "name_zh": "按下按键码",
+      "name_en": "On key code pressed",
+      "description_zh": "按下按键码对应的按键时触发。",
+      "description_en": "Test for a key pressed by its numeric key code.",
+      "display_zh": "按下 [b]{0}[/b] 按键码",
+      "display_en": "On key code [b]{0}[/b] pressed",
+      "scriptName": "OnKeyCode",
+      "category": "key-codes",
+      "params": [
+        {
+          "id": "keycode",
+          "type": "number",
+          "name_en": "Keycode",
+          "name_zh": "按键码",
+          "desc_en": "Choose a numeric key code to test.",
+          "desc_zh": "输入要测试的按键码。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "key-code-is-down",
+      "name_zh": "按住按键码",
+      "name_en": "Key code is down",
+      "description_zh": "检测按键码对应的按键是否被按住。",
+      "description_en": "Test if a keyboard key is currently held down by its numeric key code.",
+      "display_zh": "按住 [b]{0}[/b] 按键码",
+      "display_en": "Key code [b]{0}[/b] is down",
+      "scriptName": "IsKeyCodeDown",
+      "category": "key-codes",
+      "params": [
+        {
+          "id": "keycode",
+          "type": "number",
+          "name_en": "Keycode",
+          "name_zh": "按键码",
+          "desc_en": "Choose a numeric key code to test.",
+          "desc_zh": "输入要测试的按键码。"
+        }
+      ]
+    },
+    {
+      "id": "on-key-code-released",
+      "name_zh": "松开按键码",
+      "name_en": "On key code released",
+      "description_zh": "松开按键码对应的按键时触发。",
+      "description_en": "Test for a key released by its numeric key code.",
+      "display_zh": "松开 [b]{0}[/b] 按键码",
+      "display_en": "On key code [b]{0}[/b] released",
+      "scriptName": "OnKeyCodeReleased",
+      "category": "key-codes",
+      "params": [
+        {
+          "id": "keycode",
+          "type": "number",
+          "name_en": "Keycode",
+          "name_zh": "按键码",
+          "desc_en": "Choose a numeric key code to test.",
+          "desc_zh": "输入要测试的按键码。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-key-pressed",
+      "name_zh": "按下按键",
+      "name_en": "On key pressed",
+      "description_zh": "按下键盘按键时触发。",
+      "description_en": "Triggered when a keyboard key is pressed.",
+      "display_zh": "按下 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] pressed",
+      "scriptName": "OnKey",
+      "category": "keyboard",
+      "params": [
+        {
+          "id": "key",
+          "type": "keyb",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available.",
+          "desc_zh": "选择一个键盘上的按键。注意：请避免使用一些不常用的按键。因为在不同的地区、不同操作系统、不同输入设备，用户使用的键盘可能并不相同，可能没有部分按键或按键的位置布局也不一致。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-key-pressed",
+      "name_zh": "按下任意键",
+      "name_en": "On any key pressed",
+      "description_zh": "按下键盘上的任意按键时触发。",
+      "description_en": "Triggered when any keyboard key is pressed.",
+      "display_zh": "按下任意键",
+      "display_en": "On any key pressed",
+      "scriptName": "OnAnyKey",
+      "category": "keyboard",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-key-released",
+      "name_zh": "松开任意键",
+      "name_en": "On any key released",
+      "description_zh": "松开键盘上任意按键时触发。",
+      "description_en": "Triggered when any keyboard key is released.",
+      "display_zh": "松开任意键",
+      "display_en": "On any key released",
+      "scriptName": "OnAnyKeyReleased",
+      "category": "keyboard",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "key-is-down",
+      "name_zh": "按住按键",
+      "name_en": "Key is down",
+      "description_zh": "检测当前是否按住键盘按键。",
+      "description_en": "Test if a keyboard key is currently held down.",
+      "display_zh": "按住 [b]{0}[/b] 键",
+      "display_en": "[b]{0}[/b] is down",
+      "scriptName": "IsKeyDown",
+      "category": "keyboard",
+      "params": [
+        {
+          "id": "key",
+          "type": "keyb",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available.",
+          "desc_zh": "选择一个按键。 请注意，在不同国际、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。"
+        }
+      ]
+    },
+    {
+      "id": "on-key-released",
+      "name_zh": "松开按键",
+      "name_en": "On key released",
+      "description_zh": "松开键盘键时触发。",
+      "description_en": "Triggered when a keyboard key is released.",
+      "display_zh": "松开 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] released",
+      "scriptName": "OnKeyReleased",
+      "category": "keyboard",
+      "params": [
+        {
+          "id": "key",
+          "type": "keyb",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.  Note that international users and users on different operating systems or devices may not have the same keys available.",
+          "desc_zh": "选择一个按键。 请注意，在不同地区、不同操作系统，或不同设备的用户他们使用的键盘可能没有相同的按键。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "is-keyboard-lock-supported",
+      "name_zh": "支持键盘锁功能",
+      "name_en": "Is keyboard lock supported",
+      "description_zh": "检查当前浏览器/平台是否支持键盘锁。",
+      "description_en": "True if the current browser/platform supports using keyboard lock.",
+      "display_zh": "支持键盘锁功能",
+      "display_en": "Is keyboard lock supported",
+      "scriptName": "IsKeyboardLockSupported",
+      "category": "keyboard-lock",
+      "params": []
+    },
+    {
+      "id": "on-keyboard-locked",
+      "name_zh": "键盘已锁定",
+      "name_en": "On keyboard locked",
+      "description_zh": "执行 '锁定键盘' 动作后，键盘锁定成功时触发。",
+      "description_en": "Triggered after the 'Lock keyboard' action after successfully locking the keyboard.",
+      "display_zh": "键盘已锁定",
+      "display_en": "On keyboard locked",
+      "scriptName": "OnKeyboardLocked",
+      "category": "keyboard-lock",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-keyboard-lock-error",
+      "name_zh": "键盘锁定错误",
+      "name_en": "On keyboard lock error",
+      "description_zh": "执行 '锁定键盘' 动作后，键盘锁定失败时触发。",
+      "description_en": "Triggered after the 'Lock keyboard' action after failing to lock the keyboard.",
+      "display_zh": "键盘锁定错误",
+      "display_en": "On keyboard lock error",
+      "scriptName": "OnKeyboardLockError",
+      "category": "keyboard-lock",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-left-right-key-pressed",
+      "name_zh": "按下功能键",
+      "name_en": "On left/right key pressed",
+      "description_zh": "按下指定的功能键时触发，例如左Shift、右Ctrl。",
+      "description_en": "Triggered when a specific left or right keyboard key is pressed, e.g. left shift.",
+      "display_zh": "按下 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] pressed",
+      "scriptName": "OnLeftRightKeyPressed",
+      "category": "left-right-keys",
+      "params": [
+        {
+          "id": "key",
+          "type": "combo",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.",
+          "desc_zh": "选择一个按键。",
+          "items": [
+            "left-shift",
+            "right-shift",
+            "left-control",
+            "right-control",
+            "left-alt",
+            "right-alt",
+            "left-meta",
+            "right-meta"
+          ],
+          "items_i18n": {
+            "left-shift": {
+              "en": "Left shift",
+              "zh": "Left shift"
+            },
+            "right-shift": {
+              "en": "Right shift",
+              "zh": "Right shift"
+            },
+            "left-control": {
+              "en": "Left control",
+              "zh": "Left control"
+            },
+            "right-control": {
+              "en": "Right control",
+              "zh": "Right control"
+            },
+            "left-alt": {
+              "en": "Left alt",
+              "zh": "Left alt"
+            },
+            "right-alt": {
+              "en": "Right alt",
+              "zh": "Right alt"
+            },
+            "left-meta": {
+              "en": "Left meta",
+              "zh": "Left meta"
+            },
+            "right-meta": {
+              "en": "Right meta",
+              "zh": "Right meta"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-left-right-key-released",
+      "name_zh": "松开功能键",
+      "name_en": "On left/right key released",
+      "description_zh": "松开指定的功能键时触发，例如左Shift、右Ctrl。",
+      "description_en": "Triggered when a specific left or right keyboard key is released, e.g. left shift.",
+      "display_zh": "松开 [b]{0}[/b] 键",
+      "display_en": "On [b]{0}[/b] released",
+      "scriptName": "OnLeftRightKeyReleased",
+      "category": "left-right-keys",
+      "params": [
+        {
+          "id": "key",
+          "type": "combo",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.",
+          "desc_zh": "选择一个按键。",
+          "items": [
+            "left-shift",
+            "right-shift",
+            "left-control",
+            "right-control",
+            "left-alt",
+            "right-alt",
+            "left-meta",
+            "right-meta"
+          ],
+          "items_i18n": {
+            "left-shift": {
+              "en": "Left shift",
+              "zh": "Left shift"
+            },
+            "right-shift": {
+              "en": "Right shift",
+              "zh": "Right shift"
+            },
+            "left-control": {
+              "en": "Left control",
+              "zh": "Left control"
+            },
+            "right-control": {
+              "en": "Right control",
+              "zh": "Right control"
+            },
+            "left-alt": {
+              "en": "Left alt",
+              "zh": "Left alt"
+            },
+            "right-alt": {
+              "en": "Right alt",
+              "zh": "Right alt"
+            },
+            "left-meta": {
+              "en": "Left meta",
+              "zh": "Left meta"
+            },
+            "right-meta": {
+              "en": "Right meta",
+              "zh": "Right meta"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "is-left-right-key-down",
+      "name_zh": "按住功能键",
+      "name_en": "Left/right key is down",
+      "description_zh": "按住功能键时触发，例如左 Shift、右 Ctrl。",
+      "description_en": "Test if a specific left or right keyboard key is currently held down, e.g. left shift.",
+      "display_zh": "按住 [b]{0}[/b] 键",
+      "display_en": "[b]{0}[/b] is down",
+      "scriptName": "IsLeftRightKeyDown",
+      "category": "left-right-keys",
+      "params": [
+        {
+          "id": "key",
+          "type": "combo",
+          "name_en": "Key",
+          "name_zh": "按键",
+          "desc_en": "Choose a key.",
+          "desc_zh": "选择一个按键。",
+          "items": [
+            "left-shift",
+            "right-shift",
+            "left-control",
+            "right-control",
+            "left-alt",
+            "right-alt",
+            "left-meta",
+            "right-meta"
+          ],
+          "items_i18n": {
+            "left-shift": {
+              "en": "Left shift",
+              "zh": "Left shift"
+            },
+            "right-shift": {
+              "en": "Right shift",
+              "zh": "Right shift"
+            },
+            "left-control": {
+              "en": "Left control",
+              "zh": "Left control"
+            },
+            "right-control": {
+              "en": "Right control",
+              "zh": "Right control"
+            },
+            "left-alt": {
+              "en": "Left alt",
+              "zh": "Left alt"
+            },
+            "right-alt": {
+              "en": "Right alt",
+              "zh": "Right alt"
+            },
+            "left-meta": {
+              "en": "Left meta",
+              "zh": "Left meta"
+            },
+            "right-meta": {
+              "en": "Right meta",
+              "zh": "Right meta"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "lock-keyboard",
+      "name_zh": "锁定键盘",
+      "name_en": "Lock keyboard",
+      "description_zh": "请求锁定键盘，允许游戏在全屏模式下访问特殊按键或组合键，而不被浏览器/应用程序捕获。注意：仅在全屏模式下生效。",
+      "description_en": "Request to lock the keyboard so keypresses are always received by the project rather than the browser/application. NOTE: this only takes effect in fullscreen mode.",
+      "display_zh": "锁定键盘(按键: [i]{0}[/i]))",
+      "display_en": "Lock keyboard (keys: [i]{0}[/i])",
+      "scriptName": "LockKeyboard",
+      "category": "keyboard-lock",
+      "params": [
+        {
+          "id": "keys",
+          "type": "string",
+          "name_en": "Keys",
+          "name_zh": "按键",
+          "desc_en": "A comma-separated array of keys to lock. Leave empty to request to lock all keys.",
+          "desc_zh": "要锁定的按键名，以逗号区分多个按键名。留空默认所有按键。注：按键名使用 keyCode 标准。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "unlock-keyboard",
+      "name_zh": "解锁键盘",
+      "name_en": "Unlock keyboard",
+      "description_zh": "解锁的键盘锁，恢复按键的默认处理。",
+      "description_en": "Unlock a previous keyboard lock, restoring the default handling of key presses.",
+      "display_zh": "解锁键盘",
+      "display_en": "Unlock keyboard",
+      "scriptName": "UnlockKeyboard",
+      "category": "keyboard-lock",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastkeycode",
+      "name_zh": "按键码",
+      "name_en": "LastKeyCode",
+      "description_zh": "获取最后按下的键的键代码。",
+      "description_en": "Get the key code for the last pressed key.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "LastKeyCode",
+      "category": "key-codes",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "stringfromkeycode",
+      "name_zh": "按键码字符串",
+      "name_en": "StringFromKeyCode",
+      "description_zh": "获取对应按键码的字符串。",
+      "description_en": "Get a character string representing a key code.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "StringFromKeyCode",
+      "category": "key-codes",
+      "params": [
+        {
+          "id": "key-code",
+          "type": "number",
+          "name_en": "Key code",
+          "name_zh": "按键码",
+          "desc_en": "The key code to get a string from",
+          "desc_zh": "用于获取对应字符串的按键码。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "typed-key",
+      "name_zh": "功能键",
+      "name_en": "TypedKey",
+      "description_zh": "获取最后按下的按键的类型字符串。",
+      "description_en": "Get the typed key string for the last pressed key.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "TypedKey",
+      "category": "key-codes",
+      "params": [],
+      "returnType": "string"
+    }
+  ],
+  "properties": []
+}

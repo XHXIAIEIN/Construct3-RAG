@@ -1,0 +1,528 @@
+{
+  "id": "ninepatch",
+  "originalId": "NinePatch",
+  "name_zh": "九宫图",
+  "name_en": "9-patch",
+  "description_zh": "将图像分割为9个部分，使边缘和中间填充部分可以单独拉伸或平铺。对制作气泡型对话框很有帮助。",
+  "description_en": "Create resizable boxes with an image border by splitting an image in to nine tiles.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "appearance",
+    "web"
+  ],
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "name_zh": "远程图像加载完成",
+      "name_en": "On image URL loaded",
+      "description_zh": "使用 '加载远程图像' 动作后，当图像从远程服务器加载完成时触发。",
+      "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_zh": "远程图像加载完成",
+      "display_en": "On image URL loaded",
+      "scriptName": "OnURLLoaded",
+      "category": "web",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-image-url-failed",
+      "name_zh": "图像加载失败",
+      "name_en": "On image URL failed",
+      "description_zh": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_zh": "网络图像加载失败",
+      "display_en": "On image URL failed to load",
+      "scriptName": "OnURLFailed",
+      "category": "web",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name_zh": "设置混合模式",
+      "name_en": "Set blend mode",
+      "description_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode",
+          "name_zh": "混合模式",
+          "desc_en": "Choose the new blend mode for this object.",
+          "desc_zh": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "items": [
+            "normal",
+            "additive",
+            "xor",
+            "copy",
+            "destination-over",
+            "source-in",
+            "destination-in",
+            "source-out",
+            "destination-out",
+            "source-atop",
+            "destination-atop",
+            "lighten",
+            "darken",
+            "multiply",
+            "screen"
+          ],
+          "items_i18n": {
+            "normal": {
+              "en": "Normal",
+              "zh": "正常"
+            },
+            "additive": {
+              "en": "Additive",
+              "zh": "叠加"
+            },
+            "xor": {
+              "en": "XOR",
+              "zh": "重叠消除"
+            },
+            "copy": {
+              "en": "Copy",
+              "zh": "覆盖"
+            },
+            "destination-over": {
+              "en": "Destination over",
+              "zh": "背景穿透"
+            },
+            "source-in": {
+              "en": "Source in",
+              "zh": "前景剪贴"
+            },
+            "destination-in": {
+              "en": "Destination in",
+              "zh": "背景剪贴"
+            },
+            "source-out": {
+              "en": "Source out",
+              "zh": "前景剔除"
+            },
+            "destination-out": {
+              "en": "Destination out",
+              "zh": "背景剔除"
+            },
+            "source-atop": {
+              "en": "Source atop",
+              "zh": "前景混合"
+            },
+            "destination-atop": {
+              "en": "Destination atop",
+              "zh": "背景混合"
+            },
+            "lighten": {
+              "en": "Lighten",
+              "zh": "变亮"
+            },
+            "darken": {
+              "en": "Darken",
+              "zh": "变暗"
+            },
+            "multiply": {
+              "en": "Multiply",
+              "zh": "正片叠底"
+            },
+            "screen": {
+              "en": "Screen",
+              "zh": "滤色"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-margins",
+      "name_zh": "设置边距",
+      "name_en": "Set margins",
+      "description_zh": "设置图像边距大小，使边缘的图像不会被拉伸或平铺。",
+      "description_en": "Set the image margin sizes in pixels.",
+      "display_zh": "设置图像边距 (左: [i]{0}[/i], 右: [i]{1}[/i], 上: [i]{2}[/i], 下: [i]{3}[/i])",
+      "display_en": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]",
+      "scriptName": "SetMargins",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "left-margin",
+          "type": "number",
+          "name_en": "Left margin",
+          "name_zh": "左边距",
+          "desc_en": "The left margin size in pixels.",
+          "desc_zh": "左边距大小，以像素为单位。"
+        },
+        {
+          "id": "right-margin",
+          "type": "number",
+          "name_en": "Right margin",
+          "name_zh": "右边距",
+          "desc_en": "The right margin size in pixels.",
+          "desc_zh": "右边距大小，以像素为单位。"
+        },
+        {
+          "id": "top-margin",
+          "type": "number",
+          "name_en": "Top margin",
+          "name_zh": "上边距",
+          "desc_en": "The top margin size in pixels.",
+          "desc_zh": "顶部边距大小，以像素为单位。"
+        },
+        {
+          "id": "bottom-margin",
+          "type": "number",
+          "name_en": "Bottom margin",
+          "name_zh": "下边距",
+          "desc_en": "The bottom margin size in pixels.",
+          "desc_zh": "底部边距大小，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "set-edges",
+      "name_zh": "设置边缘模式",
+      "name_en": "Set edges",
+      "description_zh": "设置边缘的显示模式。",
+      "description_en": "Set the style of the 9-patch edges.",
+      "display_zh": "设置边缘模式为 [i]{0}[/i]",
+      "display_en": "Set edges to [i]{0}[/i]",
+      "scriptName": "SetEdges",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "edges",
+          "type": "combo",
+          "name_en": "Edges",
+          "name_zh": "边缘",
+          "desc_en": "Choose whether to tile or stretch the edges.",
+          "desc_zh": "设置边缘部分的显示方式，选择平铺或拉伸。",
+          "items": [
+            "tile",
+            "stretch"
+          ],
+          "items_i18n": {
+            "tile": {
+              "en": "Tile",
+              "zh": "平铺"
+            },
+            "stretch": {
+              "en": "Stretch",
+              "zh": "拉伸"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-fill",
+      "name_zh": "设置填充模式",
+      "name_en": "Set fill",
+      "description_zh": "设置填充部分的显示模式。",
+      "description_en": "Set the style of the 9-patch fill.",
+      "display_zh": "设置填充模式为 [i]{0}[/i]",
+      "display_en": "Set fill to [i]{0}[/i]",
+      "scriptName": "SetFill",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "fill",
+          "type": "combo",
+          "name_en": "Fill",
+          "name_zh": "填充",
+          "desc_en": "Choose how to display the inside of the box.",
+          "desc_zh": "设置中间填充部分的显示方式，选择平铺、拉伸或透明。",
+          "items": [
+            "tile",
+            "stretch",
+            "transparent"
+          ],
+          "items_i18n": {
+            "tile": {
+              "en": "Tile",
+              "zh": "平铺"
+            },
+            "stretch": {
+              "en": "Stretch",
+              "zh": "拉伸"
+            },
+            "transparent": {
+              "en": "Transparent",
+              "zh": "透明"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-x",
+      "name_zh": "设置图像缩放比例X",
+      "name_en": "Set image X scale",
+      "description_zh": "设置图像在X轴的缩放比例。",
+      "description_en": "Set the X scale of the image within the object.",
+      "display_zh": "设置图像缩放比例X为[i]{0}[/i]",
+      "display_en": "Set image X scale to [i]{0}[/i]",
+      "scriptName": "SetImageScaleX",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "scale-x",
+          "type": "number",
+          "name_en": "X scale",
+          "name_zh": "缩放比例 X",
+          "desc_en": "The X scale of the image within the object, as a percentage.",
+          "desc_zh": "图像在 X 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-image-scale-y",
+      "name_zh": "设置图像缩放比例Y",
+      "name_en": "Set image Y scale",
+      "description_zh": "设置图像在Y轴的缩放比例。",
+      "description_en": "Set the Y scale of the image within the object.",
+      "display_zh": "设置图像缩放比例Y为[i]{0}[/i]",
+      "display_en": "Set image Y scale to [i]{0}[/i]",
+      "scriptName": "SetImageScaleY",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "scale-y",
+          "type": "number",
+          "name_en": "Y scale",
+          "name_zh": "缩放比例 Y",
+          "desc_en": "The Y scale of the image within the object, as a percentage.",
+          "desc_zh": "图像在 Y 轴的缩放比例，以百分比表示。"
+        }
+      ]
+    },
+    {
+      "id": "set-seams",
+      "name_zh": "设置边缘衔接",
+      "name_en": "Set seams",
+      "description_zh": "更改边缘衔接的模式。",
+      "description_en": "Change the 'Seams' property.",
+      "display_zh": "设置边缘衔接为[i]{0}[/i]",
+      "display_en": "Set seams to [i]{0}[/i]",
+      "scriptName": "SetSeams",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "seams",
+          "type": "combo",
+          "name_en": "Seams",
+          "name_zh": "模式",
+          "desc_en": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+          "desc_zh": "选择边缘衔接的渲染方式，用于实现无缝衔接效果。使用半透明的图像，建议使用 '精准匹配' 模式。",
+          "items": [
+            "exact",
+            "overlap"
+          ],
+          "items_i18n": {
+            "exact": {
+              "en": "Exact",
+              "zh": "精确"
+            },
+            "overlap": {
+              "en": "Overlap",
+              "zh": "覆盖"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name_zh": "加载远程图像",
+      "name_en": "Load image from URL",
+      "description_zh": "从远程服务器地址下载图像，或从数据地址加载图像。。",
+      "description_en": "Load an image from a web address or data URI.",
+      "display_zh": "加载远程图像(地址: [i]{0}[/i])",
+      "display_en": "Load image from [i]{0}[/i]",
+      "scriptName": "LoadURL",
+      "category": "web",
+      "params": [
+        {
+          "id": "uri",
+          "type": "string",
+          "name_en": "URI",
+          "name_zh": "URI",
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
+          "desc_zh": "填入远程服务器的地址，或图像数据地址的表达式。"
+        }
+      ],
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "left-margin",
+      "name_zh": "左边距",
+      "name_en": "LeftMargin",
+      "description_zh": "图像的左边距，以像素为单位。保持不被拉伸的空间。",
+      "description_en": "Left border margin on the image in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "LeftMargin",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "right-margin",
+      "name_zh": "右边距",
+      "name_en": "RightMargin",
+      "description_zh": "图像的右边距，以像素为单位。保持不被拉伸的空间。",
+      "description_en": "Right border margin on the image in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "RightMargin",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "top-margin",
+      "name_zh": "上边距",
+      "name_en": "TopMargin",
+      "description_zh": "图像的上边距，以像素为单位。保持不被拉伸的空间。",
+      "description_en": "Top border margin on the image in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "TopMargin",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "bottom-margin",
+      "name_zh": "下边距",
+      "name_en": "BottomMargin",
+      "description_zh": "图像的下边距，以像素为单位。保持不被拉伸的空间。",
+      "description_en": "Bottom border margin on the image in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "BottomMargin",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-x",
+      "name_zh": "缩放比例X",
+      "name_en": "ImageScaleX",
+      "description_zh": "获取图像在X轴的缩放比例。",
+      "description_en": "The X scale of the image within the object.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImageScaleX",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-y",
+      "name_zh": "缩放比例Y",
+      "name_en": "ImageScaleY",
+      "description_zh": "获取图像在Y轴的缩放比例。",
+      "description_en": "The Y scale of the image within the object.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImageScaleY",
+      "category": "appearance",
+      "params": [],
+      "returnType": "number"
+    }
+  ],
+  "properties": [
+    {
+      "id": "edit-image",
+      "name_en": "Image",
+      "name_zh": "图像",
+      "description_en": "Click to edit the object's image.",
+      "description_zh": "单击以编辑对象的图像。"
+    },
+    {
+      "id": "left-margin",
+      "name_en": "Left margin",
+      "name_zh": "左边距",
+      "description_en": "Left border margin on the image in pixels.",
+      "description_zh": "图像左边框保留的边距，以像素为单位。"
+    },
+    {
+      "id": "right-margin",
+      "name_en": "Right margin",
+      "name_zh": "右边距",
+      "description_en": "Right border margin on the image in pixels.",
+      "description_zh": "图像右边框保留的边距，以像素为单位。"
+    },
+    {
+      "id": "top-margin",
+      "name_en": "Top margin",
+      "name_zh": "上边距",
+      "description_en": "Top border margin on the image in pixels.",
+      "description_zh": "图像上边框保留的边距，以像素为单位。"
+    },
+    {
+      "id": "bottom-margin",
+      "name_en": "Bottom margin",
+      "name_zh": "下边距",
+      "description_en": "Bottom border margin on the image in pixels.",
+      "description_zh": "图像下边框保留的边距，以像素为单位。"
+    },
+    {
+      "id": "edges",
+      "name_en": "Edges",
+      "name_zh": "边缘",
+      "description_en": "Choose whether to tile or stretch the edges.",
+      "description_zh": "选择是否平铺或拉伸边缘。"
+    },
+    {
+      "id": "fill",
+      "name_en": "Fill",
+      "name_zh": "填充",
+      "description_en": "Choose how to display the inside of the box.",
+      "description_zh": "选择组合框的显示方式。"
+    },
+    {
+      "id": "image-scale-x",
+      "name_en": "Image scale X",
+      "name_zh": "图像比例X",
+      "description_en": "The X scale of the image within the object.",
+      "description_zh": "图像在X轴的缩放比例。"
+    },
+    {
+      "id": "image-scale-y",
+      "name_en": "Image scale Y",
+      "name_zh": "图像比例Y",
+      "description_en": "The Y scale of the image within the object.",
+      "description_zh": "图像在Y轴的缩放比例。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose whether the object is visible when the layout starts.",
+      "description_zh": "在场景开始时，对象是否可见。"
+    },
+    {
+      "id": "origin",
+      "name_en": "Origin",
+      "name_zh": "图像原点",
+      "description_en": "Choose the location of the origin in the object.",
+      "description_zh": "选择图像原点的位置。"
+    },
+    {
+      "id": "seams",
+      "name_en": "Seams",
+      "name_zh": "边缘衔接",
+      "description_en": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+      "description_zh": "实现无缝衔接的渲染方式，对于具有半透明的图形，建议使用 '精准匹配' 设置。"
+    }
+  ]
+}

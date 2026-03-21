@@ -1,0 +1,1263 @@
+{
+  "id": "midi",
+  "originalId": "MIDI",
+  "name_zh": "MIDI",
+  "name_en": "MIDI",
+  "description_zh": "访问已连接的 MIDI 设备。",
+  "description_en": "Interact with connected MIDI devices.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "midi-access",
+    "midi-devices",
+    "midi-input",
+    "utilities",
+    "midi-output"
+  ],
+  "conditions": [
+    {
+      "id": "is-supported",
+      "name_zh": "设备受支持",
+      "name_en": "Is supported",
+      "description_zh": "检测当前平台是否支持访问 MIDI 设备。",
+      "description_en": "True if the current platform supports MIDI access.",
+      "display_zh": "设备受支持",
+      "display_en": "Is supported",
+      "scriptName": "IsSupported",
+      "category": "midi-access",
+      "params": []
+    },
+    {
+      "id": "has-access",
+      "name_zh": "有访问权限",
+      "name_en": "Has access",
+      "description_zh": "请求 MIDI 访问权限，检查是否请求成功。",
+      "description_en": "True after requesting MIDI access completes successfully.",
+      "display_zh": "有访问权限",
+      "display_en": "Has access",
+      "scriptName": "HasAccess",
+      "category": "midi-access",
+      "params": []
+    },
+    {
+      "id": "on-request-access-success",
+      "name_zh": "请求访问成功",
+      "name_en": "On request access success",
+      "description_zh": "请求访问 MIDI 设备成功时触发。",
+      "description_en": "Triggered after a successful request to access MIDI devices.",
+      "display_zh": "请求访问成功",
+      "display_en": "On request access success",
+      "scriptName": "OnRequestAccessSuccess",
+      "category": "midi-access",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-request-access-failed",
+      "name_zh": "请求访问失败",
+      "name_en": "On request access failed",
+      "description_zh": "请求访问 MIDI 设备失败时触发。",
+      "description_en": "Triggered after a failed request to access MIDI devices.",
+      "display_zh": "请求访问失败",
+      "display_en": "On request access failed",
+      "scriptName": "OnRequestAccessFailed",
+      "category": "midi-access",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-devices-state-changed",
+      "name_zh": "设备状态改变",
+      "name_en": "On devices state changed",
+      "description_zh": "MIDI 输入或输出列表发生变化时触发。",
+      "description_en": "Triggered when the list of MIDI inputs or outputs changes.",
+      "display_zh": "设备状态改变",
+      "display_en": "On devices state changed",
+      "scriptName": "OnDevicesStateChanged",
+      "category": "midi-access",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-opened",
+      "name_zh": "设备开启",
+      "name_en": "On device opened",
+      "description_zh": "特定的 MIDI 设备成功开启时触发。",
+      "description_en": "Triggered when a specific MIDI device is successfully opened.",
+      "display_zh": "{0}设备 [b]{1}[/b] 开启",
+      "display_en": "On {0} device [b]{1}[/b] opened",
+      "scriptName": "OnDeviceOpened",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型。",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出"
+            }
+          }
+        },
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID.",
+          "desc_zh": "设备ID"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-closed",
+      "name_zh": "设备关闭",
+      "name_en": "On device closed",
+      "description_zh": "特定 MIDI 设备关闭时触发。",
+      "description_en": "Triggered when a specific MIDI device is closed.",
+      "display_zh": "{0}设备 [b]{1}[/b] 关闭",
+      "display_en": "On {0} device [b]{1}[/b] closed",
+      "scriptName": "OnDeviceClosed",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出"
+            }
+          }
+        },
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID.",
+          "desc_zh": "设备ID"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-error",
+      "name_zh": "设备错误",
+      "name_en": "On device error",
+      "description_zh": "特定 MIDI 设备遇到错误时触发。",
+      "description_en": "Triggered when a specific MIDI device encounters an error.",
+      "display_zh": "在{0}设备 [b]{1}[/b] 出现错误",
+      "display_en": "On {0} device [b]{1}[/b] error",
+      "scriptName": "OnDeviceError",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出值"
+            }
+          }
+        },
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID.",
+          "desc_zh": "设备ID。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-device-opened",
+      "name_zh": "任意设备开启",
+      "name_en": "On any device opened",
+      "description_zh": "任意 MIDI 设备成功打开时触发。",
+      "description_en": "Triggered when any MIDI device is successfully opened.",
+      "display_zh": "任意{0}设备开启",
+      "display_en": "On any {0} device opened",
+      "scriptName": "OnAnyDeviceOpened",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型。",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出值"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-device-closed",
+      "name_zh": "任意设备关闭",
+      "name_en": "On any device closed",
+      "description_zh": "任意 MIDI 设备关闭时触发。",
+      "description_en": "Triggered when any MIDI device is closed.",
+      "display_zh": "任意{0}设备关闭",
+      "display_en": "On any {0} device closed",
+      "scriptName": "OnAnyDeviceClosed",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型。",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出值"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-device-error",
+      "name_zh": "任意设备出错",
+      "name_en": "On any device error",
+      "description_zh": "任意 MIDI 设别出错时触发。",
+      "description_en": "Triggered when any MIDI device encounters an error.",
+      "display_zh": "任意{0}设备出错",
+      "display_en": "On any {0} device error",
+      "scriptName": "OnAnyDeviceError",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型。",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出值"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-binary-message",
+      "name_zh": "收到二进制消息",
+      "name_en": "On any binary message",
+      "description_zh": "接收到任意 MIDI 消息时触发，并将消息的原始数据存储到二进制对象中。",
+      "description_en": "Triggered when any MIDI message is received, storing the raw message data in a Binary Data object.",
+      "display_zh": "收到二进制消息 (储存到 {0})",
+      "display_en": "On any binary message (in {0})",
+      "scriptName": "OnAnyBinaryMessage",
+      "category": "midi-input",
+      "params": [
+        {
+          "id": "receive-to",
+          "type": "object",
+          "name_en": "Receive to",
+          "name_zh": "接收到",
+          "desc_en": "Choose a Binary Data object to write the received binary message to.",
+          "desc_zh": "选择二进制数据对象，将接收到的二进制消息写入其中。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-message",
+      "name_zh": "收到消息",
+      "name_en": "On any message",
+      "description_zh": "任意设备接收到特定类型的 MIDI 消息时触发。",
+      "description_en": "Triggered when a MIDI message of a specific type is received from any device.",
+      "display_zh": "收到[b]{0}[/b]消息",
+      "display_en": "On any [b]{0}[/b] message",
+      "scriptName": "OnAnyMessage",
+      "category": "midi-input",
+      "params": [
+        {
+          "id": "message-type",
+          "type": "combo",
+          "name_en": "Message type",
+          "name_zh": "消息类型",
+          "desc_en": "The type of MIDI message received.",
+          "desc_zh": "收到的 MIDI 消息的类型。",
+          "items": [
+            "note-off",
+            "note-on",
+            "after-touch",
+            "control-change",
+            "program-change",
+            "channel-pressure",
+            "pitch-wheel"
+          ],
+          "items_i18n": {
+            "note-off": {
+              "en": "Note Off",
+              "zh": "音符关闭"
+            },
+            "note-on": {
+              "en": "Note On",
+              "zh": "音符打开"
+            },
+            "after-touch": {
+              "en": "AfterTouch",
+              "zh": "压力控制"
+            },
+            "control-change": {
+              "en": "Control Change",
+              "zh": "控制改变"
+            },
+            "program-change": {
+              "en": "Program Change",
+              "zh": "音色改变"
+            },
+            "channel-pressure": {
+              "en": "Channel Pressure",
+              "zh": "通道压力"
+            },
+            "pitch-wheel": {
+              "en": "Pitch Wheel",
+              "zh": "音高弯曲"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-message",
+      "name_zh": "收到消息",
+      "name_en": "On message",
+      "description_zh": "指定 MIID 设备接收到特定类型的 MIDI 消息时触发。",
+      "description_en": "Triggered when a MIDI message of a specific type is received from a specific device.",
+      "display_zh": "收到 [i]{0}[/i] [b]{1}[/b]消息",
+      "display_en": "On [i]{0}[/i] [b]{1}[/b] message",
+      "scriptName": "OnMessage",
+      "category": "midi-input",
+      "params": [
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the last opened input device.",
+          "desc_zh": "设备 ID。留空则使用上次打开的输入设备。"
+        },
+        {
+          "id": "message-type",
+          "type": "combo",
+          "name_en": "Message type",
+          "name_zh": "消息类型",
+          "desc_en": "The type of MIDI message received.",
+          "desc_zh": "收到的 MIDI 消息的类型。",
+          "items": [
+            "note-off",
+            "note-on",
+            "after-touch",
+            "control-change",
+            "program-change",
+            "channel-pressure",
+            "pitch-wheel"
+          ],
+          "items_i18n": {
+            "note-off": {
+              "en": "Note Off",
+              "zh": "音符关闭"
+            },
+            "note-on": {
+              "en": "Note On",
+              "zh": "音符打开"
+            },
+            "after-touch": {
+              "en": "AfterTouch",
+              "zh": "压力控制"
+            },
+            "control-change": {
+              "en": "Control Change",
+              "zh": "控制改变"
+            },
+            "program-change": {
+              "en": "Program Change",
+              "zh": "音色改变"
+            },
+            "channel-pressure": {
+              "en": "Channel Pressure",
+              "zh": "通道压力"
+            },
+            "pitch-wheel": {
+              "en": "Pitch Wheel",
+              "zh": "音高改变"
+            }
+          }
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "compare-parameter",
+      "name_zh": "比较参数",
+      "name_en": "Compare parameter",
+      "description_zh": "用于比较的值。",
+      "description_en": "Compare the current value of a parameter like the note number or velocity.",
+      "display_zh": "{0} {1} {2}",
+      "display_en": "{0} {1} {2}",
+      "scriptName": "CompareParameter",
+      "category": "midi-input",
+      "params": [
+        {
+          "id": "parameter",
+          "type": "combo",
+          "name_en": "Parameter",
+          "name_zh": "参数",
+          "desc_en": "Choose the parameter to compare.",
+          "desc_zh": "选择要比较的参数。",
+          "items": [
+            "note-number",
+            "channel",
+            "velocity",
+            "pressure",
+            "controller-number",
+            "controller-value",
+            "program-number",
+            "pitch-wheel-value"
+          ],
+          "items_i18n": {
+            "note-number": {
+              "en": "Note number",
+              "zh": "音符编号"
+            },
+            "channel": {
+              "en": "Channel",
+              "zh": "通道"
+            },
+            "velocity": {
+              "en": "Velocity",
+              "zh": "速度"
+            },
+            "pressure": {
+              "en": "Pressure",
+              "zh": "压力"
+            },
+            "controller-number": {
+              "en": "Controller number",
+              "zh": "控制器编号"
+            },
+            "controller-value": {
+              "en": "Controller value",
+              "zh": "控制器值"
+            },
+            "program-number": {
+              "en": "Program number",
+              "zh": "音色编号"
+            },
+            "pitch-wheel-value": {
+              "en": "Pitch wheel value",
+              "zh": "音高控制"
+            }
+          }
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "Choose the way to compare the parameter.",
+          "desc_zh": "选择比较参数的方式。"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare to.",
+          "desc_zh": "要比较的值。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-midi-access",
+      "name_zh": "请求访问 MIDI 设备",
+      "name_en": "Request MIDI access",
+      "description_zh": "请求访问连接的 MIDI 设备的权限。",
+      "description_en": "Request permission to access connected MIDI devices.",
+      "display_zh": "请求访问 MIDI 设备 (系统独占: {0}, 合成器: {1})",
+      "display_en": "Request MIDI access (sysex: {0}, software: {1})",
+      "scriptName": "RequestMIDIAccess",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "sysex",
+          "type": "boolean",
+          "name_en": "System exclusive",
+          "name_zh": "系统独占",
+          "desc_en": "Enable sending and receiving system exclusive (sysex) messages.",
+          "desc_zh": "启用发送和接收系统独占消息。"
+        },
+        {
+          "id": "software",
+          "type": "boolean",
+          "name_en": "Software",
+          "name_zh": "合成器",
+          "desc_en": "Allow the system to utilize any installed software synthesizers.",
+          "desc_zh": "允许系统使用任何已安装的软件合成器。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "open-device",
+      "name_zh": "打开设备",
+      "name_en": "Open device",
+      "description_zh": "打开 MIDI 设备的输入或输出，用于发送或接收信息。",
+      "description_en": "Open a MIDI input or output to send or receive messages.",
+      "display_zh": "打开 {0} 设备 [i]{1}[/i]",
+      "display_en": "Open {0} device [i]{1}[/i]",
+      "scriptName": "OpenDevice",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出"
+            }
+          }
+        },
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the first available device.",
+          "desc_zh": "设备 ID。留空则使用第一个可用设备。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "close-device",
+      "name_zh": "关闭设备",
+      "name_en": "Close device",
+      "description_zh": "关闭 MIDI 输入或输出，使其无法再发送或接收信息。",
+      "description_en": "Close a MIDI input or output so it is no longer able to send or receive messages.",
+      "display_zh": "关闭{0}设备 [i]{1}[/i]",
+      "display_en": "Close {0} device [i]{1}[/i]",
+      "scriptName": "CloseDevice",
+      "category": "midi-devices",
+      "params": [
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The device type.",
+          "desc_zh": "设备类型。",
+          "items": [
+            "input",
+            "output"
+          ],
+          "items_i18n": {
+            "input": {
+              "en": "input",
+              "zh": "输入"
+            },
+            "output": {
+              "en": "output",
+              "zh": "输出"
+            }
+          }
+        },
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to close the last opened device.",
+          "desc_zh": "设备 ID。留空则关闭上次打开的设备。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "send-binary-message",
+      "name_zh": "发送二进制消息",
+      "name_en": "Send binary message",
+      "description_zh": "将二进制原始数据作为 MIDI 消息发送到设备。",
+      "description_en": "Send raw binary data as a MIDI message to a device.",
+      "display_zh": "发送 [i]{0}[/i] 二进制消息 {1}",
+      "display_en": "Send [i]{0}[/i] binary message {1}",
+      "scriptName": "SendBinaryMessage",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the last opened output device.",
+          "desc_zh": "设备 ID。留空则使用上次打开的输出设备。"
+        },
+        {
+          "id": "binary-data",
+          "type": "object",
+          "name_en": "Binary data",
+          "name_zh": "二进制数据",
+          "desc_en": "Choose a Binary Data object to send as a MIDI message.",
+          "desc_zh": "选择要作为 MIDI 信息发送的二进制数据对象。"
+        }
+      ]
+    },
+    {
+      "id": "send-note-message",
+      "name_zh": "发送音符信息",
+      "name_en": "Send note message",
+      "description_zh": "发送音符打开/关闭的触后消息。",
+      "description_en": "Send a note on/off or aftertouch message.",
+      "display_zh": "发送[i]{0}[/i] {1}消息 ([i]{2}[/i], 速度: [i]{3}[/i])",
+      "display_en": "Send [i]{0}[/i] {1} message for note [i]{2}[/i] velocity [i]{3}[/i]",
+      "scriptName": "SendNoteMessage",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the last opened output device.",
+          "desc_zh": "设备ID。留空则使用上次打开的输出设备。"
+        },
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The message type to send.",
+          "desc_zh": "要发送的消息类型。",
+          "items": [
+            "note-off",
+            "note-on",
+            "aftertouch"
+          ],
+          "items_i18n": {
+            "note-off": {
+              "en": "note off",
+              "zh": "音符关闭"
+            },
+            "note-on": {
+              "en": "note on",
+              "zh": "音符打开"
+            },
+            "aftertouch": {
+              "en": "aftertouch",
+              "zh": "压力控制"
+            }
+          }
+        },
+        {
+          "id": "note",
+          "type": "any",
+          "name_en": "Note",
+          "name_zh": "音符",
+          "desc_en": "The MIDI note number, or string of the note name e.g. \"C4\".",
+          "desc_zh": "MIDI 音符编号，或音符名称的字符串，例如 'C4'。"
+        },
+        {
+          "id": "velocity",
+          "type": "number",
+          "name_en": "Velocity",
+          "name_zh": "速度",
+          "desc_en": "The velocity, or pressure for aftertouch messages, from 0-127.",
+          "desc_zh": "触后控制的速度或压力，范围在 0 到 127。用于模拟乐器的颤音或滤波器截止频率等参数。"
+        }
+      ]
+    },
+    {
+      "id": "send-control-change-message",
+      "name_zh": "发送控制改变消息",
+      "name_en": "Send control change message",
+      "description_zh": "发送音符打开/关闭的触后消息。",
+      "description_en": "Send a note on/off or aftertouch message.",
+      "display_zh": "发送控制改变消息(设备ID: [i]{0}[/i], 控制器编号: [i]{1}[/i], 控制器值: [i]{2}[/i])",
+      "display_en": "Send [i]{0}[/i] controller [i]{1}[/i] change message with value [i]{2}[/i]",
+      "scriptName": "SendControlChangeMessage",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the last opened output device.",
+          "desc_zh": "设备 ID。留空则使用上次打开的输出设备。"
+        },
+        {
+          "id": "controller-number",
+          "type": "number",
+          "name_en": "Controller number",
+          "name_zh": "控制器编号",
+          "desc_en": "The MIDI controller number, e.g. 1 for modulation wheel (coarse).",
+          "desc_zh": "MIDI 控制器编号，例如 1 表示颤音轮（粗调）。"
+        },
+        {
+          "id": "controller-value",
+          "type": "number",
+          "name_en": "Controller value",
+          "name_zh": "控制器值",
+          "desc_en": "The controller value to set, from 0-127.",
+          "desc_zh": "要操作的控制器值，范围在 0 到 127。"
+        }
+      ]
+    },
+    {
+      "id": "send-message",
+      "name_zh": "发送消息",
+      "name_en": "Send message",
+      "description_zh": "向 MIDI 设备发送特定的消息类型，如音色改变、通道压力、音高弯曲等。",
+      "description_en": "Send a program change, channel pressure or pitch wheel message.",
+      "display_zh": "发送{1}信息(设备ID: [i]{0}[/i],  值: [i]{2}[/i])",
+      "display_en": "Send [i]{0}[/i] {1} message value [i]{2}[/i]",
+      "scriptName": "SendMessage",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "id",
+          "type": "string",
+          "name_en": "ID",
+          "name_zh": "ID",
+          "desc_en": "The device ID. Leave empty to use the last opened output device.",
+          "desc_zh": "设备 ID。留空则使用上次打开的输出设备。"
+        },
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The message type to send.",
+          "desc_zh": "要发送的消息类型。",
+          "items": [
+            "program-change",
+            "channel-pressure",
+            "pitch-wheel"
+          ],
+          "items_i18n": {
+            "program-change": {
+              "en": "program change",
+              "zh": "音色改变"
+            },
+            "channel-pressure": {
+              "en": "channel pressure",
+              "zh": "通道压力"
+            },
+            "pitch-wheel": {
+              "en": "pitch wheel",
+              "zh": "音高变化"
+            }
+          }
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to send, from 0-127 for program change or channel pressure messages, or 0-16383 for pitch wheel messages.",
+          "desc_zh": "要发送的值。对于音色变化或通道压力的消息，范围在 0 到 127。对于音高弯曲的消息，范围在 0 到 16383。"
+        }
+      ]
+    },
+    {
+      "id": "schedule-next-message",
+      "name_zh": "安排下一条消息",
+      "name_en": "Schedule next message",
+      "description_zh": "将下一条 MIDI 消息安排在延迟后发送。",
+      "description_en": "Schedule the next sent MIDI message to be sent after a delay.",
+      "display_zh": "在 [i]{0}[/i] 秒后发送下一条消息",
+      "display_en": "Schedule next message for [i]{0}[/i] seconds",
+      "scriptName": "ScheduleNextMessage",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "time",
+          "type": "number",
+          "name_en": "Time",
+          "name_zh": "时间",
+          "desc_en": "The time delay for the next message in seconds. Zero means no delay.",
+          "desc_zh": "下一条消息发送的延迟时间，以秒为单位。0 表示没有延迟。"
+        }
+      ]
+    },
+    {
+      "id": "set-midi-channel",
+      "name_zh": "设置 MIDI 通道",
+      "name_en": "Set MIDI channel",
+      "description_zh": "设置要为所有发送的信息指定的 MIDI 通道。",
+      "description_en": "Set the MIDI channel to specify for all sent messages.",
+      "display_zh": "设置 MIDI 通道为 [i]{0}[/i]",
+      "display_en": "Set MIDI channel to [i]{0}[/i]",
+      "scriptName": "SetMIDIChannel",
+      "category": "midi-output",
+      "params": [
+        {
+          "id": "channel",
+          "type": "number",
+          "name_en": "Channel",
+          "name_zh": "通道",
+          "desc_en": "The MIDI channel, from 0-15.",
+          "desc_zh": "MIDI 通道，范围从 0 至 15。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "input-count",
+      "name_zh": "输入设备数量",
+      "name_en": "InputCount",
+      "description_zh": "当前可用的 MIDI 输入设备的数量。",
+      "description_en": "Number of available MIDI input devices.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "InputCount",
+      "category": "midi-access",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "input-id-at",
+      "name_zh": "获取输入ID",
+      "name_en": "InputIDAt",
+      "description_zh": "获取 MIDI 输入标识符。",
+      "description_en": "Get a MIDI input identifier.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "InputIDAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI input.",
+          "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "input-manufacturer-at",
+      "name_zh": "获取输入生产商",
+      "name_en": "InputManufacturerAt",
+      "description_zh": "获取 MIDI 输入生产商。",
+      "description_en": "Get a MIDI input manufacturer.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "InputManufacturerAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI input.",
+          "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "input-name-at",
+      "name_zh": "获取输入名称",
+      "name_en": "InputNameAt",
+      "description_zh": "获取 MIDI 输入设别名称。",
+      "description_en": "Get a MIDI input name.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "InputNameAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI input.",
+          "desc_zh": "MIDI 输入的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "output-count",
+      "name_zh": "设备输出数量",
+      "name_en": "OutputCount",
+      "description_zh": "当前可用的 MIDI 输出设备的数量。",
+      "description_en": "Number of available MIDI output devices.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "OutputCount",
+      "category": "midi-access",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "output-id-at",
+      "name_zh": "获取通道ID",
+      "name_en": "OutputIDAt",
+      "description_zh": "获取 MIDI 输出标识符。",
+      "description_en": "Get a MIDI output identifier.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "OutputIDAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI output.",
+          "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "output-manufacturer-at",
+      "name_zh": "获取输出生产商",
+      "name_en": "OutputManufacturerAt",
+      "description_zh": "获取 MIDI 输出生产商。",
+      "description_en": "Get a MIDI output manufacturer.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "OutputManufacturerAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI output.",
+          "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "output-name-at",
+      "name_zh": "获取输出名称",
+      "name_en": "OutputNameAt",
+      "description_zh": "获取 MIDI 输出名称",
+      "description_en": "Get a MIDI output name.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "OutputNameAt",
+      "category": "midi-access",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of MIDI output.",
+          "desc_zh": "MIDI 输出的索引，用于区分多个不同的设备，从 0 开始计数。"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "current-device-id",
+      "name_zh": "当前设备ID",
+      "name_en": "CurrentDeviceID",
+      "description_zh": "在触发器中，关联的设备 ID。",
+      "description_en": "In a trigger, the associated device ID.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurrentDeviceID",
+      "category": "midi-devices",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "current-device-manufacturer",
+      "name_zh": "当前设备生产商",
+      "name_en": "CurrentDeviceManufacturer",
+      "description_zh": "在触发器中，关联的设备制造商。",
+      "description_en": "In a trigger, the associated device manufacturer.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurrentDeviceManufacturer",
+      "category": "midi-devices",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "current-device-name",
+      "name_zh": "当前设备名称",
+      "name_en": "CurrentDeviceName",
+      "description_zh": "在触发器中，关联的设备名称。",
+      "description_en": "In a trigger, the associated device name.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurrentDeviceName",
+      "category": "midi-devices",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "note-number",
+      "name_zh": "音符编号",
+      "name_en": "NoteNumber",
+      "description_zh": "MIDI 音符编号，范围从 0 至 127。中央 C 为 60。",
+      "description_en": "The MIDI note number (0-127, middle C is 60).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NoteNumber",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "note-name",
+      "name_zh": "音符名称",
+      "name_en": "NoteName",
+      "description_zh": "MIDI 音符名称。例如用 'C4' 表示中央 C",
+      "description_en": "The MIDI note name, e.g. \"C4\" for middle C.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NoteName",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "channel",
+      "name_zh": "通道",
+      "name_en": "Channel",
+      "description_zh": "MIDI 通道",
+      "description_en": "The MIDI channel.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Channel",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "velocity",
+      "name_zh": "速度",
+      "name_en": "Velocity",
+      "description_zh": "收到 '音符开/关' 消息后，返回的力度值。范围在 0 到 127。",
+      "description_en": "Velocity for note on/off messages (0-127).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Velocity",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "pressure",
+      "name_zh": "压力",
+      "name_en": "Pressure",
+      "description_zh": "收到 '压力控制/通道压力' 消息后，返回的压力值。范围在 0 到 127。",
+      "description_en": "Pressure for AfterTouch/Channel Pressure messages (0-127).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Pressure",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "controller-number",
+      "name_zh": "控制器编号",
+      "name_en": "ControllerNumber",
+      "description_zh": "收到 '控制改变' 消息后，返回的控制器编号。范围在 0 到 127。",
+      "description_en": "Controller number for a Control Change message (0-127).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ControllerNumber",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "controller-value",
+      "name_zh": "控制器值",
+      "name_en": "ControllerValue",
+      "description_zh": "控制改变消息中的控制器值，范围在 0 到 127。",
+      "description_en": "Controller value for a Control Change message (0-127).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ControllerValue",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "program-number",
+      "name_zh": "音色编号",
+      "name_en": "ProgramNumber",
+      "description_zh": "收到 '音色改变' 消息后，返回的音色编号。范围在 0 到 127。",
+      "description_en": "Program number for a Program Change message (0-127).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ProgramNumber",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "pitch-wheel-value",
+      "name_zh": "音高位置",
+      "name_en": "PitchWheelValue",
+      "description_zh": "收到 '音高控制' 消息后，返回的音高位置。范围在 0 到 16383。",
+      "description_en": "Pitch wheel position for Pitch Wheel messages (0-16383).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PitchWheelValue",
+      "category": "midi-input",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "note-number-to-name",
+      "name_zh": "转换音符名称",
+      "name_en": "NoteNumberToName",
+      "description_zh": "转换音符编号为音符名称。例如将 60 转换为 'C4'。",
+      "description_en": "Convert a note number to a note name, e.g. 60 to \"C4\".",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NoteNumberToName",
+      "category": "utilities",
+      "params": [
+        {
+          "id": "note-number",
+          "type": "number",
+          "name_en": "NoteNumber",
+          "name_zh": "音符编号",
+          "desc_en": "MIDI note number",
+          "desc_zh": "MIDI 音符编号"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "note-name-to-number",
+      "name_zh": "转换音符编号",
+      "name_en": "NoteNameToNumber",
+      "description_zh": "转换音符名称为音符编号。例如将 'C4' 转换为 60。",
+      "description_en": "Convert a note name to a note number, e.g. \"C4\" to 60.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NoteNameToNumber",
+      "category": "utilities",
+      "params": [
+        {
+          "id": "note-name",
+          "type": "string",
+          "name_en": "NoteName",
+          "name_zh": "音符名称",
+          "desc_en": "Note name e.g. \"C4\".",
+          "desc_zh": "音符的名称， 例如 'C4'"
+        }
+      ],
+      "returnType": "number"
+    }
+  ],
+  "properties": []
+}

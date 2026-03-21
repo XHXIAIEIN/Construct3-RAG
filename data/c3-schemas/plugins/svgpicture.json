@@ -1,0 +1,191 @@
+{
+  "id": "svgpicture",
+  "originalId": "SVGPicture",
+  "name_zh": "矢量图",
+  "name_en": "SVG Picture",
+  "description_zh": "显示项目中的 SVG 文件。",
+  "description_en": "Display an SVG file imported to the project.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "appearance",
+    "svg"
+  ],
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name_zh": "设置混合模式",
+      "name_en": "Set blend mode",
+      "description_zh": "设置此对象的背景混合模式。",
+      "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode",
+          "name_zh": "混合模式",
+          "desc_en": "Choose the new blend mode for this object.",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "items": [
+            "normal",
+            "additive",
+            "xor",
+            "copy",
+            "destination-over",
+            "source-in",
+            "destination-in",
+            "source-out",
+            "destination-out",
+            "source-atop",
+            "destination-atop",
+            "lighten",
+            "darken",
+            "multiply",
+            "screen"
+          ],
+          "items_i18n": {
+            "normal": {
+              "en": "Normal",
+              "zh": "正常"
+            },
+            "additive": {
+              "en": "Additive",
+              "zh": "叠加"
+            },
+            "xor": {
+              "en": "XOR",
+              "zh": "重叠消除"
+            },
+            "copy": {
+              "en": "Copy",
+              "zh": "覆盖"
+            },
+            "destination-over": {
+              "en": "Destination over",
+              "zh": "背景穿透"
+            },
+            "source-in": {
+              "en": "Source in",
+              "zh": "前景剪贴"
+            },
+            "destination-in": {
+              "en": "Destination in",
+              "zh": "背景剪贴"
+            },
+            "source-out": {
+              "en": "Source out",
+              "zh": "前景剔除"
+            },
+            "destination-out": {
+              "en": "Destination out",
+              "zh": "背景剔除"
+            },
+            "source-atop": {
+              "en": "Source atop",
+              "zh": "前景混合"
+            },
+            "destination-atop": {
+              "en": "Destination atop",
+              "zh": "背景混合"
+            },
+            "lighten": {
+              "en": "Lighten",
+              "zh": "变亮"
+            },
+            "darken": {
+              "en": "Darken",
+              "zh": "变暗"
+            },
+            "multiply": {
+              "en": "Multiply",
+              "zh": "正片叠底"
+            },
+            "screen": {
+              "en": "Screen",
+              "zh": "滤色"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-image",
+      "name_zh": "设置图像",
+      "name_en": "Set image",
+      "description_zh": "设置从项目文件中显示的SVG图像。",
+      "description_en": "Set the SVG image to be displayed from a project file.",
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]",
+      "scriptName": "SetImage",
+      "category": "svg",
+      "params": [
+        {
+          "id": "file",
+          "type": "projectfile",
+          "name_en": "File",
+          "name_zh": "文件",
+          "desc_en": "A project file to load an SVG image from.",
+          "desc_zh": "从项目文件中加载SVG图像。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "set-image-by-name",
+      "name_zh": "设置图像 (根据名称)",
+      "name_en": "Set image (by name)",
+      "description_zh": "从字符串对应的项目文件中显示的SVG图像。",
+      "description_en": "Set the SVG image to be displayed from a string of a project file.",
+      "display_zh": "设置图像为[i]{0}[/i]",
+      "display_en": "Set image to [i]{0}[/i]",
+      "scriptName": "SetImageByName",
+      "category": "svg",
+      "params": [
+        {
+          "id": "file",
+          "type": "string",
+          "name_en": "File",
+          "name_zh": "文件",
+          "desc_en": "A string of the name of a project file to load an SVG image from.",
+          "desc_zh": "用于加载SVG图像的项目文件的名称字符串"
+        }
+      ],
+      "isAsync": true
+    }
+  ],
+  "expressions": [],
+  "properties": [
+    {
+      "id": "svg-file",
+      "name_en": "SVG file",
+      "name_zh": "SVG文件",
+      "description_en": "Pick an SVG file imported to the project to display.",
+      "description_zh": "选择要显示的SVG文件。"
+    },
+    {
+      "id": "view-image",
+      "name_en": "Image",
+      "name_zh": "图像",
+      "description_en": "Click to view the object's image file.",
+      "description_zh": "单击查看对象的图像文件。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose whether the object is visible when the layout starts.",
+      "description_zh": "在场景开始时，对象是否可见。"
+    },
+    {
+      "id": "origin",
+      "name_en": "Origin",
+      "name_zh": "图像原点",
+      "description_en": "Choose the location of the origin in the object.",
+      "description_zh": "选择图像原点的位置。"
+    }
+  ]
+}

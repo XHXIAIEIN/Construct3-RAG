@@ -1,0 +1,164 @@
+{
+  "id": "csv",
+  "originalId": "CSV",
+  "name_zh": "CSV",
+  "name_en": "CSV",
+  "description_zh": "逗号分隔值的文件格式，以纯文本形式存储表格数据。",
+  "description_en": "Load and create data in comma-separated value (CSV) format.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "csv"
+  ],
+  "conditions": [
+    {
+      "id": "on-parse-error",
+      "name_zh": "解析失败",
+      "name_en": "On parse error",
+      "description_zh": "存在无效数据，无法进行解析时触发。",
+      "description_en": "Triggered when using the 'Parse' action with invalid data.",
+      "display_zh": "解析失败",
+      "display_en": "On parse error",
+      "scriptName": "OnParseError",
+      "category": "csv",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-parse-success",
+      "name_zh": "解析成功",
+      "name_en": "On parse success",
+      "description_zh": "成功解析 JSON 字符串时触发。",
+      "description_en": "Triggered when the 'Parse' action completes successfully.",
+      "display_zh": "解析成功",
+      "display_en": "On parse success",
+      "scriptName": "OnParseSuccess",
+      "category": "csv",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "parse-csv",
+      "name_zh": "解析CSV",
+      "name_en": "Parse CSV",
+      "description_zh": "从CSV文件中解析数据并将结果存储在数组对象中。",
+      "description_en": "Parse data from a CSV file and store the result in an Array object.",
+      "display_zh": "解析CSV(内容: [i]{0}[/i], 数据类型: [i]{3}[/i], 分隔符 [i]{1}[/i], 储存到: {2}）",
+      "display_en": "Parse CSV from string [i]{0}[/i] in to {2} (delimiter [i]{1}[/i], data type [i]{3}[/i])",
+      "scriptName": "ParseCSV",
+      "category": "csv",
+      "params": [
+        {
+          "id": "csv",
+          "type": "string",
+          "name_en": "CSV",
+          "name_zh": "CSV",
+          "desc_en": "A string of comma-separated values to parse.",
+          "desc_zh": "要解析的一串由逗号分隔的字符串。"
+        },
+        {
+          "id": "delimiter",
+          "type": "string",
+          "name_en": "Delimiter",
+          "name_zh": "分隔符",
+          "desc_en": "The character that separates values.",
+          "desc_zh": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+        },
+        {
+          "id": "array",
+          "type": "object",
+          "name_en": "Array",
+          "name_zh": "数组",
+          "desc_en": "Choose an array object to store the resulting data in.",
+          "desc_zh": "选择一个数组对象来存储转换的数据。"
+        },
+        {
+          "id": "data-type",
+          "type": "combo",
+          "name_en": "Data type",
+          "name_zh": "数据类型",
+          "desc_en": "Choose the data type to read values.",
+          "desc_zh": "选择转换结果的数据类型。",
+          "items": [
+            "auto",
+            "string",
+            "number"
+          ],
+          "items_i18n": {
+            "auto": {
+              "en": "Auto",
+              "zh": "自动"
+            },
+            "string": {
+              "en": "String",
+              "zh": "字符串"
+            },
+            "number": {
+              "en": "Number",
+              "zh": "数字"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "generate-csv",
+      "name_zh": "生成CSV",
+      "name_en": "Generate CSV",
+      "description_zh": "将数组对象中的数据转换为CSV数据，并返回CSV数据的表达式。",
+      "description_en": "Convert data in a two-dimensional Array object back in to CSV data.",
+      "display_zh": "生成CSV(来源: [i]{0}[/i], 分隔符为[i]{1}[/i])",
+      "display_en": "Generate CSV from [i]{0}[/i] (delimiter [i]{1}[/i])",
+      "scriptName": "GenerateCSV",
+      "category": "csv",
+      "params": [
+        {
+          "id": "array",
+          "type": "object",
+          "name_en": "Array",
+          "name_zh": "数组",
+          "desc_en": "Choose an array object to convert to CSV.",
+          "desc_zh": "选择一个数组对象。"
+        },
+        {
+          "id": "delimiter",
+          "type": "string",
+          "name_en": "Delimiter",
+          "name_zh": "分隔符",
+          "desc_en": "The character that separates values.",
+          "desc_zh": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "generated-csv",
+      "name_zh": "生成CSV",
+      "name_en": "GeneratedCSV",
+      "description_zh": "执行 '生成CSV' 动作后，获取生成的CSV数据字符串。",
+      "description_en": "Get the generated string of CSV data after the 'Generate CSV' action.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "GeneratedCSV",
+      "category": "csv",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "tab-character",
+      "name_zh": "制表符",
+      "name_en": "TabCharacter",
+      "description_zh": "一个制表符，可以作为分隔符，有时非常有用。",
+      "description_en": "A tab character, which can be useful as a delimiter.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "TabCharacter",
+      "category": "csv",
+      "params": [],
+      "returnType": "string"
+    }
+  ],
+  "properties": []
+}

@@ -1,0 +1,73 @@
+{
+  "id": "jumpthru",
+  "originalId": "jumpthru",
+  "name_zh": "跳跃穿透",
+  "name_en": "Jump-thru",
+  "description_zh": "让平台行为识别此对象为实体，也允许从上下两端穿透而过。",
+  "description_en": "A solid the Platform behavior can also jump on to from underneath.",
+  "plugin_type": "behavior",
+  "aceCategories": [
+    ""
+  ],
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name_zh": "已启用",
+      "name_en": "Is enabled",
+      "description_zh": "测试该行为在当前是否启用",
+      "description_en": "Test whether the behavior is currently enabled.",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "name_zh": "设置启用",
+      "name_en": "Set enabled",
+      "description_zh": "该对象是否被视为平台。",
+      "description_en": "Set whether the object counts as a platform or not.",
+      "display_zh": "[b]{0}[/b] {my}",
+      "display_en": "Set {my} [b]{0}[/b]",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "params": [
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State",
+          "name_zh": "状态",
+          "desc_en": "Set whether the object counts as a platform or not.",
+          "desc_zh": "设置对象是否被视为平台",
+          "items": [
+            "disabled",
+            "enabled"
+          ],
+          "items_i18n": {
+            "disabled": {
+              "en": "Disabled",
+              "zh": "禁用"
+            },
+            "enabled": {
+              "en": "Enabled",
+              "zh": "启用"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "properties": [
+    {
+      "id": "enabled",
+      "name_en": "Enabled",
+      "name_zh": "启用",
+      "description_en": "Whether the behavior is initially enabled or disabled.",
+      "description_zh": "游戏初始化时，是否默认启用该行为。"
+    }
+  ]
+}

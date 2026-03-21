@@ -1,0 +1,105 @@
+{
+  "id": "qrcode",
+  "originalId": "qrcode",
+  "name_zh": "二维码",
+  "name_en": "QR code",
+  "description_zh": "在游戏中生成一个二维码。",
+  "description_en": "Display a QR code in your project.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "qrcode"
+  ],
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-text",
+      "name_zh": "设置文本",
+      "name_en": "Set text",
+      "description_zh": "设置二维码的文本内容。",
+      "description_en": "Set the text content of the QR code.",
+      "display_zh": "设置文本内容为[i]{0}[/i]",
+      "display_en": "Set text to [i]{0}[/i]",
+      "scriptName": "SetText",
+      "category": "qrcode",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text",
+          "name_zh": "文本",
+          "desc_en": "Text content of the QR code.",
+          "desc_zh": "二维码的文本内容。"
+        }
+      ]
+    },
+    {
+      "id": "set-correction-level",
+      "name_zh": "设置容错率",
+      "name_en": "Set correction level",
+      "description_zh": "设置二维码的容错等级。容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+      "description_en": "Set the error correction level. Higher levels include more error correction data for reliability.",
+      "display_zh": "设置容错率为[i]{0}[/i]",
+      "display_en": "Set correction level to [i]{0}[/i]",
+      "scriptName": "SetCorrectionLevel",
+      "category": "qrcode",
+      "params": [
+        {
+          "id": "correction-level",
+          "type": "combo",
+          "name_en": "Correction level",
+          "name_zh": "容错率",
+          "desc_en": "The error correction level. Higher levels include more error correction data for reliability.",
+          "desc_zh": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+          "items": [
+            "l",
+            "m",
+            "q",
+            "h"
+          ],
+          "items_i18n": {
+            "l": {
+              "en": "Low (7%)",
+              "zh": "7%"
+            },
+            "m": {
+              "en": "Medium (15%)",
+              "zh": "15%"
+            },
+            "q": {
+              "en": "Quartile (25%)",
+              "zh": "25%"
+            },
+            "h": {
+              "en": "High (30%)",
+              "zh": "30%"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "properties": [
+    {
+      "id": "text",
+      "name_en": "Text",
+      "name_zh": "文本",
+      "description_en": "Text content of the QR code.",
+      "description_zh": "二维码的文本内容。"
+    },
+    {
+      "id": "correction-level",
+      "name_en": "Correction level",
+      "name_zh": "容错率",
+      "description_en": "The error correction level. Higher levels include more error correction data for reliability.",
+      "description_zh": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose whether the object is visible when the layout starts.",
+      "description_zh": "在场景开始时，对象是否可见。"
+    }
+  ]
+}

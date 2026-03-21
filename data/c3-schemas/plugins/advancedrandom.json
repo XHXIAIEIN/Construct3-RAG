@@ -1,0 +1,842 @@
+{
+  "id": "advancedrandom",
+  "originalId": "AdvancedRandom",
+  "name_zh": "高级随机",
+  "name_en": "Advanced Random",
+  "description_zh": "更高级的随机数生成器，可以生成概率表，或指定随机种子。",
+  "description_en": "Utilities for advanced randomness",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "gradients",
+    "permutation-tables",
+    "probability-tables",
+    "advancedrandom"
+  ],
+  "conditions": [],
+  "actions": [
+    {
+      "id": "createGradient",
+      "name_zh": "生成渐变",
+      "name_en": "Create gradient",
+      "description_zh": "生成一个线性渐变。",
+      "description_en": "Creates a new linear gradient",
+      "display_zh": "生成线性渐变 (类型: [b]{1}[/b], 名称: [b]{0}[/b])",
+      "display_en": "Create [b]{1}[/b] gradient called [b]{0}[/b]",
+      "scriptName": "CreateGradient",
+      "category": "gradients",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The name of the gradient",
+          "desc_zh": "渐变的名称，用于后续事件的使用。"
+        },
+        {
+          "id": "isColor",
+          "type": "combo",
+          "name_en": "Mode",
+          "name_zh": "类型",
+          "desc_en": "Specify if the gradient is numerical or color",
+          "desc_zh": "设置渐变生成的内容，是数值还是颜色。",
+          "items": [
+            "color",
+            "number"
+          ],
+          "items_i18n": {
+            "color": {
+              "en": "Color",
+              "zh": "颜色"
+            },
+            "number": {
+              "en": "Number",
+              "zh": "数值"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "addStop",
+      "name_zh": "添加经过点",
+      "name_en": "Add gradient stop",
+      "description_zh": "在当前渐变的位置添加经过点",
+      "description_en": "Add a stop to the current gradient",
+      "display_zh": "添加渐变经过点(位置: [b]{0}[/b], 数值: [b]{1}[/b])",
+      "display_en": "Add stop at [b]{0}[/b] with value [b]{1}[/b]",
+      "scriptName": "AddStop",
+      "category": "gradients",
+      "params": [
+        {
+          "id": "position",
+          "type": "number",
+          "name_en": "Stop position",
+          "name_zh": "终点位置",
+          "desc_en": "The position of the new stop",
+          "desc_zh": "要添加的渐变经过点的位置。可以是任何数字，通常建议在 0-1 范围内。"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Stop value",
+          "name_zh": "终点数值",
+          "desc_en": "The value of the new stop. Use rgbEx/rgba expressions for color gradients.",
+          "desc_zh": "添加到经过点的值。可以是任何数字，或使用 rgbEx 或 rgba 表达式指定颜色。"
+        }
+      ]
+    },
+    {
+      "id": "setGradient",
+      "name_zh": "设置当前渐变",
+      "name_en": "Set gradient",
+      "description_zh": "设置当前的渐变，用于后续的引用。",
+      "description_en": "Sets current gradient",
+      "display_zh": "设置当前渐变为[b]{0}[/b]",
+      "display_en": "Set current gradient to [b]{0}[/b]",
+      "scriptName": "SetGradient",
+      "category": "gradients",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The name of the gradient",
+          "desc_zh": "渐变的名称"
+        }
+      ]
+    },
+    {
+      "id": "createPermutationTable",
+      "name_zh": "创建序列表",
+      "name_en": "Create permutation table",
+      "description_zh": "创建一个随机排序的数字序列。",
+      "description_en": "Creates a sequence of numbers that are randomly ordered.",
+      "display_zh": "创建序列表 (起始: {1}, 长度: {0})",
+      "display_en": "Create permutation with {0} values starting at {1}",
+      "scriptName": "CreatePermutationTable",
+      "category": "permutation-tables",
+      "params": [
+        {
+          "id": "length",
+          "type": "number",
+          "name_en": "Length",
+          "name_zh": "长度",
+          "desc_en": "The length of the new permutation table.",
+          "desc_zh": "序列表的长度。"
+        },
+        {
+          "id": "offset",
+          "type": "number",
+          "name_en": "Offset",
+          "name_zh": "起始值",
+          "desc_en": "The lowest value in the table.",
+          "desc_zh": "序列表中的首位最小值。"
+        }
+      ]
+    },
+    {
+      "id": "shufflePermutationTable",
+      "name_zh": "打乱序列表",
+      "name_en": "Shuffle permutation table",
+      "description_zh": "将当前序列表的位置排列随机打乱。",
+      "description_en": "Reshuffles the current permutation table",
+      "display_zh": "打乱序列表",
+      "display_en": "Shuffle permutation table",
+      "scriptName": "ShufflePermutationTable",
+      "category": "permutation-tables",
+      "params": []
+    },
+    {
+      "id": "createProbabilityTable",
+      "name_zh": "创建概率表",
+      "name_en": "Create probability table",
+      "description_zh": "创建一个加权概率表，指定每个元素出现的概率。",
+      "description_en": "Creates a new weighted probability table",
+      "display_zh": "创建概率表 [b]{0}[/b]",
+      "display_en": "Create probability table called [b]{0}[/b]",
+      "scriptName": "CreateProbabilityTable",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The name of the probability table",
+          "desc_zh": "概率表名称"
+        }
+      ]
+    },
+    {
+      "id": "createProbabilityTableFromJSON",
+      "name_zh": "导入概率表",
+      "name_en": "Create probability table from JSON",
+      "description_zh": "从 JSON 字符串创建新的加权概率表。数据结构使用权重和名称组成的数组。",
+      "description_en": "Creates a new weighted probability table from a JSON string",
+      "display_zh": "导入概率表[b]{0}[/b] (JSON: [b]{1}[/b])",
+      "display_en": "Create probability table called [b]{0}[/b] from [b]{1}[/b]",
+      "scriptName": "CreateProbabilityTableFromJSON",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The name of the probability table",
+          "desc_zh": "概率表的名称"
+        },
+        {
+          "id": "json",
+          "type": "string",
+          "name_en": "JSON",
+          "name_zh": "JSON",
+          "desc_en": "A JSON string of a serialized probability table",
+          "desc_zh": "用于序列化概率表的JSON字符串"
+        }
+      ]
+    },
+    {
+      "id": "addProbabilityEntry",
+      "name_zh": "增加概率权重",
+      "name_en": "Add probability entry",
+      "description_zh": "在当前概率表中添加元素",
+      "description_en": "Add an entry to the current probability table",
+      "display_zh": "添加元素 [b]{0}[/b] 权重 [b]{1}[/b]",
+      "display_en": "Add entry [b]{0}[/b] with weight [b]{1}[/b]",
+      "scriptName": "AddProbabilityEntry",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "数值",
+          "desc_en": "The value of the entry",
+          "desc_zh": "元素的值"
+        },
+        {
+          "id": "weight",
+          "type": "number",
+          "name_en": "Entry weight",
+          "name_zh": "元素权重",
+          "desc_en": "The weight for the probability of the value",
+          "desc_zh": "此在列表中出现的概率权重"
+        }
+      ]
+    },
+    {
+      "id": "removeProbabilityEntry",
+      "name_zh": "删除概率元素",
+      "name_en": "Remove probability entry",
+      "description_zh": "从当前概率表中删除与指定权重相同的元素。填写 0 时指定第 1 项。",
+      "description_en": "Remove an entry from the current probability table that matches a given weight and value",
+      "display_zh": "移除权重为 [b]{1}[/b] 的 [b]{0}[/b] 元素",
+      "display_en": "Remove entry [b]{0}[/b] with weight [b]{1}[/b]",
+      "scriptName": "RemoveProbabilityEntry",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "数值",
+          "desc_en": "The value of the entry",
+          "desc_zh": "元素的数值"
+        },
+        {
+          "id": "weight",
+          "type": "number",
+          "name_en": "Entry weight",
+          "name_zh": "元素权重",
+          "desc_en": "The weight for the probability of the value, specifying 0 matches any weight",
+          "desc_zh": "此元素的权重，只有权重相同的才会被删除。填写 0 则匹配第 1 项。"
+        }
+      ]
+    },
+    {
+      "id": "setProbabilityTable",
+      "name_zh": "设置当前概率表",
+      "name_en": "Set probability table",
+      "description_zh": "设置当前概率表",
+      "description_en": "Sets current probability table",
+      "display_zh": "设置当前概率表为 [b]{0}[/b]",
+      "display_en": "Set current probability table to [b]{0}[/b]",
+      "scriptName": "SetProbabilityTable",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The name of the probability table",
+          "desc_zh": "概率表的名称"
+        }
+      ]
+    },
+    {
+      "id": "seed",
+      "name_zh": "更新随机种子",
+      "name_en": "Update seed",
+      "description_zh": "更新随机数生成器种子",
+      "description_en": "Updates the random number generator seed",
+      "display_zh": "更新随机种子为 [b]{0}[/b]",
+      "display_en": "Update seed to [b]{0}[/b]",
+      "scriptName": "SetSeed",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "seed",
+          "type": "string",
+          "name_en": "Seed",
+          "name_zh": "随机数种子",
+          "desc_en": "The new seed for the random number generator",
+          "desc_zh": "随机生成的新种子"
+        }
+      ]
+    },
+    {
+      "id": "octaves",
+      "name_zh": "设置分形",
+      "name_en": "Set octaves",
+      "description_zh": "设置柏林噪声模型所使用的分形倍数，在1-16之间。",
+      "description_en": "Updates the number of octaves used by coherent noise",
+      "display_zh": "设置分形为 [b]{0}[/b]",
+      "display_en": "Set octaves to [b]{0}[/b]",
+      "scriptName": "SetOctaves",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "count",
+          "type": "number",
+          "name_en": "Count",
+          "name_zh": "数量",
+          "desc_en": "The number of octaves to use, from 1-16.",
+          "desc_zh": "要使用的分型倍数，从1至16。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "sampleGradient",
+      "name_zh": "获取当前渐变值",
+      "name_en": "Gradient",
+      "description_zh": "获取当前渐变的指定位置的值",
+      "description_en": "Get the value from the gradient at the given position",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Gradient",
+      "category": "gradients",
+      "params": [
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Position",
+          "name_zh": "位置",
+          "desc_en": "Position to sample gradient",
+          "desc_zh": "要获取的渐变值的位置"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "sample-gradient-by-name",
+      "name_zh": "获取指定渐变值",
+      "name_en": "GradientByName",
+      "description_zh": "从已命名的渐变表中，通过指定的位置获取对应的数值。",
+      "description_en": "Get the value from a named gradient at the given position",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "GradientByName",
+      "category": "gradients",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "Gradient name",
+          "desc_zh": "渐变名称"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Position",
+          "name_zh": "位置",
+          "desc_en": "Position to sample gradient",
+          "desc_zh": "要获取渐变值的位置"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "permutation",
+      "name_zh": "序列表",
+      "name_en": "Permutation",
+      "description_zh": "从当前序列表中获取一个值。",
+      "description_en": "Get a value from the current permutation table",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Permutation",
+      "category": "permutation-tables",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "location",
+          "desc_zh": "在列表中的位置，从 0 开始计数，最大值不超过序列表长度（不包含）。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "sampleProbability",
+      "name_zh": "随机抽取元素",
+      "name_en": "Weighted",
+      "description_zh": "从当前概率表中随机抽取一个值",
+      "description_en": "Sample a value from the current probability table",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Weighted",
+      "category": "probability-tables",
+      "params": [],
+      "returnType": "any"
+    },
+    {
+      "id": "sample-probability-by-name",
+      "name_zh": "抽取概率表元素",
+      "name_en": "WeightedByName",
+      "description_zh": "从指定概率表中随机抽取一个值。",
+      "description_en": "Sample a value from a named probability table",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "WeightedByName",
+      "category": "probability-tables",
+      "params": [
+        {
+          "id": "name",
+          "type": "string",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "Table name",
+          "desc_zh": "概率表名称"
+        }
+      ],
+      "returnType": "any"
+    },
+    {
+      "id": "probabilityTableAsJSON",
+      "name_zh": "导出概率表数据",
+      "name_en": "ProbabilityTableAsJSON",
+      "description_zh": "将当前的概率表序列化为JSON字符串",
+      "description_en": "Serialize the current probability table as a JSON string",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ProbabilityTableAsJSON",
+      "category": "probability-tables",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "classic2d",
+      "name_zh": "Classic2d",
+      "name_en": "Classic2d",
+      "description_zh": "使用 2D classic noise 算法生成 0-1 之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 2D classic noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Classic2d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "classic3d",
+      "name_zh": "Classic3d",
+      "name_en": "Classic3d",
+      "description_zh": "使用 3D classic noise 算法生成 0-1 之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 3D classic noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Classic3d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z co-ordinate to sample",
+          "desc_zh": "要采样的Z坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "billow2d",
+      "name_zh": "Billow2d",
+      "name_en": "Billow2d",
+      "description_zh": "使用 2D billow noise 算法生成 0-1 之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 2D billow noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Billow2d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "billow3d",
+      "name_zh": "Billow3d",
+      "name_en": "Billow3d",
+      "description_zh": "使用 3D billow noise 算法生成 0-1 之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 3D billow noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Billow3d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z co-ordinate to sample",
+          "desc_zh": "要采样的Z坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "ridged2d",
+      "name_zh": "Ridged2d",
+      "name_en": "Ridged2d",
+      "description_zh": "使用 2D ridged noise 算法生成 0-1 之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 2D ridged noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Ridged2d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "ridged3d",
+      "name_zh": "Ridged3d",
+      "name_en": "Ridged3d",
+      "description_zh": "使用 3D ridged noise 生成0到1之间的平滑随机数。",
+      "description_en": "Generate a smooth random number between 0 and 1 using 3D ridged noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Ridged3d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z co-ordinate to sample",
+          "desc_zh": "要采样的Z坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "seed",
+      "name_zh": "Seed",
+      "name_en": "Seed",
+      "description_zh": "目前使用的随机数种子，相同的种子可以生成相同序列的随机数。",
+      "description_en": "The seed value currently being used",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Seed",
+      "category": "advancedrandom",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "cellular2d",
+      "name_zh": "Cellular2d",
+      "name_en": "Cellular2d",
+      "description_zh": "使用 2D cellular noise 算法生成 0-1 之间的随机数。",
+      "description_en": "Generate a random number between 0 and 1 using 2D cellular noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Cellular2d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "cellular3d",
+      "name_zh": "Cellular3d",
+      "name_en": "Cellular3d",
+      "description_zh": "使用 3D cellular noise 算法生成 0-1 之间的随机数。",
+      "description_en": "Generate a random number between 0 and 1 using 3D cellular noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Cellular3d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z co-ordinate to sample",
+          "desc_zh": "要采样的Z坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "voronoi2d",
+      "name_zh": "Voronoi2d",
+      "name_en": "Voronoi2d",
+      "description_zh": "使用 2D voronoi noise 算法生成 0-1 之间的随机数。",
+      "description_en": "Generate a random number between 0 and 1 using 2D voronoi noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Voronoi2d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "voronoi3d",
+      "name_zh": "Voronoi3d",
+      "name_en": "Voronoi3d",
+      "description_zh": "使用 3D voronoi noise 算法生成 0-1 之间的随机数。",
+      "description_en": "Generate a random number between 0 and 1 using 3D voronoi noise",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Voronoi3d",
+      "category": "advancedrandom",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate to sample",
+          "desc_zh": "要采样的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate to sample",
+          "desc_zh": "要采样的Y坐标。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z co-ordinate to sample",
+          "desc_zh": "要采样的Z坐标。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "randomSeed",
+      "name_zh": "随机种子",
+      "name_en": "RandomSeed",
+      "description_zh": "生成一个随机种子。",
+      "description_en": "Generate a random seed",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "RandomSeed",
+      "category": "advancedrandom",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "random",
+      "name_zh": "生成随机数",
+      "name_en": "Random",
+      "description_zh": "使用当前随机种子，生成一个随机数，数值在 0 至 1 范围，但结果不包含 1 。",
+      "description_en": "Generate a random number in the range [0, 1) based on the current seed.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Random",
+      "category": "advancedrandom",
+      "params": [],
+      "returnType": "number"
+    }
+  ],
+  "properties": [
+    {
+      "id": "seed",
+      "name_en": "Seed",
+      "name_zh": "随机数种子",
+      "description_en": "The seed used by the random number generator.",
+      "description_zh": "随机数生成器所使用的随机种子。"
+    },
+    {
+      "id": "seeded-random",
+      "name_en": "Replace system random",
+      "name_zh": "替换系统内置的随机数",
+      "description_en": "Replace the system random with this plugin's seeded PRNG.",
+      "description_zh": "使用此插件生成的PRNG随机种子，替换系统内置的随机数。"
+    }
+  ]
+}

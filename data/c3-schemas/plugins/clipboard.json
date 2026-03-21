@@ -1,0 +1,192 @@
+{
+  "id": "clipboard",
+  "originalId": "Clipboard",
+  "name_zh": "剪贴板",
+  "name_en": "Clipboard",
+  "description_zh": "访问系统剪贴板功能，进行复制和粘贴操作。",
+  "description_en": "Access the system clipboard for copy and paste operations.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "clipboard"
+  ],
+  "conditions": [
+    {
+      "id": "on-copy-success",
+      "name_zh": "复制成功",
+      "name_en": "On copy success",
+      "description_zh": "复制到剪贴板成功时触发。",
+      "description_en": "Triggered when a copy to the clipboard is successful.",
+      "display_zh": "复制成功",
+      "display_en": "On copy success",
+      "scriptName": "OnCopySuccess",
+      "category": "clipboard",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-copy-error",
+      "name_zh": "复制失败",
+      "name_en": "On copy error",
+      "description_zh": "复制到剪贴板失败时触发。",
+      "description_en": "Triggered when a copy to the clipboard fails.",
+      "display_zh": "复制失败",
+      "display_en": "On copy error",
+      "scriptName": "OnCopyError",
+      "category": "clipboard",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-text",
+      "name_zh": "粘贴文本",
+      "name_en": "On paste text",
+      "description_zh": "成功粘贴文本时触发。",
+      "description_en": "Triggered on a successful paste of text.",
+      "display_zh": "粘贴文本",
+      "display_en": "On paste text",
+      "scriptName": "OnPasteText",
+      "category": "clipboard",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-binary",
+      "name_zh": "粘贴二进制",
+      "name_en": "On paste binary",
+      "description_zh": "成功粘贴二进制数据时触发。",
+      "description_en": "Triggered on a successful paste of binary data.",
+      "display_zh": "粘贴二进制数据 (对象: {0}, 类型: [i]{1}[/i])",
+      "display_en": "On paste binary (to {0}, type [i]{1}[/i])",
+      "scriptName": "OnPasteBinary",
+      "category": "clipboard",
+      "params": [
+        {
+          "id": "receive-to",
+          "type": "object",
+          "name_en": "Binary data",
+          "name_zh": "二进制数据",
+          "desc_en": "Choose a Binary Data object to write the pasted binary data to.",
+          "desc_zh": "选择 '二进制数据' 对象，将粘贴的二进制数据写入到对象中。"
+        },
+        {
+          "id": "type",
+          "type": "string",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The content type (aka MIME type) of the pasted data.",
+          "desc_zh": "粘贴数据的类型（又称 MIME 类型）。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-error",
+      "name_zh": "粘贴失败",
+      "name_en": "On paste error",
+      "description_zh": "粘贴失败时触发。",
+      "description_en": "Triggered when a paste fails.",
+      "display_zh": "粘贴失败",
+      "display_en": "On paste error",
+      "scriptName": "OnPasteError",
+      "category": "clipboard",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "copy-text",
+      "name_zh": "复制文本",
+      "name_en": "Copy text",
+      "description_zh": "复制文本数据到剪贴板。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "description_en": "Copy some text to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "display_zh": "复制文本 [i]{0}[/i]",
+      "display_en": "Copy text [i]{0}[/i]",
+      "scriptName": "CopyText",
+      "category": "clipboard",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text",
+          "name_zh": "文本",
+          "desc_en": "The text to copy to the clipboard.",
+          "desc_zh": "要复制到剪贴板的文本。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "copy-binary",
+      "name_zh": "复制二进制数据",
+      "name_en": "Copy binary",
+      "description_zh": "复制某些二进制数据到剪贴板。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "description_en": "Copy some binary data to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "display_zh": "复制二进制数据 {0} (类型: [i]{1}[/i])",
+      "display_en": "Copy binary {0} (type [i]{1}[/i])",
+      "scriptName": "CopyBinary",
+      "category": "clipboard",
+      "params": [
+        {
+          "id": "data",
+          "type": "object",
+          "name_en": "Binary data",
+          "name_zh": "二进制数据",
+          "desc_en": "A Binary Data object to copy to the clipboard.",
+          "desc_zh": "要复制到剪贴板的二进制数据对象。"
+        },
+        {
+          "id": "type",
+          "type": "string",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The content type (aka MIME type) of the data being copied.",
+          "desc_zh": "被复制的数据类型（又称 MIME 类型）。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "request-paste-text",
+      "name_zh": "请求粘贴文本",
+      "name_en": "Request paste text",
+      "description_zh": "请求从剪贴板中读取文本数据。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "description_en": "Request to read text from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "display_zh": "请求粘贴文本",
+      "display_en": "Request paste text",
+      "scriptName": "RequestPasteText",
+      "category": "clipboard",
+      "params": [],
+      "isAsync": true
+    },
+    {
+      "id": "request-paste-binary",
+      "name_zh": "请求粘贴二进制数据",
+      "name_en": "Request paste binary",
+      "description_zh": "请求从剪贴板中读取二进制数据。注意：这可能会显示一个权限提示，需要用户授权通过才能继续执行。",
+      "description_en": "Request to read binary data from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "display_zh": "请求粘贴二进制数据",
+      "display_en": "Request paste binary",
+      "scriptName": "RequestPasteBinary",
+      "category": "clipboard",
+      "params": [],
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pasted-text",
+      "name_zh": "剪贴文本",
+      "name_en": "PastedText",
+      "description_zh": "触发 '粘贴文本' 动作后，从剪贴板中读取到的文本。",
+      "description_en": "In 'On paste text', the text that was read from the clipboard.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PastedText",
+      "category": "clipboard",
+      "params": [],
+      "returnType": "string"
+    }
+  ],
+  "properties": []
+}

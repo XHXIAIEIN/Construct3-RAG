@@ -1,0 +1,1195 @@
+{
+  "id": "arr",
+  "originalId": "Arr",
+  "name_zh": "数组",
+  "name_en": "Array",
+  "description_zh": "允许将数据储存在最多三维的数组空间中，类似表格的作用。",
+  "description_en": "Store an array of values in up to 3 dimensions.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "array",
+    "for-each",
+    "json",
+    "manipulation"
+  ],
+  "conditions": [
+    {
+      "id": "compare-at-x",
+      "name_zh": "比较X",
+      "name_en": "Compare at X",
+      "description_zh": "比较数组在 X 轴的某个值。",
+      "description_en": "Compare the value at an X position (1D) in the array.",
+      "display_zh": "[b]{0}[/b] {1} [b]{2}[/b]",
+      "display_en": "Value at [b]{0}[/b] {1} [b]{2}[/b]",
+      "scriptName": "CompareX",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the value.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare the array value to.",
+          "desc_zh": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xy",
+      "name_zh": "比较XY",
+      "name_en": "Compare at XY",
+      "description_zh": "比较二维数组中的某个值。",
+      "description_en": "Compare the value at an X,Y position (2D) in the array.",
+      "display_zh": "([b]{0}[/b], [b]{1}[/b]) {2} [b]{3}[/b]",
+      "display_en": "Value at ([b]{0}[/b], [b]{1}[/b]) {2} [b]{3}[/b]",
+      "scriptName": "CompareXY",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the value.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare the array value to.",
+          "desc_zh": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "compare-at-xyz",
+      "name_zh": "比较XYZ",
+      "name_en": "Compare at XYZ",
+      "description_zh": "比较在三维数组中 X，Y，Z 位置的值。",
+      "description_en": "Compare the value at an X,Y,Z position (3D) in the array.",
+      "display_zh": "([b]{0}[/b], [b]{1}[/b], [b]{2}[/b]) {3} [b]{4}[/b]",
+      "display_en": "Value at ([b]{0}[/b], [b]{1}[/b], [b]{2}[/b]) {3} [b]{4}[/b]",
+      "scriptName": "CompareXYZ",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "Z index (0-based) of array value to compare.",
+          "desc_zh": "要比较的数组值位于 Z 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the value.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare the array value to.",
+          "desc_zh": "要进行比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "contains-value",
+      "name_zh": "如果包含值",
+      "name_en": "Contains value",
+      "description_zh": "查找整个数组，检测在任何位置是否包含某个值。",
+      "description_en": "Test if the array contains a value (at any element).",
+      "display_zh": "数组包含 {0}",
+      "display_en": "Contains value {0}",
+      "scriptName": "Contains",
+      "category": "array",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to test if in the array.",
+          "desc_zh": "要在数组中查找的值。"
+        }
+      ]
+    },
+    {
+      "id": "is-empty",
+      "name_zh": "如果为空",
+      "name_en": "Is empty",
+      "description_zh": "检查数组大小是否为 0，且不包含任何元素。",
+      "description_en": "Test if the array is empty and contains no elements.",
+      "display_zh": "如果为空",
+      "display_en": "Is empty",
+      "scriptName": "IsEmpty",
+      "category": "array",
+      "params": []
+    },
+    {
+      "id": "compare-size",
+      "name_zh": "比较大小",
+      "name_en": "Compare size",
+      "description_zh": "比较数组其中一个维度的大小。",
+      "description_en": "Compare the size of one of the array dimensions.",
+      "display_zh": "{0}轴大小 {1} [b]{2}[/b]",
+      "display_en": "{0} size {1} [b]{2}[/b]",
+      "scriptName": "CompareSize",
+      "category": "array",
+      "params": [
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "Select the axis to compare.",
+          "desc_zh": "选择要比较的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        },
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the size of the given axis.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare to.",
+          "desc_zh": "要比较的值。"
+        }
+      ]
+    },
+    {
+      "id": "for-each-element",
+      "name_zh": "遍历数组元素",
+      "name_en": "For each element",
+      "description_zh": "遍历数组中的每个元素。",
+      "description_en": "Repeat the event for each element in the array.",
+      "display_zh": "遍历 {0} 轴",
+      "display_en": "For each {0} element",
+      "scriptName": "ArrForEach",
+      "category": "for-each",
+      "params": [
+        {
+          "id": "axes",
+          "type": "combo",
+          "name_en": "Axes",
+          "name_zh": "轴",
+          "desc_en": "Select which dimensions to iterate.  For example, if you have a 3D array, but only want to iterate in 2D, choose 'XY'.",
+          "desc_zh": "选择要遍历的轴。",
+          "items": [
+            "xyz",
+            "xy",
+            "x"
+          ],
+          "items_i18n": {
+            "xyz": {
+              "en": "XYZ",
+              "zh": "XYZ"
+            },
+            "xy": {
+              "en": "XY",
+              "zh": "XY"
+            },
+            "x": {
+              "en": "X",
+              "zh": "X"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "compare-current-value",
+      "name_zh": "比较当前值",
+      "name_en": "Compare current value",
+      "description_zh": "在 '遍历数组' 条件中，比较当前的值。",
+      "description_en": "Compare the value of the current element in a for-each loop.",
+      "display_zh": "当前值 {0} [b]{1}[/b]",
+      "display_en": "Current value {0} [b]{1}[/b]",
+      "scriptName": "CompareCurrent",
+      "category": "for-each",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current value in the for-each loop.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to compare the array value to.",
+          "desc_zh": "要进行比较的值。"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "clear",
+      "name_zh": "清空",
+      "name_en": "Clear",
+      "description_zh": "重置数组每个轴的所有的值，设置为预设值。",
+      "description_en": "Reset all values.",
+      "display_zh": "清空并填充[i]{0}[/i]",
+      "display_en": "Clear to [i]{0}[/i]",
+      "scriptName": "Clear",
+      "category": "array",
+      "params": [
+        {
+          "id": "value",
+          "type": "number",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to clear the entire array with.",
+          "desc_zh": "用于覆盖整个数组的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-size",
+      "name_zh": "设置大小",
+      "name_en": "Set size",
+      "description_zh": "设置数组在每个轴上的元素数量。",
+      "description_en": "Set the number of elements on each axis of the array.",
+      "display_zh": "设置数组大小为([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "display_en": "Set size to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "scriptName": "SetSize",
+      "category": "array",
+      "params": [
+        {
+          "id": "width",
+          "type": "number",
+          "name_en": "Width",
+          "name_zh": "X",
+          "desc_en": "The new number of elements on the X axis.",
+          "desc_zh": "数组在X轴的元素数量。"
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_en": "Height",
+          "name_zh": "Y",
+          "desc_en": "The new number of elements on the Y axis.",
+          "desc_zh": "数组在Y轴的元素数量。"
+        },
+        {
+          "id": "depth",
+          "type": "number",
+          "name_en": "Depth",
+          "name_zh": "Z",
+          "desc_en": "The new number of elements on the Z axis.",
+          "desc_zh": "数组在Z轴的元素数量。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-x",
+      "name_zh": "设置X",
+      "name_en": "Set at X",
+      "description_zh": "设置一维数组位于 X 轴位置的值。",
+      "description_en": "Set the value at an X position (1D) in the array.",
+      "display_zh": "设置数组[i]{0}[/i]值为[i]{1}[/i]",
+      "display_en": "Set value at [i]{0}[/i] to [i]{1}[/i]",
+      "scriptName": "SetX",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组X轴的位置，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to store in the array.",
+          "desc_zh": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-xy",
+      "name_zh": "设置XY",
+      "name_en": "Set at XY",
+      "description_zh": "设置二维数组位于 X、Y 位置的值。",
+      "description_en": "Set the value at an X,Y position (2D) in the array.",
+      "display_zh": "设置数组([i]{0}[/i], [i]{1}[/i])值为[i]{2}[/i]",
+      "display_en": "Set value at ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i]",
+      "scriptName": "SetXY",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "The Y index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to store in the array.",
+          "desc_zh": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "set-at-xyz",
+      "name_zh": "设置XYZ",
+      "name_en": "Set at XYZ",
+      "description_zh": "设置三维数组位于 X、Y、Z 位置的值。",
+      "description_en": "Set the value at an X,Y,Z position (3D) in the array.",
+      "display_zh": "设置数组([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])值为[i]{3}[/i]",
+      "display_en": "Set value at ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i]) to [i]{3}[/i]",
+      "scriptName": "SetXYZ",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "The Y index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "z",
+          "type": "number",
+          "name_en": "Z",
+          "name_zh": "Z",
+          "desc_en": "The Z index (0-based) of the array value to set.",
+          "desc_zh": "要设置的值位于数组Z轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to store in the array.",
+          "desc_zh": "要存储在数组中的值。"
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "name_zh": "从JSON导入",
+      "name_en": "Load",
+      "description_zh": "加载数组文件的 JSON 字符串。",
+      "description_en": "Load from an array previously encoded in JSON format.",
+      "display_zh": "加载对象数据 [i]{0}[/i]",
+      "display_en": "Load from JSON string [i]{0}[/i]",
+      "scriptName": "JSONLoad",
+      "category": "json",
+      "params": [
+        {
+          "id": "json",
+          "type": "string",
+          "name_en": "JSON",
+          "name_zh": "JSON",
+          "desc_en": "A string of the JSON data to load.",
+          "desc_zh": "数组文件的 JSON 格式。如果希望导入项目文件夹的数组文件，请先通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式在此处输入。"
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name_zh": "下载",
+      "name_en": "Download",
+      "description_zh": "将数组内容导出为 JSON 格式的文件并下载至本地。",
+      "description_en": "Download the contents of the array as a JSON file.",
+      "display_zh": "下载数组文件(保存文件: [i]{0}[/i])",
+      "display_en": "Download as JSON data with filename [i]{0}[/i]",
+      "scriptName": "JSONDownload",
+      "category": "json",
+      "params": [
+        {
+          "id": "filename",
+          "type": "string",
+          "name_en": "Filename",
+          "name_zh": "文件名",
+          "desc_en": "The name of the file to download.",
+          "desc_zh": "要下载的文件的名称。"
+        }
+      ]
+    },
+    {
+      "id": "push",
+      "name_zh": "推入",
+      "name_en": "Push",
+      "description_zh": "在数组的顶部或末尾，添加一个新元素，并增加其大小。",
+      "description_en": "Add a new element to the front or back of an axis.",
+      "display_zh": "在{2}轴{0}推入[i]{1}[/i]",
+      "display_en": "Push {0} [i]{1}[/i] on {2} axis",
+      "scriptName": "Push",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "where",
+          "type": "combo",
+          "name_en": "Where",
+          "name_zh": "位置",
+          "desc_en": "Whether to insert at the beginning or the end of the array.",
+          "desc_zh": "将一个值推入到数组的顶部或末尾。",
+          "items": [
+            "back",
+            "front"
+          ],
+          "items_i18n": {
+            "back": {
+              "en": "back",
+              "zh": "末尾"
+            },
+            "front": {
+              "en": "front",
+              "zh": "顶部"
+            }
+          }
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to insert to the array.",
+          "desc_zh": "要推进数组的值。"
+        },
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to insert on.",
+          "desc_zh": "要插入的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop",
+      "name_zh": "弹出",
+      "name_en": "Pop",
+      "description_zh": "从数组的顶部或末尾，移除一个元素。",
+      "description_en": "Remove an element from the front or back of an axis.",
+      "display_zh": "从{1}轴{0}弹出元素",
+      "display_en": "Pop {0} on {1} axis",
+      "scriptName": "Pop",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "where",
+          "type": "combo",
+          "name_en": "Where",
+          "name_zh": "位置",
+          "desc_en": "Whether to remove at the beginning or the end of the array.",
+          "desc_zh": "删除数组的顶部或末尾的值。",
+          "items": [
+            "back",
+            "front"
+          ],
+          "items_i18n": {
+            "back": {
+              "en": "back",
+              "zh": "末尾"
+            },
+            "front": {
+              "en": "front",
+              "zh": "顶部"
+            }
+          }
+        },
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to remove from.",
+          "desc_zh": "要从中移除的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "reverse",
+      "name_zh": "反转",
+      "name_en": "Reverse",
+      "description_zh": "反转轴上元素的顺序。",
+      "description_en": "Reverse the order of elements on an axis.",
+      "display_zh": "反转{0}轴",
+      "display_en": "Reverse {0} axis",
+      "scriptName": "Reverse",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to reverse.",
+          "desc_zh": "要反转的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sort2",
+      "name_zh": "排序",
+      "name_en": "Sort",
+      "description_zh": "对数组的元素进行排序。",
+      "description_en": "Sort the elements on an axis.",
+      "display_zh": "排序{0}",
+      "display_en": "Sort {0}",
+      "scriptName": "Sort2",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to sort.",
+          "desc_zh": "选择首项排序时，以首项的排序结果应用到其他行/列。选择逐项排序时，则每行/列单独排序。",
+          "items": [
+            "x-by-col",
+            "x-separate",
+            "y-by-row",
+            "y-separate",
+            "z"
+          ],
+          "items_i18n": {
+            "x-by-col": {
+              "en": "X axis (by column)",
+              "zh": "X轴 (首列)"
+            },
+            "x-separate": {
+              "en": "X axis (separately)",
+              "zh": "X轴 (逐列)"
+            },
+            "y-by-row": {
+              "en": "Y axis (by row)",
+              "zh": "Y轴 (首行)"
+            },
+            "y-separate": {
+              "en": "Y axis (separately)",
+              "zh": "Y轴 (逐行)"
+            },
+            "z": {
+              "en": "Z axis",
+              "zh": "Z轴"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "shuffle",
+      "name_zh": "打乱",
+      "name_en": "Shuffle",
+      "description_zh": "将指定轴的数组元素随机打乱重新排序。实现洗牌的效果。",
+      "description_en": "Sort the elements on an axis in to a random ordering.",
+      "display_zh": "打乱{0} 轴",
+      "display_en": "Shuffle {0} axis",
+      "scriptName": "Shuffle",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to shuffle.",
+          "desc_zh": "要打乱的轴",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "name_zh": "删除",
+      "name_en": "Delete",
+      "description_zh": "从轴中删除元素。",
+      "description_en": "Delete an element from an axis.",
+      "display_zh": "从{1}轴删除第{0}项",
+      "display_en": "Delete index {0} from {1} axis",
+      "scriptName": "Delete",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "The zero-based index to delete.",
+          "desc_zh": "要删除的值位于轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to delete from.",
+          "desc_zh": "要删除的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "insert",
+      "name_zh": "插入",
+      "name_en": "Insert",
+      "description_zh": "在数组的指定位置，插入一个新元素，并增加其大小。",
+      "description_en": "Insert a new element at an index on an axis.",
+      "display_zh": "在{2}轴第[i]{1}[/i]项插入[i]{0}[/i]",
+      "display_en": "Insert [i]{0}[/i] at index [i]{1}[/i] on {2} axis",
+      "scriptName": "Insert",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "The value to insert to the array.",
+          "desc_zh": "要插入数组的值。"
+        },
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "The zero-based index to insert to.",
+          "desc_zh": "要插入的值位于数组 X 轴的索引，从 0 开始计数。"
+        },
+        {
+          "id": "axis",
+          "type": "combo",
+          "name_en": "Axis",
+          "name_zh": "轴",
+          "desc_en": "The axis to insert to.",
+          "desc_zh": "要插入的轴。",
+          "items": [
+            "x",
+            "y",
+            "z"
+          ],
+          "items_i18n": {
+            "x": {
+              "en": "X",
+              "zh": "X"
+            },
+            "y": {
+              "en": "Y",
+              "zh": "Y"
+            },
+            "z": {
+              "en": "Z",
+              "zh": "Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "split-string",
+      "name_zh": "拆分字符串",
+      "name_en": "Split string",
+      "description_zh": "将字符串拆分并导入为一维数组，如 \"1,2,3\"",
+      "description_en": "Set to a one-dimensional array based on splitting a string, e.g. \"1,2,3\".",
+      "display_zh": "拆分字符串 [i]{0}[/i] (分隔符:[i]{1}[/i], 类型: [i]{2}[/i])",
+      "display_en": "Split string [i]{0}[/i] with separator [i]{1}[/i] (type [i]{2}[/i])",
+      "scriptName": "SplitString",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String",
+          "name_zh": "字符串",
+          "desc_en": "The string to split.",
+          "desc_zh": "要进行拆分的字符串。"
+        },
+        {
+          "id": "separator",
+          "type": "string",
+          "name_en": "Separator",
+          "name_zh": "分隔符",
+          "desc_en": "The character to use to split the string.",
+          "desc_zh": "用于拆分的字符。"
+        },
+        {
+          "id": "type",
+          "type": "combo",
+          "name_en": "Type",
+          "name_zh": "类型",
+          "desc_en": "The data type of the values to set.",
+          "desc_zh": "拆分后的值的数据类型。",
+          "items": [
+            "auto",
+            "string",
+            "number"
+          ],
+          "items_i18n": {
+            "auto": {
+              "en": "Auto",
+              "zh": "自动"
+            },
+            "string": {
+              "en": "String",
+              "zh": "字符串"
+            },
+            "number": {
+              "en": "Number",
+              "zh": "数字"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "at",
+      "name_zh": "读取",
+      "name_en": "At",
+      "description_zh": "获取数组索引位置的值。可传入多个参数来获取二维或三维数组。",
+      "description_en": "Get value from the array.  Add second or third parameters to specify Y and Z indices.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "At",
+      "category": "array",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X index (0-based) of the array value to get.",
+          "desc_zh": "要获取的值位于数组X轴的位置，从 0 开始计数。"
+        }
+      ],
+      "returnType": "any"
+    },
+    {
+      "id": "width",
+      "name_zh": "宽度",
+      "name_en": "Width",
+      "description_zh": "获取数组在 X 轴的元素数量。",
+      "description_en": "Get the number of elements on the X axis of the array.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Width",
+      "category": "array",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "height",
+      "name_zh": "高度",
+      "name_en": "Height",
+      "description_zh": "获取数组在 Y 轴的元素数量。",
+      "description_en": "Get the number of elements on the Y axis of the array.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Height",
+      "category": "array",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "depth",
+      "name_zh": "深度",
+      "name_en": "Depth",
+      "description_zh": "获取数组在 Z 轴的元素数量。",
+      "description_en": "Get the number of elements on the Z axis of the array.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Depth",
+      "category": "array",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "front",
+      "name_zh": "首项",
+      "name_en": "Front",
+      "description_zh": "获取数组在 X 轴的第一个值。",
+      "description_en": "Get the front value on the X axis (at 0, 0, 0).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Front",
+      "category": "array",
+      "params": [],
+      "returnType": "any"
+    },
+    {
+      "id": "back",
+      "name_zh": "末尾",
+      "name_en": "Back",
+      "description_zh": "获取数组在 X 轴的最后一个值。",
+      "description_en": "Get the back value on the X axis (at w-1, 0, 0).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Back",
+      "category": "array",
+      "params": [],
+      "returnType": "any"
+    },
+    {
+      "id": "indexof",
+      "name_zh": "查找标题行",
+      "name_en": "IndexOf",
+      "description_zh": "在一维数组查找值，返回匹配到的第一个元素的索引。如果找不到，则返回 -1。",
+      "description_en": "Find first X index of matching value, or -1 if not found.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "IndexOf",
+      "category": "array",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "Value to search for.",
+          "desc_zh": "要搜索的值。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "lastindexof",
+      "name_zh": "反向查找标题行",
+      "name_en": "LastIndexOf",
+      "description_zh": "在一维数组查找值，返回最后一个匹配到的元素的索引。如果找不到，则返回 -1。",
+      "description_en": "Find last X index of matching value, or -1 if not found.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "LastIndexOf",
+      "category": "array",
+      "params": [
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "Value to search for.",
+          "desc_zh": "要搜索的值。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "curx",
+      "name_zh": "当前X",
+      "name_en": "CurX",
+      "description_zh": "在 '遍历数组' 条件中，返回当前循环的 X 轴索引。",
+      "description_en": "Get the current X index in a For Each loop.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurX",
+      "category": "for-each",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "cury",
+      "name_zh": "当前Y",
+      "name_en": "CurY",
+      "description_zh": "在 '遍历数组' 条件中，返回当前循环的 Y 轴索引。",
+      "description_en": "Get the current Y index in a For Each loop.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurY",
+      "category": "for-each",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "curz",
+      "name_zh": "当前Z",
+      "name_en": "CurZ",
+      "description_zh": "在 '遍历数组' 条件中，返回当前循环的 Z 轴索引。",
+      "description_en": "Get the current Z index in a For Each loop.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurZ",
+      "category": "for-each",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "curvalue",
+      "name_zh": "当前值",
+      "name_en": "CurValue",
+      "description_zh": "在 '遍历数组' 条件中，返回当前循环的值。",
+      "description_en": "Get the current value in a For Each loop.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "CurValue",
+      "category": "for-each",
+      "params": [],
+      "returnType": "any"
+    },
+    {
+      "id": "asjson",
+      "name_zh": "导出对象数据",
+      "name_en": "AsJSON",
+      "description_zh": "将数组内容为JSON格式的字符串。用于在对象的 '导入数据' 动作中使用。",
+      "description_en": "Return the contents of the array in JSON format.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AsJSON",
+      "category": "json",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "join-string",
+      "name_zh": "合并字符串",
+      "name_en": "JoinString",
+      "description_zh": "将一维数组的内容合并为字符串。仅包含第一个 X 轴。",
+      "description_en": "Combine a one-dimensional array back in to a string.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "JoinString",
+      "category": "manipulation",
+      "params": [
+        {
+          "id": "separator",
+          "type": "string",
+          "name_en": "Separator",
+          "name_zh": "分隔符",
+          "desc_en": "The character to use to join the string.",
+          "desc_zh": "用于拼接字符串的字符。"
+        }
+      ],
+      "returnType": "string"
+    }
+  ],
+  "properties": [
+    {
+      "id": "width",
+      "name_en": "Width",
+      "name_zh": "宽度",
+      "description_en": "Initial number of elements on the X axis.",
+      "description_zh": "数组在 X 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    {
+      "id": "height",
+      "name_en": "Height",
+      "name_zh": "高度",
+      "description_en": "Initial number of elements on the Y axis. Note 0 will make the array empty.",
+      "description_zh": "数组在 Y 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    {
+      "id": "depth",
+      "name_en": "Depth",
+      "name_zh": "深度",
+      "description_en": "Initial number of elements on the Z axis. Note 0 will make the array empty.",
+      "description_zh": "数组在 Z 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    {
+      "id": "elements",
+      "name_en": "Elements",
+      "name_zh": "元素",
+      "description_en": "Initial number of elements in the array. If 0 the array is empty and will be unable to store any data.",
+      "description_zh": "数组中的初始元素数量。如果数量为0，表示数组为空，无法储存数据。"
+    }
+  ]
+}

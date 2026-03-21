@@ -1,0 +1,128 @@
+{
+  "id": "xml",
+  "originalId": "XML",
+  "name_zh": "XML",
+  "name_en": "XML",
+  "description_zh": "从字符串加载XML文件，通过XPath表达式读取XML文档中的数据",
+  "description_en": "Load XML files from strings and read the data in the XML document using XPath expressions.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "document",
+    "xml"
+  ],
+  "conditions": [
+    {
+      "id": "for-each-node",
+      "name_zh": "遍历节点",
+      "name_en": "For each node",
+      "description_zh": "迭代XPath表达式返回的节点",
+      "description_en": "Iterate the nodes returned by an XPath expression.",
+      "display_zh": "遍历节点 [i]{0}[/i]",
+      "display_en": "For each node [i]{0}[/i]",
+      "scriptName": "ForEach",
+      "category": "xml",
+      "params": [
+        {
+          "id": "xpath",
+          "type": "string",
+          "name_en": "XPath",
+          "name_zh": "XPath",
+          "desc_en": "The XPath expression to evaluate, returning a series of nodes to iterate.",
+          "desc_zh": "要计算的XPath表达式，返回一系列要迭代的节点"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "name_zh": "加载",
+      "name_en": "Load",
+      "description_zh": "从字符串中加载 XML 文档",
+      "description_en": "Load an XML document from a string.",
+      "display_zh": "加载XML数据 [i]{0}[/i]",
+      "display_en": "Load XML document from string [i]{0}[/i]",
+      "scriptName": "Load",
+      "category": "document",
+      "params": [
+        {
+          "id": "xml",
+          "type": "string",
+          "name_en": "XML",
+          "name_zh": "XML",
+          "desc_en": "A string containing the XML document to load.",
+          "desc_zh": "包含待加载的XML文档的字符串"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "numbervalue",
+      "name_zh": "数字值",
+      "name_en": "NumberValue",
+      "description_zh": "从XPath表达式中检索单个数值",
+      "description_en": "Retrieve a single number value from an XPath expression.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NumberValue",
+      "category": "xml",
+      "params": [
+        {
+          "id": "xpath",
+          "type": "string",
+          "name_en": "XPath",
+          "name_zh": "XPath",
+          "desc_en": "The XPath expression to evaluate.",
+          "desc_zh": "待解析的XPath表达式"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "stringvalue",
+      "name_zh": "字符串值",
+      "name_en": "StringValue",
+      "description_zh": "从XPath表达式中检索单个字符串",
+      "description_en": "Retrieve a single string from an XPath expression.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "StringValue",
+      "category": "xml",
+      "params": [
+        {
+          "id": "xpath",
+          "type": "string",
+          "name_en": "XPath",
+          "name_zh": "XPath",
+          "desc_en": "The XPath expression to evaluate.",
+          "desc_zh": "待解析的XPath表达式"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "nodecount",
+      "name_zh": "节点数量",
+      "name_en": "NodeCount",
+      "description_zh": "计算XPath表达式返回的节点数",
+      "description_en": "Count the number of nodes returned by an XPath expression.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "NodeCount",
+      "category": "xml",
+      "params": [
+        {
+          "id": "xpath",
+          "type": "string",
+          "name_en": "XPath",
+          "name_zh": "XPath",
+          "desc_en": "The XPath expression to evaluate.",
+          "desc_zh": "待解析的XPath表达式"
+        }
+      ],
+      "returnType": "number"
+    }
+  ],
+  "properties": []
+}
