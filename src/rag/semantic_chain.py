@@ -14,6 +14,7 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
 from src.collections import DOC_COLLECTIONS
+from src.rag._trace import _trace
 
 # Doc collections always searched at minimum weight — ensures manual content is
 # never excluded by the threshold even when the query doesn't match a descriptor.
@@ -282,14 +283,17 @@ class CollectionRouter:
         bias = QUERY_TYPE_BIAS.get(query_type, {})
         thr = threshold if threshold is not None else self._default_threshold
         weights = {}
+        zeroed = []
         for name, desc_vec in self._descriptor_vecs.items():
             sim = _cosine(query_vec, desc_vec)
             w = min(1.0, max(0.0, sim + bias.get(name, 0.0)))
             if w < thr:
-                # Doc collections: apply floor so manual content is always searched.
-                # Non-doc collections (ace, terms, examples, effects): zero out.
                 w = _DOC_COLLECTION_FLOOR if name in _DOC_COLLECTION_SET else 0.0
+                if w == 0.0:
+                    zeroed.append(name)
             weights[name] = w
+        if zeroed:
+            _trace(f"路由排除: {','.join(zeroed)} (< {thr})", "route")
         return weights
 
 
@@ -331,11 +335,20 @@ class SemanticChain:
 
     def decompose(self, query: str) -> DecomposedQuery | None:
         if not self._enabled or self._backend is None:
+            _trace("语义分解: 跳过(未启用)", "decompose")
             return None
         key = _cache_key(query)
-        if key not in self._cache:
+        cached = key in self._cache
+        if not cached:
             self._cache[key] = self._backend.decompose(query)
-        return self._cache[key]
+        dq = self._cache[key]
+        _trace(
+            f"语义分解{'(缓存)' if cached else ''}: "
+            f"type={dq.query_type} conf={dq.confidence:.2f} "
+            f"objects={dq.c3_objects} verbs={dq.action_verbs}",
+            "decompose",
+        )
+        return dq
 
     def _path_a_intent_search(
         self, intents: list, top_collections: list, semantic_blend: float
@@ -406,6 +419,12 @@ class SemanticChain:
             if w >= self._threshold
         ][:3]
 
+        _trace(
+            f"路由: top={','.join(top_collections)} "
+            f"(blend={max(0.2, dq.confidence * 0.5):.2f})",
+            "route",
+        )
+
         semantic_blend = max(0.2, dq.confidence * 0.5)
 
         a_lists, a_weights = self._path_a_intent_search(dq.intents, top_collections, semantic_blend)
@@ -414,4 +433,11 @@ class SemanticChain:
 
         result_lists = a_lists + b_lists + c_lists
         weights = a_weights + b_weights + c_weights
+
+        _trace(
+            f"语义链: A×{len(a_lists)} B×{len(b_lists)} C×{len(c_lists)} "
+            f"共 {sum(len(r) for r in result_lists)} 条结果",
+            "route",
+        )
+
         return result_lists, weights

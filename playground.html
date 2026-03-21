@@ -135,7 +135,15 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .trace-phase.retrieve{color:var(--blue)}
 .trace-phase.done{color:var(--green)}
 .trace-phase.input{color:var(--dis)}
+.trace-phase.expand{color:var(--orange)}
+.trace-phase.decompose{color:#e0a0ff}
+.trace-phase.route{color:#70d0ff}
+.trace-phase.filter_drop{color:var(--red)}
 .trace-msg{color:var(--fg)}
+.trace-conf{display:inline-block;padding:0 4px;border-radius:2px;font-weight:bold}
+.trace-conf.high{color:var(--green)}
+.trace-conf.mid{color:var(--yellow)}
+.trace-conf.low{color:var(--red)}
 .trace-toggle{font-size:10px;color:var(--secondFg);cursor:pointer;user-select:none;padding:2px 0}
 .trace-toggle:hover{color:var(--accent)}
 </style>
@@ -153,6 +161,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
   <button class="tb-btn primary" onclick="addCardFromSelect()">+ Add Card</button>
   <div style="flex:1"></div>
   <button class="tb-btn" onclick="resetView()">Reset View</button>
+  <button class="tb-btn" onclick="restartServer()" id="restart-btn" style="color:var(--red)">Restart</button>
 </div>
 
 <div id="canvas" onmousedown="canvasDown(event)" onmousemove="canvasMove(event)" onmouseup="canvasUp(event)" onwheel="canvasWheel(event)">
@@ -255,14 +264,14 @@ const APIS = {
     method: 'POST', path: '/search',
     body: {
       query: "Sprite 碰撞检测",
+      mode: "auto",
       top_k: 5,
       lang: null,
       collections: null,
       plugin: null,
       section_types: null,
       apply_threshold: true,
-      skip_lookup: false,
-      debug: false
+      debug: true
     },
     presets: [
       { label: 'Sprite 碰撞', query: 'Sprite 碰撞检测' },
@@ -386,85 +395,115 @@ function applyPreset(cardId, presetIdx, apiKey) {
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+function renderSemanticResult(r) {
+  let html = `<div class="result-card">`;
+
+  if (r.type === 'ace') {
+    const p = r.plugin || {};
+    html += `<div class="result-header">
+      <span class="result-type ace">ACE</span>
+      <span class="result-tag">${esc(r.ace_type)}</span>
+      <span class="result-title">${esc(r.name_zh || r.name)}</span>
+      <span class="result-subtitle">${esc(r.name)}</span>
+      <span class="result-score">${r.score.toFixed(3)}</span>
+    </div>
+    <div class="result-body">
+      <span class="label">Plugin:</span> <span class="val">${esc(p.name)}</span> <span class="val-zh">${esc(p.name_zh)}</span><br>
+      ${r.description_zh ? `<span class="label">描述:</span> ${esc(r.description_zh)}<br>` : ''}
+      ${r.description ? `<span class="label">Desc:</span> ${esc(r.description)}<br>` : ''}
+      ${r.script_name ? `<span class="label">Script:</span> <span class="val">${esc(r.script_name)}</span><br>` : ''}
+      ${r.params?.length ? `<span class="label">Params:</span> ${r.params.map(p => `<span class="val">${esc(p.name)}</span>(<span class="result-tag">${esc(p.type)}</span>)`).join(', ')}<br>` : ''}
+      ${r.is_trigger ? '<span class="result-tag">trigger</span> ' : ''}${r.is_async ? '<span class="result-tag">async</span> ' : ''}${r.return_type ? `<span class="label">returns:</span> <span class="val">${esc(r.return_type)}</span>` : ''}
+    </div>`;
+  }
+
+  else if (r.type === 'doc') {
+    html += `<div class="result-header">
+      <span class="result-type doc">DOC</span>
+      <span class="result-title">${esc(r.title)}</span>
+      ${r.section ? `<span class="result-subtitle">§ ${esc(r.section)}</span>` : ''}
+      <span class="result-score">${r.score.toFixed(3)}</span>
+    </div>
+    <div class="result-meta"><span class="result-tag">${esc(r.collection)}</span><span class="result-tag">${esc(r.source)}</span></div>
+    <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 300))}${r.content?.length > 300 ? '...' : ''}</div>`;
+  }
+
+  else if (r.type === 'example') {
+    html += `<div class="result-header">
+      <span class="result-type example">EXAMPLE</span>
+      <span class="result-title">${esc(r.project)}</span>
+      ${r.project_zh ? `<span class="result-subtitle">${esc(r.project_zh)}</span>` : ''}
+      <span class="result-score">${r.score.toFixed(3)}</span>
+    </div>
+    <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 200))}</div>`;
+  }
+
+  else if (r.type === 'term') {
+    html += `<div class="result-header">
+      <span class="result-type term">TERM</span>
+      <span class="result-title">${esc(r.zh)}</span>
+      <span class="result-subtitle">${esc(r.en)}</span>
+      <span class="result-score">${r.score.toFixed(3)}</span>
+    </div>
+    <div class="result-meta"><span class="result-tag">${esc(r.category)}</span></div>`;
+  }
+
+  else {
+    html += `<div class="result-header">
+      <span class="result-type">${esc(r.type || '?')}</span>
+      <span class="result-score">${(r.score||0).toFixed(3)}</span>
+    </div>
+    <div class="result-content">${esc(JSON.stringify(r, null, 2))}</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
 function renderSearchResults(data) {
+  const totalResults = (data.lookup?.hit ? data.lookup.matches.length : 0) + (data.semantic?.length || 0);
   let html = `<div class="search-meta">
-    <span>route: <b>${data.route}</b></span>
+    <span>mode: <b>${data.mode}</b></span>
     <span>lang: <b>${data.lang}</b></span>
     <span>${data.latency_ms}ms</span>
-    <span>${data.results.length} results</span>
+    <span>${totalResults} results</span>
   </div><div class="result-list">`;
 
-  for (const r of data.results) {
-    html += `<div class="result-card">`;
-
-    if (r.type === 'ace') {
-      const p = r.plugin || {};
-      html += `<div class="result-header">
-        <span class="result-type ace">ACE</span>
-        <span class="result-tag">${esc(r.ace_type)}</span>
-        <span class="result-title">${esc(r.name_zh || r.name)}</span>
-        <span class="result-subtitle">${esc(r.name)}</span>
-        <span class="result-score">${r.score.toFixed(3)}</span>
+  // Render lookup section
+  if (data.lookup?.hit) {
+    const lk = data.lookup;
+    const confCls = lk.confidence >= 0.85 ? 'high' : lk.confidence >= 0.65 ? 'mid' : 'low';
+    html += `<div class="result-card">
+      <div class="result-header">
+        <span class="result-type lookup">LOOKUP T${lk.tier}</span>
+        <span class="result-subtitle">${esc(lk.intent)}${lk.plugin ? ' → ' + esc(lk.plugin.name_zh || lk.plugin.name || lk.plugin.id) : ''}</span>
+        <span class="trace-conf ${confCls}" style="font-size:11px">${lk.confidence.toFixed(2)}</span>
       </div>
-      <div class="result-body">
-        <span class="label">Plugin:</span> <span class="val">${esc(p.name)}</span> <span class="val-zh">${esc(p.name_zh)}</span><br>
-        ${r.description_zh ? `<span class="label">描述:</span> ${esc(r.description_zh)}<br>` : ''}
-        ${r.description ? `<span class="label">Desc:</span> ${esc(r.description)}<br>` : ''}
-        ${r.script_name ? `<span class="label">Script:</span> <span class="val">${esc(r.script_name)}</span><br>` : ''}
-        ${r.params?.length ? `<span class="label">Params:</span> ${r.params.map(p => `<span class="val">${esc(p.name)}</span>(<span class="result-tag">${esc(p.type)}</span>)`).join(', ')}<br>` : ''}
-        ${r.is_trigger ? '<span class="result-tag">trigger</span> ' : ''}${r.is_async ? '<span class="result-tag">async</span> ' : ''}${r.return_type ? `<span class="label">returns:</span> <span class="val">${esc(r.return_type)}</span>` : ''}
+      ${lk.keywords?.length ? `<div class="result-meta">${lk.keywords.map(k => `<span class="result-tag">${esc(k)}</span>`).join('')}</div>` : ''}`;
+
+    // Render each match as a mini ACE card
+    for (const m of lk.matches) {
+      html += `<div class="result-body" style="border-top:1px dashed var(--border);padding:6px 8px">
+        <span class="result-tag">${esc(m.ace_type)}</span>
+        <span class="result-title" style="margin-left:4px">${esc(m.name_zh || m.name_en)}</span>
+        <span class="result-subtitle" style="margin-left:4px">${esc(m.name_en)}</span>
+        <span class="result-tag" style="margin-left:4px">${esc(m.plugin_id)}</span>
+        ${m.script_name ? `<br><span class="label">Script:</span> <span class="val">${esc(m.script_name)}</span>` : ''}
+        ${m.description_zh ? `<br><span class="label">描述:</span> ${esc(m.description_zh)}` : ''}
+        ${m.relevance ? `<br><span class="label">relevance:</span> <span class="val">${m.relevance}</span>` : ''}
       </div>`;
     }
 
-    else if (r.type === 'doc') {
-      html += `<div class="result-header">
-        <span class="result-type doc">DOC</span>
-        <span class="result-title">${esc(r.title)}</span>
-        ${r.section ? `<span class="result-subtitle">§ ${esc(r.section)}</span>` : ''}
-        <span class="result-score">${r.score.toFixed(3)}</span>
-      </div>
-      <div class="result-meta"><span class="result-tag">${esc(r.collection)}</span><span class="result-tag">${esc(r.source)}</span></div>
-      <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 300))}${r.content?.length > 300 ? '...' : ''}</div>`;
+    // Context (collapsible)
+    if (lk.context) {
+      html += `<div class="result-content" onclick="this.classList.toggle('expanded')">${esc(lk.context)}</div>`;
     }
-
-    else if (r.type === 'example') {
-      html += `<div class="result-header">
-        <span class="result-type example">EXAMPLE</span>
-        <span class="result-title">${esc(r.project)}</span>
-        ${r.project_zh ? `<span class="result-subtitle">${esc(r.project_zh)}</span>` : ''}
-        <span class="result-score">${r.score.toFixed(3)}</span>
-      </div>
-      <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 200))}</div>`;
-    }
-
-    else if (r.type === 'term') {
-      html += `<div class="result-header">
-        <span class="result-type term">TERM</span>
-        <span class="result-title">${esc(r.zh)}</span>
-        <span class="result-subtitle">${esc(r.en)}</span>
-        <span class="result-score">${r.score.toFixed(3)}</span>
-      </div>
-      <div class="result-meta"><span class="result-tag">${esc(r.category)}</span></div>`;
-    }
-
-    else if (r.type === 'lookup') {
-      html += `<div class="result-header">
-        <span class="result-type lookup">LOOKUP</span>
-        <span class="result-subtitle">${esc(r.intent)} → ${esc(r.plugin)}</span>
-        <span class="result-score">${r.score.toFixed(3)}</span>
-      </div>
-      <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content)}</div>`;
-    }
-
-    else {
-      html += `<div class="result-header">
-        <span class="result-type">${esc(r.type || '?')}</span>
-        <span class="result-score">${(r.score||0).toFixed(3)}</span>
-      </div>
-      <div class="result-content">${esc(JSON.stringify(r, null, 2))}</div>`;
-    }
-
     html += `</div>`;
+  }
+
+  // Render semantic results
+  for (const r of (data.semantic || [])) {
+    html += renderSemanticResult(r);
   }
 
   html += `</div>`;
@@ -523,8 +562,15 @@ async function sendRequest(cardId, apiKey) {
     // Populate trace log if available
     const traceEl = document.getElementById(cardId + '-trace');
     if (traceEl && data?.trace?.length) {
-      traceEl.innerHTML = data.trace.map(s =>
-        `<div class="trace-step"><span class="trace-phase ${s.phase}">${s.phase}</span><span class="trace-msg">${s.message}</span></div>`
+      traceEl.innerHTML = data.trace.map(s => {
+        // Highlight conf= values with color coding
+        const msg = s.message.replace(/conf=(\d+\.\d+)/g, (_, v) => {
+          const n = parseFloat(v);
+          const cls = n >= 0.85 ? 'high' : n >= 0.65 ? 'mid' : 'low';
+          return `<span class="trace-conf ${cls}">conf=${v}</span>`;
+        });
+        return `<div class="trace-step"><span class="trace-phase ${s.phase}">${s.phase}</span><span class="trace-msg">${msg}</span></div>`;
+      }
       ).join('');
       traceEl.classList.add('open');
     } else if (traceEl) {
@@ -559,6 +605,25 @@ function copyResponse(cardId) {
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = 'Copy', 1200);
   });
+}
+
+async function restartServer() {
+  const btn = document.getElementById('restart-btn');
+  const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await fetch(baseUrl + '/restart', { method: 'POST' });
+  } catch {}
+  // Wait for server to come back
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 1000));
+    try {
+      const res = await fetch(baseUrl + '/health');
+      if (res.ok) { btn.textContent = 'Restart'; btn.disabled = false; return; }
+    } catch {}
+    btn.textContent = `${i+1}s...`;
+  }
+  btn.textContent = 'Restart'; btn.disabled = false;
 }
 
 function addCardFromSelect() {

@@ -243,7 +243,7 @@ class TestLookupEngineDetail:
         resp = engine.try_lookup("Sprite 的 Set animation 怎么用")
         assert resp is not None
         assert resp.query_type == "lookup_ace_detail"
-        assert "animation" in resp.answer.lower()
+        assert "animation" in resp.context.lower()
 
     def test_ace_detail_nonexistent_ace_falls_through(self):
         """Query with valid plugin but non-matching ACE name returns None."""
@@ -264,8 +264,8 @@ class TestLookupEngine:
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert resp is not None
         assert resp.query_type == "lookup_ace_list"
-        assert "A:" in resp.answer  # compact action prefix
-        assert "zh:" in resp.answer  # zh mapping line
+        assert "A:" in resp.context  # compact action prefix
+        assert "zh:" in resp.context  # zh mapping line
 
     def test_prop_list(self):
         engine = make_engine()
@@ -279,8 +279,8 @@ class TestLookupEngine:
         resp = engine.try_lookup("Platform 行为有哪些主要参数？")
         assert resp is not None
         assert resp.query_type == "lookup_prop_list"
-        assert "跳跃" in resp.answer
-        assert "速度" in resp.answer
+        assert "跳跃" in resp.context
+        assert "速度" in resp.context
 
     def test_term_translate_with_cdn_terms(self):
         """Term translate works when CDN terms are provided."""
@@ -292,7 +292,7 @@ class TestLookupEngine:
         resp = engine.try_lookup("翻译 Sprite")
         assert resp is not None
         assert resp.query_type == "lookup_term_translate"
-        assert "|" in resp.answer
+        assert "|" in resp.context
 
     def test_rag_fallthrough(self):
         """Non-lookup queries should return None."""
@@ -305,7 +305,7 @@ class TestLookupEngine:
         resp = engine.try_lookup("Bullet 有哪些 action")
         assert resp is not None
         assert resp.intent.is_behavior is True
-        assert "A:" in resp.answer
+        assert "A:" in resp.context
 
     def test_nonexistent_plugin_falls_through(self):
         """Query with fake plugin name should fallback to RAG."""
@@ -333,8 +333,8 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 碰撞")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert "碰撞" in resp.answer  # appears in zh: mapping line
-        assert ("C:" in resp.answer or "A:" in resp.answer)  # compact format
+        assert "碰撞" in resp.context  # appears in zh: mapping line
+        assert "[C]" in resp.context or "[A]" in resp.context or "[E]" in resp.context
 
     def test_array_sort(self):
         """'Array 排序' → ace_search with actions (排序 is an actions keyword)."""
@@ -342,7 +342,7 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Array 排序")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert "排序" in resp.answer
+        assert "排序" in resp.context
 
     def test_sprite_animation(self):
         """'Sprite 动画' → ace_search, may span multiple ACE types."""
@@ -350,7 +350,7 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 播放 动画")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert "animation" in resp.answer.lower()
+        assert "animation" in resp.context.lower()
 
     def test_no_keyword_fallthrough(self):
         """'Sprite 是什么' contains skip word → should NOT trigger ace_search."""
@@ -358,12 +358,13 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 是什么")
         assert resp is None  # falls through to RAG
 
-    def test_array_find_howto_falls_through(self):
-        """'怎么在数组中查找特定数字？' — complex query, falls through to semantic."""
+    def test_array_find_howto_hits_lookup(self):
+        """'怎么在数组中查找特定数字？' — matches Array search ACEs (IndexOf, Contains)."""
         engine = make_engine()
         resp = engine.try_lookup("怎么在数组中查找特定数字？")
-        # Complex multi-word query should fall through to RAG, not return partial ACE matches
-        assert resp is None
+        assert resp is not None
+        assert resp.intent.plugin_id == "arr"
+        assert "IndexOf" in resp.context
 
     def test_array_find_simple(self):
         """'Array 查找' — simple plugin+topic, triggers ace_search."""
@@ -381,7 +382,7 @@ class TestKeywordInfer:
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.plugin_id == "sprite"
-        assert ("C:" in resp.answer or "A:" in resp.answer or "E:" in resp.answer)
+        assert "[C]" in resp.context or "[A]" in resp.context or "[E]" in resp.context
 
     def test_zenyang_fallthrough(self):
         """'怎样用数组存储数据' — '怎样' is also a how-to word → should fall through."""
@@ -408,7 +409,7 @@ class TestKeywordInfer:
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.is_behavior is True
-        assert "跳跃" in resp.answer
+        assert "跳跃" in resp.context
 
     def test_no_plugin_no_trigger(self):
         """Query with ACE keyword but no plugin → should not trigger."""
@@ -496,5 +497,47 @@ class TestACEExampleAttach:
             filter_term="",
             matched_tags=["behavior-Tween"],
         )
-        result = engine._format_ace_list(intent)
+        result, _ = engine._format_ace_list(intent)
         assert "Related examples" in result
+
+
+# ---------------------------------------------------------------------------
+# TestLookupResponseStructure
+# ---------------------------------------------------------------------------
+
+class TestLookupResponseStructure:
+    def test_ace_search_returns_matches(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 动画")
+        assert resp is not None
+        assert len(resp.matches) > 0
+        match = resp.matches[0]
+        assert match.ace_id
+        assert match.en.name
+        assert match.plugin_id
+
+    def test_ace_search_has_context(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 动画")
+        assert resp.context
+        assert isinstance(resp.context, str)
+
+    def test_ace_list_returns_matches(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 有哪些 action")
+        assert resp is not None
+        assert len(resp.matches) > 0
+        assert all(m.ace_type == "action" for m in resp.matches)
+
+    def test_prop_list_returns_matches(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Platform 行为有哪些主要参数？")
+        assert resp is not None
+        assert len(resp.matches) > 0
+        assert all(m.ace_type == "property" for m in resp.matches)
+
+    def test_context_is_string(self):
+        engine = make_engine()
+        resp = engine.try_lookup("Sprite 有哪些 action")
+        assert isinstance(resp.context, str)
+        assert len(resp.context) > 0

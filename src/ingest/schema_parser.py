@@ -132,6 +132,8 @@ class SchemaParser:
                 zh_aces = zh_common.get(ace_type_plural, {})
                 for ace_id, en_ace in en_aces.items():
                     zh_ace = zh_aces.get(ace_id, {})
+                    if not zh_ace:
+                        continue
                     if ace_type_plural == "expressions":
                         name_en = en_ace.get("translated-name", ace_id)
                         name_zh = zh_ace.get("translated-name", name_en)
@@ -159,6 +161,12 @@ class SchemaParser:
                 pid_lower = plugin_id.lower()
                 en_plugin = en_text.get(addon_type, {}).get(pid_lower, {})
                 zh_plugin = zh_text.get(addon_type, {}).get(pid_lower, {})
+
+                # Skip deprecated plugins: present in allAces but absent
+                # from zh-CN lang (Scirra stops translating deprecated addons).
+                if not zh_plugin:
+                    continue
+
                 plugin_name_en = en_plugin.get("name", plugin_id)
                 plugin_name_zh = zh_plugin.get("name", plugin_name_en)
 
@@ -168,6 +176,11 @@ class SchemaParser:
                             ace_id = ace.get("id", "")
                             en_ace = en_plugin.get(ace_type, {}).get(ace_id, {})
                             zh_ace = zh_plugin.get(ace_type, {}).get(ace_id, {})
+
+                            # Skip deprecated ACEs: present in allAces but
+                            # absent from zh-CN lang (replaced by newer ACEs).
+                            if not zh_ace:
+                                continue
 
                             # Expression names use "translated-name", not "list-name"
                             if ace_type == "expressions":

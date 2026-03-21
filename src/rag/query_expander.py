@@ -27,6 +27,7 @@ from src.config import (
     EXPANDER_API_KEY, EXPANDER_API_PROVIDER, EXPANDER_API_MODEL,
     EXPANDER_LOCAL_MODEL, EXPANDER_DEVICE,
 )
+from src.rag._trace import _trace
 
 logger = logging.getLogger(__name__)
 
@@ -780,13 +781,20 @@ class QueryExpander:
 
     def expand(self, tokens: list[str]) -> dict[str, set[str]]:
         """For each token, return union of LLM + manual + auto expansions."""
+        _trace(f"扩展 {len(tokens)} 个 token: {' '.join(tokens[:8])}", "expand")
+
         llm_all = self._llm.expand(tokens)
+        if llm_all:
+            _trace(f"LLM 扩展({type(self._llm).__name__}): +{len(llm_all)} 词", "expand")
 
         result: dict[str, set[str]] = {}
         for tok in tokens:
             manual = set(self._manual.get(tok, []))
             auto   = self._index.auto_expand(tok)
-            result[tok] = llm_all | manual | auto
+            merged = llm_all | manual | auto
+            result[tok] = merged
+            if merged:
+                _trace(f"  {tok} → +{len(merged)} (手工{len(manual)}/schema{len(auto)}/LLM{len(llm_all)})", "expand")
         return result
 
     def get_term_set(self, tokens: list[str]) -> set[str]:
@@ -810,9 +818,22 @@ class QueryExpander:
         matches unrelated plugins.
         """
         result = set(segments)
+        expanded_tokens = []
+        skipped_tokens = []
         for tok in segments:
             if tok in _SCHEMA_EXPAND_STOPWORDS:
+                skipped_tokens.append(tok)
                 continue
-            if len(self._index.token_to_nodes.get(tok, set())) <= max_nodes:
-                result.update(self._index.auto_expand(tok))
+            node_count = len(self._index.token_to_nodes.get(tok, set()))
+            if node_count <= max_nodes:
+                new_terms = self._index.auto_expand(tok)
+                result.update(new_terms)
+                if new_terms:
+                    expanded_tokens.append(f"{tok}(+{len(new_terms)})")
+            else:
+                skipped_tokens.append(f"{tok}({node_count}节点)")
+        if expanded_tokens:
+            _trace(f"schema 扩展: {' '.join(expanded_tokens)}", "expand")
+        if skipped_tokens:
+            _trace(f"schema 跳过: {' '.join(skipped_tokens)}", "expand")
         return result

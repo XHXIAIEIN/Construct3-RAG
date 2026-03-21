@@ -76,6 +76,55 @@ Key variables: `LLM_PROVIDER`, `LLM_MODEL`, `QDRANT_HOST`, `EMBEDDING_MODEL`.
 - `src/locale/keywords.py` comments should be in Chinese (describing Chinese keyword semantics)
 - New user-facing strings must be added to **both** `zh/` and `en/` with the same constant name
 
+## Construct 3 Knowledge Lookup
+
+When answering questions about Construct 3 (plugins, behaviors, ACEs, events, scripting), use the local RAG API for accurate, up-to-date information instead of relying on training data.
+
+### Quick lookup (API running)
+
+API port is configured via `RAG_SERVER_PORT` env var (default `8765`).
+
+```bash
+# Keyword lookup — instant, no embedding needed
+curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"Sprite collision","mode":"lookup"}'
+
+# Full search — lookup + semantic vector search
+curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"how to detect collision","mode":"auto"}'
+```
+
+### Offline lookup (no API needed)
+
+Schema files at `.cache/c3-cdn/` under the version directory configured by `C3_VERSION` in `.env` or `src/config.py`:
+
+```
+.cache/c3-cdn/{C3_VERSION}/schemas/
+  plugins/{name}.json   — plugin ACE definitions
+  behaviors/{name}.json — behavior ACE definitions
+```
+
+Generate them if missing: `python scripts/init.py`
+
+```bash
+# Find the schema directory (version from config)
+ls .cache/c3-cdn/*/schemas/plugins/
+
+# Search ACEs by keyword across all schemas
+grep -rl "collision\|overlap" .cache/c3-cdn/*/schemas/
+```
+
+### What to look up vs. what to answer from knowledge
+
+| Question type | Source |
+|--------------|--------|
+| Plugin/behavior ACE list | API `mode=lookup` or read `schemas/plugins/{name}.json` |
+| How-to questions | API `mode=auto` (lookup + docs) |
+| Term translation | API `mode=lookup` with translation query |
+| General C3 concepts | OK to answer from training data |
+
 ## Related Files
 
 - `CLAUDE.md` in each subdirectory — directory-level details
