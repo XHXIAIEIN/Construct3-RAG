@@ -45,7 +45,7 @@ Environment variables (`.env` file supported), defined in `src/config.py`:
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `C3_VERSION` | `r476` | Construct 3 editor version for CDN |
+| `C3_VERSION` | see `src/config.py` | Construct 3 editor version for CDN |
 | `EMBEDDING_MODEL` | `BAAI/bge-m3` | Embedding model |
 | `QDRANT_HOST` | `localhost` | Qdrant host |
 | `RAG_SERVER_PORT` | `8765` | API server port |

@@ -77,7 +77,7 @@ Description: Triggered when the object collides with another object.
 用途: 碰撞检测、碰撞判定、碰撞事件。
 ```
 
-Bilingual text ensures both Chinese and English queries can find the same ACE.
+Multilingual text ensures queries in any supported language can find the same ACE.
 
 ## Version Update
 
