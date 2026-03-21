@@ -93,9 +93,6 @@ class SearchRequest(BaseModel):
     apply_threshold: bool = Field(
         True, description="Apply adaptive score threshold filtering"
     )
-    skip_lookup: bool = Field(
-        False, description="Skip lookup, go directly to semantic search"
-    )
     mode: str = Field(
         "auto",
         pattern="^(auto|lookup|semantic)$",
@@ -345,7 +342,7 @@ def _has_chinese(text: str) -> bool:
 
 def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     """Execute lookup phase. Returns LookupSection or None."""
-    use_lookup = not req.skip_lookup and not req.plugin and not req.collections
+    use_lookup = not req.plugin and not req.collections
     if not use_lookup:
         return None
 
