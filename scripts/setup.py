@@ -2,9 +2,8 @@
 """One-command setup for Construct3-RAG.
 
 Usage:
-    python scripts/setup.py              # full setup (CDN + index + server)
-    python scripts/setup.py --lite       # lite mode (CDN + lookup only, no embedding/Qdrant)
-    python scripts/setup.py --skip-index # skip indexing (just start server)
+    python scripts/setup.py              # default: lookup only (no Docker needed)
+    python scripts/setup.py --full       # full: install all deps + Qdrant + index
     python scripts/setup.py --version r477  # use specific C3 version
 """
 import argparse
@@ -31,8 +30,8 @@ def check_python():
     print("  OK")
 
 
-def install_deps(lite: bool = False):
-    req_file = ROOT / ("requirements-lite.txt" if lite else "requirements.txt")
+def install_deps(full: bool = False):
+    req_file = ROOT / ("requirements-full.txt" if full else "requirements.txt")
     print(f"[deps] Installing from {req_file.name}...")
     run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
     print("  OK")
@@ -100,45 +99,35 @@ def start_server(port: int = 8765):
 
 def main():
     parser = argparse.ArgumentParser(description="Construct3-RAG setup")
-    parser.add_argument("--lite", action="store_true",
-                        help="Lite mode: lookup only, no embedding model, no Qdrant needed")
+    parser.add_argument("--full", action="store_true",
+                        help="Full mode: install all deps including embedding/Qdrant, build index")
     parser.add_argument("--version", type=str, help="C3 version (default: from .env)")
     parser.add_argument("--skip-index", action="store_true", help="Skip index rebuild")
     parser.add_argument("--skip-deps", action="store_true", help="Skip pip install")
     parser.add_argument("--port", type=int, default=8765, help="Server port")
     args = parser.parse_args()
 
-    if args.lite:
-        print("=" * 50)
-        print("  Construct 3 RAG — Lite Setup")
-        print("  (lookup only, no embedding/Qdrant)")
-        print("=" * 50)
-        print()
-        check_python()
-        if not args.skip_deps:
-            install_deps(lite=True)
-        fetch_cdn(args.version)
-        import os
-        os.environ["LITE_MODE"] = "true"
-        start_server(args.port)
-    else:
-        print("=" * 50)
-        print("  Construct 3 RAG — Full Setup")
-        print("=" * 50)
-        print()
-        check_python()
-        if not args.skip_deps:
-            install_deps()
+    print("=" * 50)
+    print(f"  Construct 3 RAG — {'Full' if args.full else 'Lookup'} Setup")
+    print("=" * 50)
+    print()
+
+    check_python()
+    if not args.skip_deps:
+        install_deps(full=args.full)
+    fetch_cdn(args.version)
+
+    if args.full:
         qdrant_ok = check_qdrant()
         if not qdrant_ok:
-            print("  Start Qdrant and re-run, or use --lite for lookup-only mode.")
+            print("  Start Qdrant and re-run.")
             sys.exit(1)
-        fetch_cdn(args.version)
         if not args.skip_index:
             build_index()
         else:
             print("[index] Skipping (--skip-index)")
-        start_server(args.port)
+
+    start_server(args.port)
 
 
 if __name__ == "__main__":
