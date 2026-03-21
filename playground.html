@@ -43,8 +43,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 #zoom-info{position:fixed;bottom:8px;right:12px;color:var(--dis);font-size:10px;z-index:100;user-select:none}
 
 /* Card */
-.card{position:absolute;width:480px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
-.card.wide{width:640px}
+.card{position:absolute;width:480px;height:320px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
 .card:hover{border-color:#505050}
 .card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:8px;background:var(--deepBg);border-radius:8px 8px 0 0;user-select:none}
 .card-title{flex:1;font-size:12px;font-weight:bold;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -74,8 +73,9 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .panel-splitter::after{content:'';width:32px;height:2px;background:var(--border);border-radius:1px}
 .panel-splitter:hover::after{background:var(--accent)}
 
-/* Query bar: input + dropdown + send */
-.query-bar{display:flex;align-items:center;gap:6px;padding:0 0 6px;flex-shrink:0}
+/* Search bar */
+.search-bar{flex-shrink:0;display:flex;flex-direction:column;gap:4px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.search-row{display:flex;align-items:center;gap:6px}
 .query-input{flex:1;padding:5px 8px;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;color:var(--fg);font:12px inherit;outline:none}
 .query-input:focus{border-color:var(--accent)}
 .query-input::placeholder{color:var(--dis)}
@@ -85,6 +85,11 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .send-btn.ok{background:#1a6a3a}
 .send-btn.err{background:#6a1a2a}
 .latency{font-size:10px;color:var(--dis)}
+.search-options{display:flex;align-items:center;gap:6px}
+.opt-label{font-size:9px;color:var(--dis)}
+.mode-btn{padding:1px 6px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:9px inherit;cursor:pointer}
+.mode-btn:hover{border-color:var(--accent);color:var(--fg)}
+.mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* Request body: collapsible */
 .request-section.collapsed .json-editor{display:none}
@@ -327,7 +332,7 @@ function createCard(apiKey, posX, posY) {
   if (!api) return;
   const id = 'card-' + (++cardCount);
   const card = document.createElement('div');
-  card.className = 'card' + (apiKey === 'search' ? ' wide' : '');
+  card.className = 'card';
   card.id = id;
   card.style.left = posX + 'px';
   card.style.top = posY + 'px';
@@ -350,23 +355,27 @@ function createCard(apiKey, posX, posY) {
     </div>
     <div class="card-body">
       ${hasBody ? `
-      <div class="query-bar">
-        <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
-        <select class="tb-select" id="${id}-mode" style="font-size:10px;padding:4px 6px">
-          <option value="auto">auto</option>
-          <option value="lookup">lookup</option>
-          <option value="semantic">semantic</option>
-        </select>
-        ${presetOptions ? `<select class="tb-select" style="font-size:10px;padding:4px 6px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">presets</option>${presetOptions}</select>` : ''}
-        <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
-        <span class="latency" id="${id}-latency"></span>
-      </div>` : ''}
-      ${hasBody ? `
+      <div class="search-bar">
+        <div class="search-row">
+          <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
+          <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
+          <span class="latency" id="${id}-latency"></span>
+        </div>
+        <div class="search-options">
+          <input type="hidden" id="${id}-mode" value="auto"/>
+          <span class="opt-label">mode</span>
+          <button class="mode-btn active" onclick="setMode('${id}',this,'auto')">auto</button>
+          <button class="mode-btn" onclick="setMode('${id}',this,'lookup')">lookup</button>
+          <button class="mode-btn" onclick="setMode('${id}',this,'semantic')">semantic</button>
+          ${presetOptions ? `<span class="opt-label" style="margin-left:6px">preset</span>
+          <select class="tb-select" style="font-size:9px;padding:2px 4px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">--</option>${presetOptions}</select>` : ''}
+        </div>
+      </div>
       <div class="request-section collapsed" id="${id}-req-section">
         <div class="req-toggle" onclick="this.parentElement.classList.toggle('collapsed')">▶ Request Body</div>
         <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
       </div>` : `
-      <div class="query-bar">
+      <div class="search-row" style="padding-bottom:6px">
         <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
         <span class="latency" id="${id}-latency"></span>
       </div>`}
@@ -393,6 +402,12 @@ function createCard(apiKey, posX, posY) {
   }
 
   return id;
+}
+
+function setMode(cardId, btn, mode) {
+  document.getElementById(cardId + '-mode').value = mode;
+  btn.parentElement.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 function applyPreset(cardId, presetIdx, apiKey) {
