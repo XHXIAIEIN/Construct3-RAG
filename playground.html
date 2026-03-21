@@ -587,7 +587,6 @@ async function sendRequest(cardId, apiKey) {
     }
   } catch (err) {
     const ms = Math.round(performance.now() - t0);
-    const ms = Math.round(performance.now() - t0);
     sendBtn.textContent = 'ERR';
     sendBtn.className = 'send-btn err';
     latencyEl.textContent = ms >= 1000 ? (ms/1000).toFixed(1) + 's' : ms + 'ms';
