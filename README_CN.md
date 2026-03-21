@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-[Construct 3](https://www.construct.net) 文档检索服务。从官方 CDN 获取 ACE 定义，提供结构化搜索 API，支持中英双语。
+[Construct 3](https://www.construct.net) 文档检索服务。从官方 CDN 获取 ACE 定义，提供结构化搜索 API，支持多语言。
 
 ## 功能
 

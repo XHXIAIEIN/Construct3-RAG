@@ -28,7 +28,7 @@
 
 ```
 .cache/c3-cdn/{version}/schemas/
-  plugins/sprite.json       — all Sprite ACEs with bilingual names
+  plugins/sprite.json       — all Sprite ACEs with multilingual names
   plugins/_common.json      — shared ACEs (collision, position, visibility)
   behaviors/platform.json   — Platform behavior ACEs
   ...
