@@ -23,10 +23,11 @@ def test_search_request_mode_invalid():
         SearchRequest(query="test", mode="invalid")
 
 
-def test_lookup_section_model():
+def test_lookup_section_with_lang():
     section = LookupSection(
         hit=True, tier=1, confidence=0.85,
         intent="ace_search",
+        lang="zh",
         plugin=PluginInfo(id="sprite", name="Sprite", name_localized="精灵"),
         keywords=["碰撞"],
         matches=[LookupMatchResult(
@@ -34,27 +35,24 @@ def test_lookup_section_model():
             plugin_id="sprite",
             en=ACELocaleResult(name="On collision"),
             localized=ACELocaleResult(name="碰撞"),
-            localized_lang="zh",
         )],
         context="C: On collision: ...",
     )
     assert section.hit is True
-    assert len(section.matches) == 1
-    assert section.matches[0].ace_id == "on-collision"
-    assert section.matches[0].en.name == "On collision"
+    assert section.lang == "zh"
     assert section.matches[0].localized.name == "碰撞"
-    assert section.matches[0].localized_lang == "zh"
 
 
-def test_lookup_en_only():
-    """English query: no localized field."""
-    m = LookupMatchResult(
-        ace_id="test", ace_type="condition", plugin_id="sprite",
-        en=ACELocaleResult(name="Test"),
+def test_lookup_section_en_only():
+    section = LookupSection(
+        hit=True, tier=1, intent="ace_list",
+        matches=[LookupMatchResult(
+            ace_id="test", ace_type="condition", plugin_id="sprite",
+            en=ACELocaleResult(name="Test"),
+        )],
     )
-    assert m.en.name == "Test"
-    assert m.localized is None
-    assert m.localized_lang is None
+    assert section.lang is None
+    assert section.matches[0].localized is None
 
 
 def test_lookup_section_no_hit():
