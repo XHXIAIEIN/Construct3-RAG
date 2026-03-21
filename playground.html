@@ -173,7 +173,6 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
   <div style="flex:1"></div>
   <span id="env-status" style="font-size:10px;color:var(--dis)">checking...</span>
   <button class="tb-btn" onclick="resetView()">Reset View</button>
-  <button class="tb-btn" onclick="restartServer()" id="restart-btn" style="color:var(--red)">Restart</button>
 </div>
 
 <div id="canvas" onmousedown="canvasDown(event)" onmousemove="canvasMove(event)" onmouseup="canvasUp(event)" onwheel="canvasWheel(event)">
@@ -608,24 +607,7 @@ function copyResponse(cardId) {
   });
 }
 
-async function restartServer() {
-  const btn = document.getElementById('restart-btn');
-  const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
-  btn.disabled = true; btn.textContent = '...';
-  try {
-    await fetch(baseUrl + '/restart', { method: 'POST' });
-  } catch {}
-  // Wait for server to come back
-  for (let i = 0; i < 20; i++) {
-    await new Promise(r => setTimeout(r, 1000));
-    try {
-      const res = await fetch(baseUrl + '/health');
-      if (res.ok) { btn.textContent = 'Restart'; btn.disabled = false; return; }
-    } catch {}
-    btn.textContent = `${i+1}s...`;
-  }
-  btn.textContent = 'Restart'; btn.disabled = false;
-}
+
 
 function addCardFromSelect() {
   const key = document.getElementById('apiSelect').value;

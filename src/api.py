@@ -525,32 +525,6 @@ def health():
     )
 
 
-@app.post("/restart")
-def restart():
-    """Restart server. Cold restart in --reload mode, warm reset otherwise."""
-    import os
-    import threading
-
-    global _retriever, _lookup_engine, _fetcher
-
-    # Detect if running under uvicorn --reload (reloader sets env var)
-    is_reload = "WATCHFILES_FORCE_POLLING" in os.environ or os.getppid() != 1
-
-    if is_reload:
-        # Cold restart: kill worker, reloader parent respawns
-        def _exit():
-            import time
-            time.sleep(0.3)
-            os._exit(0)
-        threading.Thread(target=_exit, daemon=True).start()
-        return {"status": "restarting"}
-    else:
-        # Warm reset: clear caches, next request re-initializes
-        _retriever = None
-        _lookup_engine = None
-        _fetcher = None
-        return {"status": "reset"}
-
 
 @app.post("/search", response_model=SearchResponse)
 def search(req: SearchRequest):
