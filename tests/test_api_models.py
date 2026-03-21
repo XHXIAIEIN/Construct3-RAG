@@ -27,19 +27,34 @@ def test_lookup_section_model():
     section = LookupSection(
         hit=True, tier=1, confidence=0.85,
         intent="ace_search",
-        plugin=PluginInfo(id="sprite", name="Sprite", name_zh="精灵"),
+        plugin=PluginInfo(id="sprite", name="Sprite", name_localized="精灵"),
         keywords=["碰撞"],
         matches=[LookupMatchResult(
             ace_id="on-collision", ace_type="condition",
             plugin_id="sprite",
             en=ACELocaleResult(name="On collision"),
-            zh=ACELocaleResult(name="碰撞"),
+            localized=ACELocaleResult(name="碰撞"),
+            localized_lang="zh",
         )],
         context="C: On collision: ...",
     )
     assert section.hit is True
     assert len(section.matches) == 1
     assert section.matches[0].ace_id == "on-collision"
+    assert section.matches[0].en.name == "On collision"
+    assert section.matches[0].localized.name == "碰撞"
+    assert section.matches[0].localized_lang == "zh"
+
+
+def test_lookup_en_only():
+    """English query: no localized field."""
+    m = LookupMatchResult(
+        ace_id="test", ace_type="condition", plugin_id="sprite",
+        en=ACELocaleResult(name="Test"),
+    )
+    assert m.en.name == "Test"
+    assert m.localized is None
+    assert m.localized_lang is None
 
 
 def test_lookup_section_no_hit():

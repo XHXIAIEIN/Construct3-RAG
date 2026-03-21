@@ -105,7 +105,7 @@ class SearchRequest(BaseModel):
 class PluginInfo(BaseModel):
     id: str
     name: str
-    name_zh: str = ""
+    name_localized: str = ""  # non-en name, only when lang != en
 
 class ACEParam(BaseModel):
     name: str
@@ -164,8 +164,8 @@ class LookupMatchResult(BaseModel):
     ace_type: str
     plugin_id: str
     en: ACELocaleResult = ACELocaleResult()
-    zh: ACELocaleResult = ACELocaleResult()
-    plugin_name_zh: str = ""
+    localized: Optional[ACELocaleResult] = None  # non-en locale (zh, ja, etc.) — only when lang != en
+    localized_lang: Optional[str] = None          # e.g. "zh", "ja"
     script_name: str = ""
     category: str = ""
     relevance: int = 0
@@ -355,7 +355,10 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     intent = lookup_result.intent
     _trace(f"lookup 命中: {intent.intent_type} conf={intent.confidence:.2f}", "lookup")
 
-    # Convert matches (params: raw schema dicts → ACEParam with English names)
+    # Determine language — en is always included, non-en locale is optional
+    lang = req.lang or _detect_lang(req.query)
+    include_localized = lang != "en"
+
     def _convert_params(raw_params: list) -> list[ACEParam]:
         return [
             ACEParam(
@@ -371,8 +374,8 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             ace_type=m.ace_type,
             plugin_id=m.plugin_id,
             en=ACELocaleResult(name=m.en.name, desc=m.en.desc, display=m.en.display),
-            zh=ACELocaleResult(name=m.zh.name, desc=m.zh.desc, display=m.zh.display),
-            plugin_name_zh=m.plugin_name_zh,
+            localized=ACELocaleResult(name=m.zh.name, desc=m.zh.desc, display=m.zh.display) if include_localized else None,
+            localized_lang=lang if include_localized else None,
             script_name=m.script_name,
             category=m.category,
             relevance=m.relevance,
@@ -406,7 +409,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
                 plugin_info = PluginInfo(
                     id=plugin_id,
                     name=schema.get("name_en", plugin_id),
-                    name_zh=schema.get("name_zh", ""),
+                    name_localized=schema.get("name_zh", "") if include_localized else "",
                 )
             else:
                 plugin_info = PluginInfo(id=plugin_id, name=plugin_id)
