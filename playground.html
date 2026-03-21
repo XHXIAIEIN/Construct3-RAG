@@ -160,6 +160,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
   </select>
   <button class="tb-btn primary" onclick="addCardFromSelect()">+ Add Card</button>
   <div style="flex:1"></div>
+  <span id="env-status" style="font-size:10px;color:var(--dis)">checking...</span>
   <button class="tb-btn" onclick="resetView()">Reset View</button>
   <button class="tb-btn" onclick="restartServer()" id="restart-btn" style="color:var(--red)">Restart</button>
 </div>
@@ -637,8 +638,31 @@ const healthId = createCard('health', 20, 20);
 createCard('search', 540, 20);
 applyTransform();
 
-// Auto-send health check
-setTimeout(() => sendRequest(healthId, 'health'), 300);
+// Auto-check environment on load
+setTimeout(async () => {
+  sendRequest(healthId, 'health');
+  const el = document.getElementById('env-status');
+  const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
+  try {
+    const res = await fetch(baseUrl + '/health');
+    const d = await res.json();
+    const parts = [];
+    if (d.status === 'lite') {
+      parts.push('<span style="color:var(--yellow)">LITE</span> lookup only');
+      parts.push('<span style="color:var(--red)">Qdrant: off</span>');
+      parts.push('<span style="color:var(--red)">Embedding: off</span>');
+    } else {
+      parts.push(d.qdrant
+        ? '<span style="color:var(--green)">Qdrant: ok</span>'
+        : '<span style="color:var(--red)">Qdrant: off</span>');
+      parts.push('<span style="color:var(--green)">Embedding: ' + (d.embedding_model||'').split('/').pop() + '</span>');
+      parts.push(d.total_documents + ' docs');
+    }
+    el.innerHTML = parts.join(' · ');
+  } catch {
+    el.innerHTML = '<span style="color:var(--red)">API unreachable</span>';
+  }
+}, 300);
 </script>
 </body>
 </html>
