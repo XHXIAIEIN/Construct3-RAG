@@ -2,11 +2,11 @@
 
 **English** | [中文](README_CN.md)
 
-Retrieval service for [Construct 3](https://www.construct.net) documentation. Fetches ACE definitions from the official CDN, provides structured search API with bilingual (English/Chinese) support.
+Retrieval service for [Construct 3](https://www.construct.net) documentation. Fetches ACE definitions from the official CDN, provides structured search API with multilingual support.
 
 ## Features
 
-- **Structured ACE lookup** — Query Actions, Conditions, Expressions by plugin/behavior/keyword. Returns full bilingual names, descriptions, editor display templates, and parameter definitions.
+- **Structured ACE lookup** — Query Actions, Conditions, Expressions by plugin/behavior/keyword. Returns multilingual names, descriptions, editor display templates, and parameter definitions.
 - **Dual-path retrieval** — Lookup (keyword/rule-based, <1ms) + Semantic (vector search, ~1-10s)
 - **Live CDN data** — Fetches latest version from `editor.construct.net`, auto-filters deprecated ACEs
 - **Pre-built schemas** — `data/c3-schemas/` contains ready-to-read per-plugin JSON files (no setup needed)
