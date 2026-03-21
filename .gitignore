@@ -42,3 +42,4 @@ qdrant_storage/
 
 # Temporary / working files
 tmp/
+.trash/
