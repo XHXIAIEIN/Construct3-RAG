@@ -1,0 +1,132 @@
+name: Update Construct 3 Data
+
+# Runs every Wednesday 10:00 UTC (after Scirra's typical Tuesday evening UK release)
+on:
+  schedule:
+    - cron: '0 10 * * 3'
+  workflow_dispatch:  # manual trigger
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install minimal deps
+        run: pip install python-dotenv
+
+      - name: Check for new version
+        id: check
+        run: |
+          python -c "
+          import sys, json, urllib.request
+          sys.path.insert(0, '.')
+          from src.config import C3_VERSION
+          req = urllib.request.Request(
+              'https://editor.construct.net/versions.json',
+              headers={'User-Agent': 'Mozilla/5.0'}
+          )
+          versions = json.loads(urllib.request.urlopen(req, timeout=30).read())
+          latest = next((v['releaseName'] for v in versions if v.get('branchName') == 'Stable'), C3_VERSION)
+          print(f'current={C3_VERSION}')
+          print(f'latest={latest}')
+          changed = latest != C3_VERSION
+          print(f'changed={str(changed).lower()}')
+          # Set outputs
+          with open('$GITHUB_OUTPUT', 'a') as f:
+              f.write(f'current={C3_VERSION}\n')
+              f.write(f'latest={latest}\n')
+              f.write(f'changed={str(changed).lower()}\n')
+          " || echo "changed=false" >> $GITHUB_OUTPUT
+
+      - name: Fetch new data
+        if: steps.check.outputs.changed == 'true'
+        env:
+          C3_VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          echo "Updating from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
+
+          # Update version in config
+          sed -i "s/C3_VERSION.*/C3_VERSION=$C3_VERSION/" src/config.py || true
+
+          # Fetch CDN data and export
+          python -c "
+          import sys, json, shutil
+          from pathlib import Path
+          sys.path.insert(0, '.')
+          from src.ingest.c3_fetcher import C3Fetcher
+
+          version = '${{ steps.check.outputs.latest }}'
+          f = C3Fetcher(version=version)
+
+          # 1. Export schemas
+          print('Exporting schemas...')
+          schemas_dir = f.export_schemas()
+
+          target = Path('data/c3-schemas')
+          if target.exists():
+              shutil.rmtree(target)
+          shutil.copytree(schemas_dir / 'plugins', target / 'plugins')
+          shutil.copytree(schemas_dir / 'behaviors', target / 'behaviors')
+
+          # Build index
+          index = {'version': version, 'plugins': {}, 'behaviors': {}}
+          for section in ('plugins', 'behaviors'):
+              for fp in sorted((target / section).glob('*.json')):
+                  data = json.loads(fp.read_text(encoding='utf-8'))
+                  pid = data.get('id', fp.stem)
+                  index[section][pid] = {
+                      'name_en': data.get('name_en', pid),
+                      'name_zh': data.get('name_zh', ''),
+                      'file': f'{section}/{fp.name}',
+                      'conditions': len(data.get('conditions', [])),
+                      'actions': len(data.get('actions', [])),
+                      'expressions': len(data.get('expressions', [])),
+                  }
+          (target / '_index.json').write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding='utf-8')
+          print(f'Schemas: {len(index[\"plugins\"])} plugins, {len(index[\"behaviors\"])} behaviors')
+
+          # 2. Export ts-defs
+          print('Exporting ts-defs...')
+          ts_dir = f.export_ts_defs()
+
+          ts_target = Path('data/c3-ts-defs')
+          if ts_target.exists():
+              shutil.rmtree(ts_target)
+          for src_file in ts_dir.rglob('*.d.ts'):
+              rel = src_file.relative_to(ts_dir)
+              dst = ts_target / rel
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copy2(src_file, dst)
+          ac = ts_dir / 'autocomplete-data.json'
+          if ac.exists():
+              shutil.copy2(ac, ts_target / 'autocomplete-data.json')
+          print(f'TS defs: {len(list(ts_target.rglob(\"*.d.ts\")))} files')
+          "
+
+      - name: Create Pull Request
+        if: steps.check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "data: update C3 data to ${{ steps.check.outputs.latest }}"
+          title: "Update Construct 3 data: ${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}"
+          body: |
+            Automated update from [Construct 3 CDN](https://editor.construct.net).
+
+            **Version**: ${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}
+
+            Updated:
+            - `data/c3-schemas/` — ACE definitions (plugins + behaviors)
+            - `data/c3-ts-defs/` — TypeScript interface definitions
+            - `src/config.py` — default C3_VERSION
+          branch: update-c3-${{ steps.check.outputs.latest }}
+          delete-branch: true
