@@ -640,29 +640,27 @@ createCard('search', 540, 20);
 applyTransform();
 
 // Auto-check environment on load
+// Auto-check environment and send health
 setTimeout(async () => {
-  sendRequest(healthId, 'health');
   const el = document.getElementById('env-status');
-  const baseUrl = document.getElementById('baseUrl').value.replace(/\/+$/, '');
   try {
-    const res = await fetch(baseUrl + '/health');
+    const res = await fetch('/health');
     const d = await res.json();
     const parts = [];
     if (d.status === 'lite') {
       parts.push('<span style="color:var(--yellow)">LITE</span> lookup only');
-      parts.push('<span style="color:var(--red)">Qdrant: off</span>');
-      parts.push('<span style="color:var(--red)">Embedding: off</span>');
     } else {
       parts.push(d.qdrant
         ? '<span style="color:var(--green)">Qdrant: ok</span>'
         : '<span style="color:var(--red)">Qdrant: off</span>');
-      parts.push('<span style="color:var(--green)">Embedding: ' + (d.embedding_model||'').split('/').pop() + '</span>');
+      parts.push('<span style="color:var(--green)">' + (d.embedding_model||'').split('/').pop() + '</span>');
       parts.push(d.total_documents + ' docs');
     }
     el.innerHTML = parts.join(' · ');
   } catch {
     el.innerHTML = '<span style="color:var(--red)">API unreachable</span>';
   }
+  sendRequest(healthId, 'health');
 }, 300);
 </script>
 </body>
