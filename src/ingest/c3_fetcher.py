@@ -36,6 +36,8 @@ ENDPOINTS = {
     "examples":      "media/example-project-data.json",
     "plugin_list":   "plugins/pluginList.json",
     "behavior_list": "behaviors/behaviorList.json",
+    "offline":       "offline.json",
+    "autocomplete":  "media/autocomplete-data.json",
 }
 
 
@@ -380,6 +382,73 @@ class C3Fetcher:
         _flatten(en_text, zh_text, [])
         logger.info(f"[CDN] Exported {len(terms)} translation terms")
         return terms
+
+    def fetch_raw(self, path: str, force: bool = False) -> bytes:
+        """Fetch a raw file (text/binary), using local cache if fresh."""
+        cache_path = self.cache_dir / path.replace("/", "_")
+        if not force and cache_path.exists() and not _cache_expired(cache_path):
+            return cache_path.read_bytes()
+        url = f"{self.base_url}/{self.version}/{path}"
+        logger.info(f"[CDN] Fetching {url}")
+        raw = self._http_get(url)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_bytes(raw)
+        return raw
+
+    def export_ts_defs(self) -> Path:
+        """Download TypeScript definitions from CDN and save to ts-defs directory.
+
+        Uses offline.json to discover .d.ts file paths, downloads each once
+        and caches locally. Adds a small delay between requests to avoid
+        overwhelming the CDN.
+
+        Returns the ts-defs output directory path.
+        """
+        import time
+
+        ts_dir = self.cache_dir / "ts-defs"
+        marker = ts_dir / ".exported"
+        if marker.exists() and not _cache_expired(marker):
+            return ts_dir
+
+        # Get file list from offline.json
+        offline = self.fetch(ENDPOINTS["offline"])
+        dts_paths = [f for f in offline.get("fileList", []) if f.endswith(".d.ts")]
+        logger.info(f"[CDN] Found {len(dts_paths)} .d.ts files")
+
+        fetched = 0
+        for dts_path in dts_paths:
+            out_path = ts_dir / dts_path
+            if out_path.exists():
+                continue  # already cached
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                raw = self.fetch_raw(dts_path)
+                # Strip BOM
+                raw = self._strip_bom(raw)
+                out_path.write_bytes(raw)
+                fetched += 1
+                # Throttle: 100ms between requests to be respectful
+                if fetched % 10 == 0:
+                    time.sleep(1)
+                elif fetched > 0:
+                    time.sleep(0.1)
+            except Exception as e:
+                logger.warning(f"[CDN] Failed to fetch {dts_path}: {e}")
+
+        # Also fetch autocomplete-data.json
+        try:
+            autocomplete = self.fetch(ENDPOINTS["autocomplete"])
+            (ts_dir / "autocomplete-data.json").write_text(
+                json.dumps(autocomplete, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except Exception as e:
+            logger.warning(f"[CDN] Failed to fetch autocomplete-data: {e}")
+
+        marker.write_text(self.version)
+        logger.info(f"[CDN] Exported {fetched} new .d.ts files to {ts_dir}")
+        return ts_dir
 
     def ensure_ready(self) -> None:
         """Ensure CDN data is fetched and exported. Safe to call multiple times.
