@@ -192,14 +192,13 @@ class DebugInfo(BaseModel):
     """Structured debug output."""
     lookup_ms: Optional[float] = None
     semantic_ms: Optional[float] = None
-    total_ms: Optional[float] = None
     semantic: Optional[SemanticDebug] = None
 
 class SearchResponse(BaseModel):
     query: str
     lang: str
     mode: str              # "auto" | "lookup" | "semantic"
-    latency_ms: float
+    ms: float              # total request time in milliseconds
     lookup: Optional[LookupSection] = None
     semantic: Optional[list] = None
     debug: Optional[DebugInfo] = None
@@ -581,8 +580,7 @@ def search(req: SearchRequest):
             deduped.append(r)
         semantic_results = deduped
 
-    latency_ms = (time.time() - t0) * 1000
-    timing["total"] = round(latency_ms, 1)
+    total_ms = round((time.time() - t0) * 1000, 1)
     detected_lang = req.lang or _detect_lang(req.query)
 
     # Build debug info
@@ -605,7 +603,6 @@ def search(req: SearchRequest):
         debug_info = DebugInfo(
             lookup_ms=timing.get("lookup"),
             semantic_ms=timing.get("semantic"),
-            total_ms=timing.get("total"),
             semantic=semantic_debug,
         )
 
@@ -613,7 +610,7 @@ def search(req: SearchRequest):
         query=req.query,
         lang=detected_lang,
         mode=req.mode,
-        latency_ms=round(latency_ms, 1),
+        ms=total_ms,
         lookup=lookup_section,
         semantic=semantic_results or None,
         debug=debug_info,
