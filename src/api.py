@@ -535,7 +535,7 @@ def health():
 
 
 
-@app.post("/search", response_model=SearchResponse)
+@app.post("/search", response_model=SearchResponse, response_model_exclude_none=True)
 def search(req: SearchRequest):
     t0 = time.time()
 
