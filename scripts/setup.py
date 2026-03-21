@@ -32,13 +32,9 @@ def check_python():
 
 
 def install_deps(lite: bool = False):
-    print("[deps] Installing dependencies...")
-    if lite:
-        # Lite mode: only install what lookup needs (no torch, no sentence-transformers)
-        run([sys.executable, "-m", "pip", "install",
-             "fastapi", "uvicorn", "jieba", "python-dotenv", "-q"])
-    else:
-        run([sys.executable, "-m", "pip", "install", "-r", str(ROOT / "requirements.txt"), "-q"])
+    req_file = ROOT / ("requirements-lite.txt" if lite else "requirements.txt")
+    print(f"[deps] Installing from {req_file.name}...")
+    run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
     print("  OK")
 
 
