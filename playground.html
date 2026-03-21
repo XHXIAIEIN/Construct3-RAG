@@ -359,7 +359,7 @@ function createCard(apiKey, posX, posY) {
       ${hasBody ? `
       <div class="search-bar">
         <div class="search-row">
-          <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
+          <input class="query-input" id="${id}-query" value="${defaultQuery}" placeholder="Enter query..." oninput="syncToEditor('${id}')" onkeydown="if(event.key==='Enter')sendRequest('${id}','${apiKey}')"/>
           <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
           <span class="latency" id="${id}-latency"></span>
         </div>
@@ -406,27 +406,32 @@ function createCard(apiKey, posX, posY) {
   return id;
 }
 
+function syncToEditor(cardId) {
+  const editor = document.getElementById(cardId + '-editor');
+  if (!editor) return;
+  try {
+    const body = JSON.parse(editor.value);
+    const q = document.getElementById(cardId + '-query');
+    const m = document.getElementById(cardId + '-mode');
+    if (q) body.query = q.value;
+    if (m) body.mode = m.value;
+    editor.value = JSON.stringify(body, null, 2);
+  } catch {}
+}
+
 function setMode(cardId, btn, mode) {
   document.getElementById(cardId + '-mode').value = mode;
   btn.parentElement.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  syncToEditor(cardId);
 }
 
 function applyPreset(cardId, presetIdx, apiKey) {
   const preset = APIS[apiKey].presets[presetIdx];
   if (!preset) return;
-  // Set query input
   const queryInput = document.getElementById(cardId + '-query');
   if (queryInput) queryInput.value = preset.query;
-  // Also sync to editor body
-  const editor = document.getElementById(cardId + '-editor');
-  if (editor) {
-    try {
-      const body = JSON.parse(editor.value);
-      body.query = preset.query;
-      editor.value = JSON.stringify(body, null, 2);
-    } catch {}
-  }
+  syncToEditor(cardId);
 }
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
