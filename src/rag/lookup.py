@@ -731,9 +731,15 @@ class IntentClassifier:
                 _trace(f"字典搜索: 跳过 [概念词'{word}']", "lookup")
                 return None
 
-        # Tokenize query — split on whitespace, punctuation, AND Chinese particles
+        # Tokenize query — split on particles, then on CJK/ASCII boundaries
         tokens = re.split(ZH_PARTICLES, query)
-        tokens = [t.strip() for t in tokens if t.strip()]
+        split = []
+        for t in tokens:
+            t = t.strip()
+            if t:
+                # Split on CJK ↔ ASCII boundary: "Sprite字体" → ["Sprite", "字体"]
+                split.extend(p for p in re.split(r'(?<=[\u4e00-\u9fff])(?=[A-Za-z0-9])|(?<=[A-Za-z0-9])(?=[\u4e00-\u9fff])', t) if p)
+        tokens = split
         if not tokens:
             return None
 
