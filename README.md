@@ -21,9 +21,8 @@ Retrieval service for [Construct 3](https://www.construct.net) documentation. Fe
 Pre-built API definitions are committed to the repo:
 
 ```
-data/c3-schemas/                              — ACE definitions per plugin/behavior
-data/c3-ts-defs/                              — TypeScript scripting interfaces
-data/c3-ts-defs/autocomplete-data.json        — 109 classes with method listings
+data/c3-schemas/       — ACE definitions per plugin/behavior
+data/c3-ts-defs/       — TypeScript scripting interfaces
 ```
 
 ### Start the API server

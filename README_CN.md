@@ -21,9 +21,8 @@
 预构建的 API 定义已提交到仓库，无需安装：
 
 ```
-data/c3-schemas/                              — 每个插件/行为的 ACE 定义
-data/c3-ts-defs/                              — TypeScript 脚本 API 接口
-data/c3-ts-defs/autocomplete-data.json        — 109 个类的方法列表
+data/c3-schemas/       — 每个插件/行为的 ACE 定义
+data/c3-ts-defs/       — TypeScript 脚本 API 接口
 ```
 
 ### 启动 API 服务
