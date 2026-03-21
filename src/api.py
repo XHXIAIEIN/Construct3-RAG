@@ -157,8 +157,8 @@ class TermResult(BaseModel):
 
 class ACELocaleResult(BaseModel):
     name: str = ""
-    desc: str = ""
-    display: Optional[str] = None  # editor display template, only when scope=eventsheet|all
+    desc: Optional[str] = None
+    display: Optional[str] = None
 
 class LookupMatchResult(BaseModel):
     """Structured ACE/property match from lookup."""
@@ -167,12 +167,12 @@ class LookupMatchResult(BaseModel):
     plugin_id: str
     en: ACELocaleResult = ACELocaleResult()
     localized: Optional[ACELocaleResult] = None
-    script_name: Optional[str] = None  # only when scope includes scripts
-    category: str = ""
-    relevance: int = 0
-    params: List[ACEParam] = []
-    is_trigger: bool = False
-    is_async: bool = False
+    script_name: Optional[str] = None
+    category: Optional[str] = None
+    relevance: Optional[int] = None
+    params: Optional[List[ACEParam]] = None
+    is_trigger: Optional[bool] = None
+    is_async: Optional[bool] = None
     return_type: Optional[str] = None
 
 class LookupSection(BaseModel):
@@ -394,17 +394,17 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
                 ace_type=m.ace_type,
                 plugin_id=m.plugin_id,
                 en=ACELocaleResult(
-                    name=m.en.name, desc=m.en.desc,
+                    name=m.en.name, desc=m.en.desc or None,
                     display=m.en.display or None if include_display else None,
                 ),
                 localized=ACELocaleResult(
-                    name=m.zh.name, desc=m.zh.desc,
+                    name=m.zh.name, desc=m.zh.desc or None,
                     display=m.zh.display or None if include_display else None,
                 ) if include_localized else None,
                 script_name=m.script_name if include_scripts else None,
-                category=m.category,
-                relevance=m.relevance,
-                params=_convert_params(m.params),
+                category=m.category or None,
+                relevance=m.relevance or None,
+                params=_convert_params(m.params) or None,
                 is_trigger=m.is_trigger,
                 is_async=m.is_async,
                 return_type=m.return_type or None,
