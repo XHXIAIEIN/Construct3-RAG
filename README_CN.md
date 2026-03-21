@@ -33,29 +33,26 @@ pip install -r requirements.txt
 python scripts/setup.py
 ```
 
-服务会自动检测环境：
-- **Qdrant 在运行** → 关键词查找 + 语义向量搜索
-- **无 Qdrant** → 仅关键词查找（无需 Docker 也能用）
-
 打开 `http://localhost:8765/playground` 测试。
 
-如需启用语义搜索，在运行 setup 前启动 Qdrant：
+## 完整模式（语义搜索）
+
+在关键词查找基础上增加向量语义搜索。需要 Docker 和 ~4GB 磁盘空间。
 
 ```bash
+# 1. 安装全部依赖
+pip install -r requirements-full.txt
+
+# 2. 启动 Qdrant
 docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-```
 
-### 数据源（语义搜索用）
-
-```bash
-# 必需：官方手册 Markdown 版
+# 3. 克隆数据源（与本项目放在同一父目录下）
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git
+git clone https://github.com/Scirra/Construct-Example-Projects.git   # 可选
 
-# 可选：官方示例项目
-git clone https://github.com/Scirra/Construct-Example-Projects.git
+# 4. 完整安装
+python scripts/setup.py --full
 ```
-
-与本项目放在同一父目录下。
 
 ## API
 
