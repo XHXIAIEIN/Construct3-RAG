@@ -145,6 +145,10 @@ class C3Fetcher:
                 en_p = en_text.get(addon_type, {}).get(pid_lower, {})
                 zh_p = zh_text.get(addon_type, {}).get(pid_lower, {})
 
+                # Skip deprecated addons (absent from zh-CN lang)
+                if not zh_p:
+                    continue
+
                 plugin_json = {
                     "id": pid_lower,
                     "originalId": plugin_id,
@@ -170,6 +174,10 @@ class C3Fetcher:
                             ace_id = ace.get("id", "")
                             en_ace = en_p.get(ace_type_plural, {}).get(ace_id, {})
                             zh_ace = zh_p.get(ace_type_plural, {}).get(ace_id, {})
+
+                            # Skip deprecated ACEs (absent from zh-CN lang)
+                            if not zh_ace:
+                                continue
 
                             if ace_type_plural == "expressions":
                                 name_en = en_ace.get("translated-name", ace_id)
@@ -273,15 +281,34 @@ class C3Fetcher:
                     else:
                         name_en = en_ace.get("list-name", ace_id)
                         name_zh = zh_ace.get("list-name", name_en)
-                    common_json[ace_type_plural].append({
+                    # Build params from lang (allAces doesn't include _common)
+                    en_params = en_ace.get("params", {})
+                    zh_params = zh_ace.get("params", {})
+                    params = []
+                    for pid_param, en_param in en_params.items():
+                        zh_param = zh_params.get(pid_param, {})
+                        params.append({
+                            "id": pid_param,
+                            "type": "object",  # _common params are typically object selectors
+                            "name_en": en_param.get("name", pid_param),
+                            "name_zh": zh_param.get("name", en_param.get("name", pid_param)),
+                            "desc_en": en_param.get("desc", ""),
+                            "desc_zh": zh_param.get("desc", ""),
+                        })
+                    entry = {
                         "id": ace_id,
                         "name_en": name_en,
                         "name_zh": name_zh,
                         "description_en": en_ace.get("description", ""),
                         "description_zh": zh_ace.get("description", ""),
+                        "display_en": en_ace.get("display-text", ""),
+                        "display_zh": zh_ace.get("display-text", ""),
                         "scriptName": ace_id,
                         "category": "common",
-                    })
+                    }
+                    if params:
+                        entry["params"] = params
+                    common_json[ace_type_plural].append(entry)
             out_path = schemas_dir / "plugins" / "_common.json"
             out_path.write_text(json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8")
             logger.info(f"[CDN] Exported _common: {len(common_json['conditions'])}C "

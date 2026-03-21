@@ -9,6 +9,7 @@ import time
 import logging
 from typing import List, Optional
 
+import jieba
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
@@ -95,6 +96,11 @@ class SearchRequest(BaseModel):
     skip_lookup: bool = Field(
         False, description="Skip lookup, go directly to semantic search"
     )
+    mode: str = Field(
+        "auto",
+        pattern="^(auto|lookup|semantic)$",
+        description="Execution mode: auto (both), lookup (keyword only), semantic (vector only)",
+    )
 
 
 # ── Result types (discriminated by "type" field) ──
@@ -106,7 +112,6 @@ class PluginInfo(BaseModel):
 
 class ACEParam(BaseModel):
     name: str
-    name_zh: str = ""
     type: str = "any"
     desc: str = ""
 
@@ -151,24 +156,57 @@ class TermResult(BaseModel):
     en: str
     category: str = ""
 
-class LookupResult(BaseModel):
-    type: str = "lookup"
-    score: float = 1.0
-    intent: str
-    plugin: str = ""
-    content: str
+class ACELocaleResult(BaseModel):
+    name: str = ""
+    desc: str = ""
+    display: str = ""
 
-class TraceStep(BaseModel):
-    phase: str
-    message: str
+class LookupMatchResult(BaseModel):
+    """Structured ACE/property match from lookup."""
+    ace_id: str
+    ace_type: str
+    plugin_id: str
+    en: ACELocaleResult = ACELocaleResult()
+    zh: ACELocaleResult = ACELocaleResult()
+    plugin_name_zh: str = ""
+    script_name: str = ""
+    category: str = ""
+    relevance: int = 0
+    params: List[ACEParam] = []
+    is_trigger: bool = False
+    is_async: bool = False
+    return_type: Optional[str] = None
+
+class LookupSection(BaseModel):
+    """Structured lookup results section."""
+    hit: bool
+    tier: int = 0
+    confidence: float = 0.0
+    intent: str = ""
+    plugin: Optional[PluginInfo] = None
+    keywords: list[str] = []
+    matches: List[LookupMatchResult] = []
+    context: str = ""   # compact LLM text
+
+class SemanticDebug(BaseModel):
+    """Debug info for semantic search phase."""
+    collections: dict[str, dict] = {}   # {name: {hits: N, top_score: F}}
+    total_candidates: int = 0
+    after_dedup: int = 0
+
+class DebugInfo(BaseModel):
+    """Structured debug output."""
+    timing_ms: dict[str, float] = {}   # {lookup, semantic, total}
+    semantic: Optional[SemanticDebug] = None
 
 class SearchResponse(BaseModel):
     query: str
     lang: str
-    route: str
+    mode: str              # "auto" | "lookup" | "semantic"
     latency_ms: float
-    results: list  # mixed types: ACEResult | DocResult | ExampleResult | TermResult | LookupResult
-    trace: List[TraceStep] = []
+    lookup: Optional[LookupSection] = None   # null when mode=semantic or no hit
+    semantic: list = []    # ACEResult | DocResult | ... (empty when mode=lookup)
+    debug: Optional[DebugInfo] = None
 
 
 class HealthResponse(BaseModel):
@@ -213,10 +251,13 @@ _TERMS_USEFUL_LANGS = {"zh", "ja", "ko"}
 _PLAYGROUND_HTML = Path(__file__).parent.parent / "playground.html"
 
 
-@app.get("/playground", response_class=HTMLResponse)
+@app.get("/playground")
 def playground():
-    """Interactive API Playground UI."""
-    return _PLAYGROUND_HTML.read_text(encoding="utf-8")
+    """Interactive API Playground UI. Always read from disk, no cache."""
+    from fastapi.responses import Response
+    content = _PLAYGROUND_HTML.read_text(encoding="utf-8")
+    return Response(content=content, media_type="text/html",
+                    headers={"Cache-Control": "no-store"})
 
 
 def _collection_key(source_name: str) -> str:
@@ -298,51 +339,97 @@ def _try_lookup(query: str):
     return result
 
 
-# ---------------------------------------------------------------------------
-# Endpoints
-# ---------------------------------------------------------------------------
+def _has_chinese(text: str) -> bool:
+    return any(0x4e00 <= ord(ch) <= 0x9fff for ch in text)
 
-@app.get("/health", response_model=HealthResponse)
-def health():
-    retriever = _get_retriever()
-    detail = retriever.health_check()
-    return HealthResponse(
-        status=detail["status"],
-        qdrant=detail["qdrant_connected"],
-        embedding_model=EMBEDDING_MODEL,
-        message=detail["message"],
-        collections=detail["collections"],
-        total_documents=detail["total_documents"],
-        missing_collections=detail["missing_collections"],
+
+def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
+    """Execute lookup phase. Returns LookupSection or None."""
+    use_lookup = not req.skip_lookup and not req.plugin and not req.collections
+    if not use_lookup:
+        return None
+
+    _trace("尝试 lookup 直查...", "lookup")
+    lookup_result = _try_lookup(req.query)
+    if lookup_result is None:
+        _trace("lookup 未命中", "lookup")
+        return None
+
+    intent = lookup_result.intent
+    _trace(f"lookup 命中: {intent.intent_type} conf={intent.confidence:.2f}", "lookup")
+
+    # Convert matches (params: raw schema dicts → ACEParam with English names)
+    def _convert_params(raw_params: list) -> list[ACEParam]:
+        return [
+            ACEParam(
+                name=p.get("name_en") or p.get("name_zh", p.get("id", "")),
+                type=p.get("type", "any"),
+                desc=p.get("desc_en") or p.get("desc_zh", ""),
+            ) for p in raw_params
+        ]
+
+    matches = [
+        LookupMatchResult(
+            ace_id=m.ace_id,
+            ace_type=m.ace_type,
+            plugin_id=m.plugin_id,
+            en=ACELocaleResult(name=m.en.name, desc=m.en.desc, display=m.en.display),
+            zh=ACELocaleResult(name=m.zh.name, desc=m.zh.desc, display=m.zh.display),
+            plugin_name_zh=m.plugin_name_zh,
+            script_name=m.script_name,
+            category=m.category,
+            relevance=m.relevance,
+            params=_convert_params(m.params),
+            is_trigger=m.is_trigger,
+            is_async=m.is_async,
+            return_type=m.return_type or None,
+        ) for m in lookup_result.matches
+    ]
+
+    # Keywords from filter_term
+    filter_term = intent.filter_term or ""
+    if filter_term:
+        if _has_chinese(filter_term):
+            keywords = [w for w in jieba.lcut(filter_term) if w.strip()]
+        else:
+            keywords = filter_term.split()
+    else:
+        keywords = []
+
+    # Resolve plugin info from schema_index if plugin_id is set
+    plugin_info: Optional[PluginInfo] = None
+    plugin_id = intent.plugin_id or ""
+    if plugin_id:
+        try:
+            engine = _get_lookup_engine()
+            schema = engine.schema_index.get_schema(plugin_id, is_behavior=False)
+            if schema is None:
+                schema = engine.schema_index.get_schema(plugin_id, is_behavior=True)
+            if schema:
+                plugin_info = PluginInfo(
+                    id=plugin_id,
+                    name=schema.get("name_en", plugin_id),
+                    name_zh=schema.get("name_zh", ""),
+                )
+            else:
+                plugin_info = PluginInfo(id=plugin_id, name=plugin_id)
+        except Exception:
+            plugin_info = PluginInfo(id=plugin_id, name=plugin_id)
+
+    return LookupSection(
+        hit=True,
+        tier=intent.tier,
+        confidence=intent.confidence,
+        intent=intent.intent_type,
+        plugin=plugin_info,
+        keywords=keywords,
+        matches=matches,
+        context=lookup_result.context,
     )
 
 
-@app.post("/search", response_model=SearchResponse)
-def search(req: SearchRequest):
-    t0 = time.time()
-
-    # Initialize trace collection for this request
-    from src.rag._trace import _trace_local, _trace
-    _trace_local.events = []
-    _trace(f"query: {req.query[:60]}", "input")
-
-    # ── Step 1: Try lookup (unless skipped or filters are set) ──────────
-    lookup_answer = None
-    lookup_intent = None
-    lookup_plugin = ""
-    use_lookup = not req.skip_lookup and not req.plugin and not req.collections
-    if use_lookup:
-        _trace("尝试 lookup 直查...", "lookup")
-        lookup_result = _try_lookup(req.query)
-        if lookup_result is not None:
-            lookup_answer = lookup_result.answer
-            lookup_intent = lookup_result.intent.intent_type
-            lookup_plugin = lookup_result.intent.plugin_id or ""
-            _trace(f"lookup 命中: {lookup_intent}，继续语义搜索补充", "lookup")
-        else:
-            _trace("lookup 未命中，转语义搜索", "lookup")
-
-    # ── Step 2: Semantic search (always runs) ─────────────────────────
+def _do_semantic(req: SearchRequest, _trace) -> list:
+    """Execute semantic search phase. Returns list of result dicts."""
     retriever = _get_retriever()
 
     # Branch: plugin-specific filtered search
@@ -355,8 +442,6 @@ def search(req: SearchRequest):
             top_k=req.top_k,
         )
         total = len(results)
-        after_rerank = total
-        route = "plugin_filter"
         _trace(f"返回 {total} 条结果", "search")
 
     # Branch: collection-scoped search
@@ -383,7 +468,7 @@ def search(req: SearchRequest):
         results = results[:req.top_k]
         total = len(all_results)
         after_rerank = len(results)
-        route = "collection_filter"
+        _trace(f"collection 过滤: {total} 候选, dedup 后 {after_rerank}", "search")
 
     # Default: full cross-collection search with rerank
     else:
@@ -398,43 +483,116 @@ def search(req: SearchRequest):
             exclude_collections=exclude,
         )
         total = len(results)
-        after_rerank = total
-        route = "semantic"
-
-    _trace(f"检索完成: {total} 候选, rerank 后 {after_rerank}", "search")
+        _trace(f"检索完成: {total} 候选", "search")
 
     # Adaptive threshold filtering
-    after_threshold = len(results)
     if req.apply_threshold and results:
+        before = len(results)
         results = retriever.filter_by_adaptive_threshold(results)
-        after_threshold = len(results)
-        _trace(f"阈值过滤: {after_rerank} → {after_threshold}", "filter")
+        _trace(f"阈值过滤: {before} → {len(results)}", "filter")
+
+    return [_convert_result(r) for r in results]
+
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
+
+@app.get("/health", response_model=HealthResponse)
+def health():
+    retriever = _get_retriever()
+    detail = retriever.health_check()
+    return HealthResponse(
+        status=detail["status"],
+        qdrant=detail["qdrant_connected"],
+        embedding_model=EMBEDDING_MODEL,
+        message=detail["message"],
+        collections=detail["collections"],
+        total_documents=detail["total_documents"],
+        missing_collections=detail["missing_collections"],
+    )
+
+
+@app.post("/restart")
+def restart():
+    """Restart by clearing singletons and touching source to trigger uvicorn reload."""
+    global _retriever, _lookup_engine, _fetcher
+    _retriever = None
+    _lookup_engine = None
+    _fetcher = None
+    # Touch this file to trigger uvicorn --reload if running in dev mode
+    Path(__file__).touch()
+    return {"status": "restarting"}
+
+
+@app.post("/search", response_model=SearchResponse)
+def search(req: SearchRequest):
+    t0 = time.time()
+
+    # Suppress internal _trace calls (legacy); we build structured debug instead
+    from src.rag._trace import _trace_local
+    _trace_local.events = []
+    def _noop(*a, **kw): pass
+
+    lookup_section = None
+    semantic_results = []
+    timing: dict[str, float] = {}
+
+    # ── Lookup phase ──
+    if req.mode in ("auto", "lookup"):
+        t_lk = time.time()
+        lookup_section = _do_lookup(req, _noop)
+        timing["lookup"] = round((time.time() - t_lk) * 1000, 1)
+
+    # ── Semantic phase ──
+    if req.mode in ("auto", "semantic"):
+        t_sem = time.time()
+        semantic_results = _do_semantic(req, _noop)
+        timing["semantic"] = round((time.time() - t_sem) * 1000, 1)
+        before_dedup = len(semantic_results)
+
+    # ── Dedup: when lookup hit, drop ACE + plugin overview docs from semantic ──
+    if lookup_section and lookup_section.hit and semantic_results:
+        lookup_plugin = lookup_section.plugin.id if lookup_section.plugin else ""
+        deduped = []
+        for r in semantic_results:
+            if r.get("type") == "ace":
+                continue
+            if (r.get("type") == "doc" and lookup_plugin
+                    and r.get("title", "").lower() == lookup_plugin.lower()):
+                continue
+            deduped.append(r)
+        semantic_results = deduped
 
     latency_ms = (time.time() - t0) * 1000
-    _trace(f"完成: {after_threshold} 条结果, {latency_ms:.0f}ms", "done")
-
+    timing["total"] = round(latency_ms, 1)
     detected_lang = req.lang or _detect_lang(req.query)
 
-    # Merge: lookup result (if any) goes first, then semantic results
-    result_items = []
-    if lookup_answer:
-        result_items.append(LookupResult(
-            intent=lookup_intent or "",
-            plugin=lookup_plugin,
-            content=lookup_answer,
-        ).model_dump())
-        route = "lookup+semantic"
-
-    for r in results:
-        result_items.append(_convert_result(r))
-
-    result_items = result_items[:req.top_k]
+    # Build debug info
+    debug_info = None
+    if req.debug:
+        semantic_debug = None
+        if "semantic" in timing:
+            coll_stats = {}
+            for r in semantic_results:
+                coll = r.get("collection", r.get("type", "unknown"))
+                if coll not in coll_stats:
+                    coll_stats[coll] = {"hits": 0, "top_score": 0.0}
+                coll_stats[coll]["hits"] += 1
+                coll_stats[coll]["top_score"] = max(coll_stats[coll]["top_score"], r.get("score", 0))
+            semantic_debug = SemanticDebug(
+                collections=coll_stats,
+                total_candidates=before_dedup if 'before_dedup' in dir() else 0,
+                after_dedup=len(semantic_results),
+            )
+        debug_info = DebugInfo(timing_ms=timing, semantic=semantic_debug)
 
     return SearchResponse(
         query=req.query,
         lang=detected_lang,
-        route=route,
+        mode=req.mode,
         latency_ms=round(latency_ms, 1),
-        results=result_items,
-        trace=[TraceStep(phase=p, message=m) for p, m in getattr(_trace_local, 'events', [])] if req.debug else [],
+        lookup=lookup_section,
+        semantic=semantic_results,
+        debug=debug_info,
     )

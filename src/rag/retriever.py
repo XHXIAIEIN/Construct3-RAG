@@ -196,24 +196,10 @@ class HybridRetriever:
         """
         Compute adaptive score threshold based on result distribution.
 
-        This helps filter out irrelevant chunks by analyzing the score
-        distribution and removing results in the "long tail".
-
-        Args:
-            results: List of search results with scores
-
-        Returns:
-            Computed threshold score. Results below this should be filtered.
-
         Strategy:
             - If few results (< 3): use minimum threshold
             - Otherwise: use mean - 0.5 * std_dev as cutoff
             - Never go below MIN_SCORE_THRESHOLD
-
-        Example:
-            >>> results = retriever.search_plugins("sprite animation", top_k=10)
-            >>> threshold = retriever.compute_adaptive_threshold(results)
-            >>> filtered = [r for r in results if r.score >= threshold]
         """
         if len(results) < 3:
             return self.MIN_SCORE_THRESHOLD
@@ -222,11 +208,7 @@ class HybridRetriever:
         mean_score = statistics.mean(scores)
         std_dev = statistics.stdev(scores) if len(scores) > 1 else 0
 
-        # Adaptive threshold: mean - 0.5 * std_dev
-        # This keeps results within reasonable range of the mean
         threshold = mean_score - (0.5 * std_dev)
-
-        # Clamp to reasonable bounds
         return max(self.MIN_SCORE_THRESHOLD, min(threshold, mean_score))
 
     @property
