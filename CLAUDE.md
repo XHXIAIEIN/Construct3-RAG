@@ -68,60 +68,47 @@ Environment variables (`.env` file supported), defined in `src/config.py`:
 # 3. Local (from src.xxx import ...)
 ```
 
-## API Overview
+## Construct 3 Knowledge
 
-`POST /search` with `mode`: `auto` | `lookup` | `semantic`
+This repo contains pre-built Construct 3 API definitions. When answering questions about C3 plugins, behaviors, ACEs, or scripting, **always look up the data files below** instead of guessing from training data.
 
-Response splits into:
-- `lookup` — structured ACE matches with `en`/`zh` locale (name, desc, display, params)
-- `semantic` — vector search results (docs, examples, terms)
-- `debug` — timing and collection stats (when `debug=true`)
+### Data files (always available, no setup needed)
+
+```
+data/c3-schemas/_index.json                — START HERE: plugin/behavior name → file path
+data/c3-schemas/plugins/{id}.json          — ACE definitions (conditions, actions, expressions, params, display)
+data/c3-schemas/behaviors/{id}.json        — behavior ACE definitions
+data/c3-ts-defs/autocomplete-data.json     — scripting API: 109 classes → method/property lists
+data/c3-ts-defs/plugins/.../*.d.ts         — full TypeScript interface signatures
+data/c3-ts-defs/behaviors/.../*.d.ts       — behavior TypeScript interfaces
+data/c3-ts-defs/preview/interfaces/...     — runtime base classes (IInstance, IWorldInstance, etc.)
+```
+
+### How to answer C3 questions
+
+**"What actions/conditions/expressions does [plugin] have?"**
+→ Read `data/c3-schemas/_index.json`, find the plugin id, read `data/c3-schemas/plugins/{id}.json`
+
+**"How do I use [ACE] in event sheets?"**
+→ Read the plugin schema JSON, find the ACE entry. Look at `display_en`/`display_zh` (editor format), `params`, `description_en`.
+
+**"How do I use [plugin] in JavaScript/TypeScript?"**
+→ Read `data/c3-ts-defs/autocomplete-data.json` to find the interface class name.
+→ Then read the `.d.ts` file for full method signatures.
+→ Example: Sprite → `ISpriteInstance` → `data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`
+
+**"What is [C3 concept]?" (layouts, event sheets, behaviors, etc.)**
+→ General knowledge is fine. No lookup needed.
+
+### API (optional, if server is running)
 
 Full spec: `docs/api-reference.md`
 
-## Construct 3 Knowledge Lookup
-
-When answering questions about Construct 3 (plugins, behaviors, ACEs, events, scripting), use the pre-built schema files for accurate, up-to-date information instead of relying on training data.
-
-### Reading schema files (no setup needed)
-
-Schema data is pre-built and committed to the repo:
-
 ```
-data/c3-schemas/
-  _index.json             — plugin/behavior name index (en/zh mapping + ACE counts)
-  plugins/{name}.json     — per-plugin ACE definitions
-  behaviors/{name}.json   — per-behavior ACE definitions
+POST /search  mode=list     — ACE name listing (grouped by type)
+POST /search  mode=lookup   — keyword search with full ACE details
+POST /search  mode=auto     — lookup + semantic vector search
 ```
-
-**Step 1**: Read `data/c3-schemas/_index.json` to find the plugin/behavior name → file path.
-**Step 2**: Read the corresponding JSON for full ACE details (conditions, actions, expressions with en/zh names, descriptions, display templates, params).
-
-```bash
-# Find which plugin handles collision
-grep -l "collision" data/c3-schemas/plugins/*.json
-
-# Read Sprite ACE definitions
-cat data/c3-schemas/plugins/sprite.json
-```
-
-### API lookup (if server is running)
-
-```bash
-# Keyword lookup — instant, no GPU needed
-curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"Sprite collision","mode":"lookup"}'
-```
-
-### When to look up vs. answer from knowledge
-
-| Question type | Source |
-|--------------|--------|
-| Plugin/behavior ACE list | Read `data/c3-schemas/plugins/{name}.json` |
-| Specific ACE details | Read schema JSON or API `mode=lookup` |
-| How-to questions | API `mode=auto` (if running) |
-| General C3 concepts | Training data is fine |
 
 ## Related Files
 
