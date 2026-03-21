@@ -164,8 +164,7 @@ class LookupMatchResult(BaseModel):
     ace_type: str
     plugin_id: str
     en: ACELocaleResult = ACELocaleResult()
-    localized: Optional[ACELocaleResult] = None  # non-en locale (zh, ja, etc.) — only when lang != en
-    localized_lang: Optional[str] = None          # e.g. "zh", "ja"
+    localized: Optional[ACELocaleResult] = None
     script_name: str = ""
     category: str = ""
     relevance: int = 0
@@ -180,6 +179,7 @@ class LookupSection(BaseModel):
     tier: int = 0
     confidence: float = 0.0
     intent: str = ""
+    lang: Optional[str] = None  # localized language code (e.g. "zh"), null when en-only
     plugin: Optional[PluginInfo] = None
     keywords: list[str] = []
     matches: List[LookupMatchResult] = []
@@ -375,7 +375,6 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             plugin_id=m.plugin_id,
             en=ACELocaleResult(name=m.en.name, desc=m.en.desc, display=m.en.display),
             localized=ACELocaleResult(name=m.zh.name, desc=m.zh.desc, display=m.zh.display) if include_localized else None,
-            localized_lang=lang if include_localized else None,
             script_name=m.script_name,
             category=m.category,
             relevance=m.relevance,
@@ -421,6 +420,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         tier=intent.tier,
         confidence=intent.confidence,
         intent=intent.intent_type,
+        lang=lang if include_localized else None,
         plugin=plugin_info,
         keywords=keywords,
         matches=matches,

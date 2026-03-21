@@ -145,7 +145,7 @@ def test_search_lookup_miss_falls_to_semantic(client):
     assert resp.status_code == 200
     data = resp.json()
     assert data["mode"] == "auto"
-    assert data["lookup"] is None
+    assert "lookup" not in data  # excluded when None
     retriever.search_all_with_rerank.assert_called_once()
 
 
@@ -266,7 +266,7 @@ def test_search_response_structure(client):
     assert "mode" in data
     assert "latency_ms" in data
     assert "semantic" in data
-    assert "lookup" in data
+    # lookup excluded when None (mode=semantic skips it)
     assert "diagnostics" not in data  # old format removed
     assert "results" not in data      # old flat list removed
     assert "route" not in data        # renamed to mode
