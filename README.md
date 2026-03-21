@@ -10,20 +10,20 @@ Retrieval service for [Construct 3](https://www.construct.net) documentation. Fe
 - **Dual-path retrieval** — Lookup (keyword/rule-based, <1ms) + Semantic (vector search, ~1-10s)
 - **Live CDN data** — Fetches latest version from `editor.construct.net`, auto-filters deprecated ACEs
 - **Pre-built schemas** — `data/c3-schemas/` contains ready-to-read per-plugin JSON files (no setup needed)
-- **Multi-mode API** — `mode=lookup` (keyword only, instant) / `mode=semantic` (vector search) / `mode=auto` (both)
+- **Multi-mode API** — `mode=list` (ACE name listing) / `mode=lookup` (keyword search) / `mode=semantic` (vector search) / `mode=auto` (lookup + semantic)
+- **TypeScript definitions** — `data/c3-ts-defs/` contains full scripting API interfaces (150 `.d.ts` files)
+- **Auto-update** — GitHub Action checks for new C3 releases weekly, creates PR with updated API definitions
 
 ## Quick Start
 
 ### Read schema files directly
 
-Pre-built schema files are committed to the repo — no install needed:
+Pre-built API definitions are committed to the repo — no install needed:
 
 ```
-data/c3-schemas/
-  _index.json             — plugin/behavior name index (en/zh + ACE counts)
-  plugins/sprite.json     — Sprite ACE definitions
-  behaviors/platform.json — Platform behavior ACE definitions
-  ...
+data/c3-schemas/                              — ACE definitions per plugin/behavior
+data/c3-ts-defs/                              — TypeScript scripting interfaces
+data/c3-ts-defs/autocomplete-data.json        — 109 classes with method listings
 ```
 
 ### Start the API server
