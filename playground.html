@@ -640,46 +640,16 @@ createCard('search', 540, 20);
 applyTransform();
 
 // Auto-check environment on load
-// Auto-check environment with progressive status
 setTimeout(async () => {
   const el = document.getElementById('env-status');
-  const s = (html) => { el.innerHTML = html; };
-  const ok = (t) => `<span style="color:var(--green)">${t}</span>`;
-  const no = (t) => `<span style="color:var(--red)">${t}</span>`;
-  const yl = (t) => `<span style="color:var(--yellow)">${t}</span>`;
-
-  s('connecting...');
-  let d;
   try {
-    const res = await fetch('/health');
-    d = await res.json();
+    const d = await (await fetch('/health')).json();
+    el.textContent = d.status === 'lite' ? 'lite' : d.total_documents + ' docs';
+    el.style.color = d.status === 'lite' ? 'var(--yellow)' : 'var(--green)';
   } catch {
-    s(no('API unreachable'));
-    return;
+    el.textContent = 'offline';
+    el.style.color = 'var(--red)';
   }
-
-  if (d.status === 'lite') {
-    s(yl('LITE') + ' · lookup only');
-    sendRequest(healthId, 'health');
-    return;
-  }
-
-  // Progressive: show each check as it resolves
-  const parts = [];
-  parts.push(d.qdrant ? ok('Qdrant ✓') : no('Qdrant ✗'));
-  s(parts.join(' · '));
-
-  const model = (d.embedding_model || '').split('/').pop();
-  parts.push(model ? ok(model) : no('no model'));
-  s(parts.join(' · '));
-
-  if (d.total_documents > 0) {
-    parts.push(ok(d.total_documents + ' docs'));
-  } else {
-    parts.push(yl('0 docs — run indexer'));
-  }
-  s(parts.join(' · '));
-
   sendRequest(healthId, 'health');
 }, 300);
 </script>
