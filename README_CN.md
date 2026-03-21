@@ -10,20 +10,20 @@
 - **双路检索** — Lookup（关键词/规则，<1ms）+ Semantic（向量语义，~1-10s）
 - **CDN 实时数据** — 从 `editor.construct.net` 获取最新版本数据，自动过滤废弃 ACE
 - **预构建 Schema** — `data/c3-schemas/` 包含即用的 per-plugin JSON 文件（无需安装）
-- **多模式 API** — `mode=lookup`（纯关键词，极速）/ `mode=semantic`（向量搜索）/ `mode=auto`（两者结合）
+- **多模式 API** — `mode=list`（ACE 名称列表）/ `mode=lookup`（关键词搜索）/ `mode=semantic`（向量搜索）/ `mode=auto`（lookup + semantic）
+- **TypeScript 定义** — `data/c3-ts-defs/` 包含完整的脚本 API 接口（150 个 `.d.ts` 文件）
+- **自动更新** — GitHub Action 每周检查 C3 新版本，自动创建 PR 更新 API 定义
 
 ## 快速开始
 
 ### 直接读 Schema 文件
 
-预构建的 Schema 文件已提交到仓库，无需安装：
+预构建的 API 定义已提交到仓库，无需安装：
 
 ```
-data/c3-schemas/
-  _index.json             — 插件/行为名称索引（中英文 + ACE 数量）
-  plugins/sprite.json     — Sprite ACE 定义
-  behaviors/platform.json — Platform 行为 ACE 定义
-  ...
+data/c3-schemas/                              — 每个插件/行为的 ACE 定义
+data/c3-ts-defs/                              — TypeScript 脚本 API 接口
+data/c3-ts-defs/autocomplete-data.json        — 109 个类的方法列表
 ```
 
 ### 启动 API 服务
