@@ -424,7 +424,8 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         plugin=plugin_info,
         keywords=keywords,
         matches=matches,
-        context=lookup_result.context,
+        context=lookup_result.context if include_localized else
+            "\n".join(l for l in lookup_result.context.split("\n") if not l.startswith("zh:")),
     )
 
 
