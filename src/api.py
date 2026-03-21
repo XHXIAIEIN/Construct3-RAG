@@ -527,13 +527,16 @@ def health():
 
 @app.post("/restart")
 def restart():
-    """Restart by clearing singletons and touching source to trigger uvicorn reload."""
-    global _retriever, _lookup_engine, _fetcher
-    _retriever = None
-    _lookup_engine = None
-    _fetcher = None
-    # Touch this file to trigger uvicorn --reload if running in dev mode
-    Path(__file__).touch()
+    """Cold restart: exit worker so uvicorn --reload respawns a fresh process."""
+    import os
+    import threading
+
+    def _exit():
+        import time
+        time.sleep(0.3)
+        os._exit(0)
+
+    threading.Thread(target=_exit, daemon=True).start()
     return {"status": "restarting"}
 
 
