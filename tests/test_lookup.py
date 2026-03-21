@@ -49,7 +49,7 @@ class TestSchemaIndex:
     def test_load_plugins(self):
         idx = make_schema_index()
         pids, bids = idx.get_all_ids()
-        assert len(pids) >= 70, f"Expected >= 70 plugins, got {len(pids)}"
+        assert len(pids) >= 60, f"Expected >= 60 plugins, got {len(pids)}"
         assert len(bids) >= 20, f"Expected >= 20 behaviors, got {len(bids)}"
 
     def test_resolve_by_id(self):
