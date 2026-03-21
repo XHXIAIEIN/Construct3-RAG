@@ -31,7 +31,6 @@ qdrant_storage/
 
 # Claude Code
 .claude/settings.local.json
-.claude/soul/
 
 # Gradio / MCP
 .gradio/
