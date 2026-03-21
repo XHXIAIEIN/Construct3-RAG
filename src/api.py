@@ -253,7 +253,7 @@ def _detect_lang(query: str) -> str:
 _TERMS_USEFUL_LANGS = {"zh", "ja", "ko"}
 
 
-_PLAYGROUND_HTML = Path(__file__).parent.parent / "playground.html"
+_PLAYGROUND_HTML = Path(__file__).parent.parent / "tests" / "playground.html"
 
 
 @app.get("/playground")
