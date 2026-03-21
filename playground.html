@@ -66,7 +66,6 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .json-editor.invalid{border-color:var(--red);color:var(--red)}
 
 /* Presets */
-.presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
 .preset-btn{padding:2px 6px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:9px inherit;cursor:pointer;white-space:nowrap}
 .preset-btn:hover{background:var(--selBg);color:var(--fg);border-color:var(--accent)}
 
@@ -76,7 +75,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .panel-splitter:hover::after{background:var(--accent)}
 
 /* Actions */
-.card-actions{display:flex;align-items:center;gap:8px;padding:6px 0;flex-shrink:0}
+.card-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:6px 0;flex-shrink:0;border-bottom:1px solid var(--border);margin-bottom:6px}
 .send-btn{padding:5px 16px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font:11px/1 inherit;font-weight:bold}
 .send-btn:hover{background:#6488d8}
 .send-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -335,13 +334,14 @@ function createCard(apiKey, posX, posY) {
       <div class="request-section">
         <div class="section-label">Request Body</div>
         <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
-        ${api.presets ? `<div class="presets">${api.presets.map((p, i) =>
-          `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
-        ).join('')}</div>` : ''}
       </div>`;
   } else {
     requestSection = `<div class="no-body">No request body</div>`;
   }
+
+  const presetsHtml = api.presets ? api.presets.map((p, i) =>
+    `<button class="preset-btn" onclick="applyPreset('${id}',${i},'${apiKey}')">${p.label}</button>`
+  ).join('') : '';
 
   card.innerHTML = `
     <div class="card-header" onmousedown="startDrag(event, this.parentElement)">
@@ -351,10 +351,11 @@ function createCard(apiKey, posX, posY) {
     </div>
     <div class="card-body">
       ${requestSection}
-      <div class="card-actions">
+      <div class="card-toolbar">
         <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
         <span class="status-badge" id="${id}-status"></span>
         <span class="latency" id="${id}-latency"></span>
+        ${presetsHtml ? `<div class="sep" style="height:14px"></div>${presetsHtml}` : ''}
       </div>
       <div class="response-section">
         <div class="resp-header" onclick="this.parentElement.classList.toggle('collapsed')">
