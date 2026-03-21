@@ -74,24 +74,26 @@ curl -X POST localhost:8765/search \
 ```json
 {
   "query": "Sprite collision",
-  "mode": "auto",
-  "latency_ms": 0.3,
+  "mode": "lookup",
+  "ms": 0.5,
   "lookup": {
     "hit": true,
     "tier": 1,
     "confidence": 0.85,
-    "plugin": {"id": "sprite", "name": "Sprite", "name_zh": "精灵"},
+    "intent": "ace_search",
+    "plugin": {"id": "sprite", "name": "Sprite"},
     "matches": [
       {
         "ace_id": "on-collision-with-another-object",
         "ace_type": "condition",
+        "plugin_id": "_common",
         "en": {"name": "On collision with another object", "desc": "...", "display": "On collision with {0}"},
-        "zh": {"name": "碰撞到其他对象", "desc": "...", "display": "碰撞到 {0}"},
+        "script_name": "on-collision-with-another-object",
+        "category": "common",
         "params": [{"name": "Object", "type": "object", "desc": "..."}]
       }
     ]
-  },
-  "semantic": []
+  }
 }
 ```
 
