@@ -37,7 +37,12 @@ Open `http://localhost:8765/playground` to test.
 
 ## Full Mode (semantic search)
 
-Adds vector-based semantic search across all documentation. Requires Docker and ~4GB disk.
+Adds vector-based semantic search across all documentation.
+
+Requirements:
+- Docker (for Qdrant vector database)
+- ~4GB disk (embedding model + vector index)
+- GPU recommended (CPU works but slower, ~10x embedding time)
 
 ```bash
 # 1. Install full dependencies
