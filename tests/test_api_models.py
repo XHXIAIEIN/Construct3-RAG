@@ -36,7 +36,6 @@ def test_lookup_section_with_lang():
             en=ACELocaleResult(name="On collision"),
             localized=ACELocaleResult(name="碰撞"),
         )],
-        context="C: On collision: ...",
     )
     assert section.hit is True
     assert section.lang == "zh"
@@ -58,4 +57,4 @@ def test_lookup_section_en_only():
 def test_lookup_section_no_hit():
     section = LookupSection(hit=False)
     assert section.matches == []
-    assert section.context == ""
+    assert section.context is None

@@ -132,7 +132,7 @@ def test_search_routes_to_lookup(client):
     assert data["mode"] == "auto"
     assert data["lookup"] is not None
     assert data["lookup"]["hit"] is True
-    assert "Set animation" in data["lookup"]["context"]
+    assert len(data["lookup"]["matches"]) > 0
     # Retriever IS called (semantic search supplements lookup)
     retriever.search_all_with_rerank.assert_called_once()
 

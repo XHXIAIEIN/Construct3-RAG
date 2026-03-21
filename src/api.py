@@ -87,12 +87,9 @@ class SearchRequest(BaseModel):
     section_types: Optional[List[str]] = Field(
         None, description="Filter by section type (e.g. ['actions', 'conditions'])"
     )
-    debug: bool = Field(
-        False, description="Include trace log in diagnostics"
-    )
-    apply_threshold: bool = Field(
-        True, description="Apply adaptive score threshold filtering"
-    )
+    debug: bool = Field(False, description="Include debug info")
+    include_context: bool = Field(False, description="Include LLM context text in lookup results")
+    apply_threshold: bool = Field(True, description="Apply adaptive score threshold filtering")
     mode: str = Field(
         "auto",
         pattern="^(auto|lookup|semantic)$",
@@ -183,7 +180,7 @@ class LookupSection(BaseModel):
     plugin: Optional[PluginInfo] = None
     keywords: list[str] = []
     matches: List[LookupMatchResult] = []
-    context: str = ""   # compact LLM text
+    context: Optional[str] = None   # compact LLM text, only when include_context=true
 
 class SemanticDebug(BaseModel):
     """Debug info for semantic search phase."""
@@ -201,8 +198,8 @@ class SearchResponse(BaseModel):
     lang: str
     mode: str              # "auto" | "lookup" | "semantic"
     latency_ms: float
-    lookup: Optional[LookupSection] = None   # null when mode=semantic or no hit
-    semantic: list = []    # ACEResult | DocResult | ... (empty when mode=lookup)
+    lookup: Optional[LookupSection] = None
+    semantic: Optional[list] = None
     debug: Optional[DebugInfo] = None
 
 
@@ -415,6 +412,14 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         except Exception:
             plugin_info = PluginInfo(id=plugin_id, name=plugin_id)
 
+    # Context: only when requested, strip zh: line for en queries
+    context = None
+    if req.include_context:
+        ctx = lookup_result.context
+        if not include_localized:
+            ctx = "\n".join(l for l in ctx.split("\n") if not l.startswith("zh:"))
+        context = ctx
+
     return LookupSection(
         hit=True,
         tier=intent.tier,
@@ -424,8 +429,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         plugin=plugin_info,
         keywords=keywords,
         matches=matches,
-        context=lookup_result.context if include_localized else
-            "\n".join(l for l in lookup_result.context.split("\n") if not l.startswith("zh:")),
+        context=context,
     )
 
 
@@ -604,6 +608,6 @@ def search(req: SearchRequest):
         mode=req.mode,
         latency_ms=round(latency_ms, 1),
         lookup=lookup_section,
-        semantic=semantic_results,
+        semantic=semantic_results or None,
         debug=debug_info,
     )
