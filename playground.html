@@ -43,7 +43,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 #zoom-info{position:fixed;bottom:8px;right:12px;color:var(--dis);font-size:10px;z-index:100;user-select:none}
 
 /* Card */
-.card{position:absolute;width:480px;height:320px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
+.card{position:absolute;width:540px;height:800px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
 .card:hover{border-color:#505050}
 .card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:8px;background:var(--deepBg);border-radius:8px 8px 0 0;user-select:none}
 .card-title{flex:1;font-size:12px;font-weight:bold;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -646,7 +646,7 @@ function addCardFromSelect() {
 
 // ─── Init: create default cards and auto-send health ───
 const healthId = createCard('health', 20, 20);
-createCard('search', 540, 20);
+createCard('search', 580, 20);
 applyTransform();
 
 // Auto-check environment on load
