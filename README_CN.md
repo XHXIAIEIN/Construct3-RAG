@@ -154,9 +154,12 @@ Construct3-RAG/
 
 ## 致谢
 
-| 项目 | 用途 |
+本项目使用了 [Scirra Ltd](https://www.scirra.com) 开发的 [Construct 3](https://www.construct.net) 的数据。Construct 3 是 Scirra Ltd 的商标。ACE 定义、TypeScript 接口和语言文件从官方 Construct 3 编辑器 CDN 获取，用于教育和工具开发目的。
+
+| 来源 | 用途 |
 |------|------|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册 Markdown 版 |
+| [Construct 3 编辑器 CDN](https://editor.construct.net) | ACE 定义、TypeScript 接口、多语言翻译 |
+| [Construct 3 官方手册](https://www.construct.net/en/make-games/manuals/construct-3) | 官方文档（通过 [Markdown 镜像](https://github.com/XHXIAIEIN/Construct3-Manual)） |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | 官方示例项目 |
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | 哈工大同义词词林，查询扩展 |
 
