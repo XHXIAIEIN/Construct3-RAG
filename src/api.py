@@ -181,11 +181,16 @@ class LookupSection(BaseModel):
     tier: int = 0
     confidence: float = 0.0
     intent: str = ""
-    lang: Optional[str] = None  # localized language code (e.g. "zh"), null when en-only
+    lang: Optional[str] = None
     plugin: Optional[PluginInfo] = None
-    keywords: list[str] = []
-    matches: List[LookupMatchResult] = []
-    context: Optional[str] = None   # compact LLM text, only when include_context=true
+    keywords: Optional[list[str]] = None
+    # mode=list: grouped name arrays
+    conditions: Optional[list[str]] = None
+    actions: Optional[list[str]] = None
+    expressions: Optional[list[str]] = None
+    # mode=lookup/auto: full match objects
+    matches: Optional[List[LookupMatchResult]] = None
+    context: Optional[str] = None
 
 class SemanticDebug(BaseModel):
     """Debug info for semantic search phase."""
@@ -377,16 +382,12 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     is_list = req.mode == "list"
 
     if is_list:
-        matches = [
-            LookupMatchResult(
-                ace_id=m.ace_id,
-                ace_type=m.ace_type,
-                plugin_id=m.plugin_id,
-                en=ACELocaleResult(name=m.en.name),
-                localized=ACELocaleResult(name=m.zh.name) if include_localized else None,
-                script_name=m.script_name if include_scripts else None,
-            ) for m in lookup_result.matches
-        ]
+        # Group by ace_type → list of names
+        grouped: dict[str, list[str]] = {}
+        for m in lookup_result.matches:
+            name = m.script_name if include_scripts else m.en.name
+            grouped.setdefault(m.ace_type, []).append(name)
+        matches = None
     else:
         matches = [
             LookupMatchResult(
@@ -449,17 +450,22 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             ctx = "\n".join(l for l in ctx.split("\n") if not l.startswith("zh:"))
         context = ctx
 
-    return LookupSection(
+    section = LookupSection(
         hit=True,
         tier=intent.tier,
         confidence=intent.confidence,
         intent=intent.intent_type,
         lang=lang if include_localized else None,
         plugin=plugin_info,
-        keywords=keywords,
+        keywords=keywords or None,
         matches=matches,
         context=context,
     )
+    if is_list:
+        section.conditions = grouped.get("condition") or None
+        section.actions = grouped.get("action") or None
+        section.expressions = grouped.get("expression") or None
+    return section
 
 
 def _do_semantic(req: SearchRequest, _trace) -> list:

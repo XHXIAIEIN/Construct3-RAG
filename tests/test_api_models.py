@@ -56,5 +56,5 @@ def test_lookup_section_en_only():
 
 def test_lookup_section_no_hit():
     section = LookupSection(hit=False)
-    assert section.matches == []
+    assert section.matches is None
     assert section.context is None

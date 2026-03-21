@@ -50,14 +50,16 @@ Base URL: `http://localhost:{RAG_SERVER_PORT}` (default `8765`)
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `query` | string | required | Search query (max 500 chars) |
-| `mode` | string | `"auto"` | `"auto"` (both), `"lookup"` (keyword only), `"semantic"` (vector only) |
+| `mode` | string | `"auto"` | `"auto"` (lookup+semantic), `"lookup"` (keyword), `"list"` (names only), `"semantic"` (vector) |
+| `scope` | string | `"eventsheet"` | `"eventsheet"`, `"scripts"` (js+ts), `"js"`, `"ts"`, `"all"` |
 | `top_k` | int | 10 | Max results (1-50) |
 | `lang` | string | auto | Language hint: `zh`/`en`/`ja`/`ko`. Auto-detected if omitted |
+| `include_context` | bool | false | Include compact LLM text in lookup results |
 | `collections` | string[] | null | Limit to specific collections |
 | `plugin` | string | null | Filter by plugin name |
-| `section_types` | string[] | null | Filter by section type (`actions`/`conditions`/`expressions`) |
+| `section_types` | string[] | null | Filter by section type |
 | `apply_threshold` | bool | true | Apply adaptive score threshold |
-| `debug` | bool | false | Include debug info in response |
+| `debug` | bool | false | Include debug timing info |
 
 ### Response
 
