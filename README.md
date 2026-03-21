@@ -1,5 +1,7 @@
 # Construct3-RAG
 
+**English** | [中文](README_CN.md)
+
 Retrieval service for [Construct 3](https://www.construct.net) documentation. Fetches ACE definitions from the official CDN, provides structured search API with bilingual (English/Chinese) support.
 
 ## Features
