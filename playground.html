@@ -640,18 +640,22 @@ createCard('search', 540, 20);
 applyTransform();
 
 // Auto-check environment on load
-setTimeout(async () => {
+setTimeout(() => {
   const el = document.getElementById('env-status');
-  try {
-    const d = await (await fetch('/health')).json();
-    el.textContent = d.status === 'lite' ? 'lite' : d.total_documents + ' docs';
-    el.style.color = d.status === 'lite' ? 'var(--yellow)' : 'var(--green)';
-  } catch {
-    el.textContent = 'offline';
-    el.style.color = 'var(--red)';
-  }
+  const ctrl = new AbortController();
+  setTimeout(() => ctrl.abort(), 2000);
+  fetch('/health', { signal: ctrl.signal })
+    .then(r => r.json())
+    .then(d => {
+      el.textContent = d.status === 'lite' ? 'lite' : d.total_documents + ' docs';
+      el.style.color = d.status === 'lite' ? 'var(--yellow)' : 'var(--green)';
+    })
+    .catch(() => {
+      el.textContent = 'offline';
+      el.style.color = 'var(--red)';
+    });
   sendRequest(healthId, 'health');
-}, 300);
+}, 100);
 </script>
 </body>
 </html>
