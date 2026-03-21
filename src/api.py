@@ -190,7 +190,9 @@ class SemanticDebug(BaseModel):
 
 class DebugInfo(BaseModel):
     """Structured debug output."""
-    timing_ms: dict[str, float] = {}   # {lookup, semantic, total}
+    lookup_ms: Optional[float] = None
+    semantic_ms: Optional[float] = None
+    total_ms: Optional[float] = None
     semantic: Optional[SemanticDebug] = None
 
 class SearchResponse(BaseModel):
@@ -600,7 +602,12 @@ def search(req: SearchRequest):
                 total_candidates=before_dedup if 'before_dedup' in dir() else 0,
                 after_dedup=len(semantic_results),
             )
-        debug_info = DebugInfo(timing_ms=timing, semantic=semantic_debug)
+        debug_info = DebugInfo(
+            lookup_ms=timing.get("lookup"),
+            semantic_ms=timing.get("semantic"),
+            total_ms=timing.get("total"),
+            semantic=semantic_debug,
+        )
 
     return SearchResponse(
         query=req.query,
