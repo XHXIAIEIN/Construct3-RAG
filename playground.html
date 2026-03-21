@@ -642,18 +642,9 @@ applyTransform();
 // Auto-check environment on load
 setTimeout(() => {
   const el = document.getElementById('env-status');
-  const ctrl = new AbortController();
-  setTimeout(() => ctrl.abort(), 2000);
-  fetch('/health', { signal: ctrl.signal })
-    .then(r => r.json())
-    .then(d => {
-      el.textContent = d.status === 'lite' ? 'lite' : d.total_documents + ' docs';
-      el.style.color = d.status === 'lite' ? 'var(--yellow)' : 'var(--green)';
-    })
-    .catch(() => {
-      el.textContent = 'offline';
-      el.style.color = 'var(--red)';
-    });
+  fetch('/openapi.json')
+    .then(r => { el.textContent = 'ready'; el.style.color = 'var(--green)'; })
+    .catch(() => { el.textContent = 'offline'; el.style.color = 'var(--red)'; });
   sendRequest(healthId, 'health');
 }, 100);
 </script>
