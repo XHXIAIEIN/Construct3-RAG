@@ -1,142 +1,97 @@
-# Construct 3 RAG 助手 - 系统架构设计
+# Architecture
 
-## 概述
+## Overview
 
-基于 Construct 3 资料（Markdown 手册、i18n 翻译词条、示例项目、ACE Schema），构建一个综合助手系统。
-
-**部署环境：** 本地电脑（有 GPU）
-**核心功能：** 文档问答 / 翻译辅助 / 事件表生成
-
-## 系统架构图
+Pure retrieval service for Construct 3 documentation. No LLM generation — returns structured data for downstream consumers (Copilot, chat UI, etc.) to use.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         调用层                                    │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Python API / 外部集成                                     │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      查询路由层 (lookup.py)                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ Tier 1 正则  │→ │ Tier 1.5     │→ │  Tier 2 Embedding    │   │
-│  │ ACE列表/翻译 │  │ 关键词推断    │  │  语义匹配            │   │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
-│           ↓ 命中 → 直接返回结构化结果                             │
-│           ↓ 未命中 → 进入 RAG 引擎                               │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   语义分解层 (semantic_chain.py)                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ 查询分解      │  │ 集合路由      │  │  多路径检索           │   │
-│  │ DecomposedQ  │  │ CollRouter   │  │  Intent/HyDE/KW      │   │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    检索层 (retriever.py)                         │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                  HybridRetriever                            │ │
-│  │  跨集合向量搜索 → 自适应阈值过滤 → RRF 重排序 (k=60)       │ │
-│  └────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                         向量存储层                               │
-│  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
-│  │c3_guide │ │c3_plugins│ │c3_behaviors│ │c3_project│           │
-│  │入门教程  │ │插件参考   │ │行为参考    │ │项目元素   │           │
-│  ├─────────┤ ├──────────┤ ├──────────┤ ├──────────┤           │
-│  │c3_inter-│ │c3_script-│ │c3_ace    │ │c3_effects│           │
-│  │face     │ │ing       │ │ACE Schema│ │效果定义   │           │
-│  │编辑器界面│ │脚本 API  │ │2927 条   │ │          │           │
-│  ├─────────┤ ├──────────┤                                      │
-│  │c3_terms │ │c3_examples│                                     │
-│  │术语翻译  │ │示例代码   │                                      │
-│  └─────────┘ └──────────┘                                      │
-│                        Qdrant Vector Database                    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                          LLM 层                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ Ollama       │  │ HuggingFace  │  │  OpenAI-compatible   │   │
-│  │ qwen2.5:7b   │  │ Qwen3.5-9B   │  │  moonshot / gpt-4o   │   │
-│  │ (默认)       │  │ (本地 GPU)    │  │  (需 API Key)        │   │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
-│                Ollama / OpenAI-compatible (多 Provider)            │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## 核心组件说明
-
-### 1. 向量数据库 Collections
-
-| Collection | 用途 | 数据来源 |
-|------------|------|----------|
-| `c3_guide` | 入门教程、概述、技巧指南 | Markdown 手册 |
-| `c3_interface` | 编辑器界面文档 | Markdown 手册 |
-| `c3_project` | 项目元素（事件/对象/时间轴） | Markdown 手册 |
-| `c3_plugins` | 插件参考（72 个） | Markdown 手册 |
-| `c3_behaviors` | 行为参考 + 系统参考（31 个） | Markdown 手册 |
-| `c3_scripting` | 脚本 API 文档 | Markdown 手册 |
-| `c3_ace` | ACE Schema（Actions/Conditions/Expressions，2,927 条） | CDN allAces.json + lang files |
-| `c3_effects` | 效果定义 | CDN allEffects.json + lang files |
-| `c3_terms` | 术语翻译（23,824 条） | CSV 翻译词条 |
-| `c3_examples` | 示例项目（r476，524 个项目，2,912 向量）：元数据 + 事件块 + 脚本代码 | CDN example-project-data.json + c3proj |
-
-### 2. 查询处理策略
-
-```
-用户查询
+User Query
     │
     ▼
-┌─────────────────┐
-│ Direct Lookup   │ ─── 规则匹配 + 关键词推断
-│ (lookup.py)     │     "Sprite 有哪些 action" → 直接查 JSON Schema
-└─────────────────┘
-    │ 未命中
-    ▼
-┌─────────────────┐
-│ 语义分解        │ ─── 查询分解 + 集合路由 + 多路径检索
-│ (semantic_chain) │     DecomposedQuery → CollectionRouter → RRF 融合
-└─────────────────┘
+POST /search (mode: auto/lookup/semantic)
     │
-    ▼
-┌─────────────────┐
-│ 向量检索        │ ─── 跨集合搜索 → 自适应阈值过滤 → RRF 重排序
-│ (retriever.py)  │     搜 6 个文档集合 + 可选 c3_ace
-└─────────────────┘
+    ├── Lookup Engine (keyword/rule-based, <1ms)
+    │   ├── Tier 0: Example tag matching
+    │   ├── Tier 1: Rule-based regex + keyword inference
+    │   ├── Tier 2: Embedding similarity
+    │   └── Tier 3: LLM classification (optional)
     │
-    ▼
-┌─────────────────┐
-│ API 返回        │ ─── FastAPI /search 端点返回检索结果
-│ (api.py)        │     含诊断信息（route/latency/threshold）
-└─────────────────┘
+    ├── Semantic Search (vector-based, ~1-10s)
+    │   ├── Embedding: query → vector
+    │   ├── Qdrant: multi-collection search
+    │   ├── Reranker: cross-encoder re-scoring
+    │   └── Threshold filter: adaptive cutoff
+    │
+    └── Response Assembly
+        ├── lookup: structured matches (ACE with en/zh locale)
+        ├── semantic: doc/example/term results
+        └── dedup: remove semantic ACEs when lookup hits
 ```
 
-## 技术选型
+## Data Pipeline
 
-| 组件 | 选择 | 理由 |
-|------|------|------|
-| **LLM** | 多 Provider（Ollama / HuggingFace / OpenAI） | 灵活切换，本地或 API 均可 |
-| **向量库** | Qdrant | Rust 高性能、易部署、Docker 一键启动 |
-| **Embedding** | Qwen/Qwen3-Embedding-0.6B (默认) / BAAI/bge-m3 | 多语言、支持中英混合场景 |
-| **框架** | 纯 Python（无 LangChain） | 轻量、可控、无额外依赖 |
-| **接口** | FastAPI REST API | GET /health, POST /search |
+```
+Construct 3 CDN (editor.construct.net/{version}/)
+    │
+    ├── allAces.json ──────────┐
+    ├── allEffects.json        │
+    ├── precompiled-en-US.json ├── C3Fetcher → export_schemas()
+    ├── precompiled-zh-CN.json │       │
+    ├── example-project-data   │       ▼
+    └── pluginList.json ───────┘  .cache/c3-cdn/{version}/schemas/
+                                      ├── plugins/{name}.json
+                                      └── behaviors/{name}.json
+                                           │
+                                           ▼
+                                  SchemaParser → ACEEntry → vectordb docs
+                                           │
+                                           ▼
+                                     Qdrant (10 collections)
+```
 
-## 硬件需求
+### CDN Deprecation Filter
 
-| 配置项 | Ollama 模式 | HuggingFace 模式 |
-|--------|-------------|-------------------|
-| GPU | 可选 | 需要（bf16 推理） |
-| VRAM | ~5GB (qwen2.5:7b) | ~19GB (Qwen3.5-9B bf16) |
-| RAM | 16GB+ | 24GB+ |
-| 存储 | 30GB+ | 50GB+ |
+ACEs present in `allAces.json` but absent from `zh-CN` lang are treated as deprecated and excluded from indexing. This removes ~300 obsolete entries (e.g. old `Browser/screenwidth` replaced by `PlatformInfo/screen-width`).
+
+## Collections
+
+| Collection | Content | Source |
+|-----------|---------|--------|
+| `c3_guide` | Tutorials, overview, tips | Markdown manual |
+| `c3_interface` | Editor UI docs | Markdown manual |
+| `c3_project` | Project elements (events, objects) | Markdown manual |
+| `c3_plugins` | Plugin reference docs | Markdown manual |
+| `c3_behaviors` | Behavior + system reference | Markdown manual |
+| `c3_scripting` | Script API docs | Markdown manual |
+| `c3_ace` | Structured ACE data (per-entry) | CDN allAces + lang |
+| `c3_effects` | Effect definitions | CDN allEffects |
+| `c3_terms` | Bilingual translation pairs | CDN lang files |
+| `c3_examples` | Example project metadata + events | CDN + c3proj files |
+
+## Lookup Engine
+
+Keyword/rule-based direct lookup. Returns structured `LookupMatch` objects instead of flat text.
+
+### Tier System
+
+| Tier | Method | Latency | Example |
+|------|--------|---------|---------|
+| 0 | Example tag matching | <1ms | "platformer 示例" |
+| 1 | Regex + keyword inference | <1ms | "Sprite actions", "Sprite 碰撞检测" |
+| 2 | Embedding similarity | ~50ms | Fuzzy plugin name matching |
+| 3 | LLM classification | ~1-2s | Complex intent (optional, requires Ollama) |
+
+### Keyword Matching
+
+- **jieba full-mode**: `碰撞检测` → `[碰撞, 碰撞检测, 检测]` (respects word boundaries)
+- **Synonym expansion**: `碰撞 → [碰撞, 重叠, collision, overlap]`
+- **Category expansion**: matching `collisions` category pulls in all ACEs from that category
+- **Scoring**: name/category hits score higher than description hits (description contains noise words like `检测` in 20% of conditions)
+
+## Key Design Decisions
+
+1. **zh-CN as deprecation signal**: Scirra stops translating deprecated ACEs. We use this to filter without maintaining a manual blacklist.
+2. **Lookup before semantic**: Lookup is instant and precise for ACE queries. Semantic search supplements with docs/examples.
+3. **Dedup on overlap**: When lookup hits, semantic ACE results are dropped (redundant). Only non-ACE results (docs, examples) survive.
+4. **Context is plain text**: LLM-facing context uses compact text format, not JSON, to save tokens.
+5. **Matches are structured**: API consumer gets full ACE data with `en`/`zh` locale objects for flexible rendering.

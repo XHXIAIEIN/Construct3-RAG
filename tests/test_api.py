@@ -149,7 +149,7 @@ def test_search_lookup_miss_falls_to_semantic(client):
     retriever.search_all_with_rerank.assert_called_once()
 
 
-def test_search_skip_lookup(client):
+def test_search_mode_semantic_skips_lookup(client):
     """mode='semantic' bypasses lookup entirely."""
     c, retriever, lookup = client
     resp = c.post("/search", json={"query": "列出 Sprite 的 action", "mode": "semantic"})
