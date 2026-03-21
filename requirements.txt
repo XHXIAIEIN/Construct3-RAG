@@ -1,22 +1,6 @@
-# Core (always needed)
+# Minimal deps for lookup-only mode (no Qdrant, no embedding, no GPU)
 fastapi>=0.100.0
 uvicorn>=0.20.0
 pydantic>=2.0.0
 python-dotenv>=1.0.0
 jieba>=0.42.1
-numpy>=1.24.0
-
-# Semantic search (needs Qdrant + GPU/CPU for embedding)
-qdrant-client>=1.7.0
-sentence-transformers>=2.2.0
-FlagEmbedding>=1.2.0
-
-# NLP / Data processing
-pandas>=2.0.0
-tqdm>=4.66.0
-beautifulsoup4>=4.12.0
-lxml>=5.0.0
-
-# LLM Integration (optional, for query expansion / LLM classification)
-ollama>=0.1.0
-openai>=1.0.0
