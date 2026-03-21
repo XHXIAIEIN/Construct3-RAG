@@ -776,35 +776,32 @@ class IntentClassifier:
         # 2. Collect non-plugin tokens as topic/filter candidates
         remaining_tokens = [t for i, t in enumerate(tokens) if i != plugin_token_idx and t]
 
-        # 3. Count meaningful Chinese tokens to detect complex multi-concept queries.
-        #    Tokens that are pure ASCII, pure digits, or exactly a skip word are noise.
+        # 3. Count meaningful tokens to detect complex multi-concept queries.
+        #    Skip words and single-char noise are filtered out.
         def _is_useful(tok: str) -> bool:
             if tok.lower() in _HOWTO_NOISE_LOWER:
                 return False
-            cleaned = tok.replace(" ", "").replace("\u3000", "")
-            return not cleaned.isascii()
+            if len(tok) <= 1:
+                return False
+            return True
 
         useful_tokens = [t for t in remaining_tokens if _is_useful(t)]
-        if len(useful_tokens) > 2:
+        if len(useful_tokens) > 3:
             return None  # complex multi-concept query → fall through to RAG
 
         # 4. Build filter term
         if useful_tokens:
-            # Use full remaining tokens; _format_ace_search will generate 2-char windows
             filter_term = " ".join(remaining_tokens)
         else:
-            # No external content: extract 2-char Chinese windows from the plugin token
-            # so queries like "如何实现计时器" can search timer ACEs via "计时" etc.
-            plugin_token = tokens[plugin_token_idx]
-            zh_pairs = [
-                plugin_token[j:j + 2]
-                for j in range(len(plugin_token) - 1)
-                if all('\u4e00' <= c <= '\u9fff' for c in plugin_token[j:j + 2])
-            ]
-            filter_term = " ".join(zh_pairs)
-
-        if not filter_term:
-            return None  # no useful filter (e.g. ASCII-only plugin token)
+            # Bare plugin name (e.g. "Sprite") → return ace_list for all types
+            return LookupIntent(
+                intent_type="ace_list",
+                plugin_id=plugin_id,
+                ace_type="conditions,actions,expressions",
+                is_behavior=is_behavior,
+                tier=1,
+                confidence=0.90,
+            )
 
         # 5. Build topic token set (jieba full-mode for ACE type inference)
         topic_tokens = set(remaining_tokens)
@@ -1096,7 +1093,25 @@ class LookupEngine:
         if not schema:
             return "", []
 
-        ace_type = intent.ace_type
+        # Support comma-separated ace_types (e.g. "conditions,actions,expressions")
+        ace_types = [t.strip() for t in intent.ace_type.split(",") if t.strip()]
+        if len(ace_types) > 1:
+            all_lines = []
+            all_matches = []
+            for at in ace_types:
+                sub_intent = LookupIntent(
+                    intent_type="ace_list", plugin_id=intent.plugin_id,
+                    ace_type=at, is_behavior=intent.is_behavior,
+                    tier=intent.tier, confidence=intent.confidence,
+                    matched_tags=intent.matched_tags,
+                )
+                lines, matches = self._format_ace_list(sub_intent)
+                if lines:
+                    all_lines.append(lines)
+                    all_matches.extend(matches)
+            return "\n".join(all_lines), all_matches
+
+        ace_type = ace_types[0] if ace_types else intent.ace_type
         items = schema.get(ace_type, [])
         if not items:
             return "", []
