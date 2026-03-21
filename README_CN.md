@@ -14,9 +14,9 @@
 
 ## 快速开始
 
-### 零配置 — 直接读 Schema 文件
+### 直接读 Schema 文件
 
-预构建的 Schema 文件已提交到仓库，无需安装任何依赖。
+预构建的 Schema 文件已提交到仓库，无需安装：
 
 ```
 data/c3-schemas/
@@ -26,27 +26,26 @@ data/c3-schemas/
   ...
 ```
 
-### Lite 模式 — Lookup API，无需 Docker/GPU
+### 启动 API 服务
 
 ```bash
-python scripts/setup.py --lite
-```
-
-启动仅支持关键词查找的 API 服务。无需 Qdrant，无需 Embedding 模型。
-
-### 完整模式 — Lookup + 语义搜索
-
-```bash
-# 1. 启动 Qdrant
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-
-# 2. 完整安装
+pip install -r requirements.txt
 python scripts/setup.py
 ```
 
-需要：Python 3.11+、Docker、~4GB 磁盘空间。
+服务会自动检测环境：
+- **Qdrant 在运行** → 关键词查找 + 语义向量搜索
+- **无 Qdrant** → 仅关键词查找（无需 Docker 也能用）
 
-### 数据源
+打开 `http://localhost:8765/playground` 测试。
+
+如需启用语义搜索，在运行 setup 前启动 Qdrant：
+
+```bash
+docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
+```
+
+### 数据源（语义搜索用）
 
 ```bash
 # 必需：官方手册 Markdown 版

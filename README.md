@@ -14,9 +14,9 @@ Retrieval service for [Construct 3](https://www.construct.net) documentation. Fe
 
 ## Quick Start
 
-### Zero setup — read schema files directly
+### Read schema files directly
 
-Pre-built schema files are committed to the repo. No install needed.
+Pre-built schema files are committed to the repo — no install needed:
 
 ```
 data/c3-schemas/
@@ -26,27 +26,26 @@ data/c3-schemas/
   ...
 ```
 
-### Lite mode — lookup API, no Docker/GPU
+### Start the API server
 
 ```bash
-python scripts/setup.py --lite
-```
-
-Starts API server with keyword lookup only. No Qdrant, no embedding model.
-
-### Full mode — lookup + semantic search
-
-```bash
-# 1. Start Qdrant
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-
-# 2. Full setup
+pip install -r requirements.txt
 python scripts/setup.py
 ```
 
-Requires: Python 3.11+, Docker, ~4GB disk.
+The server auto-detects your environment:
+- **Qdrant running** → keyword lookup + semantic vector search
+- **No Qdrant** → keyword lookup only (still useful, no Docker needed)
 
-### Data sources
+Open `http://localhost:8765/playground` to test.
+
+To enable semantic search, start Qdrant before running setup:
+
+```bash
+docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
+```
+
+### Data sources (for semantic search)
 
 ```bash
 # Required: official manual (Markdown)
