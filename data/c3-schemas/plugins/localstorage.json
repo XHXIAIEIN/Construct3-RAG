@@ -1,0 +1,642 @@
+{
+  "id": "localstorage",
+  "originalId": "LocalStorage",
+  "name_zh": "本地存储",
+  "name_en": "Local storage",
+  "description_zh": "将数据本地存储在用户的设备中。即使用户关闭游戏，数据仍然储存在设备中。",
+  "description_en": "Store data locally on the user's device.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "items",
+    "binary-data",
+    "local-storage",
+    "progress",
+    "in-memory-only"
+  ],
+  "conditions": [
+    {
+      "id": "on-item-set",
+      "name_zh": "词条设置完成",
+      "name_en": "On item set",
+      "description_zh": "执行 '设置词条' 动作后，数据成功写入本地存储时触发。",
+      "description_en": "Triggered after 'Set item' when the item has been written to local storage.",
+      "display_zh": "词条 [i]{0}[/i] 设置完成",
+      "display_en": "On item [i]{0}[/i] set",
+      "scriptName": "OnItemSet",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to check for being set.",
+          "desc_zh": "要检测的词条的名称。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-item-get",
+      "name_zh": "词条已获取",
+      "name_en": "On item get",
+      "description_zh": "执行 '获取词条' 动作后，数据成功从本地存储中获取时触发。",
+      "description_en": "Triggered after 'Get item', when the item value is available.",
+      "display_zh": "词条 [i]{0}[/i] 已获取",
+      "display_en": "On item [i]{0}[/i] get",
+      "scriptName": "OnItemGet",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "字段",
+          "desc_en": "Enter the name of the key to check for being read.",
+          "desc_zh": "输入要检查的词条名称。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-item-removed",
+      "name_zh": "词条已删除",
+      "name_en": "On item removed",
+      "description_zh": "执行 '删除词条' 动作后，数据成功从本地存储中删除时触发。",
+      "description_en": "Triggered after 'Remove item', after the item has been removed from local storage.",
+      "display_zh": "词条 [i]{0}[/i] 已删除",
+      "display_en": "On item [i]{0}[/i] removed",
+      "scriptName": "OnItemRemoved",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to check for being removed.",
+          "desc_zh": "要删除的词条的名称"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-item-set",
+      "name_zh": "任意词条设置完成",
+      "name_en": "On any item set",
+      "description_zh": "执行 '设置词条' 动作后，任意词条成功写入本地存储时触发。",
+      "description_en": "Triggered after any 'Set item' action when the item has been written to local storage.",
+      "display_zh": "任意词条设置完成",
+      "display_en": "On any item set",
+      "scriptName": "OnAnyItemSet",
+      "category": "items",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-item-get",
+      "name_zh": "任意词条获取完成",
+      "name_en": "On any item get",
+      "description_zh": "执行 '获取词条' 动作后，任意词条成功从本地存储中获取时触发。",
+      "description_en": "Triggered after any 'Get item' action when the item value is available.",
+      "display_zh": "任意词条获取完成",
+      "display_en": "On any item get",
+      "scriptName": "OnAnyItemGet",
+      "category": "items",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-item-removed",
+      "name_zh": "任意词条已删除",
+      "name_en": "On any item removed",
+      "description_zh": "执行 '删除词条' 动作后，任意词条成功从本地存储中删除时触发。",
+      "description_en": "Triggered after any 'Remove item' action after the item has been removed from local storage.",
+      "display_zh": "任意词条已删除",
+      "display_en": "On any item removed",
+      "scriptName": "OnAnyItemRemoved",
+      "category": "items",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-item-exists",
+      "name_zh": "词条已存在",
+      "name_en": "On item exists",
+      "description_zh": "执行 '检查词条存在' 动作后，已核实词条存储于本地存储时触发。",
+      "description_en": "Triggered after 'Check item exists' if the given item exists in storage.",
+      "display_zh": "词条 [i]{0}[/i] 已存在",
+      "display_en": "On item [i]{0}[/i] exists",
+      "scriptName": "OnItemExists",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to check if exists.",
+          "desc_zh": "检测词条名称是否于本地存储中存在。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-item-missing",
+      "name_zh": "词条不存在",
+      "name_en": "On item missing",
+      "description_zh": "执行 '检查词条存在' 动作后，本地存储不存在该词条数据时触发。",
+      "description_en": "Triggered after 'Check item exists' if the given item does not exist in storage.",
+      "display_zh": "词条 [i]{0}[/i] 不存在",
+      "display_en": "On item [i]{0}[/i] missing",
+      "scriptName": "OnItemMissing",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to check if missing.",
+          "desc_zh": "要检查的词条的名称。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-storage-cleared",
+      "name_zh": "所有数据已清空",
+      "name_en": "On storage cleared",
+      "description_zh": "执行 '清空本地存储' 动作后，数据清空完成时触发。",
+      "description_en": "Triggered after 'Clear storage', when local storage has finished being cleared.",
+      "display_zh": "所有数据已清空",
+      "display_en": "On storage cleared",
+      "scriptName": "OnCleared",
+      "category": "local-storage",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-all-key-names-loaded",
+      "name_zh": "所有词条加载完成",
+      "name_en": "On all key names loaded",
+      "description_zh": "执行 '获取所有词条' 动作后，数据列表准备就绪时触发。",
+      "description_en": "Triggered after 'Get all key names', when the list of key names is ready.",
+      "display_zh": "所有词条加载完成",
+      "display_en": "On all key names loaded",
+      "scriptName": "OnAllKeyNamesLoaded",
+      "category": "local-storage",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "name_zh": "发生错误",
+      "name_en": "On error",
+      "description_zh": "访问本地存储过程中，如果发生任何错误，则触发此条件。",
+      "description_en": "Triggered if any error occurs while accessing local storage.",
+      "display_zh": "发生错误",
+      "display_en": "On error",
+      "scriptName": "OnError",
+      "category": "local-storage",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "compare-key",
+      "name_zh": "比较词条",
+      "name_en": "Compare key",
+      "description_zh": "要比较的词条的名称",
+      "description_en": "Compare the current key name in a trigger.",
+      "display_zh": "词条名称 {0} {1}",
+      "display_en": "Key {0} {1}",
+      "scriptName": "CompareKey",
+      "category": "local-storage",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current key.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "string",
+          "type": "string",
+          "name_en": "String",
+          "name_zh": "字符串",
+          "desc_en": "String to compare the current key to.",
+          "desc_zh": "用于比较词条的字符串。"
+        }
+      ]
+    },
+    {
+      "id": "compare-value",
+      "name_zh": "比较数据",
+      "name_en": "Compare value",
+      "description_zh": "在触发器中，比较当前词条的数据值。",
+      "description_en": "Compare the current item value in a trigger.",
+      "display_zh": "词条数据 {0} {1}",
+      "display_en": "Value {0} {1}",
+      "scriptName": "CompareValue",
+      "category": "local-storage",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current value.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "String or number to compare the current value to.",
+          "desc_zh": "用来和当前值进行比较的数字或字符串。"
+        }
+      ]
+    },
+    {
+      "id": "is-persistent",
+      "name_zh": "已开启持久存储",
+      "name_en": "Is persistent",
+      "description_zh": "检测浏览器是否已授权存储权限。",
+      "description_en": "True if the browser has granted persistent storage permission.",
+      "display_zh": "已开启持久存储",
+      "display_en": "Is persistent",
+      "scriptName": "IsPersistent",
+      "category": "local-storage",
+      "params": []
+    },
+    {
+      "id": "is-processing-sets",
+      "name_zh": "正在设置",
+      "name_en": "Is processing sets",
+      "description_zh": "执行任意 '设置词条' 动作时触发。",
+      "description_en": "True if currently processing any 'Set item' actions.",
+      "display_zh": "正在设置",
+      "display_en": "Is processing sets",
+      "scriptName": "IsProcessingSets",
+      "category": "progress",
+      "params": []
+    },
+    {
+      "id": "is-processing-gets",
+      "name_zh": "正在获取",
+      "name_en": "Is processing gets",
+      "description_zh": "执行任意 '获取词条' 动作时触发。",
+      "description_en": "True if currently processing any 'Get item' actions.",
+      "display_zh": "正在获取",
+      "display_en": "Is processing gets",
+      "scriptName": "IsProcessingGets",
+      "category": "progress",
+      "params": []
+    },
+    {
+      "id": "on-all-sets-complete",
+      "name_zh": "全部设置完成",
+      "name_en": "On all sets complete",
+      "description_zh": "所有 '设置词条' 动作都执行完成时触发。",
+      "description_en": "Triggered after all currently outstanding 'Set item' actions complete.",
+      "display_zh": "全部设置完成",
+      "display_en": "On all sets complete",
+      "scriptName": "OnAllSetsComplete",
+      "category": "progress",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-all-gets-complete",
+      "name_zh": "全部获取完成",
+      "name_en": "On all gets complete",
+      "description_zh": "所有 '获取词条' 动作都执行完成时触发。",
+      "description_en": "Triggered after all currently outstanding 'Get item' actions complete.",
+      "display_zh": "全部获取完成",
+      "display_en": "On all gets complete",
+      "scriptName": "OnAllGetsComplete",
+      "category": "progress",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-item",
+      "name_zh": "设置词条",
+      "name_en": "Set item",
+      "description_zh": "将数据存储在本地存储中。完成后触发 '词条设置完成' 条件。",
+      "description_en": "Store a value in local storage, and trigger 'On item set' when done.",
+      "display_zh": "设置词条[i]{0}[/i]为{1}",
+      "display_en": "Set item [i]{0}[/i] to {1}",
+      "scriptName": "SetItem",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to associate the value with.",
+          "desc_zh": "要设置的词条的名称。"
+        },
+        {
+          "id": "value",
+          "type": "any",
+          "name_en": "Value",
+          "name_zh": "值",
+          "desc_en": "Enter the value to store.",
+          "desc_zh": "要存储的数据。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "get-item",
+      "name_zh": "获取词条",
+      "name_en": "Get item",
+      "description_zh": "从本地存储中读取词条的数据。完成后触发 '词条获取完成' 条件。",
+      "description_en": "Read a value from local storage, and trigger 'On item get' when ready.",
+      "display_zh": "获取词条 [i]{0}[/i]",
+      "display_en": "Get item [i]{0}[/i]",
+      "scriptName": "GetItem",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to get the value for. 'On item get' will trigger when the value is ready.",
+          "desc_zh": "要获取的词条名称。完成后触发 '词条获取完成' 条件。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "remove-item",
+      "name_zh": "删除词条",
+      "name_en": "Remove item",
+      "description_zh": "从本地存储中删除词条。完成后触发 '词条删除完成' 条件。",
+      "description_en": "Remove an item from local storage, and trigger 'On item removed' when done.",
+      "display_zh": "删除词条 [i]{0}[/i]",
+      "display_en": "Remove item [i]{0}[/i]",
+      "scriptName": "RemoveItem",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to remove. 'On item removed' will trigger when done.",
+          "desc_zh": "输入要删除的词条名称。完成后触发 '词条删除完成' 条件。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "check-item-exists",
+      "name_zh": "检查词条存在",
+      "name_en": "Check item exists",
+      "description_zh": "检查本地存储中是否存在某个词条数据。完成后触发 '词条存在' 或 '词条不存在' 条件。",
+      "description_en": "Check if an item exists in local storage, triggering 'On item exists' or 'On item missing'.",
+      "display_zh": "检查词条 [i]{0}[/i] 存在",
+      "display_en": "Check item [i]{0}[/i] exists",
+      "scriptName": "CheckItemExists",
+      "category": "items",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to check if exists.",
+          "desc_zh": "要检查的词条的名称。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "set-binary-item",
+      "name_zh": "设置二进制对象",
+      "name_en": "Set binary item",
+      "description_zh": "将二进制数据记录在本地存储中。完成后触发 '词条设置完成' 条件。",
+      "description_en": "Store a Binary Data in local storage, and trigger 'On item set' when done.",
+      "display_zh": "设置词条[i]{0}[/i]为{1}",
+      "display_en": "Set item [i]{0}[/i] to {1}",
+      "scriptName": "SetBinaryItem",
+      "category": "binary-data",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to associate the value with.",
+          "desc_zh": "输入要与值关联的字段的名称。"
+        },
+        {
+          "id": "source",
+          "type": "object",
+          "name_en": "Source",
+          "name_zh": "来源",
+          "desc_en": "The Binary Data object to store.",
+          "desc_zh": "要存储的二进制数据对象"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "get-binary-item",
+      "name_zh": "获取二进制数据",
+      "name_en": "Get binary item",
+      "description_zh": "从本地存储读取二进制数据，完成后触发 '词条获取完成' 条件。",
+      "description_en": "Read a Binary Data from local storage, and trigger 'On item get' when ready.",
+      "display_zh": "获取词条 [i]{0}[/i] 到 {1}",
+      "display_en": "Get item [i]{0}[/i] into {1}",
+      "scriptName": "GetBinaryItem",
+      "category": "binary-data",
+      "params": [
+        {
+          "id": "key",
+          "type": "string",
+          "name_en": "Key",
+          "name_zh": "词条",
+          "desc_en": "Enter the name of the key to get the value for. 'On item get' will trigger when the data is ready.",
+          "desc_zh": "要获取的数据的词条名称。完成后将触发 '词条获取完成' 条件。"
+        },
+        {
+          "id": "destination",
+          "type": "object",
+          "name_en": "Destination",
+          "name_zh": "目标",
+          "desc_en": "The Binary Data object load the value into.",
+          "desc_zh": "要获取数据的二进制数据对象。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "clear-storage",
+      "name_zh": "清理本地储存",
+      "name_en": "Clear storage",
+      "description_zh": "删除本地存储中的所有词条，完成后触发 '本地存储已清空' 条件。",
+      "description_en": "Remove all items from local storage, and trigger 'On storage cleared' when done.",
+      "display_zh": "清理本地储存",
+      "display_en": "Clear storage",
+      "scriptName": "ClearStorage",
+      "category": "local-storage",
+      "params": [],
+      "isAsync": true
+    },
+    {
+      "id": "get-all-key-names",
+      "name_zh": "获取所有词条",
+      "name_en": "Get all key names",
+      "description_zh": "请求本地存储中所有词条的名称列表，完成后触发 '所有词条加载完成' 条件。",
+      "description_en": "Request a list of all key names in local storage, and trigger 'On all key names loaded' when ready.",
+      "display_zh": "获取所有词条",
+      "display_en": "Get all key names",
+      "scriptName": "GetAllKeyNames",
+      "category": "local-storage",
+      "params": [],
+      "isAsync": true
+    },
+    {
+      "id": "request-persistent",
+      "name_zh": "请求持久存储",
+      "name_en": "Request persistent storage",
+      "description_zh": "请求持久存储的权限，直到用户手动操作清除存储空间。",
+      "description_en": "Request permission to persist storage until an explicit user action to clear storage.",
+      "display_zh": "请求持久存储",
+      "display_en": "Request persistent storage",
+      "scriptName": "RequestPersistent",
+      "category": "local-storage",
+      "params": [],
+      "isAsync": true
+    },
+    {
+      "id": "load-memory-from-json",
+      "name_zh": "加载临时内存数据",
+      "name_en": "Load memory from JSON",
+      "description_zh": "当插件属性勾选了 '仅储存在内存' 属性后，可通过 '临时内存数据' 表达式加载所储存的游戏数据。",
+      "description_en": "When using in-memory storage, load the complete state of storage from a JSON string.",
+      "display_zh": "加载临时内存数据 (JSON: [i]{0}[/i])",
+      "display_en": "Load in-memory storage from JSON string [i]{0}[/i]",
+      "scriptName": "LoadMemoryFromJSON",
+      "category": "in-memory-only",
+      "params": [
+        {
+          "id": "json",
+          "type": "string",
+          "name_en": "JSON",
+          "name_zh": "JSON",
+          "desc_en": "A string of JSON data to load.",
+          "desc_zh": "要加载的 JSON 数据字符串。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "itemvalue",
+      "name_zh": "词条数据",
+      "name_en": "ItemValue",
+      "description_zh": "在 '词条获取完成' 条件中，返回的词条数据。",
+      "description_en": "In 'On item get', the item value retrieved.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ItemValue",
+      "category": "items",
+      "params": [],
+      "returnType": "any"
+    },
+    {
+      "id": "key",
+      "name_zh": "词条",
+      "name_en": "Key",
+      "description_zh": "在触发器中，当前的词条名称。",
+      "description_en": "The current key name in a storage trigger.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Key",
+      "category": "items",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "keycount",
+      "name_zh": "词条数量",
+      "name_en": "KeyCount",
+      "description_zh": "在 '所有词条加载完成' 条件中，返回列表的词条数量。",
+      "description_en": "After 'On all key names loaded', the key count.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "KeyCount",
+      "category": "local-storage",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "keyat",
+      "name_zh": "获取词条",
+      "name_en": "KeyAt",
+      "description_zh": "在 '所有字段加载完成' 条件后，返回词条索引位置的词条名称。",
+      "description_en": "After 'On all key names loaded', the key name at an index.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "KeyAt",
+      "category": "local-storage",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index",
+          "desc_zh": "从零开始的索引值"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "id": "errormessage",
+      "name_zh": "错误信息",
+      "name_en": "ErrorMessage",
+      "description_zh": "在 '发生错误' 条件中，返回的错误消息。",
+      "description_en": "In 'On error', an error message if any available.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ErrorMessage",
+      "category": "local-storage",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "memory-storage-as-json",
+      "name_zh": "临时内存数据",
+      "name_en": "MemoryStorageAsJSON",
+      "description_zh": "勾选 '仅储存在内存' 属性后，本地储存数据将储存在这个表达式中。",
+      "description_en": "When using in-memory storage, a JSON string representing all stored data.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "MemoryStorageAsJSON",
+      "category": "in-memory-only",
+      "params": [],
+      "returnType": "string"
+    }
+  ],
+  "properties": [
+    {
+      "id": "in-memory-only",
+      "name_en": "In-memory only",
+      "name_zh": "仅储存在内存",
+      "description_en": "Enable to only store data in memory for the current pageload only.",
+      "description_zh": "启用后，数据仅储在当前页面加载的内存中，页面关闭后被清除。可以通过 '临时内存数据' 表达式手动储存到本地，并通过 '加载临时内存数据' 来还原。"
+    }
+  ]
+}

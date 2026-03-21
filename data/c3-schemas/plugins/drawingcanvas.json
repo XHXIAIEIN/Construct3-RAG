@@ -1,0 +1,1511 @@
+{
+  "id": "drawingcanvas",
+  "originalId": "DrawingCanvas",
+  "name_zh": "画布",
+  "name_en": "Drawing canvas",
+  "description_zh": "可以进行自由绘画的特殊画布。",
+  "description_en": "A custom drawing surface.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "appearance",
+    "canvas",
+    "drawing-general",
+    "drawing-polygons"
+  ],
+  "conditions": [
+    {
+      "id": "on-saved-image",
+      "name_zh": "图像保存完成",
+      "name_en": "On saved image",
+      "description_zh": "执行 '保存图像' 动作后，图像保存完成时触发。",
+      "description_en": "Triggered after the 'Save image' action when the saved image is ready.",
+      "display_zh": "图像保存完成",
+      "display_en": "On saved image",
+      "scriptName": "OnSavedImage",
+      "category": "canvas",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-snapshot",
+      "name_zh": "快照完成",
+      "name_en": "On snapshot",
+      "description_zh": "在 '保存快照' 动作执行后，返回的 '保存快照地址' 表达式数据可用时触发。",
+      "description_en": "Triggered after the 'Save snapshot' action when the pixel data is ready.",
+      "display_zh": "截屏完成",
+      "display_en": "On snapshot",
+      "scriptName": "OnSnapshot",
+      "category": "canvas",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-resolution-changed",
+      "name_zh": "分辨率发生更改",
+      "name_en": "On resolution changed",
+      "description_zh": "当画布的分辨率被更改时触发。 重新绘制内容以在新的分辨率下显示。",
+      "description_en": "Triggered when the drawing surface changes resolution. Redraw content to show it at the new resolution.",
+      "display_zh": "分辨率发生更改",
+      "display_en": "On resolution changed",
+      "scriptName": "OnResolutionChanged",
+      "category": "canvas",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "name_zh": "设置混合模式",
+      "name_en": "Set blend mode",
+      "description_zh": "设置此对象的背景混合模式。",
+      "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode",
+          "name_zh": "混合模式",
+          "desc_en": "Choose the new blend mode for this object.",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "items": [
+            "normal",
+            "additive",
+            "xor",
+            "copy",
+            "destination-over",
+            "source-in",
+            "destination-in",
+            "source-out",
+            "destination-out",
+            "source-atop",
+            "destination-atop",
+            "lighten",
+            "darken",
+            "multiply",
+            "screen"
+          ],
+          "items_i18n": {
+            "normal": {
+              "en": "Normal",
+              "zh": "正常"
+            },
+            "additive": {
+              "en": "Additive",
+              "zh": "叠加"
+            },
+            "xor": {
+              "en": "XOR",
+              "zh": "重叠消除"
+            },
+            "copy": {
+              "en": "Copy",
+              "zh": "覆盖"
+            },
+            "destination-over": {
+              "en": "Destination over",
+              "zh": "背景穿透"
+            },
+            "source-in": {
+              "en": "Source in",
+              "zh": "前景剪贴"
+            },
+            "destination-in": {
+              "en": "Destination in",
+              "zh": "背景剪贴"
+            },
+            "source-out": {
+              "en": "Source out",
+              "zh": "前景剔除"
+            },
+            "destination-out": {
+              "en": "Destination out",
+              "zh": "背景剔除"
+            },
+            "source-atop": {
+              "en": "Source atop",
+              "zh": "前景混合"
+            },
+            "destination-atop": {
+              "en": "Destination atop",
+              "zh": "背景混合"
+            },
+            "lighten": {
+              "en": "Lighten",
+              "zh": "变亮"
+            },
+            "darken": {
+              "en": "Darken",
+              "zh": "变暗"
+            },
+            "multiply": {
+              "en": "Multiply",
+              "zh": "正片叠底"
+            },
+            "screen": {
+              "en": "Screen",
+              "zh": "滤色"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "save-image",
+      "name_zh": "保存图像",
+      "name_en": "Save image",
+      "description_zh": "保存当前画布的图像。完成后触发 '图像保存完成' 条件，并使用 '图像保存地址' 表达式获取图像的地址。",
+      "description_en": "Save the current canvas image. Use the 'On saved image' trigger and 'SavedImageURL' expression to get the result.",
+      "display_zh": "保存图像 ({0}, 品质: [i]{1}[/i] 偏移: [i]{2}[/i], [i]{3}[/i] 大小: [i]{4}[/i] x [i]{5}[/i])",
+      "display_en": "Save image ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])",
+      "scriptName": "SaveImage",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "format",
+          "type": "combo",
+          "name_en": "Format",
+          "name_zh": "图像格式",
+          "desc_en": "Choose the file format to save the image with. PNG is lossless but JPEG files are smaller.",
+          "desc_zh": "选择要保存图像的文件格式。PNG是无损的，但JPEG文件更小。",
+          "items": [
+            "png",
+            "jpeg"
+          ],
+          "items_i18n": {
+            "png": {
+              "en": "PNG",
+              "zh": "PNG"
+            },
+            "jpeg": {
+              "en": "JPEG",
+              "zh": "JPEG"
+            }
+          }
+        },
+        {
+          "id": "jpeg-quality",
+          "type": "number",
+          "name_en": "JPEG quality",
+          "name_zh": "JPEG品质",
+          "desc_en": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG.",
+          "desc_zh": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        },
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X offset of the area to snapshot, in canvas device pixels.",
+          "desc_zh": "截取快照区域的X偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "The Y offset of the area to snapshot, in canvas device pixels.",
+          "desc_zh": "截取快照区域的Y偏移量，基于设备画布像素。"
+        },
+        {
+          "id": "width",
+          "type": "number",
+          "name_en": "Width",
+          "name_zh": "宽度",
+          "desc_en": "The width of the area to snapshot, in canvas device pixels. Leave 0 to use the full width.",
+          "desc_zh": "截屏区域的宽度，以画布设备像素为单位，使用 0 则使用完整宽度。"
+        },
+        {
+          "id": "height",
+          "type": "number",
+          "name_en": "Height",
+          "name_zh": "高度",
+          "desc_en": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height.",
+          "desc_zh": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。"
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "save-snapshot",
+      "name_zh": "保存快照",
+      "name_en": "Save snapshot",
+      "description_zh": "保存当前画布的图像副本，用于读取画布的像素颜色。",
+      "description_en": "Save a copy of the current canvas image for reading pixel colors.",
+      "display_zh": "保存快照",
+      "display_en": "Save snapshot",
+      "scriptName": "SaveSnapshot",
+      "category": "canvas",
+      "params": [],
+      "isAsync": true
+    },
+    {
+      "id": "clear-snapshot",
+      "name_zh": "清理快照",
+      "name_en": "Clear snapshot",
+      "description_zh": "释放内存中已保存的画布快照。",
+      "description_en": "Release the saved snapshot from memory.",
+      "display_zh": "清理快照",
+      "display_en": "Clear snapshot",
+      "scriptName": "ClearSnapshot",
+      "category": "canvas",
+      "params": []
+    },
+    {
+      "id": "snapshot-set-pixel",
+      "name_zh": "设置快照像素颜色",
+      "name_en": "Set snapshot pixel",
+      "description_zh": "设置快照的图像某个像素点的颜色。",
+      "description_en": "Set a pixel to a color in the snapshot.",
+      "display_zh": "设置像素颜色 (位置: [i]{0}[/i], [i]{1}[/i], 颜色: [i]{2}[/i])",
+      "display_en": "Set pixel in snapshot at ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i]",
+      "scriptName": "SnapshotSetPixel",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "The X co-ordinate of the pixel in the snapshot.",
+          "desc_zh": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "The Y co-ordinate of the pixel in the snapshot.",
+          "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the pixel to set.",
+          "desc_zh": "要设置的像素颜色。"
+        }
+      ]
+    },
+    {
+      "id": "load-snapshot",
+      "name_zh": "加载快照",
+      "name_en": "Load snapshot",
+      "description_zh": "将快照重新加载到画布，覆盖当前的图像。",
+      "description_en": "Load the snapshot back in to the canvas image, reflecting any changes.",
+      "display_zh": "加载快照",
+      "display_en": "Load snapshot to canvas",
+      "scriptName": "LoadSnapshot",
+      "category": "canvas",
+      "params": []
+    },
+    {
+      "id": "set-resolution-mode",
+      "name_zh": "设置缩放模式",
+      "name_en": "Set resolution mode",
+      "description_zh": "更改画布的缩放模式。是自适应场景的缩放比例，还是使用固定缩放比例。用于改善文本缩放时产生的模糊感。",
+      "description_en": "Change the resolution mode, including changing the fixed resolution size.",
+      "display_zh": "设置缩放模式为[b]{0}[/b] ([i]{1}[/i] x [i]{2}[/i])",
+      "display_en": "Set resolution mode [b]{0}[/b] ([i]{1}[/i] x [i]{2}[/i])",
+      "scriptName": "SetResolutionMode",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode",
+          "name_zh": "模式",
+          "desc_en": "Whether to automatically match the canvas resolution to the project, or always use a fixed resolution.",
+          "desc_zh": "画布的自动匹配成项目的分辨率，还是始终使用固定的分辨率。",
+          "items": [
+            "auto",
+            "fixed"
+          ],
+          "items_i18n": {
+            "auto": {
+              "en": "Automatic",
+              "zh": "自动"
+            },
+            "fixed": {
+              "en": "Fixed",
+              "zh": "固定"
+            }
+          }
+        },
+        {
+          "id": "fixed-width",
+          "type": "number",
+          "name_en": "Fixed width",
+          "name_zh": "固定宽度",
+          "desc_en": "When using fixed resolution, the horizontal resolution in pixels.",
+          "desc_zh": "固定分辨率时，使用的水平分辨率，以像素为单位。"
+        },
+        {
+          "id": "fixed-height",
+          "type": "number",
+          "name_en": "Fixed height",
+          "name_zh": "固定高度",
+          "desc_en": "When using fixed resolution, the vertical resolution in pixels.",
+          "desc_zh": "固定分辨率时，使用的垂直分辨率，以像素为单位。"
+        }
+      ]
+    },
+    {
+      "id": "clear-canvas",
+      "name_zh": "清空画布",
+      "name_en": "Clear canvas",
+      "description_zh": "使用颜色填充整个画布，覆盖当前的图像。",
+      "description_en": "Clear the entire canvas with a color, replacing all existing image content.",
+      "display_zh": "清空画布(填充: [i]{0}[/i])",
+      "display_en": "Clear canvas [i]{0}[/i]",
+      "scriptName": "ClearCanvas",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to clear to.",
+          "desc_zh": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "clear-rect",
+      "name_zh": "清空区域",
+      "name_en": "Clear rectangle",
+      "description_zh": "使用颜色填充矩形区域，覆盖当前的图像。",
+      "description_en": "Clear a rectangular area with a color, replacing existing image content.",
+      "display_zh": "清空区域 (位置: 从[i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i])",
+      "display_en": "Clear rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i]",
+      "scriptName": "ClearRect",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "left",
+          "type": "number",
+          "name_en": "Left",
+          "name_zh": "左",
+          "desc_en": "X co-ordinate of left edge of rectangle.",
+          "desc_zh": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "type": "number",
+          "name_en": "Top",
+          "name_zh": "顶部",
+          "desc_en": "Y co-ordinate of top edge of rectangle.",
+          "desc_zh": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "type": "number",
+          "name_en": "Right",
+          "name_zh": "右",
+          "desc_en": "X co-ordinate of right edge of rectangle.",
+          "desc_zh": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "type": "number",
+          "name_en": "Bottom",
+          "name_zh": "底部",
+          "desc_en": "Y co-ordinate of bottom edge of rectangle.",
+          "desc_zh": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to clear to.",
+          "desc_zh": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "fill-rect",
+      "name_zh": "填充区域",
+      "name_en": "Fill rectangle",
+      "description_zh": "使用颜色填充矩形区域。",
+      "description_en": "Fill a rectangular area with a color.",
+      "display_zh": "填充区域 (位置: 从 [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i])",
+      "display_en": "Fill rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i]",
+      "scriptName": "FillRect",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "left",
+          "type": "number",
+          "name_en": "Left",
+          "name_zh": "左",
+          "desc_en": "X co-ordinate of left edge of rectangle.",
+          "desc_zh": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "type": "number",
+          "name_en": "Top",
+          "name_zh": "顶部",
+          "desc_en": "Y co-ordinate of top edge of rectangle.",
+          "desc_zh": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "type": "number",
+          "name_en": "Right",
+          "name_zh": "右",
+          "desc_en": "X co-ordinate of right edge of rectangle.",
+          "desc_zh": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "type": "number",
+          "name_en": "Bottom",
+          "name_zh": "底部",
+          "desc_en": "Y co-ordinate of bottom edge of rectangle.",
+          "desc_zh": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to fill.",
+          "desc_zh": "用于填充的颜色。"
+        }
+      ]
+    },
+    {
+      "id": "fill-linear-gradient",
+      "name_zh": "填充渐变",
+      "name_en": "Fill linear gradient",
+      "description_zh": "使用两种颜色的渐变填充矩形区域，覆盖当前的图像。",
+      "description_en": "Fill a rectangular area with a linear gradient from one color to another.",
+      "display_zh": "填充渐变(方向: [i]{6}[/i], 位置: [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 填充: [i]{4}[/i] 到 [i]{5}[/i])",
+      "display_en": "Fill [i]{6}[/i] linear gradient ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i] to [i]{5}[/i]",
+      "scriptName": "FillLinearGradient",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "left",
+          "type": "number",
+          "name_en": "Left",
+          "name_zh": "左",
+          "desc_en": "X co-ordinate of left edge of rectangle.",
+          "desc_zh": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "type": "number",
+          "name_en": "Top",
+          "name_zh": "顶部",
+          "desc_en": "Y co-ordinate of top edge of rectangle.",
+          "desc_zh": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "type": "number",
+          "name_en": "Right",
+          "name_zh": "右",
+          "desc_en": "X co-ordinate of right edge of rectangle.",
+          "desc_zh": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "type": "number",
+          "name_en": "Bottom",
+          "name_zh": "底部",
+          "desc_en": "Y co-ordinate of bottom edge of rectangle.",
+          "desc_zh": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color1",
+          "type": "number",
+          "name_en": "Color 1",
+          "name_zh": "开始颜色",
+          "desc_en": "The start color of the gradient.",
+          "desc_zh": "渐变开始的颜色。"
+        },
+        {
+          "id": "color2",
+          "type": "number",
+          "name_en": "Color 2",
+          "name_zh": "结束颜色",
+          "desc_en": "The end color of the gradient.",
+          "desc_zh": "渐变结束的颜色。"
+        },
+        {
+          "id": "direction",
+          "type": "combo",
+          "name_en": "Direction",
+          "name_zh": "方向",
+          "desc_en": "The direction of the gradient.",
+          "desc_zh": "渐变的方向",
+          "items": [
+            "horizontal",
+            "vertical"
+          ],
+          "items_i18n": {
+            "horizontal": {
+              "en": "Horizontal",
+              "zh": "水平"
+            },
+            "vertical": {
+              "en": "Vertical",
+              "zh": "垂直"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "fill-ellipse",
+      "name_zh": "填充椭圆",
+      "name_en": "Fill ellipse",
+      "description_zh": "用颜色填充椭圆区域。",
+      "description_en": "Fill an elliptical area with a color.",
+      "display_zh": "填充椭圆 位置: ([i]{0}[/i], [i]{1}[/i]), 半径: ([i]{2}[/i], [i]{3}[/i]), 填充色: [i]{4}[/i], 描线: [i]{5}[/i]",
+      "display_en": "Fill ellipse at ([i]{0}[/i], [i]{1}[/i]) radius ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i] ([i]{5}[/i] edge)",
+      "scriptName": "FillEllipse",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "圆心X",
+          "desc_en": "X co-ordinate of center.",
+          "desc_zh": "椭圆中心原点的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "圆心Y",
+          "desc_en": "Y co-ordinate of center.",
+          "desc_zh": "椭圆中心原点的Y坐标。"
+        },
+        {
+          "id": "radius-x",
+          "type": "number",
+          "name_en": "Radius X",
+          "name_zh": "半径X",
+          "desc_en": "Radius of ellipse on X axis.",
+          "desc_zh": "椭圆在X轴的半径。"
+        },
+        {
+          "id": "radius-y",
+          "type": "number",
+          "name_en": "Radius Y",
+          "name_zh": "半径Y",
+          "desc_en": "Radius of ellipse on Y axis.",
+          "desc_zh": "Y轴上的椭圆半径"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to fill.",
+          "desc_zh": "用于填充的颜色。"
+        },
+        {
+          "id": "edge",
+          "type": "combo",
+          "name_en": "Edge",
+          "name_zh": "边缘",
+          "desc_en": "Whether to use a hard (pixellated) or smooth (antialiased) edge.",
+          "desc_zh": "使用硬边(像素化)还是平滑(抗锯齿)描线。",
+          "items": [
+            "hard",
+            "smooth"
+          ],
+          "items_i18n": {
+            "hard": {
+              "en": "Hard",
+              "zh": "硬边"
+            },
+            "smooth": {
+              "en": "Smooth",
+              "zh": "平滑"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "outline-ellipse",
+      "name_zh": "绘制椭圆边框",
+      "name_en": "Outline ellipse",
+      "description_zh": "用颜色勾勒出一个椭圆区域。",
+      "description_en": "Outline an elliptical area with a color.",
+      "display_zh": "绘制椭圆边框 位置: ([i]{0}[/i], [i]{1}[/i]), 半径: ([i]{2}[/i], [i]{3}[/i]), 填充色: [i]{4}[/i], 边框: [i]{5}[/i], 描线: [i]{6}[/i]",
+      "display_en": "Outline ellipse at ([i]{0}[/i], [i]{1}[/i]) radius ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], line thickness [i]{5}[/i] ([i]{6}[/i] edge)",
+      "scriptName": "OutlineEllipse",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate of center.",
+          "desc_zh": "椭圆中心原点的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate of center.",
+          "desc_zh": "椭圆中心原点的Y坐标。"
+        },
+        {
+          "id": "radius-x",
+          "type": "number",
+          "name_en": "Radius X",
+          "name_zh": "半径X",
+          "desc_en": "Radius of ellipse on X axis.",
+          "desc_zh": "椭圆在X轴的半径。"
+        },
+        {
+          "id": "radius-y",
+          "type": "number",
+          "name_en": "Radius Y",
+          "name_zh": "半径Y",
+          "desc_en": "Radius of ellipse on Y axis.",
+          "desc_zh": "Y轴上的椭圆半径"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the outline.",
+          "desc_zh": "边框的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of the outline.",
+          "desc_zh": "线条的粗细。"
+        },
+        {
+          "id": "edge",
+          "type": "combo",
+          "name_en": "Edge",
+          "name_zh": "边缘",
+          "desc_en": "Whether to use a hard (pixellated) or smooth (antialiased) edge.",
+          "desc_zh": "使用硬边描线(像素化)还是平滑描线(抗锯齿)。",
+          "items": [
+            "hard",
+            "smooth"
+          ],
+          "items_i18n": {
+            "hard": {
+              "en": "Hard",
+              "zh": "硬边"
+            },
+            "smooth": {
+              "en": "Smooth",
+              "zh": "平滑"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "outline-rect",
+      "name_zh": "绘制边框",
+      "name_en": "Outline rectangle",
+      "description_zh": "围绕矩形区域绘制轮廓线条。",
+      "description_en": "Draw lines around the outline of a rectangular area.",
+      "display_zh": "绘制边框(位置: [i]{0}[/i], [i]{1}[/i] 到 [i]{2}[/i], [i]{3}[/i], 颜色: [i]{4}[/i], 大小: [i]{5}[/i])",
+      "display_en": "Outline rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], line thickness [i]{5}[/i]",
+      "scriptName": "OutlineRect",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "left",
+          "type": "number",
+          "name_en": "Left",
+          "name_zh": "左",
+          "desc_en": "X co-ordinate of left edge of rectangle.",
+          "desc_zh": "矩形最左边的X坐标。"
+        },
+        {
+          "id": "top",
+          "type": "number",
+          "name_en": "Top",
+          "name_zh": "顶部",
+          "desc_en": "Y co-ordinate of top edge of rectangle.",
+          "desc_zh": "矩形最上边的Y坐标。"
+        },
+        {
+          "id": "right",
+          "type": "number",
+          "name_en": "Right",
+          "name_zh": "右",
+          "desc_en": "X co-ordinate of right edge of rectangle.",
+          "desc_zh": "矩形最右边的X坐标。"
+        },
+        {
+          "id": "bottom",
+          "type": "number",
+          "name_en": "Bottom",
+          "name_zh": "底部",
+          "desc_en": "Y co-ordinate of bottom edge of rectangle.",
+          "desc_zh": "矩形最底部的Y坐标。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to fill.",
+          "desc_zh": "用于填充的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of the outline.",
+          "desc_zh": "线条的粗细。"
+        }
+      ]
+    },
+    {
+      "id": "line",
+      "name_zh": "绘制线条",
+      "name_en": "Line",
+      "description_zh": "在两点之间绘制一条实线。",
+      "description_en": "Draw a solid line between two points.",
+      "display_zh": "绘制线条 位置: ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i]), 颜色: [i]{4}[/i], 边框: [i]{5}[/i], 边角: [i]{6}[/i]",
+      "display_en": "Draw line from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], thickness [i]{5}[/i], cap [i]{6}[/i]",
+      "scriptName": "Line",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "x1",
+          "type": "number",
+          "name_en": "X1",
+          "name_zh": "X1",
+          "desc_en": "X co-ordinate of start point.",
+          "desc_zh": "起点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "type": "number",
+          "name_en": "Y1",
+          "name_zh": "Y1",
+          "desc_en": "Y co-ordinate of start point.",
+          "desc_zh": "起点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "type": "number",
+          "name_en": "X2",
+          "name_zh": "X2",
+          "desc_en": "X co-ordinate of end point.",
+          "desc_zh": "终点的X坐标。"
+        },
+        {
+          "id": "y2",
+          "type": "number",
+          "name_en": "Y2",
+          "name_zh": "Y2",
+          "desc_en": "Y co-ordinate of end point.",
+          "desc_zh": "终点的Y坐标。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the line.",
+          "desc_zh": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of line.",
+          "desc_zh": "线条的粗细。"
+        },
+        {
+          "id": "line-cap",
+          "type": "combo",
+          "name_en": "Line cap",
+          "name_zh": "边角",
+          "desc_en": "How the ends of the lines are drawn.",
+          "desc_zh": "以哪种方式绘制线条两端的样式。",
+          "items": [
+            "butt",
+            "square"
+          ],
+          "items_i18n": {
+            "butt": {
+              "en": "Butt",
+              "zh": "圆角"
+            },
+            "square": {
+              "en": "Square",
+              "zh": "直角"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "line-dashed",
+      "name_zh": "绘制虚线",
+      "name_en": "Dashed line",
+      "description_zh": "在两点之间绘制一条虚线。",
+      "description_en": "Draw a dashed line between two points.",
+      "display_zh": "绘制虚线 位置: ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i]), 颜色: [i]{4}[/i], 边框: [i]{5}[/i], 虚线长度: [i]{6}[/i], 端点: [i]{7}[/i]",
+      "display_en": "Draw dashed line from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], thickness [i]{5}[/i], dash length [i]{6}[/i], cap [i]{7}[/i]",
+      "scriptName": "LineDashed",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "x1",
+          "type": "number",
+          "name_en": "X1",
+          "name_zh": "X1",
+          "desc_en": "X co-ordinate of start point.",
+          "desc_zh": "起点的X坐标。"
+        },
+        {
+          "id": "y1",
+          "type": "number",
+          "name_en": "Y1",
+          "name_zh": "Y1",
+          "desc_en": "Y co-ordinate of start point.",
+          "desc_zh": "起点的Y坐标。"
+        },
+        {
+          "id": "x2",
+          "type": "number",
+          "name_en": "X2",
+          "name_zh": "X2",
+          "desc_en": "X co-ordinate of end point.",
+          "desc_zh": "终点的X坐标。"
+        },
+        {
+          "id": "y2",
+          "type": "number",
+          "name_en": "Y2",
+          "name_zh": "Y2",
+          "desc_en": "Y co-ordinate of end point.",
+          "desc_zh": "终点的Y坐标。"
+        },
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the line.",
+          "desc_zh": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of line.",
+          "desc_zh": "线条的粗细。"
+        },
+        {
+          "id": "dash-length",
+          "type": "number",
+          "name_en": "Dash length",
+          "name_zh": "虚线长度",
+          "desc_en": "The length of each dash on the line.",
+          "desc_zh": "线条上每个线段的长度。"
+        },
+        {
+          "id": "line-cap",
+          "type": "combo",
+          "name_en": "Line cap",
+          "name_zh": "边角",
+          "desc_en": "How the ends of the lines are drawn.",
+          "desc_zh": "以哪种方式绘制线条两端的样式。",
+          "items": [
+            "butt",
+            "square"
+          ],
+          "items_i18n": {
+            "butt": {
+              "en": "Butt",
+              "zh": "圆角"
+            },
+            "square": {
+              "en": "Square",
+              "zh": "直角"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-drawing-blend",
+      "name_zh": "设置画布混合模式",
+      "name_en": "Set drawing blend",
+      "description_zh": "设置用于绘制操作的混合模式(粘贴对象除外)。",
+      "description_en": "Set the blend mode used for drawing actions (except pasting objects).",
+      "display_zh": "设置画布混合模式为[i]{0}[/i]",
+      "display_en": "Set drawing blend mode to [i]{0}[/i]",
+      "scriptName": "SetDrawBlend",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode",
+          "name_zh": "混合模式",
+          "desc_en": "Choose the new blend mode for drawing actions (except pasting objects).",
+          "desc_zh": "用于画布的混合模式",
+          "items": [
+            "normal",
+            "additive",
+            "copy",
+            "destination-over",
+            "source-in",
+            "destination-in",
+            "source-out",
+            "destination-out",
+            "source-atop",
+            "destination-atop",
+            "lighten",
+            "darken",
+            "multiply",
+            "screen"
+          ],
+          "items_i18n": {
+            "normal": {
+              "en": "Normal",
+              "zh": "正常"
+            },
+            "additive": {
+              "en": "Additive",
+              "zh": "叠加"
+            },
+            "copy": {
+              "en": "Copy",
+              "zh": "覆盖"
+            },
+            "destination-over": {
+              "en": "Destination over",
+              "zh": "背景穿透"
+            },
+            "source-in": {
+              "en": "Source in",
+              "zh": "前景剪贴"
+            },
+            "destination-in": {
+              "en": "Destination in",
+              "zh": "背景剪贴"
+            },
+            "source-out": {
+              "en": "Source out",
+              "zh": "前景剔除"
+            },
+            "destination-out": {
+              "en": "Destination out",
+              "zh": "背景剔除"
+            },
+            "source-atop": {
+              "en": "Source atop",
+              "zh": "前景混合"
+            },
+            "destination-atop": {
+              "en": "Destination atop",
+              "zh": "背景混合"
+            },
+            "lighten": {
+              "en": "Lighten",
+              "zh": "变亮"
+            },
+            "darken": {
+              "en": "Darken",
+              "zh": "变暗"
+            },
+            "multiply": {
+              "en": "Multiply",
+              "zh": "正片叠底"
+            },
+            "screen": {
+              "en": "Screen",
+              "zh": "滤色"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "paste-object",
+      "name_zh": "粘贴对象",
+      "name_en": "Paste object",
+      "description_zh": "在画布绘制一个与对象相同的图像。",
+      "description_en": "Draw an object onto the canvas.",
+      "display_zh": "粘贴对象 {0} ({1})",
+      "display_en": "Paste object {0} {1}",
+      "scriptName": "PasteObject",
+      "category": "drawing-general",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object",
+          "name_zh": "目标",
+          "desc_en": "The object to paste onto the canvas.",
+          "desc_zh": "要粘贴到画布上的对象。"
+        },
+        {
+          "id": "effects",
+          "type": "combo",
+          "name_en": "Effects",
+          "name_zh": "滤镜",
+          "desc_en": "Choose whether to draw the object with or without any effects added to it.",
+          "desc_zh": "绘制对象时，是否应用滤镜效果。",
+          "items": [
+            "without-effects",
+            "with-effects"
+          ],
+          "items_i18n": {
+            "without-effects": {
+              "en": "without effects",
+              "zh": "排除滤镜"
+            },
+            "with-effects": {
+              "en": "with effects",
+              "zh": "包含滤镜"
+            }
+          }
+        }
+      ],
+      "isAsync": true
+    },
+    {
+      "id": "add-poly-point",
+      "name_zh": "添加多边形顶点",
+      "name_en": "Add poly point",
+      "description_zh": "在多边形上添加一个顶点以进行绘制。",
+      "description_en": "Add a point to a polygon to draw.",
+      "display_zh": "添加多边形顶点 ([i]{0}[/i], [i]{1}[/i])",
+      "display_en": "Add polygon point ([i]{0}[/i], [i]{1}[/i])",
+      "scriptName": "AddPolyPoint",
+      "category": "drawing-polygons",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "X co-ordinate of point.",
+          "desc_zh": "顶点的X坐标。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Y co-ordinate of point.",
+          "desc_zh": "顶点的Y坐标。"
+        }
+      ]
+    },
+    {
+      "id": "reset-poly",
+      "name_zh": "重置多边形",
+      "name_en": "Reset poly",
+      "description_zh": "清除已添加的所有多边形顶点。",
+      "description_en": "Clear all polygon points that were added.",
+      "display_zh": "重置多边形",
+      "display_en": "Reset polygon",
+      "scriptName": "ResetPoly",
+      "category": "drawing-polygons",
+      "params": []
+    },
+    {
+      "id": "line-poly",
+      "name_zh": "绘制多边形轮廓",
+      "name_en": "Outline poly",
+      "description_zh": "在当前多边形的轮廓周围绘制线条。",
+      "description_en": "Draw lines around the outline of the current polygon.",
+      "display_zh": "绘制轮廓 (颜色: [i]{0}[/i], 边框: [i]{1}[/i], 端点: [i]{2}[/i])",
+      "display_en": "Draw polygon outline with [i]{0}[/i], thickness [i]{1}[/i], cap [i]{2}[/i]",
+      "scriptName": "LinePoly",
+      "category": "drawing-polygons",
+      "params": [
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the line.",
+          "desc_zh": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of line.",
+          "desc_zh": "线条的粗细。"
+        },
+        {
+          "id": "line-cap",
+          "type": "combo",
+          "name_en": "Line cap",
+          "name_zh": "边角",
+          "desc_en": "How the ends of the lines are drawn.",
+          "desc_zh": "以哪种方式绘制线条两端的样式。",
+          "items": [
+            "butt",
+            "square"
+          ],
+          "items_i18n": {
+            "butt": {
+              "en": "Butt",
+              "zh": "圆角"
+            },
+            "square": {
+              "en": "Square",
+              "zh": "直角"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "line-dashed-poly",
+      "name_zh": "绘制多边形虚线轮廓",
+      "name_en": "Dashed outline poly",
+      "description_zh": "在当前多边形的轮廓周围绘制虚线。",
+      "description_en": "Draw dashed lines around the outline of the current polygon.",
+      "display_zh": "绘制虚线轮廓(颜色: [i]{0}[/i], 边框: [i]{1}[/i], 虚线长度: [i]{2}[/i], 端点: [i]{3}[/i])",
+      "display_en": "Draw dashed polygon outline with [i]{0}[/i], thickness [i]{1}[/i], dash length [i]{2}[/i], cap [i]{3}[/i]",
+      "scriptName": "LineDashedPoly",
+      "category": "drawing-polygons",
+      "params": [
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color of the line.",
+          "desc_zh": "线条的颜色。"
+        },
+        {
+          "id": "line-thickness",
+          "type": "number",
+          "name_en": "Thickness",
+          "name_zh": "粗细",
+          "desc_en": "The line thickness of line.",
+          "desc_zh": "线条的粗细。"
+        },
+        {
+          "id": "dash-length",
+          "type": "number",
+          "name_en": "Dash length",
+          "name_zh": "虚线长度",
+          "desc_en": "The length of each dash on the line.",
+          "desc_zh": "线条上每个线段的长度。"
+        },
+        {
+          "id": "line-cap",
+          "type": "combo",
+          "name_en": "Line cap",
+          "name_zh": "边角",
+          "desc_en": "How the ends of the lines are drawn.",
+          "desc_zh": "以哪种方式绘制线条两端的样式。",
+          "items": [
+            "butt",
+            "square"
+          ],
+          "items_i18n": {
+            "butt": {
+              "en": "Butt",
+              "zh": "圆角"
+            },
+            "square": {
+              "en": "Square",
+              "zh": "直角"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "fill-poly",
+      "name_zh": "填充多边形",
+      "name_en": "Fill poly",
+      "description_zh": "用颜色填充当前的多边形区域。",
+      "description_en": "Fill the current polygon area with a color.",
+      "display_zh": "填充多边形颜色 [i]{0}[/i] (检查凸边: [i]{1}[/i])",
+      "display_en": "Fill polygon with [i]{0}[/i] (convex: [i]{1}[/i])",
+      "scriptName": "FillPoly",
+      "category": "drawing-polygons",
+      "params": [
+        {
+          "id": "color",
+          "type": "number",
+          "name_en": "Color",
+          "name_zh": "颜色",
+          "desc_en": "The color to fill.",
+          "desc_zh": "用于填充的颜色。"
+        },
+        {
+          "id": "convex",
+          "type": "boolean",
+          "name_en": "Convex",
+          "name_zh": "检查凸边",
+          "desc_en": "Check if the polygon shape is convex, which enables more reliable rendering.",
+          "desc_zh": "检查多边形的形状是否凸起，这样可以更可靠地进行渲染。"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    {
+      "id": "saved-image-url",
+      "name_zh": "图像保存地址",
+      "name_en": "SavedImageURL",
+      "description_zh": "在 '图像保存完成' 条件中 ，返回的图像地址结果。",
+      "description_en": "In 'On saved image', the URL of the saved image.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SavedImageURL",
+      "category": "canvas",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "snapshot-red-at",
+      "name_zh": "获取红通道",
+      "name_en": "SnapshotRedAt",
+      "description_zh": "从屏幕快照中获取像素的红色通道。",
+      "description_en": "Get a pixel's R channel from a snapshot.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotRedAt",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "Pixel X co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Pixel Y co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-green-at",
+      "name_zh": "获取绿通道",
+      "name_en": "SnapshotGreenAt",
+      "description_zh": "从屏幕快照中获取像素的绿色通道。",
+      "description_en": "Get a pixel's G channel from a snapshot.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotGreenAt",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "Pixel X co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Pixel Y co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-blue-at",
+      "name_zh": "获取蓝通道",
+      "name_en": "SnapshotBlueAt",
+      "description_zh": "从屏幕快照中获取像素的蓝色通道。",
+      "description_en": "Get a pixel's B channel from a snapshot.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotBlueAt",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "Pixel X co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Pixel Y co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-alpha-at",
+      "name_zh": "获取不透明度通道",
+      "name_en": "SnapshotAlphaAt",
+      "description_zh": "从屏幕快照中获取像素的不透明度通道。",
+      "description_en": "Get a pixel's alpha channel from a snapshot.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotAlphaAt",
+      "category": "canvas",
+      "params": [
+        {
+          "id": "x",
+          "type": "number",
+          "name_en": "X",
+          "name_zh": "X",
+          "desc_en": "Pixel X co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的X坐标，以像素为单位。"
+        },
+        {
+          "id": "y",
+          "type": "number",
+          "name_en": "Y",
+          "name_zh": "Y",
+          "desc_en": "Pixel Y co-ordinate",
+          "desc_zh": "要读取的像素位于快照中的Y坐标，以像素为单位。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-width",
+      "name_zh": "快照宽度",
+      "name_en": "SnapshotWidth",
+      "description_zh": "获取快照的分辨率宽度，以像素为单位。",
+      "description_en": "The width of the last snapshot in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotWidth",
+      "category": "canvas",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-height",
+      "name_zh": "快照高度",
+      "name_en": "SnapshotHeight",
+      "description_zh": "获取快照的分辨率高度，以像素为单位。",
+      "description_en": "The height of the last snapshot in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SnapshotHeight",
+      "category": "canvas",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "pixel-scale",
+      "name_zh": "像素尺寸",
+      "name_en": "PixelScale",
+      "description_zh": "影响画布对象的坐标中，单个像素的大小。",
+      "description_en": "The size of a single canvas pixel in object co-ordinates.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PixelScale",
+      "category": "canvas",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "surface-device-width",
+      "name_zh": "设备像素宽度",
+      "name_en": "SurfaceDeviceWidth",
+      "description_zh": "返回设备实际的画布宽度。",
+      "description_en": "The width of the Drawing Canvas surface in device pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SurfaceDeviceWidth",
+      "category": "canvas",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "surface-device-height",
+      "name_zh": "设备像素高度",
+      "name_en": "SurfaceDeviceHeight",
+      "description_zh": "返回设备实际的画布高度。",
+      "description_en": "The height of the Drawing Canvas surface in device pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "SurfaceDeviceHeight",
+      "category": "canvas",
+      "params": [],
+      "returnType": "number"
+    }
+  ],
+  "properties": [
+    {
+      "id": "resolution-mode",
+      "name_en": "Resolution mode",
+      "name_zh": "缩放模式",
+      "description_en": "Whether to automatically match the canvas resolution to the project, or always use a fixed resolution.",
+      "description_zh": "画布的自动匹配成项目的分辨率，还是始终使用固定的分辨率。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose whether the object is visible when the layout starts.",
+      "description_zh": "在场景开始时，对象是否可见。"
+    },
+    {
+      "id": "origin",
+      "name_en": "Origin",
+      "name_zh": "图像原点",
+      "description_en": "Choose the location of the origin in the object.",
+      "description_zh": "选择图像原点的位置。"
+    },
+    {
+      "id": "antialiasing",
+      "name_en": "Antialiasing",
+      "name_zh": "抗锯齿",
+      "description_en": "Enable antialiasing for better quality drawing. Requires WebGL 2+. If enabled, objects using background blending effects cannot be pasted.",
+      "description_zh": "启用抗锯齿可以获得更高质量的画面。需要设备支持WebGL 2 +。启用后，则无法被粘贴使用了背景混合效果的对象。"
+    }
+  ]
+}

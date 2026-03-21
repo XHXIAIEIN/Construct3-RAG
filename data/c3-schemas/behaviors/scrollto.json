@@ -1,0 +1,124 @@
+{
+  "id": "scrollto",
+  "originalId": "scrollto",
+  "name_zh": "镜头跟随",
+  "name_en": "Scroll To",
+  "description_zh": "始终将画面对焦到此对象的位置。若有多个对象添加此行为，则对准它们的中心点。",
+  "description_en": "Always center the view on this object, or at the mid-point of multiple objects.",
+  "plugin_type": "behavior",
+  "aceCategories": [
+    ""
+  ],
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "name_zh": "已启用",
+      "name_en": "Is enabled",
+      "description_zh": "检测当前行为是否已启用。",
+      "description_en": "Test if the behavior is enabled.",
+      "display_zh": "{my} 已启用",
+      "display_en": "{my} is enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "params": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "shake",
+      "name_zh": "振动",
+      "name_en": "Shake",
+      "description_zh": "在一段时间内，持续振动屏幕。注意，如果可视区域和场景大小相同，需要允许镜头滚动超出场景。",
+      "description_en": "Shake the screen for a duration of time.",
+      "display_zh": "{my} 振动[i]{1}[/i]秒, 强度[i]{0}[/i]  ({2})",
+      "display_en": "Shake {my} with magnitude [i]{0}[/i] for [i]{1}[/i] seconds ({2})",
+      "scriptName": "Shake",
+      "category": "",
+      "params": [
+        {
+          "id": "magnitude",
+          "type": "number",
+          "name_en": "Magnitude",
+          "name_zh": "振动强度",
+          "desc_en": "The strength of the shake, in maximum pixels to scroll away.",
+          "desc_zh": "振动强度，即允许滚动随机偏移的最大像素。"
+        },
+        {
+          "id": "duration",
+          "type": "number",
+          "name_en": "Duration",
+          "name_zh": "持续时间",
+          "desc_en": "The time the shake should last, in seconds.",
+          "desc_zh": "振动的持续时间，以秒为单位。"
+        },
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode",
+          "name_zh": "模式",
+          "desc_en": "Select whether the magnitude gradually reduces to zero over the duration, or stays constant.",
+          "desc_zh": "在持续时间内，振动强度是逐渐减弱至零，还是保持不变。",
+          "items": [
+            "reducing-magnitude",
+            "constant-magnitude"
+          ],
+          "items_i18n": {
+            "reducing-magnitude": {
+              "en": "Reducing magnitude",
+              "zh": "逐渐减弱"
+            },
+            "constant-magnitude": {
+              "en": "Constant magnitude",
+              "zh": "保持不变"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-enabled",
+      "name_zh": "设置启用",
+      "name_en": "Set enabled",
+      "description_zh": "启用或禁用此行为。",
+      "description_en": "Enable or disable the behavior.",
+      "display_zh": "{0} {my}",
+      "display_en": "Set {my} {0}",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "params": [
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State",
+          "name_zh": "状态",
+          "desc_en": "Whether to enable or disable the behavior.",
+          "desc_zh": "启用或禁用此行为。",
+          "items": [
+            "disabled",
+            "enabled"
+          ],
+          "items_i18n": {
+            "disabled": {
+              "en": "disabled",
+              "zh": "禁用"
+            },
+            "enabled": {
+              "en": "enabled",
+              "zh": "启用"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "expressions": [],
+  "properties": [
+    {
+      "id": "enabled",
+      "name_en": "Enabled",
+      "name_zh": "启用",
+      "description_en": "Whether the behavior is initially enabled or disabled.",
+      "description_zh": "游戏初始化时，是否默认启用该行为。"
+    }
+  ]
+}

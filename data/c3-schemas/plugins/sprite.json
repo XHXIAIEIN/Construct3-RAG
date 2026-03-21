@@ -1,0 +1,1167 @@
+{
+  "id": "sprite",
+  "originalId": "Sprite",
+  "name_zh": "精灵",
+  "name_en": "Sprite",
+  "description_zh": "可以添加多张图片组成动画的对象，它是大多数项目的重要组成部分。",
+  "description_en": "An animated object that is the building block of most projects.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "animations",
+    "appearance",
+    "collisions",
+    "misc",
+    "size-position",
+    "web"
+  ],
+  "conditions": [
+    {
+      "id": "is-animation-playing",
+      "name_zh": "正在播放",
+      "name_en": "Is playing",
+      "description_zh": "检测当前正在播放哪个的动画。",
+      "description_en": "Test which of the object's animations is currently playing.",
+      "display_zh": "正在播放 {0} 动画",
+      "display_en": "Is animation {0} playing",
+      "scriptName": "IsAnimPlaying",
+      "category": "animations",
+      "params": [
+        {
+          "id": "animation",
+          "type": "animation",
+          "name_en": "Animation",
+          "name_zh": "动画",
+          "desc_en": "Enter the name of the animation to check if playing.",
+          "desc_zh": "要检测的动画名称。"
+        }
+      ]
+    },
+    {
+      "id": "compare-animation-frame",
+      "name_zh": "比较帧数",
+      "name_en": "Compare frame",
+      "description_zh": "测试当前显示的动画帧。",
+      "description_en": "Test which animation frame is currently showing.",
+      "display_zh": "动画帧 {0} {1}",
+      "display_en": "Animation frame {0} {1}",
+      "scriptName": "CompareFrame",
+      "category": "animations",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current animation frame number (0-based).",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number",
+          "name_zh": "数字",
+          "desc_en": "The animation frame number to compare to (0-based).",
+          "desc_zh": "要比较的动画帧编号（从0开始计数）。"
+        }
+      ]
+    },
+    {
+      "id": "on-animation-finished",
+      "name_zh": "动画播放完成",
+      "name_en": "On finished",
+      "description_zh": "动画播放结束时触发。",
+      "description_en": "Triggered when an animation has finished.",
+      "display_zh": "动画 {0} 播放完成",
+      "display_en": "On animation {0} finished",
+      "scriptName": "OnAnimFinished",
+      "category": "animations",
+      "params": [
+        {
+          "id": "animation",
+          "type": "animation",
+          "name_en": "Animation",
+          "name_zh": "动画",
+          "desc_en": "Enter the name of the animation that has finished.",
+          "desc_zh": "要检测的动画名称。"
+        }
+      ],
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-animation-finished",
+      "name_zh": "任意动画播放完成",
+      "name_en": "On any finished",
+      "description_zh": "任意动画播放完成时触发",
+      "description_en": "Triggered when any animation has finished.",
+      "display_zh": "任意动画播放完成",
+      "display_en": "On any animation finished",
+      "scriptName": "OnAnyAnimFinished",
+      "category": "animations",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-animation-frame-changed",
+      "name_zh": "切换动画帧",
+      "name_en": "On frame changed",
+      "description_zh": "动画帧切换时触发",
+      "description_en": "Triggered when the current animation frame changes.",
+      "display_zh": "切换动画帧",
+      "display_en": "On frame changed",
+      "scriptName": "OnFrameChanged",
+      "category": "animations",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "compare-animation-speed",
+      "name_zh": "比较播放速度",
+      "name_en": "Compare speed",
+      "description_zh": "比较当前动画帧播放速度",
+      "description_en": "Compare the current animation speed.",
+      "display_zh": "动画播放速度 {0} {1}",
+      "display_en": "Animation speed {0} {1}",
+      "scriptName": "CompareAnimSpeed",
+      "category": "animations",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current animation speed.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "number",
+          "type": "number",
+          "name_en": "Number",
+          "name_zh": "数字",
+          "desc_en": "The animation speed to compare to.",
+          "desc_zh": "要比较的动画速度。"
+        }
+      ]
+    },
+    {
+      "id": "compare-animation-frame-tag",
+      "name_zh": "比较动画帧标签",
+      "name_en": "Compare frame tag",
+      "description_zh": "与当前动画帧的标签进行比较。",
+      "description_en": "Compare against the current animation frame's tag.",
+      "display_zh": "动画帧标签 {0} {1}",
+      "display_en": "Animation frame tag {0} {1}",
+      "scriptName": "CompareFrameTag",
+      "category": "animations",
+      "params": [
+        {
+          "id": "comparison",
+          "type": "cmp",
+          "name_en": "Comparison",
+          "name_zh": "比较",
+          "desc_en": "How to compare the current animation frame's tag.",
+          "desc_zh": "选择一种比较方式。"
+        },
+        {
+          "id": "tag",
+          "type": "animationframe",
+          "name_en": "tag",
+          "name_zh": "标签",
+          "desc_en": "The animation frame tag to compare against.",
+          "desc_zh": "用于比较的动画帧标签。"
+        }
+      ]
+    },
+    {
+      "id": "is-mirrored",
+      "name_zh": "已左右翻转",
+      "name_en": "Is mirrored",
+      "description_zh": "测试对象是否已被设置 '左右翻转' 动作。",
+      "description_en": "True if the object has been mirrored with the 'Set Mirrored' action.",
+      "display_zh": "已左右翻转",
+      "display_en": "Is mirrored",
+      "scriptName": "IsMirrored",
+      "category": "appearance",
+      "params": []
+    },
+    {
+      "id": "is-flipped",
+      "name_zh": "已上下翻转",
+      "name_en": "Is flipped",
+      "description_zh": "测试对象是否已被设置 上下翻转' 操作。",
+      "description_en": "True if the object has been flipped with the 'Set Flipped' action.",
+      "display_zh": "已上下翻转",
+      "display_en": "Is flipped",
+      "scriptName": "IsFlipped",
+      "category": "appearance",
+      "params": []
+    },
+    {
+      "id": "collisions-enabled",
+      "name_zh": "已启用碰撞",
+      "name_en": "Collisions enabled",
+      "description_zh": "检测对象的碰撞功能是否已启用，并且允许触发碰撞事件。",
+      "description_en": "True if the object's collisions are enabled and will fire collision events.",
+      "display_zh": "已启用碰撞",
+      "display_en": "Collisions enabled",
+      "scriptName": "IsCollisionEnabled",
+      "category": "collisions",
+      "params": []
+    },
+    {
+      "id": "on-image-url-loaded",
+      "name_zh": "网络图像加载完成",
+      "name_en": "On image URL loaded",
+      "description_zh": "执行 '加载远程图像' 动作，图像加载完成时触发。",
+      "description_en": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "display_zh": "网络图像加载完成",
+      "display_en": "On image URL loaded",
+      "scriptName": "OnURLLoaded",
+      "category": "web",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "on-image-url-failed",
+      "name_zh": "网络图像加载失败",
+      "name_en": "On image URL failed",
+      "description_zh": "执行 '加载网络图像' 动作后，图像加载失败时触发。",
+      "description_en": "Triggered after 'Load image from URL' if the image fails to load.",
+      "display_zh": "网络图像加载失败",
+      "display_en": "On image URL failed to load",
+      "scriptName": "OnURLFailed",
+      "category": "web",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop-animation",
+      "name_zh": "停止播放",
+      "name_en": "Stop",
+      "description_zh": "停止播放当前动画。",
+      "description_en": "Stop the current animation from playing.",
+      "display_zh": "停止播放动画",
+      "display_en": "Stop animation",
+      "scriptName": "StopAnim",
+      "category": "animations",
+      "params": []
+    },
+    {
+      "id": "start-animation",
+      "name_zh": "开始播放",
+      "name_en": "Start",
+      "description_zh": "如果已停止，则启动当前动画。",
+      "description_en": "Start the current animation, if it was stopped.",
+      "display_zh": "从{0}开始播放动画",
+      "display_en": "Start animation from {0}",
+      "scriptName": "StartAnim",
+      "category": "animations",
+      "params": [
+        {
+          "id": "from",
+          "type": "combo",
+          "name_en": "From",
+          "name_zh": "从",
+          "desc_en": "Choose whether to resume or rewind the animation back to the first frame.",
+          "desc_zh": "选择是否将动画恢复或倒回到第一帧。",
+          "items": [
+            "current-frame",
+            "beginning"
+          ],
+          "items_i18n": {
+            "current-frame": {
+              "en": "current frame",
+              "zh": "当前帧"
+            },
+            "beginning": {
+              "en": "beginning",
+              "zh": "起始帧"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-animation",
+      "name_zh": "设置动画",
+      "name_en": "Set animation",
+      "description_zh": "设置当前动画",
+      "description_en": "Set the current animation",
+      "display_zh": "设置动画为[b]{0}[/b](从{1}播放)",
+      "display_en": "Set animation to [b]{0}[/b] (play from {1})",
+      "scriptName": "SetAnim",
+      "category": "animations",
+      "params": [
+        {
+          "id": "animation",
+          "type": "animation",
+          "name_en": "Animation",
+          "name_zh": "动画",
+          "desc_en": "The name of the animation to set.",
+          "desc_zh": "要设置的动画的名称。"
+        },
+        {
+          "id": "from",
+          "type": "combo",
+          "name_en": "From",
+          "name_zh": "开始",
+          "desc_en": "Choose whether to play from the same frame number or rewind the animation back to the first frame.",
+          "desc_zh": "选择从当前帧开始播放，或是从动画第一帧播放。",
+          "items": [
+            "current-frame",
+            "beginning"
+          ],
+          "items_i18n": {
+            "current-frame": {
+              "en": "current frame",
+              "zh": "当前帧"
+            },
+            "beginning": {
+              "en": "beginning",
+              "zh": "起始帧"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-animation-frame",
+      "name_zh": "设置动画帧",
+      "name_en": "Set frame",
+      "description_zh": "通过动画帧的编号或标签，设置当前动画帧。",
+      "description_en": "Set the current animation frame by its index or tag.",
+      "display_zh": "设置动画帧为[b]{0}[/b]",
+      "display_en": "Set animation frame to [b]{0}[/b]",
+      "scriptName": "SetAnimFrame",
+      "category": "animations",
+      "params": [
+        {
+          "id": "frame-number",
+          "type": "animationframe",
+          "name_en": "Frame",
+          "name_zh": "编号",
+          "desc_en": "The animation frame index (0-based), or a string of the frame tag.",
+          "desc_zh": "要设置的动画帧编号（从0开始），或标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-animation-speed",
+      "name_zh": "设置播放速度",
+      "name_en": "Set speed",
+      "description_zh": "设置当前动画速度。",
+      "description_en": "Set the current animation speed.",
+      "display_zh": "设置动画播放速度为[b]{0}[/b]",
+      "display_en": "Set animation speed to [b]{0}[/b]",
+      "scriptName": "SetAnimSpeed",
+      "category": "animations",
+      "params": [
+        {
+          "id": "speed",
+          "type": "number",
+          "name_en": "Speed",
+          "name_zh": "速度",
+          "desc_en": "The new animation speed, in animation frames per second.",
+          "desc_zh": "新动画速度，每秒动画帧数。"
+        }
+      ]
+    },
+    {
+      "id": "set-repeat-to-frame",
+      "name_zh": "设置重复帧",
+      "name_en": "Set repeat-to frame",
+      "description_zh": "设置要从哪一帧开始重复播放，仅在循环播放的动画表中生效。",
+      "description_en": "Set the animation frame number to repeat to in a looping animation.",
+      "display_zh": "设置重复起始帧为[b]{0}[/b]",
+      "display_en": "Set repeat-to frame to [b]{0}[/b]",
+      "scriptName": "SetAnimRepeatToFrame",
+      "category": "animations",
+      "params": [
+        {
+          "id": "frame-number",
+          "type": "animationframe",
+          "name_en": "Frame number",
+          "name_zh": "编号",
+          "desc_en": "The animation frame number to repeat to (0-based).",
+          "desc_zh": "要重复的动画帧编号（从0开始）。"
+        }
+      ]
+    },
+    {
+      "id": "add-remove-animation",
+      "name_zh": "添加/删除动画",
+      "name_en": "Add/remove animation",
+      "description_zh": "添加或删除对象的动画。",
+      "description_en": "Add or remove an animation in the object.",
+      "display_zh": "{0} 动画 [b]{1}[/b]",
+      "display_en": "{0} animation [b]{1}[/b]",
+      "scriptName": "AddRemoveAnimation",
+      "category": "animations",
+      "params": [
+        {
+          "id": "which",
+          "type": "combo",
+          "name_en": "Which",
+          "name_zh": "方式",
+          "desc_en": "Whether to add a new animation or remove an existing animation.",
+          "desc_zh": "添加新动画或删除现有动画。",
+          "items": [
+            "add",
+            "remove"
+          ],
+          "items_i18n": {
+            "add": {
+              "en": "Add",
+              "zh": "添加"
+            },
+            "remove": {
+              "en": "Remove",
+              "zh": "移除"
+            }
+          }
+        },
+        {
+          "id": "name",
+          "type": "animation",
+          "name_en": "Name",
+          "name_zh": "名称",
+          "desc_en": "The animation name to add or remove.",
+          "desc_zh": "添加或删除的动画名称。"
+        }
+      ]
+    },
+    {
+      "id": "add-remove-animation-frame",
+      "name_zh": "添加/删除动画帧",
+      "name_en": "Add/remove animation frame",
+      "description_zh": "在当前动画中添加或删除动画帧。",
+      "description_en": "Add or remove an animation frame in the current animation.",
+      "display_zh": "{0} 动画帧 [b]{1}[/b] 到 [i]{2}[/i]",
+      "display_en": "{0} animation frame to [b]{1}[/b] at [i]{2}[/i]",
+      "scriptName": "AddRemoveAnimationFrame",
+      "category": "animations",
+      "params": [
+        {
+          "id": "which",
+          "type": "combo",
+          "name_en": "Which",
+          "name_zh": "方式",
+          "desc_en": "Whether to add a new animation frame or remove an existing animation frame.",
+          "desc_zh": "添加或删除现有的动画帧。",
+          "items": [
+            "add",
+            "remove"
+          ],
+          "items_i18n": {
+            "add": {
+              "en": "Add",
+              "zh": "添加"
+            },
+            "remove": {
+              "en": "Remove",
+              "zh": "移除"
+            }
+          }
+        },
+        {
+          "id": "animation",
+          "type": "animation",
+          "name_en": "Animation",
+          "name_zh": "动画",
+          "desc_en": "The name of the animation to modify.",
+          "desc_zh": "要修改的动画的名称。"
+        },
+        {
+          "id": "where",
+          "type": "animationframe",
+          "name_en": "Where",
+          "name_zh": "位置",
+          "desc_en": "The index or tag at which to insert or delete an animation frame. Use -1 for last frame.",
+          "desc_zh": "要插入或删除动画帧的编号或标签。使用 -1 指定最后一帧。"
+        }
+      ]
+    },
+    {
+      "id": "set-blend-mode",
+      "name_zh": "设置混合模式",
+      "name_en": "Set blend mode",
+      "description_zh": "设置此对象的背景混合模式。",
+      "description_en": "Set the background blend mode for this object.",
+      "display_zh": "设置混合模式为[i]{0}[/i]",
+      "display_en": "Set blend mode to [i]{0}[/i]",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "blend-mode",
+          "type": "combo",
+          "name_en": "Blend mode",
+          "name_zh": "混合模式",
+          "desc_en": "Choose the new blend mode for this object.",
+          "desc_zh": "为此对象选择新的混合模式。",
+          "items": [
+            "normal",
+            "additive",
+            "xor",
+            "copy",
+            "destination-over",
+            "source-in",
+            "destination-in",
+            "source-out",
+            "destination-out",
+            "source-atop",
+            "destination-atop",
+            "lighten",
+            "darken",
+            "multiply",
+            "screen"
+          ],
+          "items_i18n": {
+            "normal": {
+              "en": "Normal",
+              "zh": "正常"
+            },
+            "additive": {
+              "en": "Additive",
+              "zh": "叠加"
+            },
+            "xor": {
+              "en": "XOR",
+              "zh": "重叠消除"
+            },
+            "copy": {
+              "en": "Copy",
+              "zh": "覆盖"
+            },
+            "destination-over": {
+              "en": "Destination over",
+              "zh": "背景穿透"
+            },
+            "source-in": {
+              "en": "Source in",
+              "zh": "前景剪贴"
+            },
+            "destination-in": {
+              "en": "Destination in",
+              "zh": "背景剪贴"
+            },
+            "source-out": {
+              "en": "Source out",
+              "zh": "前景剔除"
+            },
+            "destination-out": {
+              "en": "Destination out",
+              "zh": "背景剔除"
+            },
+            "source-atop": {
+              "en": "Source atop",
+              "zh": "前景混合"
+            },
+            "destination-atop": {
+              "en": "Destination atop",
+              "zh": "背景混合"
+            },
+            "lighten": {
+              "en": "Lighten",
+              "zh": "变亮"
+            },
+            "darken": {
+              "en": "Darken",
+              "zh": "变暗"
+            },
+            "multiply": {
+              "en": "Multiply",
+              "zh": "正片叠底"
+            },
+            "screen": {
+              "en": "Screen",
+              "zh": "滤色"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-mirrored",
+      "name_zh": "设置左右翻转",
+      "name_en": "Set mirrored",
+      "description_zh": "将对象设置为左右翻转，或恢复正常。",
+      "description_en": "Set the object horizontally mirrored or back to normal.",
+      "display_zh": "[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]",
+      "scriptName": "SetMirrored",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State",
+          "name_zh": "状态",
+          "desc_en": "Choose whether to horizontally mirror the object or set it back to normal.",
+          "desc_zh": "选择将对象左右翻转，或恢复正常。",
+          "items": [
+            "mirrored",
+            "not-mirrored"
+          ],
+          "items_i18n": {
+            "mirrored": {
+              "en": "Mirrored",
+              "zh": "左右翻转"
+            },
+            "not-mirrored": {
+              "en": "Not mirrored",
+              "zh": "关闭左右翻转"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-flipped",
+      "name_zh": "设置上下翻转",
+      "name_en": "Set flipped",
+      "description_zh": "将对象垂直翻转，或恢复正常。",
+      "description_en": "Set the object vertically flipped or back to normal.",
+      "display_zh": "[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]",
+      "scriptName": "SetFlipped",
+      "category": "appearance",
+      "params": [
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State",
+          "name_zh": "状态",
+          "desc_en": "Choose whether to vertically flip the object or set it back to normal.",
+          "desc_zh": "选择将对象垂直翻转，或恢复正常。",
+          "items": [
+            "flipped",
+            "not-flipped"
+          ],
+          "items_i18n": {
+            "flipped": {
+              "en": "Flipped",
+              "zh": "上下翻转"
+            },
+            "not-flipped": {
+              "en": "Not flipped",
+              "zh": "关闭上下翻转"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "spawn-another-object",
+      "name_zh": "生成其他对象",
+      "name_en": "Spawn another object",
+      "description_zh": "在此对象上创建另一个对象。新对象将继承此对象的角度。",
+      "description_en": "Create another object at this object.",
+      "display_zh": "生成对象 {0} 到图像点 [i]{2}[/i] (图层: [b]{1}[/b], 对象层级: [i]{3}[/i], 继承模板: [i]{4}[/i])",
+      "display_en": "Spawn {0} on layer [b]{1}[/b] (image point [i]{2}[/i], create hierarchy: [i]{3}[/i], template: [i]{4}[/i])",
+      "scriptName": "Spawn",
+      "category": "misc",
+      "params": [
+        {
+          "id": "object",
+          "type": "object",
+          "name_en": "Object",
+          "name_zh": "对象",
+          "desc_en": "Choose the object type of the new instance to create.",
+          "desc_zh": "选择要创建的对象类型。"
+        },
+        {
+          "id": "layer",
+          "type": "layer",
+          "name_en": "Layer",
+          "name_zh": "图层",
+          "desc_en": "The layer name or number to create the instance on.",
+          "desc_zh": "新实例对象要创建到的图层名称或编号。"
+        },
+        {
+          "id": "image-point",
+          "type": "any",
+          "name_en": "Image point",
+          "name_zh": "图像点",
+          "desc_en": "Use 0 for the object's origin, or the name or number of an image point to spawn the object from.",
+          "desc_zh": "输入图像点的名称或编号，对象原点的图像点编号是 0"
+        },
+        {
+          "id": "create-hierarchy",
+          "type": "boolean",
+          "name_en": "Create hierarchy",
+          "name_zh": "创建子对象",
+          "desc_en": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "desc_zh": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        {
+          "id": "template-name",
+          "type": "template",
+          "name_en": "Template name",
+          "name_zh": "模板名称",
+          "desc_en": "Use a specific instance as a template when spawning a new object.",
+          "desc_zh": "在生成对象时，继承特定的模板对象。模板可在实例对象的属性栏中定义。"
+        }
+      ]
+    },
+    {
+      "id": "set-collisions-enabled",
+      "name_zh": "启用碰撞",
+      "name_en": "Set collisions enabled",
+      "description_zh": "对象是否能触发碰撞相关的事件。",
+      "description_en": "Set whether the object will register collision events or not.",
+      "display_zh": "[b]{0}[/b]碰撞",
+      "display_en": "Set collisions [b]{0}[/b]",
+      "scriptName": "SetCollisions",
+      "category": "misc",
+      "params": [
+        {
+          "id": "collisions",
+          "type": "combo",
+          "name_en": "Collisions",
+          "name_zh": "碰撞",
+          "desc_en": "Whether to enable or disable collisions for this object.",
+          "desc_zh": "启用或禁用此对象的碰撞。",
+          "items": [
+            "disabled",
+            "enabled"
+          ],
+          "items_i18n": {
+            "disabled": {
+              "en": "Disabled",
+              "zh": "禁用"
+            },
+            "enabled": {
+              "en": "Enabled",
+              "zh": "启用"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-solid-collision-filter",
+      "name_zh": "设置实体碰撞过滤",
+      "name_en": "Set solid collision filter",
+      "description_zh": "启用或禁用与其他带有实体行为对象的碰撞。使用空格分隔多个标签。",
+      "description_en": "Use a list of tags to filter collisions with the 'Solid' behavior.",
+      "display_zh": "设置实体碰撞过滤 (模式: [i]{0}[/i], 实体标签: [b]{1}[/b])",
+      "display_en": "Set solid collision filter to [b]{1}[/b] [i]{0}[/i]",
+      "scriptName": "SetSolidCollisionFilter",
+      "category": "misc",
+      "params": [
+        {
+          "id": "mode",
+          "type": "combo",
+          "name_en": "Mode",
+          "name_zh": "模式",
+          "desc_en": "Use 'Inclusive' to only collide with solids with the given tags. Use 'Exclusive' to ignore solids with the given tags.",
+          "desc_zh": "若使用 '包含' 模式，只能与带有相同标签的实体行为对象发生碰撞。使用 '排除' 模式则会忽略带有该标签的实体行为对象的碰撞。",
+          "items": [
+            "inclusive",
+            "exclusive"
+          ],
+          "items_i18n": {
+            "inclusive": {
+              "en": "Inclusive",
+              "zh": "包含"
+            },
+            "exclusive": {
+              "en": "Exclusive",
+              "zh": "排除"
+            }
+          }
+        },
+        {
+          "id": "tags",
+          "type": "string",
+          "name_en": "Tags",
+          "name_zh": "标签",
+          "desc_en": "A space-separated list of tags to filter collisions with.",
+          "desc_zh": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      ]
+    },
+    {
+      "id": "set-scale",
+      "name_zh": "设置缩放比例",
+      "name_en": "Set scale",
+      "description_zh": "将宽度和高度设置为其原始大小的倍数。",
+      "description_en": "Set the width and height as a multiple of its original size.",
+      "display_zh": "设置缩放比例为[i]{0}[/i]",
+      "display_en": "Set scale to [i]{0}[/i]",
+      "scriptName": "SetScale",
+      "category": "size-position",
+      "params": [
+        {
+          "id": "scale",
+          "type": "number",
+          "name_en": "Scale",
+          "name_zh": "大小",
+          "desc_en": "The object width and height to set, based on a multiple of its original dimensions, e.g. 1 = original size, 2 = double size, 0.5 = half size etc.",
+          "desc_zh": "设置对象整体尺寸的倍数，1：原始尺寸，2：扩大两倍，0.5：缩小一半"
+        }
+      ]
+    },
+    {
+      "id": "load-image-from-url",
+      "name_zh": "加载远程图像",
+      "name_en": "Load image from URL",
+      "description_zh": "将当前显示的动画帧替换为从远程地址加载的图像，也可通过 AJAX 对象请求项目文件夹的本地文件。",
+      "description_en": "Replace the currently displaying animation frame with an image loaded from a web address or data URI.",
+      "display_zh": "加载远程图像 [i]{0}[/i] ({1}, 跨域 {2})",
+      "display_en": "Load image from [i]{0}[/i] ({1}, cross-origin {2})",
+      "scriptName": "LoadURL",
+      "category": "web",
+      "params": [
+        {
+          "id": "uri",
+          "type": "string",
+          "name_en": "URI",
+          "name_zh": "URI",
+          "desc_en": "Enter the URL on the web, or data URI, of an image to load.",
+          "desc_zh": "要导入的远程图像地址或通过表达式返回的数据地址。"
+        },
+        {
+          "id": "size",
+          "type": "combo",
+          "name_en": "Size",
+          "name_zh": "缩放",
+          "desc_en": "Whether to resize the sprite to the size of the loaded image, or stretch it to the current size.",
+          "desc_zh": "使用新图像的尺寸大小，或保持当前精灵的尺寸。",
+          "items": [
+            "resize-to-image-size",
+            "keep-current-size"
+          ],
+          "items_i18n": {
+            "resize-to-image-size": {
+              "en": "Resize to image size",
+              "zh": "缩放至新图片尺寸"
+            },
+            "keep-current-size": {
+              "en": "Keep current size",
+              "zh": "保持当前尺寸"
+            }
+          }
+        },
+        {
+          "id": "cross-origin",
+          "type": "combo",
+          "name_en": "Cross-origin",
+          "name_zh": "跨域",
+          "desc_en": "The cross-origin (CORS) mode to use for the request.",
+          "desc_zh": "如何处理请求的跨域（CORS）模式。",
+          "items": [
+            "anonymous",
+            "none"
+          ],
+          "items_i18n": {
+            "anonymous": {
+              "en": "anonymous",
+              "zh": "匿名"
+            },
+            "none": {
+              "en": "none",
+              "zh": "无"
+            }
+          }
+        }
+      ],
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "animationframe",
+      "name_zh": "动画帧",
+      "name_en": "AnimationFrame",
+      "description_zh": "当前动画帧编号（从0开始计数）。",
+      "description_en": "The current animation frame number (0-based).",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AnimationFrame",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "animationframecount",
+      "name_zh": "动画帧数量",
+      "name_en": "AnimationFrameCount",
+      "description_zh": "当前动画中的动画帧数。",
+      "description_en": "The number of animation frames in the current animation.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AnimationFrameCount",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "animationname",
+      "name_zh": "动画名称",
+      "name_en": "AnimationName",
+      "description_zh": "当前动画的名称。",
+      "description_en": "The name of the current animation.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AnimationName",
+      "category": "animations",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "animationspeed",
+      "name_zh": "动画播放速度",
+      "name_en": "AnimationSpeed",
+      "description_zh": "当前动画的播放速度，以每秒动画帧数为单位。",
+      "description_en": "The speed of the current animation, in animation frames per second.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AnimationSpeed",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "originalanimationspeed",
+      "name_zh": "原始动画速度",
+      "name_en": "OriginalAnimationSpeed",
+      "description_zh": "在动画编辑器中设置的原始动画播放速度，单位为每秒播放的动画帧数。",
+      "description_en": "The original speed of the current animation as set in the Animations Editor, in animation frames per second.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "OriginalAnimationSpeed",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "imagewidth",
+      "name_zh": "原始图像宽度",
+      "name_en": "ImageWidth",
+      "description_zh": "当前动画帧的图像原始宽度，不受缩放影响。以像素为单位。",
+      "description_en": "The width of the current animation frame image, in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImageWidth",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "imageheight",
+      "name_zh": "原始图像高度",
+      "name_en": "ImageHeight",
+      "description_zh": "当前动画帧的图像原始高度，不受缩放影响。以像素为单位。",
+      "description_en": "The height of the current animation frame image, in pixels.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImageHeight",
+      "category": "animations",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "animationframetag",
+      "name_zh": "动画帧标签",
+      "name_en": "AnimationFrameTag",
+      "description_zh": "用于标识动画帧的标签。",
+      "description_en": "A string tag to identify an animation frame.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "AnimationFrameTag",
+      "category": "animations",
+      "params": [],
+      "returnType": "string"
+    },
+    {
+      "id": "poly-point-x-at",
+      "name_zh": "获取多边形顶点X坐标",
+      "name_en": "PolyPointXAt",
+      "description_zh": "获取碰撞多边形点的X位置。",
+      "description_en": "The X position of one of the object's collision polygon points.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PolyPointXAt",
+      "category": "collisions",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of the collision poly point to get.",
+          "desc_zh": "要获取的碰撞多边形点的索引，从 0 开始计数。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "poly-point-y-at",
+      "name_zh": "获取多边形顶点Y坐标",
+      "name_en": "PolyPointYAt",
+      "description_zh": "获取碰撞多边形点的Y位置。",
+      "description_en": "The Y position of one of the object's collision polygon points.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PolyPointYAt",
+      "category": "collisions",
+      "params": [
+        {
+          "id": "index",
+          "type": "number",
+          "name_en": "Index",
+          "name_zh": "索引",
+          "desc_en": "Zero-based index of the collision poly point to get.",
+          "desc_zh": "要获取的碰撞多边形点的索引，从 0 开始计数。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "poly-point-count",
+      "name_zh": "多边形顶点数量",
+      "name_en": "PolyPointCount",
+      "description_zh": "当前帧的碰撞多边形顶点的数量。",
+      "description_en": "The number of collision polygon points the current frame has.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "PolyPointCount",
+      "category": "collisions",
+      "params": [],
+      "returnType": "number"
+    },
+    {
+      "id": "imagepointx",
+      "name_zh": "图像点X",
+      "name_en": "ImagePointX",
+      "description_zh": "对象的图像点的X坐标。",
+      "description_en": "The X position of one of the object's image points.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImagePointX",
+      "category": "size-position",
+      "params": [
+        {
+          "id": "imagepoint",
+          "type": "any",
+          "name_en": "ImagePoint",
+          "name_zh": "图像点",
+          "desc_en": "Name or number of image point to get.",
+          "desc_zh": "要获取的图像点的名称或编号。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "imagepointy",
+      "name_zh": "图像点Y",
+      "name_en": "ImagePointY",
+      "description_zh": "对象的图像点的Y坐标。",
+      "description_en": "The Y position of one of the object's image points.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImagePointY",
+      "category": "size-position",
+      "params": [
+        {
+          "id": "imagepoint",
+          "type": "any",
+          "name_en": "ImagePoint",
+          "name_zh": "图像点",
+          "desc_en": "Name or number of image point to get.",
+          "desc_zh": "要获取的图像点的名称或编号。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "imagepointz",
+      "name_zh": "图像点Z",
+      "name_en": "ImagePointZ",
+      "description_zh": "对象图像点的Z轴位置。",
+      "description_en": "The Z position of one of the object's image points.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImagePointZ",
+      "category": "size-position",
+      "params": [
+        {
+          "id": "imagepoint",
+          "type": "any",
+          "name_en": "ImagePoint",
+          "name_zh": "图像点",
+          "desc_en": "Name or number of image point to get.",
+          "desc_zh": "要获取的图像点的名称或编号。"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "id": "imagepointcount",
+      "name_zh": "图像点数量",
+      "name_en": "ImagePointCount",
+      "description_zh": "当前动画帧存在图像点的数量。",
+      "description_en": "The number of image points the current frame has.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "ImagePointCount",
+      "category": "size-position",
+      "params": [],
+      "returnType": "number"
+    }
+  ],
+  "properties": [
+    {
+      "id": "edit-animations",
+      "name_en": "Animations",
+      "name_zh": "动画",
+      "description_en": "Click to edit the object's animations.",
+      "description_zh": "单击以编辑对象的动画。"
+    },
+    {
+      "id": "make-original-size",
+      "name_en": "Size",
+      "name_zh": "图像尺寸",
+      "description_en": "Click to set the object to the same size as its image.",
+      "description_zh": "单击以将对象设置为与其图像相同的大小。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose whether the object is visible when the layout starts.",
+      "description_zh": "在场景开始时，对象是否可见。"
+    },
+    {
+      "id": "initial-animation",
+      "name_en": "Initial animation",
+      "name_zh": "初始动画",
+      "description_en": "The initial animation showing.",
+      "description_zh": "初始显示的动画。"
+    },
+    {
+      "id": "initial-frame",
+      "name_en": "Initial frame",
+      "name_zh": "初始帧数",
+      "description_en": "The initial animation frame showing.",
+      "description_zh": "初始显示的动画帧。"
+    },
+    {
+      "id": "enable-collisions",
+      "name_en": "Enable collisions",
+      "name_zh": "允许碰撞",
+      "description_en": "Whether the object will register collision events or not.",
+      "description_zh": "对象是否注册碰撞事件。注意，在真正触发碰撞事件前，禁用此选项不会提升性能。"
+    },
+    {
+      "id": "live-preview",
+      "name_en": "Preview",
+      "name_zh": "预览",
+      "description_en": "Tick to run a live preview in the editor.",
+      "description_zh": "在编辑器中进行实时预览。"
+    }
+  ]
+}

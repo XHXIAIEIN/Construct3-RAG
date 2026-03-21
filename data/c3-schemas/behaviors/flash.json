@@ -1,0 +1,92 @@
+{
+  "id": "flash",
+  "originalId": "Flash",
+  "name_zh": "闪烁",
+  "name_en": "Flash",
+  "description_zh": "使对象闪烁，不断地出现和隐去",
+  "description_en": "Make an object temporarily flash, alternately becoming visible and invisible.",
+  "plugin_type": "behavior",
+  "aceCategories": [
+    ""
+  ],
+  "conditions": [
+    {
+      "id": "is-flashing",
+      "name_zh": "正在闪烁",
+      "name_en": "Is flashing",
+      "description_zh": "检测对象当前是否处于闪烁状态中。",
+      "description_en": "True if the object is currently flashing.",
+      "display_zh": "正在闪烁",
+      "display_en": "Is flashing",
+      "scriptName": "IsFlashing",
+      "category": "",
+      "params": []
+    },
+    {
+      "id": "on-flash-ended",
+      "name_zh": "闪烁结束",
+      "name_en": "On flash ended",
+      "description_zh": "当闪烁结束时执行",
+      "description_en": "Triggered when the object stops flashing.",
+      "display_zh": "闪烁结束",
+      "display_en": "On flash ended",
+      "scriptName": "OnFlashEnded",
+      "category": "",
+      "params": [],
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "flash",
+      "name_zh": "闪烁",
+      "name_en": "Flash",
+      "description_zh": "使对象仅在一段时间内闪烁",
+      "description_en": "Make the object flash for a period of time.",
+      "display_zh": "{my} 开始闪烁 (持续: [b]{2}[/b]秒, 显示: {0}秒, 隐去: {1}秒)",
+      "display_en": "{my}: Flash {0} on {1} off for [b]{2}[/b] seconds",
+      "scriptName": "Flash",
+      "category": "",
+      "params": [
+        {
+          "id": "on-time",
+          "type": "number",
+          "name_en": "'On' time",
+          "name_zh": "可见时间",
+          "desc_en": "Duration in seconds the object is visible.",
+          "desc_zh": "在持续时间内使对象可见"
+        },
+        {
+          "id": "off-time",
+          "type": "number",
+          "name_en": "'Off' time",
+          "name_zh": "隐去时间",
+          "desc_en": "Duration in seconds the object is invisible.",
+          "desc_zh": "在持续时间内使对象不可见"
+        },
+        {
+          "id": "duration",
+          "type": "number",
+          "name_en": "Duration",
+          "name_zh": "持续时间",
+          "desc_en": "Duration in seconds the object flashes for.",
+          "desc_zh": "在持续时间内使对象闪烁"
+        }
+      ]
+    },
+    {
+      "id": "stop-flashing",
+      "name_zh": "停止闪烁",
+      "name_en": "Stop flashing",
+      "description_zh": "停止闪烁并使对象可见",
+      "description_en": "Stop the flashing and set the object visible.",
+      "display_zh": "{my} 停止闪烁",
+      "display_en": "{my}: Stop flashing",
+      "scriptName": "StopFlashing",
+      "category": "",
+      "params": []
+    }
+  ],
+  "expressions": [],
+  "properties": []
+}

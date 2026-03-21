@@ -81,45 +81,46 @@ Full spec: `docs/api-reference.md`
 
 ## Construct 3 Knowledge Lookup
 
-When answering questions about Construct 3 (plugins, behaviors, ACEs, events, scripting), use the local RAG API for accurate, up-to-date information instead of relying on training data.
+When answering questions about Construct 3 (plugins, behaviors, ACEs, events, scripting), use the pre-built schema files for accurate, up-to-date information instead of relying on training data.
 
-### Quick lookup (API running)
+### Reading schema files (no setup needed)
+
+Schema data is pre-built and committed to the repo:
+
+```
+data/c3-schemas/
+  _index.json             — plugin/behavior name index (en/zh mapping + ACE counts)
+  plugins/{name}.json     — per-plugin ACE definitions
+  behaviors/{name}.json   — per-behavior ACE definitions
+```
+
+**Step 1**: Read `data/c3-schemas/_index.json` to find the plugin/behavior name → file path.
+**Step 2**: Read the corresponding JSON for full ACE details (conditions, actions, expressions with en/zh names, descriptions, display templates, params).
+
+```bash
+# Find which plugin handles collision
+grep -l "collision" data/c3-schemas/plugins/*.json
+
+# Read Sprite ACE definitions
+cat data/c3-schemas/plugins/sprite.json
+```
+
+### API lookup (if server is running)
 
 ```bash
 # Keyword lookup — instant, no GPU needed
 curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
   -H "Content-Type: application/json" \
   -d '{"query":"Sprite collision","mode":"lookup"}'
-
-# Full search — lookup + semantic
-curl -s -X POST http://localhost:${RAG_SERVER_PORT:-8765}/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"how to detect collision","mode":"auto"}'
-```
-
-### Offline lookup (no API needed)
-
-Schema files at `.cache/c3-cdn/{C3_VERSION}/schemas/`:
-- `plugins/{name}.json` — plugin ACE definitions
-- `behaviors/{name}.json` — behavior ACE definitions
-
-Generate if missing: `python scripts/init.py`
-
-```bash
-# Find schemas
-ls .cache/c3-cdn/*/schemas/plugins/
-
-# Search by keyword
-grep -rl "collision\|overlap" .cache/c3-cdn/*/schemas/
 ```
 
 ### When to look up vs. answer from knowledge
 
 | Question type | Source |
 |--------------|--------|
-| Plugin/behavior ACE list | API `mode=lookup` or read schema JSON |
-| How-to questions | API `mode=auto` |
-| Term translation | API `mode=lookup` |
+| Plugin/behavior ACE list | Read `data/c3-schemas/plugins/{name}.json` |
+| Specific ACE details | Read schema JSON or API `mode=lookup` |
+| How-to questions | API `mode=auto` (if running) |
 | General C3 concepts | Training data is fine |
 
 ## Related Files

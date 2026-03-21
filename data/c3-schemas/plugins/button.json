@@ -1,0 +1,253 @@
+{
+  "id": "button",
+  "originalId": "Button",
+  "name_zh": "按钮",
+  "name_en": "Button",
+  "description_zh": "浏览器基本样式的按钮或复选框组件，通常用于系统级的点击交互。如果你希望显示游戏按钮，建议使用精灵图，并通过鼠标、触控进行交互。",
+  "description_en": "A clickable push button or checkbox.",
+  "plugin_type": "plugin",
+  "aceCategories": [
+    "button"
+  ],
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "name_zh": "点击按钮",
+      "name_en": "On clicked",
+      "description_zh": "单击按钮时触发。",
+      "description_en": "Triggered when the button is clicked.",
+      "display_zh": "点击按钮",
+      "display_en": "On clicked",
+      "scriptName": "OnClicked",
+      "category": "button",
+      "params": [],
+      "isTrigger": true
+    },
+    {
+      "id": "is-checked",
+      "name_zh": "已勾选",
+      "name_en": "Is checked",
+      "description_zh": "检测复选框是否已被勾选。",
+      "description_en": "True if the checkbox is checked.",
+      "display_zh": "已勾选",
+      "display_en": "Is checked",
+      "scriptName": "IsChecked",
+      "category": "button",
+      "params": []
+    },
+    {
+      "id": "compare-text",
+      "name_zh": "比较文本",
+      "name_en": "Compare text",
+      "description_zh": "比较按钮的文本。",
+      "description_en": "Compare the button's text.",
+      "display_zh": "按钮文本是[b]{0}[/b] [i]({1})[/i]",
+      "display_en": "Text is [b]{0}[/b] [i]({1})[/i]",
+      "scriptName": "CompareText",
+      "category": "button",
+      "params": [
+        {
+          "id": "text-to-compare",
+          "type": "string",
+          "name_en": "Text to compare",
+          "name_zh": "要比较的文本",
+          "desc_en": "Enter the text to compare with the button text.",
+          "desc_zh": "与按钮文本进行比较的文本。"
+        },
+        {
+          "id": "case-sensitivity",
+          "type": "combo",
+          "name_en": "Case sensitivity",
+          "name_zh": "区分大小写",
+          "desc_en": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "desc_zh": "是否严格区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "items": [
+            "ignore-case",
+            "case-sensitive"
+          ],
+          "items_i18n": {
+            "ignore-case": {
+              "en": "Ignore case",
+              "zh": "忽略大小写"
+            },
+            "case-sensitive": {
+              "en": "Case sensitive",
+              "zh": "区分大小写"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "name_zh": "设置按钮文字",
+      "name_en": "Set text",
+      "description_zh": "设置按钮的文字。",
+      "description_en": "Set the button's text.",
+      "display_zh": "设置按钮文字为{0}",
+      "display_en": "Set text to {0}",
+      "scriptName": "SetText",
+      "category": "button",
+      "params": [
+        {
+          "id": "text",
+          "type": "string",
+          "name_en": "Text",
+          "name_zh": "文本",
+          "desc_en": "The text to set in the button.",
+          "desc_zh": "在按钮上显示的文本。"
+        }
+      ]
+    },
+    {
+      "id": "set-tooltip",
+      "name_zh": "设置工具提示",
+      "name_en": "Set tooltip",
+      "description_zh": "设置按钮的工具提示。",
+      "description_en": "Set the button's tooltip.",
+      "display_zh": "设置工具提示为{0}",
+      "display_en": "Set tooltip to {0}",
+      "scriptName": "SetTooltip",
+      "category": "button",
+      "params": [
+        {
+          "id": "tooltip",
+          "type": "string",
+          "name_en": "Tooltip",
+          "name_zh": "提示",
+          "desc_en": "The tooltip to set on the button.",
+          "desc_zh": "在按钮上设置的工具提示。"
+        }
+      ]
+    },
+    {
+      "id": "set-checked",
+      "name_zh": "设置勾选状态",
+      "name_en": "Set checked",
+      "description_zh": "勾选或取消选中一个复选框。",
+      "description_en": "Check or uncheck a checkbox.",
+      "display_zh": "设置[b]{0}[/b]",
+      "display_en": "Set [b]{0}[/b]",
+      "scriptName": "SetChecked",
+      "category": "button",
+      "params": [
+        {
+          "id": "state",
+          "type": "combo",
+          "name_en": "State",
+          "name_zh": "状态",
+          "desc_en": "Choose the checkbox state.",
+          "desc_zh": "选择复选框状态。",
+          "items": [
+            "unchecked",
+            "checked"
+          ],
+          "items_i18n": {
+            "unchecked": {
+              "en": "Unchecked",
+              "zh": "待勾选"
+            },
+            "checked": {
+              "en": "Checked",
+              "zh": "已勾选"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "toggle-checked",
+      "name_zh": "反转勾选",
+      "name_en": "Toggle checked",
+      "description_zh": "切换复选框",
+      "description_en": "Toggle a checkbox.",
+      "display_zh": "反转勾选",
+      "display_en": "Toggle checked",
+      "scriptName": "ToggleChecked",
+      "category": "button",
+      "params": []
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "name_zh": "文本",
+      "name_en": "Text",
+      "description_zh": "获取按钮文字",
+      "description_en": "Get the button text.",
+      "display_zh": "",
+      "display_en": "",
+      "scriptName": "Text",
+      "category": "button",
+      "params": [],
+      "returnType": "string"
+    }
+  ],
+  "properties": [
+    {
+      "id": "type",
+      "name_en": "Type",
+      "name_zh": "类型",
+      "description_en": "The kind of button to use.",
+      "description_zh": "要使用的按钮类型。"
+    },
+    {
+      "id": "text",
+      "name_en": "Text",
+      "name_zh": "文本",
+      "description_en": "The initial text for the button.",
+      "description_zh": "按钮的初始文本。"
+    },
+    {
+      "id": "tooltip",
+      "name_en": "Tooltip",
+      "name_zh": "提示",
+      "description_en": "Display this text when hovering the mouse over the control.",
+      "description_zh": "将鼠标悬停在控件上时显示此文本。"
+    },
+    {
+      "id": "initially-visible",
+      "name_en": "Initially visible",
+      "name_zh": "初始可见",
+      "description_en": "Choose if the object is visible when the layout starts.",
+      "description_zh": "选择场景开始时对象是否可见。"
+    },
+    {
+      "id": "enabled",
+      "name_en": "Enabled",
+      "name_zh": "启用",
+      "description_en": "Whether the button is enabled or disabled on startup.",
+      "description_zh": "在初始状态下，默认启用还是禁用按钮。"
+    },
+    {
+      "id": "auto-font-size",
+      "name_en": "Auto font size",
+      "name_zh": "自动字体大小",
+      "description_en": "Automatically set the font size depending on the layer scale.",
+      "description_zh": "根据图层比例自动设置字体大小。"
+    },
+    {
+      "id": "checked",
+      "name_en": "Checked",
+      "name_zh": "已勾选",
+      "description_en": "For checkboxes, the initial check state.",
+      "description_zh": "对于复选框，初始检查状态。"
+    },
+    {
+      "id": "id",
+      "name_en": "ID",
+      "name_zh": "ID",
+      "description_en": "An optional ID for the element allowing it to be styled with CSS.",
+      "description_zh": "可选的元素ID，允许通过CSS设置样式。"
+    },
+    {
+      "id": "class",
+      "name_en": "Class",
+      "name_zh": "Class",
+      "description_en": "An optional class for the element allowing it to be styled with CSS.",
+      "description_zh": "可选的元素Class，允许通过CSS设置样式。"
+    }
+  ]
+}
