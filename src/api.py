@@ -165,8 +165,8 @@ class LookupSection(BaseModel):
     conditions: Optional[list[str]] = None
     actions: Optional[list[str]] = None
     expressions: Optional[list[str]] = None
-    # mode=lookup/auto: full match objects
-    matches: Optional[List[LookupMatchResult]] = None
+    # mode=lookup/auto: full match objects grouped by plugin_id
+    matches: Optional[dict[str, List[LookupMatchResult]]] = None
     context: Optional[str] = None
 
 class SemanticDebug(BaseModel):
@@ -448,6 +448,14 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             ctx = "\n".join(l for l in ctx.split("\n") if not l.startswith("zh:"))
         context = ctx
 
+    # Group matches by plugin_id
+    grouped_matches = None
+    if matches:
+        gm: dict[str, list] = {}
+        for m in matches:
+            gm.setdefault(m.plugin_id, []).append(m)
+        grouped_matches = gm or None
+
     section = LookupSection(
         hit=True,
         tier=intent.tier,
@@ -456,7 +464,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         lang=lang if include_localized else None,
         plugin=plugin_info,
         keywords=keywords or None,
-        matches=matches,
+        matches=grouped_matches,
         context=context,
     )
     if is_list:
