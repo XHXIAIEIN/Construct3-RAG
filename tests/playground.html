@@ -280,13 +280,15 @@ const APIS = {
     body: {
       query: "Sprite 碰撞检测",
       mode: "auto",
+      scope: "eventsheet",
       top_k: 5,
       lang: null,
       collections: null,
       plugin: null,
       section_types: null,
       apply_threshold: true,
-      debug: true
+      context: false,
+      debug: false
     },
     presets: [
       { label: 'Sprite 碰撞', query: 'Sprite 碰撞检测' },
