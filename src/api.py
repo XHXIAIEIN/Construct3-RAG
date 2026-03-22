@@ -255,6 +255,27 @@ def _collection_key(source_name: str) -> str:
     return source_name
 
 
+def _clean_content(text: str) -> str:
+    """Clean indexed text for LLM consumption.
+
+    Removes redundant labels and duplicate bilingual lines,
+    keeping only the useful content.
+    """
+    lines = []
+    for line in text.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        # Skip label-prefixed lines that repeat structured data
+        if line.startswith(("脚本名称/Script:", "描述: ", "Description: ")):
+            continue
+        # Skip the first title line (already in title/section fields)
+        if lines == [] and ("的条件:" in line or "的动作:" in line or "的表达式:" in line):
+            continue
+        lines.append(line)
+    return "\n".join(lines) if lines else text
+
+
 def _convert_result(r, score_override=None) -> dict:
     """Convert internal SearchResult to typed response dict."""
     score = score_override if score_override is not None else round(r.score, 4)
@@ -268,7 +289,7 @@ def _convert_result(r, score_override=None) -> dict:
             collection="ace",
             title=meta.get("plugin_name_en", meta.get("plugin_name", "")),
             section=meta.get("name_en", ""),
-            content=r.text,
+            content=_clean_content(r.text),
         ).model_dump()
         d["_type"] = "doc"
         return d
@@ -291,7 +312,7 @@ def _convert_result(r, score_override=None) -> dict:
         d["_type"] = "term"
         return d
 
-    # Doc results (plugins, behaviors, guide, interface, project, scripting, ace)
+    # Doc results (plugins, behaviors, guide, interface, project, scripting)
     d = DocResult(
         score=score,
         collection=collection or None,
