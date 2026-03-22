@@ -82,6 +82,19 @@ CASES = [
     Case("Sprite 碰撞", expect_plugin="sprite",
          expect_ids=["collisions-enabled", "on-collision-with-another-object",
                       "is-overlapping-another-object"]),
+
+    # === Scripting API ===
+    Case("callFunction", expect_intent="script_api",
+         expect_ids=["callFunction"], expect_min=1),
+
+    Case("setAnimation", expect_intent="script_api",
+         expect_ids=["setAnimation"], expect_min=1),
+
+    Case("simulateControl", expect_intent="script_api",
+         expect_ids=["simulateControl"], expect_min=1),
+
+    # === Ambiguous plugin names (should NOT match) ===
+    Case("custom action", expect_miss=True),
 ]
 
 

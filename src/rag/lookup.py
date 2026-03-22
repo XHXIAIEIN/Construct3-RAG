@@ -337,6 +337,50 @@ class SchemaIndex:
 
 
 # =============================================================================
+# ScriptingIndex — TypeScript API method search
+# =============================================================================
+
+class ScriptingIndex:
+    """Search scripting API methods from autocomplete-data.json."""
+
+    def __init__(self, data_dir: Optional[Path] = None):
+        self._data: dict[str, list[str]] = {}  # class → methods
+        self._loaded = False
+        self._data_dir = data_dir or (Path(__file__).parent.parent.parent / "data" / "c3-ts-defs")
+
+    def _load(self):
+        if self._loaded:
+            return
+        self._loaded = True
+        ac_path = self._data_dir / "autocomplete-data.json"
+        if not ac_path.exists():
+            logger.warning(f"[ScriptingIndex] Not found: {ac_path}")
+            return
+        data = json.loads(ac_path.read_text(encoding="utf-8"))
+        self._data = data.get("properties", {})
+        logger.info(f"[ScriptingIndex] Loaded {len(self._data)} classes")
+
+    def search(self, query: str, max_results: int = 20) -> list[dict]:
+        """Search for methods/properties matching query across all classes.
+
+        Returns list of {class, method, dts_path} dicts.
+        """
+        self._load()
+        q_lower = query.lower()
+        results = []
+        for cls, methods in self._data.items():
+            for method in methods:
+                if q_lower in method.lower():
+                    results.append({
+                        "class": cls,
+                        "method": method,
+                    })
+                    if len(results) >= max_results:
+                        return results
+        return results
+
+
+# =============================================================================
 # TermIndex — CSV translation terms
 # =============================================================================
 
@@ -1056,6 +1100,7 @@ class LookupEngine:
         self.schema_index = SchemaIndex(schema_dir)
         self.term_index = TermIndex(terms=terms)
         self.examples_index = ExamplesIndex()
+        self.scripting_index = ScriptingIndex()
         self.classifier = IntentClassifier(
             schema_index=self.schema_index,
             embedder=embedder,
@@ -1071,23 +1116,48 @@ class LookupEngine:
         t0 = time.time()
 
         intent = self.classifier.classify(query)
-        if intent is None:
-            return None
+        if intent is not None:
+            context, matches = self._execute(intent)
+            if context:
+                elapsed = (time.time() - t0) * 1000
+                return LookupResponse(
+                    intent=intent,
+                    matches=matches,
+                    context=context,
+                    query_type=f"lookup_{intent.intent_type}",
+                    elapsed_ms=elapsed,
+                )
 
-        context, matches = self._execute(intent)
-        if not context:
-            # Lookup failed (e.g., plugin has no matching ACE) → fallback to RAG
-            logger.info("[Lookup] No results, falling back to RAG")
-            return None
+        # Fallback: try scripting API search
+        scripting_results = self.scripting_index.search(query)
+        if scripting_results:
+            context_lines = [
+                f"{r['class']}.{r['method']}" for r in scripting_results
+            ]
+            matches = [
+                LookupMatch(
+                    ace_id=r["method"],
+                    ace_type="script_api",
+                    plugin_id=r["class"],
+                    en=ACELocale(name=f"{r['class']}.{r['method']}"),
+                    zh=ACELocale(),
+                ) for r in scripting_results
+            ]
+            elapsed = (time.time() - t0) * 1000
+            return LookupResponse(
+                intent=LookupIntent(
+                    intent_type="script_api",
+                    filter_term=query,
+                    tier=2,
+                    confidence=0.7,
+                ),
+                matches=matches,
+                context="\n".join(context_lines),
+                query_type="lookup_script_api",
+                elapsed_ms=elapsed,
+            )
 
-        elapsed = (time.time() - t0) * 1000
-        return LookupResponse(
-            intent=intent,
-            matches=matches,
-            context=context,
-            query_type=f"lookup_{intent.intent_type}",
-            elapsed_ms=elapsed,
-        )
+        return None
 
     def _execute(self, intent: LookupIntent) -> tuple[str, list[LookupMatch]]:
         """Execute lookup and format as compact English text for LLM context."""
