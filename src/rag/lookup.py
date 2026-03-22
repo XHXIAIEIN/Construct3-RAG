@@ -57,6 +57,19 @@ _ACE_SORT_ORDER: dict[str, int] = {
 # Param types where the name carries no semantic value (drop from signature)
 _GENERIC_PARAM_TYPES = frozenset({"cmp"})
 
+# Plugin/behavior names that are common English words. When the query is
+# purely English and the remaining tokens are also generic (action, event, etc.),
+# skip lookup to avoid false matches like "custom action" → Custom behavior.
+_AMBIGUOUS_PLUGIN_NAMES = frozenset({
+    "custom", "system", "audio", "text", "video", "browser", "touch",
+    "mouse", "list", "button", "timer", "json", "array",
+})
+_GENERIC_QUERY_WORDS = frozenset({
+    "action", "actions", "condition", "conditions", "expression", "expressions",
+    "event", "events", "function", "functions", "property", "properties",
+    "variable", "variables", "how", "what", "use", "create", "add", "make",
+})
+
 # Synonym sets for ace_search keyword expansion.
 # If any word in a set appears in the query, all words in that set are added
 # to the filter. This captures semantic relationships that keyword matching
@@ -779,8 +792,13 @@ class IntentClassifier:
                     return None
             return None
 
-        # 2. Collect non-plugin tokens as topic/filter candidates
+        # Ambiguity check: if plugin name is a common English word and
+        # remaining tokens are all generic, skip lookup (e.g. "custom action")
         remaining_tokens = [t for i, t in enumerate(tokens) if i != plugin_token_idx and t]
+        if plugin_id in _AMBIGUOUS_PLUGIN_NAMES:
+            remaining_lower = {t.lower() for t in remaining_tokens}
+            if remaining_lower and remaining_lower <= _GENERIC_QUERY_WORDS:
+                return None
 
         # 3. Count meaningful tokens to detect complex multi-concept queries.
         #    Skip words and single-char noise are filtered out.
