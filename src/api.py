@@ -162,9 +162,7 @@ class LookupMatchResult(BaseModel):
         return d
 
 class LookupSection(BaseModel):
-    """Structured lookup results section."""
-    hit: bool
-    plugin: Optional[PluginInfo] = None
+    """Structured lookup results section. Present = hit."""
     # mode=list: grouped name arrays
     conditions: Optional[list[str]] = None
     actions: Optional[list[str]] = None
@@ -175,6 +173,7 @@ class LookupSection(BaseModel):
 
 class LookupDebug(BaseModel):
     """Internal lookup diagnostics."""
+    plugin: Optional[str] = None
     tier: Optional[int] = None
     confidence: Optional[float] = None
     intent: Optional[str] = None
@@ -469,8 +468,6 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         grouped_matches = gm or None
 
     section = LookupSection(
-        hit=True,
-        plugin=plugin_info,
         matches=grouped_matches,
         context=context,
     )
@@ -478,8 +475,9 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         section.conditions = grouped.get("condition") or None
         section.actions = grouped.get("action") or None
         section.expressions = grouped.get("expression") or None
-    # Stash debug info for later extraction
+    section._plugin_id = intent.plugin_id or ""
     section._debug = LookupDebug(
+        plugin=intent.plugin_id or None,
         tier=intent.tier,
         confidence=round(intent.confidence, 2),
         intent=intent.intent_type,
@@ -646,8 +644,8 @@ def search(req: SearchRequest):
         before_dedup = len(semantic_results)
 
     # ── Dedup: when lookup hit, drop ACE + plugin overview docs from semantic ──
-    if lookup_section and lookup_section.hit and semantic_results:
-        lookup_plugin = lookup_section.plugin.id if lookup_section.plugin else ""
+    if lookup_section and semantic_results:
+        lookup_plugin = getattr(lookup_section, '_plugin_id', "")
         deduped = []
         for r in semantic_results:
             # Drop ACE collection results (lookup.matches is authoritative)
