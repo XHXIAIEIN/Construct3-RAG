@@ -105,7 +105,23 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .response-section:not(.collapsed) .section-label::before{content:'▼ '}
 .resp-header{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
 .response-wrap{flex:1;min-height:0;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
-.response-json{padding:8px;font:11px/1.5 'Consolas','Menlo',monospace;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
+.response-json{padding:8px;font:11px/1.5 'Consolas','Menlo',monospace;color:var(--fg)}
+
+/* JSON tree viewer */
+.jt{font:11px/1.6 'Consolas','Menlo',monospace;color:var(--fg)}
+.jt details{margin-left:16px}
+.jt summary{cursor:pointer;list-style:none;user-select:none}
+.jt summary::-webkit-details-marker{display:none}
+.jt summary::before{content:'▶ ';color:var(--dis);font-size:9px}
+.jt details[open]>summary::before{content:'▼ '}
+.jt .jk{color:var(--blue)}
+.jt .js{color:var(--green)}
+.jt .jn{color:var(--purple)}
+.jt .jb{color:var(--orange)}
+.jt .jnull{color:var(--dis)}
+.jt .jbrace{color:var(--secondFg)}
+.jt .jcount{color:var(--dis);font-size:9px;margin-left:4px}
+.jt .jleaf{margin-left:16px}
 .response-placeholder{padding:8px;color:var(--dis);font-size:11px;font-style:italic}
 .copy-btn{position:absolute;top:4px;right:4px;padding:2px 8px;background:var(--second);border:1px solid var(--border);border-radius:3px;color:var(--dis);font:10px inherit;cursor:pointer;opacity:0;transition:opacity .15s}
 .response-wrap:hover .copy-btn{opacity:1}
@@ -294,29 +310,35 @@ const APIS = {
   }
 };
 
-// ─── JSON syntax highlighting ───
-function highlightJSON(obj, indent) {
-  indent = indent || 0;
-  const pad = '  '.repeat(indent);
-  if (obj === null) return `<span class="json-null">null</span>`;
-  if (typeof obj === 'boolean') return `<span class="json-bool">${obj}</span>`;
-  if (typeof obj === 'number') return `<span class="json-num">${obj}</span>`;
+// ─── JSON tree viewer ───
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function jsonTree(obj, key) {
+  const label = key !== undefined ? `<span class="jk">"${esc(key)}"</span>: ` : '';
+
+  if (obj === null) return `<div class="jleaf">${label}<span class="jnull">null</span></div>`;
+  if (typeof obj === 'boolean') return `<div class="jleaf">${label}<span class="jb">${obj}</span></div>`;
+  if (typeof obj === 'number') return `<div class="jleaf">${label}<span class="jn">${obj}</span></div>`;
   if (typeof obj === 'string') {
-    const escaped = obj.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    return `<span class="json-str">"${escaped}"</span>`;
+    const short = obj.length <= 80;
+    const val = esc(short ? obj : obj.slice(0, 80) + '…');
+    return `<div class="jleaf">${label}<span class="js">"${val}"</span></div>`;
   }
+
   if (Array.isArray(obj)) {
-    if (obj.length === 0) return `<span class="json-brace">[]</span>`;
-    const items = obj.map(v => pad + '  ' + highlightJSON(v, indent + 1));
-    return `<span class="json-brace">[</span>\n${items.join(',\n')}\n${pad}<span class="json-brace">]</span>`;
+    if (obj.length === 0) return `<div class="jleaf">${label}<span class="jbrace">[]</span></div>`;
+    const children = obj.map((v, i) => jsonTree(v, i)).join('');
+    return `<details open><summary>${label}<span class="jbrace">[</span><span class="jcount">${obj.length}</span></summary>${children}<div class="jleaf"><span class="jbrace">]</span></div></details>`;
   }
+
   const keys = Object.keys(obj);
-  if (keys.length === 0) return `<span class="json-brace">{}</span>`;
-  const entries = keys.map(k => {
-    const ek = k.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    return pad + '  ' + `<span class="json-key">"${ek}"</span><span class="json-brace">:</span> ` + highlightJSON(obj[k], indent + 1);
-  });
-  return `<span class="json-brace">{</span>\n${entries.join(',\n')}\n${pad}<span class="json-brace">}</span>`;
+  if (keys.length === 0) return `<div class="jleaf">${label}<span class="jbrace">{}</span></div>`;
+  const children = keys.map(k => jsonTree(obj[k], k)).join('');
+  return `<details open><summary>${label}<span class="jbrace">{</span><span class="jcount">${keys.length}</span></summary>${children}<div class="jleaf"><span class="jbrace">}</span></div></details>`;
+}
+
+function renderJSON(obj) {
+  return `<div class="jt">${jsonTree(obj)}</div>`;
 }
 
 // ─── Card creation ───
@@ -427,8 +449,6 @@ function applyPreset(cardId, presetIdx, apiKey) {
   if (queryInput) queryInput.value = preset.query;
   syncToEditor(cardId);
 }
-
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderSemanticResult(r) {
   let html = `<div class="result-card">`;
@@ -604,7 +624,7 @@ async function sendRequest(cardId, apiKey) {
     if (typeof data === 'string') {
       respEl.textContent = data;
     } else {
-      respEl.innerHTML = highlightJSON(data);
+      respEl.innerHTML = renderJSON(data);
       respEl.dataset.raw = JSON.stringify(data, null, 2);
     }
   } catch (err) {
