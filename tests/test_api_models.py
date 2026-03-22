@@ -52,7 +52,7 @@ def test_lookup_match_to_dict_en():
     assert d["en"]["name"] == "Test"
 
 
-def test_lookup_section_no_hit():
-    section = LookupSection(hit=False)
+def test_lookup_section_empty():
+    section = LookupSection()
     assert section.matches is None
     assert section.context is None

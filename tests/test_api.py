@@ -131,7 +131,7 @@ def test_search_routes_to_lookup(client):
     data = resp.json()
     assert data["mode"] == "auto"
     assert data["lookup"] is not None
-    assert data["lookup"]["hit"] is True
+    assert data["lookup"] is not None
     assert len(data["lookup"]["matches"]) > 0
     # Retriever IS called (semantic search supplements lookup)
     retriever.search_all_with_rerank.assert_called_once()
