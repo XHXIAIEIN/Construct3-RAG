@@ -116,6 +116,7 @@ class ACEParam(BaseModel):
 
 class DocResult(BaseModel):
     score: float
+    path: Optional[str] = None      # manual page path (e.g. "scripting/scripting-reference/...")
     collection: Optional[str] = None
     title: Optional[str] = None
     section: Optional[str] = None
@@ -316,8 +317,10 @@ def _convert_result(r, score_override=None) -> dict:
         return d
 
     # Doc results (plugins, behaviors, guide, interface, project, scripting)
+    source = meta.get("source", "")
     d = DocResult(
         score=score,
+        path=source.replace("\\", "/").removesuffix(".md") if source else None,
         collection=collection or None,
         title=meta.get("h1_heading", meta.get("title", "")) or None,
         section=meta.get("h2_heading", meta.get("section_type", "")) or None,
