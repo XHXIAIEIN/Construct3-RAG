@@ -119,7 +119,7 @@ class DocResult(BaseModel):
     collection: Optional[str] = None
     title: Optional[str] = None
     section: Optional[str] = None
-    content: str
+    content: Optional[str] = None
 
 class TermResult(BaseModel):
     score: float
@@ -276,7 +276,7 @@ def _clean_content(text: str) -> str:
         if "的条件:" in line or "的动作:" in line or "的表达式:" in line:
             continue
         lines.append(line)
-    return "\n".join(lines) if lines else text
+    return "\n".join(lines)
 
 
 def _convert_result(r, score_override=None) -> dict:
@@ -292,7 +292,7 @@ def _convert_result(r, score_override=None) -> dict:
             collection="ace",
             title=meta.get("plugin_name_en", meta.get("plugin_name", "")),
             section=meta.get("name_en", ""),
-            content=_clean_content(r.text),
+            content=_clean_content(r.text) or None,
         ).model_dump()
         d["_type"] = "doc"
         return d
