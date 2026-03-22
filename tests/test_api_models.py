@@ -28,36 +28,28 @@ def test_search_request_mode_invalid():
         SearchRequest(query="test", mode="invalid")
 
 
-def test_lookup_section_with_lang():
+def test_lookup_match_to_dict_zh():
     m = LookupMatchResult(
         ace_id="on-collision", ace_type="condition",
         plugin_id="sprite",
         en=ACELocaleResult(name="On collision"),
         localized=ACELocaleResult(name="碰撞"),
     )
-    section = LookupSection(
-        hit=True, tier=1, confidence=0.85,
-        intent="ace_search",
-        lang="zh",
-        plugin=PluginInfo(id="sprite", name="Sprite", name_localized="精灵"),
-        keywords=["碰撞"],
-        matches={"sprite": [m]},
-    )
-    assert section.hit is True
-    assert section.lang == "zh"
-    assert section.matches["sprite"][0].localized.name == "碰撞"
+    d = m.to_dict(lang="zh")
+    assert "zh" in d
+    assert "localized" not in d
+    assert d["zh"]["name"] == "碰撞"
 
 
-def test_lookup_section_en_only():
-    section = LookupSection(
-        hit=True, tier=1, intent="ace_list",
-        matches={"sprite": [LookupMatchResult(
-            ace_id="test", ace_type="condition", plugin_id="sprite",
-            en=ACELocaleResult(name="Test"),
-        )]},
+def test_lookup_match_to_dict_en():
+    m = LookupMatchResult(
+        ace_id="test", ace_type="condition", plugin_id="sprite",
+        en=ACELocaleResult(name="Test"),
     )
-    assert section.lang is None
-    assert section.matches["sprite"][0].localized is None
+    d = m.to_dict(lang="")
+    assert "localized" not in d
+    assert "zh" not in d
+    assert d["en"]["name"] == "Test"
 
 
 def test_lookup_section_no_hit():

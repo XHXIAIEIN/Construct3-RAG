@@ -143,7 +143,7 @@ class LookupMatchResult(BaseModel):
     ace_type: str
     plugin_id: str
     en: ACELocaleResult = ACELocaleResult()
-    localized: Optional[ACELocaleResult] = None
+    localized: Optional[ACELocaleResult] = None  # renamed to lang code at serialization
     script_name: Optional[str] = None
     category: Optional[str] = None
     relevance: Optional[int] = None
@@ -152,13 +152,21 @@ class LookupMatchResult(BaseModel):
     is_async: Optional[bool] = None
     return_type: Optional[str] = None
 
+    def to_dict(self, lang: str = "") -> dict:
+        """Serialize with localized field renamed to actual lang code."""
+        d = self.model_dump(exclude_none=True)
+        if lang and "localized" in d:
+            d[lang] = d.pop("localized")
+        elif "localized" in d:
+            d.pop("localized")
+        return d
+
 class LookupSection(BaseModel):
     """Structured lookup results section."""
     hit: bool
     tier: int = 0
     confidence: float = 0.0
     intent: str = ""
-    lang: Optional[str] = None
     plugin: Optional[PluginInfo] = None
     keywords: Optional[list[str]] = None
     # mode=list: grouped name arrays
@@ -166,7 +174,7 @@ class LookupSection(BaseModel):
     actions: Optional[list[str]] = None
     expressions: Optional[list[str]] = None
     # mode=lookup/auto: full match objects grouped by plugin_id
-    matches: Optional[dict[str, List[LookupMatchResult]]] = None
+    matches: Optional[dict[str, list]] = None
     context: Optional[str] = None
 
 class SemanticDebug(BaseModel):
@@ -453,7 +461,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     if matches:
         gm: dict[str, list] = {}
         for m in matches:
-            gm.setdefault(m.plugin_id, []).append(m)
+            gm.setdefault(m.plugin_id, []).append(m.to_dict(lang=lang if include_localized else ""))
         grouped_matches = gm or None
 
     section = LookupSection(
@@ -461,7 +469,6 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         tier=intent.tier,
         confidence=intent.confidence,
         intent=intent.intent_type,
-        lang=lang if include_localized else None,
         plugin=plugin_info,
         keywords=keywords or None,
         matches=grouped_matches,
