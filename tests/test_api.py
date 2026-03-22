@@ -168,9 +168,8 @@ def test_search_semantic_basic(client):
     resp = c.post("/search", json={"query": "Sprite 动画", "mode": "semantic"})
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data["semantic"]) == 2
-    assert data["semantic"][0]["type"] == "doc"
-    assert data["semantic"][0]["source"] == "plugin-reference/sprite.md"
+    assert data["semantic"]["docs"] is not None
+    assert data["semantic"]["docs"][0]["source"] == "plugin-reference/sprite.md"
     assert data["mode"] == "semantic"
 
 

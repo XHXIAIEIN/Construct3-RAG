@@ -204,13 +204,19 @@ class DebugInfo(BaseModel):
     semantic_ms: Optional[float] = None
     semantic: Optional[SemanticDebug] = None
 
+class SemanticSection(BaseModel):
+    """Semantic search results grouped by type."""
+    docs: Optional[list] = None
+    terms: Optional[list] = None
+    examples: Optional[list] = None
+
 class SearchResponse(BaseModel):
     query: str
     lang: str
-    mode: str              # "auto" | "lookup" | "semantic"
-    ms: float              # total request time in milliseconds
+    mode: str
+    ms: float
     lookup: Optional[LookupSection] = None
-    semantic: Optional[list] = None
+    semantic: Optional[SemanticSection] = None
     debug: Optional[DebugInfo] = None
 
 
@@ -468,6 +474,28 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
     return section
 
 
+def _group_semantic(results: list) -> Optional[SemanticSection]:
+    """Group flat semantic results by type into SemanticSection."""
+    if not results:
+        return None
+    docs = [r for r in results if r.get("type") in ("doc",)]
+    terms = [r for r in results if r.get("type") == "term"]
+    examples = [r for r in results if r.get("type") == "example"]
+    # Remove type field from each — the grouping key replaces it
+    for group in (docs, terms, examples):
+        for r in group:
+            r.pop("type", None)
+    section = SemanticSection(
+        docs=docs or None,
+        terms=terms or None,
+        examples=examples or None,
+    )
+    # Return None if all groups empty
+    if not docs and not terms and not examples:
+        return None
+    return section
+
+
 def _do_semantic(req: SearchRequest, _trace) -> list:
     """Execute semantic search phase. Returns list of result dicts."""
     if LITE_MODE:
@@ -646,6 +674,6 @@ def search(req: SearchRequest):
         mode=req.mode,
         ms=total_ms,
         lookup=lookup_section,
-        semantic=semantic_results or None,
+        semantic=_group_semantic(semantic_results),
         debug=debug_info,
     )
