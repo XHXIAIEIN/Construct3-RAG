@@ -26,26 +26,19 @@ python scripts/setup.py
 # → http://localhost:8765/playground
 ```
 
-### POST /search
+### POST /search `{"query": "...", "mode": "list"}`
 
-```
-mode=list      ACE name listing (grouped by type)
-mode=lookup    keyword search with full ACE details
-mode=semantic  vector search across documentation (requires Qdrant)
-mode=auto      lookup + semantic
-```
+| Parameter | Values | Default |
+|-----------|--------|---------|
+| `mode` | `list` · `lookup` · `semantic` · `auto` | `auto` |
+| `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
+| `lang` | `en` · `zh` · `ja` · `ko` | auto-detect |
+| `include_context` | LLM-ready text in response | `false` |
+| `debug` | timing breakdown | `false` |
 
-```bash
-curl -X POST localhost:8765/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"Sprite","mode":"list"}'
-```
-
+Response example (`mode=list`):
 ```json
 {
-  "query": "Sprite",
-  "mode": "list",
-  "ms": 0.5,
   "lookup": {
     "hit": true,
     "plugin": {"id": "sprite", "name": "Sprite"},
@@ -56,7 +49,7 @@ curl -X POST localhost:8765/search \
 }
 ```
 
-Parameters: `scope` (eventsheet/scripts/all), `lang` (en/zh/ja/ko), `include_context`, `debug`. Full spec: [docs/api-reference.md](docs/api-reference.md)
+Full spec: [docs/api-reference.md](docs/api-reference.md)
 
 ## Semantic Search (optional)
 
