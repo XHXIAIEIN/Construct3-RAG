@@ -110,9 +110,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 /* JSON tree viewer */
 .jt{font:11px/1.6 'Consolas','Menlo',monospace;color:var(--fg)}
 .jt details{margin-left:16px}
-.jt summary{cursor:pointer;list-style:none;user-select:none}
+.jt summary{cursor:default;list-style:none;user-select:text}
 .jt summary::-webkit-details-marker{display:none}
-.jt summary::before{content:'▶ ';color:var(--dis);font-size:9px}
+.jt summary::before{content:'▶ ';color:var(--dis);font-size:9px;cursor:pointer;user-select:none}
 .jt details[open]>summary::before{content:'▼ '}
 .jt .jk{color:var(--blue)}
 .jt .js{color:var(--green)}
