@@ -167,8 +167,8 @@ class LookupSection(BaseModel):
     conditions: Optional[list[str]] = None
     actions: Optional[list[str]] = None
     expressions: Optional[list[str]] = None
-    # mode=lookup/auto: full match objects grouped by plugin_id
-    matches: Optional[dict[str, list]] = None
+    # mode=lookup/auto: matches[plugin_id][ace_type] = [match, ...]
+    matches: Optional[dict[str, dict]] = None
     context: Optional[str] = None
 
 class LookupDebug(BaseModel):
@@ -459,12 +459,17 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
             ctx = "\n".join(l for l in ctx.split("\n") if not l.startswith("zh:"))
         context = ctx
 
-    # Group matches by plugin_id
+    # Group matches by plugin_id → ace_type
     grouped_matches = None
     if matches:
-        gm: dict[str, list] = {}
+        gm: dict[str, dict[str, list]] = {}
         for m in matches:
-            gm.setdefault(m.plugin_id, []).append(m.to_dict(lang=lang if include_localized else ""))
+            d = m.to_dict(lang=lang if include_localized else "")
+            pid = d.pop("plugin_id", m.plugin_id)
+            atype = d.pop("ace_type", "other")
+            # Pluralize: condition → conditions
+            atype_key = atype + "s" if not atype.endswith("s") else atype
+            gm.setdefault(pid, {}).setdefault(atype_key, []).append(d)
         grouped_matches = gm or None
 
     section = LookupSection(
