@@ -283,8 +283,11 @@ function onSplitUp() {
 }
 applyTransform();
 
-// ─── Card dragging ───
-let dragCard = null, dragOff = {};
+// ─── Card dragging with snap ───
+const SNAP_DIST = 8;
+const CARD_GAP = 12;
+let dragCard = null, dragOff = {}, snapGuideEl = null;
+
 function startDrag(e, card) {
   if (e.button !== 0) return;
   dragCard = card;
@@ -296,10 +299,82 @@ function startDrag(e, card) {
 }
 function onDrag(e) {
   if (!dragCard) return;
-  dragCard.style.left = (e.clientX / zoom - dragOff.x) + 'px';
-  dragCard.style.top = (e.clientY / zoom - dragOff.y) + 'px';
+  let nx = e.clientX / zoom - dragOff.x;
+  let ny = e.clientY / zoom - dragOff.y;
+  // Snap to other cards
+  const snap = findSnap(dragCard, nx, ny);
+  if (snap.x !== null) nx = snap.x;
+  if (snap.y !== null) ny = snap.y;
+  dragCard.style.left = nx + 'px';
+  dragCard.style.top = ny + 'px';
+  drawSnapGuides(snap.guides);
 }
-function endDrag() { dragCard = null; document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', endDrag); }
+function endDrag() {
+  dragCard = null;
+  drawSnapGuides([]);
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', endDrag);
+}
+
+function findSnap(card, dx, dy) {
+  const cards = document.querySelectorAll('.card');
+  const dw = card.offsetWidth, dh = card.offsetHeight;
+  const edges_x = [dx, dx + dw / 2, dx + dw];
+  const edges_y = [dy, dy + dh / 2, dy + dh];
+  let sx = null, sy = null;
+  const guides = [];
+
+  cards.forEach(c => {
+    if (c === card) return;
+    const cx = parseFloat(c.style.left) || 0, cy = parseFloat(c.style.top) || 0;
+    const cw = c.offsetWidth, ch = c.offsetHeight;
+    const tx = [cx, cx + cw / 2, cx + cw];
+    const ty = [cy, cy + ch / 2, cy + ch];
+
+    for (const ex of edges_x) {
+      for (const t of tx) {
+        if (Math.abs(ex - t) < SNAP_DIST && sx === null) {
+          sx = dx + (t - ex);
+          guides.push({ type: 'v', pos: t, y1: Math.min(dy, cy) - 20, y2: Math.max(dy + dh, cy + ch) + 20 });
+        }
+      }
+    }
+    for (const ey of edges_y) {
+      for (const t of ty) {
+        if (Math.abs(ey - t) < SNAP_DIST && sy === null) {
+          sy = dy + (t - ey);
+          guides.push({ type: 'h', pos: t, x1: Math.min(dx, cx) - 20, x2: Math.max(dx + dw, cx + cw) + 20 });
+        }
+      }
+    }
+  });
+  return { x: sx, y: sy, guides };
+}
+
+function drawSnapGuides(guides) {
+  if (!snapGuideEl) {
+    snapGuideEl = document.createElement('div');
+    snapGuideEl.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1';
+    world.appendChild(snapGuideEl);
+  }
+  snapGuideEl.innerHTML = guides.map(g => {
+    if (g.type === 'v') return `<div style="position:absolute;left:${g.pos}px;top:${g.y1}px;width:1px;height:${g.y2 - g.y1}px;border-left:1px dashed var(--accent);opacity:.6"></div>`;
+    return `<div style="position:absolute;left:${g.x1}px;top:${g.pos}px;width:${g.x2 - g.x1}px;height:1px;border-top:1px dashed var(--accent);opacity:.6"></div>`;
+  }).join('');
+}
+
+// ─── Auto-position new cards ───
+function findOpenPosition() {
+  const cards = document.querySelectorAll('.card');
+  if (!cards.length) return { x: 20, y: 20 };
+  let maxRight = 0, topY = 20;
+  cards.forEach(c => {
+    const x = parseFloat(c.style.left) || 0;
+    const w = c.offsetWidth || 480;
+    if (x + w > maxRight) { maxRight = x + w; topY = parseFloat(c.style.top) || 20; }
+  });
+  return { x: maxRight + CARD_GAP, y: topY };
+}
 
 // ─── API definitions ───
 const APIS = {
@@ -747,8 +822,8 @@ let healthCardId = healthId;
 
 function addCardFromKey(key) {
   if (key === 'health' && healthCardId && document.getElementById(healthCardId)) return;
-  const existing = world.children.length;
-  const id = createCard(key, 20 + existing * 520, 20);
+  const pos = findOpenPosition();
+  const id = createCard(key, pos.x, pos.y);
   if (key === 'health') healthCardId = id;
 }
 </script>
