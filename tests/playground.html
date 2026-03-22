@@ -20,7 +20,7 @@
   --green:#7af8ca;--gray:#7e8eda;--purple:#baacff;--orange:#ff9668;
   --error:#dd3962;
 }
-body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--bg);color:var(--fg);overflow:hidden;height:100vh}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);overflow:hidden;height:100vh}
 
 /* Toolbar */
 #toolbar{position:fixed;top:0;left:0;right:0;z-index:200;height:44px;background:var(--second);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px}
@@ -60,7 +60,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 
 /* Request section: shrinks to content, doesn't grow beyond it */
 .request-section{flex-shrink:0;display:flex;flex-direction:column;gap:4px;margin-bottom:0}
-.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 inherit;resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
+.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 'Consolas','Menlo',monospace;resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
 .json-editor:focus{border-color:var(--accent)}
 .json-editor.invalid{border-color:var(--red);color:var(--red)}
 
@@ -105,7 +105,7 @@ body{font-family:'JetBrains Mono','Menlo','Consolas',monospace;background:var(--
 .response-section:not(.collapsed) .section-label::before{content:'▼ '}
 .resp-header{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
 .response-wrap{flex:1;min-height:0;overflow-y:auto;background:var(--deepBg);border:1px solid var(--border);border-radius:4px;position:relative}
-.response-json{padding:8px;font:11px/1.5 inherit;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
+.response-json{padding:8px;font:11px/1.5 'Consolas','Menlo',monospace;white-space:pre-wrap;word-break:break-all;color:var(--fg)}
 .response-placeholder{padding:8px;color:var(--dis);font-size:11px;font-style:italic}
 .copy-btn{position:absolute;top:4px;right:4px;padding:2px 8px;background:var(--second);border:1px solid var(--border);border-radius:3px;color:var(--dis);font:10px inherit;cursor:pointer;opacity:0;transition:opacity .15s}
 .response-wrap:hover .copy-btn{opacity:1}
