@@ -153,12 +153,17 @@ class LookupMatchResult(BaseModel):
     return_type: Optional[str] = None
 
     def to_dict(self, lang: str = "") -> dict:
-        """Serialize with localized field renamed to actual lang code."""
+        """Serialize with en + localized merged into i18n object."""
         d = self.model_dump(exclude_none=True)
+        i18n = {}
+        if "en" in d:
+            i18n["en"] = d.pop("en")
         if lang and "localized" in d:
-            d[lang] = d.pop("localized")
+            i18n[lang] = d.pop("localized")
         elif "localized" in d:
             d.pop("localized")
+        if i18n:
+            d["i18n"] = i18n
         return d
 
 class LookupSection(BaseModel):
