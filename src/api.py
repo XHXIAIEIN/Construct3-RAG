@@ -258,19 +258,22 @@ def _collection_key(source_name: str) -> str:
 def _clean_content(text: str) -> str:
     """Clean indexed text for LLM consumption.
 
-    Removes redundant labels and duplicate bilingual lines,
-    keeping only the useful content.
+    Strips redundant labels — title, bilingual descriptions, script name
+    are already in structured fields. Keeps only unique content.
     """
+    skip_prefixes = (
+        "脚本名称/Script:", "描述:", "Description:",
+        "参数:", "[触发器", "[异步", "返回类型:",
+    )
     lines = []
     for line in text.split("\n"):
         line = line.strip()
         if not line:
             continue
-        # Skip label-prefixed lines that repeat structured data
-        if line.startswith(("脚本名称/Script:", "描述: ", "Description: ")):
+        if line.startswith(skip_prefixes):
             continue
-        # Skip the first title line (already in title/section fields)
-        if lines == [] and ("的条件:" in line or "的动作:" in line or "的表达式:" in line):
+        # Skip ACE title line (e.g. "插件 精灵(Sprite) 的条件: ...")
+        if "的条件:" in line or "的动作:" in line or "的表达式:" in line:
             continue
         lines.append(line)
     return "\n".join(lines) if lines else text
