@@ -43,26 +43,31 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #zoom-info{position:fixed;bottom:8px;right:12px;color:var(--dis);font-size:10px;z-index:100;user-select:none}
 
 /* Card */
-.card{position:absolute;width:540px;height:800px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden}
+.card{position:absolute;width:540px;height:800px;min-width:320px;min-height:160px;background:var(--second);border:1px solid var(--border);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;flex-direction:column;resize:both;overflow:hidden;contain:layout}
 .card:hover{border-color:#505050}
-.card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:8px;background:var(--deepBg);border-radius:8px 8px 0 0;user-select:none}
+.card-header{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:move;gap:6px;background:var(--deepBg);border-radius:8px 8px 0 0;min-height:36px;user-select:none}
 .card-title{flex:1;font-size:12px;font-weight:bold;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .method-badge{font-size:10px;font-weight:bold;padding:2px 8px;border-radius:3px;letter-spacing:.5px}
 .method-badge.get{background:#1a3a2a;color:var(--green)}
 .method-badge.post{background:#1a2a3a;color:var(--blue)}
-.hdr-btn{background:none;border:none;color:var(--dis);cursor:pointer;font-size:15px;padding:2px 4px;line-height:1}
+.hdr-btn{background:none;border:none;color:var(--dis);cursor:pointer;font-size:14px;padding:2px 4px;line-height:1}
 .hdr-btn:hover{color:var(--fg)}
-.card-body{padding:12px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0;min-height:0}
+.card-body{padding:10px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;min-height:0;gap:8px;overscroll-behavior:contain}
 
 /* Sections */
 .section-label{font-size:10px;color:var(--secondFg);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
 .no-body{font-size:11px;color:var(--dis);font-style:italic;padding:8px 0;flex-shrink:0}
 
-/* Request section: shrinks to content, doesn't grow beyond it */
-.request-section{flex-shrink:0;display:flex;flex-direction:column;gap:4px;margin-bottom:0}
-.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:1px solid var(--border);border-radius:4px;font:11px/1.5 'Consolas','Menlo',monospace;resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
-.json-editor:focus{border-color:var(--accent)}
-.json-editor.invalid{border-color:var(--red);color:var(--red)}
+/* Card sections */
+.card-section{flex-shrink:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.card-section:last-child{flex:1;min-height:0;display:flex;flex-direction:column}
+
+/* Request section */
+.request-section{flex-shrink:0;display:flex;flex-direction:column}
+.json-editor{width:100%;padding:8px;background:var(--deepBg);color:var(--green);border:none;border-left:2px solid transparent;border-radius:0;font:11px/1.5 'Consolas','Menlo',monospace;resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
+.json-editor.valid{border-left-color:var(--green)}
+.json-editor.invalid{border-left-color:var(--red);color:var(--red)}
+.json-editor::selection{background:rgba(83,120,200,0.3)}
 
 /* Presets */
 .preset-btn{padding:2px 6px;background:var(--deepBg);border:1px solid var(--border);border-radius:3px;color:var(--secondFg);font:9px inherit;cursor:pointer;white-space:nowrap}
@@ -99,7 +104,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .request-section:not(.collapsed) .req-toggle::before{content:'▼ '}
 
 /* Response: takes ALL remaining space */
-.response-section{flex:1;min-height:30px;display:flex;flex-direction:column;gap:4px;overflow:hidden;margin-top:6px}
+.response-section{flex:1;min-height:30px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
 .response-section.collapsed .response-wrap{display:none}
 .response-section.collapsed .section-label::before{content:'▶ '}
 .response-section:not(.collapsed) .section-label::before{content:'▼ '}
@@ -389,21 +394,25 @@ function createCard(apiKey, posX, posY) {
           <select class="tb-select" style="font-size:9px;padding:2px 4px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">--</option>${presetOptions}</select>` : ''}
         </div>
       </div>
-      <div class="request-section collapsed" id="${id}-req-section">
-        <div class="req-toggle" onclick="this.parentElement.classList.toggle('collapsed')">Request Body</div>
-        <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
+      <div class="card-section">
+        <div class="request-section collapsed" id="${id}-req-section">
+          <div class="req-toggle" onclick="this.parentElement.classList.toggle('collapsed')">Request Body</div>
+          <textarea class="json-editor" id="${id}-editor">${JSON.stringify(api.body, null, 2)}</textarea>
+        </div>
       </div>` : `
       <div class="search-row" style="padding-bottom:6px">
         <button class="send-btn" id="${id}-send" onclick="sendRequest('${id}','${apiKey}')">Send</button>
         <span class="latency" id="${id}-latency"></span>
       </div>`}
-      <div class="response-section">
-        <div class="resp-header" onclick="this.parentElement.classList.toggle('collapsed')">
-          <span class="section-label" style="cursor:pointer">Response</span>
-          <button class="copy-btn" style="opacity:1;position:static;margin-left:auto" onclick="event.stopPropagation();copyResponse('${id}')">Copy</button>
-        </div>
-        <div class="response-wrap" id="${id}-resp-wrap">
-          <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
+      <div class="card-section">
+        <div class="response-section">
+          <div class="resp-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <span class="section-label" style="cursor:pointer">Response</span>
+            <button class="copy-btn" style="opacity:1;position:static;margin-left:auto" onclick="event.stopPropagation();copyResponse('${id}')">Copy</button>
+          </div>
+          <div class="response-wrap" id="${id}-resp-wrap">
+            <div class="response-json" id="${id}-resp"><span class="response-placeholder">Send a request to see the response...</span></div>
+          </div>
         </div>
       </div>
     </div>`;
@@ -417,8 +426,8 @@ function createCard(apiKey, posX, posY) {
   const editor = document.getElementById(id + '-editor');
   if (editor) {
     editor.addEventListener('input', () => {
-      try { JSON.parse(editor.value); editor.classList.remove('invalid'); }
-      catch { editor.classList.add('invalid'); }
+      try { JSON.parse(editor.value); editor.classList.remove('invalid'); editor.classList.add('valid'); }
+      catch { editor.classList.remove('valid'); editor.classList.add('invalid'); }
     });
   }
 
