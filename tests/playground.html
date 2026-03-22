@@ -58,8 +58,17 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .section-label{font-size:10px;color:var(--secondFg);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
 .no-body{font-size:11px;color:var(--dis);font-style:italic;padding:8px 0;flex-shrink:0}
 
-/* Card sections */
-.card-section{flex-shrink:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+/* Context menu */
+#ctx-menu{display:none;position:fixed;z-index:500;background:var(--second);border:1px solid var(--border);border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.6);padding:4px 0;min-width:160px;font-size:11px}
+#ctx-menu.open{display:block}
+.ctx-item{padding:6px 14px;cursor:pointer;color:var(--fg)}
+.ctx-item:hover{background:var(--selBg)}
+.ctx-item.danger{color:var(--red)}
+.ctx-item.danger:hover{background:rgba(255,117,127,.1)}
+.ctx-sep{height:1px;background:var(--border);margin:4px 0}
+
+/* Card sections — no border, just structural containers */
+.card-section{flex-shrink:0;overflow:hidden}
 .card-section:last-child{flex:1;min-height:0;display:flex;flex-direction:column}
 
 /* Request section */
@@ -202,6 +211,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <span id="env-status" style="font-size:10px;color:var(--dis)">checking...</span>
   <button class="tb-btn" onclick="resetView()">Reset View</button>
 </div>
+<div id="ctx-menu"></div>
 
 <div id="canvas" onmousedown="canvasDown(event)" onmousemove="canvasMove(event)" onmouseup="canvasUp(event)" onwheel="canvasWheel(event)">
   <div id="world"></div>
@@ -683,6 +693,61 @@ setTimeout(() => {
     .catch(() => { el.textContent = 'offline'; el.style.color = 'var(--red)'; });
   sendRequest(healthId, 'health');
 }, 100);
+
+// ─── Right-click context menu ───
+const ctxMenu = document.getElementById('ctx-menu');
+let ctxCard = null;
+
+document.addEventListener('contextmenu', e => {
+  if (e.target.closest('#toolbar')) return;
+  e.preventDefault();
+  ctxCard = e.target.closest('.card');
+  ctxMenu.innerHTML = ctxCard ? `
+    <div class="ctx-item" onclick="ctxAction('copy')">Copy Response</div>
+    <div class="ctx-item" onclick="ctxAction('clear')">Clear Response</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item danger" onclick="ctxAction('close')">Close Card</div>
+  ` : `
+    <div class="ctx-item" onclick="ctxAction('addSearch')">Add Search Card</div>
+    <div class="ctx-item" onclick="ctxAction('addHealth')">Add Health Card</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="ctxAction('resetView')">Reset View</div>
+  `;
+  ctxMenu.style.left = e.clientX + 'px';
+  ctxMenu.style.top = e.clientY + 'px';
+  ctxMenu.classList.add('open');
+  requestAnimationFrame(() => {
+    const r = ctxMenu.getBoundingClientRect();
+    if (r.right > innerWidth) ctxMenu.style.left = (e.clientX - r.width) + 'px';
+    if (r.bottom > innerHeight) ctxMenu.style.top = (e.clientY - r.height) + 'px';
+  });
+});
+
+document.addEventListener('click', e => { if (!ctxMenu.contains(e.target)) ctxMenu.classList.remove('open'); });
+
+function ctxAction(action) {
+  ctxMenu.classList.remove('open');
+  if (action === 'copy' && ctxCard) {
+    const resp = ctxCard.querySelector('.response-json');
+    if (resp?.dataset.raw) navigator.clipboard.writeText(resp.dataset.raw);
+  } else if (action === 'clear' && ctxCard) {
+    const resp = ctxCard.querySelector('.response-json');
+    if (resp) resp.innerHTML = '<span class="response-placeholder">Cleared</span>';
+  } else if (action === 'close' && ctxCard) {
+    ctxCard.remove();
+  } else if (action === 'addSearch') {
+    addCardFromKey('search');
+  } else if (action === 'addHealth') {
+    addCardFromKey('health');
+  } else if (action === 'resetView') {
+    resetView();
+  }
+}
+
+function addCardFromKey(key) {
+  const existing = world.children.length;
+  createCard(key, 20 + existing * 520, 20);
+}
 </script>
 </body>
 </html>
