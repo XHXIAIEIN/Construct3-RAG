@@ -88,7 +88,7 @@ class SearchRequest(BaseModel):
         None, description="Filter by section type (e.g. ['actions', 'conditions'])"
     )
     debug: bool = Field(False, description="Include debug info")
-    include_context: bool = Field(False, description="Include LLM context text in lookup results")
+    context: bool = Field(False, description="Include LLM context text in lookup results")
     apply_threshold: bool = Field(True, description="Apply adaptive score threshold filtering")
     mode: str = Field(
         "auto",
@@ -444,7 +444,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
 
     # Context: only when requested, strip zh: line for en queries
     context = None
-    if req.include_context:
+    if req.context:
         ctx = lookup_result.context
         if not include_localized:
             ctx = "\n".join(l for l in ctx.split("\n") if not l.startswith("zh:"))
