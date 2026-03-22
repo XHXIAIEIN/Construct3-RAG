@@ -218,7 +218,7 @@ function applyTransform() {
 }
 
 function canvasDown(e) {
-  if (e.target !== canvas) return;
+  if (e.target !== canvas && e.target !== world) return;
   panning = true; panStart = { x: e.clientX - pan.x, y: e.clientY - pan.y };
   canvas.classList.add('grabbing');
 }
@@ -409,6 +409,9 @@ function createCard(apiKey, posX, posY) {
     </div>`;
 
   world.appendChild(card);
+
+  // Prevent card interactions from triggering canvas pan
+  card.addEventListener('mousedown', e => e.stopPropagation());
 
   // Validate JSON on input
   const editor = document.getElementById(id + '-editor');
