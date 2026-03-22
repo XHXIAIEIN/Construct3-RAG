@@ -114,46 +114,22 @@ class ACEParam(BaseModel):
     type: str = "any"
     desc: str = ""
 
-class ACEResult(BaseModel):
-    type: str = "ace"
-    score: float
-    plugin: PluginInfo
-    ace_type: str  # condition | action | expression
-    id: str
-    name: str
-    name_zh: str = ""
-    description: str = ""
-    description_zh: str = ""
-    script_name: str = ""
-    params: List[ACEParam] = []
-    is_trigger: bool = False
-    is_async: bool = False
-    return_type: Optional[str] = None
-    category: str = ""
-
 class DocResult(BaseModel):
-    type: str = "doc"
     score: float
-    source: str
-    collection: str
-    title: str = ""
-    section: str = ""
-    content: str
-
-class ExampleResult(BaseModel):
-    type: str = "example"
-    score: float
-    source: str
-    project: str = ""
-    project_zh: str = ""
+    collection: Optional[str] = None
+    title: Optional[str] = None
+    section: Optional[str] = None
     content: str
 
 class TermResult(BaseModel):
-    type: str = "term"
     score: float
     zh: str
     en: str
-    category: str = ""
+
+class ExampleResult(BaseModel):
+    score: float
+    project: Optional[str] = None
+    content: str
 
 class ACELocaleResult(BaseModel):
     name: str = ""
@@ -283,59 +259,48 @@ def _convert_result(r, score_override=None) -> dict:
     """Convert internal SearchResult to typed response dict."""
     score = score_override if score_override is not None else round(r.score, 4)
     meta = r.metadata
-    source = meta.get("source", r.source)
     collection = _collection_key(r.source)
 
-    # ACE results (from c3_ace collection)
-    if collection == "ace" and meta.get("ace_type"):
-        return ACEResult(
+    # ACE results → treated as doc (lookup.matches is the structured ACE source)
+    if collection == "ace":
+        d = DocResult(
             score=score,
-            plugin=PluginInfo(
-                id=meta.get("plugin_name", ""),
-                name=meta.get("plugin_name_en", meta.get("plugin_name", "")),
-                name_zh=meta.get("plugin_name_zh", ""),
-            ),
-            ace_type=meta.get("ace_type", ""),
-            id=meta.get("ace_id", ""),
-            name=meta.get("name_en", ""),
-            name_zh=meta.get("name_zh", ""),
-            description=meta.get("description_en", "") if meta.get("description_en") else "",
-            description_zh=meta.get("description_zh", "") if meta.get("description_zh") else "",
-            script_name=meta.get("script_name", ""),
-            is_trigger=meta.get("is_trigger", False),
-            is_async=meta.get("is_async", False),
-            return_type=meta.get("return_type") or None,
-            category=meta.get("category", ""),
-        ).model_dump()
-
-    # Example results
-    if collection == "examples":
-        return ExampleResult(
-            score=score,
-            source=source,
-            project=meta.get("title_en", meta.get("slug", "")),
-            project_zh=meta.get("title_zh", ""),
+            collection="ace",
+            title=meta.get("plugin_name_en", meta.get("plugin_name", "")),
+            section=meta.get("name_en", ""),
             content=r.text,
         ).model_dump()
+        d["_type"] = "doc"
+        return d
 
-    # Term results
+    if collection == "examples":
+        d = ExampleResult(
+            score=score,
+            project=meta.get("title_en", meta.get("slug", "")) or None,
+            content=r.text,
+        ).model_dump()
+        d["_type"] = "example"
+        return d
+
     if collection == "terms":
-        return TermResult(
+        d = TermResult(
             score=score,
             zh=meta.get("zh", ""),
             en=meta.get("en", ""),
-            category=meta.get("category", ""),
         ).model_dump()
+        d["_type"] = "term"
+        return d
 
-    # Doc results (plugins, behaviors, guide, interface, project, scripting)
-    return DocResult(
+    # Doc results (plugins, behaviors, guide, interface, project, scripting, ace)
+    d = DocResult(
         score=score,
-        source=source,
-        collection=collection,
-        title=meta.get("h1_heading", meta.get("title", "")),
-        section=meta.get("h2_heading", meta.get("section_type", "")),
+        collection=collection or None,
+        title=meta.get("h1_heading", meta.get("title", "")) or None,
+        section=meta.get("h2_heading", meta.get("section_type", "")) or None,
         content=r.text,
     ).model_dump()
+    d["_type"] = "doc"
+    return d
 
 
 def _try_lookup(query: str):
@@ -478,22 +443,24 @@ def _group_semantic(results: list) -> Optional[SemanticSection]:
     """Group flat semantic results by type into SemanticSection."""
     if not results:
         return None
-    docs = [r for r in results if r.get("type") in ("doc",)]
-    terms = [r for r in results if r.get("type") == "term"]
-    examples = [r for r in results if r.get("type") == "example"]
-    # Remove type field from each — the grouping key replaces it
-    for group in (docs, terms, examples):
-        for r in group:
-            r.pop("type", None)
-    section = SemanticSection(
+    docs = []
+    terms = []
+    examples = []
+    for r in results:
+        t = r.pop("_type", "doc")
+        if t == "term":
+            terms.append(r)
+        elif t == "example":
+            examples.append(r)
+        else:
+            docs.append(r)
+    if not docs and not terms and not examples:
+        return None
+    return SemanticSection(
         docs=docs or None,
         terms=terms or None,
         examples=examples or None,
     )
-    # Return None if all groups empty
-    if not docs and not terms and not examples:
-        return None
-    return section
 
 
 def _do_semantic(req: SearchRequest, _trace) -> list:
@@ -634,10 +601,12 @@ def search(req: SearchRequest):
         lookup_plugin = lookup_section.plugin.id if lookup_section.plugin else ""
         deduped = []
         for r in semantic_results:
-            if r.get("type") == "ace":
+            # Drop ACE collection results (lookup.matches is authoritative)
+            if r.get("collection") == "ace":
                 continue
-            if (r.get("type") == "doc" and lookup_plugin
-                    and r.get("title", "").lower() == lookup_plugin.lower()):
+            # Drop generic plugin doc for the matched plugin
+            if (lookup_plugin and r.get("_type") == "doc"
+                    and (r.get("title") or "").lower() == lookup_plugin.lower()):
                 continue
             deduped.append(r)
         semantic_results = deduped

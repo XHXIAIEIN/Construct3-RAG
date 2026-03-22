@@ -169,7 +169,7 @@ def test_search_semantic_basic(client):
     assert resp.status_code == 200
     data = resp.json()
     assert data["semantic"]["docs"] is not None
-    assert data["semantic"]["docs"][0]["source"] == "plugin-reference/sprite.md"
+    assert data["semantic"]["docs"][0]["content"] is not None
     assert data["mode"] == "semantic"
 
 
