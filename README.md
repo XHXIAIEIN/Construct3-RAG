@@ -26,7 +26,7 @@ python scripts/setup.py
 # → http://localhost:8765/playground
 ```
 
-### POST /search `{"query": "...", "mode": "list"}`
+### POST /search
 
 | Parameter | Values | Default |
 |-----------|--------|---------|
