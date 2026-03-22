@@ -676,8 +676,7 @@ function copyResponse(cardId) {
 
 function addCardFromSelect() {
   const key = document.getElementById('apiSelect').value;
-  const existing = world.children.length;
-  createCard(key, 20 + existing * 520, 20);
+  addCardFromKey(key);
 }
 
 // ─── Init: create default cards and auto-send health ───
@@ -709,7 +708,7 @@ document.addEventListener('contextmenu', e => {
     <div class="ctx-item danger" onclick="ctxAction('close')">Close Card</div>
   ` : `
     <div class="ctx-item" onclick="ctxAction('addSearch')">Add Search Card</div>
-    <div class="ctx-item" onclick="ctxAction('addHealth')">Add Health Card</div>
+    ${!healthCardId || !document.getElementById(healthCardId) ? '<div class="ctx-item" onclick="ctxAction(\'addHealth\')">Add Health Card</div>' : ''}
     <div class="ctx-sep"></div>
     <div class="ctx-item" onclick="ctxAction('resetView')">Reset View</div>
   `;
@@ -744,9 +743,13 @@ function ctxAction(action) {
   }
 }
 
+let healthCardId = healthId;
+
 function addCardFromKey(key) {
+  if (key === 'health' && healthCardId && document.getElementById(healthCardId)) return;
   const existing = world.children.length;
-  createCard(key, 20 + existing * 520, 20);
+  const id = createCard(key, 20 + existing * 520, 20);
+  if (key === 'health') healthCardId = id;
 }
 </script>
 </body>
