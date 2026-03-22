@@ -163,7 +163,7 @@ class LookupMatchResult(BaseModel):
         elif "localized" in d:
             d.pop("localized")
         if i18n:
-            d["i18n"] = i18n
+            d["name"] = i18n
         return d
 
 class LookupSection(BaseModel):

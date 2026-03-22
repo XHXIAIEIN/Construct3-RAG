@@ -36,10 +36,10 @@ def test_lookup_match_to_dict_zh():
         localized=ACELocaleResult(name="碰撞"),
     )
     d = m.to_dict(lang="zh")
-    assert "i18n" in d
-    assert "en" in d["i18n"]
-    assert "zh" in d["i18n"]
-    assert d["i18n"]["zh"]["name"] == "碰撞"
+    assert "name" in d
+    assert "en" in d["name"]
+    assert "zh" in d["name"]
+    assert d["name"]["zh"]["name"] == "碰撞"
 
 
 def test_lookup_match_to_dict_en():
@@ -48,9 +48,9 @@ def test_lookup_match_to_dict_en():
         en=ACELocaleResult(name="Test"),
     )
     d = m.to_dict(lang="")
-    assert "i18n" in d
-    assert d["i18n"]["en"]["name"] == "Test"
-    assert "zh" not in d["i18n"]
+    assert "name" in d
+    assert d["name"]["en"]["name"] == "Test"
+    assert "zh" not in d["name"]
 
 
 def test_lookup_section_empty():
