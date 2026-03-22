@@ -33,7 +33,7 @@ python scripts/setup.py
 | `mode` | `list` · `lookup` · `semantic` · `auto` | `auto` |
 | `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
 | `lang` | `en` · `zh` · `ja` · `ko` | auto-detect |
-| `include_context` | LLM-ready text in response | `false` |
+| `context` | include LLM-ready text | `false` |
 | `debug` | timing breakdown | `false` |
 
 Response example (`mode=list`):

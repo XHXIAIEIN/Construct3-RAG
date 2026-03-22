@@ -33,7 +33,7 @@ python scripts/setup.py
 | `mode` | `list` · `lookup` · `semantic` · `auto` | `auto` |
 | `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
 | `lang` | `en` · `zh` · `ja` · `ko` | 自动检测 |
-| `include_context` | 返回 LLM 可用的文本 | `false` |
+| `context` | 返回 LLM 可用的文本 | `false` |
 | `debug` | 返回耗时分析 | `false` |
 
 响应示例（`mode=lookup`, `lang=zh`）：
