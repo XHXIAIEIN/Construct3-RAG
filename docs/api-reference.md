@@ -135,13 +135,21 @@ With `scope=scripts`, each match includes `script_name` instead of `display`.
   "query": "how to detect collision",
   "mode": "semantic",
   "ms": 8500,
-  "semantic": [
-    {"type": "doc", "score": 0.385, "collection": "plugins", "title": "Sprite", "content": "..."},
-    {"type": "term", "score": 0.08, "zh": "碰撞", "en": "collision"},
-    {"type": "example", "score": 0.53, "project": "Platformer Basics", "content": "..."}
-  ]
+  "semantic": {
+    "docs": [
+      {"score": 0.385, "collection": "plugins", "title": "Sprite", "section": "properties", "content": "..."}
+    ],
+    "terms": [
+      {"score": 0.08, "zh": "碰撞", "en": "collision"}
+    ],
+    "examples": [
+      {"score": 0.53, "project": "Platformer Basics", "content": "..."}
+    ]
+  }
 }
 ```
+
+Empty groups are omitted.
 
 ### debug
 
