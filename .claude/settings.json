@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreCommit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/c/Users/test/AppData/Local/Python/bin/python.exe -m pytest tests/ -q --tb=short 2>&1 | tail -5"
+          }
+        ]
+      }
+    ]
+  }
+}
