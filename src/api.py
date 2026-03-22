@@ -182,8 +182,8 @@ class DebugInfo(BaseModel):
 
 class SemanticSection(BaseModel):
     """Semantic search results grouped by type."""
-    docs: Optional[list] = None
     terms: Optional[list] = None
+    docs: Optional[list] = None
     examples: Optional[list] = None
 
 class SearchResponse(BaseModel):
