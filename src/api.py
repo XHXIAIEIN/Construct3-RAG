@@ -164,11 +164,7 @@ class LookupMatchResult(BaseModel):
 class LookupSection(BaseModel):
     """Structured lookup results section."""
     hit: bool
-    tier: int = 0
-    confidence: float = 0.0
-    intent: str = ""
     plugin: Optional[PluginInfo] = None
-    keywords: Optional[list[str]] = None
     # mode=list: grouped name arrays
     conditions: Optional[list[str]] = None
     actions: Optional[list[str]] = None
@@ -177,15 +173,23 @@ class LookupSection(BaseModel):
     matches: Optional[dict[str, list]] = None
     context: Optional[str] = None
 
+class LookupDebug(BaseModel):
+    """Internal lookup diagnostics."""
+    tier: Optional[int] = None
+    confidence: Optional[float] = None
+    intent: Optional[str] = None
+    keywords: Optional[list[str]] = None
+
 class SemanticDebug(BaseModel):
     """Debug info for semantic search phase."""
-    collections: dict[str, dict] = {}   # {name: {hits: N, top_score: F}}
+    collections: dict[str, dict] = {}
     total_candidates: int = 0
     after_dedup: int = 0
 
 class DebugInfo(BaseModel):
     """Structured debug output."""
     lookup_ms: Optional[float] = None
+    lookup: Optional[LookupDebug] = None
     semantic_ms: Optional[float] = None
     semantic: Optional[SemanticDebug] = None
 
@@ -466,11 +470,7 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
 
     section = LookupSection(
         hit=True,
-        tier=intent.tier,
-        confidence=intent.confidence,
-        intent=intent.intent_type,
         plugin=plugin_info,
-        keywords=keywords or None,
         matches=grouped_matches,
         context=context,
     )
@@ -478,6 +478,13 @@ def _do_lookup(req: SearchRequest, _trace) -> Optional[LookupSection]:
         section.conditions = grouped.get("condition") or None
         section.actions = grouped.get("action") or None
         section.expressions = grouped.get("expression") or None
+    # Stash debug info for later extraction
+    section._debug = LookupDebug(
+        tier=intent.tier,
+        confidence=round(intent.confidence, 2),
+        intent=intent.intent_type,
+        keywords=keywords or None,
+    )
     return section
 
 
@@ -673,8 +680,10 @@ def search(req: SearchRequest):
                 total_candidates=before_dedup if 'before_dedup' in dir() else 0,
                 after_dedup=len(semantic_results),
             )
+        lookup_debug = getattr(lookup_section, '_debug', None) if lookup_section else None
         debug_info = DebugInfo(
             lookup_ms=timing.get("lookup"),
+            lookup=lookup_debug,
             semantic_ms=timing.get("semantic"),
             semantic=semantic_debug,
         )

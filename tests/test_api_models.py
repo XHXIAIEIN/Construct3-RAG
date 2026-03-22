@@ -1,6 +1,6 @@
 """Tests for API response models — no external services required."""
 import pytest
-from src.api import SearchRequest, LookupSection, LookupMatchResult, ACELocaleResult, PluginInfo
+from src.api import SearchRequest, LookupSection, LookupMatchResult, ACELocaleResult, PluginInfo, LookupDebug
 
 
 def test_search_request_mode_default():
