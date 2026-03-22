@@ -357,10 +357,10 @@ function createCard(apiKey, posX, posY) {
           <span class="latency" id="${id}-latency"></span>
         </div>
         <div class="search-options">
-          <input type="hidden" id="${id}-mode" value="auto"/>
+          <input type="hidden" id="${id}-mode" value="lookup"/>
           <span class="opt-label">mode</span>
-          <button class="mode-btn active" onclick="setMode('${id}',this,'auto')">auto</button>
-          <button class="mode-btn" onclick="setMode('${id}',this,'lookup')">lookup</button>
+          <button class="mode-btn" onclick="setMode('${id}',this,'auto')">auto</button>
+          <button class="mode-btn active" onclick="setMode('${id}',this,'lookup')">lookup</button>
           <button class="mode-btn" onclick="setMode('${id}',this,'list')">list</button>
           <button class="mode-btn" onclick="setMode('${id}',this,'semantic')">semantic</button>
           ${presetOptions ? `<span class="opt-label" style="margin-left:6px">preset</span>
