@@ -68,6 +68,36 @@ Environment variables (`.env` file supported), defined in `src/config.py`:
 # 3. Local (from src.xxx import ...)
 ```
 
+## UI / Frontend
+
+- Match existing page style exactly. Do not add borders, cards, or decorative elements unless requested.
+- Minimal approach — if it works without styling, don't add styling.
+
+## File Placement
+
+- Private/sensitive files (API keys, prompts, local configs) → `.local/` (gitignored)
+- Never write secrets or local paths to git-tracked files
+- Pre-built data → `data/` (committed)
+- CDN cache → `.cache/` (gitignored, auto-generated)
+
+## Testing
+
+- Run `python -m pytest tests/ -v` before committing
+- All tests must pass with no external services (no Qdrant, no GPU)
+
+## Documentation
+
+- Write for end users, not developers
+- No hardcoded versions, paths, or Chinese-only examples in English docs
+- Keep README examples minimal and runnable
+
+## Environment Constraints
+
+- VRAM limited (24GB RTX 5090); check `nvidia-smi` before GPU tasks
+- Ollama may consume VRAM; stop before training: `ollama stop`
+- WSL memory constrained; avoid running Qdrant + training simultaneously
+- Windows paths: use forward slashes in bash, `MSYS_NO_PATHCONV=1` for taskkill
+
 ## Construct 3 Knowledge
 
 This repo contains pre-built Construct 3 API definitions. When answering questions about C3 plugins, behaviors, ACEs, or scripting, **always look up the data files below** instead of guessing from training data.
