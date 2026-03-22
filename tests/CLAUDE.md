@@ -1,34 +1,40 @@
 # tests/ Directory
 
-Unit tests. No Qdrant, LLM, or other external services required.
+No external services required (no Qdrant, no GPU).
 
 ## Test Files
 
-| File | Content | Cases | Data |
-|------|---------|-------|------|
-| `test_chain.py` | RAGChain core logic (includes Self-Reflect parsing) | 22 | Fully mocked |
-| `test_lookup.py` | Query routing + direct lookup system | 55 | Real schema/CSV files |
-| `test_event_generator.py` | Event sheet JSON generator | 49 | Real schema files |
+| File | Content | Cases |
+|------|---------|-------|
+| `test_lookup.py` | Query routing + lookup engine | 61 |
+| `test_api.py` | API endpoint behavior (mocked) | 14 |
+| `test_api_models.py` | Pydantic model validation | 7 |
+| `test_schema_parser_cdn.py` | CDN schema parsing | 6 |
+| `test_examples_parser_cdn.py` | CDN examples parsing | 2 |
+| `test_c3_fetcher.py` | CDN fetcher | 10 |
+| `test_query_expander.py` | Query expansion | 30 |
+| `test_retriever.py` | Vector retriever (mocked) | 13 |
+| `test_semantic_chain.py` | Semantic chain routing | 22 |
+| `test_examples_parser.py` | Examples parser | 7 |
 
-**Note:** `test_lookup.py` and `test_event_generator.py` use real data files from `data/schemas/` and `data/source/`. They require no external services but do depend on the data directory being present.
+## Evaluation
+
+| File | Purpose | Usage |
+|------|---------|-------|
+| `eval_lookup.py` | Lookup quality regression tests (17 cases) | `python tests/eval_lookup.py` |
+| `playground.html` | Interactive API test UI | Served at `/playground` |
 
 ## Commands
 
 ```bash
-# Run all tests
-python -m pytest tests/ -v
-
-# Run a single file
-python -m pytest tests/test_chain.py -v
-
-# Run a single test class
-python -m pytest tests/test_chain.py::TestSelfReflect -v
+python -m pytest tests/ -v              # all unit tests
+python tests/eval_lookup.py             # lookup quality check
+python tests/eval_lookup.py -v          # verbose: show matches
+python tests/eval_lookup.py -k collision  # filter by keyword
 ```
 
 ## Conventions
 
 - File naming: `test_<module_name>.py`
-- `test_chain.py` uses `unittest.mock` — fully isolated from real services
-- `test_lookup.py` / `test_event_generator.py` read real JSON schemas (no mocks needed)
 - Tests run without Docker or GPU
-- When adding a new `src/` module, add a corresponding test file
+- `eval_lookup.py` is not a pytest file — run directly
