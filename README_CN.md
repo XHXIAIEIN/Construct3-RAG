@@ -26,26 +26,19 @@ python scripts/setup.py
 # → http://localhost:8765/playground
 ```
 
-### POST /search
+### POST /search `{"query": "...", "mode": "list"}`
 
-```
-mode=list      ACE 名称列表（按类型分组）
-mode=lookup    关键词搜索，返回完整 ACE 详情
-mode=semantic  向量语义搜索（需要 Qdrant）
-mode=auto      lookup + semantic
-```
+| 参数 | 值 | 默认 |
+|------|-----|------|
+| `mode` | `list` · `lookup` · `semantic` · `auto` | `auto` |
+| `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
+| `lang` | `en` · `zh` · `ja` · `ko` | 自动检测 |
+| `include_context` | 返回 LLM 可用的文本 | `false` |
+| `debug` | 返回耗时分析 | `false` |
 
-```bash
-curl -X POST localhost:8765/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"Sprite 碰撞","mode":"lookup"}'
-```
-
+响应示例（`mode=lookup`, `lang=zh`）：
 ```json
 {
-  "query": "Sprite 碰撞",
-  "mode": "lookup",
-  "ms": 0.5,
   "lookup": {
     "hit": true,
     "lang": "zh",
@@ -54,18 +47,16 @@ curl -X POST localhost:8765/search \
       {
         "ace_id": "on-collision-with-another-object",
         "ace_type": "condition",
-        "plugin_id": "_common",
-        "en": {"name": "On collision with another object", "desc": "...", "display": "On collision with {0}"},
-        "localized": {"name": "碰撞到其他对象", "desc": "...", "display": "碰撞到 {0}"},
-        "category": "common",
-        "params": [{"name": "Object", "type": "object", "desc": "..."}]
+        "en": {"name": "On collision with another object", "display": "On collision with {0}"},
+        "localized": {"name": "碰撞到其他对象", "display": "碰撞到 {0}"},
+        "params": [{"name": "Object", "type": "object"}]
       }
     ]
   }
 }
 ```
 
-参数：`scope` (eventsheet/scripts/all)、`lang` (en/zh/ja/ko)、`include_context`、`debug`。完整规格：[docs/api-reference.md](docs/api-reference.md)
+完整规格：[docs/api-reference.md](docs/api-reference.md)
 
 ## 语义搜索（可选）
 
