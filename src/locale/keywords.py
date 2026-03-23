@@ -173,15 +173,58 @@ ACE_SYNONYMS: list[frozenset[str]] = [
     frozenset({"移动", "位置", "坐标", "position", "move"}),
     frozenset({"销毁", "删除", "destroy", "remove"}),
     frozenset({"可见", "显示", "隐藏", "visible", "show", "hide"}),
-    frozenset({"计时", "timer", "wait", "等待", "延迟", "delay"}),
-    frozenset({"保存", "存储", "存档", "store", "save", "set item", "设置词条"}),
+    frozenset({"计时", "计时器", "定时器", "timer", "wait", "等待", "延迟", "delay",
+               "倒计时", "间隔", "countdown", "interval"}),
+    frozenset({"本地存档", "持久化储存", "storage", "memory"}),
+    frozenset({"保存", "存储", "存档", "slot", "save", "set item", "保存词条"}),
     frozenset({"读取", "加载", "获取", "load", "get item", "获取词条"}),
-    frozenset({"速度", "speed", "velocity", "加速"}),
-    frozenset({"角度", "旋转", "rotation", "angle", "rotate"}),
-    frozenset({"大小", "尺寸", "宽度", "高度", "size", "width", "height", "scale"}),
-    frozenset({"按键", "键盘", "key", "keyboard", "pressed"}),
-    frozenset({"点击", "触摸", "tap", "click", "touch"}),
-    frozenset({"声音", "音效", "音乐", "audio", "sound", "music"}),
+    frozenset({"速度", "speed", "velocity", "加速", "减速", "向量", "停止", "静止", "停下"}),
+    frozenset({"角度", "旋转", "摇晃", "摇摆", "抖动", "振动", "shake", "rotation", "angle", "rotate"}),
+    frozenset({"大小", "尺寸", "缩放", "宽度", "高度", "膨胀", "收缩", "大", "小", "高",
+              "矮", "胖", "瘦", "size", "width", "height", "zoom", "scale"}),
+    frozenset({"按键", "键盘", "回车", "空格",  "keyboard", "pressed", "keycode"}),
+    frozenset({"点击", "点按", "触屏", "触摸", "手势", "长按", "多指", "滑动", "划动", "触控",
+              "虚拟按键", "虚拟按钮", "手机按钮", "移动适配", "tap", "click", "touch"}),
+    frozenset({"声音", "音效", "音乐", "audio", "sound", "music", "mp3", "ogg"}),
+    # --- 物理与刚体 ---
+    frozenset({"物理", "刚体", "重力", "质量", "摩擦力", "弹力", "力", "动量",
+               "physics", "rigidbody", "gravity", "mass", "friction", "bounce",
+               "velocity", "force", "momentum"}),
+    # --- 场景与布局 ---
+    frozenset({"布局", "场景", "切换", "跳转", "加载", "layout", "scene", "goto", "switch", "load"}),
+    # --- 图层与深度 ---
+    frozenset({"图层", "层", "深度", "顺序", "layer", "depth", "z-order", "order"}),
+    # --- 视口与相机 ---
+    frozenset({"视口", "相机", "镜头", "视野", "滚动", "viewport", "camera", "scroll", "field of view"}),
+    # --- 手柄输入 ---
+    frozenset({"手柄", "控制器", "摇杆", "扳机", "gamepad", "controller", "joystick", "trigger", "xbox"}),
+    # --- 文件操作 ---
+    frozenset({"文件", "目录", "文件夹", "本地目录", "安装目录", "永久保存", "读写", "保存", "加载", "导出", "导入",
+               "file", "read", "write", "save", "load", "export", "import"}),
+    # --- JSON 数据 ---
+    frozenset({"json", "数据",  "解析", "回调", "数据结构", "字典", "数组", "序列化", "parse", "stringify", "data"}),
+    # --- 网络请求 ---
+    frozenset({"网络", "请求", "项目文件", "http", "ajax", "fetch", "下载", "上传", "回调", "api", "get", "post",
+               "network", "request", "download", "upload"}),
+    # --- UI 控件 ---
+    frozenset({"按钮", "按下", "button", "press"}),
+    frozenset({"文本输入", "输入框", "文本框", "textbox", "input", "editbox"}),
+    frozenset({"下拉框", "选择", "选项", "combobox", "dropdown", "select"}),
+    frozenset({"滑块", "滑动条", "slider", "drag"}),
+    # --- 绘制与颜色 ---
+    frozenset({"绘制", "画图", "canvas", "图形", "矩形", "线条", "圆",
+               "draw", "rectangle", "line", "circle"}),
+    frozenset({"颜色", "rgb", "rgba", "十六进制", "透明度", "color", "hex", "alpha", "opacity"}),
+    # --- 音频通道与音量 ---
+    frozenset({"音频通道", "音轨", "分组", "channel", "track", "group"}),
+    frozenset({"音量", "静音", "平衡", "volume", "mute", "gain", "balance"}),
+    # --- 事件表核心概念 ---
+    frozenset({"事件", "触发", "子事件", "条件", "动作", "event", "trigger", "sub-event"}),
+    frozenset({"变量", "全局变量", "实例变量", "局部变量", "variable", "global", "instance", "local"}),
+    frozenset({"函数", "方法", "调用", "返回", "参数", "function", "method", "call", "return", "parameter"}),
+    # --- 性能与调试 ---
+    frozenset({"性能", "帧率", "fps", "内存", "优化", "performance", "framerate", "memory", "optimization"}),
+    frozenset({"调试", "日志", "输出", "断点", "debug", "log", "console", "breakpoint"}),
 ]
 
 # ACE 分类扩展 — 命中这些分类的 ACE 时，拉入同分类的所有 ACE
@@ -210,29 +253,94 @@ GENERIC_QUERY_WORDS: frozenset[str] = frozenset({
 # ---------------------------------------------------------------------------
 
 SEMANTIC_EXPAND: dict[str, list[str]] = {
+    # --- 基础操作 ---
     '查找': ['包含', '检测', '遍历', '存在', '检索', '条件', '表达式', '比较'],
     '搜索': ['包含', '检测', '遍历', '存在', '检索', '查询'],
     '排序': ['升序', '降序', '动作', '顺序', '比较'],
-    '碰撞': ['重叠', '检测', '条件', '触发'],
-    '移动': ['速度', '方向', '动作', '位置', '角度'],
-    '播放': ['动画', '音频', '声音', '动作'],
-    '创建': ['实例', '生成', '动作', '对象'],
-    '删除': ['销毁', '移除', '动作', '实例'],
     '设置': ['修改', '动作', '属性', '值'],
     '获取': ['读取', '表达式', '返回', '值'],
-    '计时': ['时间', '延迟', '等待', '秒'],
-    '存储': ['保存', '数据', '变量', '文件'],
-    '加载': ['读取', '文件', '数据', '动作'],
-    '显示': ['可见', '透明度', '动作', '隐藏'],
-    '隐藏': ['可见', '透明度', '动作', '显示'],
-    '旋转': ['角度', '动作', '方向'],
-    '缩放': ['大小', '尺寸', '宽度', '高度', '动作'],
-    '文本': ['字符串', '内容', '表达式', '属性'],
-    '数字': ['值', '变量', '表达式', '参数', '整数', '浮点'],
-    '数组': ['数据结构', '列表', '索引', '元素'],
     '条件': ['判断', '比较', '检测', '触发', '如果'],
     '动作': ['执行', '操作', '设置', '调用'],
     '表达式': ['返回', '计算', '获取', '值'],
+
+    # --- 游戏对象生命周期 ---
+    '创建': ['实例', '生成', '动作', '对象', '克隆', 'spawn', 'instantiate'],
+    '生成': ['创建', '实例', '对象', '克隆', 'spawn', 'instantiate', 'clone'],
+    '克隆': ['复制', '副本', '实例', '生成', 'duplicate', 'copy'],
+    '删除': ['销毁', '移除', '动作', '实例', 'destroy', 'remove', 'delete'],
+    '销毁': ['删除', '移除', '实例', '释放', 'destroy', 'remove', 'delete'],
+
+    # --- 移动与物理 ---
+    '移动': ['速度', '方向', '动作', '位置', '角度'],
+    '旋转': ['角度', '动作', '方向'],
+    '缩放': ['大小', '尺寸', '宽度', '高度', '动作'],
+    '碰撞': ['重叠', '检测', '条件', '触发', '反弹', 'collision', 'overlap'],
+    '物理': ['重力', '质量', '弹力', '摩擦力', '速度', '力', '刚体', 'physics', 'gravity', 'mass', 'bounce', 'friction'],
+    '弹跳': ['碰撞', '反弹', '物理', 'bounce', 'collision'],
+    '重力': ['下落', '物理', '质量', 'gravity', 'mass', 'fall'],
+
+    # --- 场景与布局 ---
+    '布局': ['场景', '切换', '加载', 'layout', 'scene', 'goto', 'switch'],
+    '切换场景': ['布局', '加载', '跳转', '场景', 'layout', 'goto', 'scene', 'switch'],
+
+    # --- 图层与视口 ---
+    '图层': ['层', '顺序', '深度', 'layer', 'z-order', 'depth'],
+    '视口': ['相机', '镜头', '视野', '滚动', 'viewport', 'camera', 'scroll'],
+
+    # --- 可见性 ---
+    '显示': ['可见', '透明度', '动作', '隐藏'],
+    '隐藏': ['可见', '透明度', '动作', '显示'],
+
+    # --- 用户输入 ---
+    '鼠标': ['点击', '位置', '光标', '滚轮', 'mouse', 'click', 'cursor', 'wheel'],
+    '键盘': ['按键', '热键', '按下', '释放', 'keyboard', 'key', 'hotkey'],
+    '手柄': ['控制器', '摇杆', '扳机', 'gamepad', 'controller', 'joystick'],
+
+    # --- 文件与数据 ---
+    '文件': ['读取', '写入', '保存', '加载', '导出', '导入', 'file', 'read', 'write', 'load', 'save', 'export', 'import'],
+    '存储': ['保存', '数据', '变量', '文件'],
+    '加载': ['读取', '文件', '数据', '动作'],
+    '本地存储': ['存档', '缓存', '保存', 'webstorage', 'localstorage', 'save', 'slot'],
+    'json': ['数据', '结构', '解析', '序列化', 'parse', 'stringify', 'data'],
+    '数组': ['数据结构', '列表', '索引', '元素'],
+
+    # --- 网络 ---
+    '网络': ['请求', 'ajax', 'fetch', 'http', '下载', '上传', 'network', 'request', 'download', 'upload'],
+    '多人': ['联机', '同步', '房间', 'multiplayer', 'sync', 'room', 'peer'],
+
+    # --- 时间与异步 ---
+    '计时': ['时间', '延迟', '等待', '秒'],
+    '计时器': ['定时', '间隔', '倒计时', 'timer', 'interval', 'countdown', 'settimeout'],
+    '异步': ['等待', '延迟', '回调', 'promise', 'async', 'await', 'callback', 'wait', 'delay'],
+
+    # --- 动画与渲染 ---
+    '播放': ['动画', '音频', '声音', '动作'],
+    '帧': ['动画帧', '图片', '索引', 'frame', 'animation frame', 'image', 'index'],
+    '骨骼动画': ['蒙皮', 'spine', 'dragonbones', 'skeletal', 'mesh'],
+    '绘制': ['画图', '矩形', '线条', '颜色', '填充', 'canvas', 'draw', 'rectangle', 'line', 'color', 'fill'],
+    '颜色': ['rgb', 'rgba', '十六进制', '透明度', 'color', 'hex', 'alpha', 'opacity'],
+    '粒子': ['特效', '系统', '发射器', 'particle', 'effect', 'emitter'],
+
+    # --- 音频 ---
+    '音量': ['静音', '大小', '平衡', 'volume', 'mute', 'gain', 'balance'],
+    '音频通道': ['音轨', '分组', 'channel', 'track', 'group'],
+
+    # --- UI 控件 ---
+    '按钮': ['点击', '按下', '响应', 'button', 'click', 'press'],
+    '文本输入': ['输入框', '键盘', '文本框', 'textbox', 'input', 'editbox'],
+    '下拉框': ['选择', '选项', 'combobox', 'dropdown', 'select'],
+    '滑块': ['滑动条', '数值', 'slider', 'value', 'drag'],
+
+    # --- 文本与数值 ---
+    '文本': ['字符串', '内容', '表达式', '属性'],
+    '数字': ['值', '变量', '表达式', '参数', '整数', '浮点'],
+
+    # --- 事件表核心 ---
+    '事件': ['触发', '条件', '动作', '子事件', 'event', 'trigger', 'condition', 'action', 'sub-event'],
+    '变量': ['全局', '实例', '局部', '数字', '字符串', '布尔', 'variable', 'global', 'instance', 'local', 'number', 'string', 'boolean'],
+    '函数': ['调用', '返回', '参数', '自定义', 'function', 'call', 'return', 'parameter', 'custom'],
+
+    # --- 性能与调试 ---
+    '性能': ['帧率', '内存', '优化', 'performance', 'fps', 'memory', 'profiling'],
+    '调试': ['输出', '日志', '断点', 'debug', 'console', 'log', 'breakpoint'],
 }
-
-
