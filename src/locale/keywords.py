@@ -161,6 +161,54 @@ CODE_GENERATION_KEYWORDS: list[str] = [
 # value: 在 C3 schema 描述中语义相近的词，帮助 zh→en 桥接
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# ACE 同义词集 — 关键词搜索时的语义扩展
+# 如果查询中出现集合内任一词，其余词也加入过滤
+# 例: 用户说 "保存进度" → 扩展出 "存储"/"store"/"set item" 匹配 ACE
+# ---------------------------------------------------------------------------
+
+ACE_SYNONYMS: list[frozenset[str]] = [
+    frozenset({"碰撞", "重叠", "collision", "overlap", "collisions"}),
+    frozenset({"动画", "animation", "animations", "播放", "帧"}),
+    frozenset({"移动", "位置", "坐标", "position", "move"}),
+    frozenset({"销毁", "删除", "destroy", "remove"}),
+    frozenset({"可见", "显示", "隐藏", "visible", "show", "hide"}),
+    frozenset({"计时", "timer", "wait", "等待", "延迟", "delay"}),
+    frozenset({"保存", "存储", "存档", "store", "save", "set item", "设置词条"}),
+    frozenset({"读取", "加载", "获取", "load", "get item", "获取词条"}),
+    frozenset({"速度", "speed", "velocity", "加速"}),
+    frozenset({"角度", "旋转", "rotation", "angle", "rotate"}),
+    frozenset({"大小", "尺寸", "宽度", "高度", "size", "width", "height", "scale"}),
+    frozenset({"按键", "键盘", "key", "keyboard", "pressed"}),
+    frozenset({"点击", "触摸", "tap", "click", "touch"}),
+    frozenset({"声音", "音效", "音乐", "audio", "sound", "music"}),
+]
+
+# ACE 分类扩展 — 命中这些分类的 ACE 时，拉入同分类的所有 ACE
+ACE_CATEGORY_EXPAND: frozenset[str] = frozenset({
+    "collisions", "animations", "size-position",
+})
+
+# ---------------------------------------------------------------------------
+# 歧义插件名 / 通用查询词 — 防止 "custom action" 误匹配 Custom 行为
+# ---------------------------------------------------------------------------
+
+AMBIGUOUS_PLUGIN_NAMES: frozenset[str] = frozenset({
+    "custom", "system", "audio", "text", "video", "browser", "touch",
+    "mouse", "list", "button", "timer", "json", "array",
+})
+
+GENERIC_QUERY_WORDS: frozenset[str] = frozenset({
+    "action", "actions", "condition", "conditions", "expression", "expressions",
+    "event", "events", "function", "functions", "property", "properties",
+    "variable", "variables", "how", "what", "use", "create", "add", "make",
+})
+
+
+# ---------------------------------------------------------------------------
+# 语义扩展词表 — 用于 QueryExpander 手工增补（与 schema 自动扩展合并）
+# ---------------------------------------------------------------------------
+
 SEMANTIC_EXPAND: dict[str, list[str]] = {
     '查找': ['包含', '检测', '遍历', '存在', '检索', '条件', '表达式', '比较'],
     '搜索': ['包含', '检测', '遍历', '存在', '检索', '查询'],
