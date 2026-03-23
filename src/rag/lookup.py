@@ -81,6 +81,14 @@ _ACE_SYNONYMS: list[frozenset[str]] = [
     frozenset({"销毁", "删除", "destroy", "remove"}),
     frozenset({"可见", "显示", "隐藏", "visible", "show", "hide"}),
     frozenset({"计时", "timer", "wait", "等待", "延迟", "delay"}),
+    frozenset({"保存", "存储", "存档", "store", "save", "set item", "设置词条"}),
+    frozenset({"读取", "加载", "获取", "load", "get item", "获取词条"}),
+    frozenset({"速度", "speed", "velocity", "加速"}),
+    frozenset({"角度", "旋转", "rotation", "angle", "rotate"}),
+    frozenset({"大小", "尺寸", "宽度", "高度", "size", "width", "height", "scale"}),
+    frozenset({"按键", "键盘", "key", "keyboard", "pressed"}),
+    frozenset({"点击", "触摸", "tap", "click", "touch"}),
+    frozenset({"声音", "音效", "音乐", "audio", "sound", "music"}),
 ]
 
 # Category expansion: when an ACE in one of these categories is matched,
