@@ -24,6 +24,8 @@ from src.config import SCHEMA_DIR
 from src.locale.keywords import (
     ACE_TYPE_ALIASES, ACE_INTENT_KEYWORDS, HOWTO_SKIP_WORDS,
     ZH_PARTICLES, INTENT_TEMPLATES,
+    ACE_SYNONYMS, ACE_CATEGORY_EXPAND,
+    AMBIGUOUS_PLUGIN_NAMES, GENERIC_QUERY_WORDS,
 )
 from src.rag.messages import (
     ACE_SECTION_LABELS, ACE_SECTION_LABELS_SHORT, PLUGIN_KIND_LABELS,
@@ -57,45 +59,11 @@ _ACE_SORT_ORDER: dict[str, int] = {
 # Param types where the name carries no semantic value (drop from signature)
 _GENERIC_PARAM_TYPES = frozenset({"cmp"})
 
-# Plugin/behavior names that are common English words. When the query is
-# purely English and the remaining tokens are also generic (action, event, etc.),
-# skip lookup to avoid false matches like "custom action" → Custom behavior.
-_AMBIGUOUS_PLUGIN_NAMES = frozenset({
-    "custom", "system", "audio", "text", "video", "browser", "touch",
-    "mouse", "list", "button", "timer", "json", "array",
-})
-_GENERIC_QUERY_WORDS = frozenset({
-    "action", "actions", "condition", "conditions", "expression", "expressions",
-    "event", "events", "function", "functions", "property", "properties",
-    "variable", "variables", "how", "what", "use", "create", "add", "make",
-})
-
-# Synonym sets for ace_search keyword expansion.
-# If any word in a set appears in the query, all words in that set are added
-# to the filter. This captures semantic relationships that keyword matching
-# misses (e.g. "碰撞" and "重叠" are both collision-detection concepts).
-_ACE_SYNONYMS: list[frozenset[str]] = [
-    frozenset({"碰撞", "重叠", "collision", "overlap", "collisions"}),
-    frozenset({"动画", "animation", "animations", "播放", "帧"}),
-    frozenset({"移动", "位置", "坐标", "position", "move"}),
-    frozenset({"销毁", "删除", "destroy", "remove"}),
-    frozenset({"可见", "显示", "隐藏", "visible", "show", "hide"}),
-    frozenset({"计时", "timer", "wait", "等待", "延迟", "delay"}),
-    frozenset({"保存", "存储", "存档", "store", "save", "set item", "设置词条"}),
-    frozenset({"读取", "加载", "获取", "load", "get item", "获取词条"}),
-    frozenset({"速度", "speed", "velocity", "加速"}),
-    frozenset({"角度", "旋转", "rotation", "angle", "rotate"}),
-    frozenset({"大小", "尺寸", "宽度", "高度", "size", "width", "height", "scale"}),
-    frozenset({"按键", "键盘", "key", "keyboard", "pressed"}),
-    frozenset({"点击", "触摸", "tap", "click", "touch"}),
-    frozenset({"声音", "音效", "音乐", "audio", "sound", "music"}),
-]
-
-# Category expansion: when an ACE in one of these categories is matched,
-# also include all ACEs sharing the same category (even if they don't
-# match the keyword). E.g. matching "碰撞" in category "collisions"
-# should also pull in poly-point expressions from the same category.
-_CATEGORY_EXPAND = frozenset({"collisions", "animations", "size-position"})
+# Dictionaries imported from src.locale.keywords:
+#   AMBIGUOUS_PLUGIN_NAMES — plugin names that are common English words
+#   GENERIC_QUERY_WORDS    — generic query words (action, event, etc.)
+#   ACE_SYNONYMS           — synonym sets for keyword expansion
+#   ACE_CATEGORY_EXPAND    — categories that trigger full-category inclusion
 
 
 def _format_params(params: list) -> str:
@@ -893,9 +861,9 @@ class IntentClassifier:
         # Ambiguity check: if plugin name is a common English word and
         # remaining tokens are all generic, skip lookup (e.g. "custom action")
         remaining_tokens = [t for i, t in enumerate(tokens) if i != plugin_token_idx and t]
-        if plugin_id in _AMBIGUOUS_PLUGIN_NAMES:
+        if plugin_id in AMBIGUOUS_PLUGIN_NAMES:
             remaining_lower = {t.lower() for t in remaining_tokens}
-            if remaining_lower and remaining_lower <= _GENERIC_QUERY_WORDS:
+            if remaining_lower and remaining_lower <= GENERIC_QUERY_WORDS:
                 return None
 
         # 3. Count meaningful tokens to detect complex multi-concept queries.
@@ -1401,7 +1369,7 @@ class LookupEngine:
         # Synonym expansion: semantically related terms that keyword matching
         # would miss (e.g. "碰撞" won't match "重叠" even though overlap is
         # a form of collision detection in game engines).
-        for syn_set in _ACE_SYNONYMS:
+        for syn_set in ACE_SYNONYMS:
             if filter_words & syn_set:
                 filter_words |= syn_set
 
@@ -1466,7 +1434,7 @@ class LookupEngine:
                 # Only use name-hit items (not desc-only) to avoid noise
                 # (e.g. "检测" in description pulling in unrelated categories).
                 matched_cats = {it.get("category", "") for h, it in scored_items if h > 0}
-                expand_cats = matched_cats & _CATEGORY_EXPAND
+                expand_cats = matched_cats & ACE_CATEGORY_EXPAND
                 if expand_cats:
                     seen_ids = {it.get("id") for _, it in scored_items}
                     for item in items:
