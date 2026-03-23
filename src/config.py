@@ -23,13 +23,18 @@ SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))
 # External Sources
 # =============================================================================
 
-# External repos (sibling directories of this repo)
+# External repos (sibling directories of this repo).
+# Both are optional — the pipeline degrades gracefully when missing.
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual
 EXAMPLE_REPO = "Construct-Example-Projects"  # https://github.com/Scirra/Construct-Example-Projects
 
-# Derived paths
-MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO
+# Derived paths (may not exist)
+MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO / "Construct3-Manual"
 EXAMPLE_PROJECTS_DIR = BASE_DIR.parent / EXAMPLE_REPO / "example-projects"
+
+# Availability flags — checked once at import time
+MANUAL_AVAILABLE: bool = MANUAL_DIR.exists()
+EXAMPLES_AVAILABLE: bool = EXAMPLE_PROJECTS_DIR.exists()
 
 # =============================================================================
 # Construct 3 CDN (official data source)

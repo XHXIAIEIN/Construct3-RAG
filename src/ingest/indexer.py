@@ -607,7 +607,8 @@ def index_all_data(rebuild: bool = False):
     from src.config import (
         QDRANT_HOST, QDRANT_PORT, EMBEDDING_MODEL,
         CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
-        EXAMPLE_PROJECTS_DIR,
+        EXAMPLE_PROJECTS_DIR, EXAMPLES_AVAILABLE,
+        MANUAL_AVAILABLE,
         C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
@@ -631,10 +632,14 @@ def index_all_data(rebuild: bool = False):
     if CONTEXTUAL_CHUNKING_ENABLED:
         indexer._load_chunk_contexts()
 
-    # ── Parse markdown docs ────────────────────────────────────────────────────
+    # ── Parse markdown docs (requires Construct3-Manual repo) ───────────────────
     print("\n=== Parsing Markdown Documentation ===")
-    md_parser = MarkdownParser()
-    all_chunks = md_parser.parse_directory()
+    if MANUAL_AVAILABLE:
+        md_parser = MarkdownParser()
+        all_chunks = md_parser.parse_directory()
+    else:
+        print("  Construct3-Manual not found — skipping markdown docs")
+        all_chunks = []
 
     chunks_by_collection: dict[str, list] = {col: [] for col in DOC_COLLECTIONS}
     for chunk in all_chunks:
@@ -701,8 +706,8 @@ def index_all_data(rebuild: bool = False):
             indexer.index_documents(COLLECTIONS["examples"], example_docs)
             print(f"  Indexed {len(example_docs)} project metadata docs")
 
-        # 2. Event blocks + scripts (from actual project files)
-        if EXAMPLE_PROJECTS_DIR.exists():
+        # 2. Event blocks + scripts (requires Construct-Example-Projects repo)
+        if EXAMPLES_AVAILABLE:
             slug_title_map = {
                 d["metadata"]["slug"]: {
                     "title_en": d["metadata"]["title_en"],
