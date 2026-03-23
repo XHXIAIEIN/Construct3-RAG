@@ -33,10 +33,12 @@ class MarkdownParser:
 
         Args:
             base_dir: Base directory for markdown files. If None, uses config.
+                      The directory does not need to exist at init time;
+                      parse_directory() returns an empty list if it is missing.
         """
         if base_dir is None:
-            from src.config import BASE_DIR, MANUAL_REPO
-            self.base_dir = BASE_DIR.parent / MANUAL_REPO / "Construct3-Manual"
+            from src.config import MANUAL_DIR
+            self.base_dir = MANUAL_DIR
         else:
             self.base_dir = Path(base_dir)
 
@@ -344,6 +346,10 @@ class MarkdownParser:
             dir_path = self.base_dir
         else:
             dir_path = Path(dir_path)
+
+        if not dir_path.exists():
+            print(f"Manual directory not found: {dir_path} (skipping)")
+            return []
 
         all_chunks = []
         md_files = list(dir_path.rglob('*.md'))
