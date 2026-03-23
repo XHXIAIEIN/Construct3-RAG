@@ -360,17 +360,63 @@ class ScriptingIndex:
         self._data = data.get("properties", {})
         logger.info(f"[ScriptingIndex] Loaded {len(self._data)} classes")
 
-    def search(self, query: str, max_results: int = 20) -> list[dict]:
-        """Search for methods/properties matching query across all classes.
+    @staticmethod
+    def _extract_api_tokens(query: str) -> list[str]:
+        """Extract probable API identifiers from a mixed-language query.
 
-        Returns list of {class, method, dts_path} dicts.
+        Matches camelCase, PascalCase, snake_case, and dot-separated tokens
+        that look like code (e.g. 'getAllInstances', 'IObjectClass.x').
+        """
+        return re.findall(r"[A-Za-z_][A-Za-z0-9_.]*[A-Za-z0-9]", query)
+
+    def search(self, query: str, max_results: int = 20) -> list[dict]:
+        """Search for classes and methods matching query.
+
+        Class-name hits return all members of that class (capped by max_results).
+        Method-name hits return individual {class, method} dicts.
+        Automatically extracts API tokens from mixed-language queries.
         """
         self._load()
         q_lower = query.lower()
+
+        # Extract API tokens for matching (e.g. "getAllInstances 怎么用" → ["getAllInstances"])
+        tokens = self._extract_api_tokens(query)
+        token_lowers = [t.lower() for t in tokens]
+
+        # Phase 1: class name match
+        # Require the class name to appear IN the query or a token, not the reverse.
+        # This prevents short tokens like "Sprite" from matching "ISpriteInstance".
+        class_hits = []
+        for cls, methods in self._data.items():
+            cls_lower = cls.lower()
+            if cls_lower in q_lower:
+                class_hits.append((cls, methods))
+            elif any(cls_lower == t for t in token_lowers):
+                # Exact token match (e.g. query token "IRuntime" == class "IRuntime")
+                class_hits.append((cls, methods))
+
+        if class_hits:
+            results = []
+            for cls, methods in class_hits:
+                for method in methods:
+                    results.append({"class": cls, "method": method})
+                    if len(results) >= max_results:
+                        return results
+            return results
+
+        # Phase 2: method name match
+        # Only use tokens that start with lowercase (camelCase method names)
+        # and are long enough to be specific API identifiers.
+        method_tokens = [
+            t.lower() for t in tokens
+            if t[0].islower() and len(t) >= 8
+        ] if tokens else []
         results = []
+        search_terms = [q_lower] + method_tokens
         for cls, methods in self._data.items():
             for method in methods:
-                if q_lower in method.lower():
+                method_lower = method.lower()
+                if any(t in method_lower for t in search_terms):
                     results.append({
                         "class": cls,
                         "method": method,
