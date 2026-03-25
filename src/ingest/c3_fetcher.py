@@ -401,7 +401,15 @@ class C3Fetcher:
             return cache_path.read_bytes()
         url = f"{self.base_url}/{self.version}/{path}"
         logger.info(f"[CDN] Fetching {url}")
-        raw = self._http_get(url)
+        try:
+            raw = self._http_get(url)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                fallback_url = f"{self.base_url}/{path}"
+                logger.warning(f"[CDN] 404 for {url}, falling back to {fallback_url}")
+                raw = self._http_get(fallback_url)
+            else:
+                raise
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_bytes(raw)
         return raw
