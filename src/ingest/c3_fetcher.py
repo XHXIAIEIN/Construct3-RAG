@@ -16,6 +16,7 @@ Endpoints:
 """
 import json
 import logging
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -100,7 +101,17 @@ class C3Fetcher:
         else:
             url = f"{self.base_url}/{self.version}/{path}"
             logger.info(f"[CDN] Fetching {url}")
-            raw = self._http_get(url)
+            try:
+                raw = self._http_get(url)
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    # Patch versions (e.g. r476.2) don't have their own CDN
+                    # directory; fall back to the root path (latest stable).
+                    fallback_url = f"{self.base_url}/{path}"
+                    logger.warning(f"[CDN] 404 for {url}, falling back to {fallback_url}")
+                    raw = self._http_get(fallback_url)
+                else:
+                    raise
             cache_path.parent.mkdir(parents=True, exist_ok=True)
             cache_path.write_bytes(raw)
         return json.loads(self._strip_bom(raw))
