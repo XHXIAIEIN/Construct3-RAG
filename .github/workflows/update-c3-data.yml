@@ -112,6 +112,7 @@ jobs:
           ts_target = Path('data/c3-ts-defs')
           if ts_target.exists():
               shutil.rmtree(ts_target)
+          ts_target.mkdir(parents=True, exist_ok=True)
           for src_file in ts_dir.rglob('*.d.ts'):
               rel = src_file.relative_to(ts_dir)
               dst = ts_target / rel
