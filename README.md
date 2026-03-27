@@ -2,38 +2,37 @@
 
 **English** | [中文](README_CN.md)
 
-Construct 3 ACE definitions + TypeScript scripting interfaces, fetched from the official CDN. Provides keyword search API and pre-built data files for direct access.
+Pre-built [Construct 3](https://www.construct.net) API data extracted from the official CDN. 66 plugins, 31 behaviors, 89 effects, 481 examples — per-language, CDN-native field names, ready to read.
 
-## Data Files (pre-built, no install needed)
+> Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
 
-This repo ships pre-built Construct 3 API definitions (currently **r476**) in **per-language** files using CDN-native field names. Read them directly — no server, no dependencies. Updated automatically by GitHub Action on new C3 releases.
+## Data Files
 
-### File layout
+No install needed. Pick a language directory and read.
 
 ```
 data/c3-schemas/
-  _index.json                              — START HERE: plugin/behavior/effect index
-  en/plugins/{id}.json                     — English ACE definitions (conditions, actions, expressions)
-  zh/plugins/{id}.json                     — Chinese ACE definitions (same structure, localized text)
-  en/behaviors/{id}.json                   — English behavior ACE definitions
-  zh/behaviors/{id}.json                   — Chinese behavior ACE definitions
-  en/effects/{id}.json                     — English effect definitions (parameters, categories)
-  zh/effects/{id}.json                     — Chinese effect definitions
-  en/editor/index.json                     — Editor UI element names (English)
-  zh/editor/index.json                     — Editor UI element names (Chinese)
-  en/examples/{id}.json                     — English example project metadata (tags, used addons)
-  zh/examples/{id}.json                     — Chinese example project metadata (localized tags)
+  _index.json                    — master index (all plugins, behaviors, effects)
+  {lang}/
+    plugins/{id}.json            — 66 plugins: conditions, actions, expressions
+    behaviors/{id}.json          — 31 behaviors: ACE definitions
+    effects/{id}.json            — 89 effects: parameters, categories
+    examples/{id}.json           — 481 examples: name, description, tags, used-addons
+    editor/index.json            — editor UI: bars, dialogs, views
+  (lang = en, zh)
 
 data/c3-ts-defs/
-  autocomplete-data.json                   — 109 scripting classes → method/property lists
-  plugins/.../*.d.ts                       — full TypeScript interface signatures per plugin
-  behaviors/.../*.d.ts                     — behavior TypeScript interfaces
-  preview/interfaces/...                   — runtime base classes (IInstance, IWorldInstance, etc.)
+  autocomplete-data.json         — 109 scripting classes → methods/properties
+  plugins/.../*.d.ts             — 150 TypeScript interface files
+  behaviors/.../*.d.ts
+  preview/interfaces/...         — runtime base classes (IInstance, IWorldInstance, ...)
 ```
 
-### How to look up C3 plugin/behavior info
+## Usage
 
-**Step 1** — Read `data/c3-schemas/_index.json` to find the plugin or behavior id:
+### 1. Find a plugin/behavior
+
+Read `_index.json`:
 ```json
 {
   "plugins": {
@@ -47,9 +46,9 @@ data/c3-ts-defs/
 }
 ```
 
-**Step 2** — Pick a language directory and read the schema file.
+### 2. Read its ACE definitions
 
-`data/c3-schemas/en/plugins/sprite.json` — condition example (CDN-native field names):
+`en/plugins/sprite.json` — a condition entry:
 ```json
 {
   "id": "is-animation-playing",
@@ -64,7 +63,7 @@ data/c3-ts-defs/
 }
 ```
 
-`data/c3-schemas/zh/plugins/sprite.json` — same ACE in Chinese:
+`zh/plugins/sprite.json` — same ACE, Chinese:
 ```json
 {
   "id": "is-animation-playing",
@@ -79,31 +78,30 @@ data/c3-ts-defs/
 }
 ```
 
-> Field names match the official CDN (`list-name`, `display-text`, `translated-name` for expressions).
-> Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are identical across languages.
+Field names match the official CDN: `list-name`, `display-text` for conditions/actions; `translated-name` for expressions. Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are identical across languages.
 
-**Step 3 (scripting only)** — For JavaScript/TypeScript API details:
-1. Read `data/c3-ts-defs/autocomplete-data.json` to find the interface class name (e.g. `ISpriteInstance`)
-2. Read the `.d.ts` file for full method signatures: `data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`
+### 3. JavaScript/TypeScript API
 
-### Quick reference: which file answers which question?
+1. `autocomplete-data.json` → find the class (e.g. `ISpriteInstance`)
+2. Read `plugins/general/sprite/c3runtime/ISpriteInstance.d.ts` for full signatures
 
-| Question | File to read |
-|----------|-------------|
+### Quick reference
+
+| Question | Where to look |
+|----------|---------------|
 | What plugins/behaviors/effects exist? | `_index.json` |
-| What ACEs does plugin X have? | `en/plugins/{id}.json` or `zh/plugins/{id}.json` |
-| How does an ACE appear in the event sheet? | Schema JSON → `display-text` field |
-| What parameters does an ACE take? | Schema JSON → `params` object |
-| What effects are available? | `en/effects/{id}.json` |
-| How do I use X in JavaScript? | `autocomplete-data.json` → then `.d.ts` file |
-| What example projects use plugin X? | `en/examples/{id}.json` → `used-addons` field |
+| What ACEs does X have? | `{lang}/plugins/{id}.json` |
+| How does an ACE look in the event sheet? | `display-text` field |
+| What parameters does an ACE take? | `params` object |
+| What effects are available? | `{lang}/effects/{id}.json` |
+| Example projects using X? | `{lang}/examples/*.json` → `used-addons` |
+| JavaScript/TypeScript API? | `autocomplete-data.json` → `.d.ts` |
 
-## API
+## Search API (optional)
 
 ```bash
 pip install -r requirements.txt
-python scripts/setup.py
-# → http://localhost:8765/playground
+python scripts/setup.py          # → http://localhost:8765/playground
 ```
 
 ### POST /search
@@ -114,45 +112,30 @@ python scripts/setup.py
 | `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
 | `lang` | `en` · `zh` · `ja` · `ko` | auto-detect |
 | `context` | include LLM-ready text | `false` |
-| `debug` | timing breakdown | `false` |
-
-Response example (`mode=list`):
-```json
-{
-  "lookup": {
-    "hit": true,
-    "plugin": {"id": "sprite", "name": "Sprite"},
-    "conditions": ["Is playing", "On finished", "Collisions enabled"],
-    "actions": ["Set animation", "Stop", "Start", "Set frame"],
-    "expressions": ["AnimationFrame", "AnimationName", "AnimationSpeed"]
-  }
-}
-```
 
 Full spec: [docs/api-reference.md](docs/api-reference.md)
 
-## Semantic Search (optional)
+### Semantic search
 
-Requires Docker, ~4GB disk, GPU recommended.
+Requires Qdrant + embedding model. GPU recommended.
 
 ```bash
 pip install -r requirements-full.txt
 docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-git clone https://github.com/XHXIAIEIN/Construct3-Manual.git
 python scripts/setup.py --full
 ```
 
 ## Project Structure
 
 ```
-src/api.py              API service (FastAPI)
-src/ingest/             CDN fetching, schema parsing, indexing
+src/api.py              FastAPI service
+src/ingest/             CDN fetching, schema export, indexing
 src/rag/                Lookup engine, vector retriever, query expander
-data/c3-schemas/        Pre-built ACE definitions (committed)
-data/c3-ts-defs/        TypeScript interfaces (committed)
-tests/                  172 unit tests + 17 eval cases
+data/c3-schemas/        Pre-built API data (en + zh)
+data/c3-ts-defs/        TypeScript interfaces
+tests/                  173 tests
 docs/                   API reference, architecture, data pipeline
-.github/workflows/      Auto-update on new C3 releases (weekly check)
+.github/workflows/      Weekly auto-update
 ```
 
 ## Credits
@@ -161,9 +144,8 @@ Data from [Construct 3](https://www.construct.net) by [Scirra Ltd](https://www.s
 
 | Source | Usage |
 |--------|-------|
-| [Construct 3 Editor CDN](https://editor.construct.net) | ACE definitions, TypeScript interfaces, translations |
+| [Construct 3 Editor CDN](https://editor.construct.net) | ACE definitions, effects, examples, TypeScript interfaces, translations |
 | [Construct 3 Manual](https://www.construct.net/en/make-games/manuals/construct-3) | Official documentation |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Example projects |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Markdown mirror of official manual |
 | [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | Chinese synonym dictionary |
 
