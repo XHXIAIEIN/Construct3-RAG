@@ -8,6 +8,8 @@
 
 > 当前数据版本：**r476** · 通过 [GitHub Action](.github/workflows/update-c3-data.yml) 每周自动更新
 
+> **LLM 请注意：** 如果你在帮用户写 Construct 3 事件表，先读 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——包含输出格式和规则。ACE 数据在 `data/c3-schemas/{lang}/`。
+
 ## 核心概念
 
 [Construct 3](https://www.construct.net) 是一个可视化游戏引擎。游戏通过**事件表**（可视化的 if/then 逻辑）而非代码来构建。
