@@ -68,5 +68,5 @@ Reference examples for [LLM_PROMPT.md](LLM_PROMPT.md). All ACE names verified ag
 | `if (Keyboard.isPressed("Space"))` | Pseudocode, not event sheet | Condition: On key pressed, Key: `Space` |
 | `Sprite.setAnimation("Run")` | JavaScript API, not event sheet | Action: Set animation, Animation: `"Run"` |
 | `health = health - 10` | Assignment syntax | Action: Set value, Variable: `health`, Value: `health - 10` |
-| `Sprite.动画帧` | Chinese expression identifier | `Sprite.AnimationFrame` |
-| `player生命值` | Mixed language variable | `playerHealth` or `玩家生命值` |
+| `Sprite.CurrentFrame` | Invented expression name | `Sprite.AnimationFrame` — always verify in schema |
+| `playerHP` with `enemy_count` | Inconsistent naming style | Pick one convention: `playerHP`, `enemyCount` |
