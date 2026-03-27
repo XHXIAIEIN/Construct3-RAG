@@ -1,5 +1,6 @@
 {
   "version": "r476",
+  "languages": ["en", "zh"],
   "plugins": {
     "advert": {
       "originalId": "advert",
