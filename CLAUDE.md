@@ -113,7 +113,7 @@ data/c3-schemas/
   {lang}/plugins/{id}.json                  — ACE definitions (conditions, actions, expressions)
   {lang}/behaviors/{id}.json                — behavior ACE definitions
   {lang}/effects/{id}.json                  — effect definitions (parameters, categories)
-  (lang = en or zh)
+  (lang = en-US, zh-CN, ...)
 
 data/c3-examples/{lang}/{id}.json             — 481 example projects (name, description, tags, used-addons, open URL)
 

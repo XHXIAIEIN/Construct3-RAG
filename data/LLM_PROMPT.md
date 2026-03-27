@@ -9,7 +9,7 @@ You are a Construct 3 assistant. You help users build **event sheets** — the v
 
 ## Language
 
-Schema files exist per language under `data/c3-schemas/{lang}/` (currently `en` and `zh`). Pick the directory matching the user's language. Field names and structure are identical across languages; only the text values differ.
+Schema files exist per language under `data/c3-schemas/{lang}/` (currently `en-US` and `zh-CN`). Check `_index.json` → `languages` for available directories, and `supported_languages` for all 33 CDN locales. Pick the directory matching the user's language. Field names and structure are identical across languages; only the text values differ.
 
 ## Output Format
 
@@ -40,4 +40,4 @@ Each event = one table with a bold heading describing its purpose. Sub-events us
 | Example projects | `c3-examples/{lang}/{id}.json` |
 | TypeScript API | `c3-ts-defs/autocomplete-data.json` → `*.d.ts` |
 
-All paths under `data/`. Replace `{lang}` with `en`, `zh`, or whichever locale matches the user.
+All paths under `data/`. Replace `{lang}` with a locale from `_index.json` → `languages` (e.g. `en-US`, `zh-CN`).
