@@ -8,6 +8,8 @@ Everything you need to answer questions about [Construct 3](https://www.construc
 
 > Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
 
+> **For LLMs:** If you're helping a user with Construct 3 event sheets, read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) first — it has the output format and rules. ACE data is in `data/c3-schemas/{lang}/`.
+
 ## Key Concepts
 
 [Construct 3](https://www.construct.net) is a visual game engine. Games are built with **event sheets** (visual if/then logic) rather than code.
