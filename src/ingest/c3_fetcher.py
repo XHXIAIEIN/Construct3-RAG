@@ -162,7 +162,11 @@ class C3Fetcher:
         }
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
-        all_locales = self.fetch_available_locales()
+        try:
+            all_locales = self.fetch_available_locales()
+        except Exception as e:
+            logger.warning(f"[CDN] Failed to fetch locales: {e}")
+            all_locales = sorted(lang_texts.keys())
         index_data: dict = {
             "version": self.version,
             "languages": sorted(lang_texts.keys()),
