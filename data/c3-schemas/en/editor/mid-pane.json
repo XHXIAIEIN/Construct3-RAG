@@ -1,0 +1,16 @@
+{
+  "empty-no-project": {
+    "title": "What next?",
+    "message": "There isn't anything open. Here are some options.",
+    "create-a-new-project": "Create a new project",
+    "view-start-page": "View the Start Page",
+    "open-example-browser": "Open Example Browser",
+    "view-tutorials": "View tutorials",
+    "help": "Help",
+    "asset-store": "Asset Store"
+  },
+  "empty-with-project": {
+    "title": "All tabs closed",
+    "message": "You still have a project open, but all its tabs have been closed.\nUse the Project Bar to open a layout or event sheet, or close the project."
+  }
+}

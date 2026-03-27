@@ -1,0 +1,2937 @@
+{
+  "bookmarks": {
+    "title": "书签栏",
+    "icon": "图标",
+    "name": "名称",
+    "where": "位置",
+    "sheet": "事件表",
+    "event-location": "事件行: {0}",
+    "close-to-event": "事件行: {0}",
+    "no-location": "不适用",
+    "event-objects": {
+      "group": "事件组: ",
+      "comment": "注释: ",
+      "local-variable": "局部: ",
+      "global-variable": "全局: ",
+      "include": "包含: ",
+      "missing": "(缺失)"
+    },
+    "context-menu": {
+      "go-to": "跳转",
+      "remove": "移除",
+      "remove-all": "移除所有",
+      "toggle-bookmark": "书签",
+      "help": "帮助"
+    }
+  },
+  "findAllReferences": {
+    "title": "查找所有引用",
+    "search-title": {
+      "other": "查找所有引用: '{0}' (找到 {1} 项)"
+    },
+    "project": "项目",
+    "where": "方式",
+    "location": "位置",
+    "icon": "图标",
+    "match": "匹配",
+    "no-number": "不适用",
+    "event-location": "事件 {0}",
+    "action-location": "事件 {0} 动作 {1}",
+    "condition-location": "事件 {0} 条件 {1}",
+    "layout-result-location": "(在场景中)",
+    "layout-instance-count": {
+      "other": "{0} 个实例在 [b]{1}[/b]"
+    },
+    "member-of-family-result": "家族成员 [b]{0}[/b]",
+    "member-of-family-location": "(家族成员)",
+    "family-member-result": "家族成员 [b]{0}[/b]",
+    "family-member-location": "(家族成员)",
+    "object-class-plugin-result": "[b]{0}[/b] 使用 '{1}' 插件",
+    "object-class-location": "(对象类型)",
+    "behavior-type-result": "[b]{0}[/b] 对象类型 [b]{1}[/b] 使用 '{2}' 行为",
+    "effect-type-result": "[b]{0}[/b] 滤镜类型 [b]{1}[/b] 使用 '{2}' 滤镜",
+    "context-menu": {
+      "go-to": "跳转",
+      "remove-result": "移除结果",
+      "redo-search": "重新搜索",
+      "clear-all": "清理所有",
+      "help": "帮助"
+    },
+    "filter-results-placeholder": "从查找结果中筛选",
+    "toolbar": {
+      "show-ambiguous": "显示模糊结果"
+    },
+    "short-search-title": "查找引用 ({0})"
+  },
+  "findResults": {
+    "title": "查找结果",
+    "search-title": {
+      "other": "查找结果: '{0}' (找到 {1} 项)"
+    },
+    "project": "项目",
+    "where": "位置",
+    "icon": "图标",
+    "match": "匹配",
+    "no-number": "不适用",
+    "event-location": "事件 {0}",
+    "action-location": "事件 {0} 动作 {1}",
+    "condition-location": "事件 {0} 条件 {1}",
+    "context-menu": {
+      "go-to": "跳转",
+      "remove-result": "移除结果",
+      "redo-search": "重新查找",
+      "clear-all": "清理所有",
+      "help": "帮助"
+    },
+    "script-location": "事件 {0} 行 {1}",
+    "action-script-location": "事件 {0} 动作 {1} 行 {2}",
+    "toolbar": {
+      "find-label": "查找",
+      "filter-label": "筛选",
+      "filter-results-placeholder": "从查找结果筛选",
+      "look-in": "查找范围",
+      "match-case": "匹配大小写",
+      "active-event-sheet": "当前事件表",
+      "all-event-sheets": "所有事件表",
+      "all-project-files": "所有项目文件",
+      "active-flowchart": "当前时间轴",
+      "all-flowcharts": "整个项目的时间轴",
+      "active-timeline": "当前时间轴",
+      "all-timelines": "整个项目的时间轴",
+      "all-event-sheets-and-files": "所有事件表/文件/流程图/时间轴"
+    },
+    "project-file-location": "第 {0} 行",
+    "dictionary-key-location": "字段 [i]{0}[/i]",
+    "dictionary-value-location": "值 [i]{0}[/i]",
+    "array-location": "数组元素 ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+    "flowcharts": {
+      "location": {
+        "flowchart-node-caption": "节点标题",
+        "flowchart-node-tag": "节点标签",
+        "flowchart-node-comment": "节点注释",
+        "flowchart-node-reference-tag": "引用节点标签",
+        "flowchart-node-output-name": "输出名称",
+        "flowchart-node-output-value": "输出值"
+      }
+    },
+    "timelines": {
+      "location": {
+        "timeline-track-folder-name": "轨道文件夹名称",
+        "timeline-property-track-folder-name": "属性轨道文件夹名称",
+        "timeline-track-name": "轨道名称",
+        "timeline-track-id": "轨道ID",
+        "timeline-property-track-name": "属性轨道名称",
+        "timeline-keyframe-tags": "关键帧标签"
+      }
+    },
+    "sheet": "事件表/文件 / 流程图 / 时间轴",
+    "short-search-title": "查找结果 ({0})"
+  },
+  "layers": {
+    "title": "图层栏",
+    "title-with-layout": "图层栏 - {0}",
+    "menu": {
+      "add-layer-at-top": "添加图层到顶部",
+      "add-layer-at-bottom": "添加图层到底部",
+      "show-hide": {
+        "name": "显示/隐藏",
+        "items": {
+          "show-all": "显示全部",
+          "hide-all-but-this": "隐藏其他",
+          "hide-all": "隐藏全部"
+        }
+      },
+      "lock-unlock": {
+        "name": "锁定/解锁",
+        "items": {
+          "unlock-all": "解锁所有",
+          "lock-all-but-this": "锁定其他",
+          "lock-all": "锁定全部"
+        }
+      },
+      "help-on-layers": "关于图层",
+      "help-for-this-bar": "关于图层栏",
+      "insert-layer-above": "添加图层到上方",
+      "insert-layer-below": "添加图层到下方",
+      "insert-sub-layer": "添加子图层",
+      "open-original-global-layer-layout": "打开原始图层场景"
+    },
+    "confirm-delete": {
+      "caption": "删除层",
+      "message": "删除图层也将删除它上面的所有实例对象。你确定要删除图层吗?"
+    },
+    "global": "全局",
+    "overridden": "被覆盖"
+  },
+  "project": {
+    "title": "项目栏",
+    "items": {
+      "layouts": "场景",
+      "event-sheets": "事件表",
+      "object-types": "对象",
+      "families": "家族",
+      "sound-files": "声音",
+      "music-files": "音乐",
+      "video-files": "视频",
+      "font-files": "字体",
+      "general-files": "文件",
+      "timelines": "时间轴",
+      "script-files": "脚本",
+      "transitions": "曲线",
+      "flowcharts": "流程图",
+      "icon-files": "图标",
+      "models3d": "3D 模型"
+    },
+    "add-event-sheet-prompt": {
+      "caption": "添加场景",
+      "message": "是否需要为此场景添加事件表？",
+      "add-event-sheet": "添加事件表",
+      "add-layout-only": "仅添加场景"
+    },
+    "menu": {
+      "main": {
+        "new-project": "新建项目",
+        "open": {
+          "name": "打开项目",
+          "cloud": "云储存",
+          "browser": "浏览器",
+          "local-file": "本地文件"
+        },
+        "help": "帮助"
+      },
+      "projectItem": {
+        "preview": "预览",
+        "remote-preview": "远程预览",
+        "debug": "调试",
+        "export": "导出",
+        "save": "保存",
+        "close-project": "关闭项目",
+        "tools": "工具",
+        "view-project-statistics": "项目统计",
+        "view-used-addons": "插件统计",
+        "view-spritesheets": "精灵图集",
+        "help": "关于项目",
+        "view-deprecated-features": "查看已弃用的功能",
+        "rename-functions-object": "重命名 '动作组'"
+      },
+      "objectTypeFolderItem": {
+        "add-new-object-type": "添加新的对象",
+        "add-subfolder": "新建文件夹",
+        "help": "关于对象类型"
+      },
+      "objectTypeItem": {
+        "edit-animations": "编辑动画",
+        "edit-image": "编辑图片",
+        "edit-instance-variables": "编辑变量",
+        "edit-behaviors": "编辑行为",
+        "edit-effects": "编辑滤镜",
+        "remove-from-family": "从家族中移除",
+        "edit-family": "编辑家族 '{0}'",
+        "clone": "克隆",
+        "help": "关于 '{0}'",
+        "add-to-family": "添加到家族",
+        "create-new-family": "创建家族",
+        "create-instance": "创建实例",
+        "select-all-in-project": "选择项目全部实例"
+      },
+      "familyFolderItem": {
+        "add-family": "添加家族",
+        "help": "关于家族",
+        "add-subfolder": "创建子文件夹"
+      },
+      "familyItem": {
+        "edit-family": "编辑家族",
+        "family-instance-variables": "家族实例变量",
+        "family-behaviors": "家族行为",
+        "family-effects": "家族滤镜",
+        "help": "关于家族",
+        "select-all-in-project": "选择项目全部实例"
+      },
+      "layoutFolderItem": {
+        "add-layout": "添加场景",
+        "add-subfolder": "新建文件夹",
+        "help": "关于场景"
+      },
+      "layoutItem": {
+        "open": "打开",
+        "duplicate": "克隆",
+        "edit-event-sheet": "编辑事件表",
+        "preview": "预览场景",
+        "debug": "调试",
+        "help": "关于场景"
+      },
+      "eventSheetFolderItem": {
+        "add-event-sheet": "添加事件表",
+        "add-subfolder": "新建文件夹",
+        "help": "关于事件表"
+      },
+      "eventSheetItem": {
+        "open": "打开",
+        "help": "关于事件表"
+      },
+      "fileFolderItem": {
+        "import-sound": "导入声音",
+        "import-music": "导入音乐",
+        "import-video": "导入视频",
+        "import-font": "导入字体",
+        "import-icon": "导入图标",
+        "import-general": "导入文件",
+        "new": {
+          "new": "新建",
+          "array": "数组",
+          "dictionary": "字典",
+          "txt": "纯文本",
+          "json": "JSON",
+          "xml": "XML",
+          "svg": "SVG",
+          "css": "CSS 样式表",
+          "js": "JavaScript",
+          "html": "HTML",
+          "csv": "CSV",
+          "ts": "TypeScript"
+        },
+        "add-subfolder": "新建文件夹",
+        "help": "关于项目文件",
+        "import-script": "导入脚本文件",
+        "reload-all-from-folder": "重新读取项目文件夹",
+        "auto-reload-all-on-preview": "预览时自动重新加载",
+        "typescript": "TypeScript",
+        "update-typescript-definitions": "更新 TypeScript 类型声明",
+        "typescript-help": "Construct 中使用 TypeScript 的帮助",
+        "add-javascript": "新建 Javascript",
+        "add-typescript": "新建 TypeScript",
+        "switch-project-to-typescript": "切换项目到 TypeScript",
+        "switch-project-to-javascript": "切换项目到 JavaScript",
+        "set-up-external-typescript": "安装外部编辑器 TypeScript 环境"
+      },
+      "fileItem": {
+        "preview": "预览",
+        "download": "下载",
+        "expand": "展开",
+        "collapse": "收起",
+        "edit-with-data": "在数据编辑器中打开",
+        "duplicate": "克隆",
+        "help": "关于项目文件",
+        "rename": "重命名",
+        "unable-to-load-font": "无法加载字体",
+        "changeExtension": "您确定要将文件扩展名从 [b]{0}[/b] 更改为 [b]{1}[/b]?",
+        "reload-from-folder": "从项目文件夹重新读取",
+        "copy-path": "复制文件路径"
+      },
+      "common": {
+        "expand-collapse-menu": "折叠",
+        "expand-all": "展开全部",
+        "collapse-all": "收起全部"
+      },
+      "timelineFolderItem": {
+        "add-timeline": "添加时间轴",
+        "add-subfolder": "创建子文件夹",
+        "help": "关于时间轴"
+      },
+      "timelineItem": {
+        "open": "打开",
+        "duplicate": "克隆",
+        "help": "关于时间轴"
+      },
+      "transitionFolderItem": {
+        "add-transition": "添加曲线",
+        "add-subfolder": "创建子文件夹",
+        "help": "关于曲线"
+      },
+      "transitionItem": {
+        "open": "打开",
+        "duplicate": "克隆",
+        "help": "关于曲线"
+      },
+      "flowchartItem": {
+        "open": "打开",
+        "duplicate": "克隆",
+        "help": "流程图帮助"
+      },
+      "flowchartFolderItem": {
+        "add-flowchart": "添加流程",
+        "add-subfolder": "添加子文件夹",
+        "help": "流程图帮助"
+      },
+      "model3dItem": {
+        "import": "导入模型",
+        "import-from-folder": "导入文件夹",
+        "import-from-file": "导入文件",
+        "duplicate": "复制",
+        "help": "查看 3D 模型文档"
+      },
+      "model3dFolderItem": {
+        "add-model3d": "创建 3D 模型",
+        "add-subfolder": "创建子文件夹",
+        "help": "查看 3D 模型文档"
+      }
+    },
+    "confirm-delete": {
+      "caption": "从项目中删除",
+      "layouts": {
+        "other": "您确定要删除[b]{0}[/b]选中的场景吗？"
+      },
+      "cannot-delete-last-layout": {
+        "caption": "无法删除最后一个场景",
+        "message": "每个项目必须至少保留一个场景。"
+      },
+      "event-sheets": {
+        "other": "您确定要删除[b]{0}[/b]选中的事件表吗？"
+      },
+      "objects": {
+        "referenced": {
+          "other": "删除对象将会删除关于它所有的相关条件、动作以及表达式。您确定要删除[b]{0}[/b]选中的对象吗?"
+        },
+        "unreferenced": {
+          "other": "您确定要删除选中的[b]{0}[/b]对象吗?"
+        }
+      },
+      "families": {
+        "referenced": {
+          "other": "删除家族将会删除关于它所有的相关条件、动作以及表达式。您确定要删除[b]{0}[/b]选中的家族吗?"
+        },
+        "unreferenced": {
+          "other": "您确定要删除[b]{0}[/b]选中的家族吗?"
+        }
+      },
+      "timelines": {
+        "other": "您确定要删除[b]{0}[/b]选中的时间轴吗?"
+      },
+      "flowcharts": {
+        "other": "您确定要删除 [b]{0}[/b] 流程图吗？"
+      },
+      "transitions": {
+        "other": "您确定要删除 [b]{0}[/b] 选择的曲线吗？"
+      },
+      "models3d": {
+        "other": "您确定要删除选定的 [b]{0}[/b] 个 3D 模型吗？"
+      }
+    },
+    "files": {
+      "main-script-name": "main",
+      "import-for-events-script-name": "importsForEvents",
+      "new-file-name": "新建文件",
+      "new-script-name": "script"
+    },
+    "project-location-suffix": "{0} - {1}",
+    "no-location": "(未知地区)"
+  },
+  "properties": {
+    "title": "属性栏",
+    "footer-title-suffix": ": ",
+    "percent-suffix": "%",
+    "angle-suffix": "°",
+    "multiple-placeholder": "(多个)",
+    "webfonts-picker-header-text": "或者从当前项目中选择一个字体: ",
+    "help-link": {
+      "name": "更多信息",
+      "desc": "打开手册条目以获取有关这些属性的更多信息",
+      "link-text": "帮助"
+    },
+    "instance": {
+      "object-type-properties": {
+        "name": "实例属性",
+        "desc": "整个对象类型的属性（影响所有实例）"
+      },
+      "family-properties": {
+        "name": "家族属性",
+        "desc": "应用整个家族对象的属性"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "此类对象的名称",
+        "desc-family": "这个家族的名称"
+      },
+      "plugin": {
+        "name": "类型",
+        "desc": "这个对象类型所基于的插件。",
+        "desc-family": "基于这个家族的插件"
+      },
+      "global": {
+        "name": "全局",
+        "desc": "全局对象在场景结束时不会被销毁。"
+      },
+      "common-instance-properties": {
+        "name": "组件",
+        "desc": "对象的组件属性"
+      },
+      "position": {
+        "name": "坐标",
+        "desc": "此实例对象根据其图像原点，位于场景中的位置。",
+        "separator": ", ",
+        "x": {
+          "name": "X",
+          "desc": "此实例在场景中的X坐标，以像素为单位。"
+        },
+        "y": {
+          "name": "Y",
+          "desc": "此实例在场景中的Y坐标，以像素为单位。"
+        },
+        "z": {
+          "name": "Z",
+          "desc": "该实例在场景的 Z 坐标位置，以像素为单位。"
+        }
+      },
+      "size": {
+        "name": "大小",
+        "desc": "此实例的宽度和高度，以像素为单位。",
+        "separator": " x ",
+        "width": {
+          "name": "宽度",
+          "desc": "此实例对象的宽度，以像素为单位。负数将进行垂直翻转。"
+        },
+        "height": {
+          "name": "高度",
+          "desc": "此实例对象的高度，以像素为单位。负数将进行垂直翻转。"
+        },
+        "x-scale": {
+          "name": "缩放比例 X",
+          "desc": "实例当前宽度相对于图像原始宽度的百分比。"
+        },
+        "y-scale": {
+          "name": "缩放比例 Y",
+          "desc": "实例当前高度相对于图像原始高度的百分比。"
+        },
+        "depth": {
+          "name": "深度",
+          "desc": "该实例的深度，以像素为单位。"
+        }
+      },
+      "angle": {
+        "name": "角度",
+        "desc": "此实例的旋转角度。角度增加时，相对于 0 度向右顺时针旋转。"
+      },
+      "opacity": {
+        "name": "不透明度",
+        "desc": "此实例的不透明度，从 0 (透明) 到 100 (不透明)。"
+      },
+      "layer": {
+        "name": "图层",
+        "desc": "此实例当前所在的图层。"
+      },
+      "z-index": {
+        "name": "实例索引",
+        "desc": "这个实例在当前图层上的显示顺序，从 0 开始索引。",
+        "format": "{0} / {1}"
+      },
+      "uid": {
+        "name": "UID",
+        "desc": "所选的实例对象唯一识别码(UID)。"
+      },
+      "instance-variables": {
+        "name": "实例变量",
+        "name-family": "家族实例变量",
+        "desc": "存储在对象的每个实例中的变量。",
+        "desc-family": "家族中的所有成员都会继承此变量。",
+        "inherited-group-title": "继承自 '{0}'",
+        "inherited-group-desc": "从家族 '{0}' 继承的实例变量。",
+        "hidden-count": "({0} 已隐藏)"
+      },
+      "instance-variable-default-description": "实例变量，每个实例都是独立的。",
+      "edit-instance-variables": {
+        "name": "添加 / 编辑",
+        "desc": "点击添加，编辑或移除实例变量。",
+        "link-text": "实例变量",
+        "link-text-family": "家族变量"
+      },
+      "behaviors": {
+        "name": "行为",
+        "name-family": "家族行为",
+        "desc": "用于扩展到对象的额外功能，如移动，计时器等。",
+        "desc-family": "家族中的所有成员都会继承此行为。"
+      },
+      "inherited-behavior-name": "{0} [{1}]",
+      "behavior-no-properties": "(无自定义属性)",
+      "edit-behaviors": {
+        "name": "添加 / 编辑",
+        "desc": "点击添加，编辑或移除行为。",
+        "link-text": "行为",
+        "link-text-family": "家族行为"
+      },
+      "effects": {
+        "name": "滤镜",
+        "name-family": "家族滤镜",
+        "desc": "应用到所选实例的滤镜。",
+        "enabled": {
+          "name": "启用",
+          "desc": "是否在初始时启用效果。"
+        }
+      },
+      "inherited-effect-name": "{0} [{1}]",
+      "blend-mode": {
+        "name": "混合模式",
+        "desc": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。"
+      },
+      "edit-effects": {
+        "name": "添加 / 编辑",
+        "desc": "点击添加，编辑或移除滤镜。",
+        "link-text": "滤镜",
+        "link-text-family": "家族滤镜"
+      },
+      "container-properties": {
+        "name": "关联",
+        "desc": "关联列表的对象在创建/选择/销毁时，其他被关联对象也会同时创建/选择/销毁。"
+      },
+      "container-this-object": {
+        "name": "(此对象)",
+        "desc": "此对象已经被关联。"
+      },
+      "container-remove-object": {
+        "desc": "移除此对象和其他对象的关联。",
+        "link-text": "移除"
+      },
+      "container-create": {
+        "name": "关联对象",
+        "desc": "关联列表的对象在创建/选择/销毁时，其他被关联对象也会同时创建/选择/销毁。",
+        "link-text": "添加",
+        "dialog-caption": "关联对象",
+        "dialog-header": "关联列表的对象在创建/选择/销毁时，其他被关联对象也会同时创建/选择/销毁。"
+      },
+      "container-add-object": {
+        "desc": "将另一个对象添加到关联列表中。",
+        "link-text": "添加对象",
+        "dialog-caption": "添加到关联列表",
+        "dialog-header": "要关联的对象类型:"
+      },
+      "container-select-mode": {
+        "name": "选择模式",
+        "desc": "在场景中如何选择关联对象的实例",
+        "items": {
+          "normal": "正常",
+          "all": "全选",
+          "wrap": "组合"
+        }
+      },
+      "plugin-properties": {
+        "name": "属性",
+        "desc": "当前选中的对象属性。"
+      },
+      "color": {
+        "name": "颜色",
+        "desc": "应用于该实例的颜色。"
+      },
+      "scene-graph-properties": {
+        "name": "对象层级",
+        "desc": "影响此实例在其对象层级中的属性。",
+        "properties": {
+          "x": {
+            "name": "跟随X坐标",
+            "desc": "父对象的X坐标变化时，自己也跟随变化。"
+          },
+          "y": {
+            "name": "跟随Y坐标",
+            "desc": "父对象的Y坐标变化时，自己也跟随变化。"
+          },
+          "width": {
+            "name": "跟随宽度",
+            "desc": "父对象的宽度变化时，自己也跟随变化。"
+          },
+          "height": {
+            "name": "跟随高度",
+            "desc": "父对象的高度变化时，自己也跟随变化。"
+          },
+          "angle": {
+            "name": "跟随角度",
+            "desc": "父对象的高度变化时，自己的宽度也跟随变化。"
+          },
+          "destroy": {
+            "name": "跟随父对象销毁",
+            "desc": "跟随的父对象被销毁时，是否同时销毁这个实例。"
+          },
+          "select-mode": {
+            "name": "选择模式",
+            "items": {
+              "normal": "正常",
+              "all": "全选",
+              "wrap": "组合"
+            },
+            "desc": "在场景视图中，如何选择这个层级的实例对象。"
+          },
+          "opacity": {
+            "name": "跟随不透明度",
+            "desc": "父对象的不透明度变化时，自己也跟随变化。"
+          },
+          "visibility": {
+            "name": "跟随可见性",
+            "desc": "父对象的可见性变化时，自己也跟随变化。"
+          },
+          "z": {
+            "name": "跟随Z坐标",
+            "desc": "是否跟随同步父对象的Z坐标。"
+          }
+        }
+      },
+      "template-properties": {
+        "name": "模版",
+        "desc": "作为模版的对象，可以让其他实例对象继承此对象的属性。",
+        "context-menu": {
+          "replica": {
+            "use-from-template": "从模版继承属性 '{0}'"
+          }
+        },
+        "properties": {
+          "template-mode": {
+            "name": "用途",
+            "desc": "选择此实例是作为模版对象，还是作为副本对象。",
+            "items": {
+              "template": "作为模版",
+              "replica": "作为副本"
+            }
+          },
+          "template-name": {
+            "name": "模版名称",
+            "desc": "作为模版的对象，通过模版名称，让其他对象继承此对象的属性。"
+          },
+          "template-source": {
+            "name": "继承模版",
+            "desc": "副本对象可以通过模版名称，继承模版的属性。"
+          },
+          "template-propagate-hierarchy": {
+            "name": "同步对象层级",
+            "desc": "模板的对象层级关系改变时，其他副本对象也会同步改变。包括调整子对象的各方面属性，添加或删除子对象等操作。"
+          },
+          "template-replica-ignore-hierarchy": {
+            "name": "忽略对象层级同步",
+            "desc": "忽略模板对象层级的同步状态，此实例独立于模板呈现不同的状态。"
+          },
+          "template-replace-whole-hierarchy": {
+            "name": "替换对象层级",
+            "desc": "完全替换每个副本的对象层级，删除现有并重新创建子对象。",
+            "link": "替换"
+          },
+          "template-modify-existing-hierarchy": {
+            "name": "更新对象层级",
+            "desc": "更新每个副本现有的对象层级，但不会删除或创建子对象。",
+            "link": "更新"
+          },
+          "template-replica-replace-whole-hierarchy": {
+            "name": "替换对象层级",
+            "desc": "完全替换此副本的对象层级，删除现有并重新创建子对象。",
+            "link": "覆盖"
+          },
+          "template-replica-modify-existing-hierarchy": {
+            "name": "更新对象层级",
+            "desc": "更新此副本现有的对象层级，但不会删除或创建子对象。",
+            "link": "更新"
+          }
+        }
+      },
+      "tags": {
+        "name": "标签",
+        "desc": "用于匹配不同实例的标签，使用空格分隔多个标签。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "影响此实例在编辑器中的属性。",
+        "visible-in-editor": {
+          "name": "编辑器可见",
+          "desc": "设置此实例在场景中可见。"
+        },
+        "locked": {
+          "name": "锁定",
+          "desc": "锁定对象，防止实例被意外点击或编辑。"
+        }
+      },
+      "new-instance-template": {
+        "name": "实例模板",
+        "desc": "仅适用于编辑器，创建新实例时用于初始属性的模板。"
+      },
+      "new-instance-replica": {
+        "name": "实例副本",
+        "desc": "仅适用于编辑器，用于确认新创建的实例是否应该是原始模板的副本。"
+      }
+    },
+    "layer": {
+      "layer-properties": {
+        "name": "图层属性",
+        "desc": "当前选中的图层属性。"
+      },
+      "name": {
+        "name": "图层名称",
+        "desc": "当前选中的图层名称。"
+      },
+      "initially-visible": {
+        "name": "初始可见",
+        "desc": "场景开始时，图层是否可见。"
+      },
+      "use-render-cells": {
+        "name": "静态渲染",
+        "desc": "用于优化大型图层中包含大量静态对象的渲染模式。不能与视距高度一起使用。"
+      },
+      "global": {
+        "name": "全局图层",
+        "desc": "将此图层覆盖其他场景中具有相同名称的其他图层。对全局图层所做的改变将同步到全部场景。",
+        "overriden": "被覆盖"
+      },
+      "scrollzoom-properties": {
+        "name": "滚动和缩放",
+        "desc": "影响图层镜头滚动和缩放方式的属性。"
+      },
+      "scale-rate": {
+        "name": "缩放比例",
+        "desc": "该层跟随场景缩放时产生不同的缩放比例。 使用 0 则禁用缩放。"
+      },
+      "parallax": {
+        "name": "滚动视差",
+        "desc": "图层跟随镜头移动的同步率。对于固定的 UI 图层可以将其设置为 0，保持在屏幕位置。",
+        "separator": " x ",
+        "x": {
+          "name": "X",
+          "desc": "水平滚动率"
+        },
+        "y": {
+          "name": "Y",
+          "desc": "垂直滚动率"
+        }
+      },
+      "appearance-properties": {
+        "name": "外观",
+        "desc": "影响图层在运行时显示效果。"
+      },
+      "background-color": {
+        "name": "背景颜色",
+        "desc": "在非透明背景下，图层显示的背景颜色。"
+      },
+      "transparent": {
+        "name": "透明背景",
+        "desc": "忽略背景颜色，并具有透明背景。"
+      },
+      "opacity": {
+        "name": "不透明度",
+        "desc": "整体图层不透明度，从0（透明）到100（不透明）"
+      },
+      "force-own-texture": {
+        "name": "启用纹理缓冲",
+        "desc": "启用后，图层将强制渲染到中间纹理层，而不是直接渲染到屏幕。用于处理混合模式、半透明图层、以及部分滤镜等。禁用可提升渲染性能。"
+      },
+      "uses-own-texture": {
+        "name": "使用纹理缓冲",
+        "desc": "当前图层是否作为过渡图层进行渲染，这将产生一些性能开销。部分设置可能会导致图层强制启用，如调整图层不透明度、混合模式、添加了部分滤镜等。"
+      },
+      "effect-properties": {
+        "name": "滤镜",
+        "desc": "应用到整个图层的滤镜。"
+      },
+      "blend-mode": {
+        "name": "混合模式",
+        "desc": "将图层与背景混合。如果添加了滤镜，会应用到最后一个效果。"
+      },
+      "edit-effects": {
+        "name": "添加 / 编辑",
+        "desc": "点击添加，编辑或移除滤镜。",
+        "link-text": "滤镜"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "仅影响编辑器图层的使用方式设置。"
+      },
+      "visible-in-editor": {
+        "name": "显示图层",
+        "desc": "在场景中显示此图层。"
+      },
+      "locked": {
+        "name": "锁定图层",
+        "desc": "防止选择或更改此图层上的任何对象"
+      },
+      "parallax-in-editor": {
+        "name": "预览视差",
+        "desc": "在编辑器中预览图层的视差滚动。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册以了解有关图层属性的更多信息",
+        "link-text": "帮助"
+      },
+      "z-elevation": {
+        "name": "视距高度",
+        "desc": "Z轴方向的图层高度。"
+      },
+      "rendering-mode": {
+        "name": "渲染模式",
+        "desc": "是否将此图层渲染为 2D 或 3D。使用 2D 模式渲染独立于 3D 内容的背景或覆盖。",
+        "options": {
+          "2d": "2D",
+          "3d": "3D"
+        }
+      },
+      "draw-order": {
+        "name": "渲染顺序",
+        "desc": "针对3D图层，对象显示优先级是按照2D图层的前后顺序绘制，还是按照3D相机视角的距离远近绘制。",
+        "options": {
+          "z-order": "图层顺序",
+          "camera-distance": "相机距离"
+        }
+      },
+      "initially-interactive": {
+        "name": "响应交互",
+        "desc": "允许图层与用户交互，响应鼠标或触控的输入。"
+      },
+      "html-elements-layer": {
+        "name": "HTML图层",
+        "desc": "允许 HTML 元素出现在当前层的顶部，或上一个图层的下方。"
+      }
+    },
+    "layout": {
+      "layout-properties": {
+        "name": "场景",
+        "desc": "选中的场景属性"
+      },
+      "name": {
+        "name": "场景名称",
+        "desc": "选中的场景名称"
+      },
+      "event-sheet": {
+        "name": "事件表",
+        "desc": "选择要为此场景运行的事件表。 您可以在此表中包含其他事件表",
+        "none": "(无)"
+      },
+      "size": {
+        "name": "场景大小",
+        "desc": "场景区域大小，以像素为单位。",
+        "separator": " x ",
+        "width": {
+          "name": "宽度",
+          "desc": "场景的宽度，以像素为单位。"
+        },
+        "height": {
+          "name": "高度",
+          "desc": "场景高度，以像素为单位。"
+        }
+      },
+      "unbounded-scrolling": {
+        "name": "允许镜头超出场景",
+        "desc": "在游戏中，是否允许显示超出场景边缘的画面。"
+      },
+      "effect-properties": {
+        "name": "滤镜",
+        "desc": "应用到整个场景的滤镜。"
+      },
+      "edit-effects": {
+        "name": "添加 / 编辑",
+        "desc": "点击创建，编辑或移除滤镜。",
+        "link-text": "滤镜"
+      },
+      "editor": {
+        "name": "编辑器",
+        "desc": "仅影响编辑器场景的使用方式设置。"
+      },
+      "margins": {
+        "name": "场景边距",
+        "desc": "编辑器中显示在场景外部的额外可用空间，以像素为单位。",
+        "separator": " x ",
+        "width": {
+          "name": "宽度",
+          "desc": "编辑器中显示场景外边距的宽度，以像素为单位。"
+        },
+        "height": {
+          "name": "高度",
+          "desc": "编辑器中显示场景外边距的高度，以像素为单位。"
+        }
+      },
+      "show-grid": {
+        "name": "显示网格",
+        "desc": "在编辑器中显示网格覆盖场景之上"
+      },
+      "snap-to-grid": {
+        "name": "对齐网格",
+        "desc": "将对象移动和调整大小与网格对齐"
+      },
+      "grid-size": {
+        "name": "网格大小",
+        "desc": "要显示/对齐的网格大小",
+        "separator": " x ",
+        "width": {
+          "name": "宽度",
+          "desc": "场景视图中显示的网格宽度"
+        },
+        "height": {
+          "name": "高度",
+          "desc": "场景视图中显示的网格高度"
+        }
+      },
+      "show-collision-polygons": {
+        "desc": "在场景视图中显示对象的碰撞框。",
+        "name": "显示碰撞线框"
+      },
+      "show-translucent-inactive-layers": {
+        "desc": "显示当前场景所有的非活动图层，并将它们锁定且不透明度显示为33％。活动层则正常显示，并且可拖动。",
+        "name": "淡化非活跃图层"
+      },
+      "project-properties": {
+        "name": "项目属性",
+        "desc": "查看此场景项目属性的快捷方式。",
+        "link-text": "查看"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册学习更多场景属性",
+        "link-text": "帮助"
+      },
+      "grid-offset": {
+        "name": "网格偏移",
+        "desc": "更改网格在场景中的显示的位置。",
+        "separator": ", ",
+        "x": {
+          "name": "网格偏移 X",
+          "desc": "编辑器场景中显示的网格X偏移量。"
+        },
+        "y": {
+          "name": "网格偏移 Y",
+          "desc": "编辑器场景中显示的网格Y偏移量。"
+        }
+      },
+      "show-scene-graph-connections": {
+        "desc": "显示相同层级中的实例的连接结构。",
+        "name": "显示对象层级"
+      },
+      "show-meshes": {
+        "name": "显示纹理网格",
+        "desc": "在编辑器中显示纹理网格的轮廓。"
+      },
+      "vanishing-point": {
+        "name": "透视中心",
+        "desc": "使用3D场景功能时，设置视区透视中心点的位置，中间为 50%。",
+        "separator": ", ",
+        "x": {
+          "name": "X",
+          "desc": "视区的消失点X。"
+        },
+        "y": {
+          "name": "Y",
+          "desc": "视区的消失点Y。"
+        }
+      },
+      "projection": {
+        "name": "投影类型",
+        "options": {
+          "perspective": "透视",
+          "orthographic": "正交"
+        },
+        "desc": "对于3D特性的渲染，是使用透视投影，还是正交投影。"
+      }
+    },
+    "project": {
+      "about": {
+        "name": "关于",
+        "desc": "项目信息"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "项目名称"
+      },
+      "version": {
+        "name": "版本",
+        "desc": "项目的版本号，通常由四组数字组成，例如1.0.0.0。每组数字在 0-99 范围。"
+      },
+      "description": {
+        "name": "简介",
+        "desc": "必填项。用一两句话描述你的项目。用于介绍游戏的类型、玩法以及特色等。"
+      },
+      "id": {
+        "name": "应用ID",
+        "placeholder": "com.company.appname",
+        "desc": "必填项。用于应用平台识别此项目的唯一标志符，以反向域名的格式填写。如 com.myname.myproject"
+      },
+      "author": {
+        "name": "作者",
+        "desc": "此项目的开发者或团队的名称"
+      },
+      "email": {
+        "name": "邮箱",
+        "desc": "用于联系的邮箱地址，如开发者或商务合作的邮箱。",
+        "placeholder": "author@example.com"
+      },
+      "website": {
+        "name": "主页",
+        "desc": "与该项目相关的网站。"
+      },
+      "colors": {
+        "name": "颜色",
+        "desc": "选择项目使用的颜色"
+      },
+      "background-color": {
+        "name": "背景颜色",
+        "desc": "在视窗外显示的背景颜色"
+      },
+      "splash-color": {
+        "name": "加载页颜色",
+        "desc": "启动屏幕的背景颜色，导出应用程序启动时显示。"
+      },
+      "use-theme-color": {
+        "name": "使用主题色",
+        "desc": "启用主题颜色功能，允许在部分平台运行时，替换平台默认的UI颜色。"
+      },
+      "theme-color": {
+        "name": "主题色",
+        "desc": "主题颜色允许在部分平台运行时，替换平台默认的UI颜色。"
+      },
+      "startup": {
+        "name": "启动页",
+        "desc": "影响项目加载和启动方式的设置。"
+      },
+      "first-layout": {
+        "name": "初始场景",
+        "desc": "项目运行时最初加载的场景",
+        "default": "(默认)"
+      },
+      "use-loader-layout": {
+        "name": "自定义加载场景",
+        "desc": "在项目其他内容仍在加载时，显示初始场景作为加载场景。"
+      },
+      "loader-style": {
+        "name": "加载页样式",
+        "desc": "在加载过程中，以哪种加载内容方式展示。",
+        "options": {
+          "none": "空白 (不推荐)",
+          "percent": "进度百分比文本",
+          "progress": "进度条",
+          "progress-logo": "进度条 & LOGO",
+          "splash": "Construct 启动页"
+        }
+      },
+      "preload-sounds": {
+        "name": "预载音效",
+        "desc": "在项目启动前，下载并解码所有声音文件（不包含音乐），确保首次播放声音时不会延迟。禁用可以提升启动速度和内存占用，但播放前要按需加载并管理内存卸载。注意，音乐文件不会预加载，它将在运行时流式传输。"
+      },
+      "display": {
+        "name": "显示",
+        "desc": "影响项目在运行时呈现方式的设置。"
+      },
+      "viewport-size": {
+        "name": "可视区域",
+        "desc": "可视区域大小，即玩家实际看到场景区域的范围。",
+        "separator": " x ",
+        "width": {
+          "name": "宽度",
+          "desc": "可视区域的宽度，以像素为单位。"
+        },
+        "height": {
+          "name": "高度",
+          "desc": "可视区域的高度，以像素为单位。"
+        }
+      },
+      "aspect-ratio": {
+        "name": "宽高比例",
+        "desc": "可视区域的宽高比"
+      },
+      "fullscreen-mode": {
+        "name": "缩放模式",
+        "desc": "根据设备的纵横比和分辨率，使用不同的缩放模式调整视区大小或填充可视空间。",
+        "options": {
+          "off": "关闭",
+          "scale-inner": "内部缩放",
+          "scale-outer": "外部放大",
+          "letterbox-scale": "比例缩放",
+          "letterbox-integer-scale": "整数缩放",
+          "integer-scale-inner": "内部整倍缩放",
+          "integer-scale-outer": "外部整倍缩放"
+        }
+      },
+      "fullscreen-quality": {
+        "name": "全屏质量",
+        "desc": "高质量在高分辨率游戏可以获得更好的视觉表现，低像素适用于临近采样的像素风格游戏。",
+        "options": {
+          "low": "低像素",
+          "high": "高质量"
+        }
+      },
+      "orientations": {
+        "name": "锁定方向",
+        "desc": "若设备支持，允许设备以竖屏或横屏进行。",
+        "options": {
+          "any": "任意",
+          "portrait": "竖屏",
+          "landscape": "横屏"
+        }
+      },
+      "pixel-rounding": {
+        "name": "像素对齐",
+        "desc": "将所有对象的坐标位置总是四舍五入为整数。"
+      },
+      "advanced": {
+        "name": "高级选项",
+        "desc": "适用于高级用户的设置。 建议将这些保留为默认值"
+      },
+      "use-worker": {
+        "name": "启用 Worker",
+        "desc": "将游戏环境托管在 Web Worker 中运行，独立于浏览器主线程。这样可以有效提升游戏效率。",
+        "options": {
+          "auto": "自动"
+        }
+      },
+      "downscaling-quality": {
+        "name": "缩放质量",
+        "desc": "渲染小于原始尺寸的图像时，权衡缩放质量和性能内存的策略。仅建议在观察到小图像边缘出现伪影或锯齿时选择高质量模式。",
+        "options": {
+          "low": "性能",
+          "medium": "均衡",
+          "high": "质量 (不推荐)"
+        }
+      },
+      "editor": {
+        "name": "编辑器",
+        "desc": "影响项目编辑和预览的设置"
+      },
+      "preview-effects": {
+        "name": "预览滤镜效果",
+        "desc": "在编辑器中预览混合模式和滤镜。"
+      },
+      "pause-on-unfocus": {
+        "name": "窗口后台暂停",
+        "desc": "当游戏窗口失去焦点时暂停游戏 ，仅在预览模式有效。"
+      },
+      "bundle-addons": {
+        "name": "附加插件到项目",
+        "desc": "将此项目使用的第三方插件附加到项目文件中，以便可以在任何地方打开它。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开帮助手册了解有关项目属性的更多信息。",
+        "link-text": "帮助"
+      },
+      "viewport-fit": {
+        "name": "适应屏幕",
+        "desc": "处理非矩形的屏幕设备，如刘海屏、异型屏等。选择自动，将在安全区域显示。",
+        "options": {
+          "auto": "自动",
+          "cover": "覆盖"
+        }
+      },
+      "gpu-preference": {
+        "name": "GPU首选",
+        "desc": "在具有多个GPU的设备上，首选GPU类型。",
+        "options": {
+          "low-power": "集成图形",
+          "default": "默认",
+          "high-performance": "高性能"
+        }
+      },
+      "max-spritesheet-size": {
+        "name": "图集尺寸",
+        "desc": "项目导出时，将所有图像资源合并为图集。使用较小尺寸的图集可以节省运行内存占用，但会降低性能。较大的图集可以提升性能，但需要更多运行内存。",
+        "disabled": "禁用 (不推荐)"
+      },
+      "framerate-mode": {
+        "name": "帧率模式",
+        "options": {
+          "vsync": "垂直同步",
+          "unlimited-tick": "无上限(仅每帧)",
+          "unlimited-frame": "无上限",
+          "fixed": "固定"
+        },
+        "desc": "调整游戏帧速调度方式，通常垂直同步效果最好，可以保持与显示器刷新率同步。无上限用于特殊使用场景，将尽可能在屏幕刷新前更快的渲染。"
+      },
+      "anisotropic-filtering": {
+        "name": "各向异性",
+        "desc": "图像使用的各向异性的过滤模式，主要影响3D相机从侧面观察物体表面的精细程度，也影响部分调整为极端长宽比的2D对象渲染质量。建议保持为自动。",
+        "options": {
+          "off": "关闭",
+          "auto": "自动",
+          "2x": "2x",
+          "3x": "3x",
+          "4x": "4x",
+          "8x": "8x",
+          "16x": "16x"
+        }
+      },
+      "rendering-mode": {
+        "name": "渲染模式",
+        "desc": "是否以 2D 模式、3D 模式或自动决定渲染此项目。",
+        "options": {
+          "2d": "2D",
+          "auto": "自动",
+          "3d": "3D"
+        }
+      },
+      "enable-webgpu": {
+        "name": "启用 WebGPU",
+        "options": {
+          "auto": "自动"
+        },
+        "desc": "使用实验性的WebGPU渲染器，这通常会提高性能。若设备不支持，则自动退回到WebGL。"
+      },
+      "z-axis-scale": {
+        "name": "Z轴倍率",
+        "desc": "应用于 3D 功能中的 Z 轴缩放比例。'标准' 选项适用于 0-100 数值范围，'固定' 选项将使用 X/Y 轴相同的数值单位。",
+        "options": {
+          "normalized": "标准",
+          "regular": "固定"
+        }
+      },
+      "fov": {
+        "name": "相机FOV",
+        "desc": "改变相机前方聚焦的可见区域角度，仅在Z轴倍率为 '常规' 模式下生效。注意，这也将会改变相机默认Z轴刻度。"
+      },
+      "near-distance": {
+        "name": "最近距离",
+        "desc": "近平面与相机的距离，影响 2D 缩放和 3D 渲染的极限。"
+      },
+      "far-distance": {
+        "name": "最远距离",
+        "desc": "远平面与相机的距离，影响 2D 缩放和 3D 渲染的极限。"
+      },
+      "compatibility-settings": {
+        "name": "兼容性设置",
+        "desc": "用于导出项目的向后兼容设置。通常不应更改这些设置。"
+      },
+      "uid-numbering": {
+        "name": "UID分配",
+        "desc": "为新对象分配UID编号时使用的方案。",
+        "options": {
+          "increment": "顺序",
+          "random": "随机"
+        }
+      },
+      "auto-increment-version": {
+        "name": "版本号自动递增",
+        "desc": "每次导出项目后，自动增加版本号的第四个数字。"
+      },
+      "enable-multitexturing": {
+        "name": "启用多重纹理",
+        "desc": "使用 WebGPU 渲染器时启用多重纹理渲染，可以减少纹理切换，提升渲染效率和整体视觉质量。但会增加填充率的性能开销，在移动设备会导致性能下降。",
+        "options": {
+          "auto": "自动"
+        }
+      },
+      "fixed-framerate": {
+        "name": "固定帧率",
+        "desc": "目标帧率。实际帧率受硬件性能限制影响。"
+      }
+    },
+    "seconds-suffix": "s",
+    "no-instances": "[没有实例对象]",
+    "timeline": {
+      "timeline-properties": {
+        "name": "时间轴",
+        "desc": "所选时间轴的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选时间轴的名称"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "选择要使用的动画类型。此设置将应用于时间轴的所有轨道。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择如何解析这些值。此设置将应用于时间轴的所有轨道。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择时间轴使用的曲线。此设置将应用于时间轴的所有轨道。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性之间使用的路径类型。此设置将应用于时间轴的所有轨道。"
+      },
+      "time-properties": {
+        "name": "时间",
+        "desc": "和播放时间有关的属性。"
+      },
+      "time": {
+        "name": "时间",
+        "desc": "时间轴当前的播放时间。"
+      },
+      "total-time": {
+        "name": "总时长",
+        "desc": "播放时间轴动画总共的时间。"
+      },
+      "step": {
+        "name": "步进",
+        "desc": "每秒步进。在编辑器中，此属性用于控制拖动时的时间步长。在运行时，只有选择 '步进' 插值模式时使用该值，否则将被忽略。更改此属性将同时改变 '每秒步进' 属性。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于时间轴属性的信息。",
+        "link-text": "帮助"
+      },
+      "loop": {
+        "name": "循环播放",
+        "desc": "每次播放结束后，重新播放一次。"
+      },
+      "pingPong": {
+        "name": "反转",
+        "desc": "播放结束后，将时间轴再倒放一次。"
+      },
+      "repeatCount": {
+        "name": "重复次数",
+        "desc": "重复播放动画的次数。仅在 '不循环' 播放时有效。"
+      },
+      "editor": {
+        "name": "编辑器",
+        "desc": "此设置会影响时间轴的编辑和预览功能。"
+      },
+      "show-ui-elements": {
+        "name": "显示UI元素",
+        "desc": "显示与每个实例关联的UI元素。"
+      },
+      "step-raw": {
+        "name": "原始步进",
+        "desc": "原始每秒步进。在编辑器中，此属性用于控制拖动时的时间步长。在运行时，只有选择 '步进' 插值模式时使用该值，否则将被忽略。更改此属性将同时改变 '每秒步进' 属性。"
+      },
+      "steps-per-second": {
+        "name": "每秒步进",
+        "desc": "使用此属性作为参照，生成原始的步进值。"
+      },
+      "use-step": {
+        "name": "使用步进",
+        "desc": "是否使用步进属性。"
+      },
+      "startLayout": {
+        "name": "进入场景自动播放",
+        "desc": "当进入选择的场景时，自动开始播放。",
+        "no-layout": "(无)"
+      },
+      "transformWithSceneGraph": {
+        "name": "同步对象层级",
+        "desc": "使用相关联的层次结构同步时间轴。"
+      },
+      "misc-properties": {
+        "name": "其他",
+        "desc": "时间轴的属性设置。"
+      },
+      "use-system-timescale": {
+        "name": "使用系统时间倍数",
+        "desc": "时间轴的时间刻度，是否与系统全局时间刻度保持一致。"
+      },
+      "resize-mode": {
+        "name": "缩放模式",
+        "desc": "在时间线编辑模式下更改实例大小时，将会影响哪些属性。 注，不支持缩放的实例对象将不受此设置的影响。"
+      }
+    },
+    "track": {
+      "track-properties": {
+        "name": "主轨道",
+        "desc": "所选主轨道的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选主轨道的名称。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "选择要使用的动画类型。将应用于主轨道的所有子轨道。"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "选择要使用的动画类型。此设置将应用于主轨道的所有子轨道。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择如何解释这些值。此设置将应用于主轨道的所有子轨道。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择主轨道使用的缓动功能。此设置将应用于主轨道的所有子轨道。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性之间使用的路径类型。此设置将应用于主轨道的所有子轨道。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "编辑器唯一的属性。"
+      },
+      "visible": {
+        "name": "可见",
+        "desc": "切换与主轨道关联的实例对象可见性。此设置仅在 '编辑模式' 中生效。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换主轨道的锁定状态。被锁定的轨道不能以任何方式编辑。此设置将应用于主轨道的所有子轨道。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于轨道属性。",
+        "link-text": "帮助"
+      },
+      "id": {
+        "desc": "可选，用于识别该轨道的标签。如果使用，它在当前时间轴内必须是唯一的。",
+        "name": "轨道ID"
+      },
+      "show-ui-elements": {
+        "name": "显示UI元素",
+        "desc": "显示与每个实例关联的UI元素。"
+      },
+      "resize-mode": {
+        "name": "缩放模式",
+        "desc": "在时间线编辑模式下更改实例大小时，将会影响哪些属性。 注，不支持缩放的实例对象将不受此设置的影响。"
+      }
+    },
+    "property-track": {
+      "property-track-properties": {
+        "name": "副轨道",
+        "desc": "所选副轨道的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选副轨道的名称。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "禁用副轨道将阻止它在播放时间轴时生效。"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "选择要使用的动画类型。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择如何解释这些值。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择副轨道将使用的曲线。此设置将应用于轨道的所有关键帧。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性之间使用的路径类型。此设置将应用于轨道的所有关键帧。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "编辑器唯一的属性。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换副轨道的锁定状态。被锁定的轨道不能以任何方式编辑。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于副轨道。",
+        "link-text": "帮助"
+      },
+      "property-track-unique-properties": {
+        "name": "特有属性",
+        "desc": "属性轨道所特有的属性。"
+      },
+      "unique-properties": {
+        "startOffset": {
+          "name": "起始偏移",
+          "desc": "此音轨的起始时间偏移，单位是秒。"
+        },
+        "audioDuration": {
+          "name": "声音持续时间",
+          "desc": "声音的持续时间，以秒为单位。"
+        },
+        "audioTag": {
+          "name": "标签",
+          "desc": "用于区分不同音频的字符串，使用空格分隔多个标签。"
+        },
+        "start-from": {
+          "name": "起始于",
+          "desc": "动画切换后，动画应从头开始播放，或从当前帧播放。",
+          "options": {
+            "beginning": "起始帧",
+            "current-frame": "当前帧"
+          }
+        }
+      }
+    },
+    "track-folder": {
+      "track-folder-properties": {
+        "name": "轨道文件夹",
+        "desc": "所选轨道文件夹的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选轨道文件夹的名称。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "切换轨道文件夹的启用状态。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择要使用的动画类型。选择如何解析这些值。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择副轨道使用的曲线。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性之间使用的路径类型。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "编辑唯一的属性。"
+      },
+      "visible": {
+        "name": "可见",
+        "desc": "切换轨道文件夹的可见状态。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换轨道文件夹的锁定状态。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于轨道文件夹。",
+        "link-text": "帮助"
+      },
+      "show-ui-elements": {
+        "name": "显示UI元素",
+        "desc": "显示与每个实例关联的UI元素。"
+      },
+      "resize-mode": {
+        "name": "缩放模式",
+        "desc": "在时间线编辑模式下更改实例大小时，将会影响哪些属性。 注，不支持缩放的实例对象将不受此设置的影响。"
+      }
+    },
+    "property-track-folder": {
+      "property-track-folder-properties": {
+        "name": "副轨道文件夹",
+        "desc": "所选副轨道文件夹的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选副轨道文件夹的名称。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "切换属性轨道文件夹的启用状态。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "选择要使用的动画类型。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择如何解析这些值。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择副轨道使用的曲线。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性之间使用的路径类型。此设置将应用于轨道文件夹的所有子文件夹。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "编辑器唯一的属性。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换轨道文件夹的锁定状态。将应用于轨道文件夹的所有子文件夹。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于副轨道文件夹。",
+        "link-text": "帮助"
+      }
+    },
+    "keyframe": {
+      "keyframe-properties": {
+        "name": "主关键帧",
+        "desc": "选择的主帧的配置"
+      },
+      "index": {
+        "name": "索引",
+        "desc": "主关键帧在其轨道中的索引。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "禁用主关键帧将阻止它在播放时间轴时生效。此设置影响所有相关的属性关键帧。"
+      },
+      "time": {
+        "name": "时间",
+        "desc": "时间轴上的位置，以秒为单位。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择在主轨关键帧和下一个关键帧之间使用的曲线。此设置将影响所有相关属性帧。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择在主轨关键帧和下一个关键帧之间变化X和Y属性使用的路径类型。此设置影响所有相关的属性帧。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册来查阅主关键帧数据",
+        "link-text": "帮助"
+      },
+      "tags": {
+        "name": "标签",
+        "desc": "用于区分不同的时间轴的字符串，使用空格分隔多个标签。"
+      }
+    },
+    "property-keyframe": {
+      "property-keyframe-properties": {
+        "name": "属性帧",
+        "desc": "选中帧的配置"
+      },
+      "index": {
+        "name": "索引",
+        "desc": "轨道中的属性关键帧的索引。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "属性帧的名称。"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "禁用属性关键帧将阻止它在播放时间轴时生效。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "播放时间轴时处理目标值的方式。"
+      },
+      "value": {
+        "name": "值",
+        "desc": "这个帧的配置"
+      },
+      "time": {
+        "name": "时间",
+        "desc": "时间轴上的位置，以秒为单位。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择要在此属性关键帧和下一个关键帧之间使用的曲线。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择要在X和Y属性中的关键帧和下一个属性关键帧之间使用的路径类型"
+      },
+      "source-names": {
+        "world-instance": "世界实例",
+        "instance-variable": "实例变量",
+        "value": "数值",
+        "audio": "音频"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册来查阅关键帧数据",
+        "link-text": "帮助"
+      },
+      "property-keyframe-unique-properties": {
+        "name": "特有属性",
+        "desc": "此类型属性关键帧的特有属性。"
+      },
+      "addon": {
+        "direction": {
+          "name": "方向",
+          "options": {
+            "closest": "最近的",
+            "clockwise": "顺时针",
+            "anti-clockwise": "逆时针"
+          },
+          "desc": "要旋转的方向。"
+        },
+        "revolutions": {
+          "name": "圈数",
+          "desc": "到达其最终值之前，采取360度转角的角度值。"
+        },
+        "start-from": {
+          "name": "起始帧",
+          "desc": "在此关键帧发生动画更改后，从头开始播放动画，或从当前帧播放。\"默认\" 将使用相应属性轨道中同名的值。",
+          "options": {
+            "default": "默认",
+            "beginning": "起始帧",
+            "current-frame": "当前帧"
+          }
+        }
+      }
+    },
+    "transition": {
+      "transition-properties": {
+        "name": "曲线",
+        "desc": "选择容器的配置"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "曲线的名称。"
+      },
+      "purpose": {
+        "name": "用途",
+        "desc": "曲线的用途。选择 '表达式' 需通过时间轴对象的曲线表达式使用。",
+        "options": {
+          "any": "任意",
+          "expressions-only": "仅表达式"
+        }
+      }
+    },
+    "common": {
+      "common-properties": {
+        "name": "公共的时间属性",
+        "desc": "选中的时间轴元素的属性。"
+      },
+      "common-track-properties": {
+        "name": "通用主轨道属性",
+        "desc": "所选主轨道的属性。"
+      },
+      "common-track-folder-properties": {
+        "name": "通用轨道文件夹属性",
+        "desc": "所选轨道文件夹的属性。"
+      },
+      "common-property-track-properties": {
+        "name": "通用副轨道属性",
+        "desc": "所选副轨道的属性。"
+      },
+      "common-property-track-folder-properties": {
+        "name": "通用副轨道文件夹属性",
+        "desc": "所选的副轨道文件夹属性。"
+      },
+      "common-keyframe-properties": {
+        "name": "通常的主关键帧设置",
+        "desc": "选择的主关键帧的配置"
+      },
+      "common-property-keyframe-properties": {
+        "name": "关键帧的通常配置",
+        "desc": "选择关键帧的配置"
+      },
+      "interpolation-mode": {
+        "name": "动画模式",
+        "desc": "选择要使用的动画类型。"
+      },
+      "result-mode": {
+        "name": "执行结果",
+        "desc": "选择如何解释这些值。"
+      },
+      "ease": {
+        "name": "曲线",
+        "desc": "选择要使用的曲线。"
+      },
+      "path-mode": {
+        "name": "路径模式",
+        "desc": "选择XY轴使用的路径"
+      },
+      "enable": {
+        "name": "启用",
+        "desc": "禁用时间轴元素，以在时间轴播放时忽略属性。"
+      },
+      "visible": {
+        "name": "可见",
+        "desc": "反转所有选中的时间轴元素所关联的实例对象的可见性。此设置仅在 '编辑模式' 中有效。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换每个选定时间轴元素的锁定状态。被锁定的时间轴元素不能以任何方式编辑。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册，了解更多关于轨道属性。",
+        "link-text": "帮助"
+      },
+      "common-timeline-folder-properties": {
+        "name": "常用时间轴文件夹属性",
+        "desc": "所选时间轴文件夹的属性。"
+      },
+      "show-ui-elements": {
+        "name": "显示UI元素",
+        "desc": "显示与每个实例关联的UI元素。"
+      },
+      "ease-properties": {
+        "name": "缓动曲线",
+        "desc": "曲线属性"
+      },
+      "ease-editor": {
+        "name": "编辑曲线",
+        "desc": "编辑正在使用的曲线",
+        "link-text": "编辑"
+      },
+      "resize-mode": {
+        "name": "缩放模式",
+        "desc": "在时间线编辑模式下更改实例大小时，将会影响哪些属性。 注，不支持缩放的实例对象将不受此设置的影响。"
+      }
+    },
+    "timeline-folder": {
+      "timeline-folder-properties": {
+        "name": "时间轴文件夹",
+        "desc": "所选时间轴文件夹的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "所选的时间轴文件夹的名称。"
+      },
+      "enable": {
+        "name": "默认启用",
+        "desc": "切换时间轴文件夹的启用状态。更改将应用于时间轴文件夹的所有子文件夹。"
+      },
+      "editor-properties": {
+        "name": "编辑器",
+        "desc": "编辑器唯一的属性。"
+      },
+      "visible": {
+        "name": "可见",
+        "desc": "切换时间轴文件夹的可见状态。更改将应用于时间轴文件夹的所有子文件夹。"
+      },
+      "locked": {
+        "name": "锁定",
+        "desc": "切换时间轴文件夹的锁定状态。更改将应用于时间轴文件夹的所有子文件夹。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册以了解更多关于时间轴文件夹属性的信息。",
+        "link-text": "帮助"
+      },
+      "show-ui-elements": {
+        "name": "显示UI元素",
+        "desc": "显示与每个实例关联的UI元素。"
+      }
+    },
+    "icon": {
+      "name": {
+        "name": "名称",
+        "desc": "图标的文件名"
+      },
+      "purpose": {
+        "name": "用途",
+        "items": {
+          "none": "(未设置)",
+          "app-icon": "应用图标",
+          "app-icon-maskable": "应用图标背景",
+          "loading-logo": "加载页图标",
+          "adaptive-foreground": "自适应前景图",
+          "adaptive-background": "自适应背景图",
+          "ios-splash-screen": "iOS 启动页",
+          "android-splash-icon": "Android 启动页",
+          "screenshot": "截屏"
+        },
+        "desc": "所选图标的用途。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "link-text": "帮助",
+        "desc": "打开手册了解有关管理图标和屏幕截图的更多信息。"
+      },
+      "screenshot-label": {
+        "name": "标签",
+        "desc": "关于此屏幕截图的简要说明。"
+      },
+      "screenshot-form-factor": {
+        "name": "外观",
+        "desc": "该屏幕截图的外形尺寸，用于确定它适用于哪些设备。",
+        "items": {
+          "none": "默认",
+          "narrow": "竖屏",
+          "wide": "宽屏"
+        }
+      },
+      "icon-properties": {
+        "name": "图标属性",
+        "desc": "所选的图标属性类型"
+      }
+    },
+    "script": {
+      "script-properties": {
+        "name": "脚本属性",
+        "desc": "当前选择脚本的属性。"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "脚本的名称"
+      },
+      "purpose": {
+        "name": "用途",
+        "desc": "此脚本的用途。",
+        "items": {
+          "none": "(未设置)",
+          "main": "主脚本",
+          "imports-for-events": "导入到事件表"
+        }
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "关于脚本使用的帮助手册。",
+        "link-text": "帮助"
+      }
+    },
+    "mesh-point": {
+      "mesh-point-properties": {
+        "name": "纹理网格点属性",
+        "desc": "当前选择的网格点的属性。"
+      },
+      "object-type-name": {
+        "name": "对象名称",
+        "desc": "具有网格的实例的对象类型的名称。"
+      },
+      "instance-uid": {
+        "name": "实例 UID",
+        "desc": "当前网格点所属实例的UID。"
+      },
+      "mesh-size": {
+        "name": "网格尺寸",
+        "desc": "纹理网格的列数和行数。",
+        "value": "{0} x {1}"
+      },
+      "mesh-point-position": {
+        "name": "锚点位置",
+        "desc": "当前选择的网格点所在的行列位置。从 0 开始计数。",
+        "value": "{0}, {1}"
+      },
+      "layout-position": {
+        "name": "场景坐标",
+        "desc": "当前选择的网格点位于场景中的坐标。"
+      },
+      "layout-x": {
+        "name": "场景X",
+        "desc": "此网格点位于场景的X坐标。"
+      },
+      "layout-y": {
+        "name": "场景Y",
+        "desc": "此网格点位于场景的Y坐标。"
+      },
+      "z-elevation": {
+        "name": "视距高度",
+        "desc": "该网格顶点在 Z 轴的高度。"
+      },
+      "relative-position": {
+        "name": "相对位置",
+        "desc": "此网格点的相对位置占对象大小的百分比。"
+      },
+      "relative-x": {
+        "name": "相对X",
+        "desc": "此网格点的相对 X 位置，以对象宽度的百分比表示。"
+      },
+      "relative-y": {
+        "name": "相对Y",
+        "desc": "此网格点的相对 X 位置，以对象高度的百分比表示。"
+      },
+      "texture-position": {
+        "name": "纹理位置",
+        "desc": "此网格点处的源图像位置，以源图像大小的百分比表示。"
+      },
+      "texture-x": {
+        "name": "纹理X",
+        "desc": "此网格点处的源图像 X 位置，以源图像宽度的百分比表示。"
+      },
+      "texture-y": {
+        "name": "纹理Y",
+        "desc": "此网格点处的源图像 Y 位置，以源图像高度的百分比表示。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册以了解有关网格编辑器的更多信息。",
+        "link-text": "帮助"
+      }
+    },
+    "db-suffix": " (db)",
+    "project-file": {
+      "file-properties": {
+        "name": "文件属性",
+        "desc": "选择文件的属性"
+      },
+      "name": {
+        "name": "名称",
+        "desc": "此项目的文件名"
+      },
+      "purpose": {
+        "name": "用途",
+        "desc": "此文件应用的位置。",
+        "html-file-items": {
+          "head-end": "插入到 <head> 底部",
+          "body-start": "插入到 <body> 顶部",
+          "body-end": "插入到 <body> 底部"
+        },
+        "css-file-items": {
+          "stylesheet": "Stylesheet"
+        },
+        "json-file-items": {
+          "import-map": "导入映射"
+        }
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开帮助手册了解更多项目文件的信息。",
+        "link-text": "帮助"
+      }
+    },
+    "flowchart": {
+      "flowchart-properties": {
+        "name": "流程图属性",
+        "desc": "选中的流程图的属性。"
+      },
+      "flowchart-name": {
+        "name": "名称",
+        "desc": "流程图的名称。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "desc": "打开手册了解流程图的更多信息。",
+        "link-text": "帮助"
+      }
+    },
+    "flowchartNode": {
+      "flowchart-node-properties": {
+        "name": "节点属性",
+        "desc": "选择流程图节点的属性。"
+      },
+      "flowchart-node-is-start": {
+        "name": "起始节点",
+        "desc": "流程开始时，默认的起始节点。"
+      },
+      "flowchart-node-parent-index": {
+        "name": "父节点编号",
+        "desc": "可选。用于连接到父节点的值。如果节点没有或者只有一个父节点，可以忽略。"
+      },
+      "flowchart-node-outputs": {
+        "name": "输出值",
+        "desc": "此节点中的所有输出值。"
+      },
+      "flowchart-node-output": {
+        "name": "输出值",
+        "desc": "此节点的输出值。"
+      },
+      "flowchart-node-output-index": {
+        "name": "编号",
+        "desc": "输出值的编号，从 0 开始计数。"
+      },
+      "flowchart-node-output-id": {
+        "name": "名称",
+        "desc": "输出值的名称。"
+      },
+      "flowchart-node-output-value": {
+        "name": "输出",
+        "desc": "输出值的内容。"
+      },
+      "editor": {
+        "name": "编辑器",
+        "desc": "仅影响在编辑器中的使用方式。"
+      },
+      "add-flowchart-node-outputs": {
+        "name": "添加输出值",
+        "desc": "在此节点添加新的输出值。",
+        "link-text": "添加"
+      },
+      "remove-flowchart-node-output": {
+        "name": "删除输出",
+        "desc": "从此节点中删除此输出。",
+        "link-text": "删除"
+      },
+      "flowchart-node-comment": {
+        "name": "标题",
+        "desc": "用于描述此节点的标题。"
+      },
+      "flowchart-reference": {
+        "name": "引用流程",
+        "desc": "引用另一个流程图的节点，并从指定位置开始。"
+      },
+      "flowchart-reference-start-node-tag": {
+        "name": "起始节点",
+        "desc": "引用的流程图的起始节点。如果未指定，则使用该流程图的默认起始节点。"
+      },
+      "flowchart-reference-runtime-tag": {
+        "name": "事件标签",
+        "desc": "可选。用于在事件表中引用此输出的标签。如果留空，则随机分配唯一的标签。"
+      },
+      "flowchart-node-output-color": {
+        "name": "颜色",
+        "desc": "连接节点的线条颜色。仅影响编辑器中的属性。"
+      },
+      "flowchart-node-output-link-mode": {
+        "name": "线条",
+        "desc": "连接节点的线条绘制方式。仅影响编辑器中的属性。",
+        "link-mode": {
+          "line": "直线",
+          "path-find": "自动"
+        }
+      },
+      "flowchart-node-color": {
+        "name": "边框",
+        "desc": "更改节点边框的颜色。"
+      },
+      "flowchart-comment-font-settings": {
+        "name": "字体设置",
+        "desc": "更改注释节点的字体。"
+      },
+      "flowchart-comment-font": {
+        "name": "字型",
+        "desc": "更改注释节点中，使用的字形。"
+      },
+      "flowchart-comment-font-size": {
+        "name": "大小",
+        "desc": "更改注释节点中，使用的字体大小。"
+      },
+      "flowchart-comment-font-bold": {
+        "name": "粗体",
+        "desc": "更改注释节点中，加粗部分文字。"
+      },
+      "flowchart-comment-font-italic": {
+        "name": "斜体",
+        "desc": "更改注释节点中，倾斜部分文字。"
+      },
+      "flowchart-comment-font-color": {
+        "name": "颜色",
+        "desc": "更改注释节点中，使用的字体颜色。"
+      },
+      "flowchart-node-preset": {
+        "name": "模板",
+        "desc": "将此节点保存为模板，可通过 '添加模板节点' 创建基于此节点设置的新节点。"
+      },
+      "flowchart-node-tag": {
+        "name": "标签",
+        "desc": "可选。用于标记此节点的标签，用空格分隔多个标签。"
+      },
+      "flowchart-node-output-enable": {
+        "name": "启用",
+        "desc": "启用或禁用此输出。禁用的输出在运行时将被忽略。"
+      },
+      "flowchart-node-output-default": {
+        "name": "默认",
+        "desc": "如果在没有选择或找不到输出时，在运行时选择默认输出。"
+      },
+      "flowchart-node-enable": {
+        "name": "启用",
+        "desc": "被禁用的节点无法在运行时访问。除非设置为默认输出，并且立即访问默认值。"
+      }
+    },
+    "model3d": {
+      "model3d-name": {
+        "name": "名称",
+        "desc": "3D 模型的名称。"
+      },
+      "model3d-import": {
+        "name": "数据",
+        "link-text": "导入",
+        "desc-folder": "选择一个本地文件夹，导入 3D 模型文件。",
+        "desc-file": "选择一个本地文件，导入 3D 模型文件。"
+      },
+      "model3d-textures": {
+        "name": "纹理",
+        "link-text": "编辑",
+        "desc": "查看并编辑 3D 模型使用的纹理。"
+      },
+      "help-link": {
+        "name": "更多信息",
+        "link-text": "帮助文档",
+        "desc": "打开手册了解更多关于 3D 模型的信息。"
+      },
+      "model3d-properties": {
+        "name": "3D 模型属性",
+        "desc": "所选的 3D 模型属性"
+      }
+    }
+  },
+  "tilemap": {
+    "title": "瓦片栏",
+    "title-with-object": "瓦片栏: {0} UID {1}",
+    "warnings": {
+      "source-image-is-not-visible": "由于对象属性的配置出现错误，无法显示源图像。"
+    },
+    "errors": {
+      "zip-file-load": "加载 zip 文件时出错",
+      "image-file-load": "图块文件加载出错",
+      "map-load-error": "图块文件加载出错"
+    },
+    "tooltips": {
+      "layout": "恢复到场景正常的选择模式  (Esc / 1)",
+      "pencil": "绘制图块 (2)",
+      "eraser": "擦除图块 (3)",
+      "rectangle": "绘制矩形区域 (4)",
+      "fill": "填充区域 (5)",
+      "select": "从瓦片图中选择一个图块 (6)",
+      "move": "滚动原始图像",
+      "tile-edit": "选择一个图块进行编辑",
+      "mirror-h": "左右翻转 (X)",
+      "mirror-v": "上下翻转 (Y)",
+      "rotate-acw": "逆时针旋转 (A)",
+      "rotate-cw": "顺时针旋转 (Z)",
+      "reset-transformations": "重置状态 (R)",
+      "zoom-in": "放大原始图像",
+      "zoom-out": "缩小原始图像",
+      "zoom-reset": "重置缩放",
+      "save": "导出 ZIP 文件",
+      "load": "加载 TMX 文件",
+      "auto": "自动图块笔刷 (7)",
+      "patch": "印章笔刷 (8)"
+    },
+    "context-menu": {
+      "zoom-in": "放大",
+      "zoom-out": "缩小",
+      "zoom-reset": "重置缩放",
+      "edit": "编辑图块 ({0})",
+      "enable-all-selected-collisions": "启用选中图块的碰撞",
+      "disable-all-selected-collisions": "关闭选中图块的碰撞",
+      "enable-all-collisions": "启用全部图块碰撞",
+      "disable-all-collisions": "关闭全部图块碰撞"
+    },
+    "status": {
+      "transform": "[b]旋转:[/b] [i]{0}°[/i]"
+    },
+    "patch-tiling": {
+      "add-brush": "编辑印章笔刷",
+      "add-brush-from-selection": "添加所选图块到笔刷"
+    },
+    "auto-tiling": {
+      "add-brush": "编辑笔刷"
+    }
+  },
+  "zOrder": {
+    "title": "显示顺序",
+    "filtered-results": " - 选择仅重叠",
+    "all-results": " - 显示全部",
+    "show-active-layer-only": "仅显示活动图层",
+    "global": "全局",
+    "overriden": "被覆盖",
+    "locked": "锁定",
+    "invisible": "不可见",
+    "translucent": "透明",
+    "scroll-selection-into-view": "滚动到实例位置",
+    "flash-instance": "闪烁实例"
+  },
+  "textEditor": {
+    "retry": "重试",
+    "title": "文本编辑器",
+    "title-with-file": "{0}",
+    "loading": "正在加载 {0}",
+    "network-fail": "无法从服务器加载文本编辑器",
+    "setup-fail": "无法为文件 {0} 启动文本编辑器",
+    "select-all": "选择全部",
+    "beautify": "格式化",
+    "minify": "精简",
+    "validation-error": "JSON解析失败。",
+    "file-did-change": {
+      "title": "重新加载",
+      "message": "已打开的文件 '{0}' 内容已变更，编辑器需要重新加载。"
+    },
+    "tab-tooltip": "文件：{0}\n项目：{1}\n项目文件：{2}",
+    "loading-status": "正在加载代码编辑器...",
+    "loading-message": "请稍等，正在加载代码编辑器...",
+    "loading-failed-message": "代码编辑器加载失败，请检查网络连接是否正常。",
+    "context-menu": {
+      "go-to-definition": "转到定义",
+      "peek-definition": "速览定义",
+      "find-references": "查看引用",
+      "go-to-symbol": "转到符号",
+      "rename": "重命名",
+      "change-all-occurrences": "选择所有匹配项",
+      "format-document": "格式化文档",
+      "command-palette": "命令面板..."
+    },
+    "autocomplete": {
+      "multiple-interfaces-description": {
+        "other": "{0} 项接口"
+      }
+    },
+    "validating-scripts": "正在校验脚本...",
+    "compiling-typescript": "正在编译 TypeScript..."
+  },
+  "captionMenu": {
+    "dock": "停靠",
+    "undock": "窗口浮动",
+    "open-to-popup-window": "打开弹出窗口",
+    "close": "关闭",
+    "pin": "固定",
+    "left": "左侧",
+    "right": "右侧",
+    "bottom": "底部",
+    "unpin": "解除钉住",
+    "colors-submenu": "颜色",
+    "change-tab-color": "更改标签颜色",
+    "change-text-color": "更改文本颜色",
+    "restore-default-colors": "恢复默认颜色"
+  },
+  "tabPaneMenu": {
+    "undock": "窗口浮动",
+    "close": "关闭",
+    "close-others": "关闭其他"
+  },
+  "timeline": {
+    "title": "时间轴",
+    "common-context-menu": {
+      "tooltips": {
+        "set-keyframes": "在当前时间设置或更新关键帧，仅适用于已选择的元素及其子元素",
+        "default-mode": "默认时间轴视图",
+        "interpolation-mode": "使用的动画模式",
+        "result-mode": "使用的执行模式",
+        "eases": "使用的曲线",
+        "path-mode": "使用的路径模式",
+        "scale": "设置时间轴的缩放比例",
+        "delete-track-selection": "删除选中的所有元素",
+        "auto-keyframes": "当发生更改时自动设置或更新关键帧"
+      },
+      "set-keyframes": "设置关键帧",
+      "default-mode": "默认",
+      "interpolation-mode": "播放模式",
+      "result-mode": "执行结果",
+      "eases": "曲线",
+      "path-mode": "路径模式",
+      "scale": "缩放",
+      "focus": "焦点",
+      "auto-keyframes": "自动补帧"
+    },
+    "timeline-toolbar": {
+      "tooltips": {
+        "add-instances-to-root": "将实例添加到此时间轴",
+        "more-actions": "更多动作",
+        "add-timelines-to-root": "添加时间轴到根目录",
+        "add-timeline-subfolder-to-root": "添加文件夹到根目录",
+        "add-subfolder-to-root": "添加轨道文件夹到根目录",
+        "add-value-to-root": "添加变量轨道根目录",
+        "add-audio-to-root": "添加音频轨道到根目录"
+      },
+      "add-instances-to-root": "添加实例",
+      "add-subfolder-to-root": "创建子文件夹",
+      "edit": "编辑模式",
+      "playback": {
+        "play": "播放",
+        "stop": "停止",
+        "next-keyframe": "跳转到下一帧",
+        "first-keyframe": "跳转至首帧",
+        "end-keyframe": "跳转至尾帧",
+        "last-keyframe": "跳转到上一帧"
+      },
+      "add-timelines-to-root": "添加时间轴",
+      "add-timeline-subfolder-to-root": "添加子文件夹",
+      "nesting": {
+        "previous-timeline": "父级 {0}",
+        "next-timeline": "子级 {0}"
+      },
+      "shortcuts": {
+        "edit-mode": "(E)",
+        "set-keyframes": "(S)",
+        "cut": "(Ctrl + X)",
+        "copy": "(Ctrl + C)",
+        "paste": "(Ctrl + V)",
+        "first": "(Shift + 逗号)",
+        "end": "(Shift + 句号)",
+        "play": "(空格)",
+        "pause": "(空格)",
+        "last": "(逗号)",
+        "next": "(句号)",
+        "stop": "(Ctrl + 空格)",
+        "auto-keyframes": "(A)"
+      },
+      "tools": {
+        "cut": "剪切选取的关键帧",
+        "copy": "复制所选关键帧",
+        "paste": "在当前指针处粘贴关键帧"
+      },
+      "add-value-to-root": "添加变量",
+      "add-audio-to-root": "添加音频"
+    },
+    "secondary-displays": {
+      "interpolation-mode": "动画模式",
+      "result-mode": "执行结果",
+      "ease": "缓动",
+      "path-mode": "路径模式"
+    },
+    "options": {
+      "names": {
+        "view": "视图",
+        "lock": "锁定",
+        "enable": "启用",
+        "ui": "页面"
+      },
+      "descriptions": {
+        "view": "切换所有实例对象的可见性。",
+        "lock": "锁定轨道，防止被编辑。",
+        "ui": "在场景中切换实例的页面元素。",
+        "enable": "切换轨道的启用状态。"
+      },
+      "interpolation-mode-options": {
+        "continuous": {
+          "name": "持续",
+          "tooltip": "每个关键帧之间的平滑过渡。"
+        },
+        "step": {
+          "name": "步进",
+          "tooltip": "在过渡期间，仅允许跳转与步进值匹配的时间点。"
+        },
+        "discrete": {
+          "name": "关键帧",
+          "tooltip": "没有过渡效果，直接跳转至定义的属性关键帧的值。"
+        },
+        "default": {
+          "name": "默认",
+          "tooltip": "默认设置为每种类型的属性模式。"
+        }
+      },
+      "result-mode-options": {
+        "absolute": {
+          "name": "绝对值",
+          "tooltip": "动画目标数值为绝对值。"
+        },
+        "relative": {
+          "name": "相对值",
+          "tooltip": "动画的目标数值会基于之前定义的值，做相对变化。"
+        },
+        "default": {
+          "name": "默认",
+          "tooltip": "对每个属性轨使用默认的结果模式。"
+        }
+      },
+      "path-mode-options": {
+        "none": {
+          "name": "无"
+        },
+        "line": {
+          "name": "直线",
+          "tooltip": "使用直线连接两个路径点。"
+        },
+        "cubic-bezier": {
+          "name": "曲线",
+          "tooltip": "使用曲线连接两个路径点。"
+        },
+        "default": {
+          "name": "默认",
+          "tooltip": "使用层次结构自己的路径模式。"
+        }
+      },
+      "resize-mode-options": {
+        "default": {
+          "name": "默认",
+          "tooltip": "使用对象层级自己的缩放模式。"
+        },
+        "size": {
+          "name": "宽度高度",
+          "tooltip": "修改尺寸时，将改变宽度和高度。"
+        },
+        "scale": {
+          "name": "缩放比例",
+          "tooltip": "修改尺寸时，将改变缩放比例。"
+        }
+      }
+    },
+    "track": {
+      "tooltips": {
+        "add-property-tracks": "在此轨道添加属性",
+        "add-subfolder": "在此轨道添加子文件夹",
+        "delete": "从时间轴中删除此轨道",
+        "swap-instance": "切换此轨道的实例对象"
+      },
+      "add-property-tracks": "添加属性",
+      "add-subfolder": "添加子文件夹",
+      "no-properties": "(无自定义属性)",
+      "name": "轨道",
+      "swap-instance": "替换实例"
+    },
+    "property-track": {
+      "tooltips": {
+        "delete": "删除此副轨道",
+        "convert-to-scale": "针对此实例，将缩放转换为宽高变化",
+        "convert-to-size": "针对此实例，将宽高转换为缩放变化",
+        "convert-all-to-scale": "针对时间轴所有对象，将宽高转换为缩放变化",
+        "convert-all-to-size": "针对时间轴所有对象，将缩放转换为宽高变化"
+      },
+      "name": "副轨道",
+      "convert-to-scale": "转换到缩放倍数",
+      "convert-to-size": "转换到大小",
+      "convert-all-to-scale": "转换到缩放倍数(全部)",
+      "convert-all-to-size": "转换到大小(全部)"
+    },
+    "track-folder": {
+      "tooltips": {
+        "add-tracks-from-selection": "从当前场景中，添加一个实例对象到此文件夹",
+        "add-tracks-from-dialog": "从对象选择器中，添加一个实例对象到此文件夹",
+        "add-subfolder": "在此文件夹中添加一个子文件夹",
+        "delete": "从时间轴中删除此文件夹",
+        "rename": "重命名此文件夹",
+        "add-value-track": "添加变量轨道到文件夹",
+        "add-audio-track": "添加音频轨道到文件夹"
+      },
+      "add-tracks-from-selection": "从选择中添加实例对象",
+      "add-tracks-from-dialog": "从对话框中添加实例",
+      "add-subfolder": "创建子文件夹",
+      "name": "轨道文件夹",
+      "add-value-track": "添加变量",
+      "add-audio-track": "添加音频"
+    },
+    "property-track-folder": {
+      "tooltips": {
+        "add-properties": "添加一项属性到此文件夹",
+        "add-subfolder": "在此文件夹中添加一个子文件夹",
+        "rename": "重命名此文件夹",
+        "delete": "从其父轨道中删除此文件夹"
+      },
+      "add-properties": "添加属性",
+      "add-subfolder": "添加子文件夹",
+      "name": "副轨道文件夹"
+    },
+    "keyframe": {
+      "tooltips": {
+        "enable": "动画播放时，启用此关键帧",
+        "enable-selection": "动画播放时，启用所有选中的关键帧",
+        "disable": "动画播放时，忽略此关键帧",
+        "disable-selection": "动画播放时，忽略所有选中的关键帧",
+        "delete-selection": "从选中的轨道中，删除所有选中的关键帧",
+        "update": "更新所有子属性帧",
+        "update-selection": "更新所有选中的子属性帧",
+        "add-all-property-keyframes-interpolated": "生成一个插值曲线到匹配的时间轴",
+        "add-all-property-keyframes-interpolated-selection": "生成一个插值到选中的时间轴",
+        "add-all-property-keyframes-current": "使用当前实例值作为对应属性的值",
+        "add-all-property-keyframes-current-selection": "将当前实例值应用于选择的每个实例对应属性",
+        "delete": "从轨道中删除主关键帧"
+      },
+      "enable": "启用",
+      "disable": "禁用",
+      "update": "更新",
+      "value": "值",
+      "add-all-property-keyframes": "添加缺少的属性帧",
+      "add-all-property-keyframes-interpolated": "插值",
+      "add-all-property-keyframes-current": "当前值",
+      "name": "关键帧"
+    },
+    "property-keyframe": {
+      "tooltips": {
+        "enable": "动画播放时，启用此属性关键帧",
+        "enable-selection": "动画播放时，启用所有已选中的关键帧",
+        "disable": "动画播放时，忽略此属性关键帧",
+        "disable-selection": "动画播放时，忽略所有已选中的关键帧",
+        "delete-selection": "从选中的轨道中，删除所有选中的关键帧",
+        "update": "更新此属性关键帧",
+        "update-selection": "更新已选中的属性关键帧",
+        "delete": "从属性轨道中删除此属性关键帧"
+      },
+      "enable": "启用",
+      "disable": "禁用",
+      "update": "更新",
+      "value": "值",
+      "name": "属性帧"
+    },
+    "keyframe-drag-feedback": {
+      "absolute-time": "绝对时间: {0}s",
+      "relative-time": "相对时间: {0}s"
+    },
+    "balloon-tips": {
+      "keyframe-already-exists": {
+        "title": "关键帧已经存在",
+        "message": "此位置已存在另一个关键帧。"
+      },
+      "property-keyframe-already-exists": {
+        "title": "属性帧已经存在",
+        "message": "此位置已存在另一个属性帧。"
+      }
+    },
+    "world-instance-properties": {
+      "offsetX": "X",
+      "offsetY": "Y",
+      "offsetWidth": "宽度",
+      "offsetHeight": "高度",
+      "offsetAngle": "角度",
+      "offsetOpacity": "不透明度",
+      "offsetOriginX": "原点X",
+      "offsetOriginY": "原点Y",
+      "offsetColor": "颜色",
+      "offsetScaleX": "缩放比例 X",
+      "offsetScaleY": "缩放比例 Y",
+      "offsetZElevation": "Z"
+    },
+    "eases": {
+      "noease": "Linear",
+      "easeinquad": "In Quadratic",
+      "easeoutquad": "Out Quadratic",
+      "easeinoutquad": "In Out Quadratic",
+      "easeincubic": "In Cubic",
+      "easeoutcubic": "Out Cubic",
+      "easeinoutcubic": "In Out Cubic",
+      "easeinquart": "In Quartic",
+      "easeoutquart": "Out Quartic",
+      "easeinoutquart": "In Out Quartic",
+      "easeinquint": "In Quintic",
+      "easeoutquint": "Out Quintic",
+      "easeinoutquint": "In Out Quintic",
+      "easeinsine": "In Sinusoidal",
+      "easeoutsine": "Out Sinusoidal",
+      "easeinoutsine": "In Out Sinusoidal",
+      "easeinexpo": "In Exponential",
+      "easeoutexpo": "Out Exponential",
+      "easeinoutexpo": "In Out Exponential",
+      "easeincirc": "In Circular",
+      "easeoutcirc": "Out Circular",
+      "easeinoutcirc": "In Out Circular",
+      "easeinelastic": "In Elastic",
+      "easeoutelastic": "Out Elastic",
+      "easeinoutelastic": "In Out Elastic",
+      "easeinback": "In Back",
+      "easeoutback": "Out Back",
+      "easeinoutback": "In Out Back",
+      "easeinbounce": "In Bounce",
+      "easeoutbounce": "Out Bounce",
+      "easeinoutbounce": "In Out Bounce",
+      "default": "默认"
+    },
+    "short-eases": {
+      "noease": "Lnr",
+      "quad": "Quad",
+      "cubic": "Cub",
+      "quart": "Qart",
+      "quint": "Qint",
+      "sine": "Sin",
+      "expo": "Exp",
+      "circ": "Circ",
+      "elastic": "Elst",
+      "back": "Bck",
+      "bounce": "Bnc",
+      "default": "Def"
+    },
+    "short-path-modes": {
+      "cubic-bezier": "CBzr",
+      "line": "Ln",
+      "none": "In",
+      "default": "Def"
+    },
+    "tutorial": {
+      "no-timelines": {
+        "title": "这个项目还没有添加时间轴",
+        "creation-options": {
+          "title": "时间轴可以通过以下方式添加到项目：",
+          "option-1": "在右侧[b]项目栏[/b]中，找到[b]时间轴[/b]文件夹。",
+          "option-2": "在[b]场景[/b]右键打开菜单，找到[b]时间轴[/b]选项。"
+        },
+        "help": {
+          "text": "有关更多信息，请阅读 ",
+          "link": "时间轴帮助"
+        }
+      },
+      "empty-timeline": {
+        "title": "这个时间轴是空的",
+        "add-options": {
+          "title": "实例对象可通过以下方式添加到[b]时间轴[/b]：",
+          "option-1": "点击当前窗口左上角的 [h4]+[/h4] 按钮。",
+          "option-2": "从[b]场景[/b]中将实例对象拖放到这里。",
+          "option-3": "在[b]场景[/b]选中实例对象，右键显示菜单从时间轴选项添加。"
+        },
+        "help": {
+          "text": "有关更多信息，请阅读 ",
+          "link": "时间轴帮助"
+        }
+      },
+      "runtime-not-supported": {
+        "title": "时间轴仅在 C3 runtime 可用",
+        "message": "如果您想使用这项功能，请将项目升级为C3 运行时"
+      }
+    },
+    "name": "时间轴",
+    "tooltips": {
+      "delete": "删除此时间轴",
+      "focus": "将焦点放在嵌套的时间轴上，以启用完整编辑功能"
+    },
+    "timeline-folder": {
+      "tooltips": {
+        "add-timeline": "添加嵌套时间轴",
+        "add-subfolder": "在此文件夹中添加一个子文件夹",
+        "rename": "重命名此时间轴文件夹",
+        "delete": "删除此时间轴文件夹"
+      },
+      "add-timeline": "添加时间轴",
+      "add-subfolder": "添加子文件夹",
+      "name": "时间轴文件夹"
+    },
+    "errors": {
+      "failed-to-paste": {
+        "title": "无法粘贴",
+        "message": "无法粘贴时间轴到当前项目。因为缺少某些被它引用的对象，变量或其他内容，请添加后重试。（{0}）",
+        "no-compatible-instance": "无法粘贴时间轴，因为缺少了相关的实例对象，请先将时间轴使用的实例对象复制到项目中。"
+      }
+    },
+    "standalone-properties": {
+      "value": "数值",
+      "audioSource": "添加播放源",
+      "volume": "音量 (db)",
+      "hints": {
+        "audioSource": "没有声音源",
+        "audioSourceFreeEditionLimit": "免费版本已达到使用限制"
+      }
+    },
+    "audio-track": {
+      "add-file": "添加文件",
+      "tooltips": {
+        "add-file": "为此音轨选择音频文件"
+      }
+    }
+  },
+  "confirm-close-prompt": {
+    "caption": "关闭栏",
+    "message": "您确定要关闭 '{0}' 栏吗?\n\n如果需要把它重新显示回来，可以从[i]菜单-视图-窗口[/i]找回。",
+    "close-bar": "关闭栏"
+  },
+  "instances": {
+    "title": "实例对象",
+    "title-with-object": "实例栏 - {0}",
+    "global-instances": "全局实例",
+    "context-menu": {
+      "add-folder": "添加文件夹",
+      "additional-info": "切换面板信息",
+      "lock-layer": "锁定图层 '{0}'",
+      "unlock-layer": "解锁图层 '{0}'",
+      "visible-layer": "设置图层 '{0}' 可见",
+      "invisible-layer": "设置图层 '{0}' 不可见",
+      "flash-instances": "闪烁实例",
+      "scroll-selection-into-view": "跳转到实例",
+      "select-all-instances": "选择所有实例",
+      "select-layer": "选择图层 '{0}'"
+    },
+    "status": {
+      "additional-info": "[b]面板信息:[/b] [i]{0}[/i]",
+      "template": "模版",
+      "timeline": "时间轴",
+      "layer": "图层与场景",
+      "mesh": "纹理网格",
+      "hierarchy": "对象层级",
+      "plugin": "对象类型",
+      "editing": "正在编辑",
+      "parent-other-layout": "父对象: {0}"
+    }
+  },
+  "asset-browser": {
+    "title": "资源库",
+    "empty-source": "当前源没有资产",
+    "source-not-available": "尚未连接，没有下载源",
+    "refresh-source": "重试",
+    "toolbar": {
+      "source": "来源",
+      "purchased-assets": "已购买",
+      "local-assets": "本地资源",
+      "add-local-assets-source": "添加本地资源",
+      "remove-local-assets-source": "从本地资源中移除",
+      "free-assets": "免费可商用资源",
+      "bundled-assets": "精选捆绑包",
+      "go-up-folder-structure": "返回上一级文件夹"
+    },
+    "context-menu": {
+      "download": "下载",
+      "images": {
+        "other": "导入图像 ({0}个)"
+      },
+      "images-message": {
+        "other": "如何导入这 {0} 个图像文件？"
+      },
+      "images-as-many-object-types": {
+        "other": "批量导入 ({0}个对象)"
+      },
+      "images-as-single-object-type": "合并导入 (1个对象)",
+      "images-as-icons": {
+        "other": "导入图标 ({0}个)"
+      },
+      "animations": {
+        "other": "导入动画 ({0}个)"
+      },
+      "animations-message": {
+        "other": "如何导入这 {0} 个动画文件？"
+      },
+      "animations-as-many-object-types": {
+        "other": "批量导入 ({0}个对象)"
+      },
+      "animations-as-single-object-type": "合并导入 (1个对象)",
+      "animations-as-icons": {
+        "other": "导入为图标 ({0}个)"
+      },
+      "audio": "导入音频",
+      "audio-message": {
+        "other": "如何导入这 {0} 个音频文件？"
+      },
+      "audio-as-sound": {
+        "other": "导入为声音 ({0}个)"
+      },
+      "audio-as-music": {
+        "other": "导入为音乐 ({0}个)"
+      },
+      "video": {
+        "other": "导入视频 ({0}个)"
+      },
+      "fonts": {
+        "other": "导入字体 ({0}个)"
+      },
+      "scripts": {
+        "other": "导入脚本 ({0}个)"
+      },
+      "files": {
+        "other": "导入其他文件 ({0}个)"
+      },
+      "open-c2-projects": {
+        "other": "打开 {0} 个 Construct 2 项目"
+      },
+      "open-c3-projects": {
+        "other": "打开 {0} 个 Construct 3 项目"
+      },
+      "install-c3-addons": {
+        "other": "安装 {0} 个插件"
+      },
+      "errors": {
+        "import": "导入失败",
+        "download": "下载失败",
+        "image-failure": {
+          "other": "有 {0} 个图片文件无法使用。"
+        },
+        "animation-failure": {
+          "other": "有 {0} 个动画文件无法使用。"
+        },
+        "audio-failure": {
+          "other": "有 {0} 个音频文件无法使用。"
+        },
+        "video-failure": {
+          "other": "有 {0} 个视频文件无法使用。"
+        },
+        "font-failure": {
+          "other": "有 {0} 个字体文件无法使用。"
+        },
+        "script-failure": {
+          "other": "有 {0} 个脚本文件无法使用。"
+        },
+        "files-failure": {
+          "other": "有 {0} 个文件无法使用。"
+        },
+        "c2-project-failure": {
+          "other": "有 {0} 个 C2 项目文件无法使用。"
+        },
+        "c3-project-failure": {
+          "other": "有 {0} 个 C3 项目文件无法使用。"
+        },
+        "c3-addon-failure": {
+          "other": "有 {0} 个插件文件无法使用。"
+        },
+        "download-failure": {
+          "other": "有 {0} 个文件无法下载。"
+        },
+        "zips-failure": {
+          "other": "有 {0} 个压缩文件中包含部分不支持的文件。"
+        },
+        "svg-failure": {
+          "other": "有 {0} 个 SVG 文件无法使用。"
+        }
+      },
+      "find-in-tree": "在文件夹内查找",
+      "website": "访问资源网站",
+      "support": "联系资源客服",
+      "zips": {
+        "other": "导入压缩文件 ({0}个)"
+      },
+      "import-results": {
+        "zip-import-title": "导入压缩文件失败",
+        "import-title": "导入失败",
+        "types": {
+          "image": "图像",
+          "animation": "动画",
+          "c2-project": "C2项目",
+          "c3-project": "C3项目",
+          "addon": "插件",
+          "script": "脚本",
+          "sound": "声音",
+          "music": "音乐",
+          "video": "视频",
+          "font": "字体",
+          "icon": "图标",
+          "general": "文件",
+          "svg": "SVG"
+        },
+        "type-error": "以下类型无法导入: [b]{0}[/b]"
+      },
+      "preview": "预览",
+      "visit": "访问",
+      "explore": "探索更多",
+      "license": "许可条例",
+      "svg": {
+        "other": "导入 SVG 文件 ({0}个)"
+      }
+    },
+    "source-not-available-in-free-edition": "此功能在免费版不可用",
+    "no-search-results": "暂无搜索结果",
+    "tree": {
+      "items": "{0} ({1}个项目)"
+    },
+    "no-assets-in-local-source": "当前源没有内容",
+    "no-assets-source-not-found": "此资源在本地已经不存在",
+    "iconView": {
+      "website": "主页",
+      "support": "支持",
+      "license": "许可证"
+    }
+  }
+}

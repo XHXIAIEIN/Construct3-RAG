@@ -1,0 +1,7 @@
+{
+  "building-spritesheets": "Building spritesheets ({0} remaining)...",
+  "rendering-spritesheets": "Rendering spritesheets ({0} remaining)...",
+  "compressing-spritesheets": "Compressing spritesheets ({0} remaining)...",
+  "creating-textures": "Creating textures ({0} remaining)...",
+  "loading-fonts": "Loading fonts ({0} remaining)..."
+}

@@ -17,7 +17,7 @@
 | `c3-schemas/{lang}/behaviors/{id}.json` | 31 | 行为 ACE 定义 |
 | `c3-schemas/{lang}/effects/{id}.json` | 89 | 特效参数、分类 |
 | `c3-schemas/{lang}/examples/{id}.json` | 481 | 名称、描述、标签、使用的插件、打开链接 |
-| `c3-schemas/{lang}/editor/index.json` | 1 | 编辑器 UI 元素名称（工具栏、对话框、视图） |
+| `c3-schemas/{lang}/editor/*.json` | 36 | 编辑器 UI 字符串（工具栏、对话框、视图、控件、错误提示等） |
 | `c3-ts-defs/autocomplete-data.json` | 109 | 脚本类 → 方法/属性 |
 | `c3-ts-defs/**/*.d.ts` | 150 | 完整 TypeScript 接口签名 |
 

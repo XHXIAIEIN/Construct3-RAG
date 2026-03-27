@@ -1,0 +1,15 @@
+{
+  "awaiting-authentication": "等待用户从弹窗登陆账号",
+  "downloading": "正在从 {0} 下载 '{1}'",
+  "uploading": "正在上传 '{1}' 到 {0}",
+  "upload-succeeded": "'{0}' 上传成功",
+  "save-succeeded": "'{0}' 保存成功",
+  "unknown-error-while-saving": "尝试将 '{0}' 保存到 {1} 时遇到了未知的错误",
+  "already-saving": "'{0}' 已在保存中",
+  "saving-project-to": "正在保存 '{0}' 到 {1}",
+  "already-open": "'{0}' 已经打开了",
+  "already-archiving": "项目已归档，请等待完成，然后重试。",
+  "archiving-project": "正在保存 {0}",
+  "autosaving-project-to": "正在自动保存 '{0}' 到 {1}",
+  "filesystem": "文件系统"
+}

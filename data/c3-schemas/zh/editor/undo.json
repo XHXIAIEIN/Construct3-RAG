@@ -1,0 +1,549 @@
+{
+  "change-container": "更换容器",
+  "change-family-members": "更改 '{0}' 家族成员",
+  "change-folder-items": "移动文件夹项目（{0}）",
+  "change-layers-z-order": "更改图层显示顺序（{0}）",
+  "change-object-instance-behavior-property": "更改实例'{0}'的行为属性'{1}' ({2})",
+  "change-object-instance-effect-parameter": "更改实例 '{0}' 的滤镜参数 '{1}' ({2})",
+  "change-object-instance-property": "更改实例属性'{0}' ({1})",
+  "change-object-instance-variable": "更改实例变量'{0}' ({1})",
+  "change-single-effect-parameter": "更改'{0}'  '{1}' 滤镜参数 '{2}'",
+  "change-world-instances": "更改实例（{0}）",
+  "move-world-instances": "移动实例（{0}）",
+  "resize-world-instances": "调整实例大小（{0}）",
+  "load-tilemap": "加载图块",
+  "change-conditions-inverted": "相反条件（{0}）",
+  "change-events-enabled": "禁用事件（{0}）",
+  "edit-event-comment": "编辑注释",
+  "edit-event-group": "编辑事件分组 '{0}'",
+  "edit-event-include": "编辑事件包含 '{0}'",
+  "edit-event-variable": "编辑变量 '{0}'",
+  "edit-text": "编辑文本",
+  "data-editor": {
+    "array": {
+      "edit-value": "编辑值",
+      "change-depth": "编辑深度",
+      "resize": "调整大小",
+      "transpose": "转置数组",
+      "transpose-layer": "转置数组"
+    },
+    "dictionary": {
+      "edit-value": "编辑字典值",
+      "resize": "调整字典大小"
+    }
+  },
+  "replace": {
+    "edit-event-condition": "编辑条件",
+    "edit-event-action": "编辑事件动作",
+    "replace-object": "替换对象",
+    "replace-event-condition": "替换条件",
+    "replace-event-action": "替换动作"
+  },
+  "rename": {
+    "effect-type": "重命名滤镜 '{0}'",
+    "behavior-type": "重命名行为 '{0}'",
+    "image-point": "重命名图像点 '{0}'",
+    "animation": "重命名动画 '{0}'",
+    "project": "重命名项目 '{0}'",
+    "layout": "重命名场景 '{0}'",
+    "layer": "重命名图层 '{0}'",
+    "object-type": "重命名对象类型 '{0}'",
+    "project-folder": "重命名文件夹 ({0})",
+    "project-object": "重命名项目对象 '{0}'",
+    "project-file": "重命名文件 '{0}'",
+    "family": "重命名家族 '{0}'",
+    "instance-variable": "重命名实例变量 '{0}'",
+    "event-sheet": "重命名事件表 '{0}'",
+    "timeline": "重命名时间轴 '{0}'",
+    "transition": "重命名补间 '{0}'",
+    "track": "重命名轨道 '{0}'",
+    "flowchart": "重命名流程  '{0}'",
+    "flowchart-node-output": "流程图 - 重命名输出名称 '{0}'",
+    "model3d": "重命名 3D 模型为 '{0}' "
+  },
+  "delete": {
+    "instance-variable": "添加实例变量",
+    "effect-type": "添加滤镜",
+    "behavior-type": "添加行为",
+    "image-point": "添加图像点",
+    "animation": "添加动画",
+    "animation-frame": "添加帧",
+    "project-folder": "新建文件夹",
+    "object-type": "添加对象类型",
+    "project-object": "添加项目对象",
+    "project-file": "添加项目文件",
+    "world-instance": "添加实例",
+    "layout": "添加场景",
+    "family": "添加家族",
+    "event-sheet": "添加事件表",
+    "layer": "添加图层",
+    "event-object": "添加事件",
+    "event-block": "添加事件",
+    "event-group": "添加事件分组",
+    "event-variable": "添加事件变量",
+    "event-include": "添加事件表导入",
+    "collection": {
+      "instance-variable": "添加实例变量 ({0})",
+      "effect-type": "添加滤镜 ({0})",
+      "behavior-type": "添加行为 ({0})",
+      "image-point": "添加图像点 ({0})",
+      "animation": "添加动画 ({0})",
+      "animation-frame": "添加帧 ({0})",
+      "project-folder": "新建文件夹 ({0})",
+      "object-type": "添加对象类型 ({0})",
+      "project-object": "添加项目对象 ({0})",
+      "project-file": "添加项目文件 ({0})",
+      "world-instance": "添加实例 ({0})",
+      "layout": "添加场景 ({0})",
+      "family": "添加家族 ({0})",
+      "event-sheet": "添加事件表 ({0})",
+      "layer": "添加图层 ({0})",
+      "event-object": "添加事件 ({0})",
+      "event-block": "添加事件 ({0})",
+      "event-group": "添加事件分组 ({0})",
+      "event-variable": "添加事件变量 ({0})",
+      "event-include": "添加事件包含 ({0})",
+      "objects": "添加对象 ({0})",
+      "timeline": "添加时间轴({0})",
+      "track": "添加轨道 ({0})",
+      "property-track": "添加副轨道({0})",
+      "keyframe": "添加关键帧 ({0})",
+      "property-keyframe": "添加属性帧 ({0})",
+      "transition": "添加转场'{0}'",
+      "event-condition": "添加条件 {0}",
+      "event-action": "添加行为({0})",
+      "event-comment": "添加事件注释 ({0})",
+      "event-script": "添加脚本 ({0})",
+      "flowchart": "添加流程 ({0})",
+      "flowchart-node": "添加流程节点 ({0})",
+      "palette": "添加颜色({0})",
+      "flowchart-node-output": "流程图 - 添加输出值 ({0})",
+      "flowchart-node-link": "添加节点链接 ({0})",
+      "model3d": "添加 3D 模型 ({0})"
+    },
+    "timeline": "添加时间轴",
+    "track": "添加轨道",
+    "property-track": "添加副轨道",
+    "keyframe": "添加关键帧",
+    "property-keyframe": "添加属性帧",
+    "transition": "添加过渡",
+    "event-condition": "添加事件条件",
+    "event-action": "添加事件动作",
+    "event-comment": "添加事件注释",
+    "event-script": "添加脚本",
+    "transition-keyframe": "添加补间关键帧",
+    "flowchart": "添加流程图",
+    "flowchart-node": "添加流程节点",
+    "flowchart-node-output": "流程图 - 添加输出值",
+    "flowchart-node-link": "添加节点链接",
+    "palette": "添加颜色",
+    "model3d": "添加 3D 模型"
+  },
+  "undelete": {
+    "instance-variable": "删除实例变量",
+    "effect-type": "删除滤镜",
+    "behavior-type": "删除行为",
+    "image-point": "删除图像点",
+    "animation": "删除动画",
+    "animation-frame": "删除帧",
+    "project-folder": "删除文件夹",
+    "object-type": "删除对象类型",
+    "project-object": "删除项目对象",
+    "project-file": "删除项目文件",
+    "world-instance": "删除实例",
+    "layout": "删除场景",
+    "family": "删除家族",
+    "event-sheet": "删除事件表",
+    "layer": "删除图层",
+    "event-object": "删除事件",
+    "event-block": "删除事件",
+    "event-group": "删除事件分组",
+    "event-variable": "删除事件变量",
+    "event-include": "删除事件包含",
+    "collection": {
+      "instance-variable": "删除实例变量 ({0})",
+      "effect-type": "删除滤镜 ({0})",
+      "behavior-type": "删除行为 ({0})",
+      "image-point": "删除图像点 ({0})",
+      "animation": "删除动画 ({0})",
+      "animation-frame": "删除帧 ({0})",
+      "project-folder": "删除文件夹 ({0})",
+      "object-type": "删除对象类型 ({0})",
+      "project-object": "删除项目对象 ({0})",
+      "project-file": "删除项目文件 ({0})",
+      "world-instance": "删除实例 ({0})",
+      "layout": "删除场景 ({0})",
+      "family": "删除家族 ({0})",
+      "event-sheet": "删除事件表 ({0})",
+      "layer": "删除图层 ({0})",
+      "event-object": "删除事件 ({0})",
+      "event-block": "删除事件 ({0})",
+      "event-group": "删除事件分组 ({0})",
+      "event-variable": "删除事件变量 ({0})",
+      "event-include": "删除事件表引入 ({0})",
+      "objects": "删除对象 ({0})",
+      "timeline": "删除时间轴 ({0})",
+      "track": "删除轨道 ({0})",
+      "property-track": "删除副轨道({0})",
+      "keyframe": "删除关键帧 ({0})",
+      "property-keyframe": "删除属性帧 ({0})",
+      "transition": "删除转场{0}",
+      "event-condition": "删除事件条件 ({0})",
+      "event-action": "删除事件动作 ({0})",
+      "event-comment": "删除事件注释 ({0})",
+      "event-script": "删除脚本 ({0})",
+      "flowchart": "删除流程 ({0})",
+      "flowchart-node": "删除流程节点 ({0})",
+      "flowchart-node-output": "删除流程节点输出值 ({0})",
+      "flowchart-node-link": "删除节点链接 ({0})",
+      "palette": "删除颜色({0})",
+      "model3d": "删除 3D 模型 ({0})"
+    },
+    "timeline": "删除时间轴",
+    "track": "删除轨道",
+    "property-track": "删除副轨道",
+    "keyframe": "删除关键帧",
+    "property-keyframe": "删除关键帧属性",
+    "transition": "删除转场",
+    "event-condition": "删除条件",
+    "event-action": "删除动作",
+    "event-comment": "删除事件注释",
+    "event-script": "删除脚本",
+    "transition-keyframe": "删除补间关键帧",
+    "flowchart": "删除流程",
+    "flowchart-node": "删除流程节点",
+    "flowchart-node-output": "删除流程节点输出值",
+    "flowchart-node-link": "删除节点链接",
+    "palette": "删除颜色",
+    "model3d": "删除 3D 模型"
+  },
+  "change-json-object": {
+    "world-instance": "更改实例",
+    "animation-frame": "更改帧属性",
+    "tile-map": "更改瓦片图",
+    "tile-map-instance": "更改瓦片图",
+    "image-point": "更改图像点",
+    "collision-poly": "更改多边形碰撞框",
+    "animation": "更改动画属性",
+    "origin-image-point": "更改原点",
+    "format": "更改帧格式",
+    "source": "更改帧来源",
+    "keyframe": "更改关键帧",
+    "property-keyframe": "更改属性帧",
+    "collection": {
+      "keyframe": "更改关键帧 ({0})",
+      "property-keyframe": "更改属性帧 ({0})",
+      "flowchart-node": "更改流程图节点 {0}",
+      "model3d": "更换 3D 模型 ({0})",
+      "model3d-texture": "更改 3D 模型纹理 ({0})"
+    },
+    "transition": "编辑同步",
+    "flowchart": "更改流程",
+    "flowchart-node": "更改流程节点",
+    "flowchart-node-output": "流程图 - 更改输出值",
+    "model3d": "更改 3D 模型",
+    "model3d-texture": "更改 3D 模型纹理"
+  },
+  "change-property": {
+    "project": "更改'{0}'属性'{1}'",
+    "layout": "更改'{0}'属性'{1}'",
+    "layer": "更改'{0}'属性'{1}'",
+    "object-type": "更改'{0}'属性'{1}'",
+    "project-folder": "更改'{0}'属性为'{1}'",
+    "timeline": "更改'{0}'属性'{1}'",
+    "keyframe": "更改 '{0}' 的 '{1}' 属性",
+    "property-keyframe": "更改 '{0}' 的 '{1}' 属性",
+    "track": "更改轨道 '{0}' 的 '{1}'",
+    "property-track": "更改副轨道'{0}' 的 '{1}'",
+    "transition": "更改'{0}'属性'{1}'",
+    "flowchart": "更改 '{0}' 属性 '{1}'",
+    "flowchart-node": "更改 '{0}' 属性 '{1}'",
+    "flowchart-node-output": "更改 '{0}' 属性 '{1}'",
+    "flowchart-node-plural": {
+      "other": "更改{1}流程的节点属性 '{0}'"
+    },
+    "flowchart-node-output-plural": {
+      "other": "更改 {1} 流程图节点输出属性 '{0}'"
+    },
+    "flowchart-node-element-plural": {
+      "other": "更改{1}个流程图节点属性 '{0}'"
+    }
+  },
+  "change-ui-property": {
+    "project": "更改'{0}'属性'{1}'",
+    "layout": "更改'{0}'属性'{1}'",
+    "layer": "更改'{0}'属性'{1}'",
+    "project-folder": "更改'{0}'属性'{1}'",
+    "track": "更改'{0}' 属性'{1}'",
+    "property-track": "更改'{0}' 属性'{1}'",
+    "timeline": "更改'{0}'属性'{1}'",
+    "container": "更改 {0} 属性 '{1}'",
+    "flowchart": "更改 {0} 属性 '{1}'",
+    "flowchart-node": "更改 {0} 属性 '{1}'",
+    "flowchart-node-output": "更改 {0} 属性 '{1}'",
+    "flowchart-node-plural": {
+      "other": "更改  {1} 流程节点属性 '{0}'"
+    },
+    "model3d": "更改 {0} 属性 '{1}'",
+    "model3d-texture": "更改 {0} 属性 '{1}'"
+  },
+  "multi-undo": {
+    "add-image-point-to-animation": "添加图像点 '{0}' 到动画 '{1}'",
+    "change-image-point-of-animation": "更改动画 '{0}' 的图像点 '{1}'",
+    "change-origin-of-animation": "更改'{0}'的图像原点",
+    "change-origin-of-object-type-animations": "更改'{0}'的图像原点",
+    "add-image-point-to-object-type": "添加图像点 '{0}' 到对象 '{1}'",
+    "change-object-instance-variable": "更改实例变量 '{0}' ({1})",
+    "change-object-instance": "更改实例({0})",
+    "animations-editor-close": "动画编辑器更改",
+    "format-change": {
+      "frame": "更改帧格式",
+      "animation": "更改动画格式",
+      "animations": "更改对象类型动画格式",
+      "image": "更改图像格式",
+      "project": "更改项目中所有图像的格式",
+      "texture": "更改纹理格式",
+      "textures": "更改 3D 模型纹理格式"
+    },
+    "animation-frame-change": "动画帧更改",
+    "timeline": {
+      "set": {
+        "any": "设置关键帧"
+      },
+      "move": {
+        "any": "移动 {0} 时间轴元素",
+        "track": {
+          "other": "移动 {0} 轨道"
+        },
+        "property-track": {
+          "other": "移动 {0} 子轨道"
+        },
+        "project-folder": {
+          "other": "移动 {0} 文件夹"
+        },
+        "timeline": {
+          "other": "移动时间轴 {0}"
+        }
+      },
+      "change": {
+        "any": "更改 '{1}' 属于 {0} 时间轴元素",
+        "addons": {
+          "cubic-bezier": {
+            "one": "更改贝塞尔曲线锚点"
+          }
+        },
+        "timeline": {
+          "other": "更改{1}时间轴'{0}'"
+        },
+        "track": {
+          "other": "更改{1}轨道'{0}'"
+        },
+        "property-track": {
+          "other": "更改{1}副轨道'{0}'"
+        },
+        "project-folder": {
+          "other": "更改{1}文件夹 '{0}'"
+        },
+        "keyframe": {
+          "other": "更改 {1} 关键帧 '{0}'"
+        },
+        "property-keyframe": {
+          "other": "更改 {1} 私有关键帧 '{0}'"
+        }
+      },
+      "copy": {
+        "keyframe": {
+          "other": "复制 {0} 主关键帧"
+        },
+        "property-keyframe": {
+          "other": "复制 {0} 属性帧"
+        },
+        "any": "复制 {0} 帧"
+      },
+      "swap": {
+        "track": "替换轨道实例"
+      },
+      "convert": {
+        "to-scale": "转换大小到倍数",
+        "to-size": "转换倍数到大小"
+      }
+    },
+    "scene-graph": {
+      "add": {
+        "other": "添加 {0} 实例对象到层级"
+      },
+      "remove": {
+        "other": "移除 {0} 实例对象层级"
+      },
+      "change": {
+        "other": "更改 '{1}' 实例对象层级 {0}"
+      }
+    },
+    "templates": {
+      "replace-scene-graph-of-replicas": {
+        "other": "替换副本的层次结构  {0}"
+      },
+      "modify-scene-graph-of-replicas": {
+        "other": "更新现有的层次结构  {0}"
+      }
+    },
+    "add-image-point-to-object-type-subfolder": "添加图像点 '{0}' 到动画文件夹 '{1}'",
+    "change-origin-of-object-type-animations-in-subfolder": "更改动画文件夹 '{0}' 的图像原点",
+    "import": {
+      "zip": {
+        "other": "导入 {0} 个压缩文件"
+      }
+    },
+    "model3d-change": "更改 3D 模型"
+  },
+  "collision-polygon": {
+    "animation": "应用动画表 '{0}' 的碰撞框",
+    "object-type": "应用对象 '{0}' 的碰撞框",
+    "subfolder": "应用碰撞多边形到文件夹 '{0}'"
+  },
+  "animation-frame": {
+    "blob-change": "更改帧内容",
+    "add": "添加帧到 '{0}'",
+    "delete": "从 '{0}' 删除帧",
+    "add-many": "添加动画帧到动画({0}) 的 '{1}'位置",
+    "reverse": "反向播放'{0}'",
+    "select": "选择'{0}'的帧",
+    "origin": "更改框架原点",
+    "poly": "更改帧的多边形碰撞框",
+    "image-points": "更改动画帧的图像点",
+    "delete-many": "从 '{1}' 中删除帧 ({0})",
+    "sort-many": "排序 '{0}'",
+    "sort": "排序 '{0}'"
+  },
+  "animation": {
+    "frame-order-change": "更改'{0}'帧顺序",
+    "frames-delete": "删除'{0}'帧 ({1})",
+    "add": "新建 '{0}'",
+    "delete": "删除 '{0}'",
+    "select": "选择 '{0}'",
+    "folder-add": "新建文件夹 ({0})",
+    "folder-delete": "删除 '{0}' 文件夹"
+  },
+  "commands": {
+    "clear": "清空",
+    "load": "加载",
+    "mirrorhorizontal": "左右翻转",
+    "mirrorvertical": "上下翻转",
+    "rotateanticlockwise": "逆时针旋转",
+    "rotateclockwise": "顺时针旋转",
+    "crop": "裁剪",
+    "resize": "调整大小",
+    "rectangleselect": "矩形选择",
+    "eraser": "橡皮擦",
+    "pencil": "铅笔",
+    "brush": "笔刷",
+    "line": "直线",
+    "rectangle": "矩形",
+    "ellipse": "椭圆",
+    "fill": "填充",
+    "cut": "剪切",
+    "copy": "复制",
+    "paste": "粘贴",
+    "external": "外部",
+    "reload": "重新加载",
+    "deleteselection": "删除选择"
+  },
+  "color-palette": {
+    "swatch-change": "更改颜色",
+    "swatch-add": "添加颜色",
+    "swatch-delete": "删除颜色",
+    "swatch-delete-all": "删除所有色版",
+    "color-picks-change": "更改调色板"
+  },
+  "change-properties": {
+    "project-folder": "更改文件夹 '{0}' 的属性",
+    "timeline": "更改时间轴 '{0}' 的属性",
+    "track": "更改轨道 '{0}' 的属性",
+    "property-track": "更改副轨道'{0}' 的属性",
+    "keyframe": "更改 '{0}' 的属性",
+    "property-keyframe": "更改 '{0}' 的属性",
+    "transition": "编辑补间属性 {0}",
+    "flowchart": "更改流程图属性 '{0}'",
+    "flowchart-node": "更改流程图节点属性 '{0}'",
+    "flowchart-node-output": "更改流程图节点输出值 '{0}'",
+    "model3d": "更改 3D 模型属性 '{0}' 属性",
+    "model3d-texture": "更改 3D 模型纹理 '{0}' 属性"
+  },
+  "change-event-colors": "事件颜色 ({0})",
+  "edit-function-block": "编辑动作组 '{0}'",
+  "edit-event-script": "编辑脚本",
+  "change-project-file": "更改文件'{0}'",
+  "change-multi-family-members": "更改家庭成员",
+  "instances-create-mesh": "创建网格 ({0})",
+  "instances-remove-mesh": "移除纹理网格 ({0})",
+  "edit-mesh-point": "编辑网格锚点",
+  "instances-change-mesh": "更改纹理网格 ({0})",
+  "object-type": {
+    "add-many": "添加 ({0}) 动画元素到 '{1}'",
+    "delete-many": "删除 '{1}' 动画元素 {0}"
+  },
+  "move-layer": "移动图层顺序",
+  "change-breakpoints": "断点 ({0})",
+  "change-event-or-block": "OR 事件块 ({0})",
+  "change-effect-enabled": "更改 '{0}' 启用状态",
+  "change-ui-state": {
+    "object-type": {
+      "brushes": {
+        "name": "更改 '{0}' 笔刷名称",
+        "add": "添加 '{0}' 笔刷",
+        "delete": "删除 '{0}' 笔刷",
+        "type": "更改 '{0}' 笔刷类型",
+        "tile": "更改 '{0}' 笔刷图块",
+        "properties": "更改 '{0}' 笔刷属性",
+        "delete-probability-tile": "移除图块属性 '{0}'",
+        "reset": "设置 '{0}' 画笔图块",
+        "add-probability-tile": {
+          "other": "添加 {0} 随机图块为 '{1}'"
+        },
+        "width": "更改 '{0}' 笔刷宽大小",
+        "height": "更改 '{0}' 笔刷高大小"
+      },
+      "colorpickcollections": {
+        "add-folder": "添加 '{0}' 调色板",
+        "name": "重命名 '{0}' 调色板",
+        "folder-name": "重命名 '{0}' 调色板",
+        "update": "更新 '{0}' 颜色",
+        "load": "加载 '{0}' 颜色",
+        "move": {
+          "other": "移动{0}个 '{1}' 颜色"
+        }
+      }
+    },
+    "project-file": {
+      "colorpickcollections": {
+        "add-folder": "添加 '{0}' 调色板",
+        "name": "重命名 '{0}' 调色板",
+        "folder-name": "重命名 '{0}' 调色板",
+        "update": "更新 '{0}' 颜色",
+        "load": "加载 '{0}' 颜色",
+        "move": {
+          "other": "移动{0}个 '{1}' 颜色"
+        }
+      }
+    },
+    "model3d": {
+      "colorpickcollections": {
+        "add-folder": "添加 '{0}' 色板文件夹",
+        "name": "重命名 '{0}' 色板",
+        "folder-name": "重命名 '{0}' 色板文件夹",
+        "update": "编辑 '{0}' 色板",
+        "load": "加载 '{0}' 色板",
+        "move": {
+          "other": "移动 {0} '{1}' 色板元素"
+        }
+      }
+    }
+  },
+  "edit-custom-action-block": "编辑 '{0}' 动作 '{1}'",
+  "edit-custom-condition-block": "编辑 '{0}' 条件 '{1}'",
+  "edit-custom-expression-block": "编辑 '{0}' 表达式 '{1}'",
+  "link-flowchart-nodes": "连接到流程节点",
+  "unlink-flowchart-nodes": "断开流程节点",
+  "sort-flowchart-node-outputs": "流程图 - 调整输出值顺序",
+  "switch-language": "切换编程语言"
+}

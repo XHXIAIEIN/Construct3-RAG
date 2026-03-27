@@ -1,0 +1,32 @@
+{
+  "update-pending": {
+    "title": "Update pending",
+    "message": "Close and reopen Construct to update."
+  },
+  "update-available-notification": {
+    "title": "Update available",
+    "message": "Reload Construct to update to the latest version."
+  },
+  "update-available-prompt": {
+    "title": "Update available",
+    "message": "A new version of Construct is available! You are using [b]{0}[/b], and [b]{1}[/b] is ready to use. We recommend staying up-to-date to make use of the latest features, performance improvements and bug fixes.",
+    "update": "Update",
+    "not-now": "Not now"
+  },
+  "beta-update-available-prompt": {
+    "title": "Beta update available",
+    "message": "A new beta version of Construct is available! You are using [b]{0}[/b], and [b]{1}[/b] is ready to use.",
+    "update": "Update",
+    "not-now": "Not now"
+  },
+  "lts-update-available-prompt": {
+    "title": "LTS update available",
+    "message": "A new LTS version of Construct is available! You are using [b]{0}[/b], and [b]{1}[/b] is ready to use.",
+    "update": "Update",
+    "not-now": "Not now"
+  },
+  "offline-ready": {
+    "title": "Finished downloading",
+    "message": "This version of Construct is now ready to work offline."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "preparing-images": "准备图像 ({0}％)...",
+  "preparing-project-data": "准备项目数据......",
+  "deduplicating-images": "合并重复的图像 ({0}％)...",
+  "recompressing-images": "正在压缩图像 ({0}％)...",
+  "minifying-script": "压缩脚本文件...",
+  "adding-files": "添加文件...",
+  "creating-zip": "打包压缩文件 ({0}％)...",
+  "writing-files": "写入文件...",
+  "show-export-stats": "查看导出统计信息",
+  "open-export-manager": "打开导出管理器",
+  "max-texture-size-warning": "此项目使用的图集已经超过了 {0} 像素 (在 [i]{1}[/i] 包含分辨率 {2} x {3} 的图片)。它可能超过某些设备可支持的最大纹理大小，导致无法被正确加载显示。您确定要继续吗？",
+  "kaspersky-internet-security-warning": "您的浏览器似乎安装了[b]卡巴斯基网络保护[/b]。在某些情况下，它可能会干扰Construct导出项目。如果您在导出项目中遇到任何问题，请先尝试禁用卡巴斯基 安全保护功能。",
+  "cordova-variable-required": "插件 {1} 的 {0} 属性尚未填写，请填写后重试。",
+  "unlimited-framerate-mode-warning": "此项目即将开启无上限帧率模式。请注意，这仅用于开发测试。因为它将更大程度消耗系统资源，并且以更快的速度消耗电池电量。如您需要正式发布游戏，应该使用垂直同步模式。确定要继续更改吗?",
+  "bundling-script": "正在编译脚本...",
+  "minify-status": {
+    "template": "正在压缩: {0}",
+    "uploading": "正在上传",
+    "unpacking": "正在解压",
+    "queued": "在队列中",
+    "running": "正在执行",
+    "downloading": "正在下载",
+    "connecting": "正在连接服务器"
+  },
+  "preparing-optimized-images": "准备优化图像 ({0}%)..."
+}

@@ -1,0 +1,575 @@
+{
+  "change-container": "Change container",
+  "change-family-members": "Change '{0}' family members",
+  "change-multi-family-members": "Change family members",
+  "change-folder-items": "Move folder items ({0})",
+  "move-layer": "Move layer",
+  "change-layers-z-order": "Change layers Z order ({0})",
+  "change-object-instance-behavior-property": "Change instances '{0}' behaviour property '{1}' ({2})",
+  "change-object-instance-effect-parameter": "Change instances '{0}' effect parameter '{1}' ({2})",
+  "change-effect-enabled": "Change '{0}' enabled",
+  "change-object-instance-property": "Change instances property '{0}' ({1})",
+  "change-object-instance-variable": "Change instances variable '{0}' ({1})",
+  "change-single-effect-parameter": "Change '{0}' '{1}' effect parameter '{2}'",
+  "change-world-instances": "Change instances ({0})",
+  "move-world-instances": "Move instances ({0})",
+  "resize-world-instances": "Resize instances ({0})",
+  "instances-create-mesh": "Create mesh ({0})",
+  "instances-change-mesh": "Change mesh ({0})",
+  "instances-remove-mesh": "Remove mesh ({0})",
+  "edit-mesh-point": "Edit mesh point",
+  "change-project-file": "Change file '{0}'",
+  "load-tilemap": "Load tilemap",
+  "change-conditions-inverted": "Conditions inverted ({0})",
+  "change-events-enabled": "Events disabled ({0})",
+  "change-event-colors": "Event color ({0})",
+  "change-event-or-block": "Event OR block ({0})",
+  "change-breakpoints": "Breakpoints ({0})",
+  "edit-event-comment": "Edit comment",
+  "edit-event-script": "Edit script",
+  "edit-event-group": "Edit event group '{0}'",
+  "edit-event-include": "Edit event include '{0}'",
+  "edit-event-variable": "Edit variable '{0}'",
+  "edit-function-block": "Edit function '{0}'",
+  "edit-custom-action-block": "Edit '{0}' action '{1}'",
+  "edit-custom-condition-block": "Edit '{0}' condition '{1}'",
+  "edit-custom-expression-block": "Edit '{0}' expression '{1}'",
+  "edit-text": "Edit text",
+  "switch-language": "Switch language",
+  "link-flowchart-nodes": "Link flowchart nodes",
+  "unlink-flowchart-nodes": "Unlink flowchart nodes",
+  "sort-flowchart-node-outputs": "Sort flowchart node outputs",
+  "data-editor": {
+    "array": {
+      "edit-value": "Edit array value(s)",
+      "change-depth": "Edit array depth",
+      "resize": "Resize array",
+      "transpose": "Transpose array",
+      "transpose-layer": "Transpose array layer"
+    },
+    "dictionary": {
+      "edit-value": "Edit dictionary value(s)",
+      "resize": "Resize dictionary"
+    }
+  },
+  "replace": {
+    "edit-event-condition": "Edit condition",
+    "edit-event-action": "Edit action",
+    "replace-event-condition": "Replace condition",
+    "replace-event-action": "Replace action",
+    "replace-object": "Replace object"
+  },
+  "rename": {
+    "effect-type": "Rename effect '{0}'",
+    "behavior-type": "Rename behaviour '{0}'",
+    "image-point": "Rename image point '{0}'",
+    "animation": "Rename animation '{0}'",
+    "project": "Rename project '{0}'",
+    "layout": "Rename layout '{0}'",
+    "layer": "Rename layer '{0}'",
+    "object-type": "Rename object type '{0}'",
+    "project-folder": "Rename folder '{0}'",
+    "project-object": "Rename project object '{0}'",
+    "project-file": "Rename file '{0}'",
+    "family": "Rename family '{0}'",
+    "instance-variable": "Rename instance variable '{0}'",
+    "event-sheet": "Rename event sheet '{0}'",
+    "timeline": "Rename timeline '{0}'",
+    "transition": "Rename transition '{0}'",
+    "track": "Rename track '{0}'",
+    "flowchart": "Rename flowchart '{0}'",
+    "flowchart-node-output": "Rename flowchart node output '{0}'",
+    "model3d": "Rename 3D model '{0}'"
+  },
+  "delete": {
+    "instance-variable": "Add instance variable",
+    "effect-type": "Add effect",
+    "behavior-type": "Add behavior",
+    "image-point": "Add image point",
+    "animation": "Add animation",
+    "animation-frame": "Add frame",
+    "project-folder": "Add folder",
+    "object-type": "Add object type",
+    "project-object": "Add project object",
+    "project-file": "Add project file",
+    "world-instance": "Add instance",
+    "layout": "Add layout",
+    "family": "Add family",
+    "event-sheet": "Add event sheet",
+    "layer": "Add layer",
+    "event-object": "Add event",
+    "event-block": "Add event block",
+    "event-condition": "Add condition",
+    "event-action": "Add action",
+    "event-comment": "Add comment",
+    "event-script": "Add script",
+    "event-group": "Add event group",
+    "event-variable": "Add event variable",
+    "event-include": "Add event include",
+    "timeline": "Add timeline",
+    "track": "Add track",
+    "property-track": "Add property track",
+    "keyframe": "Add keyframe",
+    "property-keyframe": "Add property keyframe",
+    "transition": "Add transition",
+    "transition-keyframe": "Add transition keyframe",
+    "flowchart": "Add flowchart",
+    "flowchart-node": "Add flowchart node",
+    "flowchart-node-output": "Add flowchart node output",
+    "flowchart-node-link": "Add flowchart node link",
+    "model3d": "Add 3D model",
+    "palette": "Add palette",
+    "collection": {
+      "instance-variable": "Add instance variables ({0})",
+      "effect-type": "Add effects ({0})",
+      "behavior-type": "Add behaviors ({0})",
+      "image-point": "Add image points ({0})",
+      "animation": "Add animations ({0})",
+      "animation-frame": "Add frames ({0})",
+      "project-folder": "Add folders ({0})",
+      "object-type": "Add object types ({0})",
+      "project-object": "Add project objects ({0})",
+      "project-file": "Add project files ({0})",
+      "world-instance": "Add instances ({0})",
+      "layout": "Add layouts ({0})",
+      "family": "Add families ({0})",
+      "event-sheet": "Add event sheets ({0})",
+      "layer": "Add layers ({0})",
+      "event-object": "Add events ({0})",
+      "event-block": "Add event blocks ({0})",
+      "event-condition": "Add conditions ({0})",
+      "event-action": "Add actions ({0})",
+      "event-comment": "Add comments ({0})",
+      "event-script": "Add scripts ({0})",
+      "event-group": "Add event groups ({0})",
+      "event-variable": "Add event variables ({0})",
+      "event-include": "Add event includes ({0})",
+      "objects": "Add objects ({0})",
+      "timeline": "Add timelines ({0})",
+      "track": "Add tracks ({0})",
+      "property-track": "Add property tracks ({0})",
+      "keyframe": "Add keyframes ({0})",
+      "property-keyframe": "Add property keyframes ({0})",
+      "transition": "Add transitions ({0})",
+      "flowchart": "Add flowcharts ({0})",
+      "flowchart-node": "Add flowchart nodes ({0})",
+      "flowchart-node-output": "Add flowchart node outputs ({0})",
+      "flowchart-node-link": "Add flowchart node links ({0})",
+      "model3d": "Add 3D models ({0})",
+      "palette": "Add palettes ({0})"
+    }
+  },
+  "undelete": {
+    "instance-variable": "Delete instance variable",
+    "effect-type": "Delete effect",
+    "behavior-type": "Delete behavior",
+    "image-point": "Delete image point",
+    "animation": "Delete animation",
+    "animation-frame": "Delete frame",
+    "project-folder": "Delete folder",
+    "object-type": "Delete object type",
+    "project-object": "Delete project object",
+    "project-file": "Delete project file",
+    "world-instance": "Delete instance",
+    "layout": "Delete layout",
+    "family": "Delete family",
+    "event-sheet": "Delete event sheet",
+    "layer": "Delete layer",
+    "event-object": "Delete event",
+    "event-block": "Delete event block",
+    "event-condition": "Delete condition",
+    "event-action": "Delete action",
+    "event-comment": "Delete comment",
+    "event-script": "Delete script",
+    "event-group": "Delete event group",
+    "event-variable": "Delete event variable",
+    "event-include": "Delete event include",
+    "timeline": "Delete timeline",
+    "track": "Delete track",
+    "property-track": "Delete property track",
+    "keyframe": "Delete keyframe",
+    "property-keyframe": "Delete property keyframe",
+    "transition": "Delete transition",
+    "transition-keyframe": "Delete transition keyframe",
+    "flowchart": "Delete flowchart",
+    "flowchart-node": "Delete flowchart node",
+    "flowchart-node-output": "Delete flowchart node output",
+    "flowchart-node-link": "Delete flowchart node link",
+    "model3d": "Delete 3D model",
+    "palette": "Delete palette",
+    "collection": {
+      "instance-variable": "Delete instance variables ({0})",
+      "effect-type": "Delete effects ({0})",
+      "behavior-type": "Delete behaviors ({0})",
+      "image-point": "Delete image points ({0})",
+      "animation": "Delete animations ({0})",
+      "animation-frame": "Delete frames ({0})",
+      "project-folder": "Delete folders ({0})",
+      "object-type": "Delete object types ({0})",
+      "project-object": "Delete project objects ({0})",
+      "project-file": "Delete project files ({0})",
+      "world-instance": "Delete instances ({0})",
+      "layout": "Delete layouts ({0})",
+      "family": "Delete families ({0})",
+      "event-sheet": "Delete event sheets ({0})",
+      "layer": "Delete layers ({0})",
+      "event-object": "Delete events ({0})",
+      "event-block": "Delete events blocks ({0})",
+      "event-condition": "Delete conditions ({0})",
+      "event-action": "Delete actions ({0})",
+      "event-comment": "Delete comments ({0})",
+      "event-script": "Delete scripts ({0})",
+      "event-group": "Delete event groups ({0})",
+      "event-variable": "Delete event variables ({0})",
+      "event-include": "Delete event includes ({0})",
+      "objects": "Delete objects ({0})",
+      "timeline": "Delete timelines ({0})",
+      "track": "Delete tracks ({0})",
+      "property-track": "Delete property tracks ({0})",
+      "keyframe": "Delete keyframes ({0})",
+      "property-keyframe": "Delete property keyframes ({0})",
+      "transition": "Delete transitions ({0})",
+      "flowchart": "Delete flowcharts ({0})",
+      "flowchart-node": "Delete flowchart nodes ({0})",
+      "flowchart-node-output": "Delete flowchart node outputs ({0})",
+      "flowchart-node-link": "Delete flowchart node links ({0})",
+      "model3d": "Delete 3D models ({0})",
+      "palette": "Delete palettes ({0})"
+    }
+  },
+  "change-json-object": {
+    "world-instance": "Change instance",
+    "animation-frame": "Change frame property",
+    "tile-map": "Change tilemap",
+    "tile-map-instance": "Change tilemap",
+    "image-point": "Change image point",
+    "collision-poly": "Change collision polygon",
+    "animation": "Change animation property",
+    "origin-image-point": "Change origin",
+    "format": "Change frame format",
+    "source": "Change frame source",
+    "keyframe": "Change keyframe",
+    "property-keyframe": "Change property keyframe",
+    "transition": "Change transition",
+    "flowchart": "Change flowchart",
+    "flowchart-node": "Change flowchart node",
+    "flowchart-node-output": "Change flowchart node output",
+    "model3d": "Change 3D model",
+    "model3d-texture": "Change 3D model texture",
+    "collection": {
+      "keyframe": "Change keyframes ({0})",
+      "property-keyframe": "Change property keyframes ({0})",
+      "flowchart-node": "Change flowchart nodes ({0})",
+      "model3d": "Change 3D models ({0})",
+      "model3d-texture": "Change 3D model textures ({0})"
+    }
+  },
+  "change-property": {
+    "project": "Change '{0}' property '{1}'",
+    "layout": "Change '{0}' property '{1}'",
+    "layer": "Change '{0}' property '{1}'",
+    "object-type": "Change '{0}' property '{1}'",
+    "project-folder": "Change '{0}' property of '{1}'",
+    "timeline": "Change '{0}' property '{1}'",
+    "track": "Change '{1}' of track '{0}'",
+    "property-track": "Change '{1}' of property track '{0}'",
+    "keyframe": "Change '{1}' property of '{0}'",
+    "property-keyframe": "Change '{1}' property of '{0}'",
+    "transition": "Change '{0}' property '{1}'",
+    "flowchart": "Change '{0}' property '{1}'",
+    "flowchart-node": "Change '{0}' property '{1}'",
+    "flowchart-node-output": "Change '{0}' property '{1}'",
+    "flowchart-node-plural": {
+      "one": "Change Flowchart node property '{0}'",
+      "other": "Change {1} Flowchart nodes property '{0}'"
+    },
+    "flowchart-node-output-plural": {
+      "one": "Change Flowchart node output property '{0}'",
+      "other": "Change {1} Flowchart node outputs property '{0}'"
+    },
+    "flowchart-node-element-plural": {
+      "one": "Change Flowchart node element property '{0}'",
+      "other": "Change {1} Flowchart node elements property '{0}'"
+    }
+  },
+  "change-properties": {
+    "project-folder": "Change properties of folder '{0}'",
+    "timeline": "Change properties of timeline '{0}'",
+    "track": "Change properties of track '{0}'",
+    "property-track": "Change properties of property track '{0}'",
+    "keyframe": "Change properties of '{0}'",
+    "property-keyframe": "Change properties of '{0}'",
+    "transition": "Change properties of transition '{0}'",
+    "flowchart": "Change properties of flowchart '{0}'",
+    "flowchart-node": "Change properties of flowchart node '{0}'",
+    "flowchart-node-output": "Change properties of flowchart node output '{0}'",
+    "model3d": "Change properties of 3D model '{0}'",
+    "model3d-texture": "Change properties of 3D model texture '{0}'"
+  },
+  "change-ui-property": {
+    "project": "Change '{0}' property '{1}'",
+    "project-folder": "Change '{0}' property '{1}'",
+    "layout": "Change '{0}' property '{1}'",
+    "layer": "Change '{0}' property '{1}'",
+    "timeline": "Change '{0}' property '{1}'",
+    "track": "Change '{0}' property '{1}'",
+    "property-track": "Change '{0}' property '{1}'",
+    "container": "Change {0} property '{1}'",
+    "flowchart": "Change {0} property '{1}'",
+    "flowchart-node": "Change {0} property '{1}'",
+    "flowchart-node-output": "Change {0} property '{1}'",
+    "model3d": "Change {0} property '{1}'",
+    "model3d-texture": "Change {0} property '{1}'",
+    "flowchart-node-plural": {
+      "one": "Change Flowchart node property '{0}'",
+      "other": "Change {1} Flowchart nodes property '{0}'"
+    }
+  },
+  "change-ui-state": {
+    "object-type": {
+      "brushes": {
+        "name": "Change '{0}' brush name",
+        "add": "Add '{0}' brush",
+        "delete": "Delete '{0}' brush",
+        "type": "Change '{0}' brush type",
+        "width": "Change '{0}' brush width",
+        "height": "Change '{0}' brush height",
+        "tile": "Change '{0}' brush tile",
+        "properties": "Change '{0}' brush properties",
+        "add-probability-tile": {
+          "one": "Add {0} probability tile to '{1}'",
+          "other": "Add {0} probability tiles to '{1}'"
+        },
+        "delete-probability-tile": "Remove probability tile from '{0}'",
+        "reset": "Set '{0}' brush tiles"
+      },
+      "colorpickcollections": {
+        "add-folder": "Add '{0}' palette folder",
+        "name": "Rename '{0}' palette",
+        "folder-name": "Rename '{0}' palette folder",
+        "update": "Update '{0}' palette",
+        "load": "Load '{0}' palette",
+        "move": {
+          "one": "Move {0} '{1}' palette element",
+          "other": "Move {0} '{1}' palette elements"
+        }
+      }
+    },
+    "project-file": {
+      "colorpickcollections": {
+        "add-folder": "Add '{0}' palette folder",
+        "name": "Rename '{0}' palette",
+        "folder-name": "Rename '{0}' palette folder",
+        "update": "Update '{0}' palette",
+        "load": "Load '{0}' palette",
+        "move": {
+          "one": "Move {0} '{1}' palette element",
+          "other": "Move {0} '{1}' palette elements"
+        }
+      }
+    },
+    "model3d": {
+      "colorpickcollections": {
+        "add-folder": "Add '{0}' palette folder",
+        "name": "Rename '{0}' palette",
+        "folder-name": "Rename '{0}' palette folder",
+        "update": "Update '{0}' palette",
+        "load": "Load '{0}' palette",
+        "move": {
+          "one": "Move {0} '{1}' palette element",
+          "other": "Move {0} '{1}' palette elements"
+        }
+      }
+    }
+  },
+  "multi-undo": {
+    "add-image-point-to-animation": "Add '{0}' image point to '{1}' animation",
+    "change-image-point-of-animation": "Change '{0}' image point of '{1}' animation",
+    "change-origin-of-animation": "Change Origin of '{0}' animation",
+    "change-object-instance-variable": "Change instances variable '{0}' ({1})",
+    "change-object-instance": "Change instances ({0})",
+    "animations-editor-close": "Animations editor changes",
+    "animation-frame-change": "Animation frame change",
+    "model3d-change": "3D model change",
+    "add-image-point-to-object-type": "Add '{0}' image point to '{1}' object type",
+    "add-image-point-to-object-type-subfolder": "Add '{0}' image point to animations in folder '{1}'",
+    "change-origin-of-object-type-animations": "Change Origin of '{0}' animations",
+    "change-origin-of-object-type-animations-in-subfolder": "Change Origin of animations in folder '{0}'",
+    "format-change": {
+      "frame": "Change frame format",
+      "animation": "Change animation format",
+      "animations": "Change object type animations format",
+      "texture": "Change texture format",
+      "textures": "Change 3D model textures format",
+      "image": "Change image format",
+      "project": "Change format of all images in project"
+    },
+    "timeline": {
+      "set": {
+        "any": "Set keyframes"
+      },
+      "move": {
+        "timeline": {
+          "one": "Move timeline",
+          "other": "Move {0} timelines"
+        },
+        "track": {
+          "one": "Move track",
+          "other": "Move {0} tracks"
+        },
+        "property-track": {
+          "one": "Move property track",
+          "other": "Move {0} property tracks"
+        },
+        "project-folder": {
+          "one": "Move folder",
+          "other": "Move {0} folders"
+        },
+        "any": "Move {0} timeline elements"
+      },
+      "change": {
+        "timeline": {
+          "one": "Change timeline '{0}'",
+          "other": "Change {1} timeline's '{0}'"
+        },
+        "track": {
+          "one": "Change track '{0}'",
+          "other": "Change {1} track's '{0}'"
+        },
+        "property-track": {
+          "one": "Change property track '{0}'",
+          "other": "Change {1} property track's '{0}'"
+        },
+        "project-folder": {
+          "one": "Change folder '{0}'",
+          "other": "Change {1} folder's '{0}'"
+        },
+        "keyframe": {
+          "one": "Change master keyframe '{0}'",
+          "other": "Change {1} master keyframe's '{0}'"
+        },
+        "property-keyframe": {
+          "one": "Change property keyframe '{0}'",
+          "other": "Change {1} property keyframe's '{0}'"
+        },
+        "addons": {
+          "cubic-bezier": {
+            "one": "Change cubic bezier anchor point"
+          }
+        },
+        "any": "Change '{1}' of {0} timeline elements"
+      },
+      "copy": {
+        "keyframe": {
+          "one": "Copy master keyframe",
+          "other": "Copy {0} master keyframes"
+        },
+        "property-keyframe": {
+          "one": "Copy property keyframe",
+          "other": "Copy {0} property keyframes"
+        },
+        "any": "Copy {0} keyframes"
+      },
+      "swap": {
+        "track": "Swap track instance"
+      },
+      "convert": {
+        "to-scale": "Convert size to scale",
+        "to-size": "Convert scale to size"
+      }
+    },
+    "scene-graph": {
+      "add": {
+        "one": "Add instance to hierarchy",
+        "other": "Add {0} instances to hierarchy"
+      },
+      "remove": {
+        "one": "Remove instance from hierarchy",
+        "other": "Remove {0} instances from hierarchy"
+      },
+      "change": {
+        "one": "Change '{1}' in {0} instance",
+        "other": "Change '{1}' in {0} instances"
+      }
+    },
+    "templates": {
+      "replace-scene-graph-of-replicas": {
+        "one": "Replace whole hierarchy of replica",
+        "other": "Replace whole hierarchy of {0} replicas"
+      },
+      "modify-scene-graph-of-replicas": {
+        "one": "Modify existing hierarchy of replica",
+        "other": "Modify existing hierarchy of {0} replicas"
+      }
+    },
+    "import": {
+      "zip": {
+        "one": "Import zip file",
+        "other": "Import {0} zip files"
+      }
+    }
+  },
+  "collision-polygon": {
+    "animation": "Apply collision polygon to '{0}' animation",
+    "object-type": "Apply collision polygon to '{0}' object type",
+    "subfolder": "Apply collision polygon to '{0}' folder"
+  },
+  "animation-frame": {
+    "blob-change": "Change frame content",
+    "origin": "Change frame origin",
+    "poly": "Change frame collision polygon",
+    "image-points": "Change frame image points",
+    "add": "Add frame to '{0}'",
+    "delete": "Delete frame from '{0}'",
+    "add-many": "Add frames ({0}) to '{1}'",
+    "delete-many": "Delete frames ({0}) from '{1}'",
+    "reverse": "Reverse frames of '{0}'",
+    "select": "Select frame of '{0}'",
+    "sort": "Sort frame of '{0}'",
+    "sort-many": "Sort frames of '{0}'"
+  },
+  "animation": {
+    "frame-order-change": "Change '{0}' frames order",
+    "frames-delete": "Delete '{0}' frames ({1})",
+    "add": "Add '{0}'",
+    "delete": "Delete '{0}'",
+    "select": "Select '{0}'",
+    "folder-add": "Add '{0}' folder",
+    "folder-delete": "Delete '{0}' folder"
+  },
+  "object-type": {
+    "add-many": "Add ({0}) animation elements to '{1}'",
+    "delete-many": "Delete ({0}) animation elements from '{1}'"
+  },
+  "commands": {
+    "clear": "Clear",
+    "load": "Load",
+    "mirrorhorizontal": "Mirror horizontal",
+    "mirrorvertical": "Mirror vertical",
+    "rotateanticlockwise": "Rotate anti-clockwise",
+    "rotateclockwise": "Rotate clockwise",
+    "crop": "Crop",
+    "resize": "Resize",
+    "rectangleselect": "Rectangle select",
+    "eraser": "Eraser",
+    "pencil": "Pencil",
+    "brush": "Brush",
+    "line": "Line",
+    "rectangle": "Rectangle",
+    "ellipse": "Ellipse",
+    "fill": "Fill",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "external": "External",
+    "reload": "Reload",
+    "deleteselection": "Delete selection"
+  },
+  "color-palette": {
+    "swatch-change": "Swatch color change",
+    "swatch-add": "Add swatch",
+    "swatch-delete": "Delete swatch",
+    "swatch-delete-all": "Delete all swatches",
+    "color-picks-change": "Change color palette"
+  }
+}

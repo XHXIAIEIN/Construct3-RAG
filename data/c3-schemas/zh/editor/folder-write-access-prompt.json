@@ -1,0 +1,5 @@
+{
+  "caption": "保存到文件夹",
+  "message": "Construct 需要您允许某些权限设置才能将文件储存在选定的文件夹。",
+  "confirm-text": "请求权限"
+}

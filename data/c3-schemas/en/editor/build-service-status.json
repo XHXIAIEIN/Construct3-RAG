@@ -1,0 +1,15 @@
+{
+  "prefix": "Build Service: ",
+  "connecting": "Connecting to build server...",
+  "connected-to-server": "Connected to server",
+  "transfer-progress": "Transfer progress {0}%",
+  "lost-connection": "Lost connection to build server",
+  "waiting-to-build": "Waiting to build",
+  "preparing-project": "Preparing project",
+  "building-android": "Building Android",
+  "building-ios": "Building iOS",
+  "compressing-builds": "Compressing builds",
+  "upload-complete": "Project uploaded successfully",
+  "connection-restored": "Connection restored",
+  "build-complete": "Build complete, beginning transfer"
+}

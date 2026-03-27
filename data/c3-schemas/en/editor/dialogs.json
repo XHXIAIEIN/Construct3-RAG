@@ -1,0 +1,2420 @@
+{
+  "asset-browser-bar-settings": {
+    "caption": "Asset Browser settings",
+    "import-animations-settings": "Animations import settings",
+    "use-file-name-as-frame-tag-on-many": "Tag new frames with asset name when importing as many object types",
+    "use-file-name-as-frame-tag-on-single": "Tag new frames with asset name when importing as single object type",
+    "use-file-name-as-frame-tag-sub-1": "• these do not apply for animated formats (e.g. [b].gif[/b] or [b].apng[/b])",
+    "use-file-name-as-frame-tag-sub-2": "• zip files with a [a1]c3-import-settings.json[/a1] file will prefer tag values in that file"
+  },
+  "zipImportOptions": {
+    "caption": "Zip Import Options",
+    "header-text": {
+      "one": "Choose what to import from the chosen zip file. The folder structure of the zip file will be replicated in the destinations where applicable.",
+      "other": "Choose what to import from the {0} chosen zip files. The folder structure of the zip files will be replicated in the destinations where applicable."
+    },
+    "import": "Import assets",
+    "nothing-to-import": {
+      "caption": "Nothing to import",
+      "message": {
+        "one": "No content can be imported from the zip file",
+        "other": "No content can be imported from either of the {0} zip files"
+      }
+    },
+    "tableHeaders": {
+      "icon": "Icon",
+      "enable": "Import",
+      "type": "Type",
+      "option": "Option",
+      "description": "Description"
+    },
+    "options": {
+      "images": {
+        "type": "Images",
+        "options": {
+          "as-multiple-object-types": {
+            "dropdown": "As multiple object types",
+            "description": "Create one object type for each image file found in each zip file."
+          },
+          "as-single-object-type": {
+            "dropdown": "As single object type",
+            "description": "Create one object type for each zip file. Each new object type will have as many animations can be found in the corresponding zip file."
+          },
+          "as-icons": {
+            "dropdown": "As icons",
+            "description": "Each image file will be added to the project's [b]Icons & screenshots[/b] folder."
+          }
+        }
+      },
+      "audio": {
+        "type": "Audio",
+        "options": {
+          "as-music": {
+            "dropdown": "As music",
+            "description": "Each audio file will be added to the project's [b]Music[/b] folder."
+          },
+          "as-sound": {
+            "dropdown": "As sounds",
+            "description": "Each audio file will be added to the project's [b]Sounds[/b] folder."
+          }
+        }
+      },
+      "svg": {
+        "type": "SVG",
+        "description": "Create one object type for each svg file and add each file to the project's [b]File[/b] folder."
+      },
+      "video": {
+        "type": "Video",
+        "description": "Each video file will be added to the project's [b]Video[/b] folder."
+      },
+      "fonts": {
+        "type": "Fonts",
+        "description": "Each font file will be added to the project's [b]Fonts[/b] folder."
+      },
+      "scripts": {
+        "type": "Scripts",
+        "description": "Each script file will be added to the project's [b]Scripts[/b] folder."
+      },
+      "other": {
+        "type": "Files",
+        "options": {
+          "all": {
+            "dropdown": "All",
+            "description": "All files will be added to the project's [b]Files[/b] folder."
+          },
+          "misc-only": {
+            "dropdown": "Misc. only",
+            "description": "Only files which aren't [b]images, audio, video, fonts or scripts[/b] will be added to the project's [b]Files[/b] folder."
+          }
+        }
+      }
+    }
+  },
+  "remotePreview": {
+    "caption": "Remote preview",
+    "settings": {
+      "first-layout": "First layout:",
+      "reload-all": "Reload all"
+    },
+    "qr-code-header": "Scan this QR code for quick access on mobile:",
+    "status-label": "Status: ",
+    "url-label": "Visit this URL on another browser or device to load this project.\n[i]Note:[/i] the URL only works until Remote Preview is stopped or closed.",
+    "stats": {
+      "one": "{0} client connected — uploading at {1} — total uploaded {2}",
+      "other": "{0} clients connected — uploading at {1} — total uploaded {2}"
+    },
+    "not-active": "Remote Preview is not active",
+    "stop": "Stop",
+    "signalling-status": {
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "logged-in": "Logged in",
+      "hosting-preview": "Hosting preview"
+    },
+    "signalling-error": {
+      "template": "Error: {0}",
+      "connection-failed": "failed to connect to signalling server",
+      "websocket-error": "websocket error",
+      "invalid-message": "invalid message",
+      "login-failed": "login failed",
+      "hosting-failed": "failed to host a preview session",
+      "signalling-error": "signalling error"
+    },
+    "client-list-header": "Connected clients",
+    "client-info-prefix": "[b]{0} / {1}[/b] [i]({2})[/i]: ",
+    "client-status": {
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "loading-data": "Loading data...",
+      "loading-images": "Loading images...",
+      "loading-scripts": "Loading scripts...",
+      "running": "Running"
+    },
+    "client-upload-info": "{0} upload — {1} total uploaded — ",
+    "request-video": "Request video",
+    "video-status-format": "Video: {0}",
+    "video-status": {
+      "unavailable": "not yet available",
+      "available": "available",
+      "requesting": "requesting...",
+      "playing": "Playing"
+    },
+    "runtime-stats": "Layout: [b]{0}[/b] — [b]{1} FPS[/b] — {2}% CPU — {3}% GPU — Renderer: [i]{4}[/i]",
+    "waiting-for-runtime-stats": "Waiting for runtime stats...",
+    "unknown-layout": "(unknown)",
+    "unknown-gpu": "(unknown)"
+  },
+  "tilemapBrushEditor": {
+    "caption": "Tilemap brush editor",
+    "new-brush-name": "Brush {0}",
+    "invalid-pick": "{0} - Invalid",
+    "errors": {
+      "name-invalid": {
+        "title": "Invalid name",
+        "message": "Please choose another name."
+      },
+      "name-used": {
+        "title": "Name is already used",
+        "message": "The brush name [b]{0}[/b] is already used in this project."
+      },
+      "tile-is-too-large": {
+        "message": "Tile size [b]{0}[/b]x[b]{1}[/b] is too large, brushes can't be edited."
+      }
+    },
+    "tooltips": {
+      "add": "Add a new brush",
+      "remove": "Delete the current brush",
+      "rename": "Rename the current brush",
+      "all": "Brush",
+      "type": "Type",
+      "options": "Options",
+      "toggle-tiles-in-template": "Toggle tiles in template",
+      "width": "Width",
+      "height": "Height"
+    },
+    "shortcuts": {
+      "toggle-tiles-in-template": "({alt} + T)"
+    },
+    "brush-types": {
+      "patch": "Patch",
+      "auto16": "Auto 16",
+      "auto47": "Auto 47"
+    },
+    "tile-properties": {
+      "header": "Tile properties",
+      "footer": "Tile properties when used in an auto tiling brush.",
+      "index": {
+        "name": "Index",
+        "desc": "The index of this tile."
+      },
+      "probability": {
+        "name": "Probability",
+        "desc": "The probability of this tile being picked when using it in an auto tiling brush."
+      }
+    },
+    "context-menu": {
+      "add-tile": "Add Tile",
+      "add-tiles": "Add Tiles",
+      "remove-tile": "Remove Tile",
+      "set-brush": "Set brush with selection"
+    },
+    "after-close-undo-point": "Tilemap brush editor changes"
+  },
+  "pickTimelineAudioFile": {
+    "caption": "Pick audio file"
+  },
+  "pickTimelineInstances": {
+    "caption": {
+      "timeline": "Pick instances for timeline '{0}'",
+      "track-folder": "Pick instances for folder '{0}'",
+      "track": "Pick compatible instance to swap"
+    }
+  },
+  "pickTimelineProperty": {
+    "caption": "Timeline property picker",
+    "header": "Pick timeline property for {0}",
+    "groups": {
+      "world-instance": "Common properties",
+      "instance-variable": "Instance variables",
+      "behavior-properties": "{0} behavior properties",
+      "effect-parameters": "{0} effect parameters",
+      "plugin": "Plugin properties",
+      "audio": "Audio properties"
+    }
+  },
+  "pickTimelines": {
+    "caption": "Timeline picker",
+    "header": "Pick child timelines for {0}",
+    "groupNames": {
+      "valid": "Valid: Timelines can be added to the target",
+      "already-nested": "Invalid: Timelines already nested in the target",
+      "recursive-structure": "Invalid: Timelines will generate infinite recursion",
+      "duplicate-track-ids": "Invalid: Timelines have track ids already present in the target",
+      "duplicate-track-names": "Invalid: Timelines have names already present in the target"
+    }
+  },
+  "dataEditorResize": {
+    "caption": {
+      "default": "Resize",
+      "column": "Resize column",
+      "columns": "Resize all columns",
+      "row": "Resize row",
+      "rows": "Resize all rows"
+    },
+    "new-size": "New size"
+  },
+  "pickPresetFlowchartNodes": {
+    "caption": "Preset node picker",
+    "header": "Pick a preset node for {0}:",
+    "flowchart-item-name": "{0} preset nodes",
+    "buttons": {
+      "insert": "Insert"
+    },
+    "context-menu": {
+      "add-folder": "Add folder",
+      "goto-flowchart-node": "Go to node"
+    },
+    "after-close-undo-point": "Pick node preset changes"
+  },
+  "addonManager": {
+    "caption": "Addon manager",
+    "loading-text": "Loading...",
+    "header-text": "This is a list of all addons loaded by the editor. To view addons used by a specific project, use the Project Bar to view the used addons only.",
+    "show-built-in": "Show built-in",
+    "show-updates-only": "Show updates only",
+    "show-only-legacy-addons": "Show only legacy addons (SDK v1)",
+    "name": "Name",
+    "type": "Type",
+    "version": "Version",
+    "available-version": "{0} available",
+    "author": "Author",
+    "source": "Source",
+    "description": "Description",
+    "safe-mode-deactivated": "Deactivated due to Safe Mode",
+    "sdkv1-no-longer-supported": "Legacy (SDK v1) addons are no longer supported",
+    "install-new-addon": "Install new addon...",
+    "update-all": "Update all",
+    "downloading-updates": "Downloading updates...",
+    "add-dev-addon": "Add dev addon...",
+    "get-addons": "Get addons",
+    "addon-types": {
+      "plugin": "Plugin",
+      "behavior": "Behavior",
+      "effect": "Effect",
+      "theme": "Theme",
+      "tour": "Guided tour"
+    },
+    "addon-sources": {
+      "built-in": "Built-in",
+      "addon": "Browser storage",
+      "dev": "Developer"
+    },
+    "install-confirmation": {
+      "title": "Addon installation",
+      "message": "Addon install finished. Restart Construct to start using any new addons."
+    },
+    "install-error-message": "Failed to install the addon. Check the browser console for details.",
+    "install-min-version-error-message": "This addon cannot be installed because it requires a minimum version of [a1]{0}[/a1], and you are currently using [b]{1}[/b].",
+    "install-sdkv1-error-message": "The addon [i]{0}[/i] by [i]{1}[/i] is a legacy (SDK v1) addon which is no longer supported in this release of Construct and so cannot be installed. The last release that supports legacy addons is the [b]r449[/b] LTS release. See the [a1]LTS releases page[/a1], or contact the addon developer for an updated version of the addon.",
+    "menu": {
+      "help": "Help for '{0}'",
+      "visit-addon-page": "Visit addon page",
+      "effects-help": "Help for effects",
+      "visit-website": "Visit website",
+      "update": "Update to {0}",
+      "download-c3addon": "Download .c3addon",
+      "uninstall": "Uninstall"
+    },
+    "update-confirmation": {
+      "title": "Addon updates",
+      "message": "Addon updates completed. Restart Construct for changes to take effect."
+    },
+    "update-error-message": "Failed to update addons. Try checking your Internet connection is working.",
+    "uninstall-confirmation": {
+      "caption": "Uninstall addon",
+      "message": "If you uninstall an addon, you will no longer be able to open projects that use it. Are you sure you want to uninstall the addon '{0}'?",
+      "uninstall": "Uninstall"
+    },
+    "uninstall-finished": {
+      "title": "Addon uninstalled",
+      "message": "The addon has been uninstalled. Restart Construct for changes to take effect."
+    },
+    "uninstall-error-message": "Failed to uninstall the addon.",
+    "restart-pending-message": "Restart Construct for addon changes to take effect.",
+    "dev-addon-install": {
+      "caption": "Add developer addon",
+      "message": "Enter the URL to an addon available on a local webserver (on localhost).",
+      "url-label": "URL:"
+    },
+    "dev-install-confirmation": "Restart Construct to load the addon '{0}'.",
+    "dev-install-failed": "Unable to load the addon JSON. Check your local web server is running and correctly configured. Check the browser console for errors.",
+    "addon-updates-available-notification": {
+      "title": {
+        "one": "{0} addon update available",
+        "other": "{0} addon updates available"
+      },
+      "message": "Click this notification to open the Addon Manager and view and install addon updates."
+    }
+  },
+  "animationFromSpriteStrip": {
+    "caption": "Import Sprite Sheet",
+    "horizontal-cells": "Number of horizontal cells:",
+    "vertical-cells": "Number of vertical cells:",
+    "slice-mode": "Direction:",
+    "horizontal-slice": "Horizontal",
+    "vertical-slice": "Vertical",
+    "replace-animation": "Replace entire animation",
+    "keep-existing-data": "Keep data of replaced frames",
+    "dimension-header": "Sprite Sheet Layout",
+    "import": "Import",
+    "errors": {
+      "invalid-horizontal-cells": {
+        "title": "Invalid horizontal cells value",
+        "message": "The value must be greater than 0"
+      },
+      "invalid-vertical-cells": {
+        "title": "Invalid vertical cells value",
+        "message": "The value must be greater than 0"
+      }
+    }
+  },
+  "animations-editor-settings": {
+    "caption": "Miscellaneous settings",
+    "import-settings": "Import settings",
+    "guess-collision-polygon": "Guess collision polygon after importing images",
+    "use-filename-for-animation": "Use file name when importing animations",
+    "palette-settings": "Palette settings",
+    "palette-swatch-size": "Swatch size:",
+    "palette-swatch-size-small": "Small",
+    "palette-swatch-size-large": "Large",
+    "save-settings": "Download settings",
+    "save-format": "Format:",
+    "save-quality": "Quality (0 - 100):",
+    "save-optimize": "Optimize generated files"
+  },
+  "animationsFromSpriteStripPicker": {
+    "caption-animations": "Animations Picker: {0}",
+    "caption-frames": "Frames Picker: {0}",
+    "animations": "New animations",
+    "frames": "{0} Frames ({1})",
+    "frames-empty": "Frames",
+    "frames-number": "Frames ({0})",
+    "no-frames": "No frames added",
+    "no-animations": "No animations added",
+    "import-animations": "Import animations",
+    "import-frames": "Import frames",
+    "toolbar": {
+      "labels": {
+        "frame-columns": "Columns",
+        "frame-rows": "Rows",
+        "frame-width": "Width",
+        "frame-height": "Height",
+        "read-direction": "Order"
+      },
+      "dropdown": {
+        "left-to-right": "Left to right",
+        "top-to-bottom": "Top to bottom"
+      },
+      "tooltips": {
+        "add-animation-from-selection": "Add animation from selection",
+        "add-frames-from-selection": "Add frames from selection",
+        "add-animation-with-all-frames": "Add animation with all frames",
+        "add-all-frames": "Add all frames",
+        "add-animations-from-all-columns": "Add an animation for each column",
+        "add-animations-from-all-rows": "Add an animation for each row",
+        "add-animations-from-columns-selection": "Add an animation for each column from selection",
+        "add-animations-from-rows-selection": "Add an animation for each row from selection"
+      },
+      "shortcuts": {
+        "add-animation-from-selection": "(A)",
+        "add-animation-with-all-frames": "({alt} + A)",
+        "add-frames-from-selection": "(F)",
+        "add-all-frames": "({alt} + F)",
+        "add-animations-from-columns-selection": "(C)",
+        "add-animations-from-all-columns": "({alt} + C)",
+        "add-animations-from-rows-selection": "(R)",
+        "add-animations-from-all-rows": "({alt} + R)"
+      }
+    },
+    "context-menu": {
+      "add-animation-from-selection": "Add animation",
+      "add-frames-from-selection": "Add frames",
+      "add-animations-from-columns-selection": "Add animations for each column",
+      "add-animations-from-rows-selection": "Add animations for each row"
+    },
+    "status": {
+      "frame": "[b]Current frame:[/b] [i]{0}[/i]",
+      "zoom": "[b]Zoom:[/b] [i]{0}%[/i]"
+    }
+  },
+  "configure-animations-editor-grid": {
+    "caption": "Configure grid",
+    "grid-width": "Grid width",
+    "grid-height": "Grid height",
+    "grid-color": "Grid color",
+    "grid-snap": "Snap",
+    "grid-no-snap": "No snap",
+    "grid-snap-to-edge": "Edges",
+    "grid-snap-to-middle": "Center",
+    "errors": {
+      "invalid-width": {
+        "title": "Invalid Width",
+        "message": "Width must be a numeric value greater than 0"
+      },
+      "invalid-height": {
+        "title": "Invalid Height",
+        "message": "Height must be a numeric value greater than 0"
+      }
+    }
+  },
+  "fileImportMode": {
+    "caption": "File Import Mode",
+    "import-mode": "Choose an import mode",
+    "from-files": "Import from files",
+    "from-spritesheet": "Import from sprite sheet"
+  },
+  "imageFormat": {
+    "caption": "Image Format",
+    "format": "Format:",
+    "lossy": "Lossy",
+    "lossless": "Lossless",
+    "quality": "Quality (0-100):",
+    "apply-settings": "Apply these settings to:",
+    "import": "Import",
+    "frame": "This frame",
+    "animation": "This animation",
+    "all-animations": "All animations",
+    "image": "This Image",
+    "texture": "This texture",
+    "all-textures": "All textures",
+    "project": "Entire Project",
+    "settings-header": "Compression for Export"
+  },
+  "pasteImage": {
+    "caption": "Paste Image",
+    "paste-option": "The pasted content is larger that the current image",
+    "enlarge": "Enlarge canvas",
+    "keep": "Keep canvas size",
+    "fit": "Fit to canvas"
+  },
+  "pickColorPickCollection": {
+    "caption": "Color palette picker",
+    "header": "Pick a color palette from the whole project:",
+    "owner-item-name": "{0} color palettes",
+    "palette-item-name": "{0} (colors: {1})",
+    "palette-preview": "{0} preview:",
+    "context-menu": {
+      "add-folder": "Add folder"
+    },
+    "buttons": {
+      "pick-palette": "Pick"
+    },
+    "after-close-undo-point": "Color palette picker changes"
+  },
+  "previewAnimation": {
+    "caption": "Preview",
+    "restart": "Restart"
+  },
+  "resizeImage": {
+    "raster": {
+      "caption": "Resize Image Canvas",
+      "settings-header": "Image Canvas Size"
+    },
+    "svg": {
+      "caption": "Resize SVG",
+      "settings-header": "SVG Size"
+    },
+    "width": "Width (Pixels):",
+    "height": "Height (Pixels):",
+    "image": "Image:",
+    "apply-to-whole-animation": "Apply to whole animation",
+    "apply-to-all-animations": "Apply to all animations",
+    "apply-to-all-textures": "Apply to all textures",
+    "aspect-ratio": "Keep aspect ratio",
+    "smooth": "Smooth",
+    "stretch": "Stretch",
+    "align-top-left": "Align Top-Left",
+    "align-center": "Align Center",
+    "invalid-width": "Invalid Width",
+    "invalid-height": "Invalid Height",
+    "invalid-dimension-tip": "Please enter numeric value greater than 0",
+    "action-not-undoable-message": "Resizing the whole animation can not be undone.",
+    "action-not-undoable-tip": "All undo history of the Animation's Editor up until this point will be lost."
+  },
+  "about": {
+    "caption": "About",
+    "release-number-beta": "Release {0} beta",
+    "release-number-stable": "Release {0} stable",
+    "release-number-lts": "Release {0} LTS",
+    "view-release-notes": "View {0} release notes",
+    "platform-information": "Platform information",
+    "account-header": "Account",
+    "view-account-information": "View account information",
+    "local-storage-header": "Local storage",
+    "storage-usage": "Approximately {0} storage used of {1} quota ({2}%)",
+    "storage-cleanup": "Storage cleanup...",
+    "storage-persisted": "Browser will persist storage",
+    "storage-not-persisted-prefix": "Browser may not persist storage — ",
+    "request-persistent-storage": "Request persistent storage",
+    "persistent-storage-denied": "Unable to get permission to persist storage. Try bookmarking this page or adding it to the home screen before trying again. Also note private browsing windows do not support persistent storage.",
+    "storage-usage-unavailable": "(storage usage unavailable)",
+    "storage-status-unavailable": "(storage status unavailable)",
+    "about-construct-header": "About Construct",
+    "official-website": "Official website: ",
+    "about-us": "About us",
+    "help": "Help",
+    "forums": "Forums",
+    "tutorials": "Tutorials",
+    "get-addons": "Get addons",
+    "suggest-features": "Suggest features",
+    "report-issues": "Report issues",
+    "contribute-translations": "Contribute translations",
+    "editor-credit": "Construct editor:",
+    "website-credit": "Website development & online services:",
+    "design-credit": "Construct logo, editor icons & website design:",
+    "thanks-credit": "Thanks also to:",
+    "eula": "End-user license agreement",
+    "bundled-project-license": "Bundled project license",
+    "privacy-policy": "Privacy policy",
+    "legal-information": "Legal information",
+    "time-spent-in-editor": "Time spent in editor (this device only, any account):",
+    "thanks-note": "Thank you to our dedicated users, patient testers, community translators, friends, family and countless other individuals who helped along the way!",
+    "quote": "\"The only way of discovering the limits of the possible is to venture a little way past them into the impossible.\" — [i]Arthur C. Clarke[/i]"
+  },
+  "addonConfirmInstall": {
+    "caption": "Install Construct 3 addon",
+    "header-text": "Only install addons from sources you trust. Malicious addons could compromise the security or privacy of your projects. Broken addons can also cause bugs or other problems in Construct 3, including corrupting your project. Check the addon developer is actively maintaining their addon and providing support for it in case of any problems caused by the addon.\n\nWould you like to install the following addon for Construct 3? The details of this addon, according to the author, are:",
+    "name": "Name",
+    "version": "Version",
+    "type": "Type",
+    "type-plugin": "Plugin",
+    "type-behavior": "Behavior",
+    "type-effect": "Effect",
+    "type-theme": "Theme",
+    "author": "Author",
+    "website": "Website",
+    "documentation": "Documentation",
+    "dont-ask-again": "Don't ask me again for this addon",
+    "description": "Description",
+    "install": "Install"
+  },
+  "addonUpdateReview": {
+    "caption": "Addon update review",
+    "header": {
+      "review-details": {
+        "one": "Review details for {0} addon update.",
+        "other": "Review details for {0} addon updates."
+      },
+      "bundled-addons-note": "[b]Note:[/b] addons bundled with projects must be separately updated via the 'View used addons' dialog from the Project Bar."
+    },
+    "update": "Update",
+    "visit-addon-page": "Visit addon page",
+    "current-version": "Current version: {0}",
+    "update-version": "Update version: [b]{0}[/b]",
+    "published-date": "Published: {0}",
+    "changes": "Changes in {0}"
+  },
+  "exportSelectPlatform": {
+    "caption": "Choose platform to export to",
+    "error-loading-exporters": "Error loading exporters"
+  },
+  "exportStandardOptions": {
+    "caption": "Export options",
+    "export-to": "Export to:",
+    "image-options": "Image options",
+    "deduplicate-images": "Deduplicate images",
+    "lossless-format": "Lossless format",
+    "lossy-format": "Lossy format",
+    "optimize-images": "Optimize images",
+    "script-options": "Script options",
+    "minify-script": {
+      "description": "Minifying the script makes the exported project harder to decompile and faster to start.",
+      "advanced-note": "[b]Note:[/b] in some cases 'Advanced' mode can break your project's JavaScript code, unless it is specially written. [a1]Learn more[/a1]",
+      "mode": {
+        "label": "Minify mode",
+        "none": "None",
+        "bundle": "Bundle only",
+        "simple": "Simple",
+        "advanced": "Advanced",
+        "debug-advanced": "Debug advanced"
+      }
+    },
+    "other-options": "Other options",
+    "offline-support": {
+      "label": "Offline support",
+      "description": "Offline support saves the project to the local device so it can still load in a browser even when offline or with limited connectivity. [a1]Learn more[/a1]"
+    }
+  },
+  "exportStats": {
+    "caption": "Export statistics",
+    "duration-message": "This export took [b]{0}[/b] to complete.",
+    "script-size-no-minify": "Total script size without minifying is [b]{0}[/b] (about [b]{1}[/b] compressed)",
+    "script-size-minified": "Total script size originally [b]{0}[/b], minified to [b]{1}[/b] (about [b]{2}[/b] compressed)",
+    "data-file-size": "Data file size is [b]{0}[/b] (about [b]{1}[/b] compressed)",
+    "optimized-image-size-message": "Total optimized image size is [b]{0}[/b]",
+    "unoptimized-image-size-message": "Total unoptimized image size is [b]{0}[/b]",
+    "deduplication-message": "Image deduplication eliminated [b]{0}[/b] redundant images, saving about {1} RAM",
+    "no-deduplication-message": "Image deduplication was not enabled",
+    "audio-size": "Total sounds size [b]{0}[/b], music size [b]{1}[/b]",
+    "overall-size-summary": "Estimated download size: [b]{0}[/b].",
+    "overall-size": "Overall estimated download size: [b]{0}[/b] (excluding streamed audio: [b]{1}[/b]). See also [a1]tips on reducing download size[/a1].",
+    "not-applicable": "n/a"
+  },
+  "fileList": {
+    "refresh": "Refresh",
+    "search": "Search",
+    "service": "Service",
+    "name": "Name",
+    "dateModified": "Date Modified",
+    "size": "Size",
+    "filename": "Filename",
+    "getFiles": "Getting Files from {0}",
+    "selectService": " -- select a service -- ",
+    "pleaseSelectService": "Please Select a Service",
+    "deleteFile": "Delete Entry",
+    "renameFile": "Rename Entry",
+    "downloadFile": "Download Project",
+    "confirmDelete": "Are you sure you want to delete \"{0}\"?",
+    "deletingFile": "Deleting file",
+    "failedDelete": "Failed to Delete \"{0}\"",
+    "confirmRename": "Are you sure you want to rename \"{0}\" to \"{1}\"?",
+    "renamingFile": "Renaming File",
+    "failedRename": "Failed to Rename \"{0}\" to \"{1}\"",
+    "unknown": "unknown",
+    "openProject": "Open Project",
+    "saveProject": "Save Project",
+    "sortNameAscending": "Sort by file name (ascending)",
+    "sortNameDescending": "Sort by file name (descending)",
+    "sortDateAscending": "Sort by date modified (ascending)",
+    "sortDateDescending": "Sort by date modified (descending)",
+    "sortSizeAscending": "Sort by file size (ascending)",
+    "sortSizeDescending": "Sort by file size (descending)",
+    "save": "Save",
+    "open": "Open",
+    "logout": "Logout",
+    "logging-out": "Logging out of \"{0}\"",
+    "request-persistence": "Currently, files saved to browser storage may be deleted by the browser under certain circumstances. Would you like to enable persistent storage? This should ensure the browser does not delete files automatically. [b]Note:[/b] we strongly recommend also keeping regular backups while using this save option to avoid accidental data loss.",
+    "declined-persistence": "Unable to get permission to persist storage. Try adding Construct to your desktop/home screen.",
+    "cannotSaveCAPX": "The selected file is a Construct 2 project, and cannot be saved to by Construct 3. Please choose a new name for your project with the \"c3p\" file extension.",
+    "overwriteFile": "Overwrite File",
+    "confirmOverwrite": "Are you sure you want to overwrite \"{0}\"?",
+    "filenameNone": "You must type a filename",
+    "filenameIllegalCharacter": "Filename contains illegal character \"{0}\"",
+    "filenameReservedName": "Filename uses reserved name \"{0}\"",
+    "filenamePrivate": "Filename cannot begin with \".\"",
+    "filenameExtension": "Invalid file extension \"{0}\"",
+    "userAuthenticationCancelled": "Cloud authentication cancelled",
+    "failedToRefresh": "Failed to refresh file list",
+    "popupBlocked": "Unable to open authentication popup. If you can see a warning indicating a popup window was blocked, click on it and select \"allow popups\" then try again.",
+    "add-folder": "Add folder",
+    "upload": "Upload file",
+    "uploading": "Uploading file",
+    "creatingFolder": "Creating folder...",
+    "failedCreatingFolder": "Failed to create folder",
+    "add-folder-dialog": {
+      "caption": "New folder",
+      "message": "Choose a name for the folder",
+      "label": ""
+    },
+    "up": "Up to parent folder"
+  },
+  "iframe": {
+    "caption": "iframe"
+  },
+  "login": {
+    "caption": "Log in",
+    "please-wait": "Please wait...",
+    "login-unavailable-header": "Login unavailable",
+    "login-unavailable-message": "Unable to load login service. Please check your Internet connection and ensure access to [i]{0}[/i] is permitted on your network. [a1]Click here to test access[/a1] to the login service.",
+    "username": "Username",
+    "password": "Password",
+    "keep-me-logged-in": "Keep me logged in",
+    "log-in": "Log in",
+    "failed-prompt": {
+      "caption": "Login failed",
+      "message": "Unable to login. Check the username and password are correct.",
+      "try-again": "Try again"
+    }
+  },
+  "newProject": {
+    "caption": "New project",
+    "project-name-label": "Name",
+    "new-project-name": "New project",
+    "preset-label": "Choose preset",
+    "viewport-size-label": "Viewport size",
+    "viewport-size-separator": "x",
+    "orientations-label": "Orientations",
+    "start-with-label": "Start with",
+    "pixel-art-label": "Optimize for pixel art",
+    "create": "Create",
+    "presets": {
+      "retro-style": "Retro style",
+      "sd-landscape-4-3": "SD landscape 4:3",
+      "sd-portrait-4-3": "SD portrait 3:4",
+      "sd-landscape-16-9": "SD landscape 16:9",
+      "sd-portrait-16-9": "SD portrait 9:16",
+      "720p-landscape": "720p landscape",
+      "720p-portrait": "720p portrait",
+      "1080p-landscape": "1080p landscape",
+      "1080p-portrait": "1080p portrait",
+      "4k-landscape": "4K landscape",
+      "4k-portrait": "4K portrait"
+    },
+    "orientations": {
+      "any": "Any",
+      "portrait": "Portrait",
+      "landscape": "Landscape"
+    },
+    "start-with": {
+      "event-sheet": "Event sheet",
+      "javascript": "JavaScript",
+      "typescript": "TypeScript"
+    },
+    "errors": {
+      "invalid-width": "Invalid width",
+      "invalid-width-desc": "Please enter a valid viewport width.",
+      "invalid-height": "Invalid height",
+      "invalid-height-desc": "Please enter a valid viewport height."
+    }
+  },
+  "welcomeTour": {
+    "caption": "Welcome!",
+    "welcome-title": "Welcome to Construct!",
+    "welcome-text": "Well done for picking a powerful and easy-to-use game creation tool! Take a [b]guided tour[/b] to start building your first game with [b]step-by-step instructions[/b]. You won't believe how quick and easy it is!",
+    "animate-welcome-text": "Well done for picking a powerful and easy-to-use animation tool! Take a [b]guided tour[/b] to make your first animation with [b]step-by-step instructions[/b]. You won't believe how quick and easy it is!",
+    "tour-button-text": "Take a guided tour",
+    "no-thanks": "No thanks, not now"
+  },
+  "addBehavior": {
+    "caption": "Add behavior",
+    "header": "Choose a behavior to add:",
+    "add": "Add",
+    "description": "{0}: {1}",
+    "get-addons": "Get addons",
+    "pinned": "Pinned",
+    "context-menu": {
+      "pin-to-top": "Pin to top",
+      "unpin": "Unpin",
+      "help-on-behavior": "Help on '{0}'"
+    }
+  },
+  "addEffect": {
+    "caption": "Add effect",
+    "header": "Choose an effect to add:",
+    "pinned": "Pinned",
+    "add": "Add",
+    "description": "{0}: {1}",
+    "get-addons": "Get addons",
+    "context-menu": {
+      "pin-to-top": "Pin to top",
+      "unpin": "Unpin"
+    }
+  },
+  "behaviors": {
+    "caption": "{0} behaviors",
+    "family-caption": "{0} family behaviors",
+    "add-new-behavior": "Add new behavior",
+    "column-names": {
+      "name": "Name",
+      "type": "Type"
+    },
+    "menu": {
+      "add-behavior": "Add behavior",
+      "behavior-help": "Help on '{0}'",
+      "general-help": "Help on behaviors"
+    },
+    "delete-confirmation": {
+      "caption": "Delete behavior",
+      "message": "Deleting this behavior will delete all actions and conditions that reference it. Are you sure you want to delete the behavior [b]{0}[/b]?"
+    }
+  },
+  "createMesh": {
+    "caption-create": "Create mesh",
+    "caption-resize": "Resize mesh",
+    "rows": "Rows",
+    "columns": "Columns",
+    "invalid-value": {
+      "title": "Invalid value",
+      "message": "Please enter a valid value (at least 2)."
+    }
+  },
+  "createNewObjectType": {
+    "caption": "Create new object type",
+    "header": "Choose a plugin to create a new object type from:",
+    "insert": "Insert",
+    "name": "Name",
+    "get-addons": "Get addons",
+    "pinned": "Pinned",
+    "inserted-single-global-tip": {
+      "title": "Added '{0}'",
+      "message": "This object is available to the entire project."
+    },
+    "inserted-nonworld-tip": {
+      "title": "Added '{0}'",
+      "message": "This object is available to the entire project."
+    },
+    "errors": {
+      "invalid-name-chars": {
+        "title": "Invalid characters were removed",
+        "desc": "Check the name is correct and try again."
+      },
+      "name-taken": {
+        "title": "This name is already taken",
+        "desc": "The following name is free: {0}"
+      },
+      "singleglobal-plugin-already-added": "The '{0}' object can only be added to a project once, and it has already been added to this project.",
+      "blob-failure": {
+        "one": "The image file could not be used.",
+        "other": "Some of the {0} image files could not be used."
+      }
+    },
+    "context-menu": {
+      "pin-to-top": "Pin to top",
+      "unpin": "Unpin",
+      "help-on-plugin": "Help on '{0}'"
+    }
+  },
+  "deprecatedFeatures": {
+    "caption": "Deprecated features",
+    "header-text": "This project uses some deprecated features. These are unsupported and may be removed. Consider updating the project. [a1]Learn more about deprecated features and how to update the project[/a1]",
+    "dont-show-again": "Don't show again for this project",
+    "items": {
+      "file-structure": "This project used the legacy [i]Flat[/i] export file structure mode. It has been updated to the modern [i]Folders[/i] mode. You may need to update some file paths.",
+      "cordova-ios-scheme": "Project property [i]Cordova iOS scheme[/i] was the legacy [i]file[/i] mode. It has been updated to the modern [i]app[/i] mode. This may reset storage if you previously published this project as an iOS app.",
+      "cordova-android-scheme": "Project property [i]Cordova Android scheme[/i] was the legacy [i]file[/i] mode. It has been updated to the modern [i]https[/i] mode. This may reset storage if you previously published this project as an Android app.",
+      "classic-scripts": "This project used legacy [i]classic[/i] scripts. Support for this was removed in favor of [i]module[/i] scripts. You may need to update your code to support modules.",
+      "deprecated-plugin": "Plugin [b]{0}[/b] ({1}) by [i]{2}[/i] is deprecated",
+      "deprecated-behavior": "Behavior [b]{0}[/b] ({1}) by [i]{2}[/i] is deprecated"
+    }
+  },
+  "edit-custom-ace-block": {
+    "action": {
+      "edit-caption": "Edit custom action",
+      "add-caption": "Add custom action",
+      "pick-object-header": "Pick the object the custom action will belong to."
+    },
+    "object": "Object",
+    "click-to-choose": "<click to choose>",
+    "pick-object-caption": "Pick object",
+    "name": "Name",
+    "description": "Description (optional)",
+    "category": "Category (optional)",
+    "copy-all-picked": "Copy all picked",
+    "asynchronous": "Asynchronous",
+    "errors": {
+      "no-object": {
+        "title": "Please pick an object",
+        "message": "This cannot be empty."
+      },
+      "empty-name": {
+        "title": "Please enter a name",
+        "message": "This cannot be empty."
+      },
+      "name-used": {
+        "title": "The name [b]{0}[/b] is already used",
+        "message": "Please choose another name."
+      }
+    }
+  },
+  "edit-event-group": {
+    "edit-caption": "Edit group",
+    "add-caption": "Add group",
+    "name": "Name",
+    "description": "Description (optional)",
+    "active-on-start": "Active on start",
+    "errors": {
+      "empty-name": {
+        "title": "Enter a name for the group",
+        "message": "You can't leave this empty."
+      },
+      "name-used": {
+        "title": "A group with this name already exists in the project",
+        "message": "Please choose another name"
+      }
+    }
+  },
+  "edit-event-variable": {
+    "edit-global-caption": "Edit global variable",
+    "edit-local-caption": "Edit local variable",
+    "add-global-caption": "Add global variable",
+    "add-local-caption": "Add local variable",
+    "name": "Name",
+    "type": "Type",
+    "initial-value": "Initial value",
+    "description": "Description (optional)",
+    "static": "Static",
+    "constant": "Constant",
+    "errors": {
+      "invalid-characters": {
+        "title": "Some invalid characters were removed",
+        "message": "You may want to double-check the name."
+      },
+      "empty-name": {
+        "title": "Please enter a name",
+        "message": "This cannot be empty."
+      },
+      "name-used": {
+        "title": "The name [b]{0}[/b] is already used in this scope",
+        "message": "Please choose another name."
+      },
+      "invalid-number-initial-value": {
+        "title": "Please enter a valid initial value",
+        "message": "This must be a valid number."
+      },
+      "name-is-system-expression": {
+        "title": "The name [b]{0}[/b] is the name of a system expression",
+        "message": "Event variables cannot have the same name as a system expression.  Please choose another name."
+      },
+      "change-constant-warning": {
+        "title": "Edit variable",
+        "message": "You are changing a non-constant variable in to a constant one. Any actions setting the variable will be removed, since constant variables cannot be modified. Are you sure you want to continue?"
+      }
+    }
+  },
+  "editFamily": {
+    "caption": "Edit object types in family '{0}'",
+    "header-project": "Object types in project:",
+    "header-project-with-plugin": "'{0}' object types in project:",
+    "header-family": "Object types in '{0}':",
+    "header-family-with-plugin": "'{0}' object types in '{1}':",
+    "add": "Add",
+    "remove": "Remove",
+    "errors": {
+      "name-collision": {
+        "caption": "Cannot add object type",
+        "message": "The object type cannot be added to the family, because '{0}' has an instance variable, behavior or effect named [b]{1}[/b], and the family '{2}' already has something using this name. Rename one of the items involved and try again."
+      }
+    }
+  },
+  "edit-function-block": {
+    "edit-caption": "Edit function",
+    "add-caption": "Add function",
+    "name": "Name",
+    "description": "Description (optional)",
+    "category": "Category (optional)",
+    "return-type": "Return type",
+    "copy-picked": "Copy picked",
+    "asynchronous": "Asynchronous",
+    "errors": {
+      "invalid-characters": {
+        "title": "Some invalid characters were removed",
+        "message": "Functions with a return type must have a name that can be used in expressions. You may want to double-check the name."
+      },
+      "empty-name": {
+        "title": "Please enter a name",
+        "message": "This cannot be empty."
+      },
+      "name-used": {
+        "title": "The name [b]{0}[/b] is already used",
+        "message": "Another function in the project already uses this name. Please choose another name."
+      },
+      "name-reserved": {
+        "title": "The name [b]{0}[/b] is reserved",
+        "message": "This name is reserved for use by Construct. Please choose another name."
+      }
+    }
+  },
+  "edit-function-parameter": {
+    "edit-caption": "Edit parameter",
+    "add-caption": "Add parameter",
+    "name": "Name",
+    "type": "Type",
+    "default-value": "Default value",
+    "description": "Description (optional)",
+    "errors": {
+      "invalid-characters": {
+        "title": "Some invalid characters were removed",
+        "message": "You may want to double-check the name."
+      },
+      "empty-name": {
+        "title": "Please enter a name",
+        "message": "This cannot be empty."
+      },
+      "name-used": {
+        "title": "The name [b]{0}[/b] is already used in this scope",
+        "message": "Please choose another name."
+      },
+      "invalid-number-default-value": {
+        "title": "Please enter a valid default value",
+        "message": "This must be a valid number."
+      },
+      "name-is-system-expression": {
+        "title": "The name [b]{0}[/b] is the name of a system expression",
+        "message": "Function parameters cannot have the same name as a system expression.  Please choose another name."
+      }
+    }
+  },
+  "edit-instance-variable": {
+    "edit-caption": "Edit instance variable",
+    "add-caption": "Add instance variable",
+    "name": "Name",
+    "type": "Type",
+    "initial-value": "Initial value",
+    "varies-placeholder": "(varies)",
+    "description": "Description (optional)",
+    "show-in-properties-bar": "Show in Properties Bar",
+    "errors": {
+      "invalid-characters": {
+        "title": "Some invalid characters were removed",
+        "message": "You may want to double-check the name."
+      },
+      "empty-name": {
+        "title": "Please enter a name",
+        "message": "This cannot be empty."
+      },
+      "name-used": {
+        "title": "The name [b]{0}[/b] is already used in this object",
+        "message": "Please choose another name."
+      },
+      "invalid-number-initial-value": {
+        "title": "Please enter a valid initial value",
+        "message": "This must be a valid number."
+      }
+    }
+  },
+  "effects": {
+    "caption": "{0} effects",
+    "add-new-effect": "Add new effect",
+    "column-names": {
+      "name": "Name",
+      "type": "Type"
+    },
+    "menu": {
+      "add-effect": "Add effect",
+      "help": "Help on effects"
+    },
+    "delete-confirmation": {
+      "caption": "Delete effect type",
+      "message": "Deleting this effect will delete all actions and conditions that reference it. Are you sure you want to delete the effect [b]{0}[/b]?"
+    }
+  },
+  "eventSheetPicker": {
+    "default-caption": "Choose event sheet"
+  },
+  "expressionsDictionary": {
+    "caption": "Expressions dictionary",
+    "root-header": "Double-click an object to view its available expressions:",
+    "sub-header": "[b]{0}[/b]: Choose an object to find its available expressions",
+    "object-header": "Double-click to insert a [b]{0}[/b] expression",
+    "object-description": "Double-click to view [b]{0}[/b] expressions",
+    "folder-description": "Double-click to view the contents of [b]{0}[/b]",
+    "expression-description": "[b]{0}[/b]: {1}",
+    "variable-description": "[b]{0}[/b]: {1}",
+    "variables-category": "Global & Local Variables",
+    "instance-variables-category": "Instance Variables",
+    "global-variable": "Global",
+    "local-variable": "Local",
+    "search-header": "Items matching [b]{0}[/b]:"
+  },
+  "freeEditionLimit": {
+    "caption": "Free edition limit",
+    "purchase": "Purchase",
+    "learn-more": "Learn more...",
+    "limit-types": {
+      "events": "events",
+      "layers": "layers",
+      "timelines": "timelines",
+      "scripting": "scripting",
+      "effects": "effects",
+      "webfonts": "web fonts",
+      "meshes": "meshes"
+    },
+    "login-tip": "If you've already purchased a plan, [a1]log in to your account[/a1] to use the full features.",
+    "limit-descriptions": {
+      "exporter-unavailable": {
+        "title": "This exporter is not available in the Free Edition",
+        "body": "Purchase a plan to use the full features of Construct, including a range of new export options to help you publish your project to different platforms."
+      },
+      "export-limits-exceeded": {
+        "title": "This project exceeds the Free Edition limits",
+        "body": "This project exceeds the Free Edition limit for [b]{0}[/b]. You cannot export this project when the limits are exceeded. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "event-limits-exceeded": {
+        "title": "This project exceeds the Free Edition limits",
+        "body": "This project exceeds the Free Edition limit for [b]{0}[/b]. You cannot modify this project when the limits are exceeded. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "layers-limit": {
+        "title": "Layers limit reached",
+        "body": "You cannot add more layers in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "timeline-limit": {
+        "title": "Timelines limit reached",
+        "body": "You cannot have more than one timeline, or a timeline longer than 5 seconds, in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "custom-ease-function-limit": {
+        "title": "Custom ease functions limit reached",
+        "body": "You cannot have more than one custom ease function, in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "effects-limit": {
+        "title": "Effects limit reached",
+        "body": "You cannot add more effects in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "loader-mode": {
+        "title": "Not available in the Free Edition",
+        "body": "The loader setting cannot be changed in the Free Edition. You can only export projects using the Construct splash. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "remote-preview": {
+        "title": "Remote Preview is not available in the Free Edition",
+        "body": "Remote Preview allows you to quickly and easily test your project on different devices. It's particularly useful for trying out your project on mobile devices. Purchase a plan to access this feature."
+      },
+      "restricted-plugin": {
+        "title": "Not available in the Free Edition",
+        "body": "This plugin is not available in the Free Edition. Purchase a plan to access all plugins in Construct."
+      },
+      "event-search": {
+        "title": "Not available in the Free Edition",
+        "body": "Searching event sheets and project files is not available in the Free Edition. Purchase a plan to use this feature."
+      },
+      "find-all-references": {
+        "title": "Not available in the Free Edition",
+        "body": "[i]Find All References[/i] allows you to instantly see a list of everywhere something is used in your project. It's great for reviewing your work. Purchase a plan to use this feature."
+      },
+      "live-preview": {
+        "title": "Not available in the Free Edition",
+        "body": "[i]Live Preview[/i] allows you to see a preview of an object or behavior directly in the editor, without having to preview the project. It's great for getting effects right, such as with the Particles object. Purchase a plan to use this feature."
+      },
+      "zorder-bar": {
+        "title": "Not available in the Free Edition",
+        "body": "The Z Order Bar allows you to easily edit which objects appear in front or behind others. Purchase a plan to use this feature."
+      },
+      "bookmarks-bar": {
+        "title": "Not available in the Free Edition",
+        "body": "The Bookmarks Bar allows you to save locations in event sheets and easily navigate between them. Purchase a plan to use this feature."
+      },
+      "families": {
+        "title": "Not available in the Free Edition",
+        "body": "[i]Families[/i] help eliminate repeated events for similar objects. Purchase a plan to use this feature."
+      },
+      "project-subfolders": {
+        "title": "Not available in the Free Edition",
+        "body": "Using subfolders in the Project Bar helps you keep your project organized. Purchase a plan to use this feature."
+      },
+      "breakpoints": {
+        "title": "Not available in the Free Edition",
+        "body": "Breakpoints allow you to pause on an event when using the debugger. Purchase a plan to use this feature."
+      },
+      "data-editor": {
+        "title": "Not available in the Free Edition",
+        "body": "The data editors allow you to edit Array and Dictionary data directly in the editor. Purchase a plan to use this feature."
+      },
+      "text-editor": {
+        "title": "Not available in the Free Edition",
+        "body": "The text editor allows you to edit text files directly in the editor. Purchase a plan to use this feature."
+      },
+      "webfont-limit": {
+        "title": "Not available in the Free Edition",
+        "body": "You cannot add more Web Fonts in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "bundled-addons": {
+        "title": "Not available in the Free Edition",
+        "body": "Bundling addons with a project allows you to open the project anywhere without having to first install the addons it uses. Purchase a plan to use this feature."
+      },
+      "onion-skin": {
+        "title": "Not available in the Free Edition",
+        "body": "Onion skinning allows you to see translucent copies of the next and previous frames while editing the current animation frame. It's a great help for drawing animations. Purchase a plan to use this feature."
+      },
+      "export-manager": {
+        "title": "Not available in the Free Edition",
+        "body": "The Export Manager allows you to review and build the last few exports from Construct, as well as build projects exported from Construct 2. Purchase a plan to use this feature."
+      },
+      "theme": {
+        "title": "Not available in the Free Edition",
+        "body": "Changing the theme allows you to customise the appearance of Construct, such as by using a dark theme. Purchase a plan to use this feature."
+      },
+      "script-limit": {
+        "title": "Not available in the Free Edition",
+        "body": "You cannot write more JavaScript in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "mesh-editor-limit": {
+        "title": "Mesh editing limit reached",
+        "body": "You cannot edit more than one mesh in a project in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "export-video-limit": {
+        "title": "Export limit reached",
+        "body": "You cannot export a video or GIF longer than 5 seconds in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "export-image-sequence-limit": {
+        "title": "Export image sequence limit reached",
+        "body": "You cannot export an image sequence longer than 5 seconds in the Free Edition. Purchase a plan to remove all of the Free Edition limits."
+      },
+      "minify-script": {
+        "title": "Not available in the Free Edition",
+        "body": "Minifying script reduces the size of the exported JavaScript code, making the project quicker to load and harder to reverse engineer. Purchase a plan to use this feature."
+      },
+      "generic": {
+        "title": "Not available in the Free Edition",
+        "body": "This feature is not available in the Free Edition of Construct. Purchase a plan to start using it."
+      }
+    }
+  },
+  "importAudio": {
+    "caption-general": "Import audio",
+    "caption-sound": "Import sounds",
+    "caption-music": "Import music",
+    "ok-button-text": "Import",
+    "invalid-files": "Some files were not included as they were not valid for this folder",
+    "import-files-button-label": "Click here to open a file picker:",
+    "import-files-button-text": "Import audio",
+    "drop-files-label": "Or drag and drop audio files in to the box below:",
+    "drop-files-text": "Drag and drop audio files here",
+    "no-files": "No files to import",
+    "encoding-progress": "encoding in progress",
+    "bitrate-label": "Bitrate:",
+    "table": {
+      "name": "Name",
+      "progress": "Encoding Progress",
+      "size": "Size",
+      "extension": "Type",
+      "complete": "Complete",
+      "bitrate": "Bitrate",
+      "pending": "Pending",
+      "decoding": "Decoding",
+      "encoding": "Encoding",
+      "queued": "Queued",
+      "failed": "Failed",
+      "notConverting": "Not Converting"
+    },
+    "format-warning": {
+      "caption": "Import audio",
+      "message": "You are importing audio files that Construct cannot convert to WebM Opus. Due to inconsistent support, these audio files [b]may not play on all platforms.[/b] To ensure audio can play on every device, import audio files in WebM Opus, FLAC or PCM WAV format, or use other software to convert the audio files to one of those formats. Are you sure you want to import these audio files? [a1]Learn more[/a1]",
+      "confirmText": "Import"
+    },
+    "replace-confirmation": {
+      "caption": "Replace files",
+      "message": "{0} files will be replaced by importing these files. Are you sure you want to replace these files?",
+      "confirmText": "Replace",
+      "cancelText": "Cancel"
+    }
+  },
+  "importFiles": {
+    "caption-general": "Import files",
+    "caption-script": "Import scripts",
+    "caption-icon": "Import icons",
+    "caption-video": "Import videos",
+    "caption-font": "Import fonts",
+    "caption-sound": "Import sounds",
+    "caption-music": "Import music",
+    "ok-button-text": "Import",
+    "invalid-files": "Some files were not included as they were not valid for this folder",
+    "import-files-button-label": "Click here to open a file picker:",
+    "import-files-button-text": "Import files",
+    "import-fonts-note": "Import fonts in [b]WOFF[/b] format for full support across all platforms. Other formats like TTF may not be supported on some platforms.",
+    "drop-files-label": "Or drag and drop files in to the box below:",
+    "drop-files-text": "Drag and drop files here",
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "size": "Size"
+    },
+    "replace-confirmation": {
+      "caption": "Replace files",
+      "message": "{0} files will be replaced by importing these files. Are you sure you want to replace these files?",
+      "confirmText": "Replace",
+      "cancelText": "Cancel"
+    },
+    "reserved-filename": {
+      "message": "The filename [b]{0}[/b] is reserved for use by Construct. Please import a file with a different name."
+    }
+  },
+  "instanceVariables": {
+    "caption": "{0} instance variables",
+    "family-caption": "{0} family instance variables",
+    "add-new-instance-variable": "Add new instance variable",
+    "column-names": {
+      "name": "Name",
+      "type": "Type",
+      "initial-value": "Initial value",
+      "show": "Show",
+      "description": "Description"
+    },
+    "value-varies": "[i](varies)[/i]",
+    "menu": {
+      "add-instance-variable": "Add instance variable",
+      "help": "Help on instance variables"
+    },
+    "delete-confirmation": {
+      "caption": "Delete instance variable",
+      "message": "Deleting this instance variable will delete all actions and conditions that reference it. Are you sure you want to delete the instance variable [b]{0}[/b]?"
+    }
+  },
+  "invalid-expressions": {
+    "caption": "Invalid expressions",
+    "header-text": "In some circumstances, previous versions of Construct allow invalid expressions to be used. These expressions must be corrected the prior version before using the project in this version of Construct 3. A list of the invalid expressions is provided below.",
+    "close-project": "Close project"
+  },
+  "loadTilemap": {
+    "caption": "Load Tilemap",
+    "choose-tilemap-file": "Choose a tilemap file",
+    "choose-layer": "Choose a layer",
+    "choose-tileset-file": "Choose a tileset file",
+    "choose-tile-graphics-file": "Choose a tile graphics file",
+    "load": "Load",
+    "choose": "Choose a file",
+    "optional": "This file is optional",
+    "dimensions-error-title": "Missing attributes",
+    "dimensions-error-message": "Missing [b]width[/b] and [b]height[/b] in map tag",
+    "tile-dimensions-error-title": "Missing attributes",
+    "tile-dimensions-error-message": "[b]tilewidth[/b] and [b]tileheight[/b] in map tag",
+    "renderorder-error-title": "Incorrect [b]renderorder[/b] attribute",
+    "renderorder-error-message": "Construct only supports [b]right-down[/b] renderer order.",
+    "tileset-error-title": "Wrong number of tilesets",
+    "tileset-error-message": "Construct only supports 1 tileset in tmx files.",
+    "image-error-title": "Missing image on tileset",
+    "image-error-message": "Construct requires an image to be defined in the tileset.",
+    "layers-error-title": "No layers found",
+    "layers-error-message": "Construct requires at least 1 layer to be defined.",
+    "encoding-error-title": "Layer encoding not supported",
+    "encoding-error-message": "Construct does not support [b]base64[/b] encoding with [b]gzip[/b] compression",
+    "general-encoding-error-title": "Layer encoding not supported",
+    "general-encoding-error-message": "Construct does not support [b]{0}[/b] encoding with [b]{1}[/b] compression",
+    "image-dimensions-error-title": "Image dimensions do not match",
+    "image-dimensions-error-message": "The image size described in the tmx file does not match with the size of the selected image",
+    "missing-image-error-title": "Missing image file",
+    "missing-image-error-message": "Construct can not load a tilemap with out a valid image file"
+  },
+  "minifyError": {
+    "caption": "Minify error",
+    "header": "Minifying this export failed. The errors are listed below. This is usually caused by the JavaScript code in your project, or a third-party addon. [b]Note:[/b] when using advanced minification, you may need to make changes to your JavaScript code. [a1]Learn more[/a1]"
+  },
+  "missingAddons": {
+    "caption": "Missing addons",
+    "header-text": "The project you are opening uses the following addons that are not installed. Try installing these missing plugins, behaviors and effects and then re-open the project.",
+    "missing-plugin-format": "Plugin [b]{0}[/b] ({1}) by [i]{2}[/i]",
+    "missing-behavior-format": "Behavior [b]{0}[/b] ({1}) by [i]{2}[/i]",
+    "missing-effect-format": "Effect [b]{0}[/b] ({1}) by [i]{2}[/i]",
+    "legacy-sdk-v1-addon-suffix": " (legacy SDK v1)",
+    "sdk-v1-note": "[b]Note:[/b] legacy (SDK v1) addons are no longer supported in this release of Construct and so cannot be installed. The last release that supports legacy addons is the [b]r449[/b] LTS release. See the [a1]LTS releases page[/a1], or contact the addon developer for an updated version of the addon.",
+    "c2-runtime-compatibility-note": "[b]Note:[/b] this project uses the legacy C2 runtime, which has since been removed from Construct 3. You can also try importing the project to C3 [a1]r251.2[/a1], which is the last release that included the C2 runtime. Then you can upgrade it to the C3 runtime and import it to the latest release. [a2]Learn more[/a2]"
+  },
+  "objectPicker": {
+    "default-caption": "Object picker",
+    "default-header": "Pick an object below:",
+    "clear-selection": "Clear selection"
+  },
+  "parameters": {
+    "caption": "Parameters for {0}: {1}",
+    "expressions-dictionary": "Find Expressions",
+    "description": "[b]{0}:[/b] {1}",
+    "controls": {
+      "object": {
+        "click-to-choose": "<click to choose>",
+        "dialog-caption": "Pick an object",
+        "dialog-header": "Pick an object to use for the [b]{0}[/b] parameter:",
+        "pick-message": {
+          "title": "Choose an object for '{0}'",
+          "message": "Click the button to pick an object."
+        }
+      },
+      "comparison": {
+        "equal": "= Equal to",
+        "not-equal": "≠ Not equal to",
+        "less": "< Less than",
+        "less-equal": "≤ Less or equal",
+        "greater": "> Greater than",
+        "greater-equal": "≥ Greater or equal"
+      },
+      "key": {
+        "click-to-choose": "<click to choose>",
+        "pick-message": {
+          "title": "Choose a key for '{0}'",
+          "message": "Click the button and choose a key."
+        }
+      },
+      "instance-variable": {
+        "none-available": "<none - add an instance variable first>",
+        "pick-message": {
+          "title": "No instance variables",
+          "message": "The object '{0}' has no instance variables that can be shown here. Create one before using this."
+        }
+      },
+      "object-instance-variable": {
+        "no-object-picked": "<pick an object first>"
+      },
+      "event-variable": {
+        "global": "Global",
+        "sub-event": "Sub-event",
+        "none-available": "<none - add something first>",
+        "pick-message": {
+          "title": "No variables",
+          "message": "There are no global or local variables in this scope. Create one in the event sheet first."
+        }
+      },
+      "audio-file": {
+        "none-available": "<none - import some audio files first>",
+        "pick-message": {
+          "title": "No audio files",
+          "message": "There are no audio files in the project. Import some before using this."
+        },
+        "cannot-preview-message": {
+          "title": "Cannot preview audio",
+          "message": "This audio file cannot be previewed here."
+        }
+      },
+      "project-file": {
+        "none-available": "<none - import some files first>",
+        "pick-message": {
+          "title": "No files",
+          "message": "There are no project files. Import some before using this."
+        }
+      },
+      "variadic": {
+        "add-parameter": "Add parameter",
+        "remove-parameter": "Remove parameter"
+      },
+      "timeline": {
+        "none-available": "<none - add a timeline first>",
+        "pick-message": {
+          "title": "No timelines",
+          "message": "The project '{0}' has no timelines that can be shown here. Create one before using this."
+        }
+      },
+      "flowchart": {
+        "none-available": "<none - add a flowchart first>",
+        "pick-message": {
+          "title": "No flowcharts",
+          "message": "The project '{0}' has no flowcharts that can be shown here. Create one before using this."
+        }
+      },
+      "model3d": {
+        "none-available": "<none - add a 3D model first>",
+        "pick-message": {
+          "title": "No 3D models",
+          "message": "The project '{0}' has no 3D models that can be shown here. Create one before using this."
+        }
+      },
+      "transition": {
+        "none-available": "<none - add an ease first>",
+        "pick-message": {
+          "title": "No eases",
+          "message": "The project '{0}' has no eases that can be shown here. Create one before using this."
+        }
+      },
+      "tilemapbrush": {
+        "none-available": "<none - add a tilemap brush first>",
+        "pick-message": {
+          "title": "No tilemap brushes",
+          "message": "The object '{0}' has no tilemap brushes that can be shown here. Create one before using this."
+        }
+      },
+      "function": {
+        "none-available": "<none - add a function first>",
+        "pick-message": {
+          "title": "No functions",
+          "message": "The project '{0}' has no functions that can be shown here. Create one with return type 'None' before using this."
+        }
+      }
+    },
+    "call-tip-templates": {
+      "no-params": "'{0}' does not take any parameters",
+      "variadic-no-params": "{0}(...)",
+      "params": "{0}({1})",
+      "variadic-params": "{0}({1}[, ...])",
+      "param-separator": ", ",
+      "type-separator": "{0} [info]{1}[/info]",
+      "return-type-suffix": "{0} → [info]{1}[/info]",
+      "data-types": {
+        "number": "number",
+        "string": "string",
+        "any": "any",
+        "layer": "layer",
+        "functionname": "function",
+        "timeline": "timeline",
+        "template": "template"
+      }
+    }
+  },
+  "pickACObject": {
+    "add-condition": {
+      "caption": "Add condition",
+      "header": "Pick an object to create a new condition from:"
+    },
+    "edit-condition": {
+      "caption": "Edit condition",
+      "header": "Pick an object to edit the condition:"
+    },
+    "add-action": {
+      "caption": "Add action",
+      "header": "Pick an object to create a new action from:"
+    },
+    "edit-action": {
+      "caption": "Edit action",
+      "header": "Pick an object to edit the action:"
+    },
+    "folder": "Folder: [b]{0}[/b]",
+    "folder-separator": "/",
+    "search-header": "Items matching [b]{0}[/b]:"
+  },
+  "pickActionCondition": {
+    "add-condition": {
+      "caption": "Add '{0}' condition",
+      "header": "Pick a condition in [b]{0}[/b]:",
+      "search-header": "Conditions in [b]{0}[/b] matching [b]{1}[/b]:"
+    },
+    "edit-condition": {
+      "caption": "Edit '{0}' condition",
+      "header": "Pick a condition in [b]{0}[/b]:",
+      "search-header": "Conditions in [b]{0}[/b] matching [b]{1}[/b]:"
+    },
+    "add-action": {
+      "caption": "Add '{0}' action",
+      "header": "Pick an action in [b]{0}[/b]:",
+      "search-header": "Actions in [b]{0}[/b] matching [b]{1}[/b]:"
+    },
+    "edit-action": {
+      "caption": "Edit '{0}' action",
+      "header": "Pick an action in [b]{0}[/b]:",
+      "search-header": "Actions in [b]{0}[/b] matching [b]{1}[/b]:"
+    }
+  },
+  "project-stats": {
+    "caption": "Project statistics",
+    "main-header": "Project statistics",
+    "name": "Name:",
+    "layouts": "Layouts:",
+    "event-sheets": "Event sheets:",
+    "total-events": "Total number of events:",
+    "total-conditions": "Total number of conditions:",
+    "total-actions": "Total number of actions:",
+    "total-lines-of-code": "Total lines of code:",
+    "object-types": "Object types:",
+    "families": "Families:",
+    "image-memory-header": "Estimated peak image memory usage",
+    "image-memory-description": "For each layout, the image memory requirement is estimated by summing the memory usage of the spritesheets used by objects on the layout. The peak image memory usage is the size of the largest single layout, since the runtime only loads one layout at a time. See also [a1]tips on reducing memory usage[/a1].",
+    "estimated-image-memory-usage": "Estimated peak memory usage is [b]{0}[/b] due to largest layout [i]{1}[/i]",
+    "top-10-layouts-header": "Top 10 layouts by image memory usage",
+    "layout-list-item": "{0}: [b]{1}[/b]",
+    "top-10-event-sheets-header": "Top 10 event sheets by event count",
+    "event-sheet-list-item": "{0}: [b]{1}[/b] events"
+  },
+  "remoteVideo": {
+    "caption": "Remote preview for {0}"
+  },
+  "scriptingFeatureLimit": {
+    "caption": "Scripting feature limit",
+    "purchase": "Purchase",
+    "learn-more": "Learn more...",
+    "title": "Scripting feature limit reached",
+    "description-guest": "You have reached the free edition limit on the number of lines of JavaScript code. As a guest you are allowed [b]{0}[/b] lines, and this project uses [b]{1}[/b] lines. [a1]Register an account[/a1] or [a2]log in[/a2] to get more lines of code, or purchase a plan to unlock the full features of Construct.",
+    "description-logged-in": "You have reached the free edition limit on the number of lines of JavaScript code. With a free account you are allowed [b]{0}[/b] lines, and this project uses [b]{1}[/b] lines. Purchase a plan to unlock the full features of Construct."
+  },
+  "unsupportedEffects": {
+    "caption": "Unsupported effects",
+    "header-text": "This project uses effects that are not supported in the [b]{0}[/b] renderer. Before you can switch renderer you'll need to remove or replace these effects.",
+    "unsupported-effect-format": "Effect [b]{0}[/b] ({1}) by [i]{2}[/i]"
+  },
+  "settings": {
+    "caption": "Settings",
+    "close": "Close",
+    "user-interface": {
+      "header": "User interface"
+    },
+    "editor-settings": {
+      "language": "Language",
+      "ui-mode": {
+        "label": "UI mode",
+        "auto": "Automatic",
+        "mobile": "Mobile",
+        "desktop": "Desktop"
+      },
+      "simplified-mode": "Use simplified user interface (hides advanced features)",
+      "enable-example-browser": "Enable Example Browser",
+      "theme": {
+        "label": "Theme",
+        "default": "Default (no theme)"
+      },
+      "gpu-power-preference": {
+        "label": "GPU preference (for multi-GPU systems)",
+        "default": "Default",
+        "low-power": "Low power",
+        "high-performance": "High performance"
+      },
+      "enable-multi-monitor-features": "Enable multi-monitor features",
+      "reset-user-interface": {
+        "label": "Reset user interface",
+        "confirmation-message": "The saved state of the user interface has been reset for all users on this device. Restart Construct to restore the default user interface."
+      },
+      "clear-recent-projects": "Clear recent projects",
+      "download-browser-saves": "Download local browser saves",
+      "download-browser-saves-failed": "Failed to download local browser saves",
+      "use-default-icon-color": "Use default icon color",
+      "icon-color-label": "Custom icon color:",
+      "enable-ui-animations": "Enable UI animations",
+      "enable-ui-effects": "Enable UI effects",
+      "enable-notifications": "Enable notifications",
+      "show-take-a-break-reminder": "Show 'take a break' reminder every 2 hours",
+      "zoom-mouse-wheel-only": "Zoom with mouse wheel only",
+      "use-in-app-clipboard": "Use in-app clipboard (avoids copy prompts)",
+      "cache-cloud-meta": "Cache cloud metadata (reduces network requests)",
+      "limit-to-webgl1": "Limit editor/preview to WebGL 1 (for testing purposes)",
+      "enable-webgpu-in-editor": {
+        "label": "Enable WebGPU in editor",
+        "no": "No",
+        "auto": "Auto",
+        "yes": "Yes"
+      },
+      "enable-developer-mode": "Enable developer mode"
+    },
+    "text-editor-settings": {
+      "header": "Text / code editor",
+      "font-size": "Font size (px)",
+      "auto-indent": "Automatic indentation",
+      "word-wrap": "Word wrap",
+      "show-minimap": "Show minimap",
+      "minimap-scale": {
+        "label": "Minimap scale",
+        "1x": "1x",
+        "2x": "2x",
+        "3x": "3x"
+      },
+      "use-sticky-scrolling": "Use sticky scrolling",
+      "enable-code-folding": "Enable code folding"
+    },
+    "backup-settings": {
+      "header": "Save & backup",
+      "default-save-location": {
+        "label": "Default save location",
+        "cloud": "Cloud",
+        "local-browser": "Local browser",
+        "download-a-copy": "Download a copy",
+        "save-as": "Save as"
+      },
+      "autosave": "Periodically back up active project",
+      "autosave-location": "Backup location",
+      "autosave-duration": "Backup interval (minutes)",
+      "locations": {
+        "browser": "Browser",
+        "match": "Same location",
+        "filesystem": "Filesystem",
+        "local-folder": "Local folder"
+      },
+      "local-backup-folder": {
+        "label": "Local backup folder",
+        "choose": "Choose",
+        "none-chosen": "None chosen",
+        "need-to-pick-folder": "The backup location needs a local backup folder to be chosen. Please pick one or select a different backup location."
+      }
+    },
+    "default-properties-settings": {
+      "header": "Default properties",
+      "default-project-author": "Default project author",
+      "default-project-email": "Default project email",
+      "default-project-website": "Default project website",
+      "default-animation-speed": "Default animation speed"
+    },
+    "update-settings": {
+      "header": "Updates",
+      "beta-description": "Opt in to beta releases to get more frequent updates and try new features sooner. However beta releases have not had as much testing and may have more bugs.",
+      "notify-updates-label": "Notify me about updates for",
+      "stable-releases": "Stable releases",
+      "beta-releases": "Beta releases",
+      "disable-update-notifications": "Disable update notifications",
+      "check-for-addon-updates": "Check for updates for installed addons"
+    },
+    "start-page-settings": {
+      "header": "Start Page",
+      "show-start-page": "Show the Start Page on startup",
+      "auto-hide-start-page": "Hide the Start Page when opening a project",
+      "show-start-page-message-banners": "Occasionally show message banners from the Construct team on the Start Page"
+    },
+    "event-sheet-settings": {
+      "header": "Event Sheets",
+      "hide-add-action-rows": "Hide 'Add action' rows",
+      "translate-expressions": "Translate expressions (uncheck to always show expressions in English)"
+    },
+    "preview-settings": {
+      "header": "Preview",
+      "preview-with": {
+        "label": "Preview with",
+        "popup-window": "Popup window",
+        "browser-tab": "Browser tab",
+        "iframe-dialog": "Dialog"
+      }
+    },
+    "advanced-settings": {
+      "header": "Advanced",
+      "show-in-progress-languages": "Show in-progress languages",
+      "enable-experimental-features": "Enable experimental features (note: subject to change at any time)"
+    },
+    "restart-notification": {
+      "caption": "Changed settings",
+      "message": "Restart Construct for changes to take effect."
+    },
+    "simplified-mode-notification": "Note the simplified user interface has been enabled. This will hide many features of Construct in order to make the user interface simpler. Disable the setting to restore access to the full features of Construct.",
+    "in-progress-languages-notification": "Please note that in-progress translations have not been reviewed. This option is intended to help translators review their work. There is no guarantee that the content of in-progress translations is suitable or appropriate.",
+    "developer-mode-confirmation": {
+      "caption": "Developer mode",
+      "message": "Developer mode is intended for addon developers and should not be used by other users. Are you sure you want to show developer mode settings?"
+    }
+  },
+  "transitionsEditor": {
+    "caption": "Ease Editor",
+    "context-menu": {
+      "add-keyframe": "Add ease keyframe",
+      "delete-keyframe": "Delete ease keyframe",
+      "make-cubic-bezier": "Make cubic",
+      "make-linear": "Make linear",
+      "make-segment-cubic-bezier": "Make segment cubic",
+      "make-segment-linear": "Make segment linear"
+    },
+    "toolbar": {
+      "name": "Name",
+      "purpose": "Purpose",
+      "segment": "Segment",
+      "segment-options": {
+        "linear": "Linear",
+        "cubic": "Cubic"
+      }
+    },
+    "tooltips": {
+      "invert": "Invert ease",
+      "toogle-cubic": "Toggle between cubic and linear ease"
+    },
+    "dialog-messages": {
+      "new-ease": {
+        "desc": "A new custom ease with the name [b]{0}[/b] will be added to the project as a result of editing a built-in ease."
+      },
+      "default-ease": {
+        "desc": "The selected timeline element, '[b]{0}[/b]', is using the '[b]{1}[/b]' ease. For this reason, changes made will be applied to `[b]{2}[/b]`, which is the first element with a concrete ease value."
+      }
+    },
+    "after-close-undo-point": "Ease editor changes",
+    "built-in-ease-edit": "Built-in ease edit",
+    "default-ease-edit": "'{0}' ease edit"
+  },
+  "transitions-editor-settings": {
+    "caption": "Miscellaneous settings",
+    "display-settings": "Display settings",
+    "graph-height": "Graph height"
+  },
+  "accountInfo": {
+    "caption": "Account information",
+    "register-account": "Register a new account",
+    "log-in": "Log in to existing account",
+    "enter-access-code": "Enter access code",
+    "your-licenses": "Your licenses",
+    "edit-profile": "Edit profile",
+    "free-section-header": "You are using the Free Edition of Construct. Some features are only available with a plan. The following limits also apply:",
+    "max-events-label": "Maximum events per project: ",
+    "max-layers-label": "Maximum layers per layout: ",
+    "max-effects-label": "Maximum effects per project: ",
+    "max-webfonts-label": "Maximum web fonts per project: ",
+    "free-limit-register-account": "Register an account and verify your email to increase the limits!",
+    "license-type": {
+      "free-edition": "Free edition",
+      "personal": "Personal",
+      "gamejam": "Gamejam",
+      "educational": "Educational",
+      "startupbusiness": "Startup Business",
+      "business": "Business",
+      "access-code": "Using access code",
+      "other": "Licensed"
+    },
+    "offline-mode": "You are working in [b]offline mode[/b]. You can keep working offline until [b]{0}[/b] (in {1}), at which point you must go online again to continue using your account.",
+    "license-thankyou": "Thank you for subscribing! We hope you enjoy Construct.",
+    "gamejam-info": "Using temporary gamejam license. Construct will revert to the Free Edition when it expires on [b]{0}[/b] (in {1}).",
+    "access-code-info": "Using temporary access code. Construct will revert to the Free Edition when it expires on [b]{0}[/b] (in {1})."
+  },
+  "cordovaBuildReport": {
+    "caption": "Build report for '{0}'",
+    "build-finished": "Build finished!",
+    "download-link": "Download {0}",
+    "view-archive-manager": "Open project manager",
+    "tutorial-link": "Learn more about [a1]publishing mobile apps[/a1]"
+  },
+  "archive-manager": {
+    "caption": "Export Manager",
+    "columns": {
+      "project": "Project",
+      "exporter": "Exporter",
+      "created": "Created",
+      "type": "Type",
+      "size": "Size",
+      "saved": "Saved",
+      "version": "Version"
+    },
+    "toolbar": {
+      "build": "Build Application",
+      "upload": "Add archive",
+      "download": "Download archive",
+      "save": "Save archive",
+      "delete": "Delete archive"
+    },
+    "error": {
+      "invalid-file": "Unable to import file. Only Cordova projects exported from Construct 3 can be imported.",
+      "build-fail": "Build failed.",
+      "build-failure-message": "Unfortunately your project failed to build. The build log is included below in case it includes any information about the problem. You may need to adjust project settings, included plugins or application signing options.",
+      "storage-fail": "Unable to save export to disk. This build will not be available in the export manager past the end of this session. Your storage quota may be full. Try freeing up storage space on your device.",
+      "c2-no-longer-supported": "Unable to import file: legacy Construct 2 exports are no longer supported."
+    }
+  },
+  "cordovaOptions": {
+    "caption": "Cordova options",
+    "hide-status-bar": "Hide status bar",
+    "android-version-code": "Android version code",
+    "min-version": "Min. version",
+    "target-version": "Target version",
+    "android-target-version-info": "Android {0} (API level {1})",
+    "android-build": "Android build",
+    "ios-build": "iOS build",
+    "url-whitelist": "URL whitelist",
+    "builds": {
+      "cordova-project": "Cordova project",
+      "android-studio-project": "Android Studio project",
+      "xcode-project": "Xcode project",
+      "debug-apk": "Debug APK",
+      "unsigned-release-apk": "Unsigned release APK",
+      "signed-release-apk": "Signed release APK",
+      "signed-app-bundle": "Signed Android App Bundle",
+      "unsigned-app-bundle": "Unsigned Android App Bundle",
+      "signed-debug-apk": "Signed debug APK"
+    },
+    "permissions": {
+      "vibrate": "Require Vibrate permission",
+      "camera": "Require Camera permission",
+      "microphone": "Require Microphone permission"
+    },
+    "general": "General",
+    "properties": "Properties",
+    "signing": "Signing",
+    "keystore": "Keystore",
+    "choose": "Choose",
+    "create": "Create",
+    "clear": "Clear",
+    "key-alias": "Key alias",
+    "keystore-password": "Keystore password",
+    "key-password": "Key password (optional)",
+    "show-passwords": "Show passwords",
+    "invalid-version-code": "The chosen version code is outside the range 0 to 2147483647"
+  },
+  "audioPreview": {
+    "caption": "Audio preview",
+    "audio-title": "{0} ({1}, {2})"
+  },
+  "chooseKey": {
+    "caption": "Press a key",
+    "no-key-placeholder": "(press a key)",
+    "num-lock-note": "Note the state of Num Lock may affect the detected key.",
+    "or-use-dropdown-note": "Or choose a key that can't be detected above: ",
+    "dropdown-none": "(none)"
+  },
+  "createKeystoreDialog": {
+    "caption": "Create a new keystore",
+    "creating-keystore": "Creating keystore...",
+    "create": "Create",
+    "label": {
+      "name": "First and Last Name",
+      "unit": "Organizational Unit",
+      "organisation": "Organization",
+      "city": "City or Locality",
+      "state": "State or Province",
+      "country": "Country Code (XX)",
+      "alias": "Alias",
+      "password": "Keystore Password",
+      "password-confirm": "Confirm Password",
+      "key-password": "Key Password",
+      "key-password-confirm": "Confirm Password",
+      "validity": "Validity (years)",
+      "show-passwords": "Show passwords"
+    },
+    "placeholder": {
+      "name": "John Doe",
+      "unit": "Mobile Game Development",
+      "organisation": "My Game Company",
+      "city": "San Francisco",
+      "state": "California",
+      "country": "US",
+      "alias": "production",
+      "password": "",
+      "password-confirm": "",
+      "key-password": "",
+      "key-password-confirm": ""
+    },
+    "validation": {
+      "name": "Please specify your full name.",
+      "unit": "Please specify your organisational unit.",
+      "organisation": "Please specify your organisation.",
+      "city": "Please specify your city.",
+      "state": "Please specify your state.",
+      "country": "Invalid 2 letter country code.",
+      "alias": "Please specify your key alias.",
+      "validity": "Please specify a validity between 1 - 100 years.",
+      "password": "Please specify a password of at least 6 characters.",
+      "password-confirm": "Please confirm your password.",
+      "key-password": "Please specify a key password of at least 6 characters.",
+      "key-password-confirm": "Please confirm your key password.",
+      "password-match": "Password and confirmation do not match.",
+      "key-password-match": "Key password and confirmation do not match."
+    },
+    "failure": {
+      "caption": "Keystore creation failed",
+      "message": "Creation of your keystore failed. The log is included below in case it contains any useful information."
+    },
+    "context-menu": {
+      "help-on-plugin": "Help on '{0}'"
+    }
+  },
+  "create-keystore-report-dialog": {
+    "caption": "Successfully created keystore",
+    "success": "Success!",
+    "keep-it-safe": "Because your app signing key is used to verify your identity as a developer and to ensure seamless and secure updates for your users, managing your key and keeping it secure are very important, both for you and for your users. [b]If you lose access to your app signing key[/b] or your key is compromised, Google cannot retrieve the app signing key for you, and [b]you will not be able to release new versions of your app[/b] to users as updates to the original app.",
+    "we-dont-store-it": "When using the build service a copy of your keystore will be transferred to the build server temporarily, and deleted once the build has completed. [b]Neither C3 or Scirra hold a copy of any keystore[/b] created or used by the build service. [b]You must keep your keystore in a safe and secure place.[/b]",
+    "google-play-app-signing": "If you are worried about the possibility of losing your signing key, you can use Google Play App Signing. This makes use of 2 keys instead of 1; an upload key and a signing key. When you use this service the Play Store verifies the key you used to sign your game for upload, then it signs it a second time with the signing key that Google stores securely. If you lose your upload key, or if it is compromised, you can contact Google to revoke your old upload key and generate a new one. Because your app signing key is secured by Google, you can continue to upload new versions of your app as updates to the original app, even if you change upload keys.",
+    "more-information": "You can find more information about signing Android applications at:",
+    "download-keystore": "Download keystore",
+    "signature": "Your SHA-1 signature is [b]{0}[/b]. It's worth writing this down, as you will need it to use some plugins like Google Play."
+  },
+  "fullscreen-prompt": {
+    "caption": "Go fullscreen",
+    "message": "On mobile, Construct is easier to use if it can use all the available screen space. Would you like to switch to fullscreen mode?",
+    "continue": "No thanks",
+    "go-fullscreen": "Go fullscreen"
+  },
+  "shell-output": {
+    "build-log": "Log"
+  },
+  "storageCleanup": {
+    "caption": "Storage cleanup",
+    "scanning-storage": "Please wait, scanning storage...",
+    "storage-usage-header": "Construct is using an estimated [b]{0}[/b] local storage out of a {1} quota ({2}%) on this device. Clearing the storage items below may help free up more space for Construct to use.",
+    "linux-cef": {
+      "label": {
+        "one": "[b]Delete {0} downloaded Linux CEF version[/b] ({1})",
+        "other": "[b]Delete {0} downloaded Linux CEF versions[/b] ({1})"
+      },
+      "tip": "[i]Linux CEF versions can be downloaded again while online.[/i]"
+    },
+    "export-manager": {
+      "label": {
+        "one": "[b]Delete {0} exported project[/b] ({1})",
+        "other": "[b]Delete {0} exported projects[/b] ({1})"
+      },
+      "tip": "[i]The last few exports are saved in the Export Manager. The projects can be exported again to add them back to the Export Manager.[/i]"
+    },
+    "example-projects": {
+      "label": {
+        "one": "[b]Delete {0} example projects[/b] ({1})",
+        "other": "[b]Delete {0} example projects[/b] ({1})"
+      },
+      "tip": "[i]Example projects opened from the Example Browser are saved for use offline. The projects can be downloaded again while online.[/i]"
+    },
+    "c3-offline": {
+      "label": {
+        "one": "[b]Delete {0} saved version of Construct[/b] ({1})",
+        "other": "[b]Delete {0} saved versions of Construct[/b] ({1})"
+      },
+      "tip": "[i]The last few versions of Construct are saved for use offline. These can be deleted, but you must be online next time you load Construct.[/i]"
+    },
+    "more-options": {
+      "header": "More options",
+      "description": "You can also try the following options, which may also increase the available quota. However these must be done manually.",
+      "local-browser-saves": "Local browser saves have been used. Deleting any old projects you no longer need, or moving them somewhere else, will free up space.",
+      "clear-browser-cache": "Clear your browser cache in your browser's settings. [b]Warning:[/b] this may also delete any projects, backups and addons saved to the local browser, reverting Construct to default settings.",
+      "private-browsing": "Private browsing modes sometimes have much lower storage limits. If you are using a private browsing mode, try switching back to the normal browsing mode.",
+      "system-storage-cleanup": "Use a system storage cleanup utility, if one is available on your device."
+    },
+    "clear-storage": "Clear storage",
+    "clearing-storage": "Clearing storage...",
+    "nothing-to-clear": "There is nothing set to be cleared. Check the boxes by the items you wish you clear.",
+    "successfully-cleared": "Successfully cleared storage (about {0} saved). Note the storage usage estimate may not update immediately.",
+    "error-clearing": "An error occurred while clearing storage. Try reloading Construct and clearing storage again."
+  },
+  "svgPreview": {
+    "caption": "SVG preview",
+    "caption-image": "Image preview",
+    "caption-animation": "Animation preview",
+    "svg-title": "{0} ({1})",
+    "edit-xml": "Edit XML",
+    "view-xml": "View XML"
+  },
+  "textPreview": {
+    "caption": "{0} preview",
+    "javascript": "Script",
+    "css": "CSS",
+    "markdown": "Markdown",
+    "html": "HTML",
+    "json": "JSON",
+    "xml": "XML",
+    "svg": "SVG",
+    "other": "Text"
+  },
+  "videoPreview": {
+    "caption": "Video preview",
+    "video-title": "{0} ({1}, {2} x {3}, {4})"
+  },
+  "view-spritesheets": {
+    "caption": "View '{0}' spritesheets",
+    "loading": "Loading...",
+    "zoom-label": "Zoom ({0}%):",
+    "lossy": "lossy",
+    "lossy-quality": "lossy quality {0}",
+    "lossless": "lossless",
+    "building-spritesheets": "Building sprite sheets ({0}%)...",
+    "rendering-spritesheets": "Rendering sprite sheets ({0}%)...",
+    "shared-collection-header": "{0} ({1} objects, {2})",
+    "collection-header": "{0} ({1})",
+    "shared-sheet-number": "Shared sheet #{0}",
+    "sheet-number": "Sheet #{0} ",
+    "sheet-details": "{0} ({1} x {2}, ~{3} memory, ~{4} download as {5} {6})",
+    "summary": "Total image content area: {0} megapixels ({1} images over {2} sheets)"
+  },
+  "viewUsedAddons": {
+    "caption": "Addons used in '{0}'",
+    "name": "Name",
+    "type": "Type",
+    "author": "Author",
+    "source": "Source",
+    "version": "Version",
+    "version-bundled-same-as-builtin": "Bundled: {0}\nEditor: {1}",
+    "version-bundled-different-to-builtin": "[b]Bundled: {0}[/b] Editor: {1}",
+    "references": "References",
+    "more-references": "({0} more)",
+    "layout-reference": "Layout '{0}'",
+    "layer-reference": "Layout '{0}' layer '{1}'",
+    "addon-types": {
+      "plugin": "Plugin",
+      "behavior": "Behavior",
+      "effect": "Effect"
+    },
+    "addon-sources": {
+      "built-in": "Built-in",
+      "addon": "Browser storage",
+      "project": "[b]Bundled with project[/b]",
+      "dev": "Developer"
+    },
+    "context-menu": {
+      "update-to-editor-version": "Update to editor version",
+      "help": "Help"
+    },
+    "update-confirmation": "[b]{0}[/b] will be updated from version [i]{1}[/i] to version [b]{2}[/b] the next time you save the project. Note you will then need to close and reopen the project to start using the updated addon."
+  },
+  "cordovaExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "wrapper-size-overhead": "Approximately [b]{0}[/b] app overhead",
+    "build-header": "Build",
+    "build-apps-button": "Build apps",
+    "tutorial-link": "Learn more about [a1]publishing mobile apps[/a1]"
+  },
+  "gifExportReport": {
+    "caption": "GIF exported for '{0}'",
+    "export-finished": "Export finished! Encoded [b]{0}[/b] frames ([i]in {1}[/i])",
+    "download-link": "Download {0}",
+    "share-link": "Share this GIF",
+    "made-with-tagline": "Made with Construct",
+    "tutorial-link": "Learn more about [a1]exporting GIFs[/a1]"
+  },
+  "exportGifOptions": {
+    "caption": "Export GIF options",
+    "gif-video-tip": "Many websites and apps actually use videos in place of GIFs. Where possible consider exporting to video, which will have better quality and a smaller file size.",
+    "general-header": "General",
+    "duration": "Duration (seconds)",
+    "framerate": "Framerate",
+    "advanced-header": "Advanced",
+    "dither": "Dither",
+    "enable-transparency": "Enable transparency",
+    "transparent-color": "Transparent color",
+    "errors": {
+      "invalid-duration": {
+        "title": "Invalid duration",
+        "message": "Please enter a valid duration in seconds."
+      },
+      "invalid-framerate": {
+        "title": "Invalid framerate",
+        "message": "Please enter a valid framerate in frames per second."
+      }
+    }
+  },
+  "webExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "https-note": "Note many features [b]require secure (HTTPS) hosting.[/b] Be sure to use a secure host when publishing web exports or you may find a number of features stop working, including fullscreen support, gamepad input, device orientation/motion, camera/microphone access, and much more.",
+    "tutorial-link": "Learn more about [a1]publishing to the web[/a1]"
+  },
+  "imageSeqExportReport": {
+    "caption": "Image sequence exported for '{0}'",
+    "export-finished": "Export finished! Encoded [b]{0}[/b] images ([i]in {1}[/i])",
+    "download-link": "Download {0}",
+    "tutorial-link": "Learn more about [a1]exporting image sequences[/a1]",
+    "image-message-with-recompression": "Total image size originally [b]{0}[/b], recompressed to [b]{1}[/b] (saving of {2}%)"
+  },
+  "exportImageSeqOptions": {
+    "caption": "Export image sequence options",
+    "transparency-tip": "To export images with transparency, make sure the bottom layer is transparent.",
+    "general-header": "General",
+    "duration": "Duration (seconds)",
+    "framerate": "Framerate",
+    "format": "Format",
+    "recompress-images": "Recompress images",
+    "errors": {
+      "invalid-duration": {
+        "title": "Invalid duration",
+        "message": "Please enter a valid duration in seconds."
+      },
+      "invalid-framerate": {
+        "title": "Invalid framerate",
+        "message": "Please enter a valid framerate in frames per second."
+      }
+    }
+  },
+  "instantGamesExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "publishing-header": "Publishing",
+    "publishing-text": "You can publish your game to Facebook Instant Games by [a1]creating an app[/a1].",
+    "developer-docs-link": "For more information about testing and publishing, see the [a1]Instant Games developer documentation[/a1]."
+  },
+  "linuxCefExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "zip-extraction-note": "[b]Note:[/b] To ensure the exported Linux app works, make sure you extract the app files from the zip on the system the app will be run on.",
+    "platform-size-overhead": "Average platform app overhead [b]{0}[/b]",
+    "tutorial-link": "Learn more about [a1]exporting for Linux[/a1]"
+  },
+  "linuxCefOptions": {
+    "caption": "Linux options",
+    "loading-versions": "Loading Linux CEF versions...",
+    "version": "Linux CEF version",
+    "version-entry-latest": "Latest (Chromium {0})",
+    "version-entry": "Chromium {0}",
+    "manage-versions": "Manage versions...",
+    "platforms": "Platforms",
+    "options": "Options",
+    "start-up-fullscreen": "Start up fullscreen",
+    "compress-final-zip": "Compress final zip",
+    "bundle-assets": "Bundle assets",
+    "enable-devtools": "Enable DevTools",
+    "window-caption": "Window caption",
+    "resizable-window": "Resizable window",
+    "no-platforms-selected": "No platforms are checked. Please enable at least one platform to export.",
+    "loading-error": {
+      "title": "Linux export",
+      "message": "Unable to load Linux CEF versions. Check your Internet connection is working."
+    }
+  },
+  "linuxCefPlatformManager": {
+    "caption": "Linux CEF platforms",
+    "header-text": "Available platforms for Linux CEF {0} are listed below.",
+    "download-all": "Download all",
+    "column-names": {
+      "version": "Version",
+      "platform": "Platform",
+      "size": "Size",
+      "state": "State"
+    },
+    "state": {
+      "available": "Not downloaded",
+      "pending": "Pending...",
+      "downloading": "Downloading ({0}%)...",
+      "downloaded": "Downloaded"
+    },
+    "menu": {
+      "download-all": "Download all",
+      "delete-all": "Delete all"
+    },
+    "confirm-delete-all": {
+      "caption": "Delete all platforms",
+      "message": "This will free approximately {1} storage. Are you sure you want to delete all platforms for Linux CEF {0}?",
+      "delete-all": "Delete all"
+    }
+  },
+  "linuxCefVersionManager": {
+    "caption": "Linux CEF version manager",
+    "loading": "Loading...",
+    "header-text": "Available Linux CEF versions are listed below.",
+    "error-text": "Failed to load Linux CEF versions. If you are offline, try again when online.",
+    "total-size-info": "Total Linux CEF downloads: {0}",
+    "column-names": {
+      "version": "Linux CEF version",
+      "release-date": "Published",
+      "platforms": "Platforms"
+    },
+    "platforms-download-status": "{0} of {1} downloaded",
+    "platforms-download-status-size": "{0} of {1} downloaded ({2})",
+    "menu": {
+      "manage-platforms": "Manage platforms..."
+    },
+    "confirm-delete": {
+      "caption": "Delete Linux CEF version",
+      "message": "This will free approximately {1} storage. Are you sure you want to delete all platforms for Linux CEF {0}?",
+      "delete-all": "Delete all"
+    }
+  },
+  "macExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "zip-extraction-note": "[b]Note:[/b] To ensure the exported macOS app works, make sure you extract the zip on a macOS device.",
+    "macos-permission-note": "[b]Note:[/b] Exported macOS apps may not immediately run due to security restrictions in macOS. For more information, refer to the linked guide below.",
+    "platform-size-overhead": "Platform app overhead [b]{0}[/b]",
+    "tutorial-link": "Learn more about [a1]exporting macOS apps with the WKWebView wrapper[/a1]"
+  },
+  "macos-wkwebview-options": {
+    "caption": "macOS wrapper options",
+    "options": "Options",
+    "use-app-sandbox": "Use App Sandbox",
+    "bundle-assets": "Bundle assets",
+    "enable-devtools": "Enable DevTools",
+    "window-caption": "Window caption",
+    "resizable-window": "Resizable window",
+    "permissions": "Permissions",
+    "signing-identity": "Signing identity (optional)",
+    "signing-identity-placeholder": "Developer ID Application: Name (ABC123)"
+  },
+  "macos-wkwebview-permissions": {
+    "caption": "macOS permissions",
+    "name": "Name",
+    "allow": "Allow",
+    "usage-description": "Usage description",
+    "camera": "Camera",
+    "microphone": "Microphone",
+    "internet-server": "Internet server",
+    "pictures-folder": "Pictures folder",
+    "movies-folder": "Movies folder",
+    "downloads-folder": "Downloads folder",
+    "not-allowed": "Not allowed",
+    "read-only": "Read-only",
+    "read-write": "Read & write",
+    "errors": {
+      "usage-description-required": {
+        "title": "Enter usage description",
+        "description": "When this permission is allowed, you must provide a usage description."
+      }
+    }
+  },
+  "playableAdSFExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "info": {
+      "header": "Important information about Playable Ads",
+      "efficiency-note": "Projects exported this way are [b]significantly less efficient[/b] and far more complex to support. Wherever possible, [b]use the zip export option instead[/b] which produces a zip file of assets, which is much more efficient and simpler. Only use the single file option when it is required for meeting restrictions.",
+      "features-note": "Due to the extreme technical restrictions involved in packing all assets in to a single file, not all features may work in this mode. Be sure to test carefully.",
+      "deprecation-note": "The extreme technical restrictions are also very difficult to support long-term. [b]Support for this mode may be removed in future.[/b] If your ad provider requires this format, please ask them to support the zip format instead, which is far easier to support.",
+      "playable-ads-link": "Learn more about the [a1]Playable Ad format[/a1]."
+    }
+  },
+  "playableAdZipExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "playable-ads-link": "Learn more about the [a1]Playable Ad format[/a1]."
+  },
+  "scirraArcadeExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "submit-game-header": "Submit your game",
+    "submit-game-text": "To submit your game to the Construct Arcade, download the exported zip, and submit it by uploading the zip file at:"
+  },
+  "videoExportReport": {
+    "caption": "Video exported for '{0}'",
+    "export-finished": "Export finished! ([i]in {0}[/i])",
+    "download-link": "Download {0}",
+    "share-link": "Share this video",
+    "made-with-tagline": "Made with Construct",
+    "tutorial-link": "Learn more about [a1]exporting videos[/a1]"
+  },
+  "exportVideoOptions": {
+    "caption": "Export video options",
+    "general-header": "General",
+    "duration": "Duration (seconds)",
+    "framerate": "Framerate",
+    "format": "Format",
+    "advanced-header": "Advanced",
+    "video-codec": "Video codec",
+    "video-bitrate": "Video bitrate (kbps)",
+    "audio-codec": "Audio codec",
+    "audio-bitrate": "Audio bitrate (kbps)",
+    "errors": {
+      "invalid-duration": {
+        "title": "Invalid duration",
+        "message": "Please enter a valid video duration in seconds."
+      },
+      "invalid-framerate": {
+        "title": "Invalid framerate",
+        "message": "Please enter a valid video framerate in frames per second."
+      },
+      "invalid-bitrate": {
+        "title": "Invalid bitrate",
+        "message": "Please enter a valid bitrate in kilobits per second."
+      },
+      "invalid-codec-parameters": "Sorry, these encoding parameters are not supported on this device. Try using different parameters, and avoid any extreme values."
+    }
+  },
+  "windows-webview2-options": {
+    "caption": "Windows wrapper options",
+    "platforms": "Platforms",
+    "options": "Options",
+    "enable-devtools": "Enable DevTools",
+    "window-caption": "Window caption",
+    "resizable-window": "Resizable window",
+    "bundle-assets": "Bundle assets",
+    "ignore-gpu-blacklist": "Ignore GPU blacklist",
+    "export-for-steam": "Export for Steam",
+    "export-for-remote-preview": "Export for Remote Preview",
+    "command-line": "Command line options",
+    "no-platforms-selected": "No platforms are checked. Please enable at least one platform to export."
+  },
+  "wv2ExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder",
+    "platform-size-overhead": "Average platform app overhead [b]{0}[/b]",
+    "windows-icon-updater-note": "[b]Note:[/b] To make the exported Windows executable files use your project icons, extract the files on a Windows device and run [i]WindowsIconUpdater.exe[/i].",
+    "tutorial-link": "Learn more about [a1]exporting Windows apps with the WebView2 wrapper[/a1]"
+  },
+  "xboxWV2UWPExportReport": {
+    "caption": "Export report for '{0}'",
+    "export-finished": "Export finished!",
+    "download-link": "Download {0}",
+    "open-folder": "Open folder"
+  },
+  "download": {
+    "caption": "Downloading...",
+    "caption-progress": "Downloading ({0}%)...",
+    "downloading-label": "Downloading: ",
+    "speed-label": "Speed: ",
+    "time-remaining-label": "Time remaining: ",
+    "calculating": "Calculating...",
+    "stalled": "Stalled..."
+  },
+  "fontPreview": {
+    "caption": "Font preview: {0}",
+    "example-text": "The quick brown fox jumps over the lazy dog."
+  },
+  "openPopupWindow": {
+    "caption": "Popup Blocked",
+    "body": "Unable to open popup window. Your browser may have blocked it. If you can see a warning indicating a popup window was blocked, you may be able to click on it and allow popups here. If not, you may need to change your browser settings. Click 'Try again' to attempt to open the popup window again, or press 'Cancel' to close this dialog.",
+    "try-again": "Try again"
+  },
+  "progress": {
+    "titleBase": "Working",
+    "cancelButton": "Cancel"
+  },
+  "caption-menu": {
+    "open-to-popup-window": "Open to popup window",
+    "close": "Close"
+  },
+  "std": {
+    "font-picker": {
+      "caption": "Font picker",
+      "loading-message": "Please wait, loading local font list...",
+      "local-font-header": "Pick a local font available on this device:",
+      "default-additional-fonts-header": "Or pick from the additional list:",
+      "none-selected": "(none selected)",
+      "generic-font-families-group": "Generic font families",
+      "generic-font-families": {
+        "serif": "Serif",
+        "sans-serif": "Sans serif",
+        "monospace": "Monospace",
+        "cursive": "Cursive",
+        "fantasy": "Fantasy",
+        "system-ui": "System UI",
+        "ui-serif": "UI serif",
+        "ui-sans-serif": "UI sans serif",
+        "ui-monospace": "UI monospace",
+        "ui-rounded": "UI rounded",
+        "math": "Math",
+        "emoji": "Emoji",
+        "fangsong": "FangSong"
+      },
+      "other-fonts-group": "Other available fonts",
+      "sample-text-header": "Sample text:",
+      "default-sample-text": "The quick brown fox jumps over the lazy dog.",
+      "more-preview": "More preview"
+    }
+  }
+}

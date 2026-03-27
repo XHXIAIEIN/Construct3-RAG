@@ -1,0 +1,37 @@
+{
+  "tree": {
+    "multi-select-drag-tooltip": {
+      "other": "({0} 项目)"
+    },
+    "no-text-search-results": "没有符合'{0}'的项目",
+    "no-items-showing": "没有项目"
+  },
+  "icon-view": {
+    "no-items-showing": "没有项目",
+    "no-search-results": "没有结果",
+    "no-text-search-results": "没有符合'{0}'的项目",
+    "multi-select-drag-tooltip": {
+      "other": "({0}个项目)"
+    },
+    "pagination": {
+      "pages": "页：",
+      "total": "共 {0} 页"
+    }
+  },
+  "close-button": {
+    "close-tooltip": "关闭"
+  },
+  "back-button": {
+    "back-tooltip": "返回"
+  },
+  "menu-dots-button": {
+    "tooltip": "选项"
+  },
+  "settings-button": {
+    "tooltip": "设置"
+  },
+  "pin-button": {
+    "pin-tooltip": "固定",
+    "unpin-tooltip": "解除"
+  }
+}

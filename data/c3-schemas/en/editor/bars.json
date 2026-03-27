@@ -1,0 +1,2987 @@
+{
+  "asset-browser": {
+    "title": "Asset Browser",
+    "empty-source": "This source has no assets",
+    "source-not-available": "No connection, can't download source",
+    "source-not-available-in-free-edition": "This source is not available in the free edition",
+    "no-assets-in-local-source": "There are no assets in this source",
+    "no-assets-source-not-found": "The assets source not longer exists in the local file system",
+    "no-search-results": "No search results",
+    "refresh-source": "Try again",
+    "toolbar": {
+      "source": "Source",
+      "bundled-assets": "Store premium bundled assets",
+      "purchased-assets": "Store purchased assets",
+      "free-assets": "Store free bundled assets",
+      "local-assets": "Local assets",
+      "add-local-assets-source": "Add a source from the local file system",
+      "remove-local-assets-source": "Remove the current local file system source",
+      "go-up-folder-structure": "Up to parent folder"
+    },
+    "tree": {
+      "items": "{0} ({1} items)"
+    },
+    "iconView": {
+      "website": "Website",
+      "support": "Support",
+      "license": "License"
+    },
+    "context-menu": {
+      "download": "Download",
+      "preview": "Preview",
+      "visit": "Visit",
+      "explore": "Explore",
+      "find-in-tree": "Find folder in tree",
+      "website": "Visit asset website",
+      "support": "Contact asset support",
+      "license": "License terms",
+      "images": {
+        "one": "Import image",
+        "other": "Import {0} images"
+      },
+      "images-message": {
+        "one": "How should this image file be imported?",
+        "other": "How should these {0} image files be imported?"
+      },
+      "images-as-many-object-types": {
+        "one": "As an object type",
+        "other": "As {0} object types"
+      },
+      "images-as-single-object-type": "As single object type",
+      "images-as-icons": {
+        "one": "As icon",
+        "other": "As {0} icons"
+      },
+      "animations": {
+        "one": "Import animation",
+        "other": "Import {0} animations"
+      },
+      "animations-message": {
+        "one": "How should this animation file be imported?",
+        "other": "How should these {0} animation files be imported?"
+      },
+      "animations-as-many-object-types": {
+        "one": "As an object type",
+        "other": "As {0} object types"
+      },
+      "animations-as-single-object-type": "As single object type",
+      "animations-as-icons": {
+        "one": "As icon",
+        "other": "As {0} icons"
+      },
+      "audio": "Import audio",
+      "audio-message": {
+        "one": "How should this audio file be imported?",
+        "other": "How should these {0} audio files be imported?"
+      },
+      "audio-as-sound": {
+        "one": "As sound file",
+        "other": "As {0} sound files"
+      },
+      "audio-as-music": {
+        "one": "As music file",
+        "other": "As {0} music files"
+      },
+      "svg": {
+        "one": "Import svg",
+        "other": "Import {0} svg files"
+      },
+      "video": {
+        "one": "Import video",
+        "other": "Import {0} videos"
+      },
+      "fonts": {
+        "one": "Import font",
+        "other": "Import {0} fonts"
+      },
+      "scripts": {
+        "one": "Import script",
+        "other": "Import {0} scripts"
+      },
+      "files": {
+        "one": "Import misc. file",
+        "other": "Import {0} misc. files"
+      },
+      "open-c2-projects": {
+        "one": "Open C2 project",
+        "other": "Open {0} C2 projects"
+      },
+      "open-c3-projects": {
+        "one": "Open C3 project",
+        "other": "Open {0} C3 projects"
+      },
+      "install-c3-addons": {
+        "one": "Install C3 addon",
+        "other": "Install {0} C3 addons"
+      },
+      "zips": {
+        "one": "Import zip",
+        "other": "Import {0} zips"
+      },
+      "import-results": {
+        "zip-import-title": "Zip import error",
+        "import-title": "Import error",
+        "types": {
+          "image": "Images",
+          "animation": "Animations",
+          "c2-project": "C2 projects",
+          "c3-project": "C3 projects",
+          "addon": "Addons",
+          "script": "Scripts",
+          "sound": "Sounds",
+          "music": "Music",
+          "video": "Videos",
+          "font": "Fonts",
+          "icon": "Icons",
+          "general": "Files",
+          "svg": "Svg"
+        },
+        "type-error": "The following types could not be imported: [b]{0}[/b]"
+      },
+      "errors": {
+        "import": "Import error",
+        "download": "Download error",
+        "image-failure": {
+          "one": "The image file could not be used.",
+          "other": "Some of the {0} image files could not be used."
+        },
+        "svg-failure": {
+          "one": "The SVG file could not be used.",
+          "other": "Some of the {0} SVG files could not be used."
+        },
+        "animation-failure": {
+          "one": "The animation file could not be used.",
+          "other": "Some of the {0} animation files could not be used."
+        },
+        "audio-failure": {
+          "one": "The audio file could not be used.",
+          "other": "Some of the {0} audio files could not be used."
+        },
+        "video-failure": {
+          "one": "The video file could not be used.",
+          "other": "Some of the {0} video files could not be used."
+        },
+        "font-failure": {
+          "one": "The font file could not be used.",
+          "other": "Some of the {0} font files could not be used."
+        },
+        "script-failure": {
+          "one": "The script file could not be used.",
+          "other": "Some of the {0} script files could not be used."
+        },
+        "files-failure": {
+          "one": "The file could not be used.",
+          "other": "Some of the {0} files could not be used."
+        },
+        "zips-failure": {
+          "one": "The zip file could not be used.",
+          "other": "Some of the {0} zip files could not be used."
+        },
+        "c2-project-failure": {
+          "one": "The C2 project file could not be used.",
+          "other": "Some of the {0} C2 project files could not be used."
+        },
+        "c3-project-failure": {
+          "one": "The C3 project file could not be used.",
+          "other": "Some of the {0} C3 project files could not be used."
+        },
+        "c3-addon-failure": {
+          "one": "The addon file could not be used.",
+          "other": "Some of the {0} addon files could not be used."
+        },
+        "download-failure": {
+          "one": "The file could not be downloaded.",
+          "other": "Some of the {0} files could not be downloaded."
+        }
+      }
+    }
+  },
+  "bookmarks": {
+    "title": "Bookmarks",
+    "icon": "Icon",
+    "name": "Name",
+    "where": "Where",
+    "sheet": "Sheet",
+    "event-location": "Event number: {0}",
+    "close-to-event": "By event number: {0}",
+    "no-location": "N/A",
+    "event-objects": {
+      "group": "Group: ",
+      "comment": "Comment: ",
+      "local-variable": "Local: ",
+      "global-variable": "Global: ",
+      "include": "Include: ",
+      "missing": "(Missing)"
+    },
+    "context-menu": {
+      "go-to": "Go To",
+      "remove": "Remove",
+      "remove-all": "Remove All",
+      "toggle-bookmark": "Toggle Bookmark",
+      "help": "Help"
+    }
+  },
+  "findAllReferences": {
+    "title": "Find all references",
+    "search-title": {
+      "one": "Find all references: '{0}' ({1} result)",
+      "other": "Find all references: '{0}' ({1} results)"
+    },
+    "short-search-title": "Find all references ({0})",
+    "toolbar": {
+      "show-ambiguous": "Show ambiguous"
+    },
+    "filter-results-placeholder": "Filter results",
+    "project": "Project",
+    "where": "Where",
+    "location": "Location",
+    "icon": "Icon",
+    "match": "Match",
+    "no-number": "N/A",
+    "event-location": "Event {0}",
+    "action-location": "Event {0} action {1}",
+    "condition-location": "Event {0} condition {1}",
+    "layout-result-location": "(on layout)",
+    "layout-instance-count": {
+      "one": "{0} instance on [b]{1}[/b]",
+      "other": "{0} instances on [b]{1}[/b]"
+    },
+    "member-of-family-result": "Member of family [b]{0}[/b]",
+    "member-of-family-location": "(member of family)",
+    "family-member-result": "Family member [b]{0}[/b]",
+    "family-member-location": "(family member)",
+    "object-class-plugin-result": "[b]{0}[/b] uses '{1}' plugin",
+    "object-class-location": "(object type)",
+    "behavior-type-result": "[b]{0}[/b] behavior type [b]{1}[/b] uses '{2}' behavior",
+    "effect-type-result": "[b]{0}[/b] effect type [b]{1}[/b] uses '{2}' effect",
+    "context-menu": {
+      "go-to": "Go to",
+      "remove-result": "Remove result",
+      "redo-search": "Redo search",
+      "clear-all": "Clear all",
+      "help": "Help"
+    }
+  },
+  "findResults": {
+    "title": "Find results",
+    "search-title": {
+      "one": "Find results: '{0}' ({1} result)",
+      "other": "Find results: '{0}' ({1} results)"
+    },
+    "short-search-title": "Find results ({0})",
+    "toolbar": {
+      "find-label": "Find:",
+      "filter-label": "Filter:",
+      "filter-results-placeholder": "Filter results",
+      "look-in": "Look in:",
+      "match-case": "Match case",
+      "active-event-sheet": "Active event sheet",
+      "all-event-sheets": "All event sheets in project",
+      "active-flowchart": "Active flowchart",
+      "all-flowcharts": "All flowcharts in project",
+      "active-timeline": "Active timeline",
+      "all-timelines": "All timelines in project",
+      "all-project-files": "All project files",
+      "all-event-sheets-and-files": "All event sheets, files, flowcharts and timelines"
+    },
+    "project": "Project",
+    "sheet": "Event sheet / file / flowchart / timeline",
+    "where": "Where",
+    "icon": "Icon",
+    "match": "Match",
+    "no-number": "N/A",
+    "event-location": "Event {0}",
+    "script-location": "Event {0} line {1}",
+    "action-location": "Event {0} action {1}",
+    "action-script-location": "Event {0} action {1} line {2}",
+    "condition-location": "Event {0} condition {1}",
+    "project-file-location": "Line {0}",
+    "dictionary-key-location": "Key [i]{0}[/i]",
+    "dictionary-value-location": "Value for key [i]{0}[/i]",
+    "array-location": "Array element ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+    "context-menu": {
+      "go-to": "Go to",
+      "remove-result": "Remove result",
+      "redo-search": "Redo search",
+      "clear-all": "Clear all",
+      "help": "Help"
+    },
+    "flowcharts": {
+      "location": {
+        "flowchart-node-caption": "Node caption",
+        "flowchart-node-tag": "Node tag",
+        "flowchart-node-comment": "Node comment",
+        "flowchart-node-reference-tag": "Reference node tag",
+        "flowchart-node-output-name": "Output name",
+        "flowchart-node-output-value": "Output value"
+      }
+    },
+    "timelines": {
+      "location": {
+        "timeline-track-folder-name": "Track folder name",
+        "timeline-property-track-folder-name": "Property Track folder name",
+        "timeline-track-name": "Track name",
+        "timeline-track-id": "Track ID",
+        "timeline-property-track-name": "Property track name",
+        "timeline-keyframe-tags": "Keyframe tags"
+      }
+    }
+  },
+  "instances": {
+    "title": "Instances",
+    "title-with-object": "Instances - {0}",
+    "global-instances": "Global instances",
+    "context-menu": {
+      "add-folder": "Add subfolder",
+      "additional-info": "Show more information for",
+      "lock-layer": "Lock layer '{0}'",
+      "unlock-layer": "Unlock layer '{0}'",
+      "visible-layer": "Make layer '{0}' visible",
+      "invisible-layer": "Make layer '{0}' invisible",
+      "select-layer": "Select layer '{0}'",
+      "flash-instances": "Flash selection",
+      "scroll-selection-into-view": "Scroll selection into view",
+      "select-all-instances": "Select all instances"
+    },
+    "status": {
+      "additional-info": "[b]Showing more information for:[/b] [i]{0}[/i]",
+      "template": "Templates",
+      "timeline": "Timelines",
+      "layer": "Layers & Layouts",
+      "mesh": "Meshes",
+      "hierarchy": "Hierarchies",
+      "plugin": "Plugins",
+      "editing": "Editing",
+      "parent-other-layout": "Parent in: {0}"
+    }
+  },
+  "layers": {
+    "title": "Layers",
+    "title-with-layout": "Layers - {0}",
+    "global": "Global",
+    "overridden": "Overridden",
+    "confirm-delete": {
+      "caption": "Delete layer",
+      "message": "Deleting this layer will also delete all the instances on it. Are you sure you want to delete this layer?"
+    },
+    "menu": {
+      "add-layer-at-top": "Add layer at top",
+      "add-layer-at-bottom": "Add layer at bottom",
+      "insert-layer-above": "Insert layer above",
+      "insert-layer-below": "Insert layer below",
+      "insert-sub-layer": "Insert sub-layer",
+      "open-original-global-layer-layout": "Open original global layer layout",
+      "show-hide": {
+        "name": "Show/hide",
+        "items": {
+          "show-all": "Show all",
+          "hide-all-but-this": "Hide all but this",
+          "hide-all": "Hide all"
+        }
+      },
+      "lock-unlock": {
+        "name": "Lock/unlock",
+        "items": {
+          "unlock-all": "Unlock all",
+          "lock-all-but-this": "Lock all but this",
+          "lock-all": "Lock all"
+        }
+      },
+      "help-on-layers": "Help on layers",
+      "help-for-this-bar": "Help for this bar"
+    }
+  },
+  "project": {
+    "title": "Project",
+    "project-location-suffix": "{0} - {1}",
+    "no-location": "(no location)",
+    "items": {
+      "layouts": "Layouts",
+      "event-sheets": "Event sheets",
+      "object-types": "Object types",
+      "families": "Families",
+      "script-files": "Scripts",
+      "sound-files": "Sounds",
+      "music-files": "Music",
+      "video-files": "Videos",
+      "font-files": "Fonts",
+      "icon-files": "Icons & screenshots",
+      "general-files": "Files",
+      "timelines": "Timelines",
+      "transitions": "Eases",
+      "flowcharts": "Flowcharts",
+      "models3d": "3D models"
+    },
+    "files": {
+      "new-file-name": "file",
+      "new-script-name": "script",
+      "main-script-name": "main",
+      "import-for-events-script-name": "importsForEvents"
+    },
+    "add-event-sheet-prompt": {
+      "caption": "Add layout",
+      "message": "Do you want to add an event sheet for this layout as well?",
+      "add-event-sheet": "Add event sheet",
+      "add-layout-only": "Add layout only"
+    },
+    "confirm-delete": {
+      "caption": "Delete from project",
+      "layouts": {
+        "one": "Are you sure you want to delete the selected layout?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected layouts?"
+      },
+      "cannot-delete-last-layout": {
+        "caption": "Cannot delete last layout",
+        "message": "The last layout in a project cannot be deleted. A project must have at least one layout."
+      },
+      "event-sheets": {
+        "one": "Are you sure you want to delete the selected event sheet?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected event sheets?"
+      },
+      "objects": {
+        "referenced": {
+          "one": "Deleting an object type removes all its related conditions, actions and expressions. Are you sure you want to delete the selected object type?",
+          "other": "Deleting an object type removes all its related conditions, actions and expressions. Are you sure you want to delete the [b]{0}[/b] selected object types?"
+        },
+        "unreferenced": {
+          "one": "Are you sure you want to delete the selected object type?",
+          "other": "Are you sure you want to delete the [b]{0}[/b] selected object types?"
+        }
+      },
+      "families": {
+        "referenced": {
+          "one": "Deleting a family removes all its related conditions, actions and expressions. Are you sure you want to delete the selected family?",
+          "other": "Deleting a family removes all its related conditions, actions and expressions. Are you sure you want to delete the [b]{0}[/b] selected families?"
+        },
+        "unreferenced": {
+          "one": "Are you sure you want to delete the selected family?",
+          "other": "Are you sure you want to delete the [b]{0}[/b] selected families?"
+        }
+      },
+      "timelines": {
+        "one": "Are you sure you want to delete the selected timeline?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected timelines?"
+      },
+      "transitions": {
+        "one": "Are you sure you want to delete the selected eases?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected eases?"
+      },
+      "flowcharts": {
+        "one": "Are you sure you want to delete the selected flowchart?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected flowcharts?"
+      },
+      "models3d": {
+        "one": "Are you sure you want to delete the selected 3D models?",
+        "other": "Are you sure you want to delete the [b]{0}[/b] selected 3D models?"
+      }
+    },
+    "menu": {
+      "main": {
+        "new-project": "New project",
+        "open": {
+          "name": "Open from",
+          "cloud": "Cloud",
+          "browser": "Browser",
+          "local-file": "Local file"
+        },
+        "help": "Help"
+      },
+      "projectItem": {
+        "preview": "Preview",
+        "remote-preview": "Remote preview",
+        "debug": "Debug",
+        "export": "Export",
+        "save": "Save",
+        "close-project": "Close project",
+        "tools": "Tools",
+        "view-project-statistics": "View project statistics",
+        "view-used-addons": "View used addons",
+        "view-spritesheets": "View spritesheets",
+        "rename-functions-object": "Rename Functions object",
+        "view-deprecated-features": "View deprecated features",
+        "help": "Help on projects"
+      },
+      "objectTypeFolderItem": {
+        "add-new-object-type": "Add new object type",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on object types"
+      },
+      "objectTypeItem": {
+        "create-instance": "Create instance",
+        "edit-animations": "Edit animations",
+        "edit-image": "Edit image",
+        "edit-instance-variables": "Edit instance variables",
+        "edit-behaviors": "Edit behaviors",
+        "edit-effects": "Edit effects",
+        "remove-from-family": "Remove from family",
+        "add-to-family": "Add to family",
+        "create-new-family": "Create new family",
+        "edit-family": "Edit family '{0}'",
+        "clone": "Clone",
+        "select-all-in-project": "Select all in project",
+        "help": "Help on '{0}'"
+      },
+      "familyFolderItem": {
+        "add-family": "Add family",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on families"
+      },
+      "familyItem": {
+        "edit-family": "Edit family",
+        "family-instance-variables": "Family instance variables",
+        "family-behaviors": "Family behaviors",
+        "family-effects": "Family effects",
+        "select-all-in-project": "Select all in project",
+        "help": "Help on families"
+      },
+      "layoutFolderItem": {
+        "add-layout": "Add layout",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on layouts"
+      },
+      "layoutItem": {
+        "open": "Open",
+        "duplicate": "Duplicate",
+        "edit-event-sheet": "Edit event sheet",
+        "preview": "Preview layout",
+        "debug": "Debug layout",
+        "help": "Help on layouts"
+      },
+      "eventSheetFolderItem": {
+        "add-event-sheet": "Add event sheet",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on event sheets"
+      },
+      "eventSheetItem": {
+        "open": "Open",
+        "help": "Help on event sheets"
+      },
+      "timelineFolderItem": {
+        "add-timeline": "Add timeline",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on timelines"
+      },
+      "timelineItem": {
+        "open": "Open",
+        "duplicate": "Duplicate",
+        "help": "Help on timelines"
+      },
+      "transitionFolderItem": {
+        "add-transition": "Add Ease",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on eases"
+      },
+      "transitionItem": {
+        "open": "Open",
+        "duplicate": "Duplicate",
+        "help": "Help on eases"
+      },
+      "flowchartItem": {
+        "open": "Open",
+        "duplicate": "Duplicate",
+        "help": "Help on flowcharts"
+      },
+      "flowchartFolderItem": {
+        "add-flowchart": "Add flowchart",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on flowcharts"
+      },
+      "model3dItem": {
+        "import": "Import",
+        "import-from-folder": "From folder",
+        "import-from-file": "From file",
+        "duplicate": "Duplicate",
+        "help": "Help on 3D model"
+      },
+      "model3dFolderItem": {
+        "add-model3d": "Add 3D model",
+        "add-subfolder": "Add subfolder",
+        "help": "Help on 3D models"
+      },
+      "fileFolderItem": {
+        "add-javascript": "Add JavaScript",
+        "add-typescript": "Add TypeScript",
+        "import-script": "Import scripts",
+        "import-sound": "Import sounds",
+        "import-music": "Import music",
+        "import-video": "Import video",
+        "import-font": "Import fonts",
+        "import-icon": "Import icons",
+        "import-general": "Import files",
+        "new": {
+          "new": "New",
+          "array": "Array",
+          "dictionary": "Dictionary",
+          "txt": "Plain Text",
+          "json": "JSON",
+          "xml": "XML",
+          "csv": "CSV",
+          "svg": "SVG",
+          "css": "Stylesheet",
+          "js": "JavaScript",
+          "ts": "TypeScript",
+          "html": "HTML"
+        },
+        "add-subfolder": "Add subfolder",
+        "reload-all-from-folder": "Reload all from folder",
+        "auto-reload-all-on-preview": "Auto reload all on preview",
+        "help": "Help on project files",
+        "typescript": "TypeScript",
+        "switch-project-to-typescript": "Switch project to TypeScript",
+        "switch-project-to-javascript": "Switch project to JavaScript",
+        "set-up-external-typescript": "Set up TypeScript for external editor",
+        "update-typescript-definitions": "Update TypeScript definitions",
+        "typescript-help": "Help for TypeScript in Construct"
+      },
+      "fileItem": {
+        "preview": "Preview",
+        "download": "Download",
+        "reload-from-folder": "Reload from folder",
+        "copy-path": "Copy path",
+        "expand": "Expand",
+        "collapse": "Collapse",
+        "edit-with-data": "Edit With Data Editor",
+        "duplicate": "Duplicate",
+        "help": "Help on project files",
+        "rename": "Rename",
+        "unable-to-load-font": "Failed to load font",
+        "changeExtension": "Are you sure you want to change the file extension from [b]{0}[/b] to [b]{1}[/b]?"
+      },
+      "common": {
+        "expand-collapse-menu": "Expand/collapse",
+        "expand-all": "Expand all",
+        "collapse-all": "Collapse all"
+      }
+    }
+  },
+  "properties": {
+    "title": "Properties",
+    "footer-title-prefix": "",
+    "footer-title-suffix": ": ",
+    "percent-suffix": "%",
+    "angle-suffix": "°",
+    "seconds-suffix": "s",
+    "db-suffix": " (db)",
+    "multiple-placeholder": "(multiple)",
+    "webfonts-picker-header-text": "Or pick a web font from this project: ",
+    "no-instances": "(no instances)",
+    "help-link": {
+      "name": "More information",
+      "desc": "Open the manual entry for more information on these properties.",
+      "link-text": "Help"
+    },
+    "flowchart": {
+      "flowchart-properties": {
+        "name": "Flowchart properties",
+        "desc": "Properties for the selected flowchart."
+      },
+      "flowchart-name": {
+        "name": "Name",
+        "desc": "Name of the flowchart."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about flowcharts.",
+        "link-text": "Help"
+      }
+    },
+    "flowchartNode": {
+      "editor": {
+        "name": "Editor",
+        "desc": "Settings which only affect how the node is used in the editor."
+      },
+      "add-flowchart-node-outputs": {
+        "name": "New outputs",
+        "desc": "Add new outputs to this node.",
+        "link-text": "Add"
+      },
+      "remove-flowchart-node-output": {
+        "name": "Remove output",
+        "desc": "Remove this output from its node.",
+        "link-text": "Remove"
+      },
+      "flowchart-node-properties": {
+        "name": "Node properties",
+        "desc": "Properties for the selected flowchart node."
+      },
+      "flowchart-node-comment": {
+        "name": "Caption",
+        "desc": "A caption to describe this node."
+      },
+      "flowchart-node-color": {
+        "name": "Color",
+        "desc": "The color of this node."
+      },
+      "flowchart-node-preset": {
+        "name": "Preset",
+        "desc": "Toggle this setting to use this node as a base to create new nodes."
+      },
+      "flowchart-node-tag": {
+        "name": "Tags",
+        "desc": "An optional space separated list of tags for this node."
+      },
+      "flowchart-node-is-start": {
+        "name": "Start node",
+        "desc": "The default starting node to use at runtime"
+      },
+      "flowchart-node-enable": {
+        "name": "Enable",
+        "desc": "Disabled nodes can not be visited at runtime, unless a default output has been set, then the default output is followed inmediatelly."
+      },
+      "flowchart-node-parent-index": {
+        "name": "Parent index",
+        "desc": "An optional value used by the parents of a node. Ignored if the node has one or no parents."
+      },
+      "flowchart-node-outputs": {
+        "name": "Outputs",
+        "desc": "All the outputs of this node."
+      },
+      "flowchart-node-output": {
+        "name": "Output",
+        "desc": "An output of this node."
+      },
+      "flowchart-node-output-index": {
+        "name": "Index",
+        "desc": "The index of this output."
+      },
+      "flowchart-node-output-id": {
+        "name": "Name",
+        "desc": "The name of this output."
+      },
+      "flowchart-node-output-value": {
+        "name": "Value",
+        "desc": "The value of this output."
+      },
+      "flowchart-node-output-color": {
+        "name": "Color",
+        "desc": "The color of the associated link. This is an editor-only property."
+      },
+      "flowchart-node-output-link-mode": {
+        "name": "Link mode",
+        "desc": "The method to use to draw the associated link. This is an editor-only property.",
+        "link-mode": {
+          "line": "Line",
+          "path-find": "Path find"
+        }
+      },
+      "flowchart-node-output-enable": {
+        "name": "Enable",
+        "desc": "Enable or disable this output. Disabled outputs are ignored at runtime."
+      },
+      "flowchart-node-output-default": {
+        "name": "Default",
+        "desc": "Default outputs are chosen at runtime using the relevant ACEs or when an output can not be found."
+      },
+      "flowchart-reference": {
+        "name": "Reference flowchart",
+        "desc": "The flowchart this node is referencing."
+      },
+      "flowchart-reference-start-node-tag": {
+        "name": "Reference start node",
+        "desc": "The tag of the node to start in the reference flowchart. If not specified, the default start node for the flowchart is used."
+      },
+      "flowchart-reference-runtime-tag": {
+        "name": "Runtime tag",
+        "desc": "An optional tag that will be given to the referenced flowchart at runtime. If left empty a unique tag will be given to it at runtime."
+      },
+      "flowchart-comment-font-settings": {
+        "name": "Font settings",
+        "desc": "Font settings for comment nodes."
+      },
+      "flowchart-comment-font": {
+        "name": "Font",
+        "desc": "Font used in the main body of the comment node."
+      },
+      "flowchart-comment-font-size": {
+        "name": "Size",
+        "desc": "Font size used in the main body of the comment node."
+      },
+      "flowchart-comment-font-bold": {
+        "name": "Bold",
+        "desc": "Make the font used in the main body of the comment node, bold."
+      },
+      "flowchart-comment-font-italic": {
+        "name": "Italic",
+        "desc": "Make the font used in the main body of the comment node, italic."
+      },
+      "flowchart-comment-font-color": {
+        "name": "Color",
+        "desc": "The color of the font used in the main body of the comment node."
+      }
+    },
+    "icon": {
+      "icon-properties": {
+        "name": "Image properties",
+        "desc": "Properties for the selected icon or screenshot."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "File name of this image."
+      },
+      "purpose": {
+        "name": "Purpose",
+        "desc": "Select what to use this image for.",
+        "items": {
+          "none": "(none set)",
+          "app-icon": "App icon",
+          "app-icon-maskable": "App icon maskable",
+          "loading-logo": "Loading logo",
+          "adaptive-foreground": "Adaptive foreground",
+          "adaptive-background": "Adaptive background",
+          "ios-splash-screen": "iOS splash screen",
+          "android-splash-icon": "Android splash icon",
+          "screenshot": "Screenshot"
+        }
+      },
+      "screenshot-label": {
+        "name": "Label",
+        "desc": "A brief description of the screenshot."
+      },
+      "screenshot-form-factor": {
+        "name": "Form factor",
+        "desc": "The form factor of this screenshot (used to determine which devices it is applicable for).",
+        "items": {
+          "none": "(none set)",
+          "narrow": "Narrow",
+          "wide": "Wide"
+        }
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about managing icons and screenshots.",
+        "link-text": "Help"
+      }
+    },
+    "instance": {
+      "object-type-properties": {
+        "name": "Object type properties",
+        "desc": "Properties for the whole object type (affecting all instances)."
+      },
+      "family-properties": {
+        "name": "Family properties",
+        "desc": "Properties for the whole family."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of this type of object.",
+        "desc-family": "The name of this family."
+      },
+      "plugin": {
+        "name": "Plugin",
+        "desc": "The plugin this object type is based on.",
+        "desc-family": "The plugin this family is based on."
+      },
+      "global": {
+        "name": "Global",
+        "desc": "Global objects are not destroyed at the end of a layout."
+      },
+      "new-instance-template": {
+        "name": "New instance template",
+        "desc": "For the editor only, the template to use for initial properties when creating a new instance."
+      },
+      "new-instance-replica": {
+        "name": "New instance replica",
+        "desc": "For the editor only, whether a newly created instance should be a replica of the original template."
+      },
+      "common-instance-properties": {
+        "name": "Common",
+        "desc": "Common properties for object instances."
+      },
+      "position": {
+        "name": "Position",
+        "desc": "The co-ordinates in the layout where this instance is located, in pixels, relative to its origin.",
+        "separator": ", ",
+        "x": {
+          "name": "X",
+          "desc": "The X co-ordinate of this instance in the layout, in pixels."
+        },
+        "y": {
+          "name": "Y",
+          "desc": "The Y co-ordinate of this instance in the layout, in pixels."
+        },
+        "z": {
+          "name": "Z",
+          "desc": "The Z co-ordinate of this instance in the layout, in pixels."
+        }
+      },
+      "size": {
+        "name": "Size",
+        "desc": "The width and height of this instance, in pixels.",
+        "separator": " x ",
+        "width": {
+          "name": "Width",
+          "desc": "The width of this instance, in pixels."
+        },
+        "height": {
+          "name": "Height",
+          "desc": "The height of this instance, in pixels."
+        },
+        "depth": {
+          "name": "Depth",
+          "desc": "The depth of this instance, in pixels."
+        },
+        "x-scale": {
+          "name": "X scale",
+          "desc": "The width of this instance as a percentage of its original size."
+        },
+        "y-scale": {
+          "name": "Y scale",
+          "desc": "The height of this instance as a percentage of its original size."
+        }
+      },
+      "angle": {
+        "name": "Angle",
+        "desc": "The angle of this instance, in degrees, relative to 0 degrees facing right and increasing clockwise."
+      },
+      "opacity": {
+        "name": "Opacity",
+        "desc": "The opacity of this instance, from 0 (transparent) to 100 (opaque)."
+      },
+      "color": {
+        "name": "Color",
+        "desc": "The color to apply to this instance."
+      },
+      "layer": {
+        "name": "Layer",
+        "desc": "Layer the selection is currently on."
+      },
+      "z-index": {
+        "name": "Z index",
+        "desc": "The zero-based index of the order this instance is shown on its layer.",
+        "format": "{0} of {1}"
+      },
+      "uid": {
+        "name": "UID",
+        "desc": "The unique identifier (UID) of the selected instance."
+      },
+      "tags": {
+        "name": "Tags",
+        "desc": "A list of space separated tags."
+      },
+      "instance-variables": {
+        "name": "Instance variables",
+        "name-family": "Family instance variables",
+        "desc": "Variables stored in each instance of an object.",
+        "desc-family": "Variables inherited by every object type in the family.",
+        "hidden-count": "({0} hidden)",
+        "inherited-group-title": "Inherited from '{0}'",
+        "inherited-group-desc": "Instance variables inherited from the family '{0}'."
+      },
+      "instance-variable-default-description": "An instance variable, unique to each instance.",
+      "edit-instance-variables": {
+        "name": "Add / edit",
+        "desc": "Click to add, change or remove instance variables.",
+        "link-text": "Instance variables",
+        "link-text-family": "Family instance variables"
+      },
+      "behaviors": {
+        "name": "Behaviors",
+        "name-family": "Family behaviors",
+        "desc": "Add-on features for the object, such as movements.",
+        "desc-family": "Behaviors inherited by every object type in the family."
+      },
+      "inherited-behavior-name": "{0} [{1}]",
+      "behavior-no-properties": "(no properties)",
+      "edit-behaviors": {
+        "name": "Add / edit",
+        "desc": "Click to add, change or remove behaviors.",
+        "link-text": "Behaviors",
+        "link-text-family": "Family behaviors"
+      },
+      "effects": {
+        "name": "Effects",
+        "name-family": "Family effects",
+        "desc": "Visual effects applied to the selected instances.",
+        "enabled": {
+          "name": "Enabled",
+          "desc": "Whether the effect is initially enabled."
+        }
+      },
+      "inherited-effect-name": "{0} [{1}]",
+      "blend-mode": {
+        "name": "Blend mode",
+        "desc": "How to blend the object with the background. If effects are used, applied for last effect."
+      },
+      "edit-effects": {
+        "name": "Add / edit",
+        "desc": "Click to add, change or remove effects.",
+        "link-text": "Effects",
+        "link-text-family": "Family effects"
+      },
+      "container-properties": {
+        "name": "Container",
+        "desc": "The list of objects in a container with this object, if any."
+      },
+      "container-this-object": {
+        "name": "(this object)",
+        "desc": "This object is in the container."
+      },
+      "container-remove-object": {
+        "desc": "Remove this object from the container.",
+        "link-text": "Remove"
+      },
+      "container-create": {
+        "name": "No container",
+        "desc": "Click to create a container with this object and another object.",
+        "link-text": "Create",
+        "dialog-caption": "Create container",
+        "dialog-header": "Pick an object type to add to the container:"
+      },
+      "container-add-object": {
+        "desc": "Add another object to this container.",
+        "link-text": "Add object",
+        "dialog-caption": "Add to container",
+        "dialog-header": "Pick an object type to add to the container:"
+      },
+      "container-select-mode": {
+        "name": "Select mode",
+        "desc": "How to select instances in this container in the Layout View.",
+        "items": {
+          "normal": "Normal",
+          "all": "All",
+          "wrap": "Wrap"
+        }
+      },
+      "plugin-properties": {
+        "name": "Properties",
+        "desc": "Properties for the selection."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Settings which only affect how instances are used in the editor.",
+        "visible-in-editor": {
+          "name": "Visible in editor",
+          "desc": "Show instances in the layout view."
+        },
+        "locked": {
+          "name": "Locked",
+          "desc": "Prevent instances from being selected or changed."
+        }
+      },
+      "scene-graph-properties": {
+        "name": "Hierarchy",
+        "desc": "Properties affecting how an instance behaves in its hierarchy.",
+        "properties": {
+          "x": {
+            "name": "Transform X",
+            "desc": "Whether to transform with the parent's X position."
+          },
+          "y": {
+            "name": "Transform Y",
+            "desc": "Whether to transform with the parent's Y position."
+          },
+          "z": {
+            "name": "Transform Z",
+            "desc": "Whether to transform with the parent's Z position."
+          },
+          "width": {
+            "name": "Transform width",
+            "desc": "Whether to transform with the parent's width."
+          },
+          "height": {
+            "name": "Transform height",
+            "desc": "Whether to transform with the parent's height."
+          },
+          "angle": {
+            "name": "Transform angle",
+            "desc": "Whether to transform with the parent's angle."
+          },
+          "opacity": {
+            "name": "Transform opacity",
+            "desc": "Whether to transform with the parent's opacity."
+          },
+          "visibility": {
+            "name": "Transform visibility",
+            "desc": "Whether to transform with the parent's visibility."
+          },
+          "destroy": {
+            "name": "Destroy with parent",
+            "desc": "Whether to also destroy this instance when its parent is destroyed."
+          },
+          "select-mode": {
+            "name": "Select mode",
+            "desc": "How to select instances in this hierarchy in the Layout View.",
+            "items": {
+              "normal": "Normal",
+              "all": "All",
+              "wrap": "Wrap"
+            }
+          }
+        }
+      },
+      "template-properties": {
+        "name": "Template",
+        "desc": "Properties to set whether an instance should be a source template or a replica.",
+        "context-menu": {
+          "replica": {
+            "use-from-template": "Use value '{0}' from template"
+          }
+        },
+        "properties": {
+          "template-mode": {
+            "name": "Template mode",
+            "desc": "Choose whether this instance will be a template or a replica.",
+            "items": {
+              "template": "Template",
+              "replica": "Replica"
+            }
+          },
+          "template-name": {
+            "name": "Template name",
+            "desc": "The name by which a replica refers to this template."
+          },
+          "template-source": {
+            "name": "Template source",
+            "desc": "The name by which this replica refers to a template."
+          },
+          "template-propagate-hierarchy": {
+            "name": "Propagate hierarchy",
+            "desc": "Automatically propagate hierarchy changes made on a template to the replicas. Includes setting and removing connections, deleting instances and changes to properties affected by hierarchies."
+          },
+          "template-replica-ignore-hierarchy": {
+            "name": "Ignore hierarchy propagation",
+            "desc": "Ignore hierarchy changes automatically propagated from the template."
+          },
+          "template-replace-whole-hierarchy": {
+            "name": "Replace hierarchy",
+            "desc": "Replace the hierarchy of each replica, deletes and creates instances.",
+            "link": "Replace"
+          },
+          "template-modify-existing-hierarchy": {
+            "name": "Modify hierarchy",
+            "desc": "Update the existing hierarchy of each replica, does not delete or create instances.",
+            "link": "Modify"
+          },
+          "template-replica-replace-whole-hierarchy": {
+            "name": "Replace hierarchy",
+            "desc": "Replace the hierarchy of this replica, deletes and creates instances.",
+            "link": "Replace"
+          },
+          "template-replica-modify-existing-hierarchy": {
+            "name": "Modify hierarchy",
+            "desc": "Update the existing hierarchy of this replica, does not delete or create instances.",
+            "link": "Modify"
+          }
+        }
+      }
+    },
+    "layer": {
+      "layer-properties": {
+        "name": "Layer properties",
+        "desc": "Properties for the selected layer."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected layer."
+      },
+      "initially-visible": {
+        "name": "Initially visible",
+        "desc": "Show the layer when the layout starts at runtime."
+      },
+      "initially-interactive": {
+        "name": "Initially interactive",
+        "desc": "Allow the layer to respond to mouse and touch input at runtime."
+      },
+      "html-elements-layer": {
+        "name": "HTML elements layer",
+        "desc": "Allow HTML elements to appear on top of this layer, and underneath the next layer above it."
+      },
+      "use-render-cells": {
+        "name": "Use render cells",
+        "desc": "Optimise rendering for large layers with many static objects. Cannot be used with Z elevation."
+      },
+      "global": {
+        "name": "Global",
+        "desc": "Override every other layer in the project with the same name with this layer.",
+        "overriden": "Overridden"
+      },
+      "scrollzoom-properties": {
+        "name": "Scroll & zoom",
+        "desc": "Properties affecting how the layer scrolls and zooms."
+      },
+      "scale-rate": {
+        "name": "Scale rate",
+        "desc": "The rate the layer scales as the scale changes. Use 0 to disable scaling."
+      },
+      "parallax": {
+        "name": "Parallax",
+        "desc": "The rate at which the layer scrolls in each direction.",
+        "separator": " x ",
+        "x": {
+          "name": "X",
+          "desc": "The horizontal scroll rate."
+        },
+        "y": {
+          "name": "Y",
+          "desc": "The vertical scroll rate."
+        }
+      },
+      "z-elevation": {
+        "name": "Z elevation",
+        "desc": "The layer elevation on the Z axis."
+      },
+      "appearance-properties": {
+        "name": "Appearance",
+        "desc": "Properties affecting the appearance of the layer at runtime."
+      },
+      "background-color": {
+        "name": "Background color",
+        "desc": "The background color of the layer if not transparent."
+      },
+      "transparent": {
+        "name": "Transparent",
+        "desc": "Ignore the background color and have a transparent background."
+      },
+      "opacity": {
+        "name": "Opacity",
+        "desc": "The overall layer opacity, from 0 (transparent) to 100 (opaque)."
+      },
+      "force-own-texture": {
+        "name": "Force own texture",
+        "desc": "Force the layer to render to an intermediate texture. Rendering is faster with this disabled."
+      },
+      "uses-own-texture": {
+        "name": "Uses own texture",
+        "desc": "Indicates whether this layer will render to an intermediate texture."
+      },
+      "rendering-mode": {
+        "name": "Rendering mode",
+        "desc": "Whether to render this layer as 2D or 3D. Use 2D mode to render backdrops or overlays independent of 3D content.",
+        "options": {
+          "2d": "2D",
+          "3d": "3D"
+        }
+      },
+      "draw-order": {
+        "name": "Draw order",
+        "desc": "For 3D layers, whether objects are drawn back-to-front by the 2D Z order, or by distance from the camera.",
+        "options": {
+          "z-order": "Z order",
+          "camera-distance": "Camera distance"
+        }
+      },
+      "effect-properties": {
+        "name": "Effects",
+        "desc": "Visual effects applied to the entire layer."
+      },
+      "blend-mode": {
+        "name": "Blend mode",
+        "desc": "How to blend the layer with the background. If effects are used, applied for last effect."
+      },
+      "edit-effects": {
+        "name": "Add / edit",
+        "desc": "Click to add, change or remove effects.",
+        "link-text": "Effects"
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Settings which only affect how the layer is used in the editor."
+      },
+      "visible-in-editor": {
+        "name": "Visible in editor",
+        "desc": "Show this layer in the layout view."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Prevent any objects on this layer being selected or changed."
+      },
+      "parallax-in-editor": {
+        "name": "Parallax in editor",
+        "desc": "Scroll the layer in the editor according to its parallax setting."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about layer properties.",
+        "link-text": "Help"
+      }
+    },
+    "layout": {
+      "layout-properties": {
+        "name": "Layout",
+        "desc": "Properties for the selected layout."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected layout."
+      },
+      "event-sheet": {
+        "name": "Event sheet",
+        "desc": "Choose the event sheet to run for this layout. You can include other event sheets from this sheet.",
+        "none": "(none)"
+      },
+      "size": {
+        "name": "Size",
+        "desc": "The size of the layout area in pixels.",
+        "separator": " x ",
+        "width": {
+          "name": "Width",
+          "desc": "The width of the layout area in pixels."
+        },
+        "height": {
+          "name": "Height",
+          "desc": "The height of the layout area in pixels."
+        }
+      },
+      "unbounded-scrolling": {
+        "name": "Unbounded scrolling",
+        "desc": "Allow scrolling past the edges of the layout at runtime."
+      },
+      "projection": {
+        "name": "Projection",
+        "desc": "Whether to render 3D features with perspective, or a flat orthographic projection.",
+        "options": {
+          "perspective": "Perspective",
+          "orthographic": "Orthographic"
+        }
+      },
+      "vanishing-point": {
+        "name": "Vanishing point",
+        "desc": "When using 3D features, set where the vanishing point is relative to the viewport area, with 50% being the middle.",
+        "separator": ", ",
+        "x": {
+          "name": "X",
+          "desc": "The vanishing point X in the viewport."
+        },
+        "y": {
+          "name": "Y",
+          "desc": "The vanishing point Y in the viewport."
+        }
+      },
+      "effect-properties": {
+        "name": "Effects",
+        "desc": "Visual effects applied to the entire layout."
+      },
+      "edit-effects": {
+        "name": "Add / edit",
+        "desc": "Click to add, change or remove effects.",
+        "link-text": "Effects"
+      },
+      "editor": {
+        "name": "Editor",
+        "desc": "Settings which only affect how the layout is used in the editor."
+      },
+      "margins": {
+        "name": "Margins",
+        "desc": "The size of the extra free space appearing in the editor outside the layout in pixels.",
+        "separator": " x ",
+        "width": {
+          "name": "Width",
+          "desc": "The width of the editor layout margin in pixels."
+        },
+        "height": {
+          "name": "Height",
+          "desc": "The height of the editor layout margin in pixels."
+        }
+      },
+      "show-grid": {
+        "name": "Show grid",
+        "desc": "Display a grid in the editor over the layout."
+      },
+      "snap-to-grid": {
+        "name": "Snap to grid",
+        "desc": "Align moving and resizing objects with the grid."
+      },
+      "grid-size": {
+        "name": "Grid size",
+        "desc": "The size of the grid to show/snap to.",
+        "separator": " x ",
+        "width": {
+          "name": "Width",
+          "desc": "The width of the layout grid."
+        },
+        "height": {
+          "name": "Height",
+          "desc": "The height of the layout grid."
+        }
+      },
+      "grid-offset": {
+        "name": "Grid offset",
+        "desc": "Alter the position of the grid in the layout.",
+        "separator": ", ",
+        "x": {
+          "name": "Grid offset X",
+          "desc": "The X offset of the grid in the layout."
+        },
+        "y": {
+          "name": "Grid offset Y",
+          "desc": "The Y offset of the grid in the layout."
+        }
+      },
+      "show-collision-polygons": {
+        "name": "Show collision polygons",
+        "desc": "Show the outlines of collision polygons in the layout view."
+      },
+      "show-meshes": {
+        "name": "Show meshes",
+        "desc": "Show the outlines of meshes in the layout view."
+      },
+      "show-translucent-inactive-layers": {
+        "name": "Show translucent inactive layers",
+        "desc": "All inactive layers in the current layout are shown, locked and at 33% opacity. The active layer is shown as normal."
+      },
+      "show-scene-graph-connections": {
+        "name": "Show hierarchy",
+        "desc": "Show the connections between instances in the same hierarchy."
+      },
+      "project-properties": {
+        "name": "Project properties",
+        "desc": "Shortcut to view the properties for this layout's project.",
+        "link-text": "View"
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about layout properties.",
+        "link-text": "Help"
+      }
+    },
+    "mesh-point": {
+      "mesh-point-properties": {
+        "name": "Mesh point properties",
+        "desc": "Properties for the selected mesh point."
+      },
+      "object-type-name": {
+        "name": "Object type name",
+        "desc": "Name of the object type of the instance with the mesh."
+      },
+      "instance-uid": {
+        "name": "Instance UID",
+        "desc": "Unique ID (UID) of the instance the mesh point belongs to."
+      },
+      "mesh-size": {
+        "name": "Mesh size",
+        "desc": "Number of columns and rows in the mesh.",
+        "value": "{0} x {1}"
+      },
+      "mesh-point-position": {
+        "name": "Mesh point position",
+        "desc": "The zero-based column and row index of the selected mesh point.",
+        "value": "{0}, {1}"
+      },
+      "layout-position": {
+        "name": "Layout position",
+        "desc": "The position of this mesh point in layout co-ordinates."
+      },
+      "layout-x": {
+        "name": "Layout X",
+        "desc": "The X position of this mesh point in layout co-ordinates."
+      },
+      "layout-y": {
+        "name": "Layout Y",
+        "desc": "The Y position of this mesh point in layout co-ordinates."
+      },
+      "z-elevation": {
+        "name": "Z elevation",
+        "desc": "The Z elevation of this mesh point."
+      },
+      "relative-position": {
+        "name": "Relative position",
+        "desc": "The relative position of this mesh point as a percentage of the object size."
+      },
+      "relative-x": {
+        "name": "Relative X",
+        "desc": "The relative X position of this mesh point as a percentage of the object width."
+      },
+      "relative-y": {
+        "name": "Relative Y",
+        "desc": "The relative Y position of this mesh point as a percentage of the object height."
+      },
+      "texture-position": {
+        "name": "Texture position",
+        "desc": "The source image position at this mesh point, as a percentage of the source image size."
+      },
+      "texture-x": {
+        "name": "Texture X",
+        "desc": "The source image X position at this mesh point, as a percentage of the source image width."
+      },
+      "texture-y": {
+        "name": "Texture Y",
+        "desc": "The source image Y position at this mesh point, as a percentage of the source image height."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about the mesh editor.",
+        "link-text": "Help"
+      }
+    },
+    "model3d": {
+      "model3d-properties": {
+        "name": "3D model properties",
+        "desc": "Properties for the selected 3D model."
+      },
+      "model3d-name": {
+        "name": "Name",
+        "desc": "Name of the 3D model."
+      },
+      "model3d-import": {
+        "name": "Data",
+        "desc-folder": "Import a 3D model file from a folder in the local file system.",
+        "desc-file": "Import a 3D model file from the local file system.",
+        "link-text": "Import"
+      },
+      "model3d-textures": {
+        "name": "Textures",
+        "desc": "View and edit the textures used by the 3D model.",
+        "link-text": "Edit"
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about 3D models.",
+        "link-text": "Help"
+      }
+    },
+    "project-file": {
+      "file-properties": {
+        "name": "File properties",
+        "desc": "Properties for the selected project file."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "File name of this project file."
+      },
+      "purpose": {
+        "name": "Purpose",
+        "desc": "Select what to use this file for.",
+        "html-file-items": {
+          "head-end": "End of <head>",
+          "body-start": "Start of <body>",
+          "body-end": "End of <body>"
+        },
+        "css-file-items": {
+          "stylesheet": "Stylesheet"
+        },
+        "json-file-items": {
+          "import-map": "Import map"
+        }
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about project files.",
+        "link-text": "Help"
+      }
+    },
+    "project": {
+      "about": {
+        "name": "About",
+        "desc": "Information about this project."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The project name."
+      },
+      "auto-increment-version": {
+        "name": "Auto-increment version",
+        "desc": "Check to automatically increment the fourth number of the version field after every export."
+      },
+      "version": {
+        "name": "Version",
+        "desc": "Up to four numbers to identify the version of the project."
+      },
+      "description": {
+        "name": "Description",
+        "desc": "A sentence or two describing the project."
+      },
+      "id": {
+        "name": "ID",
+        "desc": "An identifier for this project in reverse domain format.",
+        "placeholder": "com.company.appname"
+      },
+      "author": {
+        "name": "Author",
+        "desc": "The name or organisation of the project author."
+      },
+      "email": {
+        "name": "Email",
+        "desc": "A contact email address, such as the author or support email.",
+        "placeholder": "author@example.com"
+      },
+      "website": {
+        "name": "Website",
+        "desc": "The website associated with this project.",
+        "placeholder": "https://www.example.com"
+      },
+      "colors": {
+        "name": "Colors",
+        "desc": "Choose colors used by the project."
+      },
+      "background-color": {
+        "name": "Background color",
+        "desc": "The background color, which appears around or at the edges of the viewport."
+      },
+      "splash-color": {
+        "name": "Splash color",
+        "desc": "The background color of the splash screen, which appears when run as a web app."
+      },
+      "use-theme-color": {
+        "name": "Use theme color",
+        "desc": "Whether to enable the theme color, which replaces the default UI color on some platforms."
+      },
+      "theme-color": {
+        "name": "Theme color",
+        "desc": "On some platforms the theme color replaces the default UI color."
+      },
+      "startup": {
+        "name": "Startup",
+        "desc": "Settings affecting how the project loads and starts."
+      },
+      "first-layout": {
+        "name": "First layout",
+        "desc": "The layout that will initially load when the project is run.",
+        "default": "(default)"
+      },
+      "use-loader-layout": {
+        "name": "Use loader layout",
+        "desc": "Display the first layout while the rest of the project is still loading."
+      },
+      "loader-style": {
+        "name": "Loader style",
+        "desc": "What to show when loading, or loading the loader layout.",
+        "options": {
+          "none": "Nothing (not recommended)",
+          "percent": "Percentage text",
+          "progress": "Progress bar only",
+          "progress-logo": "Progress bar & logo",
+          "splash": "Construct splash"
+        }
+      },
+      "preload-sounds": {
+        "name": "Preload sounds",
+        "desc": "Download and decode all sounds (but not music) while loading."
+      },
+      "display": {
+        "name": "Display",
+        "desc": "Settings affecting how the project is rendered at runtime."
+      },
+      "viewport-size": {
+        "name": "Viewport size",
+        "desc": "The size of the viewport area in pixels.",
+        "separator": " x ",
+        "width": {
+          "name": "Width",
+          "desc": "The width of the viewport area in pixels."
+        },
+        "height": {
+          "name": "Height",
+          "desc": "The height of the viewport area in pixels."
+        }
+      },
+      "aspect-ratio": {
+        "name": "Aspect ratio",
+        "desc": "The aspect ratio of the viewport."
+      },
+      "viewport-fit": {
+        "name": "Viewport fit",
+        "desc": "How to handle non-rectangular displays like on the iPhone X.",
+        "options": {
+          "auto": "Auto",
+          "cover": "Cover"
+        }
+      },
+      "fullscreen-mode": {
+        "name": "Fullscreen mode",
+        "desc": "How to resize the view to fill the available area.",
+        "options": {
+          "off": "Off",
+          "scale-inner": "Scale inner",
+          "integer-scale-inner": "Integer scale inner",
+          "scale-outer": "Scale outer",
+          "integer-scale-outer": "Integer scale outer",
+          "letterbox-scale": "Letterbox scale",
+          "letterbox-integer-scale": "Letterbox integer scale"
+        }
+      },
+      "fullscreen-quality": {
+        "name": "Fullscreen quality",
+        "desc": "Whether to scale to fullscreen before (high quality) or after (low quality) rendering.",
+        "options": {
+          "low": "Low",
+          "high": "High"
+        }
+      },
+      "orientations": {
+        "name": "Orientations",
+        "desc": "Where supported, the device orientations to allow.",
+        "options": {
+          "any": "Any",
+          "portrait": "Portrait",
+          "landscape": "Landscape"
+        }
+      },
+      "pixel-rounding": {
+        "name": "Pixel rounding",
+        "desc": "Round the position all objects are drawn at to an integer."
+      },
+      "z-axis-scale": {
+        "name": "Z axis scale",
+        "desc": "The scale of units to use on the Z axis for 3D features. 'Normalized' works 0-100, and 'Regular' uses same units as X/Y axes.",
+        "options": {
+          "normalized": "Normalized",
+          "regular": "Regular"
+        }
+      },
+      "fov": {
+        "name": "Field of view",
+        "desc": "The angle of the visible area in front of the camera (only available when using regular Z axis scale). Note this changes the default camera Z."
+      },
+      "advanced": {
+        "name": "Advanced",
+        "desc": "Settings intended for advanced users. It is recommended to leave these on defaults."
+      },
+      "use-worker": {
+        "name": "Use worker",
+        "desc": "Host the runtime in a Web Worker, off the main thread.",
+        "options": {
+          "auto": "Auto"
+        }
+      },
+      "framerate-mode": {
+        "name": "Framerate mode",
+        "desc": "How to schedule frames. Typically v-synced gives the best results.",
+        "options": {
+          "vsync": "V-synced",
+          "fixed": "Fixed",
+          "unlimited-tick": "Unlimited (ticks only)",
+          "unlimited-frame": "Unlimited (full frames)"
+        }
+      },
+      "fixed-framerate": {
+        "name": "Fixed framerate",
+        "desc": "The frames per second rate to target (subject to performance and timer precision limitations)."
+      },
+      "gpu-preference": {
+        "name": "GPU preference",
+        "desc": "On devices with multiple GPUs, the type of GPU to prefer (where supported).",
+        "options": {
+          "low-power": "Low power",
+          "default": "Default",
+          "high-performance": "High performance"
+        }
+      },
+      "enable-webgpu": {
+        "name": "Enable WebGPU",
+        "desc": "Use the WebGPU renderer if supported, which usually improves performance. Falls back to WebGL if not supported.",
+        "options": {
+          "auto": "Auto"
+        }
+      },
+      "enable-multitexturing": {
+        "name": "Enable multitexturing",
+        "desc": "Enables multitextured rendering when using WebGPU renderer. This trades off texture-swap performance for fill-rate performance.",
+        "options": {
+          "auto": "Auto"
+        }
+      },
+      "downscaling-quality": {
+        "name": "Downscaling quality",
+        "desc": "Trade-off between display quality and memory use when drawing downscaled objects.",
+        "options": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High (not recommended)"
+        }
+      },
+      "rendering-mode": {
+        "name": "Rendering mode",
+        "desc": "Whether to render this project in 2D mode, 3D mode, or automatically decide.",
+        "options": {
+          "2d": "2D",
+          "auto": "Auto",
+          "3d": "3D"
+        }
+      },
+      "anisotropic-filtering": {
+        "name": "Anisotropic filtering",
+        "desc": "The degree of anisotropy to use, mainly affecting rendering of surfaces at oblique viewing angles, such as in 3D shape objects.",
+        "options": {
+          "auto": "Auto",
+          "off": "Off",
+          "2x": "2x",
+          "3x": "3x",
+          "4x": "4x",
+          "8x": "8x",
+          "16x": "16x"
+        }
+      },
+      "near-distance": {
+        "name": "Near distance",
+        "desc": "The distance of the near plane from the camera, affecting the limits of 2D scaling and 3D rendering."
+      },
+      "far-distance": {
+        "name": "Far distance",
+        "desc": "The distance of the far plane from the camera, affecting the limits of 2D scaling and 3D rendering."
+      },
+      "max-spritesheet-size": {
+        "name": "Max spritesheet size",
+        "desc": "The maximum spritesheet size to use. Smaller sizes save memory but larger sizes can improve performance.",
+        "disabled": "Disabled (not recommended)"
+      },
+      "uid-numbering": {
+        "name": "UID numbering",
+        "desc": "The numbering scheme to use for assigning a UID to new objects.",
+        "options": {
+          "increment": "Increment",
+          "random": "Random"
+        }
+      },
+      "compatibility-settings": {
+        "name": "Compatibility settings",
+        "desc": "Settings that exist mainly for backwards compatibility reasons. Usually these settings should not be changed."
+      },
+      "editor": {
+        "name": "Editor",
+        "desc": "Settings affecting the editing and preview of the project."
+      },
+      "preview-effects": {
+        "name": "Preview effects",
+        "desc": "Preview blend modes and effects in the editor."
+      },
+      "pause-on-unfocus": {
+        "name": "Pause on unfocus",
+        "desc": "During preview only, pause the game when the browser loses focus."
+      },
+      "bundle-addons": {
+        "name": "Bundle addons",
+        "desc": "Save installed addons with this project so it can be opened anywhere."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about project properties.",
+        "link-text": "Help"
+      }
+    },
+    "script": {
+      "script-properties": {
+        "name": "Script properties",
+        "desc": "Properties for the selected script."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "File name of this script."
+      },
+      "purpose": {
+        "name": "Purpose",
+        "desc": "Select what to use this script for.",
+        "items": {
+          "none": "(none set)",
+          "main": "Main script",
+          "imports-for-events": "Imports for events"
+        }
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about scripts.",
+        "link-text": "Help"
+      }
+    },
+    "common": {
+      "common-properties": {
+        "name": "Common timeline properties",
+        "desc": "Properties for the selected timeline elements."
+      },
+      "common-timeline-folder-properties": {
+        "name": "Common timeline folder properties",
+        "desc": "Properties for the selected timeline folders."
+      },
+      "common-track-properties": {
+        "name": "Common master track properties",
+        "desc": "Properties for the selected master tracks."
+      },
+      "common-track-folder-properties": {
+        "name": "Common track folder properties",
+        "desc": "Properties for the selected track folders."
+      },
+      "common-property-track-properties": {
+        "name": "Common property track properties",
+        "desc": "Properties for the selected property tracks."
+      },
+      "common-property-track-folder-properties": {
+        "name": "Common property track folder properties",
+        "desc": "Properties for the selected property track folders."
+      },
+      "common-keyframe-properties": {
+        "name": "Common master keyframe properties",
+        "desc": "Properties for the selected master keyframes."
+      },
+      "common-property-keyframe-properties": {
+        "name": "Common property keyframe properties",
+        "desc": "Properties for the selected property keyframes."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted."
+      },
+      "ease-properties": {
+        "name": "Ease properties",
+        "desc": "Easing function properties"
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function that will be used."
+      },
+      "ease-editor": {
+        "name": "Ease editor",
+        "desc": "Edit the easing function in use.",
+        "link-text": "Edit"
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties."
+      },
+      "resize-mode": {
+        "name": "Resize mode",
+        "desc": "Choose which properties will be affected when changing the size of an instance in timeline editing mode. Instances which do not support scaling are unaffected by this setting."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Disabled timeline elements are not considered when animating the timeline."
+      },
+      "visible": {
+        "name": "Visible",
+        "desc": "Toggle the visibility of the instance associated with each of the selected timeline elements. This setting only takes effect while in \"Editing Mode\"."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of each of the selected timeline elements. A locked timeline element can not be edited in any way."
+      },
+      "show-ui-elements": {
+        "name": "Show UI elements",
+        "desc": "Show the UI elements associated with each instance."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about track properties.",
+        "link-text": "Help"
+      }
+    },
+    "timeline": {
+      "timeline-properties": {
+        "name": "Timeline",
+        "desc": "Properties for the selected timeline."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected timeline."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use. This setting will be applied to all the tracks of the timeline."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted. This setting will be applied to all the tracks of the timeline."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function the timeline will use. This setting will be applied to all the tracks of the timeline."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties. This setting will be applied to all the tracks of the timeline."
+      },
+      "resize-mode": {
+        "name": "Resize mode",
+        "desc": "Choose which properties will be affected when changing the size of an instance in timeline editing mode. Instances which do not support scaling are unaffected by this setting."
+      },
+      "time-properties": {
+        "name": "Time",
+        "desc": "Properties relating to time."
+      },
+      "time": {
+        "name": "Time",
+        "desc": "The current time in the timeline."
+      },
+      "total-time": {
+        "name": "Total time",
+        "desc": "The total time of the timeline."
+      },
+      "step": {
+        "name": "Step",
+        "desc": "The step time of the timeline. This is used in the editor to control the step the time marker takes when dragging. At runtime this value is used when the \"Step\" interpolation mode is chosen, otherwise it is ignored."
+      },
+      "step-raw": {
+        "name": "Raw step",
+        "desc": "The raw step time in seconds. This is used in the editor to control the step the time marker takes when dragging. At runtime this value is used when the \"Step\" interpolation mode is chosen, otherwise it is ignored. Changing this property will change \"Step per second\" property."
+      },
+      "steps-per-second": {
+        "name": "Steps per second",
+        "desc": "Use this property as a shortcut to generate a raw step value."
+      },
+      "loop": {
+        "name": "Loop",
+        "desc": "Play the timeline continuously after reaching the end."
+      },
+      "pingPong": {
+        "name": "Ping pong",
+        "desc": "Play the timeline backwards to the beginning after reaching the end."
+      },
+      "repeatCount": {
+        "name": "Repeat count",
+        "desc": "The number of times to repeat the animation if it is not looping."
+      },
+      "editor": {
+        "name": "Editor",
+        "desc": "Settings affecting the editing and preview of the timeline."
+      },
+      "show-ui-elements": {
+        "name": "Show UI elements",
+        "desc": "Show the UI elements associated with each instance."
+      },
+      "use-step": {
+        "name": "Use Step",
+        "desc": "Whether to use the step property or not."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about timeline properties.",
+        "link-text": "Help"
+      },
+      "startLayout": {
+        "name": "Start on layout",
+        "desc": "Start playing automatically when the selected layout becomes active.",
+        "no-layout": "(none)"
+      },
+      "misc-properties": {
+        "name": "Miscellaneous",
+        "desc": "Miscellaneous timeline properties."
+      },
+      "transformWithSceneGraph": {
+        "name": "Transform",
+        "desc": "Whether to transform the timeline with any related hierarchies or not."
+      },
+      "use-system-timescale": {
+        "name": "Use system timescale",
+        "desc": "Whether the timeline is tied to the system timescale or not."
+      }
+    },
+    "track": {
+      "track-properties": {
+        "name": "Master track",
+        "desc": "Properties for the selected master track."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected master track."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Disabled tracks are not considered when animating the timeline. This setting will be applied to all children of the master track."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use. This setting will be applied to all children of the master track."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted. This setting will be applied to all children of the master track."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function the master track will use. This setting will be applied to all children of the master track."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties. This setting will be applied to all children of the master track."
+      },
+      "resize-mode": {
+        "name": "Resize mode",
+        "desc": "Choose which properties will be affected when changing the size of an instance in timeline editing mode. Instances which do not support scaling are unaffected by this setting."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Editor only properties."
+      },
+      "visible": {
+        "name": "Visible",
+        "desc": "Toggle the visibility of the instance associated with the master track. This setting only takes effect while in \"Editing Mode\"."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of the master track. A locked track can not be edited in any way. This setting affects all children of the master track."
+      },
+      "id": {
+        "name": "Track ID",
+        "desc": "Optional string to identify a track at runtime. If used, it must be unique inside the timeline."
+      },
+      "show-ui-elements": {
+        "name": "Show UI elements",
+        "desc": "Show the UI elements associated with the instance."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about track properties.",
+        "link-text": "Help"
+      }
+    },
+    "property-track": {
+      "property-track-properties": {
+        "name": "Property track",
+        "desc": "Properties for the selected property track."
+      },
+      "property-track-unique-properties": {
+        "name": "Unique properties",
+        "desc": "Properties unique to this type of property track."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected property track."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Disabling the property track will prevent it from taking effect when playing the timeline."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function the property track will use. This setting will be applied to all the keyframes of the property track."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties. This setting will be applied to all the keyframes of the property track."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Editor only properties."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of the property track. A locked property track can not be edited in any way."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about property track properties.",
+        "link-text": "Help"
+      },
+      "unique-properties": {
+        "startOffset": {
+          "name": "Start offset",
+          "desc": "Starting offset of this audio property track, in seconds."
+        },
+        "audioDuration": {
+          "name": "Audio duration",
+          "desc": "The duration of the audio source, in seconds."
+        },
+        "audioTag": {
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to use to reference this sound in future."
+        },
+        "start-from": {
+          "name": "Start from",
+          "desc": "After an animation change start playing the beginning or from the currently active frame",
+          "options": {
+            "beginning": "Beginning",
+            "current-frame": "Current frame"
+          }
+        }
+      }
+    },
+    "timeline-folder": {
+      "timeline-folder-properties": {
+        "name": "Timeline folder",
+        "desc": "Properties for the selected timeline folder."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected timeline folder."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Toggle the enabled state of the timeline folder. The change will be applied to all children of the timeline folder."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Editor only properties."
+      },
+      "visible": {
+        "name": "Visible",
+        "desc": "Toggle the visibility state of the timeline folder. The change will be applied to all children of the timeline folder."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of the timeline folder. The change will be applied to all children of the timeline folder."
+      },
+      "show-ui-elements": {
+        "name": "Show UI elements",
+        "desc": "Show the UI elements associated with each instance."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about timeline folder properties.",
+        "link-text": "Help"
+      }
+    },
+    "track-folder": {
+      "track-folder-properties": {
+        "name": "Track folder",
+        "desc": "Properties for the selected track folder."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected track folder."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Toggle the enabled state of the track folder. The change will be applied to all children of the track folder."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use. The change will be applied to all children of the track folder."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted. The change will be applied to all children of the track folder."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function the track folder will use. The change will be applied to all children of the track folder."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties. The change will be applied to all children of the track folder."
+      },
+      "resize-mode": {
+        "name": "Resize mode",
+        "desc": "Choose which properties will be affected when changing the size of an instance in timeline editing mode. Instances which do not support scaling are unaffected by this setting."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Editor only properties."
+      },
+      "visible": {
+        "name": "Visible",
+        "desc": "Toggle the visibility state of the track folder. The change will be applied to all children of the track folder."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of the track folder. The change will be applied to all children of the track folder."
+      },
+      "show-ui-elements": {
+        "name": "Show UI elements",
+        "desc": "Show the UI elements associated with each instance."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about track folder properties.",
+        "link-text": "Help"
+      }
+    },
+    "property-track-folder": {
+      "property-track-folder-properties": {
+        "name": "Property track folder",
+        "desc": "Properties for the selected property track folder."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the selected property track folder."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Toggle the enabled state of the property track folder. The change will be applied to all children of the property track folder."
+      },
+      "interpolation-mode": {
+        "name": "Animation mode",
+        "desc": "Choose the type of animation to use. The change will be applied to all children of the property track folder."
+      },
+      "result-mode": {
+        "name": "Result mode",
+        "desc": "Choose how the values will be interpreted. The change will be applied to all children of the property track folder."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function the property track folder will use. The change will be applied to all children of the property track folder."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties. The change will be applied to all children of the property track folder."
+      },
+      "editor-properties": {
+        "name": "Editor",
+        "desc": "Editor only properties."
+      },
+      "locked": {
+        "name": "Locked",
+        "desc": "Toggle the locked state of the track folder. The change will be applied to all children of the property track folder."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about property track folder properties.",
+        "link-text": "Help"
+      }
+    },
+    "keyframe": {
+      "keyframe-properties": {
+        "name": "Master keyframe",
+        "desc": "Properties for the selected master keyframe."
+      },
+      "index": {
+        "name": "Index",
+        "desc": "The index of the master keyframe in its track."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Disabling the master keyframe will prevent it from taking effect when playing the timeline. This setting affects all related property keyframes."
+      },
+      "time": {
+        "name": "Time",
+        "desc": "The position in the timeline in seconds."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function to be used between this master keyframe and the next. This setting affects all related property keyframes."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties, between this master keyframe and the next. This setting affects all related property keyframes."
+      },
+      "tags": {
+        "name": "Tags",
+        "desc": "A space separated list of tags. Used by the Timeline plugin to trigger conditions."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about master keyframe properties.",
+        "link-text": "Help"
+      }
+    },
+    "property-keyframe": {
+      "property-keyframe-properties": {
+        "name": "Property keyframe",
+        "desc": "Properties for the selected property keyframe."
+      },
+      "property-keyframe-unique-properties": {
+        "name": "Unique properties",
+        "desc": "Properties unique to this type of property keyframe."
+      },
+      "index": {
+        "name": "Index",
+        "desc": "The index of the property keyframe in its track."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the property affected by the property keyframe."
+      },
+      "enable": {
+        "name": "Enabled",
+        "desc": "Disabling the property keyframe will prevent it from taking effect when playing the timeline."
+      },
+      "result-mode": {
+        "name": "Result Mode",
+        "desc": "The way the value is interpreted when the timeline is played."
+      },
+      "value": {
+        "name": "Value",
+        "desc": "The value of this property keyframe."
+      },
+      "time": {
+        "name": "Time",
+        "desc": "The position in the timeline in seconds."
+      },
+      "ease": {
+        "name": "Ease",
+        "desc": "Choose the easing function to be used between this property keyframe and the next."
+      },
+      "path-mode": {
+        "name": "Path mode",
+        "desc": "Choose the type of path to use between X and Y properties, between this property keyframe and the next."
+      },
+      "help-link": {
+        "name": "More information",
+        "desc": "Open the manual to learn more about property keyframe properties.",
+        "link-text": "Help"
+      },
+      "source-names": {
+        "world-instance": "World instance",
+        "instance-variable": "Instance variable",
+        "value": "Value",
+        "audio": "Audio"
+      },
+      "addon": {
+        "direction": {
+          "name": "Direction",
+          "desc": "Which direction to take when rotating.",
+          "options": {
+            "closest": "Closest",
+            "clockwise": "Clockwise",
+            "anti-clockwise": "Anti-clockwise"
+          }
+        },
+        "revolutions": {
+          "name": "Revolutions",
+          "desc": "Amount of 360 degree turns the angle value should take before arriving to its final value."
+        },
+        "start-from": {
+          "name": "Start from",
+          "desc": "After an animation change on this keyframe, start playing the animation from the beginning or from the currently active frame. \"Default\" will use the value with the same name as this in the corresponding property track.",
+          "options": {
+            "default": "Default",
+            "beginning": "Beginning",
+            "current-frame": "Current frame"
+          }
+        }
+      }
+    },
+    "transition": {
+      "transition-properties": {
+        "name": "Ease",
+        "desc": "Properties for the selected ease."
+      },
+      "name": {
+        "name": "Name",
+        "desc": "The name of the ease."
+      },
+      "purpose": {
+        "name": "Purpose",
+        "desc": "The purose of the ease. The 'Expressions only' purpose indicates the ease can only be used through the TimelineController's 'Ease' expression.",
+        "options": {
+          "any": "Any",
+          "expressions-only": "Expressions only"
+        }
+      }
+    }
+  },
+  "tilemap": {
+    "title": "Tilemap",
+    "title-with-object": "Tilemap: {0} UID {1}",
+    "warnings": {
+      "source-image-is-not-visible": "The source image is not being shown due to instance properties misconfiguration"
+    },
+    "errors": {
+      "zip-file-load": "Error loading zip file",
+      "image-file-load": "Error loading image file",
+      "map-load-error": "Error loading map files"
+    },
+    "status": {
+      "transform": "[b]Rotation:[/b] [i]{0}°[/i]"
+    },
+    "tooltips": {
+      "layout": "Normal layout view selection (esc / 1)",
+      "pencil": "Draw tiles (2)",
+      "eraser": "Erase tiles (3)",
+      "rectangle": "Draw rectangle areas (4)",
+      "fill": "Fill area with tiles (5)",
+      "select": "Select a patch from the tilemap (6)",
+      "auto": "Auto tiling brush (7)",
+      "patch": "Draw patches of tiles (8)",
+      "move": "Scroll the source image",
+      "tile-edit": "Select a tile to edit it",
+      "mirror-h": "Mirror current tile patch (X)",
+      "mirror-v": "Flip current tile patch (Y)",
+      "rotate-acw": "Rotate current tile patch anti-clockwise (A)",
+      "rotate-cw": "Rotate current tile patch clockwise (Z)",
+      "reset-transformations": "Reset transformations (R)",
+      "zoom-in": "Zoom in the source image",
+      "zoom-out": "Zoom out the source image",
+      "zoom-reset": "Reset zoom level",
+      "save": "Save tilemap to ZIP file",
+      "load": "Load tilemap from TMX file"
+    },
+    "context-menu": {
+      "zoom-in": "Zoom In",
+      "zoom-out": "Zoom Out",
+      "zoom-reset": "Zoom Reset",
+      "edit": "Edit Tile ({0})",
+      "enable-all-selected-collisions": "Enable selected tile collisions",
+      "disable-all-selected-collisions": "Disable selected tile collisions",
+      "enable-all-collisions": "Enable all tile collisions",
+      "disable-all-collisions": "Disable all tile collisions"
+    },
+    "auto-tiling": {
+      "add-brush": "Edit auto brushes"
+    },
+    "patch-tiling": {
+      "add-brush": "Edit patch brushes",
+      "add-brush-from-selection": "Add patch brush from selection"
+    }
+  },
+  "timeline": {
+    "title": "Timeline",
+    "common-context-menu": {
+      "tooltips": {
+        "set-keyframes": "Set or update keyframes at the current time, to the selected elements and their children only",
+        "auto-keyframes": "Automatically set or update keyframes as changes are made",
+        "default-mode": "Default timeline view",
+        "interpolation-mode": "Animation modes in use",
+        "result-mode": "Result modes in use",
+        "eases": "Ease functions in use",
+        "path-mode": "Path modes in use",
+        "scale": "Set the scale of the timeline",
+        "delete-track-selection": "Delete all elements in selection"
+      },
+      "set-keyframes": "Set keyframes",
+      "auto-keyframes": "Auto keyframes",
+      "default-mode": "Default",
+      "interpolation-mode": "Animation modes",
+      "result-mode": "Result modes",
+      "eases": "Eases",
+      "path-mode": "Path modes",
+      "scale": "Scale",
+      "focus": "Focus"
+    },
+    "timeline-toolbar": {
+      "tooltips": {
+        "add-timelines-to-root": "Add timelines to the root of this timeline",
+        "add-timeline-subfolder-to-root": "Add a timeline subfolder to the root of this timeline",
+        "add-instances-to-root": "Add instances to the root of this timeline",
+        "add-value-to-root": "Add a value track to the root of this timeline",
+        "add-audio-to-root": "Add an audio track to the root of this timeline",
+        "add-subfolder-to-root": "Add a track subfolder to the root of this timeline",
+        "more-actions": "More actions"
+      },
+      "shortcuts": {
+        "edit-mode": "(E)",
+        "set-keyframes": "(S)",
+        "auto-keyframes": "(A)",
+        "play": "(Space)",
+        "pause": "(Space)",
+        "stop": "({ctrl} + Space)",
+        "first": "({shift} + {comma})",
+        "last": "({comma})",
+        "next": "({period})",
+        "end": "({shift} + {period})",
+        "cut": "({ctrl} + X)",
+        "copy": "({ctrl} + C)",
+        "paste": "({ctrl} + V)"
+      },
+      "add-timelines-to-root": "Add timelines",
+      "add-timeline-subfolder-to-root": "Add subfolder",
+      "add-instances-to-root": "Add instances",
+      "add-value-to-root": "Add value",
+      "add-audio-to-root": "Add audio",
+      "add-subfolder-to-root": "Add subfolder",
+      "edit": "Editing mode",
+      "playback": {
+        "play": "Play",
+        "stop": "Stop",
+        "first-keyframe": "First master keyframe",
+        "last-keyframe": "Previous master keyframe",
+        "next-keyframe": "Next master keyframe",
+        "end-keyframe": "Last master keyframe"
+      },
+      "tools": {
+        "cut": "Cut a selection of keyframes",
+        "copy": "Copy a selection of keyframes",
+        "paste": "Paste a selection of keyframes at the current time marker"
+      },
+      "nesting": {
+        "previous-timeline": "Parent {0}",
+        "next-timeline": "Child {0}"
+      }
+    },
+    "secondary-displays": {
+      "interpolation-mode": "Animation mode",
+      "result-mode": "Result mode",
+      "ease": "Ease",
+      "path-mode": "Path mode"
+    },
+    "options": {
+      "names": {
+        "view": "View",
+        "lock": "Lock",
+        "enable": "Enable",
+        "ui": "UI"
+      },
+      "descriptions": {
+        "view": "Toggle the visibility of each instance",
+        "lock": "Lock tracks to prevent editing",
+        "enable": "Toggle the enabled state of a track",
+        "ui": "Toggle the UI elements of instances in the layout view"
+      },
+      "interpolation-mode-options": {
+        "continuous": {
+          "name": "Continuous",
+          "tooltip": "A smooth transition between each keyframe"
+        },
+        "step": {
+          "name": "Step",
+          "tooltip": "Only allow times fitting with the defined step while transitioning"
+        },
+        "discrete": {
+          "name": "Keyframe",
+          "tooltip": "No transition, just use the defined property keyframe values as the play head reaches them"
+        },
+        "default": {
+          "name": "Default",
+          "tooltip": "Default to the mode assign to each type of property"
+        }
+      },
+      "result-mode-options": {
+        "absolute": {
+          "name": "Absolute",
+          "tooltip": "The results of animations are absolute values"
+        },
+        "relative": {
+          "name": "Relative",
+          "tooltip": "The results of animations are relative to previous values"
+        },
+        "default": {
+          "name": "Default",
+          "tooltip": "Use the default result mode for each property track"
+        }
+      },
+      "path-mode-options": {
+        "default": {
+          "name": "Default",
+          "tooltip": "Use the path mode defined elsewhere up the hierarchy"
+        },
+        "none": {
+          "name": "None",
+          "tooltip": ""
+        },
+        "line": {
+          "name": "Line",
+          "tooltip": "The path taken between two points is a straight line"
+        },
+        "cubic-bezier": {
+          "name": "Cubic Bezier",
+          "tooltip": "The path taken between two points is a cubic bezier curve"
+        }
+      },
+      "resize-mode-options": {
+        "default": {
+          "name": "Default",
+          "tooltip": "Use the resize mode defined elsewhere up the hierarchy"
+        },
+        "size": {
+          "name": "Width & Height",
+          "tooltip": "The properties changed when modifying dimensions will be width and height"
+        },
+        "scale": {
+          "name": "Scale X & Scale Y",
+          "tooltip": "The properties changed when modifying dimensions will be scale X and scale Y"
+        }
+      }
+    },
+    "name": "Timeline",
+    "tooltips": {
+      "delete": "Delete this timeline",
+      "focus": "Focus this nested timeline to allow full editing"
+    },
+    "track": {
+      "tooltips": {
+        "add-property-tracks": "Add properties to this track",
+        "add-subfolder": "Add a subfolder to this track",
+        "delete": "Delete this track from the timeline",
+        "swap-instance": "Swap the instance of this track for another one"
+      },
+      "add-property-tracks": "Add properties",
+      "add-subfolder": "Add subfolder",
+      "no-properties": "No properties",
+      "swap-instance": "Swap instance",
+      "name": "Track"
+    },
+    "property-track": {
+      "convert-to-scale": "Convert to scale",
+      "convert-to-size": "Convert to size",
+      "convert-all-to-scale": "Convert all to scale",
+      "convert-all-to-size": "Convert all to size",
+      "tooltips": {
+        "delete": "Delete this property track",
+        "convert-to-scale": "Convert width and height to scale X and scale Y on this instance",
+        "convert-to-size": "Convert scale X and scale Y to width and height on this instance",
+        "convert-all-to-scale": "Convert width and height to scale X and scale Y in all instances in the timeline",
+        "convert-all-to-size": "Convert scale X and scale Y to width and height in all instances in the timeline"
+      },
+      "name": "Property track"
+    },
+    "audio-track": {
+      "add-file": "Add file",
+      "tooltips": {
+        "add-file": "Pick an audio file for this audio property track"
+      }
+    },
+    "timeline-folder": {
+      "tooltips": {
+        "add-timeline": "Add a nested timeline",
+        "add-subfolder": "Add a subfolder to this folder",
+        "rename": "Rename this timeline folder",
+        "delete": "Delete this timeline folder"
+      },
+      "add-timeline": "Add timeline",
+      "add-subfolder": "Add subfolder",
+      "name": "Timeline folder"
+    },
+    "track-folder": {
+      "tooltips": {
+        "add-tracks-from-selection": "Add instances to this folder from the current layout selection",
+        "add-tracks-from-dialog": "Add instances to this folder by choosing from a dialog",
+        "add-value-track": "Add a value track to this folder",
+        "add-audio-track": "Add an audio track to this folder",
+        "add-subfolder": "Add a subfolder to this folder",
+        "delete": "Delete this folder from the timeline",
+        "rename": "Rename this folder"
+      },
+      "add-tracks-from-selection": "Add instances from selection",
+      "add-tracks-from-dialog": "Add instances from dialog",
+      "add-value-track": "Add value",
+      "add-audio-track": "Add audio",
+      "add-subfolder": "Add subfolder",
+      "name": "Track folder"
+    },
+    "property-track-folder": {
+      "tooltips": {
+        "add-properties": "Add properties to this folder",
+        "add-subfolder": "Add a subfolder to this folder",
+        "delete": "Delete this folder from its parent track",
+        "rename": "Rename this folder"
+      },
+      "add-properties": "Add properties",
+      "add-subfolder": "Add subfolder",
+      "name": "Property track folder"
+    },
+    "keyframe": {
+      "tooltips": {
+        "enable": "Include this master keyframe while animating",
+        "enable-selection": "Include all selected keyframes while animating",
+        "disable": "Omit this master keyframe while animating",
+        "disable-selection": "Omit all selected keyframes while animating",
+        "delete": "Delete this master keyframe from its track",
+        "delete-selection": "Delete all selected keyframes from their tracks",
+        "update": "Update all child property keyframes",
+        "update-selection": "Update all child property keyframes of selection",
+        "add-all-property-keyframes-interpolated": "Generates an interpolated value that fits in the timeline",
+        "add-all-property-keyframes-interpolated-selection": "Generates interpolated values that fit in the timeline for the whole selection",
+        "add-all-property-keyframes-current": "Use the current instance value for the corresponding property",
+        "add-all-property-keyframes-current-selection": "Use the current instance value for each corresponding property in the selection"
+      },
+      "enable": "Enable",
+      "disable": "Disable",
+      "update": "Update",
+      "value": "Value",
+      "add-all-property-keyframes": "Add missing property keyframes",
+      "add-all-property-keyframes-interpolated": "With interpolated values",
+      "add-all-property-keyframes-current": "With current values",
+      "name": "Master keyframe"
+    },
+    "property-keyframe": {
+      "tooltips": {
+        "enable": "Include this property keyframe while animating",
+        "enable-selection": "Include all selected keyframes while animating",
+        "disable": "Omit this property keyframe while animating",
+        "disable-selection": "Omit all selected keyframes while animating",
+        "delete": "Delete this property keyframe from its property track",
+        "delete-selection": "Delete all selected keyframes from their tracks",
+        "update": "Update this property keyframe",
+        "update-selection": "Update property keyframes in selection"
+      },
+      "enable": "Enable",
+      "disable": "Disable",
+      "update": "Update",
+      "value": "Value",
+      "name": "Property keyframe"
+    },
+    "keyframe-drag-feedback": {
+      "absolute-time": "Absolute: {0}s",
+      "relative-time": "Relative: {0}s"
+    },
+    "balloon-tips": {
+      "keyframe-already-exists": {
+        "title": "Master keyframe already exists",
+        "message": "Another master keyframe exists at the same position in the timeline. Try moving the playhead before adding a new keyframe."
+      },
+      "property-keyframe-already-exists": {
+        "title": "Property keyframe already exists",
+        "message": "Another property keyframe exists at the same position in the timeline. Try moving the playhead before adding a new property keyframe."
+      }
+    },
+    "world-instance-properties": {
+      "offsetX": "X",
+      "offsetY": "Y",
+      "offsetZElevation": "Z",
+      "offsetWidth": "Width",
+      "offsetHeight": "Height",
+      "offsetAngle": "Angle",
+      "offsetOpacity": "Opacity",
+      "offsetOriginX": "Origin X",
+      "offsetOriginY": "Origin Y",
+      "offsetColor": "Color",
+      "offsetScaleX": "X scale",
+      "offsetScaleY": "Y scale"
+    },
+    "standalone-properties": {
+      "value": "Value",
+      "audioSource": "Audio source",
+      "volume": "Volume (db)",
+      "hints": {
+        "audioSourceFreeEditionLimit": "Free edition limited",
+        "audioSource": "No audio source"
+      }
+    },
+    "eases": {
+      "default": "Default",
+      "noease": "Linear",
+      "easeinquad": "In Quadratic",
+      "easeoutquad": "Out Quadratic",
+      "easeinoutquad": "In Out Quadratic",
+      "easeincubic": "In Cubic",
+      "easeoutcubic": "Out Cubic",
+      "easeinoutcubic": "In Out Cubic",
+      "easeinquart": "In Quartic",
+      "easeoutquart": "Out Quartic",
+      "easeinoutquart": "In Out Quartic",
+      "easeinquint": "In Quintic",
+      "easeoutquint": "Out Quintic",
+      "easeinoutquint": "In Out Quintic",
+      "easeinsine": "In Sinusoidal",
+      "easeoutsine": "Out Sinusoidal",
+      "easeinoutsine": "In Out Sinusoidal",
+      "easeinexpo": "In Exponential",
+      "easeoutexpo": "Out Exponential",
+      "easeinoutexpo": "In Out Exponential",
+      "easeincirc": "In Circular",
+      "easeoutcirc": "Out Circular",
+      "easeinoutcirc": "In Out Circular",
+      "easeinelastic": "In Elastic",
+      "easeoutelastic": "Out Elastic",
+      "easeinoutelastic": "In Out Elastic",
+      "easeinback": "In Back",
+      "easeoutback": "Out Back",
+      "easeinoutback": "In Out Back",
+      "easeinbounce": "In Bounce",
+      "easeoutbounce": "Out Bounce",
+      "easeinoutbounce": "In Out Bounce"
+    },
+    "short-eases": {
+      "default": "Def",
+      "noease": "Lnr",
+      "quad": "Quad",
+      "cubic": "Cub",
+      "quart": "Qart",
+      "quint": "Qint",
+      "sine": "Sin",
+      "expo": "Exp",
+      "circ": "Circ",
+      "elastic": "Elst",
+      "back": "Bck",
+      "bounce": "Bnc"
+    },
+    "short-path-modes": {
+      "default": "Def",
+      "none": "N",
+      "line": "Ln",
+      "cubic-bezier": "CBzr"
+    },
+    "tutorial": {
+      "no-timelines": {
+        "title": "There are no timelines in this project",
+        "creation-options": {
+          "title": "Timelines can be added to a project in the following ways:",
+          "option-1": "With the [b]Timelines[/b] folder in the [b]Project Bar[/b].",
+          "option-2": "With the [b]Timeline[/b] option of the [b]Layout[/b] context menu."
+        },
+        "help": {
+          "text": "For more information see the ",
+          "link": "Timeline manual."
+        }
+      },
+      "empty-timeline": {
+        "title": "This timeline is empty",
+        "add-options": {
+          "title": "Instances can be added to the active [b]Timeline[/b] in the following ways:",
+          "option-1": "Using the [h4]+[/h4] button in the top left corner of this pane.",
+          "option-2": "Drag & drop instances from a [b]Layout[/b] into the bar.",
+          "option-3": "The [b]Layout[/b] context menu has an option to add all selected instances."
+        },
+        "help": {
+          "text": "For more information see the ",
+          "link": "Timeline manual."
+        }
+      },
+      "runtime-not-supported": {
+        "title": "Timelines are only supported in C3 runtime",
+        "message": "If you want to use this feature, please switch the project to the C3 runtime"
+      }
+    },
+    "errors": {
+      "failed-to-paste": {
+        "title": "Cannot paste",
+        "message": "The copied timelines cannot be pasted to this project. They may reference objects, variables or other content that is missing in this project. ({0})",
+        "no-compatible-instance": "The project needs instances compatible with the timelines attempted to be pasted. If you are trying to paste a timeline from another project, try copying over the instances used by the timeline into the target project first."
+      }
+    }
+  },
+  "zOrder": {
+    "title": "Z Order",
+    "filtered-results": " - Showing subset",
+    "all-results": " - Showing all",
+    "flash-instance": "Flash selection",
+    "scroll-selection-into-view": "Scroll selection into view",
+    "show-active-layer-only": "Show active layer only",
+    "global": "Global",
+    "overriden": "Overridden",
+    "locked": "Locked",
+    "invisible": "Invisible",
+    "translucent": "Translucent"
+  },
+  "textEditor": {
+    "loading-status": "Loading code editor...",
+    "loading-message": "Please wait, loading code editor...",
+    "loading-failed-message": "Failed to load the code editor. Try checking your Internet connection is working.",
+    "beautify": "Beautify",
+    "minify": "Minify",
+    "validation-error": "Failed to parse as JSON.",
+    "file-did-change": {
+      "title": "Editor reloaded",
+      "message": "Open file '{0}' was changed, so the editor reloaded."
+    },
+    "tab-tooltip": "File: {0}\nProject: {1}\nProject file: {2}",
+    "select-all": "Select All",
+    "retry": "Retry",
+    "title": "Text editor",
+    "title-with-file": "{0}",
+    "loading": "Loading {0}",
+    "network-fail": "Unable to load text editor from server",
+    "setup-fail": "Failed to create text editor for file {0}",
+    "context-menu": {
+      "go-to-definition": "Go to definition",
+      "peek-definition": "Peek definition",
+      "find-references": "Find references",
+      "go-to-symbol": "Go to symbol",
+      "rename": "Rename",
+      "change-all-occurrences": "Change all occurrences",
+      "format-document": "Format document",
+      "command-palette": "Command palette"
+    },
+    "autocomplete": {
+      "multiple-interfaces-description": {
+        "one": "{0} interface",
+        "other": "{0} interfaces"
+      }
+    },
+    "validating-scripts": "Validating scripts...",
+    "compiling-typescript": "Compiling TypeScript..."
+  },
+  "captionMenu": {
+    "dock": "Dock",
+    "undock": "Undock",
+    "open-to-popup-window": "Open to popup window",
+    "pin": "Pin",
+    "left": "Left",
+    "right": "Right",
+    "bottom": "Bottom",
+    "unpin": "Unpin",
+    "close": "Close",
+    "colors-submenu": "Colors",
+    "change-tab-color": "Change tab color",
+    "change-text-color": "Change text color",
+    "restore-default-colors": "Restore default colors"
+  },
+  "tabPaneMenu": {
+    "undock": "Undock",
+    "close": "Close",
+    "close-others": "Close others"
+  },
+  "confirm-close-prompt": {
+    "caption": "Close bar",
+    "message": "Are you sure you want to close the '{0}' bar?\n\nIf you need to bring it back, select [i]Menu - View - Bars[/i].",
+    "close-bar": "Close bar"
+  }
+}

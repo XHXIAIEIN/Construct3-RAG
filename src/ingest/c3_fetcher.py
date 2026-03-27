@@ -389,20 +389,19 @@ class C3Fetcher:
 
         logger.info(f"[CDN] Exported {len(index_data['effects'])} effects")
 
-        # ── Editor UI (bars, dialogs, editors) ────────────────────────────
+        # ── Editor UI (bars, dialogs, editors, controls, errors, etc.) ────
         for lang, text in lang_texts.items():
             ui = text.get("ui", {})
-            editor_json: dict = {"bars": {}, "dialogs": {}, "views": {}}
-            for group_key, out_key in [("bars", "bars"), ("dialogs", "dialogs"), ("editors", "views")]:
-                group = ui.get(group_key, {})
-                for elem_id, elem in group.items():
-                    if isinstance(elem, dict) and elem.get("title"):
-                        editor_json[out_key][elem_id] = {"title": elem["title"]}
             out_dir = schemas_dir / lang / "editor"
             out_dir.mkdir(parents=True, exist_ok=True)
-            (out_dir / "index.json").write_text(
-                json.dumps(editor_json, ensure_ascii=False, indent=2), encoding="utf-8",
-            )
+            # Export each ui section as its own file
+            for section_key in sorted(ui.keys()):
+                section = ui[section_key]
+                if not isinstance(section, dict) or not section:
+                    continue
+                (out_dir / f"{section_key}.json").write_text(
+                    json.dumps(section, ensure_ascii=False, indent=2), encoding="utf-8",
+                )
 
         # ── Examples (per-language, per-file) ─────────────────────────────
         try:

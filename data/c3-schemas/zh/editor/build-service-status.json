@@ -1,0 +1,15 @@
+{
+  "prefix": "打包服务: ",
+  "connecting": "正在连接打包服务器...",
+  "connected-to-server": "已连接到打包服务器",
+  "transfer-progress": "传输进度 {0}%",
+  "lost-connection": "与打包服务器失去连接",
+  "waiting-to-build": "正在等待打包",
+  "preparing-project": "正在准备项目",
+  "building-android": "正在打包 Android 应用...",
+  "building-ios": "正在打包 iOS 应用...",
+  "compressing-builds": "正在合并打包",
+  "upload-complete": "项目上传成功",
+  "connection-restored": "连接已恢复",
+  "build-complete": "打包完成，开始传输"
+}

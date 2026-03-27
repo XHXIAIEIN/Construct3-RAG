@@ -805,31 +805,49 @@ def _load_editor(path: Path) -> dict:
 
 
 def _load_editor_bilingual(schema_dir: Path) -> dict:
-    """Load editor index from both en/ and zh/ and merge into {name_en, name_zh} format."""
-    en_path = schema_dir / "en" / "editor" / "index.json"
-    zh_path = schema_dir / "zh" / "editor" / "index.json"
+    """Load editor UI data from both en/ and zh/ and merge into {name_en, name_zh} format.
+
+    New format: per-section files (bars.json, dialogs.json, editors.json, ...).
+    Fallback: old single index.json format.
+    """
+    en_dir = schema_dir / "en" / "editor"
+    zh_dir = schema_dir / "zh" / "editor"
 
     # Fallback: old single-file format
-    old_path = schema_dir / "editor" / "index.json"
-    if not en_path.exists() and not zh_path.exists():
+    if not en_dir.exists():
+        old_path = schema_dir / "editor" / "index.json"
         return _load_editor(old_path)
 
-    en_data = _load_editor(en_path)
-    zh_data = _load_editor(zh_path)
+    # Map section files to output keys
+    # bars.json, dialogs.json → top-level groups with sub-elements
+    # editors.json → "views" for backward compatibility
+    _SECTION_MAP = {"bars": "bars", "dialogs": "dialogs", "editors": "views"}
 
     merged: dict = {}
-    for group_key in ("bars", "dialogs", "views"):
-        merged[group_key] = {}
-        en_group = en_data.get(group_key, {})
-        zh_group = zh_data.get(group_key, {})
-        all_ids = set(en_group.keys()) | set(zh_group.keys())
+    for section_file, out_key in _SECTION_MAP.items():
+        en_path = en_dir / f"{section_file}.json"
+        zh_path = zh_dir / f"{section_file}.json"
+        en_data = _load_editor(en_path)
+        zh_data = _load_editor(zh_path)
+        merged[out_key] = {}
+        all_ids = set(en_data.keys()) | set(zh_data.keys())
         for elem_id in all_ids:
-            en_elem = en_group.get(elem_id, {})
-            zh_elem = zh_group.get(elem_id, {})
-            merged[group_key][elem_id] = {
-                "name_en": en_elem.get("title", ""),
-                "name_zh": zh_elem.get("title", en_elem.get("title", "")),
-            }
+            en_elem = en_data.get(elem_id, {})
+            zh_elem = zh_data.get(elem_id, {})
+            if not isinstance(en_elem, dict) and not isinstance(zh_elem, dict):
+                continue
+            # Use title or caption as display name
+            en_name = ""
+            zh_name = ""
+            if isinstance(en_elem, dict):
+                en_name = en_elem.get("title", en_elem.get("caption", ""))
+            if isinstance(zh_elem, dict):
+                zh_name = zh_elem.get("title", zh_elem.get("caption", en_name))
+            if en_name or zh_name:
+                merged[out_key][elem_id] = {
+                    "name_en": en_name,
+                    "name_zh": zh_name or en_name,
+                }
     return merged
 
 

@@ -1,0 +1,6 @@
+{
+  "caption": "Copy to clipboard",
+  "message": "The browser blocked the attempt to copy data. Click the 'Copy' button below to try again.",
+  "copy": "Copy",
+  "failed-message": "Failed to copy data. Check you have given any necessary permissions for this page."
+}
