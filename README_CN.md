@@ -2,7 +2,9 @@
 
 [English](README.md) | **中文**
 
-从 [Construct 3](https://www.construct.net) 官方 CDN 提取的预构建 API 数据。66 个插件、31 个行为、89 个特效、481 个示例——按语言分离，CDN 原始字段名，开箱即读。
+回答 [Construct 3](https://www.construct.net) 相关问题所需的一切——完整的游戏引擎知识库，结构化 JSON 格式。每个插件有什么功能？有哪些动作、条件、表达式可用？参数是什么？全在这里，中英双语，无需任何安装直接读取。
+
+66 个插件 · 31 个行为 · 89 个特效 · 481 个示例 · 150 个 TypeScript 定义
 
 > 当前数据版本：**r476** · 通过 [GitHub Action](.github/workflows/update-c3-data.yml) 每周自动更新
 

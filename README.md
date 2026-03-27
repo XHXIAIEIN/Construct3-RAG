@@ -2,7 +2,9 @@
 
 **English** | [中文](README_CN.md)
 
-Pre-built [Construct 3](https://www.construct.net) API data extracted from the official CDN. 66 plugins, 31 behaviors, 89 effects, 481 examples — per-language, CDN-native field names, ready to read.
+Everything you need to answer questions about [Construct 3](https://www.construct.net) — the complete game engine knowledge base in structured JSON. What does each plugin do? What actions, conditions, and expressions are available? What parameters do they take? It's all here, in English and Chinese, ready to read without any setup.
+
+66 plugins · 31 behaviors · 89 effects · 481 examples · 150 TypeScript definitions
 
 > Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
 
