@@ -14,10 +14,10 @@ When showing event sheet logic, output a table. Each row = one step the user per
 ```markdown
 | # | Object | Type | Behavior | Name | Content |
 |---|--------|------|----------|------|---------|
-| 1 | Keyboard | Condition | | 按下按键码 | 按下 Space 按键码 |
+| 1 | Keyboard | Condition | | 按下按键 | 按下 Space 键 |
 |   | Player | Action | | 设置动画 | 设置动画为 "Jump" (从 beginning 播放) |
-|   | Player | Action | Platform | 模拟操控 | 模拟操控 Jump |
-| 2 | Player | Condition | Platform | 平台上 | 平台上 |
+|   | Player | Action | Platform | 模拟控制 | 控制 Player Jump |
+| 2 | Player | Condition | Platform | 接触地面 | Player 接触地面 |
 |   | Player | Action | | 设置动画 | 设置动画为 "Idle" (从 beginning 播放) |
 ```
 
@@ -30,7 +30,7 @@ Columns match the editor workflow left-to-right:
 | 3 | **Type** | Click "Add condition" or "Add action". |
 | 4 | **Behavior** | In the dialog, find this behavior section. Blank = plugin's own ACE. |
 | 5 | **Name** | Select this `list-name` from the list. |
-| 6 | **Content** | Fill in parameters so the result matches this (`display-text` with values). |
+| 6 | **Content** | Fill in parameters so the result matches this (`display-text` with values, strip `[b]`/`[i]` tags). |
 
 Sub-events use hierarchical numbering (`1.1`, `1.2`, `1.1.1`). A sub-event only runs when its parent's conditions are all true.
 
@@ -38,16 +38,16 @@ Sub-events use hierarchical numbering (`1.1`, `1.2`, `1.1.1`). A sub-event only 
 | # | Object | Type | Behavior | Name | Content |
 |---|--------|------|----------|------|---------|
 | 1 | System | Condition | | 每一帧 | 每一帧 |
-|   | Player | Action | | 设置值 | 设置变量 speed 为 Player.Platform.Speed |
-| 1.1 | Player | Condition | Platform | 比较速度 | 速度 ≥ 200 |
+|   | System | Action | | 设置值 | 设置变量 speed 为 Player.Platform.Speed |
+| 1.1 | Player | Condition | Platform | 比较移动速度 | Player 速度 ≥ 200 |
 |     | Player | Action | | 设置动画 | 设置动画为 "FastRun" (从 beginning 播放) |
-| 1.2 | Player | Condition | Platform | 平台上 | 平台上 |
-|     | System | Condition | | 比较两个值 | speed < 50 |
+| 1.2 | Player | Condition | Platform | 接触地面 | Player 接触地面 |
+|     | System | Condition | | 比较两值 | speed < 50 |
 |     | Player | Action | | 设置动画 | 设置动画为 "Idle" (从 beginning 播放) |
 | 2 | Player | Condition | | 碰撞到其他对象 | 碰撞到 Enemy |
-|   | Enemy | Action | | 销毁 | 销毁 |
-| 2.1 | System | Condition | | 比较两个值 | Enemy.Count = 0 |
-|     | System | Action | | 切换布局 | 切换到布局 "WinScreen" |
+|   | Enemy | Action | | 销毁对象 | 销毁对象 |
+| 2.1 | System | Condition | | 比较两值 | Enemy.Count = 0 |
+|     | System | Action | | 跳转到场景 | 跳转到 "WinScreen" |
 ```
 
 ## Strict Rules
@@ -56,7 +56,7 @@ Sub-events use hierarchical numbering (`1.1`, `1.2`, `1.1.1`). A sub-event only 
 
 Every condition, action, and expression you output **must exist** in the schema files. If you're not sure, say so — don't guess.
 
-To verify: read `data/c3-schemas/{lang}/plugins/{id}.json` and check that the ACE `id` and `list-name` exist.
+To verify: read `data/c3-schemas/{lang}/plugins/{id}.json` or `behaviors/{id}.json` and check that the `list-name` exists.
 
 ### 2. Expressions use English identifiers
 
@@ -83,9 +83,9 @@ Event sheets are not code. Never output `if/else`, function calls, or assignment
 
 | Wrong | Correct (use the table format above) |
 |-------|-------|
-| `if (Keyboard.isPressed("Space"))` | Condition: 按下 Space 按键码 |
+| `if (Keyboard.isPressed("Space"))` | Condition: 按下 Space 键 |
 | `Sprite.setAnimation("Run")` | Action: 设置动画为 "Run" |
-| `health = health - 10` | Action: 变量 health 减少 10 |
+| `health = health - 10` | Action: 设置变量 health 为 health - 10 |
 
 ## Where to Find Data
 
