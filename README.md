@@ -125,7 +125,8 @@ python scripts/setup.py --full
 src/api.py              FastAPI service
 src/ingest/             CDN fetching, schema export, indexing
 src/rag/                Lookup engine, vector retriever, query expander
-data/c3-schemas/        Pre-built API data (en + zh)
+data/c3-schemas/        ACE definitions, effects (en + zh)
+data/c3-examples/       Example project metadata (en + zh)
 data/c3-ts-defs/        TypeScript interfaces
 tests/                  173 tests
 docs/                   API reference, architecture, data pipeline
