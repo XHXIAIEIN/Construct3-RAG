@@ -116,6 +116,10 @@ Field names match the official CDN: `list-name`, `display-text` for conditions/a
 | Example projects using X? | `c3-examples/{lang}/*.json` → `used-addons` |
 | JavaScript/TypeScript API? | `autocomplete-data.json` → `.d.ts` |
 
+## LLM Integration
+
+If you're building an LLM that helps users write event sheets, see [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) — a ready-to-use system prompt with output format, naming rules, and common pitfalls.
+
 ## Search API (optional)
 
 ```bash
