@@ -1,6 +1,0 @@
-{
-  "caption": "Set up backups",
-  "message": "Backups are not currently enabled in Settings. [b]Enabling backups is strongly recommended[/b] in order to protect your work in the event of disaster, such as software/hardware failure, cyber attack/malware, fire, flood and theft. It only takes a moment to set up. Open Settings to set up backups now. [a1]Learn more[/a1]",
-  "open-settings": "Open Settings",
-  "save-anyway": "Save anyway"
-}

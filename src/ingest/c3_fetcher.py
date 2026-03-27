@@ -389,20 +389,6 @@ class C3Fetcher:
 
         logger.info(f"[CDN] Exported {len(index_data['effects'])} effects")
 
-        # ── Editor UI (bars, dialogs, editors, controls, errors, etc.) ────
-        for lang, text in lang_texts.items():
-            ui = text.get("ui", {})
-            out_dir = schemas_dir / lang / "editor"
-            out_dir.mkdir(parents=True, exist_ok=True)
-            # Export each ui section as its own file
-            for section_key in sorted(ui.keys()):
-                section = ui[section_key]
-                if not isinstance(section, dict) or not section:
-                    continue
-                (out_dir / f"{section_key}.json").write_text(
-                    json.dumps(section, ensure_ascii=False, indent=2), encoding="utf-8",
-                )
-
         # ── Examples (per-language, per-file) ─────────────────────────────
         try:
             examples_raw = self.fetch_examples()
@@ -423,8 +409,9 @@ class C3Fetcher:
                             tmap[k] = v
                 tag_maps[lang] = tmap
 
+            examples_dir = schemas_dir.parent / "examples"
             for lang in lang_texts:
-                out_dir = schemas_dir / lang / "examples"
+                out_dir = examples_dir / lang
                 out_dir.mkdir(parents=True, exist_ok=True)
                 tmap = tag_maps.get(lang, {})
                 projects = lang_projects.get(lang, {})

@@ -1,5 +1,0 @@
-{
-  "caption": "Update addon",
-  "message": "This addon has already been installed. The currently installed version is [b]{0}[/b], and you are installing version [b]{1}[/b]. Would you like to update the installed addon?",
-  "update": "Update"
-}

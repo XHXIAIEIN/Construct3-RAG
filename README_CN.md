@@ -16,8 +16,7 @@
 | `c3-schemas/{lang}/plugins/{id}.json` | 66 | 条件、动作、表达式、属性 |
 | `c3-schemas/{lang}/behaviors/{id}.json` | 31 | 行为 ACE 定义 |
 | `c3-schemas/{lang}/effects/{id}.json` | 89 | 特效参数、分类 |
-| `c3-schemas/{lang}/examples/{id}.json` | 481 | 名称、描述、标签、使用的插件、打开链接 |
-| `c3-schemas/{lang}/editor/*.json` | 36 | 编辑器 UI 字符串（工具栏、对话框、视图、控件、错误提示等） |
+| `c3-examples/{lang}/{id}.json` | 481 | 名称、描述、标签、使用的插件、打开链接 |
 | `c3-ts-defs/autocomplete-data.json` | 109 | 脚本类 → 方法/属性 |
 | `c3-ts-defs/**/*.d.ts` | 150 | 完整 TypeScript 接口签名 |
 
@@ -74,7 +73,7 @@
 | ACE 在事件表中长什么样？ | `display-text` 字段 |
 | ACE 需要什么参数？ | `params` 对象 |
 | 有哪些特效？ | `{lang}/effects/{id}.json` |
-| 哪些示例用了 X？ | `{lang}/examples/*.json` → `used-addons` |
+| 哪些示例用了 X？ | `c3-examples/{lang}/*.json` → `used-addons` |
 | JavaScript/TypeScript API？ | `autocomplete-data.json` → `.d.ts` |
 
 ## 搜索 API（可选）
