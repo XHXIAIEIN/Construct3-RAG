@@ -110,7 +110,8 @@ python scripts/setup.py --full
 src/api.py              FastAPI 服务
 src/ingest/             CDN 拉取、schema 导出、索引构建
 src/rag/                Lookup 引擎、向量检索、查询扩展
-data/c3-schemas/        预构建 API 数据（en + zh）
+data/c3-schemas/        ACE 定义、特效（en + zh）
+data/c3-examples/       示例项目元数据（en + zh）
 data/c3-ts-defs/        TypeScript 接口
 tests/                  173 个测试
 docs/                   API 参考、架构、数据管线
