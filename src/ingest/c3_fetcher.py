@@ -162,7 +162,13 @@ class C3Fetcher:
         }
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
-        index_data: dict = {"version": self.version, "languages": sorted(lang_texts.keys()), "plugins": {}, "behaviors": {}, "effects": {}}
+        all_locales = self.fetch_available_locales()
+        index_data: dict = {
+            "version": self.version,
+            "languages": sorted(lang_texts.keys()),
+            "supported_locales": all_locales,
+            "plugins": {}, "behaviors": {}, "effects": {},
+        }
 
         # ── Plugins & Behaviors ───────────────────────────────────────────
         for addon_type, plugin_type in type_map.items():
