@@ -17,18 +17,18 @@ Each event = one table. This matches the editor where each event is a distinct v
 
 **Event 1** — Jump when pressing Space
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| Keyboard | Condition | Keyboard | On key pressed | On Space pressed |
-| Player | Action | Animations | Set animation | Set animation to "Jump" (play from beginning) |
-| Player | Action | Platform | Simulate control | Simulate Player pressing Jump |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| Keyboard | Condition | Keyboard | On key pressed | Key: `Space` |
+| Player | Action | Animations | Set animation | Animation: `"Jump"`, From: `beginning` |
+| Player | Action | Platform | Simulate control | Control: `Jump` |
 
 **Event 2** — Return to idle on landing
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| Player | Condition | Platform | Is on floor | Player is on floor |
-| Player | Action | Animations | Set animation | Set animation to "Idle" (play from beginning) |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| Player | Condition | Platform | Is on floor | — |
+| Player | Action | Animations | Set animation | Animation: `"Idle"`, From: `beginning` |
 
 Columns match the editor workflow left-to-right:
 
@@ -38,7 +38,7 @@ Columns match the editor workflow left-to-right:
 | 2 | **Type** | Click "Add condition" or "Add action". |
 | 3 | **Category** | In the dialog, find this section. Value comes from `aceCategories` dict in the schema. For behaviors, the behavior name is the section header. |
 | 4 | **Name** | Select this `list-name` from the list. |
-| 5 | **Content** | Fill in parameters so the result matches this (`display-text` with values, strip `[b]`/`[i]` tags). |
+| 5 | **Parameters** | Fill in each parameter field. Format: `ParamName: value`. Use `—` for no parameters. Expression values use English identifiers (e.g. `Player.Platform.Speed`). |
 
 ### Sub-events
 
@@ -46,39 +46,39 @@ Sub-events are nested tables under their parent. They only run when the parent's
 
 **Event 3** — Speed tracking
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| System | Condition | General | Every tick | Every tick |
-| System | Action | Global & local variables | Set value | Set speed to Player.Platform.Speed |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| System | Condition | General | Every tick | — |
+| System | Action | Global & local variables | Set value | Variable: `speed`, Value: `Player.Platform.Speed` |
 
 > **Event 3.1** — Fast animation
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| Player | Condition | Platform | Compare speed | Player speed ≥ 200 |
-| Player | Action | Animations | Set animation | Set animation to "FastRun" (play from beginning) |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| Player | Condition | Platform | Compare speed | Comparison: `≥`, Speed: `200` |
+| Player | Action | Animations | Set animation | Animation: `"FastRun"`, From: `beginning` |
 
 > **Event 3.2** — Idle when slow and grounded
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| Player | Condition | Platform | Is on floor | Player is on floor |
-| System | Condition | General | Compare two values | speed < 50 |
-| Player | Action | Animations | Set animation | Set animation to "Idle" (play from beginning) |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| Player | Condition | Platform | Is on floor | — |
+| System | Condition | General | Compare two values | First value: `speed`, Comparison: `<`, Second value: `50` |
+| Player | Action | Animations | Set animation | Animation: `"Idle"`, From: `beginning` |
 
 **Event 4** — Destroy enemy on collision
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| Player | Condition | Collisions | On collision with another object | On collision with Enemy |
-| Enemy | Action | Misc | Destroy | Destroy |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| Player | Condition | Collisions | On collision with another object | Object: `Enemy` |
+| Enemy | Action | Misc | Destroy | — |
 
 > **Event 4.1** — Win when all enemies gone
 
-| Object | Type | Category | Name | Content |
-|--------|------|----------|------|---------|
-| System | Condition | General | Compare two values | Enemy.Count = 0 |
-| System | Action | Layout | Go to layout | Go to "WinScreen" |
+| Object | Type | Category | Name | Parameters |
+|--------|------|----------|------|------------|
+| System | Condition | General | Compare two values | First value: `Enemy.Count`, Comparison: `=`, Second value: `0` |
+| System | Action | Layout | Go to layout | Layout: `"WinScreen"` |
 
 ## Strict Rules
 
