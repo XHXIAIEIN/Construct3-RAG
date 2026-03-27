@@ -97,7 +97,7 @@ declare class IWorldInstance extends IInstance
 	colorRgb: Vec3Arr;
 	blendMode: BlendModeParameter;
 	sampling: SamplingModeOrAutoType;
-    activeSampling: SamplingModeType;
+    readonly activeSampling: SamplingModeType;
 	effects: IEffectInstance[];
 
 	moveToTop(): void;
