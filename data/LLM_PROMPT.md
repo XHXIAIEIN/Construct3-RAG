@@ -17,18 +17,18 @@ Each event = one table. This matches the editor where each event is a distinct v
 
 **Event 1** — Jump when pressing Space
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
-| Keyboard | Condition | | On key pressed | On Space pressed |
-| Player | Action | | Set animation | Set animation to "Jump" (play from beginning) |
+| Keyboard | Condition | Keyboard | On key pressed | On Space pressed |
+| Player | Action | Animations | Set animation | Set animation to "Jump" (play from beginning) |
 | Player | Action | Platform | Simulate control | Simulate Player pressing Jump |
 
 **Event 2** — Return to idle on landing
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
 | Player | Condition | Platform | Is on floor | Player is on floor |
-| Player | Action | | Set animation | Set animation to "Idle" (play from beginning) |
+| Player | Action | Animations | Set animation | Set animation to "Idle" (play from beginning) |
 
 Columns match the editor workflow left-to-right:
 
@@ -36,7 +36,7 @@ Columns match the editor workflow left-to-right:
 |------|--------|------------|
 | 1 | **Object** | Right-click this object in the event sheet. |
 | 2 | **Type** | Click "Add condition" or "Add action". |
-| 3 | **Behavior** | In the dialog, find this behavior section. Blank = plugin's own ACE. |
+| 3 | **Category** | In the dialog, find this section. Value comes from `aceCategories` dict in the schema. For behaviors, the behavior name is the section header. |
 | 4 | **Name** | Select this `list-name` from the list. |
 | 5 | **Content** | Fill in parameters so the result matches this (`display-text` with values, strip `[b]`/`[i]` tags). |
 
@@ -46,39 +46,39 @@ Sub-events are nested tables under their parent. They only run when the parent's
 
 **Event 3** — Speed tracking
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
-| System | Condition | | Every tick | Every tick |
-| System | Action | | Set value | Set speed to Player.Platform.Speed |
+| System | Condition | General | Every tick | Every tick |
+| System | Action | Global & local variables | Set value | Set speed to Player.Platform.Speed |
 
 > **Event 3.1** — Fast animation
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
 | Player | Condition | Platform | Compare speed | Player speed ≥ 200 |
-| Player | Action | | Set animation | Set animation to "FastRun" (play from beginning) |
+| Player | Action | Animations | Set animation | Set animation to "FastRun" (play from beginning) |
 
 > **Event 3.2** — Idle when slow and grounded
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
 | Player | Condition | Platform | Is on floor | Player is on floor |
-| System | Condition | | Compare two values | speed < 50 |
-| Player | Action | | Set animation | Set animation to "Idle" (play from beginning) |
+| System | Condition | General | Compare two values | speed < 50 |
+| Player | Action | Animations | Set animation | Set animation to "Idle" (play from beginning) |
 
 **Event 4** — Destroy enemy on collision
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
-| Player | Condition | | On collision with another object | On collision with Enemy |
-| Enemy | Action | | Destroy | Destroy |
+| Player | Condition | Collisions | On collision with another object | On collision with Enemy |
+| Enemy | Action | Misc | Destroy | Destroy |
 
 > **Event 4.1** — Win when all enemies gone
 
-| Object | Type | Behavior | Name | Content |
+| Object | Type | Category | Name | Content |
 |--------|------|----------|------|---------|
-| System | Condition | | Compare two values | Enemy.Count = 0 |
-| System | Action | | Go to layout | Go to "WinScreen" |
+| System | Condition | General | Compare two values | Enemy.Count = 0 |
+| System | Action | Layout | Go to layout | Go to "WinScreen" |
 
 ## Strict Rules
 
