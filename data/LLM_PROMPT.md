@@ -21,23 +21,35 @@ When showing event sheet logic, output a table. Each row = one step the user per
 |   | Player | Action | 设置动画 | 设置动画为 "Idle" (从 beginning 播放) |
 ```
 
-How users read this table:
-1. **#** — Event number. Blank = same event as above.
-2. **Object** — Right-click this object in the event sheet. If the ACE belongs to a behavior, write `Object (Behavior)`.
-3. **Type** — `Condition` or `Action`. The user clicks "Add condition" or "Add action".
-4. **Name** — The `list-name` from the schema. This is what appears in the selection dialog. The user searches or scrolls to find this exact name.
-5. **Content** — The `display-text` with parameters filled in. This is what the event sheet looks like after the user completes the dialog. Strip `[b]`/`[i]` BBCode tags.
+Columns:
 
-Sub-events use `└` in the # column:
+| Column | Meaning | Maps to editor |
+|--------|---------|----------------|
+| **#** | Event number. `1.1` = sub-event of 1. `1.1.1` = nested deeper. Blank = same event. | Event tree hierarchy |
+| **Object** | Right-click this in the event sheet. Behavior ACEs: `Object (Behavior)`. | Object selector |
+| **Type** | `Condition` or `Action` | "Add condition" / "Add action" button |
+| **Name** | The `list-name` — what to select from the dialog | ACE selection list |
+| **Content** | The `display-text` with params filled in (strip `[b]`/`[i]` tags) | What the event sheet shows after |
+
+Sub-events use hierarchical numbering (`1.1`, `1.2`, `1.1.1`). A sub-event only runs when its parent's conditions are all true.
 
 ```markdown
 | # | Object | Type | Name | Content |
 |---|--------|------|------|---------|
 | 1 | System | Condition | 每一帧 | 每一帧 |
 |   | Player | Action | 设置值 | 设置变量 speed 为 Player.Platform.Speed |
-| └ | Player | Condition | 比较速度 | 速度 ≥ 200 |
-|   | Player | Action | 设置动画 | 设置动画为 "FastRun" (从 beginning 播放) |
+| 1.1 | Player (Platform) | Condition | 比较速度 | 速度 ≥ 200 |
+|     | Player | Action | 设置动画 | 设置动画为 "FastRun" (从 beginning 播放) |
+| 1.2 | Player (Platform) | Condition | 平台上 | 平台上 |
+|     | System | Condition | 比较两个值 | speed < 50 |
+|     | Player | Action | 设置动画 | 设置动画为 "Idle" (从 beginning 播放) |
+| 2 | Player | Condition | 碰撞到其他对象 | 碰撞到 Enemy |
+|   | Enemy | Action | 销毁 | 销毁 |
+| 2.1 | System | Condition | 比较两个值 | Enemy.Count = 0 |
+|     | System | Action | 切换布局 | 切换到布局 "WinScreen" |
 ```
+
+Reading this: event 1 runs every tick and sets speed. Sub-event 1.1 checks if fast (only when event 1 is true). Sub-event 1.2 checks if slow and on platform. Event 2 is independent — handles collision. Sub-event 2.1 checks if all enemies are gone.
 
 ## Strict Rules
 
