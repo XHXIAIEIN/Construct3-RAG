@@ -1,0 +1,6 @@
+{
+  "caption": "Construct updated",
+  "message": "Construct has been updated! You were on release [b]{0}[/b] and you've updated to release [b]{1}[/b]. Read the release notes to find out what new features are available and what's changed.",
+  "view-release-notes": "View release notes",
+  "not-now": "Not now"
+}

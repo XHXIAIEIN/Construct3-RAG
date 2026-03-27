@@ -1,0 +1,635 @@
+{
+  "edit-with-data": "Edit with data editor?",
+  "data-editor": {
+    "array-did-change": "Open file '{0}' was changed, its array editor has reloaded.",
+    "dictionary-did-change": "Open file {0} did change, its dictionary editor has reloaded.",
+    "tab-tooltip": "File: {0}\nProject: {1}\nProject file: {2}",
+    "key": "Key",
+    "value": "Value",
+    "width": "Width",
+    "height": "Height",
+    "depth": "Depth",
+    "sheet": "Sheet",
+    "size": "Size",
+    "dedupe": "Automatically deduplicate keys",
+    "caption": "Data Editor: {0}",
+    "fail-dedupe-key": "Failed to generate unique key",
+    "fail-parse-file": "This file doesn't look like an array or dictionary, try opening it with the text editor",
+    "fail-open-file": "Unable to open file",
+    "contains-duplicates": "Dictionary contains duplicate keys",
+    "ask-to-rename": "Would you like to automatically rename them?",
+    "fail-serialize": "Unable to serialize",
+    "fail-save": "Unable to save",
+    "warning": "Warning",
+    "size-warning": "Warning! The size you have entered is pretty big, the editor may run slowly with this much data. Are you sure you want to continue?",
+    "context-menu": {
+      "transpose-layer": "Transpose current layer rows/columns",
+      "transpose-array": "Transpose array rows/columns",
+      "rename-row": "Rename row",
+      "rename-column": "Rename column",
+      "insert-row-before": "Insert row before",
+      "insert-row-after": "Insert row after",
+      "insert-column-before": "Insert column before",
+      "insert-column-after": "Insert column after",
+      "insert-row-start": "Insert row at start",
+      "insert-row-end": "Insert row at end",
+      "insert-column-start": "Insert column at start",
+      "insert-column-end": "Insert column at end",
+      "delete-row": "Delete row",
+      "delete-column": "Delete column",
+      "clear-row": "Clear row",
+      "clear-column": "Clear column",
+      "clear-cell": "Clear cell",
+      "dedupe": "Auto deduplicate key",
+      "resize-row": "Change row height",
+      "resize-rows": "Change all row heights",
+      "resize-column": "Change column width",
+      "resize-columns": "Change all column widths"
+    },
+    "rename-column": {
+      "caption": "Rename Column",
+      "message": "Choose a new name for the column",
+      "label": "Column name"
+    },
+    "rename-row": {
+      "caption": "Rename Row",
+      "message": "Choose a new name for the row",
+      "label": "Row name"
+    },
+    "new-dictionary": "New Dictionary",
+    "new-array": "New Array"
+  },
+  "event-sheet-view": {
+    "tab-tooltip": "Event sheet: {0}\nProject: {1}\nProject file: {2}",
+    "loading": "Loading...",
+    "add-event": "Add event",
+    "add-other": "Add...",
+    "copy-as-text": "Copy as text",
+    "replace-object": "Replace object",
+    "empty-sheet-placeholder": {
+      "title": "This is an empty event sheet",
+      "add-paragraph": "To start adding events, click [b]Add event[/b] in the top-left corner of this view. You can also double-click or double-tap in a space. Alternatively you can bring up a menu by right-click or tap-and-hold or clicking the [b]Add...[/b] link in the top-right.",
+      "desc-paragraph": "Events are run from top-to-bottom once per tick (i.e. at the framerate), typically 60 times a second. An example event is shown below. The [i]conditions[/i] are on the left and the [i]actions[/i] are on the right. The actions only run when the conditions are met. The margin can be used to select or modify the whole event. For more information see [a1]How events work[/a1].",
+      "margin-label": "Margin",
+      "conditions-label": "Conditions",
+      "actions-label": "Actions",
+      "bullet-name": "Bullet",
+      "monster-name": "Monster",
+      "destroy": "Destroy",
+      "condition-text": "On collision with"
+    },
+    "common-context-menu": {
+      "name": "Event sheet",
+      "find": "Find...",
+      "help": "Help",
+      "expand-all": "Expand all",
+      "collapse-all": "Collapse all",
+      "reset-column-sizes": "Reset column sizes",
+      "font-size": {
+        "name": "Font size",
+        "increase": "Increase",
+        "decrease": "Decrease",
+        "reset": "Reset"
+      }
+    },
+    "event-sheet": {
+      "context-menu": {
+        "add-event": "Add event",
+        "add-function": "Add function",
+        "add-custom-action": "Add custom action",
+        "add-javascript": "Add JavaScript",
+        "add-typescript": "Add TypeScript",
+        "add-comment": "Add comment",
+        "add-group": "Add group",
+        "add-global-variable": "Add global variable",
+        "include-event-sheet": "Include event sheet"
+      }
+    },
+    "event-row": {
+      "context-menu": {
+        "toggle": "Toggle",
+        "toggle-bookmark": "Toggle bookmark",
+        "toggle-breakpoint": "Toggle breakpoint",
+        "toggle-disabled": "Toggle disabled",
+        "colors": "Colors",
+        "change-text-color": "Change text color",
+        "change-background-color": "Change background color",
+        "restore-default-colors": "Restore default colors"
+      }
+    },
+    "event-block": {
+      "add-action": "Add action",
+      "context-menu": {
+        "add": "Add",
+        "add-another-action": "Add another action",
+        "add-another-condition": "Add another condition",
+        "add-subevent": "Add sub-event",
+        "add-blank-subevent": "Add blank sub-event",
+        "add-comment": "Add comment",
+        "add-javascript": "Add JavaScript",
+        "add-typescript": "Add TypeScript",
+        "switch-to-javascript": "Switch to JavaScript",
+        "switch-to-typescript": "Switch to TypeScript",
+        "add-group": "Add group",
+        "add-function": "Add function",
+        "add-custom-action": "Add custom action",
+        "add-global-variable": "Add global variable",
+        "add-local-variable": "Add local variable",
+        "add-else": "Add 'Else'",
+        "insert-new-event-above": "Insert above",
+        "insert-new-event-below": "Insert below",
+        "make-or-block": "Make OR block",
+        "make-and-block": "Make AND block"
+      }
+    },
+    "condition": {
+      "context-menu": {
+        "replace": "Replace condition",
+        "replace-object": "Replace object",
+        "invert": "Invert",
+        "toggle-disabled": "Toggle disabled",
+        "find-all-function-references": "Find all function references..."
+      },
+      "alt-texts": {
+        "inverted": "Inverted",
+        "trigger": "Trigger",
+        "looping": "Looping"
+      }
+    },
+    "action": {
+      "context-menu": {
+        "replace": "Replace action",
+        "replace-object": "Replace object",
+        "toggle-disabled": "Toggle disabled",
+        "go-to-function": "Go to function",
+        "cant-find-function": "Unable to find an [i]On function \"{0}\"[/i] event in this project.",
+        "find-all-function-references": "Find all function references...",
+        "go-to-action": "Go to action",
+        "find-all-action-references": "Find all action references..."
+      },
+      "alt-texts": {
+        "asynchronous": "Asynchronous"
+      }
+    },
+    "function-block": {
+      "header": "On function [b]{0}[/b]",
+      "async-header": "On async function [b]{0}[/b]",
+      "copy-picked": "(copy picked)",
+      "context-menu": {
+        "edit-function": "Edit function",
+        "add-parameter": "Add parameter",
+        "find-all-function-references": "Find all function references..."
+      }
+    },
+    "custom-ace-block": {
+      "header": "[b]{0}[/b] {1} [b]{2}[/b]",
+      "async-header": "[b]{0}[/b] async {1} [b]{2}[/b]",
+      "context-menu": {
+        "edit": "Edit",
+        "add-parameter": "Add parameter",
+        "find-all-references": "Find all {0} references..."
+      }
+    },
+    "function-parameter": {
+      "context-menu": {
+        "add-another-parameter": "Add another parameter"
+      }
+    },
+    "event-group": {
+      "add-event": "Add event to '{0}'",
+      "add-other": "Add to '{0}'...",
+      "context-menu": {
+        "add": "Add",
+        "add-subgroup": "Add sub-group",
+        "add-subevent": "Add sub-event",
+        "add-blank-subevent": "Add blank sub-event",
+        "add-comment": "Add comment",
+        "add-javascript": "Add JavaScript",
+        "add-typescript": "Add TypeScript",
+        "add-function": "Add function",
+        "add-custom-action": "Add custom action",
+        "add-global-variable": "Add global variable",
+        "add-local-variable": "Add local variable"
+      }
+    },
+    "event-variable": {
+      "context-menu": {
+        "add-another-variable": "Add another variable",
+        "add-comment": "Add comment",
+        "move-to-event-sheet": "Move to event sheet..."
+      },
+      "confirm-delete": {
+        "title": "Delete event",
+        "message": "Deleting a global or local variable also deletes all actions, conditions and expressions referencing it. Are you sure you want to delete the variable [b]{0}[/b]?",
+        "message-multiple": "Deleting global or local variables also deletes all actions, conditions and expressions referencing them. Are you sure you want to delete the selection?"
+      }
+    },
+    "include": {
+      "context-menu": {
+        "change-include": "Change include",
+        "open-sheet": "Open '{0}'"
+      }
+    },
+    "replace-object-dialogs": {
+      "pick-object-to-be-replaced": "Pick the object to be replaced:",
+      "pick-object-to-replace-with": "Pick the object to replace '{0}' with:"
+    },
+    "errors": {
+      "drag-event-inside-self": {
+        "title": "Cannot move here",
+        "message": "You tried to move an event to become a sub-event of itself. That's impossible!"
+      },
+      "cannot-move-conditions": {
+        "title": "Cannot move conditions",
+        "message": "Due to the restrictions of triggers, you can't move the selected conditions here."
+      },
+      "cannot-move-events": {
+        "title": "Cannot move events",
+        "message": "Due to the restrictions of triggers, you can't move the selected events here."
+      },
+      "invalid-else": {
+        "title": "Event validation problem",
+        "message": "Oops! There is a mistake in your events. It must be fixed before you preview or export the project.\n\n[b]{0}[/b], number [b]{1}[/b]: An [b]Else[/b] condition cannot be placed here. Make sure the event follows a non-triggered event, and is the first condition."
+      },
+      "failed-to-paste": {
+        "title": "Cannot paste",
+        "message": "The copied events cannot be pasted to this project. They may reference objects, variables or other content that is missing in this project. ({0})"
+      },
+      "nothing-to-replace": {
+        "title": "Replace object",
+        "message": "There are no objects in the selection that can be replaced."
+      },
+      "nothing-can-replace-object": {
+        "title": "Replace object",
+        "message": "There are no objects that can replace the object '{0}'. To replace an object, there must be another object that is the same type, and has matching instance variables, behaviors, effects and custom actions."
+      },
+      "cannot-set-breakpoint": {
+        "title": "Cannot set a breakpoint here",
+        "message": "The current selection does not support setting a breakpoint."
+      },
+      "invalid-drag-drop": {
+        "title": "Cannot drag events here",
+        "message": "You can't drop events here because: {0}"
+      },
+      "event-variable-scope-changed": {
+        "title": "Scope change removed items",
+        "message": "Some actions or conditions were removed because a variable's scope changed. Press 'Undo' (Ctrl+Z) if you did not intend this."
+      },
+      "script-syntax-error": {
+        "title": "Script validation problem",
+        "message": "Oops! There is a mistake in a script in your project. It must be fixed before you preview or export the project.",
+        "location-file": "[b]{0}[/b], line [b]{1}[/b]: [i]{2}[/i]",
+        "location-block": "[b]{0}[/b], number [b]{1}[/b], line [b]{2}[/b]: [i]{3}[/i]",
+        "location-action": "[b]{0}[/b], number [b]{1}[/b], action [b]{2}[/b], line [b]{3}[/b]: [i]{4}[/i]"
+      },
+      "cannot-edit-script-in-popup": {
+        "message": "Sorry - editing scripts in event sheets in a popup window is not currently supported. Close the popup window to return the Event Sheet View to the main window to edit this script."
+      }
+    },
+    "events-remaining": {
+      "header": {
+        "one": "You have {0} event remaining",
+        "other": "You have {0} events remaining"
+      },
+      "header-exceeded": "You have no events remaining",
+      "description": {
+        "guest": "As a guest you may use up to {0} events in a project. [a1]Register an account[/a1] or [a2]log in[/a2] to get more events.",
+        "logged-in": "When logged in to the Free edition of Construct, you may use up to {0} events in a project. [a1]Purchase a plan[/a1] to unlock the full features of Construct."
+      }
+    }
+  },
+  "flowchartView": {
+    "context-menu": {
+      "add-new-node": "Add node",
+      "insert-new-node": "Insert node",
+      "add-new-reference-node": "Add reference node",
+      "insert-new-reference-node": "Insert flowchart reference node",
+      "add-new-comment-node": "Add comment node",
+      "insert-new-comment-node": "Insert flowchart comment node",
+      "add-new-preset-node": "Add preset node",
+      "insert-new-preset-node": "Insert flowchart preset node",
+      "select-all": "Select all",
+      "select-all-tooltip": "Select all nodes",
+      "preset-menu": "Preset",
+      "preset-on": "Add to presets",
+      "preset-on-tooltip": {
+        "one": "Add node to presets",
+        "other": "Add node selection to presets"
+      },
+      "preset-off": "Remove from presets",
+      "preset-off-tooltip": {
+        "one": "Remove node from presets",
+        "other": "Remove node selection from presets"
+      },
+      "remove-link": "Unlink",
+      "delete-node": "Delete node",
+      "delete-nodes": "Delete node selection",
+      "delete-output": "Delete output",
+      "delete-outputs": "Delete output selection",
+      "delete-element": "Delete element",
+      "delete-elements": "Delete element selection",
+      "enable-node": "Enable node",
+      "enable-nodes": "Enable node selection",
+      "enable-output": "Enable output",
+      "enable-outputs": "Enable output selection",
+      "enable-element": "Enable element",
+      "enable-elements": "Enable element selection",
+      "disable-node": "Disable node",
+      "disable-nodes": "Disable node selection",
+      "disable-output": "Disable output",
+      "disable-outputs": "Disable output selection",
+      "disable-element": "Disable element",
+      "disable-elements": "Disable element selection",
+      "set-default-output": "Set output as default",
+      "set-default-outputs": "Set output selection as default",
+      "unset-default-output": "Unset output as default",
+      "unset-default-outputs": "Unset output selection as default",
+      "set-default-element": "Set element as default",
+      "set-default-elements": "Set element selection as default",
+      "unset-default-element": "Unset element as default",
+      "unset-default-elements": "Unset element selection as default",
+      "set-default": "Set default",
+      "unset-default": "Unset default",
+      "add-output": "Add output",
+      "edit-name": "Edit name",
+      "edit-value": "Edit value",
+      "edit-runtime-tag": "Edit runtime tag",
+      "goto-flowchart": "Go to flowchart",
+      "goto-flowchart-tooltip": "Go to the referenced flowchart",
+      "edit-caption": "Edit caption"
+    },
+    "status": {
+      "output-preview": "Index: [i]{0}[/i] - Name: [i]{1}[/i] - Value: [i]{2}[/i]",
+      "no-output-preview": "[i]No output selected[/i]",
+      "node-preview": "Caption: [i]{0}[/i]",
+      "no-node-preview": "[i]No node selected[/i]"
+    },
+    "tab-tooltip": "Flowchart: {0}\nProject: {1}\nProject file: {2}",
+    "errors": {
+      "can-not-place-node": "A new node can not be placed here.",
+      "can-not-paste-all-nodes": "Some nodes could not be pasted.",
+      "can-not-paste-all-outputs": "Some outputs could not be pasted.",
+      "can-not-paste-nodes": "There was a problem pasting nodes.",
+      "can-not-add-outout": "A new option can not be added here.",
+      "can-not-add-outout-tip": {
+        "title": "A new option can not be added.",
+        "desc": "There is not enough space for the node to grow."
+      },
+      "can-not-delete-outout-tip": {
+        "title": "Can not delete output.",
+        "desc": "Nodes must have at least one output."
+      },
+      "can-not-disable-node-tip": {
+        "title": "Can not disable node.",
+        "desc": "Flowcharts must have at least one enabled node."
+      },
+      "can-not-disable-output-tip": {
+        "title": "Can not disable output.",
+        "desc": "Nodes must have at least one enabled output."
+      },
+      "can-not-disable-element-tip": {
+        "title": "Can not disable flowchart element.",
+        "desc": "Flowcharts must have at least one enabled element."
+      },
+      "infite-loop-not-allowed": {
+        "title": "Infinite loops are not allowed",
+        "desc": "The latest change is not allowed because it would produce an infinite loop at runtime."
+      }
+    },
+    "node": {
+      "caption": "Flowchart node",
+      "modifier-disable": "Disable",
+      "modifier-bypass": "Bypass",
+      "modifier-bypass-not-connected": "Default output not connected",
+      "input": {
+        "label": "In"
+      },
+      "output": {
+        "index": "Index",
+        "name": "Name",
+        "value": "Value",
+        "output": "Out",
+        "edit-value": "Edit output value: {0}"
+      },
+      "tag": {
+        "label": "Tags"
+      },
+      "parent-index": {
+        "label": "P. index"
+      },
+      "value": {
+        "add": "Add"
+      }
+    },
+    "reference-node": {
+      "caption": "Flowchart reference node",
+      "reference": {
+        "name": "Flowchart",
+        "no-flowcharts": "<no flowcharts>"
+      },
+      "start-node": {
+        "name": "Start node",
+        "use-default": "<use default>"
+      },
+      "flowchart-tag": {
+        "name": "Runtime tag"
+      }
+    },
+    "comment-node": {
+      "caption": "Flowchart comment",
+      "comment": {
+        "name": "Comment"
+      }
+    },
+    "tutorial": {
+      "empty-flowchart": {
+        "title": "This is an empty flowchart",
+        "blurb-1": "To start adding nodes, you can bring up a menu by right-click or tap-and-hold and choosing one of the available options. After creating nodes you can add more information to them and connect them by clicking and dragging from an [b]Output[/b] into an [b]Input[/b] in a different node.",
+        "blurb-2": "Use [b]Flowcharts[/b] to arrange information in a tree like structure and establish logical connections between each node. Use the [b]Flowchart Controller[/b] to setup events to navigate through and query the tree for information at runtime.",
+        "help": {
+          "text": "For more information see the following manual entries:",
+          "link-1": "Flowchart View",
+          "link-2": "Flowcharts",
+          "link-3": "Flowchart Controller"
+        }
+      }
+    }
+  },
+  "layoutView": {
+    "tab-tooltip": "Layout: {0}\nProject: {1}\nProject file: {2}",
+    "context-menu": {
+      "insert-new-object": "Insert new object",
+      "add-submenu": {
+        "name": "Add",
+        "instance-variable": "Instance variable...",
+        "behavior": "Behavior...",
+        "effect": "Effect..."
+      },
+      "hierarchy": {
+        "name": "Hierarchy",
+        "add-selection-as-children": "Add selection to this instance",
+        "remove-children-from-selection": "Remove all children",
+        "remove-selection-from-parent": "Remove from parent",
+        "select-all-children": "Select all children"
+      },
+      "z-order": {
+        "name": "Z Order",
+        "send-to-top": "Send to top of layer",
+        "send-to-bottom": "Send to bottom of layer",
+        "open-zorder-bar": "Open Z Order bar..."
+      },
+      "move-to-layer": "Move to layer",
+      "align": {
+        "name": "Align",
+        "viewport": {
+          "name": "Viewport",
+          "left": "Left",
+          "right": "Right",
+          "top": "Top",
+          "bottom": "Bottom",
+          "center-horizontal": "Center horizontal",
+          "center-vertical": "Center vertical"
+        },
+        "layout": {
+          "name": "Layout",
+          "left": "Left",
+          "right": "Right",
+          "top": "Top",
+          "bottom": "Bottom",
+          "center-horizontal": "Center horizontal",
+          "center-vertical": "Center vertical"
+        },
+        "edges": {
+          "name": "Edges",
+          "left": "Left",
+          "right": "Right",
+          "top": "Top",
+          "bottom": "Bottom"
+        },
+        "space": {
+          "name": "Space",
+          "horizontally": "Horizontally",
+          "vertically": "Vertically"
+        },
+        "size": {
+          "name": "Size",
+          "make-same-width": "Make same width",
+          "make-same-height": "Make same height",
+          "make-same-size": "Make same size"
+        },
+        "cover-viewport": "Cover viewport",
+        "cover-layout": "Cover layout"
+      },
+      "lock": {
+        "name": "Lock",
+        "lock-selection": "Lock selection",
+        "unlock-all-on-layer": "Unlock all on '{0}'",
+        "unlock-all": "Unlock all"
+      },
+      "mesh": {
+        "name": "Mesh",
+        "create-mesh": "Create mesh...",
+        "set-mesh-size": "Set mesh size...",
+        "reset-mesh": "Reset mesh",
+        "remove-mesh": "Remove mesh",
+        "edit-mesh": "Edit mesh",
+        "stop-editing-mesh": "Stop editing mesh"
+      },
+      "wrap-selection": "Wrap selection",
+      "view": {
+        "name": "View",
+        "live-previews": {
+          "name": "Live previews",
+          "start-all": "Start all live previews",
+          "stop-all": "Stop all live previews"
+        },
+        "zoom": {
+          "zoom-in": "Zoom in",
+          "zoom-out": "Zoom out",
+          "zoom-reset": "Reset zoom"
+        },
+        "edit-grid": "Edit grid",
+        "copy-coords": "Copy co-ordinates"
+      },
+      "timeline": {
+        "name": "Timeline",
+        "add-timeline": "Add timeline",
+        "add-instances": "Add to timeline",
+        "set-keyframes": "Set keyframes",
+        "open": "Open Timeline bar..."
+      },
+      "tilemap": {
+        "name": "Tilemap",
+        "open": "Open Tilemap bar...",
+        "show": "Show Tilemap bar..."
+      },
+      "template": {
+        "name": "Template",
+        "template": {
+          "use-in-all-replicas": {
+            "name": "Apply template to all replicas",
+            "properties": "Properties only",
+            "properties-tooltip": "Apply the template's properties to each replica",
+            "hierarchy": {
+              "name": "Hierarchy",
+              "replace-whole": "Replace whole",
+              "replace-whole-tooltip": "Replace the hierarchy of each replica (deletes and creates instances)",
+              "modify-existing": "Modify existing",
+              "modify-existing-tooltip": "Update the existing hierarchy of each replica (does not delete or create instances)"
+            }
+          },
+          "select-all-replicas": "Select all replicas in layout",
+          "go-to-replicas": "Open all layouts with replicas"
+        },
+        "replica": {
+          "use-from-template": {
+            "name": "Apply template",
+            "properties": "Properties only",
+            "properties-tooltip": "Apply the template's properties to this replica",
+            "hierarchy": {
+              "name": "Hierarchy",
+              "replace-whole": "Replace whole",
+              "replace-whole-tooltip": "Replace the hierarchy of this replica (deletes and creates instances)",
+              "modify-existing": "Modify existing",
+              "modify-existing-tooltip": "Update the existing hierarchy of this replica (does not delete or create instances)"
+            }
+          },
+          "select-all-replicas": "Select all replicas in layout",
+          "go-to-template": "Open template layout"
+        }
+      },
+      "edit-event-sheet": "Edit event sheet",
+      "clone-object-type": "Clone object type",
+      "help": "Help"
+    },
+    "status": {
+      "mouse": "Mouse: ({0}, {1})",
+      "active-layer": "Active layer: {0}",
+      "active-layer-tooltip": "New instances will be placed on this layer.",
+      "zoom": "Zoom: {0}"
+    },
+    "clipboard-paste-error": {
+      "title": "Some items were not pasted",
+      "message": "Not all the copied items could be pasted to this project. Check all the names and requirements (e.g. instance variables) match."
+    },
+    "notify-deleted-last-instance": {
+      "title": "You have deleted the last '{0}' instance",
+      "message": "Deleting the last instance of an object type does not remove it from the project. To completely remove '{0}' from the project, delete it from the Project Bar."
+    },
+    "warnings": {
+      "placed-on-locked-layer": {
+        "title": "Layer '{0}' is locked",
+        "message": "You won't be able to modify this instance until you unlock the layer."
+      },
+      "placed-on-hidden-layer": {
+        "title": "Layer '{0}' is hidden",
+        "message": "You won't be able to see or modify this instance until you make the layer visible again."
+      },
+      "placed-3d-object-on-2d-layer": {
+        "title": "3D object placed on 2D layer '{0}'",
+        "message": "3D objects may not display correctly on 2D layers. Move 3D objects to a 3D layer, or set this layer to use a 3D rendering mode."
+      },
+      "webgl-initialisation-failed": "Failed to initialise WebGL. This prevents Construct opening any Layout Views.\n\nThis can be caused by broken graphics drivers or out-of-date software. [b]Try installing any available software updates for your system.[/b]"
+    }
+  }
+}

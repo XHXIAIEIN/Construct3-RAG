@@ -1,0 +1,15 @@
+{
+  "awaiting-authentication": "Cloud Save: Awaiting user authentication",
+  "downloading": "Downloading \"{1}\" from {0}",
+  "uploading": "Uploading \"{1}\" from {0}",
+  "upload-succeeded": "Successfully uploaded \"{0}\"",
+  "save-succeeded": "Successfully saved \"{0}\"",
+  "unknown-error-while-saving": "Unknown error while saving \"{0}\" to {1}",
+  "already-saving": "\"{0}\" is already saving",
+  "saving-project-to": "Saving \"{0}\" to {1}",
+  "already-open": "\"{0}\" is already open",
+  "already-archiving": "Project already archiving, please wait until it has completed and try again",
+  "archiving-project": "Archiving \"{0}\"",
+  "autosaving-project-to": "Autosaving \"{0}\" to {1}",
+  "filesystem": "Filesystem"
+}

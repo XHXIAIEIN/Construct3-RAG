@@ -17,7 +17,7 @@ No install needed. Pick a language (`en` or `zh`) and read.
 | `c3-schemas/{lang}/behaviors/{id}.json` | 31 | Behavior ACE definitions |
 | `c3-schemas/{lang}/effects/{id}.json` | 89 | Effect parameters, categories |
 | `c3-schemas/{lang}/examples/{id}.json` | 481 | Name, description, tags, used-addons, open URL |
-| `c3-schemas/{lang}/editor/index.json` | 1 | Editor UI element names (bars, dialogs, views) |
+| `c3-schemas/{lang}/editor/*.json` | 36 | Editor UI strings (bars, dialogs, views, controls, errors, ...) |
 | `c3-ts-defs/autocomplete-data.json` | 109 | Scripting classes → methods/properties |
 | `c3-ts-defs/**/*.d.ts` | 150 | Full TypeScript interface signatures |
 

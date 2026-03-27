@@ -1,0 +1,6 @@
+{
+  "location": "Local backup folder",
+  "folder-unavailable": "Construct needs to autosave a project to a local backup folder, but it appears no folder has been chosen. Verify a valid local backup folder has been chosen in Settings.",
+  "folder-permission-denied": "Construct needs to autosave a project to a local backup folder, but access to the folder was denied. Verify a valid local backup folder has been chosen in Settings, and ensure any permission prompts are approved.",
+  "folder-permission-prompt": "Construct needs to autosave a project to a local backup folder, but needs permission to access the folder. Please approve the following permission prompt to ensure the backup can be completed."
+}

@@ -1,0 +1,39 @@
+{
+  "tree": {
+    "multi-select-drag-tooltip": {
+      "one": "({0} item)",
+      "other": "({0} items)"
+    },
+    "no-text-search-results": "No items match '{0}'",
+    "no-items-showing": "No items"
+  },
+  "icon-view": {
+    "multi-select-drag-tooltip": {
+      "one": "({0} item)",
+      "other": "({0} items)"
+    },
+    "no-items-showing": "No items",
+    "no-search-results": "No results",
+    "no-text-search-results": "No items match '{0}'",
+    "pagination": {
+      "pages": "Page:",
+      "total": "of {0}"
+    }
+  },
+  "close-button": {
+    "close-tooltip": "Close"
+  },
+  "back-button": {
+    "back-tooltip": "Back"
+  },
+  "menu-dots-button": {
+    "tooltip": "Options"
+  },
+  "settings-button": {
+    "tooltip": "Settings"
+  },
+  "pin-button": {
+    "pin-tooltip": "Pin",
+    "unpin-tooltip": "Unpin"
+  }
+}
