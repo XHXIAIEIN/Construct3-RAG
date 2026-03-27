@@ -1,0 +1,30 @@
+{
+  "id": "template-gamepad-twin-stick-shooter",
+  "name": "Gamepad twin stick shooter",
+  "description": "Use the analog sticks on a gamepad to control the character movement and aim.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Pin",
+      "Bullet",
+      "solid",
+      "Timer",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-gamepad-twin-stick-shooter"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "robotic-loader",
+  "name": "Robotic loader animation",
+  "description": "A timeline animation also using hierarchies which shows a robotic arm loading a cargo truck.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "overlay"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=robotic-loader"
+}

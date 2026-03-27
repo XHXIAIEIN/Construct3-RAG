@@ -1,0 +1,28 @@
+{
+  "id": "blackball-billiard",
+  "name": "游戏示例: 台球",
+  "description": "通过挑战您的朋友参加当地的黑球台球比赛来证明自己是台球冠军。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Timer",
+      "Tween",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blackball-billiard"
+}

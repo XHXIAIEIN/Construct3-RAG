@@ -1,0 +1,29 @@
+{
+  "id": "offline-builder",
+  "name": "游戏示例: 离线建造游戏",
+  "description": "放置挂机类游戏示例。建立和扩大你的中世纪帝国，即使离开游戏，也能见证它的成长。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Date",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=offline-builder"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "scripting-web-worker",
+  "name": "Web Workers",
+  "description": "Demonstrates creating a Web Worker, which can run script code in the background without blocking the main thread.",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-web-worker"
+}

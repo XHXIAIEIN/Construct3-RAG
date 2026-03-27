@@ -1,0 +1,27 @@
+{
+  "id": "template-endless-runner",
+  "name": "基础示例：无限跑酷",
+  "description": "简单的横版跑酷游戏模板，有无限生成的地形，支持移动端操作，带有简单的图形。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "平台",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-endless-runner"
+}

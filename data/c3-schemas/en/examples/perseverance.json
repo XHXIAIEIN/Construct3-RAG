@@ -1,0 +1,31 @@
+{
+  "id": "perseverance",
+  "name": "Perseverance",
+  "description": "A brief animation of a skater who perseveres in learning tricks.",
+  "tags": [
+    "animation-recommended",
+    "Intermediate",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "radialblur"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=perseverance"
+}

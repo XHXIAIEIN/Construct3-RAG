@@ -1,0 +1,35 @@
+{
+  "id": "dynamic-camera-system",
+  "name": "Dynamic camera system",
+  "description": "Shows how to use some scrolling effects while moving between zones, as the adventurer finds the lost key.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Tilemap",
+      "Sprite",
+      "NinePatch",
+      "Keyboard",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "TileMovement",
+      "Bullet",
+      "Fade",
+      "Rotate",
+      "Sin"
+    ],
+    "effects": [
+      "brightness",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dynamic-camera-system"
+}

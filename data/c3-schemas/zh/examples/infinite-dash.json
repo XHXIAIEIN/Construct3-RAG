@@ -1,0 +1,31 @@
+{
+  "id": "infinite-dash",
+  "name": "关卡设计፡ 火箭推进",
+  "description": "通过按下它冲向的方向来控制玩家，直到它碰到一个表面。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Platform",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=infinite-dash"
+}

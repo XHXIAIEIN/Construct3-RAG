@@ -1,0 +1,17 @@
+{
+  "id": "text-formatting",
+  "name": "Text formatting",
+  "description": "A demonstration of using BBCode tags to format the contents of a Text object.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=text-formatting"
+}

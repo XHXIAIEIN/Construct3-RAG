@@ -1,0 +1,21 @@
+{
+  "id": "bboxperf",
+  "name": "Bounding box performance",
+  "description": "A performance test to measure how fast the CPU can calculate geometry for rotating sprites.",
+  "tags": [
+    "Advanced",
+    "Tech demo",
+    "Performance"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bboxperf"
+}

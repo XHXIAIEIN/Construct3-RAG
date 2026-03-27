@@ -1,0 +1,29 @@
+{
+  "id": "audio-positioning",
+  "name": "音频：空间音频",
+  "description": "场景中存在多个不同位置的声源，听到的声音会根据听众的距离位置对声相和音量进行调整。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Touch",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate",
+      "EightDir",
+      "scrollto",
+      "Fade",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-positioning"
+}

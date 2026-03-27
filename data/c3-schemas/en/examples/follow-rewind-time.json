@@ -1,0 +1,25 @@
+{
+  "id": "follow-rewind-time",
+  "name": "Follow rewind time",
+  "description": "Demonstrates using the Follow behavior to allow the player to rewind time and then continue from an earlier point.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-rewind-time"
+}

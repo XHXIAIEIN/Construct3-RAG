@@ -1,0 +1,17 @@
+{
+  "id": "webgpu-compute",
+  "name": "功能示例：WebGPU",
+  "description": "演示使用 WebGPU API 在 GPU 上运行通用着色器的计算。",
+  "tags": [
+    "高级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=webgpu-compute"
+}

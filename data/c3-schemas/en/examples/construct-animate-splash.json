@@ -1,0 +1,25 @@
+{
+  "id": "construct-animate-splash",
+  "name": "Construct Animate splash",
+  "description": "Combines SVGs to have adaptive-scale graphics, with advanced use of blending modes to create timeline-animated dynamic masking.",
+  "tags": [
+    "animation-recommended",
+    "Animation",
+    "Feature example",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "SVGPicture",
+      "Sprite",
+      "TiledBg",
+      "Timeline",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=construct-animate-splash"
+}

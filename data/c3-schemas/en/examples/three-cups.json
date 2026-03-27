@@ -1,0 +1,29 @@
+{
+  "id": "three-cups",
+  "name": "Three cups",
+  "description": "Keep your eyes on the correct cup as they're shuffled at increasingly faster speeds.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween",
+      "scrollto"
+    ],
+    "effects": [
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=three-cups"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "camera-input",
+  "name": "Camera input",
+  "description": "A simple example of accessing the user's camera using the User Media object, with options to take pictures or recordings and download the result.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "GameRecorder",
+      "List",
+      "Sprite",
+      "Text",
+      "UserMedia"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=camera-input"
+}

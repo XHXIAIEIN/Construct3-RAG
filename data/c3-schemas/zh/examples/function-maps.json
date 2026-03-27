@@ -1,0 +1,20 @@
+{
+  "id": "function-maps",
+  "name": "功能示例: 映射动作组",
+  "description": "演示如何使用映射动作组，通过字符串调用指定的动作组。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Button",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=function-maps"
+}

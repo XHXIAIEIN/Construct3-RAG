@@ -1,0 +1,27 @@
+{
+  "id": "template-platformer",
+  "name": "Platformer",
+  "description": "A template with a basic platform game setup prepared, using placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid",
+      "Sin",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-platformer"
+}

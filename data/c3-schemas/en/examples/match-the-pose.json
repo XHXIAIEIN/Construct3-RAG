@@ -1,0 +1,27 @@
+{
+  "id": "match-the-pose",
+  "name": "Match the Pose",
+  "description": "Pull the strings fast and hit every pose with precision. How long can you keep up before the clock runs out?",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=match-the-pose"
+}

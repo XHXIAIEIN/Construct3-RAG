@@ -1,0 +1,32 @@
+{
+  "id": "jetpack",
+  "name": "Jetpack",
+  "description": "A platformer with a fuel powered jetpack to help you reach higher places.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "NinePatch",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Timer",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=jetpack"
+}

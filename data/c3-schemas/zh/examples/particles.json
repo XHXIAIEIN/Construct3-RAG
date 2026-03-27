@@ -1,0 +1,24 @@
+{
+  "id": "particles",
+  "name": "粒子",
+  "description": "演示全屏粒子特效。",
+  "tags": [
+    "animation-recommended",
+    "技术演示",
+    "性能测试",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text",
+      "Sprite"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particles"
+}

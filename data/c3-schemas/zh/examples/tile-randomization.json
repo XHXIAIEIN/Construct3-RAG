@@ -1,0 +1,20 @@
+{
+  "id": "tile-randomization",
+  "name": "平铺背景：纹理混合",
+  "description": "演示平铺背景的纹理混合功能，消除重复的纹理。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "TiledBg",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tile-randomization"
+}

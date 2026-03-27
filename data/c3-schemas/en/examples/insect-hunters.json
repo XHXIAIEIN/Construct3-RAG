@@ -1,0 +1,30 @@
+{
+  "id": "insect-hunters",
+  "name": "Insect hunters",
+  "description": "Flies are everywhere, and for frogs, that means free lunch! Compete against the CPU or a friend to see who can devour them the fastest.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "glowvertical",
+      "waterbg"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=insect-hunters"
+}

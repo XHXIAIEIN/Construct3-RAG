@@ -1,0 +1,24 @@
+{
+  "id": "timeline-basics",
+  "name": "Timeline basic playback",
+  "description": "Shows how to play a timeline animation designed with the Timeline Bar.",
+  "tags": [
+    "Beginner",
+    "animation-recommended",
+    "Feature example",
+    "Mobile",
+    "Timeline",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Timeline",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-basics"
+}

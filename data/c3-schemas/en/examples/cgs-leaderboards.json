@@ -1,0 +1,22 @@
+{
+  "id": "cgs-leaderboards",
+  "name": "Online leaderboards",
+  "description": "Demonstrates Construct Game Services leaderboards to provide online cross-platform hi-scores.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "List",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-leaderboards"
+}

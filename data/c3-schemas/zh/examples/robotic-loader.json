@@ -1,0 +1,27 @@
+{
+  "id": "robotic-loader",
+  "name": "时间轴：机械手臂",
+  "description": "基于时间轴和对象层级结构的动画，展示了机械臂将货物装载到卡车的过程。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "overlay"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=robotic-loader"
+}

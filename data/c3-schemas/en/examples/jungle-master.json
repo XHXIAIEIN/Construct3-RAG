@@ -1,0 +1,38 @@
+{
+  "id": "jungle-master",
+  "name": "Jungle Master",
+  "description": "Soar through the jungle by swinging from vine to vine, avoiding giant birds and dolphins.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "DrawingCanvas",
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Share",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "custom"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=jungle-master"
+}

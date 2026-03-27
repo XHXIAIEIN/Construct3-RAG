@@ -1,0 +1,35 @@
+{
+  "id": "dynamic-camera-system",
+  "name": "摄像机：动态跟随",
+  "description": "扮演一名寻找钥匙的冒险者，在不同的区域移动时，视角会跟随滚动。",
+  "tags": [
+    "进阶",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Tilemap",
+      "Sprite",
+      "NinePatch",
+      "Keyboard",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "TileMovement",
+      "Bullet",
+      "Fade",
+      "Rotate",
+      "Sin"
+    ],
+    "effects": [
+      "brightness",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dynamic-camera-system"
+}

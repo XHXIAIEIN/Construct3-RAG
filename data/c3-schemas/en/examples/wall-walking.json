@@ -1,0 +1,35 @@
+{
+  "id": "wall-walking",
+  "name": "Wall walking",
+  "description": "A platformer where you can use the walls to your advantage by changing the direction of gravity to walk along them.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "LOS",
+      "Timer",
+      "solid",
+      "Pin",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": [
+      "replacesolidcolor",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=wall-walking"
+}

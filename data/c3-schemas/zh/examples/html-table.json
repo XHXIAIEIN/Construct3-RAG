@@ -1,0 +1,21 @@
+{
+  "id": "html-table",
+  "name": "功能示例：HTML 表格",
+  "description": "演示使用 HTML Element 插件显示表格信息。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "HTMLElement",
+      "Arr",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-table"
+}

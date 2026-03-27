@@ -1,0 +1,23 @@
+{
+  "id": "shadows-colors",
+  "name": "阴影：颜色",
+  "description": "使用具有不透明度和不同阴影颜色的三个灯光来创建多重灯光效果",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-colors"
+}

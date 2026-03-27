@@ -1,0 +1,546 @@
+{
+  "id": "htmlelement",
+  "name": "HTML",
+  "description": "在 Canvas 顶部创建自定义 HTML元素，可以显示任意 HTML 内容。",
+  "type": "plugin",
+  "aceCategories": {
+    "html-content": "HTML 内容"
+  },
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "html-content",
+      "list-name": "被点击",
+      "display-text": "被点击",
+      "description": "次元素的任意部分被点击时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-clicked-id",
+      "scriptName": "OnClickedID",
+      "category": "html-content",
+      "list-name": "ID元素被点击",
+      "display-text": "ID元素 [i]{0}[/i] 被点击",
+      "description": "指定 id 的元素被点击时触发。",
+      "params": {
+        "id": {
+          "type": "string",
+          "name": "ID",
+          "desc": "指定的ID。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-clicked-class",
+      "scriptName": "OnClickedClass",
+      "category": "html-content",
+      "list-name": "Class元素被点击",
+      "display-text": "Class类名 [i]{0}[/i] 被点击",
+      "description": "具有指定 class 的元素被点击时触发。",
+      "params": {
+        "class": {
+          "type": "string",
+          "name": "Class",
+          "desc": "指定的Class类名。 使用空格匹配多个类名称。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-css-animation-ended",
+      "scriptName": "OnCSSAnimationEnded",
+      "category": "html-content",
+      "list-name": "CSS动画播放结束",
+      "display-text": "CSS 动画 [i]{0}[/i] 播放结束",
+      "description": "CSS动画播放结束时触发。",
+      "params": {
+        "animation-name": {
+          "type": "string",
+          "name": "动画名称",
+          "desc": "CSS动画的名称，不区分大小写。"
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-content",
+      "scriptName": "SetContent",
+      "category": "html-content",
+      "list-name": "设置内容",
+      "display-text": "设置 [b]{0}[/b] 内容为 [i]{1}[/i] (选择器: [i]{2}[/i], 类型: [i]{3}[/i])",
+      "description": "将该元素的内容解析为HTML、或BBCode、纯文本的字符串。注意: 在HTML中将转义为用户提供的值。",
+      "params": {
+        "content-type": {
+          "type": "combo",
+          "name": "内容类型",
+          "desc": "使用哪种方式解析内容。",
+          "items": {
+            "html": "HTML",
+            "bbcode": "富文本",
+            "plain-text": "纯文本"
+          }
+        },
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "将该元素的内容解析为特定的字符串。注意: 在HTML中将转义为用户提供的值。"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "影响子元素的CSS选择器的匹配规则。 匹配单次或是匹配所有元素。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "insert-content",
+      "scriptName": "InsertContent",
+      "category": "html-content",
+      "list-name": "插入内容",
+      "display-text": "在[i]{2}[/i]插入[b]{0}[/b]内容 [i]{1}[/i] (选择器: [i]{3}[/i], 类型: [i]{4}[/i])",
+      "description": "插入HTML、BBcode 或纯文本字符串。注意: 在 HTML 中将转义用户提供的值。",
+      "params": {
+        "content-type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "使用哪种方式解析内容。",
+          "items": {
+            "html": "HTML",
+            "bbcode": "富文本",
+            "plain-text": "纯文本"
+          }
+        },
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "将该元素的内容解析为特定的字符串。注意：在HTML中将转义为用户提供的值。"
+        },
+        "position": {
+          "type": "combo",
+          "name": "定位",
+          "desc": "在元素的顶部或底部位置插入内容。",
+          "items": {
+            "start": "顶部",
+            "end": "底部"
+          },
+          "initialValue": "end"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "可选，用于子元素的CSS选择器。留空以向主体HTML元素插入内容。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "remove-content",
+      "scriptName": "RemoveContent",
+      "category": "html-content",
+      "list-name": "移除内容",
+      "display-text": "{0}内容, 选择器: [i]{1}[/i], ([i]{2}[/i])",
+      "description": "移除或清空匹配的CSS选择器的元素。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择移除匹配的元素，或是全部清空内容。",
+          "items": {
+            "remove": "移除",
+            "clear": "清空"
+          }
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "用于匹配的CSS选择器。留空以清除主体HTML元素。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-content-class",
+      "scriptName": "SetContentClass",
+      "category": "html-content",
+      "list-name": "设置Class元素",
+      "display-text": "{0} class [i]{1}[/i] 到 [i]{2}[/i] ([i]{3}[/i])",
+      "description": "为匹配的CSS选择器的元素添加、切换或删除类。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "是否添加、切换或删除类。",
+          "items": {
+            "add": "添加",
+            "toggle": "反转",
+            "remove": "移除"
+          }
+        },
+        "class": {
+          "type": "string",
+          "name": "Class",
+          "desc": "要更改的元素类名。 使用空格分隔的多个类。"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "用于匹配元素的 CSS 选择器。 留空以使用主体HTML元素。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-content-attribute",
+      "scriptName": "SetContentAttribute",
+      "category": "html-content",
+      "list-name": "设置特性",
+      "display-text": "{0}属性 [b]{1}[/b] 为 [i]{2}[/i], 选择器: [i]{3}[/i] ([i]{4}[/i])",
+      "description": "设置或删除与 CSS 选择器匹配的元素的属性。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "设置或删除属性。",
+          "items": {
+            "set": "设置",
+            "remove": "移除"
+          }
+        },
+        "attribute": {
+          "type": "string",
+          "name": "特性",
+          "desc": "要更改的属性。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "设置新属性的值（如果是删除属性则忽略）"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "用于匹配元素的CSS选择器。 留空以使用主体HTML元素。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-content-css-style",
+      "scriptName": "SetContentCSSStyle",
+      "category": "html-content",
+      "list-name": "设置CSS样式",
+      "display-text": "设置CSS样式 [b]{0}[/b]: [i]{1}[/i] (选择器: [i]{2}[/i], 范围: [i]{3}[/i])",
+      "description": "为匹配CSS选择器的元素设置CSS样式。",
+      "params": {
+        "property-name": {
+          "type": "string",
+          "name": "属性名称",
+          "desc": "填写CSS样式属性名称。"
+        },
+        "value": {
+          "type": "string",
+          "name": "值",
+          "desc": "要指定为此CSS属性的值的字符串。"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "一个CSS选择器，用于匹配元素。留空则使用主体HTML元素。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "范围",
+          "desc": "可选。子元素的CSS选择器。 留空以设置整个元素的内容。",
+          "items": {
+            "one": "单次",
+            "all": "全选"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "position-object-at-element",
+      "scriptName": "PositionObjectAtElement",
+      "category": "html-content",
+      "list-name": "将对象定位到元素",
+      "display-text": "定位 {0} 到 [i]{1}[/i]",
+      "description": "设置对象大小和位置以匹配HTML元素。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要移动和调整大小的对象"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "CSS 选择器，用于标识要将对象定位到的HTML元素。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "create-sprite-img-element",
+      "scriptName": "CreateSpriteImgElement",
+      "category": "html-content",
+      "list-name": "在元素位置创建图片",
+      "display-text": "创建 {0} 图片元素到 [i]{1}[/i],  位置: [i]{2}[/i], ID [i]{3}[/i], class [i]{4}[/i]",
+      "description": "使用对象的图像创建一个 <img> 元素并将其插入到HTML元素。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "使用图像的对象。"
+        },
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "CSS 选择器，用于标识父元素的位置，图像元素将会被插入到这个地方。留空则使用父级的 HTML 元素。"
+        },
+        "insert": {
+          "type": "combo",
+          "name": "插入到",
+          "desc": "选择在标签的开头、结尾位置插入元素，也可以整个替换元素的内容。",
+          "items": {
+            "at-start": "顶部",
+            "at-end": "底部",
+            "replace-content": "替换内容"
+          }
+        },
+        "id": {
+          "type": "string",
+          "name": "ID",
+          "desc": "可选项，为新创建的图像元素设置 ID。"
+        },
+        "class": {
+          "type": "string",
+          "name": "Class",
+          "desc": "(可选) 为新创建的图像元素设置 class。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-scroll-position",
+      "scriptName": "SetScrollPosition",
+      "category": "html-content",
+      "list-name": "设置滚动位置",
+      "display-text": "设置 [i]{0}[/i] 元素 {1} 滚动到 [i]{2}[/i]",
+      "description": "设置元素的滚动位置。",
+      "params": {
+        "selector": {
+          "type": "string",
+          "name": "选择器",
+          "desc": "标识要滚动的元素的 CSS 选择器。留空则使用主HTML 元素。"
+        },
+        "direction": {
+          "type": "combo",
+          "name": "方向",
+          "desc": "将滚动设置为左侧或顶部的位置。",
+          "items": {
+            "left": "左右",
+            "top": "上下"
+          },
+          "initialValue": "top"
+        },
+        "position": {
+          "type": "number",
+          "name": "位置",
+          "desc": "设置滚动到的位置，以CSS像素为单位。"
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "html-content",
+      "scriptName": "HTMLContent",
+      "category": "html-content",
+      "translated-name": "HTML内容",
+      "description": "包含HTML元素内容的字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "text-content",
+      "scriptName": "TextContent",
+      "category": "html-content",
+      "translated-name": "文本内容",
+      "description": "包含HTML元素的纯文本内容的字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "target-id",
+      "scriptName": "TargetID",
+      "category": "html-content",
+      "translated-name": "目标ID",
+      "description": "在触发器中，目标元素的ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "target-class",
+      "scriptName": "TargetClass",
+      "category": "html-content",
+      "translated-name": "目标Class",
+      "description": "在触发器中，目标元素的类。",
+      "returnType": "string"
+    },
+    {
+      "id": "escape-html",
+      "scriptName": "EscapeHTML",
+      "category": "html-content",
+      "translated-name": "转义HTML",
+      "description": "将HTML的标签字符(如 < ) 转换为实体(如 &lt; )， 所以文本不能改变HTML。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要转义的HTML字符串"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "tag": {
+      "name": "标签",
+      "desc": "此HTML元素的标签名称。"
+    },
+    "content": {
+      "name": "内容",
+      "desc": "此HTML元素的初始内容。"
+    },
+    "content-type": {
+      "name": "内容类型",
+      "desc": "使用哪种方式解析内容。",
+      "items": {
+        "html": "HTML",
+        "bbcode": "富文本",
+        "plain-text": "纯文本"
+      }
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "选择在场景开始时元素默认可见。"
+    },
+    "id": {
+      "name": "ID",
+      "desc": "可选项，添加 ID 元素来设置样式。"
+    },
+    "class": {
+      "name": "Class",
+      "desc": "可选项，添加 Class 元素来设置样式。"
+    },
+    "allow-context-menu": {
+      "name": "允许右键菜单",
+      "desc": "是否允许在此元素显示浏览器默认的上下文菜单。"
+    },
+    "stop-input-events": {
+      "name": "阻止输入事件",
+      "desc": "停止该元素上的输入事件，避免影响到项目的其他部分。",
+      "items": {
+        "no": "关闭",
+        "child-elements": "仅子级元素",
+        "entire-element": "整个元素"
+      }
+    },
+    "styling": {
+      "name": "基本样式",
+      "desc": "影响此元素的样式属性。"
+    },
+    "set-color": {
+      "name": "设置颜色",
+      "desc": "设置元素 color 样式"
+    },
+    "default-color": {
+      "name": "默认颜色",
+      "desc": "初始的 color 样式。"
+    },
+    "set-background-color": {
+      "name": "设置背景颜色",
+      "desc": "设置元素 background-color 样式"
+    },
+    "default-background-color": {
+      "name": "默认背景颜色",
+      "desc": "初始的 background-color 样式。"
+    },
+    "auto-font-size": {
+      "name": "自动缩放字体",
+      "desc": "根据图层比例自动设置字体大小。"
+    },
+    "allow-text-selection": {
+      "name": "允许选中文字",
+      "desc": "允许用户选择此元素的文本。"
+    },
+    "style-attribute": {
+      "name": "属性",
+      "desc": "在此元素附加初始的属性。"
+    },
+    "origin": {
+      "name": "原点",
+      "desc": "选择对象的原点位置。",
+      "items": {
+        "top-left": "左上",
+        "top": "顶部",
+        "top-right": "右上",
+        "left": "左",
+        "center": "中心",
+        "right": "右",
+        "bottom-left": "左下",
+        "bottom": "底部",
+        "bottom-right": "右下"
+      }
+    }
+  }
+}

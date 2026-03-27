@@ -1,0 +1,36 @@
+{
+  "id": "level-editor-template",
+  "name": "HUD: 关卡编辑器",
+  "description": "基于瓦片图的关卡编辑器，允许进行创建，编辑，保存和加载。",
+  "tags": [
+    "高级",
+    "移动端",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "TiledBg",
+      "Keyboard",
+      "Button",
+      "List",
+      "Mouse",
+      "LocalStorage",
+      "Text",
+      "Sprite",
+      "NinePatch",
+      "Touch",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "Fade",
+      "wrap",
+      "Bullet",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=level-editor-template"
+}

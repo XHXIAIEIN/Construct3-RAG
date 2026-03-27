@@ -1,0 +1,23 @@
+{
+  "id": "simple-snake-game",
+  "name": "Simple snake",
+  "description": "A minimal snake game using simpler logic and the Follow behavior for snake body segments.",
+  "tags": [
+    "Beginner",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Flash",
+      "Follow"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-snake-game"
+}

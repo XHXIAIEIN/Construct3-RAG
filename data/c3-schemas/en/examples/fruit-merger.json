@@ -1,0 +1,30 @@
+{
+  "id": "fruit-merger",
+  "name": "Fruit merger",
+  "description": "Combine smaller fruits into bigger ones, but without filling the entire screen.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fruit-merger"
+}

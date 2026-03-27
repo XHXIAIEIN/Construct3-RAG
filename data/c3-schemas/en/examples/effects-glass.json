@@ -1,0 +1,22 @@
+{
+  "id": "effects-glass",
+  "name": "Effects: Glass",
+  "description": "A simple demo of effects using a glass effect on a sprite.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": [
+      "glass"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-glass"
+}

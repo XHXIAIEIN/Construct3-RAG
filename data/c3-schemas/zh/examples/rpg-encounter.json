@@ -1,0 +1,31 @@
+{
+  "id": "rpg-encounter",
+  "name": "游戏示例: RPG遭遇战",
+  "description": "实现回合制的RPG风格游戏，扮演勇敢的冒险者，与未知土地上的强大怪物战斗，并完成一项重要任务。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "TileMovement",
+      "Tween",
+      "bound",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rpg-encounter"
+}

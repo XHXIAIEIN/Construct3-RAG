@@ -1,0 +1,33 @@
+{
+  "id": "rally-drifting",
+  "name": "3D模拟: 卡丁车",
+  "description": "经典游戏《卡丁车》玩法机制。以第一人称视角驾驶赛车，在雾气弥漫的树林中漂移，争取在更快的时间内完成赛道。使用 JavaScript 代码完成。",
+  "tags": [
+    "进阶",
+    "3D",
+    "纹理变形",
+    "游戏模板",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "shadowlight"
+    ],
+    "behaviors": [
+      "Car",
+      "Fade",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rally-drifting"
+}

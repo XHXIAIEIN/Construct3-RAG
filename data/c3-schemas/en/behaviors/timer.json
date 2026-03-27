@@ -1,0 +1,214 @@
+{
+  "id": "timer",
+  "name": "Timer",
+  "description": "Manage multiple timers which work per instance.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "on-timer",
+      "scriptName": "OnTimer",
+      "category": "",
+      "list-name": "On timer",
+      "display-text": "On {my} [i]{0}[/i]",
+      "description": "Triggered when a timer has elapsed.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter the name of the timer."
+        }
+      }
+    },
+    {
+      "id": "is-timer-running",
+      "scriptName": "IsTimerRunning",
+      "category": "",
+      "list-name": "Is timer running",
+      "display-text": "Is {my} [i]{0}[/i] running",
+      "description": "True if a timer with the given tag is currently running.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter the name of the timer."
+        }
+      }
+    },
+    {
+      "id": "is-timer-paused",
+      "scriptName": "IsTimerPaused",
+      "category": "",
+      "list-name": "Is timer paused",
+      "display-text": "Is {my} [i]{0}[/i] paused",
+      "description": "True if a timer with the given tag is currently paused.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter the name of the timer."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "start-timer",
+      "scriptName": "StartTimer",
+      "category": "",
+      "list-name": "Start timer",
+      "display-text": "Start {my} [i]{2}[/i] for [b]{0}[/b] ({1})",
+      "description": "Start a one-off or regular timer.",
+      "params": {
+        "duration": {
+          "type": "number",
+          "name": "Duration",
+          "desc": "Enter the time in seconds after which to trigger 'On timer'."
+        },
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "Whether to run this timer once only, or regularly until cancelled.",
+          "items": {
+            "once": "Once",
+            "regular": "Regular"
+          }
+        },
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter a name to identify this timer."
+        }
+      }
+    },
+    {
+      "id": "stop-timer",
+      "scriptName": "StopTimer",
+      "category": "",
+      "list-name": "Stop timer",
+      "display-text": "Stop {my} [i]{0}[/i]",
+      "description": "Stop a timer.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter the name of the timer to stop."
+        }
+      }
+    },
+    {
+      "id": "stop-all-timers",
+      "scriptName": "StopAllTimers",
+      "category": "",
+      "list-name": "Stop all timers",
+      "display-text": "Stop all {my} timers",
+      "description": "Stop all timers."
+    },
+    {
+      "id": "pause-resume-timer",
+      "scriptName": "PauseResumeTimer",
+      "category": "",
+      "list-name": "Pause/resume timer",
+      "display-text": "Set {my} timer [b]{0}[/b] {1}",
+      "description": "Pause or resume a currently running timer.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Enter a name to identify the timer."
+        },
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Whether to pause or resume this timer.",
+          "items": {
+            "paused": "Paused",
+            "resumed": "Resumed"
+          }
+        }
+      }
+    },
+    {
+      "id": "pause-resume-all-timers",
+      "scriptName": "PauseResumeAllTimers",
+      "category": "",
+      "list-name": "Pause/resume all timers",
+      "display-text": "Set all {my} timers [b]{0}[/b]",
+      "description": "Pause or resume all currently running timers.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Whether to pause or resume timers.",
+          "items": {
+            "paused": "Paused",
+            "resumed": "Resumed"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "currenttime",
+      "scriptName": "CurrentTime",
+      "category": "",
+      "translated-name": "CurrentTime",
+      "description": "Seconds since last 'On timer' event.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Timer name"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "normalized-progress",
+      "scriptName": "NormalizedProgress",
+      "category": "",
+      "translated-name": "NormalizedProgress",
+      "description": "The progress of a given timer on a scale of 0 to 1.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Timer name"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "totaltime",
+      "scriptName": "TotalTime",
+      "category": "",
+      "translated-name": "TotalTime",
+      "description": "Seconds since timer was started.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Timer name"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "duration",
+      "scriptName": "Duration",
+      "category": "",
+      "translated-name": "Duration",
+      "description": "Duration in seconds of a timer that is running.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Timer name"
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

@@ -1,0 +1,33 @@
+{
+  "id": "complex-terrain",
+  "name": "Complex terrain",
+  "description": "Walk through a 3D procedurally-generated terrain.",
+  "tags": [
+    "Advanced",
+    "3D",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Fade",
+      "LOS",
+      "Sin",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=complex-terrain"
+}

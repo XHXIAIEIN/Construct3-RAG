@@ -1,0 +1,32 @@
+{
+  "id": "shockwave-spell",
+  "name": "关卡设计፡ 冲击波",
+  "description": "使用魔法咒语发出冲击波的角色示例。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "solid",
+      "Tween",
+      "LOS",
+      "destroy",
+      "scrollto",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shockwave-spell"
+}

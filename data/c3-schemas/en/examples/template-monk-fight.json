@@ -1,0 +1,31 @@
+{
+  "id": "template-monk-fight",
+  "name": "Monk fight",
+  "description": "A beat-em-up style game template. Press D to kick and defeat all the enemies in each area!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Fighting"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Particles"
+    ],
+    "behaviors": [
+      "Pin",
+      "Fade",
+      "EightDir",
+      "bound",
+      "solid",
+      "Flash",
+      "Timer"
+    ],
+    "effects": [
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-monk-fight"
+}

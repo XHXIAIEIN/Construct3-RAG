@@ -1,0 +1,24 @@
+{
+  "id": "simple-synth",
+  "name": "脚本项目：音乐合成器",
+  "description": "使用键盘、鼠标或触屏弹奏音乐，使用 JavaScript 中的 Web Audio API 产生声音。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-synth"
+}

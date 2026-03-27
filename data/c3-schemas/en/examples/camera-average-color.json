@@ -1,0 +1,15 @@
+{
+  "id": "camera-average-color",
+  "name": "Camera average color",
+  "description": "Using code to retrieve a video feed from the camera, get the video pixel data, and then calculate the average RGB value.",
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=camera-average-color"
+}

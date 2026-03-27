@@ -1,0 +1,23 @@
+{
+  "id": "collision-methods",
+  "name": "Collision methods",
+  "description": "Some re-usable sample collision handling methods, involving moving an object until it no longer overlaps something else.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=collision-methods"
+}

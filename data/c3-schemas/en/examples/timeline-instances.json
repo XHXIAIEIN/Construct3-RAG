@@ -1,0 +1,25 @@
+{
+  "id": "timeline-instances",
+  "name": "Timeline instances",
+  "description": "Demonstrates playing a timeline with different instances using the 'Set instance' action.",
+  "tags": [
+    "Intermediate",
+    "animation-recommended",
+    "Feature example",
+    "Animation",
+    "Mobile",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Timeline",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-instances"
+}

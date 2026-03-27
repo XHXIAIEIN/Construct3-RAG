@@ -1,0 +1,24 @@
+{
+  "id": "bouncing-bullets",
+  "name": "Bouncing bullets",
+  "description": "Shows how bullets can bounce off solids, creating a ricochet effect.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Bullet",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bouncing-bullets"
+}

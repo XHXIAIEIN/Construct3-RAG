@@ -1,0 +1,24 @@
+{
+  "id": "mesh-z-elevation",
+  "name": "Mesh Z elevation",
+  "description": "Demonstrates how Z elevation can be applied to individual mesh points to create an animated 3D mesh effect.",
+  "tags": [
+    "Advanced",
+    "3D",
+    "Mesh distortion",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "scrollto",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-z-elevation"
+}

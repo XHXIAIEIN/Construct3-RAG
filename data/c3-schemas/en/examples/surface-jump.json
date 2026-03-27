@@ -1,0 +1,35 @@
+{
+  "id": "surface-jump",
+  "name": "Surface jump",
+  "description": "A platformer-style game where the user must click or touch where the player jumps to, while avoiding obstacles.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "Mouse",
+      "TiledBg",
+      "Touch",
+      "PlatformInfo",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "scrollto",
+      "Tween",
+      "LOS",
+      "Pin",
+      "Sin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=surface-jump"
+}

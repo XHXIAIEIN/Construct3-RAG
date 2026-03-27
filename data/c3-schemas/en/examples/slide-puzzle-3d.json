@@ -1,0 +1,34 @@
+{
+  "id": "slide-puzzle-3d",
+  "name": "Slide puzzle 3D",
+  "description": "A puzzle where you must move one piece at a time to rebuild the complete picture, in a 3D environment.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "3D",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Mouse",
+      "Sprite",
+      "AdvancedRandom",
+      "Arr",
+      "Touch",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust",
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=slide-puzzle-3d"
+}

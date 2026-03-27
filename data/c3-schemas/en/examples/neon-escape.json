@@ -1,0 +1,31 @@
+{
+  "id": "neon-escape",
+  "name": "Neon Escape",
+  "description": "Escape the merciless streets of Cyber City by climbing buildings using neon blocks, unlocking doors, and dodging security drones.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Platform",
+      "Sin",
+      "Tween",
+      "bound",
+      "solid"
+    ],
+    "effects": [
+      "brightness"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=neon-escape"
+}

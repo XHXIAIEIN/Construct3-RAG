@@ -1,0 +1,25 @@
+{
+  "id": "shadows-soft-penumbras",
+  "name": "Shadows: Soft penumbras",
+  "description": "Use a light radius on a shadow light to cast soft-edged shadows.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-soft-penumbras"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "pick-nearest",
+  "name": "功能示例：选取最近的",
+  "description": "演示 '选取最近的' 条件，突出显示距离鼠标最近的对象。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pick-nearest"
+}

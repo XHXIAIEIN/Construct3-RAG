@@ -1,0 +1,17 @@
+{
+  "id": "iterating-instances",
+  "name": "Iterating instances",
+  "description": "An example of using a for-of loop to iterate instances in code.",
+  "tags": [
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=iterating-instances"
+}

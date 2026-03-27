@@ -1,0 +1,29 @@
+{
+  "id": "template-gravityless-labyrinth",
+  "name": "游戏示例: 反重力迷宫",
+  "description": "通过一直沿固定方向移动，收集物品并避开陷阱来解决迷宫。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "solid",
+      "Tween",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-gravityless-labyrinth"
+}

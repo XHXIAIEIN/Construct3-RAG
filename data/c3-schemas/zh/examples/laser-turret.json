@@ -1,0 +1,33 @@
+{
+  "id": "laser-turret",
+  "name": "关卡设计：激光镭射",
+  "description": "自上而下的游戏机制，玩家必须在关卡中躲避激光。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "TiledBg",
+      "Particles",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "solid",
+      "Sin",
+      "Rotate",
+      "LOS",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=laser-turret"
+}

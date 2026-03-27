@@ -1,0 +1,26 @@
+{
+  "id": "template-quiz",
+  "name": "数据：问卷测试",
+  "description": "简易的问卷测试题模板。演示如何加载项目文件，并将字典数据在游戏中显示。",
+  "tags": [
+    "进阶",
+    "基础示例",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Touch",
+      "Sprite",
+      "Function",
+      "Dictionary",
+      "AJAX"
+    ],
+    "behaviors": [
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-quiz"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "auto-maze",
+  "name": "3D迷宫: 自动版",
+  "description": "以经典屏幕保护程序的形式，展示了一个自动探索由程序生成的三维迷宫。",
+  "tags": [
+    "高级",
+    "动画",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=auto-maze"
+}

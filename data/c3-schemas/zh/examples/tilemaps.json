@@ -1,0 +1,18 @@
+{
+  "id": "tilemaps",
+  "name": "功能示例：瓦片图",
+  "description": "使用瓦片图对象设计出基于图块的游戏。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Tilemap"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tilemaps"
+}

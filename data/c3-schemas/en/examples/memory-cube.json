@@ -1,0 +1,32 @@
+{
+  "id": "memory-cube",
+  "name": "Memory cube",
+  "description": "Use your memory to keep track of the computer's moves and replicate them for as long as you can.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=memory-cube"
+}

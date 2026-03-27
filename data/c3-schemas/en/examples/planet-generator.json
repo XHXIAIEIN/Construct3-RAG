@@ -1,0 +1,32 @@
+{
+  "id": "planet-generator",
+  "name": "Planet Generator",
+  "description": "Craft your planet by selecting a terrain type, colors, and atmosphere characteristics. When you are done, hide the interface to view your planet in deep space.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "DrawingCanvas",
+      "HTMLElement",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "screen",
+      "sphere",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=planet-generator"
+}

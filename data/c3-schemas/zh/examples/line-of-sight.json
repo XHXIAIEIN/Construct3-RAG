@@ -1,0 +1,24 @@
+{
+  "id": "line-of-sight",
+  "name": "功能示例：视线",
+  "description": "演示 '视线行为'(LOS) 功能，检测对象是否可以发现目标。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=line-of-sight"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "ice-beam",
+  "name": "Ice beam",
+  "description": "A platform game where you can freeze your enemies with an ice beam and then jump on them.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Bullet",
+      "Tween",
+      "destroy",
+      "EightDir",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ice-beam"
+}

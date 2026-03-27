@@ -1,0 +1,43 @@
+{
+  "id": "bumble-beep",
+  "name": "时间轴：蜜蜂机器人",
+  "description": "运用时间轴和对象层级功能，设计一场强大的 Boss 战斗。击败强大的 '嗡嗡哔哔' 机器人，它来自外星世界的安全执法者 。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "街机",
+    "对象层级",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "MoveTo",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=bumble-beep"
+}

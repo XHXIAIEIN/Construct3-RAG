@@ -1,0 +1,23 @@
+{
+  "id": "shadows-colors",
+  "name": "Shadows: Colors",
+  "description": "Using three lights with opacity and different shadow colors to create a multiple light effect.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-colors"
+}

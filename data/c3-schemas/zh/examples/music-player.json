@@ -1,0 +1,28 @@
+{
+  "id": "music-player",
+  "name": "HUD: 音乐播放器",
+  "description": "带基本功能的风格化音乐播放器，有暂停、停止、切歌、快进、添加/移除播放列表和可视化音乐频率。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Audio",
+      "BinaryData",
+      "FileSystem",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=music-player"
+}

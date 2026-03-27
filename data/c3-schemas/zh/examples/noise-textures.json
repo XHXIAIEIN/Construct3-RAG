@@ -1,0 +1,20 @@
+{
+  "id": "noise-textures",
+  "name": "功能示例：噪声",
+  "description": "演示如何使用绘图画布插件来显示使用高级随机插件随机生成的图像",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Text",
+      "List",
+      "AdvancedRandom"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=noise-textures"
+}

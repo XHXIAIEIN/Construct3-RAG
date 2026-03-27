@@ -1,0 +1,26 @@
+{
+  "id": "bullet-stepping",
+  "name": "Bullet stepping",
+  "description": "Shows how to improve collision accuracy with fast-moving bullets using the stepping feature.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Button",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "bound",
+      "EightDir",
+      "destroy",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bullet-stepping"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "retractable-bridge",
+  "name": "Retractable bridge",
+  "description": "A platformer where special locations trigger building bridge the player can run along.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Particles"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "bulge",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=retractable-bridge"
+}

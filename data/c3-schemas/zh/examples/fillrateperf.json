@@ -1,0 +1,21 @@
+{
+  "id": "fillrateperf",
+  "name": "性能演示：填充率性能",
+  "description": "极限性能测试：测量GPU填充率。渲染大量的图像较大的对象。",
+  "tags": [
+    "高级",
+    "技术演示",
+    "性能测试"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fillrateperf"
+}

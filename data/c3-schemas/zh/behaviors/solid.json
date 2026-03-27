@@ -1,0 +1,69 @@
+{
+  "id": "solid",
+  "name": "实体",
+  "description": "使对象不能被其他对象穿透，其他对象在撞击刚体对象时无法移动或者跌落。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "测试行为当前是否启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "设置对象启用或禁用实体行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用实体行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          },
+          "initialValue": "enabled"
+        }
+      }
+    },
+    {
+      "id": "set-tags",
+      "scriptName": "SetTags",
+      "category": "",
+      "list-name": "设置实体标签",
+      "display-text": "设置 {my}实体标签为[i]{0}[/i]",
+      "description": "设置用于碰撞过滤的实体行为标签。",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      }
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    },
+    "tags": {
+      "name": "标签",
+      "desc": "用于区分不同实体的字符串，使用空格分隔多个标签。"
+    },
+    "use-instance-tags": {
+      "name": "使用实例标签",
+      "desc": "处理碰撞过滤时，使用实例标签而不是实体行为的标签。"
+    }
+  }
+}

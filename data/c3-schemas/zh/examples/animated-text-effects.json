@@ -1,0 +1,18 @@
+{
+  "id": "animated-text-effects",
+  "name": "富文本：文本动画",
+  "description": "在事件表中动态编辑 BBCode，创建各种文字动画效果。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-text-effects"
+}

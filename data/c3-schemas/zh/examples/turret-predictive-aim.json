@@ -1,0 +1,24 @@
+{
+  "id": "turret-predictive-aim",
+  "name": "功能示例：炮台预测目标",
+  "description": "使用炮塔行为的预测目标特征可以更准确地瞄准移动目标",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Turret",
+      "EightDir",
+      "Flash",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=turret-predictive-aim"
+}

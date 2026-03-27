@@ -1,0 +1,25 @@
+{
+  "id": "template-physics-catapult",
+  "name": "基础示例：物理弹射",
+  "description": "基于物理的弹射游戏模板，支持移动端操作。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Text",
+      "Touch",
+      "Button"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-physics-catapult"
+}

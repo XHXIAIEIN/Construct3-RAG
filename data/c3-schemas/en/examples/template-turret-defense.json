@@ -1,0 +1,30 @@
+{
+  "id": "template-turret-defense",
+  "name": "Turret defense",
+  "description": "A template with a basic turret defense game setup prepared, using placeholder graphics.",
+  "tags": [
+    "games-recommended",
+    "Beginner",
+    "Barebones template",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "TiledBg",
+      "Particles",
+      "Text"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Flash",
+      "solid",
+      "Turret",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-turret-defense"
+}

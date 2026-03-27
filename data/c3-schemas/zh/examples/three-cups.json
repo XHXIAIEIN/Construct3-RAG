@@ -1,0 +1,29 @@
+{
+  "id": "three-cups",
+  "name": "游戏示例：三杯猜球",
+  "description": "不要眨眼！紧盯装有小球的杯子，它们会以越来越快的速度被打乱。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween",
+      "scrollto"
+    ],
+    "effects": [
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=three-cups"
+}

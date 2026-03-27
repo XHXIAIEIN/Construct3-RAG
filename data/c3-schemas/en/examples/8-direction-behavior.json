@@ -1,0 +1,24 @@
+{
+  "id": "8-direction-behavior",
+  "name": "8 direction behavior",
+  "description": "A simple example of the 8-direction movement behavior, controlled with arrow keys. The player can also shoot bullets by clicking.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=8-direction-behavior"
+}

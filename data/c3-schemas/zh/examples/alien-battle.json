@@ -1,0 +1,41 @@
+{
+  "id": "alien-battle",
+  "name": "时间轴：异形入侵",
+  "description": "用时间轴功能，设计 Boss 战斗的攻击动作。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作",
+    "动画",
+    "平台",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Timeline",
+      "Particles",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Platform",
+      "solid",
+      "Sin",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "destroy",
+      "Flash",
+      "Rotate",
+      "Fade",
+      "Pin"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=alien-battle"
+}

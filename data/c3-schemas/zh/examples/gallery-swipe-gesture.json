@@ -1,0 +1,21 @@
+{
+  "id": "gallery-swipe-gesture",
+  "name": "触控：相册滑动手势",
+  "description": "如何检测左右滑动手势，切换上一张/下一张图片。",
+  "tags": [
+    "进阶",
+    "基础示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gallery-swipe-gesture"
+}

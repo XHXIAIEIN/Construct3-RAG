@@ -1,0 +1,33 @@
+{
+  "id": "template-challenge-room",
+  "name": "3D挑战室",
+  "description": "经典游戏《Disc Room》游戏机制，3D小房间的四周不断出现障碍陷阱，躲开它们并收集尽可能多的工具箱。",
+  "tags": [
+    "games-recommended",
+    "进阶",
+    "游戏模板",
+    "动作",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Camera3D",
+      "Keyboard",
+      "Sprite",
+      "Tilemap",
+      "gamepad",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Flash",
+      "EightDir",
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-challenge-room"
+}

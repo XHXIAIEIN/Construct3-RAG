@@ -1,0 +1,31 @@
+{
+  "id": "chess-checkmate",
+  "name": "游戏示例: 象棋残局",
+  "description": "通过流程图实现游戏逻辑，破解经典的国际象棋残局。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "流程图"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Flowchart",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=chess-checkmate"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "physics-revolute-joint",
+  "name": "Physics: Revolute joint",
+  "description": "Hinge together two Physics objects with a revolute joint.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-revolute-joint"
+}

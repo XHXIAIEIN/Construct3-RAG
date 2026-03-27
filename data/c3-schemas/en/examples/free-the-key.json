@@ -1,0 +1,25 @@
+{
+  "id": "free-the-key",
+  "name": "Free the Key",
+  "description": "You found the treasure in the ruins, but to get it, you must unlock its case by solving a sliding puzzle to insert the key into the keyhole.",
+  "tags": [
+    "Advanced",
+    "Mobile",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=free-the-key"
+}

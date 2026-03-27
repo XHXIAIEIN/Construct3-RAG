@@ -1,0 +1,28 @@
+{
+  "id": "dock-fishing",
+  "name": "Dock fishing",
+  "description": "Challenge a friend to see who can catch the most fish, while avoiding the lurking sharks.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "waterbg"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dock-fishing"
+}

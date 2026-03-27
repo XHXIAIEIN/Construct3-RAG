@@ -1,0 +1,23 @@
+{
+  "id": "camera-effects",
+  "name": "Camera effects",
+  "description": "A demo of applying effects to the camera input from the User Media object.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "Text",
+      "UserMedia"
+    ],
+    "behaviors": [],
+    "effects": [
+      "stretch"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=camera-effects"
+}

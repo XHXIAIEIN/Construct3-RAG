@@ -1,0 +1,34 @@
+{
+  "id": "hidden-objects",
+  "name": "Hidden objects",
+  "description": "Scroll through a monochromatic world and click or tap to find all the hidden objects in it.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Touch",
+      "Sprite",
+      "NinePatch",
+      "DrawingCanvas",
+      "TiledBg",
+      "Tilemap",
+      "Mouse",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hidden-objects"
+}

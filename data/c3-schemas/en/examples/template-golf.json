@@ -1,0 +1,29 @@
+{
+  "id": "template-golf",
+  "name": "Golf",
+  "description": "Use mouse or touch input to try to hit the ball to the end of the course.",
+  "tags": [
+    "Beginner",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "TiledBg",
+      "Particles",
+      "Touch",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Physics",
+      "Bullet",
+      "destroy",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-golf"
+}

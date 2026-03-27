@@ -1,0 +1,19 @@
+{
+  "id": "xml",
+  "name": "数据：XML",
+  "description": "演示从 XML 类型文档中获取数据。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "XML",
+      "Text",
+      "AJAX"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=xml"
+}

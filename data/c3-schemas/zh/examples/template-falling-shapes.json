@@ -1,0 +1,26 @@
+{
+  "id": "template-falling-shapes",
+  "name": "基础示例: 俄罗斯方块",
+  "description": "经典游戏《俄罗斯方块》游戏机制。将不同形状的方块摆放在不同的位置，并尝试组成完整的线条。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Timer",
+      "Flash",
+      "solid",
+      "destroy",
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-falling-shapes"
+}

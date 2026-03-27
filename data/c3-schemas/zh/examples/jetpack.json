@@ -1,0 +1,32 @@
+{
+  "id": "jetpack",
+  "name": "关卡设计: 喷气背包",
+  "description": "带有燃料动力的喷气背包，可以带你一飞冲天。适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "NinePatch",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Timer",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=jetpack"
+}

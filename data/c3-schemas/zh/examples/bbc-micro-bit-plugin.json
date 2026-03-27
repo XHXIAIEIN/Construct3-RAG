@@ -1,0 +1,27 @@
+{
+  "id": "bbc-micro-bit-plugin",
+  "name": "外设: BBC micro:bit 插件",
+  "description": "通过蓝牙获取和更新 BBC micro:bit 设备，对主板读数和更新LED显示屏的演示。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "技术演示",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BBCMicroBit",
+      "Button",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-plugin"
+}

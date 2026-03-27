@@ -1,0 +1,33 @@
+{
+  "id": "template-4-direction-bomb",
+  "name": "游戏示例：炸弹人",
+  "description": "基于瓦片图的炸弹人游戏，移动，投掷炸弹，摧毁墙壁和敌人。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "Flash",
+      "Timer",
+      "Tween",
+      "Fade"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-4-direction-bomb"
+}

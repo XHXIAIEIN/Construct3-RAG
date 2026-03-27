@@ -1,0 +1,27 @@
+{
+  "id": "interior-designer",
+  "name": "Interior Designer",
+  "description": "Unleash your inner architect by choosing the layout of your building and placing all the furniture to create the perfect space.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=interior-designer"
+}

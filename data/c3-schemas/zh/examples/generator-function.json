@@ -1,0 +1,17 @@
+{
+  "id": "generator-function",
+  "name": "脚本基础：生成器函数",
+  "description": "使用生成器函数迭代特定的实例对象。",
+  "tags": [
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=generator-function"
+}

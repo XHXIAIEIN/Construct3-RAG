@@ -1,0 +1,22 @@
+{
+  "id": "level-selection",
+  "name": "Level selection",
+  "description": "Demonstrates how to have a level selection screen indicating progress, and also save the progress to storage.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Button",
+      "Sprite",
+      "Arr",
+      "LocalStorage",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=level-selection"
+}

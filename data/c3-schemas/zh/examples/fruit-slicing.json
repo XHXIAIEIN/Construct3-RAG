@@ -1,0 +1,32 @@
+{
+  "id": "fruit-slicing",
+  "name": "游戏示例: 切水果",
+  "description": "成为餐厅闪亮的焦点，潇洒地切开各种水果，但要小心：有人会在其中混入炸弹来破坏表演！",
+  "tags": [
+    "推荐",
+    "进阶",
+    "移动端",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "colorblend",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fruit-slicing"
+}

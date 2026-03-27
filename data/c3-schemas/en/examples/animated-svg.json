@@ -1,0 +1,20 @@
+{
+  "id": "animated-svg",
+  "name": "Animated SVG",
+  "description": "A demonstration of using the HTML Element plugin to display an animated SVG.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "HTMLElement"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-svg"
+}

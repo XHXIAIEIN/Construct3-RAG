@@ -1,0 +1,35 @@
+{
+  "id": "rhythm-game",
+  "name": "Rhythm game",
+  "description": "Play every single note in order to complete the song and become a famous musician.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "gamepad",
+      "Audio",
+      "Spritefont2",
+      "TiledBg",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Bullet",
+      "Rotate",
+      "destroy",
+      "Fade"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rhythm-game"
+}

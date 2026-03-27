@@ -1,0 +1,29 @@
+{
+  "id": "classic-raycaster",
+  "name": "Classic raycaster",
+  "description": "Guide yourself through a maze using a simplistic visualization method.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "LOS",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=classic-raycaster"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "microphone-input",
+  "name": "设备：麦克风输入",
+  "description": "演示接入麦克风设备，捕获音频实时输入。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "TiledBg",
+      "Touch",
+      "Sprite",
+      "UserMedia",
+      "Button",
+      "List"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=microphone-input"
+}

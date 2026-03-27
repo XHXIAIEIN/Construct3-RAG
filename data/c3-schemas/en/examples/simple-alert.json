@@ -1,0 +1,16 @@
+{
+  "id": "simple-alert",
+  "name": "Simple alert",
+  "description": "A minimal example using JavaScript to call the alert function, which displays a message.",
+  "tags": [
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-alert"
+}

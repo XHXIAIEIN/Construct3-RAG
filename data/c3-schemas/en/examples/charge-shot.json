@@ -1,0 +1,40 @@
+{
+  "id": "charge-shot",
+  "name": "Charge shot",
+  "description": "A platformer where the player can hold down a button to charge up a more powerful shot.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Tilemap",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Sin",
+      "Bullet",
+      "Tween",
+      "Fade",
+      "solid",
+      "Rotate",
+      "destroy",
+      "Flash"
+    ],
+    "effects": [
+      "hsladjust",
+      "blurhorizontal",
+      "blurvertical",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=charge-shot"
+}

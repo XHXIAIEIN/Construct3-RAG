@@ -1,0 +1,31 @@
+{
+  "id": "perseverance",
+  "name": "时间轴：滑板少年",
+  "description": "一段简短的动画，讲述了一位滑板运动员坚持不懈地学习技巧的故事。",
+  "tags": [
+    "animation-recommended",
+    "进阶",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "radialblur"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=perseverance"
+}

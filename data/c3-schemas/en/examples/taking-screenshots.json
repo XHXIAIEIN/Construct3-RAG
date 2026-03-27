@@ -1,0 +1,28 @@
+{
+  "id": "taking-screenshots",
+  "name": "Taking screenshots",
+  "description": "How to use canvas snapshots to take screenshots, and download or share them as image files.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "Clipboard",
+      "FileSystem",
+      "Share",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=taking-screenshots"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "youtube-api",
+  "name": "脚本示例：YouTube API",
+  "description": "演示在内嵌网页中使用 YouTube API 控制当前显示的视频。",
+  "tags": [
+    "移动端",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "iframe",
+      "Text",
+      "Button",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=youtube-api"
+}

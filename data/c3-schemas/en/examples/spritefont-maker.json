@@ -1,0 +1,28 @@
+{
+  "id": "spritefont-maker",
+  "name": "Sprite Font Maker",
+  "description": "This example converts a TrueType font into a Construct 3-ready Sprite Font image with the necessary properties.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Tech demo"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Browser",
+      "Button",
+      "FileSystem",
+      "HTMLElement",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spritefont-maker"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "run-n-gun-weapons",
+  "name": "关卡设计：武器切换",
+  "description": "简单游戏《合金弹头》多武器切换机制，根据不同的对手从装备库切换武器，手枪，电击枪，自动追踪炮弹。适用于横版射击游戏。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "PlatformInfo",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Timer",
+      "Pin",
+      "solid",
+      "Bullet",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Turret",
+      "Fade",
+      "Sin"
+    ],
+    "effects": [
+      "replacesolidcolor",
+      "hsladjust",
+      "posterize",
+      "replacecolor",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=run-n-gun-weapons"
+}

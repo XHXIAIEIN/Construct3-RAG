@@ -1,0 +1,34 @@
+{
+  "id": "rat-purrsuit",
+  "name": "Rat purrsuit",
+  "description": "There is a pesky rat in the neighborhood, and you, the apex hunter, must navigate different environments, avoid traps, and catch the rodent!",
+  "tags": [
+    "Demo game",
+    "Intermediate",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rat-purrsuit"
+}

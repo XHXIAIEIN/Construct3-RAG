@@ -1,0 +1,32 @@
+{
+  "id": "berry-harvester",
+  "name": "游戏示例：采集浆果",
+  "description": "在穿越障碍的同时收集浆果，确保您的收割机保持完好无损以满足每日配额。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "3D",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=berry-harvester"
+}

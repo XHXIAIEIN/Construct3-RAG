@@ -1,0 +1,18 @@
+{
+  "id": "integrating-events-with-script",
+  "name": "脚本基础：调用事件表函数",
+  "description": "演示从事件表调用脚本函数，并传回结果。",
+  "tags": [
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TextBox",
+      "Text",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=integrating-events-with-script"
+}

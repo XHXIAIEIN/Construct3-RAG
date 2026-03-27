@@ -1,0 +1,29 @@
+{
+  "id": "rotating-maze",
+  "name": "游戏示例: 旋转迷宫",
+  "description": "旋转三个不同的迷宫，利用重力和物理原理，引导小球滚入洞中。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Physics",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=rotating-maze"
+}

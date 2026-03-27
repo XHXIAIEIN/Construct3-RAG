@@ -1,0 +1,39 @@
+{
+  "id": "digiautos",
+  "name": "3D长尾蛇阵",
+  "description": "在充满未来感的锦标赛中展开激战，赛车在闪耀的竞技场内展开决斗，身后留下霓虹灯光轨迹。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "竞速",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Camera3D",
+      "Keyboard",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=digiautos"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "rocket-barrel",
+  "name": "Rocket barrel",
+  "description": "Fly on a rocket barrel through a 3D level without crashing into any walls.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2",
+      "Touch",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "EightDir",
+      "Rotate",
+      "Bullet",
+      "Sin",
+      "Fade",
+      "Flash"
+    ],
+    "effects": [
+      "pulse",
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rocket-barrel"
+}

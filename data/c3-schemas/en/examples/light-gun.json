@@ -1,0 +1,40 @@
+{
+  "id": "light-gun",
+  "name": "Light gun",
+  "description": "Walk through a haunted house filled with zombies, and find the exit before they get you.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Shooter",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "DragnDrop",
+      "Pathfinding",
+      "Rotate",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "overlay"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=light-gun"
+}

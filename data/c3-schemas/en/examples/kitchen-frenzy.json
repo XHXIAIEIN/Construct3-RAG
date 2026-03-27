@@ -1,0 +1,27 @@
+{
+  "id": "kitchen-frenzy",
+  "name": "Kitchen frenzy",
+  "description": "Your restaurant has never seen so many customers! Do your best to serve everyone in time.",
+  "tags": [
+    "Game template",
+    "Intermediate",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjustmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kitchen-frenzy"
+}

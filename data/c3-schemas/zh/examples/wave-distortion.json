@@ -1,0 +1,33 @@
+{
+  "id": "wave-distortion",
+  "name": "游戏示例：旗帜扭曲",
+  "description": "演示如何使用纹理变形功能，通过扭曲对象的纹理形状来实现动态呼吸效果。如火焰、布料、旗帜的飘动。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "冒险",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "TiledBg",
+      "PlatformInfo",
+      "Spritefont2",
+      "gamepad",
+      "Keyboard",
+      "DrawingCanvas"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "EightDir",
+      "Bullet",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wave-distortion"
+}

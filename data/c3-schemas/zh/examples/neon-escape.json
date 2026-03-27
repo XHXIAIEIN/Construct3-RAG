@@ -1,0 +1,31 @@
+{
+  "id": "neon-escape",
+  "name": "游戏示例：极限脱出",
+  "description": "利用霓虹方块攀登高楼，解锁大门，躲避巡逻无人机，逃离这座无情的赛博都市。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Platform",
+      "Sin",
+      "Tween",
+      "bound",
+      "solid"
+    ],
+    "effects": [
+      "brightness"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=neon-escape"
+}

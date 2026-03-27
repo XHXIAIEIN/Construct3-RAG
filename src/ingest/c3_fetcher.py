@@ -126,15 +126,27 @@ class C3Fetcher:
                 return v["releaseName"]
         return self.version
 
-    # ── Schema export (compatible with lookup.py / query_expander.py) ───
+    # ── Schema export (per-language, CDN-native field names) ─────────────
 
     def export_schemas(self) -> Path:
-        """Generate per-plugin/behavior JSON files from CDN data.
+        """Generate per-language schema files from CDN data.
 
-        Creates a directory structure compatible with lookup.py SchemaIndex:
-            .cache/c3-cdn/r476/schemas/plugins/sprite.json
-            .cache/c3-cdn/r476/schemas/behaviors/platform.json
-            ...
+        Merges allAces.json (structural) + precompiled-{locale}.json (text) into
+        per-language files that preserve CDN field names:
+          - conditions/actions: list-name, display-text, description
+          - expressions: translated-name, description
+          - params: name, desc, items (object keyed by param id)
+
+        Structure fields from allAces (scriptName, isTrigger, isAsync, returnType,
+        params[].type) are merged in.
+
+        Directory layout:
+            schemas/en/plugins/sprite.json
+            schemas/zh/plugins/sprite.json
+            schemas/en/behaviors/platform.json
+            schemas/en/effects/alphaclamp.json
+            schemas/en/editor/index.json
+            schemas/_index.json   (language-neutral)
 
         Returns the schemas root directory path.
         """
@@ -144,190 +156,308 @@ class C3Fetcher:
             return schemas_dir
 
         aces_data = self.fetch_all_aces()
-        en_text = self.fetch_lang("en-US").get("text", {})
-        zh_text = self.fetch_lang("zh-CN").get("text", {})
+        lang_texts = {
+            "en": self.fetch_lang("en-US").get("text", {}),
+            "zh": self.fetch_lang("zh-CN").get("text", {}),
+        }
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
+        index_data: dict = {"version": self.version, "plugins": {}, "behaviors": {}, "effects": {}}
 
+        # ── Plugins & Behaviors ───────────────────────────────────────────
         for addon_type, plugin_type in type_map.items():
-            out_dir = schemas_dir / addon_type
-            out_dir.mkdir(parents=True, exist_ok=True)
-
             for plugin_id, categories in aces_data.get(addon_type, {}).items():
                 pid_lower = plugin_id.lower()
-                en_p = en_text.get(addon_type, {}).get(pid_lower, {})
-                zh_p = zh_text.get(addon_type, {}).get(pid_lower, {})
 
                 # Skip deprecated addons (absent from zh-CN lang)
+                zh_p = lang_texts["zh"].get(addon_type, {}).get(pid_lower, {})
                 if not zh_p:
                     continue
 
-                plugin_json = {
-                    "id": pid_lower,
+                for lang, text in lang_texts.items():
+                    lp = text.get(addon_type, {}).get(pid_lower, {})
+                    out_dir = schemas_dir / lang / addon_type
+                    out_dir.mkdir(parents=True, exist_ok=True)
+
+                    plugin_json = {
+                        "id": pid_lower,
+                        "name": lp.get("name", plugin_id),
+                        "description": lp.get("description", ""),
+                        "type": plugin_type,
+                        "aceCategories": lp.get("aceCategories", {}),
+                        "conditions": [],
+                        "actions": [],
+                        "expressions": [],
+                        "properties": {},
+                    }
+
+                    for category, ace_types in categories.items():
+                        for ace_type_plural in ("conditions", "actions", "expressions"):
+                            for ace in ace_types.get(ace_type_plural, []):
+                                ace_id = ace.get("id", "")
+
+                                # Skip deprecated ACEs (absent from zh-CN)
+                                if not zh_p.get(ace_type_plural, {}).get(ace_id):
+                                    continue
+
+                                l_ace = lp.get(ace_type_plural, {}).get(ace_id, {})
+
+                                # Merge params: type from allAces + name/desc from lang
+                                params: dict = {}
+                                for p in ace.get("params", []):
+                                    pid_param = p.get("id", "")
+                                    l_param = l_ace.get("params", {}).get(pid_param, {})
+                                    param_entry: dict = {
+                                        "type": p.get("type", "any"),
+                                        "name": l_param.get("name", pid_param),
+                                        "desc": l_param.get("desc", ""),
+                                    }
+                                    if "items" in p:
+                                        # Merge item labels from lang
+                                        l_items = l_param.get("items", {})
+                                        if l_items:
+                                            param_entry["items"] = l_items
+                                        else:
+                                            param_entry["items"] = {k: k for k in p["items"]}
+                                        if p.get("initialValue"):
+                                            param_entry["initialValue"] = p["initialValue"]
+                                    params[pid_param] = param_entry
+
+                                entry: dict = {
+                                    "id": ace_id,
+                                    "scriptName": ace.get("scriptName", ace.get("expressionName", "")),
+                                    "category": category,
+                                }
+                                # Use CDN-native field names
+                                if ace_type_plural == "expressions":
+                                    entry["translated-name"] = l_ace.get("translated-name", ace_id)
+                                else:
+                                    entry["list-name"] = l_ace.get("list-name", ace_id)
+                                    entry["display-text"] = l_ace.get("display-text", "")
+                                entry["description"] = l_ace.get("description", "")
+                                if params:
+                                    entry["params"] = params
+                                if ace.get("isTrigger"):
+                                    entry["isTrigger"] = True
+                                if ace.get("isAsync"):
+                                    entry["isAsync"] = True
+                                if ace.get("returnType"):
+                                    entry["returnType"] = ace["returnType"]
+
+                                plugin_json[ace_type_plural].append(entry)
+
+                    # Properties — keep CDN dict structure {prop_id: {name, desc, ...}}
+                    plugin_json["properties"] = lp.get("properties", {})
+
+                    out_path = out_dir / f"{pid_lower}.json"
+                    out_path.write_text(
+                        json.dumps(plugin_json, ensure_ascii=False, indent=2),
+                        encoding="utf-8",
+                    )
+
+                # Index entry (language-neutral)
+                en_p = lang_texts["en"].get(addon_type, {}).get(pid_lower, {})
+                section = "plugins" if plugin_type == "plugin" else "behaviors"
+                c_count = sum(len(at.get("conditions", [])) for at in categories.values())
+                a_count = sum(len(at.get("actions", [])) for at in categories.values())
+                e_count = sum(len(at.get("expressions", [])) for at in categories.values())
+                index_data[section][pid_lower] = {
                     "originalId": plugin_id,
-                    "name_zh": zh_p.get("name", en_p.get("name", plugin_id)),
                     "name_en": en_p.get("name", plugin_id),
-                    "description_zh": zh_p.get("description", ""),
-                    "description_en": en_p.get("description", ""),
-                    "plugin_type": plugin_type,
-                    "aceCategories": list(categories.keys()),
+                    "name_zh": zh_p.get("name", en_p.get("name", plugin_id)),
+                    "file": f"{addon_type}/{pid_lower}.json",
+                    "conditions": c_count,
+                    "actions": a_count,
+                    "expressions": e_count,
+                }
+
+        # ── _common (shared ACEs for World instances) ─────────────────────
+        en_common = lang_texts["en"].get("plugins", {}).get("_common", {})
+        zh_common = lang_texts["zh"].get("plugins", {}).get("_common", {})
+        if en_common:
+            for lang in ("en", "zh"):
+                lc = lang_texts[lang].get("plugins", {}).get("_common", {})
+                common_json: dict = {
+                    "id": "_common",
+                    "name": lc.get("name", "Common" if lang == "en" else "公共"),
+                    "description": lc.get("description", ""),
+                    "type": "plugin",
+                    "aceCategories": lc.get("aceCategories", {}),
                     "conditions": [],
                     "actions": [],
                     "expressions": [],
-                    "properties": [],
+                    "properties": lc.get("properties", {}),
                 }
-
-                for category, ace_types in categories.items():
-                    for ace_type_plural, ace_type_key in [
-                        ("conditions", "conditions"),
-                        ("actions", "actions"),
-                        ("expressions", "expressions"),
-                    ]:
-                        for ace in ace_types.get(ace_type_plural, []):
-                            ace_id = ace.get("id", "")
-                            en_ace = en_p.get(ace_type_plural, {}).get(ace_id, {})
-                            zh_ace = zh_p.get(ace_type_plural, {}).get(ace_id, {})
-
-                            # Skip deprecated ACEs (absent from zh-CN lang)
-                            if not zh_ace:
-                                continue
-
-                            if ace_type_plural == "expressions":
-                                name_en = en_ace.get("translated-name", ace_id)
-                                name_zh = zh_ace.get("translated-name", name_en)
-                            else:
-                                name_en = en_ace.get("list-name", ace_id)
-                                name_zh = zh_ace.get("list-name", name_en)
-
-                            params = []
-                            for p in ace.get("params", []):
-                                pid_param = p.get("id", "")
-                                en_param = en_ace.get("params", {}).get(pid_param, {})
-                                zh_param = zh_ace.get("params", {}).get(pid_param, {})
-                                param = {
-                                    "id": pid_param,
-                                    "type": p.get("type", "any"),
-                                    "name_en": en_param.get("name", pid_param),
-                                    "name_zh": zh_param.get("name", en_param.get("name", pid_param)),
-                                    "desc_en": en_param.get("desc", ""),
-                                    "desc_zh": zh_param.get("desc", ""),
-                                }
-                                if "items" in p:
-                                    param["items"] = p["items"]
-                                    # Translate combo items
-                                    en_items = en_ace.get("params", {}).get(pid_param, {}).get("items", {})
-                                    zh_items = zh_ace.get("params", {}).get(pid_param, {}).get("items", {})
-                                    if en_items:
-                                        param["items_i18n"] = {
-                                            k: {"en": en_items.get(k, k), "zh": zh_items.get(k, en_items.get(k, k))}
-                                            for k in p["items"]
-                                        }
-                                params.append(param)
-
-                            entry = {
-                                "id": ace_id,
-                                "name_zh": name_zh,
-                                "name_en": name_en,
-                                "description_zh": zh_ace.get("description", ""),
-                                "description_en": en_ace.get("description", ""),
-                                "display_zh": zh_ace.get("display-text", ""),
-                                "display_en": en_ace.get("display-text", ""),
-                                "scriptName": ace.get("scriptName", ace.get("expressionName", "")),
-                                "category": category,
-                                "params": params,
+                for ace_type_plural in ("conditions", "actions", "expressions"):
+                    en_aces = en_common.get(ace_type_plural, {})
+                    zh_aces = zh_common.get(ace_type_plural, {})
+                    l_aces = lc.get(ace_type_plural, {})
+                    for ace_id in en_aces:
+                        if not zh_aces.get(ace_id):
+                            continue
+                        l_ace = l_aces.get(ace_id, en_aces[ace_id])
+                        # Build params from lang (allAces doesn't include _common)
+                        params = {}
+                        for pid_param, l_param in l_ace.get("params", {}).items():
+                            params[pid_param] = {
+                                "type": "object",
+                                "name": l_param.get("name", pid_param),
+                                "desc": l_param.get("desc", ""),
                             }
-                            if ace.get("isTrigger"):
-                                entry["isTrigger"] = True
-                            if ace.get("isAsync"):
-                                entry["isAsync"] = True
-                            if ace.get("returnType"):
-                                entry["returnType"] = ace["returnType"]
+                        entry: dict = {
+                            "id": ace_id,
+                            "scriptName": ace_id,
+                            "category": "common",
+                        }
+                        if ace_type_plural == "expressions":
+                            entry["translated-name"] = l_ace.get("translated-name", ace_id)
+                        else:
+                            entry["list-name"] = l_ace.get("list-name", ace_id)
+                            entry["display-text"] = l_ace.get("display-text", "")
+                        entry["description"] = l_ace.get("description", "")
+                        if params:
+                            entry["params"] = params
+                        common_json[ace_type_plural].append(entry)
 
-                            plugin_json[ace_type_plural].append(entry)
-
-                # Properties from lang
-                en_props = en_p.get("properties", {})
-                zh_props = zh_p.get("properties", {})
-                for prop_id, en_prop in en_props.items():
-                    plugin_json["properties"].append({
-                        "id": prop_id,
-                        "name_en": en_prop.get("name", prop_id),
-                        "name_zh": zh_props.get(prop_id, {}).get("name", en_prop.get("name", prop_id)),
-                        "description_en": en_prop.get("desc", ""),
-                        "description_zh": zh_props.get(prop_id, {}).get("desc", ""),
-                    })
-
-                # Write per-plugin file
-                out_path = out_dir / f"{pid_lower}.json"
-                out_path.write_text(
-                    json.dumps(plugin_json, ensure_ascii=False, indent=2),
-                    encoding="utf-8",
+                out_dir = schemas_dir / lang / "plugins"
+                out_dir.mkdir(parents=True, exist_ok=True)
+                (out_dir / "_common.json").write_text(
+                    json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8",
                 )
 
-        # Export _common (shared ACEs for all World instances: collision, position, etc.)
-        # allAces.json doesn't include these; definitions come from lang files only.
-        en_common = en_text.get("plugins", {}).get("_common", {})
-        zh_common = zh_text.get("plugins", {}).get("_common", {})
-        if en_common:
-            common_json = {
-                "id": "_common",
-                "originalId": "_common",
-                "name_zh": zh_common.get("name", "公共"),
+            c_count = len(common_json["conditions"])
+            a_count = len(common_json["actions"])
+            e_count = len(common_json["expressions"])
+            logger.info(f"[CDN] Exported _common: {c_count}C {a_count}A {e_count}E")
+            index_data["plugins"]["_common"] = {
                 "name_en": en_common.get("name", "Common"),
-                "description_zh": zh_common.get("description", ""),
-                "description_en": en_common.get("description", ""),
-                "plugin_type": "plugin",
-                "aceCategories": list(en_common.get("aceCategories", {}).keys()),
-                "conditions": [],
-                "actions": [],
-                "expressions": [],
-                "properties": [],
+                "name_zh": zh_common.get("name", "公共"),
+                "file": "plugins/_common.json",
+                "conditions": c_count, "actions": a_count, "expressions": e_count,
             }
-            for ace_type_plural in ("conditions", "actions", "expressions"):
-                en_aces = en_common.get(ace_type_plural, {})
-                zh_aces = zh_common.get(ace_type_plural, {})
-                for ace_id, en_ace in en_aces.items():
-                    zh_ace = zh_aces.get(ace_id, {})
-                    if ace_type_plural == "expressions":
-                        name_en = en_ace.get("translated-name", ace_id)
-                        name_zh = zh_ace.get("translated-name", name_en)
-                    else:
-                        name_en = en_ace.get("list-name", ace_id)
-                        name_zh = zh_ace.get("list-name", name_en)
-                    # Build params from lang (allAces doesn't include _common)
-                    en_params = en_ace.get("params", {})
-                    zh_params = zh_ace.get("params", {})
-                    params = []
-                    for pid_param, en_param in en_params.items():
-                        zh_param = zh_params.get(pid_param, {})
-                        params.append({
-                            "id": pid_param,
-                            "type": "object",  # _common params are typically object selectors
-                            "name_en": en_param.get("name", pid_param),
-                            "name_zh": zh_param.get("name", en_param.get("name", pid_param)),
-                            "desc_en": en_param.get("desc", ""),
-                            "desc_zh": zh_param.get("desc", ""),
-                        })
-                    entry = {
-                        "id": ace_id,
-                        "name_en": name_en,
-                        "name_zh": name_zh,
-                        "description_en": en_ace.get("description", ""),
-                        "description_zh": zh_ace.get("description", ""),
-                        "display_en": en_ace.get("display-text", ""),
-                        "display_zh": zh_ace.get("display-text", ""),
-                        "scriptName": ace_id,
-                        "category": "common",
-                    }
-                    if params:
-                        entry["params"] = params
-                    common_json[ace_type_plural].append(entry)
-            out_path = schemas_dir / "plugins" / "_common.json"
-            out_path.write_text(json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8")
-            logger.info(f"[CDN] Exported _common: {len(common_json['conditions'])}C "
-                        f"{len(common_json['actions'])}A {len(common_json['expressions'])}E")
 
-        # Write marker
+        # ── Effects ───────────────────────────────────────────────────────
+        effects_raw = self.fetch_effects()
+        for lang, text in lang_texts.items():
+            out_dir = schemas_dir / lang / "effects"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            l_effects = text.get("effects", {})
+            for item in effects_raw:
+                data = item.get("json", item)
+                eid = data.get("id", "")
+                l_fx = l_effects.get(eid, {})
+                if not l_fx:
+                    continue
+                # Merge structural (allEffects) + text (lang)
+                fx_json: dict = {
+                    "id": eid,
+                    "name": l_fx.get("name", eid),
+                    "description": l_fx.get("description", ""),
+                    "category": data.get("category", ""),
+                    "blends-background": data.get("blends-background", False),
+                    "cross-sampling": data.get("cross-sampling", False),
+                    "animated": data.get("animated", False),
+                    "parameters": [],
+                }
+                for p in data.get("parameters", []):
+                    pid_param = p.get("id", "")
+                    l_param = l_fx.get("parameters", {}).get(pid_param, {})
+                    fx_json["parameters"].append({
+                        "id": pid_param,
+                        "type": p.get("type", "float"),
+                        "name": l_param.get("name", pid_param),
+                        "desc": l_param.get("desc", ""),
+                    })
+                (out_dir / f"{eid}.json").write_text(
+                    json.dumps(fx_json, ensure_ascii=False, indent=2), encoding="utf-8",
+                )
+
+            # Index effects
+            if lang == "en":
+                for item in effects_raw:
+                    data = item.get("json", item)
+                    eid = data.get("id", "")
+                    en_fx = l_effects.get(eid, {})
+                    zh_fx = lang_texts["zh"].get("effects", {}).get(eid, {})
+                    if en_fx:
+                        index_data["effects"][eid] = {
+                            "name_en": en_fx.get("name", eid),
+                            "name_zh": zh_fx.get("name", en_fx.get("name", eid)),
+                            "file": f"effects/{eid}.json",
+                            "category": data.get("category", ""),
+                        }
+
+        logger.info(f"[CDN] Exported {len(index_data['effects'])} effects")
+
+        # ── Editor UI (bars, dialogs, editors) ────────────────────────────
+        for lang, text in lang_texts.items():
+            ui = text.get("ui", {})
+            editor_json: dict = {"bars": {}, "dialogs": {}, "views": {}}
+            for group_key, out_key in [("bars", "bars"), ("dialogs", "dialogs"), ("editors", "views")]:
+                group = ui.get(group_key, {})
+                for elem_id, elem in group.items():
+                    if isinstance(elem, dict) and elem.get("title"):
+                        editor_json[out_key][elem_id] = {"title": elem["title"]}
+            out_dir = schemas_dir / lang / "editor"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            (out_dir / "index.json").write_text(
+                json.dumps(editor_json, ensure_ascii=False, indent=2), encoding="utf-8",
+            )
+
+        # ── Examples (per-language, per-file) ─────────────────────────────
+        try:
+            examples_raw = self.fetch_examples()
+
+            # Per-lang data sources:
+            #   - ui.start-page.projects.{id} → {name, description}  (localized title/desc)
+            #   - ui.example-browser.filters   → tag label translations
+            lang_projects: dict[str, dict] = {}
+            tag_maps: dict[str, dict[str, str]] = {}
+            for lang, text in lang_texts.items():
+                lang_projects[lang] = text.get("ui", {}).get("start-page", {}).get("projects", {})
+                filters = text.get("ui", {}).get("example-browser", {}).get("filters", {})
+                tmap: dict[str, str] = {}
+                for section_key in ("level", "category", "genre", "tag"):
+                    section = filters.get(section_key, {})
+                    for k, v in section.items():
+                        if k != "section-title" and isinstance(v, str):
+                            tmap[k] = v
+                tag_maps[lang] = tmap
+
+            for lang in lang_texts:
+                out_dir = schemas_dir / lang / "examples"
+                out_dir.mkdir(parents=True, exist_ok=True)
+                tmap = tag_maps.get(lang, {})
+                projects = lang_projects.get(lang, {})
+                for ex in examples_raw:
+                    eid = ex.get("id", "")
+                    if not eid:
+                        continue
+                    lp = projects.get(eid, {})
+                    entry: dict = {"id": eid}
+                    # Localized name and description from lang
+                    entry["name"] = lp.get("name", ex.get("name", eid))
+                    if lp.get("description"):
+                        entry["description"] = lp["description"]
+                    if ex.get("tags"):
+                        entry["tags"] = [tmap.get(t, t) for t in ex["tags"]]
+                    if ex.get("used-addons"):
+                        entry["used-addons"] = ex["used-addons"]
+                    entry["open"] = f"https://editor.construct.net/#open={eid}"
+                    (out_dir / f"{eid}.json").write_text(
+                        json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8",
+                    )
+
+            index_data["examples"] = len(examples_raw)
+            logger.info(f"[CDN] Exported {len(examples_raw)} examples (per-language)")
+        except Exception as e:
+            logger.warning(f"[CDN] Failed to export examples: {e}")
+
+        # ── Write _index.json ─────────────────────────────────────────────
+        (schemas_dir / "_index.json").write_text(
+            json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8",
+        )
+
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
         return schemas_dir

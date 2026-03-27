@@ -1,0 +1,34 @@
+{
+  "id": "pinball",
+  "name": "Pinball",
+  "description": "A recreation of an arcade classic based on the Physics behavior.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Spritefont2",
+      "Particles",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Physics",
+      "Tween",
+      "LOS",
+      "Fade",
+      "Timer",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pinball"
+}

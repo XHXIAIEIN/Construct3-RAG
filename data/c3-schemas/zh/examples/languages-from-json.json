@@ -1,0 +1,29 @@
+{
+  "id": "languages-from-json",
+  "name": "HUD: 多语言菜单",
+  "description": "从储存为数组的JSON文件中加载对应语言的字符串。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Mouse",
+      "TiledBg",
+      "AJAX",
+      "NinePatch",
+      "Spritefont2",
+      "Touch"
+    ],
+    "behaviors": [
+      "Tween",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=languages-from-json"
+}

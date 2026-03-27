@@ -1,0 +1,28 @@
+{
+  "id": "pathfinding-direct-movement",
+  "name": "寻路：直接移动",
+  "description": "演示 '移动到' 行为功能，平滑拐角位置的移动路线。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-direct-movement"
+}

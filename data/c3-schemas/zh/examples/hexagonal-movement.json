@@ -1,0 +1,25 @@
+{
+  "id": "hexagonal-movement",
+  "name": "游戏示例: 六边形寻路",
+  "description": "穿过六边形结构的地形，帮助蜜蜂收集蜂蜜并避开苍蝇。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hexagonal-movement"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "screen-recording",
+  "name": "Screen recording",
+  "description": "Demonstrates how to use the Video Recorder object to record a video of the screen or canvas (where supported).",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "GameRecorder",
+      "Particles",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Anchor",
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=screen-recording"
+}

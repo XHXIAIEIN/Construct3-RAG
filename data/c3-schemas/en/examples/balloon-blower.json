@@ -1,0 +1,32 @@
+{
+  "id": "balloon-blower",
+  "name": "Balloon blower",
+  "description": "Use the power of your voice to make the balloon inflate and ascend, dodging threats and collecting cotton candy along the way.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Audio",
+      "Browser",
+      "Keyboard",
+      "List",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "UserMedia"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=balloon-blower"
+}

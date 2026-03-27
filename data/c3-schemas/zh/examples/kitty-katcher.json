@@ -1,0 +1,37 @@
+{
+  "id": "kitty-katcher",
+  "name": "游戏示例：寻猫启事",
+  "description": "帮助老太太找到她失踪的小猫。",
+  "tags": [
+    "animation-recommended",
+    "进阶",
+    "完整游戏",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Audio",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "darken",
+      "tintmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kitty-katcher"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "mesh-platforms",
+  "name": "纹理变形：平台",
+  "description": "在编辑器中将游戏对象进行纹理变形，用来设计有趣的平台游戏关卡。",
+  "tags": [
+    "简单",
+    "纹理变形",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-platforms"
+}

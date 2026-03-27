@@ -1,0 +1,26 @@
+{
+  "id": "particle-thruster",
+  "name": "Particle thruster",
+  "description": "Using the Particles object to create a controlled spaceship thruster effect.",
+  "tags": [
+    "Beginner",
+    "Mobile",
+    "Feature example",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text",
+      "Particles",
+      "Touch"
+    ],
+    "behaviors": [
+      "custom",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-thruster"
+}

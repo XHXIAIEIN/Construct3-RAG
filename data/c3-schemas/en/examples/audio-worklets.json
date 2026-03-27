@@ -1,0 +1,18 @@
+{
+  "id": "audio-worklets",
+  "name": "Audio worklets",
+  "description": "Demonstrates how to write custom audio processing code in JavaScript using audio worklets.",
+  "tags": [
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "HTMLElement",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-worklets"
+}

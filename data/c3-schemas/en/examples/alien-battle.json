@@ -1,0 +1,41 @@
+{
+  "id": "alien-battle",
+  "name": "Alien battle",
+  "description": "Save the planet earth from the giant alien invaders, in a boss battle using timeline animations.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "Animation",
+    "Platformer",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Timeline",
+      "Particles",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Platform",
+      "solid",
+      "Sin",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "destroy",
+      "Flash",
+      "Rotate",
+      "Fade",
+      "Pin"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=alien-battle"
+}

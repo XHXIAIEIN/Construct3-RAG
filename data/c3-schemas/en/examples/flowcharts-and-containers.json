@@ -1,0 +1,21 @@
+{
+  "id": "flowcharts-and-containers",
+  "name": "Flowcharts and containers",
+  "description": "Demonstrates how to use the Flowcharts feature with containers to manage multiple instances of the same flowchart.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Flowchart",
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=flowcharts-and-containers"
+}

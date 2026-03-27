@@ -1,0 +1,21 @@
+{
+  "id": "particle-explosions",
+  "name": "粒子：爆炸效果",
+  "description": "使用一次性粒子对象来创建爆炸效果。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-explosions"
+}

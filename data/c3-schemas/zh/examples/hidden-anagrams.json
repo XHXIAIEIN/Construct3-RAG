@@ -1,0 +1,29 @@
+{
+  "id": "hidden-anagrams",
+  "name": "3D拼词大师",
+  "description": "经典游戏《Word Connect》玩法机制。识别棋盘一部分字母的位置，组成不同的单词来解谜。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "3D",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Spritefont2",
+      "Sprite",
+      "Touch",
+      "Camera3D",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hidden-anagrams"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "template-top-down-shooter",
+  "name": "基础示例：俯视射击",
+  "description": "俯视射击游戏模板，带有简单的图形。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "scrollto",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-top-down-shooter"
+}

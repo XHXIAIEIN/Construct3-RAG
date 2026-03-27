@@ -1,0 +1,33 @@
+{
+  "id": "complex-terrain",
+  "name": "3D地形: 沙漠探险",
+  "description": "第一人称视角，探索由程序生成的3D地形场景。",
+  "tags": [
+    "高级",
+    "3D",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Fade",
+      "LOS",
+      "Sin",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=complex-terrain"
+}

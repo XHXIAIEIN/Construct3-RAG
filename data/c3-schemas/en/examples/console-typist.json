@@ -1,0 +1,32 @@
+{
+  "id": "console-typist",
+  "name": "Console typist",
+  "description": "In a mouseless era, quick typing was vital for efficient navigation. Test your speed by quickly entering words displayed on the console screen.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Browser",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "bulge",
+      "glowhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=console-typist"
+}

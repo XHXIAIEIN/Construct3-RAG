@@ -1,0 +1,37 @@
+{
+  "id": "tilemap-switching",
+  "name": "瓦片图：切换地形",
+  "description": "高级的 GamePlay 游戏机制，允许玩家在不同的瓦片图之间跳转，带有视差高度的视觉效果。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Pin",
+      "solid",
+      "Bullet",
+      "scrollto",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "darken",
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tilemap-switching"
+}

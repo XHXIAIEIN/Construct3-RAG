@@ -1,0 +1,31 @@
+{
+  "id": "morph-runner",
+  "name": "游戏示例: 兽灵历险记",
+  "description": "穿过小路，变身为不同的动物躲避障碍：蜥蜴可以狭小的空间穿行，狼可以跳过障碍，鸟可以飞越更高的障碍。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=morph-runner"
+}

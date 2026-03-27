@@ -1,0 +1,25 @@
+{
+  "id": "template-vertical-space-shooter",
+  "name": "基础示例：太空射击",
+  "description": "纵向卷轴射击游戏模板，带有简单的图形。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "bound",
+      "Bullet",
+      "destroy",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-vertical-space-shooter"
+}

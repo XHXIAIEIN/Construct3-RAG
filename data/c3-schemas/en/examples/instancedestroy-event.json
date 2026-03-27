@@ -1,0 +1,18 @@
+{
+  "id": "instancedestroy-event",
+  "name": "Instance destroyed event",
+  "description": "Get a callback when an instance is destroyed with the \"instancedestroy\" event.",
+  "tags": [
+    "Mobile",
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instancedestroy-event"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "template-first-person-shooter",
+  "name": "功能示例：FPS 射击游戏",
+  "description": "使用 3D 相机对象，让 2D 游戏实现第一人称射击视角 (FPS) 游戏。",
+  "tags": [
+    "games-recommended",
+    "简单",
+    "基础示例",
+    "射击",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Shape3D",
+      "Camera3D",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Car",
+      "solid",
+      "Bullet",
+      "Flash",
+      "destroy",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-first-person-shooter"
+}

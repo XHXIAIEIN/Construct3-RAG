@@ -1,0 +1,27 @@
+{
+  "id": "quest-flowcharts",
+  "name": "Quest flowcharts",
+  "description": "A text adventure with quests and conversation trees designed using the Flowcharts feature.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Game template",
+    "Adventure",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Button",
+      "Dictionary",
+      "Flowchart",
+      "HTMLElement",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=quest-flowcharts"
+}

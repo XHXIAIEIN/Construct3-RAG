@@ -1,0 +1,21 @@
+{
+  "id": "physics-distance-joint",
+  "name": "Physics: Distance joint",
+  "description": "Demonstrates connecting two Physics objects with a distance joint.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-distance-joint"
+}

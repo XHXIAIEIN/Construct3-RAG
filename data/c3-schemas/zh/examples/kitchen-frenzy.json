@@ -1,0 +1,27 @@
+{
+  "id": "kitchen-frenzy",
+  "name": "脚本项目：狂热厨房",
+  "description": "经典游戏《Tapper》玩法机制。你的餐厅生意突然爆火！你的任务是让顾客满意，尽可能去为每个人服务。",
+  "tags": [
+    "游戏模板",
+    "进阶",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjustmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kitchen-frenzy"
+}

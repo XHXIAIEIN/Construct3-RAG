@@ -1,0 +1,32 @@
+{
+  "id": "cgs-cloud-save",
+  "name": "Cloud save",
+  "description": "Demonstrates Construct Game Services cloud save, allowing cross-device savegames based on an account login.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "Keyboard",
+      "List",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-cloud-save"
+}

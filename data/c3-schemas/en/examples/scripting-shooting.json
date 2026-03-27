@@ -1,0 +1,21 @@
+{
+  "id": "scripting-shooting",
+  "name": "Shooting code",
+  "description": "Using code to make a simple shooting ability, with collision detection.",
+  "tags": [
+    "Beginner",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse"
+    ],
+    "behaviors": [
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-shooting"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "input-sequence",
+  "name": "游戏示例：按键组合技",
+  "description": "经典游戏《快打旋风》 的连招机制，在短时间内按下特定顺序的按键触发一次特殊的必杀技。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "格斗"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Arr",
+      "DrawingCanvas"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Bullet",
+      "destroy",
+      "Fade",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=input-sequence"
+}

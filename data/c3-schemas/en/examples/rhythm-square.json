@@ -1,0 +1,31 @@
+{
+  "id": "rhythm-square",
+  "name": "Rhythm Square",
+  "description": "Feel the rhythm as you insert bolts into two squares with perfect precision, synchronized with the music beat.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rhythm-square"
+}

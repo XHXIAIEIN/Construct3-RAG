@@ -1,0 +1,39 @@
+{
+  "id": "kiwi-story",
+  "name": "Kiwi Story",
+  "description": "奇异果部落派小基洛去采集软糖甲虫，但他在路上迷了路！快来帮助他找到回家的路吧！",
+  "tags": [
+    "完整游戏",
+    "games-recommended",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Platform",
+      "Sin",
+      "jumpthru",
+      "solid",
+      "wrap"
+    ],
+    "effects": [
+      "brightness",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kiwi-story"
+}

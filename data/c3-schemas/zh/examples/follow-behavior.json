@@ -1,0 +1,26 @@
+{
+  "id": "follow-behavior",
+  "name": "轨迹跟随：基础",
+  "description": "演示 '轨迹跟随' 行为，跟随玩家对象移动。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-behavior"
+}

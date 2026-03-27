@@ -1,0 +1,38 @@
+{
+  "id": "top-down-jump",
+  "name": "Top-down jumping",
+  "description": "A top-down game where the player must jump between ships, using Z elevation for a depth effect.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Tilemap",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "EightDir",
+      "Fade",
+      "Bullet",
+      "Sin",
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "warpobject",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=top-down-jump"
+}

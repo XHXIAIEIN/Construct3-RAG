@@ -1,0 +1,16 @@
+{
+  "id": "audio-scripting",
+  "name": "Audio scripting",
+  "description": "Demonstrates using code to load and play sounds and music, using both the Web Audio API and an <audio> element.",
+  "tags": [
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-scripting"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "physics-force-point",
+  "name": "物理：力点",
+  "description": "通过更改施加力的点来显示移动的影响",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-force-point"
+}

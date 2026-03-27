@@ -1,0 +1,23 @@
+{
+  "id": "physics-rolling-platformer",
+  "name": "Physics: Rolling platformer",
+  "description": "Re-creating a platform style movement using a rolling object and the Physics behavior.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-rolling-platformer"
+}

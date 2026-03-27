@@ -1,0 +1,21 @@
+{
+  "id": "particle-explosions",
+  "name": "Particle explosions",
+  "description": "Use one-shot particle objects to create an explosion effect.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-explosions"
+}

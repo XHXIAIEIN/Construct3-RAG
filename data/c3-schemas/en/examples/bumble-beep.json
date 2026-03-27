@@ -1,0 +1,43 @@
+{
+  "id": "bumble-beep",
+  "name": "Bumble Beep",
+  "description": "Defeat the mighty Bumble Beep bot, the security enforcer for an alien world - a boss animated with timelines and hierarchies.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Arcade",
+    "Hierarchy",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "MoveTo",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=bumble-beep"
+}

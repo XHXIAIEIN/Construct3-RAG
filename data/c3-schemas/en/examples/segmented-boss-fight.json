@@ -1,0 +1,38 @@
+{
+  "id": "segmented-boss-fight",
+  "name": "Segmented boss fight",
+  "description": "An epic boss fight powered by hierarchies and timelines to connect multiple objects together and animate them as one.",
+  "tags": [
+    "Advanced",
+    "games-recommended",
+    "Gameplay mechanic",
+    "Animation",
+    "Hierarchy",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Timeline",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "Bullet",
+      "Sin",
+      "Rotate",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=segmented-boss-fight"
+}

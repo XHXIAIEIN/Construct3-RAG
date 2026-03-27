@@ -1,0 +1,26 @@
+{
+  "id": "template-tile-based-game",
+  "name": "基础示例：图块地图",
+  "description": "演示瓦片图绘制的关卡地图，并使用 '网格移动' 行为移动的基础模板。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "冒险"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "TiledBg",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "Pin",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-tile-based-game"
+}

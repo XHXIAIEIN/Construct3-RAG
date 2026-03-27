@@ -1,0 +1,26 @@
+{
+  "id": "day-night-timelapse",
+  "name": "时间轴：昼夜交替",
+  "description": "欣赏里约热内卢绚丽多彩的城市风光，背景是巍峨矗立的救世基督像，尽在这段精彩的延时摄影中。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=day-night-timelapse"
+}

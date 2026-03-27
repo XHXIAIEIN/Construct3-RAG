@@ -1,0 +1,33 @@
+{
+  "id": "collect-the-pages",
+  "name": "3D林中笔记",
+  "description": "在令人不安的树林中漫步并收集所有书页，但要小心，周围潜伏着诡异的东西。",
+  "tags": [
+    "玩法机制",
+    "进阶",
+    "RPG",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=collect-the-pages"
+}

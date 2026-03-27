@@ -1,0 +1,19 @@
+{
+  "id": "bbcode-tag-range",
+  "name": "BBcode tag ranges",
+  "description": "Demonstrates how to use BBcode to tag ranges of text, e.g. to detect the mouse cursor over part of the text.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Spritefont2",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbcode-tag-range"
+}

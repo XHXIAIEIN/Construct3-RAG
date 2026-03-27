@@ -1,0 +1,26 @@
+{
+  "id": "template-flapping-bird",
+  "name": "Flapping bird",
+  "description": "A variation on the 'Flying along' template where you control a bird that has to fly through gaps.",
+  "tags": [
+    "Beginner",
+    "Game template",
+    "Action",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button",
+      "TiledBg",
+      "Text",
+      "Browser",
+      "Touch"
+    ],
+    "behaviors": [
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-flapping-bird"
+}

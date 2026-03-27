@@ -1,0 +1,24 @@
+{
+  "id": "audio-player",
+  "name": "Audio player",
+  "description": "An example of a simple media player with controls to seek, switch track, and adjust volume.",
+  "tags": [
+    "Intermediate",
+    "Barebones template",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Audio",
+      "Text",
+      "Touch",
+      "Arr"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-player"
+}

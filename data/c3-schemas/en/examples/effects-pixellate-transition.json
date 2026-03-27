@@ -1,0 +1,21 @@
+{
+  "id": "effects-pixellate-transition",
+  "name": "Effects: Pixellate transition",
+  "description": "A transition based on altering a pixellation effect over time.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": [
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-pixellate-transition"
+}

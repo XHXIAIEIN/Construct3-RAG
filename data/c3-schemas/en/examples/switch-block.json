@@ -1,0 +1,29 @@
+{
+  "id": "switch-block",
+  "name": "Switch blocks",
+  "description": "A platformer template where the player can change the level by switching between two types of blocks.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=switch-block"
+}

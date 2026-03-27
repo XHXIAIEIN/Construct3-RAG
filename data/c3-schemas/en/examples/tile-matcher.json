@@ -1,0 +1,29 @@
+{
+  "id": "tile-matcher",
+  "name": "Tile matcher",
+  "description": "Match tiles of the same color in this hyper-casual type game. The more tiles you match, the faster the game becomes!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tile-matcher"
+}

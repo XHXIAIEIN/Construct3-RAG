@@ -1,0 +1,28 @@
+{
+  "id": "hero-attributes",
+  "name": "Hero attributes",
+  "description": "A dynamic selection screen for you to choose your hero and delve into their backstory, featuring a morphing spider chart made using mesh distortion.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hero-attributes"
+}

@@ -1,0 +1,908 @@
+{
+  "id": "drawingcanvas",
+  "name": "Drawing canvas",
+  "description": "A custom drawing surface.",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "Appearance",
+    "canvas": "Canvas",
+    "drawing-general": "Drawing: general",
+    "drawing-polygons": "Drawing: polygons"
+  },
+  "conditions": [
+    {
+      "id": "on-saved-image",
+      "scriptName": "OnSavedImage",
+      "category": "canvas",
+      "list-name": "On saved image",
+      "display-text": "On saved image",
+      "description": "Triggered after the 'Save image' action when the saved image is ready.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-snapshot",
+      "scriptName": "OnSnapshot",
+      "category": "canvas",
+      "list-name": "On snapshot",
+      "display-text": "On snapshot",
+      "description": "Triggered after the 'Save snapshot' action when the pixel data is ready.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-resolution-changed",
+      "scriptName": "OnResolutionChanged",
+      "category": "canvas",
+      "list-name": "On resolution changed",
+      "display-text": "On resolution changed",
+      "description": "Triggered when the drawing surface changes resolution. Redraw content to show it at the new resolution.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "Set blend mode",
+      "display-text": "Set blend mode to [i]{0}[/i]",
+      "description": "Set the background blend mode for this object.",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for this object.",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "xor": "XOR",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-image",
+      "scriptName": "SaveImage",
+      "category": "canvas",
+      "list-name": "Save image",
+      "display-text": "Save image ({0}, quality [i]{1}[/i], offset [i]{2}[/i], [i]{3}[/i] size [i]{4}[/i] x [i]{5}[/i])",
+      "description": "Save the current canvas image. Use the 'On saved image' trigger and 'SavedImageURL' expression to get the result.",
+      "params": {
+        "format": {
+          "type": "combo",
+          "name": "Format",
+          "desc": "Choose the file format to save the image with. PNG is lossless but JPEG files are smaller.",
+          "items": {
+            "png": "PNG",
+            "jpeg": "JPEG"
+          }
+        },
+        "jpeg-quality": {
+          "type": "number",
+          "name": "JPEG quality",
+          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG."
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X offset of the area to snapshot, in canvas device pixels."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y offset of the area to snapshot, in canvas device pixels."
+        },
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "The width of the area to snapshot, in canvas device pixels. Leave 0 to use the full width."
+        },
+        "height": {
+          "type": "number",
+          "name": "Height",
+          "desc": "The height of the area to snapshot, in canvas device pixels. Leave 0 to use the full height."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "save-snapshot",
+      "scriptName": "SaveSnapshot",
+      "category": "canvas",
+      "list-name": "Save snapshot",
+      "display-text": "Save snapshot",
+      "description": "Save a copy of the current canvas image for reading pixel colors.",
+      "isAsync": true
+    },
+    {
+      "id": "clear-snapshot",
+      "scriptName": "ClearSnapshot",
+      "category": "canvas",
+      "list-name": "Clear snapshot",
+      "display-text": "Clear snapshot",
+      "description": "Release the saved snapshot from memory."
+    },
+    {
+      "id": "snapshot-set-pixel",
+      "scriptName": "SnapshotSetPixel",
+      "category": "canvas",
+      "list-name": "Set snapshot pixel",
+      "display-text": "Set pixel in snapshot at ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i]",
+      "description": "Set a pixel to a color in the snapshot.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate of the pixel in the snapshot."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate of the pixel in the snapshot."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the pixel to set."
+        }
+      }
+    },
+    {
+      "id": "load-snapshot",
+      "scriptName": "LoadSnapshot",
+      "category": "canvas",
+      "list-name": "Load snapshot",
+      "display-text": "Load snapshot to canvas",
+      "description": "Load the snapshot back in to the canvas image, reflecting any changes."
+    },
+    {
+      "id": "set-resolution-mode",
+      "scriptName": "SetResolutionMode",
+      "category": "canvas",
+      "list-name": "Set resolution mode",
+      "display-text": "Set resolution mode [b]{0}[/b] ([i]{1}[/i] x [i]{2}[/i])",
+      "description": "Change the resolution mode, including changing the fixed resolution size.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to automatically match the canvas resolution to the project, or always use a fixed resolution.",
+          "items": {
+            "auto": "Automatic",
+            "fixed": "Fixed"
+          }
+        },
+        "fixed-width": {
+          "type": "number",
+          "name": "Fixed width",
+          "desc": "When using fixed resolution, the horizontal resolution in pixels."
+        },
+        "fixed-height": {
+          "type": "number",
+          "name": "Fixed height",
+          "desc": "When using fixed resolution, the vertical resolution in pixels."
+        }
+      }
+    },
+    {
+      "id": "clear-canvas",
+      "scriptName": "ClearCanvas",
+      "category": "drawing-general",
+      "list-name": "Clear canvas",
+      "display-text": "Clear canvas [i]{0}[/i]",
+      "description": "Clear the entire canvas with a color, replacing all existing image content.",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to clear to."
+        }
+      }
+    },
+    {
+      "id": "clear-rect",
+      "scriptName": "ClearRect",
+      "category": "drawing-general",
+      "list-name": "Clear rectangle",
+      "display-text": "Clear rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i]",
+      "description": "Clear a rectangular area with a color, replacing existing image content.",
+      "params": {
+        "left": {
+          "type": "number",
+          "name": "Left",
+          "desc": "X co-ordinate of left edge of rectangle."
+        },
+        "top": {
+          "type": "number",
+          "name": "Top",
+          "desc": "Y co-ordinate of top edge of rectangle."
+        },
+        "right": {
+          "type": "number",
+          "name": "Right",
+          "desc": "X co-ordinate of right edge of rectangle."
+        },
+        "bottom": {
+          "type": "number",
+          "name": "Bottom",
+          "desc": "Y co-ordinate of bottom edge of rectangle."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to clear to."
+        }
+      }
+    },
+    {
+      "id": "fill-rect",
+      "scriptName": "FillRect",
+      "category": "drawing-general",
+      "list-name": "Fill rectangle",
+      "display-text": "Fill rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i]",
+      "description": "Fill a rectangular area with a color.",
+      "params": {
+        "left": {
+          "type": "number",
+          "name": "Left",
+          "desc": "X co-ordinate of left edge of rectangle."
+        },
+        "top": {
+          "type": "number",
+          "name": "Top",
+          "desc": "Y co-ordinate of top edge of rectangle."
+        },
+        "right": {
+          "type": "number",
+          "name": "Right",
+          "desc": "X co-ordinate of right edge of rectangle."
+        },
+        "bottom": {
+          "type": "number",
+          "name": "Bottom",
+          "desc": "Y co-ordinate of bottom edge of rectangle."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to fill."
+        }
+      }
+    },
+    {
+      "id": "fill-linear-gradient",
+      "scriptName": "FillLinearGradient",
+      "category": "drawing-general",
+      "list-name": "Fill linear gradient",
+      "display-text": "Fill [i]{6}[/i] linear gradient ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i] to [i]{5}[/i]",
+      "description": "Fill a rectangular area with a linear gradient from one color to another.",
+      "params": {
+        "left": {
+          "type": "number",
+          "name": "Left",
+          "desc": "X co-ordinate of left edge of rectangle."
+        },
+        "top": {
+          "type": "number",
+          "name": "Top",
+          "desc": "Y co-ordinate of top edge of rectangle."
+        },
+        "right": {
+          "type": "number",
+          "name": "Right",
+          "desc": "X co-ordinate of right edge of rectangle."
+        },
+        "bottom": {
+          "type": "number",
+          "name": "Bottom",
+          "desc": "Y co-ordinate of bottom edge of rectangle."
+        },
+        "color1": {
+          "type": "number",
+          "name": "Color 1",
+          "desc": "The start color of the gradient."
+        },
+        "color2": {
+          "type": "number",
+          "name": "Color 2",
+          "desc": "The end color of the gradient."
+        },
+        "direction": {
+          "type": "combo",
+          "name": "Direction",
+          "desc": "The direction of the gradient.",
+          "items": {
+            "horizontal": "Horizontal",
+            "vertical": "Vertical"
+          }
+        }
+      }
+    },
+    {
+      "id": "fill-ellipse",
+      "scriptName": "FillEllipse",
+      "category": "drawing-general",
+      "list-name": "Fill ellipse",
+      "display-text": "Fill ellipse at ([i]{0}[/i], [i]{1}[/i]) radius ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i] ([i]{5}[/i] edge)",
+      "description": "Fill an elliptical area with a color.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate of center."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate of center."
+        },
+        "radius-x": {
+          "type": "number",
+          "name": "Radius X",
+          "desc": "Radius of ellipse on X axis."
+        },
+        "radius-y": {
+          "type": "number",
+          "name": "Radius Y",
+          "desc": "Radius of ellipse on Y axis."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to fill."
+        },
+        "edge": {
+          "type": "combo",
+          "name": "Edge",
+          "desc": "Whether to use a hard (pixellated) or smooth (antialiased) edge.",
+          "items": {
+            "hard": "Hard",
+            "smooth": "Smooth"
+          },
+          "initialValue": "smooth"
+        }
+      }
+    },
+    {
+      "id": "outline-ellipse",
+      "scriptName": "OutlineEllipse",
+      "category": "drawing-general",
+      "list-name": "Outline ellipse",
+      "display-text": "Outline ellipse at ([i]{0}[/i], [i]{1}[/i]) radius ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], line thickness [i]{5}[/i] ([i]{6}[/i] edge)",
+      "description": "Outline an elliptical area with a color.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate of center."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate of center."
+        },
+        "radius-x": {
+          "type": "number",
+          "name": "Radius X",
+          "desc": "Radius of ellipse on X axis."
+        },
+        "radius-y": {
+          "type": "number",
+          "name": "Radius Y",
+          "desc": "Radius of ellipse on Y axis."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the outline."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of the outline."
+        },
+        "edge": {
+          "type": "combo",
+          "name": "Edge",
+          "desc": "Whether to use a hard (pixellated) or smooth (antialiased) edge.",
+          "items": {
+            "hard": "Hard",
+            "smooth": "Smooth"
+          },
+          "initialValue": "smooth"
+        }
+      }
+    },
+    {
+      "id": "outline-rect",
+      "scriptName": "OutlineRect",
+      "category": "drawing-general",
+      "list-name": "Outline rectangle",
+      "display-text": "Outline rectangle ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], line thickness [i]{5}[/i]",
+      "description": "Draw lines around the outline of a rectangular area.",
+      "params": {
+        "left": {
+          "type": "number",
+          "name": "Left",
+          "desc": "X co-ordinate of left edge of rectangle."
+        },
+        "top": {
+          "type": "number",
+          "name": "Top",
+          "desc": "Y co-ordinate of top edge of rectangle."
+        },
+        "right": {
+          "type": "number",
+          "name": "Right",
+          "desc": "X co-ordinate of right edge of rectangle."
+        },
+        "bottom": {
+          "type": "number",
+          "name": "Bottom",
+          "desc": "Y co-ordinate of bottom edge of rectangle."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to fill."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of the outline."
+        }
+      }
+    },
+    {
+      "id": "line",
+      "scriptName": "Line",
+      "category": "drawing-general",
+      "list-name": "Line",
+      "display-text": "Draw line from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], thickness [i]{5}[/i], cap [i]{6}[/i]",
+      "description": "Draw a solid line between two points.",
+      "params": {
+        "x1": {
+          "type": "number",
+          "name": "X1",
+          "desc": "X co-ordinate of start point."
+        },
+        "y1": {
+          "type": "number",
+          "name": "Y1",
+          "desc": "Y co-ordinate of start point."
+        },
+        "x2": {
+          "type": "number",
+          "name": "X2",
+          "desc": "X co-ordinate of end point."
+        },
+        "y2": {
+          "type": "number",
+          "name": "Y2",
+          "desc": "Y co-ordinate of end point."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the line."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of line."
+        },
+        "line-cap": {
+          "type": "combo",
+          "name": "Line cap",
+          "desc": "How the ends of the lines are drawn.",
+          "items": {
+            "butt": "Butt",
+            "square": "Square"
+          }
+        }
+      }
+    },
+    {
+      "id": "line-dashed",
+      "scriptName": "LineDashed",
+      "category": "drawing-general",
+      "list-name": "Dashed line",
+      "display-text": "Draw dashed line from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i]) with [i]{4}[/i], thickness [i]{5}[/i], dash length [i]{6}[/i], cap [i]{7}[/i]",
+      "description": "Draw a dashed line between two points.",
+      "params": {
+        "x1": {
+          "type": "number",
+          "name": "X1",
+          "desc": "X co-ordinate of start point."
+        },
+        "y1": {
+          "type": "number",
+          "name": "Y1",
+          "desc": "Y co-ordinate of start point."
+        },
+        "x2": {
+          "type": "number",
+          "name": "X2",
+          "desc": "X co-ordinate of end point."
+        },
+        "y2": {
+          "type": "number",
+          "name": "Y2",
+          "desc": "Y co-ordinate of end point."
+        },
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the line."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of line."
+        },
+        "dash-length": {
+          "type": "number",
+          "name": "Dash length",
+          "desc": "The length of each dash on the line."
+        },
+        "line-cap": {
+          "type": "combo",
+          "name": "Line cap",
+          "desc": "How the ends of the lines are drawn.",
+          "items": {
+            "butt": "Butt",
+            "square": "Square"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-drawing-blend",
+      "scriptName": "SetDrawBlend",
+      "category": "drawing-general",
+      "list-name": "Set drawing blend",
+      "display-text": "Set drawing blend mode to [i]{0}[/i]",
+      "description": "Set the blend mode used for drawing actions (except pasting objects).",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for drawing actions (except pasting objects).",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "paste-object",
+      "scriptName": "PasteObject",
+      "category": "drawing-general",
+      "list-name": "Paste object",
+      "display-text": "Paste object {0} {1}",
+      "description": "Draw an object onto the canvas.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to paste onto the canvas."
+        },
+        "effects": {
+          "type": "combo",
+          "name": "Effects",
+          "desc": "Choose whether to draw the object with or without any effects added to it.",
+          "items": {
+            "without-effects": "without effects",
+            "with-effects": "with effects"
+          },
+          "initialValue": "with-effects"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "add-poly-point",
+      "scriptName": "AddPolyPoint",
+      "category": "drawing-polygons",
+      "list-name": "Add poly point",
+      "display-text": "Add polygon point ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Add a point to a polygon to draw.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate of point."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate of point."
+        }
+      }
+    },
+    {
+      "id": "reset-poly",
+      "scriptName": "ResetPoly",
+      "category": "drawing-polygons",
+      "list-name": "Reset poly",
+      "display-text": "Reset polygon",
+      "description": "Clear all polygon points that were added."
+    },
+    {
+      "id": "line-poly",
+      "scriptName": "LinePoly",
+      "category": "drawing-polygons",
+      "list-name": "Outline poly",
+      "display-text": "Draw polygon outline with [i]{0}[/i], thickness [i]{1}[/i], cap [i]{2}[/i]",
+      "description": "Draw lines around the outline of the current polygon.",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the line."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of line."
+        },
+        "line-cap": {
+          "type": "combo",
+          "name": "Line cap",
+          "desc": "How the ends of the lines are drawn.",
+          "items": {
+            "butt": "Butt",
+            "square": "Square"
+          }
+        }
+      }
+    },
+    {
+      "id": "line-dashed-poly",
+      "scriptName": "LineDashedPoly",
+      "category": "drawing-polygons",
+      "list-name": "Dashed outline poly",
+      "display-text": "Draw dashed polygon outline with [i]{0}[/i], thickness [i]{1}[/i], dash length [i]{2}[/i], cap [i]{3}[/i]",
+      "description": "Draw dashed lines around the outline of the current polygon.",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the line."
+        },
+        "line-thickness": {
+          "type": "number",
+          "name": "Thickness",
+          "desc": "The line thickness of line."
+        },
+        "dash-length": {
+          "type": "number",
+          "name": "Dash length",
+          "desc": "The length of each dash on the line."
+        },
+        "line-cap": {
+          "type": "combo",
+          "name": "Line cap",
+          "desc": "How the ends of the lines are drawn.",
+          "items": {
+            "butt": "Butt",
+            "square": "Square"
+          }
+        }
+      }
+    },
+    {
+      "id": "fill-poly",
+      "scriptName": "FillPoly",
+      "category": "drawing-polygons",
+      "list-name": "Fill poly",
+      "display-text": "Fill polygon with [i]{0}[/i] (convex: [i]{1}[/i])",
+      "description": "Fill the current polygon area with a color.",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color to fill."
+        },
+        "convex": {
+          "type": "boolean",
+          "name": "Convex",
+          "desc": "Check if the polygon shape is convex, which enables more reliable rendering."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "saved-image-url",
+      "scriptName": "SavedImageURL",
+      "category": "canvas",
+      "translated-name": "SavedImageURL",
+      "description": "In 'On saved image', the URL of the saved image.",
+      "returnType": "string"
+    },
+    {
+      "id": "snapshot-red-at",
+      "scriptName": "SnapshotRedAt",
+      "category": "canvas",
+      "translated-name": "SnapshotRedAt",
+      "description": "Get a pixel's R channel from a snapshot.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "Pixel X co-ordinate"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Pixel Y co-ordinate"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-green-at",
+      "scriptName": "SnapshotGreenAt",
+      "category": "canvas",
+      "translated-name": "SnapshotGreenAt",
+      "description": "Get a pixel's G channel from a snapshot.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "Pixel X co-ordinate"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Pixel Y co-ordinate"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-blue-at",
+      "scriptName": "SnapshotBlueAt",
+      "category": "canvas",
+      "translated-name": "SnapshotBlueAt",
+      "description": "Get a pixel's B channel from a snapshot.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "Pixel X co-ordinate"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Pixel Y co-ordinate"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-alpha-at",
+      "scriptName": "SnapshotAlphaAt",
+      "category": "canvas",
+      "translated-name": "SnapshotAlphaAt",
+      "description": "Get a pixel's alpha channel from a snapshot.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "Pixel X co-ordinate"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Pixel Y co-ordinate"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-width",
+      "scriptName": "SnapshotWidth",
+      "category": "canvas",
+      "translated-name": "SnapshotWidth",
+      "description": "The width of the last snapshot in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "snapshot-height",
+      "scriptName": "SnapshotHeight",
+      "category": "canvas",
+      "translated-name": "SnapshotHeight",
+      "description": "The height of the last snapshot in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "pixel-scale",
+      "scriptName": "PixelScale",
+      "category": "canvas",
+      "translated-name": "PixelScale",
+      "description": "The size of a single canvas pixel in object co-ordinates.",
+      "returnType": "number"
+    },
+    {
+      "id": "surface-device-width",
+      "scriptName": "SurfaceDeviceWidth",
+      "category": "canvas",
+      "translated-name": "SurfaceDeviceWidth",
+      "description": "The width of the Drawing Canvas surface in device pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "surface-device-height",
+      "scriptName": "SurfaceDeviceHeight",
+      "category": "canvas",
+      "translated-name": "SurfaceDeviceHeight",
+      "description": "The height of the Drawing Canvas surface in device pixels.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "resolution-mode": {
+      "name": "Resolution mode",
+      "desc": "Whether to automatically match the canvas resolution to the project, or always use a fixed resolution.",
+      "items": {
+        "auto": "Automatic",
+        "fixed": "Fixed"
+      }
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "origin": {
+      "name": "Origin",
+      "desc": "Choose the location of the origin in the object.",
+      "items": {
+        "top-left": "Top-left",
+        "top": "Top",
+        "top-right": "Top-right",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "bottom-left": "Bottom-left",
+        "bottom": "Bottom",
+        "bottom-right": "Bottom-right"
+      }
+    },
+    "antialiasing": {
+      "name": "Antialiasing",
+      "desc": "Enable antialiasing for better quality drawing. Requires WebGL 2+. If enabled, objects using background blending effects cannot be pasted.",
+      "items": {
+        "off": "Off",
+        "2x-msaa": "2x MSAA",
+        "4x-msaa": "4x MSAA",
+        "8x-msaa": "8x MSAA"
+      }
+    }
+  }
+}

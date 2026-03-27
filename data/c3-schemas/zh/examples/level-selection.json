@@ -1,0 +1,22 @@
+{
+  "id": "level-selection",
+  "name": "HUD: 关卡选择页面",
+  "description": "利用关卡选择器向玩家展示游戏进度，并将存档记录储存在本地。",
+  "tags": [
+    "进阶",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Button",
+      "Sprite",
+      "Arr",
+      "LocalStorage",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=level-selection"
+}

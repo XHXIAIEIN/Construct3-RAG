@@ -1,0 +1,35 @@
+{
+  "id": "battery-sprint",
+  "name": "脚本项目: 逆转跑酷",
+  "description": "这款3D平台跑酷游戏挑战你带领一个小电池到关卡的终点。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "平台",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Platform",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=battery-sprint"
+}

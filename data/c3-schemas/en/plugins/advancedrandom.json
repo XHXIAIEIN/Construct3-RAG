@@ -1,0 +1,564 @@
+{
+  "id": "advancedrandom",
+  "name": "Advanced Random",
+  "description": "Utilities for advanced randomness",
+  "type": "plugin",
+  "aceCategories": {
+    "advancedrandom": "Advanced Random",
+    "gradients": "Gradients",
+    "permutation-tables": "Permutation tables",
+    "probability-tables": "Probability tables"
+  },
+  "conditions": [],
+  "actions": [
+    {
+      "id": "createGradient",
+      "scriptName": "CreateGradient",
+      "category": "gradients",
+      "list-name": "Create gradient",
+      "display-text": "Create [b]{1}[/b] gradient called [b]{0}[/b]",
+      "description": "Creates a new linear gradient",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the gradient"
+        },
+        "isColor": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Specify if the gradient is numerical or color",
+          "items": {
+            "number": "Number",
+            "color": "Color"
+          }
+        }
+      }
+    },
+    {
+      "id": "addStop",
+      "scriptName": "AddStop",
+      "category": "gradients",
+      "list-name": "Add gradient stop",
+      "display-text": "Add stop at [b]{0}[/b] with value [b]{1}[/b]",
+      "description": "Add a stop to the current gradient",
+      "params": {
+        "position": {
+          "type": "number",
+          "name": "Stop position",
+          "desc": "The position of the new stop"
+        },
+        "value": {
+          "type": "number",
+          "name": "Stop value",
+          "desc": "The value of the new stop. Use rgbEx/rgba expressions for color gradients."
+        }
+      }
+    },
+    {
+      "id": "setGradient",
+      "scriptName": "SetGradient",
+      "category": "gradients",
+      "list-name": "Set gradient",
+      "display-text": "Set current gradient to [b]{0}[/b]",
+      "description": "Sets current gradient",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the gradient"
+        }
+      }
+    },
+    {
+      "id": "createPermutationTable",
+      "scriptName": "CreatePermutationTable",
+      "category": "permutation-tables",
+      "list-name": "Create permutation table",
+      "display-text": "Create permutation with {0} values starting at {1}",
+      "description": "Creates a sequence of numbers that are randomly ordered.",
+      "params": {
+        "length": {
+          "type": "number",
+          "name": "Length",
+          "desc": "The length of the new permutation table."
+        },
+        "offset": {
+          "type": "number",
+          "name": "Offset",
+          "desc": "The lowest value in the table."
+        }
+      }
+    },
+    {
+      "id": "shufflePermutationTable",
+      "scriptName": "ShufflePermutationTable",
+      "category": "permutation-tables",
+      "list-name": "Shuffle permutation table",
+      "display-text": "Shuffle permutation table",
+      "description": "Reshuffles the current permutation table"
+    },
+    {
+      "id": "createProbabilityTable",
+      "scriptName": "CreateProbabilityTable",
+      "category": "probability-tables",
+      "list-name": "Create probability table",
+      "display-text": "Create probability table called [b]{0}[/b]",
+      "description": "Creates a new weighted probability table",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the probability table"
+        }
+      }
+    },
+    {
+      "id": "createProbabilityTableFromJSON",
+      "scriptName": "CreateProbabilityTableFromJSON",
+      "category": "probability-tables",
+      "list-name": "Create probability table from JSON",
+      "display-text": "Create probability table called [b]{0}[/b] from [b]{1}[/b]",
+      "description": "Creates a new weighted probability table from a JSON string",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the probability table"
+        },
+        "json": {
+          "type": "string",
+          "name": "JSON",
+          "desc": "A JSON string of a serialized probability table"
+        }
+      }
+    },
+    {
+      "id": "addProbabilityEntry",
+      "scriptName": "AddProbabilityEntry",
+      "category": "probability-tables",
+      "list-name": "Add probability entry",
+      "display-text": "Add entry [b]{0}[/b] with weight [b]{1}[/b]",
+      "description": "Add an entry to the current probability table",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value of the entry"
+        },
+        "weight": {
+          "type": "number",
+          "name": "Entry weight",
+          "desc": "The weight for the probability of the value"
+        }
+      }
+    },
+    {
+      "id": "removeProbabilityEntry",
+      "scriptName": "RemoveProbabilityEntry",
+      "category": "probability-tables",
+      "list-name": "Remove probability entry",
+      "display-text": "Remove entry [b]{0}[/b] with weight [b]{1}[/b]",
+      "description": "Remove an entry from the current probability table that matches a given weight and value",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value of the entry"
+        },
+        "weight": {
+          "type": "number",
+          "name": "Entry weight",
+          "desc": "The weight for the probability of the value, specifying 0 matches any weight"
+        }
+      }
+    },
+    {
+      "id": "setProbabilityTable",
+      "scriptName": "SetProbabilityTable",
+      "category": "probability-tables",
+      "list-name": "Set probability table",
+      "display-text": "Set current probability table to [b]{0}[/b]",
+      "description": "Sets current probability table",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the probability table"
+        }
+      }
+    },
+    {
+      "id": "seed",
+      "scriptName": "SetSeed",
+      "category": "advancedrandom",
+      "list-name": "Update seed",
+      "display-text": "Update seed to [b]{0}[/b]",
+      "description": "Updates the random number generator seed",
+      "params": {
+        "seed": {
+          "type": "string",
+          "name": "Seed",
+          "desc": "The new seed for the random number generator"
+        }
+      }
+    },
+    {
+      "id": "octaves",
+      "scriptName": "SetOctaves",
+      "category": "advancedrandom",
+      "list-name": "Set octaves",
+      "display-text": "Set octaves to [b]{0}[/b]",
+      "description": "Updates the number of octaves used by coherent noise",
+      "params": {
+        "count": {
+          "type": "number",
+          "name": "Count",
+          "desc": "The number of octaves to use, from 1-16."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "sampleGradient",
+      "scriptName": "Gradient",
+      "category": "gradients",
+      "translated-name": "Gradient",
+      "description": "Get the value from the gradient at the given position",
+      "params": {
+        "value": {
+          "type": "number",
+          "name": "Position",
+          "desc": "Position to sample gradient"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "sample-gradient-by-name",
+      "scriptName": "GradientByName",
+      "category": "gradients",
+      "translated-name": "GradientByName",
+      "description": "Get the value from a named gradient at the given position",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "Gradient name"
+        },
+        "value": {
+          "type": "number",
+          "name": "Position",
+          "desc": "Position to sample gradient"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "permutation",
+      "scriptName": "Permutation",
+      "category": "permutation-tables",
+      "translated-name": "Permutation",
+      "description": "Get a value from the current permutation table",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "location"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "sampleProbability",
+      "scriptName": "Weighted",
+      "category": "probability-tables",
+      "translated-name": "Weighted",
+      "description": "Sample a value from the current probability table",
+      "returnType": "any"
+    },
+    {
+      "id": "sample-probability-by-name",
+      "scriptName": "WeightedByName",
+      "category": "probability-tables",
+      "translated-name": "WeightedByName",
+      "description": "Sample a value from a named probability table",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "Table name"
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "probabilityTableAsJSON",
+      "scriptName": "ProbabilityTableAsJSON",
+      "category": "probability-tables",
+      "translated-name": "ProbabilityTableAsJSON",
+      "description": "Serialize the current probability table as a JSON string",
+      "returnType": "string"
+    },
+    {
+      "id": "classic2d",
+      "scriptName": "Classic2d",
+      "category": "advancedrandom",
+      "translated-name": "Classic2d",
+      "description": "Generate a smooth random number between 0 and 1 using 2D classic noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "classic3d",
+      "scriptName": "Classic3d",
+      "category": "advancedrandom",
+      "translated-name": "Classic3d",
+      "description": "Generate a smooth random number between 0 and 1 using 3D classic noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "Z co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "billow2d",
+      "scriptName": "Billow2d",
+      "category": "advancedrandom",
+      "translated-name": "Billow2d",
+      "description": "Generate a smooth random number between 0 and 1 using 2D billow noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "billow3d",
+      "scriptName": "Billow3d",
+      "category": "advancedrandom",
+      "translated-name": "Billow3d",
+      "description": "Generate a smooth random number between 0 and 1 using 3D billow noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "Z co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "ridged2d",
+      "scriptName": "Ridged2d",
+      "category": "advancedrandom",
+      "translated-name": "Ridged2d",
+      "description": "Generate a smooth random number between 0 and 1 using 2D ridged noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "ridged3d",
+      "scriptName": "Ridged3d",
+      "category": "advancedrandom",
+      "translated-name": "Ridged3d",
+      "description": "Generate a smooth random number between 0 and 1 using 3D ridged noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "Z co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "seed",
+      "scriptName": "Seed",
+      "category": "advancedrandom",
+      "translated-name": "Seed",
+      "description": "The seed value currently being used",
+      "returnType": "string"
+    },
+    {
+      "id": "cellular2d",
+      "scriptName": "Cellular2d",
+      "category": "advancedrandom",
+      "translated-name": "Cellular2d",
+      "description": "Generate a random number between 0 and 1 using 2D cellular noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cellular3d",
+      "scriptName": "Cellular3d",
+      "category": "advancedrandom",
+      "translated-name": "Cellular3d",
+      "description": "Generate a random number between 0 and 1 using 3D cellular noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "Z co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "voronoi2d",
+      "scriptName": "Voronoi2d",
+      "category": "advancedrandom",
+      "translated-name": "Voronoi2d",
+      "description": "Generate a random number between 0 and 1 using 2D voronoi noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "voronoi3d",
+      "scriptName": "Voronoi3d",
+      "category": "advancedrandom",
+      "translated-name": "Voronoi3d",
+      "description": "Generate a random number between 0 and 1 using 3D voronoi noise",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X co-ordinate to sample"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y co-ordinate to sample"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "Z co-ordinate to sample"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "randomSeed",
+      "scriptName": "RandomSeed",
+      "category": "advancedrandom",
+      "translated-name": "RandomSeed",
+      "description": "Generate a random seed",
+      "returnType": "string"
+    },
+    {
+      "id": "random",
+      "scriptName": "Random",
+      "category": "advancedrandom",
+      "translated-name": "Random",
+      "description": "Generate a random number in the range [0, 1) based on the current seed.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "seed": {
+      "name": "Seed",
+      "desc": "The seed used by the random number generator."
+    },
+    "seeded-random": {
+      "name": "Replace system random",
+      "desc": "Replace the system random with this plugin's seeded PRNG."
+    }
+  }
+}

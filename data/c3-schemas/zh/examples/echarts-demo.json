@@ -1,0 +1,20 @@
+{
+  "id": "echarts-demo",
+  "name": "脚本项目：可视化图表",
+  "description": "演示使用 JavaScript 和 Apache ECharts 库来显示可视化图表。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "HTMLElement",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=echarts-demo"
+}

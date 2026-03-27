@@ -1,0 +1,22 @@
+{
+  "id": "scripting-pathfinding",
+  "name": "脚本示例：寻路",
+  "description": "演示使用寻路行为的 API 查找路径并显示路径点。",
+  "tags": [
+    "移动端",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-pathfinding"
+}

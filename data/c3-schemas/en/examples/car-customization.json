@@ -1,0 +1,25 @@
+{
+  "id": "car-customization",
+  "name": "Car Customization",
+  "description": "Fine tune your car to reach peak performance and rule the racing tracks.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Racing",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=car-customization"
+}

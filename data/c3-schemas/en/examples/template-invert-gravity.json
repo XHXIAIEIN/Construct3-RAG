@@ -1,0 +1,37 @@
+{
+  "id": "template-invert-gravity",
+  "name": "Invert gravity platformer",
+  "description": "A tilemap-based platform template with controls to invert gravity, providing a puzzle style gameplay mechanic.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Spritefont2",
+      "Particles",
+      "gamepad"
+    ],
+    "behaviors": [
+      "solid",
+      "Pin",
+      "Tween",
+      "Platform",
+      "wrap",
+      "Sin",
+      "Bullet",
+      "Timer",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": [
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-invert-gravity"
+}

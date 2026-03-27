@@ -1,0 +1,25 @@
+{
+  "id": "html-menu",
+  "name": "HUD: HTML 菜单",
+  "description": "演示使用 HTML + CSS 制作右键弹出菜单，此菜单会自适应内容而调整大小，带有简单的CSS动画。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "HTMLElement",
+      "AJAX",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-menu"
+}

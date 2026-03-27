@@ -1,0 +1,32 @@
+{
+  "id": "guided-platforms",
+  "name": "Guided platforms",
+  "description": "Demonstrates moving platforms that can also be controlled by the player.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "MoveTo",
+      "EightDir",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=guided-platforms"
+}

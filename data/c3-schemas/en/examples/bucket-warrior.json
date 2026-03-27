@@ -1,0 +1,35 @@
+{
+  "id": "bucket-warrior",
+  "name": "Bucket warrior",
+  "description": "With a bucket in hand and courage in his heart, the kingdom's warrior is on a mission to extinguish the flames and defeat the dragon. Guide him to victory!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer",
+    "Timeline",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Fade",
+      "LOS",
+      "MoveTo",
+      "Platform",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bucket-warrior"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "tank-pilot",
+  "name": "游戏示例：坦克士兵",
+  "description": "经典游戏《合金弹头》 部分机制，玩家可以坐进坦克里并使用新武器战斗。适用于平台射击类型游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "jumpthru",
+      "LOS",
+      "Pin",
+      "Bullet",
+      "destroy",
+      "solid",
+      "Tween",
+      "Fade",
+      "Flash",
+      "Platform"
+    ],
+    "effects": [
+      "warpobjectmask",
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tank-pilot"
+}

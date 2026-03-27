@@ -1,0 +1,31 @@
+{
+  "id": "world-to-hud-position",
+  "name": "HUD: 转换图层坐标",
+  "description": "演示如何计算不同图层之间的位置坐标，使游戏对象移动到UI页面的位置。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Fade",
+      "Pin",
+      "Platform",
+      "Sin",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=world-to-hud-position"
+}

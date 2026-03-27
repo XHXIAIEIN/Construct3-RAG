@@ -1,0 +1,237 @@
+{
+  "id": "pin",
+  "name": "Pin",
+  "description": "Stick to another object maintaining a relative distance and angle.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-pinned",
+      "scriptName": "IsPinned",
+      "category": "",
+      "list-name": "Is pinned",
+      "display-text": "{my} is pinned",
+      "description": "Object is currently pinned to another object."
+    },
+    {
+      "id": "will-destroy",
+      "scriptName": "WillDestroy",
+      "category": "",
+      "list-name": "Will destroy with pinned object",
+      "display-text": "{my} will destroy with pinned object",
+      "description": "True if the object will be destroyed when the object it is pinned to is destroyed."
+    }
+  ],
+  "actions": [
+    {
+      "id": "pin-to-object",
+      "scriptName": "Pin",
+      "category": "",
+      "list-name": "Pin to object",
+      "display-text": "{my} Pin to {0} ({1})",
+      "description": "Pin the object to another object.",
+      "params": {
+        "pin-to": {
+          "type": "object",
+          "name": "Pin to",
+          "desc": "Choose the object to pin to."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Choose which properties of the object to update.",
+          "items": {
+            "position-angle": "Position & angle",
+            "position-only": "Position only",
+            "angle-only": "Angle only",
+            "rope-style": "Rope style",
+            "bar-style": "Bar style"
+          }
+        }
+      }
+    },
+    {
+      "id": "pin-to-object-distance",
+      "scriptName": "PinByDistance",
+      "category": "",
+      "list-name": "Pin at distance",
+      "display-text": "{my} Pin to {0} {1}",
+      "description": "Pin the object to another object by restricting its distance to that object.",
+      "params": {
+        "pin-to": {
+          "type": "object",
+          "name": "Pin to",
+          "desc": "Choose the object to pin to."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Choose the distance limitation to use for the pin.",
+          "items": {
+            "rope-style": "Rope style (maximum distance)",
+            "bar-style": "Bar style (fixed distance)"
+          }
+        }
+      }
+    },
+    {
+      "id": "pin-to-object-properties",
+      "scriptName": "PinByProperties",
+      "category": "",
+      "list-name": "Pin to object",
+      "display-text": "{my} Pin to {0} (X: [i]{1}[/i], Y: [i]{2}[/i], angle: [i]{3}[/i], width: [i]{4}[/i], height: [i]{5}[/i], Z: [i]{6}[/i])",
+      "description": "Pin the object to another object.",
+      "params": {
+        "pin-to": {
+          "type": "object",
+          "name": "Pin to",
+          "desc": "Choose the object to pin to."
+        },
+        "x": {
+          "type": "boolean",
+          "name": "X",
+          "desc": "Pin the object's X co-ordinate."
+        },
+        "y": {
+          "type": "boolean",
+          "name": "Y",
+          "desc": "Pin the object's Y co-ordinate."
+        },
+        "angle": {
+          "type": "boolean",
+          "name": "Angle",
+          "desc": "Pin the object's angle."
+        },
+        "width-type": {
+          "type": "combo",
+          "name": "Width",
+          "desc": "Pin the object's width, either by absolute difference or relative scale.",
+          "items": {
+            "no": "No",
+            "absolute": "Absolute",
+            "scale": "Scale"
+          }
+        },
+        "height-type": {
+          "type": "combo",
+          "name": "Height",
+          "desc": "Pin the object's height, either by absolute difference or relative scale.",
+          "items": {
+            "no": "No",
+            "absolute": "Absolute",
+            "scale": "Scale"
+          }
+        },
+        "z": {
+          "type": "boolean",
+          "name": "Z elevation",
+          "desc": "Pin the object's Z elevation."
+        }
+      }
+    },
+    {
+      "id": "pin-to-object-imagepoint",
+      "scriptName": "PinByImagePoint",
+      "category": "",
+      "list-name": "Pin to image point",
+      "display-text": "{my} Pin to {0} (image point [i]{1}[/i], angle: [i]{2}[/i], width: [i]{3}[/i], height: [i]{4}[/i], Z: [i]{5}[/i])",
+      "description": "Pin the object to another object's image point.",
+      "params": {
+        "pin-to": {
+          "type": "object",
+          "name": "Pin to",
+          "desc": "Choose the object to pin to."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of an image point in the object to position to."
+        },
+        "angle": {
+          "type": "boolean",
+          "name": "Angle",
+          "desc": "Pin the object's angle."
+        },
+        "width-type": {
+          "type": "combo",
+          "name": "Width",
+          "desc": "Pin the object's width, either by absolute difference or relative scale.",
+          "items": {
+            "no": "No",
+            "absolute": "Absolute",
+            "scale": "Scale"
+          }
+        },
+        "height-type": {
+          "type": "combo",
+          "name": "Height",
+          "desc": "Pin the object's height, either by absolute difference or relative scale.",
+          "items": {
+            "no": "No",
+            "absolute": "Absolute",
+            "scale": "Scale"
+          }
+        },
+        "z": {
+          "type": "boolean",
+          "name": "Z elevation",
+          "desc": "Pin the object's Z elevation."
+        }
+      }
+    },
+    {
+      "id": "set-pin-distance",
+      "scriptName": "SetPinDistance",
+      "category": "",
+      "list-name": "Set pin distance",
+      "display-text": "Set {my} distance to [i]{0}[/i]",
+      "description": "When using 'Pin at distance', set the distance limit.",
+      "params": {
+        "distance": {
+          "type": "number",
+          "name": "Distance",
+          "desc": "The distance limit to use, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-destroy",
+      "scriptName": "SetDestroy",
+      "category": "",
+      "list-name": "Set destroy with pinned object",
+      "display-text": "Set {my} destroy with pinned object [i]{0}[/i]",
+      "description": "Set whether to destroy this object if the object it is pinned to is destroyed.",
+      "params": {
+        "destroy": {
+          "type": "boolean",
+          "name": "Destroy with pinned object",
+          "desc": "Whether to destroy this object if the object it is pinned to is destroyed."
+        }
+      }
+    },
+    {
+      "id": "unpin",
+      "scriptName": "Unpin",
+      "category": "",
+      "list-name": "Unpin",
+      "display-text": "{my} Unpin",
+      "description": "Unpin the object."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pinneduid",
+      "scriptName": "PinnedUID",
+      "category": "",
+      "translated-name": "PinnedUID",
+      "description": "Get the UID of the object pinned to, or -1 if not pinned.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "destroy": {
+      "name": "Destroy with pinned object",
+      "desc": "If the object pinned to is destroyed, also destroy this object."
+    }
+  }
+}

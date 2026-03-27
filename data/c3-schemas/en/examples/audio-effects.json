@@ -1,0 +1,22 @@
+{
+  "id": "audio-effects",
+  "name": "Audio effects",
+  "description": "A sound effect pad showing various effects that can be added to audio playback.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "Keyboard",
+      "NinePatch",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-effects"
+}

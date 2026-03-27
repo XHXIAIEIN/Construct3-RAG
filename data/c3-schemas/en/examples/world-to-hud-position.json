@@ -1,0 +1,31 @@
+{
+  "id": "world-to-hud-position",
+  "name": "World to HUD position",
+  "description": "Shows how to make objects in the level move to a position on the interface by transforming positions between layers.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Fade",
+      "Pin",
+      "Platform",
+      "Sin",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=world-to-hud-position"
+}

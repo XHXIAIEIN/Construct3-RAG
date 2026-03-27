@@ -1,0 +1,25 @@
+{
+  "id": "back-face-culling",
+  "name": "功能示例：背面剔除",
+  "description": "展示背面剔除功能对 3D 形状对象影响。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Orbit"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=back-face-culling"
+}

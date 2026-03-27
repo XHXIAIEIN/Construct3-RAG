@@ -1,0 +1,28 @@
+{
+  "id": "follow-custom-properties",
+  "name": "轨迹跟随：自定义属性",
+  "description": "演示 '轨迹跟随' 行为，同步对象的属性，效果参数。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=follow-custom-properties"
+}

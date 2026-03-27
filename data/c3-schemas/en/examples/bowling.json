@@ -1,0 +1,26 @@
+{
+  "id": "bowling",
+  "name": "Bowling",
+  "description": "Display your bowling expertise and rule the lanes, stacking up impressive strikes in this classic bowling experience.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bowling"
+}

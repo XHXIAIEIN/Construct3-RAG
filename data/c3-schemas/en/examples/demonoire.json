@@ -1,0 +1,44 @@
+{
+  "id": "demonoire",
+  "name": "Demonoire",
+  "description": "There are many riches to be had in the dungeon of the demon. Are you up to the challenge?",
+  "tags": [
+    "Demo game",
+    "games-recommended",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "Flash",
+      "Pin",
+      "Sin",
+      "Timer",
+      "solid"
+    ],
+    "effects": [
+      "brightness",
+      "overlay",
+      "replacecolor",
+      "tint",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=demonoire"
+}

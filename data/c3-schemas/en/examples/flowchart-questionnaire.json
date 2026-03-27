@@ -1,0 +1,25 @@
+{
+  "id": "flowchart-questionnaire",
+  "name": "Flowcharts questionnaire",
+  "description": "Demonstrates how to use the Flowcharts feature for a short questionnaire, with subsequent questions depending on previous answers.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Button",
+      "Flowchart",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=flowchart-questionnaire"
+}

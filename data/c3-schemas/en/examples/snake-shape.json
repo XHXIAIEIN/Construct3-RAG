@@ -1,0 +1,41 @@
+{
+  "id": "snake-shape",
+  "name": "Snake shape",
+  "description": "Move a snake changing its body shape in order to solve puzzles and avoid hazards.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Particles",
+      "gamepad",
+      "Browser",
+      "Keyboard",
+      "Arr",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Sin",
+      "Fade",
+      "Tween",
+      "LOS",
+      "Timer",
+      "solid"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "warpobjectmask",
+      "overlay",
+      "bulge",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=snake-shape"
+}

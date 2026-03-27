@@ -1,0 +1,23 @@
+{
+  "id": "colorhalftone",
+  "name": "Color halftone",
+  "description": "A dotted print style color effect.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "scale",
+      "type": "percent",
+      "name": "Scale",
+      "desc": "Size of the dots."
+    },
+    {
+      "id": "angle",
+      "type": "float",
+      "name": "angle",
+      "desc": "Angle of the dot lines."
+    }
+  ]
+}

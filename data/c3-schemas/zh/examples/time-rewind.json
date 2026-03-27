@@ -1,0 +1,35 @@
+{
+  "id": "time-rewind",
+  "name": "关卡设计፡ 时间回溯",
+  "description": "一个平台示例，用于跟踪玩家移动的简短历史并允许他们倒带时间。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Arr",
+      "NinePatch",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "Tween",
+      "solid",
+      "Bullet",
+      "LOS",
+      "Pin",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=time-rewind"
+}

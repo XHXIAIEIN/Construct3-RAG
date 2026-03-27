@@ -1,0 +1,21 @@
+{
+  "id": "physics-basics",
+  "name": "物理：基础",
+  "description": "演示物理行为的简单示例。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-basics"
+}

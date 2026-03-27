@@ -1,0 +1,27 @@
+{
+  "id": "animated-title-screen",
+  "name": "时间轴：标题动画",
+  "description": "用时间轴功能，设计冒险游戏的经典标题开场动画。",
+  "tags": [
+    "简单",
+    "animation-recommended",
+    "玩法机制",
+    "冒险",
+    "动画",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Timeline",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=animated-title-screen"
+}

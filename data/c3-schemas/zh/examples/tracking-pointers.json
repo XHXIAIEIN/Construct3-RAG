@@ -1,0 +1,19 @@
+{
+  "id": "tracking-pointers",
+  "name": "脚本示例：多点触控",
+  "description": "演示如何通过 JavaScript 代码处理多个触控输入（鼠标、触控、电容笔）",
+  "tags": [
+    "移动端",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tracking-pointers"
+}

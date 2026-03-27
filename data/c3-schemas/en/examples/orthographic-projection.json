@@ -1,0 +1,25 @@
+{
+  "id": "orthographic-projection",
+  "name": "Orthographic projection",
+  "description": "Demonstrates using an orthographic projection along with the 3D camera object for an isometric style appearance.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Shape3D",
+      "Camera3D",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=orthographic-projection"
+}

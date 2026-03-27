@@ -1,0 +1,28 @@
+{
+  "id": "farming-lines",
+  "name": "Farming lines",
+  "description": "Find a way to fill the land with seeds to make your farm grow larger.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Touch",
+      "Sprite",
+      "Shape3D",
+      "Camera3D",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=farming-lines"
+}

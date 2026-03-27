@@ -1,0 +1,24 @@
+{
+  "id": "8-direction-behavior",
+  "name": "功能示例：八方向",
+  "description": "使用键盘的方向键，控制八方向行为对象，点击鼠标发射子弹。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=8-direction-behavior"
+}

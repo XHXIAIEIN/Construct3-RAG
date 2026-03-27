@@ -1,0 +1,26 @@
+{
+  "id": "particle-thruster",
+  "name": "粒子：推进器",
+  "description": "使用粒子对象创建受控太空船推进器效果。",
+  "tags": [
+    "简单",
+    "移动端",
+    "功能示例",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text",
+      "Particles",
+      "Touch"
+    ],
+    "behaviors": [
+      "custom",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-thruster"
+}

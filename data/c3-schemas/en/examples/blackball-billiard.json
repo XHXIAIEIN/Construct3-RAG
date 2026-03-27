@@ -1,0 +1,28 @@
+{
+  "id": "blackball-billiard",
+  "name": "Blackball billiards",
+  "description": "Prove yourself as the pool champion by challenging your friends to a local match of blackball billiards.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Timer",
+      "Tween",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blackball-billiard"
+}

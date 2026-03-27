@@ -1,0 +1,23 @@
+{
+  "id": "turret-behavior",
+  "name": "功能示例：炮台行为",
+  "description": "使用炮塔行为瞄准并射击范围内物体的简单示例",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Turret",
+      "EightDir",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=turret-behavior"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "animated-title-screen",
+  "name": "Animated title screen",
+  "description": "Learn more about the timeline feature with an animated adventure game title screen.",
+  "tags": [
+    "Beginner",
+    "animation-recommended",
+    "Gameplay mechanic",
+    "Adventure",
+    "Animation",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Timeline",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=animated-title-screen"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "loading-script-and-wasm",
+  "name": "Loading external script & WebAssembly",
+  "description": "Demonstrates how to dynamically load an external script file (e.g. a library), and how to compile and instantiate a simple WebAssembly module and call an exported function.",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=loading-script-and-wasm"
+}

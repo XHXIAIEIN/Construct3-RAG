@@ -1,0 +1,32 @@
+{
+  "id": "space-blaster",
+  "name": "Space Blaster",
+  "description": "As usual, Earth is under attack. Can you save all mankind... before tea-time?",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Shooter",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Browser",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Anchor",
+      "Bullet",
+      "Flash",
+      "Rotate",
+      "bound",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=space-blaster"
+}

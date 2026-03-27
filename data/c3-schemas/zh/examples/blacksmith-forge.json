@@ -1,0 +1,27 @@
+{
+  "id": "blacksmith-forge",
+  "name": "时间轴：锻造大师",
+  "description": "观赏铁匠大师熟练地挥舞铁锤，锻造一把威力强大的宝剑。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Bullet",
+      "DragnDrop",
+      "Fade",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blacksmith-forge"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "template-crossing-frog",
+  "name": "3D青蛙过河",
+  "description": "经典游戏《青蛙过河》玩法。帮助青蛙利用浮动的木头穿过河流，安全到达对岸。",
+  "tags": [
+    "games-recommended",
+    "进阶",
+    "游戏模板",
+    "冒险",
+    "3D",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "Shape3D",
+      "TiledBg",
+      "Tilemap",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Pin",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-crossing-frog"
+}

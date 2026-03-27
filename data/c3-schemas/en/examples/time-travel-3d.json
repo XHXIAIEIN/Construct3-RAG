@@ -1,0 +1,29 @@
+{
+  "id": "time-travel-3d",
+  "name": "Time travel 3D",
+  "description": "You find yourself trapped in the lab after discovering time-travel. Rewrite history by using your powers to solve puzzles and escape.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=time-travel-3d"
+}

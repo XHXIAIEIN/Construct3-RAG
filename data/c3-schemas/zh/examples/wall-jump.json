@@ -1,0 +1,29 @@
+{
+  "id": "wall-jump",
+  "name": "关卡设计⁚ 蹬墙跳",
+  "description": "给角色增加蹬墙跳跃能力，适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "MoveTo",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wall-jump"
+}

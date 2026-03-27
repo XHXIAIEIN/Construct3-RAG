@@ -1,0 +1,32 @@
+{
+  "id": "follow-path",
+  "name": "Follow path",
+  "description": "Demonstrates making another object follow the player by storing a short history of positions in an array.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Tilemap",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Timer",
+      "solid",
+      "Pin",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-path"
+}

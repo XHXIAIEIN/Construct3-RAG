@@ -1,0 +1,25 @@
+{
+  "id": "raycast-reflections",
+  "name": "功能示例：Raycast 反射",
+  "description": "演示使用视线行为的光线投射，多次反弹光线，并在绘图画布上绘制线条，以使投射的光线可见。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text",
+      "DrawingCanvas",
+      "Touch"
+    ],
+    "behaviors": [
+      "EightDir",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=raycast-reflections"
+}

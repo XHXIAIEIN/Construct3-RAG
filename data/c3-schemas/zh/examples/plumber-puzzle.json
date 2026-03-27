@@ -1,0 +1,30 @@
+{
+  "id": "plumber-puzzle",
+  "name": "游戏示例：接水管",
+  "description": "经典游戏《接水管》玩法，加入限时解谜机制。在水流恢复前，尽快找出正确的路线重新布置管道。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "NinePatch",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin",
+      "Rotate"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=plumber-puzzle"
+}

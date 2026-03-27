@@ -1,0 +1,29 @@
+{
+  "id": "qr-code-maker",
+  "name": "QR code maker",
+  "description": "A small tool to generate a QR code and download, copy or share the result.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "Clipboard",
+      "DrawingCanvas",
+      "FileSystem",
+      "List",
+      "Share",
+      "Text",
+      "TextBox",
+      "qrcode"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=qr-code-maker"
+}

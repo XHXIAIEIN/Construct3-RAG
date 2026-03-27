@@ -1,0 +1,35 @@
+{
+  "id": "dungeon-crawler",
+  "name": "Dungeon crawler",
+  "description": "Move through a dark dungeon choosing your moves wisely so you don't run out of energy before reaching the end.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject",
+      "blurhorizontal",
+      "blurvertical",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dungeon-crawler"
+}

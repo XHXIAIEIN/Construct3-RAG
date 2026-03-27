@@ -1,0 +1,24 @@
+{
+  "id": "html-dialog",
+  "name": "HUD: HTML对话框",
+  "description": "演示使用 HTML + CSS 制作交互式对话框，在对话框的滚动列表中选择项目。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "HTMLElement",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-dialog"
+}

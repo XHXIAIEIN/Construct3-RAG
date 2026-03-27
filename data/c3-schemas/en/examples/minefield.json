@@ -1,0 +1,31 @@
+{
+  "id": "minefield",
+  "name": "Minefield",
+  "description": "Try to find all the mines without activating any in this classic retro style game.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Mouse",
+      "Spritefont2",
+      "AdvancedRandom",
+      "NinePatch",
+      "TiledBg",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=minefield"
+}

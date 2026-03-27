@@ -1,0 +1,16 @@
+{
+  "id": "imports-and-exports",
+  "name": "脚本示例：外部模块",
+  "description": "演示代码模块的用法， import 和 export 语句。",
+  "tags": [
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=imports-and-exports"
+}

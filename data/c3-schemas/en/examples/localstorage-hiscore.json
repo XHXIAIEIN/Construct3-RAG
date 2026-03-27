@@ -1,0 +1,21 @@
+{
+  "id": "localstorage-hiscore",
+  "name": "Local storage - high score",
+  "description": "An example of how to persistently store data (such as a high score) using the Local Storage object.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic"
+  ],
+  "used-addons": {
+    "plugins": [
+      "LocalStorage",
+      "TextBox",
+      "Button",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=localstorage-hiscore"
+}

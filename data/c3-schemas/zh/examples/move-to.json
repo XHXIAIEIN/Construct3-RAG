@@ -1,0 +1,23 @@
+{
+  "id": "move-to",
+  "name": "功能示例：移动到位置",
+  "description": "演示 '移动到' 行为，对象移动到用户触摸或单击的位置。",
+  "tags": [
+    "简单",
+    "移动端",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=move-to"
+}

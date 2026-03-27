@@ -1,0 +1,20 @@
+{
+  "id": "bluetooth-device-name",
+  "name": "Bluetooth - device name",
+  "description": "Uses the Bluetooth object to connect to a nearby device and read its device name.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "Bluetooth"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bluetooth-device-name"
+}

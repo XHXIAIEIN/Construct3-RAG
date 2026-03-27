@@ -1,0 +1,32 @@
+{
+  "id": "shockwave-spell",
+  "name": "Shockwave spell",
+  "description": "An example of a character with a magic spell that sends out a shockwave.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "solid",
+      "Tween",
+      "LOS",
+      "destroy",
+      "scrollto",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shockwave-spell"
+}

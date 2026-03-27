@@ -1,0 +1,29 @@
+{
+  "id": "rotating-maze",
+  "name": "Rotating maze",
+  "description": "Rotate the three available mazes, utilizing gravity and physics to guide the balls into the hole.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Physics",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=rotating-maze"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "console-typist",
+  "name": "游戏示例: 终端打字",
+  "description": "在无鼠标时代，快速打字对于高效导航至关重要。通过快速输入控制台屏幕上显示的单词来测试您的速度。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Browser",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "bulge",
+      "glowhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=console-typist"
+}

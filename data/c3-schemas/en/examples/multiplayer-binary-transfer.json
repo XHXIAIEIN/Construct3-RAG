@@ -1,0 +1,28 @@
+{
+  "id": "multiplayer-binary-transfer",
+  "name": "Multiplayer file transfer",
+  "description": "Using the Multiplayer binary transfer feature to send a file to another peer.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "FileSystem",
+      "Keyboard",
+      "List",
+      "Multiplayer",
+      "Text",
+      "TextBox",
+      "filechooser",
+      "progressbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-binary-transfer"
+}

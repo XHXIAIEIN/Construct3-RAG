@@ -1,0 +1,17 @@
+{
+  "id": "generator-function",
+  "name": "Generator function",
+  "description": "An example of using a generator function in code to only iterate certain instances.",
+  "tags": [
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=generator-function"
+}

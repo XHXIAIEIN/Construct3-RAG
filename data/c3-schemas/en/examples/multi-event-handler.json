@@ -1,0 +1,17 @@
+{
+  "id": "multi-event-handler",
+  "name": "Handling multiple events",
+  "description": "Demonstrates a small but useful MultiEventHandler class that is useful for adding and removing multiple event listeners.",
+  "tags": [
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multi-event-handler"
+}

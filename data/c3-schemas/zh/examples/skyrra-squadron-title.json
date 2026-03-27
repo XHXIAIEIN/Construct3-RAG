@@ -1,0 +1,26 @@
+{
+  "id": "skyrra-squadron-title",
+  "name": "时间轴：进场动画",
+  "description": "空战游戏的动画标题屏幕，使用 Z 仰角实现 3D 效果。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "动画",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=skyrra-squadron-title"
+}

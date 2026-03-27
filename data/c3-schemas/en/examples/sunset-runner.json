@@ -1,0 +1,32 @@
+{
+  "id": "sunset-runner",
+  "name": "Sunset runner",
+  "description": "A looping animation of a runner on the beach during a beautiful sunset.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "animation-recommended",
+    "Timeline",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "screen",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=sunset-runner"
+}

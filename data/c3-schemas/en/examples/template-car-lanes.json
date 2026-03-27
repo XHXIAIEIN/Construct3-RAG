@@ -1,0 +1,22 @@
+{
+  "id": "template-car-lanes",
+  "name": "Car lanes",
+  "description": "A template with a basic car lane game prepared. Use the keyboard to switch lanes and dodge the traffic.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-car-lanes"
+}

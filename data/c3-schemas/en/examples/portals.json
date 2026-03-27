@@ -1,0 +1,32 @@
+{
+  "id": "portals",
+  "name": "Portals",
+  "description": "Travel through points in space using portals to reach the end of the level.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "swirl"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=portals"
+}

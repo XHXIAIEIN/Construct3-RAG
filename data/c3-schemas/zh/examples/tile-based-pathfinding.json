@@ -1,0 +1,39 @@
+{
+  "id": "tile-based-pathfinding",
+  "name": "游戏示例：网格寻路",
+  "description": "帮助小鸡避开狐狸并穿过农场，使用基于图块的网格寻路来引导它们前进。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "冒险"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "MoveTo",
+      "Pathfinding",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tile-based-pathfinding"
+}

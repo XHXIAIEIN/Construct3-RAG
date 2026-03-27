@@ -1,0 +1,31 @@
+{
+  "id": "wall-creature",
+  "name": "关卡设计: 墙体生物",
+  "description": "带有尖刺外壳的生物环绕在地形表面移动。适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Sin",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wall-creature"
+}

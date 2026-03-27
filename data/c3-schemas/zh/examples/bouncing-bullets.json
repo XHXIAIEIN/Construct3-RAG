@@ -1,0 +1,24 @@
+{
+  "id": "bouncing-bullets",
+  "name": "功能示例：反弹子弹",
+  "description": "演示子弹行为撞击墙壁后反弹，产生反弹效果。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Bullet",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bouncing-bullets"
+}

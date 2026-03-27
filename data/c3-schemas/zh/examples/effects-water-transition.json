@@ -1,0 +1,21 @@
+{
+  "id": "effects-water-transition",
+  "name": "特效：水波转场",
+  "description": "演示波纹效应的转场效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": [
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-water-transition"
+}

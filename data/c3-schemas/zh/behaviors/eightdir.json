@@ -1,0 +1,354 @@
+{
+  "id": "eightdir",
+  "name": "八方向",
+  "description": "允许对象朝上下左右，及对角线方向移动。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-moving",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "正在移动",
+      "display-text": "{my} 正在移动",
+      "description": "检测对象是否正在移动。"
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "比较移动速度",
+      "display-text": "{my} 速度 {0} {1}",
+      "description": "与对象当前的速度进行比较。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "速度值，以像素/秒为单位，与对象当前的速度进行比较。"
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检测当前行为是否已启用。"
+    },
+    {
+      "id": "is-allow-sliding",
+      "scriptName": "IsAllowSliding",
+      "category": "",
+      "list-name": "允许沿边缘滑行",
+      "display-text": "启动 {my} 沿边缘滑行",
+      "description": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "",
+      "list-name": "停止移动",
+      "display-text": "{my} 停止移动",
+      "description": "设置对象的移动速度为0"
+    },
+    {
+      "id": "reverse",
+      "scriptName": "Reverse",
+      "category": "",
+      "list-name": "转向",
+      "display-text": "{my} 转向",
+      "description": "使对象进行反向移动。"
+    },
+    {
+      "id": "set-ignoring-input",
+      "scriptName": "SetIgnoreInput",
+      "category": "",
+      "list-name": "屏蔽玩家控制",
+      "display-text": "{my} {0}控制",
+      "description": "是否屏蔽玩家对该对象移动的控制行为。",
+      "params": {
+        "input": {
+          "type": "combo",
+          "name": "输入",
+          "desc": "是否屏蔽玩家对该对象移动的控制行为。",
+          "items": {
+            "stop-ignoring": "结束屏蔽",
+            "start-ignoring": "开始屏蔽"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "设置移动速度",
+      "display-text": "设置 {my}移动速度为[i]{0}[/i]",
+      "description": "设置对象当前的移动速度。",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "设置移动速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "",
+      "list-name": "设置最大移动速度",
+      "display-text": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "description": "设置对象的最大移动速度。",
+      "params": {
+        "max-speed": {
+          "type": "number",
+          "name": "最大移动速度",
+          "desc": "设置最大移动速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "设置加速度",
+      "display-text": "设置 {my}加速度为[i]{0}[/i]",
+      "description": "设置对象的加速度。",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "加速度",
+          "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDeceleration",
+      "category": "",
+      "list-name": "设置减速度",
+      "display-text": "设置 {my}减速度为[i]{0}[/i]",
+      "description": "设置对象的减速度。",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "减速度",
+          "desc": "从移动状态至完全停止的减速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "simulate-control",
+      "scriptName": "SimulateControl",
+      "category": "",
+      "list-name": "模拟控制",
+      "display-text": "控制{my}{0}",
+      "description": "模拟玩家按下按键，来控制角色行动。",
+      "params": {
+        "control": {
+          "type": "combo",
+          "name": "控制",
+          "desc": "模拟玩家按下按键，来控制角色行动。",
+          "items": {
+            "left": "向左移动",
+            "right": "向右移动",
+            "up": "向上移动",
+            "down": "向下移动"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-vector-x",
+      "scriptName": "SetVectorX",
+      "category": "",
+      "list-name": "设置向量X",
+      "display-text": "设置 {my}向量X为[b]{0}[/b]",
+      "description": "设置 X 轴方向的运动向量。",
+      "params": {
+        "vector-x": {
+          "type": "number",
+          "name": "向量 X",
+          "desc": "在X轴方向的运动向量，以每秒像素为单位。大于 0 将向右运动，小于 0 则向左运动。最终速度不会超过最大速度属性。"
+        }
+      }
+    },
+    {
+      "id": "set-vector-y",
+      "scriptName": "SetVectorY",
+      "category": "",
+      "list-name": "设置向量Y",
+      "display-text": "设置 {my}向量Y为[b]{0}[/b]",
+      "description": "设置 Y 轴方向的运动向量。",
+      "params": {
+        "vector-y": {
+          "type": "number",
+          "name": "向量 Y",
+          "desc": "在Y轴方向的运动向量，以每秒像素为单位。大于 0 将向上运动，小于 0 则向下运动。最终速度不会超过最大速度属性。"
+        }
+      }
+    },
+    {
+      "id": "set-default-controls",
+      "scriptName": "SetDefaultControls",
+      "category": "",
+      "list-name": "启用默认控制方式",
+      "display-text": "[b]{0}[/b] {my} 默认控制方式",
+      "description": "更改默认开启控制的设置。",
+      "params": {
+        "default-controls": {
+          "type": "boolean",
+          "name": "默认的控制方式",
+          "desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。"
+        }
+      }
+    },
+    {
+      "id": "set-allow-sliding",
+      "scriptName": "SetAllowSliding",
+      "category": "",
+      "list-name": "启用沿边缘滑行",
+      "display-text": "设置 {my}[b]{0}[/b]沿边缘滑行",
+      "description": "设置启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。",
+      "params": {
+        "set-allow-sliding": {
+          "type": "boolean",
+          "name": "沿边缘滑行",
+          "desc": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "移动速度",
+      "description": "当前的移动速度，以像素每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "",
+      "translated-name": "最大移动速度",
+      "description": "最大移动速度，以像素每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "加速度",
+      "description": "从静止状态到正常移动速度的加速度，以像素每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "",
+      "translated-name": "减速度",
+      "description": "从正常移动至完全停止的减速度，以像素每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "",
+      "translated-name": "移动角度",
+      "description": "当前移动的方向，以角度为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "vectorx",
+      "scriptName": "VectorX",
+      "category": "",
+      "translated-name": "向量X",
+      "description": "在X轴方向的运动向量，以每秒像素为单位。大于 0 将向右运动，小于 0 则向左运动。",
+      "returnType": "number"
+    },
+    {
+      "id": "vectory",
+      "scriptName": "VectorY",
+      "category": "",
+      "translated-name": "向量Y",
+      "description": "在Y轴方向的运动向量，以每秒像素为单位。大于 0 将向上运动，小于 0 则向下运动。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "set-angle": {
+      "items": {
+        "no": "关闭",
+        "interval-90": "90° 间隔",
+        "interval-45": "45° 间隔",
+        "smooth": "360° 间隔"
+      },
+      "name": "更改图像角度",
+      "desc": "启用后，将精灵图像的角度设置为移动角度。"
+    },
+    "default-controls": {
+      "name": "使用默认控制方式",
+      "desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来移动。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "对象创建时，是否默认启用该行为。"
+    },
+    "max-speed": {
+      "name": "最大速度",
+      "desc": "最大移动速度，以像素/秒为单位。"
+    },
+    "acceleration": {
+      "name": "加速度",
+      "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+    },
+    "deceleration": {
+      "name": "减速度",
+      "desc": "从正常移动至完全停止的减速度，以像素/秒为单位。"
+    },
+    "directions": {
+      "name": "运动方向",
+      "desc": "对象朝多个方向移动的方式。",
+      "items": {
+        "up-down": "上下移动",
+        "left-right": "左右移动",
+        "dir-4": "四方向",
+        "dir-8": "八方向"
+      }
+    },
+    "allow-sliding": {
+      "name": "沿边缘滑行",
+      "desc": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "template-physics-soccer",
+  "name": "Physics soccer",
+  "description": "A platform game template where the player must also kick a physics-controlled ball to a destination.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Physics",
+      "Platform",
+      "scrollto",
+      "jumpthru",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-physics-soccer"
+}

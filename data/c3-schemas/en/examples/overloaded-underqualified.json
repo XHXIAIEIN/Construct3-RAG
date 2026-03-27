@@ -1,0 +1,42 @@
+{
+  "id": "overloaded-underqualified",
+  "name": "Overloaded & Underqualified",
+  "description": "Drive through a small city completing dynamic delivery jobs, overcome tough routes, and upgrade your fleet with the cash you earn.",
+  "tags": [
+    "Demo game",
+    "Advanced",
+    "Arcade",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Car",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "darken",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=overloaded-underqualified"
+}

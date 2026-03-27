@@ -1,0 +1,21 @@
+{
+  "id": "gallery-swipe-gesture",
+  "name": "Gallery swipe gesture",
+  "description": "Shows how to detect a swipe gesture that is used to scroll along a gallery of images.",
+  "tags": [
+    "Intermediate",
+    "Barebones template",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gallery-swipe-gesture"
+}

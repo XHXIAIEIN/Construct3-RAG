@@ -1,0 +1,30 @@
+{
+  "id": "concussive-blast",
+  "name": "Concussive blast",
+  "description": "A platformer template where the player must propel themselves by dropping and detonating bombs.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "EightDir",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=concussive-blast"
+}

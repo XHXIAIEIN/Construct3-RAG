@@ -1,0 +1,29 @@
+{
+  "id": "tile-matcher",
+  "name": "游戏示例: 方块匹配",
+  "description": "在这个超休闲类型的游戏中匹配相同颜色的方块。你匹配的牌越多，游戏就越快！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tile-matcher"
+}

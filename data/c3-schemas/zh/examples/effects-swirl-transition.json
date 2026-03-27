@@ -1,0 +1,21 @@
+{
+  "id": "effects-swirl-transition",
+  "name": "特效：漩涡转场",
+  "description": "演旋涡效应的转场效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": [
+      "swirl"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-swirl-transition"
+}

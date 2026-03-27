@@ -1,0 +1,24 @@
+{
+  "id": "line-of-sight",
+  "name": "Line of sight",
+  "description": "Using the Line-of-sight (LOS) behavior to determine if objects can \"see\" each other.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=line-of-sight"
+}

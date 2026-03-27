@@ -1,0 +1,23 @@
+{
+  "id": "template-slide-puzzle",
+  "name": "Slide puzzle",
+  "description": "A simple puzzle game where touching or clicking a piece will slide it into a space, until the complete picture is assembled.",
+  "tags": [
+    "Intermediate",
+    "Barebones template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-slide-puzzle"
+}

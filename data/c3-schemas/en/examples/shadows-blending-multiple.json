@@ -1,0 +1,22 @@
+{
+  "id": "shadows-blending-multiple",
+  "name": "Shadows: blending multiple lights",
+  "description": "Demonstrates an advanced lighting effect with three moving colored shadow-casting lights that blend with each other.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "shadowlight"
+    ],
+    "behaviors": [
+      "Sin",
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-blending-multiple"
+}

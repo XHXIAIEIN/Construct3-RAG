@@ -1,0 +1,34 @@
+{
+  "id": "top-down-shooter-3d",
+  "name": "Top-down shooter 3D",
+  "description": "Unlock doors and run away from dangerous monsters in a 3D dungeon.",
+  "tags": [
+    "games-recommended",
+    "Intermediate",
+    "Game template",
+    "Shooter",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Shape3D",
+      "Camera3D",
+      "Mouse",
+      "Keyboard",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "Bullet",
+      "destroy",
+      "Rotate",
+      "Tween",
+      "LOS",
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=top-down-shooter-3d"
+}

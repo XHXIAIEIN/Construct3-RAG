@@ -1,0 +1,29 @@
+{
+  "id": "local-savegames",
+  "name": "功能示例：保存游戏",
+  "description": "演示简单的本地存档和读档功能。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=local-savegames"
+}

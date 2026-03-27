@@ -1,0 +1,22 @@
+{
+  "id": "effects-glass",
+  "name": "特效：玻璃效果",
+  "description": "演示简单的 '玻璃' 效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": [
+      "glass"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-glass"
+}

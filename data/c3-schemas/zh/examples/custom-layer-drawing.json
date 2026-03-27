@@ -1,0 +1,20 @@
+{
+  "id": "custom-layer-drawing",
+  "name": "脚本绘图：绘制图像",
+  "description": "演示使用代码在图层绘制自定义内容，包括直接从数据数组绘制网格。",
+  "tags": [
+    "高级",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-layer-drawing"
+}

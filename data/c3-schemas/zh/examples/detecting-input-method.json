@@ -1,0 +1,26 @@
+{
+  "id": "detecting-input-method",
+  "name": "设备：检测输入方式",
+  "description": "演示如何在游戏标题中，检测玩家是使用键盘/鼠标还是屏幕触摸，并相应地切换输入方式。",
+  "tags": [
+    "进阶",
+    "移动端",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Touch",
+      "Mouse",
+      "Keyboard",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Flash",
+      "EightDir",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=detecting-input-method"
+}

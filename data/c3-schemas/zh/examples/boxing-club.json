@@ -1,0 +1,26 @@
+{
+  "id": "boxing-club",
+  "name": "脚本项目：格斗俱乐部",
+  "description": "双人本地对战游戏。向你的朋友发起挑战，进行一场经典的本地多人拳击比赛！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "格斗",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Fade",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=boxing-club"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "effects-screen-blend",
+  "name": "Effects: Screen blend",
+  "description": "An example of a use for advanced blending effects.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=effects-screen-blend"
+}

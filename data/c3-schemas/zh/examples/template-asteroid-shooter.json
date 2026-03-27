@@ -1,0 +1,39 @@
+{
+  "id": "template-asteroid-shooter",
+  "name": "游戏示例：小行星",
+  "description": "在太空中飞来飞去，躲避小行星并将它们击落。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "scrollto",
+      "custom",
+      "Timer",
+      "wrap",
+      "Bullet",
+      "destroy",
+      "Tween",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "warpobjectmask",
+      "hsladjust",
+      "warplayout"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-asteroid-shooter"
+}

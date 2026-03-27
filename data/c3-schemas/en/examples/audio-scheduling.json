@@ -1,0 +1,20 @@
+{
+  "id": "audio-scheduling",
+  "name": "Audio scheduling",
+  "description": "Schedule sound playback at a sample-accurate time using the 'Schedule next play' action.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Button",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-scheduling"
+}

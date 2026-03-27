@@ -1,0 +1,23 @@
+{
+  "id": "multiplayer-chat",
+  "name": "多人联机：聊天室",
+  "description": "多人聊天室示例。 这是在 Construct 3 开发多人游戏功能最简单的功能演示。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "多人"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "List",
+      "Multiplayer",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-chat"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "input-event-position",
+  "name": "脚本基础：输入事件",
+  "description": "获取输入事件的图层坐标，使精灵跟随鼠标/触控位置。",
+  "tags": [
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=input-event-position"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "effects-oldtv",
+  "name": "Effects: Old TV",
+  "description": "Using multiple effects to create an old TV appearance.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": [
+      "grayscale",
+      "pixellate",
+      "noise",
+      "blurhorizontal",
+      "bulge"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-oldtv"
+}

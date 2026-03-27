@@ -1,0 +1,28 @@
+{
+  "id": "spritefont-maker",
+  "name": "工具: 位图字体生成器",
+  "description": "将字体文件转换为用于 Construct3 的位图字体对象所需要的资源。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "技术演示"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Browser",
+      "Button",
+      "FileSystem",
+      "HTMLElement",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spritefont-maker"
+}

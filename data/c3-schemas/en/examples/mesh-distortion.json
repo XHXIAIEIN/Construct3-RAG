@@ -1,0 +1,21 @@
+{
+  "id": "mesh-distortion",
+  "name": "Mesh distortion",
+  "description": "Demonstrates how a Sprite can be split up in to a grid of points that can be individually moved around, creating a distorted appearance.",
+  "tags": [
+    "Advanced",
+    "Mesh distortion",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-distortion"
+}

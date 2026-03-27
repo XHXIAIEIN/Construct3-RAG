@@ -1,0 +1,31 @@
+{
+  "id": "exfiltration",
+  "name": "脚本项目：雷达潜行",
+  "description": "使用高科技雷达从敌方基地潜入而不被发现。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "策略",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=exfiltration"
+}

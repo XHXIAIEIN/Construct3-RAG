@@ -1,0 +1,20 @@
+{
+  "id": "custom-layer-drawing",
+  "name": "Custom layer drawing",
+  "description": "How to use code to draw custom content to a layer, including drawing meshes directly from data arrays.",
+  "tags": [
+    "Advanced",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-layer-drawing"
+}

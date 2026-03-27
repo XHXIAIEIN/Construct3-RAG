@@ -1,0 +1,34 @@
+{
+  "id": "gravitational-field",
+  "name": "Gravitational field",
+  "description": "Use the gravitational fields of planets to guide projectiles to targets.",
+  "tags": [
+    "Intermediate",
+    "Mobile",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Browser",
+      "DrawingCanvas",
+      "Touch",
+      "AJAX",
+      "Arr",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Tween",
+      "Timer",
+      "Sin",
+      "Flash",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gravitational-field"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "template-eat-em-all",
+  "name": "Eat 'em all",
+  "description": "Move around a maze avoiding ghosts and trying to eat up all the dots!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Arr",
+      "Browser",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "destroy",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-eat-em-all"
+}

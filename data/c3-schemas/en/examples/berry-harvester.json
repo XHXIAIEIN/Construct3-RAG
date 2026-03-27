@@ -1,0 +1,32 @@
+{
+  "id": "berry-harvester",
+  "name": "Berry harvester",
+  "description": "Collect berries while navigating through obstacles, ensuring your harvesters remain intact to meet the daily quota.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=berry-harvester"
+}

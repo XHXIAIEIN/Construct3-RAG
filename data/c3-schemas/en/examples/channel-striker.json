@@ -1,0 +1,31 @@
+{
+  "id": "channel-striker",
+  "name": "Channel Striker",
+  "description": "The channel is under attack by enemy forces. Use your jet, powered by JavaScript code, to fight back!",
+  "tags": [
+    "Game template",
+    "Arcade",
+    "Shooter",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "MoveTo",
+      "Rotate",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=channel-striker"
+}

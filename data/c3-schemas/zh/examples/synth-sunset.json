@@ -1,0 +1,30 @@
+{
+  "id": "synth-sunset",
+  "name": "时间轴：驶向日落",
+  "description": "简单的CG动画，蒸汽波风格的日落和复古风格的汽车，通过时间线控制 3D 摄像机运镜。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "3D",
+    "时间轴",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Shape3D",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=synth-sunset"
+}

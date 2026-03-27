@@ -1,0 +1,32 @@
+{
+  "id": "living-card",
+  "name": "Living card",
+  "description": "Become the strongest player by wielding the power of a legendary card.",
+  "tags": [
+    "animation-recommended",
+    "Intermediate",
+    "Gameplay mechanic",
+    "Animation",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "overlay",
+      "pulse"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=living-card"
+}

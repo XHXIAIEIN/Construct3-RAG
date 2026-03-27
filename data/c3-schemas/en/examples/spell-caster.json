@@ -1,0 +1,30 @@
+{
+  "id": "spell-caster",
+  "name": "Spell Caster tutorial",
+  "description": "A project of the fully completed 'Spell Caster' tutorial, with some extra features added.",
+  "tags": [
+    "games-recommended",
+    "Beginner",
+    "Barebones template",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spell-caster"
+}

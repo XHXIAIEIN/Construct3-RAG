@@ -1,0 +1,28 @@
+{
+  "id": "world-builder",
+  "name": "World Builder",
+  "description": "Use the power of mesh distortion to shape your world! Sculpt mountains, rivers, and plains, then bring everything to life with trees, rocks, animals, and more.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "DrawingCanvas",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=world-builder"
+}

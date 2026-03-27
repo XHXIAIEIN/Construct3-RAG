@@ -1,0 +1,33 @@
+{
+  "id": "marble-spiral-clash",
+  "name": "Marble Spiral Clash",
+  "description": "Shoot marbles aiming to match 3 of the same color, destroy them for points, and prevent them from reaching your cannon!",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=marble-spiral-clash"
+}

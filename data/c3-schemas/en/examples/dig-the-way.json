@@ -1,0 +1,32 @@
+{
+  "id": "dig-the-way",
+  "name": "Dig the way",
+  "description": "Dig through piles of dirt and help the miner find the gold nugget.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Tween",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=dig-the-way"
+}

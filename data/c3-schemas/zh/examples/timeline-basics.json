@@ -1,0 +1,24 @@
+{
+  "id": "timeline-basics",
+  "name": "时间轴：播放动画",
+  "description": "演示播放时间轴动画。",
+  "tags": [
+    "简单",
+    "animation-recommended",
+    "功能示例",
+    "移动端",
+    "时间轴",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Timeline",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-basics"
+}

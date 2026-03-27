@@ -1,0 +1,32 @@
+{
+  "id": "follow-path",
+  "name": "AI: 跟随路径",
+  "description": "向数组存储玩家位置的数据，让另一个游戏对象跟随玩家移动。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Tilemap",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Timer",
+      "solid",
+      "Pin",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-path"
+}

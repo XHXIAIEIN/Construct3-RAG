@@ -1,0 +1,39 @@
+{
+  "id": "template-asteroid-shooter",
+  "name": "Asteroid shooter",
+  "description": "Fly around in space dodging asteroids and shooting them down.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "scrollto",
+      "custom",
+      "Timer",
+      "wrap",
+      "Bullet",
+      "destroy",
+      "Tween",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "warpobjectmask",
+      "hsladjust",
+      "warplayout"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-asteroid-shooter"
+}

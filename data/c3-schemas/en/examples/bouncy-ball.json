@@ -1,0 +1,28 @@
+{
+  "id": "bouncy-ball",
+  "name": "Bouncy ball",
+  "description": "Move a bouncy ball in an isometric world and try to keep on the platforms.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin",
+      "Fade",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bouncy-ball"
+}

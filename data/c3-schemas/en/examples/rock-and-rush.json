@@ -1,0 +1,34 @@
+{
+  "id": "rock-and-rush",
+  "name": "Rock and rush",
+  "description": "Take on the role of a rock band manager with the sole goal of finding the best bassist, drummer, guitarist, and keyboardist in the world.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Rotate",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=rock-and-rush"
+}

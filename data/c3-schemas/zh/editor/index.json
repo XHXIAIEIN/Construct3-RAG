@@ -1,0 +1,46 @@
+{
+  "bars": {
+    "bookmarks": {
+      "title": "书签栏"
+    },
+    "findAllReferences": {
+      "title": "查找所有引用"
+    },
+    "findResults": {
+      "title": "查找结果"
+    },
+    "layers": {
+      "title": "图层栏"
+    },
+    "project": {
+      "title": "项目栏"
+    },
+    "properties": {
+      "title": "属性栏"
+    },
+    "tilemap": {
+      "title": "瓦片栏"
+    },
+    "zOrder": {
+      "title": "显示顺序"
+    },
+    "textEditor": {
+      "title": "文本编辑器"
+    },
+    "timeline": {
+      "title": "时间轴"
+    },
+    "instances": {
+      "title": "实例对象"
+    },
+    "asset-browser": {
+      "title": "资源库"
+    }
+  },
+  "dialogs": {
+    "scriptingFeatureLimit": {
+      "title": "脚本功能已超出使用限制"
+    }
+  },
+  "views": {}
+}

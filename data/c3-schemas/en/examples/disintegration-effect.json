@@ -1,0 +1,40 @@
+{
+  "id": "disintegration-effect",
+  "name": "Disintegration effect",
+  "description": "An advanced effect demonstrating a player disintegrating as they teleport to a new location.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "DrawingCanvas",
+      "Particles",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=disintegration-effect"
+}

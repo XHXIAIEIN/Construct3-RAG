@@ -1,0 +1,30 @@
+{
+  "id": "stealth-example",
+  "name": "AI: 潜行游戏",
+  "description": "一个简单的潜行游戏，玩家必须避开四处巡逻的敌人视线范围，到达终点。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Browser",
+      "DrawingCanvas",
+      "Arr",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "scrollto",
+      "Pathfinding",
+      "Timer",
+      "LOS",
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=stealth-example"
+}

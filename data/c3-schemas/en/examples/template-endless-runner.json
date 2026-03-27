@@ -1,0 +1,27 @@
+{
+  "id": "template-endless-runner",
+  "name": "Endless runner",
+  "description": "A template with a basic sideways always-moving platformer setup prepared, with mobile control support and placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Platformer",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-endless-runner"
+}

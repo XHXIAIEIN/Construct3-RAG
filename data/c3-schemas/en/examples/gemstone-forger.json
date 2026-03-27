@@ -1,0 +1,31 @@
+{
+  "id": "gemstone-forger",
+  "name": "Gemstone Forger",
+  "description": "Combine gemstones of the same type to forge increasingly rare and valuable gems. Your ultimate goal is to obtain the Infinite Gemstone.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "hsladjust",
+      "softlight"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=gemstone-forger"
+}

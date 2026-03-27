@@ -1,0 +1,30 @@
+{
+  "id": "archery-range",
+  "name": "Archery range",
+  "description": "Test your bow and arrow mastery in a 3D archery range.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Adventure",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=archery-range"
+}

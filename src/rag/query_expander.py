@@ -37,8 +37,8 @@ _EXPAND_PROMPT = (
     "关键词：{keywords}\n\n相关词：\n"
 )
 
-# Schema root directory
-_SCHEMA_DIR = Path(DATA_DIR) / "schemas"
+# Schema root directory (per-language CDN-native format under en/ and zh/)
+_SCHEMA_DIR = Path(DATA_DIR) / "c3-schemas"
 
 # Tokens that should NOT trigger auto_expand even when they match few schema nodes.
 # These are common Chinese query words that appear in node *descriptions* incidentally,
@@ -527,11 +527,11 @@ class SchemaZhEnIndex:
         self._build()
 
     def _build(self) -> None:
-        plugins   = _load_json_dir(_SCHEMA_DIR / "plugins")
-        behaviors = _load_json_dir(_SCHEMA_DIR / "behaviors")
-        effects   = _load_json_dir(_SCHEMA_DIR / "effects")
-        features  = _load_json_dir(_SCHEMA_DIR / "features")
-        editor    = _load_editor(_SCHEMA_DIR / "editor" / "index.json")
+        plugins   = _load_bilingual_dir(_SCHEMA_DIR, "plugins")
+        behaviors = _load_bilingual_dir(_SCHEMA_DIR, "behaviors")
+        effects   = _load_bilingual_dir(_SCHEMA_DIR, "effects")
+        features  = _load_json_dir(_SCHEMA_DIR / "features")  # no per-lang yet
+        editor    = _load_editor_bilingual(_SCHEMA_DIR)
         self._build_from_fixtures(plugins, behaviors, effects, features, editor)
         logger.info(
             f"[SchemaZhEnIndex] Built: {len(self.node_data)} nodes, "
@@ -742,6 +742,58 @@ def _load_json_dir(path: Path) -> list[dict]:
     return result
 
 
+def _load_bilingual_dir(schema_dir: Path, addon_type: str) -> list[dict]:
+    """Load per-language schema files and merge en+zh into unified dicts.
+
+    For plugins/behaviors: uses _merge_bilingual (full ACE merge).
+    For effects: simple name/description merge with _en/_zh suffixes.
+    Falls back to flat layout (old format) if en/ subdir doesn't exist.
+    """
+    en_dir = schema_dir / "en" / addon_type
+    zh_dir = schema_dir / "zh" / addon_type
+
+    # Fallback: flat layout (old format or single-lang)
+    if not en_dir.exists():
+        return _load_json_dir(schema_dir / addon_type)
+
+    if addon_type in ("plugins", "behaviors"):
+        from src.rag.lookup import _merge_bilingual
+        merge_fn = _merge_bilingual
+    else:
+        merge_fn = _merge_simple
+
+    result = []
+    for fp in sorted(en_dir.glob("*.json")):
+        if fp.stem == "index":
+            continue
+        try:
+            en_data = json.loads(fp.read_text(encoding="utf-8"))
+            zh_path = zh_dir / fp.name
+            zh_data = json.loads(zh_path.read_text(encoding="utf-8")) if zh_path.exists() else {}
+            result.append(merge_fn(en_data, zh_data))
+        except Exception as e:
+            logger.warning(f"[SchemaZhEnIndex] Skip {fp.name}: {e}")
+    return result
+
+
+def _merge_simple(en: dict, zh: dict) -> dict:
+    """Merge simple per-language files (effects, features) by adding _en/_zh suffixes."""
+    merged = dict(en)  # copy all structural fields
+    merged["name_en"] = en.get("name", en.get("id", ""))
+    merged["name_zh"] = zh.get("name", en.get("name", ""))
+    merged["description_en"] = en.get("description", "")
+    merged["description_zh"] = zh.get("description", "")
+    # Merge parameters with _en/_zh names
+    en_params = en.get("parameters", [])
+    zh_params_map = {p.get("id", ""): p for p in zh.get("parameters", [])}
+    for p in en_params:
+        pid = p.get("id", "")
+        zp = zh_params_map.get(pid, {})
+        p["name_en"] = p.get("name", pid)
+        p["name_zh"] = zp.get("name", p.get("name", pid))
+    return merged
+
+
 def _load_editor(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -750,6 +802,35 @@ def _load_editor(path: Path) -> dict:
     except Exception as e:
         logger.warning(f"[SchemaZhEnIndex] Skip editor/index.json: {e}")
         return {}
+
+
+def _load_editor_bilingual(schema_dir: Path) -> dict:
+    """Load editor index from both en/ and zh/ and merge into {name_en, name_zh} format."""
+    en_path = schema_dir / "en" / "editor" / "index.json"
+    zh_path = schema_dir / "zh" / "editor" / "index.json"
+
+    # Fallback: old single-file format
+    old_path = schema_dir / "editor" / "index.json"
+    if not en_path.exists() and not zh_path.exists():
+        return _load_editor(old_path)
+
+    en_data = _load_editor(en_path)
+    zh_data = _load_editor(zh_path)
+
+    merged: dict = {}
+    for group_key in ("bars", "dialogs", "views"):
+        merged[group_key] = {}
+        en_group = en_data.get(group_key, {})
+        zh_group = zh_data.get(group_key, {})
+        all_ids = set(en_group.keys()) | set(zh_group.keys())
+        for elem_id in all_ids:
+            en_elem = en_group.get(elem_id, {})
+            zh_elem = zh_group.get(elem_id, {})
+            merged[group_key][elem_id] = {
+                "name_en": en_elem.get("title", ""),
+                "name_zh": zh_elem.get("title", en_elem.get("title", "")),
+            }
+    return merged
 
 
 # =============================================================================

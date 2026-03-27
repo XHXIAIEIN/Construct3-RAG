@@ -1,0 +1,30 @@
+{
+  "id": "draw-the-line",
+  "name": "游戏示例：画线运球",
+  "description": "画线引导球越过障碍物抵达目标位置。",
+  "tags": [
+    "新增",
+    "移动端",
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=draw-the-line"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "physics-distance-joint",
+  "name": "物理：距离关节",
+  "description": "演示物理行为的距离关节，连接两个物理对象。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-distance-joint"
+}

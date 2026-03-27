@@ -1,0 +1,30 @@
+{
+  "id": "archery-range",
+  "name": "3D模拟: 射箭场",
+  "description": "第一人称视角的3D射箭场，测试你对弓箭的掌握。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "冒险",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=archery-range"
+}

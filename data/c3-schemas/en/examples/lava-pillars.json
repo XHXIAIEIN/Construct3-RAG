@@ -1,0 +1,46 @@
+{
+  "id": "lava-pillars",
+  "name": "Lava pillars",
+  "description": "A platform where the player can create a crossing point by making a pillar rise out of lava pools.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "Particles",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Sin",
+      "Fade",
+      "Bullet",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject",
+      "warpobjectmask",
+      "bulge",
+      "sharpen",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=lava-pillars"
+}

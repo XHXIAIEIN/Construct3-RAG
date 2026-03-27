@@ -1,0 +1,31 @@
+{
+  "id": "traffic-jam",
+  "name": "游戏示例: 交通指挥官",
+  "description": "按正确的顺序移动汽车，引导它们安全抵达目的地，同时避免发生碰撞。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Fade",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=traffic-jam"
+}

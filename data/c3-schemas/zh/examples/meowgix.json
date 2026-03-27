@@ -1,0 +1,51 @@
+{
+  "id": "meowgix",
+  "name": "游戏示例：喵吉克斯",
+  "description": "扮演猫咪巫师。学习、升级并组合喵喵魔法，变得更强，击败邪恶大军。",
+  "tags": [
+    "新增",
+    "高级",
+    "完整游戏",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "screen",
+      "tint",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=meowgix"
+}

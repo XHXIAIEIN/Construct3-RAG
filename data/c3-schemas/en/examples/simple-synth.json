@@ -1,0 +1,24 @@
+{
+  "id": "simple-synth",
+  "name": "Simple synth",
+  "description": "Adjust the settings to your liking and play music using a keyboard, mouse or touchscreen, with sound produced by using the Web Audio API in JavaScript.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-synth"
+}

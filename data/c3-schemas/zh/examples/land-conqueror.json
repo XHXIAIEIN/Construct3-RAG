@@ -1,0 +1,35 @@
+{
+  "id": "land-conqueror",
+  "name": "游戏示例：领地征服者",
+  "description": "触摸这个等距关卡中的每一个方块来征服它，但要小心不要被不死生物攻击。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "TiledBg",
+      "Spritefont2",
+      "Particles"
+    ],
+    "behaviors": [
+      "Flash",
+      "Fade",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Rotate"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=land-conqueror"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "json",
+  "name": "数据：JSON",
+  "description": "使用JSON对象从JSON文件中读取信息。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "XML",
+      "Text",
+      "AJAX",
+      "Json"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=json"
+}

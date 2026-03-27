@@ -1,0 +1,26 @@
+{
+  "id": "template-falling-shapes",
+  "name": "Falling shapes",
+  "description": "Drop shapes in different positions to try to make complete lines.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Timer",
+      "Flash",
+      "solid",
+      "destroy",
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-falling-shapes"
+}

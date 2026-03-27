@@ -1,0 +1,32 @@
+{
+  "id": "sunset-runner",
+  "name": "时间轴：落日跑者",
+  "description": "在美丽的日落下，跑步者在海滩上的循环动画。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "animation-recommended",
+    "时间轴",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "screen",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=sunset-runner"
+}

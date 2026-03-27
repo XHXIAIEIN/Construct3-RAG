@@ -1,0 +1,28 @@
+{
+  "id": "pathfinding-direct-movement",
+  "name": "Pathfinding direct movement",
+  "description": "Demonstrates how the Pathfinding 'Direct movement' setting can be used to smooth a path.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-direct-movement"
+}

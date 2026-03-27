@@ -1,0 +1,21 @@
+{
+  "id": "scripting-shooting",
+  "name": "脚本基础：射击",
+  "description": "演示实现一个简单的射击功能，带有碰撞检测。",
+  "tags": [
+    "简单",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse"
+    ],
+    "behaviors": [
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-shooting"
+}

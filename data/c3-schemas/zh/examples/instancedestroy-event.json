@@ -1,0 +1,18 @@
+{
+  "id": "instancedestroy-event",
+  "name": "脚本基础：实例销毁事件",
+  "description": "演示实例对象被销毁时，触发回调事件。",
+  "tags": [
+    "移动端",
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instancedestroy-event"
+}

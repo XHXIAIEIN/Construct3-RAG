@@ -1,0 +1,28 @@
+{
+  "id": "bbc-micro-bit-raw",
+  "name": "BBC micro:bit raw communication",
+  "description": "A demonstration of low-level access of the BBC micro:bit using the Bluetooth and Binary Data objects rather than the BBC micro:bit plugin.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Tech demo",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Bluetooth",
+      "Button",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-raw"
+}

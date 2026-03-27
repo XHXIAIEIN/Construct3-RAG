@@ -1,0 +1,31 @@
+{
+  "id": "template-first-person-shooter",
+  "name": "First-person shooter",
+  "description": "A basic 3D first-person shooter (FPS) game based on a 2D game using the 3D camera object for a first-person view.",
+  "tags": [
+    "games-recommended",
+    "Beginner",
+    "Barebones template",
+    "Shooter",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Shape3D",
+      "Camera3D",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Car",
+      "solid",
+      "Bullet",
+      "Flash",
+      "destroy",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-first-person-shooter"
+}

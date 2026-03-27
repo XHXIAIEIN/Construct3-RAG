@@ -1,0 +1,34 @@
+{
+  "id": "hidden-objects",
+  "name": "游戏示例：捉迷藏解谜",
+  "description": "在单色世界四周探索并单击物体查找其中的隐藏对象。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Touch",
+      "Sprite",
+      "NinePatch",
+      "DrawingCanvas",
+      "TiledBg",
+      "Tilemap",
+      "Mouse",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hidden-objects"
+}

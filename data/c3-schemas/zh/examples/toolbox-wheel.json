@@ -1,0 +1,34 @@
+{
+  "id": "toolbox-wheel",
+  "name": "HUD：轮盘",
+  "description": "工具箱轮是一个非常好用的多平台工具切换机制。试试在键盘、鼠标和游戏手柄上使用它吧！",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjustmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=toolbox-wheel"
+}

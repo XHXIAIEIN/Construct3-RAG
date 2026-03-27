@@ -1,0 +1,36 @@
+{
+  "id": "ghost-racer",
+  "name": "Ghost racer",
+  "description": "A neon 3D racer where you can race against a ghost of your own best time.",
+  "tags": [
+    "games-recommended",
+    "Advanced",
+    "Game template",
+    "3D",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Camera3D",
+      "Arr",
+      "LocalStorage",
+      "Shape3D",
+      "Keyboard",
+      "TiledBg",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Car",
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "lighten",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-racer"
+}

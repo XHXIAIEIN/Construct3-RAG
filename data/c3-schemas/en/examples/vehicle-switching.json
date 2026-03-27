@@ -1,0 +1,36 @@
+{
+  "id": "vehicle-switching",
+  "name": "Vehicle switching",
+  "description": "Switch between walking and driving in vehicles in an immersive 3D world.",
+  "tags": [
+    "games-recommended",
+    "Intermediate",
+    "Game template",
+    "Racing",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "Fade",
+      "Flash",
+      "solid",
+      "Car"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=vehicle-switching"
+}

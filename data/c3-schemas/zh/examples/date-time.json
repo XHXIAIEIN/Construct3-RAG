@@ -1,0 +1,20 @@
+{
+  "id": "date-time",
+  "name": "功能示例：日期和时间",
+  "description": "展示日期插件的一些特性功能，它可以操纵日期和时间的各个方面。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Text",
+      "Date",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=date-time"
+}

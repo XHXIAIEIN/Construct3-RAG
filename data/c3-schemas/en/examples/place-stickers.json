@@ -1,0 +1,28 @@
+{
+  "id": "place-stickers",
+  "name": "Place stickers",
+  "description": "Bring the world to life again by placing all available stickers in the empty slots with matching silhouettes.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=place-stickers"
+}

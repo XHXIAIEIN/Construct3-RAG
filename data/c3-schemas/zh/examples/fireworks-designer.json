@@ -1,0 +1,23 @@
+{
+  "id": "fireworks-designer",
+  "name": "游戏示例: 烟花设计师",
+  "description": "用自定义图案设计自己的烟花，以时尚的方式点亮天空。",
+  "tags": [
+    "进阶",
+    "技术演示"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fireworks-designer"
+}

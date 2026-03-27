@@ -1,0 +1,20 @@
+{
+  "id": "9-patch-plugin",
+  "name": "9-patch object",
+  "description": "Shows how to use the 9-patch object to draw images that only stretch the middle part.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=9-patch-plugin"
+}

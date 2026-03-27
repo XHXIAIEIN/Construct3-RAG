@@ -1,0 +1,41 @@
+{
+  "id": "tick-tock-toppings",
+  "name": "游戏示例：冰淇淋工坊",
+  "description": "使用高科技机器，在独特的甜品店中精心制作美味的冰淇淋。精通每一款，击败游戏并解锁无限模式！",
+  "tags": [
+    "移动端",
+    "进阶",
+    "完整游戏",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "ConstructGameServices",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "brightness",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tick-tock-toppings"
+}

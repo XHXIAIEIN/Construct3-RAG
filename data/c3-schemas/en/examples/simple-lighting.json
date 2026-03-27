@@ -1,0 +1,21 @@
+{
+  "id": "simple-lighting",
+  "name": "Simple lighting",
+  "description": "Use layers and blend modes to create a simple lighting effect.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-lighting"
+}

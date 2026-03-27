@@ -1,0 +1,23 @@
+{
+  "id": "make-animations-with-construct",
+  "name": "Animated splash",
+  "description": "An example of using timelines to make a splash animation for Construct.",
+  "tags": [
+    "animation-recommended",
+    "Animation",
+    "Feature example",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Timeline",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=make-animations-with-construct"
+}

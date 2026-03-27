@@ -1,0 +1,17 @@
+{
+  "id": "spritefont-formatting",
+  "name": "SpriteFont formatting",
+  "description": "A demonstration of using BBCode tags to format the contents of a SpriteFont object.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spritefont-formatting"
+}

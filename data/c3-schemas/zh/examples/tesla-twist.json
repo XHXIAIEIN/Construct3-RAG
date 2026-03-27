@@ -1,0 +1,36 @@
+{
+  "id": "tesla-twist",
+  "name": "游戏示例：电圈迷城",
+  "description": "在旋转的蒸汽朋克世界中，用强大的特斯拉线圈电击来袭的无人机！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "LOS",
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tesla-twist"
+}

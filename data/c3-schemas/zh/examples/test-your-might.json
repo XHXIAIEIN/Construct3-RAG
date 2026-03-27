@@ -1,0 +1,28 @@
+{
+  "id": "test-your-might",
+  "name": "游戏示例: 会心一击",
+  "description": "徒手劈开一系列坚硬的材料，测试你的真正实力！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=test-your-might"
+}

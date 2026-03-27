@@ -1,0 +1,33 @@
+{
+  "id": "relic-hunter",
+  "name": "Relic hunter",
+  "description": "Collect as many golden skulls as you can, but be careful with the ghosts roaming the cave.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=relic-hunter"
+}

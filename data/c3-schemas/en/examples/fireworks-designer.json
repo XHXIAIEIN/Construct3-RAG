@@ -1,0 +1,23 @@
+{
+  "id": "fireworks-designer",
+  "name": "Fireworks designer",
+  "description": "Design your own fireworks with custom patterns, and light up the sky in a stylish way.",
+  "tags": [
+    "Intermediate",
+    "Tech demo"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fireworks-designer"
+}

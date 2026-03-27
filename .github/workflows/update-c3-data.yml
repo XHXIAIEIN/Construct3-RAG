@@ -78,32 +78,24 @@ jobs:
           version = '${{ steps.check.outputs.latest }}'
           f = C3Fetcher(version=version)
 
-          # 1. Export schemas
+          # 1. Export schemas (per-language files + _index.json)
           print('Exporting schemas...')
           schemas_dir = f.export_schemas()
 
           target = Path('data/c3-schemas')
           if target.exists():
               shutil.rmtree(target)
-          shutil.copytree(schemas_dir / 'plugins', target / 'plugins')
-          shutil.copytree(schemas_dir / 'behaviors', target / 'behaviors')
-
-          # Build index
-          index = {'version': version, 'plugins': {}, 'behaviors': {}}
-          for section in ('plugins', 'behaviors'):
-              for fp in sorted((target / section).glob('*.json')):
-                  data = json.loads(fp.read_text(encoding='utf-8'))
-                  pid = data.get('id', fp.stem)
-                  index[section][pid] = {
-                      'name_en': data.get('name_en', pid),
-                      'name_zh': data.get('name_zh', ''),
-                      'file': f'{section}/{fp.name}',
-                      'conditions': len(data.get('conditions', [])),
-                      'actions': len(data.get('actions', [])),
-                      'expressions': len(data.get('expressions', [])),
-                  }
-          (target / '_index.json').write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding='utf-8')
-          print(f'Schemas: {len(index[\"plugins\"])} plugins, {len(index[\"behaviors\"])} behaviors')
+          target.mkdir(parents=True, exist_ok=True)
+          # Copy per-language dirs (includes examples/) and _index.json
+          for item in ('en', 'zh', '_index.json'):
+              src_path = schemas_dir / item
+              dst_path = target / item
+              if src_path.is_dir():
+                  shutil.copytree(src_path, dst_path)
+              elif src_path.is_file():
+                  shutil.copy2(src_path, dst_path)
+          idx = json.loads((target / '_index.json').read_text(encoding='utf-8'))
+          print(f'Schemas: {len(idx.get(\"plugins\", {}))} plugins, {len(idx.get(\"behaviors\", {}))} behaviors, {len(idx.get(\"effects\", {}))} effects')
 
           # 2. Export ts-defs
           print('Exporting ts-defs...')

@@ -1,0 +1,29 @@
+{
+  "id": "multiplayer-pong",
+  "name": "多人联机：乒乓球",
+  "description": "远程双人乒乓球示例，两个玩家各自控制一个球拍，以及共同看到一个相同的球。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "多人"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-pong"
+}

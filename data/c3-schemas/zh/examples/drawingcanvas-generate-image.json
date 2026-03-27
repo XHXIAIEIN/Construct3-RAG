@@ -1,0 +1,15 @@
+{
+  "id": "drawingcanvas-generate-image",
+  "name": "脚本绘图：绘制像素",
+  "description": "使用代码生成带有自定义像素数据的ImageData，并在 Drawing Canvas 对象中显示。",
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Text",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=drawingcanvas-generate-image"
+}

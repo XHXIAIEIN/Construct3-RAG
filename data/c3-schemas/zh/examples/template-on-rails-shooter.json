@@ -1,0 +1,35 @@
+{
+  "id": "template-on-rails-shooter",
+  "name": "游戏示例：航线射击",
+  "description": "一个太空主题的射击游戏，利用视差高度属性实现深度视觉效果。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "射击",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "Spritefont2",
+      "AJAX",
+      "Arr",
+      "Particles",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Tween",
+      "EightDir",
+      "Timer",
+      "Pin",
+      "Flash",
+      "Fade",
+      "Rotate",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-on-rails-shooter"
+}

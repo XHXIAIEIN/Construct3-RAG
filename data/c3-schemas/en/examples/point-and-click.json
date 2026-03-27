@@ -1,0 +1,30 @@
+{
+  "id": "point-and-click",
+  "name": "Point and click",
+  "description": "In this brief point-and-click adventure, you play the role of a detective assigned to deactivate a hidden signal jammer within a building.",
+  "tags": [
+    "animation-recommended",
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Dictionary",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Flash",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=point-and-click"
+}

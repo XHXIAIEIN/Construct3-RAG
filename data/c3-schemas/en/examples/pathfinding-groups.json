@@ -1,0 +1,28 @@
+{
+  "id": "pathfinding-groups",
+  "name": "Pathfinding groups",
+  "description": "Demonstrates how using path groups can help spread out paths, preventing many objects taking exactly the same paths.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-groups"
+}

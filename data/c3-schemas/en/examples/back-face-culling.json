@@ -1,0 +1,25 @@
+{
+  "id": "back-face-culling",
+  "name": "Back face culling",
+  "description": "A visualization of the effect of back face culling on the 3D shape object.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Orbit"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=back-face-culling"
+}

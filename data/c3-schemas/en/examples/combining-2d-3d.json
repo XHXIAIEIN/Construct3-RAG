@@ -1,0 +1,24 @@
+{
+  "id": "combining-2d-3d",
+  "name": "Combining 2D & 3D layers",
+  "description": "Demonstrates how setting a layer to 2D allows it to display top of 3D content regardless of depth.",
+  "tags": [
+    "Beginner",
+    "3D",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=combining-2d-3d"
+}

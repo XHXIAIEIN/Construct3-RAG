@@ -1,0 +1,18 @@
+{
+  "id": "icons-in-text",
+  "name": "富文本：显示图标",
+  "description": "演示在文本中通过 BBCode 将精灵的动画帧在文本内显示为小图标。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=icons-in-text"
+}

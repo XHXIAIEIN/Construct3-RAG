@@ -1,0 +1,324 @@
+{
+  "id": "sin",
+  "name": "Sine",
+  "description": "Adjust an object's position, size, angle or other properties with an oscillating sine wave.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-active",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "Is {my} enabled",
+      "description": "True if the movement is currently enabled."
+    },
+    {
+      "id": "compare-movement",
+      "scriptName": "CompareMovement",
+      "category": "",
+      "list-name": "Compare movement",
+      "display-text": "{my} movement is {0}",
+      "description": "Compare the current sine movement property.",
+      "params": {
+        "movement": {
+          "type": "combo",
+          "name": "Movement",
+          "desc": "Select the movement property to compare to.",
+          "items": {
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "size": "Size",
+            "width": "Width",
+            "height": "Height",
+            "angle": "Angle",
+            "opacity": "Opacity",
+            "value-only": "Value only",
+            "forwardsbackwards": "Forwards/backwards",
+            "z-elevation": "Z elevation"
+          }
+        }
+      }
+    },
+    {
+      "id": "compare-period",
+      "scriptName": "ComparePeriod",
+      "category": "",
+      "list-name": "Compare period",
+      "display-text": "{my} period {0} {1}",
+      "description": "Compare the current period of the oscillation, in seconds.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select how to compare the period in seconds."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Value to compare the period to, in seconds."
+        }
+      }
+    },
+    {
+      "id": "compare-magnitude",
+      "scriptName": "CompareMagnitude",
+      "category": "",
+      "list-name": "Compare magnitude",
+      "display-text": "{my} magnitude {0} {1}",
+      "description": "Compare the current magnitude of the oscillation.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select how to compare the magnitude."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Value to compare the magnitude to."
+        }
+      }
+    },
+    {
+      "id": "compare-wave",
+      "scriptName": "CompareWave",
+      "category": "",
+      "list-name": "Compare wave",
+      "display-text": "{my} is [b]{0}[/b] wave",
+      "description": "Compare the current wave function of the behavior.",
+      "params": {
+        "wave": {
+          "type": "combo",
+          "name": "Wave",
+          "desc": "Select the wave type to compare to.",
+          "items": {
+            "sine": "Sine",
+            "triangle": "Triangle",
+            "sawtooth": "Sawtooth",
+            "reverse-sawtooth": "Reverse sawtooth",
+            "square": "Square"
+          }
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-active",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Enable or disable the movement.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether the movement is enabled or disabled.",
+          "items": {
+            "inactive": "Disabled",
+            "active": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-period",
+      "scriptName": "SetPeriod",
+      "category": "",
+      "list-name": "Set period",
+      "display-text": "Set {my} period to [b]{0}[/b]",
+      "description": "Set the time in seconds for a complete cycle.",
+      "params": {
+        "period": {
+          "type": "number",
+          "name": "Period",
+          "desc": "The time in seconds for a complete cycle."
+        }
+      }
+    },
+    {
+      "id": "set-magnitude",
+      "scriptName": "SetMagnitude",
+      "category": "",
+      "list-name": "Set magnitude",
+      "display-text": "Set {my} magnitude to [b]{0}[/b]",
+      "description": "Set the magnitude of the movement.",
+      "params": {
+        "magnitude": {
+          "type": "number",
+          "name": "Magnitude",
+          "desc": "The maximum change in pixels (or degrees for Angle)."
+        }
+      }
+    },
+    {
+      "id": "set-movement",
+      "scriptName": "SetMovement",
+      "category": "",
+      "list-name": "Set movement",
+      "display-text": "Set {my} movement to [b]{0}[/b]",
+      "description": "Set the type of movement.",
+      "params": {
+        "movement": {
+          "type": "combo",
+          "name": "Movement",
+          "desc": "Select the movement property to compare to.",
+          "items": {
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "size": "Size",
+            "width": "Width",
+            "height": "Height",
+            "angle": "Angle",
+            "opacity": "Opacity",
+            "value-only": "Value only",
+            "forwardsbackwards": "Forwards/backwards",
+            "z-elevation": "Z elevation"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-wave",
+      "scriptName": "SetWave",
+      "category": "",
+      "list-name": "Set wave",
+      "display-text": "Set {my} wave function to [b]{0}[/b]",
+      "description": "Set the wave function used to calculate movement.",
+      "params": {
+        "wave": {
+          "type": "combo",
+          "name": "Wave",
+          "desc": "Select the wave function to apply.",
+          "items": {
+            "sine": "Sine",
+            "triangle": "Triangle",
+            "sawtooth": "Sawtooth",
+            "reverse-sawtooth": "Reverse sawtooth",
+            "square": "Square"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-cycle-position",
+      "scriptName": "SetPhase",
+      "category": "",
+      "list-name": "Set cycle position",
+      "display-text": "Set {my} cycle position to [b]{0}[/b]",
+      "description": "Set the progress through one cycle (the phase).",
+      "params": {
+        "cycle-position": {
+          "type": "number",
+          "name": "Cycle position",
+          "desc": "The progress through one cycle (phase) to set, from 0 to 1."
+        }
+      }
+    },
+    {
+      "id": "update-initial-state",
+      "scriptName": "UpdateInitialState",
+      "category": "",
+      "list-name": "Update initial state",
+      "display-text": "Update {my} initial state",
+      "description": "Set the initial state to oscillate from to the current state of the object."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "cycleposition",
+      "scriptName": "CyclePosition",
+      "category": "",
+      "translated-name": "CyclePosition",
+      "description": "Return the current position in the cycle (phase) as a number from 0 to 1.",
+      "returnType": "number"
+    },
+    {
+      "id": "period",
+      "scriptName": "Period",
+      "category": "",
+      "translated-name": "Period",
+      "description": "Return the current period, in seconds.",
+      "returnType": "number"
+    },
+    {
+      "id": "magnitude",
+      "scriptName": "Magnitude",
+      "category": "",
+      "translated-name": "Magnitude",
+      "description": "Return the current magnitude of the movement.",
+      "returnType": "number"
+    },
+    {
+      "id": "value",
+      "scriptName": "Value",
+      "category": "",
+      "translated-name": "Value",
+      "description": "Return the current oscillating value.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "movement": {
+      "name": "Movement",
+      "desc": "Select what property of the object to modify.",
+      "items": {
+        "horizontal": "Horizontal",
+        "vertical": "Vertical",
+        "forwards-backwards": "Forwards/backwards",
+        "width": "Width",
+        "height": "Height",
+        "size": "Size",
+        "angle": "Angle",
+        "opacity": "Opacity",
+        "z-elevation": "Z elevation",
+        "value-only": "Value only"
+      }
+    },
+    "wave": {
+      "name": "Wave",
+      "desc": "Select the kind of wave function used to calculate the movement.",
+      "items": {
+        "sine": "Sine",
+        "triangle": "Triangle",
+        "sawtooth": "Sawtooth",
+        "reverse-sawtooth": "Reverse sawtooth",
+        "square": "Square"
+      }
+    },
+    "period": {
+      "name": "Period",
+      "desc": "The time in seconds for a complete cycle."
+    },
+    "period-random": {
+      "name": "Period random",
+      "desc": "Add a random number of seconds to the period, up to this value."
+    },
+    "period-offset": {
+      "name": "Period offset",
+      "desc": "The initial time in seconds through the cycle."
+    },
+    "period-offset-random": {
+      "name": "Period offset random",
+      "desc": "Add a random number of seconds to the initial time, up to this value."
+    },
+    "magnitude": {
+      "name": "Magnitude",
+      "desc": "The maximum change in pixels, degrees, percent etc."
+    },
+    "magnitude-random": {
+      "name": "Magnitude random",
+      "desc": "Add a random number to the magnitude, up to this value."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    },
+    "live-preview": {
+      "name": "Preview",
+      "desc": "Tick to run a live preview in the editor."
+    }
+  }
+}

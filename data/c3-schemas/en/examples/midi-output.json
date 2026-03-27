@@ -1,0 +1,23 @@
+{
+  "id": "midi-output",
+  "name": "MIDI output",
+  "description": "Demonstrates how to send output to a connected MIDI device to play arpeggios.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Button",
+      "List",
+      "MIDI",
+      "Text",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=midi-output"
+}

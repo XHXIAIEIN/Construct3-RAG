@@ -1,0 +1,30 @@
+{
+  "id": "tasty-cappuccino",
+  "name": "Tasty Cappuccino",
+  "description": "Master the art of making cappuccinos following an interactive slideshow, made using the powerful timeline feature.",
+  "tags": [
+    "animation-recommended",
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": [
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tasty-cappuccino"
+}

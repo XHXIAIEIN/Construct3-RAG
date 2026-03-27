@@ -1,0 +1,33 @@
+{
+  "id": "keyboard-mapping",
+  "name": "Keyboard mapping",
+  "description": "Create and save a custom key map profile to control a simple platformer character.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Fade",
+      "Platform",
+      "bound",
+      "solid"
+    ],
+    "effects": [
+      "noise",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=keyboard-mapping"
+}

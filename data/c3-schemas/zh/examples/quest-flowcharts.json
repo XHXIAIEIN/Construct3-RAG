@@ -1,0 +1,27 @@
+{
+  "id": "quest-flowcharts",
+  "name": "流程图：文字冒险游戏",
+  "description": "使用流程图功能设计的具有任务和对话树的文字冒险游戏。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "游戏模板",
+    "冒险",
+    "流程图"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Button",
+      "Dictionary",
+      "Flowchart",
+      "HTMLElement",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=quest-flowcharts"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "simple-snake-game",
+  "name": "游戏示例: 贪吃蛇(简单)",
+  "description": "最小实现的贪吃蛇游戏，使用更简单的逻辑和蛇身的跟随行为。",
+  "tags": [
+    "简单",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Flash",
+      "Follow"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-snake-game"
+}

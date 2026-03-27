@@ -1,0 +1,18 @@
+{
+  "id": "animated-spritefont-effects",
+  "name": "富文本：文本动画(位图字体)",
+  "description": "演示在游戏中使用BBCode，创建各种文字动画效果。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-spritefont-effects"
+}

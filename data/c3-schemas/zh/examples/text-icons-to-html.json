@@ -1,0 +1,19 @@
+{
+  "id": "text-icons-to-html",
+  "name": "文本：转换HTML",
+  "description": "将包含图标的文本对象转换为HTML，并在HTML元素对象中显示，以便进行更高级的使用。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "HTMLElement",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=text-icons-to-html"
+}

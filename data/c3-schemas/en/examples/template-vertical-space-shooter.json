@@ -1,0 +1,25 @@
+{
+  "id": "template-vertical-space-shooter",
+  "name": "Vertical space shooter",
+  "description": "A template with a basic vertical space shooter game setup prepared, with placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "bound",
+      "Bullet",
+      "destroy",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-vertical-space-shooter"
+}

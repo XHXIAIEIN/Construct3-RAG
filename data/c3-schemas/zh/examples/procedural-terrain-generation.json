@@ -1,0 +1,29 @@
+{
+  "id": "procedural-terrain-generation",
+  "name": "基础示例：程序生成地形",
+  "description": "结合使用高级随机插件，瓦片图和字典数据创建无限随机生成的关卡。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Tilemap",
+      "Json",
+      "Sprite",
+      "Dictionary",
+      "Mouse",
+      "Arr"
+    ],
+    "behaviors": [
+      "solid",
+      "Pin",
+      "scrollto",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=procedural-terrain-generation"
+}

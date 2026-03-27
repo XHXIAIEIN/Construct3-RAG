@@ -1,0 +1,37 @@
+{
+  "id": "cave-bridge",
+  "name": "Cave bridge",
+  "description": "Enter and explore the depths of a magical cave, using timeline animations to assemble a bridge.",
+  "tags": [
+    "games-recommended",
+    "Beginner",
+    "Gameplay mechanic",
+    "Adventure",
+    "Animation",
+    "Platformer",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Timeline",
+      "Particles",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "overlay",
+      "noise"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cave-bridge"
+}

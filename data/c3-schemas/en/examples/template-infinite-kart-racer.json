@@ -1,0 +1,31 @@
+{
+  "id": "template-infinite-kart-racer",
+  "name": "Infinite kart racer",
+  "description": "Race through the clouds in an endless procedurally generated 3D track.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Racing",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Keyboard",
+      "Sprite",
+      "TiledBg",
+      "NinePatch",
+      "Touch",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-infinite-kart-racer"
+}

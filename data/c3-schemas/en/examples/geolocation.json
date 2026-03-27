@@ -1,0 +1,21 @@
+{
+  "id": "geolocation",
+  "name": "Geolocation",
+  "description": "A simple example of how to use the Geolocation object and show the resulting position on Google Maps.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Geolocation",
+      "Button",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=geolocation"
+}

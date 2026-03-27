@@ -1,0 +1,272 @@
+{
+  "id": "bullet",
+  "name": "Bullet",
+  "description": "Move an object ahead at its current angle.  Typically used for bullets and projectiles.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "Compare speed",
+      "display-text": "{my} speed {0} {1}",
+      "description": "Compare the current speed of the object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose the way to compare the current speed."
+        },
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The speed, in pixels per second, to compare the current speed to."
+        }
+      }
+    },
+    {
+      "id": "compare-distance-travelled",
+      "scriptName": "CompareTravelled",
+      "category": "",
+      "list-name": "Compare distance travelled",
+      "display-text": "{my} distance travelled {0} {1}",
+      "description": "Compare the distance the object has travelled.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose the way to compare the distance travelled."
+        },
+        "distance": {
+          "type": "number",
+          "name": "Distance",
+          "desc": "The distance, in pixels, to compare to."
+        }
+      }
+    },
+    {
+      "id": "on-step",
+      "scriptName": "OnStep",
+      "category": "",
+      "list-name": "On step",
+      "display-text": "On {my} step",
+      "description": "If stepping is enabled, triggers on each step for additional collision tests.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "Set speed",
+      "display-text": "Set {my} speed to [i]{0}[/i]",
+      "description": "Set the object's current speed.",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The new speed of the object to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "Set acceleration",
+      "display-text": "Set {my} acceleration to [i]{0}[/i]",
+      "description": "Set the object's acceleration.",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "Acceleration",
+          "desc": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-gravity",
+      "scriptName": "SetGravity",
+      "category": "",
+      "list-name": "Set gravity",
+      "display-text": "Set {my} gravity to [i]{0}[/i]",
+      "description": "Set the object's force of gravity.",
+      "params": {
+        "gravity": {
+          "type": "number",
+          "name": "Gravity",
+          "desc": "The new acceleration caused by gravity, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-angle-of-motion",
+      "scriptName": "SetAngleOfMotion",
+      "category": "",
+      "list-name": "Set angle of motion",
+      "display-text": "Set {my} angle of motion to [i]{0}[/i] degrees",
+      "description": "Set the angle the object is moving at.",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The new angle of motion, in degrees."
+        }
+      }
+    },
+    {
+      "id": "bounce-off-object",
+      "scriptName": "Bounce",
+      "category": "",
+      "list-name": "Bounce off object",
+      "display-text": "Bounce {my} off {0}",
+      "description": "Bounce the object off an object it is currently touching.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to bounce off."
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-distance-travelled",
+      "scriptName": "SetDistanceTravelled",
+      "category": "",
+      "list-name": "Set distance travelled",
+      "display-text": "Set {my} distance travelled to [i]{0}[/i]",
+      "description": "Change the counter used to track the distance travelled.",
+      "params": {
+        "distance": {
+          "type": "number",
+          "name": "Distance",
+          "desc": "The new distance in pixels to set for the DistanceTravelled expression."
+        }
+      }
+    },
+    {
+      "id": "stop-stepping",
+      "scriptName": "StopStepping",
+      "category": "",
+      "list-name": "Stop stepping",
+      "display-text": "Stop {my} stepping",
+      "description": "Stop the stepping for this tick."
+    },
+    {
+      "id": "set-bounce-off-solids",
+      "scriptName": "SetBounceOffSolids",
+      "category": "",
+      "list-name": "Set bounce off solids",
+      "display-text": "Set {my} bounce off solids [b]{0}[/b]",
+      "description": "Set whether the 'Bounce off solids' property is enabled.",
+      "params": {
+        "state": {
+          "type": "boolean",
+          "name": "Bounce off solids",
+          "desc": "Set whether to enable or disable bouncing off solids."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "angleofmotion",
+      "scriptName": "AngleOfMotion",
+      "category": "",
+      "translated-name": "AngleOfMotion",
+      "description": "The angle the object is currently moving at, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "distancetravelled",
+      "scriptName": "DistanceTravelled",
+      "category": "",
+      "translated-name": "DistanceTravelled",
+      "description": "The distance, in pixels, the object has travelled so far.",
+      "returnType": "number"
+    },
+    {
+      "id": "gravity",
+      "scriptName": "Gravity",
+      "category": "",
+      "translated-name": "Gravity",
+      "description": "The current gravity in pixels per second per second.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "speed": {
+      "name": "Speed",
+      "desc": "The speed the object travels at, in pixels per second."
+    },
+    "acceleration": {
+      "name": "Acceleration",
+      "desc": "The rate of acceleration, in pixels per second per second.  Negative values decelerate."
+    },
+    "gravity": {
+      "name": "Gravity",
+      "desc": "Gravity on the bullet, in pixels per second per second."
+    },
+    "bounce-off-solids": {
+      "name": "Bounce off solids",
+      "desc": "Make the object bounce off solid objects when it collides with them."
+    },
+    "set-angle": {
+      "name": "Set angle",
+      "desc": "Automatically set the object's angle to the angle of motion."
+    },
+    "step": {
+      "name": "Step",
+      "desc": "Move in small steps triggering 'On step', for making additional collision tests."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

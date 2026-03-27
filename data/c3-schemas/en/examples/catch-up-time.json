@@ -1,0 +1,25 @@
+{
+  "id": "catch-up-time",
+  "name": "Catch-up time",
+  "description": "Demonstrates how to simulate time passing while the app was in the background by catching up on resume.",
+  "tags": [
+    "Mobile",
+    "Feature example",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Date",
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=catch-up-time"
+}

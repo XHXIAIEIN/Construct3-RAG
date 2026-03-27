@@ -1,0 +1,42 @@
+{
+  "id": "cellf-defense",
+  "name": "Cellf Defense",
+  "description": "Challenge friends in a multiplayer microscopic arena! Absorb smaller cells to grow, grab powerups for an edge, and dodge viruses in chaotic Petri dish battles.",
+  "tags": [
+    "Advanced",
+    "Mobile",
+    "Multiplayer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Date",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cellf-defense"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "text-based-adventure",
+  "name": "Text-based adventure",
+  "description": "Immerse yourself in a flowchart-driven text-based adventure where you must guide your character to save the universe.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Browser",
+      "Dictionary",
+      "Flowchart",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer"
+    ],
+    "effects": [
+      "bulge",
+      "glowhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=text-based-adventure"
+}

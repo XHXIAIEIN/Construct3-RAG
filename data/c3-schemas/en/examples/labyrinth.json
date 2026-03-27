@@ -1,0 +1,38 @@
+{
+  "id": "labyrinth",
+  "name": "Labyrinth",
+  "description": "Reach the teleportation crystal to escape the labyrinth before the Minotaur catches you.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Flowchart",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "LOS",
+      "MoveTo",
+      "Pathfinding",
+      "Sin",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "dodge",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=labyrinth"
+}

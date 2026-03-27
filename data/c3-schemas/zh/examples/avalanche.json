@@ -1,0 +1,49 @@
+{
+  "id": "avalanche",
+  "name": "3D平台：雪崩大陆",
+  "description": "距离上次灾变已过千年，神秘的雪崩再次降临，随之而来的还有意图腐化冻原的邪恶生物。重建和平的使命，就落在了你的肩上。",
+  "tags": [
+    "进阶",
+    "完整游戏",
+    "平台",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Audio",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Flash",
+      "Pathfinding",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=avalanche"
+}

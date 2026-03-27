@@ -1,0 +1,25 @@
+{
+  "id": "car-customization",
+  "name": "脚本项目：赛车定制",
+  "description": "优化您的汽车以达到最佳性能，并统治赛道。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "竞速",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=car-customization"
+}

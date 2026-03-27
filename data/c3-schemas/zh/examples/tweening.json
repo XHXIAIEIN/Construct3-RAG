@@ -1,0 +1,24 @@
+{
+  "id": "tweening",
+  "name": "功能示例：补间动画",
+  "description": "演示如何使用补间行为随时间平滑地更改值。",
+  "tags": [
+    "简单",
+    "animation-recommended",
+    "功能示例",
+    "动画",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tweening"
+}

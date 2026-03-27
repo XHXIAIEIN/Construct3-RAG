@@ -1,0 +1,22 @@
+{
+  "id": "integrated-3d-engine",
+  "name": "Integrated 3D engine",
+  "description": "Demonstrates how the 3D engine three.js can be integrated to a Construct project, combining the scripting feature with HTML layers.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Tech demo",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "HTMLElement",
+      "PlatformInfo",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=integrated-3d-engine"
+}

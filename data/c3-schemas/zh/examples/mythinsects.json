@@ -1,0 +1,43 @@
+{
+  "id": "mythinsects",
+  "name": "游戏示例：虫族保卫战",
+  "description": "在时间的沙浪中引领古老的圣甲虫文明，以此考验你的战略才能。你会带领他们迈向荣耀，还是让其湮没于历史长河？",
+  "tags": [
+    "完整游戏",
+    "进阶",
+    "策略",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Timer",
+      "Turret",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "brightness",
+      "dodge",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=mythinsects"
+}

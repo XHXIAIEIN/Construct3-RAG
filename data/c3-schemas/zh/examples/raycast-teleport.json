@@ -1,0 +1,29 @@
+{
+  "id": "raycast-teleport",
+  "name": "关卡设计: 镭射冲刺",
+  "description": "利用 raycase 射线实现水平传送能力，适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "LOS",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=raycast-teleport"
+}

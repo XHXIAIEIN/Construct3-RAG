@@ -1,0 +1,33 @@
+{
+  "id": "jumpy-monster",
+  "name": "游戏示例：迷失森林",
+  "description": "扮演一只可爱的小怪物，在未知的天空中从一个蘑菇跳到另一个蘑菇！收集手表来获得额外时间，躲避致命的紫色蘑菇，并追求最高分。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=jumpy-monster"
+}

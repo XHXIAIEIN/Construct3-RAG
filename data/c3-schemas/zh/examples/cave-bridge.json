@@ -1,0 +1,37 @@
+{
+  "id": "cave-bridge",
+  "name": "时间轴：洞穴断桥",
+  "description": "探索魔法洞窟。利用 Timeline 设计一段自动组成桥梁的动画。适用于平台跳跃类型的游戏机制。",
+  "tags": [
+    "games-recommended",
+    "简单",
+    "玩法机制",
+    "冒险",
+    "动画",
+    "平台",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Timeline",
+      "Particles",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "overlay",
+      "noise"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cave-bridge"
+}

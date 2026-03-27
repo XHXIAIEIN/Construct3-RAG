@@ -1,0 +1,21 @@
+{
+  "id": "physics-ragdoll",
+  "name": "物理：布娃娃",
+  "description": "演示物理行为的关节系统，制作简单的布娃娃效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-ragdoll"
+}

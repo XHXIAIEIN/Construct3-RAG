@@ -1,0 +1,27 @@
+{
+  "id": "effects-oldtv",
+  "name": "特效：旧电视机",
+  "description": "演示多种滤镜组合，实现旧电视的复古效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": [
+      "grayscale",
+      "pixellate",
+      "noise",
+      "blurhorizontal",
+      "bulge"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-oldtv"
+}

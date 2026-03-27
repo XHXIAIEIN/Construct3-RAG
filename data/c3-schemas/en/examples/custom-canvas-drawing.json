@@ -1,0 +1,19 @@
+{
+  "id": "custom-canvas-drawing",
+  "name": "Custom canvas drawing",
+  "description": "Demonstrates using a custom canvas element with HTML layers to draw an antialiased bezier curve with a rainbow gradient.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "PlatformInfo",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-canvas-drawing"
+}

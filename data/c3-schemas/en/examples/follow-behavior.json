@@ -1,0 +1,26 @@
+{
+  "id": "follow-behavior",
+  "name": "Follow behavior",
+  "description": "A simple demonstration of using the Follow behavior to follow an object.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-behavior"
+}

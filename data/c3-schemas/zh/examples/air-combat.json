@@ -1,0 +1,38 @@
+{
+  "id": "air-combat",
+  "name": "游戏示例：空战演习",
+  "description": "一个简单的飞行射击游戏，利用自动追踪的导弹击毁敌方战斗机，阻止敌军进入我方的边境。",
+  "tags": [
+    "进阶",
+    "3D",
+    "游戏模板",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Particles",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "custom",
+      "scrollto",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Sin",
+      "LOS",
+      "Rotate",
+      "destroy",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=air-combat"
+}

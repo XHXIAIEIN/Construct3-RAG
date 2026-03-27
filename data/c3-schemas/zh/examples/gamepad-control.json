@@ -1,0 +1,25 @@
+{
+  "id": "gamepad-control",
+  "name": "设备：手柄控制",
+  "description": "演示如何使用游戏手柄，控制游戏的输入操作。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Keyboard",
+      "gamepad"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gamepad-control"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "tilemap-destruction",
+  "name": "瓦片图：破坏地形",
+  "description": "可破坏的场景环境，玩家可以投掷炸弹来破坏关卡的地形。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Particles",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Pin",
+      "scrollto",
+      "solid",
+      "Bullet",
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tilemap-destruction"
+}

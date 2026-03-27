@@ -1,0 +1,42 @@
+{
+  "id": "ghost-shooter-rain-demo",
+  "name": "基础示例：下雨特效",
+  "description": "一款自上而下视角的射击游戏，使用了大量的视觉效果。",
+  "tags": [
+    "高级",
+    "技术演示",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "Pin",
+      "Sin",
+      "bound",
+      "wrap"
+    ],
+    "effects": [
+      "bumpmapping",
+      "dodge",
+      "exclusion",
+      "glass",
+      "glowhorizontal",
+      "glowvertical",
+      "radialblur",
+      "swirl",
+      "tint",
+      "warp"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-shooter-rain-demo"
+}

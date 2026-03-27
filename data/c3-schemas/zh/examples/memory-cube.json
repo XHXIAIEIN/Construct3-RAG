@@ -1,0 +1,32 @@
+{
+  "id": "memory-cube",
+  "name": "游戏示例：记忆魔方",
+  "description": "挑战你的记忆能力，跟踪计算机的动作，并尽可能地复现它们的步骤。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=memory-cube"
+}

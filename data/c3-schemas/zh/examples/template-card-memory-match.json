@@ -1,0 +1,34 @@
+{
+  "id": "template-card-memory-match",
+  "name": "游戏示例：记忆翻牌",
+  "description": "一个简单的匹配相同卡牌的益智游戏，带有翻牌动画视觉效果。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Arr",
+      "Browser",
+      "AdvancedRandom",
+      "Particles",
+      "TiledBg",
+      "Keyboard",
+      "Spritefont2",
+      "NinePatch",
+      "Touch",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "Tween",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-card-memory-match"
+}

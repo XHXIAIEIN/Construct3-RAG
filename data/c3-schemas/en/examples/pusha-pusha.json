@@ -1,0 +1,44 @@
+{
+  "id": "pusha-pusha",
+  "name": "Pusha Pusha",
+  "description": "Push crates around and solve elaborate puzzles in a wild environment to please the gods of the jungle.",
+  "tags": [
+    "Advanced",
+    "Demo game",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "LocalStorage",
+      "SVGPicture",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "TileMovement",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "darken",
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pusha-pusha"
+}

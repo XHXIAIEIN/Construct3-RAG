@@ -1,0 +1,50 @@
+{
+  "id": "airborne-explorer",
+  "name": "Airborne explorer",
+  "description": "Propel your Mars rover off Martian forces to stay airborne, chain massive combos, upgrade your rover, and defeat the boss to bring vital intel back to Earth.",
+  "tags": [
+    "Intermediate",
+    "Demo game",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "ConstructGameServices",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "custom",
+      "destroy"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "bulge",
+      "dodge",
+      "hsladjust",
+      "warpobject",
+      "warpradial"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=airborne-explorer"
+}

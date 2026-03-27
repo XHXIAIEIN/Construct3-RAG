@@ -1,0 +1,47 @@
+{
+  "id": "samuroof",
+  "name": "Samuroof",
+  "description": "Dash across the city rooftops to awaken five sacred gongs and seal the portal, banishing the evil spirits haunting the land.",
+  "tags": [
+    "Intermediate",
+    "Demo game",
+    "Arcade",
+    "Platformer",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "BinaryData",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Timeline",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=samuroof"
+}

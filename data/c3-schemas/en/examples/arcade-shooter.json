@@ -1,0 +1,38 @@
+{
+  "id": "arcade-shooter",
+  "name": "Arcade shooter",
+  "description": "Play an elite soldier invading the enemy base.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "scrollto",
+      "MoveTo",
+      "Timer",
+      "Bullet",
+      "destroy",
+      "solid",
+      "Tween",
+      "Rotate"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcade-shooter"
+}

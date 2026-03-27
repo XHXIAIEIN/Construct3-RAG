@@ -1,0 +1,31 @@
+{
+  "id": "chess-checkmate",
+  "name": "Checkmate puzzle",
+  "description": "Compete against the king to perform a checkmate, following the classic set of chess rules with flowchart logic.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Flowchart",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=chess-checkmate"
+}

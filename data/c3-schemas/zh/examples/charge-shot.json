@@ -1,0 +1,40 @@
+{
+  "id": "charge-shot",
+  "name": "关卡设计꞉ 蓄力射击",
+  "description": "经典游戏《洛克人》部分机制，玩家可以持续通过长按射击按钮来发射一次更强大的攻击。适用于平台射击类型游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Tilemap",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Sin",
+      "Bullet",
+      "Tween",
+      "Fade",
+      "solid",
+      "Rotate",
+      "destroy",
+      "Flash"
+    ],
+    "effects": [
+      "hsladjust",
+      "blurhorizontal",
+      "blurvertical",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=charge-shot"
+}

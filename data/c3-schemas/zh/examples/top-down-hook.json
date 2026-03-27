@@ -1,0 +1,31 @@
+{
+  "id": "top-down-hook",
+  "name": "关卡设计: 钩索（顶视角)",
+  "description": "经典游戏《塞尔达传说》的关卡机制。发射钩索，帮助玩家通过地形障碍，适用于八方向游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Keyboard",
+      "TiledBg",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "LOS",
+      "EightDir",
+      "Tween",
+      "scrollto",
+      "solid",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=top-down-hook"
+}

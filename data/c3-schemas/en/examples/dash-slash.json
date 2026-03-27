@@ -1,0 +1,31 @@
+{
+  "id": "dash-slash",
+  "name": "Dash Slash",
+  "description": "A platformer where you can cut through floating orbs while avoiding dangerous traps on the way.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "MoveTo",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=dash-slash"
+}

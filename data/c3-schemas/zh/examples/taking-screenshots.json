@@ -1,0 +1,28 @@
+{
+  "id": "taking-screenshots",
+  "name": "功能示例：截图",
+  "description": "演示使用画布的快照功能，捕获屏幕快照，然后将图像文件下载或共享。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "Clipboard",
+      "FileSystem",
+      "Share",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=taking-screenshots"
+}

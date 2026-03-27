@@ -1,0 +1,16 @@
+{
+  "id": "audio-scripting",
+  "name": "脚本示例：播放音频",
+  "description": "使用代码加载和播放声音及音乐。使用 Web Audio API 和 <audio> 元素。",
+  "tags": [
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-scripting"
+}

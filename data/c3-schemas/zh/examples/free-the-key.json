@@ -1,0 +1,25 @@
+{
+  "id": "free-the-key",
+  "name": "游戏示例: 华容道",
+  "description": "你在遗迹中找到了宝藏，但要获得它，你必须通过滑动拼图来解锁宝箱，将钥匙插入锁孔。",
+  "tags": [
+    "高级",
+    "移动端",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=free-the-key"
+}

@@ -1,0 +1,599 @@
+{
+  "id": "pathfinding",
+  "name": "Pathfinding",
+  "description": "Find paths around obstacles, and optionally move along them.",
+  "type": "behavior",
+  "aceCategories": {
+    "movement": "Movement",
+    "path": "Path",
+    "rabbit": "Rabbit",
+    "settings": "Settings"
+  },
+  "conditions": [
+    {
+      "id": "on-path-found",
+      "scriptName": "OnPathFound",
+      "category": "",
+      "list-name": "On path found",
+      "display-text": "On {my} path found",
+      "description": "Triggered after 'Find path' when a path successfully found.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-failed-to-find-path",
+      "scriptName": "OnFailedToFindPath",
+      "category": "",
+      "list-name": "On failed to find path",
+      "display-text": "On {my} failed to find path",
+      "description": "Triggered after 'Find path' when no path could be found.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-cell-obstacle",
+      "scriptName": "IsCellObstacle",
+      "category": "",
+      "list-name": "Is cell obstacle",
+      "display-text": "Is {my} cell ({0}, {1}) obstacle",
+      "description": "Test if a cell in the pathfinding map is marked as an obstacle.",
+      "params": {
+        "cell-x": {
+          "type": "number",
+          "name": "Cell X",
+          "desc": "The horizontal cell to test if an obstacle (in cells, rather than layout co-ordinates)."
+        },
+        "cell-y": {
+          "type": "number",
+          "name": "Cell Y",
+          "desc": "The vertical cell to test if an obstacle (in cells, rather than layout co-ordinates)."
+        }
+      }
+    },
+    {
+      "id": "is-calculating-path",
+      "scriptName": "IsCalculatingPath",
+      "category": "",
+      "list-name": "Is calculating path",
+      "display-text": "Is {my} calculating path",
+      "description": "True if the object is currently searching for a path."
+    },
+    {
+      "id": "is-moving-along-path",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "Is moving along path",
+      "display-text": "Is {my} moving along path",
+      "description": "True if the object is currently moving along a found path."
+    },
+    {
+      "id": "on-arrived",
+      "scriptName": "OnArrived",
+      "category": "",
+      "list-name": "On arrived",
+      "display-text": "On {my} arrived",
+      "description": "Triggered when moving along path and arrived at destination.",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "Compare speed",
+      "display-text": "{my} speed {0} [b]{1}[/b]",
+      "description": "Compare the current movement speed of the object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "How to compare the current movement speed."
+        },
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The speed to compare to, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "diagonals-are-enabled",
+      "scriptName": "DiagonalsEnabled",
+      "category": "",
+      "list-name": "Diagonals are enabled",
+      "display-text": "{my} diagonals are enabled",
+      "description": "True if diagonal movement across cells is currently enabled."
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "find-path",
+      "scriptName": "FindPath",
+      "category": "",
+      "list-name": "Find path",
+      "display-text": "{my}: Find path to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Start looking for a path to a destination, later triggering 'On path found' or 'On failed to find path'.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to find a path to."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to find a path to."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} {0}",
+      "description": "Enable or disable the behavior.",
+      "params": {
+        "set": {
+          "type": "combo",
+          "name": "Set",
+          "desc": "Whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "disabled",
+            "enabled": "enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "regenerate-obstacle-map",
+      "scriptName": "RegenerateMap",
+      "category": "",
+      "list-name": "Regenerate obstacle map",
+      "display-text": "Regenerate {my} obstacle map",
+      "description": "(Slow) Check every cell to determine if it is an obstacle again, in case obstacles have moved or changed. Completes next tick.",
+      "isAsync": true
+    },
+    {
+      "id": "add-obstacle",
+      "scriptName": "AddObstacle",
+      "category": "",
+      "list-name": "Add obstacle",
+      "display-text": "Add {my} obstacle {0}",
+      "description": "When using custom obstacles, add a family or object as an obstacle.",
+      "params": {
+        "obstacle": {
+          "type": "object",
+          "name": "Obstacle",
+          "desc": "Choose a family or object to use as obstacles in the pathfinding map."
+        }
+      }
+    },
+    {
+      "id": "clear-obstacles",
+      "scriptName": "ClearObstacles",
+      "category": "",
+      "list-name": "Clear obstacles",
+      "display-text": "Clear {my} obstacles",
+      "description": "Clear the added custom obstacles."
+    },
+    {
+      "id": "set-move-cost",
+      "scriptName": "SetMoveCost",
+      "category": "",
+      "list-name": "Set move cost",
+      "display-text": "Set {my} move cost [i]{0}[/i]",
+      "description": "Set the basic cost for moving to an adjacent cell, which affects the relative effect of other costs.",
+      "params": {
+        "move-cost": {
+          "type": "number",
+          "name": "Move cost",
+          "desc": "The basic cost to move to an adjacent cell while calculating a path."
+        }
+      }
+    },
+    {
+      "id": "add-path-cost",
+      "scriptName": "AddCost",
+      "category": "",
+      "list-name": "Add path cost",
+      "display-text": "Add {my} object {0} with path cost [i]{1}[/i]",
+      "description": "Increase the path cost for travelling over an object (e.g. to simulate rough terrain).",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Choose an object to increase pathfinding cost."
+        },
+        "cost": {
+          "type": "number",
+          "name": "Cost",
+          "desc": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively."
+        }
+      }
+    },
+    {
+      "id": "clear-cost",
+      "scriptName": "ClearCost",
+      "category": "",
+      "list-name": "Clear cost",
+      "display-text": "Clear {my} additional path costs",
+      "description": "Clear any additional path cost that was previously added."
+    },
+    {
+      "id": "regenerate-region",
+      "scriptName": "RegenerateRegion",
+      "category": "",
+      "list-name": "Regenerate region",
+      "display-text": "Regenerate {my} obstacle map from ([i]{0}[/i], [i]{1}[/i]) to ([i]{2}[/i], [i]{3}[/i])",
+      "description": "Regenerate just a rectangular portion of the obstacle map in layout co-ordinates. Completes next tick.",
+      "params": {
+        "start-x": {
+          "type": "number",
+          "name": "Start X",
+          "desc": "Start X co-ordinate in layout of rectangle to regenerate."
+        },
+        "start-y": {
+          "type": "number",
+          "name": "Start Y",
+          "desc": "Start Y co-ordinate in layout of rectangle to regenerate."
+        },
+        "end-x": {
+          "type": "number",
+          "name": "End X",
+          "desc": "End X co-ordinate in layout of rectangle to regenerate."
+        },
+        "end-y": {
+          "type": "number",
+          "name": "End Y",
+          "desc": "End Y co-ordinate in layout of rectangle to regenerate."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "regenerate-region-around-object",
+      "scriptName": "RegenerateObjectRegion",
+      "category": "",
+      "list-name": "Regenerate region around object",
+      "display-text": "Regenerate {my} obstacle map around {0}",
+      "description": "Regenerate just a rectangular portion of the obstacle map from an object's bounding box. Completes next tick.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "An object whose bounding box will determine a rectangular portion of the obstacle map to regenerate."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "start-path-group",
+      "scriptName": "StartPathGroup",
+      "category": "",
+      "list-name": "Start path group",
+      "display-text": "{my}: Start path group (base cost [i]{0}[/i], cell spread [i]{1}[/i], max workers [i]{2}[/i])",
+      "description": "Spread out paths by adding a temporary extra cost around found paths in the same group.",
+      "params": {
+        "base-cost": {
+          "type": "number",
+          "name": "Base cost",
+          "desc": "The extra cost to add around found paths, which is multiplied depending on the number of workers used."
+        },
+        "cell-spread": {
+          "type": "number",
+          "name": "Cell spread",
+          "desc": "The number of cells around the found path to increase cost for. Prefer to use an odd number."
+        },
+        "max-workers": {
+          "type": "number",
+          "name": "Max workers",
+          "desc": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately."
+        }
+      }
+    },
+    {
+      "id": "end-path-group",
+      "scriptName": "EndPathGroup",
+      "category": "",
+      "list-name": "End path group",
+      "display-text": "{my}: End path group",
+      "description": "End a path group, restoring normal pathfinding."
+    },
+    {
+      "id": "move-along-path",
+      "scriptName": "StartMoving",
+      "category": "movement",
+      "list-name": "Move along path",
+      "display-text": "{my}: Move along path",
+      "description": "Start moving along a found path after the 'On path found' trigger."
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "movement",
+      "list-name": "Stop",
+      "display-text": "{my}: Stop",
+      "description": "Stop moving along a path."
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "movement",
+      "list-name": "Set max speed",
+      "display-text": "Set {my} maximum speed to [i]{0}[/i]",
+      "description": "Set the maximum speed for moving along paths.",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The maximum speed to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcc",
+      "category": "movement",
+      "list-name": "Set acceleration",
+      "display-text": "Set {my} acceleration to [i]{0}[/i]",
+      "description": "Set the acceleration for moving along paths.",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "Acceleration",
+          "desc": "The acceleration to set, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDec",
+      "category": "movement",
+      "list-name": "Set deceleration",
+      "display-text": "Set {my} deceleration to [i]{0}[/i]",
+      "description": "Set the deceleration for moving along paths.",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "Deceleration",
+          "desc": "The deceleration to set, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-rotate-speed",
+      "scriptName": "SetRotateSpeed",
+      "category": "movement",
+      "list-name": "Set rotate speed",
+      "display-text": "Set {my} rotate speed to [i]{0}[/i] degrees per second",
+      "description": "Set the turn speed for moving along paths.",
+      "params": {
+        "rotate-speed": {
+          "type": "number",
+          "name": "Rotate speed",
+          "desc": "The turn speed to set, in degrees per second."
+        }
+      }
+    },
+    {
+      "id": "set-diagonals-enabled",
+      "scriptName": "SetDiagonalsEnabled",
+      "category": "movement",
+      "list-name": "Set diagonals enabled",
+      "display-text": "Set {my} diagonals {0}",
+      "description": "Enable or disable diagonal movement across cells.",
+      "params": {
+        "diagonals": {
+          "type": "combo",
+          "name": "Diagonals",
+          "desc": "Whether to enable or disable diagonal movement across cells.",
+          "items": {
+            "disabled": "disabled",
+            "enabled": "enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-direct-movement",
+      "scriptName": "SetDirectMovement",
+      "category": "movement",
+      "list-name": "Set direct movement",
+      "display-text": "Set {my} direct movement [i]{0}[/i]",
+      "description": "Set where to allow moving directly towards a node when the surrounding area is clear.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Direct movement",
+          "desc": "Where to allow moving directly towards a node when the surrounding area is clear.",
+          "items": {
+            "none": "None",
+            "to-destination": "To destination",
+            "anywhere-along-path": "Anywhere along path"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "movement",
+      "list-name": "Set speed",
+      "display-text": "Set {my} speed to [i]{0}[/i]",
+      "description": "Set the current speed for moving along paths.",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The speed to set, in pixels per second."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "nodecount",
+      "scriptName": "NodeCount",
+      "category": "path",
+      "translated-name": "NodeCount",
+      "description": "The number of nodes along a found path.",
+      "returnType": "number"
+    },
+    {
+      "id": "nodexat",
+      "scriptName": "NodeXAt",
+      "category": "path",
+      "translated-name": "NodeXAt",
+      "description": "The X co-ordinate of a node at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of node in path."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "nodeyat",
+      "scriptName": "NodeYAt",
+      "category": "path",
+      "translated-name": "NodeYAt",
+      "description": "The Y co-ordinate of a node at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of node in path."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "path",
+      "translated-name": "MovingAngle",
+      "description": "The current angle of motion along a path, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "currentnode",
+      "scriptName": "CurrentNode",
+      "category": "path",
+      "translated-name": "CurrentNode",
+      "description": "The current zero-based node index moving towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "path",
+      "translated-name": "Speed",
+      "description": "The current speed in pixels per second while moving.",
+      "returnType": "number"
+    },
+    {
+      "id": "cellsize",
+      "scriptName": "CellSize",
+      "category": "settings",
+      "translated-name": "CellSize",
+      "description": "The current cell size property.",
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "settings",
+      "translated-name": "MaxSpeed",
+      "description": "The current maximum speed in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "settings",
+      "translated-name": "Acceleration",
+      "description": "The current acceleration in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "settings",
+      "translated-name": "Deceleration",
+      "description": "The current deceleration in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "rotatespeed",
+      "scriptName": "RotateSpeed",
+      "category": "settings",
+      "translated-name": "RotateSpeed",
+      "description": "The current maximum turn speed in degrees per second.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "cell-size": {
+      "name": "Cell size",
+      "desc": "The size of cells for pathfinding. Smaller sizes will use more CPU."
+    },
+    "cell-border": {
+      "name": "Cell border",
+      "desc": "Additional size to detect obstacles. Prevents paths very close to obstacles."
+    },
+    "obstacles": {
+      "name": "Obstacles",
+      "desc": "Use either solids or custom objects as obstacles.",
+      "items": {
+        "solids": "Solids",
+        "custom": "Custom"
+      }
+    },
+    "max-speed": {
+      "name": "Max speed",
+      "desc": "For movement, the maximum speed in pixels per second."
+    },
+    "acceleration": {
+      "name": "Acceleration",
+      "desc": "For movement, the acceleration in pixels per second per second."
+    },
+    "deceleration": {
+      "name": "Deceleration",
+      "desc": "For movement, the deceleration in pixels per second per second."
+    },
+    "rotate-speed": {
+      "name": "Rotate speed",
+      "desc": "For movement, the maximum turn speed in degrees per second."
+    },
+    "rotate-object": {
+      "name": "Rotate object",
+      "desc": "For movement, whether to change the object's angle."
+    },
+    "diagonals": {
+      "name": "Diagonals",
+      "desc": "Whether paths are allowed to use diagonal directions."
+    },
+    "direct-movement": {
+      "name": "Direct movement",
+      "desc": "Where to allow moving directly towards a node when the surrounding area is clear.",
+      "items": {
+        "none": "None",
+        "to-destination": "To destination",
+        "anywhere-along-path": "Anywhere along path"
+      }
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

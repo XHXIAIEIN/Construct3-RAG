@@ -1,0 +1,27 @@
+{
+  "id": "template-flying-along",
+  "name": "基础示例：横版飞行",
+  "description": "经典的直升机/躲避障碍飞行游戏模板，支持移动端操作。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "动作",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Sin",
+      "custom"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-flying-along"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "follow-record-replay",
+  "name": "轨迹跟随：录制重放",
+  "description": "演示 '轨迹跟随' 行为，捕捉玩家的动作并重放。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-record-replay"
+}

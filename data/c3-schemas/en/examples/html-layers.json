@@ -1,0 +1,20 @@
+{
+  "id": "html-layers",
+  "name": "HTML layers",
+  "description": "Demonstrates layering Construct objects both above and below HTML content using HTML layers.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "HTMLElement",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-layers"
+}

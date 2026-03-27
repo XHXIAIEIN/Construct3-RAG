@@ -1,0 +1,23 @@
+{
+  "id": "camera-effects",
+  "name": "设备：摄像机特效",
+  "description": "演示接入摄像头设备，并添加相机特效。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "Text",
+      "UserMedia"
+    ],
+    "behaviors": [],
+    "effects": [
+      "stretch"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=camera-effects"
+}

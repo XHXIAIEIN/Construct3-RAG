@@ -1,0 +1,32 @@
+{
+  "id": "scaffold-shuffle",
+  "name": "Scaffold shuffle",
+  "description": "Spin the platforms to solve the puzzle and help the construction worker recover his missing toolbox.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Hierarchy",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=scaffold-shuffle"
+}

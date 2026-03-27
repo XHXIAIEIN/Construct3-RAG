@@ -1,0 +1,63 @@
+{
+  "id": "flash",
+  "name": "Flash",
+  "description": "Make an object temporarily flash, alternately becoming visible and invisible.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-flashing",
+      "scriptName": "IsFlashing",
+      "category": "",
+      "list-name": "Is flashing",
+      "display-text": "Is flashing",
+      "description": "True if the object is currently flashing."
+    },
+    {
+      "id": "on-flash-ended",
+      "scriptName": "OnFlashEnded",
+      "category": "",
+      "list-name": "On flash ended",
+      "display-text": "On flash ended",
+      "description": "Triggered when the object stops flashing.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "flash",
+      "scriptName": "Flash",
+      "category": "",
+      "list-name": "Flash",
+      "display-text": "{my}: Flash {0} on {1} off for [b]{2}[/b] seconds",
+      "description": "Make the object flash for a period of time.",
+      "params": {
+        "on-time": {
+          "type": "number",
+          "name": "'On' time",
+          "desc": "Duration in seconds the object is visible."
+        },
+        "off-time": {
+          "type": "number",
+          "name": "'Off' time",
+          "desc": "Duration in seconds the object is invisible."
+        },
+        "duration": {
+          "type": "number",
+          "name": "Duration",
+          "desc": "Duration in seconds the object flashes for."
+        }
+      }
+    },
+    {
+      "id": "stop-flashing",
+      "scriptName": "StopFlashing",
+      "category": "",
+      "list-name": "Stop flashing",
+      "display-text": "{my}: Stop flashing",
+      "description": "Stop the flashing and set the object visible."
+    }
+  ],
+  "expressions": [],
+  "properties": {}
+}

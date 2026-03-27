@@ -1,0 +1,19 @@
+{
+  "id": "guess-the-number-js",
+  "name": "Guess the number",
+  "description": "A simple guess-the-number game implemented with code.",
+  "tags": [
+    "games-recommended",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "TextBox",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=guess-the-number-js"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "simple-keyboard-movement",
+  "name": "Simple keyboard movement",
+  "description": "A minimal example using code to move a Sprite using the arrow keys on the keyboard.",
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-keyboard-movement"
+}

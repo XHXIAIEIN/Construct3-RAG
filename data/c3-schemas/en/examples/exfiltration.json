@@ -1,0 +1,31 @@
+{
+  "id": "exfiltration",
+  "name": "Exfiltration",
+  "description": "Use your radar to exfiltrate from the enemy base without being detected.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Strategy",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=exfiltration"
+}

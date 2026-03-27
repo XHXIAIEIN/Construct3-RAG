@@ -1,0 +1,24 @@
+{
+  "id": "template-driving",
+  "name": "基础示例：赛车场",
+  "description": "简单的驾驶游戏模板，带有简单的图形，基础的摄像机缩放。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "Car",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-driving"
+}

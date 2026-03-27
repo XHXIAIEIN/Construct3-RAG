@@ -1,0 +1,30 @@
+{
+  "id": "insect-hunters",
+  "name": "本地多人：苍蝇捕手",
+  "description": "本地双人游戏示例，支持单人模式于电脑AI对抗。苍蝇无处不在，对于青蛙来说，这意味着免费的午餐！看看谁能更快、更准地吃掉它们。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "glowvertical",
+      "waterbg"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=insect-hunters"
+}

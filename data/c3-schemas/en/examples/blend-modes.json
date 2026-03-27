@@ -1,0 +1,18 @@
+{
+  "id": "blend-modes",
+  "name": "Blend modes",
+  "description": "Shows what effect each blend mode setting has.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blend-modes"
+}

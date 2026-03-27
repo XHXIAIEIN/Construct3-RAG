@@ -1,0 +1,29 @@
+{
+  "id": "offline-builder",
+  "name": "Offline builder",
+  "description": "Establish and expand your medieval empire, witnessing its growth even when you're away from the game.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Date",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=offline-builder"
+}

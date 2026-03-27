@@ -1,0 +1,21 @@
+{
+  "id": "fillrateperf",
+  "name": "Fill rate performance",
+  "description": "A performance test to measure the GPU fill rate (how many large sprites can be rendered).",
+  "tags": [
+    "Advanced",
+    "Tech demo",
+    "Performance"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fillrateperf"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "meowgix",
+  "name": "Meowgix",
+  "description": "Assume the role of a cat wizard. Learn, upgrade, and combine meowgic spells to grow stronger and defeat the evil hordes.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Demo game",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "screen",
+      "tint",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=meowgix"
+}

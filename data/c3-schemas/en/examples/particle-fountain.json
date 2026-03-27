@@ -1,0 +1,21 @@
+{
+  "id": "particle-fountain",
+  "name": "Particle fountain",
+  "description": "A fountain effect created with the Particles object.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text"
+    ],
+    "behaviors": [
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-fountain"
+}

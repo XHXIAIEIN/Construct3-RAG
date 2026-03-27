@@ -1,0 +1,25 @@
+{
+  "id": "fireworks",
+  "name": "粒子：烟花",
+  "description": "演示使用大量粒子的动画，实现篝火和烟花效果。",
+  "tags": [
+    "技术演示",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Touch",
+      "Spritefont2",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Bullet"
+    ],
+    "effects": [
+      "setcolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fireworks"
+}

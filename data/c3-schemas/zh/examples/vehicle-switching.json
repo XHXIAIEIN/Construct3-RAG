@@ -1,0 +1,36 @@
+{
+  "id": "vehicle-switching",
+  "name": "游戏示例：车辆切换",
+  "description": "经典游戏《侠盗飞车》部分机制，玩家可以在沉浸式的 3D 世界中在步行和驾驶车辆之间切换。",
+  "tags": [
+    "games-recommended",
+    "进阶",
+    "游戏模板",
+    "竞速",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "Fade",
+      "Flash",
+      "solid",
+      "Car"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=vehicle-switching"
+}

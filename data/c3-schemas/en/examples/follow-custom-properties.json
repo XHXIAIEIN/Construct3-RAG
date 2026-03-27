@@ -1,0 +1,28 @@
+{
+  "id": "follow-custom-properties",
+  "name": "Follow custom properties",
+  "description": "Demonstrates how to use the Follow behavior to follow a custom property, like an effect parameter.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=follow-custom-properties"
+}

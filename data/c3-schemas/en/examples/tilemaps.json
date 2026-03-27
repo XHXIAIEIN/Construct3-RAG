@@ -1,0 +1,18 @@
+{
+  "id": "tilemaps",
+  "name": "Tilemaps",
+  "description": "A simple example of how tile-based games can be more easily designed using the Tilemap object.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Tilemap"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tilemaps"
+}

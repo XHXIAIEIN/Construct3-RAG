@@ -1,0 +1,23 @@
+{
+  "id": "mesh-relative-displacement",
+  "name": "纹理变形：相对纹理",
+  "description": "通过对象的网格点相对位置进行变形。",
+  "tags": [
+    "高级",
+    "纹理变形",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "List"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-relative-displacement"
+}

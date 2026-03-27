@@ -1,0 +1,27 @@
+{
+  "id": "template-infinite-jumping",
+  "name": "Infinite jumping",
+  "description": "A template with a basic infinite jumping platformer game setup prepared, with mobile control support and placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Platformer",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text",
+      "Mouse",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "Platform",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-infinite-jumping"
+}

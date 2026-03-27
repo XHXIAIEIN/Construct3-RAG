@@ -1,0 +1,29 @@
+{
+  "id": "river-jump",
+  "name": "River Jump",
+  "description": "Good news: You have survived a shipwreck! Bad news: you must jump your way against the river current to reach safety. How far can you go?",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=river-jump"
+}

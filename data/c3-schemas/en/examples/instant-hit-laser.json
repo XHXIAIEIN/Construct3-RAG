@@ -1,0 +1,26 @@
+{
+  "id": "instant-hit-laser",
+  "name": "Instant hit laser",
+  "description": "Shows how the Line of Sight behavior's ray casting feature can be used to create an instant-hit laser effect.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Audio",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instant-hit-laser"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "relic-hunter",
+  "name": "游戏示例：遗迹猎人",
+  "description": "尽可能多地收集金色头骨，但要小心在洞穴中游荡的幽灵！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=relic-hunter"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "spell-caster-code",
+  "name": "Spell caster code",
+  "description": "The same game as 'Spell caster', but made using code instead of event blocks.",
+  "tags": [
+    "Intermediate",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spell-caster-code"
+}

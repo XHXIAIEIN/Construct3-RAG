@@ -1,0 +1,19 @@
+{
+  "id": "tic-tac-toe",
+  "name": "Tic-tac-toe",
+  "description": "The classic puzzle game combining event sheets and JavaScript coding with an AI driven by the minimax algorithm.",
+  "tags": [
+    "Game template",
+    "Puzzle",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tic-tac-toe"
+}

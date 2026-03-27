@@ -1,0 +1,30 @@
+{
+  "id": "spell-caster",
+  "name": "基础示例：魔能守卫",
+  "description": "从《新手教程：顶视射击游戏》更近一步的案例，加入了更多的功能，如敌人血量、在屏幕显示分数，显示调试信息，游戏存档等。",
+  "tags": [
+    "games-recommended",
+    "简单",
+    "基础示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spell-caster"
+}

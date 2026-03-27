@@ -1,0 +1,10 @@
+{
+  "id": "hardlight",
+  "name": "Hard light",
+  "description": "Multiplies or screen blends depending on the foreground color, as if shining a harsh spotlight on the background.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

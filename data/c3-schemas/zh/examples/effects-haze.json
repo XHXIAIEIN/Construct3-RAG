@@ -1,0 +1,24 @@
+{
+  "id": "effects-haze",
+  "name": "特效：热雾效果",
+  "description": "演示多种滤镜组合，实现微妙的热雾扭曲效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet"
+    ],
+    "effects": [
+      "glass",
+      "warplayout"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-haze"
+}

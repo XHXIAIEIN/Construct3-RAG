@@ -1,0 +1,26 @@
+{
+  "id": "instant-hit-laser",
+  "name": "功能示例：激光武器",
+  "description": "演示 '视线(LOS)' 行为功能，发射一条射线，实现实时击中位置的激光效果。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Audio",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instant-hit-laser"
+}

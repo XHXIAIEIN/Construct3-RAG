@@ -1,0 +1,24 @@
+{
+  "id": "families",
+  "name": "功能示例：家族",
+  "description": "演示家族功能作用，避免编写重复的事件。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "destroy",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=families"
+}

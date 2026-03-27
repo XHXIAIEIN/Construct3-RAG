@@ -1,0 +1,887 @@
+{
+  "id": "browser",
+  "name": "Browser",
+  "description": "Access the browser that is running the web app.",
+  "type": "plugin",
+  "aceCategories": {
+    "battery": "Battery",
+    "browser": "Browser",
+    "connection": "Connection",
+    "console": "Console",
+    "device": "Device",
+    "display": "Display",
+    "document": "Document",
+    "mobile": "Mobile",
+    "navigation": "Navigation",
+    "offline": "Offline",
+    "page": "Page",
+    "window": "Window",
+    "pwa": "Progressive Web Apps (PWA)",
+    "desktop-exports-only": "Desktop exports only"
+  },
+  "conditions": [
+    {
+      "id": "cookies-enabled",
+      "scriptName": "CookiesEnabled",
+      "category": "browser",
+      "list-name": "Cookies enabled",
+      "display-text": "Cookies are enabled",
+      "description": "Browser has cookies enabled."
+    },
+    {
+      "id": "is-online",
+      "scriptName": "IsOnline",
+      "category": "browser",
+      "list-name": "Is online",
+      "display-text": "Is online",
+      "description": "Browser is online (i.e. not in an offline browsing mode)."
+    },
+    {
+      "id": "on-went-online",
+      "scriptName": "OnOnline",
+      "category": "browser",
+      "list-name": "On went online",
+      "display-text": "On went online",
+      "description": "Triggered when user is offline and a connection becomes available.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-went-offline",
+      "scriptName": "OnOffline",
+      "category": "browser",
+      "list-name": "On went offline",
+      "display-text": "On went offline",
+      "description": "Triggered when user is online and the connection becomes unavailable.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-portraitlandscape",
+      "scriptName": "IsPortraitLandscape",
+      "category": "mobile",
+      "list-name": "Is portrait/landscape",
+      "display-text": "Is {0}",
+      "description": "Check the current orientation of the device.",
+      "params": {
+        "orientation": {
+          "type": "combo",
+          "name": "Orientation",
+          "desc": "Select the orientation to test.",
+          "items": {
+            "portrait": "Portrait",
+            "landscape": "Landscape"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-back-button",
+      "scriptName": "OnBackButton",
+      "category": "mobile",
+      "list-name": "On back button",
+      "display-text": "On mobile back button pressed",
+      "description": "Triggers when device 'Back' button is pressed.  Note not all devices have a 'Back' button.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-hash-change",
+      "scriptName": "OnHashChange",
+      "category": "navigation",
+      "list-name": "On hash change",
+      "display-text": "On hash change",
+      "description": "Triggered when the part of the URL after the hash (#) is changed.",
+      "isTrigger": true
+    },
+    {
+      "id": "warn-on-close-enabled",
+      "scriptName": "IsWarnOnCloseEnabled",
+      "category": "navigation",
+      "list-name": "Warn on close is enabled",
+      "display-text": "Warn on close is enabled",
+      "description": "True if the 'Set warn on close' action has been used to enable warning on close."
+    },
+    {
+      "id": "on-update-ready-sw",
+      "scriptName": "OnUpdateReady",
+      "category": "offline",
+      "list-name": "On update ready",
+      "display-text": "On update ready",
+      "description": "Triggers when an update has finished downloading in the background.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-update-found-sw",
+      "scriptName": "OnUpdateFound",
+      "category": "offline",
+      "list-name": "On update found",
+      "display-text": "On update found",
+      "description": "Triggers upon starting to download an update in the background.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-offline-ready-sw",
+      "scriptName": "OnOfflineReady",
+      "category": "offline",
+      "list-name": "On offline ready",
+      "display-text": "On offline ready",
+      "description": "Triggers on the first run when finished saving resources for offline support.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-fullscreen",
+      "scriptName": "IsFullscreen",
+      "category": "window",
+      "list-name": "Is fullscreen",
+      "display-text": "Is fullscreen",
+      "description": "True if the page is currently in fullscreen mode."
+    },
+    {
+      "id": "on-resized",
+      "scriptName": "OnResize",
+      "category": "window",
+      "list-name": "On resized",
+      "display-text": "On resized",
+      "description": "Triggered when the current browser viewport is resized.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-fullscreen-error",
+      "scriptName": "OnFullscreenError",
+      "category": "window",
+      "list-name": "On fullscreen error",
+      "display-text": "On fullscreen error",
+      "description": "Triggered when a request to enter fullscreen mode was refused by the browser.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-window-focus",
+      "scriptName": "OnWindowFocus",
+      "category": "window",
+      "list-name": "On focus",
+      "display-text": "On window focused",
+      "description": "Triggered when the window becomes focused.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-window-blur",
+      "scriptName": "OnWindowBlur",
+      "category": "window",
+      "list-name": "On blur",
+      "display-text": "On window blur",
+      "description": "Triggered when the window loses focus.",
+      "isTrigger": true
+    },
+    {
+      "id": "window-has-focus",
+      "scriptName": "WindowHasFocus",
+      "category": "window",
+      "list-name": "Has focus",
+      "display-text": "Window has focus",
+      "description": "True when the window currently has focus."
+    },
+    {
+      "id": "on-install-available",
+      "scriptName": "OnInstallAvailable",
+      "category": "pwa",
+      "list-name": "On install available",
+      "display-text": "On install available",
+      "description": "Triggered when PWA install becomes available.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-install-available",
+      "scriptName": "IsInstallAvailable",
+      "category": "pwa",
+      "list-name": "Is install available",
+      "display-text": "Is install available",
+      "description": "True after 'On install available' when PWA install is available."
+    },
+    {
+      "id": "on-install-result",
+      "scriptName": "OnInstallResult",
+      "category": "pwa",
+      "list-name": "On install result",
+      "display-text": "On install result [i]{0}[/i]",
+      "description": "Triggered after 'Request install' identifying the outcome of the install request.",
+      "params": {
+        "result": {
+          "type": "combo",
+          "name": "Result",
+          "desc": "The result of the install request.",
+          "items": {
+            "accepted": "accepted",
+            "dismissed": "dismissed",
+            "error": "error",
+            "any": "any"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-app-installed",
+      "scriptName": "OnAppInstalled",
+      "category": "pwa",
+      "list-name": "On app installed",
+      "display-text": "On app installed",
+      "description": "Triggered after requesting install, the user accepting the prompt, and the app install then successfully completing.",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-display-mode",
+      "scriptName": "CompareDisplayMode",
+      "category": "pwa",
+      "list-name": "Compare display mode",
+      "display-text": "Display mode is [i]{0}[/i]",
+      "description": "Compare the current app display mode. Typically PWAs are shown in 'standalone' mode.",
+      "params": {
+        "display-mode": {
+          "type": "combo",
+          "name": "Display mode",
+          "desc": "The display mode to check.",
+          "items": {
+            "browser": "browser",
+            "minimal-ui": "minimal UI",
+            "standalone": "standalone",
+            "fullscreen": "fullscreen"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-window-maximized",
+      "scriptName": "OnWindowMaximized",
+      "category": "desktop-exports-only",
+      "list-name": "On window maximized",
+      "display-text": "On window maximized",
+      "description": "Triggered when the main app window is maximized.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-window-minimized",
+      "scriptName": "OnWindowMinimized",
+      "category": "desktop-exports-only",
+      "list-name": "On window minimized",
+      "display-text": "On window minimized",
+      "description": "Triggered when the main app window is minimized.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "log",
+      "scriptName": "ConsoleLog",
+      "category": "console",
+      "list-name": "Log",
+      "display-text": "{0} in console: [i]{1}[/i]",
+      "description": "Log a message to the browser console, which can be useful for debugging.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "Choose the type of message to log to the browser console.",
+          "items": {
+            "log": "Log",
+            "warn": "Warn",
+            "error": "Error"
+          }
+        },
+        "message": {
+          "type": "any",
+          "name": "Message",
+          "desc": "Enter the message text to log to the browser console."
+        }
+      }
+    },
+    {
+      "id": "start-group",
+      "scriptName": "ConsoleGroup",
+      "category": "console",
+      "list-name": "Start group",
+      "display-text": "Start console group [i]{0}[/i]",
+      "description": "Start a message group in the browser console.",
+      "params": {
+        "group-name": {
+          "type": "string",
+          "name": "Group name",
+          "desc": "Enter the group name to add to the browser console."
+        }
+      }
+    },
+    {
+      "id": "end-group",
+      "scriptName": "ConsoleGroupEnd",
+      "category": "console",
+      "list-name": "End group",
+      "display-text": "End console group",
+      "description": "End a message group in the browser console."
+    },
+    {
+      "id": "vibrate",
+      "scriptName": "Vibrate",
+      "category": "device",
+      "list-name": "Vibrate",
+      "display-text": "Vibrate with pattern [i]{0}[/i]",
+      "description": "Vibrate with a specified pattern if the device (e.g. phone) supports it.",
+      "params": {
+        "pattern": {
+          "type": "string",
+          "name": "Pattern",
+          "desc": "A comma-separated string with a list of times in milliseconds, describing a pattern of vibrations and pauses."
+        }
+      }
+    },
+    {
+      "id": "load-stylesheet",
+      "scriptName": "LoadStyleSheet",
+      "category": "document",
+      "list-name": "Load stylesheet",
+      "display-text": "Load stylesheet from [i]{0}[/i]",
+      "description": "Load a Cascading Style Sheet (CSS) from a URL and apply it to the document.",
+      "params": {
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "URL to load CSS from. This can be a project file URL, e.g. \"mystyle.css\"."
+        }
+      }
+    },
+    {
+      "id": "set-document-css-style",
+      "scriptName": "SetDocumentCSSStyle",
+      "category": "document",
+      "list-name": "Set CSS style",
+      "display-text": "Set CSS style [b]{0}[/b] to [i]{1}[/i] for [i]{2}[/i] ([i]{3}[/i])",
+      "description": "Set a CSS style on elements in the document matching a CSS selector.",
+      "params": {
+        "property-name": {
+          "type": "string",
+          "name": "Property name",
+          "desc": "A CSS property name to set on the HTML element."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "A string to assign as the value for this CSS property."
+        },
+        "selector": {
+          "type": "string",
+          "name": "Selector",
+          "desc": "A CSS selector which will be used to match elements."
+        },
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "Whether to affect one element matching the selector, or all matching elements.",
+          "items": {
+            "one": "one",
+            "all": "all"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-document-css-style",
+      "scriptName": "GetDocumentCSSStyle",
+      "category": "document",
+      "list-name": "Get CSS style",
+      "display-text": "Get CSS style [b]{0}[/b] from [i]{1}[/i] (tag [i]{2}[/i])",
+      "description": "Get the computed value of a CSS property from an element in the document.",
+      "params": {
+        "property-name": {
+          "type": "string",
+          "name": "Property name",
+          "desc": "The CSS property name to get."
+        },
+        "selector": {
+          "type": "string",
+          "name": "Selector",
+          "desc": "A CSS selector which will be used to match the element."
+        },
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag to later retrieve this value with."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "go-back",
+      "scriptName": "GoBack",
+      "category": "navigation",
+      "list-name": "Go back",
+      "display-text": "Go back",
+      "description": "Go to the previous page in browser history."
+    },
+    {
+      "id": "go-forward",
+      "scriptName": "GoForward",
+      "category": "navigation",
+      "list-name": "Go forward",
+      "display-text": "Go forward",
+      "description": "Go to the next page in browser history."
+    },
+    {
+      "id": "go-to-url",
+      "scriptName": "GoToURL",
+      "category": "navigation",
+      "list-name": "Go to URL",
+      "display-text": "Go to {0} (target [i]{1}[/i])",
+      "description": "Navigate to a URL.",
+      "params": {
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "Enter the full URL to navigate to."
+        },
+        "target": {
+          "type": "combo",
+          "name": "Target",
+          "desc": "Which frame level to navigate. Only has an effect when using frames in a web browser.",
+          "items": {
+            "self": "self",
+            "parent": "parent",
+            "top": "top"
+          }
+        }
+      }
+    },
+    {
+      "id": "open-url-in-new-window",
+      "scriptName": "GoToURLWindow",
+      "category": "navigation",
+      "list-name": "Open URL in new window",
+      "display-text": "Go to {0} in a new window ([i]{1}[/i])",
+      "description": "Open a new window and navigate to a URL.",
+      "params": {
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "Enter the full URL to navigate to."
+        },
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A string to identify this window.  You can reuse an existing window by reusing its tag."
+        }
+      }
+    },
+    {
+      "id": "reload",
+      "scriptName": "Reload",
+      "category": "navigation",
+      "list-name": "Reload",
+      "display-text": "Reload",
+      "description": "Reload the current page.  Also updates if an 'On update ready' event has triggered."
+    },
+    {
+      "id": "invoke-download",
+      "scriptName": "InvokeDownload",
+      "category": "navigation",
+      "list-name": "Invoke download",
+      "display-text": "Invoke download of [b]{0}[/b] with filename [i]{1}[/i]",
+      "description": "Start a file download of a data URI, project file or web address.",
+      "params": {
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "A data URI, project file, or any website address to invoke as a download."
+        },
+        "filename": {
+          "type": "string",
+          "name": "Filename",
+          "desc": "The filename to give the downloaded file."
+        }
+      }
+    },
+    {
+      "id": "invoke-download-of-string",
+      "scriptName": "InvokeDownloadString",
+      "category": "navigation",
+      "list-name": "Invoke download of string",
+      "display-text": "Invoke download of string [b]{0}[/b] with MIME type [i]{1}[/i] and filename [i]{2}[/i]",
+      "description": "Start a file download of data given in a string, e.g. JSON.",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "String",
+          "desc": "A string of data to download as a file, e.g. JSON data from the AsJSON expression."
+        },
+        "mime-type": {
+          "type": "string",
+          "name": "MIME type",
+          "desc": "The MIME type of the given data."
+        },
+        "filename": {
+          "type": "string",
+          "name": "Filename",
+          "desc": "The filename to give the downloaded file."
+        }
+      }
+    },
+    {
+      "id": "set-hash",
+      "scriptName": "SetHash",
+      "category": "navigation",
+      "list-name": "Set hash",
+      "display-text": "Set hash to [i]{0}[/i]",
+      "description": "Set the part of the URL after the hash (#) symbol. This does not reload the page.",
+      "params": {
+        "hash": {
+          "type": "string",
+          "name": "Hash",
+          "desc": "New string to set after the hash (#) symbol in the URL."
+        }
+      }
+    },
+    {
+      "id": "set-warn-on-close",
+      "scriptName": "SetWarnOnClose",
+      "category": "navigation",
+      "list-name": "Set warn on close",
+      "display-text": "Set warn on close enabled: [b]{0}[/b]",
+      "description": "Enable a prompt to confirm upon closing the browser tab or window.",
+      "params": {
+        "warn-on-close": {
+          "type": "boolean",
+          "name": "Warn on close",
+          "desc": "Whether to enable a prompt to confirm closing."
+        }
+      }
+    },
+    {
+      "id": "alert",
+      "scriptName": "Alert",
+      "category": "window",
+      "list-name": "Alert",
+      "display-text": "Alert {0}",
+      "description": "Pop up a message box with a message and an OK button.",
+      "params": {
+        "message": {
+          "type": "any",
+          "name": "Message",
+          "desc": "Enter the message to display in the alert."
+        }
+      }
+    },
+    {
+      "id": "close",
+      "scriptName": "Close",
+      "category": "window",
+      "list-name": "Close",
+      "display-text": "Close",
+      "description": "Close the current browser window or tab.  The browser may prompt the user to confirm."
+    },
+    {
+      "id": "focus",
+      "scriptName": "Focus",
+      "category": "window",
+      "list-name": "Focus",
+      "display-text": "Focus",
+      "description": "Focus the current browser window or tab."
+    },
+    {
+      "id": "blur",
+      "scriptName": "Blur",
+      "category": "window",
+      "list-name": "Blur",
+      "display-text": "Blur",
+      "description": "Blur (unfocus) the current browser window or tab."
+    },
+    {
+      "id": "request-fullscreen",
+      "scriptName": "RequestFullScreen",
+      "category": "window",
+      "list-name": "Request fullscreen",
+      "display-text": "Request fullscreen - {0}, navigation UI: [i]{1}[/i]",
+      "description": "Request the user to enter fullscreen mode. Usually this only works in a user input trigger.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Determine how the game viewport is displayed in the monitor area.",
+          "items": {
+            "centered": "Centered",
+            "stretch-crop": "Stretch (crop)",
+            "stretch-scale-inner": "Stretch (scale inner)",
+            "stretch-integer-scale-inner": "Stretch (integer scale inner)",
+            "stretch-scale-outer": "Stretch (scale outer)",
+            "stretch-integer-scale-outer": "Stretch (integer scale outer)",
+            "stretch-letterbox-scale": "Stretch (letterbox scale)",
+            "stretch-integer-letterbox-scale": "Stretch (integer letterbox scale)"
+          },
+          "initialValue": "stretch-letterbox-scale"
+        },
+        "navigation-ui": {
+          "type": "combo",
+          "name": "Navigation UI",
+          "desc": "Whether the browser should still display some user interface controls while in fullscreen mode. Typically only affects mobile browsers.",
+          "items": {
+            "auto": "Auto",
+            "hide": "Hide",
+            "show": "Show"
+          },
+          "initialValue": "auto"
+        }
+      }
+    },
+    {
+      "id": "cancel-fullscreen",
+      "scriptName": "CancelFullScreen",
+      "category": "window",
+      "list-name": "Cancel fullscreen",
+      "display-text": "Cancel fullscreen",
+      "description": "Exit fullscreen mode."
+    },
+    {
+      "id": "lock-orientation",
+      "scriptName": "LockOrientation",
+      "category": "window",
+      "list-name": "Lock orientation",
+      "display-text": "Lock orientation to [b]{0}[/b]",
+      "description": "Prevent the orientation of the device changing.",
+      "params": {
+        "orientation": {
+          "type": "combo",
+          "name": "Orientation",
+          "desc": "The orientation to lock the device to. This may only take effect if already in fullscreen mode.",
+          "items": {
+            "portrait": "portrait",
+            "landscape": "landscape",
+            "primary-portrait": "primary portrait",
+            "secondary-portrait": "secondary portrait",
+            "primary-landscape": "primary landscape",
+            "secondary-landscape": "secondary landscape"
+          }
+        }
+      }
+    },
+    {
+      "id": "unlock-orientation",
+      "scriptName": "UnlockOrientation",
+      "category": "window",
+      "list-name": "Unlock orientation",
+      "display-text": "Unlock orientation",
+      "description": "Restore normal device orientation after locking."
+    },
+    {
+      "id": "set-window-size",
+      "scriptName": "SetWindowSize",
+      "category": "window",
+      "list-name": "Set window size",
+      "display-text": "Set window size to [i]{0}[/i] x [i]{1}[/i]",
+      "description": "Set the main window size. (Note: may not be allowed in browsers in some cases.)",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "The window width to set."
+        },
+        "height": {
+          "type": "number",
+          "name": "Height",
+          "desc": "The window height to set."
+        }
+      }
+    },
+    {
+      "id": "set-window-position",
+      "scriptName": "SetWindowPosition",
+      "category": "window",
+      "list-name": "Set window position",
+      "display-text": "Set window position to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the main window position. (Note: may not be allowed in browsers in some cases.)",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The window X position to set."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The window Y position to set."
+        }
+      }
+    },
+    {
+      "id": "request-install",
+      "scriptName": "RequestInstall",
+      "category": "pwa",
+      "list-name": "Request install",
+      "display-text": "Request install",
+      "description": "When install is available, prompt the user to install the page as an app. This may only be allowed in a user input event.",
+      "isAsync": true
+    },
+    {
+      "id": "maximize-window",
+      "scriptName": "MaximizeWindow",
+      "category": "desktop-exports-only",
+      "list-name": "Maximize window",
+      "display-text": "Maximize window",
+      "description": "Maximize the main app window."
+    },
+    {
+      "id": "minimize-window",
+      "scriptName": "MinimizeWindow",
+      "category": "desktop-exports-only",
+      "list-name": "Minimize window",
+      "display-text": "Minimize window",
+      "description": "Minimize the main app window."
+    },
+    {
+      "id": "restore-window",
+      "scriptName": "RestoreWindow",
+      "category": "desktop-exports-only",
+      "list-name": "Restore window",
+      "display-text": "Restore window",
+      "description": "Restore the main app window to its original size and position if it was maximized or minimized."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "language",
+      "scriptName": "Language",
+      "category": "browser",
+      "translated-name": "Language",
+      "description": "Get the browser language.",
+      "returnType": "string"
+    },
+    {
+      "id": "platform",
+      "scriptName": "Platform",
+      "category": "browser",
+      "translated-name": "Platform",
+      "description": "Get the browser platform (e.g. Windows, Mac).",
+      "returnType": "string"
+    },
+    {
+      "id": "useragent",
+      "scriptName": "UserAgent",
+      "category": "browser",
+      "translated-name": "UserAgent",
+      "description": "Get the full browser user agent string.",
+      "returnType": "string"
+    },
+    {
+      "id": "title",
+      "scriptName": "Title",
+      "category": "document",
+      "translated-name": "Title",
+      "description": "Get the page title.",
+      "returnType": "string"
+    },
+    {
+      "id": "css-style-value",
+      "scriptName": "CSSStyleValue",
+      "category": "document",
+      "translated-name": "CSSStyleValue",
+      "description": "Get the result value for a tag after 'Get CSS style' completes.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to retrieve the value for."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "url",
+      "scriptName": "URL",
+      "category": "navigation",
+      "translated-name": "Url",
+      "description": "Get the current browser URL.",
+      "returnType": "string"
+    },
+    {
+      "id": "protocol",
+      "scriptName": "Protocol",
+      "category": "navigation",
+      "translated-name": "Protocol",
+      "description": "Get the current protocol, e.g. http:.",
+      "returnType": "string"
+    },
+    {
+      "id": "domain",
+      "scriptName": "Domain",
+      "category": "navigation",
+      "translated-name": "Domain",
+      "description": "Get the current domain, e.g. construct.net.",
+      "returnType": "string"
+    },
+    {
+      "id": "port",
+      "scriptName": "Port",
+      "category": "navigation",
+      "translated-name": "Port",
+      "description": "Get the port specified in the current URL if any, e.g. 443.",
+      "returnType": "string"
+    },
+    {
+      "id": "pathname",
+      "scriptName": "PathName",
+      "category": "navigation",
+      "translated-name": "PathName",
+      "description": "Get the path relative to domain.",
+      "returnType": "string"
+    },
+    {
+      "id": "hash",
+      "scriptName": "Hash",
+      "category": "navigation",
+      "translated-name": "Hash",
+      "description": "Get the hash from the URL, e.g. #myAnchor.",
+      "returnType": "string"
+    },
+    {
+      "id": "referrer",
+      "scriptName": "Referrer",
+      "category": "navigation",
+      "translated-name": "Referrer",
+      "description": "Get the referrer (the page that linked to this page).",
+      "returnType": "string"
+    },
+    {
+      "id": "querystring",
+      "scriptName": "QueryString",
+      "category": "navigation",
+      "translated-name": "QueryString",
+      "description": "Get the full query string, including the ?.",
+      "returnType": "string"
+    },
+    {
+      "id": "queryparam",
+      "scriptName": "QueryParam",
+      "category": "navigation",
+      "translated-name": "QueryParam",
+      "description": "Get a query string parameter by name.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "name",
+          "desc": "Query string parameter name."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "display-mode",
+      "scriptName": "DisplayMode",
+      "category": "pwa",
+      "translated-name": "DisplayMode",
+      "description": "A string of the current app display mode, e.g. \"browser\" or \"standalone\".",
+      "returnType": "string"
+    },
+    {
+      "id": "install-result",
+      "scriptName": "InstallResult",
+      "category": "pwa",
+      "translated-name": "InstallResult",
+      "description": "In 'On install result', a string of the install result, e.g. \"accepted\" or \"dismissed\".",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

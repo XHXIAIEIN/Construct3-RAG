@@ -1,0 +1,30 @@
+{
+  "id": "template-gamepad-twin-stick-shooter",
+  "name": "关卡设计: 双摇杆射击",
+  "description": "使用手柄的摇杆控制角色的移动和瞄准射击。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Pin",
+      "Bullet",
+      "solid",
+      "Timer",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-gamepad-twin-stick-shooter"
+}

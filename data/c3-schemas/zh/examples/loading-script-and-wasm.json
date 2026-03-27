@@ -1,0 +1,13 @@
+{
+  "id": "loading-script-and-wasm",
+  "name": "脚本示例：加载外部脚本",
+  "description": "演示动态加载外部脚本文件（例如运行库），以及如何编译和实例化简单的 WebAssembly 模块并调用导出的函数。",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=loading-script-and-wasm"
+}

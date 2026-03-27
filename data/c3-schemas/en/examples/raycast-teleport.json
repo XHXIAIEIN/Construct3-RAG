@@ -1,0 +1,29 @@
+{
+  "id": "raycast-teleport",
+  "name": "Raycast teleport",
+  "description": "Uses raycasting to implement a horizontal teleport ability in a platform game.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "LOS",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=raycast-teleport"
+}

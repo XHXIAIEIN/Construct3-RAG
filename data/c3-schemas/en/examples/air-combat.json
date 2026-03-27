@@ -1,0 +1,38 @@
+{
+  "id": "air-combat",
+  "name": "Air combat",
+  "description": "A shoot-em-up where you must defend the frontier limits from the invaders with powerful missile barrages.",
+  "tags": [
+    "Intermediate",
+    "3D",
+    "Game template",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Particles",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "custom",
+      "scrollto",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Sin",
+      "LOS",
+      "Rotate",
+      "destroy",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=air-combat"
+}

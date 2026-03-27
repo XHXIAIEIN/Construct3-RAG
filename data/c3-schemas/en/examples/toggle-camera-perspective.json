@@ -1,0 +1,34 @@
+{
+  "id": "toggle-camera-perspective",
+  "name": "Toggle camera perspective",
+  "description": "Switch between first and third person cameras during runtime to take a closer look at your surroundings.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Adventure",
+    "3D",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Camera3D",
+      "Keyboard",
+      "TiledBg",
+      "Shape3D",
+      "Tilemap",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "darken",
+      "blurhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=toggle-camera-perspective"
+}

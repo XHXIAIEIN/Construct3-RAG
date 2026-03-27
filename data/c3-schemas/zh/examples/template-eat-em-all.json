@@ -1,0 +1,27 @@
+{
+  "id": "template-eat-em-all",
+  "name": "基础示例: 吃豆人",
+  "description": "经典游戏《吃豆人》游戏机制。在迷宫里转来转去，注意避开鬼魂，尝试吃掉所有的豆子！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Arr",
+      "Browser",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "destroy",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-eat-em-all"
+}

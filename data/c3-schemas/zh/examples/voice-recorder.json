@@ -1,0 +1,29 @@
+{
+  "id": "voice-recorder",
+  "name": "设备：录音机",
+  "description": "演示请求用户的麦克风权限进行录音，并支持下载或共享结果记录。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Audio",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "FileSystem",
+      "GameRecorder",
+      "List",
+      "Share",
+      "Text",
+      "TiledBg",
+      "UserMedia"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=voice-recorder"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "obstacle-race",
+  "name": "Obstacle race",
+  "description": "You have reached the pinnacle of obstacle races. Prepare to face the fastest opponents in this retro-flavored sports game.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=obstacle-race"
+}

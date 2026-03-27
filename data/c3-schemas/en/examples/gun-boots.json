@@ -1,0 +1,37 @@
+{
+  "id": "gun-boots",
+  "name": "Gun boots",
+  "description": "Try out the dual purpose gun boots to fine tune your jumps and destroy the hazards below you.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Timer",
+      "Bullet",
+      "destroy",
+      "Tween",
+      "solid",
+      "Rotate"
+    ],
+    "effects": [
+      "glowvertical",
+      "hsladjust",
+      "warpobject",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=gun-boots"
+}

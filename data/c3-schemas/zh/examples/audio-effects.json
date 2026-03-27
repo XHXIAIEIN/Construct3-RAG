@@ -1,0 +1,22 @@
+{
+  "id": "audio-effects",
+  "name": "音频：声音效果器",
+  "description": "演示如何给音频添加效果器，在播放音频时加入各种声音效果。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "Keyboard",
+      "NinePatch",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-effects"
+}

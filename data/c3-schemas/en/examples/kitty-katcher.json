@@ -1,0 +1,37 @@
+{
+  "id": "kitty-katcher",
+  "name": "Kitty katcher",
+  "description": "Lend a hand to an elderly lady and help her find her missing kittens.",
+  "tags": [
+    "animation-recommended",
+    "Intermediate",
+    "Demo game",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Audio",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "darken",
+      "tintmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kitty-katcher"
+}

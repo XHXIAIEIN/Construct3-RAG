@@ -1,0 +1,28 @@
+{
+  "id": "visual-novel-sniff-and-fetch",
+  "name": "Visual novel",
+  "description": "In this visual novel \"Sniff and fetch\", step into the paws of Cooper, the golden retriever! Explore the neighborhood, sniff out clues, and locate your missing toys in this flowchart-driven example.",
+  "tags": [
+    "Recommended",
+    "Intermediate",
+    "Game template",
+    "Animation",
+    "Flowcharts"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Dictionary",
+      "Flowchart",
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=visual-novel-sniff-and-fetch"
+}

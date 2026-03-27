@@ -1,0 +1,33 @@
+{
+  "id": "keyboard-mapping",
+  "name": "HUD: 按键绑定",
+  "description": "保存自定义键映射配置文件，控制简单的平台角色。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Fade",
+      "Platform",
+      "bound",
+      "solid"
+    ],
+    "effects": [
+      "noise",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=keyboard-mapping"
+}

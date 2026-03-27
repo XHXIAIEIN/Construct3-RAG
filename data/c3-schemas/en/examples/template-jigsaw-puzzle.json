@@ -1,0 +1,29 @@
+{
+  "id": "template-jigsaw-puzzle",
+  "name": "Jigsaw puzzle",
+  "description": "Turn an image in to a jigsaw puzzle where the pieces are mixed up and must be moved back to the correct location.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Sprite",
+      "TiledBg",
+      "NinePatch",
+      "Particles",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "DragnDrop",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-jigsaw-puzzle"
+}

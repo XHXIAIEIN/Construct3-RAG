@@ -1,0 +1,23 @@
+{
+  "id": "collision-methods",
+  "name": "脚本示例：处理碰撞重叠",
+  "description": "演示处理碰撞重叠的方法，推开对象，直到它不再与其他对象重叠。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=collision-methods"
+}

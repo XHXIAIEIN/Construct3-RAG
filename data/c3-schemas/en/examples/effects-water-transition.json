@@ -1,0 +1,21 @@
+{
+  "id": "effects-water-transition",
+  "name": "Effects: Water transition",
+  "description": "A transition based on altering a water effect over time.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": [
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-water-transition"
+}

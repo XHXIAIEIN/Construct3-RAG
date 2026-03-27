@@ -1,0 +1,23 @@
+{
+  "id": "toon",
+  "name": "Toon",
+  "description": "Posterizes colors and adds black outlines.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "threshold",
+      "type": "percent",
+      "name": "Threshold",
+      "desc": "Outlining threshold, from 0 to 100."
+    },
+    {
+      "id": "levels",
+      "type": "float",
+      "name": "Levels",
+      "desc": "Number of color levels to use."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "family-tree",
+  "name": "Family tree",
+  "description": "Read the clues carefully and place each person in the correct spot in order to rebuild the family tree.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=family-tree"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "script-raycasting",
+  "name": "Scripting raycasting",
+  "description": "Demonstrates raycasting in code using the Line-of-Sight (LOS) behavior API.",
+  "tags": [
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "LOS",
+      "Sin",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=script-raycasting"
+}

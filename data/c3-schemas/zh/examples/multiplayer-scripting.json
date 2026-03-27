@@ -1,0 +1,20 @@
+{
+  "id": "multiplayer-scripting",
+  "name": "脚本示例：多人游戏",
+  "description": "使用代码通过多人对象传输网络消息。",
+  "tags": [
+    "高级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Multiplayer",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-scripting"
+}

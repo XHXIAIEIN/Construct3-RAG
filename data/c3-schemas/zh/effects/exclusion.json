@@ -1,0 +1,10 @@
+{
+  "id": "exclusion",
+  "name": "排除",
+  "description": "将背景层和混合层的颜色通道相减取绝对值，与黑色混合时保持不变，与 50％灰度混合产生50％的灰度，此模式相比 '差值混合' 结果更加柔和。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

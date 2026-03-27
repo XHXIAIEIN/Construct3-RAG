@@ -1,0 +1,228 @@
+{
+  "id": "speechrecognition",
+  "name": "Speech recognition",
+  "description": "Use speech recognition to get text from the user speaking in to a microphone.",
+  "type": "plugin",
+  "aceCategories": {
+    "speech-recognition": "Speech recognition",
+    "on-device-recognition": "On-device recognition"
+  },
+  "conditions": [
+    {
+      "id": "supports-speech-recognition",
+      "scriptName": "SupportsSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "Supports speech recognition",
+      "display-text": "Supports speech recognition",
+      "description": "True if the current browser supports speech recognition."
+    },
+    {
+      "id": "on-start",
+      "scriptName": "OnSpeechRecognitionStart",
+      "category": "speech-recognition",
+      "list-name": "On start",
+      "display-text": "On speech recognition started",
+      "description": "Triggered when speech recognition begins.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-end",
+      "scriptName": "OnSpeechRecognitionEnd",
+      "category": "speech-recognition",
+      "list-name": "On end",
+      "display-text": "On speech recognition ended",
+      "description": "Triggered when speech recognition ends.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnSpeechRecognitionError",
+      "category": "speech-recognition",
+      "list-name": "On error",
+      "display-text": "On speech recognition error",
+      "description": "Triggered if there is an error starting speech recognition, e.g. permission denied.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-result",
+      "scriptName": "OnSpeechRecognitionResult",
+      "category": "speech-recognition",
+      "list-name": "On result",
+      "display-text": "On speech recognition result",
+      "description": "Triggered during speech recognition as results are detected.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-recognising-speech",
+      "scriptName": "IsRecognisingSpeech",
+      "category": "speech-recognition",
+      "list-name": "Is recognizing speech",
+      "display-text": "Is recognizing speech",
+      "description": "True if speech recognition is currently active."
+    },
+    {
+      "id": "on-check-language-available-result",
+      "scriptName": "OnCheckLanguageAvailableResult",
+      "category": "speech-recognition",
+      "list-name": "On check language available result",
+      "display-text": "On check language result [b]{0}[/b]",
+      "description": "Triggered after the 'Check language available' action with the availability status.",
+      "params": {
+        "result": {
+          "type": "combo",
+          "name": "Result",
+          "desc": "The availability result to check for.",
+          "items": {
+            "available": "available",
+            "downloading": "downloading",
+            "downloadable": "downloadable",
+            "unavailable": "unavailable",
+            "unknown": "unknown",
+            "error": "error"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "supports-on-device-recongition",
+      "scriptName": "SupportsOnDeviceRecognition",
+      "category": "on-device-recognition",
+      "list-name": "Supports on-device recognition",
+      "display-text": "Supports on-device recognition",
+      "description": "True if the current browser supports on-device speech recognition (processing locally). Installation may still be required."
+    },
+    {
+      "id": "on-install-on-device-recongition-result",
+      "scriptName": "OnInstallOnDeviceRecognitionResult",
+      "category": "on-device-recognition",
+      "list-name": "On install on-device recognition result",
+      "display-text": "On install on-device recognition result [b]{0}[/b]",
+      "description": "Triggered after the 'Install on-device recognition' action with the result of the install.",
+      "params": {
+        "result": {
+          "type": "combo",
+          "name": "Result",
+          "desc": "The install result to check for.",
+          "items": {
+            "success": "success",
+            "error": "error"
+          }
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-speech-recognition",
+      "scriptName": "RequestSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "Request speech recognition",
+      "display-text": "Request speech recognition (language [i]{0}[/i], process locally [i]{1}[/i], {2} mode, {3} results)",
+      "description": "Prompt the user for speech recognition input from a microphone, if one is present.",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "Language",
+          "desc": "The BCP 47 language tag to recognize, or empty for the browser's current language."
+        },
+        "process-locally": {
+          "type": "boolean",
+          "name": "Process locally",
+          "desc": "Use on-device speech recognition. Support for the specified language may need to be installed first."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to keep detecting speech until stopped (continuous), or to automatically stop when speech stops (single phrase).",
+          "items": {
+            "continuous": "Continuous",
+            "single-phrase": "Single phrase"
+          }
+        },
+        "results": {
+          "type": "combo",
+          "name": "Results",
+          "desc": "Whether to allow uncertain (interim) results, or only final results.",
+          "items": {
+            "interim": "Interim",
+            "final": "Final"
+          }
+        }
+      }
+    },
+    {
+      "id": "stop-speech-recognition",
+      "scriptName": "StopSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "Stop speech recognition",
+      "display-text": "Stop speech recognition",
+      "description": "Stop any active speech recognition input."
+    },
+    {
+      "id": "check-language-available",
+      "scriptName": "CheckLanguageAvailable",
+      "category": "speech-recognition",
+      "list-name": "Check language available",
+      "display-text": "Check language [b]{0}[/b] is available (process locally: [i]{1}[/i])",
+      "description": "Check if a given language is available for speech recognition, including for on-device recognition, subsequently triggering 'On check language available result'.",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "Language",
+          "desc": "The BCP 47 language tag to check."
+        },
+        "process-locally": {
+          "type": "boolean",
+          "name": "Process locally",
+          "desc": "Whether to check for availability of on-device speech recognition for this language."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "install-on-device-recognition",
+      "scriptName": "InstallOnDeviceRecognition",
+      "category": "on-device-recognition",
+      "list-name": "Install on-device recognition",
+      "display-text": "Install on-device recognition for [b]{0}[/b]",
+      "description": "Install on-device speech recognition for a specific language, subsequently triggering 'On install on-device recognition result'.",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "Language",
+          "desc": "The BCP 47 language tag to install on-device recognition for."
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "finaltranscript",
+      "scriptName": "FinalTranscript",
+      "category": "speech-recognition",
+      "translated-name": "FinalTranscript",
+      "description": "Return the final recognized speech.",
+      "returnType": "string"
+    },
+    {
+      "id": "interimtranscript",
+      "scriptName": "InterimTranscript",
+      "category": "speech-recognition",
+      "translated-name": "InterimTranscript",
+      "description": "Return the interim recognized speech, which can change.",
+      "returnType": "string"
+    },
+    {
+      "id": "speecherror",
+      "scriptName": "SpeechError",
+      "category": "speech-recognition",
+      "translated-name": "SpeechError",
+      "description": "Return a string describing the type of error in 'On error'.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

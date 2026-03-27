@@ -1,0 +1,27 @@
+{
+  "id": "item-sorting",
+  "name": "游戏示例：表情分类",
+  "description": "根据表情符号进行分组，将相同的表情包放在同一个试管中。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=item-sorting"
+}

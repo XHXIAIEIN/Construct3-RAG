@@ -1,0 +1,35 @@
+{
+  "id": "land-conqueror",
+  "name": "Land conqueror",
+  "description": "Touch every single block in this isometric level to conquer it, but be careful to not be attacked by the undead.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "TiledBg",
+      "Spritefont2",
+      "Particles"
+    ],
+    "behaviors": [
+      "Flash",
+      "Fade",
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Rotate"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=land-conqueror"
+}

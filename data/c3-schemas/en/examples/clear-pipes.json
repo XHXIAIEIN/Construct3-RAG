@@ -1,0 +1,30 @@
+{
+  "id": "clear-pipes",
+  "name": "Clear pipes",
+  "description": "Move around a platform level by navigating a system of transparent pipes.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "solid",
+      "LOS",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=clear-pipes"
+}

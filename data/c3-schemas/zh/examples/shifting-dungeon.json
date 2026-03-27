@@ -1,0 +1,33 @@
+{
+  "id": "shifting-dungeon",
+  "name": "游戏示例：移动地牢",
+  "description": "经典游戏《Loot River》部分机制，玩家可以将脚下的地形进行移动，来重新排列场景。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "解谜",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "EightDir",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=shifting-dungeon"
+}

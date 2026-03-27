@@ -1,0 +1,29 @@
+{
+  "id": "template-jigsaw-puzzle",
+  "name": "游戏示例：拼图解谜",
+  "description": "利用 DrawingCanvas 将一张完整的图像分割成拼图碎片，并打乱位置顺序，将它们移回正确的位置。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Sprite",
+      "TiledBg",
+      "NinePatch",
+      "Particles",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "DragnDrop",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-jigsaw-puzzle"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "system-wait",
+  "name": "功能示例：系统 '等待' 动作",
+  "description": "演示 '等待' 动作，延迟后续动作执行的时间。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=system-wait"
+}

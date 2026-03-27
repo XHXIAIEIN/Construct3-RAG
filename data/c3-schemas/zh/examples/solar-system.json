@@ -1,0 +1,36 @@
+{
+  "id": "solar-system",
+  "name": "时间轴：太阳系",
+  "description": "深入我们的太阳系，通过互动体验发现事实和好奇心，这些都由 Construct 的时间线赋予了生命！",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Browser",
+      "Mouse",
+      "NinePatch",
+      "SVGPicture",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Orbit",
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpradial"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=solar-system"
+}

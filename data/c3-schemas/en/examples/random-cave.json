@@ -1,0 +1,35 @@
+{
+  "id": "random-cave",
+  "name": "Random cave",
+  "description": "Explore a procedurally generated cave and use your explosives to reach the gold nugget.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "DrawingCanvas",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Physics",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=random-cave"
+}

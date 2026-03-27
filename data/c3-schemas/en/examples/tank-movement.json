@@ -1,0 +1,30 @@
+{
+  "id": "tank-movement",
+  "name": "Tank movement",
+  "description": "Control a combat tank in a 3D environment.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Camera3D",
+      "gamepad",
+      "TiledBg",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tank-movement"
+}

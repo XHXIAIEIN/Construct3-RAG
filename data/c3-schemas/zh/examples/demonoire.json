@@ -1,0 +1,44 @@
+{
+  "id": "demonoire",
+  "name": "Demonoire",
+  "description": "恶魔的地下城堡里隐藏着很多财宝， 你准备好挑战了吗？",
+  "tags": [
+    "完整游戏",
+    "games-recommended",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "Flash",
+      "Pin",
+      "Sin",
+      "Timer",
+      "solid"
+    ],
+    "effects": [
+      "brightness",
+      "overlay",
+      "replacecolor",
+      "tint",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=demonoire"
+}

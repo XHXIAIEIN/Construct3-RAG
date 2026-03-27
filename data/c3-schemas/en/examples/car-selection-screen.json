@@ -1,0 +1,26 @@
+{
+  "id": "car-selection-screen",
+  "name": "Car selection screen",
+  "description": "An example of a stylish car selection screen for a racing game, with car stats and more.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "Spritefont2",
+      "NinePatch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=car-selection-screen"
+}

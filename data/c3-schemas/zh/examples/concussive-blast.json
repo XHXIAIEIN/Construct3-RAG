@@ -1,0 +1,30 @@
+{
+  "id": "concussive-blast",
+  "name": "关卡设计: 震荡炸弹",
+  "description": "投掷震荡炸弹产生推进力让角色跳得更高，适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "EightDir",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=concussive-blast"
+}

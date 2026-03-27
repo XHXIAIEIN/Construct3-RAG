@@ -1,0 +1,28 @@
+{
+  "id": "gift-guesser",
+  "name": "Gift guesser",
+  "description": "Find where each wrapped gift is by carefully looking at their distinct shapes.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Arr",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gift-guesser"
+}

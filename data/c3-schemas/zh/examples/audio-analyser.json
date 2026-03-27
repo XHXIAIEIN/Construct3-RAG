@@ -1,0 +1,22 @@
+{
+  "id": "audio-analyser",
+  "name": "音频：频谱分析",
+  "description": "演示将音频分析可视化，识别当前播放音频的音量、频率峰值、RMS等信息。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "TiledBg",
+      "Touch",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-analyser"
+}

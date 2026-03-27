@@ -1,0 +1,36 @@
+{
+  "id": "solar-system",
+  "name": "Solar System",
+  "description": "Dive into our Solar System and uncover facts and curiosities through an interactive experience, brought to life by Construct's timeline!",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Browser",
+      "Mouse",
+      "NinePatch",
+      "SVGPicture",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Orbit",
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpradial"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=solar-system"
+}

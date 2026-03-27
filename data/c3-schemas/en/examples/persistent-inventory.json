@@ -1,0 +1,33 @@
+{
+  "id": "persistent-inventory",
+  "name": "Persistent inventory",
+  "description": "Buy, scrap and organize the items in your inventory, like in a classic RPG game.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Adventure",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Touch",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Spritefont2",
+      "NinePatch",
+      "Browser"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=persistent-inventory"
+}

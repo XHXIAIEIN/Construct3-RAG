@@ -1,0 +1,33 @@
+{
+  "id": "gravity-portal",
+  "name": "3D反重力弹带",
+  "description": "实现3D平台跳跃游戏，帮助小猴子使用特殊的传送门来逆转重力，通过关卡障碍，找到香蕉。",
+  "tags": [
+    "简单",
+    "3D",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Camera3D",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=gravity-portal"
+}

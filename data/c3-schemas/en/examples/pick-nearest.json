@@ -1,0 +1,19 @@
+{
+  "id": "pick-nearest",
+  "name": "Pick nearest",
+  "description": "Shows how to highlight the object nearest the mouse using the 'Pick nearest' condition.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pick-nearest"
+}

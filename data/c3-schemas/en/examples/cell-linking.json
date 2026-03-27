@@ -1,0 +1,30 @@
+{
+  "id": "cell-linking",
+  "name": "Cell linking",
+  "description": "Find and connect matching pairs of cells without intersecting lines or leaving the magnifying glass area.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Browser",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "warpripple"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cell-linking"
+}

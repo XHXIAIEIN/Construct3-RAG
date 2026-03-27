@@ -1,0 +1,16 @@
+{
+  "id": "input-event-position",
+  "name": "Input event position",
+  "description": "Demonstrates how to get the layer co-ordinates of an input event, to make a sprite follow mouse/touch.",
+  "tags": [
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=input-event-position"
+}

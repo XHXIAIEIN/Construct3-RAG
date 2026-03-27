@@ -1,0 +1,29 @@
+{
+  "id": "layout-transition",
+  "name": "Layout transition",
+  "description": "Perform advanced transition techniques to seamlessly move from one layout to another.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "DrawingCanvas",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=layout-transition"
+}

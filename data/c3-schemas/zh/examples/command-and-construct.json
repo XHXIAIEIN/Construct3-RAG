@@ -1,0 +1,29 @@
+{
+  "id": "command-and-construct",
+  "name": "脚本项目：多人在线RTS游戏",
+  "description": "使用 TypeScript 开发的多人实时战略（RTS）游戏。",
+  "tags": [
+    "高级",
+    "技术演示",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Browser",
+      "Button",
+      "HTMLElement",
+      "Keyboard",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=command-and-construct"
+}

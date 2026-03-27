@@ -1,0 +1,22 @@
+{
+  "id": "sine-behavior-types",
+  "name": "功能示例：正弦行为",
+  "description": "演示正弦行为的每种类型的运动。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=sine-behavior-types"
+}

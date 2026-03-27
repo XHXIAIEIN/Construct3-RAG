@@ -1,0 +1,41 @@
+{
+  "id": "manual-elevator",
+  "name": "关卡设计：手动升降机",
+  "description": "允许玩家可以用他们的能量炮为电梯提供动力，通过关卡。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "Particles",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Bullet",
+      "Pin",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "bulge"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=manual-elevator"
+}

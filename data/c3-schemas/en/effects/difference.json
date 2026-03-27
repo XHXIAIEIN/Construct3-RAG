@@ -1,0 +1,10 @@
+{
+  "id": "difference",
+  "name": "Difference",
+  "description": "For each color channel, show the difference between foreground and background pixels.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

@@ -1,0 +1,27 @@
+{
+  "id": "template-flying-along",
+  "name": "Flying along",
+  "description": "A classic helicopter/dodge-the-obstacles flying game template, with mobile control support.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Action",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Sin",
+      "custom"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-flying-along"
+}

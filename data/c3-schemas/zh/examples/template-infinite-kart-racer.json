@@ -1,0 +1,31 @@
+{
+  "id": "template-infinite-kart-racer",
+  "name": "3D云顶飞车",
+  "description": "经典游戏《玛丽赛车》游戏机制，由程序生成的无尽3D赛道地图中躲避障碍，穿越云层冲向远方。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "竞速",
+    "3D",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Keyboard",
+      "Sprite",
+      "TiledBg",
+      "NinePatch",
+      "Touch",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-infinite-kart-racer"
+}

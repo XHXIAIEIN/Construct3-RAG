@@ -1,0 +1,24 @@
+{
+  "id": "effects-haze",
+  "name": "Effects: Haze",
+  "description": "A subtle heat haze effect.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet"
+    ],
+    "effects": [
+      "glass",
+      "warplayout"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-haze"
+}

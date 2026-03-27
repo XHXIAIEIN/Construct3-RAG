@@ -1,0 +1,31 @@
+{
+  "id": "pixel-data-reader",
+  "name": "Pixel data reader",
+  "description": "Create entire 3D levels using a single bitmap texture.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Adventure",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "DrawingCanvas",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pixel-data-reader"
+}

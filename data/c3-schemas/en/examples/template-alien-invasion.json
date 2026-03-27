@@ -1,0 +1,37 @@
+{
+  "id": "template-alien-invasion",
+  "name": "Alien invasion",
+  "description": "Shoot down the advancing aliens before they invade Earth.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Sin",
+      "EightDir",
+      "bound",
+      "Bullet",
+      "wrap",
+      "Rotate",
+      "destroy",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-alien-invasion"
+}
