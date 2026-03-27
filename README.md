@@ -8,7 +8,7 @@ Everything you need to answer questions about [Construct 3](https://www.construc
 
 > Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
 
-> **For LLMs:** If you're helping a user with Construct 3 event sheets, read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) first — it has the output format and rules. ACE data is in `data/c3-schemas/{lang}/`.
+> **For LLMs:** Read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) before answering Construct 3 questions — it defines how to look up and reference ACEs accurately. Data is in `data/c3-schemas/{lang}/`.
 
 ## Key Concepts
 
