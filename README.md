@@ -35,7 +35,7 @@ Each ACE entry in the schema files has:
 
 ## Data Files
 
-No install needed. Pick a language (`en` or `zh`) and read.
+No install needed. Pick a language (`en-US` or `zh-CN`) and read.
 
 | Path | Count | Content |
 |------|------:|---------|
@@ -69,7 +69,7 @@ Read `_index.json`:
 
 ### 2. Read its ACE definitions
 
-`en/plugins/sprite.json` — a condition entry:
+`en-US/plugins/sprite.json` — a condition entry:
 ```json
 {
   "id": "is-animation-playing",
@@ -84,7 +84,7 @@ Read `_index.json`:
 }
 ```
 
-`zh/plugins/sprite.json` — same ACE, Chinese:
+`zh-CN/plugins/sprite.json` — same ACE, Chinese:
 ```json
 {
   "id": "is-animation-playing",

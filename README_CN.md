@@ -69,7 +69,7 @@ Schema 文件中每个 ACE 条目的字段含义：
 
 ### 2. 读取 ACE 定义
 
-`zh/plugins/sprite.json` — 条件条目：
+`zh-CN/plugins/sprite.json` — 条件条目：
 ```json
 {
   "id": "is-animation-playing",

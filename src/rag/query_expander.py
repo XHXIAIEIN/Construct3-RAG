@@ -749,8 +749,8 @@ def _load_bilingual_dir(schema_dir: Path, addon_type: str) -> list[dict]:
     For effects: simple name/description merge with _en/_zh suffixes.
     Falls back to flat layout (old format) if en/ subdir doesn't exist.
     """
-    en_dir = schema_dir / "en" / addon_type
-    zh_dir = schema_dir / "zh" / addon_type
+    en_dir = schema_dir / "en-US" / addon_type
+    zh_dir = schema_dir / "zh-CN" / addon_type
 
     # Fallback: flat layout (old format or single-lang)
     if not en_dir.exists():
@@ -810,8 +810,8 @@ def _load_editor_bilingual(schema_dir: Path) -> dict:
     New format: per-section files (bars.json, dialogs.json, editors.json, ...).
     Fallback: old single index.json format.
     """
-    en_dir = schema_dir / "en" / "editor"
-    zh_dir = schema_dir / "zh" / "editor"
+    en_dir = schema_dir / "en-US" / "editor"
+    zh_dir = schema_dir / "zh-CN" / "editor"
 
     # Fallback: old single-file format
     if not en_dir.exists():

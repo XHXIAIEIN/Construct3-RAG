@@ -338,8 +338,8 @@ class SchemaIndex:
             ("plugins", self._plugins, False),
             ("behaviors", self._behaviors, True),
         ]:
-            en_dir = self._schema_dir / "en" / addon_type
-            zh_dir = self._schema_dir / "zh" / addon_type
+            en_dir = self._schema_dir / "en-US" / addon_type
+            zh_dir = self._schema_dir / "zh-CN" / addon_type
             idx_section = index_data.get(addon_type, {})
 
             # Fallback: try flat layout (old format) if en/ subdir doesn't exist

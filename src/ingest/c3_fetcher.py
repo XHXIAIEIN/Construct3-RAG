@@ -157,8 +157,8 @@ class C3Fetcher:
 
         aces_data = self.fetch_all_aces()
         lang_texts = {
-            "en": self.fetch_lang("en-US").get("text", {}),
-            "zh": self.fetch_lang("zh-CN").get("text", {}),
+            "en-US": self.fetch_lang("en-US").get("text", {}),
+            "zh-CN": self.fetch_lang("zh-CN").get("text", {}),
         }
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
@@ -166,7 +166,7 @@ class C3Fetcher:
         index_data: dict = {
             "version": self.version,
             "languages": sorted(lang_texts.keys()),
-            "supported_locales": all_locales,
+            "supported_languages": all_locales,
             "plugins": {}, "behaviors": {}, "effects": {},
         }
 
@@ -176,7 +176,7 @@ class C3Fetcher:
                 pid_lower = plugin_id.lower()
 
                 # Skip deprecated addons (absent from zh-CN lang)
-                zh_p = lang_texts["zh"].get(addon_type, {}).get(pid_lower, {})
+                zh_p = lang_texts["zh-CN"].get(addon_type, {}).get(pid_lower, {})
                 if not zh_p:
                     continue
 
@@ -262,7 +262,7 @@ class C3Fetcher:
                     )
 
                 # Index entry (language-neutral)
-                en_p = lang_texts["en"].get(addon_type, {}).get(pid_lower, {})
+                en_p = lang_texts["en-US"].get(addon_type, {}).get(pid_lower, {})
                 section = "plugins" if plugin_type == "plugin" else "behaviors"
                 c_count = sum(len(at.get("conditions", [])) for at in categories.values())
                 a_count = sum(len(at.get("actions", [])) for at in categories.values())
@@ -278,14 +278,14 @@ class C3Fetcher:
                 }
 
         # ── _common (shared ACEs for World instances) ─────────────────────
-        en_common = lang_texts["en"].get("plugins", {}).get("_common", {})
-        zh_common = lang_texts["zh"].get("plugins", {}).get("_common", {})
+        en_common = lang_texts["en-US"].get("plugins", {}).get("_common", {})
+        zh_common = lang_texts["zh-CN"].get("plugins", {}).get("_common", {})
         if en_common:
-            for lang in ("en", "zh"):
+            for lang in ("en-US", "zh-CN"):
                 lc = lang_texts[lang].get("plugins", {}).get("_common", {})
                 common_json: dict = {
                     "id": "_common",
-                    "name": lc.get("name", "Common" if lang == "en" else "公共"),
+                    "name": lc.get("name", "Common"),
                     "description": lc.get("description", ""),
                     "type": "plugin",
                     "aceCategories": lc.get("aceCategories", {}),
@@ -379,12 +379,12 @@ class C3Fetcher:
                 )
 
             # Index effects
-            if lang == "en":
+            if lang == "en-US":
                 for item in effects_raw:
                     data = item.get("json", item)
                     eid = data.get("id", "")
                     en_fx = l_effects.get(eid, {})
-                    zh_fx = lang_texts["zh"].get("effects", {}).get(eid, {})
+                    zh_fx = lang_texts["zh-CN"].get("effects", {}).get(eid, {})
                     if en_fx:
                         index_data["effects"][eid] = {
                             "name_en": en_fx.get("name", eid),

@@ -29,12 +29,12 @@
 ```
 .cache/c3-cdn/{version}/schemas/
   _index.json                  — language-neutral index (plugin/behavior/effect counts, originalId)
-  en/plugins/sprite.json       — English Sprite ACE definitions
-  zh/plugins/sprite.json       — Chinese Sprite ACE definitions
-  en/behaviors/platform.json   — English Platform behavior ACEs
-  en/effects/alphaclamp.json   — English effect definitions
-  en/examples/{id}.json        — English example project metadata (name, description, tags, open URL)
-  zh/...                       — Chinese equivalents (same structure)
+  en-US/plugins/sprite.json       — English Sprite ACE definitions
+  zh-CN/plugins/sprite.json       — Chinese Sprite ACE definitions
+  en-US/behaviors/platform.json   — English Platform behavior ACEs
+  en-US/effects/alphaclamp.json   — English effect definitions
+  en-US/examples/{id}.json        — English example project metadata (name, description, tags, open URL)
+  zh-CN/...                     — Chinese equivalents (same structure)
 ```
 
 Each plugin/behavior file uses CDN field names:
