@@ -16,8 +16,7 @@ No install needed. Pick a language (`en` or `zh`) and read.
 | `c3-schemas/{lang}/plugins/{id}.json` | 66 | Conditions, actions, expressions, properties |
 | `c3-schemas/{lang}/behaviors/{id}.json` | 31 | Behavior ACE definitions |
 | `c3-schemas/{lang}/effects/{id}.json` | 89 | Effect parameters, categories |
-| `c3-schemas/{lang}/examples/{id}.json` | 481 | Name, description, tags, used-addons, open URL |
-| `c3-schemas/{lang}/editor/*.json` | 36 | Editor UI strings (bars, dialogs, views, controls, errors, ...) |
+| `c3-examples/{lang}/{id}.json` | 481 | Name, description, tags, used-addons, open URL |
 | `c3-ts-defs/autocomplete-data.json` | 109 | Scripting classes → methods/properties |
 | `c3-ts-defs/**/*.d.ts` | 150 | Full TypeScript interface signatures |
 
@@ -89,7 +88,7 @@ Field names match the official CDN: `list-name`, `display-text` for conditions/a
 | How does an ACE look in the event sheet? | `display-text` field |
 | What parameters does an ACE take? | `params` object |
 | What effects are available? | `{lang}/effects/{id}.json` |
-| Example projects using X? | `{lang}/examples/*.json` → `used-addons` |
+| Example projects using X? | `c3-examples/{lang}/*.json` → `used-addons` |
 | JavaScript/TypeScript API? | `autocomplete-data.json` → `.d.ts` |
 
 ## Search API (optional)

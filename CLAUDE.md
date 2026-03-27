@@ -113,9 +113,9 @@ data/c3-schemas/
   {lang}/plugins/{id}.json                  — ACE definitions (conditions, actions, expressions)
   {lang}/behaviors/{id}.json                — behavior ACE definitions
   {lang}/effects/{id}.json                  — effect definitions (parameters, categories)
-  {lang}/examples/{id}.json                 — example projects (name, description, tags, used-addons, open URL)
-  {lang}/editor/index.json                  — editor UI element names (bars, dialogs, views)
   (lang = en or zh)
+
+data/c3-examples/{lang}/{id}.json             — 481 example projects (name, description, tags, used-addons, open URL)
 
 data/c3-ts-defs/
   autocomplete-data.json                    — scripting API: 109 classes → method/property lists
@@ -141,7 +141,7 @@ data/c3-ts-defs/
 → Read `_index.json` effects section, then `{lang}/effects/{id}.json`
 
 **"Are there example projects for [topic]?"**
-→ Browse `{lang}/examples/` — each file has `name`, `description`, `tags`, `used-addons`, and an `open` URL to launch in the editor.
+→ Browse `data/c3-examples/{lang}/` — each file has `name`, `description`, `tags`, `used-addons`, and an `open` URL to launch in the editor.
 
 **"What is [C3 concept]?" (layouts, event sheets, behaviors, etc.)**
 → General knowledge is fine. No lookup needed.

@@ -86,7 +86,7 @@ jobs:
           if target.exists():
               shutil.rmtree(target)
           target.mkdir(parents=True, exist_ok=True)
-          # Copy per-language dirs (includes examples/) and _index.json
+          # Copy schemas (per-language dirs + _index.json)
           for item in ('en', 'zh', '_index.json'):
               src_path = schemas_dir / item
               dst_path = target / item
@@ -96,6 +96,16 @@ jobs:
                   shutil.copy2(src_path, dst_path)
           idx = json.loads((target / '_index.json').read_text(encoding='utf-8'))
           print(f'Schemas: {len(idx.get(\"plugins\", {}))} plugins, {len(idx.get(\"behaviors\", {}))} behaviors, {len(idx.get(\"effects\", {}))} effects')
+
+          # Copy examples (separate from schemas)
+          examples_src = schemas_dir.parent / 'examples'
+          examples_target = Path('data/c3-examples')
+          if examples_target.exists():
+              shutil.rmtree(examples_target)
+          if examples_src.exists():
+              shutil.copytree(examples_src, examples_target)
+              en_count = len(list((examples_target / 'en').glob('*.json'))) if (examples_target / 'en').exists() else 0
+              print(f'Examples: {en_count}')
 
           # 2. Export ts-defs
           print('Exporting ts-defs...')

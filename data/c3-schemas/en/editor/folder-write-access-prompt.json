@@ -1,5 +1,0 @@
-{
-  "caption": "Save to folder",
-  "message": "Construct needs permission to write to the chosen folder. Saving can only complete if permission is granted.",
-  "confirm-text": "Request permission"
-}

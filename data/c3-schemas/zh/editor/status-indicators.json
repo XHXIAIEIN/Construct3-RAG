@@ -1,7 +1,0 @@
-{
-  "building-spritesheets": "正在合并动画表(剩余{0}个)...",
-  "rendering-spritesheets": "正在渲染动画表(剩余{0}个)......",
-  "compressing-spritesheets": "正在压缩动画表(剩余{0}个)......",
-  "creating-textures": "正在绘制纹理(剩余{0}个)......",
-  "loading-fonts": "正在加载字体(剩余{0}个)......"
-}

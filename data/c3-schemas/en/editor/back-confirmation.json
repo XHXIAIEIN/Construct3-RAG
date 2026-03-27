@@ -1,6 +1,0 @@
-{
-  "caption": "Back navigation",
-  "message": "'Back' was pressed but a project is open. If you navigate back, Construct will be closed. Are you sure you want to navigate back?",
-  "go-back": "Go back",
-  "stay": "Stay"
-}

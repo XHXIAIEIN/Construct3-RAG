@@ -1,5 +1,0 @@
-{
-  "caption": "Storage quota nearly full",
-  "message": "Construct is using [b]{0}%[/b] of the available storage quota on this device ({1} of {2}). Consider using Storage Cleanup to free some space.",
-  "storage-cleanup": "Storage cleanup..."
-}

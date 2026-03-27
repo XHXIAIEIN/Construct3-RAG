@@ -34,7 +34,6 @@
   en/behaviors/platform.json   — English Platform behavior ACEs
   en/effects/alphaclamp.json   — English effect definitions
   en/examples/{id}.json        — English example project metadata (name, description, tags, open URL)
-  en/editor/index.json         — English editor UI element names
   zh/...                       — Chinese equivalents (same structure)
 ```
 
