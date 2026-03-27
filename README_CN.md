@@ -8,25 +8,20 @@
 
 ## 数据文件
 
-无需安装。选择语言目录直接读取。
+无需安装。选择语言（`en` 或 `zh`）直接读取。
 
-```
-data/c3-schemas/
-  _index.json                    — 总索引（所有插件、行为、特效）
-  {lang}/
-    plugins/{id}.json            — 66 个插件：条件、动作、表达式
-    behaviors/{id}.json          — 31 个行为：ACE 定义
-    effects/{id}.json            — 89 个特效：参数、分类
-    examples/{id}.json           — 481 个示例：名称、描述、标签、使用的插件
-    editor/index.json            — 编辑器 UI：工具栏、对话框、视图
-  （lang = en, zh）
+| 路径 | 数量 | 内容 |
+|------|-----:|------|
+| `c3-schemas/_index.json` | — | 总索引：id → 名称、文件路径、ACE 数量 |
+| `c3-schemas/{lang}/plugins/{id}.json` | 66 | 条件、动作、表达式、属性 |
+| `c3-schemas/{lang}/behaviors/{id}.json` | 31 | 行为 ACE 定义 |
+| `c3-schemas/{lang}/effects/{id}.json` | 89 | 特效参数、分类 |
+| `c3-schemas/{lang}/examples/{id}.json` | 481 | 名称、描述、标签、使用的插件、打开链接 |
+| `c3-schemas/{lang}/editor/index.json` | 1 | 编辑器 UI 元素名称（工具栏、对话框、视图） |
+| `c3-ts-defs/autocomplete-data.json` | 109 | 脚本类 → 方法/属性 |
+| `c3-ts-defs/**/*.d.ts` | 150 | 完整 TypeScript 接口签名 |
 
-data/c3-ts-defs/
-  autocomplete-data.json         — 109 个脚本类 → 方法/属性
-  plugins/.../*.d.ts             — 150 个 TypeScript 接口文件
-  behaviors/.../*.d.ts
-  preview/interfaces/...         — 运行时基类（IInstance、IWorldInstance 等）
-```
+所有路径基于 `data/`。Schema 文件使用 CDN 原始字段名（`list-name`、`display-text`、`translated-name`）。
 
 ## 使用方法
 

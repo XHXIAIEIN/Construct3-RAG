@@ -8,25 +8,20 @@ Pre-built [Construct 3](https://www.construct.net) API data extracted from the o
 
 ## Data Files
 
-No install needed. Pick a language directory and read.
+No install needed. Pick a language (`en` or `zh`) and read.
 
-```
-data/c3-schemas/
-  _index.json                    — master index (all plugins, behaviors, effects)
-  {lang}/
-    plugins/{id}.json            — 66 plugins: conditions, actions, expressions
-    behaviors/{id}.json          — 31 behaviors: ACE definitions
-    effects/{id}.json            — 89 effects: parameters, categories
-    examples/{id}.json           — 481 examples: name, description, tags, used-addons
-    editor/index.json            — editor UI: bars, dialogs, views
-  (lang = en, zh)
+| Path | Count | Content |
+|------|------:|---------|
+| `c3-schemas/_index.json` | — | Master index: id → name, file path, ACE counts |
+| `c3-schemas/{lang}/plugins/{id}.json` | 66 | Conditions, actions, expressions, properties |
+| `c3-schemas/{lang}/behaviors/{id}.json` | 31 | Behavior ACE definitions |
+| `c3-schemas/{lang}/effects/{id}.json` | 89 | Effect parameters, categories |
+| `c3-schemas/{lang}/examples/{id}.json` | 481 | Name, description, tags, used-addons, open URL |
+| `c3-schemas/{lang}/editor/index.json` | 1 | Editor UI element names (bars, dialogs, views) |
+| `c3-ts-defs/autocomplete-data.json` | 109 | Scripting classes → methods/properties |
+| `c3-ts-defs/**/*.d.ts` | 150 | Full TypeScript interface signatures |
 
-data/c3-ts-defs/
-  autocomplete-data.json         — 109 scripting classes → methods/properties
-  plugins/.../*.d.ts             — 150 TypeScript interface files
-  behaviors/.../*.d.ts
-  preview/interfaces/...         — runtime base classes (IInstance, IWorldInstance, ...)
-```
+All paths are under `data/`. Schema files use CDN-native field names (`list-name`, `display-text`, `translated-name`).
 
 ## Usage
 
