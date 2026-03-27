@@ -101,6 +101,10 @@ Schema 文件中每个 ACE 条目的字段含义：
 | 哪些示例用了 X？ | `c3-examples/{lang}/*.json` → `used-addons` |
 | JavaScript/TypeScript API？ | `autocomplete-data.json` → `.d.ts` |
 
+## LLM 集成
+
+如果你在构建一个帮用户写事件表的 LLM，参见 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——现成的 system prompt，包含输出格式、命名规范和常见错误。
+
 ## 搜索 API（可选）
 
 ```bash
