@@ -1,0 +1,31 @@
+{
+  "id": "tower-defense-game",
+  "name": "Tower defense game",
+  "description": "Protect your kingdom from the menacing goblins and skeletons, by building better defenses along the road.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Spritefont2",
+      "NinePatch",
+      "Touch",
+      "TiledBg",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tower-defense-game"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "simple-lighting",
+  "name": "混合模式：聚光灯",
+  "description": "使用图层和混合模式创建简单的光照效果。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-lighting"
+}

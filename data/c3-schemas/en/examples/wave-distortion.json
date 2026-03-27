@@ -1,0 +1,33 @@
+{
+  "id": "wave-distortion",
+  "name": "Wave distortion",
+  "description": "Demonstrates the use of mesh distortion to create dynamic environments by modifying the shape of objects like fire and cloth.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Adventure",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "TiledBg",
+      "PlatformInfo",
+      "Spritefont2",
+      "gamepad",
+      "Keyboard",
+      "DrawingCanvas"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "EightDir",
+      "Bullet",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wave-distortion"
+}

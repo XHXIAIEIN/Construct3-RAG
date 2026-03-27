@@ -1,0 +1,19 @@
+{
+  "id": "pixel-painter",
+  "name": "脚本项目：像素画家",
+  "description": "极简像素艺术编辑器，使用 JavaScript 和 Drawing Canvas 对象实现基本工具。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Mouse",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pixel-painter"
+}

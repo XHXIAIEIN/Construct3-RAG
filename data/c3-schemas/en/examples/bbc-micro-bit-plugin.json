@@ -1,0 +1,27 @@
+{
+  "id": "bbc-micro-bit-plugin",
+  "name": "BBC micro:bit plugin",
+  "description": "A demonstration of getting readings and updating the LED display of a BBC micro:bit device over Bluetooth using the special BBC micro:bit plugin.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Tech demo",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BBCMicroBit",
+      "Button",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-plugin"
+}

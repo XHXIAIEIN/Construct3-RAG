@@ -1,0 +1,29 @@
+{
+  "id": "gamepad-local-multiplayer",
+  "name": "Gamepad local multiplayer",
+  "description": "Demonstrates how to use multiple gamepads connected to the same system for local multiplayer controls.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Multiplayer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "Tween",
+      "wrap",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gamepad-local-multiplayer"
+}

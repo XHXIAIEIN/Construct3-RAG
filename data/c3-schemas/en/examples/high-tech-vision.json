@@ -1,0 +1,34 @@
+{
+  "id": "high-tech-vision",
+  "name": "High-tech vision",
+  "description": "Use a high-tech mask to see in the dark and fix an electrical issue in a 3D warehouse.",
+  "tags": [
+    "Game template",
+    "Intermediate",
+    "3D",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=high-tech-vision"
+}

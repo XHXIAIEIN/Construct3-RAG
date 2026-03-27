@@ -1,0 +1,32 @@
+{
+  "id": "cgs-cloud-save",
+  "name": "功能示例：云储存",
+  "description": "演示云存档游戏服务，基于帐户登录进行跨设备的保存游戏。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "Keyboard",
+      "List",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-cloud-save"
+}

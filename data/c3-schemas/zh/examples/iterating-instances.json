@@ -1,0 +1,17 @@
+{
+  "id": "iterating-instances",
+  "name": "脚本基础：遍历实例对象",
+  "description": "使用代码的 For 循环，遍历全部实例对象。",
+  "tags": [
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=iterating-instances"
+}

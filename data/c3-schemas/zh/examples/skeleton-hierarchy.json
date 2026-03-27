@@ -1,0 +1,26 @@
+{
+  "id": "skeleton-hierarchy",
+  "name": "对象层级：角色骨架",
+  "description": "演示 '添加子对象' 功能，连接将多个对象，形成复杂的层次结构 (也称为场景图)，使他们像一个整体对象那样移动、缩放和旋转。",
+  "tags": [
+    "进阶",
+    "animation-recommended",
+    "功能示例",
+    "动画",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Rotate",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=skeleton-hierarchy"
+}

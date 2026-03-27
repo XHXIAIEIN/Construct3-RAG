@@ -1,0 +1,33 @@
+{
+  "id": "gravity-portal",
+  "name": "Gravity portal",
+  "description": "A platformer where you must help the little monkey reach the banana at the end of the level, using portals to invert gravity.",
+  "tags": [
+    "Beginner",
+    "3D",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Camera3D",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=gravity-portal"
+}

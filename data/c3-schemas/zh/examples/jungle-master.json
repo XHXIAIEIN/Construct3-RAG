@@ -1,0 +1,38 @@
+{
+  "id": "jungle-master",
+  "name": "游戏示例：丛林大师",
+  "description": "在丛林中飞跃，借助藤蔓穿梭跳跃，躲避巨鸟和……海豚。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "DrawingCanvas",
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Share",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "custom"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=jungle-master"
+}

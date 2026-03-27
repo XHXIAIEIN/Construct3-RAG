@@ -1,0 +1,22 @@
+{
+  "id": "scripting-pathfinding",
+  "name": "Scripting pathfinding",
+  "description": "Using the Pathfinding behavior's API to find a path and display the waypoints.",
+  "tags": [
+    "Mobile",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-pathfinding"
+}

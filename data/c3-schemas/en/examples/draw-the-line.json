@@ -1,0 +1,30 @@
+{
+  "id": "draw-the-line",
+  "name": "Draw the line",
+  "description": "Draw lines to guide the ball past obstacles.",
+  "tags": [
+    "New",
+    "Mobile",
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=draw-the-line"
+}

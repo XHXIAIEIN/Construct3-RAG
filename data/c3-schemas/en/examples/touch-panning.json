@@ -1,0 +1,21 @@
+{
+  "id": "touch-panning",
+  "name": "Touch: panning",
+  "description": "How to scroll around a layout using touch input to pan the view.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=touch-panning"
+}

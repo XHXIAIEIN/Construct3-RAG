@@ -1,0 +1,22 @@
+{
+  "id": "basic-hierarchy",
+  "name": "Basic hierarchy",
+  "description": "Demonstrates how the 'Add child' action can be used to connect objects, so they move and rotate together.",
+  "tags": [
+    "Beginner",
+    "animation-recommended",
+    "Feature example",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=basic-hierarchy"
+}

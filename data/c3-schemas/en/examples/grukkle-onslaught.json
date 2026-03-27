@@ -1,0 +1,46 @@
+{
+  "id": "grukkle-onslaught",
+  "name": "Grukkle Onslaught",
+  "description": "Defend your planets against the Grukkle invasion by building towers and expanding your civilization.",
+  "tags": [
+    "Advanced",
+    "Demo game",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "MoveTo",
+      "Orbit",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Turret",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=grukkle-onslaught"
+}

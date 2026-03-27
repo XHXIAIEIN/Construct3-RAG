@@ -1,0 +1,33 @@
+{
+  "id": "collect-the-pages",
+  "name": "Collect the pages",
+  "description": "Take a walk around the unsettling woods and collect all the pages, but be careful, there is something eerie lurking around.",
+  "tags": [
+    "Gameplay mechanic",
+    "Intermediate",
+    "RPG",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=collect-the-pages"
+}

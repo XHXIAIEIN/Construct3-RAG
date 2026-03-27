@@ -1,0 +1,25 @@
+{
+  "id": "reveal-the-tiles",
+  "name": "游戏示例：益智填色",
+  "description": "翻开图块以揭示隐藏的像素艺术。带数字的图块需要特定的区域大小。正确翻开所有图块即可获胜！",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=reveal-the-tiles"
+}

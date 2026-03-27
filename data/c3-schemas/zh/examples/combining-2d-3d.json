@@ -1,0 +1,24 @@
+{
+  "id": "combining-2d-3d",
+  "name": "功能示例：3D文字图层",
+  "description": "演示在3D图层上方显示 2D 元素。",
+  "tags": [
+    "简单",
+    "3D",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=combining-2d-3d"
+}

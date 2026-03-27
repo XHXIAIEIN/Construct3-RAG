@@ -1,0 +1,21 @@
+{
+  "id": "template-spot-the-difference",
+  "name": "Spot the difference",
+  "description": "A template of a simple spot-the-difference game, where the player must click areas to identify where an image is different.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-spot-the-difference"
+}

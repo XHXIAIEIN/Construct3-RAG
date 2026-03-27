@@ -1,0 +1,28 @@
+{
+  "id": "hero-attributes",
+  "name": "HUD: 角色属性",
+  "description": "一个动态的角色选择界面，供你挑选英雄并深入了解他们的背景故事，其中包含一个使用网格变形技术制作的可变蜘蛛图。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hero-attributes"
+}

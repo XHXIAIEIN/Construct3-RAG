@@ -1,0 +1,34 @@
+{
+  "id": "rat-purrsuit",
+  "name": "游戏示例：老鼠别跑",
+  "description": "社区里出现了一只讨厌的老鼠！作为顶级猎手的你，必须穿越各种环境，躲避陷阱，抓住这个小家伙！",
+  "tags": [
+    "完整游戏",
+    "进阶",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rat-purrsuit"
+}

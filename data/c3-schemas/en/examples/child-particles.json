@@ -1,0 +1,22 @@
+{
+  "id": "child-particles",
+  "name": "Child particles",
+  "description": "Demonstrates using a hierarchy to move an entire particle effect with an emitter.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Particles",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=child-particles"
+}

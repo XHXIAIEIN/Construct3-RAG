@@ -1,0 +1,17 @@
+{
+  "id": "text-formatting",
+  "name": "富文本：文字格式",
+  "description": "演示使用BBCode标记格式化文本对象的内容。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=text-formatting"
+}

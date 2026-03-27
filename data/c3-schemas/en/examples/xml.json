@@ -1,0 +1,19 @@
+{
+  "id": "xml",
+  "name": "XML",
+  "description": "Use XPath to get data from XML documents.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "XML",
+      "Text",
+      "AJAX"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=xml"
+}

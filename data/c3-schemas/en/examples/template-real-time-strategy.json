@@ -1,0 +1,33 @@
+{
+  "id": "template-real-time-strategy",
+  "name": "Real Time Strategy (RTS)",
+  "description": "An advanced template showing how to set up an RTS style game with user-commanded units which aim and fire at enemies.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "NinePatch",
+      "Touch",
+      "Mouse",
+      "Particles",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "solid",
+      "Pathfinding",
+      "Turret",
+      "Pin",
+      "Timer",
+      "destroy",
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-real-time-strategy"
+}

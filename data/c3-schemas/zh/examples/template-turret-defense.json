@@ -1,0 +1,30 @@
+{
+  "id": "template-turret-defense",
+  "name": "基础示例：塔防游戏",
+  "description": "建造防御塔基地的游戏模板，带有简单的图形。",
+  "tags": [
+    "games-recommended",
+    "简单",
+    "基础示例",
+    "策略",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "TiledBg",
+      "Particles",
+      "Text"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Flash",
+      "solid",
+      "Turret",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-turret-defense"
+}

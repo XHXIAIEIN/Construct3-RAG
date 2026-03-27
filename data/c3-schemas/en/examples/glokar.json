@@ -1,0 +1,35 @@
+{
+  "id": "glokar",
+  "name": "Glokar",
+  "description": "Captain Glorktar and his cronies have stolen blueprints to the ultimate war machine. Track him down and take them out before it's too late!",
+  "tags": [
+    "Demo game",
+    "games-recommended",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Sin",
+      "Pin",
+      "wrap",
+      "EightDir",
+      "Flash"
+    ],
+    "effects": [
+      "tint",
+      "brightness",
+      "warp",
+      "overlay",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=glokar"
+}

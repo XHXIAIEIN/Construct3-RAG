@@ -1,0 +1,272 @@
+{
+  "id": "bullet",
+  "name": "子弹",
+  "description": "以当前角度向前移动对象。通常用于子弹和抛射物。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "比较移动速度",
+      "display-text": "{my} 移动速度 {0} {1}",
+      "description": "比较对象的当前速度。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "速度值，以像素/秒为单位，并与当前的速度值进行比较。"
+        }
+      }
+    },
+    {
+      "id": "compare-distance-travelled",
+      "scriptName": "CompareTravelled",
+      "category": "",
+      "list-name": "比较移动距离",
+      "display-text": "{my} 移动距离 {0} {1}",
+      "description": "比较子弹对象的移动距离。比较子弹累计经过的移动距离。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "distance": {
+          "type": "number",
+          "name": "距离",
+          "desc": "要比较的移动距离，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "on-step",
+      "scriptName": "OnStep",
+      "category": "",
+      "list-name": "触发步进",
+      "display-text": "{my} 步进",
+      "description": "如果启用了步进模式，在每次触发步进时，用于进行额外的碰撞测试。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检测当前行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "设置移动速度",
+      "display-text": "设置 {my} 移动速度为[i]{0}[/i]",
+      "description": "设置对象当前的移动速度。",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "设置速度值，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "设置加速度",
+      "display-text": "设置 {my} 加速度为[i]{0}[/i]",
+      "description": "设置对象的加速度。",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "加速度",
+          "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-gravity",
+      "scriptName": "SetGravity",
+      "category": "",
+      "list-name": "设置重力",
+      "display-text": "设置 {my} 重力为[i]{0}[/i]",
+      "description": "设置对象的重力值",
+      "params": {
+        "gravity": {
+          "type": "number",
+          "name": "重力",
+          "desc": "设置由重力引起的加速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-angle-of-motion",
+      "scriptName": "SetAngleOfMotion",
+      "category": "",
+      "list-name": "设置移动角度",
+      "display-text": "设置 {my} 移动角度为[i]{0}[/i]°",
+      "description": "设置子弹移动的角度。",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "设置移动方向，以度数为单位。"
+        }
+      }
+    },
+    {
+      "id": "bounce-off-object",
+      "scriptName": "Bounce",
+      "category": "",
+      "list-name": "反弹子弹",
+      "display-text": "设置 {my} 撞击 {0} 时反弹",
+      "description": "将接触到目标对象的子弹反弹。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "被反弹的对象。"
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-distance-travelled",
+      "scriptName": "SetDistanceTravelled",
+      "category": "",
+      "list-name": "设置移动距离",
+      "display-text": "设置 {my} 移动距离为[i]{0}[/i]",
+      "description": "设置子弹行为累计的移动距离。",
+      "params": {
+        "distance": {
+          "type": "number",
+          "name": "距离",
+          "desc": "设置子弹累计移动距离，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "stop-stepping",
+      "scriptName": "StopStepping",
+      "category": "",
+      "list-name": "停止步进",
+      "display-text": "{my} 停止步进",
+      "description": "在这一帧停止步进模式。"
+    },
+    {
+      "id": "set-bounce-off-solids",
+      "scriptName": "SetBounceOffSolids",
+      "category": "",
+      "list-name": "启用撞击实体反弹",
+      "display-text": "设置 {my} 撞击实体时反弹: [b]{0}[/b]",
+      "description": "启用后，子弹碰撞到实体对象时反弹。",
+      "params": {
+        "state": {
+          "type": "boolean",
+          "name": "撞击实体反弹",
+          "desc": "子弹撞击具有 '实体' 行为的对象时，是否将子弹反弹。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "移动速度",
+      "description": "子弹的移动速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "加速度",
+      "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "angleofmotion",
+      "scriptName": "AngleOfMotion",
+      "category": "",
+      "translated-name": "移动角度",
+      "description": "子弹的移动角度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "distancetravelled",
+      "scriptName": "DistanceTravelled",
+      "category": "",
+      "translated-name": "移动距离",
+      "description": "子弹累计的移动距离，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "gravity",
+      "scriptName": "Gravity",
+      "category": "",
+      "translated-name": "重力",
+      "description": "子弹的重力，以像素/秒为单位。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "speed": {
+      "name": "速度",
+      "desc": "对象移动的速度，以像素/秒为单位。"
+    },
+    "acceleration": {
+      "name": "加速度",
+      "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。负值则减速。"
+    },
+    "gravity": {
+      "name": "重力",
+      "desc": "设置子弹的重力，以像素/秒为单位"
+    },
+    "bounce-off-solids": {
+      "name": "撞击实体时反弹",
+      "desc": "子弹对象碰撞到具有 '实体' 行为的对象时，使子弹反弹。"
+    },
+    "set-angle": {
+      "name": "改变图像角度",
+      "desc": "启用后，将精灵图像的角度设置为运动角度。"
+    },
+    "step": {
+      "name": "步进模式",
+      "desc": "以更小的增量移动对象，避免因高速移动穿过实体对象。每次向前移动都将触发 '步进' 条件，以进行更高精度的碰撞测试。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

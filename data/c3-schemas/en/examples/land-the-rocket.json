@@ -1,0 +1,28 @@
+{
+  "id": "land-the-rocket",
+  "name": "Land the Rocket",
+  "description": "Prove your astronaut skills by landing a rocket, powered by physics and code, on different moon bases.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Fade",
+      "Flash",
+      "LOS",
+      "Physics",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=land-the-rocket"
+}

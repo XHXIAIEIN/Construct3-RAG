@@ -1,0 +1,29 @@
+{
+  "id": "multiplayer-game",
+  "name": "Multiplayer: real-time game",
+  "description": "A top-down shooter adapted to a real-time multiplayer shoot-em-up. See the accompanying tutorial for more information.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Multiplayer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-game"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "snowboard-3d",
+  "name": "3D地形: 滑雪场",
+  "description": "帮助滑雪者穿越山丘，尝试更少的点击次数收集所有旗帜。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=snowboard-3d"
+}

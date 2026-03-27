@@ -1,0 +1,28 @@
+{
+  "id": "test-your-might",
+  "name": "Test Your Might",
+  "description": "Test your true strength by breaking a series of hard materials with nothing but your bare hands.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=test-your-might"
+}

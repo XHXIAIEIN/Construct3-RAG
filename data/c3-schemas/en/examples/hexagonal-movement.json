@@ -1,0 +1,25 @@
+{
+  "id": "hexagonal-movement",
+  "name": "Hexagonal movement",
+  "description": "Move across a hexagonal structure, aiding the bee in collecting honey and avoiding flies.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hexagonal-movement"
+}

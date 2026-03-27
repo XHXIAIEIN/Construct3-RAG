@@ -1,0 +1,24 @@
+{
+  "id": "template-physics-puzzle",
+  "name": "Physics puzzle",
+  "description": "A template with a basic physics-based puzzle game prepared, with mobile control support.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-physics-puzzle"
+}

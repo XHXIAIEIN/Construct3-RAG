@@ -1,0 +1,31 @@
+{
+  "id": "foggy-outbreak",
+  "name": "3D丧尸围城",
+  "description": "第一人称视角的3D游戏，四周都是丧尸、以及充满浓雾的恐怖小巷。",
+  "tags": [
+    "进阶",
+    "3D",
+    "游戏模板",
+    "冒险"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Camera3D",
+      "Sprite",
+      "Mouse",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "Tween",
+      "LOS"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=foggy-outbreak"
+}

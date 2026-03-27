@@ -1,0 +1,16 @@
+{
+  "id": "simple-alert",
+  "name": "脚本基础：弹窗警告",
+  "description": "简单示例使用 JavaScript 调用浏览器弹窗的警告函数。",
+  "tags": [
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-alert"
+}

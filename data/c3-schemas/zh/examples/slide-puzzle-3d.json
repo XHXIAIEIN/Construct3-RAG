@@ -1,0 +1,34 @@
+{
+  "id": "slide-puzzle-3d",
+  "name": "3D滑块拼图",
+  "description": "经典游戏《滑块拼图》玩法机制。用 3D功能重现。移动方块，来重建完整的图像。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "3D",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Mouse",
+      "Sprite",
+      "AdvancedRandom",
+      "Arr",
+      "Touch",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust",
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=slide-puzzle-3d"
+}

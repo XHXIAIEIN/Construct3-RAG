@@ -1,0 +1,22 @@
+{
+  "id": "child-particles",
+  "name": "粒子：发射器",
+  "description": "演示如何使用对象层级通过发射器移动整个粒子效果。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Particles",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=child-particles"
+}

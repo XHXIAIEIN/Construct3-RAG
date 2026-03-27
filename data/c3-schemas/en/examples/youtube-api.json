@@ -1,0 +1,20 @@
+{
+  "id": "youtube-api",
+  "name": "YouTube API",
+  "description": "How to use the YouTube player API to control playback of a video shown in an iframe.",
+  "tags": [
+    "Mobile",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "iframe",
+      "Text",
+      "Button",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=youtube-api"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "kiwi-story",
+  "name": "Kiwi Story",
+  "description": "The Kiwi Clan has sent little kiro to fetch gummi beetles, but he got lost along the way! Help him find his way back!",
+  "tags": [
+    "Demo game",
+    "games-recommended",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Platform",
+      "Sin",
+      "jumpthru",
+      "solid",
+      "wrap"
+    ],
+    "effects": [
+      "brightness",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=kiwi-story"
+}

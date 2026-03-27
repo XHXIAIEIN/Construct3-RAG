@@ -1,0 +1,39 @@
+{
+  "id": "mask-effect-puzzle",
+  "name": "Mask effect puzzle",
+  "description": "Uses blend mode effects to create visual masks which are used as the player's special power to reveal hidden obstacles.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse",
+      "Tilemap",
+      "Particles",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Fade",
+      "solid",
+      "Sin",
+      "LOS",
+      "Bullet",
+      "jumpthru",
+      "Pin",
+      "Timer"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=mask-effect-puzzle"
+}

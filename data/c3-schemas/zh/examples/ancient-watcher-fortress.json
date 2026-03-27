@@ -1,0 +1,33 @@
+{
+  "id": "ancient-watcher-fortress",
+  "name": "脚本项目：禁忌堡垒",
+  "description": "你发现自己身处一个禁忌之地，里面有一个强大的存在。唯一逃生的希望就是击败它。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ancient-watcher-fortress"
+}

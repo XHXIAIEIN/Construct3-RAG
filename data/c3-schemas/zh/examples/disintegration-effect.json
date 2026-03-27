@@ -1,0 +1,40 @@
+{
+  "id": "disintegration-effect",
+  "name": "关卡设计: 传送平台 (定向型)",
+  "description": "演示高级的传送效果，玩家会分解为碎片，随后传送到新的位置。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "DrawingCanvas",
+      "Particles",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=disintegration-effect"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "mesh-platforms",
+  "name": "Mesh platforms",
+  "description": "An example of how creating meshes in the editor can be used to design more interesting platformer levels.",
+  "tags": [
+    "Beginner",
+    "Mesh distortion",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-platforms"
+}

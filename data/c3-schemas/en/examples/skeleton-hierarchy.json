@@ -1,0 +1,26 @@
+{
+  "id": "skeleton-hierarchy",
+  "name": "Skeleton hierarchy",
+  "description": "Demonstrates connecting multiple objects together with 'Add child' forming a complex hierarchy (also known as scene graph), allowing them to move, scale and rotate as if they were one large object.",
+  "tags": [
+    "Intermediate",
+    "animation-recommended",
+    "Feature example",
+    "Animation",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Rotate",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=skeleton-hierarchy"
+}

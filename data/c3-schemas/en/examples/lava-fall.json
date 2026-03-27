@@ -1,0 +1,32 @@
+{
+  "id": "lava-fall",
+  "name": "Lava fall",
+  "description": "Double-jump to avoid the cascades of hot lava in this platformer example.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "TiledBg",
+      "NinePatch",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "LOS",
+      "Sin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=lava-fall"
+}

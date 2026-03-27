@@ -1,0 +1,34 @@
+{
+  "id": "template-crossing-frog",
+  "name": "Crossing frog",
+  "description": "Help the frog safely cross the moving traffic and river currents.",
+  "tags": [
+    "games-recommended",
+    "Intermediate",
+    "Game template",
+    "Adventure",
+    "3D",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Browser",
+      "Shape3D",
+      "TiledBg",
+      "Tilemap",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Pin",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-crossing-frog"
+}

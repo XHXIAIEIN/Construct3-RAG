@@ -1,0 +1,51 @@
+{
+  "id": "eventide",
+  "name": "游戏示例：荒野幸存者",
+  "description": "面对源源不断的幽灵怪物来袭，不断强化自己的技能，让角色变得更加强大，在这场冒险中突破重重考验！",
+  "tags": [
+    "进阶",
+    "完整游戏",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Flash",
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=eventide"
+}

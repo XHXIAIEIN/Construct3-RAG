@@ -1,0 +1,33 @@
+{
+  "id": "template-4-direction-bomb",
+  "name": "4-direction bomber",
+  "description": "Drop bombs around a tile-based map to destroy walls and enemies.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "Flash",
+      "Timer",
+      "Tween",
+      "Fade"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-4-direction-bomb"
+}

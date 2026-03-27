@@ -1,0 +1,30 @@
+{
+  "id": "ledge-climb",
+  "name": "关卡设计⁚ 爬墙角",
+  "description": "允许角色抓住墙壁边缘，避免落入陷阱。适用于扩展角色在平台跳跃关卡上的行动能力。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "solid",
+      "LOS",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ledge-climb"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "skyrra-squadron-title",
+  "name": "Skyrra Squadron title",
+  "description": "An animated title screen for an air combat game, using Z elevation for a 3D effect.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Animation",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=skyrra-squadron-title"
+}

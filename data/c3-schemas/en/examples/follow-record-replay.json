@@ -1,0 +1,28 @@
+{
+  "id": "follow-record-replay",
+  "name": "Follow record/replay",
+  "description": "Demonstrates using the Follow behavior to record the player's movements and then replay the same movements.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-record-replay"
+}

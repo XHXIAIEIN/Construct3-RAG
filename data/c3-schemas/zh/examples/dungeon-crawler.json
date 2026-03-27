@@ -1,0 +1,35 @@
+{
+  "id": "dungeon-crawler",
+  "name": "游戏示例：地牢探险者",
+  "description": "经典游戏《Helltaker》玩法，融合推箱子和魔塔战斗机制。在体力耗尽前尽快到达终点。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject",
+      "blurhorizontal",
+      "blurvertical",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dungeon-crawler"
+}

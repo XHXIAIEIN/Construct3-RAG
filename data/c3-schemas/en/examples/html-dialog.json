@@ -1,0 +1,24 @@
+{
+  "id": "html-dialog",
+  "name": "HTML dialog",
+  "description": "An interactive dialog for selecting an item, composed of a mix of Construct objects and HTML elements with CSS styling.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "HTMLElement",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-dialog"
+}

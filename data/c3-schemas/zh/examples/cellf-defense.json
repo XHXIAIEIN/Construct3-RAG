@@ -1,0 +1,42 @@
+{
+  "id": "cellf-defense",
+  "name": "多人联机：细胞大作战",
+  "description": "在多人微观竞技场中挑战好友！吸收更小的细胞来成长，获取能量提升来获得优势，并在混乱的培养皿战斗中躲避病毒。",
+  "tags": [
+    "高级",
+    "移动端",
+    "多人"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Date",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cellf-defense"
+}

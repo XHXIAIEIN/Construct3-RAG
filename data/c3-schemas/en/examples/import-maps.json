@@ -1,0 +1,16 @@
+{
+  "id": "import-maps",
+  "name": "Import maps",
+  "description": "Demonstrates how to use import maps to help manage JavaScript module imports.",
+  "tags": [
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=import-maps"
+}

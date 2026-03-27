@@ -1,0 +1,32 @@
+{
+  "id": "fruit-slicing",
+  "name": "Fruit Slicing",
+  "description": "Be the main attraction of the restaurant by stylishly slicing fruits, but beware: someone is sabotaging the show by dropping bombs into the mix.",
+  "tags": [
+    "Recommended",
+    "Intermediate",
+    "Mobile",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "colorblend",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fruit-slicing"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "poplab",
+  "name": "Pop Lab",
+  "description": "Test your skills in this puzzle game and last as long as you can while the game gets more difficult!",
+  "tags": [
+    "Demo game",
+    "games-recommended",
+    "Puzzle",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "ConstructGameServices",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "Pin",
+      "Sin"
+    ],
+    "effects": [
+      "brightness",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=poplab"
+}

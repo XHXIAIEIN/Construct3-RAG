@@ -1,0 +1,20 @@
+{
+  "id": "scripting-tweens",
+  "name": "脚本示例：补间动画",
+  "description": "使用代码访问补间动画行为。",
+  "tags": [
+    "移动端",
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-tweens"
+}

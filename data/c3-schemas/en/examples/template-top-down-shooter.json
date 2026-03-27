@@ -1,0 +1,28 @@
+{
+  "id": "template-top-down-shooter",
+  "name": "Top-down shooter",
+  "description": "A template with a basic top-down shooter game setup prepared, using placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "scrollto",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-top-down-shooter"
+}

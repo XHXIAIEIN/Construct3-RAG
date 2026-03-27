@@ -1,0 +1,29 @@
+{
+  "id": "graphing-calculator",
+  "name": "Graphing calculator",
+  "description": "Combines JavaScript code evaluation with mesh distortion to produce custom 3D graphs.",
+  "tags": [
+    "Tech demo",
+    "Advanced",
+    "3D",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "bound"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=graphing-calculator"
+}

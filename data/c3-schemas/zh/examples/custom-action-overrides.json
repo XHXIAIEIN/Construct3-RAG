@@ -1,0 +1,21 @@
+{
+  "id": "custom-action-overrides",
+  "name": "功能示例：覆盖对象动作",
+  "description": "演示在家族中使用对象动作，并为特殊的个体对象设计不同的动作来覆盖家族动作。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-action-overrides"
+}

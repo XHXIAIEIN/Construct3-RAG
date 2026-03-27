@@ -1,0 +1,31 @@
+{
+  "id": "rpg-encounter",
+  "name": "RPG Encounter",
+  "description": "Assume the role of a brave adventurer, fight the mighty monsters of the unknown land, and complete an important quest in this turn-based RPG-style game.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "TileMovement",
+      "Tween",
+      "bound",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rpg-encounter"
+}

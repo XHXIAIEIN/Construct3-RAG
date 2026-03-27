@@ -1,0 +1,43 @@
+{
+  "id": "mythinsects",
+  "name": "Mythinsects",
+  "description": "Test your strategic skills by leading an ancient scarab civilization through the sands of time. Will you guide them to glory, or fade into history?",
+  "tags": [
+    "Demo game",
+    "Intermediate",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Timer",
+      "Turret",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "brightness",
+      "dodge",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=mythinsects"
+}

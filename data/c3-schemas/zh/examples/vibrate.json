@@ -1,0 +1,20 @@
+{
+  "id": "vibrate",
+  "name": "设备: 振动",
+  "description": "演示如何通过浏览器对象，振动手机设备以提供物理反馈。",
+  "tags": [
+    "简单",
+    "移动端",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Button",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=vibrate"
+}

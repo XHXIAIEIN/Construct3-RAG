@@ -1,0 +1,18 @@
+{
+  "id": "blend-modes",
+  "name": "混合模式",
+  "description": "演示混合模式的表现效果。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blend-modes"
+}

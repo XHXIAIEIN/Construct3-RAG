@@ -1,0 +1,23 @@
+{
+  "id": "persistent-layouts",
+  "name": "Persistent layouts",
+  "description": "Shows how to use the Persist behavior to make layouts which remember their state when you come back to them later.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Persist",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=persistent-layouts"
+}

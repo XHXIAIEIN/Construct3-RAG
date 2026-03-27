@@ -1,0 +1,34 @@
+{
+  "id": "toggle-camera-perspective",
+  "name": "3D视角切换",
+  "description": "在游戏中实时切换第一人称和第三人称视角相机视角，以更仔细地观察周围环境。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "冒险",
+    "3D",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Camera3D",
+      "Keyboard",
+      "TiledBg",
+      "Shape3D",
+      "Tilemap",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "darken",
+      "blurhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=toggle-camera-perspective"
+}

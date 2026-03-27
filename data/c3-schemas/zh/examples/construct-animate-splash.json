@@ -1,0 +1,25 @@
+{
+  "id": "construct-animate-splash",
+  "name": "时间轴：启动动画",
+  "description": "将 SVG 组合为具有自适应比例的图形，并使用混合模式来创建动态蒙版。",
+  "tags": [
+    "animation-recommended",
+    "动画",
+    "功能示例",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "SVGPicture",
+      "Sprite",
+      "TiledBg",
+      "Timeline",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=construct-animate-splash"
+}

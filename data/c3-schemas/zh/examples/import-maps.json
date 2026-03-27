@@ -1,0 +1,16 @@
+{
+  "id": "import-maps",
+  "name": "脚本基础：导入映射",
+  "description": "演示使用 import maps 管理 JavaScript 模块的导入。",
+  "tags": [
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=import-maps"
+}

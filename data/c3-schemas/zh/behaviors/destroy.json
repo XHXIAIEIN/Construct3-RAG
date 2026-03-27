@@ -1,0 +1,20 @@
+{
+  "id": "destroy",
+  "name": "出界销毁",
+  "description": "离开场景或视区范围时，自动销毁对象。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "properties": {
+    "region": {
+      "name": "范围",
+      "desc": "选择要检测的区域。对象超出此范围将被销毁。",
+      "items": {
+        "layout": "场景",
+        "viewport": "视区"
+      }
+    }
+  }
+}

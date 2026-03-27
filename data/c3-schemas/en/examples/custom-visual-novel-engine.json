@@ -1,0 +1,27 @@
+{
+  "id": "custom-visual-novel-engine",
+  "name": "Custom visual novel engine",
+  "description": "In this visual novel based on a custom array-based engine, invent the perfect RPG to impress the leaders of the poetry or robotics club in order to secure a spot in one of them.",
+  "tags": [
+    "Recommended",
+    "Intermediate",
+    "Game template",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-visual-novel-engine"
+}

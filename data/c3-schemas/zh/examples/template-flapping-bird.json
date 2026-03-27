@@ -1,0 +1,26 @@
+{
+  "id": "template-flapping-bird",
+  "name": "基础示例：砖块鸟",
+  "description": "经典游戏《Flappy Bird》的玩法机制。控制一只鸟，飞越障碍，支持移动端操作。为《横版飞行》模板示例的另一种设计思路。",
+  "tags": [
+    "简单",
+    "游戏模板",
+    "动作",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Button",
+      "TiledBg",
+      "Text",
+      "Browser",
+      "Touch"
+    ],
+    "behaviors": [
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-flapping-bird"
+}

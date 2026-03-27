@@ -1,0 +1,21 @@
+{
+  "id": "draw-mesh-data",
+  "name": "Draw mesh data",
+  "description": "An example of using the drawMeshData() API to more efficiently handle large meshes.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=draw-mesh-data"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "quadissueperf",
+  "name": "性能演示：四指标性能",
+  "description": "极限性能测试：测量CPU渲染速度。渲染大量的图像较小的对象。",
+  "tags": [
+    "高级",
+    "技术演示",
+    "性能测试"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=quadissueperf"
+}

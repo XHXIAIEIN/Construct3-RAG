@@ -1,0 +1,25 @@
+{
+  "id": "timeline-instances",
+  "name": "时间轴：更换实例对象",
+  "description": "演示使用 '设置实例对象' 操作在不同实例中播放时间轴动画。",
+  "tags": [
+    "进阶",
+    "animation-recommended",
+    "功能示例",
+    "动画",
+    "移动端",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Timeline",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-instances"
+}

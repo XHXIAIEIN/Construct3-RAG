@@ -1,0 +1,22 @@
+{
+  "id": "template-car-lanes",
+  "name": "基础示例：赛车跑道",
+  "description": "简易的车道游戏模板，使用键盘左右切换车道，躲避逆行的危险车辆。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-car-lanes"
+}

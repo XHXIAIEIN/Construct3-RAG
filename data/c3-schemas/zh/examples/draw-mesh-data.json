@@ -1,0 +1,21 @@
+{
+  "id": "draw-mesh-data",
+  "name": "功能示例：网格纹理数据",
+  "description": "演示使用 drawMeshData API 更高效处理大型网格。",
+  "tags": [
+    "新增",
+    "高级",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=draw-mesh-data"
+}

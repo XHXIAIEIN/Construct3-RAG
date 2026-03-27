@@ -1,0 +1,34 @@
+{
+  "id": "ceiling-trap",
+  "name": "Ceiling trap",
+  "description": "A platformer template showing ceiling traps the player must escape by moving quickly past them.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "NinePatch",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Pin",
+      "LOS",
+      "Tween",
+      "Timer",
+      "jumpthru",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ceiling-trap"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "classic-raycaster",
+  "name": "3D迷宫: 光线投射",
+  "description": "使用简单的光线可视化引导自己穿过迷宫。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "LOS",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=classic-raycaster"
+}

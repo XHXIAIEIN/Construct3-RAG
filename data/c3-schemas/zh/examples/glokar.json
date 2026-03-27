@@ -1,0 +1,35 @@
+{
+  "id": "glokar",
+  "name": "Glokar",
+  "description": "格洛克塔船长和他的爪牙偷走了终极战争机器的设计图。在事情变得很麻烦之前，追踪他们的踪迹，将他们一网打尽！",
+  "tags": [
+    "完整游戏",
+    "games-recommended",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Sin",
+      "Pin",
+      "wrap",
+      "EightDir",
+      "Flash"
+    ],
+    "effects": [
+      "tint",
+      "brightness",
+      "warp",
+      "overlay",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=glokar"
+}

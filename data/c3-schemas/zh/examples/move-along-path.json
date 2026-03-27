@@ -1,0 +1,23 @@
+{
+  "id": "move-along-path",
+  "name": "功能示例：沿直线移动",
+  "description": "演示 '移动到' 行为功能，沿着时间轴的路径移动。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=move-along-path"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "unique-ids",
+  "name": "Unique IDs",
+  "description": "An introduction to Unique IDs (UIDs), which can be used to refer to individual instances.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=unique-ids"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "audio-positioning",
+  "name": "Audio positioning",
+  "description": "An example of a layout with several positioned sound sources in it, where the audio pan and volume adjusts depending on the listener location.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Touch",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Mouse",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate",
+      "EightDir",
+      "scrollto",
+      "Fade",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-positioning"
+}

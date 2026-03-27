@@ -1,0 +1,42 @@
+{
+  "id": "ghost-shooter-rain-demo",
+  "name": "The 'Rain demo'",
+  "description": "A top-down shooter game making heavy use of visual effects.",
+  "tags": [
+    "Advanced",
+    "Tech demo",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "Pin",
+      "Sin",
+      "bound",
+      "wrap"
+    ],
+    "effects": [
+      "bumpmapping",
+      "dodge",
+      "exclusion",
+      "glass",
+      "glowhorizontal",
+      "glowvertical",
+      "radialblur",
+      "swirl",
+      "tint",
+      "warp"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-shooter-rain-demo"
+}

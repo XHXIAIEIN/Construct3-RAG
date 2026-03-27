@@ -1,0 +1,428 @@
+{
+  "id": "shape3d",
+  "name": "3D形状",
+  "description": "简单的 3D 形状支持，如创建一个立方体，每个面都可以自定义图像。",
+  "type": "plugin",
+  "aceCategories": {
+    "3d-shape": "3D形状"
+  },
+  "conditions": [
+    {
+      "id": "compare-shape",
+      "scriptName": "CompareShape",
+      "category": "3d-shape",
+      "list-name": "比较形状",
+      "display-text": "形状为[i]{0}[/i]",
+      "description": "测试当前设置的形状。",
+      "params": {
+        "shape": {
+          "type": "combo",
+          "name": "形状",
+          "desc": "要检查的形状。",
+          "items": {
+            "box": "方盒",
+            "prism": "棱镜",
+            "wedge": "斜坡",
+            "pyramid": "金字塔",
+            "corner-in": "尖角(内)",
+            "corner": "尖角(外)"
+          }
+        }
+      }
+    },
+    {
+      "id": "compare-z-height",
+      "scriptName": "CompareZHeight",
+      "category": "3d-shape",
+      "list-name": "比较形状高度",
+      "display-text": "形状高度 {0} {1}",
+      "description": "比较形状在Z轴方向的高度。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "z-height": {
+          "type": "number",
+          "name": "形状高度",
+          "desc": "比较形状在Z轴方向的高度。"
+        }
+      }
+    },
+    {
+      "id": "is-face-visible",
+      "scriptName": "IsFaceVisible",
+      "category": "3d-shape",
+      "list-name": "朝面可见",
+      "display-text": "[i]{0}[/i] 朝面可见",
+      "description": "检测对象某个朝面是否可见。",
+      "params": {
+        "face": {
+          "type": "combo",
+          "name": "朝面",
+          "desc": "要检查的朝面。",
+          "items": {
+            "back": "背面",
+            "front": "正面",
+            "left": "左面",
+            "right": "右面",
+            "top": "顶面",
+            "bottom": "底面"
+          }
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-shape",
+      "scriptName": "SetShape",
+      "category": "3d-shape",
+      "list-name": "设置形状",
+      "display-text": "设置形状为[b]{0}[/b]",
+      "description": "更改为不同的 3D 形状类型。",
+      "params": {
+        "shape": {
+          "type": "combo",
+          "name": "形状",
+          "desc": "要设置的形状。",
+          "items": {
+            "box": "方盒",
+            "prism": "棱镜",
+            "wedge": "斜坡",
+            "pyramid": "金字塔",
+            "corner-in": "尖角(内)",
+            "corner": "尖角(外)"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-z-height",
+      "scriptName": "SetZHeight",
+      "category": "3d-shape",
+      "list-name": "设置形状高度",
+      "display-text": "设置形状高度为[b]{0}[/b]",
+      "description": "设置形状在Z轴方向的高度。",
+      "params": {
+        "z-height": {
+          "type": "number",
+          "name": "形状高度",
+          "desc": "要设置的形状的Z轴高度。"
+        }
+      }
+    },
+    {
+      "id": "set-face-visible",
+      "scriptName": "SetFaceVisible",
+      "category": "3d-shape",
+      "list-name": "设置朝面可见",
+      "display-text": "[b]{1}[/b][i]{0}[/i]可见",
+      "description": "设置形状的某个朝面是否可见。",
+      "params": {
+        "face": {
+          "type": "combo",
+          "name": "朝面",
+          "desc": "要检查的朝面。",
+          "items": {
+            "back": "背面",
+            "front": "正面",
+            "left": "左面",
+            "right": "右面",
+            "top": "顶面",
+            "bottom": "底面"
+          }
+        },
+        "visible": {
+          "type": "boolean",
+          "name": "可见",
+          "desc": "显示或隐藏形状的朝面。"
+        }
+      }
+    },
+    {
+      "id": "set-back-face-culling",
+      "scriptName": "SetBackFaceCulling",
+      "category": "3d-shape",
+      "list-name": "启用背面剔除",
+      "display-text": "设置背面剔除(启用: [b]{0}[/b])",
+      "description": "设置是否自动隐藏背对镜头的面部。",
+      "params": {
+        "back-face-culling": {
+          "type": "boolean",
+          "name": "背面剔除",
+          "desc": "是否启用背面剔除。"
+        }
+      }
+    },
+    {
+      "id": "set-face-image",
+      "scriptName": "SetFaceImage",
+      "category": "3d-shape",
+      "list-name": "设置朝面图像",
+      "display-text": "设置朝面图像 (朝面: [i]{0}[/i], 图像:[i]{1}[/i])",
+      "description": "设置形状朝面使用的对象图像。",
+      "params": {
+        "face": {
+          "type": "combo",
+          "name": "朝面",
+          "desc": "要更改图像的朝面。",
+          "items": {
+            "back": "背面",
+            "front": "正面",
+            "left": "左面",
+            "right": "右面",
+            "top": "顶面",
+            "bottom": "底面"
+          }
+        },
+        "image": {
+          "type": "combo",
+          "name": "图像",
+          "desc": "用于朝面的图像。",
+          "items": {
+            "back": "背面",
+            "front": "正面",
+            "left": "左面",
+            "right": "右面",
+            "top": "顶面",
+            "bottom": "底面"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-z-tiling-factor",
+      "scriptName": "SetZTilingFactor",
+      "category": "3d-shape",
+      "list-name": "设置平铺系数",
+      "display-text": "设置平铺系数为[b]{0}[/b]",
+      "description": "设置应用于Z轴上的纹理平铺系数。数值越大，图像重复越密集。",
+      "params": {
+        "z-tiling-factor": {
+          "type": "number",
+          "name": "平铺系数",
+          "desc": "要设置的平铺系数。"
+        }
+      }
+    },
+    {
+      "id": "set-face-object",
+      "scriptName": "SetFaceObject",
+      "category": "3d-shape",
+      "list-name": "设置朝面对象",
+      "display-text": "设置朝面图像 (朝面: [i]{0}[/i], 对象:{1})",
+      "description": "选择一个对象，使用其图像作为3D形状朝向面的图像。注意，对象的实例必须放置在相同的场景中。后续想要操作此对象时，需先选择该3D形状对象。",
+      "params": {
+        "face": {
+          "type": "combo",
+          "name": "朝面",
+          "desc": "要更改哪个朝面的图像。",
+          "items": {
+            "back": "背面",
+            "front": "正面",
+            "left": "左面",
+            "right": "右面",
+            "top": "顶面",
+            "bottom": "底面"
+          }
+        },
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "用于朝向显示的对象。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "z-height",
+      "scriptName": "ZHeight",
+      "category": "3d-shape",
+      "translated-name": "形状高度",
+      "description": "形状在 Z 轴上的高度。视角从 100 的高度向下看。",
+      "returnType": "number"
+    },
+    {
+      "id": "z-tiling-factor",
+      "scriptName": "ZTilingFactor",
+      "category": "3d-shape",
+      "translated-name": "平铺系数",
+      "description": "应用于Z轴的纹理平铺系数。数值越大，图像重复越密集。",
+      "returnType": "number"
+    },
+    {
+      "id": "face-image-point-x",
+      "scriptName": "FaceImagePointX",
+      "category": "3d-shape",
+      "translated-name": "朝面图像点X",
+      "description": "在3D形状朝面的一个图像点的X坐标。",
+      "params": {
+        "face": {
+          "type": "number",
+          "name": "朝面",
+          "desc": "朝面的数字编号(0-5)"
+        },
+        "imagepoint": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要获取的图像点的名称或编号。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "face-image-point-y",
+      "scriptName": "FaceImagePointY",
+      "category": "3d-shape",
+      "translated-name": "朝面图像点Y",
+      "description": "在3D形状朝面的一个图像点的Y坐标。",
+      "params": {
+        "face": {
+          "type": "number",
+          "name": "朝面",
+          "desc": "朝面的数字编号(0-5)"
+        },
+        "imagepoint": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要获取的图像点的名称或编号。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "face-image-point-z",
+      "scriptName": "FaceImagePointZ",
+      "category": "3d-shape",
+      "translated-name": "朝面图像点Z",
+      "description": "在3D形状朝面的一个图像点的Z轴位置。",
+      "params": {
+        "face": {
+          "type": "number",
+          "name": "朝面",
+          "desc": "朝面的数字编号(0-5)"
+        },
+        "imagepoint": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要获取的图像点的名称或编号。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "face-image-point-count",
+      "scriptName": "FaceImagePointCount",
+      "category": "3d-shape",
+      "translated-name": "朝面图像点数量",
+      "description": "在3D形状朝面的图像点数量。",
+      "params": {
+        "face": {
+          "type": "number",
+          "name": "朝面",
+          "desc": "朝面的数字编号(0-5)"
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "edit-images": {
+      "name": "图像",
+      "desc": "编辑此形状每个朝面的图像。",
+      "link-text": "编辑"
+    },
+    "shape": {
+      "name": "形状",
+      "desc": "要使用的 3D 基本形状。请注意，并非所有形状都使用所有六个面。",
+      "items": {
+        "box": "方盒",
+        "prism": "棱柱",
+        "wedge": "斜坡",
+        "pyramid": "金字塔",
+        "corner-in": "尖角(内)",
+        "corner": "尖角(外)"
+      }
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "在场景开始时，对象是否可见。"
+    },
+    "face-visibility": {
+      "name": "朝面可见",
+      "desc": "选择形状的哪些面是可见的。"
+    },
+    "face-back": {
+      "name": "背面",
+      "desc": "选择背面是否可见。"
+    },
+    "face-front": {
+      "name": "正面",
+      "desc": "选择正面是否可见。"
+    },
+    "face-left": {
+      "name": "左面",
+      "desc": "选择左面是否可见。"
+    },
+    "face-right": {
+      "name": "右面",
+      "desc": "选择右面是否可见。"
+    },
+    "face-top": {
+      "name": "顶面",
+      "desc": "选择顶面是否可见。"
+    },
+    "face-bottom": {
+      "name": "底面",
+      "desc": "选择底面是否可见。"
+    },
+    "use-object-image-for-faces": {
+      "name": "朝面对象",
+      "desc": "可选。允许选择一个对象作为每个朝面的图像。注意，此对象的实例必须放置在相同的场景中。"
+    },
+    "z-tiling-factor": {
+      "name": "平铺系数",
+      "desc": "使用平铺图或九宫图类型的作为朝向图像时，应用到Z轴上的纹理平铺系数。数值越大，图像重复越密集。"
+    },
+    "object-back": {
+      "name": "背面对象",
+      "desc": "可选。选择一个对象作为背面的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "object-front": {
+      "name": "正面对象",
+      "desc": "可选。选择一个对象作为正面的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "object-left": {
+      "name": "左面对象",
+      "desc": "可选。选择一个对象作为左面的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "object-right": {
+      "name": "右面对象",
+      "desc": "可选。选择一个对象作为右面的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "object-top": {
+      "name": "顶部对象",
+      "desc": "可选。选择一个对象作为顶部的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "object-bottom": {
+      "name": "底部对象",
+      "desc": "可选。选择一个对象作为底部的图像。注意，此对象的实例必须放在相同场景中。"
+    },
+    "back-face-culling": {
+      "name": "背面剔除",
+      "desc": "自动隐藏背对相机的朝面。"
+    },
+    "z-origin": {
+      "name": "原点Z",
+      "desc": "物体位于 Z 轴上的位置。",
+      "items": {
+        "back": "背面",
+        "middle": "中间",
+        "front": "正面"
+      }
+    }
+  }
+}

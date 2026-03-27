@@ -1,0 +1,28 @@
+{
+  "id": "dock-fishing",
+  "name": "本地双人：捕鱼达人",
+  "description": "和朋友一起挑战，比比谁能钓到更多的鱼，同时还要小心潜伏的鲨鱼！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "waterbg"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=dock-fishing"
+}

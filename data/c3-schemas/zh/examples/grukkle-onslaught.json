@@ -1,0 +1,46 @@
+{
+  "id": "grukkle-onslaught",
+  "name": "游戏示例：异星入侵",
+  "description": "建造防御塔，抵御异族的入侵，保卫你的家园！",
+  "tags": [
+    "高级",
+    "完整游戏",
+    "策略",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "MoveTo",
+      "Orbit",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Turret",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=grukkle-onslaught"
+}

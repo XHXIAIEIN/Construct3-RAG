@@ -1,0 +1,38 @@
+{
+  "id": "segmented-boss-fight",
+  "name": "时间轴：Boss战",
+  "description": "使用时间轴功能，设计最终的BOSS战斗，设计不同的动作技能。还使用对象层级，将身上多个部件组合作为整体进行移动。",
+  "tags": [
+    "高级",
+    "games-recommended",
+    "玩法机制",
+    "动画",
+    "对象层级",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Timeline",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "Bullet",
+      "Sin",
+      "Rotate",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=segmented-boss-fight"
+}

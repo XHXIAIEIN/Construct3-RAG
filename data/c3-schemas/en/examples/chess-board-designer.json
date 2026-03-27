@@ -1,0 +1,22 @@
+{
+  "id": "chess-board-designer",
+  "name": "Chess board designer",
+  "description": "Translate between Forsyth-Edwards Notation (FEN) and board positions to save your game of chess for later.",
+  "tags": [
+    "Advanced",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=chess-board-designer"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "cgs-auth-providers",
+  "name": "功能示例：第三方登录",
+  "description": "展示 Construct 游戏服务功能，允许用户使用第三方登录。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "List",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-auth-providers"
+}

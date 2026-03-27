@@ -1,0 +1,29 @@
+{
+  "id": "switch-block",
+  "name": "关卡设计: 切换方块",
+  "description": "切换两种不同的砖块而改变地图的通道，适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=switch-block"
+}

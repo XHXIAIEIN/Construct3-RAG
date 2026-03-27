@@ -1,0 +1,35 @@
+{
+  "id": "time-rewind",
+  "name": "Time rewind",
+  "description": "A platform example that tracks a short history of player movement and allows them to rewind time.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Arr",
+      "NinePatch",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "Tween",
+      "solid",
+      "Bullet",
+      "LOS",
+      "Pin",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=time-rewind"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "sine-behavior-types",
+  "name": "Sine behavior types",
+  "description": "Demonstrates each type of Sine movement that the behavior provides.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=sine-behavior-types"
+}

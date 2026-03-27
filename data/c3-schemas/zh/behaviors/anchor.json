@@ -1,0 +1,79 @@
+{
+  "id": "anchor",
+  "name": "锚点",
+  "description": "简单将对象固定在可视区域内，不会随镜头移动。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检测当前行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "{0} {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "left-edge": {
+      "name": "左边缘",
+      "desc": "将对象的左边缘固定到视区边缘。",
+      "items": {
+        "window-left": "视区左边缘",
+        "window-right": "视区右边缘",
+        "none": "无"
+      }
+    },
+    "top-edge": {
+      "name": "上边缘",
+      "desc": "将对象的上边缘锚定到视区边缘。",
+      "items": {
+        "window-top": "视区上边缘",
+        "window-bottom": "视区下边缘",
+        "none": "无"
+      }
+    },
+    "right-edge": {
+      "name": "右边缘",
+      "desc": "锚定对象的右边缘。",
+      "items": {
+        "window-right": "视图右边缘",
+        "none": "无"
+      }
+    },
+    "bottom-edge": {
+      "name": "下边缘",
+      "desc": "锚定对象的底边。",
+      "items": {
+        "window-bottom": "视图下边缘",
+        "none": "无"
+      }
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

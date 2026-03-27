@@ -1,0 +1,31 @@
+{
+  "id": "minefield",
+  "name": "游戏示例：扫雷",
+  "description": "经典游戏《扫雷》玩法机制，利用高级随机插件，在棋盘上埋下地雷。尝试在不触发地雷的条件下，找出所有隐藏的地雷。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Mouse",
+      "Spritefont2",
+      "AdvancedRandom",
+      "NinePatch",
+      "TiledBg",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween",
+      "Bullet",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=minefield"
+}

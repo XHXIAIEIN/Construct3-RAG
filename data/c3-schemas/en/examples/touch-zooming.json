@@ -1,0 +1,21 @@
+{
+  "id": "touch-zooming",
+  "name": "Touch: zooming",
+  "description": "How to both scroll and scale a layout based on single and double touches.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=touch-zooming"
+}

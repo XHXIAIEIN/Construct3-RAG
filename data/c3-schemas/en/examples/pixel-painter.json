@@ -1,0 +1,19 @@
+{
+  "id": "pixel-painter",
+  "name": "Pixel painter",
+  "description": "A minimalist pixel art editor implementing essential tools with JavaScript and the Drawing Canvas object.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Mouse",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pixel-painter"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "auto-maze",
+  "name": "Auto maze 3D",
+  "description": "Demonstrates an automated agent exploring a procedurally-generated 3D maze, in the style of a screensaver.",
+  "tags": [
+    "Advanced",
+    "Animation",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=auto-maze"
+}

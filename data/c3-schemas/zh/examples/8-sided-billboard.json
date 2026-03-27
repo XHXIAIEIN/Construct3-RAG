@@ -1,0 +1,29 @@
+{
+  "id": "8-sided-billboard",
+  "name": "3D展示: 广告牌",
+  "description": "演示在3D环境中的八方向展示牌，根据摄像机视角旋转改变方向。",
+  "tags": [
+    "进阶",
+    "3D",
+    "玩法机制",
+    "冒险"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=8-sided-billboard"
+}

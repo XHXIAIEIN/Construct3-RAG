@@ -1,0 +1,33 @@
+{
+  "id": "rally-drifting",
+  "name": "Rally drifting",
+  "description": "Get in a rally car and drift through the foggy woods to finish the circuit in the smallest amount of time.",
+  "tags": [
+    "Intermediate",
+    "3D",
+    "Mesh distortion",
+    "Game template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "shadowlight"
+    ],
+    "behaviors": [
+      "Car",
+      "Fade",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rally-drifting"
+}

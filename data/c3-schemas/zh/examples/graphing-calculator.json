@@ -1,0 +1,29 @@
+{
+  "id": "graphing-calculator",
+  "name": "HUD: 图形学计算器",
+  "description": "将 JavaScript 的运算功能与网格变形功能结合，产生自定义的3D图形。",
+  "tags": [
+    "技术演示",
+    "高级",
+    "3D",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "bound"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=graphing-calculator"
+}

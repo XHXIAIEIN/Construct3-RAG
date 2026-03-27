@@ -1,0 +1,24 @@
+{
+  "id": "shadows-light-height",
+  "name": "Shadows: Light height",
+  "description": "An example of a real-time shadow effect using the Shadow Light object and Shadow Caster behavior, with varying shadow lengths.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-light-height"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "cannon-launch",
+  "name": "Cannon launch",
+  "description": "A platform game where you can also launch yourself from powerful cannons.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Particles"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Pin",
+      "Platform",
+      "Bullet",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "bulge",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cannon-launch"
+}

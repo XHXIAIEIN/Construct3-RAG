@@ -1,0 +1,32 @@
+{
+  "id": "flatland-golf",
+  "name": "Flatland golf",
+  "description": "Calculate the correct amount of strength, taking the wind into consideration, to make the ball reach the hole.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=flatland-golf"
+}

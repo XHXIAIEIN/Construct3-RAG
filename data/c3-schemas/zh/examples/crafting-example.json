@@ -1,0 +1,20 @@
+{
+  "id": "crafting-example",
+  "name": "脚本项目：合成系统",
+  "description": "类似《我的世界》合成机制，将原材料根据特定的组合来创建各种物品，最终目标是制作一个箭袋。",
+  "tags": [
+    "游戏模板",
+    "高级",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=crafting-example"
+}

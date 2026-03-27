@@ -1,0 +1,23 @@
+{
+  "id": "persistent-layouts",
+  "name": "功能示例：持久化的场景",
+  "description": "演示使用持久化行制作奖励关卡，当玩家重新进入场景时仍能保留它们的状态。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Persist",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=persistent-layouts"
+}

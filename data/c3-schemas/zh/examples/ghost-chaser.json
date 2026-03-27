@@ -1,0 +1,35 @@
+{
+  "id": "ghost-chaser",
+  "name": "3D幽灵追逐者",
+  "description": "在一座鬼影幢幢的宅邸中，通过定位声音来指引你，寻找并捕获幽灵。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Flash",
+      "LOS",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-chaser"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "spider-solitaire",
+  "name": "脚本项目：蜘蛛纸牌",
+  "description": "经典纸牌游戏，你需要按照从A到K的顺序，将所有卡牌移至基础牌堆。",
+  "tags": [
+    "高级",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spider-solitaire"
+}

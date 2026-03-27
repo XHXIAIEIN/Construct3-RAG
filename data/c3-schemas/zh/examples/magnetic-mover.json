@@ -1,0 +1,31 @@
+{
+  "id": "magnetic-mover",
+  "name": "3D磁力方块",
+  "description": "利用磁力操纵金属立方体来打开门、禁用力场并解决每个谜题挑战。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Flash",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=magnetic-mover"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "procedural-terrain-generation",
+  "name": "Procedural terrain generation",
+  "description": "Combines Advanced Random, Tilemap and Dictionary to create an endless randomly generated level.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Tilemap",
+      "Json",
+      "Sprite",
+      "Dictionary",
+      "Mouse",
+      "Arr"
+    ],
+    "behaviors": [
+      "solid",
+      "Pin",
+      "scrollto",
+      "Platform"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=procedural-terrain-generation"
+}

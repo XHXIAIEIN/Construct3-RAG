@@ -1,0 +1,26 @@
+{
+  "id": "3dshape-tour",
+  "name": "3D shape",
+  "description": "An interactive tour demonstrating what kinds of things can be done with the 3D shape object.",
+  "tags": [
+    "Beginner",
+    "3D",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "scrollto",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=3dshape-tour"
+}

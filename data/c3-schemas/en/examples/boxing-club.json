@@ -1,0 +1,26 @@
+{
+  "id": "boxing-club",
+  "name": "Boxing club",
+  "description": "Challenge your friends to a classic local multiplayer boxing match!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Fighting",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Fade",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=boxing-club"
+}

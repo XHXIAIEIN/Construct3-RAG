@@ -1,0 +1,31 @@
+{
+  "id": "traffic-jam",
+  "name": "Traffic jam",
+  "description": "Move the cars in the right sequence to guide them safely to their destination, avoiding collisions along the way.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Fade",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=traffic-jam"
+}

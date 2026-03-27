@@ -1,0 +1,32 @@
+{
+  "id": "code-panel",
+  "name": "Code panel",
+  "description": "Demonstrates a number panel where the player must enter the correct code, with some themed effects.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Particles",
+      "Touch"
+    ],
+    "behaviors": [
+      "Fade",
+      "Flash",
+      "Tween",
+      "Timer"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=code-panel"
+}

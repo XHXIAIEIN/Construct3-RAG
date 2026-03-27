@@ -1,0 +1,24 @@
+{
+  "id": "mesh-z-elevation",
+  "name": "纹理变形：视距高度",
+  "description": "演示将视距高度应用于单个网格点，以创建3D动态视觉效果。",
+  "tags": [
+    "高级",
+    "3D",
+    "纹理变形",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "scrollto",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-z-elevation"
+}

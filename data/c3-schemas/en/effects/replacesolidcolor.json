@@ -1,0 +1,29 @@
+{
+  "id": "replacesolidcolor",
+  "name": "Replace solid color",
+  "description": "Replace a color in the image with a solid color.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "source-color",
+      "type": "color",
+      "name": "Source",
+      "desc": "Source color to be replaced."
+    },
+    {
+      "id": "replace-color",
+      "type": "color",
+      "name": "Replace",
+      "desc": "Color to replace with."
+    },
+    {
+      "id": "tolerance",
+      "type": "percent",
+      "name": "Tolerance",
+      "desc": "From 0 to 100. Increase to also replace colors close to the source color."
+    }
+  ]
+}

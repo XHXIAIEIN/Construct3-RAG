@@ -1,0 +1,30 @@
+{
+  "id": "point-and-click",
+  "name": "游戏示例: 点击指向",
+  "description": "简短的点击冒险游戏，你将扮演一名侦探，任务是在一栋建筑内找到并关闭一个隐藏的信号干扰器。",
+  "tags": [
+    "animation-recommended",
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Dictionary",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Flash",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=point-and-click"
+}

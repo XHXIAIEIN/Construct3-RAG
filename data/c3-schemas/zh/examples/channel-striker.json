@@ -1,0 +1,31 @@
+{
+  "id": "channel-striker",
+  "name": "脚本项目: 雷电战机",
+  "description": "经典游戏《雷电》玩法机制。你的领地正在受到敌军的攻击，快驾驶你的喷气战机，以 JavaScript 代码为动力，展开反击！",
+  "tags": [
+    "游戏模板",
+    "街机",
+    "射击",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "MoveTo",
+      "Rotate",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=channel-striker"
+}

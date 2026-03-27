@@ -1,0 +1,21 @@
+{
+  "id": "effects-ripple-transition",
+  "name": "Effects: Ripple transition",
+  "description": "A transition based on altering a ripple effect over time.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": [
+      "warpripple"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=effects-ripple-transition"
+}

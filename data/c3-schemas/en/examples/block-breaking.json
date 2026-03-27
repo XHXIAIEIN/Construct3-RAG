@@ -1,0 +1,41 @@
+{
+  "id": "block-breaking",
+  "name": "Block breaking",
+  "description": "A platformer where the player can set off a chain reaction that destroys blocks.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "Particles",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "solid",
+      "LOS",
+      "Bullet"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "bulge",
+      "sharpen",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=block-breaking"
+}

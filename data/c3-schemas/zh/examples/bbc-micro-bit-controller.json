@@ -1,0 +1,27 @@
+{
+  "id": "bbc-micro-bit-controller",
+  "name": "外设: BBC micro:bit 控制器",
+  "description": "演示使用 BBC micro:bit 作为游戏控制器使用。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BBCMicroBit",
+      "Button",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "bound",
+      "destroy",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-controller"
+}

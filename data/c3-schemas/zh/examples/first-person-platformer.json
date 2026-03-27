@@ -1,0 +1,30 @@
+{
+  "id": "first-person-platformer",
+  "name": "功能示例：FPS 平台跳跃",
+  "description": "展示简单的第一人称视角的3D平台游戏，基于2D的碰撞来以处理Z轴。",
+  "tags": [
+    "进阶",
+    "3D",
+    "基础示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "custom",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=first-person-platformer"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "date-time",
+  "name": "Date & time",
+  "description": "An example showing some of the features of the Date plugin, which can manipulate various aspects of dates and times.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Text",
+      "Date",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=date-time"
+}

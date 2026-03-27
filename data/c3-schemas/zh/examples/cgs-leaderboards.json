@@ -1,0 +1,22 @@
+{
+  "id": "cgs-leaderboards",
+  "name": "功能示例：在线排行榜",
+  "description": "演示在线排行榜游戏服务，基于帐户登录进行跨设备的高分排名。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "List",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-leaderboards"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "screen-recording",
+  "name": "设备：屏幕录像",
+  "description": "演示录制屏幕或画布的内容，并保存视频。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "GameRecorder",
+      "Particles",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Anchor",
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=screen-recording"
+}

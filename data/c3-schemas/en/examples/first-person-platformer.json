@@ -1,0 +1,30 @@
+{
+  "id": "first-person-platformer",
+  "name": "First-person platformer",
+  "description": "Demonstrates a simple 3D platformer style game with a first-person view, based on augmenting Construct's 2D collisions with events to also handle the Z axis.",
+  "tags": [
+    "Intermediate",
+    "3D",
+    "Barebones template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "custom",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=first-person-platformer"
+}

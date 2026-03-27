@@ -1,0 +1,24 @@
+{
+  "id": "falling-blocks",
+  "name": "基础示例：方块掉落",
+  "description": "使用递归调用动作组的办法，检测哪些方块连接到地面，使相邻的方块不会掉落。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=falling-blocks"
+}

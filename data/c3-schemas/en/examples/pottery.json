@@ -1,0 +1,31 @@
+{
+  "id": "pottery",
+  "name": "Pottery",
+  "description": "Sculpt and paint stunning ceramic pots using a variety of tools, then share your unique creations with the world!",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mesh distortion"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "DrawingCanvas",
+      "Share",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pottery"
+}

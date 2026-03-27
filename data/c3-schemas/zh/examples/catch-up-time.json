@@ -1,0 +1,25 @@
+{
+  "id": "catch-up-time",
+  "name": "功能示例：后台时间追赶",
+  "description": "放置挂机类游戏示例。应用切换后台再恢复时，通过帧率追赶模拟时间流逝。",
+  "tags": [
+    "移动端",
+    "功能示例",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Date",
+      "Keyboard",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=catch-up-time"
+}

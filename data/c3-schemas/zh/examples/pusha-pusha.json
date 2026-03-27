@@ -1,0 +1,44 @@
+{
+  "id": "pusha-pusha",
+  "name": "3D推箱子",
+  "description": "在狂野的环境中推箱子，解开精巧的谜题，取悦丛林之神。",
+  "tags": [
+    "高级",
+    "完整游戏",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "LocalStorage",
+      "SVGPicture",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "TileMovement",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "darken",
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pusha-pusha"
+}

@@ -1,0 +1,42 @@
+{
+  "id": "gold-mining",
+  "name": "Gold mining",
+  "description": "Throw the hook at the right time and help the miner extract as much gold as possible.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "Arr",
+      "AdvancedRandom",
+      "AJAX",
+      "NinePatch",
+      "Particles",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween",
+      "Fade",
+      "Flash"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "lighten",
+      "blurhorizontal",
+      "blurvertical",
+      "softlight",
+      "contrast",
+      "sharpen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=gold-mining"
+}

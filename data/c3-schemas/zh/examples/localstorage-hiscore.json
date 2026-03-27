@@ -1,0 +1,21 @@
+{
+  "id": "localstorage-hiscore",
+  "name": "本地存储：高分榜",
+  "description": "演示本地存储功能，将数据保存在本地设备。关闭游戏后，下次打开还能继续上次进度。",
+  "tags": [
+    "进阶",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "LocalStorage",
+      "TextBox",
+      "Button",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=localstorage-hiscore"
+}

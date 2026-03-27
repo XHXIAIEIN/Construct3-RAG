@@ -1,0 +1,30 @@
+{
+  "id": "level-chunk-swap",
+  "name": "Level chunk swap",
+  "description": "A tilemap-based platformer where the player can change the level by swapping chunks of land around.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Timer",
+      "Platform",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=level-chunk-swap"
+}

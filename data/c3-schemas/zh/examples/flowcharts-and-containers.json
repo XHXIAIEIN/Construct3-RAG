@@ -1,0 +1,21 @@
+{
+  "id": "flowcharts-and-containers",
+  "name": "功能示例：有限状态机",
+  "description": "演示将流程图功能与对象关联，管理多个实例对象。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "流程图"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Flowchart",
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=flowcharts-and-containers"
+}

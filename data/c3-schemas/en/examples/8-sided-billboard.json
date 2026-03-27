@@ -1,0 +1,29 @@
+{
+  "id": "8-sided-billboard",
+  "name": "8-sided billboard",
+  "description": "A demonstration of an 8-sided billboard in a 3D environment with a retro aesthetic.",
+  "tags": [
+    "Intermediate",
+    "3D",
+    "Gameplay mechanic",
+    "Adventure"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=8-sided-billboard"
+}

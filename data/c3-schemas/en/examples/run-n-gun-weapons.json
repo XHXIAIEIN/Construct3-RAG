@@ -1,0 +1,43 @@
+{
+  "id": "run-n-gun-weapons",
+  "name": "Run 'N Gun weapons",
+  "description": "Use an arsenal of weapons to destroy all enemies on the battlefield, in the style of the classic run 'n gun genre.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "PlatformInfo",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Timer",
+      "Pin",
+      "solid",
+      "Bullet",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Turret",
+      "Fade",
+      "Sin"
+    ],
+    "effects": [
+      "replacesolidcolor",
+      "hsladjust",
+      "posterize",
+      "replacecolor",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=run-n-gun-weapons"
+}

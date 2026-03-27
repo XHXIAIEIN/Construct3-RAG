@@ -1,0 +1,20 @@
+{
+  "id": "scripting-tweens",
+  "name": "Scripting tweens",
+  "description": "Similar to the 'Tweening' example but using code and using the Tween behavior API.",
+  "tags": [
+    "Mobile",
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-tweens"
+}

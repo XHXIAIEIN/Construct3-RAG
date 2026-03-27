@@ -1,0 +1,24 @@
+{
+  "id": "hashing",
+  "name": "功能示例：信息加密(单向)",
+  "description": "对一串文本信息或文件内容进行哈希加密，生成单向的密码。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Button",
+      "Clipboard",
+      "Cryptography",
+      "Text",
+      "TextBox",
+      "filechooser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hashing"
+}

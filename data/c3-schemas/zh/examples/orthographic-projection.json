@@ -1,0 +1,25 @@
+{
+  "id": "orthographic-projection",
+  "name": "功能示例：3D相机投影",
+  "description": "演示如何切换相机的透视、等距视角。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Shape3D",
+      "Camera3D",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=orthographic-projection"
+}

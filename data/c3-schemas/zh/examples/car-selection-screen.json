@@ -1,0 +1,26 @@
+{
+  "id": "car-selection-screen",
+  "name": "HUD: 赛车选择",
+  "description": "赛车游戏的时尚汽车选择屏幕示例，包含汽车统计信息等。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Keyboard",
+      "Spritefont2",
+      "NinePatch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=car-selection-screen"
+}

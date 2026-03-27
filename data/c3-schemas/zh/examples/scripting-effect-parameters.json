@@ -1,0 +1,20 @@
+{
+  "id": "scripting-effect-parameters",
+  "name": "脚本基础：滤镜参数",
+  "description": "演示通过 JavaScript 修改实例对象的滤镜参数。",
+  "tags": [
+    "简单"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=scripting-effect-parameters"
+}

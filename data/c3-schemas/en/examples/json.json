@@ -1,0 +1,20 @@
+{
+  "id": "json",
+  "name": "JSON",
+  "description": "Using the JSON object to read information from JSON files.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "XML",
+      "Text",
+      "AJAX",
+      "Json"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=json"
+}

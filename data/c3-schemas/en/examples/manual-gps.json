@@ -1,0 +1,32 @@
+{
+  "id": "manual-gps",
+  "name": "Manual GPS",
+  "description": "Take control of a taxi's navigation system and help find the path to the passenger's destination.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Racing",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Touch",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2",
+      "Particles"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Tween",
+      "scrollto"
+    ],
+    "effects": [
+      "overlay"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=manual-gps"
+}

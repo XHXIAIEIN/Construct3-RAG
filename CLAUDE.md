@@ -104,28 +104,44 @@ This repo contains pre-built Construct 3 API definitions. When answering questio
 
 ### Data files (always available, no setup needed)
 
+Per-language files using CDN-native field names (`list-name`, `display-text`, `translated-name`).
+Each language is a complete, independent copy — pick one directory and read it.
+
 ```
-data/c3-schemas/_index.json                — START HERE: plugin/behavior name → file path
-data/c3-schemas/plugins/{id}.json          — ACE definitions (conditions, actions, expressions, params, display)
-data/c3-schemas/behaviors/{id}.json        — behavior ACE definitions
-data/c3-ts-defs/autocomplete-data.json     — scripting API: 109 classes → method/property lists
-data/c3-ts-defs/plugins/.../*.d.ts         — full TypeScript interface signatures
-data/c3-ts-defs/behaviors/.../*.d.ts       — behavior TypeScript interfaces
-data/c3-ts-defs/preview/interfaces/...     — runtime base classes (IInstance, IWorldInstance, etc.)
+data/c3-schemas/
+  _index.json                               — START HERE: plugin/behavior/effect index
+  {lang}/plugins/{id}.json                  — ACE definitions (conditions, actions, expressions)
+  {lang}/behaviors/{id}.json                — behavior ACE definitions
+  {lang}/effects/{id}.json                  — effect definitions (parameters, categories)
+  {lang}/examples/{id}.json                 — example projects (name, description, tags, used-addons, open URL)
+  {lang}/editor/index.json                  — editor UI element names (bars, dialogs, views)
+  (lang = en or zh)
+
+data/c3-ts-defs/
+  autocomplete-data.json                    — scripting API: 109 classes → method/property lists
+  plugins/.../*.d.ts                        — full TypeScript interface signatures
+  behaviors/.../*.d.ts                      — behavior TypeScript interfaces
+  preview/interfaces/...                    — runtime base classes (IInstance, IWorldInstance, etc.)
 ```
 
 ### How to answer C3 questions
 
 **"What actions/conditions/expressions does [plugin] have?"**
-→ Read `data/c3-schemas/_index.json`, find the plugin id, read `data/c3-schemas/plugins/{id}.json`
+→ Read `_index.json`, find the plugin id, then read `{lang}/plugins/{id}.json`
 
 **"How do I use [ACE] in event sheets?"**
-→ Read the plugin schema JSON, find the ACE entry. Look at `display_en`/`display_zh` (editor format), `params`, `description_en`.
+→ Read the plugin schema JSON, find the ACE entry. Look at `display-text` (editor format), `params`, `description`.
 
 **"How do I use [plugin] in JavaScript/TypeScript?"**
 → Read `data/c3-ts-defs/autocomplete-data.json` to find the interface class name.
 → Then read the `.d.ts` file for full method signatures.
 → Example: Sprite → `ISpriteInstance` → `data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`
+
+**"What effects are available?"**
+→ Read `_index.json` effects section, then `{lang}/effects/{id}.json`
+
+**"Are there example projects for [topic]?"**
+→ Browse `{lang}/examples/` — each file has `name`, `description`, `tags`, `used-addons`, and an `open` URL to launch in the editor.
 
 **"What is [C3 concept]?" (layouts, event sheets, behaviors, etc.)**
 → General knowledge is fine. No lookup needed.

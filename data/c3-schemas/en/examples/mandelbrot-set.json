@@ -1,0 +1,21 @@
+{
+  "id": "mandelbrot-set",
+  "name": "Mandelbrot Set",
+  "description": "Discover and create beautiful images of the Mandelbrot set, well known for its complex and mesmerizing fractal patterns.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mandelbrot-set"
+}

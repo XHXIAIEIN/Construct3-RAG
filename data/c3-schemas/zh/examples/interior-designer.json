@@ -1,0 +1,27 @@
+{
+  "id": "interior-designer",
+  "name": "游戏示例: 室内建造",
+  "description": "选择建筑布局并摆放所有家具，打造完美空间，释放你内心的建筑师天赋！",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "RPG"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=interior-designer"
+}

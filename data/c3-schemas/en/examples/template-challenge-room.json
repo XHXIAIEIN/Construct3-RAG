@@ -1,0 +1,33 @@
+{
+  "id": "template-challenge-room",
+  "name": "Challenge room",
+  "description": "Collect as many tool boxes as you can, while also avoiding pointy traps, in a 3D spaceship.",
+  "tags": [
+    "games-recommended",
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Camera3D",
+      "Keyboard",
+      "Sprite",
+      "Tilemap",
+      "gamepad",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Flash",
+      "EightDir",
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-challenge-room"
+}

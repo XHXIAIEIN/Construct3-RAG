@@ -1,0 +1,24 @@
+{
+  "id": "audio-player",
+  "name": "设备：音乐播放器",
+  "description": "简单的音乐播放器，带有进度控制、切歌等功能。",
+  "tags": [
+    "进阶",
+    "基础示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Audio",
+      "Text",
+      "Touch",
+      "Arr"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-player"
+}

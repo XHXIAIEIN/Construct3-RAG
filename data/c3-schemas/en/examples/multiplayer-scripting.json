@@ -1,0 +1,20 @@
+{
+  "id": "multiplayer-scripting",
+  "name": "Multiplayer scripting",
+  "description": "Demonstrates sending and receiving binary and text network messages using the Multiplayer object with code.",
+  "tags": [
+    "Advanced"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Multiplayer",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-scripting"
+}

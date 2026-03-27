@@ -1,0 +1,23 @@
+{
+  "id": "midi-output",
+  "name": "MIDI设备: 输出",
+  "description": "演示如何将音频输出到连接的 MIDI 设备，演奏音符。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Button",
+      "List",
+      "MIDI",
+      "Text",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=midi-output"
+}

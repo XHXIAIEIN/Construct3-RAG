@@ -1,0 +1,38 @@
+{
+  "id": "tank-pilot",
+  "name": "Tank pilot",
+  "description": "A platformer where the player can jump in to a tank and use new weapons.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "jumpthru",
+      "LOS",
+      "Pin",
+      "Bullet",
+      "destroy",
+      "solid",
+      "Tween",
+      "Fade",
+      "Flash",
+      "Platform"
+    ],
+    "effects": [
+      "warpobjectmask",
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tank-pilot"
+}

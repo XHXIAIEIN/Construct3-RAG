@@ -1,0 +1,30 @@
+{
+  "id": "stealth-example",
+  "name": "Stealth game example",
+  "description": "An advanced example combining multiple plugins and behaviors to create a stealth game where the player must avoid the line-of-sight of patrolling enemies.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Browser",
+      "DrawingCanvas",
+      "Arr",
+      "Text"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "scrollto",
+      "Pathfinding",
+      "Timer",
+      "LOS",
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=stealth-example"
+}

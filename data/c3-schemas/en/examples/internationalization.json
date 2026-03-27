@@ -1,0 +1,23 @@
+{
+  "id": "internationalization",
+  "name": "Internationalization",
+  "description": "Shows how the Internationalization object can be used to help translate and localize a project.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Button",
+      "Date",
+      "Internationalization",
+      "List",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=internationalization"
+}

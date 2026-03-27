@@ -1,0 +1,17 @@
+{
+  "id": "localstorage-script",
+  "name": "Local storage - script",
+  "description": "A script-based equivalent to the 'Local storage - high score' example.",
+  "used-addons": {
+    "plugins": [
+      "LocalStorage",
+      "TextBox",
+      "Button",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=localstorage-script"
+}

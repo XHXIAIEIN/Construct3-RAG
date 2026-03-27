@@ -1,0 +1,34 @@
+{
+  "id": "floating-orbs",
+  "name": "关卡设计: 传送平台 (悬浮球)",
+  "description": "经典游戏《Celeste》的关卡机制。在传送前通过按下方向键，让传送泡泡向指定方向滑行移动，直到碰到墙壁停下。适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "EightDir",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=floating-orbs"
+}

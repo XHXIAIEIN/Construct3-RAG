@@ -1,0 +1,33 @@
+{
+  "id": "artillery-war",
+  "name": "本地双人：堡垒战争",
+  "description": "经典游戏《百战天虫》玩法。在双人游戏中，计算炮弹发射的角度和威力，摧毁对方的城堡。",
+  "tags": [
+    "高级",
+    "解谜",
+    "游戏模板"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Mouse",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": [
+      "warpobject",
+      "alphaclamp"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=artillery-war"
+}

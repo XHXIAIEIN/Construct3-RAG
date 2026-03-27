@@ -1,0 +1,27 @@
+{
+  "id": "bewitched-torches",
+  "name": "Bewitched torches",
+  "description": "Trapped in a haunted house, a little witch must ignite every torch to break free! But beware: shadowy bats lurk in the darkness, ready to catch you!",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "TileMovement",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bewitched-torches"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "foggy-outbreak",
+  "name": "Foggy outbreak",
+  "description": "Explore a foggy and creepy alley filled with zombies in 3D.",
+  "tags": [
+    "Intermediate",
+    "3D",
+    "Game template",
+    "Adventure"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Camera3D",
+      "Sprite",
+      "Mouse",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "Tween",
+      "LOS"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=foggy-outbreak"
+}

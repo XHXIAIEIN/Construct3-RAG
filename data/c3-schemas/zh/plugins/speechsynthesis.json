@@ -1,0 +1,167 @@
+{
+  "id": "speechsynthesis",
+  "name": "语音合成",
+  "description": "使用文本转语音引擎自动读出文本",
+  "type": "plugin",
+  "aceCategories": {
+    "speech-synthesis": "语音合成"
+  },
+  "conditions": [
+    {
+      "id": "supports-speech-synthesis",
+      "scriptName": "SupportsSpeechSynthesis",
+      "category": "speech-synthesis",
+      "list-name": "支持语音合成",
+      "display-text": "支持语音合成",
+      "description": "测试设备是否支持语音合成。"
+    },
+    {
+      "id": "is-speaking",
+      "scriptName": "IsSpeaking",
+      "category": "speech-synthesis",
+      "list-name": "正在讲话",
+      "display-text": "正在讲话",
+      "description": "检测当前是否正在讲话。"
+    },
+    {
+      "id": "on-speech-ended",
+      "scriptName": "OnSpeechEnded",
+      "category": "speech-synthesis",
+      "list-name": "说话结束",
+      "display-text": "说话结束",
+      "description": "在说完话后被触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-speech-error",
+      "scriptName": "OnSpeechError",
+      "category": "speech-synthesis",
+      "list-name": "发声错误",
+      "display-text": "发声错误",
+      "description": "在语音合成失败时触发",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "speak-text",
+      "scriptName": "SpeakText",
+      "category": "speech-synthesis",
+      "list-name": "说话",
+      "display-text": "朗读文本 [b]{0}[/b] (语言: [i]{1}[/i], 声音来源: [i]{2}[/i], 音量: [i]{3}[/i]dB, 速度: [i]{4}[/i], 音高 [i]{5}[/i])",
+      "description": "用语音合成读出一些文本。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要说的文字。"
+        },
+        "language": {
+          "type": "string",
+          "name": "语言",
+          "desc": "文字的语言代码，如 \"en-US\" 为美式英语，\"zh-CN\"为简体中文。留空则使用设备默认语言。"
+        },
+        "voice-uri": {
+          "type": "string",
+          "name": "声音文件地址",
+          "desc": "要使用的声音。 留空以使用默认语音。"
+        },
+        "volume": {
+          "type": "number",
+          "name": "音量",
+          "desc": "朗读文本的音量，以分贝为单位。"
+        },
+        "rate": {
+          "type": "number",
+          "name": "速率",
+          "desc": "说话的相对速度，例如 1为正常，0.5为一半快。"
+        },
+        "pitch": {
+          "type": "number",
+          "name": "音高",
+          "desc": "说话的相对音高，介于0和2之间。"
+        }
+      }
+    },
+    {
+      "id": "stop-speaking",
+      "scriptName": "StopSpeaking",
+      "category": "speech-synthesis",
+      "list-name": "停止语音输入",
+      "display-text": "停止语音输入",
+      "description": "取消任何活动的语音合成。"
+    },
+    {
+      "id": "pause-speaking",
+      "scriptName": "PauseSpeaking",
+      "category": "speech-synthesis",
+      "list-name": "暂停语音输入",
+      "display-text": "暂停语音输入",
+      "description": "暂停任何活动的语音合成。"
+    },
+    {
+      "id": "resume-speaking",
+      "scriptName": "ResumeSpeaking",
+      "category": "speech-synthesis",
+      "list-name": "恢复语音输入",
+      "display-text": "恢复语音输入",
+      "description": "恢复先前暂停的语音合成。"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "voicecount",
+      "scriptName": "VoiceCount",
+      "category": "speech-synthesis",
+      "translated-name": "声音数量",
+      "description": "返回可用语音的数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "voicenameat",
+      "scriptName": "VoiceNameAt",
+      "category": "speech-synthesis",
+      "translated-name": "语音名称索引",
+      "description": "返回索引处的语音名称。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "基于零的语音索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "voicelangat",
+      "scriptName": "VoiceLangAt",
+      "category": "speech-synthesis",
+      "translated-name": "语音语言索引",
+      "description": "在索引处返回语音的语言。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "基于零的语音索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "voiceuriat",
+      "scriptName": "VoiceURIAt",
+      "category": "speech-synthesis",
+      "translated-name": "语音链接索引",
+      "description": "返回索引处语音的URI。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "基于零的语音索引。"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

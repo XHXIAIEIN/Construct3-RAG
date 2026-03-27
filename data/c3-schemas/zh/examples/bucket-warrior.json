@@ -1,0 +1,35 @@
+{
+  "id": "bucket-warrior",
+  "name": "游戏示例：咚洗钢勇士",
+  "description": "王国的勇士手持水桶，心中满怀勇气，他肩负着扑灭火焰、战胜巨龙的使命。引领他走向胜利吧！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "平台",
+    "时间轴",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Fade",
+      "LOS",
+      "MoveTo",
+      "Platform",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bucket-warrior"
+}

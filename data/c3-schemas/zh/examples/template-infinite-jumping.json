@@ -1,0 +1,27 @@
+{
+  "id": "template-infinite-jumping",
+  "name": "基础示例：无限跳跃",
+  "description": "经典游戏《Doodle Jump》的玩法机制。支持移动端操作，带有简单的图形。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "平台",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Keyboard",
+      "Text",
+      "Mouse",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "Platform",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-infinite-jumping"
+}

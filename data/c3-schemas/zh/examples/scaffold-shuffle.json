@@ -1,0 +1,32 @@
+{
+  "id": "scaffold-shuffle",
+  "name": "游戏项目：旋转工地",
+  "description": "帮助建筑工人找回他丢失的工具箱。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "对象层级",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=scaffold-shuffle"
+}

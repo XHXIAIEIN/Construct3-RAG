@@ -1,0 +1,18 @@
+{
+  "id": "audio-worklets",
+  "name": "脚本示例：音频队列",
+  "description": "演示如何在 JavaScript 中使用音频 Worklet 编写自定义音频处理的代码。",
+  "tags": [
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "HTMLElement",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-worklets"
+}

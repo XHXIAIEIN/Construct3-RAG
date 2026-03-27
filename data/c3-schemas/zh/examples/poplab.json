@@ -1,0 +1,36 @@
+{
+  "id": "poplab",
+  "name": "Pop Lab",
+  "description": "在这款益智游戏中展现你的实力，随着难度不断提升，看看你能坚持多久！",
+  "tags": [
+    "完整游戏",
+    "games-recommended",
+    "解谜",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "ConstructGameServices",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "Pin",
+      "Sin"
+    ],
+    "effects": [
+      "brightness",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=poplab"
+}

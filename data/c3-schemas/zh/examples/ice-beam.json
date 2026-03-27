@@ -1,0 +1,33 @@
+{
+  "id": "ice-beam",
+  "name": "关卡设计: 冻结子弹",
+  "description": "可以发射冻结敌人的子弹，使得敌人的移动短暂停止。适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Bullet",
+      "Tween",
+      "destroy",
+      "EightDir",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ice-beam"
+}

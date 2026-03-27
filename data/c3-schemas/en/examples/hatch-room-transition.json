@@ -1,0 +1,33 @@
+{
+  "id": "hatch-room-transition",
+  "name": "Hatch room transition",
+  "description": "Walk between rooms with a dynamic and stylish transition.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Fade",
+      "Bullet",
+      "Pin",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hatch-room-transition"
+}

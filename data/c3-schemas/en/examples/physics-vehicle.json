@@ -1,0 +1,21 @@
+{
+  "id": "physics-vehicle",
+  "name": "Physics: Vehicle",
+  "description": "Shows how to make contraptions like this vehicle using multiple joints.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-vehicle"
+}

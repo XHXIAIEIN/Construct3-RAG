@@ -1,0 +1,26 @@
+{
+  "id": "detecting-input-method",
+  "name": "Detecting input method",
+  "description": "How to create a title screen that automatically detects whether keyboard/mouse or touch controls are in use, and switches controls accordingly.",
+  "tags": [
+    "Intermediate",
+    "Mobile",
+    "Gameplay mechanic"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Touch",
+      "Mouse",
+      "Keyboard",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Flash",
+      "EightDir",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=detecting-input-method"
+}

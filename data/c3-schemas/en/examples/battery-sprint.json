@@ -1,0 +1,35 @@
+{
+  "id": "battery-sprint",
+  "name": "Battery sprint",
+  "description": "This 3D platform runner challenges you to lead a little battery to the end of the level.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Platformer",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade",
+      "Platform",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=battery-sprint"
+}

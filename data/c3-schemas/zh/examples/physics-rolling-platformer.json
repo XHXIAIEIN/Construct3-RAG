@@ -1,0 +1,23 @@
+{
+  "id": "physics-rolling-platformer",
+  "name": "物理：物理平台",
+  "description": "使用滚动对象和物理行为重新创建平台样式移动",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-rolling-platformer"
+}

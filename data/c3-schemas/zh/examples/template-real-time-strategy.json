@@ -1,0 +1,33 @@
+{
+  "id": "template-real-time-strategy",
+  "name": "基础示例：实时战略 (RTS)",
+  "description": "RTS风格游戏模板，展示了如何构建由玩家指挥的作战单位，包含瞄准和射击敌人的核心功能。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "NinePatch",
+      "Touch",
+      "Mouse",
+      "Particles",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "solid",
+      "Pathfinding",
+      "Turret",
+      "Pin",
+      "Timer",
+      "destroy",
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-real-time-strategy"
+}

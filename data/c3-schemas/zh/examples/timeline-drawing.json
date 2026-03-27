@@ -1,0 +1,24 @@
+{
+  "id": "timeline-drawing",
+  "name": "时间轴：路径绘画",
+  "description": "演示使用时间轴播放一段动画，并使用绘图画布对象绘制出线条路径，来书写一些文本。",
+  "tags": [
+    "高级",
+    "animation-recommended",
+    "功能示例",
+    "时间轴",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "DrawingCanvas",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-drawing"
+}

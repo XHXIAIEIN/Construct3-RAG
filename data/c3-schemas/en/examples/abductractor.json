@@ -1,0 +1,34 @@
+{
+  "id": "abductractor",
+  "name": "Abductractor",
+  "description": "Engage in an exciting tractor race with a catch: if you move while the scarecrow is watching, otherworldly anomalies will happen!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Racing",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Car",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=abductractor"
+}

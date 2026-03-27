@@ -1,0 +1,20 @@
+{
+  "id": "file-system-text-editor",
+  "name": "Text editor",
+  "description": "A simple demonstration of using the File System plugin to read and write text files.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "FileSystem",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=file-system-text-editor"
+}

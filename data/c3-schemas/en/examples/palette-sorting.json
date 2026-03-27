@@ -1,0 +1,28 @@
+{
+  "id": "palette-sorting",
+  "name": "Palette sorting",
+  "description": "Test your eyesight by rearranging the colored blocks in a visually smooth ramp.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Arr",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=palette-sorting"
+}

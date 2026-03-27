@@ -1,0 +1,32 @@
+{
+  "id": "hook-shot",
+  "name": "Hook shot",
+  "description": "A platformer where the player can also use a hook to pull themselves along horizontally.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "LOS",
+      "solid",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hook-shot"
+}

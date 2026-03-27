@@ -1,0 +1,25 @@
+{
+  "id": "reveal-the-tiles",
+  "name": "Reveal the tiles",
+  "description": "Reveal tiles to uncover hidden pixel art. Numbered tiles require specific area sizes. Reveal them all correctly to win!",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=reveal-the-tiles"
+}

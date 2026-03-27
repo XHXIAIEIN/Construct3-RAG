@@ -1,0 +1,32 @@
+{
+  "id": "skyscraper-builder",
+  "name": "Skyscraper builder",
+  "description": "Build the highest skyscraper you can by stacking floors with the right timing.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Touch",
+      "Keyboard",
+      "TiledBg",
+      "Spritefont2",
+      "Sprite"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust",
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=skyscraper-builder"
+}

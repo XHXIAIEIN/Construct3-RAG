@@ -1,0 +1,21 @@
+{
+  "id": "bouncing-balls",
+  "name": "功能示例：子弹重力",
+  "description": "演示子弹行为的重力功能与反弹实体组合使用，产生弹跳球的运动效果。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bouncing-balls"
+}

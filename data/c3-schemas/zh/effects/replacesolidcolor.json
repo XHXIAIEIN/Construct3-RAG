@@ -1,0 +1,29 @@
+{
+  "id": "replacesolidcolor",
+  "name": "替换纯色",
+  "description": "将图像中的某种颜色替换为纯色。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "source-color",
+      "type": "color",
+      "name": "来源",
+      "desc": "要替换的源颜色。"
+    },
+    {
+      "id": "replace-color",
+      "type": "color",
+      "name": "替换",
+      "desc": "将来源得颜色替换为新的颜色。"
+    },
+    {
+      "id": "tolerance",
+      "type": "percent",
+      "name": "容差",
+      "desc": "范围从0到100。增加容差可以替换更接近来源的颜色。"
+    }
+  ]
+}

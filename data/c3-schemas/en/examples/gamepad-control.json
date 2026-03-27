@@ -1,0 +1,25 @@
+{
+  "id": "gamepad-control",
+  "name": "Gamepad control",
+  "description": "A simple demo of how to use the Gamepad object as an alternative input to control a game.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Keyboard",
+      "gamepad"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gamepad-control"
+}

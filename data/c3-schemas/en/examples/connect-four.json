@@ -1,0 +1,32 @@
+{
+  "id": "connect-four",
+  "name": "Connect four",
+  "description": "Compete with another player to see who's able to place a four discs in a line first.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Touch",
+      "Camera3D",
+      "Shape3D",
+      "Mouse",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=connect-four"
+}

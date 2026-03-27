@@ -1,0 +1,25 @@
+{
+  "id": "alchemist",
+  "name": "Alchemist",
+  "description": "Unravel all sorts of hidden materials by dragging and dropping to mix different materials.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Camera3D",
+      "Particles"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=alchemist"
+}

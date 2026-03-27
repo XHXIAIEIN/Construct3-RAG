@@ -1,0 +1,34 @@
+{
+  "id": "multiplayer-time-attack",
+  "name": "Multiplayer time attack",
+  "description": "Engage in real-time multiplayer races, competing against others to achieve the fastest time on the circuit.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Button",
+      "Date",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Car",
+      "Flash",
+      "Tween",
+      "bound",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-time-attack"
+}

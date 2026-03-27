@@ -1,0 +1,30 @@
+{
+  "id": "ledge-climb",
+  "name": "Ledge climb",
+  "description": "A platformer enhanced with the ability to grab on to ledges and avoid falling in to traps.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "solid",
+      "LOS",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ledge-climb"
+}

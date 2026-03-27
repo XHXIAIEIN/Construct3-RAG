@@ -1,0 +1,33 @@
+{
+  "id": "ancient-watcher-fortress",
+  "name": "Ancient Watcher fortress",
+  "description": "You find yourself in a forbidden place with a mighty entity inside. The only way out is to defeat it.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ancient-watcher-fortress"
+}

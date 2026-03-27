@@ -1,0 +1,33 @@
+{
+  "id": "marble-spiral-clash",
+  "name": "游戏示例：祖玛",
+  "description": "发射弹珠，匹配三个及以上相同颜色的弹珠即可消除并得分，阻止它们抵达你的炮台！",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "destroy"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=marble-spiral-clash"
+}

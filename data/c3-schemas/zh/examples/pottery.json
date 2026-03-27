@@ -1,0 +1,31 @@
+{
+  "id": "pottery",
+  "name": "脚本项目：陶艺大师",
+  "description": "使用各种工具雕刻和绘制令人惊叹的陶瓷罐，然后与世界分享您独特的创作！",
+  "tags": [
+    "高级",
+    "功能示例",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "DrawingCanvas",
+      "Share",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pottery"
+}

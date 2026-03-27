@@ -1,0 +1,19 @@
+{
+  "id": "guess-the-number-js",
+  "name": "脚本示例：猜数字",
+  "description": "使用代码实现的简单猜数字游戏。",
+  "tags": [
+    "games-recommended",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "TextBox",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=guess-the-number-js"
+}

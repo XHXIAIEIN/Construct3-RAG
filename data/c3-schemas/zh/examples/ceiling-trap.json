@@ -1,0 +1,34 @@
+{
+  "id": "ceiling-trap",
+  "name": "关卡设计: 天花板陷阱",
+  "description": "快速躲避从天花板砸下来的陷阱，适用于平台跳跃游戏的关卡设计。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "NinePatch",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Pin",
+      "LOS",
+      "Tween",
+      "Timer",
+      "jumpthru",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=ceiling-trap"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "catch-the-rats",
+  "name": "Catch the rats",
+  "description": "Compete with a friend to see who can catch the largest number of rats in the sewers using giant cages.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=catch-the-rats"
+}

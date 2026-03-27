@@ -1,0 +1,35 @@
+{
+  "id": "box-breaker",
+  "name": "游戏示例: 疾奔牛仔",
+  "description": "经典流行的消除类游戏，带领一群牛仔在西部荒野中奔跑，躲避并粉碎迎面而来的箱子！",
+  "tags": [
+    "游戏模板",
+    "进阶",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=box-breaker"
+}

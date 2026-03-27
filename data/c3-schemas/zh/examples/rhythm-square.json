@@ -1,0 +1,31 @@
+{
+  "id": "rhythm-square",
+  "name": "脚本项目: 节奏方块",
+  "description": "感受节奏，随着音乐节拍，精准地将螺栓插入两个方块中。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rhythm-square"
+}

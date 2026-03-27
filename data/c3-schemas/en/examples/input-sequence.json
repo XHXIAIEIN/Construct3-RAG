@@ -1,0 +1,33 @@
+{
+  "id": "input-sequence",
+  "name": "Input sequence",
+  "description": "Perform special combo moves by pressing a specific sequence of buttons.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Fighting"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Arr",
+      "DrawingCanvas"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Bullet",
+      "destroy",
+      "Fade",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=input-sequence"
+}

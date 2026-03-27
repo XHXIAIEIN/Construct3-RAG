@@ -1,0 +1,31 @@
+{
+  "id": "train-navigation",
+  "name": "Train navigation",
+  "description": "Navigate a simple train system with smooth transitions between each scene.",
+  "tags": [
+    "Intermediate",
+    "Adventure",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "MoveTo",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=train-navigation"
+}

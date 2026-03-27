@@ -1,0 +1,29 @@
+{
+  "id": "template-golf",
+  "name": "游戏示例：高尔夫球",
+  "description": "使用鼠标或屏幕触控，将高尔夫球击飞到球场吧。",
+  "tags": [
+    "简单",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "TiledBg",
+      "Particles",
+      "Touch",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Physics",
+      "Bullet",
+      "destroy",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-golf"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "mesh-relative-displacement",
+  "name": "Mesh relative displacement",
+  "description": "Demonstrates another use of mesh distortion, this time using relative positioning of mesh points to create a warping effect.",
+  "tags": [
+    "Advanced",
+    "Mesh distortion",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "List"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-relative-displacement"
+}

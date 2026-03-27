@@ -1,0 +1,20 @@
+{
+  "id": "cgs-auth-providers",
+  "name": "Log in with providers",
+  "description": "Demonstrates Construct Game Services authentication providers to allow users to log in.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "List",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-auth-providers"
+}

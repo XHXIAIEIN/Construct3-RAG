@@ -1,0 +1,17 @@
+{
+  "id": "html-element",
+  "name": "HTML Element",
+  "description": "A demonstration of a few of the things the HTML Element plugin can be used for.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "HTMLElement"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-element"
+}

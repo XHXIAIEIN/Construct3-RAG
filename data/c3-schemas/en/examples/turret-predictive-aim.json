@@ -1,0 +1,24 @@
+{
+  "id": "turret-predictive-aim",
+  "name": "Turret predictive aim",
+  "description": "Using the Turret behavior's predictive aim feature to aim more accurately at moving targets.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Turret",
+      "EightDir",
+      "Flash",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=turret-predictive-aim"
+}

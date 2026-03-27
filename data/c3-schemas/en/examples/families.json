@@ -1,0 +1,24 @@
+{
+  "id": "families",
+  "name": "Families",
+  "description": "A simple example demonstrating how the 'Families' feature can be used to avoid repeating events.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "destroy",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=families"
+}

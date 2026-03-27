@@ -1,0 +1,17 @@
+{
+  "id": "spritefont-formatting",
+  "name": "富文本：位图字体",
+  "description": "演示使用BBCode标记格式化精灵字体对象的内容",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spritefont-formatting"
+}

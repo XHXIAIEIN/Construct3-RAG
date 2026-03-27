@@ -1,0 +1,27 @@
+{
+  "id": "blacksmith-forge",
+  "name": "Blacksmith forge",
+  "description": "Watch as the blacksmith expertly uses his hammering skills to craft a powerful blade.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Bullet",
+      "DragnDrop",
+      "Fade",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=blacksmith-forge"
+}

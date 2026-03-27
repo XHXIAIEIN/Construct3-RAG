@@ -1,0 +1,23 @@
+{
+  "id": "multiplayer-chat",
+  "name": "Multiplayer: chat room",
+  "description": "An example of a chat room using the Multiplayer object. This is the simplest demonstration of how to use Construct 3's Multiplayer features.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Multiplayer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "List",
+      "Multiplayer",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-chat"
+}

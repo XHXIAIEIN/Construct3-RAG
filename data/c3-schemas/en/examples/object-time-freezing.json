@@ -1,0 +1,42 @@
+{
+  "id": "object-time-freezing",
+  "name": "Object time freezing",
+  "description": "Temporarily freeze the crates in time, and store kinetic energy in them with your sword that is unleashed when time unfreezes.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "LOS",
+      "Physics",
+      "Platform",
+      "Rotate",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "bulge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "sharpen",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=object-time-freezing"
+}

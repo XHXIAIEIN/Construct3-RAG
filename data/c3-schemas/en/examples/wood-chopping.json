@@ -1,0 +1,27 @@
+{
+  "id": "wood-chopping",
+  "name": "Wood chopping",
+  "description": "Chop as many logs as you can without getting hit in the head by a tree branch.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wood-chopping"
+}

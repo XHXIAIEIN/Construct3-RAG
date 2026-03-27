@@ -1,0 +1,330 @@
+{
+  "id": "los",
+  "name": "Line of sight",
+  "description": "Test if an object has line of sight to (if it can \"see\") an object or position.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "has-los-to-object",
+      "scriptName": "HasLOSToObject",
+      "category": "",
+      "list-name": "Has LOS to object",
+      "display-text": "Has {my} to {0} image point [i]{1}[/i]",
+      "description": "Test if there is line-of-sight to any instance of an object type.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Choose the object to test if line-of-sight covers."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point (optional)",
+          "desc": "The name or number of an image point in the object to test line-of-sight to. Leave 0 for object's origin."
+        }
+      }
+    },
+    {
+      "id": "has-los-to-position",
+      "scriptName": "HasLOSToPosition",
+      "category": "",
+      "list-name": "Has LOS to position",
+      "display-text": "Has {my} to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Test if there is line-of-sight to a position in the layout.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to test line-of-sight to, in pixels."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to test line-of-sight to, in pixels."
+        }
+      }
+    },
+    {
+      "id": "has-los-between-positions",
+      "scriptName": "HasLOSBetweenPositions",
+      "category": "",
+      "list-name": "Has LOS between positions",
+      "display-text": "Has {my} from ([i]{0}[/i], [i]{1}[/i]) angle [i]{2}[/i] to ([i]{3}[/i], [i]{4}[/i])",
+      "description": "Test if there is line-of-sight between any two positions in the layout.",
+      "params": {
+        "from-x": {
+          "type": "number",
+          "name": "From X",
+          "desc": "The X co-ordinate to test line-of-sight from, in pixels."
+        },
+        "from-y": {
+          "type": "number",
+          "name": "From Y",
+          "desc": "The Y co-ordinate to test line-of-sight from, in pixels."
+        },
+        "from-angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle to orient the cone of view with, in degrees."
+        },
+        "to-x": {
+          "type": "number",
+          "name": "To X",
+          "desc": "The X co-ordinate to test line-of-sight to, in pixels."
+        },
+        "to-y": {
+          "type": "number",
+          "name": "To Y",
+          "desc": "The Y co-ordinate to test line-of-sight to, in pixels."
+        }
+      }
+    },
+    {
+      "id": "ray-intersected",
+      "scriptName": "RayIntersected",
+      "category": "",
+      "list-name": "Ray intersected",
+      "display-text": "{my} ray intersected",
+      "description": "Test if the last cast ray intersected an obstacle."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-range",
+      "scriptName": "SetRange",
+      "category": "",
+      "list-name": "Set range",
+      "display-text": "Set {my} range to [i]{0}[/i]",
+      "description": "Set the maximum range the line-of-sight can cover.",
+      "params": {
+        "range": {
+          "type": "number",
+          "name": "Range",
+          "desc": "The new maximum distance in pixels that line-of-sight can cover."
+        }
+      }
+    },
+    {
+      "id": "set-cone-of-view",
+      "scriptName": "SetCone",
+      "category": "",
+      "list-name": "Set cone of view",
+      "display-text": "Set {my} cone of view to [i]{0}[/i]",
+      "description": "Set the angle range relative to the object angle that line-of-sight can cover.",
+      "params": {
+        "cone-of-view": {
+          "type": "number",
+          "name": "Cone of view",
+          "desc": "The new angle range in degrees relative to the object angle that line-of-sight can cover."
+        }
+      }
+    },
+    {
+      "id": "add-obstacle",
+      "scriptName": "AddObstacle",
+      "category": "",
+      "list-name": "Add obstacle",
+      "display-text": "Add {my} obstacle {0}",
+      "description": "Add a custom object as an obstacle to line-of-sight.",
+      "params": {
+        "obstacle": {
+          "type": "object",
+          "name": "Obstacle",
+          "desc": "Choose an object to add as an obstacle, obstructing line-of-sight."
+        }
+      }
+    },
+    {
+      "id": "clear-obstacles",
+      "scriptName": "ClearObstacles",
+      "category": "",
+      "list-name": "Clear obstacles",
+      "display-text": "Clear {my} obstacles",
+      "description": "Remove all added obstacle objects."
+    },
+    {
+      "id": "cast-ray",
+      "scriptName": "CastRay",
+      "category": "",
+      "list-name": "Cast ray",
+      "display-text": "Cast {my} ray from ({0}, {1}) to ({2}, {3}) (use collision cells [i]{4}[/i])",
+      "description": "Cast a ray between any two positions in the layout, checking for obstructions.",
+      "params": {
+        "from-x": {
+          "type": "number",
+          "name": "From X",
+          "desc": "The ray origin X co-ordinate."
+        },
+        "from-y": {
+          "type": "number",
+          "name": "From Y",
+          "desc": "The ray origin Y co-ordinate."
+        },
+        "to-x": {
+          "type": "number",
+          "name": "To X",
+          "desc": "The ray destination X co-ordinate."
+        },
+        "to-y": {
+          "type": "number",
+          "name": "To Y",
+          "desc": "The ray destination Y co-ordinate."
+        },
+        "use-collision-cells": {
+          "type": "boolean",
+          "name": "Use collision cells",
+          "desc": "Enabling usually improves performance, but can be slower over very long distances."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "range",
+      "scriptName": "Range",
+      "category": "",
+      "translated-name": "Range",
+      "description": "Return the current range in pixels that line-of-sight can cover.",
+      "returnType": "number"
+    },
+    {
+      "id": "coneofview",
+      "scriptName": "ConeOfView",
+      "category": "",
+      "translated-name": "ConeOfView",
+      "description": "Return the current cone of view in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "hitx",
+      "scriptName": "HitX",
+      "category": "",
+      "translated-name": "HitX",
+      "description": "Return the X position of the hit position.",
+      "returnType": "number"
+    },
+    {
+      "id": "hity",
+      "scriptName": "HitY",
+      "category": "",
+      "translated-name": "HitY",
+      "description": "Return the Y position of the hit position.",
+      "returnType": "number"
+    },
+    {
+      "id": "hituid",
+      "scriptName": "HitUID",
+      "category": "",
+      "translated-name": "HitUID",
+      "description": "Return the UID of the instance that was hit.",
+      "returnType": "number"
+    },
+    {
+      "id": "hitdistance",
+      "scriptName": "HitDistance",
+      "category": "",
+      "translated-name": "HitDistance",
+      "description": "Return the distance between the ray origin and hit position.",
+      "returnType": "number"
+    },
+    {
+      "id": "normalx",
+      "scriptName": "NormalX",
+      "category": "",
+      "translated-name": "NormalX",
+      "description": "Return the X position at a distance along the hit normal.",
+      "params": {
+        "length": {
+          "type": "number",
+          "name": "length",
+          "desc": "Length along the normal"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "normaly",
+      "scriptName": "NormalY",
+      "category": "",
+      "translated-name": "NormalY",
+      "description": "Return the Y position at a distance along the hit normal",
+      "params": {
+        "length": {
+          "type": "number",
+          "name": "length",
+          "desc": "Length along the normal"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "normalangle",
+      "scriptName": "NormalAngle",
+      "category": "",
+      "translated-name": "NormalAngle",
+      "description": "Return the angle for the surface normal at the hit position.",
+      "returnType": "number"
+    },
+    {
+      "id": "reflectionx",
+      "scriptName": "ReflectionX",
+      "category": "",
+      "translated-name": "ReflectionX",
+      "description": "Return the X position at a distance along the hit reflection angle.",
+      "params": {
+        "length": {
+          "type": "number",
+          "name": "length",
+          "desc": "Length along the reflection"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "reflectiony",
+      "scriptName": "ReflectionY",
+      "category": "",
+      "translated-name": "ReflectionY",
+      "description": "Return the Y position at a distance along the hit reflection angle.",
+      "params": {
+        "length": {
+          "type": "number",
+          "name": "length",
+          "desc": "Length along the reflection"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "reflectionangle",
+      "scriptName": "ReflectionAngle",
+      "category": "",
+      "translated-name": "ReflectionAngle",
+      "description": "Return the absolute angle of the ray reflection at the hit position.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "obstacles": {
+      "name": "Obstacles",
+      "desc": "Choose whether solids obstruct LOS or if to use custom objects added by events.",
+      "items": {
+        "solids": "Solids",
+        "custom": "Custom"
+      }
+    },
+    "range": {
+      "name": "Range",
+      "desc": "The maximum distance in pixels that line-of-sight can cover."
+    },
+    "cone-of-view": {
+      "name": "Cone of view",
+      "desc": "The angle range in degrees relative to the object angle that line-of-sight can cover."
+    },
+    "use-collision-cells": {
+      "name": "Use collision cells",
+      "desc": "Enabling usually improves performance, but can be slower over very long distances."
+    }
+  }
+}

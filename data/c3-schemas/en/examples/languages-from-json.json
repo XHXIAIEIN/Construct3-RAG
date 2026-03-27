@@ -1,0 +1,29 @@
+{
+  "id": "languages-from-json",
+  "name": "Languages from JSON",
+  "description": "Demonstrates a basic way to translate a game by loading strings from a language file stored as an array.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Mouse",
+      "TiledBg",
+      "AJAX",
+      "NinePatch",
+      "Spritefont2",
+      "Touch"
+    ],
+    "behaviors": [
+      "Tween",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=languages-from-json"
+}

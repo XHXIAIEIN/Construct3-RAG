@@ -1,0 +1,39 @@
+{
+  "id": "mask-effect-puzzle",
+  "name": "关卡设计：遮罩蒙版解谜",
+  "description": "使用混合模式效果来创建视觉遮罩，来实现玩家揭示隐藏陷阱的特殊能力。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Mouse",
+      "Tilemap",
+      "Particles",
+      "Keyboard",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Fade",
+      "solid",
+      "Sin",
+      "LOS",
+      "Bullet",
+      "jumpthru",
+      "Pin",
+      "Timer"
+    ],
+    "effects": [
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=mask-effect-puzzle"
+}

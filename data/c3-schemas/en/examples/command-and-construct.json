@@ -1,0 +1,29 @@
+{
+  "id": "command-and-construct",
+  "name": "Command & Construct multiplayer RTS",
+  "description": "Follow the open development of a multiplayer real-time strategy (RTS) game using TypeScript coding in Construct.",
+  "tags": [
+    "Advanced",
+    "Tech demo",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Browser",
+      "Button",
+      "HTMLElement",
+      "Keyboard",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=command-and-construct"
+}

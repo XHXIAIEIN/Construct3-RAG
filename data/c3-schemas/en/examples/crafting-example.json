@@ -1,0 +1,20 @@
+{
+  "id": "crafting-example",
+  "name": "Crafting example",
+  "description": "With the available raw materials, use the recipe book to create various items, all with the ultimate goal of crafting a quiver.",
+  "tags": [
+    "Game template",
+    "Advanced",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=crafting-example"
+}

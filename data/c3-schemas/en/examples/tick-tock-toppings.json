@@ -1,0 +1,41 @@
+{
+  "id": "tick-tock-toppings",
+  "name": "Tick Tock Toppings",
+  "description": "Serve beautifully crafted ice creams using high-tech machines across unique parlors. Master each one to beat the game and unlock the endless mode!",
+  "tags": [
+    "Mobile",
+    "Intermediate",
+    "Demo game",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "ConstructGameServices",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "brightness",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tick-tock-toppings"
+}

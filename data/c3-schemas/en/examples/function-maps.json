@@ -1,0 +1,20 @@
+{
+  "id": "function-maps",
+  "name": "Function maps",
+  "description": "Demonstrates how to use function maps to call a function by a string.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "List",
+      "Button",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=function-maps"
+}

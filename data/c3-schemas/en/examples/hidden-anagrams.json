@@ -1,0 +1,29 @@
+{
+  "id": "hidden-anagrams",
+  "name": "Hidden anagrams",
+  "description": "Solve the word puzzle by identifying anagrams from a small selection of letters.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "3D",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Spritefont2",
+      "Sprite",
+      "Touch",
+      "Camera3D",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=hidden-anagrams"
+}

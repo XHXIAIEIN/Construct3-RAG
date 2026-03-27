@@ -1,0 +1,31 @@
+{
+  "id": "spinning-stick",
+  "name": "Spinning stick",
+  "description": "Help a spinning stick to cross the tight corridors of a magical maze, while also avoiding touching the walls around it.",
+  "tags": [
+    "Beginner",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Shape3D",
+      "Tilemap",
+      "Camera3D",
+      "gamepad",
+      "Keyboard",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "EightDir",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spinning-stick"
+}

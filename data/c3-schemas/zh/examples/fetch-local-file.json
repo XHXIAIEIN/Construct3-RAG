@@ -1,0 +1,13 @@
+{
+  "id": "fetch-local-file",
+  "name": "脚本示例：加载本地项目文件",
+  "description": "使用代码获取项目文件，并显示文件内容。",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fetch-local-file"
+}

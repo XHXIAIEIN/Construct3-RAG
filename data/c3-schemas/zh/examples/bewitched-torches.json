@@ -1,0 +1,27 @@
+{
+  "id": "bewitched-torches",
+  "name": "游戏示例：连锁反应",
+  "description": "被困在鬼屋中的小女巫，你必须点燃所有火把才能脱困！但要小心：黑暗中潜伏着阴暗的蝙蝠，随时准备抓住你！",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "TileMovement",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bewitched-torches"
+}

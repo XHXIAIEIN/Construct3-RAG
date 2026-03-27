@@ -1,0 +1,33 @@
+{
+  "id": "coral-savior",
+  "name": "Coral savior",
+  "description": "Dive deep into the ocean to spread magical seeds in order to restore bleached corals, using audio effects for underwater sounds.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "EightDir",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=coral-savior"
+}

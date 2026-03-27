@@ -1,0 +1,21 @@
+{
+  "id": "custom-actions",
+  "name": "功能示例：对象动作",
+  "description": "演示如何使用对象动作。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-actions"
+}

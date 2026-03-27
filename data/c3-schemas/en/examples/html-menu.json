@@ -1,0 +1,25 @@
+{
+  "id": "html-menu",
+  "name": "HTML menu",
+  "description": "Demonstrates using HTML and CSS to create an animated context menu that automatically sizes to fit its content.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "HTMLElement",
+      "AJAX",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-menu"
+}

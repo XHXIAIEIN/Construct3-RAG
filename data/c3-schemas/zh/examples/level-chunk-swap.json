@@ -1,0 +1,30 @@
+{
+  "id": "level-chunk-swap",
+  "name": "关卡设计꞉ 空间交换",
+  "description": "基于图块的平台游戏，玩家可以通过交换周围的土地来改变关卡地形。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "平台",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Timer",
+      "Platform",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=level-chunk-swap"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "tasty-cappuccino",
+  "name": "时间轴：咖啡教学",
+  "description": "使用时间轴功能制作的交互式幻灯片，掌握制作卡布奇诺的艺术。",
+  "tags": [
+    "animation-recommended",
+    "进阶",
+    "功能示例",
+    "动画",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": [
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tasty-cappuccino"
+}

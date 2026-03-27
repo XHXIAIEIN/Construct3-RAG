@@ -1,0 +1,18 @@
+{
+  "id": "integrating-events-with-script",
+  "name": "Integrating events with script",
+  "description": "Demonstrates two different methods of calling a script function from an event sheet, and passing the result back.",
+  "tags": [
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TextBox",
+      "Text",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=integrating-events-with-script"
+}

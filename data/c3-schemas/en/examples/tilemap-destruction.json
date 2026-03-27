@@ -1,0 +1,34 @@
+{
+  "id": "tilemap-destruction",
+  "name": "Tilemap destruction",
+  "description": "A dynamic platformer environment where the player can completely change the shape of the level with a grenade launcher.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Particles",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Pin",
+      "scrollto",
+      "solid",
+      "Bullet",
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tilemap-destruction"
+}

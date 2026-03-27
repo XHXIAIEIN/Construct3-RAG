@@ -1,0 +1,28 @@
+{
+  "id": "egg-catcher",
+  "name": "Egg catcher",
+  "description": "Use your trusty skimmer to quickly pick the falling eggs before they hit the ground and break.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=egg-catcher"
+}

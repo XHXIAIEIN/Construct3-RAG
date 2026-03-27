@@ -1,0 +1,31 @@
+{
+  "id": "infinite-dash",
+  "name": "Infinite dash",
+  "description": "Control the player by pressing a direction that it dashes in until it hits a surface.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Platform",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=infinite-dash"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "shooting-cube",
+  "name": "Shooting cube",
+  "description": "A unique way to control the player in a platform game, by rolling a cube and shooting bullets.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2",
+      "Particles"
+    ],
+    "behaviors": [
+      "solid",
+      "Bullet",
+      "Sin",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Fade",
+      "Timer",
+      "TileMovement",
+      "Rotate",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shooting-cube"
+}

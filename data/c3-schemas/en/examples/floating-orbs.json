@@ -1,0 +1,34 @@
+{
+  "id": "floating-orbs",
+  "name": "Floating orbs",
+  "description": "Travel around a platform level by jumping in to floating red orbs.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "EightDir",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=floating-orbs"
+}

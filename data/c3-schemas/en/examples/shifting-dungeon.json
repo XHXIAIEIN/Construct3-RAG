@@ -1,0 +1,33 @@
+{
+  "id": "shifting-dungeon",
+  "name": "Shifting dungeon",
+  "description": "Rearrange the level by moving sections of the floor at your will.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Puzzle",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "EightDir",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=shifting-dungeon"
+}

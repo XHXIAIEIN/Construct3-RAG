@@ -1,0 +1,22 @@
+{
+  "id": "chess-board-designer",
+  "name": "脚本项目：棋盘编辑器",
+  "description": "输入棋盘 FEN 数据将棋子生成到指定的棋盘位置，用于复盘国际象棋的对局。",
+  "tags": [
+    "高级",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=chess-board-designer"
+}

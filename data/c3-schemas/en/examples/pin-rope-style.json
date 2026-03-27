@@ -1,0 +1,21 @@
+{
+  "id": "pin-rope-style",
+  "name": "Pin rope style",
+  "description": "Create a loose \"rope\" of objects by pinning together a line of sprites.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pin-rope-style"
+}

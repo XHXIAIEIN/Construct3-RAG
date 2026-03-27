@@ -1,0 +1,35 @@
+{
+  "id": "magic-feather",
+  "name": "Magic feather",
+  "description": "A platformer where the player can temporarily fly by grabbing a magic feather.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "EightDir",
+      "Bullet",
+      "solid",
+      "LOS",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=magic-feather"
+}

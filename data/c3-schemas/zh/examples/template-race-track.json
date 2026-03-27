@@ -1,0 +1,26 @@
+{
+  "id": "template-race-track",
+  "name": "AI：赛车游戏",
+  "description": "功能更丰富的竞速赛车模板。带有跑圈计时、AI对手、镜头缩放以及位置追踪检查点系统。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Arr",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Car",
+      "solid",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-race-track"
+}

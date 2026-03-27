@@ -1,0 +1,18 @@
+{
+  "id": "system-wait",
+  "name": "System 'Wait' action",
+  "description": "A simple example of how to use the system 'Wait' action to schedule actions.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=system-wait"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "box-breaker",
+  "name": "Box Breaker",
+  "description": "Take command of a group of cowboys running in the Wild West, dodging and smashing incoming boxes!",
+  "tags": [
+    "Game template",
+    "Intermediate",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "destroy",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=box-breaker"
+}

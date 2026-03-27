@@ -1,0 +1,29 @@
+{
+  "id": "template-gravityless-labyrinth",
+  "name": "Gravityless labyrinth",
+  "description": "Solve the maze by moving in a fixed direction all the way, collecting items and avoiding the traps.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "solid",
+      "Tween",
+      "scrollto",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-gravityless-labyrinth"
+}

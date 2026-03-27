@@ -1,0 +1,42 @@
+{
+  "id": "overloaded-underqualified",
+  "name": "游戏示例：跑腿模拟器",
+  "description": "驾驶车辆穿梭于城市之间，完成各种送货任务，克服艰难的路线，并用赚取的现金升级你的配送装备。",
+  "tags": [
+    "完整游戏",
+    "高级",
+    "街机",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Car",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "darken",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=overloaded-underqualified"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "raycast-reflections",
+  "name": "Raycast reflections",
+  "description": "Uses the Line of Sight behavior's raycasting in a loop to repeatedly bounce a ray until it leaves the layout, while drawing lines on a Drawing Canvas to make the ray visible.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text",
+      "DrawingCanvas",
+      "Touch"
+    ],
+    "behaviors": [
+      "EightDir",
+      "LOS",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=raycast-reflections"
+}

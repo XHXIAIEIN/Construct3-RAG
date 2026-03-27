@@ -1,0 +1,28 @@
+{
+  "id": "world-builder",
+  "name": "3D地形: 创世者",
+  "description": "使用网格纹理的力量来塑造您的世界！雕刻山脉、河流和平原，然后用树木、岩石、动物等让一切栩栩如生。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "DrawingCanvas",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=world-builder"
+}

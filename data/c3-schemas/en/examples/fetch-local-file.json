@@ -1,0 +1,13 @@
+{
+  "id": "fetch-local-file",
+  "name": "Fetching project files",
+  "description": "Shows how to fetch and display the contents of a project file using code.",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fetch-local-file"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "sound-synthesis",
+  "name": "设备：声音合成",
+  "description": "演示将 Web Audio API 与 Construct 的 Audio 对象一起使用，用自定义样本数据填充音频缓冲区，然后播放它们。",
+  "tags": [
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Button",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=sound-synthesis"
+}

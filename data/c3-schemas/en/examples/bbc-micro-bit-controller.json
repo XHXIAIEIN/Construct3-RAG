@@ -1,0 +1,27 @@
+{
+  "id": "bbc-micro-bit-controller",
+  "name": "BBC micro:bit controller",
+  "description": "A demonstration of using the BBC micro:bit as a controller for a game.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BBCMicroBit",
+      "Button",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Bullet",
+      "bound",
+      "destroy",
+      "wrap"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-controller"
+}

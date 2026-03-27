@@ -1,0 +1,26 @@
+{
+  "id": "3dshape-tour",
+  "name": "功能示例：3D多边形",
+  "description": "以导览方式展示 3D 形状对象的各种类型。",
+  "tags": [
+    "简单",
+    "3D",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "EightDir",
+      "scrollto",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=3dshape-tour"
+}

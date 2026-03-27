@@ -1,0 +1,22 @@
+{
+  "id": "speech-synthesis",
+  "name": "Speech synthesis",
+  "description": "How to use the Speech Synthesis object to read out some text (also known as text-to-speech or TTS).",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "TextBox",
+      "Button",
+      "List",
+      "SpeechSynthesis"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=speech-synthesis"
+}

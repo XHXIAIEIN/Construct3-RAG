@@ -1,0 +1,30 @@
+{
+  "id": "plumber-puzzle",
+  "name": "Plumber puzzle",
+  "description": "Avoid a flood by rearranging the pipes in the correct order before the water flow is restored.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "NinePatch",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin",
+      "Rotate"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=plumber-puzzle"
+}

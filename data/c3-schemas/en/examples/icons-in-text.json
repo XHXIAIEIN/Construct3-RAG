@@ -1,0 +1,18 @@
+{
+  "id": "icons-in-text",
+  "name": "Icons in text",
+  "description": "A demonstration of how animation frames from a Sprite object can be shown as icons in a Text object.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=icons-in-text"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "multiplayer-pong",
+  "name": "Multiplayer: pong",
+  "description": "A very simple multiplayer game, with two players controlling a paddle each.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Multiplayer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-pong"
+}

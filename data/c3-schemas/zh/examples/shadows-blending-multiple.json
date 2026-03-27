@@ -1,0 +1,22 @@
+{
+  "id": "shadows-blending-multiple",
+  "name": "阴影：混合多个灯光",
+  "description": "展示高级灯光效果，三个移动的彩色阴影投射灯相互融合。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "shadowlight"
+    ],
+    "behaviors": [
+      "Sin",
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-blending-multiple"
+}

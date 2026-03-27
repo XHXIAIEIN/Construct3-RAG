@@ -1,0 +1,20 @@
+{
+  "id": "vibrate",
+  "name": "Vibrate",
+  "description": "An example of the Browser object's 'Vibrate' action which can vibrate a mobile device.",
+  "tags": [
+    "Beginner",
+    "Mobile",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Button",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=vibrate"
+}

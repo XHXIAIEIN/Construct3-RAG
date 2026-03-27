@@ -1,0 +1,19 @@
+{
+  "id": "custom-canvas-drawing",
+  "name": "脚本绘图：绘制曲线",
+  "description": "演示使用 HTML图层的 Canvas 元素绘制具有彩虹渐变的抗锯齿贝塞尔曲线。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "PlatformInfo",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-canvas-drawing"
+}

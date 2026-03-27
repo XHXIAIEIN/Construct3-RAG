@@ -1,0 +1,28 @@
+{
+  "id": "egg-catcher",
+  "name": "游戏示例: 捞鸡蛋",
+  "description": "快速接住掉落的鸡蛋，别让它们摔碎在地上！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Flash",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=egg-catcher"
+}

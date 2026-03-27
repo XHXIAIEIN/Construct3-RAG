@@ -1,0 +1,29 @@
+{
+  "id": "3d-platformer",
+  "name": "3D Platformer",
+  "description": "Walk, jump and reach the flag at the end of the level in a 3D environment.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=3d-platformer"
+}

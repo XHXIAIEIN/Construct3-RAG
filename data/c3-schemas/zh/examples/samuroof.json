@@ -1,0 +1,47 @@
+{
+  "id": "samuroof",
+  "name": "游戏示例：武士道",
+  "description": "冲过城市屋顶，唤醒五个神圣的锣并封住入口，驱逐困扰这片土地的邪恶灵魂。",
+  "tags": [
+    "进阶",
+    "完整游戏",
+    "街机",
+    "平台",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "BinaryData",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Timeline",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=samuroof"
+}

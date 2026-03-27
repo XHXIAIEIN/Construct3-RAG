@@ -1,0 +1,31 @@
+{
+  "id": "winter-tree",
+  "name": "Winter tree",
+  "description": "Transform a simple winter tree into a unique masterpiece by adjusting its branches and colors.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Hierarchy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Browser",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=winter-tree"
+}

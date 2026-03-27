@@ -1,0 +1,37 @@
+{
+  "id": "tilemap-switching",
+  "name": "Tilemap switching",
+  "description": "An advanced gameplay mechanic allowing the player to switch between different tilemaps, with a depth effect.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Platformer",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Platform",
+      "Tween",
+      "Pin",
+      "solid",
+      "Bullet",
+      "scrollto",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "darken",
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tilemap-switching"
+}

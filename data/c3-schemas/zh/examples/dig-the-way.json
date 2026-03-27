@@ -1,0 +1,32 @@
+{
+  "id": "dig-the-way",
+  "name": "游戏示例: 掘地求路",
+  "description": "帮助矿工挖掘泥土堆，寻找闪闪发光的金块！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Dictionary",
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Tween",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=dig-the-way"
+}

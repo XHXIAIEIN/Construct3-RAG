@@ -1,0 +1,21 @@
+{
+  "id": "geolocation",
+  "name": "功能示例：地理位置",
+  "description": "演示在 Google 地图上显示当前位置的数据。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Geolocation",
+      "Button",
+      "Browser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=geolocation"
+}

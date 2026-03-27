@@ -1,0 +1,31 @@
+{
+  "id": "top-down-hook",
+  "name": "Top-down hook",
+  "description": "An 8-direction movement augmented with the ability to fire a hook that pulls the player across obstacles.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Keyboard",
+      "TiledBg",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "LOS",
+      "EightDir",
+      "Tween",
+      "scrollto",
+      "solid",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=top-down-hook"
+}

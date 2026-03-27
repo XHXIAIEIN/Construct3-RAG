@@ -1,0 +1,44 @@
+{
+  "id": "fuji-leaper",
+  "name": "Fuji Leaper",
+  "description": "Unleash your samurai skills to rid the swamp near Mount Fuji of pesky flies.",
+  "tags": [
+    "Intermediate",
+    "Demo game",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "brightness",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fuji-leaper"
+}

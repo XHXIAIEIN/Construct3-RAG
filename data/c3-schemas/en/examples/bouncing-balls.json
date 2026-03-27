@@ -1,0 +1,21 @@
+{
+  "id": "bouncing-balls",
+  "name": "Bouncing balls",
+  "description": "Uses the Bullet behavior to create a bouncing ball movement.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Bullet",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bouncing-balls"
+}

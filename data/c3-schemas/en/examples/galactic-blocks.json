@@ -1,0 +1,36 @@
+{
+  "id": "galactic-blocks",
+  "name": "Galactic blocks",
+  "description": "Protect your planet by matching and destroying colored meteors before they get too close.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Arr",
+      "TiledBg",
+      "DrawingCanvas",
+      "Spritefont2",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Bullet",
+      "Rotate",
+      "Fade",
+      "Flash",
+      "Pin"
+    ],
+    "effects": [
+      "glowvertical",
+      "glowhorizontal",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=galactic-blocks"
+}

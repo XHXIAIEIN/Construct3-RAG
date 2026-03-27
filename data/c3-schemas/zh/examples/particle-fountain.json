@@ -1,0 +1,21 @@
+{
+  "id": "particle-fountain",
+  "name": "粒子：喷泉效果",
+  "description": "演示 '粒子' 对象创建的喷泉效果。",
+  "tags": [
+    "简单",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text"
+    ],
+    "behaviors": [
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particle-fountain"
+}

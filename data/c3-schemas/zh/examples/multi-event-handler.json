@@ -1,0 +1,17 @@
+{
+  "id": "multi-event-handler",
+  "name": "脚本示例：多线程事件",
+  "description": "演示一个简单小巧的 MultiEventHandler 类，用于添加和删除多个事件监听器。",
+  "tags": [
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multi-event-handler"
+}

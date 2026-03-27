@@ -1,0 +1,43 @@
+{
+  "id": "3d-castle-maze",
+  "name": "3D迷宫",
+  "description": "通过第一人称视角在使用3D对象搭建的迷宫里寻找出路。",
+  "tags": [
+    "高级",
+    "3D",
+    "游戏模板",
+    "冒险",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "TiledBg",
+      "gamepad",
+      "Particles",
+      "PlatformInfo",
+      "Spritefont2",
+      "Camera3D"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjustmask",
+      "blurhorizontal",
+      "warpobject",
+      "vignette",
+      "bulge",
+      "pixellate",
+      "alphaclamp",
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=3d-castle-maze"
+}

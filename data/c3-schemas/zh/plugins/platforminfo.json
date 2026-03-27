@@ -1,0 +1,394 @@
+{
+  "id": "platforminfo",
+  "name": "设备信息",
+  "description": "获取正在运行应用程序的平台设备信息。",
+  "type": "plugin",
+  "aceCategories": {
+    "platform": "平台",
+    "display": "显示",
+    "network": "网络",
+    "device": "设备",
+    "export": "导出类型",
+    "wake-lock": "屏幕常亮",
+    "performance": "性能测试"
+  },
+  "conditions": [
+    {
+      "id": "is-on-mobile",
+      "scriptName": "IsOnMobile",
+      "category": "platform",
+      "list-name": "在移动端运行",
+      "display-text": "在移动端运行",
+      "description": "检测当前运行设备是否为移动设备，如手机、平板电脑。注意：这种检测方式并非总是准确的，也不意味着此时必须要使用某种操作方式，如触屏。"
+    },
+    {
+      "id": "is-on-windows",
+      "scriptName": "IsOnWindows",
+      "category": "platform",
+      "list-name": "在 Windows 运行",
+      "display-text": "在 Windows 运行",
+      "description": "检测当前的运行平台是否为 Windows 设备。"
+    },
+    {
+      "id": "is-on-macos",
+      "scriptName": "IsOnMacOS",
+      "category": "platform",
+      "list-name": "在 macOS 运行",
+      "display-text": "在 macOS 运行",
+      "description": "检测当前的运行平台是否为 MacOS / OS X 设备。"
+    },
+    {
+      "id": "is-on-linux",
+      "scriptName": "IsOnLinux",
+      "category": "platform",
+      "list-name": "在 Linux 运行",
+      "display-text": "在 Linux 运行",
+      "description": "检测当前的运行平台是否为 Linux 设备。"
+    },
+    {
+      "id": "is-on-chromeos",
+      "scriptName": "IsOnChromeOS",
+      "category": "platform",
+      "list-name": "在 Chrome OS 运行",
+      "display-text": "在 Chrome OS 运行",
+      "description": "检测当前的运行平台是否为 Chrome OS 设备。"
+    },
+    {
+      "id": "is-on-android",
+      "scriptName": "IsOnAndroid",
+      "category": "platform",
+      "list-name": "在 Android 运行",
+      "display-text": "在 Android 运行",
+      "description": "检测当前的运行平台是否为 Android 设备。"
+    },
+    {
+      "id": "is-on-ios",
+      "scriptName": "IsOniOS",
+      "category": "platform",
+      "list-name": "在 iOS 运行",
+      "display-text": "在 iOS 运行",
+      "description": "检测当前的运行平台是否为 iOS 设备。"
+    },
+    {
+      "id": "is-web-export",
+      "scriptName": "IsWebExport",
+      "category": "export",
+      "list-name": "使用 Web 导出",
+      "display-text": "使用 Web 导出",
+      "description": "检测当前运行的项目是否使用基于 Web 的导出方式。注意，在预览模式中总是能满足此结果。"
+    },
+    {
+      "id": "is-cordova-export",
+      "scriptName": "IsCordovaExport",
+      "category": "export",
+      "list-name": "使用 Cordova 导出",
+      "display-text": "使用 Cordova 导出",
+      "description": "检测当前运行项目是否使用基于 Cordova 的导出方式。用于检测 Android / iOS 平台。"
+    },
+    {
+      "id": "is-windows-webview2-export",
+      "scriptName": "IsWindowsWebView2Export",
+      "category": "export",
+      "list-name": "使用 Windows WebView2 方式导出",
+      "display-text": "使用 Windows WebView2 方式导出",
+      "description": "检测是否使用 Windows wrapper (WebView2) 方式导出的。"
+    },
+    {
+      "id": "is-macos-wkwebview-export",
+      "scriptName": "IsMacOSWKWebView2Export",
+      "category": "export",
+      "list-name": "使用 macOS WKWebView 导出",
+      "display-text": "使用 macOS WKWebView 导出",
+      "description": "检测是否使用 macOS wrapper (WKWebView) 方式导出的。"
+    },
+    {
+      "id": "is-linux-cef-export",
+      "scriptName": "IsLinuxCEFExport",
+      "category": "export",
+      "list-name": "使用 Linux CEF 导出",
+      "display-text": "使用 Linux CEF 导出",
+      "description": "检查当前应用是否使用 Linux CEF 导出后运行的。"
+    },
+    {
+      "id": "on-network-change",
+      "scriptName": "OnNetworkChange",
+      "category": "network",
+      "list-name": "网络连接已变化",
+      "display-text": "网络连接已变化",
+      "description": "当网络环境发生变化时触发，例如从WiFi切换为流量。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-wake-lock-acquired",
+      "scriptName": "OnWakeLockAcquired",
+      "category": "wake-lock",
+      "list-name": "请求 '屏幕常亮' 成功",
+      "display-text": "请求 '屏幕常亮' 成功",
+      "description": "成功开启屏幕常亮功能时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-wake-lock-error",
+      "scriptName": "OnWakeLockError",
+      "category": "wake-lock",
+      "list-name": "请求 '屏幕常亮' 失败",
+      "display-text": "请求 '屏幕常亮' 失败",
+      "description": "执行 '请求屏幕常亮' 动作后，权限请求失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-wake-lock-released",
+      "scriptName": "OnWakeLockReleased",
+      "category": "wake-lock",
+      "list-name": "屏幕常亮解除",
+      "display-text": "屏幕常亮解除",
+      "description": "开启 '屏幕常亮' 功能后，再次解除时触发，这意味着屏幕此时已关闭。注意：某些情况下，设备会被自动解除。例如进入了省电模式。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-wake-lock-active",
+      "scriptName": "IsWakeLockActive",
+      "category": "wake-lock",
+      "list-name": "已开启屏幕常亮",
+      "display-text": "已开启屏幕常亮",
+      "description": "检测当前是否已完成请求 '请求屏幕常亮' 动作，并且屏幕已保持常亮的状态。"
+    },
+    {
+      "id": "is-wake-lock-supported",
+      "scriptName": "IsWakeLockSupported",
+      "category": "wake-lock",
+      "list-name": "设备支持功能",
+      "display-text": "设备支持屏幕常亮",
+      "description": "检测当前设备是否支持屏幕常亮的功能。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-wake-lock",
+      "scriptName": "RequestWakeLock",
+      "category": "wake-lock",
+      "list-name": "请求屏幕常亮",
+      "display-text": "请求屏幕常亮",
+      "description": "请求设备唤醒锁，让设备保持常亮的状态。注意：这可能会导致电量消耗更快。"
+    },
+    {
+      "id": "release-wake-lock",
+      "scriptName": "ReleaseWakeLock",
+      "category": "wake-lock",
+      "list-name": "关闭屏幕常亮",
+      "display-text": "关闭屏幕常亮",
+      "description": "如果已进入屏幕常亮状态，可以将其关闭。屏幕可能会由于长期不活跃而变暗或者关闭。"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "renderer",
+      "scriptName": "Renderer",
+      "category": "display",
+      "translated-name": "渲染器",
+      "description": "返回当前图形渲染器。如 'webgl2'",
+      "returnType": "string"
+    },
+    {
+      "id": "renderer-detail",
+      "scriptName": "RendererDetail",
+      "category": "display",
+      "translated-name": "渲染器详细信息",
+      "description": "返当GPU显卡描述信息，若设备支持。",
+      "returnType": "string"
+    },
+    {
+      "id": "device-pixel-ratio",
+      "scriptName": "DevicePixelRatio",
+      "category": "display",
+      "translated-name": "设备像素比",
+      "description": "每个CSS像素对应的设备(硬件)像素数",
+      "returnType": "number"
+    },
+    {
+      "id": "screen-width",
+      "scriptName": "ScreenWidth",
+      "category": "display",
+      "translated-name": "屏幕宽度",
+      "description": "获取显示屏的屏幕宽度，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "screen-height",
+      "scriptName": "ScreenHeight",
+      "category": "display",
+      "translated-name": "屏幕高度",
+      "description": "获取显示屏的屏幕高度，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "window-inner-width",
+      "scriptName": "WindowInnerWidth",
+      "category": "display",
+      "translated-name": "窗口内部宽度",
+      "description": "当前窗口的内部大小，这是游戏实际在窗口运行时的内容区域。",
+      "returnType": "number"
+    },
+    {
+      "id": "window-inner-height",
+      "scriptName": "WindowInnerHeight",
+      "category": "display",
+      "translated-name": "窗口内部高度",
+      "description": "当前窗口的内部大小，这是游戏实际在窗口运行时的内容区域。",
+      "returnType": "number"
+    },
+    {
+      "id": "window-outer-width",
+      "scriptName": "WindowOuterWidth",
+      "category": "display",
+      "translated-name": "窗口外侧宽度",
+      "description": "当前窗口的外部大小。包括浏览器的标题栏、状态栏等大小。",
+      "returnType": "number"
+    },
+    {
+      "id": "window-outer-height",
+      "scriptName": "WindowOuterHeight",
+      "category": "display",
+      "translated-name": "窗口外侧高度",
+      "description": "当前窗口的外部大小。包括浏览器的标题栏、状态栏等大小。",
+      "returnType": "number"
+    },
+    {
+      "id": "canvas-css-width",
+      "scriptName": "CanvasCssWidth",
+      "category": "display",
+      "translated-name": "画布CSS宽度",
+      "description": "主显示画布的宽度，以CSS像素为单位",
+      "returnType": "number"
+    },
+    {
+      "id": "canvas-css-height",
+      "scriptName": "CanvasCssHeight",
+      "category": "display",
+      "translated-name": "画布CSS高度",
+      "description": "主显示画布的高度，以CSS像素为单位",
+      "returnType": "number"
+    },
+    {
+      "id": "canvas-device-width",
+      "scriptName": "CanvasDeviceWidth",
+      "category": "display",
+      "translated-name": "画布设备宽度",
+      "description": "设备像素中主显示画布的宽度",
+      "returnType": "number"
+    },
+    {
+      "id": "canvas-device-height",
+      "scriptName": "CanvasDeviceHeight",
+      "category": "display",
+      "translated-name": "画布设备高度",
+      "description": "主显示画布在设备像素中的宽度",
+      "returnType": "number"
+    },
+    {
+      "id": "safe-area-inset-top",
+      "scriptName": "SafeAreaInsetTop",
+      "category": "display",
+      "translated-name": "内部安全区域顶部",
+      "description": "在CSS中嵌入非矩形屏幕上安全矩形区域的像素。",
+      "returnType": "number"
+    },
+    {
+      "id": "safe-area-inset-right",
+      "scriptName": "SafeAreaInsetRight",
+      "category": "display",
+      "translated-name": "内部安全区域右侧",
+      "description": "检测在非矩形屏幕中的安全矩形区域的CSS像素位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "safe-area-inset-bottom",
+      "scriptName": "SafeAreaInsetBottom",
+      "category": "display",
+      "translated-name": "内部安全区域底部",
+      "description": "检测在非矩形屏幕中的安全矩形区域的CSS像素位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "safe-area-inset-left",
+      "scriptName": "SafeAreaInsetLeft",
+      "category": "display",
+      "translated-name": "内部安全区域左侧",
+      "description": "检测在非矩形屏幕中的安全矩形区域的CSS像素位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "downlink",
+      "scriptName": "Downlink",
+      "category": "network",
+      "translated-name": "预估宽带下载速度",
+      "description": "预估的带宽下载速度，以 M/s 为单位。如果无法检测，则返回 0。",
+      "returnType": "number"
+    },
+    {
+      "id": "downlink-max",
+      "scriptName": "DownlinkMax",
+      "category": "network",
+      "translated-name": "预估宽带最大下载速度",
+      "description": "理论上可达到的最大宽带下载速度，实际速度将受到网络信号或其他的影响。如果无法检测，则返回 0。",
+      "returnType": "number"
+    },
+    {
+      "id": "connection-type",
+      "scriptName": "ConnectionType",
+      "category": "network",
+      "translated-name": "网络类型",
+      "description": "返回当前网络连接类型。如 'cellular' (蜂窝数据), 'wifi' (无线局域网), 或 'ethernet' (以太网)。",
+      "returnType": "string"
+    },
+    {
+      "id": "connection-effective-type",
+      "scriptName": "ConnectionEffectiveType",
+      "category": "network",
+      "translated-name": "蜂窝数据类型",
+      "description": "返回当前蜂窝数据类型。如 '2g',  '4g',  '5g'。",
+      "returnType": "string"
+    },
+    {
+      "id": "connection-rtt",
+      "scriptName": "ConnectionRTT",
+      "category": "network",
+      "translated-name": "网络延迟",
+      "description": "预估的网络延迟信息，以 ms 为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "hardware-concurrency",
+      "scriptName": "HardwareConcurrency",
+      "category": "device",
+      "translated-name": "核心进程数",
+      "description": "设备硬件的CPU内核数量。如果无法检测则为0。",
+      "returnType": "number"
+    },
+    {
+      "id": "device-memory",
+      "scriptName": "DeviceMemory",
+      "category": "device",
+      "translated-name": "设备内存",
+      "description": "设备硬件的运行内存 (RAM)，以 GB 为单位。如果无法检测返回为0。",
+      "returnType": "number"
+    },
+    {
+      "id": "frames-per-second",
+      "scriptName": "FramesPerSecond",
+      "category": "performance",
+      "translated-name": "每秒刷新帧数",
+      "description": "每秒渲染游戏画面的帧数。",
+      "returnType": "number"
+    },
+    {
+      "id": "ticks-per-second",
+      "scriptName": "TicksPerSecond",
+      "category": "performance",
+      "translated-name": "每秒运行帧",
+      "description": "每秒处理事件运行的帧数。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

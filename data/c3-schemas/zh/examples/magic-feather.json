@@ -1,0 +1,35 @@
+{
+  "id": "magic-feather",
+  "name": "关卡设计：传送平台 (泡泡球)",
+  "description": "一种平台游戏，玩家可以通过抓住魔法羽毛暂时飞行。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "EightDir",
+      "Bullet",
+      "solid",
+      "LOS",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=magic-feather"
+}

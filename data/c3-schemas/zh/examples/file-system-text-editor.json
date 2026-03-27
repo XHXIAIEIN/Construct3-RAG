@@ -1,0 +1,20 @@
+{
+  "id": "file-system-text-editor",
+  "name": "功能示例：文本编辑器",
+  "description": "简单的文本编辑器，访问本地文件夹对文件进行读写操作。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "FileSystem",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=file-system-text-editor"
+}

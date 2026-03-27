@@ -1,0 +1,23 @@
+{
+  "id": "turret-behavior",
+  "name": "Turret behavior",
+  "description": "A simple example of using the Turret behavior to aim and fire at objects in range.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Turret",
+      "EightDir",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=turret-behavior"
+}

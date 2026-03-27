@@ -1,0 +1,31 @@
+{
+  "id": "bamboo-strike",
+  "name": "游戏示例: 击竹打字",
+  "description": "打字游戏，结合你的原始力量和时机技巧，一击就能切开一大片竹子。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=bamboo-strike"
+}

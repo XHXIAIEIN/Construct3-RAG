@@ -1,0 +1,22 @@
+{
+  "id": "basic-hierarchy",
+  "name": "对象层级：子对象",
+  "description": "演示 '添加子对象' 功能，连接多个对象，让他们一起移动和旋转。",
+  "tags": [
+    "简单",
+    "animation-recommended",
+    "功能示例",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=basic-hierarchy"
+}

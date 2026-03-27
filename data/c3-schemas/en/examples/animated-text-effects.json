@@ -1,0 +1,18 @@
+{
+  "id": "animated-text-effects",
+  "name": "Animated text effects",
+  "description": "A demonstration of using events to modify BBCode over time, creating various animated text effects.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-text-effects"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "pin-rope-style",
+  "name": "物理：绳子",
+  "description": "演示 '固定' 行为，将多个精灵链接在一起，模拟一条松散的绳索效果。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pin-rope-style"
+}

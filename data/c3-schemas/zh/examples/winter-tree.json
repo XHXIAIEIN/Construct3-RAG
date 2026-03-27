@@ -1,0 +1,31 @@
+{
+  "id": "winter-tree",
+  "name": "HUD: 分型树",
+  "description": "通过调整树枝和颜色，将一棵朴素的冬日树木转变为独一无二的艺术杰作。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Browser",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=winter-tree"
+}

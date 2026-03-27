@@ -1,0 +1,25 @@
+{
+  "id": "follow-rewind-time",
+  "name": "轨迹跟随：录制倒带",
+  "description": "演示 '轨迹跟随' 行为，将玩家的行动倒带，回到更早的时间节点。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Follow",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=follow-rewind-time"
+}

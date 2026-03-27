@@ -1,0 +1,33 @@
+{
+  "id": "space-bricks",
+  "name": "Space bricks",
+  "description": "Break every single brick and prevent the ball from falling into space in this 3D style breakout game.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Camera3D",
+      "Shape3D",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "LOS",
+      "custom",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=space-bricks"
+}

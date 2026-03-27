@@ -1,0 +1,27 @@
+{
+  "id": "match-the-pose",
+  "name": "游戏示例：提线人偶",
+  "description": "拉扯细线，精准摆出每个姿势。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机",
+    "对象层级"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=match-the-pose"
+}

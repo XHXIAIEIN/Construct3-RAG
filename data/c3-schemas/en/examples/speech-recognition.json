@@ -1,0 +1,20 @@
+{
+  "id": "speech-recognition",
+  "name": "Speech recognition",
+  "description": "How to use the Speech Recognition object to recognise words spoken by the user in to a microphone.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "List",
+      "SpeechRecognition",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=speech-recognition"
+}

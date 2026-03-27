@@ -193,6 +193,117 @@ class LookupResponse:
 
 
 # =============================================================================
+# Bilingual merge — converts per-language CDN-native schema files into the
+# internal merged format used by all downstream code.
+# =============================================================================
+
+def _merge_bilingual(en: dict, zh: dict) -> dict:
+    """Merge English and Chinese per-language schema files into a unified dict.
+
+    Input: per-language files with CDN-native field names (list-name, display-text,
+    translated-name, params as dict keyed by id, etc.)
+    Output: merged dict with _en/_zh suffixed fields, params as array, compatible
+    with all downstream lookup.py / query_expander.py code.
+    """
+    merged = {
+        "id": en.get("id", ""),
+        "originalId": en.get("id", ""),
+        "name_en": en.get("name", en.get("id", "")),
+        "name_zh": zh.get("name", en.get("name", "")),
+        "description_en": en.get("description", ""),
+        "description_zh": zh.get("description", ""),
+        "plugin_type": en.get("type", "plugin"),
+        "aceCategories": list(en.get("aceCategories", {}).keys()),
+    }
+
+    for ace_type in ("conditions", "actions", "expressions"):
+        en_items = en.get(ace_type, [])
+        # Build zh lookup by id
+        zh_map = {item.get("id", ""): item for item in zh.get(ace_type, [])}
+        merged_items = []
+        for en_item in en_items:
+            ace_id = en_item.get("id", "")
+            zh_item = zh_map.get(ace_id, {})
+            entry: dict = {"id": ace_id}
+
+            # Name (CDN uses list-name for conditions/actions, translated-name for expressions)
+            if ace_type == "expressions":
+                entry["name_en"] = en_item.get("translated-name", ace_id)
+                entry["name_zh"] = zh_item.get("translated-name", entry["name_en"])
+            else:
+                entry["name_en"] = en_item.get("list-name", ace_id)
+                entry["name_zh"] = zh_item.get("list-name", entry["name_en"])
+
+            entry["description_en"] = en_item.get("description", "")
+            entry["description_zh"] = zh_item.get("description", "")
+            entry["display_en"] = en_item.get("display-text", "")
+            entry["display_zh"] = zh_item.get("display-text", "")
+            entry["scriptName"] = en_item.get("scriptName", "")
+            entry["category"] = en_item.get("category", "")
+
+            # Params: CDN format is dict {param_id: {type, name, desc, ...}}
+            # Convert to array [{id, type, name_en, name_zh, desc_en, desc_zh}]
+            en_params = en_item.get("params", {})
+            zh_params = zh_item.get("params", {})
+            params_list: list = []
+            if isinstance(en_params, dict):
+                for pid, ep in en_params.items():
+                    zp = zh_params.get(pid, {}) if isinstance(zh_params, dict) else {}
+                    param: dict = {
+                        "id": pid,
+                        "type": ep.get("type", "any"),
+                        "name_en": ep.get("name", pid),
+                        "name_zh": zp.get("name", ep.get("name", pid)),
+                        "desc_en": ep.get("desc", ""),
+                        "desc_zh": zp.get("desc", ""),
+                    }
+                    if "items" in ep:
+                        param["items"] = list(ep["items"].keys()) if isinstance(ep["items"], dict) else ep["items"]
+                        en_items_map = ep.get("items", {})
+                        zh_items_map = zp.get("items", {}) if isinstance(zp.get("items"), dict) else {}
+                        if isinstance(en_items_map, dict):
+                            param["items_i18n"] = {
+                                k: {"en": v, "zh": zh_items_map.get(k, v)}
+                                for k, v in en_items_map.items()
+                            }
+                    if ep.get("initialValue"):
+                        param["initialValue"] = ep["initialValue"]
+                    params_list.append(param)
+            elif isinstance(en_params, list):
+                params_list = en_params
+            entry["params"] = params_list
+
+            if en_item.get("isTrigger"):
+                entry["isTrigger"] = True
+            if en_item.get("isAsync"):
+                entry["isAsync"] = True
+            if en_item.get("returnType"):
+                entry["returnType"] = en_item["returnType"]
+            merged_items.append(entry)
+        merged[ace_type] = merged_items
+
+    # Properties: CDN dict → array
+    en_props = en.get("properties", {})
+    zh_props = zh.get("properties", {})
+    props_list: list = []
+    if isinstance(en_props, dict):
+        for prop_id, ep in en_props.items():
+            zp = zh_props.get(prop_id, {}) if isinstance(zh_props, dict) else {}
+            props_list.append({
+                "id": prop_id,
+                "name_en": ep.get("name", prop_id),
+                "name_zh": zp.get("name", ep.get("name", prop_id)),
+                "description_en": ep.get("desc", ""),
+                "description_zh": zp.get("desc", ""),
+            })
+    elif isinstance(en_props, list):
+        props_list = en_props
+    merged["properties"] = props_list
+
+    return merged
+
+
+# =============================================================================
 # SchemaIndex — lazy-loaded plugin/behavior JSON schemas
 # =============================================================================
 
@@ -214,30 +325,53 @@ class SchemaIndex:
             return
         self._loaded = True
 
-        plugin_dir = self._schema_dir / "plugins"
-        behavior_dir = self._schema_dir / "behaviors"
+        # Load _index.json for originalId lookups
+        index_data: dict = {}
+        index_path = self._schema_dir / "_index.json"
+        if index_path.exists():
+            try:
+                index_data = json.loads(index_path.read_text(encoding="utf-8"))
+            except Exception:
+                pass
 
-        # Load plugins
-        if plugin_dir.exists():
-            for fp in sorted(plugin_dir.glob("*.json")):
-                try:
-                    data = json.loads(fp.read_text(encoding="utf-8"))
-                    pid = data.get("id", fp.stem)
-                    self._plugins[pid] = data
-                    self._register_names(data, pid, is_behavior=False)
-                except Exception as e:
-                    logger.warning(f"[SchemaIndex] Failed to load: {fp.name}: {e}")
+        for addon_type, store, is_beh in [
+            ("plugins", self._plugins, False),
+            ("behaviors", self._behaviors, True),
+        ]:
+            en_dir = self._schema_dir / "en" / addon_type
+            zh_dir = self._schema_dir / "zh" / addon_type
+            idx_section = index_data.get(addon_type, {})
 
-        # Load behaviors
-        if behavior_dir.exists():
-            for fp in sorted(behavior_dir.glob("*.json")):
+            # Fallback: try flat layout (old format) if en/ subdir doesn't exist
+            if not en_dir.exists():
+                flat_dir = self._schema_dir / addon_type
+                if flat_dir.exists():
+                    for fp in sorted(flat_dir.glob("*.json")):
+                        if fp.stem == "index":
+                            continue
+                        try:
+                            data = json.loads(fp.read_text(encoding="utf-8"))
+                            pid = data.get("id", fp.stem)
+                            store[pid] = data
+                            self._register_names(data, pid, is_beh)
+                        except Exception as e:
+                            logger.warning(f"[SchemaIndex] Failed to load: {fp.name}: {e}")
+                continue
+
+            for fp in sorted(en_dir.glob("*.json")):
                 if fp.stem == "index":
                     continue
                 try:
-                    data = json.loads(fp.read_text(encoding="utf-8"))
-                    bid = data.get("id", fp.stem)
-                    self._behaviors[bid] = data
-                    self._register_names(data, bid, is_behavior=True)
+                    en_data = json.loads(fp.read_text(encoding="utf-8"))
+                    zh_path = zh_dir / fp.name
+                    zh_data = json.loads(zh_path.read_text(encoding="utf-8")) if zh_path.exists() else {}
+                    merged = _merge_bilingual(en_data, zh_data)
+                    pid = merged.get("id", fp.stem)
+                    # Inject originalId from _index.json (preserves CDN case)
+                    if pid in idx_section:
+                        merged["originalId"] = idx_section[pid].get("originalId", pid)
+                    store[pid] = merged
+                    self._register_names(merged, pid, is_beh)
                 except Exception as e:
                     logger.warning(f"[SchemaIndex] Failed to load: {fp.name}: {e}")
 

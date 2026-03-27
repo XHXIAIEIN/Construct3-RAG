@@ -1,0 +1,17 @@
+{
+  "id": "localstorage-script",
+  "name": "脚本示例：本地存储",
+  "description": "使用脚本实现《本地数据存储 - 高分榜》示例。",
+  "used-addons": {
+    "plugins": [
+      "LocalStorage",
+      "TextBox",
+      "Button",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=localstorage-script"
+}

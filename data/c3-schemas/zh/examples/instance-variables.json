@@ -1,0 +1,19 @@
+{
+  "id": "instance-variables",
+  "name": "功能示例：实例变量",
+  "description": "演示实例对象的实例变量，让每个实例各自存储自己的值。例如生命值属性。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instance-variables"
+}

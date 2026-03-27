@@ -1,0 +1,33 @@
+{
+  "id": "laser-turret",
+  "name": "Laser turret",
+  "description": "A top-down game mechanic where the player must dodge lasers across a level.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "TiledBg",
+      "Particles",
+      "Keyboard",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Tween",
+      "solid",
+      "Sin",
+      "Rotate",
+      "LOS",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=laser-turret"
+}

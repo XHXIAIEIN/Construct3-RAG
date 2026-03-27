@@ -1,0 +1,29 @@
+{
+  "id": "hanoi-tower",
+  "name": "Hanoi tower",
+  "description": "A 3D example of the classic puzzle involving rearrange the discs.",
+  "tags": [
+    "Advanced",
+    "3D",
+    "Mobile",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Shape3D",
+      "Mouse",
+      "Sprite",
+      "NinePatch",
+      "Touch",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hanoi-tower"
+}

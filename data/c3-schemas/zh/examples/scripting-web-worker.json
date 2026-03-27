@@ -1,0 +1,13 @@
+{
+  "id": "scripting-web-worker",
+  "name": "脚本示例：Web Workers",
+  "description": "使用代码创建 Web Worker，在后台运行 JavaScript 代码而不会阻塞主线程。",
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=scripting-web-worker"
+}

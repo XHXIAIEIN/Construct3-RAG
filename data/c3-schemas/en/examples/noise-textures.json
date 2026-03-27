@@ -1,0 +1,20 @@
+{
+  "id": "noise-textures",
+  "name": "Noise textures",
+  "description": "Demonstrates using the Drawing Canvas plugin to display randomly generated images using the Advanced Random plugin.",
+  "tags": [
+    "Advanced",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Text",
+      "List",
+      "AdvancedRandom"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=noise-textures"
+}

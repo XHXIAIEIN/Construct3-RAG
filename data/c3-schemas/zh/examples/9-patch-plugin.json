@@ -1,0 +1,20 @@
+{
+  "id": "9-patch-plugin",
+  "name": "功能示例：九宫图",
+  "description": "演示九宫图对象，自动拉伸中间内容的图像。(也被称为9-patch图、点9图等)。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=9-patch-plugin"
+}

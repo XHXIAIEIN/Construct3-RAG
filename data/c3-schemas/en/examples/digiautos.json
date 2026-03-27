@@ -1,0 +1,39 @@
+{
+  "id": "digiautos",
+  "name": "Digiautos",
+  "description": "Battle in a futuristic championship where cars duel in a glowing arena, leaving neon trails of light behind.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Racing",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Camera3D",
+      "Keyboard",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=digiautos"
+}

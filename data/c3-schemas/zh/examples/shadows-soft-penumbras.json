@@ -1,0 +1,25 @@
+{
+  "id": "shadows-soft-penumbras",
+  "name": "阴影：柔软的半影",
+  "description": "在阴影灯上使用光半径来投射柔和边缘的阴影。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-soft-penumbras"
+}

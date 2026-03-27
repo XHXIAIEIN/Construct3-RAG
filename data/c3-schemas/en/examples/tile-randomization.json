@@ -1,0 +1,20 @@
+{
+  "id": "tile-randomization",
+  "name": "Tile randomization",
+  "description": "Demonstrates a feature of Tiled Background to break up repetitive patterns.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "TiledBg",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tile-randomization"
+}

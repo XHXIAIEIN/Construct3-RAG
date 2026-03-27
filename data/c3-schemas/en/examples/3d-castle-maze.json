@@ -1,0 +1,43 @@
+{
+  "id": "3d-castle-maze",
+  "name": "3D castle maze",
+  "description": "Find your way out of a 3D first-person perspective maze built out of 3D shape objects.",
+  "tags": [
+    "Advanced",
+    "3D",
+    "Game template",
+    "Adventure",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "TiledBg",
+      "gamepad",
+      "Particles",
+      "PlatformInfo",
+      "Spritefont2",
+      "Camera3D"
+    ],
+    "behaviors": [
+      "Tween",
+      "solid",
+      "Fade"
+    ],
+    "effects": [
+      "hsladjustmask",
+      "blurhorizontal",
+      "warpobject",
+      "vignette",
+      "bulge",
+      "pixellate",
+      "alphaclamp",
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=3d-castle-maze"
+}

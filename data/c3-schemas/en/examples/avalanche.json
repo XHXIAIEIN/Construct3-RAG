@@ -1,0 +1,49 @@
+{
+  "id": "avalanche",
+  "name": "Avalanche",
+  "description": "Over a millennium since the last event, the mysterious avalanche has returned, along with evil creatures seeking to corrupt the tundra. It's your mission to restore the peace.",
+  "tags": [
+    "Intermediate",
+    "Demo game",
+    "Platformer",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Audio",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Flash",
+      "Pathfinding",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=avalanche"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "animated-svg",
+  "name": "功能示例：SVG 动画",
+  "description": "演示使用 HTML Element 插件显示 SVG 动画。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "动画",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "HTMLElement"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-svg"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "tesla-twist",
+  "name": "Tesla Twist",
+  "description": "Zap incoming drones with a powerful Tesla coil in a rotating, steampunk environment.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "LOS",
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tesla-twist"
+}

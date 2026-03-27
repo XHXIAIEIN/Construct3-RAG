@@ -1,0 +1,31 @@
+{
+  "id": "template-monk-fight",
+  "name": "游戏示例: 清版过关",
+  "description": "清版动作游戏街机模板。按D键施展飞踢，横扫每个区域的所有敌人！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "格斗"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "Particles"
+    ],
+    "behaviors": [
+      "Pin",
+      "Fade",
+      "EightDir",
+      "bound",
+      "solid",
+      "Flash",
+      "Timer"
+    ],
+    "effects": [
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=template-monk-fight"
+}

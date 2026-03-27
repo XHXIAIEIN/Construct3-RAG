@@ -1,0 +1,26 @@
+{
+  "id": "bullet-stepping",
+  "name": "功能示例：子弹步进",
+  "description": "演示子弹行为步进功能，针对高速移动的子弹提升碰撞精度。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Button",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "bound",
+      "EightDir",
+      "destroy",
+      "Bullet"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bullet-stepping"
+}

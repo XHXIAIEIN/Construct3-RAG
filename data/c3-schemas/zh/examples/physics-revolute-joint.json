@@ -1,0 +1,21 @@
+{
+  "id": "physics-revolute-joint",
+  "name": "物理：旋转关节",
+  "description": "用旋转关节将两个物理对象铰接在一起。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-revolute-joint"
+}

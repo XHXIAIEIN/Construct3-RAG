@@ -1,0 +1,810 @@
+{
+  "id": "googleplay",
+  "name": "Google Play",
+  "description": "Access Google Play Game Services.",
+  "type": "plugin",
+  "aceCategories": {
+    "achievements": "Achievements",
+    "google-play-game-services": "Google Play Game Services",
+    "hi-scores": "Hi-scores",
+    "leaderboards": "Leaderboards",
+    "player-details": "Player details"
+  },
+  "conditions": [
+    {
+      "id": "on-achievement-list-success",
+      "scriptName": "OnAchievementsRequestSuccess",
+      "category": "achievements",
+      "list-name": "On achievement list success",
+      "display-text": "On achievement list success",
+      "description": "Triggered after a 'List achievements' action if the list received successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-achievement-list-fail",
+      "scriptName": "OnAchievementsRequestFail",
+      "category": "achievements",
+      "list-name": "On achievement list fail",
+      "display-text": "On achievement list fail",
+      "description": "Triggered after a 'List achievements' action if the request failed.",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-achievement-state",
+      "scriptName": "CompareAchievementState",
+      "category": "achievements",
+      "list-name": "Compare achievement state",
+      "display-text": "Achievement [i]{0}[/i] is {1}",
+      "description": "Test if an achievement at an index is hidden, revealed or unlocked.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Index of the achievement."
+        },
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "The state of the achievement to test.",
+          "items": {
+            "hidden": "hidden",
+            "revealed": "revealed",
+            "unlocked": "unlocked"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-achievement-metadata-success",
+      "scriptName": "OnAchievementsMetadataSuccess",
+      "category": "achievements",
+      "list-name": "On achievement metadata success",
+      "display-text": "On achievement metadata success",
+      "description": "Triggered after a 'Get metadata' action if the data received successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-achievement-metadata-fail",
+      "scriptName": "OnAchievementsMetadataFail",
+      "category": "achievements",
+      "list-name": "On achievement metadata fail",
+      "display-text": "On achievement metadata fail",
+      "description": "Triggered after a 'Get metadata' action if the request failed.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-achievement-revealed",
+      "scriptName": "OnAchievementRevealed",
+      "category": "achievements",
+      "list-name": "On achievement revealed",
+      "display-text": "On achievement [b]{0}[/b] revealed",
+      "description": "Triggered after 'Reveal' when the achievement has been successfully revealed.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "ID of the achievement that was revealed."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-achievement-unlocked",
+      "scriptName": "OnAchievementUnlocked",
+      "category": "achievements",
+      "list-name": "On achievement unlocked",
+      "display-text": "On achievement [b]{0}[/b] unlocked",
+      "description": "Triggered after 'Unlock' or when an incremental achievement's steps have been fulfilled.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "ID of the achievement that was unlocked."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "is-loaded",
+      "scriptName": "IsLoaded",
+      "category": "google-play-game-services",
+      "list-name": "Is loaded",
+      "display-text": "Is loaded",
+      "description": "True if 'On loaded' has fired and the plugin is ready to use."
+    },
+    {
+      "id": "on-signed-in",
+      "scriptName": "OnSignedIn",
+      "category": "google-play-game-services",
+      "list-name": "On signed in",
+      "display-text": "On signed in",
+      "description": "Triggered when the user successfully signs in.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-signed-in",
+      "scriptName": "IsSignedIn",
+      "category": "google-play-game-services",
+      "list-name": "Is signed in",
+      "display-text": "Is signed in",
+      "description": "True if the user is currently signed in."
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "google-play-game-services",
+      "list-name": "On error",
+      "display-text": "On error",
+      "description": "Triggered if an error occurs in the game services.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-player-details-received",
+      "scriptName": "OnPlayerDetails",
+      "category": "google-play-game-services",
+      "list-name": "On player details received",
+      "display-text": "On player details received",
+      "description": "Triggered after 'Request player details', when the response has been received.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-signed-out",
+      "scriptName": "OnSignedOut",
+      "category": "google-play-game-services",
+      "list-name": "On signed out",
+      "display-text": "On signed out",
+      "description": "Triggered when the user signs out.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-auto-sign-in-failed",
+      "scriptName": "OnAutoSignInFailed",
+      "category": "google-play-game-services",
+      "list-name": "On auto-sign in failed",
+      "display-text": "On auto-sign in failed",
+      "description": "Triggered on startup if the user could not be automatically logged in. It will be necessary to use the 'Sign in' action.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-sign-in-fail",
+      "scriptName": "OnSignInFail",
+      "category": "google-play-game-services",
+      "list-name": "On sign in failed",
+      "display-text": "On sign in failed",
+      "description": "Triggered when the user did not sign in. This might be because the user cancelled or due to an error.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-score-submit-success",
+      "scriptName": "OnScoreSubmitSuccess",
+      "category": "leaderboards",
+      "list-name": "On score submit success",
+      "display-text": "On score submit success",
+      "description": "Triggered after a 'Submit score' action if the score was submitted successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-score-submit-fail",
+      "scriptName": "OnScoreSubmitFail",
+      "category": "leaderboards",
+      "list-name": "On score submit fail",
+      "display-text": "On score submit fail",
+      "description": "Triggered after a 'Submit score' action if the score failed to submitted successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-hi-score-request-success",
+      "scriptName": "OnHiScoreRequestSuccess",
+      "category": "leaderboards",
+      "list-name": "On hi-score request success",
+      "display-text": "On hi-score request success",
+      "description": "Triggered after a 'Request hi-scores' action if the scores were received successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-hi-score-request-fail",
+      "scriptName": "OnHiScoreRequestFail",
+      "category": "leaderboards",
+      "list-name": "On hi-score request fail",
+      "display-text": "On hi-score request fail",
+      "description": "Triggered after a 'Request hi-scores' action if the request failed.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "list-achievements",
+      "scriptName": "RequestAchievements",
+      "category": "achievements",
+      "list-name": "List achievements",
+      "display-text": "Request list of {0} achievements. Force reload: {1}",
+      "description": "Request a list of achievements for the current player.",
+      "params": {
+        "which": {
+          "type": "combo",
+          "name": "Which",
+          "desc": "Which achievements to request a list of.",
+          "items": {
+            "all": "all",
+            "hidden": "hidden",
+            "revealed": "revealed",
+            "unlocked": "unlocked"
+          }
+        },
+        "reload": {
+          "type": "boolean",
+          "name": "Force reload",
+          "desc": "Ensure that the results are up to date, and not from the cache."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-metadata",
+      "scriptName": "RequestAchievementMetadata",
+      "category": "achievements",
+      "list-name": "Get metadata",
+      "display-text": "Request achievements metadata. Force reload: {0}",
+      "description": "Request achievements metadata (name, description etc.) allowing the corresponding expressions to return the correct values.",
+      "params": {
+        "reload": {
+          "type": "boolean",
+          "name": "Force reload",
+          "desc": "Ensure that the results are up to date, and not from the cache."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "reveal",
+      "scriptName": "RevealAchievement",
+      "category": "achievements",
+      "list-name": "Reveal",
+      "display-text": "Reveal achievement [b]{0}[/b]",
+      "description": "Reveal a hidden achievement.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "Achievement ID to reveal."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "unlock",
+      "scriptName": "UnlockAchievement",
+      "category": "achievements",
+      "list-name": "Unlock",
+      "display-text": "Unlock achievement [b]{0}[/b]",
+      "description": "Unlock an achievement.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "Achievement ID to unlock."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "increment",
+      "scriptName": "IncrementAchievement",
+      "category": "achievements",
+      "list-name": "Increment",
+      "display-text": "Increment achievement [b]{0}[/b] by [i]{1}[/i] steps",
+      "description": "Add steps to an incremental achievement.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "Achievement ID to increment."
+        },
+        "steps": {
+          "type": "number",
+          "name": "Steps",
+          "desc": "Number of steps to increment the achievement by."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-steps",
+      "scriptName": "SetStepsAchievement",
+      "category": "achievements",
+      "list-name": "Set steps",
+      "display-text": "Set achievement [b]{0}[/b] steps to [i]{1}[/i]",
+      "description": "Set the steps progress of an incremental achievement.",
+      "params": {
+        "achievement-id": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "Achievement ID to increment."
+        },
+        "steps": {
+          "type": "number",
+          "name": "Steps",
+          "desc": "Number of steps to set the achievement progress to. The steps cannot be reduced."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "show-achievements",
+      "scriptName": "ShowAchievements",
+      "category": "achievements",
+      "list-name": "Show native achievements dialog",
+      "display-text": "Display achievements",
+      "description": "Display the native google play games dialog for all achievements (only works in Android app).",
+      "isAsync": true
+    },
+    {
+      "id": "request-player-details",
+      "scriptName": "RequestPlayerDetails",
+      "category": "google-play-game-services",
+      "list-name": "Request player details",
+      "display-text": "Request player details",
+      "description": "If signed in, request the details of the signed in player.",
+      "isAsync": true
+    },
+    {
+      "id": "sign-in",
+      "scriptName": "SignIn",
+      "category": "google-play-game-services",
+      "list-name": "Sign in",
+      "display-text": "Sign in",
+      "description": "Request the player to sign in."
+    },
+    {
+      "id": "sign-out",
+      "scriptName": "SignOut",
+      "category": "google-play-game-services",
+      "list-name": "Sign out",
+      "display-text": "Sign out",
+      "description": "Sign out if already signed in. NOTE: not supported in Android apps."
+    },
+    {
+      "id": "submit-score",
+      "scriptName": "SubmitScore",
+      "category": "leaderboards",
+      "list-name": "Submit score",
+      "display-text": "Submit score [b]{1}[/b] (tag [i]{2}[/i]) to leaderboard [i]{0}[/i]",
+      "description": "Submit a score to a leaderboard.",
+      "params": {
+        "leaderboard-id": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "Leaderboard ID to submit the score to."
+        },
+        "score": {
+          "type": "number",
+          "name": "Score",
+          "desc": "The score to submit to the leaderboard."
+        },
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "Up to 64 extra characters to submit along with this score."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-hi-scores",
+      "scriptName": "RequestHiScores",
+      "category": "leaderboards",
+      "list-name": "Request hi-scores",
+      "display-text": "Request {1} {2} hi-scores from [b]{0}[/b] ([i]{3}[/i] results, [i]{4}[/i]). Force reload: {5}",
+      "description": "Request a list of scores from a leaderboard.",
+      "params": {
+        "leaderboard-id": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "Leaderboard ID to request scores from."
+        },
+        "collection": {
+          "type": "combo",
+          "name": "Collection",
+          "desc": "Whether to return all scores, or scores relating to the current player.",
+          "items": {
+            "public": "public",
+            "social": "social"
+          }
+        },
+        "time-span": {
+          "type": "combo",
+          "name": "Time span",
+          "desc": "Return the top scores in the given time span.",
+          "items": {
+            "all-time": "all-time",
+            "weekly": "weekly",
+            "daily": "daily"
+          }
+        },
+        "results": {
+          "type": "number",
+          "name": "Results",
+          "desc": "The number of score results to return, from 1 to 25."
+        },
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "Return the top scores, or a window of the scores around the current player's best score.",
+          "items": {
+            "top": "top",
+            "window": "window"
+          }
+        },
+        "reload": {
+          "type": "boolean",
+          "name": "Force reload",
+          "desc": "Ensure that the results are up to date, and not from the cache."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "show-leaderboard",
+      "scriptName": "ShowLeaderboard",
+      "category": "leaderboards",
+      "list-name": "Show native leaderboard dialog",
+      "display-text": "Display leaderboard {0}",
+      "description": "Display the native google play games dialog for a specific leaderboard (only works in Android app).",
+      "params": {
+        "leaderboard-id": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "Leaderboard ID to display."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "show-leaderboards",
+      "scriptName": "ShowLeaderboards",
+      "category": "leaderboards",
+      "list-name": "Show native leaderboards dialog",
+      "display-text": "Display leaderboards",
+      "description": "Display the native google play games dialog for all leaderboards (only works in Android app).",
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "achievementscount",
+      "scriptName": "AchievementsCount",
+      "category": "achievements",
+      "translated-name": "AchievementsCount",
+      "description": "The number of returned achievements in the list.",
+      "returnType": "number"
+    },
+    {
+      "id": "achievementidat",
+      "scriptName": "AchievementIDAt",
+      "category": "achievements",
+      "translated-name": "AchievementIDAt",
+      "description": "The ID of an achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "achievementstepsat",
+      "scriptName": "AchievementStepsAt",
+      "category": "achievements",
+      "translated-name": "AchievementStepsAt",
+      "description": "The current steps for an incremental achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "achievementnameat",
+      "scriptName": "AchievementNameAt",
+      "category": "achievements",
+      "translated-name": "AchievementNameAt",
+      "description": "The metadata name of an achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "achievementdescriptionat",
+      "scriptName": "AchievementDescriptionAt",
+      "category": "achievements",
+      "translated-name": "AchievementDescriptionAt",
+      "description": "The metadata description of an achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "achievementtypeat",
+      "scriptName": "AchievementTypeAt",
+      "category": "achievements",
+      "translated-name": "AchievementTypeAt",
+      "description": "The metadata type (\"standard\" or \"incremental\") of an achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "achievementtotalstepsat",
+      "scriptName": "AchievementTotalStepsAt",
+      "category": "achievements",
+      "translated-name": "AchievementTotalStepsAt",
+      "description": "The metadata total steps of an incremental achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "achievementrevealediconurlat",
+      "scriptName": "AchievementRevealedIconURLAt",
+      "category": "achievements",
+      "translated-name": "AchievementRevealedIconURLAt",
+      "description": "The metadata icon image URL of a revealed achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "achievementunlockediconurlat",
+      "scriptName": "AchievementUnlockedIconURLAt",
+      "category": "achievements",
+      "translated-name": "AchievementUnlockedIconURLAt",
+      "description": "The metadata icon image URL of an unlocked achievement at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "errormessage",
+      "scriptName": "ErrorMessage",
+      "category": "google-play-game-services",
+      "translated-name": "ErrorMessage",
+      "description": "In 'On error', return the error message if available.",
+      "returnType": "string"
+    },
+    {
+      "id": "hiscoretotalcount",
+      "scriptName": "HiScoreTotalCount",
+      "category": "hi-scores",
+      "translated-name": "HiScoreTotalCount",
+      "description": "The total number of scores in the leaderboard.",
+      "returnType": "number"
+    },
+    {
+      "id": "hiscoremybest",
+      "scriptName": "HiScoreMyBest",
+      "category": "hi-scores",
+      "translated-name": "HiScoreMyBest",
+      "description": "The current player's best score on the returned leaderboard.",
+      "returnType": "number"
+    },
+    {
+      "id": "hiscoremybesttag",
+      "scriptName": "HiScoreMyBestTag",
+      "category": "hi-scores",
+      "translated-name": "HiScoreMyBestTag",
+      "description": "The tag for the current player's best score.",
+      "returnType": "string"
+    },
+    {
+      "id": "hiscorecount",
+      "scriptName": "HiScoreCount",
+      "category": "hi-scores",
+      "translated-name": "HiScoreCount",
+      "description": "The number of scores returned for the current page.",
+      "returnType": "number"
+    },
+    {
+      "id": "hiscorenameat",
+      "scriptName": "HiScoreNameAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreNameAt",
+      "description": "Player name at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "hiscorerankat",
+      "scriptName": "HiScoreRankAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreRankAt",
+      "description": "Score rank at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "hiscoreat",
+      "scriptName": "HiScoreAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreAt",
+      "description": "Score value at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "hiscoretagat",
+      "scriptName": "HiScoreTagAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreTagAt",
+      "description": "Score tag at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "hiscoreformattedat",
+      "scriptName": "HiScoreFormattedAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreFormattedAt",
+      "description": "Formatted score value at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "hiscoreformattedrankat",
+      "scriptName": "HiScoreFormattedRankAt",
+      "category": "hi-scores",
+      "translated-name": "HiScoreFormattedRankAt",
+      "description": "Formatted score rank (e.g. \"1st\") at an index in the returned page.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "hiscoremyformattedbest",
+      "scriptName": "HiScoreMyFormattedBest",
+      "category": "hi-scores",
+      "translated-name": "HiScoreMyFormattedBest",
+      "description": "The formatted version of the current player's best score.",
+      "returnType": "string"
+    },
+    {
+      "id": "hiscoremybestrank",
+      "scriptName": "HiScoreMyBestRank",
+      "category": "hi-scores",
+      "translated-name": "HiScoreMyBestRank",
+      "description": "The rank of the current player's best score.",
+      "returnType": "number"
+    },
+    {
+      "id": "hiscoremybestformattedrank",
+      "scriptName": "HiScoreMyBestFormattedRank",
+      "category": "hi-scores",
+      "translated-name": "HiScoreMyBestFormattedRank",
+      "description": "The formatted rank (e.g. \"1st\") of the current player's best score.",
+      "returnType": "string"
+    },
+    {
+      "id": "myid",
+      "scriptName": "MyID",
+      "category": "player-details",
+      "translated-name": "MyID",
+      "description": "The ID of the signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "mydisplayname",
+      "scriptName": "MyDisplayName",
+      "category": "player-details",
+      "translated-name": "MyDisplayName",
+      "description": "The display name of the signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "myavatarurl",
+      "scriptName": "MyAvatarUrl",
+      "category": "player-details",
+      "translated-name": "MyAvatarURL",
+      "description": "The URL to the avatar image of the signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "mygivenname",
+      "scriptName": "MyGivenName",
+      "category": "player-details",
+      "translated-name": "MyGivenName",
+      "description": "The given name of the signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "myfamilyname",
+      "scriptName": "MyFamilyName",
+      "category": "player-details",
+      "translated-name": "MyFamilyName",
+      "description": "The family name of the signed in player.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "application-id": {
+      "name": "Application ID (web)",
+      "desc": "The application ID from Google Play Developer Console. Required for Web."
+    },
+    "client-id": {
+      "name": "Client ID",
+      "desc": "The client ID from Google Play Developer Console."
+    },
+    "game-id": {
+      "name": "Application ID (android)",
+      "desc": "The application ID from Game services in the Google Play Console. Required for Android."
+    }
+  }
+}

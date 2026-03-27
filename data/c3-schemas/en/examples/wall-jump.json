@@ -1,0 +1,29 @@
+{
+  "id": "wall-jump",
+  "name": "Wall jump",
+  "description": "Demonstrates adding a wall-jump ability to the Platform behavior.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "MoveTo",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wall-jump"
+}

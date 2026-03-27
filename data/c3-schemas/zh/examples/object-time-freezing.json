@@ -1,0 +1,42 @@
+{
+  "id": "object-time-freezing",
+  "name": "关卡设计꞉ 时间停止器",
+  "description": "简单实现《塞尔达传说: 旷野之息》 时间停止器的机制。暂时冻结木箱的时间，将这段时间产生的物理动能进行储存，然后一次性爆发。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "LOS",
+      "Physics",
+      "Platform",
+      "Rotate",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "bulge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "sharpen",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=object-time-freezing"
+}

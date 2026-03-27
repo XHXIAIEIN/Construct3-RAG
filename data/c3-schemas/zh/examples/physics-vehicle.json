@@ -1,0 +1,21 @@
+{
+  "id": "physics-vehicle",
+  "name": "物理：车辆",
+  "description": "演示物理行为的关节系统，制作简单的车辆装置。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-vehicle"
+}

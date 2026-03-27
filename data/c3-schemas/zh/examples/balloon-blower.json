@@ -1,0 +1,32 @@
+{
+  "id": "balloon-blower",
+  "name": "游戏示例: 吹气球",
+  "description": "用你的声音控制气球充气上升，躲避障碍，一路收集棉花糖！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Audio",
+      "Browser",
+      "Keyboard",
+      "List",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "UserMedia"
+    ],
+    "behaviors": [
+      "Flash",
+      "MoveTo",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=balloon-blower"
+}

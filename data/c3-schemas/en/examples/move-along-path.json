@@ -1,0 +1,23 @@
+{
+  "id": "move-along-path",
+  "name": "Move along path",
+  "description": "Shows how to combine the 'Move to' behavior to follow a fixed path set out in a timeline.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=move-along-path"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "pathfinding-path-cost",
+  "name": "Pathfinding: path cost",
+  "description": "Shows how using objects to increase path cost can make the Pathfinding behavior take detours. Useful for simulating different terrain types.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Keyboard",
+      "Touch",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "Pathfinding",
+      "Flash"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-path-cost"
+}

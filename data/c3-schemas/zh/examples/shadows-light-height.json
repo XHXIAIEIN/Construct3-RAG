@@ -1,0 +1,24 @@
+{
+  "id": "shadows-light-height",
+  "name": "阴影：光线高度",
+  "description": "使用光影对象和投影映射行为的实时阴影效果的示例，具有不同的阴影长度",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "shadowlight",
+      "Mouse",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "shadowcaster"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shadows-light-height"
+}

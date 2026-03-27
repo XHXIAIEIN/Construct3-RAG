@@ -1,0 +1,41 @@
+{
+  "id": "manual-elevator",
+  "name": "Manual elevator",
+  "description": "A platformer where the player can power elevators with their energy cannon.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "Particles",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Bullet",
+      "Pin",
+      "Platform",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "bulge"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=manual-elevator"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "drawingcanvas-generate-image",
+  "name": "Drawing Canvas: generate image",
+  "description": "Using code to generate an ImageData with custom pixel data, and then display it in a Drawing Canvas object.",
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Text",
+      "Button"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=drawingcanvas-generate-image"
+}

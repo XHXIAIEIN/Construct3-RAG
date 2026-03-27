@@ -1,0 +1,24 @@
+{
+  "id": "3d-platforms",
+  "name": "3D platforms",
+  "description": "A simple platform movement example, but using 3D Shape objects for the platforms.",
+  "tags": [
+    "Beginner",
+    "3D",
+    "Barebones template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=3d-platforms"
+}

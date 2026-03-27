@@ -1,0 +1,33 @@
+{
+  "id": "nail-artist",
+  "name": "Nail Artist",
+  "description": "Recreate the reference nail art with different colors and stickers under a time limit.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Game template",
+    "Arcade",
+    "Hierarchy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "DrawingCanvas",
+      "Mouse",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "lighten"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=nail-artist"
+}

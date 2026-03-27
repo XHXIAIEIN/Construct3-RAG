@@ -1,0 +1,14 @@
+{
+  "id": "simple-keyboard-movement",
+  "name": "脚本基础：键盘移动",
+  "description": "使用代码访问键盘，通过方向键移动精灵。",
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=simple-keyboard-movement"
+}

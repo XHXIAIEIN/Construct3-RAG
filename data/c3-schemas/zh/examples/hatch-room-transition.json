@@ -1,0 +1,33 @@
+{
+  "id": "hatch-room-transition",
+  "name": "摄像机：转场动画",
+  "description": "在房间之间走动，充满活力和时尚的过渡。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Fade",
+      "Bullet",
+      "Pin",
+      "Platform",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hatch-room-transition"
+}

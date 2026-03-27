@@ -1,0 +1,22 @@
+{
+  "id": "midi-input",
+  "name": "MIDI设备: 输入",
+  "description": "演示如何连接 MIDI 设备，接收输入并描述钢琴键盘上的音符按下情况。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "List",
+      "MIDI",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=midi-input"
+}

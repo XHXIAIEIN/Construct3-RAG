@@ -1,0 +1,27 @@
+{
+  "id": "pathfinding-path-cost",
+  "name": "寻路：路径成本",
+  "description": "演示寻路行为的路径成本的功能，通过增加移动成本使其走更多弯路。 用于模拟不同的地形类型。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Keyboard",
+      "Touch",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "solid",
+      "Pathfinding",
+      "Flash"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-path-cost"
+}

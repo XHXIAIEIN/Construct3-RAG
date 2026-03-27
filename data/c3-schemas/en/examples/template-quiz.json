@@ -1,0 +1,26 @@
+{
+  "id": "template-quiz",
+  "name": "Quiz",
+  "description": "A template demonstrating how to make an interactive quiz, using a project file for question data.",
+  "tags": [
+    "Intermediate",
+    "Barebones template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text",
+      "Touch",
+      "Sprite",
+      "Function",
+      "Dictionary",
+      "AJAX"
+    ],
+    "behaviors": [
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-quiz"
+}

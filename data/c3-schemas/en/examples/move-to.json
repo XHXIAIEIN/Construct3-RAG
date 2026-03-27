@@ -1,0 +1,23 @@
+{
+  "id": "move-to",
+  "name": "Move to position",
+  "description": "Demonstrates using the 'Move to' behavior to move an object to a location the user touched or clicked.",
+  "tags": [
+    "Beginner",
+    "Mobile",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "MoveTo"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=move-to"
+}

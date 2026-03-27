@@ -1,0 +1,24 @@
+{
+  "id": "particles",
+  "name": "Particles",
+  "description": "An example of a full-screen particle effect.",
+  "tags": [
+    "animation-recommended",
+    "Tech demo",
+    "Performance",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Text",
+      "Sprite"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Anchor"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=particles"
+}

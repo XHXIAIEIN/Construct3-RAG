@@ -1,0 +1,21 @@
+{
+  "id": "bboxperf",
+  "name": "性能演示：边界框性能",
+  "description": "极限性能测试：测量CPU运算速度。运行大量的旋转的对象。",
+  "tags": [
+    "高级",
+    "技术演示",
+    "性能测试"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bboxperf"
+}

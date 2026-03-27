@@ -1,0 +1,19 @@
+{
+  "id": "unique-ids",
+  "name": "功能示例：UID",
+  "description": "介绍唯一识别码(UID)，可用于选取特定的实例对象。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=unique-ids"
+}

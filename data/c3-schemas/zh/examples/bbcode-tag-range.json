@@ -1,0 +1,19 @@
+{
+  "id": "bbcode-tag-range",
+  "name": "富文本：标签范围",
+  "description": "演示使用BBcode标记文本范围，检测鼠标悬停在文本的某个部分。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Spritefont2",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbcode-tag-range"
+}

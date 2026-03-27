@@ -1,0 +1,38 @@
+{
+  "id": "ground-shift",
+  "name": "Ground shift",
+  "description": "Shift between two completely different 3D worlds, in order to solve platforming puzzles.",
+  "tags": [
+    "games-recommended",
+    "Game template",
+    "Advanced",
+    "3D",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Keyboard",
+      "Sprite",
+      "Shape3D",
+      "TiledBg",
+      "NinePatch",
+      "gamepad",
+      "Particles",
+      "Camera3D",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "Tween",
+      "Fade",
+      "Bullet"
+    ],
+    "effects": [
+      "inverse",
+      "blurhorizontal"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ground-shift"
+}

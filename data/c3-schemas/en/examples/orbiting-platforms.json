@@ -1,0 +1,31 @@
+{
+  "id": "orbiting-platforms",
+  "name": "Orbiting platforms",
+  "description": "Uses constantly orbiting platforms as a challenge for a platform game.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "TiledBg",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Orbit",
+      "jumpthru",
+      "Rotate",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=orbiting-platforms"
+}

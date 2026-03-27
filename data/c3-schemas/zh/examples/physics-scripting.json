@@ -1,0 +1,17 @@
+{
+  "id": "physics-scripting",
+  "name": "脚本示例：物理行为",
+  "description": "使用代码访问物理行为。",
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-scripting"
+}

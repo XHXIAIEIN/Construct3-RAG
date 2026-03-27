@@ -1,0 +1,17 @@
+{
+  "id": "physics-scripting",
+  "name": "Physics scripting",
+  "description": "Demonstrates how to implement the 'Physics: Vehicle' example using code to access the Physics behavior.",
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-scripting"
+}

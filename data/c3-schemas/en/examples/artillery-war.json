@@ -1,0 +1,33 @@
+{
+  "id": "artillery-war",
+  "name": "Artillery war",
+  "description": "Calculate the angle and power of your shots in order to destroy the enemy tower, in a two-player battle.",
+  "tags": [
+    "Advanced",
+    "Puzzle",
+    "Game template"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Mouse",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Tween",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": [
+      "warpobject",
+      "alphaclamp"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=artillery-war"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "sound-synthesis",
+  "name": "Sound synthesis",
+  "description": "Demonstrates using the Web Audio API with Construct's Audio object to fill audio buffers with custom sample data and then play them back.",
+  "tags": [
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Button",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=sound-synthesis"
+}

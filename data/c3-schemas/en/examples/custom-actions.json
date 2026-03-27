@@ -1,0 +1,21 @@
+{
+  "id": "custom-actions",
+  "name": "Custom actions",
+  "description": "A simple demonstration of the Custom Actions feature.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-actions"
+}

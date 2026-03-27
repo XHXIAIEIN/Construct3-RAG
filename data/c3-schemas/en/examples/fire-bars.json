@@ -1,0 +1,30 @@
+{
+  "id": "fire-bars",
+  "name": "Fire bars",
+  "description": "Shows how to create a rotating bar of flames as an obstacle for a platform game.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Pin",
+      "Orbit",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=fire-bars"
+}

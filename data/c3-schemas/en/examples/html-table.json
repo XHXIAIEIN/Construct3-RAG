@@ -1,0 +1,21 @@
+{
+  "id": "html-table",
+  "name": "HTML table",
+  "description": "Demonstrates displaying information using an HTML table inside the HTML Element plugin.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "HTMLElement",
+      "Arr",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=html-table"
+}

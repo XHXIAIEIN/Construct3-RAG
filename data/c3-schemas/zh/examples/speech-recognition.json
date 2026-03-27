@@ -1,0 +1,20 @@
+{
+  "id": "speech-recognition",
+  "name": "设备：语音识别",
+  "description": "演示 '语音识别' 功能，识别麦克风中说出的单词并转换成文字。",
+  "tags": [
+    "简单",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "List",
+      "SpeechRecognition",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=speech-recognition"
+}

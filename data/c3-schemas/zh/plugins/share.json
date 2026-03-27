@@ -1,0 +1,144 @@
+{
+  "id": "share",
+  "name": "分享",
+  "description": "使用当前运行系统的分享功能，分享到另一个应用程序。",
+  "type": "plugin",
+  "aceCategories": {
+    "share": "分享"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "share",
+      "list-name": "设备支持分享",
+      "display-text": "设备支持分享功能",
+      "description": "检测当前运行设备是否支持分享功能。"
+    },
+    {
+      "id": "is-sharing-files-supported",
+      "scriptName": "IsSharingFilesSupported",
+      "category": "share",
+      "list-name": "设备支持分享",
+      "display-text": "设备支持分享功能",
+      "description": "检测当前运行的平台是否支持 '附加文件' 操作分享文件。"
+    },
+    {
+      "id": "on-share-completed",
+      "scriptName": "OnShareCompleted",
+      "category": "share",
+      "list-name": "分享完成",
+      "display-text": "分享完成",
+      "description": "用户完成分享动作后触发。注意，这并不一定意味着用户实际分享了任何内容。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-share-failed",
+      "scriptName": "OnShareFailed",
+      "category": "share",
+      "list-name": "分享失败",
+      "display-text": "分享失败",
+      "description": "如果共享未成功或发生错误，则触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "share-text",
+      "scriptName": "Share",
+      "category": "share",
+      "list-name": "分享",
+      "display-text": "分享信息(标题: [i]{1}[/i], 内容: [i]{0}[/i], 链接: [i]{2}[/i])",
+      "description": "调起系统的分享功能，可以带有标题、内容、网页信息，以及来自二进制数据的文件内容。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要分享的信息，留空则忽略。"
+        },
+        "title": {
+          "type": "string",
+          "name": "标题",
+          "desc": "分享时显示的标题，留空则忽略。"
+        },
+        "url": {
+          "type": "string",
+          "name": "链接",
+          "desc": "要分享的链接，留空则忽略。"
+        }
+      }
+    },
+    {
+      "id": "add-file",
+      "scriptName": "AddFile",
+      "category": "share",
+      "list-name": "附加文件 (二进制)",
+      "display-text": "附加文件(文件名: [i]{0}[/i], 类型: [i]{1}[/i], 数据: {2})",
+      "description": "在 '分享' 动作前使用，允许将二进制数据附加到分享内容中。注意，这需要设备支持文件共享功能。",
+      "params": {
+        "filename": {
+          "type": "string",
+          "name": "文件名",
+          "desc": "要添加的文件的名称。"
+        },
+        "type": {
+          "type": "string",
+          "name": "文件类型",
+          "desc": "要添加的文件的内容类型，也称为MIME类型。"
+        },
+        "data": {
+          "type": "object",
+          "name": "数据来源",
+          "desc": "要使用的二进制数据对象。"
+        }
+      }
+    },
+    {
+      "id": "rate-app",
+      "scriptName": "RequestRate",
+      "category": "share",
+      "list-name": "请求应用评分页面",
+      "display-text": "弹出请求评分窗口 (正文: [i]{0}[/i], 确认按钮: [i]{1}[/i], 取消按钮: [i]{2}[/i],  AppID: [i]{3}[/i])",
+      "description": "弹出请求为你应用评分的窗口",
+      "params": {
+        "dialogText": {
+          "type": "string",
+          "name": "正文内容",
+          "desc": "请求评价对话框的正文。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        "confirmButtonText": {
+          "type": "string",
+          "name": "确认按钮",
+          "desc": "确认按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        "cancelButtonText": {
+          "type": "string",
+          "name": "取消按钮",
+          "desc": "取消按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        },
+        "appIdentifier": {
+          "type": "string",
+          "name": "App ID",
+          "desc": "请求评分的应用程序ID。留空则使用在项目属性中填写的应用程序ID。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+        }
+      }
+    },
+    {
+      "id": "open-store",
+      "scriptName": "RequestStore",
+      "category": "share",
+      "list-name": "显示商店页面",
+      "display-text": "显示商店页面 (AppID: [i]{0}[/i])",
+      "description": "打开App的评分页面",
+      "params": {
+        "appIdentifier": {
+          "type": "string",
+          "name": "App ID",
+          "desc": "要打开商店页面的应用程序ID。留空则使用项目设置中的应用程序ID。"
+        }
+      }
+    }
+  ],
+  "expressions": [],
+  "properties": {}
+}

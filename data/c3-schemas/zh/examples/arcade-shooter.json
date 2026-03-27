@@ -1,0 +1,38 @@
+{
+  "id": "arcade-shooter",
+  "name": "游戏示例: 街机清道夫",
+  "description": "经典游戏《赤色要塞》玩法机制。扮演一名勇敢的士兵穿插敌人的防线，入侵敌军基地。纵版俯视角射击的街机风格。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Tilemap",
+      "Keyboard",
+      "gamepad",
+      "TiledBg",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound",
+      "scrollto",
+      "MoveTo",
+      "Timer",
+      "Bullet",
+      "destroy",
+      "solid",
+      "Tween",
+      "Rotate"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcade-shooter"
+}

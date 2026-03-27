@@ -1,0 +1,21 @@
+{
+  "id": "physics-ragdoll",
+  "name": "Physics: Ragdoll",
+  "description": "A simple ragdoll effect using a series of physics joints.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [
+      "Physics"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=physics-ragdoll"
+}

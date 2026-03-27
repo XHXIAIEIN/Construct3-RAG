@@ -1,0 +1,28 @@
+{
+  "id": "farming-lines",
+  "name": "3D农场播种",
+  "description": "经典游戏《一笔画》玩法机制。想办法让种子填满整片农地。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Touch",
+      "Sprite",
+      "Shape3D",
+      "Camera3D",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=farming-lines"
+}

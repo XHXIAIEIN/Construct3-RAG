@@ -1,0 +1,29 @@
+{
+  "id": "local-savegames",
+  "name": "Local savegames",
+  "description": "The 'Spell caster' tutorial modified to support full-state savegames using the System 'Save' and 'Load' actions.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Shooter"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "EightDir",
+      "Fade",
+      "bound",
+      "destroy",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=local-savegames"
+}

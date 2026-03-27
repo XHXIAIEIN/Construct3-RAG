@@ -1,0 +1,25 @@
+{
+  "id": "fireworks",
+  "name": "Fireworks",
+  "description": "An animated bonfire and firework effect demo using lots of particles.",
+  "tags": [
+    "Tech demo",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Particles",
+      "Sprite",
+      "Touch",
+      "Spritefont2",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Bullet"
+    ],
+    "effects": [
+      "setcolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fireworks"
+}

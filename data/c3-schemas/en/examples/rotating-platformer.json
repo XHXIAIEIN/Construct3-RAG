@@ -1,0 +1,25 @@
+{
+  "id": "rotating-platformer",
+  "name": "Rotating platformer",
+  "description": "Use rotating layers and a changing gravity angle to make a platform game that spirals in a circle.",
+  "tags": [
+    "Beginner",
+    "Feature example",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=rotating-platformer"
+}

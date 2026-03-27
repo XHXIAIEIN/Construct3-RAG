@@ -1,0 +1,23 @@
+{
+  "id": "make-animations-with-construct",
+  "name": "时间轴：启动动画",
+  "description": "使用时间轴制作标题启动动画的示例。",
+  "tags": [
+    "animation-recommended",
+    "动画",
+    "功能示例",
+    "时间轴"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Timeline",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=make-animations-with-construct"
+}

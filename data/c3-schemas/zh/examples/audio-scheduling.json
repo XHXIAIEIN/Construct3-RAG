@@ -1,0 +1,20 @@
+{
+  "id": "audio-scheduling",
+  "name": "音频：播放序列",
+  "description": "演示 '安排下一首播放' 动作，精确安排下一个声音顺序播放的时间点。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Button",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-scheduling"
+}

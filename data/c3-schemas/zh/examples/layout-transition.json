@@ -1,0 +1,29 @@
+{
+  "id": "layout-transition",
+  "name": "HUD: 转场动画",
+  "description": "通过高级动画技术，将一个场景无缝过渡到另一种场景。",
+  "tags": [
+    "高级",
+    "玩法机制"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "DrawingCanvas",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=layout-transition"
+}

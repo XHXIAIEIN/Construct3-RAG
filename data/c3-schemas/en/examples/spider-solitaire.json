@@ -1,0 +1,24 @@
+{
+  "id": "spider-solitaire",
+  "name": "Spider solitaire",
+  "description": "The classic card game where you must move all cards to the foundations in order, from Ace to King.",
+  "tags": [
+    "Advanced",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spider-solitaire"
+}

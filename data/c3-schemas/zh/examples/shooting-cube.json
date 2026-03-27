@@ -1,0 +1,37 @@
+{
+  "id": "shooting-cube",
+  "name": "关卡设计፡ 方块冲刺",
+  "description": "在平台游戏中通过滚动立方体和射击子弹来控制玩家的独特方式。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "gamepad",
+      "Tilemap",
+      "TiledBg",
+      "Spritefont2",
+      "Particles"
+    ],
+    "behaviors": [
+      "solid",
+      "Bullet",
+      "Sin",
+      "Tween",
+      "LOS",
+      "scrollto",
+      "Fade",
+      "Timer",
+      "TileMovement",
+      "Rotate",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=shooting-cube"
+}

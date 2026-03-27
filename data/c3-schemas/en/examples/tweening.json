@@ -1,0 +1,24 @@
+{
+  "id": "tweening",
+  "name": "Tweening",
+  "description": "Demonstrates using the Tween behavior to smoothly change values over time.",
+  "tags": [
+    "Beginner",
+    "animation-recommended",
+    "Feature example",
+    "Animation",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tweening"
+}

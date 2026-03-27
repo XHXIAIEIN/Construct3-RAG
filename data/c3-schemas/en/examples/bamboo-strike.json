@@ -1,0 +1,31 @@
+{
+  "id": "bamboo-strike",
+  "name": "Bamboo strike",
+  "description": "Combine your raw strength and timing skills to cut through a massive line of bamboo in one strike.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=bamboo-strike"
+}

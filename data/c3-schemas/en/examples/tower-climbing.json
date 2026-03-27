@@ -1,0 +1,29 @@
+{
+  "id": "tower-climbing",
+  "name": "Tower climbing",
+  "description": "Perform precise jumps in a wild environment to reach the top of the tree.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tower-climbing"
+}

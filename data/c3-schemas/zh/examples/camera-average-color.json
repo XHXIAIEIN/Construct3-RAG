@@ -1,0 +1,15 @@
+{
+  "id": "camera-average-color",
+  "name": "设备：画面平均色调",
+  "description": "使用代码从摄像头获取视频流，提取视频像素数据，并计算平均RGB值。",
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=camera-average-color"
+}

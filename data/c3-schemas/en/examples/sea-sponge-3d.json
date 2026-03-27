@@ -1,0 +1,32 @@
+{
+  "id": "sea-sponge-3d",
+  "name": "Sea sponge 3D",
+  "description": "Help the sponge eat as much bacteria as possible in a three dimensional sea.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "3D",
+    "Action"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Keyboard",
+      "Sprite",
+      "Arr",
+      "Particles",
+      "TiledBg",
+      "Spritefont2",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer"
+    ],
+    "effects": [
+      "darken",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=sea-sponge-3d"
+}

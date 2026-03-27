@@ -1,0 +1,20 @@
+{
+  "id": "bluetooth-device-name",
+  "name": "设备：蓝牙模块",
+  "description": "演示使用蓝牙功能，连接到附近的设备并读取设备名称。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Text",
+      "Bluetooth"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bluetooth-device-name"
+}

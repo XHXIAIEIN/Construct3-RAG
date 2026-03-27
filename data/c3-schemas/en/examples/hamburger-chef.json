@@ -1,0 +1,27 @@
+{
+  "id": "hamburger-chef",
+  "name": "Hamburger chef",
+  "description": "Customers are craving your burgers! Grill each patty to perfection and assemble the correct combination of ingredients to fulfill every order.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hamburger-chef"
+}

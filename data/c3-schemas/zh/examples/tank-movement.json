@@ -1,0 +1,30 @@
+{
+  "id": "tank-movement",
+  "name": "3D坦克驾驶员",
+  "description": "在3D环境中控制一辆坦克。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作",
+    "3D",
+    "纹理变形"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Shape3D",
+      "Camera3D",
+      "gamepad",
+      "TiledBg",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tank-movement"
+}

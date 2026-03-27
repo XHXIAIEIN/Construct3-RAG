@@ -1,0 +1,28 @@
+{
+  "id": "palette-sorting",
+  "name": "游戏示例: 色感训练",
+  "description": "通过将彩色块重新排列在视觉上平滑的坡道中来测试您的视力。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "Arr",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Fade",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=palette-sorting"
+}

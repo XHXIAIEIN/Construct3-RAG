@@ -1,0 +1,24 @@
+{
+  "id": "3d-platforms",
+  "name": "功能示例：3D平台地形",
+  "description": "演示使用 3D 形状对象，实现简单的平台移动示例。",
+  "tags": [
+    "简单",
+    "3D",
+    "基础示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Shape3D",
+      "Sprite"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=3d-platforms"
+}

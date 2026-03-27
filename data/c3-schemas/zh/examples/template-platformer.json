@@ -1,0 +1,27 @@
+{
+  "id": "template-platformer",
+  "name": "基础示例：平台跳跃",
+  "description": "常见的平台跳跃游戏模板，带有简单的图形。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid",
+      "Sin",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-platformer"
+}

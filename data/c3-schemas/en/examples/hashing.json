@@ -1,0 +1,24 @@
+{
+  "id": "hashing",
+  "name": "Hashing",
+  "description": "Demonstrates using the Cryptography plugin to calculate a cryptographic hash function for some text or a file.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Button",
+      "Clipboard",
+      "Cryptography",
+      "Text",
+      "TextBox",
+      "filechooser"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hashing"
+}

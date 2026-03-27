@@ -1,0 +1,31 @@
+{
+  "id": "wall-creature",
+  "name": "Wall creatures",
+  "description": "An example of a type of platformer obstacle where spiky creatures walk around surfaces.",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "Keyboard",
+      "Particles",
+      "gamepad",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "scrollto",
+      "Tween",
+      "Sin",
+      "Timer",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=wall-creature"
+}

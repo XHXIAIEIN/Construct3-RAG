@@ -1,0 +1,29 @@
+{
+  "id": "snowboard-3d",
+  "name": "Snowboard 3D",
+  "description": "Assist the snowboarder traverse the hills to collect all the flags with the least number of clicks possible.",
+  "tags": [
+    "Advanced",
+    "Gameplay mechanic",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=snowboard-3d"
+}

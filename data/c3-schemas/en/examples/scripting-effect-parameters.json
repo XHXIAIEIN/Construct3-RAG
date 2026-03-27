@@ -1,0 +1,20 @@
+{
+  "id": "scripting-effect-parameters",
+  "name": "Scripting effect parameters",
+  "description": "Demonstrates how to change effect parameters using code.",
+  "tags": [
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "sliderbar"
+    ],
+    "behaviors": [],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=scripting-effect-parameters"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "template-on-rails-shooter",
+  "name": "On-rails shooter",
+  "description": "A space-themed shooter template using Z elevation for a depth effect.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Shooter",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Keyboard",
+      "Spritefont2",
+      "AJAX",
+      "Arr",
+      "Particles",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Tween",
+      "EightDir",
+      "Timer",
+      "Pin",
+      "Flash",
+      "Fade",
+      "Rotate",
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-on-rails-shooter"
+}

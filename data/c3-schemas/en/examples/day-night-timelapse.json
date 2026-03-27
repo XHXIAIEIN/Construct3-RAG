@@ -1,0 +1,26 @@
+{
+  "id": "day-night-timelapse",
+  "name": "Day-night timelapse",
+  "description": "Experience a beautiful time-lapse animation of Rio de Janeiro's vibrant landscape, set against the iconic backdrop of Christ the Redeemer.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "Timeline"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=day-night-timelapse"
+}

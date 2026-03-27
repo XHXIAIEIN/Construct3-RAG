@@ -1,0 +1,31 @@
+{
+  "id": "game-of-life",
+  "name": "3D生命游戏",
+  "description": "经典游戏《生命游戏》玩法机制。在一个小型的细胞自动机世界里，观察文明的兴起和衰落吧。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "动画",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Spritefont2",
+      "Keyboard",
+      "Mouse",
+      "Camera3D",
+      "Shape3D",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=game-of-life"
+}

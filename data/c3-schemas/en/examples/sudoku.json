@@ -1,0 +1,23 @@
+{
+  "id": "sudoku",
+  "name": "Sudoku",
+  "description": "Prove your logic skills by correctly filling the blank spots.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Tween",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=sudoku"
+}

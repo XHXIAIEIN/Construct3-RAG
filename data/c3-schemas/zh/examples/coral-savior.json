@@ -1,0 +1,33 @@
+{
+  "id": "coral-savior",
+  "name": "游戏示例：珊瑚潜水员",
+  "description": "潜入深海，播撒神奇的种子来修复白化的珊瑚，伴随着逼真的水下音效。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "EightDir",
+      "MoveTo",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=coral-savior"
+}

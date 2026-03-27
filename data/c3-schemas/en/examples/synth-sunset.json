@@ -1,0 +1,30 @@
+{
+  "id": "synth-sunset",
+  "name": "Synth Sunset",
+  "description": "Watch a brief animation featuring a synthwave sunset and a retro-inspired car, brought to life with dynamic 3D camera movements controlled by a timeline.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation",
+    "3D",
+    "Timeline",
+    "animation-recommended"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Shape3D",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential",
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=synth-sunset"
+}

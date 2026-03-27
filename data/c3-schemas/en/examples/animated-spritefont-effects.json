@@ -1,0 +1,18 @@
+{
+  "id": "animated-spritefont-effects",
+  "name": "Animated SpriteFont effects",
+  "description": "A demonstration of using events to modify BBCode over time, creating various animated SpriteFont text effects.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=animated-spritefont-effects"
+}

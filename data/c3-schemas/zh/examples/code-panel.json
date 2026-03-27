@@ -1,0 +1,32 @@
+{
+  "id": "code-panel",
+  "name": "HUD: 密码解锁器",
+  "description": "演示一个可交互的密码面板，玩家必须输入正确的代码才能打开机关。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Spritefont2",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Particles",
+      "Touch"
+    ],
+    "behaviors": [
+      "Fade",
+      "Flash",
+      "Tween",
+      "Timer"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=code-panel"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "magnetic-mover",
+  "name": "Magnetic Mover",
+  "description": "Manipulate metal cubes with magnetism to unlock doors, disable force fields, and solve every puzzle challenge.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Flash",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=magnetic-mover"
+}

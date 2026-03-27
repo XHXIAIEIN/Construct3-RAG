@@ -1,0 +1,29 @@
+{
+  "id": "qr-code-maker",
+  "name": "功能示例：二维码生成器",
+  "description": "演示如何生成一个二维码，可以下载、复制或分享。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "Clipboard",
+      "DrawingCanvas",
+      "FileSystem",
+      "List",
+      "Share",
+      "Text",
+      "TextBox",
+      "qrcode"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=qr-code-maker"
+}

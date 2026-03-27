@@ -1,0 +1,29 @@
+{
+  "id": "time-travel-3d",
+  "name": "脚本项目：时空旅行",
+  "description": "你发现自己被困在实验室里，却意外发现了时间旅行的能力。利用你的超能力改写历史、解开谜题并逃出生天！",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=time-travel-3d"
+}

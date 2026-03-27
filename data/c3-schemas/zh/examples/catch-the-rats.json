@@ -1,0 +1,32 @@
+{
+  "id": "catch-the-rats",
+  "name": "本地双人：抓老鼠",
+  "description": "与朋友比赛，看看谁能在下水道里用巨型笼子抓到更多的老鼠！",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=catch-the-rats"
+}

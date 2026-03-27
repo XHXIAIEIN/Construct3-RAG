@@ -1,0 +1,29 @@
+{
+  "id": "voice-recorder",
+  "name": "Voice recorder",
+  "description": "Demonstrates how a combination of the User Media and Video Recorder objects can be used to record from the user's microphone. The resulting recording can be downloaded or shared.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Audio",
+      "BinaryData",
+      "Browser",
+      "Button",
+      "FileSystem",
+      "GameRecorder",
+      "List",
+      "Share",
+      "Text",
+      "TiledBg",
+      "UserMedia"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=voice-recorder"
+}

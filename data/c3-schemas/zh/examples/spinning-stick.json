@@ -1,0 +1,31 @@
+{
+  "id": "spinning-stick",
+  "name": "3D滚滚棒",
+  "description": "经典游戏《Kuru Kuru Kururin》玩法机制，控制一根不断旋转的木棒穿过狭窄的走廊，避免接触到四周的墙壁，抵达目的地。",
+  "tags": [
+    "简单",
+    "游戏模板",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Shape3D",
+      "Tilemap",
+      "Camera3D",
+      "gamepad",
+      "Keyboard",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "EightDir",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spinning-stick"
+}

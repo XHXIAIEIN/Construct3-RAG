@@ -1,0 +1,34 @@
+{
+  "id": "toolbox-wheel",
+  "name": "Toolbox wheel",
+  "description": "A toolbox wheel is a great multi-platform tool switching mechanism. Try it out on keyboard, mouse and gamepad!",
+  "tags": [
+    "Intermediate",
+    "Gameplay mechanic",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "hsladjustmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=toolbox-wheel"
+}

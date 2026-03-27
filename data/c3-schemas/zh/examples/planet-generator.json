@@ -1,0 +1,32 @@
+{
+  "id": "planet-generator",
+  "name": "脚本项目：星球创造",
+  "description": "选择地形类型、颜色和大气特征，打造你的星球。完成后，隐藏界面，即可在深空视角查看你的星球。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "动画"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AdvancedRandom",
+      "DrawingCanvas",
+      "HTMLElement",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "screen",
+      "sphere",
+      "vignette"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=planet-generator"
+}

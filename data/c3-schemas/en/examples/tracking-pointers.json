@@ -1,0 +1,19 @@
+{
+  "id": "tracking-pointers",
+  "name": "Tracking pointers",
+  "description": "Demonstrates a coding pattern for tracking multiple simultaneous pointers (mouse, touch or pen inputs).",
+  "tags": [
+    "Mobile",
+    "Intermediate"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tracking-pointers"
+}

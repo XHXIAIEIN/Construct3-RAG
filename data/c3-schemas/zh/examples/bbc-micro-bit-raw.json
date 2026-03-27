@@ -1,0 +1,28 @@
+{
+  "id": "bbc-micro-bit-raw",
+  "name": "外设: BBC micro:bit 原始通信",
+  "description": "通过蓝牙和二进制对象对 BBC micro:bit 进行底层的通信。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "技术演示",
+    "BBC micro:bit"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Bluetooth",
+      "Button",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bbc-micro-bit-raw"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "rotating-platformer",
+  "name": "基础示例：旋转平台",
+  "description": "使用旋转层和不断变化的重力角度来制作一个螺旋形的平台游戏",
+  "tags": [
+    "简单",
+    "功能示例",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Platform",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=rotating-platformer"
+}

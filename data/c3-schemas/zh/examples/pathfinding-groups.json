@@ -1,0 +1,28 @@
+{
+  "id": "pathfinding-groups",
+  "name": "寻路：分散寻路",
+  "description": "演示多个对象同时进行寻路，使用路径组分散路径，防止它们采用完全相同的路径，减少重叠的情况。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Pathfinding",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=pathfinding-groups"
+}

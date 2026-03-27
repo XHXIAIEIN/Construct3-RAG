@@ -1,0 +1,30 @@
+{
+  "id": "cell-linking",
+  "name": "游戏示例: 连接细胞",
+  "description": "一笔画游戏，连接相同的细胞，但每个线条不能交叉，也不能超出范围。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Browser",
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "warpripple"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cell-linking"
+}

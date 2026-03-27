@@ -1,0 +1,31 @@
+{
+  "id": "elemental-conveyors",
+  "name": "3D物流输送",
+  "description": "放置元素传送带来运送包裹。方块会对元素产生独特的反应，为你的任务增添复杂性。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=elemental-conveyors"
+}

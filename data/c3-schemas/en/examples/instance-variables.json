@@ -1,0 +1,19 @@
+{
+  "id": "instance-variables",
+  "name": "Instance variables",
+  "description": "Shows how each instance of an object can store its own values, such as for health.",
+  "tags": [
+    "Beginner",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Mouse"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=instance-variables"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "template-card-memory-match",
+  "name": "Card memory match",
+  "description": "A simple memory match style puzzle game with retro style graphics.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Mouse",
+      "Arr",
+      "Browser",
+      "AdvancedRandom",
+      "Particles",
+      "TiledBg",
+      "Keyboard",
+      "Spritefont2",
+      "NinePatch",
+      "Touch",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "Tween",
+      "Pin",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-card-memory-match"
+}

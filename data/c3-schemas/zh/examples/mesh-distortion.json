@@ -1,0 +1,21 @@
+{
+  "id": "mesh-distortion",
+  "name": "纹理变形：网格纹理",
+  "description": "将对象分割为若干个纹理网格锚点，自由将对象外观扭曲变型。",
+  "tags": [
+    "高级",
+    "纹理变形",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "DragnDrop"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mesh-distortion"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "pair-of-knights",
+  "name": "Pair of Knights",
+  "description": "Two knights, one fight! Control them in unison through a deadly mansion, solving puzzles and dodging traps on the way to victory.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Bullet",
+      "MoveTo",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "jumpthru",
+      "solid"
+    ],
+    "effects": [
+      "dodge"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pair-of-knights"
+}

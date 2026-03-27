@@ -1,0 +1,34 @@
+{
+  "id": "license-test",
+  "name": "License test",
+  "description": "You are a novice racer seeking to obtain a race license. Showcase your skills by navigating the test course as quickly as possible.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Racing",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Car",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=license-test"
+}

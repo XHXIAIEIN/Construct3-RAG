@@ -1,0 +1,53 @@
+{
+  "id": "randomizetiling",
+  "name": "Randomize tiling",
+  "description": "Breaks up repetitive tiling images with a random offset and orientation for tiles and blending the edges.",
+  "category": "tiling",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "tile-width",
+      "type": "float",
+      "name": "Tile width",
+      "desc": "Width of each tile in pixels."
+    },
+    {
+      "id": "tile-height",
+      "type": "float",
+      "name": "Tile height",
+      "desc": "Height of each tile in pixels."
+    },
+    {
+      "id": "x-random",
+      "type": "percent",
+      "name": "X random",
+      "desc": "Amount of horizontal shift randomization."
+    },
+    {
+      "id": "y-random",
+      "type": "percent",
+      "name": "Y random",
+      "desc": "Amount of vertical shift randomization."
+    },
+    {
+      "id": "angle-random",
+      "type": "percent",
+      "name": "Angle random",
+      "desc": "Amount of rotation randomization."
+    },
+    {
+      "id": "blend-margin-x",
+      "type": "percent",
+      "name": "Blend margin X",
+      "desc": "Percentage of tile width that fades to adjacent tile."
+    },
+    {
+      "id": "blend-margin-y",
+      "type": "percent",
+      "name": "Blend margin Y",
+      "desc": "Percentage of tile height that fades to adjacent tile."
+    }
+  ]
+}

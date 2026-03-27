@@ -1,0 +1,32 @@
+{
+  "id": "living-card",
+  "name": "3D展示: 传奇卡牌",
+  "description": "展示一张传说级卡牌的力量，成为最强大的玩家。",
+  "tags": [
+    "animation-recommended",
+    "进阶",
+    "玩法机制",
+    "动画",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "overlay",
+      "pulse"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=living-card"
+}

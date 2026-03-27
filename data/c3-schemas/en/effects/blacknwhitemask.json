@@ -1,0 +1,17 @@
+{
+  "id": "blacknwhitemask",
+  "name": "Black & white mask",
+  "description": "Replace all colors in the background with either black or white.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "threshold",
+      "type": "percent",
+      "name": "Threshold",
+      "desc": "Separation level, from 0 to 100."
+    }
+  ]
+}

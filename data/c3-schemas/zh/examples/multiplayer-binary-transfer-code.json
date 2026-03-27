@@ -1,0 +1,25 @@
+{
+  "id": "multiplayer-binary-transfer-code",
+  "name": "脚本项目：多人游戏传输文件",
+  "description": "使用多人游戏的二进制传输功能，将文件发送给另一个玩家，以代码实现。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "BinaryData",
+      "Button",
+      "List",
+      "Multiplayer",
+      "Text",
+      "TextBox",
+      "filechooser",
+      "progressbar"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-binary-transfer-code"
+}

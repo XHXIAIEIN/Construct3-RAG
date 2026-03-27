@@ -1,0 +1,30 @@
+{
+  "id": "fruit-merger",
+  "name": "游戏示例: 合成水果",
+  "description": "将小水果合成更大的水果，但切记不要把整个屏幕填满！",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "街机",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Flash",
+      "Physics",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fruit-merger"
+}

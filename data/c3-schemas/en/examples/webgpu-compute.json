@@ -1,0 +1,17 @@
+{
+  "id": "webgpu-compute",
+  "name": "WebGPU compute",
+  "description": "Demonstrates how the WebGPU API can be used to run general-purpose compute shaders on the GPU.",
+  "tags": [
+    "Advanced"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=webgpu-compute"
+}

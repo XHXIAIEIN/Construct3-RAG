@@ -1,0 +1,32 @@
+{
+  "id": "hook-shot",
+  "name": "关卡设计：钩索（平台)",
+  "description": "经典游戏《Celeste2》勾索机制。向前方发射勾索，若击中墙体则将自身拉近。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "LOS",
+      "solid",
+      "jumpthru"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=hook-shot"
+}

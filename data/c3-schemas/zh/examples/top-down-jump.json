@@ -1,0 +1,38 @@
+{
+  "id": "top-down-jump",
+  "name": "关卡设计：顶视角跳跃",
+  "description": "在顶视角游戏实现跳跃，角色必须在两个飞船之间跳跃。利用视差高度产生深度效果。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "动作",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Tilemap",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween",
+      "EightDir",
+      "Fade",
+      "Bullet",
+      "Sin",
+      "Rotate"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "warpobject",
+      "glowvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=top-down-jump"
+}

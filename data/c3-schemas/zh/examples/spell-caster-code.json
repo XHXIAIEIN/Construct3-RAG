@@ -1,0 +1,21 @@
+{
+  "id": "spell-caster-code",
+  "name": "脚本示例：魔能守卫",
+  "description": "与新手示例《魔能守卫》相同，但使用代码编写而不是事件表。",
+  "tags": [
+    "进阶",
+    "射击"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=spell-caster-code"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "script-raycasting",
+  "name": "脚本示例：raycasting 反射",
+  "description": "演示使用视线行为(LOS)的 API 进行光线投射。",
+  "tags": [
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "LOS",
+      "Sin",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=script-raycasting"
+}

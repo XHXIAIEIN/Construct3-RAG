@@ -1,0 +1,31 @@
+{
+  "id": "elemental-conveyors",
+  "name": "Elemental conveyors",
+  "description": "Position elemental conveyors to deliver packages. Blocks react uniquely to elements, adding complexity to your task.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=elemental-conveyors"
+}

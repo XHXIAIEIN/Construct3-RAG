@@ -1,0 +1,29 @@
+{
+  "id": "hsladjustmask",
+  "name": "Adjust HSL mask",
+  "description": "Adjust the hue, saturation and luminosity of the background.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "hue",
+      "type": "percent",
+      "name": "Hue",
+      "desc": "Amount of hue rotation to apply, from 0 to 100."
+    },
+    {
+      "id": "saturation",
+      "type": "percent",
+      "name": "Saturation",
+      "desc": "Saturation factor, from 0 to 100 or beyond."
+    },
+    {
+      "id": "luminosity",
+      "type": "percent",
+      "name": "Luminosity",
+      "desc": "Amount to offset luminosity, from 0 to 200."
+    }
+  ]
+}

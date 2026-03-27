@@ -1,0 +1,31 @@
+{
+  "id": "pixel-data-reader",
+  "name": "3D迷宫: 位图数据解析",
+  "description": "使用单张位图纹理，创建完整的 3D 关卡。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "冒险",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "DrawingCanvas",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pixel-data-reader"
+}

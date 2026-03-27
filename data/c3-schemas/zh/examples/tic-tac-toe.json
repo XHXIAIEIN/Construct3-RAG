@@ -1,0 +1,19 @@
+{
+  "id": "tic-tac-toe",
+  "name": "游戏示例: AI井字棋",
+  "description": "经典游戏《Tic-tac-toe》玩法机制。将事件表和 JavaScript 代码结合使用，与电脑共同游戏，由 minimax 算法驱动 AI。",
+  "tags": [
+    "游戏模板",
+    "解谜",
+    "进阶"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=tic-tac-toe"
+}

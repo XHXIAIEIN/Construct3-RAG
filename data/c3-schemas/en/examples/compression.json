@@ -1,0 +1,20 @@
+{
+  "id": "compression",
+  "name": "Compression",
+  "description": "Demonstrates how data compression works with the Binary Data object.",
+  "tags": [
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Button",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=compression"
+}

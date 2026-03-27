@@ -1,0 +1,34 @@
+{
+  "id": "volcano-jumper",
+  "name": "Volcano jumper",
+  "description": "Step into the shoes of a geologist escaping from an erupting volcano. Ascend as high as you can!",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "Platformer",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Fade",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "water"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=volcano-jumper"
+}

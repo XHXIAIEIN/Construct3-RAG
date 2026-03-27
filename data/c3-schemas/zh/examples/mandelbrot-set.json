@@ -1,0 +1,21 @@
+{
+  "id": "mandelbrot-set",
+  "name": "脚本绘图：分型图案",
+  "description": "探索并创造曼德布罗特集的美丽图像，它以其复杂而迷人的分形图案而闻名。",
+  "tags": [
+    "高级",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "DrawingCanvas",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=mandelbrot-set"
+}

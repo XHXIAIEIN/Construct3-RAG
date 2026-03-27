@@ -1,0 +1,33 @@
+{
+  "id": "jumpy-monster",
+  "name": "Jumpy monster",
+  "description": "Play as a cute monster hopping from mushroom to mushroom above the unknown! Collect watches for extra time, dodge deadly purple mushrooms, and chase the highest score.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=jumpy-monster"
+}

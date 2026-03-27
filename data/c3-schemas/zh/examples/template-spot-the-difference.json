@@ -1,0 +1,21 @@
+{
+  "id": "template-spot-the-difference",
+  "name": "基础示例：找不同",
+  "description": "一个简单的图像找茬游戏模板，点击两幅图像不同的区域。",
+  "tags": [
+    "简单",
+    "基础示例",
+    "移动端",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text",
+      "Touch"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-spot-the-difference"
+}

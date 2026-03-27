@@ -1,0 +1,25 @@
+{
+  "id": "microphone-input",
+  "name": "Microphone input",
+  "description": "An example of using the User Media object to get live audio input to the Audio object through a microphone.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "TiledBg",
+      "Touch",
+      "Sprite",
+      "UserMedia",
+      "Button",
+      "List"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=microphone-input"
+}

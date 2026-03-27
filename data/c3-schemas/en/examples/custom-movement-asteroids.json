@@ -1,0 +1,25 @@
+{
+  "id": "custom-movement-asteroids",
+  "name": "Custom movement ('Asteroids' style)",
+  "description": "An 'Asteroids' type movement using the Custom Movement behavior.",
+  "tags": [
+    "Intermediate",
+    "Barebones template",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text"
+    ],
+    "behaviors": [
+      "custom",
+      "wrap",
+      "Bullet",
+      "destroy"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=custom-movement-asteroids"
+}

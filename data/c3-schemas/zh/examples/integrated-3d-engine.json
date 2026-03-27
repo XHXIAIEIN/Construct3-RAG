@@ -1,0 +1,22 @@
+{
+  "id": "integrated-3d-engine",
+  "name": "3D引擎集成",
+  "description": "将 three.js 集成到 Construct 项目中，将脚本功能与 HTML 图层相结合。",
+  "tags": [
+    "高级",
+    "功能示例",
+    "技术演示",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "HTMLElement",
+      "PlatformInfo",
+      "Sprite",
+      "TiledBg"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=integrated-3d-engine"
+}

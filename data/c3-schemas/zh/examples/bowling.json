@@ -1,0 +1,26 @@
+{
+  "id": "bowling",
+  "name": "脚本项目：保龄球",
+  "description": "展示你精湛的保龄球技艺，称霸球道，在这场经典的保龄球体验中接连打出令人赞叹的全中。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=bowling"
+}

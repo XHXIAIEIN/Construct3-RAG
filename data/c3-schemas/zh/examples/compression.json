@@ -1,0 +1,20 @@
+{
+  "id": "compression",
+  "name": "功能示例：信息压缩",
+  "description": "演示将文本信息压缩为Base64编码或反向解密。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "BinaryData",
+      "Button",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=compression"
+}

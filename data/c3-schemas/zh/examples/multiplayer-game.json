@@ -1,0 +1,29 @@
+{
+  "id": "multiplayer-game",
+  "name": "多人联机：即时游戏",
+  "description": "一款顶视角视角，实时多人射击游戏。有关开发多人游戏的详细介绍，请参阅案例配套的教程。",
+  "tags": [
+    "高级",
+    "基础示例",
+    "多人"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Browser",
+      "Button",
+      "Keyboard",
+      "Mouse",
+      "Multiplayer",
+      "Sprite",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [
+      "EightDir",
+      "bound"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=multiplayer-game"
+}

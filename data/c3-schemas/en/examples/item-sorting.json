@@ -1,0 +1,27 @@
+{
+  "id": "item-sorting",
+  "name": "Item sorting",
+  "description": "Organize the emojis by grouping them based on their facial expressions.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Puzzle",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=item-sorting"
+}

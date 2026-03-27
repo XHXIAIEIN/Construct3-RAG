@@ -1,0 +1,21 @@
+{
+  "id": "quadissueperf",
+  "name": "Quad issue performance",
+  "description": "A performance test to measure how fast the CPU can make draw calls for sprites.",
+  "tags": [
+    "Advanced",
+    "Tech demo",
+    "Performance"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Text"
+    ],
+    "behaviors": [
+      "Rotate"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=quadissueperf"
+}

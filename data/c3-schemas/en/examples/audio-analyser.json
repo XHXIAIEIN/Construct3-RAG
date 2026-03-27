@@ -1,0 +1,22 @@
+{
+  "id": "audio-analyser",
+  "name": "Audio analyser",
+  "description": "Shows how to display a live graph of frequency information from the current audio playback.",
+  "tags": [
+    "Advanced",
+    "Feature example",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Text",
+      "TiledBg",
+      "Touch",
+      "Sprite"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=audio-analyser"
+}

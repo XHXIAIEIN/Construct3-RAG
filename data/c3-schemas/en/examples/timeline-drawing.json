@@ -1,0 +1,24 @@
+{
+  "id": "timeline-drawing",
+  "name": "Timeline drawing",
+  "description": "Using a Timeline to play back an animation which also draws out the path in to a Drawing Canvas object, writing out some text.",
+  "tags": [
+    "Advanced",
+    "animation-recommended",
+    "Feature example",
+    "Timeline",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "DrawingCanvas",
+      "Timeline"
+    ],
+    "behaviors": [
+      "Pin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=timeline-drawing"
+}

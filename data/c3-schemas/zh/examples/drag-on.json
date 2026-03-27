@@ -1,0 +1,34 @@
+{
+  "id": "drag-on",
+  "name": "游戏示例：祥龙献福",
+  "description": "拖着你的龙躲避炸弹，收集部件让身体更长。",
+  "tags": [
+    "新增",
+    "进阶",
+    "游戏模板",
+    "街机",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=drag-on"
+}

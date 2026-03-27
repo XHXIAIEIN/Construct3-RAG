@@ -1,0 +1,16 @@
+{
+  "id": "imports-and-exports",
+  "name": "Imports & exports",
+  "description": "A basic example of modules in code, using import and export statements.",
+  "tags": [
+    "Beginner"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=imports-and-exports"
+}

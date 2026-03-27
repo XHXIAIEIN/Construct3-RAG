@@ -1,0 +1,26 @@
+{
+  "id": "template-snake",
+  "name": "Snake",
+  "description": "A template of a classic snake type game, using functions to manage the movement of the snake.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Strategy",
+    "Mobile"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "Text",
+      "Touch",
+      "PlatformInfo"
+    ],
+    "behaviors": [
+      "TileMovement",
+      "Flash"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-snake"
+}

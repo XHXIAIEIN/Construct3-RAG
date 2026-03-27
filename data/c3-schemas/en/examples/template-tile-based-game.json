@@ -1,0 +1,26 @@
+{
+  "id": "template-tile-based-game",
+  "name": "Tile-based game",
+  "description": "A template with a basic tile-based game, involving a player with the Tile movement walking around a Tilemap-designed level.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Adventure"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "TiledBg",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "solid",
+      "TileMovement",
+      "Pin",
+      "scrollto"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-tile-based-game"
+}

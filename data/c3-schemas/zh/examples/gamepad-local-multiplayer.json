@@ -1,0 +1,29 @@
+{
+  "id": "gamepad-local-multiplayer",
+  "name": "本地多人：手柄测试",
+  "description": "演示如何在本地设备连接多台游戏手柄，进行同屏多人游戏。",
+  "tags": [
+    "进阶",
+    "游戏模板",
+    "多人"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Tilemap",
+      "Sprite",
+      "gamepad",
+      "TiledBg",
+      "Particles",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "solid",
+      "Platform",
+      "Tween",
+      "wrap",
+      "Fade"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=gamepad-local-multiplayer"
+}

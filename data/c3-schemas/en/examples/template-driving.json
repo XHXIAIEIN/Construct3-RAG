@@ -1,0 +1,24 @@
+{
+  "id": "template-driving",
+  "name": "Driving",
+  "description": "A template with a basic car driving game setup prepared, with placeholder graphics.",
+  "tags": [
+    "Beginner",
+    "Barebones template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Text"
+    ],
+    "behaviors": [
+      "Car",
+      "scrollto",
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-driving"
+}

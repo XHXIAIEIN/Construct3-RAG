@@ -1,0 +1,36 @@
+{
+  "id": "ghost-racer",
+  "name": "3D霓虹巴士",
+  "description": "一款3D赛车游戏，完成一圈后，即将与自己历史最佳记录的幽灵巴士一起竞赛。",
+  "tags": [
+    "games-recommended",
+    "高级",
+    "游戏模板",
+    "3D",
+    "竞速"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Camera3D",
+      "Arr",
+      "LocalStorage",
+      "Shape3D",
+      "Keyboard",
+      "TiledBg",
+      "Tilemap",
+      "Spritefont2"
+    ],
+    "behaviors": [
+      "Car",
+      "Tween",
+      "Timer",
+      "Fade"
+    ],
+    "effects": [
+      "lighten",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-racer"
+}

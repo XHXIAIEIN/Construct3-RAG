@@ -1,0 +1,41 @@
+{
+  "id": "cannon-launch",
+  "name": "关卡设计꞉ 木桶大炮",
+  "description": "经典游戏《咚奇刚》的关卡机制。跳进强力的木桶把自己发射到天上。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Particles"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Pin",
+      "Platform",
+      "Bullet",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "bulge",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cannon-launch"
+}

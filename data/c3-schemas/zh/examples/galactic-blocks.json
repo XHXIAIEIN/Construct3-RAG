@@ -1,0 +1,36 @@
+{
+  "id": "galactic-blocks",
+  "name": "游戏示例：砖块大作战",
+  "description": "经典游戏《零用钱大作战》玩法，通过搬动或交换陨石位置，使得相同颜色的陨石上下左右相邻并消去。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Keyboard",
+      "gamepad",
+      "Arr",
+      "TiledBg",
+      "DrawingCanvas",
+      "Spritefont2",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Bullet",
+      "Rotate",
+      "Fade",
+      "Flash",
+      "Pin"
+    ],
+    "effects": [
+      "glowvertical",
+      "glowhorizontal",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=galactic-blocks"
+}

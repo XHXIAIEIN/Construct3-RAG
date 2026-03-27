@@ -24,18 +24,27 @@
 
 ### Schema Export
 
-`C3Fetcher.export_schemas()` joins `allAces.json` + `en-US` lang + `zh-CN` lang into per-plugin JSON files:
+`C3Fetcher.export_schemas()` merges CDN structural data (`allAces.json`, `allEffects.json`, `example-project-data.json`) with per-locale text (`precompiled-{locale}.json`) into **per-language** schema files using CDN-native field names:
 
 ```
 .cache/c3-cdn/{version}/schemas/
-  plugins/sprite.json       — all Sprite ACEs with multilingual names
-  plugins/_common.json      — shared ACEs (collision, position, visibility)
-  behaviors/platform.json   — Platform behavior ACEs
-  ...
+  _index.json                  — language-neutral index (plugin/behavior/effect counts, originalId)
+  en/plugins/sprite.json       — English Sprite ACE definitions
+  zh/plugins/sprite.json       — Chinese Sprite ACE definitions
+  en/behaviors/platform.json   — English Platform behavior ACEs
+  en/effects/alphaclamp.json   — English effect definitions
+  en/examples/{id}.json        — English example project metadata (name, description, tags, open URL)
+  en/editor/index.json         — English editor UI element names
+  zh/...                       — Chinese equivalents (same structure)
 ```
 
-Each file contains: `conditions[]`, `actions[]`, `expressions[]`, `properties[]` with fields:
-`id`, `name_en`, `name_zh`, `description_en`, `description_zh`, `display_en`, `display_zh`, `scriptName`, `category`, `params[]`
+Each plugin/behavior file uses CDN field names:
+- Conditions/actions: `list-name`, `display-text`, `description`
+- Expressions: `translated-name`, `description`
+- Params: `{param_id: {type, name, desc}}` (object keyed by param id)
+- Structural fields from allAces: `scriptName`, `isTrigger`, `isAsync`, `returnType`, `category`
+
+Consumers that need both languages use `_merge_bilingual()` (in `src/rag/lookup.py`) to load en/ + zh/ and produce a unified in-memory format.
 
 ### Deprecation Filter
 

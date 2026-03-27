@@ -1,0 +1,24 @@
+{
+  "id": "falling-blocks",
+  "name": "Falling blocks",
+  "description": "An advanced example using recursive functions to determine which blocks are connected to the ground, and making those which are not to fall down.",
+  "tags": [
+    "Advanced",
+    "Barebones template",
+    "Mobile",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "TiledBg",
+      "Sprite",
+      "Touch",
+      "Text"
+    ],
+    "behaviors": [
+      "solid"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=falling-blocks"
+}

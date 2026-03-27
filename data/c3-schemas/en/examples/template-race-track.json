@@ -1,0 +1,26 @@
+{
+  "id": "template-race-track",
+  "name": "Race track",
+  "description": "A template of a race track with a countdown, computer-controlled opponents, and a checkpoint system for tracking positions.",
+  "tags": [
+    "Advanced",
+    "Game template",
+    "Racing"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "TiledBg",
+      "Arr",
+      "Text",
+      "Keyboard"
+    ],
+    "behaviors": [
+      "Car",
+      "solid",
+      "Timer"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=template-race-track"
+}

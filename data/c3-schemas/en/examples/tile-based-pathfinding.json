@@ -1,0 +1,39 @@
+{
+  "id": "tile-based-pathfinding",
+  "name": "Tile-based pathfinding",
+  "description": "Help the chickens cross the farm and avoid the foxes, using grid based pathfinding to guide them.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Adventure"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Fade",
+      "Flash",
+      "MoveTo",
+      "Pathfinding",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
+    ],
+    "effects": [
+      "hsladjust",
+      "posterize",
+      "replacecolor"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=tile-based-pathfinding"
+}

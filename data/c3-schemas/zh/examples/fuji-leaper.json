@@ -1,0 +1,44 @@
+{
+  "id": "fuji-leaper",
+  "name": "游戏示例：蝇山浪人",
+  "description": "施展你的武士绝技，斩除那些恼人的苍蝇！",
+  "tags": [
+    "进阶",
+    "完整游戏",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap",
+      "Touch",
+      "gamepad"
+    ],
+    "behaviors": [
+      "MoveTo",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "brightness",
+      "hsladjust",
+      "screen"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=fuji-leaper"
+}

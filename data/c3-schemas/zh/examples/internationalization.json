@@ -1,0 +1,23 @@
+{
+  "id": "internationalization",
+  "name": "文本：地区本地化",
+  "description": "演示本地化对象，显示不同地区的文本，时间，货币单位等。",
+  "tags": [
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Button",
+      "Date",
+      "Internationalization",
+      "List",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=internationalization"
+}

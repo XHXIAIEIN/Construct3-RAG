@@ -1,0 +1,35 @@
+{
+  "id": "ghost-chaser",
+  "name": "Ghost chaser",
+  "description": "Locate and capture ghosts in a haunted mansion using positioned sounds to guide you.",
+  "tags": [
+    "Intermediate",
+    "Game template",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Audio",
+      "Camera3D",
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Flash",
+      "LOS",
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=ghost-chaser"
+}

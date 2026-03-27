@@ -1,0 +1,33 @@
+{
+  "id": "persistent-inventory",
+  "name": "HUD: 背包库存",
+  "description": "典型RPG游戏的背包仓库系统，在商城中购买道具，整理背包或丢弃物品。",
+  "tags": [
+    "高级",
+    "玩法机制",
+    "冒险",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "Arr",
+      "Touch",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "Spritefont2",
+      "NinePatch",
+      "Browser"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Tween",
+      "Sin"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=persistent-inventory"
+}

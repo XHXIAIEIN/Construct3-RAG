@@ -1,0 +1,35 @@
+{
+  "id": "rhythm-game",
+  "name": "游戏示例：节奏游戏",
+  "description": "演奏每一个音符，以完成歌曲并成为著名的音乐家。",
+  "tags": [
+    "高级",
+    "游戏模板",
+    "动作"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Sprite",
+      "AJAX",
+      "Arr",
+      "Keyboard",
+      "gamepad",
+      "Audio",
+      "Spritefont2",
+      "TiledBg",
+      "NinePatch"
+    ],
+    "behaviors": [
+      "Tween",
+      "Timer",
+      "Bullet",
+      "Rotate",
+      "destroy",
+      "Fade"
+    ],
+    "effects": [
+      "warpobjectmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=rhythm-game"
+}

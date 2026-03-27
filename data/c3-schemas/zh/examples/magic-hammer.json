@@ -1,0 +1,43 @@
+{
+  "id": "magic-hammer",
+  "name": "关卡设计꞉ 魔法飞锤",
+  "description": "允许角色抛掷一柄魔法飞锤，帮助其在场景中穿梭移动，通过障碍。适用于扩展角色在平台跳跃关卡上的行动能力。",
+  "tags": [
+    "进阶",
+    "玩法机制",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "gamepad",
+      "Keyboard",
+      "Sprite",
+      "PlatformInfo",
+      "Spritefont2",
+      "Particles",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "scrollto",
+      "Tween",
+      "Timer",
+      "Fade",
+      "Platform",
+      "Rotate",
+      "solid",
+      "LOS"
+    ],
+    "effects": [
+      "glowhorizontal",
+      "glowvertical",
+      "blurhorizontal",
+      "blurvertical",
+      "hsladjust",
+      "bulge",
+      "pixellate"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=magic-hammer"
+}

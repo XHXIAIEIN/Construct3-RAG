@@ -1,0 +1,20 @@
+{
+  "id": "echarts-demo",
+  "name": "ECharts demo",
+  "description": "Demonstrates using JavaScript coding with the Apache ECharts library to display charts.",
+  "tags": [
+    "Intermediate",
+    "Feature example",
+    "Animation"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "HTMLElement",
+      "Text"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=echarts-demo"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "camera-input",
+  "name": "设备：摄像头输入",
+  "description": "演示 '用户媒体' 功能，连接摄像头设备。",
+  "tags": [
+    "进阶",
+    "功能示例",
+    "移动端"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Button",
+      "GameRecorder",
+      "List",
+      "Sprite",
+      "Text",
+      "UserMedia"
+    ],
+    "behaviors": [
+      "Sin"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=camera-input"
+}

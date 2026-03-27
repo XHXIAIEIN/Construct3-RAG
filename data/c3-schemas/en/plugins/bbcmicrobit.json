@@ -1,0 +1,283 @@
+{
+  "id": "bbcmicrobit",
+  "name": "BBC micro:bit",
+  "description": "Connect to a BBC micro:bit device over Bluetooth and access its features.",
+  "type": "plugin",
+  "aceCategories": {
+    "bluetooth": "Bluetooth",
+    "readings": "Readings",
+    "led-display": "LED display"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth",
+      "list-name": "Is supported",
+      "display-text": "Is supported",
+      "description": "True if the current platform supports Bluetooth features."
+    },
+    {
+      "id": "on-device-connected",
+      "scriptName": "OnDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "On device connected",
+      "display-text": "On device connected",
+      "description": "Triggered after 'Request device' successfully connects to a device.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-disconnected",
+      "scriptName": "OnDeviceDisconnected",
+      "category": "bluetooth",
+      "list-name": "On device disconnected",
+      "display-text": "On device disconnected",
+      "description": "Triggered when a connected device disconnects and is no longer accessible.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-device-connected",
+      "scriptName": "IsDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "Is device connected",
+      "display-text": "Is device connected",
+      "description": "Test if any device is currently connected."
+    },
+    {
+      "id": "on-request-device-failed",
+      "scriptName": "OnRequestDeviceFailed",
+      "category": "bluetooth",
+      "list-name": "On request device failed",
+      "display-text": "On request device failed",
+      "description": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-accelerometer-reading",
+      "scriptName": "OnAccelerometerReading",
+      "category": "readings",
+      "list-name": "On accelerometer reading",
+      "display-text": "On accelerometer reading",
+      "description": "Triggered when an accelerometer reading is received from the device.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-button-pressed",
+      "scriptName": "OnButtonPressed",
+      "category": "readings",
+      "list-name": "On button pressed",
+      "display-text": "On button [b]{0}[/b] {1}",
+      "description": "Triggered when one of the buttons on the device is pressed.",
+      "params": {
+        "button": {
+          "type": "combo",
+          "name": "Button",
+          "desc": "Which button to detect input from.",
+          "items": {
+            "a": "A",
+            "b": "B"
+          }
+        },
+        "input": {
+          "type": "combo",
+          "name": "Input",
+          "desc": "The type of input to detect.",
+          "items": {
+            "pressed": "pressed",
+            "long-pressed": "long pressed",
+            "released": "released"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-bearing-reading",
+      "scriptName": "OnBearingReading",
+      "category": "readings",
+      "list-name": "On bearing reading",
+      "display-text": "On bearing reading",
+      "description": "Triggered when a bearing reading is received from the device.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-temperature-reading",
+      "scriptName": "OnTemperatureReading",
+      "category": "readings",
+      "list-name": "On temperature reading",
+      "display-text": "On temperature reading",
+      "description": "Triggered when a temperature reading is received from the device.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "scriptName": "RequestDevice",
+      "category": "bluetooth",
+      "list-name": "Request device",
+      "display-text": "Request device",
+      "description": "Request access to a BBC micro:bit device over Bluetooth. Must be used in a user input trigger."
+    },
+    {
+      "id": "disconnect-device",
+      "scriptName": "DisconnectDevice",
+      "category": "bluetooth",
+      "list-name": "Disconnect device",
+      "display-text": "Disconnect device",
+      "description": "Disconnect a currently connected device."
+    },
+    {
+      "id": "clear-led-state",
+      "scriptName": "ClearLEDState",
+      "category": "led-display",
+      "list-name": "Clear LED state",
+      "display-text": "Clear LED state",
+      "description": "Reset the stored LED state, so all LEDs are off."
+    },
+    {
+      "id": "set-led-state",
+      "scriptName": "SetLEDState",
+      "category": "led-display",
+      "list-name": "Set LED state",
+      "display-text": "Set LED ([i]{0}[/i], [i]{1}[/i]) state [b]{2}[/b]",
+      "description": "Set whether an individual LED is on or off in the stored LED state.",
+      "params": {
+        "col": {
+          "type": "number",
+          "name": "Column",
+          "desc": "The zero-based column of the LED, from 0-4."
+        },
+        "row": {
+          "type": "number",
+          "name": "Row",
+          "desc": "The zero-based row of the LED, from 0-4."
+        },
+        "state": {
+          "type": "boolean",
+          "name": "State",
+          "desc": "Whether the LED is on or off."
+        }
+      }
+    },
+    {
+      "id": "update-leds",
+      "scriptName": "UpdateLEDs",
+      "category": "led-display",
+      "list-name": "Update LEDs",
+      "display-text": "Update LEDs",
+      "description": "Update the LEDs on the device to the stored LED state."
+    },
+    {
+      "id": "scroll-text",
+      "scriptName": "ScrollText",
+      "category": "led-display",
+      "list-name": "Scroll text",
+      "display-text": "Scroll text [i]{0}[/i]",
+      "description": "Show a message on the LED display.",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "The message to display, up to 20 characters."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "scriptName": "DeviceID",
+      "category": "bluetooth",
+      "translated-name": "DeviceID",
+      "description": "The ID of a connected device (if any).",
+      "returnType": "string"
+    },
+    {
+      "id": "accelerometer-raw-x",
+      "scriptName": "AccelerometerRawX",
+      "category": "readings",
+      "translated-name": "AccelerometerRawX",
+      "description": "The raw accelerometer X reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-raw-y",
+      "scriptName": "AccelerometerRawY",
+      "category": "readings",
+      "translated-name": "AccelerometerRawY",
+      "description": "The raw accelerometer Y reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-raw-z",
+      "scriptName": "AccelerometerRawZ",
+      "category": "readings",
+      "translated-name": "AccelerometerRawZ",
+      "description": "The raw accelerometer Z reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-x",
+      "scriptName": "AccelerometerSmoothedX",
+      "category": "readings",
+      "translated-name": "AccelerometerSmoothedX",
+      "description": "The smoothed accelerometer X reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-y",
+      "scriptName": "AccelerometerSmoothedY",
+      "category": "readings",
+      "translated-name": "AccelerometerSmoothedY",
+      "description": "The smoothed accelerometer Y reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-z",
+      "scriptName": "AccelerometerSmoothedZ",
+      "category": "readings",
+      "translated-name": "AccelerometerSmoothedZ",
+      "description": "The smoothed accelerometer Z reading.",
+      "returnType": "number"
+    },
+    {
+      "id": "bearing",
+      "scriptName": "Bearing",
+      "category": "readings",
+      "translated-name": "Bearing",
+      "description": "The magnetometer bearing reading, in degrees from due north.",
+      "returnType": "number"
+    },
+    {
+      "id": "temperature",
+      "scriptName": "Temperature",
+      "category": "readings",
+      "translated-name": "Temperature",
+      "description": "The temperature reading, in degrees celcius.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "enable-accelerometer": {
+      "name": "Enable accelerometer",
+      "desc": "Whether to enable accelerometer readings."
+    },
+    "enable-buttons": {
+      "name": "Enable buttons",
+      "desc": "Whether to enable button input readings."
+    },
+    "enable-magnetometer": {
+      "name": "Enable magnetometer",
+      "desc": "Whether to enable magnetometer for bearing readings."
+    },
+    "enable-temperature": {
+      "name": "Enable temperature",
+      "desc": "Whether to enable temperature readings."
+    },
+    "enable-led-display": {
+      "name": "Enable LED display",
+      "desc": "Whether to enable updating the LED display."
+    }
+  }
+}
