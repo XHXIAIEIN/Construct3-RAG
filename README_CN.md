@@ -6,6 +6,29 @@
 
 > 当前数据版本：**r476** · 通过 [GitHub Action](.github/workflows/update-c3-data.yml) 每周自动更新
 
+## 核心概念
+
+[Construct 3](https://www.construct.net) 是一个可视化游戏引擎。游戏通过**事件表**（可视化的 if/then 逻辑）而非代码来构建。
+
+- **插件（Plugin）** — 对象类型（Sprite、Audio、Keyboard 等）
+- **行为（Behavior）** — 附加到插件的可复用逻辑（Platform、Tween、Physics 等）
+- **ACE** — Actions、Conditions、Expressions 的缩写，是事件表的构建块：
+  - **条件（Condition）** — 判断条件（`正在播放动画`、`碰撞到...`）
+  - **动作（Action）** — 执行操作（`设置动画`、`销毁`）
+  - **表达式（Expression）** — 读取数值（`AnimationFrame`、`X`、`Y`）
+- **特效（Effect）** — 视觉着色器（模糊、着色、发光等）
+
+Schema 文件中每个 ACE 条目的字段含义：
+
+| 字段 | 含义 |
+|------|------|
+| `list-name` | "添加条件/动作"对话框中显示的名称 |
+| `display-text` | 事件表中显示的模板（如 `设置动画为 {0}`） |
+| `translated-name` | 表达式标识符（仅表达式，如 `AnimationFrame`） |
+| `scriptName` | JavaScript API 方法名（用于脚本编程，非事件表） |
+| `description` | 提示 / 帮助文本 |
+| `params` | 参数定义（`{id: {type, name, desc}}`） |
+
 ## 数据文件
 
 无需安装。选择语言（`en` 或 `zh`）直接读取。

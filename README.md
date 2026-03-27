@@ -6,6 +6,29 @@ Pre-built [Construct 3](https://www.construct.net) API data extracted from the o
 
 > Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
 
+## Key Concepts
+
+[Construct 3](https://www.construct.net) is a visual game engine. Games are built with **event sheets** (visual if/then logic) rather than code.
+
+- **Plugin** — an object type (Sprite, Audio, Keyboard, etc.)
+- **Behavior** — reusable logic attached to plugins (Platform, Tween, Physics, etc.)
+- **ACE** — Actions, Conditions, Expressions. The building blocks of event sheets:
+  - **Condition** — a test (`Is animation playing`, `On collision with...`)
+  - **Action** — something that happens (`Set animation`, `Destroy`)
+  - **Expression** — a value to read (`AnimationFrame`, `X`, `Y`)
+- **Effect** — a visual shader (blur, tint, glow, etc.)
+
+Each ACE entry in the schema files has:
+
+| Field | Meaning |
+|-------|---------|
+| `list-name` | Name shown in the "Add condition/action" dialog |
+| `display-text` | Template shown in the event sheet (e.g. `Set animation to {0}`) |
+| `translated-name` | Expression identifier (expressions only, e.g. `AnimationFrame`) |
+| `scriptName` | JavaScript API method name (for scripting, not event sheets) |
+| `description` | Tooltip / help text |
+| `params` | Parameter definitions (`{id: {type, name, desc}}`) |
+
 ## Data Files
 
 No install needed. Pick a language (`en` or `zh`) and read.
