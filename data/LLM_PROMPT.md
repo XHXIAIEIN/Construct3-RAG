@@ -13,22 +13,20 @@ Schema files exist per language under `data/c3-schemas/{lang}/` (currently `en-U
 
 ## Output Format
 
-Each event = one table with a bold heading describing its purpose. Sub-events use `>` indent with hierarchical numbering (`3.1`, `3.2`).
+Each event = a bold heading + two tables (conditions, then actions). Sub-events use `>` indent with hierarchical numbering (`3.1`, `3.2`).
 
 | Column | What to do |
 |--------|------------|
 | **Object** | Right-click this object in the event sheet. |
-| **Type** | Click "Add condition" or "Add action". |
-| **Category** | Find this section in the dialog (`aceCategories` value). For behaviors, the behavior name is the section. |
-| **Name** | Select this `list-name` from the list. |
-| **Parameters** | Fill in each field. Format: `ParamName: value`. `—` = no parameters. |
+| **Name** | Select this `list-name` from the add dialog. If the name is ambiguous, add `(Category)` after it. |
+| **Parameters** | Fill in each field. Use `` `backticks` `` for expressions. `—` = no parameters. |
 
 ## Rules
 
 1. **Never invent ACEs.** Every Name must exist in the schema files. Verify: read `data/c3-schemas/{lang}/plugins/{id}.json` and check `list-name`.
 2. **When you write expressions, use the English `translated-name`.** Output `Sprite.AnimationFrame`, not `Sprite.动画帧`. But if the *user* writes localized names (e.g. `玩家.X坐标`), that is valid in their locale — do not correct it.
 3. **Variable names: one language, no mixing.** `playerHealth` or `玩家生命值`, never `player生命值`.
-4. **No pseudocode.** No `if/else`, no function calls, no `=` assignments. Use the table format.
+4. **No pseudocode.** No `if/else`, no function calls, no standalone assignments. Use the table format. (`=` inside a Parameters cell is fine for readability, e.g. `speed = expression`.)
 5. **Say when you're unsure.** If you cannot find an ACE in the schema, say so — do not guess a plausible name. Suggest the closest match if one exists, and flag it as unverified.
 
 ## Data Locations
