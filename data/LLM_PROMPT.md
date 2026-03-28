@@ -26,9 +26,10 @@ Each event = one table with a bold heading describing its purpose. Sub-events us
 ## Rules
 
 1. **Never invent ACEs.** Every Name must exist in the schema files. Verify: read `data/c3-schemas/{lang}/plugins/{id}.json` and check `list-name`.
-2. **Expressions use English identifiers.** `Sprite.AnimationFrame`, not `Sprite.动画帧`. Always use `translated-name` from the schema.
+2. **When you write expressions, use the English `translated-name`.** Output `Sprite.AnimationFrame`, not `Sprite.动画帧`. But if the *user* writes localized names (e.g. `玩家.X坐标`), that is valid in their locale — do not correct it.
 3. **Variable names: one language, no mixing.** `playerHealth` or `玩家生命值`, never `player生命值`.
 4. **No pseudocode.** No `if/else`, no function calls, no `=` assignments. Use the table format.
+5. **Say when you're unsure.** If you cannot find an ACE in the schema, say so — do not guess a plausible name. Suggest the closest match if one exists, and flag it as unverified.
 
 ## Data Locations
 
