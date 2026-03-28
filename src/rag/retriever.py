@@ -444,6 +444,7 @@ class HybridRetriever:
         "behaviors":  (5,  0.3),
         "scripting":  (5,  0.3),
         "ace":        (5,  0.3),
+        "effects":    (5,  0.3),
         "terms":      (10, 0.3),
         "examples":   (5,  0.3),
     }
@@ -496,6 +497,10 @@ class HybridRetriever:
     def search_ace(self, query: str, top_k: int = 5) -> List[SearchResult]:
         """Search ACE schema (Actions/Conditions/Expressions per plugin)"""
         return self._search("ace", query, top_k)
+
+    def search_effects(self, query: str, top_k: int = 5) -> List[SearchResult]:
+        """Search effect definitions (blur, glow, blend modes, etc.)"""
+        return self._search("effects", query, top_k)
 
     def search_plugin_by_name(
         self,
@@ -641,12 +646,14 @@ class HybridRetriever:
         _COLL_WEIGHTS: Dict[str, float] = {
             "plugins": 1.0, "behaviors": 1.0, "project": 1.0,
             "scripting": 1.0, "interface": 1.0, "guide": 1.0,
-            "ace": 1.0, "effects": 0.8,
+            "ace": 1.0, "effects": 1.0,
             "examples": 0.6, "terms": 0.5,
         }
 
         result_lists: List[List[SearchResult]] = []
         weights: List[float] = []
+        # Track per-collection best result for diversity guarantee
+        coll_best: Dict[str, SearchResult] = {}
 
         coll_hit_summaries = []
         _exclude = exclude_collections or set()
@@ -659,6 +666,7 @@ class HybridRetriever:
                 if results:
                     result_lists.append(results)
                     weights.append(_COLL_WEIGHTS.get(coll_name, 0.5))
+                    coll_best[coll_name] = results[0]
                     top_r = max(results, key=lambda r: r.score)
                     max_score = top_r.score
                     src = top_r.metadata.get("source", "")
@@ -706,6 +714,20 @@ class HybridRetriever:
             deduped.append(r)
 
         result = deduped[:final_top_k]
+
+        # Diversity guarantee: if a collection had results but none survived
+        # reranking, inject its best result at the end. This prevents small
+        # collections (e.g. effects with short docs) from being completely
+        # overshadowed by verbose reference docs.
+        represented = {r.source for r in result}
+        injected = []
+        for coll_name, best in coll_best.items():
+            if coll_name not in represented:
+                injected.append(coll_name)
+                result.append(best)
+        if injected:
+            logger.info(f"[Rerank] Diversity inject: {', '.join(injected)}")
+
         logger.info(f"[Rerank] Done, returning {len(result)} (deduped from {len(final_results)})")
         return result
 
