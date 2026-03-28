@@ -332,6 +332,21 @@ def _convert_result(r, score_override=None) -> dict:
         d["_type"] = "term"
         return d
 
+    # Effects: payload uses name_zh/name_en/category instead of h1_heading/title
+    if collection == "effects":
+        name_zh = meta.get("name_zh", "")
+        name_en = meta.get("name_en", "")
+        title = f"{name_zh} ({name_en})" if name_zh and name_en else name_zh or name_en
+        d = DocResult(
+            score=score,
+            collection="effects",
+            title=title or None,
+            section=meta.get("category") or None,
+            content=r.text,
+        ).model_dump()
+        d["_type"] = "doc"
+        return d
+
     # Doc results (plugins, behaviors, guide, interface, project, scripting)
     source = meta.get("source", "")
     d = DocResult(
