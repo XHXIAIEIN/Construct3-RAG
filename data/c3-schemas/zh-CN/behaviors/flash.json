@@ -1,0 +1,63 @@
+{
+  "id": "flash",
+  "name": "闪烁",
+  "description": "使对象闪烁，不断地出现和隐去",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-flashing",
+      "scriptName": "IsFlashing",
+      "category": "",
+      "list-name": "正在闪烁",
+      "display-text": "正在闪烁",
+      "description": "检测对象当前是否处于闪烁状态中。"
+    },
+    {
+      "id": "on-flash-ended",
+      "scriptName": "OnFlashEnded",
+      "category": "",
+      "list-name": "闪烁结束",
+      "display-text": "闪烁结束",
+      "description": "当闪烁结束时执行",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "flash",
+      "scriptName": "Flash",
+      "category": "",
+      "list-name": "闪烁",
+      "display-text": "{my} 开始闪烁 (持续: [b]{2}[/b]秒, 显示: {0}秒, 隐去: {1}秒)",
+      "description": "使对象仅在一段时间内闪烁",
+      "params": {
+        "on-time": {
+          "type": "number",
+          "name": "可见时间",
+          "desc": "在持续时间内使对象可见"
+        },
+        "off-time": {
+          "type": "number",
+          "name": "隐去时间",
+          "desc": "在持续时间内使对象不可见"
+        },
+        "duration": {
+          "type": "number",
+          "name": "持续时间",
+          "desc": "在持续时间内使对象闪烁"
+        }
+      }
+    },
+    {
+      "id": "stop-flashing",
+      "scriptName": "StopFlashing",
+      "category": "",
+      "list-name": "停止闪烁",
+      "display-text": "{my} 停止闪烁",
+      "description": "停止闪烁并使对象可见"
+    }
+  ],
+  "expressions": [],
+  "properties": {}
+}

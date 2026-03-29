@@ -1,0 +1,23 @@
+{
+  "id": "vignette",
+  "name": "暗角",
+  "description": "淡出屏幕周围的边缘。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "start-radius",
+      "type": "percent",
+      "name": "开始半径",
+      "desc": "效果的起始半径，从 0（中心）到 100（边缘）。"
+    },
+    {
+      "id": "end-radius",
+      "type": "percent",
+      "name": "结束半径",
+      "desc": "效果的结束半径，从 0（中心）到 100（边缘）。"
+    }
+  ]
+}

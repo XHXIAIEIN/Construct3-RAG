@@ -1,0 +1,604 @@
+{
+  "id": "spritefont2",
+  "name": "Sprite font",
+  "description": "Displays some text on the screen using a sprite sheet.",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "Appearance",
+    "text": "Text"
+  },
+  "conditions": [
+    {
+      "id": "compare-text",
+      "scriptName": "CompareText",
+      "category": "text",
+      "list-name": "Compare text",
+      "display-text": "Text is [b]{0}[/b] [i]({1})[/i]",
+      "description": "Compare the text in this object.",
+      "params": {
+        "text-to-compare": {
+          "type": "string",
+          "name": "Text to compare",
+          "desc": "Enter the text to compare with the object's content."
+        },
+        "case-sensitivity": {
+          "type": "combo",
+          "name": "Case sensitivity",
+          "desc": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "items": {
+            "ignore-case": "Ignore case",
+            "case-sensitive": "Case sensitive"
+          }
+        }
+      }
+    },
+    {
+      "id": "is-running-typewriter-text",
+      "scriptName": "IsRunningTypewriterText",
+      "category": "text",
+      "list-name": "Is running typewriter text",
+      "display-text": "Is running typewriter text",
+      "description": "True if currently writing out typewriter text."
+    },
+    {
+      "id": "on-typewriter-text-finished",
+      "scriptName": "OnTypewriterTextFinished",
+      "category": "text",
+      "list-name": "On typewriter text finished",
+      "display-text": "On typewriter text finished",
+      "description": "Triggered when typewriter text finishes writing out all the text.",
+      "isTrigger": true
+    },
+    {
+      "id": "has-tag-at-position",
+      "scriptName": "HasTagAtPosition",
+      "category": "text",
+      "list-name": "Has tag at position",
+      "display-text": "Has tag [b]{0}[/b] at ([i]{1}[/i], [i]{2}[/i])",
+      "description": "Check if a BBcode tag style is set at a given position.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to check for."
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to check."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to check."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "Set blend mode",
+      "display-text": "Set blend mode to [i]{0}[/i]",
+      "description": "Set the background blend mode for this object.",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for this object.",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "xor": "XOR",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-scale",
+      "scriptName": "SetScale",
+      "category": "appearance",
+      "list-name": "Set scale",
+      "display-text": "Set scale [i]{0}[/i]",
+      "description": "Set the scale of the spritefont image.",
+      "params": {
+        "scale": {
+          "type": "number",
+          "name": "Scale",
+          "desc": "Enter the scale of the spritefont image."
+        }
+      }
+    },
+    {
+      "id": "set-character-spacing",
+      "scriptName": "SetCharacterSpacing",
+      "category": "appearance",
+      "list-name": "Set character spacing",
+      "display-text": "Set spacing [i]{0}[/i]",
+      "description": "Set the spacing between each character.",
+      "params": {
+        "character-spacing": {
+          "type": "number",
+          "name": "Character spacing",
+          "desc": "Enter the number of pixels for the spacing between characters."
+        }
+      }
+    },
+    {
+      "id": "set-line-height",
+      "scriptName": "SetLineHeight",
+      "category": "appearance",
+      "list-name": "Set line height",
+      "display-text": "Set line height to [i]{0}[/i]",
+      "description": "Set the spacing between each line.",
+      "params": {
+        "line-height": {
+          "type": "number",
+          "name": "Line height",
+          "desc": "Enter the number of pixels for the spacing between lines."
+        }
+      }
+    },
+    {
+      "id": "set-character-width",
+      "scriptName": "SetCharacterWidth",
+      "category": "appearance",
+      "list-name": "Set character width",
+      "display-text": "Set character width to [i]{1}[/i] for [i]{0}[/i]",
+      "description": "Change the width of some characters.",
+      "params": {
+        "character": {
+          "type": "string",
+          "name": "Character",
+          "desc": "Enter one or more characters to change the width for (e.g. \"abcd\")."
+        },
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "Enter the number of pixels width you want the character(s) to occupy. This should be less than the cell width."
+        }
+      }
+    },
+    {
+      "id": "set-horizontal-alignment",
+      "scriptName": "SetHAlign",
+      "category": "appearance",
+      "list-name": "Set horizontal alignment",
+      "display-text": "Set horizontal alignment to [i]{0}[/i]",
+      "description": "Set the horizontal alignment of the text.",
+      "params": {
+        "horizontal-alignment": {
+          "type": "combo",
+          "name": "Horizontal alignment",
+          "desc": "Choose the new horizontal alignment for the text.",
+          "items": {
+            "left": "left",
+            "center": "center",
+            "right": "right"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-vertical-alignment",
+      "scriptName": "SetVAlign",
+      "category": "appearance",
+      "list-name": "Set vertical alignment",
+      "display-text": "Set vertical alignment to [i]{0}[/i]",
+      "description": "Set the vertical alignment of the text.",
+      "params": {
+        "vertical-alignment": {
+          "type": "combo",
+          "name": "Vertical alignment",
+          "desc": "Choose the new vertical alignment for the text.",
+          "items": {
+            "top": "top",
+            "center": "center",
+            "bottom": "bottom"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-wrapping",
+      "scriptName": "SetWrapping",
+      "category": "appearance",
+      "list-name": "Set wrapping",
+      "display-text": "Set text wrapping to [i]{0}[/i]",
+      "description": "Set whether to wrap text by space-separated words or by character.",
+      "params": {
+        "wrapping": {
+          "type": "combo",
+          "name": "Wrapping",
+          "desc": "Wrap text by space-separated words or by character.",
+          "items": {
+            "word": "Word",
+            "cjk": "CJK",
+            "character": "Character"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-text",
+      "scriptName": "SetText",
+      "category": "text",
+      "list-name": "Set text",
+      "display-text": "Set text to [i]{0}[/i]",
+      "description": "Set the text of this object.",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "Text",
+          "desc": "Enter the text to set the object's content to."
+        }
+      }
+    },
+    {
+      "id": "append-text",
+      "scriptName": "AppendText",
+      "category": "text",
+      "list-name": "Append text",
+      "display-text": "Append [i]{0}[/i]",
+      "description": "Add text to the end of the existing text.",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "Text",
+          "desc": "Enter the text to append to the object's content."
+        }
+      }
+    },
+    {
+      "id": "typewriter-text",
+      "scriptName": "TypewriterText",
+      "category": "text",
+      "list-name": "Typewriter text",
+      "display-text": "Typewriter text [i]{0}[/i] over [i]{1}[/i] seconds",
+      "description": "Set the text over time by starting with an empty string and gradually adding characters.",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "Text",
+          "desc": "Enter the text to set the object's content to over time."
+        },
+        "duration": {
+          "type": "number",
+          "name": "Duration",
+          "desc": "The time in seconds to write out the text."
+        }
+      }
+    },
+    {
+      "id": "typewriter-finish",
+      "scriptName": "TypewriterFinish",
+      "category": "text",
+      "list-name": "Finish typewriter",
+      "display-text": "Finish typewriter",
+      "description": "Force a typewriter text effect to finish immediately."
+    },
+    {
+      "id": "set-read-aloud",
+      "scriptName": "SetReadAloud",
+      "category": "text",
+      "list-name": "Set read aloud",
+      "display-text": "Set read aloud [i]{0}[/i]",
+      "description": "Set whether the text is read aloud while using a screen reader.",
+      "params": {
+        "enable": {
+          "type": "boolean",
+          "name": "Enable",
+          "desc": "Whether to enable reading aloud."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "characterwidth",
+      "scriptName": "CharacterWidth",
+      "category": "appearance",
+      "translated-name": "CharacterWidth",
+      "description": "Get the width of a character.",
+      "params": {
+        "character": {
+          "type": "string",
+          "name": "Character",
+          "desc": "Character to get width for (empty for default)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "characterheight",
+      "scriptName": "CharacterHeight",
+      "category": "appearance",
+      "translated-name": "CharacterHeight",
+      "description": "Get the height of a character.",
+      "returnType": "number"
+    },
+    {
+      "id": "characterscale",
+      "scriptName": "CharacterScale",
+      "category": "appearance",
+      "translated-name": "CharacterScale",
+      "description": "Get the scale of the characters.",
+      "returnType": "number"
+    },
+    {
+      "id": "characterspacing",
+      "scriptName": "CharacterSpacing",
+      "category": "appearance",
+      "translated-name": "CharacterSpacing",
+      "description": "Get the spacing between characters.",
+      "returnType": "number"
+    },
+    {
+      "id": "lineheight",
+      "scriptName": "LineHeight",
+      "category": "appearance",
+      "translated-name": "LineHeight",
+      "description": "Get the line height.",
+      "returnType": "number"
+    },
+    {
+      "id": "textwidth",
+      "scriptName": "TextWidth",
+      "category": "appearance",
+      "translated-name": "TextWidth",
+      "description": "Get the width extent of the text in the object in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "textheight",
+      "scriptName": "TextHeight",
+      "category": "appearance",
+      "translated-name": "TextHeight",
+      "description": "Get the height extent of the text in the object in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "text",
+      "scriptName": "Text",
+      "category": "text",
+      "translated-name": "Text",
+      "description": "Get the object's text.",
+      "returnType": "string"
+    },
+    {
+      "id": "plaintext",
+      "scriptName": "PlainText",
+      "category": "text",
+      "translated-name": "PlainText",
+      "description": "Get the object's text with any BBcode tags stripped out.",
+      "returnType": "string"
+    },
+    {
+      "id": "tag-at-position",
+      "scriptName": "TagAtPosition",
+      "category": "text",
+      "translated-name": "TagAtPosition",
+      "description": "Get the BBcode tag style at a given position, or an empty string if none.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to check."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to check."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "tag-count",
+      "scriptName": "TagCount",
+      "category": "text",
+      "translated-name": "TagCount",
+      "description": "Get the number of BBcode style tags for a specific tag.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to use."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-x",
+      "scriptName": "TagX",
+      "category": "text",
+      "translated-name": "TagX",
+      "description": "Get X co-ordinate of a BBcode style tag.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to use."
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The tag index, in case there are multiple."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-y",
+      "scriptName": "TagY",
+      "category": "text",
+      "translated-name": "TagY",
+      "description": "Get Y co-ordinate of a BBcode style tag.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to use."
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The tag index, in case there are multiple."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-width",
+      "scriptName": "TagWidth",
+      "category": "text",
+      "translated-name": "TagWidth",
+      "description": "Get width of a BBcode style tag.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to use."
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The tag index, in case there are multiple."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-height",
+      "scriptName": "TagHeight",
+      "category": "text",
+      "translated-name": "TagHeight",
+      "description": "Get height of a BBcode style tag.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The tag to use."
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The tag index, in case there are multiple."
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "text": {
+      "name": "Text",
+      "desc": "The initial text to display.",
+      "initial-value": "Text"
+    },
+    "enable-bbcode": {
+      "name": "Enable BBCode",
+      "desc": "Allow use of BBCode tags in the text, e.g. [scale=2]big text[/scale]."
+    },
+    "edit-image": {
+      "name": "Sprite font",
+      "desc": "Click to edit the object's spritefont.",
+      "link-text": "Edit"
+    },
+    "character-width": {
+      "name": "Character width",
+      "desc": "Width of each cell in the image."
+    },
+    "character-height": {
+      "name": "Character height",
+      "desc": "Height of each cell in the image."
+    },
+    "character-set": {
+      "name": "Character set",
+      "desc": "List of characters in the spritefont image, starting in the top-left."
+    },
+    "spacing-data": {
+      "name": "Spacing data",
+      "desc": "Data describing individual character widths in JSON format."
+    },
+    "scale": {
+      "name": "Scale",
+      "desc": "Amount to scale the drawn text by."
+    },
+    "character-spacing": {
+      "name": "Character spacing",
+      "desc": "Extra pixel width to add between displayed characters."
+    },
+    "line-height": {
+      "name": "Line height",
+      "desc": "Offset to the default line height, in pixels. 0 is default line height."
+    },
+    "horizontal-alignment": {
+      "name": "Horizontal alignment",
+      "desc": "Horizontal alignment of the text inside its bounding box.",
+      "items": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      }
+    },
+    "vertical-alignment": {
+      "name": "Vertical alignment",
+      "desc": "Vertical alignment of the text inside its bounding box.",
+      "items": {
+        "top": "Top",
+        "center": "Center",
+        "bottom": "Bottom"
+      }
+    },
+    "wrapping": {
+      "name": "Wrapping",
+      "desc": "Wrap text by space-separated words or by character.",
+      "items": {
+        "word": "Word",
+        "cjk": "CJK",
+        "character": "Character"
+      }
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "origin": {
+      "name": "Origin",
+      "desc": "Choose the location of the origin in the object.",
+      "items": {
+        "top-left": "Top-left",
+        "top": "Top",
+        "top-right": "Top-right",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "bottom-left": "Bottom-left",
+        "bottom": "Bottom",
+        "bottom-right": "Bottom-right"
+      }
+    },
+    "accessibility": {
+      "name": "Accessibility",
+      "desc": "Settings for accessibility features."
+    },
+    "read-aloud": {
+      "name": "Read aloud",
+      "desc": "Check for text to be read aloud when it appears or changes while using a screen reader."
+    }
+  }
+}

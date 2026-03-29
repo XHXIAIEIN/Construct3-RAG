@@ -1,0 +1,283 @@
+{
+  "id": "bbcmicrobit",
+  "name": "BBC micro:bit",
+  "description": "通过蓝牙连接到 BBC micro:bit 设备并访问其功能。",
+  "type": "plugin",
+  "aceCategories": {
+    "bluetooth": "蓝牙",
+    "readings": "读数",
+    "led-display": "LED显示屏"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth",
+      "list-name": "设备受支持",
+      "display-text": "设备受支持",
+      "description": "检测当前运行设备是否支持蓝牙连接。"
+    },
+    {
+      "id": "on-device-connected",
+      "scriptName": "OnDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "设备连接成功",
+      "display-text": "设备连接成功",
+      "description": "执行 '请求连接设备' 动作后，成功连接到设备时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-disconnected",
+      "scriptName": "OnDeviceDisconnected",
+      "category": "bluetooth",
+      "list-name": "设备断开连接",
+      "display-text": "设备断开连接",
+      "description": "已连接的设备断开，无法继续访问时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-device-connected",
+      "scriptName": "IsDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "设备已连接",
+      "display-text": "设备已连接",
+      "description": "检测目前是否已连接到任意设备。"
+    },
+    {
+      "id": "on-request-device-failed",
+      "scriptName": "OnRequestDeviceFailed",
+      "category": "bluetooth",
+      "list-name": "请求连接失败",
+      "display-text": "请求连接失败",
+      "description": "执行 '请求连接设备' 后，如果用户取消或连接失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-accelerometer-reading",
+      "scriptName": "OnAccelerometerReading",
+      "category": "readings",
+      "list-name": "加速度计读数更新",
+      "display-text": "加速度计读数更新",
+      "description": "设备接收到加速度计读数时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-button-pressed",
+      "scriptName": "OnButtonPressed",
+      "category": "readings",
+      "list-name": "按下按钮",
+      "display-text": "{1}按钮[b]{0}[/b]",
+      "description": "按下设备上的任意按钮时触发。",
+      "params": {
+        "button": {
+          "type": "combo",
+          "name": "按钮",
+          "desc": "检测哪个按钮被按下",
+          "items": {
+            "a": "A",
+            "b": "B"
+          }
+        },
+        "input": {
+          "type": "combo",
+          "name": "输入",
+          "desc": "要检测的输入类型。",
+          "items": {
+            "pressed": "按下",
+            "long-pressed": "长按",
+            "released": "松开"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-bearing-reading",
+      "scriptName": "OnBearingReading",
+      "category": "readings",
+      "list-name": "指南针读数更新",
+      "display-text": "指南针读数更新",
+      "description": "当设备接收到指南针读数时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-temperature-reading",
+      "scriptName": "OnTemperatureReading",
+      "category": "readings",
+      "list-name": "温度计读数更新",
+      "display-text": "温度计读数更新",
+      "description": "当设备接收到温度读数时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "scriptName": "RequestDevice",
+      "category": "bluetooth",
+      "list-name": "请求连接",
+      "display-text": "请求连接",
+      "description": "请求通过蓝牙访问 BBC micro:bit 设备。必须在用户输入后才能使用。"
+    },
+    {
+      "id": "disconnect-device",
+      "scriptName": "DisconnectDevice",
+      "category": "bluetooth",
+      "list-name": "断开设备",
+      "display-text": "断开设备",
+      "description": "断开当前连接的设备。"
+    },
+    {
+      "id": "clear-led-state",
+      "scriptName": "ClearLEDState",
+      "category": "led-display",
+      "list-name": "清除 LED 状态",
+      "display-text": "清除 LED 状态",
+      "description": "重置所有 LED 状态，使所有 LED 熄灭。"
+    },
+    {
+      "id": "set-led-state",
+      "scriptName": "SetLEDState",
+      "category": "led-display",
+      "list-name": "设置 LED 状态",
+      "display-text": "设置 LED ([i]{0}[/i], [i]{1}[/i]) 状态 [b]{2}[/b]",
+      "description": "设置单个 LED 是打开或关闭。",
+      "params": {
+        "col": {
+          "type": "number",
+          "name": "列",
+          "desc": "单个 LED 灯所在的列，0-4。(从0开始)"
+        },
+        "row": {
+          "type": "number",
+          "name": "行",
+          "desc": "单个 LED 灯所在的行，0-4。(从0开始)"
+        },
+        "state": {
+          "type": "boolean",
+          "name": "状态",
+          "desc": "打开或关闭 LED"
+        }
+      }
+    },
+    {
+      "id": "update-leds",
+      "scriptName": "UpdateLEDs",
+      "category": "led-display",
+      "list-name": "更新LED",
+      "display-text": "更新LED",
+      "description": "将设备上的 LED 更新为存储的 LED 状态。"
+    },
+    {
+      "id": "scroll-text",
+      "scriptName": "ScrollText",
+      "category": "led-display",
+      "list-name": "显示滚动文字",
+      "display-text": "显示滚动文字 [i]{0}[/i]",
+      "description": "在 LED 显示屏上显示一条消息。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要显示的消息，最多 20 个字符。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "scriptName": "DeviceID",
+      "category": "bluetooth",
+      "translated-name": "设备ID",
+      "description": "连接的设备ID（如果有）。",
+      "returnType": "string"
+    },
+    {
+      "id": "accelerometer-raw-x",
+      "scriptName": "AccelerometerRawX",
+      "category": "readings",
+      "translated-name": "原始加速度X",
+      "description": "加速度计原始 X 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-raw-y",
+      "scriptName": "AccelerometerRawY",
+      "category": "readings",
+      "translated-name": "原始加速度Y",
+      "description": "加速度计原始 Y 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-raw-z",
+      "scriptName": "AccelerometerRawZ",
+      "category": "readings",
+      "translated-name": "原始加速度Z",
+      "description": "加速度计原始 Z 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-x",
+      "scriptName": "AccelerometerSmoothedX",
+      "category": "readings",
+      "translated-name": "平滑加速度X",
+      "description": "加速度计平滑后的 X 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-y",
+      "scriptName": "AccelerometerSmoothedY",
+      "category": "readings",
+      "translated-name": "平滑加速度Y",
+      "description": "加速度计平滑后的 Y 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "accelerometer-smoothed-z",
+      "scriptName": "AccelerometerSmoothedZ",
+      "category": "readings",
+      "translated-name": "平滑加速度Z",
+      "description": "加速度计平滑后的 Z 读数。",
+      "returnType": "number"
+    },
+    {
+      "id": "bearing",
+      "scriptName": "Bearing",
+      "category": "readings",
+      "translated-name": "轴承",
+      "description": "磁力计的方位读数，以距离正北的度数相差为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "temperature",
+      "scriptName": "Temperature",
+      "category": "readings",
+      "translated-name": "温度",
+      "description": "温度计的读数，以摄氏度为单位。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "enable-accelerometer": {
+      "name": "启用加速度计",
+      "desc": "是否启用加速度计模块。"
+    },
+    "enable-buttons": {
+      "name": "启用按钮",
+      "desc": "是否启用按钮输入模块。"
+    },
+    "enable-magnetometer": {
+      "name": "启用磁力计",
+      "desc": "是否启用磁力计模块。"
+    },
+    "enable-temperature": {
+      "name": "启用温度计",
+      "desc": "是否启用温度计模块。"
+    },
+    "enable-led-display": {
+      "name": "启用 LED 显示屏",
+      "desc": "是否启用LED显示屏模块。"
+    }
+  }
+}

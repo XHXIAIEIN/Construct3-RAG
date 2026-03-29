@@ -1,0 +1,10 @@
+{
+  "id": "cga",
+  "name": "CGA",
+  "description": "Simulate CGA color mode.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

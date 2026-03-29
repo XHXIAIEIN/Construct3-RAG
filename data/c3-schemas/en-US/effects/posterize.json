@@ -1,0 +1,17 @@
+{
+  "id": "posterize",
+  "name": "Posterize",
+  "description": "Limit the number of color levels in the image.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "levels",
+      "type": "float",
+      "name": "Levels",
+      "desc": "Number of color levels."
+    }
+  ]
+}

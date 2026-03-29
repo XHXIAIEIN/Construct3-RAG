@@ -1,0 +1,998 @@
+{
+  "id": "physics",
+  "name": "Physics",
+  "description": "Simulate realistic object physics, powered by Box2D.",
+  "type": "behavior",
+  "aceCategories": {
+    "forces": "Forces",
+    "global-settings": "Global settings",
+    "joints": "Joints",
+    "object-settings": "Object settings",
+    "torque": "Torque"
+  },
+  "conditions": [
+    {
+      "id": "is-sleeping",
+      "scriptName": "IsSleeping",
+      "category": "",
+      "list-name": "Is sleeping",
+      "display-text": "Is {my} sleeping",
+      "description": "True if the physics object has become inactive and is no longer requiring processing."
+    },
+    {
+      "id": "is-immovable",
+      "scriptName": "IsImmovable",
+      "category": "",
+      "list-name": "Is immovable",
+      "display-text": "Is {my} immovable",
+      "description": "True if the physics object is set to be immovable (having infinite mass)."
+    },
+    {
+      "id": "compare-velocity",
+      "scriptName": "CompareVelocity",
+      "category": "",
+      "list-name": "Compare velocity",
+      "display-text": "{my} {0} {1} {2}",
+      "description": "Compare the current velocity of the physics object.",
+      "params": {
+        "which": {
+          "type": "combo",
+          "name": "Which",
+          "desc": "Choose whether to compare the velocity on an axis, or the overall velocity.",
+          "items": {
+            "x-velocity": "X velocity",
+            "y-velocity": "Y velocity",
+            "overall-velocity": "Overall velocity"
+          }
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose how to compare the velocity."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Choose the number to compare the velocity to."
+        }
+      }
+    },
+    {
+      "id": "compare-angular-velocity",
+      "scriptName": "CompareAngularVelocity",
+      "category": "",
+      "list-name": "Compare angular velocity",
+      "display-text": "{my} angular velocity {0} {1}",
+      "description": "Compare the current angular velocity of the physics object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose how to compare the angular velocity."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Choose the number to compare the angular velocity to, in degrees per second."
+        }
+      }
+    },
+    {
+      "id": "compare-mass",
+      "scriptName": "CompareMass",
+      "category": "",
+      "list-name": "Compare mass",
+      "display-text": "{my} mass {0} {1}",
+      "description": "Compare the current mass of the physics object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose how to compare the mass."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Choose the number to compare the mass to."
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "Is {my} enabled",
+      "description": "Test if the behavior is currently enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "apply-force",
+      "scriptName": "ApplyForce",
+      "category": "forces",
+      "list-name": "Apply force",
+      "display-text": "Apply {my} force ([i]{0}[/i], [i]{1}[/i]) at image point {2}",
+      "description": "Apply a force on the object.",
+      "params": {
+        "force-x": {
+          "type": "number",
+          "name": "Force X",
+          "desc": "The horizontal force to apply."
+        },
+        "force-y": {
+          "type": "number",
+          "name": "Force Y",
+          "desc": "The vertical force to apply."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "apply-force-towards-position",
+      "scriptName": "ApplyForceToward",
+      "category": "forces",
+      "list-name": "Apply force towards position",
+      "display-text": "Apply {my} force {0} toward ([i]{1}[/i], [i]{2}[/i]) at image point {3}",
+      "description": "Apply a force on the object towards a position in the layout.",
+      "params": {
+        "force": {
+          "type": "number",
+          "name": "Force",
+          "desc": "The force to apply."
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to apply the force towards."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to apply the force towards."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "apply-force-at-angle",
+      "scriptName": "ApplyForceAtAngle",
+      "category": "forces",
+      "list-name": "Apply force at angle",
+      "display-text": "Apply {my} force {0} at angle {1} at image point {2}",
+      "description": "Apply a force on the object in a particular direction.",
+      "params": {
+        "force": {
+          "type": "number",
+          "name": "Force",
+          "desc": "The force to apply."
+        },
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle, in degrees, to apply the force towards."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the force at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "apply-impulse",
+      "scriptName": "ApplyImpulse",
+      "category": "forces",
+      "list-name": "Apply impulse",
+      "display-text": "Apply {my} impulse ([i]{0}[/i], [i]{1}[/i]) at image point {2}",
+      "description": "Apply an impulse to the object, as if it were suddenly struck.",
+      "params": {
+        "impulse-x": {
+          "type": "number",
+          "name": "Impulse X",
+          "desc": "The horizontal impulse to apply."
+        },
+        "implulse-y": {
+          "type": "number",
+          "name": "Impulse Y",
+          "desc": "The vertical impulse to apply."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "apply-impulse-towards-position",
+      "scriptName": "ApplyImpulseToward",
+      "category": "forces",
+      "list-name": "Apply impulse towards position",
+      "display-text": "Apply {my} impulse {0} toward ([i]{1}[/i], [i]{2}[/i]) at image point {3}",
+      "description": "Apply an impulse on the object as if it were suddenly struck towards a position in the layout.",
+      "params": {
+        "impulse": {
+          "type": "number",
+          "name": "Impulse",
+          "desc": "The impulse to apply."
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to apply the impulse towards."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to apply the impulse towards."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "apply-impulse-at-angle",
+      "scriptName": "ApplyImpulseAtAngle",
+      "category": "forces",
+      "list-name": "Apply impulse at angle",
+      "display-text": "Apply {my} impulse {0} at angle {1} at image point {2}",
+      "description": "Apply an impulse on the object as if it were suddenly struck at an angle.",
+      "params": {
+        "impulse": {
+          "type": "number",
+          "name": "Impulse",
+          "desc": "The impulse to apply."
+        },
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle, in degrees, to apply the impulse at."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point",
+          "desc": "The name or number of the image point to apply the impulse at. Use 0 for the center of gravity and -1 for the object origin."
+        }
+      }
+    },
+    {
+      "id": "set-velocity",
+      "scriptName": "SetVelocity",
+      "category": "forces",
+      "list-name": "Set velocity",
+      "display-text": "Set {my} velocity to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the current motion of the physics object.",
+      "params": {
+        "x-component": {
+          "type": "number",
+          "name": "X component",
+          "desc": "The X component of the velocity to set, in pixels per second."
+        },
+        "y-component": {
+          "type": "number",
+          "name": "Y component",
+          "desc": "The Y component of the velocity to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "teleport",
+      "scriptName": "Teleport",
+      "category": "forces",
+      "list-name": "Teleport",
+      "display-text": "Teleport {my} to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the position of the physics body to a new location, preserving its velocity.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X position to teleport to."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y position to teleport to."
+        }
+      }
+    },
+    {
+      "id": "set-world-gravity",
+      "scriptName": "SetWorldGravity",
+      "category": "global-settings",
+      "list-name": "Set world gravity",
+      "display-text": "Set {my} world gravity to {0}",
+      "description": "Set the force of gravity on all objects in the world.",
+      "params": {
+        "gravity": {
+          "type": "number",
+          "name": "Gravity",
+          "desc": "The new force of gravity to set."
+        }
+      }
+    },
+    {
+      "id": "set-stepping-mode",
+      "scriptName": "SetSteppingMode",
+      "category": "global-settings",
+      "list-name": "Set stepping mode",
+      "display-text": "Set {my} world stepping mode to [b]{0}[/b]",
+      "description": "Set the way the physics engine steps the simulation.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "The stepping mode.  'Fixed' guarantees same results every time but is not framerate independent; 'framerate independent' adjusts to the framerate but may give different results each time.",
+          "items": {
+            "fixed": "Fixed",
+            "framerate-independent": "Framerate independent"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-stepping-iterations",
+      "scriptName": "SetIterations",
+      "category": "global-settings",
+      "list-name": "Set stepping iterations",
+      "display-text": "Set {my} world stepping to {0} velocity iterations and {1} position iterations",
+      "description": "Set the performance/accuracy trade-off.",
+      "params": {
+        "velocity-iterations": {
+          "type": "number",
+          "name": "Velocity iterations",
+          "desc": "Iterations for the velocity constraint solver.  Lower is fast and inaccurate, higher is slow and accurate."
+        },
+        "position-iterations": {
+          "type": "number",
+          "name": "Position iterations",
+          "desc": "Iterations for the position constraint solver.  Lower is fast and inaccurate, higher is slow and accurate."
+        }
+      }
+    },
+    {
+      "id": "enabledisable-collisions",
+      "scriptName": "EnableCollisions",
+      "category": "global-settings",
+      "list-name": "Enable/disable collisions",
+      "display-text": "{1} {my} collisions with {0}",
+      "description": "Enable or disable collisions with another object using the Physics behavior.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Choose another object type with the Physics behavior to enable or disable collisions for."
+        },
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Enable or disable collisions with the given object type.",
+          "items": {
+            "disable": "Disable",
+            "enable": "Enable"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-distance-joint",
+      "scriptName": "CreateDistanceJoint",
+      "category": "joints",
+      "list-name": "Create distance joint",
+      "display-text": "Create {my} distance joint from image point {0} to {1} image point {2}, damping ratio {3}, frequency {4}",
+      "description": "Force this and another object to stay a fixed distance apart, as if connected by a pole.",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "This image point",
+          "desc": "Name or number of image point on this object to attach joint to. Use 0 for the center of gravity and -1 for the object origin."
+        },
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to attach to."
+        },
+        "that-image-point": {
+          "type": "any",
+          "name": "That image point",
+          "desc": "Name or number of image point on other object to attach joint to."
+        },
+        "damping-ratio": {
+          "type": "number",
+          "name": "Damping ratio",
+          "desc": "The joint damping ratio, from 0 (no damping) to 1 (critical damping)"
+        },
+        "spring-frequency": {
+          "type": "number",
+          "name": "Spring frequency",
+          "desc": "The mass-spring-damper frequency, in Hertz."
+        }
+      }
+    },
+    {
+      "id": "create-revolute-joint",
+      "scriptName": "CreateRevoluteJoint",
+      "category": "joints",
+      "list-name": "Create revolute joint",
+      "display-text": "Create {my} revolute joint at image point {0} to {1}",
+      "description": "Hinge another object to a point on this object.",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "This image point",
+          "desc": "Name or number of image point on this object to hinge object to. Use 0 for the center of gravity and -1 for the object origin."
+        },
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to attach."
+        }
+      }
+    },
+    {
+      "id": "create-limited-revolute-joint",
+      "scriptName": "CreateLimitedRevoluteJoint",
+      "category": "joints",
+      "list-name": "Create limited revolute joint",
+      "display-text": "Create {my} limited revolute joint at image point {0} to {1}, from {2} to {3} degrees",
+      "description": "Hinge another object to a point on this object and limit the range of rotation.",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "This image point",
+          "desc": "Name or number of image point on this object to hinge object to. Use 0 for the center of gravity and -1 for the object origin."
+        },
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to attach."
+        },
+        "lower-angle": {
+          "type": "number",
+          "name": "Lower angle",
+          "desc": "The lower angle of rotation allowed, in degrees."
+        },
+        "upper-angle": {
+          "type": "number",
+          "name": "Upper angle",
+          "desc": "The upper angle of rotation allowed, in degrees."
+        }
+      }
+    },
+    {
+      "id": "create-prismatic-joint",
+      "scriptName": "CreatePrismaticJoint",
+      "category": "joints",
+      "list-name": "Create prismatic joint",
+      "display-text": "Create {my} prismatic joint at image point {0} to {1} (angle [i]{2}[/i], limit [i]{3}[/i] from [i]{4}[/i] to [i]{5}[/i], motor [i]{6}[/i] speed [i]{7}[/i] max force [i]{8}[/i])",
+      "description": "Restrict movement of two objects along a specific axis.",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "This image point",
+          "desc": "Name or number of image point on this object to hinge object to. Use 0 for the center of gravity and -1 for the object origin."
+        },
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to attach."
+        },
+        "axis-angle": {
+          "type": "number",
+          "name": "Axis angle",
+          "desc": "The angle of the axis to constrain movement to, in degrees."
+        },
+        "enable-limit": {
+          "type": "combo",
+          "name": "Enable limit",
+          "desc": "Whether to enable the lower and upper translation limits.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          },
+          "initialValue": "yes"
+        },
+        "lower-translation": {
+          "type": "number",
+          "name": "Lower translation",
+          "desc": "The lower translation allowed relative to the starting position, in pixels."
+        },
+        "upper-translation": {
+          "type": "number",
+          "name": "Upper translation",
+          "desc": "The upper translation allowed relative to the starting position, in pixels."
+        },
+        "enable-motor": {
+          "type": "combo",
+          "name": "Enable motor",
+          "desc": "Whether to enable a motor on the joint.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
+        "motor-speed": {
+          "type": "number",
+          "name": "Motor speed",
+          "desc": "The speed of the motor, in degrees per second."
+        },
+        "max-motor-force": {
+          "type": "number",
+          "name": "Max motor force",
+          "desc": "The maximum motor torque."
+        }
+      }
+    },
+    {
+      "id": "remove-all-joints",
+      "scriptName": "RemoveJoints",
+      "category": "joints",
+      "list-name": "Remove all joints",
+      "display-text": "Remove all {my} joints",
+      "description": "Remove all joints created to or from this object."
+    },
+    {
+      "id": "set-density",
+      "scriptName": "SetDensity",
+      "category": "object-settings",
+      "list-name": "Set density",
+      "display-text": "Set {my} density to [b]{0}[/b]",
+      "description": "Set the density of the physics object.",
+      "params": {
+        "density": {
+          "type": "number",
+          "name": "Density",
+          "desc": "The new object density.  Only has effect when 'Immovable' is 'No'."
+        }
+      }
+    },
+    {
+      "id": "set-friction",
+      "scriptName": "SetFriction",
+      "category": "object-settings",
+      "list-name": "Set friction",
+      "display-text": "Set {my} friction coefficient to [b]{0}[/b]",
+      "description": "Set the friction coefficient.",
+      "params": {
+        "friction": {
+          "type": "number",
+          "name": "Friction",
+          "desc": "The new object friction coefficient, between 0 and 1."
+        }
+      }
+    },
+    {
+      "id": "set-elasticity",
+      "scriptName": "SetElasticity",
+      "category": "object-settings",
+      "list-name": "Set elasticity",
+      "display-text": "Set {my} elasticity to [b]{0}[/b]",
+      "description": "Set the elasticity ('bounciness') coefficient.",
+      "params": {
+        "elasticity": {
+          "type": "number",
+          "name": "Elasticity",
+          "desc": "The new object elasticity (restitution or 'bounciness') coefficient, between 0 and 1."
+        }
+      }
+    },
+    {
+      "id": "set-linear-damping",
+      "scriptName": "SetLinearDamping",
+      "category": "object-settings",
+      "list-name": "Set linear damping",
+      "display-text": "Set {my} linear damping to [b]{0}[/b]",
+      "description": "Set the coefficient to slow down motion over time.",
+      "params": {
+        "linear-damping": {
+          "type": "number",
+          "name": "Linear damping",
+          "desc": "The new object linear damping, between 0 and 1."
+        }
+      }
+    },
+    {
+      "id": "set-angular-damping",
+      "scriptName": "SetAngularDamping",
+      "category": "object-settings",
+      "list-name": "Set angular damping",
+      "display-text": "Set {my} angular damping to [b]{0}[/b]",
+      "description": "Set the coefficient to slow down rotations over time.",
+      "params": {
+        "angular-damping": {
+          "type": "number",
+          "name": "Angular damping",
+          "desc": "The new object angular damping, between 0 and 1."
+        }
+      }
+    },
+    {
+      "id": "set-immovable",
+      "scriptName": "SetImmovable",
+      "category": "object-settings",
+      "list-name": "Set immovable",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether the object has infinite mass (immovable)",
+      "params": {
+        "setting": {
+          "type": "combo",
+          "name": "Setting",
+          "desc": "Set whether the object has infinite mass (immovable).",
+          "items": {
+            "movable": "Movable",
+            "immovable": "Immovable"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-prevent-rotation",
+      "scriptName": "SetPreventRotate",
+      "category": "object-settings",
+      "list-name": "Set prevent rotation",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether to prevent the object rotating when hit.",
+      "params": {
+        "setting": {
+          "type": "combo",
+          "name": "Setting",
+          "desc": "Set whether to prevent the object rotating when hit.",
+          "items": {
+            "dont-prevent-rotations": "Don't prevent rotations",
+            "prevent-rotations": "Prevent rotations"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-bullet",
+      "scriptName": "SetBullet",
+      "category": "object-settings",
+      "list-name": "Set bullet",
+      "display-text": "Set {my} bullet mode [b]{0}[/b]",
+      "description": "Set whether to use enhanced collision detection for fast-moving objects.",
+      "params": {
+        "bullet": {
+          "type": "combo",
+          "name": "Bullet",
+          "desc": "Set whether to use bullet mode for enhanced collision detection on fast-moving objects.",
+          "items": {
+            "off": "Off",
+            "on": "On"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-awake",
+      "scriptName": "SetAwake",
+      "category": "object-settings",
+      "list-name": "Set awake",
+      "display-text": "Set {my} awake [b]{0}[/b]",
+      "description": "Set whether the Physics engine is actively simulating this object.",
+      "params": {
+        "awake": {
+          "type": "boolean",
+          "name": "Awake",
+          "desc": "Set whether the Physics engine is actively simulating this object."
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "object-settings",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} {0}",
+      "description": "Enable or disable the behavior.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Choose whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "disabled",
+            "enabled": "enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-collision-filter",
+      "scriptName": "SetCollisionFilter",
+      "category": "object-settings",
+      "list-name": "Set collision filter",
+      "display-text": "Set collision filter to [b]{1}[/b] [i]{0}[/i]",
+      "description": "Set a list of tags to filter physics collisions.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Use 'Inclusive' to only collide with Physics objects with the given tags. Use 'Exclusive' to ignore Physics objects with the given tags.",
+          "items": {
+            "inclusive": "Inclusive",
+            "exclusive": "Exclusive"
+          }
+        },
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "A space-separated list of tags to filter collisions with."
+        }
+      }
+    },
+    {
+      "id": "apply-torque",
+      "scriptName": "ApplyTorque",
+      "category": "torque",
+      "list-name": "Apply torque",
+      "display-text": "Apply {my} torque {0}",
+      "description": "Apply a torque (i.e. angular acceleration).",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "Torque",
+          "desc": "The torque to apply to the object."
+        }
+      }
+    },
+    {
+      "id": "apply-torque-towards-angle",
+      "scriptName": "ApplyTorqueToAngle",
+      "category": "torque",
+      "list-name": "Apply torque towards angle",
+      "display-text": "Apply {my} torque {0} toward angle {1}",
+      "description": "Apply a torque towards an angle.",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "Torque",
+          "desc": "The magnitude of the torque to apply."
+        },
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle, in degrees, to apply torque towards."
+        }
+      }
+    },
+    {
+      "id": "apply-torque-towards-position",
+      "scriptName": "ApplyTorqueToPosition",
+      "category": "torque",
+      "list-name": "Apply torque towards position",
+      "display-text": "Apply {my} torque {0} toward ([i]{1}[/i], [i]{2}[/i])",
+      "description": "Apply a torque towards a position in the layout.",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "Torque",
+          "desc": "The magnitude of the torque to apply."
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate in the layout to apply torque towards."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate in the layout to apply torque towards."
+        }
+      }
+    },
+    {
+      "id": "set-angular-velocity",
+      "scriptName": "SetAngularVelocity",
+      "category": "torque",
+      "list-name": "Set angular velocity",
+      "display-text": "Set {my} angular velocity to {0}",
+      "description": "Set the rate the object rotates at.",
+      "params": {
+        "angular-velocity": {
+          "type": "number",
+          "name": "Angular velocity",
+          "desc": "The angular velocity to set, in degrees per second."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "velocityx",
+      "scriptName": "VelocityX",
+      "category": "",
+      "translated-name": "VelocityX",
+      "description": "The X component of the object's current velocity, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "velocityy",
+      "scriptName": "VelocityY",
+      "category": "",
+      "translated-name": "VelocityY",
+      "description": "The Y component of the object's current velocity, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "angularvelocity",
+      "scriptName": "AngularVelocity",
+      "category": "",
+      "translated-name": "AngularVelocity",
+      "description": "The object's current angular velocity, in degrees per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "mass",
+      "scriptName": "Mass",
+      "category": "",
+      "translated-name": "Mass",
+      "description": "The object's physics mass, which is its collision area multiplied by its density.",
+      "returnType": "number"
+    },
+    {
+      "id": "centerofmassx",
+      "scriptName": "CenterOfMassX",
+      "category": "",
+      "translated-name": "CenterOfMassX",
+      "description": "The X co-ordinate of the object's center of mass.",
+      "returnType": "number"
+    },
+    {
+      "id": "centerofmassy",
+      "scriptName": "CenterOfMassY",
+      "category": "",
+      "translated-name": "CenterOfMassY",
+      "description": "The Y co-ordinate of the object's center of mass.",
+      "returnType": "number"
+    },
+    {
+      "id": "contact-count",
+      "scriptName": "ContactCount",
+      "category": "",
+      "translated-name": "ContactCount",
+      "description": "The current number of collision contact points.",
+      "returnType": "number"
+    },
+    {
+      "id": "contact-x-at",
+      "scriptName": "ContactXAt",
+      "category": "",
+      "translated-name": "ContactXAt",
+      "description": "The X co-ordinate of a collision contact.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of the contact."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "contact-y-at",
+      "scriptName": "ContactYAt",
+      "category": "",
+      "translated-name": "ContactYAt",
+      "description": "The Y co-ordinate of a collision contact.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of the contact."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "density",
+      "scriptName": "Density",
+      "category": "object-settings",
+      "translated-name": "Density",
+      "description": "The current density of the physics object.",
+      "returnType": "number"
+    },
+    {
+      "id": "friction",
+      "scriptName": "Friction",
+      "category": "object-settings",
+      "translated-name": "Friction",
+      "description": "The current friction of the physics object.",
+      "returnType": "number"
+    },
+    {
+      "id": "elasticity",
+      "scriptName": "Elasticity",
+      "category": "object-settings",
+      "translated-name": "Elasticity",
+      "description": "The current elasticity ('bounciness') of the physics object.",
+      "returnType": "number"
+    },
+    {
+      "id": "lineardamping",
+      "scriptName": "LinearDamping",
+      "category": "object-settings",
+      "translated-name": "LinearDamping",
+      "description": "The current linear damping coefficient.",
+      "returnType": "number"
+    },
+    {
+      "id": "angulardamping",
+      "scriptName": "AngularDamping",
+      "category": "object-settings",
+      "translated-name": "AngularDamping",
+      "description": "The current angular damping coefficient.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "immovable": {
+      "name": "Immovable",
+      "desc": "Enable to make object have infinite mass.  Ideal for scenery."
+    },
+    "collision-mask": {
+      "name": "Collision mask",
+      "desc": "How the object collides in the physics simulation.",
+      "items": {
+        "use-collision-polygon": "Use collision polygon",
+        "bounding-box": "Bounding box",
+        "circle": "Circle"
+      }
+    },
+    "collision-filter-tags": {
+      "name": "Collision filter tags",
+      "desc": "A list of space separated tags to filter collisions with."
+    },
+    "collision-filter-mode": {
+      "name": "Collision filter mode",
+      "desc": "How to apply the collision filter tags to instance tags.",
+      "items": {
+        "inclusive": "Inclusive",
+        "exclusive": "Exclusive"
+      }
+    },
+    "prevent-rotation": {
+      "name": "Prevent rotation",
+      "desc": "Prevent the object rotating when hit."
+    },
+    "density": {
+      "name": "Density",
+      "desc": "The object density, from which its mass is calculated."
+    },
+    "friction": {
+      "name": "Friction",
+      "desc": "The object friction coefficient, between 0 and 1."
+    },
+    "elasticity": {
+      "name": "Elasticity",
+      "desc": "The object elasticity (restitution or 'bounciness') coefficient, between 0 and 1."
+    },
+    "linear-damping": {
+      "name": "Linear damping",
+      "desc": "Coefficient to slow down motion over time, between 0 and 1."
+    },
+    "angular-damping": {
+      "name": "Angular damping",
+      "desc": "Coefficient to slow down rotations over time, between 0 and 1."
+    },
+    "bullet": {
+      "name": "Bullet",
+      "desc": "Enable enhanced collision detection for fast moving objects."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

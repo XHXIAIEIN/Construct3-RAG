@@ -1,0 +1,240 @@
+{
+  "id": "textbox",
+  "name": "Text input",
+  "description": "A text field form control for the user to type text in to. For simply displaying text, use the 'Text' object instead.",
+  "type": "plugin",
+  "aceCategories": {
+    "text-input": "Text input"
+  },
+  "conditions": [
+    {
+      "id": "compare-text",
+      "scriptName": "CompareText",
+      "category": "text-input",
+      "list-name": "Compare text",
+      "display-text": "Text is {0} ([i]{1}[/i])",
+      "description": "Compare the text currently entered in to the text input.",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "The text to compare the text input's text to."
+        },
+        "case": {
+          "type": "combo",
+          "name": "Case",
+          "desc": "Choose whether the comparison is case sensitive (FOO different to Foo) or case insensitive (FOO same as Foo).",
+          "items": {
+            "case-insensitive": "case insensitive",
+            "case-sensitive": "case sensitive"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-text-changed",
+      "scriptName": "OnTextChanged",
+      "category": "text-input",
+      "list-name": "On text changed",
+      "display-text": "On text changed",
+      "description": "Triggered when the text in the text input changes.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "text-input",
+      "list-name": "On clicked",
+      "display-text": "On clicked",
+      "description": "Triggered when the text input is clicked.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-double-clicked",
+      "scriptName": "OnDoubleClicked",
+      "category": "text-input",
+      "list-name": "On double-clicked",
+      "display-text": "On double-clicked",
+      "description": "Triggered when the text input is double-clicked.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "scriptName": "SetText",
+      "category": "text-input",
+      "list-name": "Set text",
+      "display-text": "Set text to {0}",
+      "description": "Set the text input's text.",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "Text",
+          "desc": "The text to set in the text input."
+        }
+      }
+    },
+    {
+      "id": "append-text",
+      "scriptName": "AppendText",
+      "category": "text-input",
+      "list-name": "Append text",
+      "display-text": "Append [i]{0}[/i]",
+      "description": "Add text to the end of the existing text.",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "Text",
+          "desc": "Enter the text to append to the object's content."
+        }
+      }
+    },
+    {
+      "id": "set-placeholder",
+      "scriptName": "SetPlaceholder",
+      "category": "text-input",
+      "list-name": "Set placeholder",
+      "display-text": "Set placeholder to {0}",
+      "description": "Set the text input's placeholder.",
+      "params": {
+        "placeholder": {
+          "type": "string",
+          "name": "Placeholder",
+          "desc": "The new text input placeholder."
+        }
+      }
+    },
+    {
+      "id": "set-tooltip",
+      "scriptName": "SetTooltip",
+      "category": "text-input",
+      "list-name": "Set tooltip",
+      "display-text": "Set tooltip to {0}",
+      "description": "Set the text input's tooltip.",
+      "params": {
+        "tooltip": {
+          "type": "string",
+          "name": "Tooltip",
+          "desc": "The tooltip to set on the text input."
+        }
+      }
+    },
+    {
+      "id": "set-read-only",
+      "scriptName": "SetReadOnly",
+      "category": "text-input",
+      "list-name": "Set read-only",
+      "display-text": "Set [b]{0}[/b]",
+      "description": "Turn read-only on or off.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Choose whether to enable or disable read-only mode.",
+          "items": {
+            "read-only": "Read-only",
+            "not-read-only": "Not read-only"
+          }
+        }
+      }
+    },
+    {
+      "id": "scroll-to-bottom",
+      "scriptName": "ScrollToBottom",
+      "category": "text-input",
+      "list-name": "Scroll to bottom",
+      "display-text": "Scroll to bottom",
+      "description": "Scroll to the bottom of the text input if a textarea."
+    },
+    {
+      "id": "set-max-length",
+      "scriptName": "SetMaxLength",
+      "category": "text-input",
+      "list-name": "Set max length",
+      "display-text": "Set max length to [i]{0}[/i]",
+      "description": "Set the maximum number of characters that can be entered.",
+      "params": {
+        "max-length": {
+          "type": "number",
+          "name": "Max length",
+          "desc": "The maximum number of characters that can be entered. Use -1 for unlimited."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "scriptName": "Text",
+      "category": "text-input",
+      "translated-name": "Text",
+      "description": "Get the text input's current text.",
+      "returnType": "string"
+    },
+    {
+      "id": "max-length",
+      "scriptName": "MaxLength",
+      "category": "text-input",
+      "translated-name": "MaxLength",
+      "description": "Get the maximum number of characters that can be entered, or -1 for unlimited.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "text": {
+      "name": "Text",
+      "desc": "The initial text for the text input."
+    },
+    "placeholder": {
+      "name": "Placeholder",
+      "desc": "A tip to display when the text input is empty."
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "desc": "Display this text when hovering the mouse over the control."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose if the object is visible when the layout starts."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the control is enabled or disabled on startup."
+    },
+    "read-only": {
+      "name": "Read-only",
+      "desc": "Whether the text input is read-only on startup."
+    },
+    "spell-check": {
+      "name": "Spell check",
+      "desc": "Allow the browser to spell-check the text input, if supported."
+    },
+    "type": {
+      "name": "Type",
+      "desc": "The kind of text entered in to the text input, which also affects on-screen keyboards on touch devices.",
+      "items": {
+        "text": "Text",
+        "password": "Password",
+        "email": "Email",
+        "number": "Number",
+        "telephone-number": "Telephone number",
+        "url": "URL",
+        "textarea": "Textarea",
+        "search": "Search"
+      }
+    },
+    "auto-font-size": {
+      "name": "Auto font size",
+      "desc": "Automatically set the font size depending on the layer scale."
+    },
+    "id": {
+      "name": "ID",
+      "desc": "An optional ID for the element allowing it to be styled with CSS."
+    },
+    "class": {
+      "name": "Class",
+      "desc": "An optional class for the element allowing it to be styled with CSS."
+    }
+  }
+}

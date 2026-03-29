@@ -1,0 +1,569 @@
+{
+  "id": "platform",
+  "name": "Platform",
+  "description": "Jump and run along platforms (solid/jump-thru objects).",
+  "type": "behavior",
+  "aceCategories": {
+    "animation-triggers": "Animation triggers"
+  },
+  "conditions": [
+    {
+      "id": "is-moving",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "Is moving",
+      "display-text": "{my} is moving",
+      "description": "True when the object is moving."
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "Compare speed",
+      "display-text": "{my} speed {0} {1}",
+      "description": "Compare the current speed of the object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose the way to compare the current speed."
+        },
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The speed, in pixels per second, to compare the current speed to."
+        }
+      }
+    },
+    {
+      "id": "is-on-floor",
+      "scriptName": "IsOnFloor",
+      "category": "",
+      "list-name": "Is on floor",
+      "display-text": "{my} is on floor",
+      "description": "True when the object is on top of a solid or platform."
+    },
+    {
+      "id": "is-jumping",
+      "scriptName": "IsJumping",
+      "category": "",
+      "list-name": "Is jumping",
+      "display-text": "{my} is jumping",
+      "description": "True when the object is moving upwards (i.e. jumping)."
+    },
+    {
+      "id": "is-falling",
+      "scriptName": "IsFalling",
+      "category": "",
+      "list-name": "Is falling",
+      "display-text": "{my} is falling",
+      "description": "True when the object is moving downwards (i.e. falling)."
+    },
+    {
+      "id": "is-by-wall",
+      "scriptName": "IsByWall",
+      "category": "",
+      "list-name": "Is by wall",
+      "display-text": "{my} has wall to {0}",
+      "description": "Test if the object has a wall to the left or right.",
+      "params": {
+        "side": {
+          "type": "combo",
+          "name": "Side",
+          "desc": "Select the side to test for a wall.",
+          "items": {
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    },
+    {
+      "id": "is-double-jump-enabled",
+      "scriptName": "IsDoubleJumpEnabled",
+      "category": "",
+      "list-name": "Is double-jump enabled",
+      "display-text": "{my} double-jump is enabled",
+      "description": "True if double-jump is currently enabled."
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    },
+    {
+      "id": "on-jump",
+      "scriptName": "OnJump",
+      "category": "animation-triggers",
+      "list-name": "On jump",
+      "display-text": "{my} On jump",
+      "description": "Triggered when jumping.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-fall",
+      "scriptName": "OnFall",
+      "category": "animation-triggers",
+      "list-name": "On fall",
+      "display-text": "{my} On fall",
+      "description": "Triggered when falling.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-stopped",
+      "scriptName": "OnStop",
+      "category": "animation-triggers",
+      "list-name": "On stopped",
+      "display-text": "{my} On stopped",
+      "description": "Triggered when stopped moving.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-moved",
+      "scriptName": "OnMove",
+      "category": "animation-triggers",
+      "list-name": "On moved",
+      "display-text": "{my} On moved",
+      "description": "Triggered when starting to move.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-landed",
+      "scriptName": "OnLand",
+      "category": "animation-triggers",
+      "list-name": "On landed",
+      "display-text": "{my} On landed",
+      "description": "Triggered when first hitting the floor.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-ignoring-input",
+      "scriptName": "SetIgnoreInput",
+      "category": "",
+      "list-name": "Set ignoring input",
+      "display-text": "{0} {my} user input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "params": {
+        "input": {
+          "type": "combo",
+          "name": "Input",
+          "desc": "Set whether to ignore the controls for this movement.",
+          "items": {
+            "stop-ignoring": "Stop ignoring",
+            "start-ignoring": "Start ignoring"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "",
+      "list-name": "Set max speed",
+      "display-text": "Set {my} maximum speed to [i]{0}[/i]",
+      "description": "Set the object's maximum speed.",
+      "params": {
+        "max-speed": {
+          "type": "number",
+          "name": "Max Speed",
+          "desc": "The new maximum speed of the object to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "Set acceleration",
+      "display-text": "Set {my} acceleration to [i]{0}[/i]",
+      "description": "Set the object's acceleration.",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "Acceleration",
+          "desc": "The new acceleration of the object to set, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDeceleration",
+      "category": "",
+      "list-name": "Set deceleration",
+      "display-text": "Set {my} deceleration to [i]{0}[/i]",
+      "description": "Set the object's deceleration.",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "Deceleration",
+          "desc": "The new deceleration of the object to set, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-jump-strength",
+      "scriptName": "SetJumpStrength",
+      "category": "",
+      "list-name": "Set jump strength",
+      "display-text": "Set {my} jump strength to [i]{0}[/i]",
+      "description": "Set the object's jump strength.",
+      "params": {
+        "jump-strength": {
+          "type": "number",
+          "name": "Jump strength",
+          "desc": "The new speed at which jumps start, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-gravity",
+      "scriptName": "SetGravity",
+      "category": "",
+      "list-name": "Set gravity",
+      "display-text": "Set {my} gravity to [i]{0}[/i]",
+      "description": "Set the object's gravity.",
+      "params": {
+        "gravity": {
+          "type": "number",
+          "name": "Gravity",
+          "desc": "The new acceleration from gravity, in pixels per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-max-fall-speed",
+      "scriptName": "SetMaxFallSpeed",
+      "category": "",
+      "list-name": "Set max fall speed",
+      "display-text": "Set {my} max fall speed to [i]{0}[/i]",
+      "description": "Set the object's maximum fall speed.",
+      "params": {
+        "max-fall-speed": {
+          "type": "number",
+          "name": "Max fall speed",
+          "desc": "The new maximum speed object can reach in freefall, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "simulate-control",
+      "scriptName": "SimulateControl",
+      "category": "",
+      "list-name": "Simulate control",
+      "display-text": "Simulate {my} pressing {0}",
+      "description": "Control the movement by events.",
+      "params": {
+        "control": {
+          "type": "combo",
+          "name": "Control",
+          "desc": "The movement control to simulate pressing.",
+          "items": {
+            "left": "Left",
+            "right": "Right",
+            "jump": "Jump"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-vector-x",
+      "scriptName": "SetVectorX",
+      "category": "",
+      "list-name": "Set vector X",
+      "display-text": "Set {my} vector X to [i]{0}[/i]",
+      "description": "Set the X component of motion.",
+      "params": {
+        "vector-x": {
+          "type": "number",
+          "name": "Vector X",
+          "desc": "The new horizontal movement vector, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-vector-y",
+      "scriptName": "SetVectorY",
+      "category": "",
+      "list-name": "Set vector Y",
+      "display-text": "Set {my} vector Y to [i]{0}[/i]",
+      "description": "Set the Y component of motion.",
+      "params": {
+        "vector-y": {
+          "type": "number",
+          "name": "Vector Y",
+          "desc": "The new vertical movement vector, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-angle-of-gravity",
+      "scriptName": "SetGravityAngle",
+      "category": "",
+      "list-name": "Set angle of gravity",
+      "display-text": "Set {my} angle of gravity to [i]{0}[/i] degrees",
+      "description": "Change the angle the player falls at.",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle of gravity in degrees."
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "fall-through",
+      "scriptName": "FallThrough",
+      "category": "",
+      "list-name": "Fall through",
+      "display-text": "Fall {my} down through jump-thru",
+      "description": "Fall through a jump-thru platform."
+    },
+    {
+      "id": "set-double-jump",
+      "scriptName": "SetDoubleJumpEnabled",
+      "category": "",
+      "list-name": "Set double-jump",
+      "display-text": "Set {my} double-jump [b]{0}[/b]",
+      "description": "Set whether double-jump is enabled.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether to enable or disable double jumps.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-jump-sustain",
+      "scriptName": "SetJumpSustain",
+      "category": "",
+      "list-name": "Set jump sustain",
+      "display-text": "Set {my} jump sustain to [b]{0}[/b] ms",
+      "description": "Set the jump sustain property.",
+      "params": {
+        "jump-sustain": {
+          "type": "number",
+          "name": "Jump sustain",
+          "desc": "The new jump sustain, in milliseconds to sustain jump velocity for."
+        }
+      }
+    },
+    {
+      "id": "set-ceiling-collision",
+      "scriptName": "SetCeilingCollision",
+      "category": "",
+      "list-name": "Set ceiling collision",
+      "display-text": "Set {my} ceiling collision mode to [b]{0}[/b]",
+      "description": "Set how ceiling collisions are handled (stop or preserve momentum)",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Set how to handle collisions with the ceiling.",
+          "items": {
+            "stop": "Stop",
+            "preserve-momentum": "Preserve momentum"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-default-controls",
+      "scriptName": "SetDefaultControls",
+      "category": "",
+      "list-name": "Set default controls",
+      "display-text": "Set {my} default controls [b]{0}[/b]",
+      "description": "Change the default controls setting.",
+      "params": {
+        "default-controls": {
+          "type": "boolean",
+          "name": "Default controls",
+          "desc": "Whether to enable or disable the behavior default controls."
+        }
+      }
+    },
+    {
+      "id": "reset-double-jump",
+      "scriptName": "ResetDoubleJump",
+      "category": "",
+      "list-name": "Reset double jump",
+      "display-text": "Reset {my} double jump allowed [b]{0}[/b]",
+      "description": "Change whether a double jump is allowed during a jump.",
+      "params": {
+        "double-jump-allowed": {
+          "type": "boolean",
+          "name": "Double jump allowed",
+          "desc": "Whether a double jump is allowed during the current jump."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "",
+      "translated-name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "",
+      "translated-name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "jumpstrength",
+      "scriptName": "JumpStrength",
+      "category": "",
+      "translated-name": "JumpStrength",
+      "description": "The jump strength setting, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "gravity",
+      "scriptName": "Gravity",
+      "category": "",
+      "translated-name": "Gravity",
+      "description": "The gravity setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "maxfallspeed",
+      "scriptName": "MaxFallSpeed",
+      "category": "",
+      "translated-name": "MaxFallSpeed",
+      "description": "The maximum fall speed setting, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "",
+      "translated-name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "vectorx",
+      "scriptName": "VectorX",
+      "category": "",
+      "translated-name": "VectorX",
+      "description": "The current X component of motion, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "vectory",
+      "scriptName": "VectorY",
+      "category": "",
+      "translated-name": "VectorY",
+      "description": "The current Y component of motion, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "gravityangle",
+      "scriptName": "GravityAngle",
+      "category": "",
+      "translated-name": "GravityAngle",
+      "description": "The angle of gravity, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "jumpsustain",
+      "scriptName": "JumpSustain",
+      "category": "",
+      "translated-name": "JumpSustain",
+      "description": "The jump sustain property, in milliseconds.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "max-speed": {
+      "name": "Max speed",
+      "desc": "The maximum speed, in pixels per second, the object can travel at."
+    },
+    "acceleration": {
+      "name": "Acceleration",
+      "desc": "The rate of acceleration, in pixels per second per second."
+    },
+    "deceleration": {
+      "name": "Deceleration",
+      "desc": "The rate of deceleration, in pixels per second per second."
+    },
+    "jump-strength": {
+      "name": "Jump strength",
+      "desc": "Speed at which jumps start, in pixels per second."
+    },
+    "gravity": {
+      "name": "Gravity",
+      "desc": "Acceleration from gravity, in pixels per second per second."
+    },
+    "max-fall-speed": {
+      "name": "Max fall speed",
+      "desc": "Maximum speed object can reach in freefall, in pixels per second."
+    },
+    "double-jump": {
+      "name": "Double-jump",
+      "desc": "Allow a single extra jump while in mid-air before landing."
+    },
+    "jump-sustain": {
+      "name": "Jump sustain",
+      "desc": "Time in milliseconds to allow jump to sustain for, reaching higher if holding longer."
+    },
+    "default-controls": {
+      "name": "Default controls",
+      "desc": "If enabled, arrow keys control movement.  Otherwise, use the 'simulate control' action."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

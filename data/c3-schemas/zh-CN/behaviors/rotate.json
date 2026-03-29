@@ -1,0 +1,104 @@
+{
+  "id": "rotate",
+  "name": "旋转",
+  "description": "使对象旋转",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检测当前行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "设置速度",
+      "display-text": "设置 {my}每秒旋转速度为{0}°",
+      "description": "设置对象旋转的速率",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "设置旋转速度，以每秒角度为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "设置加速度",
+      "display-text": "设置 {my}加速度为{0}",
+      "description": "设置每秒旋转角度变化的速率，正数则顺时针加速，负数逆时针加速。",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "加速度",
+          "desc": "设置旋转加速度，以每秒角度为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "移动速度",
+      "description": "当前旋转速度，以度数/每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "加速度",
+      "description": "当前的旋转加速度，以度数/秒为单位。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "speed": {
+      "name": "速度",
+      "desc": "转速，以度/秒为单位。 正向为顺时针，负向为逆时针"
+    },
+    "acceleration": {
+      "name": "加速度",
+      "desc": "每秒旋转的加速度，以角度/秒为单位。负数则减速。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    },
+    "live-preview": {
+      "name": "预览",
+      "desc": "在编辑器中进行实时预览。"
+    }
+  }
+}

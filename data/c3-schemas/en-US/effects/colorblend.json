@@ -1,0 +1,10 @@
+{
+  "id": "colorblend",
+  "name": "Color",
+  "description": "Use the hue and saturation of the foreground and luminosity of the background.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

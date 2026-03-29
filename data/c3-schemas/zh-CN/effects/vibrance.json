@@ -1,0 +1,17 @@
+{
+  "id": "vibrance",
+  "name": "自然饱和度",
+  "description": "使颜色更暖或更凉爽。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "vibrance",
+      "type": "percent",
+      "name": "自然饱和度",
+      "desc": "要应用的效果量。 高于0会使颜色变暖，负数会使颜色变冷。"
+    }
+  ]
+}

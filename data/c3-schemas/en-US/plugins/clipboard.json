@@ -1,0 +1,136 @@
+{
+  "id": "clipboard",
+  "name": "Clipboard",
+  "description": "Access the system clipboard for copy and paste operations.",
+  "type": "plugin",
+  "aceCategories": {
+    "clipboard": "Clipboard"
+  },
+  "conditions": [
+    {
+      "id": "on-copy-success",
+      "scriptName": "OnCopySuccess",
+      "category": "clipboard",
+      "list-name": "On copy success",
+      "display-text": "On copy success",
+      "description": "Triggered when a copy to the clipboard is successful.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-copy-error",
+      "scriptName": "OnCopyError",
+      "category": "clipboard",
+      "list-name": "On copy error",
+      "display-text": "On copy error",
+      "description": "Triggered when a copy to the clipboard fails.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-text",
+      "scriptName": "OnPasteText",
+      "category": "clipboard",
+      "list-name": "On paste text",
+      "display-text": "On paste text",
+      "description": "Triggered on a successful paste of text.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-binary",
+      "scriptName": "OnPasteBinary",
+      "category": "clipboard",
+      "list-name": "On paste binary",
+      "display-text": "On paste binary (to {0}, type [i]{1}[/i])",
+      "description": "Triggered on a successful paste of binary data.",
+      "params": {
+        "receive-to": {
+          "type": "object",
+          "name": "Binary data",
+          "desc": "Choose a Binary Data object to write the pasted binary data to."
+        },
+        "type": {
+          "type": "string",
+          "name": "Type",
+          "desc": "The content type (aka MIME type) of the pasted data."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-paste-error",
+      "scriptName": "OnPasteError",
+      "category": "clipboard",
+      "list-name": "On paste error",
+      "display-text": "On paste error",
+      "description": "Triggered when a paste fails.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "copy-text",
+      "scriptName": "CopyText",
+      "category": "clipboard",
+      "list-name": "Copy text",
+      "display-text": "Copy text [i]{0}[/i]",
+      "description": "Copy some text to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "The text to copy to the clipboard."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "copy-binary",
+      "scriptName": "CopyBinary",
+      "category": "clipboard",
+      "list-name": "Copy binary",
+      "display-text": "Copy binary {0} (type [i]{1}[/i])",
+      "description": "Copy some binary data to the clipboard. Note this is usually only allowed in a user input trigger.",
+      "params": {
+        "data": {
+          "type": "object",
+          "name": "Binary data",
+          "desc": "A Binary Data object to copy to the clipboard."
+        },
+        "type": {
+          "type": "string",
+          "name": "Type",
+          "desc": "The content type (aka MIME type) of the data being copied."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-paste-text",
+      "scriptName": "RequestPasteText",
+      "category": "clipboard",
+      "list-name": "Request paste text",
+      "display-text": "Request paste text",
+      "description": "Request to read text from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "isAsync": true
+    },
+    {
+      "id": "request-paste-binary",
+      "scriptName": "RequestPasteBinary",
+      "category": "clipboard",
+      "list-name": "Request paste binary",
+      "display-text": "Request paste binary",
+      "description": "Request to read binary data from the clipboard. Note this is usually only allowed in a user input trigger and may show a permission prompt.",
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "pasted-text",
+      "scriptName": "PastedText",
+      "category": "clipboard",
+      "translated-name": "PastedText",
+      "description": "In 'On paste text', the text that was read from the clipboard.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

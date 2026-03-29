@@ -1,0 +1,17 @@
+{
+  "id": "exposure",
+  "name": "曝光",
+  "description": "调整图像的曝光。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "exposure",
+      "type": "percent",
+      "name": "曝光",
+      "desc": "调整曝光量。"
+    }
+  ]
+}

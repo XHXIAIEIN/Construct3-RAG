@@ -1,0 +1,998 @@
+{
+  "id": "physics",
+  "name": "物理",
+  "description": "模拟真实的物理行为，基于 Box2D 技术驱动。",
+  "type": "behavior",
+  "aceCategories": {
+    "forces": "动量",
+    "global-settings": "全局设置",
+    "joints": "关节",
+    "object-settings": "对象设置",
+    "torque": "力矩"
+  },
+  "conditions": [
+    {
+      "id": "is-sleeping",
+      "scriptName": "IsSleeping",
+      "category": "",
+      "list-name": "正在休眠",
+      "display-text": "{my} 正在休眠",
+      "description": "检测物理对象是否处于非活动状态，且不再需要处理运算。"
+    },
+    {
+      "id": "is-immovable",
+      "scriptName": "IsImmovable",
+      "category": "",
+      "list-name": "不可移动",
+      "display-text": "{my}不可移动",
+      "description": "检测物理对象是否被设置为 '不可移动'（具有无限质量）属性。"
+    },
+    {
+      "id": "compare-velocity",
+      "scriptName": "CompareVelocity",
+      "category": "",
+      "list-name": "比较运动速度",
+      "display-text": "{my} {0} {1} {2}",
+      "description": "比较物理对象当前的运动速度。",
+      "params": {
+        "which": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "是比较某一轴的速度，还是整体速度。",
+          "items": {
+            "x-velocity": "X轴速度",
+            "y-velocity": "Y轴速度",
+            "overall-velocity": "整体速度"
+          }
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "输入要比较的值。"
+        }
+      }
+    },
+    {
+      "id": "compare-angular-velocity",
+      "scriptName": "CompareAngularVelocity",
+      "category": "",
+      "list-name": "比较角速度",
+      "display-text": "{my} 角速度 {0} {1}",
+      "description": "比较物理对象当前的角速度。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "要与角速度比较的值，以角度/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "compare-mass",
+      "scriptName": "CompareMass",
+      "category": "",
+      "list-name": "比较质量",
+      "display-text": "{my} 质量 {0} {1}",
+      "description": "比较物理对象当前的质量。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "输入要比较的值。"
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检查物理行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "apply-force",
+      "scriptName": "ApplyForce",
+      "category": "forces",
+      "list-name": "施加作用力",
+      "display-text": "向 {my} 图像点 {2} 施加作用力 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "为对象施加作用力。常用于模拟持续的推力、拉力等效果。",
+      "params": {
+        "force-x": {
+          "type": "number",
+          "name": "动量 X",
+          "desc": "向X轴方向施加的力。"
+        },
+        "force-y": {
+          "type": "number",
+          "name": "动量 Y",
+          "desc": "向Y轴方向施加的力。"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "apply-force-towards-position",
+      "scriptName": "ApplyForceToward",
+      "category": "forces",
+      "list-name": "施加作用力 (朝向位置)",
+      "display-text": "向 {my} 图形点 {3} 施加作用力 (动量: {0}, 朝向位置: [i]{1}[/i], [i]{2}[/i])",
+      "description": "为对象施加力，使其朝向场景某个位置移动。常用于模拟持续的推力、拉力等效果。",
+      "params": {
+        "force": {
+          "type": "number",
+          "name": "动量",
+          "desc": "要施加的力。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "向X轴朝向使力"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "向Y轴朝向使力"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "apply-force-at-angle",
+      "scriptName": "ApplyForceAtAngle",
+      "category": "forces",
+      "list-name": "施加作用力 (朝向角度)",
+      "display-text": "向 {my} 图像点 {2} 施加作用力 (动量: {0}, 朝向角度: {1})",
+      "description": "将对象沿指定的方向施加作用力，使对象沿力的方向持续运动。常用于模拟环境的重力、风力推动等影响效果。",
+      "params": {
+        "force": {
+          "type": "number",
+          "name": "动量",
+          "desc": "要施加的力。"
+        },
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "施加作用力的角度。"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要对其施加力的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "apply-impulse",
+      "scriptName": "ApplyImpulse",
+      "category": "forces",
+      "list-name": "施加脉冲",
+      "display-text": "向 {my} 图像点 {2} 施加脉冲 (动量: [i]{0}[/i], [i]{1}[/i])",
+      "description": "对物体对象朝一个位置施加瞬间的动量，模拟物体被击飞或吸引的运动。",
+      "params": {
+        "impulse-x": {
+          "type": "number",
+          "name": "冲量 X",
+          "desc": "在X轴方向上瞬间产生的动量。"
+        },
+        "implulse-y": {
+          "type": "number",
+          "name": "冲量 Y",
+          "desc": "在Y轴方向上瞬间产生的动量。"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "apply-impulse-towards-position",
+      "scriptName": "ApplyImpulseToward",
+      "category": "forces",
+      "list-name": "施加脉冲 (朝向位置)",
+      "display-text": "向 {my} 图像点 {3} 施加脉冲 (动量: {0}, 朝向位置: ([i]{1}[/i], [i]{2}[/i]))",
+      "description": "将物体朝指定位置施加脉冲，模拟物体被击飞或吸引的运动。",
+      "params": {
+        "impulse": {
+          "type": "number",
+          "name": "冲量",
+          "desc": "要施加的冲量。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要朝向其位置施加冲量的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要朝向其位置施加冲量的Y坐标。"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "apply-impulse-at-angle",
+      "scriptName": "ApplyImpulseAtAngle",
+      "category": "forces",
+      "list-name": "施加脉冲 (朝向角度)",
+      "display-text": "向 {my} 图像点 {2} 施加脉冲 (动量: {0}, 角度: {1}°)",
+      "description": "将物体朝向指定角度施加脉冲，模拟物体被击飞或吸引的运动。",
+      "params": {
+        "impulse": {
+          "type": "number",
+          "name": "冲量",
+          "desc": "要施加的冲量。"
+        },
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "施加冲量的角度。"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "用于施加脉冲的图像点的名称或编号。用 0 表示重心，用 -1表示动画原点。"
+        }
+      }
+    },
+    {
+      "id": "set-velocity",
+      "scriptName": "SetVelocity",
+      "category": "forces",
+      "list-name": "设置向量",
+      "display-text": "设置 {my}运动向量为([i]{0}[/i], [i]{1}[/i])",
+      "description": "设置此物理对象当前在X轴/Y轴上的移动速度。",
+      "params": {
+        "x-component": {
+          "type": "number",
+          "name": "向量X",
+          "desc": "在X轴方向的运动向量，以每秒像素为单位。"
+        },
+        "y-component": {
+          "type": "number",
+          "name": "向量Y",
+          "desc": "在Y轴方向的运动向量，以每秒像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "teleport",
+      "scriptName": "Teleport",
+      "category": "forces",
+      "list-name": "传送到位置",
+      "display-text": "传送 {my} 到位置 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "将物理对象的位置设置为新位置，且保持其速度。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要传送到的X位置。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要传送到的Y位置。"
+        }
+      }
+    },
+    {
+      "id": "set-world-gravity",
+      "scriptName": "SetWorldGravity",
+      "category": "global-settings",
+      "list-name": "设置地心引力",
+      "display-text": "设置 {my}地心引力值为{0}",
+      "description": "设置所有物理对象的重力。默认重力为10。",
+      "params": {
+        "gravity": {
+          "type": "number",
+          "name": "重力",
+          "desc": "设置重力值。填负数为反方向重力。"
+        }
+      }
+    },
+    {
+      "id": "set-stepping-mode",
+      "scriptName": "SetSteppingMode",
+      "category": "global-settings",
+      "list-name": "设置步进模式",
+      "display-text": "设置 {my}步进模式为[b]{0}[/b]",
+      "description": "设置物理引擎是否使用 '帧速率' 影响运算，在 '精确结果' 和 '稳定速度' 之间的权衡。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "默认为增量时间模式。选择 '固定值' 可以保证每次运算的结果相同，但在不同刷新率的显示器将呈现不同的运行速度。选择 '增量时间' 可以确保在不同刷新率具有相同的运行速度，但可能因此产生不同的结果。",
+          "items": {
+            "fixed": "固定步长",
+            "framerate-independent": "增量时间"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-stepping-iterations",
+      "scriptName": "SetIterations",
+      "category": "global-settings",
+      "list-name": "设置步进迭代次数",
+      "display-text": "设置 {my} 步进迭代次数 (速度: {0}, 位置: {1})",
+      "description": "设置物理引擎在 '性能' 与 '精度' 之间的权衡。",
+      "params": {
+        "velocity-iterations": {
+          "type": "number",
+          "name": "速度迭代",
+          "desc": "较低的值运算速度更快，但结果不准确。较高的值运算更慢，消耗更多性能，但提供更真实的模拟。默认值为 8 。"
+        },
+        "position-iterations": {
+          "type": "number",
+          "name": "位置迭代",
+          "desc": "较低的值运算速度更快，但结果不准确。较高的值运算更慢，消耗更多性能，但提供更真实的模拟。默认值为 3。"
+        }
+      }
+    },
+    {
+      "id": "enabledisable-collisions",
+      "scriptName": "EnableCollisions",
+      "category": "global-settings",
+      "list-name": "启用碰撞",
+      "display-text": "{1} {my} 与 {0} 碰撞",
+      "description": "禁用或启用与其他对象物理行为的碰撞检测",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择另一个拥有物理行为的对象，对其启用或禁用碰撞。"
+        },
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用某对象类型的碰撞能力",
+          "items": {
+            "disable": "禁用",
+            "enable": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-distance-joint",
+      "scriptName": "CreateDistanceJoint",
+      "category": "joints",
+      "list-name": "创建距离关节",
+      "display-text": "创建 {my} 距离关节, 从图像点 {0} 连接到 {1} 图像点 {2} (阻尼: {3}，弹性: {4})",
+      "description": "将两个物理对象进行连接，并保持一定的距离。",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要连接对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要附着的对象"
+        },
+        "that-image-point": {
+          "type": "any",
+          "name": "要设置的图像点",
+          "desc": "要连接到其他对象上的图像点的名称或编号。"
+        },
+        "damping-ratio": {
+          "type": "number",
+          "name": "阻尼比率",
+          "desc": "关节阻尼比，从0（无阻尼）到1（临界阻尼）"
+        },
+        "spring-frequency": {
+          "type": "number",
+          "name": "弹簧频率",
+          "desc": "质量 - 弹簧 - 阻尼器频率，以赫兹为单位"
+        }
+      }
+    },
+    {
+      "id": "create-revolute-joint",
+      "scriptName": "CreateRevoluteJoint",
+      "category": "joints",
+      "list-name": "创建旋转关节",
+      "display-text": "创建 {my} 旋转关节, 在图像点 {0} 连接 {1}",
+      "description": "将另一个对象铰接到此对象的某个图像点，允许他们围绕此旋转。",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要连接的对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要铰接的对象"
+        }
+      }
+    },
+    {
+      "id": "create-limited-revolute-joint",
+      "scriptName": "CreateLimitedRevoluteJoint",
+      "category": "joints",
+      "list-name": "创建有限旋转关节",
+      "display-text": "创建 {my} 旋转关节, 在图像点 {0} 连接 {1} (限制范围: {2}° 到 {3}°)",
+      "description": "将另一个对象铰接到此对象的某个图像点，允许他们围绕在一定范围内旋转。",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要连接的对象的图像点的名称或编号。用 0 表示重心，用 -1 表示图像原点。"
+        },
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要铰接的对象"
+        },
+        "lower-angle": {
+          "type": "number",
+          "name": "角度下限",
+          "desc": "允许更低的旋转角度"
+        },
+        "upper-angle": {
+          "type": "number",
+          "name": "角度上限",
+          "desc": "允许更高的旋转角度"
+        }
+      }
+    },
+    {
+      "id": "create-prismatic-joint",
+      "scriptName": "CreatePrismaticJoint",
+      "category": "joints",
+      "list-name": "创建移动关节",
+      "display-text": "创建 {my} 移动关节 (从图像点 {0} 到 {1}, 角度 [i]{2}[/i], 限制: [i]{3}[/i] 从 [i]{4}[/i] 到 [i]{5}[/i], 马达: [i]{6}[/i], 速度: [i]{7}[/i], 最大作用力 [i]{8}[/i])",
+      "description": "限制两个对象沿特定轴的移动。",
+      "params": {
+        "this-image-point": {
+          "type": "any",
+          "name": "图像点",
+          "desc": "要连接的对象的图像点的名称或数量。 使用 0 表示重心，使用 -1 表示对象原点"
+        },
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "要附着的对象"
+        },
+        "axis-angle": {
+          "type": "number",
+          "name": "轴角度",
+          "desc": "用于约束运动的轴的角度。"
+        },
+        "enable-limit": {
+          "type": "combo",
+          "name": "约束范围",
+          "desc": "是否启用移动范围的限制。",
+          "items": {
+            "no": "禁用",
+            "yes": "启用"
+          },
+          "initialValue": "yes"
+        },
+        "lower-translation": {
+          "type": "number",
+          "name": "移动下限",
+          "desc": "允许进行移动的下限距离，相对于起始位置，以像素为单位。"
+        },
+        "upper-translation": {
+          "type": "number",
+          "name": "移动上限",
+          "desc": "允许进行移动的上限距离，相对于起始位置，以像素为单位。"
+        },
+        "enable-motor": {
+          "type": "combo",
+          "name": "马达",
+          "desc": "在关节上开启一个马达。",
+          "items": {
+            "no": "禁用",
+            "yes": "启用"
+          }
+        },
+        "motor-speed": {
+          "type": "number",
+          "name": "马达转速",
+          "desc": "设置马达的转速，以每秒旋转度数为单位。"
+        },
+        "max-motor-force": {
+          "type": "number",
+          "name": "最大转力",
+          "desc": "马达力矩的最大转动速度。"
+        }
+      }
+    },
+    {
+      "id": "remove-all-joints",
+      "scriptName": "RemoveJoints",
+      "category": "joints",
+      "list-name": "移除所有关节",
+      "display-text": "移除 {my} 所有关节",
+      "description": "移除此对象上所有创建的关节点。"
+    },
+    {
+      "id": "set-density",
+      "scriptName": "SetDensity",
+      "category": "object-settings",
+      "list-name": "设置密度",
+      "display-text": "设置 {my}密度为[b]{0}[/b]",
+      "description": "设置此物理对象的密度。",
+      "params": {
+        "density": {
+          "type": "number",
+          "name": "密度",
+          "desc": "新的对象密度，仅在禁用不可移动属性时生效。"
+        }
+      }
+    },
+    {
+      "id": "set-friction",
+      "scriptName": "SetFriction",
+      "category": "object-settings",
+      "list-name": "设置摩擦系数",
+      "display-text": "设置 {my}摩擦系数为[b]{0}[/b]",
+      "description": "设置物理对象的摩擦系数。",
+      "params": {
+        "friction": {
+          "type": "number",
+          "name": "摩擦系数",
+          "desc": "摩擦力，影响物体接触其他物体时相互运动的阻力，范围值 0-1。"
+        }
+      }
+    },
+    {
+      "id": "set-elasticity",
+      "scriptName": "SetElasticity",
+      "category": "object-settings",
+      "list-name": "设置弹性系数",
+      "display-text": "设置 {my}弹性系数为[b]{0}[/b]",
+      "description": "设置物理对象的弹性系数。",
+      "params": {
+        "elasticity": {
+          "type": "number",
+          "name": "弹性系数",
+          "desc": "弹力，影响物体撞击其他物体时反弹的高度。范围值 0-1。"
+        }
+      }
+    },
+    {
+      "id": "set-linear-damping",
+      "scriptName": "SetLinearDamping",
+      "category": "object-settings",
+      "list-name": "设置线性阻尼",
+      "display-text": "设置 {my}线性阻尼为[b]{0}[/b]",
+      "description": "设置物理对象的线性阻尼。",
+      "params": {
+        "linear-damping": {
+          "type": "number",
+          "name": "线性阻尼",
+          "desc": "物体运动时，随时间逐渐减速的系数，介于0到1之间。"
+        }
+      }
+    },
+    {
+      "id": "set-angular-damping",
+      "scriptName": "SetAngularDamping",
+      "category": "object-settings",
+      "list-name": "设置角度阻尼",
+      "display-text": "设置 {my}角度阻尼为[b]{0}[/b]",
+      "description": "设置物理对象的角度阻尼。",
+      "params": {
+        "angular-damping": {
+          "type": "number",
+          "name": "角度阻尼",
+          "desc": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。"
+        }
+      }
+    },
+    {
+      "id": "set-immovable",
+      "scriptName": "SetImmovable",
+      "category": "object-settings",
+      "list-name": "设置不可移动",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "让此物体拥有无限的质量，不再受到密度的影响，不会再进行移动。",
+      "params": {
+        "setting": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "开启后，此物体将拥有无限的质量，不再受到物体密度的影响，永远不会移动，适用于场景对象，例如坚固的墙体。",
+          "items": {
+            "movable": "允许移动",
+            "immovable": "不可移动"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-prevent-rotation",
+      "scriptName": "SetPreventRotate",
+      "category": "object-settings",
+      "list-name": "设置不可旋转",
+      "display-text": "[b]{0}[/b]{my}",
+      "description": "锁定对象的角度，受到物理撞击时不会导致它旋转。",
+      "params": {
+        "setting": {
+          "type": "combo",
+          "name": "设置",
+          "desc": "锁定对象的角度，受到物理撞击时不会导致它旋转。",
+          "items": {
+            "dont-prevent-rotations": "允许旋转",
+            "prevent-rotations": "不可旋转"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-bullet",
+      "scriptName": "SetBullet",
+      "category": "object-settings",
+      "list-name": "设置子弹模式",
+      "display-text": "{my}[b]{0}[/b]子弹模式",
+      "description": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。",
+      "params": {
+        "bullet": {
+          "type": "combo",
+          "name": "子弹",
+          "desc": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。注意，这会影响性能，除非需要超高速移动的物理对象，否则不建议启用它。",
+          "items": {
+            "off": "关闭",
+            "on": "开启"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-awake",
+      "scriptName": "SetAwake",
+      "category": "object-settings",
+      "list-name": "设置唤醒",
+      "display-text": "[b]{0}[/b] {my} 活跃状态",
+      "description": "设置物理引擎是否主动运算该对象。",
+      "params": {
+        "awake": {
+          "type": "boolean",
+          "name": "唤醒",
+          "desc": "设置物理引擎是否要主动运算该对象。"
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "object-settings",
+      "list-name": "设置启用",
+      "display-text": "{0} {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-collision-filter",
+      "scriptName": "SetCollisionFilter",
+      "category": "object-settings",
+      "list-name": "过滤碰撞标签",
+      "display-text": "[i]{0}[/i]碰撞过滤标签: [b]{1}[/b]",
+      "description": "要设置的物理碰撞标签，用空格分隔多个标签。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "使用 \"包含\" 选项仅与具有指定标签的物理对象发生碰撞。使用 \"排除\" 选项则忽略具有指定标签的物理对象。",
+          "items": {
+            "inclusive": "包含",
+            "exclusive": "排除"
+          }
+        },
+        "tags": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的实体。使用空格分隔多个标签。"
+        }
+      }
+    },
+    {
+      "id": "apply-torque",
+      "scriptName": "ApplyTorque",
+      "category": "torque",
+      "list-name": "施加力矩",
+      "display-text": "向 {my} 施加扭矩 (动量:  {0})",
+      "description": "向物体施加旋转的作用力（即旋转加速度），使对象朝向场景的位置做旋转运动。",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "力矩",
+          "desc": "要施加的力矩。使对象朝向场景的位置做旋转运动。"
+        }
+      }
+    },
+    {
+      "id": "apply-torque-towards-angle",
+      "scriptName": "ApplyTorqueToAngle",
+      "category": "torque",
+      "list-name": "施加力矩(根据角度)",
+      "display-text": "向 {my} 施加扭矩 (动量:  {0}, 角度: {1}°)",
+      "description": "在某个角度，向物体施加旋转的作用力（即旋转加速度）",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "力矩",
+          "desc": "要施加的力矩。使对象朝向场景的位置做旋转运动。"
+        },
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "施加扭矩的角度。"
+        }
+      }
+    },
+    {
+      "id": "apply-torque-towards-position",
+      "scriptName": "ApplyTorqueToPosition",
+      "category": "torque",
+      "list-name": "施加力矩(根据位置)",
+      "display-text": "向 {my} 施加扭矩 (动量: {0}, 朝向位置: [i]{1}[/i], [i]{2}[/i])",
+      "description": "向物体施加力矩，使对象朝向场景的位置做旋转运动。",
+      "params": {
+        "torque": {
+          "type": "number",
+          "name": "力矩",
+          "desc": "要施加的力矩。对象将朝向场景的位置做旋转运动。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "对象将朝向场景中的X坐标位置做旋转运动。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "对象将朝向场景中的Y坐标位置做旋转运动。"
+        }
+      }
+    },
+    {
+      "id": "set-angular-velocity",
+      "scriptName": "SetAngularVelocity",
+      "category": "torque",
+      "list-name": "设置角速度",
+      "display-text": "设置 {my}角速度为{0}",
+      "description": "设置对象旋转的速率",
+      "params": {
+        "angular-velocity": {
+          "type": "number",
+          "name": "角速度",
+          "desc": "设置对象每秒旋转的角度向量。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "velocityx",
+      "scriptName": "VelocityX",
+      "category": "",
+      "translated-name": "移动向量X",
+      "description": "当前速度在X轴的移动向量，以像素/每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "velocityy",
+      "scriptName": "VelocityY",
+      "category": "",
+      "translated-name": "移动向量Y",
+      "description": "当前速度在Y轴的移动向量，以像素/每秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "angularvelocity",
+      "scriptName": "AngularVelocity",
+      "category": "",
+      "translated-name": "角速度",
+      "description": "当前的角速度，以度数/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "mass",
+      "scriptName": "Mass",
+      "category": "",
+      "translated-name": "质量",
+      "description": "物理对象的质量，即对象碰撞面积×密度。",
+      "returnType": "number"
+    },
+    {
+      "id": "centerofmassx",
+      "scriptName": "CenterOfMassX",
+      "category": "",
+      "translated-name": "质心X",
+      "description": "物体质量中心的X坐标",
+      "returnType": "number"
+    },
+    {
+      "id": "centerofmassy",
+      "scriptName": "CenterOfMassY",
+      "category": "",
+      "translated-name": "质心Y",
+      "description": "物体质量中心的Y坐标",
+      "returnType": "number"
+    },
+    {
+      "id": "contact-count",
+      "scriptName": "ContactCount",
+      "category": "",
+      "translated-name": "连接点数量",
+      "description": "当前对象碰撞到其他物理对象的接触点数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "contact-x-at",
+      "scriptName": "ContactXAt",
+      "category": "",
+      "translated-name": "获取连接点X",
+      "description": "返回与另一个物理对象接触的X坐标位置。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要返回的第几个连接点，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "contact-y-at",
+      "scriptName": "ContactYAt",
+      "category": "",
+      "translated-name": "获取连接点Y",
+      "description": "返回与另一个物理对象接触的Y坐标位置。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要返回的第几个连接点，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "density",
+      "scriptName": "Density",
+      "category": "object-settings",
+      "translated-name": "密度",
+      "description": "对象的密度，主要用于计算物体的质量。",
+      "returnType": "number"
+    },
+    {
+      "id": "friction",
+      "scriptName": "Friction",
+      "category": "object-settings",
+      "translated-name": "摩擦系数",
+      "description": "物体接触其他物体时相互运动的阻力，范围值 0-1。",
+      "returnType": "number"
+    },
+    {
+      "id": "elasticity",
+      "scriptName": "Elasticity",
+      "category": "object-settings",
+      "translated-name": "弹性系数",
+      "description": "物体撞击其他物体时反弹的高度。",
+      "returnType": "number"
+    },
+    {
+      "id": "lineardamping",
+      "scriptName": "LinearDamping",
+      "category": "object-settings",
+      "translated-name": "线性阻尼",
+      "description": "物体运动时，随时间逐渐减速的系数，介于0到1之间。",
+      "returnType": "number"
+    },
+    {
+      "id": "angulardamping",
+      "scriptName": "AngularDamping",
+      "category": "object-settings",
+      "translated-name": "角度阻尼",
+      "description": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "immovable": {
+      "name": "不可移动",
+      "desc": "开启后，此物体将拥有无限的质量，不再受到物体密度的影响，不会发生移动，适用于场景对象，例如坚固的墙体。"
+    },
+    "collision-mask": {
+      "name": "碰撞边界",
+      "desc": "处理此对象物理碰撞的方式。",
+      "items": {
+        "use-collision-polygon": "碰撞框",
+        "bounding-box": "矩形",
+        "circle": "圆形"
+      }
+    },
+    "prevent-rotation": {
+      "name": "不可旋转",
+      "desc": "锁定对象的角度，受到物理撞击时不会导致它旋转。"
+    },
+    "density": {
+      "name": "密度",
+      "desc": "物理对象的密度，用于计算物体的质量。注意，精确的密度值并不重要，仅用于作不同物体相对密度的比较。"
+    },
+    "friction": {
+      "name": "摩擦系数",
+      "desc": "摩擦力，影响物体接触其他物体时相互运动的阻力，范围值 0-1。"
+    },
+    "elasticity": {
+      "name": "弹性系数",
+      "desc": "弹力，影响物体撞击其他物体时反弹的高度。范围值 0-1。"
+    },
+    "linear-damping": {
+      "name": "线性阻尼",
+      "desc": "物体运动时，随时间逐渐减速的系数，介于0到1之间。"
+    },
+    "angular-damping": {
+      "name": "角度阻尼",
+      "desc": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。"
+    },
+    "bullet": {
+      "name": "子弹模式",
+      "desc": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。注意，这会影响性能，除非需要超高速移动的物理对象，否则不建议启用它。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    },
+    "collision-filter-tags": {
+      "name": "碰撞标签",
+      "desc": "过滤其他指定碰撞标签的物理对象的碰撞，用空格分隔多个标签。"
+    },
+    "collision-filter-mode": {
+      "name": "过滤模式",
+      "desc": "使用什么方式来过滤物理碰撞标签。",
+      "items": {
+        "inclusive": "包含",
+        "exclusive": "排除"
+      }
+    }
+  }
+}

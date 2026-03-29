@@ -1,0 +1,29 @@
+{
+  "id": "warpripple",
+  "name": "Warp ripple",
+  "description": "Warp in rings around the object.",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "frequency",
+      "type": "float",
+      "name": "Frequency",
+      "desc": "Frequency of waves."
+    },
+    {
+      "id": "amplitude",
+      "type": "percent",
+      "name": "Amplitude",
+      "desc": "Amplitude of waves."
+    },
+    {
+      "id": "speed",
+      "type": "float",
+      "name": "Speed",
+      "desc": "Speed of the wave animation."
+    }
+  ]
+}

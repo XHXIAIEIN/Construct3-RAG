@@ -1,0 +1,240 @@
+{
+  "id": "textbox",
+  "name": "输入框",
+  "description": "用于提供给用户输入文本的表单控件。 如果只是要简单的显示文本，请改用 \"文本\" 对象。",
+  "type": "plugin",
+  "aceCategories": {
+    "text-input": "输入框"
+  },
+  "conditions": [
+    {
+      "id": "compare-text",
+      "scriptName": "CompareText",
+      "category": "text-input",
+      "list-name": "比较文本",
+      "display-text": "文本内容是 {0} ([i]{1}[/i])",
+      "description": "将当前输入的文本与文本输入进行比较。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "用于比较文本输入文本的文本。"
+        },
+        "case": {
+          "type": "combo",
+          "name": "大小写",
+          "desc": "选择比较是区分大小写（FOO与Foo不同）还是不区分大小写（FOO与Foo相同）。",
+          "items": {
+            "case-insensitive": "不区分大小写",
+            "case-sensitive": "区分大小写"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-text-changed",
+      "scriptName": "OnTextChanged",
+      "category": "text-input",
+      "list-name": "文本被改变",
+      "display-text": "文本已改变",
+      "description": "当文本输入中的文本发生更改时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "text-input",
+      "list-name": "点击",
+      "display-text": "点击",
+      "description": "单击文本输入时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-double-clicked",
+      "scriptName": "OnDoubleClicked",
+      "category": "text-input",
+      "list-name": "双击",
+      "display-text": "双击",
+      "description": "双击文本输入时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "scriptName": "SetText",
+      "category": "text-input",
+      "list-name": "设置文本",
+      "display-text": "设置文本内容为{0}",
+      "description": "设置文本显示的内容。",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "文本",
+          "desc": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。"
+        }
+      }
+    },
+    {
+      "id": "append-text",
+      "scriptName": "AppendText",
+      "category": "text-input",
+      "list-name": "追加文本",
+      "display-text": "追加文本 [i]{0}[/i]",
+      "description": "将文本添加到现有文本的末尾。",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "文本内容",
+          "desc": "在当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2\""
+        }
+      }
+    },
+    {
+      "id": "set-placeholder",
+      "scriptName": "SetPlaceholder",
+      "category": "text-input",
+      "list-name": "设置占位符",
+      "display-text": "设置占位符为{0}",
+      "description": "设置文本输入的占位符。",
+      "params": {
+        "placeholder": {
+          "type": "string",
+          "name": "占位符",
+          "desc": "新文本输入占位符。"
+        }
+      }
+    },
+    {
+      "id": "set-tooltip",
+      "scriptName": "SetTooltip",
+      "category": "text-input",
+      "list-name": "设置工具提示",
+      "display-text": "设置工具提示为{0}",
+      "description": "设置文本输入的工具提示。",
+      "params": {
+        "tooltip": {
+          "type": "string",
+          "name": "提示",
+          "desc": "用于设置文本输入的工具提示。"
+        }
+      }
+    },
+    {
+      "id": "set-read-only",
+      "scriptName": "SetReadOnly",
+      "category": "text-input",
+      "list-name": "设置只读状态",
+      "display-text": "设置[b]{0}[/b]",
+      "description": "将输入框设置为只读模式，防止用户对值进行修改。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "启用或禁用输入框的只读模式。",
+          "items": {
+            "read-only": "只读",
+            "not-read-only": "关闭只读"
+          }
+        }
+      }
+    },
+    {
+      "id": "scroll-to-bottom",
+      "scriptName": "ScrollToBottom",
+      "category": "text-input",
+      "list-name": "转到尾行",
+      "display-text": "转到尾行",
+      "description": "如果是多行文本，则滚动到文本输入的底部。"
+    },
+    {
+      "id": "set-max-length",
+      "scriptName": "SetMaxLength",
+      "category": "text-input",
+      "list-name": "设置最大长度",
+      "display-text": "设置最大长度为[i]{0}[/i]",
+      "description": "设置允许输入的最大字符数。",
+      "params": {
+        "max-length": {
+          "type": "number",
+          "name": "最大长度",
+          "desc": "可以输入字符的最大长度，-1为不限制"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "scriptName": "Text",
+      "category": "text-input",
+      "translated-name": "文本内容",
+      "description": "获取文本输入的当前文本",
+      "returnType": "string"
+    },
+    {
+      "id": "max-length",
+      "scriptName": "MaxLength",
+      "category": "text-input",
+      "translated-name": "最大长度",
+      "description": "获取可以输入字符的最大长度，-1为不限制",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "text": {
+      "name": "文本",
+      "desc": "文本输入的初始文本。"
+    },
+    "placeholder": {
+      "name": "占位符",
+      "desc": "文本输入为空时显示的提示。"
+    },
+    "tooltip": {
+      "name": "提示",
+      "desc": "将鼠标悬停在控件上时显示此文本。"
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "在场景开始时，对象是否可见。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "场景启动时，启用还是禁用控件。"
+    },
+    "read-only": {
+      "name": "只读",
+      "desc": "场景启动时，是否为只读模式。不允许用户对值修改。"
+    },
+    "spell-check": {
+      "name": "拼写检查",
+      "desc": "如果支持，允许浏览器拼写检查文本输入。"
+    },
+    "type": {
+      "name": "类型",
+      "desc": "输入框接收值的类型，如单行、多行文本，仅数字、密码、邮箱等，这也会影响触控设备上的屏幕键盘布局。",
+      "items": {
+        "text": "文本",
+        "password": "密码",
+        "email": "邮箱",
+        "number": "数字",
+        "telephone-number": "电话号码",
+        "url": "URL",
+        "textarea": "多行文本",
+        "search": "搜索"
+      }
+    },
+    "auto-font-size": {
+      "name": "自动字体大小",
+      "desc": "根据图层比例自动设置字体大小。"
+    },
+    "id": {
+      "name": "ID",
+      "desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。"
+    },
+    "class": {
+      "name": "Class",
+      "desc": "可选项，添加 Class 元素来设置样式。"
+    }
+  }
+}

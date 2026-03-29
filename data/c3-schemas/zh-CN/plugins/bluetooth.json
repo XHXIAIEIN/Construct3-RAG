@@ -1,0 +1,567 @@
+{
+  "id": "bluetooth",
+  "name": "蓝牙",
+  "description": "连接到蓝牙设备并与他们对话",
+  "type": "plugin",
+  "aceCategories": {
+    "bluetooth": "蓝牙",
+    "services": "服务",
+    "characteristics": "特征数据"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth",
+      "list-name": "设备支持蓝牙",
+      "display-text": "设备支持蓝牙",
+      "description": "检测当前运行设备是否支持蓝牙连接。"
+    },
+    {
+      "id": "on-device-connected",
+      "scriptName": "OnDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "设备连接成功",
+      "display-text": "设备连接成功",
+      "description": "在列出设备完事后触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-disconnected",
+      "scriptName": "OnDeviceDisconnected",
+      "category": "bluetooth",
+      "list-name": "设备断开连接",
+      "display-text": "设备断开连接",
+      "description": "在设备断开连接并关闭自身连接收触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-request-device-failed",
+      "scriptName": "OnRequestDeviceFailed",
+      "category": "bluetooth",
+      "list-name": "请求设备失败",
+      "display-text": "请求设备失败",
+      "description": "执行 '请求设备' 动作后，如果用户取消了请求或设备连接失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-device-connected",
+      "scriptName": "IsDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "设备已连接",
+      "display-text": "设备 [b]{0}[/b] 已连接",
+      "description": "测试：指定设备ID是否已连接",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-primary-services-loaded",
+      "scriptName": "OnPrimaryServicesLoaded",
+      "category": "services",
+      "list-name": "次要服务加载完成",
+      "display-text": "次要服务加载完成",
+      "description": "请求次要服务成功时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-primary-services-error",
+      "scriptName": "OnPrimaryServicesError",
+      "category": "services",
+      "list-name": "请求次要服务出错",
+      "display-text": "请求次要服务出错",
+      "description": "请求次要服务出错时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristics-loaded",
+      "scriptName": "OnCharacteristicsLoaded",
+      "category": "services",
+      "list-name": "特征数据加载成功",
+      "display-text": "特征数据加载成功",
+      "description": "蓝牙特征数据(Characteristic)加载成功时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristics-error",
+      "scriptName": "OnCharacteristicsError",
+      "category": "services",
+      "list-name": "特征数据加载错误",
+      "display-text": "特征数据加载错误",
+      "description": "蓝牙特征数据(Characteristic)加载错误时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-read",
+      "scriptName": "OnAnyCharacteristicRead",
+      "category": "characteristics",
+      "list-name": "任意特征数据读取成功",
+      "display-text": "任意特征数据读取成功",
+      "description": "任意蓝牙特征数据(Characteristic)读取成功时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-read",
+      "scriptName": "OnCharacteristicRead",
+      "category": "characteristics",
+      "list-name": "特征数据读取成功",
+      "display-text": "蓝牙特征数据 [b]{0}[/b] 读取成功",
+      "description": "在蓝牙特性成功读取后触发",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "蓝牙特征数据的名称，UUID，或十六进制ID。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-written",
+      "scriptName": "OnAnyCharacteristicWritten",
+      "category": "characteristics",
+      "list-name": "任意特征数据写入完成",
+      "display-text": "任意特征数据写入完成",
+      "description": "任意蓝牙特征数据(Characteristic)写入完成时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-written",
+      "scriptName": "OnCharacteristicWritten",
+      "category": "characteristics",
+      "list-name": "特征数据写入完成",
+      "display-text": "特征数据 [b]{0}[/b] 写入完成",
+      "description": "指定的蓝牙特征数据(Characteristic)写入完成时触发。",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "蓝牙特征数据的名称，UUID，或十六进制ID。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-notification",
+      "scriptName": "OnAnyCharacteristicNotification",
+      "category": "characteristics",
+      "list-name": "任意特征数据收到提醒",
+      "display-text": "任意特征数据收到通知提醒  (在 {0} 中)",
+      "description": "任意蓝牙特征数据(Characteristic)接收到通知提醒时触发。",
+      "params": {
+        "binary-data": {
+          "type": "object",
+          "name": "二进制数据",
+          "desc": "要用来缓存读取数据的二进制数据实例"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-notification",
+      "scriptName": "OnCharacteristicNotification",
+      "category": "characteristics",
+      "list-name": "特征数据收到提醒",
+      "display-text": "特征数据 [b]{0}[/b] 收到通知 (在 {1} 中)",
+      "description": "指定的蓝牙特征数据(Characteristic)收到通知时触发",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "蓝牙特征数据的名称，UUID，或十六进制ID。"
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "二进制数据",
+          "desc": "要用来缓存读取数据的二进制数据实例"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-read-error",
+      "scriptName": "OnCharacteristicReadError",
+      "category": "characteristics",
+      "list-name": "特征数据读取错误",
+      "display-text": "特征数据读取错误",
+      "description": "任意蓝牙特征数据(Characteristic)读取失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-write-error",
+      "scriptName": "OnCharacteristicWriteError",
+      "category": "characteristics",
+      "list-name": "特征数据写入失败",
+      "display-text": "特征数据写入失败",
+      "description": "特征数据写入失败的时候触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "scriptName": "RequestDevice",
+      "category": "bluetooth",
+      "list-name": "请求设备",
+      "display-text": "请求设备(服务[i]{0}[/i]，设备名称[i]{1}[/i]，设备名称前缀[i]{2}[/i]，可选服务[i]{3}[/i]，接受所有设备[i]{4}[/i])",
+      "description": "请求最近的蓝牙设备 必须在用户输入操作中被调用",
+      "params": {
+        "services": {
+          "type": "string",
+          "name": "服务",
+          "desc": "可选蓝牙服务名称，十六进制ID或UUID的列表，以逗号分隔。"
+        },
+        "device-name": {
+          "type": "string",
+          "name": "设备名",
+          "desc": "要过滤的设备名"
+        },
+        "device-name-prefix": {
+          "type": "string",
+          "name": "设备前缀",
+          "desc": "要过滤的设备前缀"
+        },
+        "optional-services": {
+          "type": "string",
+          "name": "可选服务",
+          "desc": "可选蓝牙服务名称，十六进制ID或UUID的列表，以逗号分隔。"
+        },
+        "accept-all-devices": {
+          "type": "combo",
+          "name": "允许所有设备",
+          "desc": "显示所有设备（即时不符合上面条件）",
+          "items": {
+            "no": "否",
+            "yes": "是"
+          }
+        }
+      }
+    },
+    {
+      "id": "disconnect-device",
+      "scriptName": "DisconnectDevice",
+      "category": "bluetooth",
+      "list-name": "与设备断开连接",
+      "display-text": "与设备[i]{0}[/i]断开连接",
+      "description": "断开一个已经连接的设备",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "要断开连接的设备 留空为默认设备"
+        }
+      }
+    },
+    {
+      "id": "request-primary-services",
+      "scriptName": "RequestPrimaryServices",
+      "category": "services",
+      "list-name": "请求次要服务",
+      "display-text": "为设备 [i]{0}[/i]请求次要服务",
+      "description": "加载一个设备可用次要服务的列表 将触发当次要服务加载完成时",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "要请求次要服务的设备ID  留空危默认"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-characteristics",
+      "scriptName": "RequestCharacteristics",
+      "category": "services",
+      "list-name": "请求蓝牙特性",
+      "display-text": "为设备 [i]{0}[/i] 请求蓝牙特性服务 [i]{1}[/i]",
+      "description": "加载主要服务的可用特性列表。完成后触发 '特性加载完成' 条件。",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID 为空则为默认设备"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务名称，UUID或十六进制ID，用于获取特征数据。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "read-characteristic-binary",
+      "scriptName": "ReadCharacteristicBinary",
+      "category": "characteristics",
+      "list-name": "读取二进制文件",
+      "display-text": "从设备[i]{0}[/i] 的服务 [i]{1}[/i] 蓝牙特性 [i]{2}[/i] 读取数据到 {3} 中",
+      "description": "从蓝牙设备中读取二进制数据并存入二进制数据对象中",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID 为空则为默认设备"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "终点",
+          "desc": "要读取的二进制数据"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "read-characteristic-value",
+      "scriptName": "ReadCharacteristicValue",
+      "category": "characteristics",
+      "list-name": "读取值",
+      "display-text": "从设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 中读取信息",
+      "description": "从蓝牙特性中读取文字或数字",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID 为空则为默认设备"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "服务名、UUID或十六进制ID。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "write-characteristic-binary",
+      "scriptName": "WriteCharacteristicBinary",
+      "category": "characteristics",
+      "list-name": "写二进制",
+      "display-text": "向设备 [i]{0}[/i] 的服务 [i]{1}[/i] 特性 [i]{2}[/i] 写入数据  {3}",
+      "description": "向蓝牙设备写入二进制数据",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID 为空则为默认设备"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "数据",
+          "desc": "要写入的二进制值"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "start-stop-characteristic-notifications",
+      "scriptName": "StartStopCharacteristicNotifications",
+      "category": "characteristics",
+      "list-name": "开始/停止推送",
+      "display-text": "{3}设备[i]{0}[/i]服务[i]{1}[/i]特性[i]{2}[/i]",
+      "description": "启动或停止此特性的通知",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID 为空则为默认设备"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "特征数据",
+          "desc": "服务名、UUID或十六进制ID。"
+        },
+        "notifications": {
+          "type": "combo",
+          "name": "通知",
+          "desc": "用来设置启动或停止此特性的通知",
+          "items": {
+            "start": "开始",
+            "stop": "停下"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "scriptName": "DeviceID",
+      "category": "bluetooth",
+      "translated-name": "设备ID",
+      "description": "在触发器中调用，相关设备的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "device-name",
+      "scriptName": "DeviceName",
+      "category": "bluetooth",
+      "translated-name": "设备名称",
+      "description": "在'当设备连接成功'中，返回带有设备名称的字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "primary-service-id",
+      "scriptName": "PrimaryServiceID",
+      "category": "bluetooth",
+      "translated-name": "次要服务ID",
+      "description": "在触发器中调用：最近服务的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-id",
+      "scriptName": "CharacteristicID",
+      "category": "bluetooth",
+      "translated-name": "特征数据ID",
+      "description": "在触发器中调用：最近字节集的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "primary-service-count",
+      "scriptName": "PrimaryServiceCount",
+      "category": "services",
+      "translated-name": "次要服务数量",
+      "description": "在次要服务加载之后，服务数量",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "primary-service-at",
+      "scriptName": "PrimaryServiceAt",
+      "category": "services",
+      "translated-name": "获取次要服务",
+      "description": "在次要服务加载之后，第X个服务的ID",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "次要服务的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-count",
+      "scriptName": "CharacteristicCount",
+      "category": "services",
+      "translated-name": "特征数据数量",
+      "description": "在蓝牙特性加载后，一个服务可用的特性数量",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-at",
+      "scriptName": "CharacteristicAt",
+      "category": "services",
+      "translated-name": "获取特征数据",
+      "description": "在 '蓝牙特性加载完成' 条件中，返回的特征数据ID。",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "设备ID",
+          "desc": "设备ID"
+        },
+        "service": {
+          "type": "string",
+          "name": "服务",
+          "desc": "服务ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "特征数据的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-text",
+      "scriptName": "CharacteristicText",
+      "category": "characteristics",
+      "translated-name": "设备特征文本",
+      "description": "在读取值之后，字符串形式的数据",
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-signed-int",
+      "scriptName": "CharacteristicSignedInteger",
+      "category": "characteristics",
+      "translated-name": "CharacteristicSignedInteger",
+      "description": "在读取值之后，整数形式的数据",
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-unsigned-int",
+      "scriptName": "CharacteristicUnsignedInteger",
+      "category": "characteristics",
+      "translated-name": "CharacteristicUnsignedInteger",
+      "description": "在读取值之后，无点形式的数据",
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-float",
+      "scriptName": "CharacteristicFloat",
+      "category": "characteristics",
+      "translated-name": "CharacteristicFloat",
+      "description": "在读取值中调用：以浮点数存储的数据",
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

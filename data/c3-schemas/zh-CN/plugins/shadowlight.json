@@ -1,0 +1,154 @@
+{
+  "id": "shadowlight",
+  "name": "投影光",
+  "description": "让拥有 '投影对象' 行为的实例对象能被投射阴影。",
+  "type": "plugin",
+  "aceCategories": {
+    "light": "光源"
+  },
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-light-height",
+      "scriptName": "SetLightHeight",
+      "category": "light",
+      "list-name": "设置光源高度",
+      "display-text": "设置光源高度为[i]{0}[/i]",
+      "description": "设置光源的位置高度。",
+      "params": {
+        "height": {
+          "type": "number",
+          "name": "高度",
+          "desc": "要设置的光源的高度，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-shadow-color",
+      "scriptName": "SetLightColor",
+      "category": "light",
+      "list-name": "设置光源颜色",
+      "display-text": "设置光源颜色为[i]{0}[/i]",
+      "description": "设置光源投射的阴影颜色。",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "颜色",
+          "desc": "此对象投射的阴影的颜色。"
+        }
+      }
+    },
+    {
+      "id": "set-tag",
+      "scriptName": "SetTag",
+      "category": "light",
+      "list-name": "设置投影标签",
+      "display-text": "设置投影标签为[i]{0}[/i]",
+      "description": "设置光源的投影标签，以区分不同的投影对象。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的投影对象。"
+        }
+      }
+    },
+    {
+      "id": "set-cast-from",
+      "scriptName": "SetCastFrom",
+      "category": "light",
+      "list-name": "设置投影目标",
+      "display-text": "设置投影目标为[b]{0}[/b]",
+      "description": "根据投影对象的投影标签，决定哪些对象能被投射。",
+      "params": {
+        "cast-from": {
+          "type": "combo",
+          "name": "目标",
+          "desc": "设置光源的投影标签，以区分不同的投影对象。",
+          "items": {
+            "all": "所有标签",
+            "same-tag": "相同标签",
+            "different-tag": "不同标签"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-light-position",
+      "scriptName": "SetLightPosition",
+      "category": "light",
+      "list-name": "设置光源位置",
+      "display-text": "设置光源位置 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "设置阴影投射的位置。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "灯光 X",
+          "desc": "光源的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "光源Y",
+          "desc": "光源的Y坐标。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lightx",
+      "scriptName": "LightX",
+      "category": "light",
+      "translated-name": "光源X",
+      "description": "光源的X位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "lighty",
+      "scriptName": "LightY",
+      "category": "light",
+      "translated-name": "光源Y",
+      "description": "光源的Y位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "tag",
+      "scriptName": "Tag",
+      "category": "light",
+      "translated-name": "投影标签",
+      "description": "光源的投影标签。",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "light-height": {
+      "name": "光源高度",
+      "desc": "光源的初始高度，以像素为单位。"
+    },
+    "light-radius": {
+      "name": "光源半径",
+      "desc": "投射具有柔软边缘的阴影光，仅在光源高度为 0 时有效，"
+    },
+    "shadow-color": {
+      "name": "光源颜色",
+      "desc": "光源投射的阴影颜色。"
+    },
+    "cast-from": {
+      "name": "投射目标",
+      "desc": "根据投影对象的投影标签，决定哪些对象能被投射。",
+      "items": {
+        "all": "所有标签",
+        "same-tag": "相同标签",
+        "different-tag": "不同标签"
+      }
+    },
+    "tag": {
+      "name": "投影标签",
+      "desc": "用于识别 '投影对象' 的阴影标签。"
+    },
+    "live-preview": {
+      "name": "预览",
+      "desc": "在编辑器中进行实时预览。"
+    }
+  }
+}

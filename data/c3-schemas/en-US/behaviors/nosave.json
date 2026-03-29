@@ -1,0 +1,11 @@
+{
+  "id": "nosave",
+  "name": "No save",
+  "description": "Don't save or load this object, e.g. for static scenery. Helps make savegames smaller and quicker to load.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [],
+  "actions": [],
+  "expressions": [],
+  "properties": {}
+}

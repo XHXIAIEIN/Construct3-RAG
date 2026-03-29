@@ -1,0 +1,17 @@
+{
+  "id": "hexpixellatemask",
+  "name": "Hexagonal pixellate mask",
+  "description": "Hexagonal pixellate the background.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": true,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "scale",
+      "type": "float",
+      "name": "Scale",
+      "desc": "Size of the hexagons."
+    }
+  ]
+}

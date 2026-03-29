@@ -1,0 +1,464 @@
+{
+  "id": "moveto",
+  "name": "移动到",
+  "description": "让对象移动到指定的位置，具有移动速度的属性。",
+  "type": "behavior",
+  "aceCategories": {
+    "properties": "属性"
+  },
+  "conditions": [
+    {
+      "id": "is-moving",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "正在移动",
+      "display-text": "{my} 正在移动",
+      "description": "检测对象是否正在移动。"
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "比较移动速度",
+      "display-text": "{my} 速度 {0} {1}",
+      "description": "比较对象的当前速度。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "速度，以每秒像素为单位，用于比较当前的速度。"
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "测试行为是否已经启用。"
+    },
+    {
+      "id": "on-arrived",
+      "scriptName": "OnArrived",
+      "category": "",
+      "list-name": "到达",
+      "display-text": "{my} 已到达",
+      "description": "到达目标位置时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-hit-solid",
+      "scriptName": "OnHitSolid",
+      "category": "",
+      "list-name": "撞击到实体对象",
+      "display-text": "{my} 撞击到实体对象",
+      "description": "在启用 '撞到实体对象时停下' 属性且碰撞到实体对象时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "move-to-position",
+      "scriptName": "MoveToPosition",
+      "category": "",
+      "list-name": "移动到位置",
+      "display-text": "{my}: 移动到 ([i]{0}[/i], [i]{1}[/i]) ({2})",
+      "description": "立即移动到场景中指定的位置，或将位置添加到下一个路径点。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要移动到的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要移动到的Y坐标。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "items": {
+            "direct": "直接移动",
+            "add-waypoint": "添加路径点"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-to-object",
+      "scriptName": "MoveToObject",
+      "category": "",
+      "list-name": "移动到对象图层",
+      "display-text": "{my}: 移动到 {0} 图像点 [i]{1}[/i] ({2})",
+      "description": "立即移动到另一个对象的位置，或将对象位置添加到下一个路径点。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "要移动的对象"
+        },
+        "image-point": {
+          "type": "any",
+          "name": "图像点 (可选)",
+          "desc": "要移动到图像中点的名称或者序号 输入0则为原点"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "items": {
+            "direct": "直接移动",
+            "add-waypoint": "添加路径点"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-pathfinding-path",
+      "scriptName": "MoveAlongPathfindingPath",
+      "category": "",
+      "list-name": "沿着寻路路径移动",
+      "display-text": "{my}: 沿着寻路路径移动 ({0})",
+      "description": "立即沿着由相同对象的寻路行为计算出的路径点移动。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "items": {
+            "direct": "直接移动",
+            "add-waypoints": "添加路径点"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-timeline",
+      "scriptName": "MoveAlongTimeline",
+      "category": "",
+      "list-name": "沿着时间轴移动",
+      "display-text": "{my} 沿着 [b]{0}[/b] 轨道移动 [i]{1}[/i] ({2})",
+      "description": "开始沿着具有X和Y属性的时间轴轨道中的所有路径点移动。",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "时间轴",
+          "desc": "使用该轨道的时间轴。"
+        },
+        "track": {
+          "type": "string",
+          "name": "轨道ID",
+          "desc": "在时间轴中使用X和Y位置的轨迹ID。如果为空，则使用第一个轨道。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "items": {
+            "direct": "直接移动",
+            "add-waypoints": "添加路径点"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-timeline-by-name",
+      "scriptName": "MoveAlongTimelineByName",
+      "category": "",
+      "list-name": "沿着时间轴移动(根据名称)",
+      "display-text": "{my} 沿着 [b]{0}[/b] 轨道移动 [i]{1}[/i] ({2})",
+      "description": "使用时间轴名称的字符串，沿着带有X和Y属性的时间轴轨道的所有路径点移动。",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "时间轴名称",
+          "desc": "使用轨道时间轴名称的字符串。"
+        },
+        "track": {
+          "type": "string",
+          "name": "轨道ID",
+          "desc": "在时间轴中使用X和Y位置的轨迹ID。如果为空，则使用第一个轨道。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "选择直接移动(删除之前所有路径点)，还是在当前的移动路径后添加新的路径点。",
+          "items": {
+            "direct": "直接移动",
+            "add-waypoints": "添加路径点"
+          }
+        }
+      }
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "",
+      "list-name": "停下",
+      "display-text": "停止 {my}",
+      "description": "停止移动并删除所有路径点。"
+    },
+    {
+      "id": "set-moving-angle",
+      "scriptName": "SetMovingAngle",
+      "category": "",
+      "list-name": "设置移动角度",
+      "display-text": "设置 {my}移动角度为[i]{0}[/i]°",
+      "description": "设置对象移动时的角度",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "设置移动角度，以度数为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "设置速度",
+      "display-text": "设置 {my}移动速度为[i]{0}[/i]",
+      "description": "设置对象当前运动速度",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "要设置的对象的新速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "properties",
+      "list-name": "设置最大移动速度",
+      "display-text": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "description": "设置对象的最大移动速度。",
+      "params": {
+        "max-speed": {
+          "type": "number",
+          "name": "最大移动速度",
+          "desc": "设置最大移动速度，以每秒像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "properties",
+      "list-name": "设置加速度",
+      "display-text": "设置 {my}加速度为[i]{0}[/i]",
+      "description": "设置对象的加速度。",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "加速度",
+          "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。使用 0 表示瞬间加速。"
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDeceleration",
+      "category": "properties",
+      "list-name": "设置减速度",
+      "display-text": "设置 {my}减速度为[i]{0}[/i]",
+      "description": "设置对象的减速度。",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "减速度",
+          "desc": "从正常移动至完全停止的减速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-rotate-speed",
+      "scriptName": "SetRotateSpeed",
+      "category": "properties",
+      "list-name": "设置转向速度",
+      "display-text": "设置 {my}转向速度为[i]{0}[/i]",
+      "description": "设置转向目标位置时的转向速度",
+      "params": {
+        "rotate-speed": {
+          "type": "number",
+          "name": "转向速度",
+          "desc": "转向速度，以度数每秒为单位，使用 0 可以禁用转向。"
+        }
+      }
+    },
+    {
+      "id": "set-stop-on-solids",
+      "scriptName": "SetStopOnSolids",
+      "category": "properties",
+      "list-name": "设置是否被实体阻止",
+      "display-text": "{my} [b]{0}[/b] 碰撞到实体对象时停下",
+      "description": "设置是否在碰到实体时自动停止移动",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "设置是否被实体阻止"
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "properties",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "启用或禁用此行为。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "速度",
+      "description": "当前对象的移动速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "",
+      "translated-name": "移动角度",
+      "description": "当前移动角度，以度数为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "targetx",
+      "scriptName": "TargetX",
+      "category": "",
+      "translated-name": "目标X",
+      "description": "当前目标位置移动的X坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "targety",
+      "scriptName": "TargetY",
+      "category": "",
+      "translated-name": "目标Y",
+      "description": "当前目标位置移动的Y坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "waypointcount",
+      "scriptName": "WaypointCount",
+      "category": "",
+      "translated-name": "路径点数量",
+      "description": "剩下要移动的路径点",
+      "returnType": "number"
+    },
+    {
+      "id": "waypointxat",
+      "scriptName": "WaypointXAt",
+      "category": "",
+      "translated-name": "获取路径点X坐标",
+      "description": "路径点在某一指标上的X坐标。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "路径点的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "waypointyat",
+      "scriptName": "WaypointYAt",
+      "category": "",
+      "translated-name": "获取路径点Y坐标",
+      "description": "路径点在某一指标上的Y坐标。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "路径点的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "properties",
+      "translated-name": "最大移动速度",
+      "description": "设置最大移动速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "properties",
+      "translated-name": "加速度",
+      "description": "设置加速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "properties",
+      "translated-name": "减速度",
+      "description": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "rotatespeed",
+      "scriptName": "RotateSpeed",
+      "category": "properties",
+      "translated-name": "转向速度",
+      "description": "当前最大转速以度/秒为单位",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "max-speed": {
+      "name": "最大移动速度",
+      "desc": "设置最大移动速度，以像素/秒为单位。"
+    },
+    "acceleration": {
+      "name": "加速度",
+      "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。使用 0 表示瞬间加速。"
+    },
+    "deceleration": {
+      "name": "减速度",
+      "desc": "从正常移动至完全停止的减速度，以像素/秒为单位。使用 0 表示瞬间减速。"
+    },
+    "rotate-speed": {
+      "name": "转向速度",
+      "desc": "转弯时，每秒最大的转向速度，以度数/秒为单位，使用 0 则禁用转向。"
+    },
+    "set-angle": {
+      "name": "设置角度",
+      "desc": "自动设置物体的角度到运动的角度。"
+    },
+    "stop-on-solids": {
+      "name": "撞击到实体时停下",
+      "desc": "此对象撞击到拥有 '实体' 行为对象时，自动停止移动。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

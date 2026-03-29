@@ -1,0 +1,17 @@
+{
+  "id": "posterizemask",
+  "name": "Posterize mask",
+  "description": "Limit the number of color levels in the background.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "levels",
+      "type": "float",
+      "name": "Levels",
+      "desc": "Number of color levels."
+    }
+  ]
+}
