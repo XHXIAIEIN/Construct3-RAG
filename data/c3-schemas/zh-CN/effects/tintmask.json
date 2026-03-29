@@ -1,0 +1,17 @@
+{
+  "id": "tintmask",
+  "name": "颜色叠加蒙版",
+  "description": "调整背景的RGB级别。",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color",
+      "type": "color",
+      "name": "颜色",
+      "desc": "红色，绿色和蓝色级别调整。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "posterizemask",
+  "name": "色调分离蒙版",
+  "description": "限制背景中的颜色级别数。",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "levels",
+      "type": "float",
+      "name": "等级",
+      "desc": "色阶数量。"
+    }
+  ]
+}

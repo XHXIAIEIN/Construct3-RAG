@@ -1,0 +1,17 @@
+{
+  "id": "tint",
+  "name": "Tint",
+  "description": "Adjust the RGB levels of the image.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color",
+      "type": "color",
+      "name": "Color",
+      "desc": "Red, green and blue level adjustments."
+    }
+  ]
+}

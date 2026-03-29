@@ -1,0 +1,29 @@
+{
+  "id": "alphaclamp",
+  "name": "Alpha cutoff",
+  "description": "Set alpha to a threshold with a darkening effect at the edges.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "threshold",
+      "type": "percent",
+      "name": "Threshold",
+      "desc": "Alpha threshold, from 0 to 100."
+    },
+    {
+      "id": "lower-clamp",
+      "type": "percent",
+      "name": "Lower clamp",
+      "desc": "Alpha to set when below the threshold, from 0 to 100."
+    },
+    {
+      "id": "upper-clamp",
+      "type": "percent",
+      "name": "Upper clamp",
+      "desc": "Alpha to set when above the threshold, from 0 to 100."
+    }
+  ]
+}

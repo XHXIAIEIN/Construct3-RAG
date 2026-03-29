@@ -1,0 +1,92 @@
+{
+  "id": "xml",
+  "name": "XML",
+  "description": "Load XML files from strings and read the data in the XML document using XPath expressions.",
+  "type": "plugin",
+  "aceCategories": {
+    "document": "Document",
+    "xml": "XML"
+  },
+  "conditions": [
+    {
+      "id": "for-each-node",
+      "scriptName": "ForEach",
+      "category": "xml",
+      "list-name": "For each node",
+      "display-text": "For each node [i]{0}[/i]",
+      "description": "Iterate the nodes returned by an XPath expression.",
+      "params": {
+        "xpath": {
+          "type": "string",
+          "name": "XPath",
+          "desc": "The XPath expression to evaluate, returning a series of nodes to iterate."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "load",
+      "scriptName": "Load",
+      "category": "document",
+      "list-name": "Load",
+      "display-text": "Load XML document from string [i]{0}[/i]",
+      "description": "Load an XML document from a string.",
+      "params": {
+        "xml": {
+          "type": "string",
+          "name": "XML",
+          "desc": "A string containing the XML document to load."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "numbervalue",
+      "scriptName": "NumberValue",
+      "category": "xml",
+      "translated-name": "NumberValue",
+      "description": "Retrieve a single number value from an XPath expression.",
+      "params": {
+        "xpath": {
+          "type": "string",
+          "name": "XPath",
+          "desc": "The XPath expression to evaluate."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "stringvalue",
+      "scriptName": "StringValue",
+      "category": "xml",
+      "translated-name": "StringValue",
+      "description": "Retrieve a single string from an XPath expression.",
+      "params": {
+        "xpath": {
+          "type": "string",
+          "name": "XPath",
+          "desc": "The XPath expression to evaluate."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "nodecount",
+      "scriptName": "NodeCount",
+      "category": "xml",
+      "translated-name": "NodeCount",
+      "description": "Count the number of nodes returned by an XPath expression.",
+      "params": {
+        "xpath": {
+          "type": "string",
+          "name": "XPath",
+          "desc": "The XPath expression to evaluate."
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

@@ -1,0 +1,736 @@
+{
+  "id": "instantgames",
+  "name": "Instant Games",
+  "description": "Integrate with Facebook Instant Games.",
+  "type": "plugin",
+  "aceCategories": {
+    "instant-games": "Instant Games",
+    "context": "Context",
+    "player": "Player",
+    "analytics": "Analytics",
+    "leaderboards": "Leaderboards",
+    "ads": "Ads"
+  },
+  "conditions": [
+    {
+      "id": "is-available",
+      "scriptName": "IsAvailable",
+      "category": "instant-games",
+      "list-name": "Is available",
+      "display-text": "Is available",
+      "description": "Test if the Instant Games platform is available."
+    },
+    {
+      "id": "on-pause",
+      "scriptName": "OnPause",
+      "category": "instant-games",
+      "list-name": "On pause",
+      "display-text": "On pause",
+      "description": "Triggered when the Instant Games platform wants your game to pause in order to handle an interruption.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "instant-games",
+      "list-name": "On error",
+      "display-text": "On error",
+      "description": "Triggered if an error occurs while using the Instant Games platform.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-shortcut-created",
+      "scriptName": "OnShortcutCreated",
+      "category": "instant-games",
+      "list-name": "On shortcut created",
+      "display-text": "On shortcut created",
+      "description": "Triggered after 'Create home screen shortcut' when a shortcut was successfully created.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-shortcut-failed",
+      "scriptName": "OnShortcutFailed",
+      "category": "instant-games",
+      "list-name": "On shortcut failed",
+      "display-text": "On shortcut failed",
+      "description": "Triggered after 'Create home screen shortcut' when a shortcut could not be created.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-context-changed",
+      "scriptName": "OnContextChanged",
+      "category": "instant-games",
+      "list-name": "On context changed",
+      "display-text": "On context changed",
+      "description": "Triggered after the 'Change context' action when the user successfully switched to another context.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-context-change-cancelled",
+      "scriptName": "OnContextChangeCancelled",
+      "category": "instant-games",
+      "list-name": "On context change cancelled",
+      "display-text": "On context change cancelled",
+      "description": "Triggered after the 'Change context' action when the user cancels the context change.",
+      "isTrigger": true
+    },
+    {
+      "id": "supports-feature",
+      "scriptName": "SupportsFeature",
+      "category": "instant-games",
+      "list-name": "Supports feature",
+      "display-text": "Supports feature [i]{0}[/i]",
+      "description": "Test if an Instant Games feature is supported on the current platform.",
+      "params": {
+        "feature": {
+          "type": "combo",
+          "name": "Feature",
+          "desc": "The feature to check if supported.",
+          "items": {
+            "switch-game": "Switch game"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-loaded-player-data",
+      "scriptName": "OnLoadedPlayerData",
+      "category": "player",
+      "list-name": "On loaded player data",
+      "display-text": "On loaded player data",
+      "description": "Triggered after 'Load player data' when the data is available.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-connected-players-loaded",
+      "scriptName": "OnConnectedPlayersLoaded",
+      "category": "player",
+      "list-name": "On connected players loaded",
+      "display-text": "On connected players loaded",
+      "description": "Triggered after 'Load connected players' when the data is available.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-score-submitted",
+      "scriptName": "OnScoreSubmitted",
+      "category": "leaderboards",
+      "list-name": "On score submitted",
+      "display-text": "On score submitted",
+      "description": "Triggered after 'Set score' when the score has been submitted.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-player-score-loaded",
+      "scriptName": "OnPlayerScoreLoaded",
+      "category": "leaderboards",
+      "list-name": "On player score loaded",
+      "display-text": "On player score loaded",
+      "description": "Triggered after 'Load player score' when the data is available.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-leaderboard-loaded",
+      "scriptName": "OnLeaderboardLoaded",
+      "category": "leaderboards",
+      "list-name": "On leaderboard loaded",
+      "display-text": "On leaderboard loaded",
+      "description": "Triggered after 'Load leaderboard scores' when the data is available.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-ad-success",
+      "scriptName": "OnLoadAdSuccess",
+      "category": "ads",
+      "list-name": "On load ad success",
+      "display-text": "On load [i]{0}[/i] ad success",
+      "description": "Triggered after 'Load ad' when the ad is ready to be shown.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert that was loaded.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-ad-error",
+      "scriptName": "OnLoadAdError",
+      "category": "ads",
+      "list-name": "On load ad error",
+      "display-text": "On load [i]{0}[/i] ad error",
+      "description": "Triggered after 'Load ad' if the ad fails to load.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert that was loaded.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-show-ad-success",
+      "scriptName": "OnShowAdSuccess",
+      "category": "ads",
+      "list-name": "On show ad success",
+      "display-text": "On show [i]{0}[/i] ad success",
+      "description": "Triggered after 'Show ad' when the user finishes viewing the ad.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert that was shown.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-show-ad-error",
+      "scriptName": "OnShowAdError",
+      "category": "ads",
+      "list-name": "On show ad error",
+      "display-text": "On show [i]{0}[/i] ad error",
+      "description": "Triggered after 'Show ad' if the ad fails to be shown.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert that was shown.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "quit",
+      "scriptName": "Quit",
+      "category": "instant-games",
+      "list-name": "Quit",
+      "display-text": "Quit",
+      "description": "Quits the game."
+    },
+    {
+      "id": "share",
+      "scriptName": "Share",
+      "category": "instant-games",
+      "list-name": "Share",
+      "display-text": "Share image {0}, text [i]{1}[/i], data [i]{2}[/i] (switch context: [i]{3}[/i])",
+      "description": "Invokes a dialog to invite, request, challenge or share, in a chat or timeline.",
+      "params": {
+        "image": {
+          "type": "object",
+          "name": "Image",
+          "desc": "A Sprite object to take an image from for the share."
+        },
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "A message to include with the share."
+        },
+        "data": {
+          "type": "string",
+          "name": "Data",
+          "desc": "A string of data to attach, available as EntryPointData if launched from the share. Max 1000 chars."
+        },
+        "switch-context": {
+          "type": "boolean",
+          "name": "Switch context",
+          "desc": "Whether to switch the user into the new context created on sharing."
+        }
+      }
+    },
+    {
+      "id": "custom-update",
+      "scriptName": "CustomUpdate",
+      "category": "instant-games",
+      "list-name": "Custom update",
+      "display-text": "Post custom update with template ID [i]{0}[/i], CTA [i]{1}[/i], image {2}, text [i]{3}[/i], data [i]{4}[/i], strategy [i]{5}[/i], notification [i]{6}[/i]",
+      "description": "Post a custom update in to a message thread.",
+      "params": {
+        "template-id": {
+          "type": "string",
+          "name": "Template ID",
+          "desc": "ID of the template this custom update is using, as defined in fbapp-config.json."
+        },
+        "cta": {
+          "type": "string",
+          "name": "CTA",
+          "desc": "Optional \"call to action\" (CTA) button text. Leave empty to use the default (\"Play\")."
+        },
+        "image": {
+          "type": "object",
+          "name": "Image",
+          "desc": "A Sprite object to take an image from for the update."
+        },
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "A message to include with the update."
+        },
+        "data": {
+          "type": "string",
+          "name": "Data",
+          "desc": "A string of data to attach, available as EntryPointData if launched from the update. Max 1000 chars."
+        },
+        "strategy": {
+          "type": "combo",
+          "name": "Strategy",
+          "desc": "How to deliver the update. 'Immediate' posts immediately (optionally clearing any other pending updates); 'Last' posts when the game session ends.",
+          "items": {
+            "immediate": "Immediate",
+            "last": "Last"
+          }
+        },
+        "notification": {
+          "type": "combo",
+          "name": "Notification",
+          "desc": "Whether to send a push notification for the custom update. Only use push notifications for updates that are essential and immediately actionable.",
+          "items": {
+            "no-push": "No push",
+            "push": "Push"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-shortcut",
+      "scriptName": "CreateShortcut",
+      "category": "instant-games",
+      "list-name": "Create home screen shortcut",
+      "display-text": "Create home screen shortcut",
+      "description": "(Android only) Request to create a home screen shortcut.",
+      "isAsync": true
+    },
+    {
+      "id": "subscribe-bot",
+      "scriptName": "SubscribeBot",
+      "category": "instant-games",
+      "list-name": "Subscribe to bot",
+      "display-text": "Subscribe to bot",
+      "description": "Prompt the user to subscribe to a bot associated with the game."
+    },
+    {
+      "id": "switch-game",
+      "scriptName": "SwitchGame",
+      "category": "instant-games",
+      "list-name": "Switch game",
+      "display-text": "Switch game to [b]{0}[/b] with data [i]{1}[/i]",
+      "description": "Request that the client switch to a different Instant Game.",
+      "params": {
+        "app-id": {
+          "type": "string",
+          "name": "App ID",
+          "desc": "The Application ID of the Instant Game to switch to. It must belong to the same business as the current game."
+        },
+        "data": {
+          "type": "string",
+          "name": "Data",
+          "desc": "A string of data to attach, available as EntryPointData if launched from the switch. Max 1000 chars."
+        }
+      }
+    },
+    {
+      "id": "change-context",
+      "scriptName": "ChangeContext",
+      "category": "instant-games",
+      "list-name": "Change context",
+      "display-text": "Change context with filter [i]{0}[/i], min size [i]{1}[/i], max size [i]{2}[/i]",
+      "description": "Opens a dialog allowing the player to switch to a different context.",
+      "params": {
+        "filter": {
+          "type": "combo",
+          "name": "Filter",
+          "desc": "How to filter the suggested contexts.",
+          "items": {
+            "none": "None",
+            "new-context-only": "New context only",
+            "include-existing-challenges": "Include existing challenges",
+            "new-players-only": "New players only"
+          }
+        },
+        "min-size": {
+          "type": "number",
+          "name": "Min size",
+          "desc": "The minimum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
+        },
+        "max-size": {
+          "type": "number",
+          "name": "Max size",
+          "desc": "The maximum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-data",
+      "scriptName": "SetPlayerData",
+      "category": "player",
+      "list-name": "Set player data",
+      "display-text": "Set player data to [i]{0}[/i]",
+      "description": "Store some data for this player on the Instant Games platform.",
+      "params": {
+        "data": {
+          "type": "any",
+          "name": "Data",
+          "desc": "A string of data to save for the player. Consider using a JSON string, e.g. from the Dictionary plugin."
+        }
+      }
+    },
+    {
+      "id": "load-player-data",
+      "scriptName": "LoadPlayerData",
+      "category": "player",
+      "list-name": "Load player data",
+      "display-text": "Load player data",
+      "description": "Request to load the last set player data. Triggers 'On loaded player data' when loaded.",
+      "isAsync": true
+    },
+    {
+      "id": "load-connected-players",
+      "scriptName": "LoadConnectedPlayers",
+      "category": "player",
+      "list-name": "Load connected players",
+      "display-text": "Load connected players",
+      "description": "Request a list of connected players. Triggers 'On connected players loaded' when done.",
+      "isAsync": true
+    },
+    {
+      "id": "log-event",
+      "scriptName": "LogEvent",
+      "category": "analytics",
+      "list-name": "Log event",
+      "display-text": "Log event [i]{0}[/i] (value to sum: [i]{1}[/i])",
+      "description": "Log an analytics event for the game.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Event name",
+          "desc": "Name of the analytics event to log."
+        },
+        "sum": {
+          "type": "number",
+          "name": "Value to sum",
+          "desc": "An optional number that FB Analytics can calculate a sum with."
+        }
+      }
+    },
+    {
+      "id": "set-score",
+      "scriptName": "SetScore",
+      "category": "leaderboards",
+      "list-name": "Set score",
+      "display-text": "Set score to [i]{2}[/i] on leaderboard [i]{0}[/i] (contextual: [i]{1}[/i])",
+      "description": "Set the player's score on a leaderboard.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Leaderboard",
+          "desc": "Name of the leaderboard to submit to."
+        },
+        "is-contextual": {
+          "type": "combo",
+          "name": "Contextual",
+          "desc": "Set according to whether the leaderboard was created as contextual or not.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
+        "score": {
+          "type": "number",
+          "name": "Score",
+          "desc": "The score to set for this player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "load-player-score",
+      "scriptName": "LoadPlayerScore",
+      "category": "leaderboards",
+      "list-name": "Load player score",
+      "display-text": "Load player score from leaderboard [i]{0}[/i] (contextual: [i]{1}[/i])",
+      "description": "Load the player's own score and rank, triggering 'On player score loaded' when done.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Leaderboard",
+          "desc": "Name of the leaderboard to load from."
+        },
+        "is-contextual": {
+          "type": "combo",
+          "name": "Contextual",
+          "desc": "Set according to whether the leaderboard was created as contextual or not.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "load-leaderboard",
+      "scriptName": "LoadLeaderboard",
+      "category": "leaderboards",
+      "list-name": "Load leaderboard scores",
+      "display-text": "Load [i]{2}[/i] scores from leaderboard [i]{0}[/i] (contextual: [i]{1}[/i], count: [i]{3}[/i])",
+      "description": "Load a list of scores from a leaderboard.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Leaderboard",
+          "desc": "Name of the leaderboard to load from."
+        },
+        "is-contextual": {
+          "type": "combo",
+          "name": "Contextual",
+          "desc": "Set according to whether the leaderboard was created as contextual or not.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
+        "results": {
+          "type": "combo",
+          "name": "Results",
+          "desc": "Return results for either all results or only those for connected players.",
+          "items": {
+            "all": "All",
+            "connected-players": "Connected players"
+          }
+        },
+        "count": {
+          "type": "number",
+          "name": "Count",
+          "desc": "The number of leaderboard scores to request."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "load-ad",
+      "scriptName": "LoadAd",
+      "category": "ads",
+      "list-name": "Load ad",
+      "display-text": "Load [b]{0}[/b] ad with placement ID [i]{1}[/i]",
+      "description": "Load an advert. Once loaded it is ready to be shown.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert to load.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        },
+        "placement-id": {
+          "type": "string",
+          "name": "Placement ID",
+          "desc": "The ad placement ID to load."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "show-ad",
+      "scriptName": "ShowAd",
+      "category": "ads",
+      "list-name": "Show ad",
+      "display-text": "Show [b]{0}[/b] ad",
+      "description": "Show an ad that has been successfully loaded.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Ad type",
+          "desc": "The type of advert to show. An ad of this type must have previously been loaded.",
+          "items": {
+            "interstitial": "Interstitial",
+            "rewarded-video": "Rewarded video"
+          }
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "locale",
+      "scriptName": "Locale",
+      "category": "instant-games",
+      "translated-name": "Locale",
+      "description": "Locale of the current player.",
+      "returnType": "string"
+    },
+    {
+      "id": "platform",
+      "scriptName": "Platform",
+      "category": "instant-games",
+      "translated-name": "Platform",
+      "description": "A string describing the current platform the game is being played on.",
+      "returnType": "string"
+    },
+    {
+      "id": "sdk-version",
+      "scriptName": "SDKVersion",
+      "category": "instant-games",
+      "translated-name": "SDKVersion",
+      "description": "The version of the Instant Games SDK in use.",
+      "returnType": "string"
+    },
+    {
+      "id": "entry-point-data",
+      "scriptName": "EntryPointData",
+      "category": "instant-games",
+      "translated-name": "EntryPointData",
+      "description": "A string of data associated with this launch of the game, e.g. from a share.",
+      "returnType": "string"
+    },
+    {
+      "id": "context-id",
+      "scriptName": "ContextID",
+      "category": "context",
+      "translated-name": "ContextID",
+      "description": "A unique identifier for the current game context.",
+      "returnType": "string"
+    },
+    {
+      "id": "player-name",
+      "scriptName": "PlayerName",
+      "category": "player",
+      "translated-name": "PlayerName",
+      "description": "The name of the current player.",
+      "returnType": "string"
+    },
+    {
+      "id": "player-photo",
+      "scriptName": "PlayerPhotoURL",
+      "category": "player",
+      "translated-name": "PlayerPhotoURL",
+      "description": "A URL to the player's current profile image.",
+      "returnType": "string"
+    },
+    {
+      "id": "player-id",
+      "scriptName": "PlayerID",
+      "category": "player",
+      "translated-name": "PlayerID",
+      "description": "A unique identifier for the current player.",
+      "returnType": "string"
+    },
+    {
+      "id": "player-data",
+      "scriptName": "PlayerData",
+      "category": "player",
+      "translated-name": "PlayerData",
+      "description": "In 'On loaded player data', the string of the loaded player data.",
+      "returnType": "string"
+    },
+    {
+      "id": "connected-player-count",
+      "scriptName": "ConnectedPlayerCount",
+      "category": "player",
+      "translated-name": "ConnectedPlayerCount",
+      "description": "After 'On connected players loaded', the number of connected players.",
+      "returnType": "number"
+    },
+    {
+      "id": "connected-player-id-at",
+      "scriptName": "ConnectedPlayerIDAt",
+      "category": "player",
+      "translated-name": "ConnectedPlayerIDAt",
+      "description": "The player ID of a connected player at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index of the connected player."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "player-score",
+      "scriptName": "PlayerScore",
+      "category": "leaderboards",
+      "translated-name": "PlayerScore",
+      "description": "After 'On player score loaded', the player's current score.",
+      "returnType": "number"
+    },
+    {
+      "id": "player-rank",
+      "scriptName": "PlayerRank",
+      "category": "leaderboards",
+      "translated-name": "PlayerRank",
+      "description": "After 'On player score loaded', the player's current rank on the leaderboard.",
+      "returnType": "number"
+    },
+    {
+      "id": "leaderboard-result-count",
+      "scriptName": "LeaderboardResultCount",
+      "category": "leaderboards",
+      "translated-name": "LeaderboardResultCount",
+      "description": "After 'On leaderboard loaded', the number of results on the leaderboard.",
+      "returnType": "number"
+    },
+    {
+      "id": "leaderboard-player-id-at",
+      "scriptName": "LeaderboardPlayerIDAt",
+      "category": "leaderboards",
+      "translated-name": "LeaderboardPlayerIDAt",
+      "description": "The session-scoped player ID for a result at an index on a leaderboard.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index of the result."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "leaderboard-score-at",
+      "scriptName": "LeaderboardScoreAt",
+      "category": "leaderboards",
+      "translated-name": "LeaderboardScoreAt",
+      "description": "The score of a result at an index on a leaderboard.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index of the result."
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "navigation-menu": {
+      "name": "Navigation menu",
+      "desc": "The platform navigation menu version the game should use.",
+      "items": {
+        "floating": "Floating",
+        "bar": "Bar"
+      }
+    }
+  }
+}

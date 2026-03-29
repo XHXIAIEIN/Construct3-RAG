@@ -1,0 +1,305 @@
+{
+  "id": "turret",
+  "name": "炮台",
+  "description": "在射程范围内寻找目标，并朝向目标射击。",
+  "type": "behavior",
+  "aceCategories": {
+    "settings": "设置"
+  },
+  "conditions": [
+    {
+      "id": "has-target",
+      "scriptName": "HasTarget",
+      "category": "",
+      "list-name": "已发现目标",
+      "display-text": "{my} 已发现目标",
+      "description": "检测炮台当前是否有射击目标。"
+    },
+    {
+      "id": "on-shoot",
+      "scriptName": "OnShoot",
+      "category": "",
+      "list-name": "执行射击",
+      "display-text": "{my} 执行射击",
+      "description": "当炮台可以射击目标时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-target-acquired",
+      "scriptName": "OnTargetAcquired",
+      "category": "",
+      "list-name": "锁定目标",
+      "display-text": "{my} 锁定目标",
+      "description": "当炮台在射程范围内找到新目标时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "测试行为是否已经启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "acquire-target",
+      "scriptName": "AcquireTarget",
+      "category": "",
+      "list-name": "瞄准目标",
+      "display-text": "{my} 瞄准目标 {0}",
+      "description": "如果指定目标在射程内，则捕捉对象。",
+      "params": {
+        "target": {
+          "type": "object",
+          "name": "目标",
+          "desc": "为炮台指定一个目标，当目标出现在射程内时执行射击。"
+        }
+      }
+    },
+    {
+      "id": "add-object-to-target",
+      "scriptName": "AddTarget",
+      "category": "",
+      "list-name": "增加瞄准目标",
+      "display-text": "{my}添加 {0} 为瞄准目标",
+      "description": "将对象或家族添加到炮台的瞄准目标。",
+      "params": {
+        "target": {
+          "type": "object",
+          "name": "目标",
+          "desc": "选择一个对象或家族对象，用于炮台的瞄准目标。"
+        }
+      }
+    },
+    {
+      "id": "clear-targets",
+      "scriptName": "ClearTargets",
+      "category": "",
+      "list-name": "解除所有目标",
+      "display-text": "清空 {my} 瞄准目标",
+      "description": "炮台不再自动瞄准任何对象。"
+    },
+    {
+      "id": "unacquire-target",
+      "scriptName": "UnacquireTarget",
+      "category": "",
+      "list-name": "解除当前目标",
+      "display-text": "取消 {my} 瞄准目标",
+      "description": "让炮台解除锁定当前的射击目标，以便获取另一个目标。注意，如果不立即使用 '瞄准目标' 动作，炮台仍然可以继续瞄准同一个目标。"
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "settings",
+      "list-name": "设置启用状态",
+      "display-text": "{0} {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-range",
+      "scriptName": "SetRange",
+      "category": "settings",
+      "list-name": "设置射程范围",
+      "display-text": "设置 {my}射程范围为[i]{0}[/i]",
+      "description": "设置射程范围",
+      "params": {
+        "range": {
+          "type": "number",
+          "name": "范围",
+          "desc": "要设置的范围，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-rate-of-fire",
+      "scriptName": "SetRateOfFire",
+      "category": "settings",
+      "list-name": "设置发射频率",
+      "display-text": "设置 {my}发射速率为[i]{0}[/i]",
+      "description": "设置炮台的发射频率。",
+      "params": {
+        "rate-of-fire": {
+          "type": "number",
+          "name": "发射频率",
+          "desc": "要设置的射击速度，以秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-rotate",
+      "scriptName": "SetRotate",
+      "category": "settings",
+      "list-name": "设置自动转向",
+      "display-text": "设置 {my}{0}自动转向目标",
+      "description": "设置炮台启用或禁用自动朝向目标",
+      "params": {
+        "rotate": {
+          "type": "combo",
+          "name": "转向",
+          "desc": "炮台是否自动朝向目标的方向旋转。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-rotate-speed",
+      "scriptName": "SetRotateSpeed",
+      "category": "settings",
+      "list-name": "设置转向速度",
+      "display-text": "设置 {my}转向速度为[i]{0}[/i]",
+      "description": "设置转向速度",
+      "params": {
+        "rotate-speed": {
+          "type": "number",
+          "name": "转向速度",
+          "desc": "要设置的转向速度，以度/秒为单位"
+        }
+      }
+    },
+    {
+      "id": "set-target-mode",
+      "scriptName": "SetTargetMode",
+      "category": "settings",
+      "list-name": "设置目标模式",
+      "display-text": "设置 {my}目标模式为[i]{0}[/i]",
+      "description": "设置如何处理多个目标",
+      "params": {
+        "target": {
+          "type": "combo",
+          "name": "目标",
+          "desc": "选择如何处理多个目标",
+          "items": {
+            "first-in-range": "第一个",
+            "nearest": "最近的"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-predictive-aim",
+      "scriptName": "SetPredictiveAim",
+      "category": "settings",
+      "list-name": "启用预测瞄准",
+      "display-text": "设置 {my}{0}预测瞄准",
+      "description": "设置是否使用预测瞄准",
+      "params": {
+        "predictive-aim": {
+          "type": "combo",
+          "name": "预判目标",
+          "desc": "选择是否使用预测瞄准",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-projectile-speed",
+      "scriptName": "SetProjectileSpeed",
+      "category": "settings",
+      "list-name": "设置预判速度",
+      "display-text": "设置 {my}预判速度为[i]{0}[/i]",
+      "description": "设置预判速度以使预判走位发挥作用",
+      "params": {
+        "projectile-speed": {
+          "type": "number",
+          "name": "预判速度",
+          "desc": "用于预测目标的射弹速度，以每秒像素为单位"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "targetuid",
+      "scriptName": "TargetUID",
+      "category": "",
+      "translated-name": "目标UID",
+      "description": "获取当前目标对象的唯一识别码(UID)",
+      "returnType": "number"
+    },
+    {
+      "id": "range",
+      "scriptName": "Range",
+      "category": "",
+      "translated-name": "发射范围",
+      "description": "获取当前的射击范围，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "rateoffire",
+      "scriptName": "RateOfFire",
+      "category": "",
+      "translated-name": "发射频率",
+      "description": "获取当前的射击频率，以每秒次数为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "rotatespeed",
+      "scriptName": "RotateSpeed",
+      "category": "",
+      "translated-name": "旋转速度",
+      "description": "获取当前的旋转速度，以每秒角度为单位。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "range": {
+      "name": "射程范围",
+      "desc": "炮台可以探测目标的范围，以像素为单位。"
+    },
+    "rate-of-fire": {
+      "name": "发射频率",
+      "desc": "每次射击的时间间隔。"
+    },
+    "rotate": {
+      "name": "转向目标",
+      "desc": "自动转向瞄准目标"
+    },
+    "rotate-speed": {
+      "name": "转向速度",
+      "desc": "在开启转向时，以度数/秒的速度转向瞄准目标。"
+    },
+    "target-mode": {
+      "name": "目标模式",
+      "desc": "如何处理多个目标",
+      "items": {
+        "first-in-range": "第一个",
+        "nearest": "最近的"
+      }
+    },
+    "predictive-aim": {
+      "name": "预判走位",
+      "desc": "瞄准目标即将前进的位置，而不是目标当前位置。"
+    },
+    "projectile-speed": {
+      "name": "预判速度",
+      "desc": "预测目标的射弹速度，以像素/每秒为单位。"
+    },
+    "use-collision-cells": {
+      "name": "使用碰撞单元",
+      "desc": "寻找范围内目标时，开启这项功能通常可以提高性能。若目标超出范围外的极远距离下反而会变慢。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

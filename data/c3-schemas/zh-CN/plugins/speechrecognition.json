@@ -1,0 +1,228 @@
+{
+  "id": "speechrecognition",
+  "name": "语音识别",
+  "description": "使用语音识别来读取用户通过麦克风说话的文字。",
+  "type": "plugin",
+  "aceCategories": {
+    "speech-recognition": "语音识别",
+    "on-device-recognition": "设备端识别"
+  },
+  "conditions": [
+    {
+      "id": "supports-speech-recognition",
+      "scriptName": "SupportsSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "支持语音识别",
+      "display-text": "支持语音识别",
+      "description": "测试设备是否支持语音识别。"
+    },
+    {
+      "id": "on-start",
+      "scriptName": "OnSpeechRecognitionStart",
+      "category": "speech-recognition",
+      "list-name": "开始识别",
+      "display-text": "开始语音识别",
+      "description": "语音识别开始时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-end",
+      "scriptName": "OnSpeechRecognitionEnd",
+      "category": "speech-recognition",
+      "list-name": "识别完成",
+      "display-text": "语音识别结束了",
+      "description": "在语音识别完成后被触发",
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnSpeechRecognitionError",
+      "category": "speech-recognition",
+      "list-name": "在出错时",
+      "display-text": "语音识别错误",
+      "description": "启动语音识别出现错误时触发，例如没有权限。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-result",
+      "scriptName": "OnSpeechRecognitionResult",
+      "category": "speech-recognition",
+      "list-name": "在结果",
+      "display-text": "识别结果完成",
+      "description": "在语音识别完成，有文本返回时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "is-recognising-speech",
+      "scriptName": "IsRecognisingSpeech",
+      "category": "speech-recognition",
+      "list-name": "正在识别语音",
+      "display-text": "正在识别语音",
+      "description": "测试当前语音识别功能是否活跃。"
+    },
+    {
+      "id": "on-check-language-available-result",
+      "scriptName": "OnCheckLanguageAvailableResult",
+      "category": "speech-recognition",
+      "list-name": "可用语言检查完成",
+      "display-text": "可用语言检查结果为 [b]{0}[/b]",
+      "description": "在执行 \"检查语言可用状态\" 动作后，返回的各种结果的触发条件。",
+      "params": {
+        "result": {
+          "type": "combo",
+          "name": "结果",
+          "desc": "要检查的结果。",
+          "items": {
+            "available": "可用",
+            "downloading": "正在下载",
+            "downloadable": "可下载",
+            "unavailable": "不可使用",
+            "unknown": "未知",
+            "error": "错误"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "supports-on-device-recongition",
+      "scriptName": "SupportsOnDeviceRecognition",
+      "category": "on-device-recognition",
+      "list-name": "支持本地处理",
+      "display-text": "支持本地处理",
+      "description": "检测当前浏览器是否支持处理设备端语音识别（本地处理）。注意，即使支持，仍可能需要安装语言包。"
+    },
+    {
+      "id": "on-install-on-device-recongition-result",
+      "scriptName": "OnInstallOnDeviceRecognitionResult",
+      "category": "on-device-recognition",
+      "list-name": "设备端识别结果安装完成",
+      "display-text": "设备端识别结果安装[b]{0}[/b]",
+      "description": "执行 '安装语言包' 动作后，根据安装结果返回的触发事件。",
+      "params": {
+        "result": {
+          "type": "combo",
+          "name": "结果",
+          "desc": "要检查的安装结果。",
+          "items": {
+            "success": "完成",
+            "error": "失败"
+          }
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-speech-recognition",
+      "scriptName": "RequestSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "请求语音识别",
+      "display-text": "请求语音识别 (语言: [i]{0}[/i], 本地处理: [i]{1}[/i], 模式: {2}, 结果: {3})",
+      "description": "提示用户从麦克风输入语音识别（如果存在）。",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "语言",
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        },
+        "process-locally": {
+          "type": "boolean",
+          "name": "本地处理",
+          "desc": "使用设备端的语音识别功能。使用前，可能需要先安装语言包。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "是否在停止前一直检测说话，或者在检测到说完话时自动停止",
+          "items": {
+            "continuous": "持续",
+            "single-phrase": "单个短语"
+          }
+        },
+        "results": {
+          "type": "combo",
+          "name": "结果",
+          "desc": "是否允许不确定（临时）结果，或仅允许最终结果。",
+          "items": {
+            "interim": "临时结果",
+            "final": "最终"
+          }
+        }
+      }
+    },
+    {
+      "id": "stop-speech-recognition",
+      "scriptName": "StopSpeechRecognition",
+      "category": "speech-recognition",
+      "list-name": "停止语音识别",
+      "display-text": "停止语音识别",
+      "description": "停止任何语音识别"
+    },
+    {
+      "id": "check-language-available",
+      "scriptName": "CheckLanguageAvailable",
+      "category": "speech-recognition",
+      "list-name": "检查语言可用状态",
+      "display-text": "检查语言 [b]{0}[/b] 可用状态 (本地处理: [i]{1}[/i])",
+      "description": "检查特定语言是否可用于语音识别，包括设备端识别。完成后触发 \"可用语言检查完成\" 条件，并返回结果。",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "语言环境",
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        },
+        "process-locally": {
+          "type": "boolean",
+          "name": "本地端处理",
+          "desc": "检查该语言是否可用本机设备端的语音识别功能。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "install-on-device-recognition",
+      "scriptName": "InstallOnDeviceRecognition",
+      "category": "on-device-recognition",
+      "list-name": "安装语言包",
+      "display-text": "安装语言包(语言: [b]{0}[/b])",
+      "description": "为特定语言安装设备端语音识别，随后触发 \"设备端识别结果安装完成\"。",
+      "params": {
+        "language": {
+          "type": "string",
+          "name": "语言环境",
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "finaltranscript",
+      "scriptName": "FinalTranscript",
+      "category": "speech-recognition",
+      "translated-name": "最终记录结果",
+      "description": "返回最终识别的语音内容。",
+      "returnType": "string"
+    },
+    {
+      "id": "interimtranscript",
+      "scriptName": "InterimTranscript",
+      "category": "speech-recognition",
+      "translated-name": "缓存记录",
+      "description": "返回临时猜测的语音内容，会根据上下文随时变化 。",
+      "returnType": "string"
+    },
+    {
+      "id": "speecherror",
+      "scriptName": "SpeechError",
+      "category": "speech-recognition",
+      "translated-name": "言语误差",
+      "description": "返回一个字符串，描述'在出错'中的错误类型。",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

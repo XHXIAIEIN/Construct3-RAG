@@ -1,0 +1,23 @@
+{
+  "id": "noise",
+  "name": "噪点",
+  "description": "将伪随机噪点添加到颜色通道。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "强度",
+      "desc": "要添加的噪点级别。"
+    },
+    {
+      "id": "color",
+      "type": "percent",
+      "name": "颜色",
+      "desc": "从0（单色噪点）到100（颜色噪点）。"
+    }
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "id": "tilemovement",
+  "name": "Tile movement",
+  "description": "Moves an object around a 2D grid.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-moving",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "Is moving",
+      "display-text": "{my} is moving",
+      "description": "True when the object is moving."
+    },
+    {
+      "id": "is-moving-direction",
+      "scriptName": "IsMovingDirection",
+      "category": "",
+      "list-name": "Is moving in direction",
+      "display-text": "{my} is moving [b]{0}[/b]",
+      "description": "True when the object is moving in the specified direction.",
+      "params": {
+        "direction": {
+          "type": "combo",
+          "name": "Direction",
+          "desc": "The direction of movement.",
+          "items": {
+            "right": "Right",
+            "left": "Left",
+            "down": "Down",
+            "up": "Up"
+          }
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    },
+    {
+      "id": "can-move-to",
+      "scriptName": "CanMoveTo",
+      "category": "",
+      "list-name": "Can move to",
+      "display-text": "{my} can move to [b]({0},{1})[/b]",
+      "description": "Test if the object can move into a cell.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The grid column to check."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The grid row to check."
+        }
+      }
+    },
+    {
+      "id": "can-move-direction",
+      "scriptName": "CanMoveDirection",
+      "category": "",
+      "list-name": "Can move in direction",
+      "display-text": "{my} can move [b]{1}[/b] cells [b]{0}[/b]",
+      "description": "Test if the object can move a given distance in specified direction, checking for obstacles along the way.",
+      "params": {
+        "direction": {
+          "type": "combo",
+          "name": "Direction",
+          "desc": "The direction of movement.",
+          "items": {
+            "right": "Right",
+            "left": "Left",
+            "down": "Down",
+            "up": "Up"
+          }
+        },
+        "distance": {
+          "type": "number",
+          "name": "Distance",
+          "desc": "The distance of movement"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "Set speed",
+      "display-text": "Set {my} speed to [i]({0},{1})[/i]",
+      "description": "Set the object's movement speed.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The new horizontal speed of the object to set, in pixels per second."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The new vertical speed of the object to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-ignoring-input",
+      "scriptName": "SetIgnoreInput",
+      "category": "",
+      "list-name": "Set ignoring input",
+      "display-text": "{0} {my} user input",
+      "description": "Set whether to ignore the controls for this movement.",
+      "params": {
+        "input": {
+          "type": "combo",
+          "name": "Input",
+          "desc": "Set whether to ignore the controls for this movement.",
+          "items": {
+            "stop-ignoring": "Stop ignoring",
+            "start-ignoring": "Start ignoring"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "simulate-control",
+      "scriptName": "SimulateControl",
+      "category": "",
+      "list-name": "Simulate control",
+      "display-text": "Simulate {my} pressing {0}",
+      "description": "Control the movement by events.",
+      "params": {
+        "control": {
+          "type": "combo",
+          "name": "Control",
+          "desc": "The movement control to simulate pressing.",
+          "items": {
+            "left": "Left",
+            "right": "Right",
+            "up": "Up",
+            "down": "Down"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-grid-position",
+      "scriptName": "SetGridPosition",
+      "category": "",
+      "list-name": "Set grid position",
+      "display-text": "Set {my} grid position to {2} to the cell at [i]({0},{1})[/i]",
+      "description": "Set the object's grid position.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The column to move the object to."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The row to move the object to."
+        },
+        "instant": {
+          "type": "combo",
+          "name": "Movement",
+          "desc": "Choose whether to move the object instantly to the location, or to animate over normally.",
+          "items": {
+            "instant": "instant",
+            "animate": "animate"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-grid-dimensions",
+      "scriptName": "SetGridDimensions",
+      "category": "",
+      "list-name": "Set grid dimensions",
+      "display-text": "Set {my} grid size to [b]({0},{1})[/b] and offset to [i]({2},{3})[/i]",
+      "description": "Set the object's grid size and offset",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "The new width to set for columns."
+        },
+        "height": {
+          "type": "number",
+          "name": "Height",
+          "desc": "The new height to set for rows."
+        },
+        "x-offset": {
+          "type": "number",
+          "name": "X offset",
+          "desc": "The new X offset to set for the object's grid."
+        },
+        "y-offset": {
+          "type": "number",
+          "name": "Y offset",
+          "desc": "The new Y offset to set for the object's grid."
+        }
+      }
+    },
+    {
+      "id": "set-default-controls",
+      "scriptName": "SetDefaultControls",
+      "category": "",
+      "list-name": "Set default controls",
+      "display-text": "Set {my} default controls [b]{0}[/b]",
+      "description": "Change the default controls setting.",
+      "params": {
+        "default-controls": {
+          "type": "boolean",
+          "name": "Default controls",
+          "desc": "Whether to enable or disable the behavior default controls."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "grid-x",
+      "scriptName": "GridX",
+      "category": "",
+      "translated-name": "GridX",
+      "description": "The grid column the object is currently in.",
+      "returnType": "number"
+    },
+    {
+      "id": "grid-y",
+      "scriptName": "GridY",
+      "category": "",
+      "translated-name": "GridY",
+      "description": "The grid row the object is currently in.",
+      "returnType": "number"
+    },
+    {
+      "id": "speed-x",
+      "scriptName": "SpeedX",
+      "category": "",
+      "translated-name": "SpeedX",
+      "description": "The current object horizontal speed, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "speed-y",
+      "scriptName": "SpeedY",
+      "category": "",
+      "translated-name": "SpeedY",
+      "description": "The current object vertical speed, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "target-x",
+      "scriptName": "TargetX",
+      "category": "",
+      "translated-name": "TargetX",
+      "description": "The layout co-ordinates of the grid column the object is currently heading towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "target-y",
+      "scriptName": "TargetY",
+      "category": "",
+      "translated-name": "TargetY",
+      "description": "The layout co-ordinates of the grid row the object is currently heading towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "target-grid-x",
+      "scriptName": "GridTargetX",
+      "category": "",
+      "translated-name": "GridTargetX",
+      "description": "The grid column the object is currently heading towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "target-grid-y",
+      "scriptName": "GridTargetY",
+      "category": "",
+      "translated-name": "GridTargetY",
+      "description": "The grid row the object is currently heading towards.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "grid-width": {
+      "name": "Grid width",
+      "desc": "The width of the movement grid."
+    },
+    "grid-height": {
+      "name": "Grid height",
+      "desc": "The height of the movement grid."
+    },
+    "grid-offset-x": {
+      "name": "Grid offset X",
+      "desc": "The offset of the movement grid on the X axis."
+    },
+    "grid-offset-y": {
+      "name": "Grid offset Y",
+      "desc": "The offset of the movement grid on the Y axis."
+    },
+    "speed-x": {
+      "name": "Speed X",
+      "desc": "The speed of movement in the X axis, in pixels per second."
+    },
+    "speed-y": {
+      "name": "Speed Y",
+      "desc": "The speed of movement in the Y axis, in pixels per second."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    },
+    "default-controls": {
+      "name": "Default controls",
+      "desc": "Whether the default controls will be bound to the behaviour."
+    },
+    "isometric": {
+      "name": "Isometric",
+      "desc": "Whether the behaviour uses an isometric or cartesian grid."
+    }
+  }
+}

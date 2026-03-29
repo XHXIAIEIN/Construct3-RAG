@@ -1,0 +1,23 @@
+{
+  "id": "noisemask",
+  "name": "Noise mask",
+  "description": "Add pseudorandom noise to the background color channel.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "Intensity",
+      "desc": "Noise level to add."
+    },
+    {
+      "id": "color",
+      "type": "percent",
+      "name": "Color",
+      "desc": "From 0 (monochrome noise) to 100 (color noise)."
+    }
+  ]
+}

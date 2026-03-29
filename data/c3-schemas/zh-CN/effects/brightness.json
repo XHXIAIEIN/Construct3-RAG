@@ -1,0 +1,17 @@
+{
+  "id": "brightness",
+  "name": "亮度",
+  "description": "通过向RGB通道添加常量来调整图像亮度。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "brightness",
+      "type": "percent",
+      "name": "亮度",
+      "desc": "要提亮图像的变化强度。100为正常，减小值则变暗，增加值变亮。"
+    }
+  ]
+}

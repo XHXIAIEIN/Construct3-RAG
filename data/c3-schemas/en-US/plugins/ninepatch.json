@@ -1,0 +1,323 @@
+{
+  "id": "ninepatch",
+  "name": "9-patch",
+  "description": "Create resizable boxes with an image border by splitting an image in to nine tiles.",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "Appearance",
+    "web": "Web"
+  },
+  "conditions": [
+    {
+      "id": "on-image-url-loaded",
+      "scriptName": "OnURLLoaded",
+      "category": "web",
+      "list-name": "On image URL loaded",
+      "display-text": "On image URL loaded",
+      "description": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-image-url-failed",
+      "scriptName": "OnURLFailed",
+      "category": "web",
+      "list-name": "On image URL failed",
+      "display-text": "On image URL failed to load",
+      "description": "Triggered after 'Load image from URL' if the image fails to load.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "Set blend mode",
+      "display-text": "Set blend mode to [i]{0}[/i]",
+      "description": "Set the background blend mode for this object.",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for this object.",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "xor": "XOR",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-margins",
+      "scriptName": "SetMargins",
+      "category": "appearance",
+      "list-name": "Set margins",
+      "display-text": "Set margins to [i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i]",
+      "description": "Set the image margin sizes in pixels.",
+      "params": {
+        "left-margin": {
+          "type": "number",
+          "name": "Left margin",
+          "desc": "The left margin size in pixels."
+        },
+        "right-margin": {
+          "type": "number",
+          "name": "Right margin",
+          "desc": "The right margin size in pixels."
+        },
+        "top-margin": {
+          "type": "number",
+          "name": "Top margin",
+          "desc": "The top margin size in pixels."
+        },
+        "bottom-margin": {
+          "type": "number",
+          "name": "Bottom margin",
+          "desc": "The bottom margin size in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-edges",
+      "scriptName": "SetEdges",
+      "category": "appearance",
+      "list-name": "Set edges",
+      "display-text": "Set edges to [i]{0}[/i]",
+      "description": "Set the style of the 9-patch edges.",
+      "params": {
+        "edges": {
+          "type": "combo",
+          "name": "Edges",
+          "desc": "Choose whether to tile or stretch the edges.",
+          "items": {
+            "tile": "Tile",
+            "stretch": "Stretch"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-fill",
+      "scriptName": "SetFill",
+      "category": "appearance",
+      "list-name": "Set fill",
+      "display-text": "Set fill to [i]{0}[/i]",
+      "description": "Set the style of the 9-patch fill.",
+      "params": {
+        "fill": {
+          "type": "combo",
+          "name": "Fill",
+          "desc": "Choose how to display the inside of the box.",
+          "items": {
+            "tile": "Tile",
+            "stretch": "Stretch",
+            "transparent": "Transparent"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-image-scale-x",
+      "scriptName": "SetImageScaleX",
+      "category": "appearance",
+      "list-name": "Set image X scale",
+      "display-text": "Set image X scale to [i]{0}[/i]",
+      "description": "Set the X scale of the image within the object.",
+      "params": {
+        "scale-x": {
+          "type": "number",
+          "name": "X scale",
+          "desc": "The X scale of the image within the object, as a percentage."
+        }
+      }
+    },
+    {
+      "id": "set-image-scale-y",
+      "scriptName": "SetImageScaleY",
+      "category": "appearance",
+      "list-name": "Set image Y scale",
+      "display-text": "Set image Y scale to [i]{0}[/i]",
+      "description": "Set the Y scale of the image within the object.",
+      "params": {
+        "scale-y": {
+          "type": "number",
+          "name": "Y scale",
+          "desc": "The Y scale of the image within the object, as a percentage."
+        }
+      }
+    },
+    {
+      "id": "set-seams",
+      "scriptName": "SetSeams",
+      "category": "appearance",
+      "list-name": "Set seams",
+      "display-text": "Set seams to [i]{0}[/i]",
+      "description": "Change the 'Seams' property.",
+      "params": {
+        "seams": {
+          "type": "combo",
+          "name": "Seams",
+          "desc": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+          "items": {
+            "exact": "Exact",
+            "overlap": "Overlap"
+          }
+        }
+      }
+    },
+    {
+      "id": "load-image-from-url",
+      "scriptName": "LoadURL",
+      "category": "web",
+      "list-name": "Load image from URL",
+      "display-text": "Load image from [i]{0}[/i]",
+      "description": "Load an image from a web address or data URI.",
+      "params": {
+        "uri": {
+          "type": "string",
+          "name": "URI",
+          "desc": "Enter the URL on the web, or data URI, of an image to load."
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "left-margin",
+      "scriptName": "LeftMargin",
+      "category": "appearance",
+      "translated-name": "LeftMargin",
+      "description": "Left border margin on the image in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "right-margin",
+      "scriptName": "RightMargin",
+      "category": "appearance",
+      "translated-name": "RightMargin",
+      "description": "Right border margin on the image in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "top-margin",
+      "scriptName": "TopMargin",
+      "category": "appearance",
+      "translated-name": "TopMargin",
+      "description": "Top border margin on the image in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "bottom-margin",
+      "scriptName": "BottomMargin",
+      "category": "appearance",
+      "translated-name": "BottomMargin",
+      "description": "Bottom border margin on the image in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-x",
+      "scriptName": "ImageScaleX",
+      "category": "appearance",
+      "translated-name": "ImageScaleX",
+      "description": "The X scale of the image within the object.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-y",
+      "scriptName": "ImageScaleY",
+      "category": "appearance",
+      "translated-name": "ImageScaleY",
+      "description": "The Y scale of the image within the object.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "edit-image": {
+      "name": "Image",
+      "desc": "Click to edit the object's image.",
+      "link-text": "Edit"
+    },
+    "left-margin": {
+      "name": "Left margin",
+      "desc": "Left border margin on the image in pixels."
+    },
+    "right-margin": {
+      "name": "Right margin",
+      "desc": "Right border margin on the image in pixels."
+    },
+    "top-margin": {
+      "name": "Top margin",
+      "desc": "Top border margin on the image in pixels."
+    },
+    "bottom-margin": {
+      "name": "Bottom margin",
+      "desc": "Bottom border margin on the image in pixels."
+    },
+    "edges": {
+      "name": "Edges",
+      "desc": "Choose whether to tile or stretch the edges.",
+      "items": {
+        "tile": "Tile",
+        "stretch": "Stretch"
+      }
+    },
+    "fill": {
+      "name": "Fill",
+      "desc": "Choose how to display the inside of the box.",
+      "items": {
+        "tile": "Tile",
+        "stretch": "Stretch",
+        "transparent": "Transparent"
+      }
+    },
+    "image-scale-x": {
+      "name": "Image scale X",
+      "desc": "The X scale of the image within the object."
+    },
+    "image-scale-y": {
+      "name": "Image scale Y",
+      "desc": "The Y scale of the image within the object."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "origin": {
+      "name": "Origin",
+      "desc": "Choose the location of the origin in the object.",
+      "items": {
+        "top-left": "Top-left",
+        "top": "Top",
+        "top-right": "Top-right",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "bottom-left": "Bottom-left",
+        "bottom": "Bottom",
+        "bottom-right": "Bottom-right"
+      }
+    },
+    "seams": {
+      "name": "Seams",
+      "desc": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+      "items": {
+        "exact": "Exact",
+        "overlap": "Overlap"
+      }
+    }
+  }
+}

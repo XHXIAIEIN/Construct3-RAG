@@ -1,0 +1,47 @@
+{
+  "id": "warpobjectmask",
+  "name": "Warp object mask",
+  "description": "An animated wave distortion of the background of an object.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": true,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "x-frequency",
+      "type": "float",
+      "name": "X frequency",
+      "desc": "Number of waves on the X axis."
+    },
+    {
+      "id": "y-frequency",
+      "type": "float",
+      "name": "Y frequency",
+      "desc": "Number of waves on the Y axis."
+    },
+    {
+      "id": "x-amplitude",
+      "type": "float",
+      "name": "X amplitude",
+      "desc": "Amplitude of waves on the X axis, in pixels."
+    },
+    {
+      "id": "y-amplitude",
+      "type": "float",
+      "name": "Y amplitude",
+      "desc": "Amplitude of waves on the Y axis, in pixels."
+    },
+    {
+      "id": "x-speed",
+      "type": "float",
+      "name": "X speed",
+      "desc": "Speed of the wave animation on the X axis, in cycles per second."
+    },
+    {
+      "id": "y-speed",
+      "type": "float",
+      "name": "Y speed",
+      "desc": "Speed of the wave animation on the Y axis, in cycles per second."
+    }
+  ]
+}

@@ -1,0 +1,254 @@
+{
+  "id": "dictionary",
+  "name": "Dictionary",
+  "description": "Store data under named keys, e.g. set \"key\" to \"value\".",
+  "type": "plugin",
+  "aceCategories": {
+    "dictionary": "Dictionary",
+    "for-each": "For Each",
+    "json": "JSON"
+  },
+  "conditions": [
+    {
+      "id": "compare-value",
+      "scriptName": "CompareValue",
+      "category": "dictionary",
+      "list-name": "Compare value",
+      "display-text": "Key [b]{0}[/b] {1} [b]{2}[/b]",
+      "description": "Compare the value at a key.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key to test."
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "How to compare the key's value."
+        },
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value to compare to."
+        }
+      }
+    },
+    {
+      "id": "has-key",
+      "scriptName": "HasKey",
+      "category": "dictionary",
+      "list-name": "Has key",
+      "display-text": "Has key [b]{0}[/b]",
+      "description": "Check if a key name has been stored.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key to check if exists."
+        }
+      }
+    },
+    {
+      "id": "is-empty",
+      "scriptName": "IsEmpty",
+      "category": "dictionary",
+      "list-name": "Is empty",
+      "display-text": "Is empty",
+      "description": "True if no keys are in storage."
+    },
+    {
+      "id": "for-each-key",
+      "scriptName": "ForEachKey",
+      "category": "for-each",
+      "list-name": "For each key",
+      "display-text": "For each key",
+      "description": "Repeat the event for each key/value pair that has been stored."
+    },
+    {
+      "id": "compare-current-value",
+      "scriptName": "CompareCurrentValue",
+      "category": "for-each",
+      "list-name": "Compare current value",
+      "display-text": "Current value {0} [b]{1}[/b]",
+      "description": "Compare the value at the current key in the for-each loop.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "How to compare the value of the current key in the for-each loop."
+        },
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value to compare to."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "add-key",
+      "scriptName": "AddKey",
+      "category": "dictionary",
+      "list-name": "Add key",
+      "display-text": "Add key [i]{0}[/i] with value [i]{1}[/i]",
+      "description": "Add a new key in to storage. If it already exists, its value will be overwritten.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key.  If it already exists, its value will be overwritten."
+        },
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value to store for the key."
+        }
+      }
+    },
+    {
+      "id": "set-key",
+      "scriptName": "SetKey",
+      "category": "dictionary",
+      "list-name": "Set key",
+      "display-text": "Set key [i]{0}[/i] to value [i]{1}[/i]",
+      "description": "Set an existing key in to storage. If it does not exist, this will have no effect.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key.  If it does not exist, this will have no effect."
+        },
+        "value": {
+          "type": "any",
+          "name": "Value",
+          "desc": "The value to store for the key."
+        }
+      }
+    },
+    {
+      "id": "delete-key",
+      "scriptName": "DeleteKey",
+      "category": "dictionary",
+      "list-name": "Delete key",
+      "display-text": "Delete key [i]{0}[/i]",
+      "description": "Delete a key from storage.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key to delete."
+        }
+      }
+    },
+    {
+      "id": "clear",
+      "scriptName": "Clear",
+      "category": "dictionary",
+      "list-name": "Clear",
+      "display-text": "Clear",
+      "description": "Delete all keys and values from storage, returning to empty."
+    },
+    {
+      "id": "load",
+      "scriptName": "JSONLoad",
+      "category": "json",
+      "list-name": "Load",
+      "display-text": "Load from JSON string [i]{0}[/i]",
+      "description": "Load from a dictionary previously encoded in JSON format.",
+      "params": {
+        "json": {
+          "type": "string",
+          "name": "JSON",
+          "desc": "A string of the JSON data to load."
+        }
+      }
+    },
+    {
+      "id": "download",
+      "scriptName": "JSONDownload",
+      "category": "json",
+      "list-name": "Download",
+      "display-text": "Download as JSON data with filename [i]{0}[/i]",
+      "description": "Download the contents of the dictionary as a JSON file.",
+      "params": {
+        "filename": {
+          "type": "string",
+          "name": "Filename",
+          "desc": "The name of the file to download."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "get",
+      "scriptName": "Get",
+      "category": "dictionary",
+      "translated-name": "Get",
+      "description": "Get the value from a key.  0 is returned if it does not exist.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key to retrieve."
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "get-default",
+      "scriptName": "GetDefault",
+      "category": "dictionary",
+      "translated-name": "GetDefault",
+      "description": "Get the value from a key, or return a custom value if it does not exist.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The name of the key to retrieve."
+        },
+        "default": {
+          "type": "any",
+          "name": "Default",
+          "desc": "The value to return if the key does not exist."
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "keycount",
+      "scriptName": "KeyCount",
+      "category": "dictionary",
+      "translated-name": "KeyCount",
+      "description": "Get the number of keys in storage.",
+      "returnType": "number"
+    },
+    {
+      "id": "currentkey",
+      "scriptName": "CurrentKey",
+      "category": "for-each",
+      "translated-name": "CurrentKey",
+      "description": "Get the current key name in a for-each loop.",
+      "returnType": "string"
+    },
+    {
+      "id": "currentvalue",
+      "scriptName": "CurrentValue",
+      "category": "for-each",
+      "translated-name": "CurrentValue",
+      "description": "Get the current key value in a for-each loop.",
+      "returnType": "any"
+    },
+    {
+      "id": "asjson",
+      "scriptName": "AsJSON",
+      "category": "json",
+      "translated-name": "AsJSON",
+      "description": "Return the contents of the dictionary in JSON format.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

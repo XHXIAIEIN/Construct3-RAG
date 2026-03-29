@@ -1,0 +1,4781 @@
+{
+  "id": "system",
+  "name": "系统",
+  "description": "提供对 Construc 引擎的生命周期的访问。",
+  "type": "plugin",
+  "aceCategories": {
+    "angles": "角度",
+    "display": "显示",
+    "general": "常规",
+    "global-local-variables": "变量",
+    "layers": "图层",
+    "layout": "场景",
+    "loops": "循环",
+    "math": "数学公式",
+    "pick-instances": "对象实例",
+    "save-load": "游戏快照",
+    "scrolling": "滚动",
+    "special-conditions": "特殊条件",
+    "start-end": "场景开始/结束",
+    "system": "系统",
+    "text": "文本",
+    "time": "时间",
+    "values": "数值",
+    "memory-management": "内存管理",
+    "function-maps": "映射",
+    "templates": "模版"
+  },
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "scriptName": "AngleWithin",
+      "category": "angles",
+      "list-name": "在相差角度内",
+      "display-text": "{0} 位于 {1} 相差 {2} 范围内",
+      "description": "检测某个角度是否位于另一个角度的相差范围内，例如某个角度可能与90度相差0.5度。",
+      "params": {
+        "angle-1": {
+          "type": "number",
+          "name": "角度1",
+          "desc": "要用于比较的角度。"
+        },
+        "within": {
+          "type": "number",
+          "name": "相差",
+          "desc": "检查角度1是否位于角度2的相差范围内。"
+        },
+        "angle-2": {
+          "type": "number",
+          "name": "角度2",
+          "desc": "检查角度1是否接近这个角度。"
+        }
+      }
+    },
+    {
+      "id": "is-clockwise-from",
+      "scriptName": "IsClockwiseFrom",
+      "category": "angles",
+      "list-name": "在顺时针方向",
+      "display-text": "{0} 在 {1} 顺时针方向",
+      "description": "比较角度是否是从另一个角度顺时针方向。",
+      "params": {
+        "angle-1": {
+          "type": "number",
+          "name": "角度1",
+          "desc": "需要测试的角度，以度为单位。"
+        },
+        "angle-2": {
+          "type": "number",
+          "name": "角度2",
+          "desc": "用于测试是否在角度1的顺时针方向的角度。"
+        }
+      }
+    },
+    {
+      "id": "is-between-angles",
+      "scriptName": "IsBetweenAngles",
+      "category": "angles",
+      "list-name": "在角度范围内",
+      "display-text": "{0} 角度在 {1}° 与 {2}° 之间",
+      "description": "比较角度是否位于两角度之间。",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "检测角度是否在其他两个顺时针角度之间。"
+        },
+        "first-angle": {
+          "type": "number",
+          "name": "角度1",
+          "desc": "第一个角度，按顺时针方向顺序。"
+        },
+        "second-angle": {
+          "type": "number",
+          "name": "角度2",
+          "desc": "第二个角度，按顺时针方向顺序。"
+        }
+      }
+    },
+    {
+      "id": "every-tick",
+      "scriptName": "EveryTick",
+      "category": "general",
+      "list-name": "每一帧",
+      "display-text": "每一帧",
+      "description": "在事件表运行的每帧执行一次，相当于 '总是执行'。与空白事件块的作用相同。"
+    },
+    {
+      "id": "compare-two-values",
+      "scriptName": "Compare",
+      "category": "general",
+      "list-name": "比较两值",
+      "display-text": "{0} {1} {2}",
+      "description": "比较两个任意值。此条件不会选择任何对象。",
+      "params": {
+        "first-value": {
+          "type": "any",
+          "name": "a",
+          "desc": "输入要比较的第一个值。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "second-value": {
+          "type": "any",
+          "name": "b",
+          "desc": "输入要比较的第二个值。"
+        }
+      }
+    },
+    {
+      "id": "is-group-active",
+      "scriptName": "IsGroupActive",
+      "category": "general",
+      "list-name": "事件组已激活",
+      "display-text": "事件组 [b]{0}[/b] 已激活",
+      "description": "检查事件组当前是否处于活动状态。",
+      "params": {
+        "group-name": {
+          "type": "groupname",
+          "name": "名称",
+          "desc": "要检查的事件组的名称。"
+        }
+      }
+    },
+    {
+      "id": "is-between-values",
+      "scriptName": "CompareBetween",
+      "category": "general",
+      "list-name": "在两值之间",
+      "display-text": "{1} ≤ {0} ≤ {2}",
+      "description": "比较一个数字是否介于两个值之间。",
+      "params": {
+        "value": {
+          "type": "number",
+          "name": "数值",
+          "desc": "输入要比较的值。"
+        },
+        "lower-bound": {
+          "type": "number",
+          "name": "下限",
+          "desc": "要比较的下限值。"
+        },
+        "upper-bound": {
+          "type": "number",
+          "name": "上限",
+          "desc": "要比较的上限值。"
+        }
+      }
+    },
+    {
+      "id": "object-uid-exists",
+      "scriptName": "ObjectUIDExists",
+      "category": "general",
+      "list-name": "检测UID对象存在",
+      "display-text": "存在UID为[b]{0}[/b]的对象",
+      "description": "检查指定的UID对象当前是否存在。",
+      "params": {
+        "uid": {
+          "type": "number",
+          "name": "UID",
+          "desc": "输入对象的UID以检查是否存在。"
+        }
+      }
+    },
+    {
+      "id": "test-regex",
+      "scriptName": "RegexTest",
+      "category": "general",
+      "list-name": "比较字符串 (正则表达式)",
+      "display-text": "[i]{0}[/i] 匹配正则表达式 [i]{1}[/i] ([i]{2}[/i])",
+      "description": "测试字符串是否与正则表达式匹配。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要匹配的字符串。"
+        },
+        "regex": {
+          "type": "string",
+          "name": "正则表达式",
+          "desc": "输入正则表达式以测试字符串。"
+        },
+        "flags": {
+          "type": "string",
+          "name": "标志",
+          "desc": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行"
+        }
+      }
+    },
+    {
+      "id": "is-number-nan",
+      "scriptName": "IsNaN",
+      "category": "general",
+      "list-name": "检测非数字(NaN)",
+      "display-text": "{0} 非数字类型",
+      "description": "检查数字是否为特殊的 NaN (非数字)值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "一个数字，用于检查是否匹配特殊的NaN（非数字）值。"
+        }
+      }
+    },
+    {
+      "id": "is-value-type",
+      "scriptName": "IsValueType",
+      "category": "general",
+      "list-name": "检测数值类型",
+      "display-text": "{0} 是 {1}",
+      "description": "分辨一个值是数字还是字符串。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要检查类型的值。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "检查值的类型。",
+          "items": {
+            "number": "数字",
+            "string": "字符串"
+          }
+        }
+      }
+    },
+    {
+      "id": "evaluate-expression",
+      "scriptName": "EvaluateExpression",
+      "category": "general",
+      "list-name": "比较表达式",
+      "display-text": "{0}",
+      "description": "检测表达式是否有效，即为非零、非空的字符串。对布尔值的判断非常有帮助！",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "表达式",
+          "desc": "要检测的表达式。仅在该表达式返回的结果为非零或非空的字符串时有效。"
+        }
+      }
+    },
+    {
+      "id": "compare-eventvar",
+      "scriptName": "CompareVar",
+      "category": "global-local-variables",
+      "list-name": "比较变量",
+      "display-text": "[b]{0}[/b] {1} {2}",
+      "description": "比较全局变量或局部变量的值。",
+      "params": {
+        "variable": {
+          "type": "eventvar",
+          "name": "变量",
+          "desc": "选择要比较的变量。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要与变量进行比较的值。"
+        }
+      }
+    },
+    {
+      "id": "compare-boolean-eventvar",
+      "scriptName": "CompareBoolVar",
+      "category": "global-local-variables",
+      "list-name": "判断布尔值",
+      "display-text": "如果[b]{0}[/b]",
+      "description": "检测布尔值是否为真。",
+      "params": {
+        "variable": {
+          "type": "eventvarbool",
+          "name": "变量",
+          "desc": "选择要检测的布尔值。"
+        }
+      }
+    },
+    {
+      "id": "layer-is-visible",
+      "scriptName": "LayerVisible",
+      "category": "layers",
+      "list-name": "检查图层可见",
+      "display-text": "图层[b]{0}[/b]可见",
+      "description": "测试图层当前在场景是否可见。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要检查可见性的图层的名称或编号。"
+        }
+      }
+    },
+    {
+      "id": "layer-is-interactive",
+      "scriptName": "LayerInteractive",
+      "category": "layers",
+      "list-name": "图层可交互",
+      "display-text": "图层 [b]{0}[/b] 可交互",
+      "description": "检查指定的图层是否可以响应鼠标和触控的输入。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "检查指定的图层是否允许响应用户的交互。"
+        }
+      }
+    },
+    {
+      "id": "layer-is-html",
+      "scriptName": "LayerIsHTML",
+      "category": "layers",
+      "list-name": "图层为HTML层",
+      "display-text": "图层 [b]{0}[/b] 是 HTML 图层",
+      "description": "检测图层是否为 HTML 图层。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "填写图层名称或编号，用于检查此图层是否为 HTML 层。"
+        }
+      }
+    },
+    {
+      "id": "layer-name-exists",
+      "scriptName": "LayerNameExists",
+      "category": "layers",
+      "list-name": "存在图层名称",
+      "display-text": "图层 [b]{0}[/b] 已存在",
+      "description": "检测指定名称的图层是否已经存在。",
+      "params": {
+        "layer": {
+          "type": "string",
+          "name": "图层",
+          "desc": "要检查是否存在的图层名称。"
+        }
+      }
+    },
+    {
+      "id": "compare-layer-opacity",
+      "scriptName": "LayerCmpOpacity",
+      "category": "layers",
+      "list-name": "比较图层不透明度",
+      "display-text": "图层[b]{0}[/b]不透明度 {1} {2}",
+      "description": "比较图层的不透明度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要比较不透明度的图层的名称或数量。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "opacity": {
+          "type": "number",
+          "name": "不透明度",
+          "desc": "要比较的不透明度，从0（透明）到100（不透明）。"
+        }
+      }
+    },
+    {
+      "id": "layer-is-empty",
+      "scriptName": "LayerEmpty",
+      "category": "layers",
+      "list-name": "图层为空",
+      "display-text": "图层[b]{0}[/b]是空的",
+      "description": "测试图层是否不存在任何实例对象。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要检查的图层的名称或层数是否为空。"
+        }
+      }
+    },
+    {
+      "id": "on-canvas-snapshot",
+      "scriptName": "OnCanvasSnapshot",
+      "category": "layout",
+      "list-name": "截屏完成",
+      "display-text": "截屏完成",
+      "description": "执行 '截屏' 动作后，成功截屏时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "effects-are-supported",
+      "scriptName": "EffectsSupported",
+      "category": "layout",
+      "list-name": "设备支持滤镜",
+      "display-text": "设备支持滤镜",
+      "description": "检测当前设备是否支持着色器效果并且可以在游戏中显示。"
+    },
+    {
+      "id": "for",
+      "scriptName": "For",
+      "category": "loops",
+      "list-name": "循环",
+      "display-text": "循环 [b]{0}[/b] 从 [i]{1}[/i] 到 [i]{2}[/i]",
+      "description": "根据数值区间的范围，重复执行多次动作。使用 loopindex 表达式获取当前索引（基于 0 开始计数）。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "名称",
+          "desc": "用于区分不同循环的名称，并通过 loopindex(\"\") 表达式获取循环的索引。留空则表示当前事件块范围的循环索引。"
+        },
+        "start-index": {
+          "type": "number",
+          "name": "初始值",
+          "desc": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。"
+        },
+        "end-index": {
+          "type": "number",
+          "name": "结束值",
+          "desc": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。"
+        }
+      }
+    },
+    {
+      "id": "for-each",
+      "scriptName": "ForEach",
+      "category": "loops",
+      "list-name": "遍历对象",
+      "display-text": "遍历 {0}",
+      "description": "对每个实例对象重复执行一次动作。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择循环的对象。 对于对象的每个实例，操作将重复一次。"
+        }
+      }
+    },
+    {
+      "id": "repeat",
+      "scriptName": "Repeat",
+      "category": "loops",
+      "list-name": "重复 X 次",
+      "display-text": "重复[b]{0}[/b]次",
+      "description": "将动作重复执行多次。使用 loopindex 表达式获取每次循环的索引（基于0开始计数）。",
+      "params": {
+        "count": {
+          "type": "number",
+          "name": "次数",
+          "desc": "要重复执行的次数。"
+        }
+      }
+    },
+    {
+      "id": "while",
+      "scriptName": "While",
+      "category": "loops",
+      "list-name": "重复",
+      "display-text": "重复",
+      "description": "只要事件块的条件满足，就无限重复执行动作。"
+    },
+    {
+      "id": "for-each-ordered",
+      "scriptName": "ForEachOrdered",
+      "category": "loops",
+      "list-name": "遍历对象 (排序)",
+      "display-text": "遍历 {0} 根据 [i]{1}[/i] {2}",
+      "description": "根据表达式的结果排序，将指定对象的每个实例都重复一次动作。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要遍历的对象，对此对象的每个实例都执行一次动作。"
+        },
+        "expression": {
+          "type": "any",
+          "name": "表达式",
+          "desc": "输入一个表达式来对循环进行排序，例如：Sprite.X"
+        },
+        "order": {
+          "type": "combo",
+          "name": "排序",
+          "desc": "使用升序或者降序。",
+          "items": {
+            "ascending": "升序",
+            "descending": "降序"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-image-loading-complete",
+      "scriptName": "OnImageLoadingComplete",
+      "category": "memory-management",
+      "list-name": "图像加载完成",
+      "display-text": "图像加载完成",
+      "description": "使用内存管理操作后，当图像加载完成时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-loading-images",
+      "scriptName": "IsLoadingImages",
+      "category": "memory-management",
+      "list-name": "图像正在加载",
+      "display-text": "图像正在加载",
+      "description": "使用内存管理操作后，用于检测当前是否正在加载图像的过程中。"
+    },
+    {
+      "id": "pick-nth-instance",
+      "scriptName": "PickNth",
+      "category": "pick-instances",
+      "list-name": "按顺序选择",
+      "display-text": "选择第 {1} 个 {0} 实例对象",
+      "description": "从当前已选取的实例中，选择第n个实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要选择的对象。"
+        },
+        "instance": {
+          "type": "number",
+          "name": "实例",
+          "desc": "要选择的实例的索引，从 0 开始计数。"
+        }
+      }
+    },
+    {
+      "id": "pick-random-instance",
+      "scriptName": "PickRandom",
+      "category": "pick-instances",
+      "list-name": "随机选择一个",
+      "display-text": "随机选择一个 {0} 实例",
+      "description": "从当前已选择的对象实例中随机选择一个实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要从中选择随机实例的对象。"
+        }
+      }
+    },
+    {
+      "id": "pick-all",
+      "scriptName": "PickAll",
+      "category": "pick-instances",
+      "list-name": "再次选择全部",
+      "display-text": "再次选择全部 {0}",
+      "description": "重置当前已选取的实例，再次选择所有实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要重置的对象以选择所有实例。"
+        }
+      }
+    },
+    {
+      "id": "pick-by-comparison",
+      "scriptName": "PickByComparison",
+      "category": "pick-instances",
+      "list-name": "按条件选择",
+      "display-text": "选择 {1} {2} {3} 的 {0}",
+      "description": "选择满足比较的对象的实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "通过比较选择要选择的对象。"
+        },
+        "expression": {
+          "type": "any",
+          "name": "表达式",
+          "desc": "输入引用所选对象的表达式。 将挑选符合比较的实例。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "通过表达式筛选出满足条件的实例对象。可以引用要选择的对象。"
+        }
+      }
+    },
+    {
+      "id": "pick-by-evaluate",
+      "scriptName": "PickByEvaluate",
+      "category": "pick-instances",
+      "list-name": "按表达式选择",
+      "display-text": "选择 {0} 根据 {1}",
+      "description": "通过计算表达式来选择对象的实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "通过评估选择要选择的对象"
+        },
+        "expression": {
+          "type": "number",
+          "name": "表达式",
+          "desc": "通过表达式的结果选择实例对象，如果结果非零，将选择实例。"
+        }
+      }
+    },
+    {
+      "id": "pick-by-highest-lowest-value",
+      "scriptName": "PickByHighestLowestValue",
+      "category": "pick-instances",
+      "list-name": "按最高/最低值选择",
+      "display-text": "选择 {2} {1}的 {0}  (包含并列结果: [i]{3}[/i])",
+      "description": "根据表达式计算结果，选中数值最高或最低的实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要选取的对象。"
+        },
+        "which": {
+          "type": "combo",
+          "name": "选择",
+          "desc": "选择最高或最低值结果的实例。",
+          "items": {
+            "lowest": "最低",
+            "highest": "最高"
+          }
+        },
+        "expression": {
+          "type": "number",
+          "name": "表达式",
+          "desc": "引用所选对象的表达式。"
+        },
+        "pick-all-tied": {
+          "type": "boolean",
+          "name": "包含并列结果",
+          "desc": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。"
+        }
+      }
+    },
+    {
+      "id": "pick-overlapping-point",
+      "scriptName": "PickOverlappingPoint",
+      "category": "pick-instances",
+      "list-name": "选择在位置重叠的",
+      "display-text": "选择在位置([i]{1}[/i], [i]{2}[/i])重叠的 {0}",
+      "description": "选取在场景中的重叠在一起的一类对象实例。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "如果重叠点，请选择要拾取的对象。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X坐标测试是否重叠。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y坐标测试是否重叠。"
+        }
+      }
+    },
+    {
+      "id": "pick-last-created",
+      "scriptName": "PickLastCreated",
+      "category": "pick-instances",
+      "list-name": "选择最后创建的",
+      "display-text": "选择最后创建的{0}",
+      "description": "选择对象类型最后一个创建的实例对象，用于 '创建对象 (按名称)' 一起使用。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择最后创建的对象实例。"
+        }
+      }
+    },
+    {
+      "id": "on-save-complete",
+      "scriptName": "OnSaveComplete",
+      "category": "save-load",
+      "list-name": "保存完成",
+      "display-text": "保存完成",
+      "description": "执行 '保存游戏' 动作后，返回的 '游戏保存数据' 表达式可用时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-save-failed",
+      "scriptName": "OnSaveFailed",
+      "category": "save-load",
+      "list-name": "保存失败",
+      "display-text": "保存失败",
+      "description": "执行 '保存游戏' 动作后，游戏保存失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-complete",
+      "scriptName": "OnLoadComplete",
+      "category": "save-load",
+      "list-name": "加载完成",
+      "display-text": "加载完成",
+      "description": "执行 '加载游戏' 动作后，游戏加载完成时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-failed",
+      "scriptName": "OnLoadFailed",
+      "category": "save-load",
+      "list-name": "加载失败",
+      "display-text": "加载失败",
+      "description": "执行 '加载游戏' 动作后，当插槽无法加载时触发，包括尚未保存的。",
+      "isTrigger": true
+    },
+    {
+      "id": "trigger-once-while-true",
+      "scriptName": "TriggerOnce",
+      "category": "special-conditions",
+      "list-name": "仅触发一次",
+      "display-text": "仅触发一次",
+      "description": "当持续条件第一次触发时，添加此特殊条件仅触发一次。需注意，此条件需要放在其他条件的最后一个。"
+    },
+    {
+      "id": "is-in-preview",
+      "scriptName": "IsPreview",
+      "category": "special-conditions",
+      "list-name": "在预览模式中",
+      "display-text": "在预览模式中",
+      "description": "如果在预览模式中，则触发此条件。导出项目后此条件将失效。"
+    },
+    {
+      "id": "is-on-mobile-device",
+      "scriptName": "IsMobile",
+      "category": "special-conditions",
+      "list-name": "在移动设备运行",
+      "display-text": "在移动设备运行",
+      "description": "如果在移动设备上观看，则为True。 这是一个估计，可能不完全准确。"
+    },
+    {
+      "id": "else",
+      "scriptName": "Else",
+      "category": "special-conditions",
+      "list-name": "否则",
+      "display-text": "否则",
+      "description": "当上一个事件的触发条件不满足时，运行此条件的动作。需注意，此条件需要放在其他条件的第一个。且不会选择任何实例对象。"
+    },
+    {
+      "id": "is-on-platform",
+      "scriptName": "IsOnPlatform",
+      "category": "special-conditions",
+      "list-name": "在运行平台",
+      "display-text": "运行在[b]{0}[/b]平台",
+      "description": "检查当前是否在特定平台上运行，例如Android系统。",
+      "params": {
+        "platform": {
+          "type": "combo",
+          "name": "运行平台",
+          "desc": "要检查的运行平台。 请注意，多个选项可以同时触发（例如HTML5 + Android）。",
+          "items": {
+            "html5-website": "HTML5 网站",
+            "ios": "IOS",
+            "android": "Android",
+            "windows-8-app": "Windows 8 app",
+            "windows-phone-8-app": "Windows Phone 8 app",
+            "blackberry-10-app": "Blackberry 10 app",
+            "tizen": "Tizen",
+            "cocoonjs": "CocoonJS",
+            "cordova": "Cordova",
+            "nwjs": "NW.js",
+            "crosswalk": "Crosswalk",
+            "amazon-web-app": "Amazon web app",
+            "windows-10-app": "Windows 10 app",
+            "scirra-arcade": "Construct Arcade"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-start-of-layout",
+      "scriptName": "OnLayoutStart",
+      "category": "start-end",
+      "list-name": "场景开始",
+      "display-text": "场景开始",
+      "description": "当前场景开始时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-end-of-layout",
+      "scriptName": "OnLayoutEnd",
+      "category": "start-end",
+      "list-name": "场景结束",
+      "display-text": "场景结束",
+      "description": "在当前场景结束时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-loader-layout-complete",
+      "scriptName": "OnLoadFinished",
+      "category": "start-end",
+      "list-name": "加载页加载完成",
+      "display-text": "加载页加载完成",
+      "description": "在加载器场景加载完成后触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-suspend",
+      "scriptName": "OnSuspend",
+      "category": "start-end",
+      "list-name": "窗口暂停",
+      "display-text": "窗口暂停",
+      "description": "当窗口进入后台时触发，如切换浏览器标签页、或切换到其他应用程序。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-resume",
+      "scriptName": "OnResume",
+      "category": "start-end",
+      "list-name": "窗口恢复",
+      "display-text": "窗口恢复",
+      "description": "当游戏窗口已失去焦点正处于暂停状态，并恢复到前台运行前触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-suspended",
+      "scriptName": "IsSuspended",
+      "category": "start-end",
+      "list-name": "正在暂停",
+      "display-text": "正在暂停",
+      "description": "检测应用程序当前是否正处于暂停状态。"
+    },
+    {
+      "id": "every-x-seconds",
+      "scriptName": "Every",
+      "category": "time",
+      "list-name": "每隔 X 秒",
+      "display-text": "每 [b]{0}[/b] 秒",
+      "description": "以固定的时间间隔运行操作。",
+      "params": {
+        "interval-seconds": {
+          "type": "number",
+          "name": "间隔（秒）",
+          "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。"
+        }
+      }
+    },
+    {
+      "id": "compare-time",
+      "scriptName": "CompareTime",
+      "category": "time",
+      "list-name": "比较时间",
+      "display-text": "时间 {0} [b]{1}[/b] 秒",
+      "description": "比较当前时间（启动后的秒数）",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "time-seconds": {
+          "type": "number",
+          "name": "秒",
+          "desc": "比较自游戏运行以来累计的秒数。"
+        }
+      }
+    },
+    {
+      "id": "on-signal",
+      "scriptName": "OnSignal",
+      "category": "time",
+      "list-name": "收到信号",
+      "display-text": "收到信号[i]{0}[/i]",
+      "description": "在执行 '发送信号' 动作后，接收对应的标签的信号。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，用于接收 '发送信号' 动作中对应的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "template-exists",
+      "scriptName": "TemplateExists",
+      "category": "templates",
+      "list-name": "存在对象模版",
+      "display-text": "{0} 存在模版对象 [b]{1}[/b]",
+      "description": "检测指定的对象模版名称是否存在。",
+      "params": {
+        "object-to-test": {
+          "type": "object",
+          "name": "检测的对象",
+          "desc": "检测此对象是否存在模版名称"
+        },
+        "template-name": {
+          "type": "template",
+          "name": "模版名称",
+          "desc": "要检查是否已存在的模板对象的名称。"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "snapshot-canvas",
+      "scriptName": "SnapshotCanvas",
+      "category": "display",
+      "list-name": "截屏",
+      "display-text": "保存画布快照 (格式: {0}, 品质: [i]{1}[/i], 偏移: [i]{2}[/i], [i]{3}[/i], 大小:[i]{4}[/i] x [i]{5}[/i])",
+      "description": "在 '截图完成' 条件中，返回的图像地址结果。",
+      "params": {
+        "format": {
+          "type": "combo",
+          "name": "格式",
+          "desc": "选择用于保存截图的文件格式。PNG是无损的，JPEG文件更小。",
+          "items": {
+            "png": "PNG",
+            "jpeg": "JPEG"
+          }
+        },
+        "jpeg-quality": {
+          "type": "number",
+          "name": "JPEG品质",
+          "desc": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "截取快照区域的X偏移量，基于设备画布像素。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "截取快照区域的Y偏移量，基于设备画布像素。"
+        },
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": "截屏区域的宽度，以画布设备像素为单位，使用 0 则使用完整宽度。"
+        },
+        "height": {
+          "type": "number",
+          "name": "高度",
+          "desc": "截屏区域的高度，以画布设备像素为单位，使用 0 则使用完整高度。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-canvas-size",
+      "scriptName": "SetCanvasSize",
+      "category": "display",
+      "list-name": "设置画布大小",
+      "display-text": "设置画布大小为[b]{0}[/b] x [b]{1}[/b]",
+      "description": "设置画布大小，同时也会改变项目属性的窗口大小。",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": "设置画布宽度，以像素为单位。"
+        },
+        "height": {
+          "type": "number",
+          "name": "高度",
+          "desc": "设置画布高度，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-fullscreen-scaling",
+      "scriptName": "SetFullscreenQuality",
+      "category": "display",
+      "list-name": "设置全屏质量",
+      "display-text": "设置全屏质量为[i]{0}[/i]",
+      "description": "设置全屏缩放的质量。",
+      "params": {
+        "fullscreen-scaling": {
+          "type": "combo",
+          "name": "全屏质量",
+          "desc": "高质量的缩放在高分辨率可以获得更好的视觉表现，低像素的缩放有助于改善低端设备的性能，也适用于临近采样的像素风格游戏。",
+          "items": {
+            "low-quality": "低像素",
+            "high-quality": "高质量"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-pixel-rounding",
+      "scriptName": "SetPixelRounding",
+      "category": "display",
+      "list-name": "设置像素对齐",
+      "display-text": "[b]{0}[/b]像素对齐",
+      "description": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 \"临近采样\" 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "像素对齐能让对象在渲染到屏幕前将其位置进行四舍五入到整数，防止对象在 '临近采样' 模式中出现模糊、边缘接缝的现象。注意，这不会影响它们实际的坐标，对象仍然可以使用子像素位置，只会影响游戏中在屏幕的显示。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-project-sampling",
+      "scriptName": "SetProjectSampling",
+      "category": "display",
+      "list-name": "设置项目采样",
+      "display-text": "设置项目采样为[b]{0}[/b]",
+      "description": "设置项目的采样模式。",
+      "params": {
+        "sampling": {
+          "type": "combo",
+          "name": "采样",
+          "desc": "调整图像时，使用的采样方式。",
+          "items": {
+            "nearest": "邻近",
+            "bilinear": "双线性",
+            "trilinear": "三线性"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-anisotropic-filtering",
+      "scriptName": "SetAnisotropicFiltering",
+      "category": "display",
+      "list-name": "设置各向异性",
+      "display-text": "设置各向异性为 [b]{0}[/b]",
+      "description": "设置各向异性的模式。",
+      "params": {
+        "anisotropic-filtering": {
+          "type": "combo",
+          "name": "各向异性",
+          "desc": "要使用的各向异性程度。",
+          "items": {
+            "auto": "自动",
+            "off": "关闭",
+            "2x": "2x",
+            "3x": "3x",
+            "4x": "4x",
+            "8x": "8x",
+            "16x": "16x"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-object",
+      "scriptName": "CreateObject",
+      "category": "general",
+      "list-name": "创建对象",
+      "display-text": "创建对象 {0}, 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "description": "在当前场景创建对象的实例。如果选择 '家族' 将从中随机创建一个成员。",
+      "params": {
+        "object-to-create": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要创建的新实例的对象类型。"
+        },
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要在其上创建实例的图层的名称或编号。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X坐标，用于放置创建的实例。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y坐标，用于放置创建的实例。"
+        },
+        "create-hierarchy": {
+          "type": "boolean",
+          "name": "创建子对象",
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        "template-name": {
+          "type": "template",
+          "name": "模版名称",
+          "desc": "创建对象时，指定模版对象的名称，继承其所有属性。"
+        }
+      }
+    },
+    {
+      "id": "create-object-by-name",
+      "scriptName": "CreateObjectByName",
+      "category": "general",
+      "list-name": "创建对象(按名称)",
+      "display-text": "创建对象 [b]{0}[/b], 图层: [b]{1}[/b], 位置: ([i]{2}[/i], [i]{3}[/i]), 对象层级: [i]{4}[/i], 继承模版: [i]{5}[/i]",
+      "description": "使用字符串创建对应名称的对象实例，然后在下方添加 '选择最后创建的' 条件选择此对象。对于包含不同的对象类型，建议使用 '家族' 进行选择。",
+      "params": {
+        "object-name": {
+          "type": "objectname",
+          "name": "对象名称",
+          "desc": "要创建的新实例的对象类型的名称。"
+        },
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要在其上创建实例的图层的名称或编号。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "X坐标，用于放置创建的实例。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "Y坐标，用于放置创建的实例。"
+        },
+        "create-hierarchy": {
+          "type": "boolean",
+          "name": "创建子对象",
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        },
+        "template-name": {
+          "type": "template",
+          "name": "模版名称",
+          "desc": "创建对象时，指定模版对象的名称，继承其所有属性。"
+        }
+      }
+    },
+    {
+      "id": "set-group-active",
+      "scriptName": "SetGroupActive",
+      "category": "general",
+      "list-name": "启用事件组",
+      "display-text": "{1}事件组 [b]{0}[/b]",
+      "description": "启用或禁用事件组。",
+      "params": {
+        "group-name": {
+          "type": "groupname",
+          "name": "名称",
+          "desc": "要设置的事件组的名称。"
+        },
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "激活或冻结分组，还可以切换激活状态。",
+          "items": {
+            "deactivated": "禁用",
+            "activated": "启用",
+            "toggle-active": "反转"
+          },
+          "initialValue": "activated"
+        }
+      }
+    },
+    {
+      "id": "stop-loop",
+      "scriptName": "StopLoop",
+      "category": "general",
+      "list-name": "停止循环",
+      "display-text": "停止循环",
+      "description": "停止当前正在运行的循环，仅对 '系统' 对象中的循环、重复条件有效。"
+    },
+    {
+      "id": "reset-persisted-objects",
+      "scriptName": "ResetPersisted",
+      "category": "general",
+      "list-name": "重置持久化对象",
+      "display-text": "重置持久化对象",
+      "description": "重置所有场景具有持久化行为的对象，恢复到初始状态。"
+    },
+    {
+      "id": "sort-z-order",
+      "scriptName": "SortZOrderByInstVar",
+      "category": "general",
+      "list-name": "排序显示顺序",
+      "display-text": "排序{0}显示顺序(根据[b]{1}[/b])",
+      "description": "根据对象的实例变量，调整在Z轴的显示顺序。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要进行排序的对象，建议使用家族。"
+        },
+        "instance-variable": {
+          "type": "objinstancevar",
+          "name": "实例变量",
+          "desc": "指定一个实例变量，作为排序顺序的参考。通常会将此值设为实例对象的 Y 坐标或图像点。"
+        }
+      }
+    },
+    {
+      "id": "set-collision-cell-size",
+      "scriptName": "SetCollisionCellSize",
+      "category": "general",
+      "list-name": "设置碰撞单元大小",
+      "display-text": "设置碰撞单元大小 [i]{0}[/i] x [i]{1}[/i]",
+      "description": "通过碰撞单元优化更改移动对象和测试碰撞之间的性能权衡。",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": "要设置的碰撞单元格宽度。"
+        },
+        "height": {
+          "type": "number",
+          "name": "高度",
+          "desc": "要设置的碰撞单元格高度。"
+        }
+      }
+    },
+    {
+      "id": "set-eventvar-value",
+      "scriptName": "SetVar",
+      "category": "global-local-variables",
+      "list-name": "设置值",
+      "display-text": "设置变量[b]{0}[/b]为[i]{1}[/i]",
+      "description": "设置全局或本地变量的数值。",
+      "params": {
+        "variable": {
+          "type": "eventvar",
+          "name": "变量",
+          "desc": "选择要更改的变量。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "存储在此变量中的值。"
+        }
+      }
+    },
+    {
+      "id": "add-to-eventvar",
+      "scriptName": "AddVar",
+      "category": "global-local-variables",
+      "list-name": "增加值",
+      "display-text": "变量[b]{0}[/b]增加[i]{1}[/i]",
+      "description": "增加全局变量或局部变量的数值。",
+      "params": {
+        "variable": {
+          "type": "eventvar",
+          "name": "变量",
+          "desc": "选择要更改的变量。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要增加到此变量的值。"
+        }
+      }
+    },
+    {
+      "id": "subtract-from-eventvar",
+      "scriptName": "SubVar",
+      "category": "global-local-variables",
+      "list-name": "减少值",
+      "display-text": "变量[b]{0}[/b]减少[i]{1}[/i]",
+      "description": "减去全局变量或局部变量的值。",
+      "params": {
+        "variable": {
+          "type": "eventvar",
+          "name": "变量",
+          "desc": "选择要更改的变量。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要从此变量中减去的值。"
+        }
+      }
+    },
+    {
+      "id": "set-boolean-eventvar",
+      "scriptName": "SetBoolVar",
+      "category": "global-local-variables",
+      "list-name": "设置布尔值",
+      "display-text": "设置[i]{0}[/i]为[b]{1}[/b]",
+      "description": "设置全局或局部布尔值变量的状态。",
+      "params": {
+        "variable": {
+          "type": "eventvarbool",
+          "name": "变量",
+          "desc": "选择要更改的变量。"
+        },
+        "value": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "更改布尔值的状态。",
+          "items": {
+            "false": "否",
+            "true": "是"
+          },
+          "initialValue": "true"
+        }
+      }
+    },
+    {
+      "id": "toggle-boolean-eventvar",
+      "scriptName": "ToggleBoolVar",
+      "category": "global-local-variables",
+      "list-name": "反转布尔值",
+      "display-text": "反转[b]{0}[/b]",
+      "description": "反转布尔值。如果为是，则变成否。",
+      "params": {
+        "variable": {
+          "type": "eventvarbool",
+          "name": "变量",
+          "desc": "选择要切换状态的布尔值。"
+        }
+      }
+    },
+    {
+      "id": "reset-global-variables",
+      "scriptName": "ResetGlobals",
+      "category": "global-local-variables",
+      "list-name": "重置全局变量",
+      "display-text": "重置全局变量 (包含静态变量: [i]{0}[/i])",
+      "description": "将项目中的所有全局变量重置为其初始值。",
+      "params": {
+        "reset-static": {
+          "type": "boolean",
+          "name": "包含静态变量",
+          "desc": "勾选后，项目中的所有静态局部变量也会重置。"
+        }
+      }
+    },
+    {
+      "id": "reset-eventvar",
+      "scriptName": "ResetEventVar",
+      "category": "global-local-variables",
+      "list-name": "重置变量",
+      "display-text": "重置变量 [b]{0}[/b]",
+      "description": "将指定的变量恢复为项目中的初始值。",
+      "params": {
+        "variable": {
+          "type": "eventvarany",
+          "name": "变量",
+          "desc": "选择要重置的变量。"
+        }
+      }
+    },
+    {
+      "id": "set-function-return-value",
+      "scriptName": "SetFunctionReturnValue",
+      "category": "global-local-variables",
+      "list-name": "设置返回值",
+      "display-text": "设置返回值 [i]{0}[/i]",
+      "description": "将动作组作为表达式使用时可以返回的值，需要动作组的属性有设置返回值。注意，设置返回值不会中断执行。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "返回值",
+          "desc": "要从动作组中返回的值。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-visible",
+      "scriptName": "SetLayerVisible",
+      "category": "layers",
+      "list-name": "设置图层可见",
+      "display-text": "设置图层[b]{0}[/b][i]{1}[/i]",
+      "description": "设置图层的可见性。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层的名称或编号。"
+        },
+        "visibility": {
+          "type": "combo",
+          "name": "可见性",
+          "desc": "选择是否绘制图层。",
+          "items": {
+            "invisible": "不可见",
+            "visible": "可见"
+          },
+          "initialValue": "visible"
+        }
+      }
+    },
+    {
+      "id": "set-layer-interactive",
+      "scriptName": "SetLayerInteractive",
+      "category": "layers",
+      "list-name": "启用图层交互响应",
+      "display-text": "启用图层[i]{0}[/i]交互: [b]{1}[/b]",
+      "description": "设置图层是否响应鼠标和触控的输入。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "设置交互的图层编号或名称。"
+        },
+        "interactive": {
+          "type": "boolean",
+          "name": "交互",
+          "desc": "选择图层是否允许与用户交互，响应鼠标或触控的输入。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-html",
+      "scriptName": "SetLayerHTML",
+      "category": "layers",
+      "list-name": "设置 HTML 图层",
+      "display-text": "设置 HTML 图层 (图层: [b]{0}[/b], 启用: [i]{1}[/i])",
+      "description": "设置当前图层是否为 HTML 图层。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层的名称或编号。"
+        },
+        "html": {
+          "type": "boolean",
+          "name": "HTML 图层",
+          "desc": "设置当前图层是否为 HTML 图层。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-scale",
+      "scriptName": "SetLayerScale",
+      "category": "layers",
+      "list-name": "设置图层缩放倍数",
+      "display-text": "设置图层[b]{0}[/b]缩放为[i]{1}[/i]倍",
+      "description": "设置图层的缩放倍数，使其看起来更大或更小。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层名称或编号。"
+        },
+        "scale": {
+          "type": "number",
+          "name": "大小",
+          "desc": "图层的缩放倍数。1.0 为原始尺寸，2.0为双倍尺寸。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-opacity",
+      "scriptName": "SetLayerOpacity",
+      "category": "layers",
+      "list-name": "设置图层不透明度",
+      "display-text": "设置图层 [b]{0}[/b] 不透明度为[i]{1}[/i]",
+      "description": "设置单个图层的不透明度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要为其设置不透明度的图层的名称或编号。"
+        },
+        "opacity": {
+          "type": "number",
+          "name": "不透明度",
+          "desc": "图层不透明度，从0（透明）到100（不透明）。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-scale-rate",
+      "scriptName": "SetLayerScaleRate",
+      "category": "layers",
+      "list-name": "设置图层缩放同步比例",
+      "display-text": "设置图层[b]{0}[/b]缩放比例为[i]{1}[/i]",
+      "description": "设置图层的缩放比例，使其在场景缩放时容易变得更大，或更难被放大，或者不缩放。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层名称或编号。"
+        },
+        "scale-rate": {
+          "type": "number",
+          "name": "同步比例",
+          "desc": "跟随场景缩放的同步比例。1.0 为正常缩放。2.0为双倍缩放，0为不缩放。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-angle",
+      "scriptName": "SetLayerAngle",
+      "category": "layers",
+      "list-name": "设置图层角度",
+      "display-text": "设置图层 [b]{0}[/b] 角度为[i]{1}[/i]°",
+      "description": "设置单个图层的角度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要为其设置角度的图层的名称或编号。"
+        },
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "将图层旋转到指定的角度，以度为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-effect-enabled",
+      "scriptName": "SetLayerEffectEnabled",
+      "category": "layers",
+      "list-name": "启用图层滤镜",
+      "display-text": "{1}图层{0}滤镜{2}",
+      "description": "启用或禁用图层上的滤镜。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "启用或禁用图层的滤镜。",
+          "items": {
+            "disable": "禁用",
+            "enable": "启用"
+          }
+        },
+        "effect": {
+          "type": "layereffect",
+          "name": "滤镜",
+          "desc": "要修改的图层滤镜。 此滤镜必须先添加到图层的滤镜列表中。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-effect-parameter",
+      "scriptName": "SetLayerEffectParam",
+      "category": "layers",
+      "list-name": "设置图层滤镜参数",
+      "display-text": "设置图层{0}滤镜{1}第{2}个参数为[b]{3}[/b]",
+      "description": "设置图层的滤镜参数。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "effect": {
+          "type": "layereffect",
+          "name": "滤镜名称",
+          "desc": "要修改的图层滤镜。"
+        },
+        "parameter-index": {
+          "type": "number",
+          "name": "参数索引",
+          "desc": "要更改的第几个参数，从 0 开始索引。例如 0 = 第1个参数，1 = 第2个参数等。"
+        },
+        "value": {
+          "type": "number",
+          "name": "数值",
+          "desc": "要设置的数值。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-scroll",
+      "scriptName": "SetLayerScroll",
+      "category": "layers",
+      "list-name": "设置图层滚动",
+      "display-text": "设置图层{0}滚动到位置([b]{1}[/b], [b]{2}[/b])",
+      "description": "单独滚动图层镜头到指定位置，而不跟随场景的滚动。直到执行 '复位图层滚动' 动作。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层的名称或编号。"
+        },
+        "scroll-x": {
+          "type": "number",
+          "name": "位置 X",
+          "desc": "将此图层滚动到指定的 X 坐标。"
+        },
+        "scroll-y": {
+          "type": "number",
+          "name": "位置 Y",
+          "desc": "将此图层滚动到指定的 Y 坐标。"
+        }
+      }
+    },
+    {
+      "id": "restore-layer-scroll",
+      "scriptName": "RestoreLayerScroll",
+      "category": "layers",
+      "list-name": "复位图层滚动",
+      "display-text": "复位图层{0}滚动位置",
+      "description": "复位图层滚动位置，还原到场景当前的滚动位置。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-parallax",
+      "scriptName": "SetLayerParallax",
+      "category": "layers",
+      "list-name": "设置图层视差滚动",
+      "display-text": "设置图层{0}滚动视差为 ([b]{1}[/b], [b]{2}[/b])",
+      "description": "设置图层的视差比例。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "parallax-x": {
+          "type": "number",
+          "name": "滚动视差X",
+          "desc": "图层在水平方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+        },
+        "parallax-y": {
+          "type": "number",
+          "name": "滚动视差Y",
+          "desc": "图层在垂直方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-background-color",
+      "scriptName": "SetLayerBackground",
+      "category": "layers",
+      "list-name": "设置图层背景颜色",
+      "display-text": "设置图层{0}背景颜色为[b]{1}[/b]",
+      "description": "设置图层的背景颜色。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "color": {
+          "type": "number",
+          "name": "颜色",
+          "desc": "用于设置图层背景的颜色。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-transparent",
+      "scriptName": "SetLayerTransparent",
+      "category": "layers",
+      "list-name": "启用图层透明化",
+      "display-text": "设置图层{0}背景[b]{1}[/b]",
+      "description": "设置图层背景为透明或不透明。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "该图层是否为透明。",
+          "items": {
+            "opaque": "不透明",
+            "transparent": "透明"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layer-blend-mode",
+      "scriptName": "SetLayerBlendMode",
+      "category": "layers",
+      "list-name": "设置图层混合模式",
+      "display-text": "设置图层{0}混合模式为[b]{1}[/b]",
+      "description": "将图层与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "blend-mode": {
+          "type": "combo",
+          "name": "混合模式",
+          "desc": "为图层选择新的混合模式。",
+          "items": {
+            "normal": "正常",
+            "additive": "叠加",
+            "xor": "重叠消除",
+            "copy": "覆盖",
+            "destination-over": "背景穿透",
+            "source-in": "前景剪贴",
+            "destination-in": "背景剪贴",
+            "source-out": "前景剔除",
+            "destination-out": "背景剔除",
+            "source-atop": "前景混合",
+            "destination-atop": "背景混合",
+            "lighten": "变亮",
+            "darken": "变暗",
+            "multiply": "正片叠底",
+            "screen": "滤色"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layer-force-own-texture",
+      "scriptName": "SetLayerForceOwnTexture",
+      "category": "layers",
+      "list-name": "启用图层纹理缓冲",
+      "display-text": "[b]{1}[/b]图层{0}纹理缓冲",
+      "description": "设置图层的 '纹理缓冲' 模式。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "启用后，图层将强制渲染到中间纹理层，而不是直接渲染到屏幕。适用于处理混合模式和部分滤镜。禁用可提升渲染性能。",
+          "items": {
+            "off": "禁用",
+            "on": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layer-z-elevation",
+      "scriptName": "SetLayerZElevation",
+      "category": "layers",
+      "list-name": "设置图层视距高度",
+      "display-text": "设置图层{0}视距高度为[b]{1}[/b]",
+      "description": "设置图层在Z轴的视距高度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "z-elevation": {
+          "type": "number",
+          "name": "视距高度",
+          "desc": "设置图层在Z轴的视距高度。"
+        }
+      }
+    },
+    {
+      "id": "set-layer-rendering-mode",
+      "scriptName": "SetLayerRenderingMode",
+      "category": "layers",
+      "list-name": "设置图层渲染模式",
+      "display-text": "设置图层{0}渲染模式为[b]{1}[/b]",
+      "description": "设置指定图层的渲染模式为 2D 或 3D。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层的名称或编号。"
+        },
+        "rendering-mode": {
+          "type": "combo",
+          "name": "渲染模式",
+          "desc": "要设置的渲染模式",
+          "items": {
+            "2d": "2D",
+            "3d": "3D"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layer-sampling",
+      "scriptName": "SetLayerSampling",
+      "category": "layers",
+      "list-name": "设置图层采样",
+      "display-text": "设置图层 {0} 采样质量为 [b]{1}[/b]",
+      "description": "设置图层的采样模式。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要修改的图层的名称或编号。"
+        },
+        "sampling": {
+          "type": "combo",
+          "name": "采样",
+          "desc": "调整图像时，使用的采样方式。",
+          "items": {
+            "auto": "自动",
+            "nearest": "邻近",
+            "bilinear": "双线性",
+            "trilinear": "三线性"
+          }
+        }
+      }
+    },
+    {
+      "id": "add-layer",
+      "scriptName": "AddLayer",
+      "category": "layers",
+      "list-name": "添加图层",
+      "display-text": "添加图层 [b]{0}[/b] 到 [i]{1}[/i] [i]{2}[/i]",
+      "description": "在当前场景的图层列表中创建一个新图层。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "图层名称",
+          "desc": "新图层的名称。在当前场景中必须是唯一的。"
+        },
+        "insert-by": {
+          "type": "layer",
+          "name": "插入到",
+          "desc": "添加新图层的相对位置，指定另一个图层的名称或编号。"
+        },
+        "where": {
+          "type": "combo",
+          "name": "位置",
+          "desc": "在另一个图层的相对位置添加新图层。",
+          "items": {
+            "above": "上方",
+            "below": "下方",
+            "add-top-sublayer": "添加子图层到顶部",
+            "add-bottom-sublayer": "添加子图层到底部"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-layer",
+      "scriptName": "MoveLayer",
+      "category": "layers",
+      "list-name": "移动图层顺序",
+      "display-text": "移动图层[b]{0}[/b]到[i]{1}[/i][i]{2}[/i]",
+      "description": "将图层移动到当前场景图层列表的新位置。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要移动的图层的名称或编号。"
+        },
+        "insert-by": {
+          "type": "layer",
+          "name": "插入到",
+          "desc": "要将图层移动到的相对位置，指定另一图层的名称或编号。"
+        },
+        "where": {
+          "type": "combo",
+          "name": "位置",
+          "desc": "移动到另一个图层的相对位置。",
+          "items": {
+            "above": "上方",
+            "below": "下方",
+            "top-sublayer": "子图层顶部",
+            "bottom-sublayer": "子图层底部"
+          }
+        }
+      }
+    },
+    {
+      "id": "remove-layer",
+      "scriptName": "RemoveLayer",
+      "category": "layers",
+      "list-name": "移除图层",
+      "display-text": "移除图层 [b]{0}[/b]",
+      "description": "移除当前场景的某个图层，并同时销毁位于该图层的所有实例对象。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要删除的图层名称或编号。"
+        }
+      }
+    },
+    {
+      "id": "remove-all-dynamic-layers",
+      "scriptName": "RemoveAllDynamicLayers",
+      "category": "layers",
+      "list-name": "移除所有动态图层",
+      "display-text": "移除所有动态图层",
+      "description": "移除所有通过 '添加图层' 生成的动态图层。"
+    },
+    {
+      "id": "map-function",
+      "scriptName": "MapFunction",
+      "category": "function-maps",
+      "list-name": "映射动作组",
+      "display-text": "映射动作组 [b]{2}[/b] 到字符串 [i]{0}[/i] (名称: [i]{1}[/i])",
+      "description": "将字符串和动作组关联，通过字符串执行动作组。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "映射名称",
+          "desc": "要进行映射的名称，用于识别不同的映射，不区分大小写。"
+        },
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要关联到动作组的字符串，不区分大小写。使用此映射的名称中，找到相应字符串来调用动作组。"
+        },
+        "function": {
+          "type": "function",
+          "name": "动作组",
+          "desc": "要关联到字符串的动作组。"
+        }
+      }
+    },
+    {
+      "id": "map-function-default",
+      "scriptName": "MapFunctionDefault",
+      "category": "function-maps",
+      "list-name": "映射默认动作组",
+      "display-text": "映射 [i]{0}[/i] 到[b]{1}[/b]",
+      "description": "在映射名称中，找不到相应的字符串时，默认调用这个动作组。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "映射名称",
+          "desc": "要映射的名称，不区分大小写。"
+        },
+        "function": {
+          "type": "function",
+          "name": "动作组",
+          "desc": "在映射的名称中，找不到相应的字符串时，默认调用这个动作组。"
+        }
+      }
+    },
+    {
+      "id": "call-mapped-function",
+      "scriptName": "CallMappedFunction",
+      "category": "function-maps",
+      "list-name": "执行映射动作组",
+      "display-text": "使用动作组映射(映射名称:  [i]{0}[/i], 关联字符串:  [i]{1}[/i]，起始参数: [i]{2}[/i])",
+      "description": "从映射中的字符串调用动作组。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "映射名称",
+          "desc": "映射的名称（不区分大小写)。"
+        },
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "与动作组关联的字符串，不区分大小写。"
+        },
+        "forward-params": {
+          "type": "number",
+          "name": "起始参数",
+          "desc": "从另一个带有参数的动作组中，使用动作组映射时，其参数也会传递到关联的动作组中，并通过此值来跳过前面的参数。注意，如果关联的字符串不存在，则默认动作组将转发所有参数。"
+        }
+      }
+    },
+    {
+      "id": "go-to-layout",
+      "scriptName": "GoToLayout",
+      "category": "layout",
+      "list-name": "跳转到场景",
+      "display-text": "跳转到[b]{0}[/b]",
+      "description": "跳转到项目中的另一个场景。",
+      "params": {
+        "layout": {
+          "type": "layout",
+          "name": "场景",
+          "desc": "选择跳转的场景"
+        }
+      }
+    },
+    {
+      "id": "go-to-layout-by-name",
+      "scriptName": "GoToLayoutByName",
+      "category": "layout",
+      "list-name": "跳转到场景(根据名称)",
+      "display-text": "跳转到场景[b]{0}[/b]",
+      "description": "跳转到项目中的另一个场景，使用字符串作为场景名称。",
+      "params": {
+        "layout": {
+          "type": "string",
+          "name": "场景",
+          "desc": "要跳转的场景的名称。"
+        }
+      }
+    },
+    {
+      "id": "restart-layout",
+      "scriptName": "RestartLayout",
+      "category": "layout",
+      "list-name": "重载场景",
+      "display-text": "重载场景",
+      "description": "重新进入当前场景，并将任何事件分组还原到初始激活状态。"
+    },
+    {
+      "id": "go-to-nextprevious-layout",
+      "scriptName": "NextPrevLayout",
+      "category": "layout",
+      "list-name": "跳转下一个/上一个场景",
+      "display-text": "跳转到{0}场景",
+      "description": "跳转下一个或上一个场景。",
+      "params": {
+        "which": {
+          "type": "combo",
+          "name": "跳转到",
+          "desc": "是否转到下一个或上一个场景。",
+          "items": {
+            "next": "下一个",
+            "previous": "上一个"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layout-scale",
+      "scriptName": "SetLayoutScale",
+      "category": "layout",
+      "list-name": "设置场景缩放倍数",
+      "display-text": "设置场景缩放为[b]{0}[/b]倍",
+      "description": "设置场景的缩放比例。",
+      "params": {
+        "scale": {
+          "type": "number",
+          "name": "大小",
+          "desc": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。"
+        }
+      }
+    },
+    {
+      "id": "set-layout-angle",
+      "scriptName": "SetLayoutAngle",
+      "category": "layout",
+      "list-name": "设置场景角度",
+      "display-text": "设置场景角度为[b]{0}[/b]",
+      "description": "设置整个场景的角度。",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "角度",
+          "desc": "旋转画布到指定的角度，以度为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-layout-effect-enabled",
+      "scriptName": "SetLayoutEffectEnabled",
+      "category": "layout",
+      "list-name": "启用场景滤镜",
+      "display-text": "{0}场景滤镜{1}",
+      "description": "启用或禁用当前场景的滤镜。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "启用或禁用场景的滤镜。",
+          "items": {
+            "disable": "禁用",
+            "enable": "启用"
+          }
+        },
+        "effect": {
+          "type": "layouteffect",
+          "name": "滤镜",
+          "desc": "要修改的场景滤镜。 此滤镜必须先添加到场景的滤镜列表中。"
+        }
+      }
+    },
+    {
+      "id": "set-layout-effect-parameter",
+      "scriptName": "SetLayoutEffectParam",
+      "category": "layout",
+      "list-name": "设置场景滤镜参数",
+      "display-text": "设置场景滤镜{0}第{1}个参数为[b]{2}[/b]",
+      "description": "设置场景的滤镜参数。",
+      "params": {
+        "effect": {
+          "type": "layouteffect",
+          "name": "滤镜",
+          "desc": "要设置的滤镜名称。此滤镜必须先添加到场景的滤镜列表中。"
+        },
+        "parameter-index": {
+          "type": "number",
+          "name": "参数索引",
+          "desc": "要更改的第几个参数，从 0 开始索引。例如 0 = 第1个参数，1 = 第2个参数等。"
+        },
+        "value": {
+          "type": "number",
+          "name": "数值",
+          "desc": "要设置的数值。"
+        }
+      }
+    },
+    {
+      "id": "set-layout-vanishing-point",
+      "scriptName": "SetLayoutVanishingPoint",
+      "category": "layout",
+      "list-name": "设置场景透视中心",
+      "display-text": "设置场景透视点为 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "使用3D布局功能时，设置视区透视中心点的位置。",
+      "params": {
+        "vanishing-point-x": {
+          "type": "number",
+          "name": "透视点X",
+          "desc": "透视点的X坐标，数值从 0-100，中间位置是50。"
+        },
+        "vanishing-point-y": {
+          "type": "number",
+          "name": "透视点Y",
+          "desc": "透视点的Y坐标，数值从 0-100，中间位置是50。"
+        }
+      }
+    },
+    {
+      "id": "set-layout-projection",
+      "scriptName": "SetLayoutProjection",
+      "category": "layout",
+      "list-name": "设置场景投影类型",
+      "display-text": "设置场景投影类型为[i]{0}[/i]",
+      "description": "对于3D场景，相机视角使用透视投影，还是正交投影。",
+      "params": {
+        "projection": {
+          "type": "combo",
+          "name": "投影类型",
+          "desc": "要使用的投影类型",
+          "items": {
+            "perspective": "透视投影",
+            "orthographic": "正交投影"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-layout-sampling",
+      "scriptName": "SetLayoutSampling",
+      "category": "layout",
+      "list-name": "设置场景采样",
+      "display-text": "设置场景采样为 [b]{0}[/b]",
+      "description": "设置场景的采样模式。",
+      "params": {
+        "sampling": {
+          "type": "combo",
+          "name": "采样",
+          "desc": "调整图像时，使用的采样方式。",
+          "items": {
+            "auto": "自动",
+            "nearest": "邻近",
+            "bilinear": "双线性",
+            "trilinear": "三线性"
+          }
+        }
+      }
+    },
+    {
+      "id": "recreate-initial-objects",
+      "scriptName": "RecreateInitialObjects",
+      "category": "layout",
+      "list-name": "初始化场景对象",
+      "display-text": "初始化对象 {0}, 原始场景: [i]{5}[/i], 原始位置: [i]{1}[/i], [i]{2}[/i]) 到 ([i]{3}[/i], [i]{4}[/i]), 原始图层: [i]{6}[/i], 目标图层: [i]{7}[/i], 位置偏移: ([i]{8}[/i], [i]{9}[/i]), 创建对象层级: [i]{10}[/i]",
+      "description": "在矩形区域内，重新创建场景中的对象并初始化。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要重新创建实例的对象类型。"
+        },
+        "from-x": {
+          "type": "number",
+          "name": "起始 X",
+          "desc": "要重新创建的左边缘的X坐标"
+        },
+        "from-y": {
+          "type": "number",
+          "name": "起始 Y",
+          "desc": "要重新创建的上边缘的Y坐标"
+        },
+        "to-x": {
+          "type": "number",
+          "name": "目标 X",
+          "desc": "要重新创建的右边缘的X坐标"
+        },
+        "to-y": {
+          "type": "number",
+          "name": "目标 Y",
+          "desc": "准备重新创建区域的右下角Y坐标。"
+        },
+        "source-layout": {
+          "type": "string",
+          "name": "源场景",
+          "desc": "目标物体的所在场景 留空来选择当前场景"
+        },
+        "source-layer": {
+          "type": "any",
+          "name": "源图层",
+          "desc": "目标物体的所在图层名或零基编号 留空来选择当前层"
+        },
+        "dest-layer": {
+          "type": "any",
+          "name": "目标图层",
+          "desc": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。"
+        },
+        "offset-x": {
+          "type": "number",
+          "name": "X 偏移",
+          "desc": "在指定位置进行偏移的X坐标。"
+        },
+        "offset-y": {
+          "type": "number",
+          "name": "Y 偏移",
+          "desc": "在指定位置进行偏移的Y坐标。"
+        },
+        "create-hierarchy": {
+          "type": "boolean",
+          "name": "创建子对象",
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+        }
+      }
+    },
+    {
+      "id": "load-object-images",
+      "scriptName": "LoadObjectTextures",
+      "category": "memory-management",
+      "list-name": "加载对象图像",
+      "display-text": "加载 {0} 图像资源到内存",
+      "description": "将对象的图像资源加载到内存中(如果它还没有被加载)。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "需要加载图像的对象。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "load-object-images-by-name",
+      "scriptName": "LoadObjectTexturesByName",
+      "category": "memory-management",
+      "list-name": "加载对象图像(根据名称)",
+      "display-text": "加载 [i]{0}[/i] 图像资源到内存",
+      "description": "将指定名称的对象使用的图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "params": {
+        "object": {
+          "type": "objectname",
+          "name": "目标",
+          "desc": "需要加载图像的对象名称。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "unload-object-images",
+      "scriptName": "UnloadObjectTextures",
+      "category": "memory-management",
+      "list-name": "卸载对象图像",
+      "display-text": "卸载 {0} 图像资源",
+      "description": "如果对象已加载且其所有实例均已销毁，则从内存中卸载该对象的图像。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "要卸载图像的对象。"
+        }
+      }
+    },
+    {
+      "id": "unload-object-images-by-name",
+      "scriptName": "UnloadObjectTexturesByName",
+      "category": "memory-management",
+      "list-name": "卸载对象图像(根据名称)",
+      "display-text": "卸载 [i]{0}[/i] 图像资源",
+      "description": "从内存中释放指定对象名称的图像资源。",
+      "params": {
+        "object": {
+          "type": "objectname",
+          "name": "目标",
+          "desc": "需要卸载图像的对象名称。"
+        }
+      }
+    },
+    {
+      "id": "unload-unused-images",
+      "scriptName": "UnloadUnusedTextures",
+      "category": "memory-management",
+      "list-name": "卸载未使用的图像",
+      "display-text": "卸载未使用的图像资源",
+      "description": "卸载已加载的对象的图像，并销毁所有实例。"
+    },
+    {
+      "id": "load-layout-images",
+      "scriptName": "LoadLayoutTextures",
+      "category": "memory-management",
+      "list-name": "加载场景图像",
+      "display-text": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "description": "将场景使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "params": {
+        "layout": {
+          "type": "layout",
+          "name": "场景",
+          "desc": "需要加载所有图像的场景。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "load-layout-images-by-name",
+      "scriptName": "LoadLayoutTexturesByName",
+      "category": "memory-management",
+      "list-name": "加载场景图片(根据名称)",
+      "display-text": "加载场景 [b]{0}[/b] 图像资源到内存",
+      "description": "将指定名称的场景所使用的所有图像资源加载到内存中。注意，这可能导致内存占用消耗变高。",
+      "params": {
+        "layout": {
+          "type": "string",
+          "name": "场景",
+          "desc": "需要加载所有图像的场景名称。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "save",
+      "scriptName": "SaveState",
+      "category": "save-load",
+      "list-name": "保存",
+      "display-text": "保存游戏(插槽: [b]{0}[/b])",
+      "description": "将完整的游戏状态保存到本地计算机。",
+      "params": {
+        "slot": {
+          "type": "string",
+          "name": "插槽",
+          "desc": "标识此保存游戏状态的字符串。"
+        }
+      }
+    },
+    {
+      "id": "load",
+      "scriptName": "LoadState",
+      "category": "save-load",
+      "list-name": "加载",
+      "display-text": "加载游戏(插槽: [b]{0}[/b])",
+      "description": "从本地存储中加载先前保存的游戏状态。",
+      "params": {
+        "slot": {
+          "type": "string",
+          "name": "插槽",
+          "desc": "先前保存游戏时填写的插槽字符串。"
+        }
+      }
+    },
+    {
+      "id": "save-to-json",
+      "scriptName": "SaveStateJSON",
+      "category": "save-load",
+      "list-name": "保存为 JSON",
+      "display-text": "保存游戏数据",
+      "description": "将游戏的完整状态保存到 JSON 字符串。随后在 '保存完成' 条件中使用 '游戏储存数据' 表达式，并将其传输到其他地方，如本地存储。"
+    },
+    {
+      "id": "load-from-json",
+      "scriptName": "LoadStateJSON",
+      "category": "save-load",
+      "list-name": "加载游戏数据",
+      "display-text": "加载游戏数据 [i]{0}[/i]",
+      "description": "从先前导出的游戏状态数据加载游戏。",
+      "params": {
+        "json": {
+          "type": "string",
+          "name": "JSON",
+          "desc": "填写先前通过系统 '游戏保存数据' 表达式保存的JSON字符串。"
+        }
+      }
+    },
+    {
+      "id": "scroll-to-x",
+      "scriptName": "ScrollX",
+      "category": "scrolling",
+      "list-name": "滚动到X",
+      "display-text": "设置视角位置到X坐标 [i]{0}[/i]",
+      "description": "滚动到X坐标。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要滚动到的X坐标，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "scroll-to-y",
+      "scriptName": "ScrollY",
+      "category": "scrolling",
+      "list-name": "滚动到Y",
+      "display-text": "设置视角位置到Y坐标 [i]{0}[/i]",
+      "description": "滚动到Y坐标。",
+      "params": {
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要滚动到的Y坐标，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "scroll-to-position",
+      "scriptName": "Scroll",
+      "category": "scrolling",
+      "list-name": "滚动到位置",
+      "display-text": "设置视角位置到坐标 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "滚动到坐标。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要滚动到的X坐标，以像素为单位。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要滚动到的Y坐标，以像素为单位。"
+        }
+      }
+    },
+    {
+      "id": "scroll-to-object",
+      "scriptName": "ScrollToObject",
+      "category": "scrolling",
+      "list-name": "滚动到对象",
+      "display-text": "设置镜头位置到对象 {0}",
+      "description": "将镜头位置滚动到对象",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "要将视角滚动到的对象"
+        }
+      }
+    },
+    {
+      "id": "set-time-scale",
+      "scriptName": "SetTimescale",
+      "category": "time",
+      "list-name": "设置时间速率",
+      "display-text": "设置全局时间速率为[i]{0}[/i]倍",
+      "description": "更改游戏中的时间流逝速率，实现慢动作或暂停效果。",
+      "params": {
+        "time-scale": {
+          "type": "number",
+          "name": "时间速率",
+          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+        }
+      }
+    },
+    {
+      "id": "set-object-time-scale",
+      "scriptName": "SetObjectTimescale",
+      "category": "time",
+      "list-name": "设置对象速率",
+      "display-text": "设置 {0} 时间速率为[i]{1}[/i]倍",
+      "description": "更改特定对象的时间流逝速度，将覆盖全局时间速率。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要更改时间速率的对象。"
+        },
+        "time-scale": {
+          "type": "number",
+          "name": "时间速率",
+          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+        }
+      }
+    },
+    {
+      "id": "restore-object-time-scale",
+      "scriptName": "RestoreObjectTimescale",
+      "category": "time",
+      "list-name": "恢复对象速率",
+      "display-text": "恢复 {0} 时间速率",
+      "description": "将对象的时间刻度恢复为游戏时间。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "选择要恢复正常时间速率的对象。"
+        }
+      }
+    },
+    {
+      "id": "wait",
+      "scriptName": "Wait",
+      "category": "time",
+      "list-name": "等待",
+      "display-text": "等待[b]{0}[/b]秒 (使用时间倍速: [i]{1}[/i])",
+      "description": "等待几秒钟后再继续运行下一个动作。",
+      "params": {
+        "seconds": {
+          "type": "number",
+          "name": "秒",
+          "desc": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数"
+        },
+        "use-timescale": {
+          "type": "boolean",
+          "name": "使用时间倍数",
+          "desc": "是否使用当前的时间倍数。取消则使用真实时间速度。"
+        }
+      }
+    },
+    {
+      "id": "wait-for-signal",
+      "scriptName": "WaitForSignal",
+      "category": "time",
+      "list-name": "等待信号",
+      "display-text": "等待信号[b]{0}[/b]",
+      "description": "暂停后续动作，直到对应标签的 '发送信号' 动作触发后，再继续执行。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，用于区分要等待的信号标签。添加该动作后，当前事件块后面的其他动作将暂停运行，直至此标签对应的 '发送信号' 动作触发后继续执行。"
+        }
+      }
+    },
+    {
+      "id": "wait-for-previous-actions",
+      "scriptName": "WaitForPreviousActions",
+      "category": "time",
+      "list-name": "等待前面异步动作完成",
+      "display-text": "等待前面异步动作完成",
+      "description": "等待之前的异步动作运行完成，触发任意完成或失败都会返回。(异步动作在右侧有特殊的时间图标显示，它们往往需要一些时间才能处理完成)"
+    },
+    {
+      "id": "signal",
+      "scriptName": "Signal",
+      "category": "time",
+      "list-name": "发送信号",
+      "display-text": "发送信号[b]{0}[/b]",
+      "description": "发送一个信号，触发对应标签的 '收到信号' 条件和 '等待信号' 动作。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "在 \"双引号\" 里填写一个字符串。根据此标签触发对应的 '收到信号' 和 '等待信号' 动作。"
+        }
+      }
+    },
+    {
+      "id": "set-min-max-dt",
+      "scriptName": "SetDeltaTimeMinMax",
+      "category": "time",
+      "list-name": "设置增量时间",
+      "display-text": "设置增量时间：最小值[b]{0}[/b]，最大值[b]{1}[/b]",
+      "description": "设置增量时间限制，若帧率低于最小值将进入慢速状态，若高于最大值则进入加速状态。",
+      "params": {
+        "minimum-dt": {
+          "type": "number",
+          "name": "最小增量时间",
+          "desc": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。"
+        },
+        "maximum-dt": {
+          "type": "number",
+          "name": "最大增量时间",
+          "desc": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。"
+        }
+      }
+    },
+    {
+      "id": "set-framerate-mode",
+      "scriptName": "SetFramerateMode",
+      "category": "time",
+      "list-name": "设置帧率模式",
+      "display-text": "设置帧率模式为 [b]{0}[/b] ([i]{1}[/i])",
+      "description": "设置当前帧率模式。",
+      "params": {
+        "framerate-mode": {
+          "type": "combo",
+          "name": "帧率模式",
+          "desc": "要设置的帧率模式。",
+          "items": {
+            "vsync": "垂直同步",
+            "unlimited-tick": "无上限(仅每帧)",
+            "unlimited-frame": "无上限",
+            "fixed": "固定"
+          }
+        },
+        "fixed-framerate": {
+          "type": "number",
+          "name": "固定帧率",
+          "desc": "目标的每秒帧率。仅在 '固定帧率' 模式中可用。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "windowwidth",
+      "scriptName": "WindowWidth",
+      "category": "display",
+      "translated-name": "窗口宽度",
+      "description": "窗口宽度，用于显示游戏窗口区域的宽度。",
+      "returnType": "number"
+    },
+    {
+      "id": "windowheight",
+      "scriptName": "WindowHeight",
+      "category": "display",
+      "translated-name": "窗口高度",
+      "description": "窗口高度，用于显示游戏窗口区域的高度。",
+      "returnType": "number"
+    },
+    {
+      "id": "originalviewportwidth",
+      "scriptName": "OriginalViewportWidth",
+      "category": "display",
+      "translated-name": "原始视区宽度",
+      "description": "获取项目属性中填写的 '视区宽度' 值。",
+      "returnType": "number"
+    },
+    {
+      "id": "originalviewportheight",
+      "scriptName": "OriginalViewportHeight",
+      "category": "display",
+      "translated-name": "原始视区高度",
+      "description": "获取项目属性中填写的 '视区高度' 值。",
+      "returnType": "number"
+    },
+    {
+      "id": "layerscale",
+      "scriptName": "LayerScale",
+      "category": "layers",
+      "translated-name": "图层缩放倍数",
+      "description": "获取图层的缩放倍数。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要设置的图层的名称或编号。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layeropacity",
+      "scriptName": "LayerOpacity",
+      "category": "layers",
+      "translated-name": "图层不透明度",
+      "description": "图层不透明度，获取指定图层当前的不透明度。(通过名称或编号指定)",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerscalerate",
+      "scriptName": "LayerScaleRate",
+      "category": "layers",
+      "translated-name": "图层缩放同步比例",
+      "description": "获取图层的缩放倍率。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerangle",
+      "scriptName": "LayerAngle",
+      "category": "layers",
+      "translated-name": "图层角度",
+      "description": "获取图层的角度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportleft",
+      "scriptName": "ViewportLeft",
+      "category": "layers",
+      "translated-name": "视区左侧",
+      "description": "视区左边缘，获取指定图层视区左边缘的X坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewporttop",
+      "scriptName": "ViewportTop",
+      "category": "layers",
+      "translated-name": "视区顶部",
+      "description": "视区顶部，获取指定图层视区顶部的Y坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportright",
+      "scriptName": "ViewportRight",
+      "category": "layers",
+      "translated-name": "视区右侧",
+      "description": "视区右边缘，获取指定图层视区右边缘的X坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportbottom",
+      "scriptName": "ViewportBottom",
+      "category": "layers",
+      "translated-name": "视区底部",
+      "description": "视区底部，获取指定图层视区底部的Y坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportwidth",
+      "scriptName": "ViewportWidth",
+      "category": "layers",
+      "translated-name": "视区宽度",
+      "description": "获取指定图层的可视区域宽度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportheight",
+      "scriptName": "ViewportHeight",
+      "category": "layers",
+      "translated-name": "视区高度",
+      "description": "获取指定图层的可视区域高度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或图层名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportmidx",
+      "scriptName": "ViewportMidX",
+      "category": "layers",
+      "translated-name": "视区中心X",
+      "description": "获取指定图层视区中心的X坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "viewportmidy",
+      "scriptName": "ViewportMidY",
+      "category": "layers",
+      "translated-name": "视区中心Y",
+      "description": "获取指定图层视区中心的Y坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layertocanvasx",
+      "scriptName": "LayerToCanvasX",
+      "category": "layers",
+      "translated-name": "图层转换画布坐标X",
+      "description": "将指定位置从图层坐标转换为Canvas层的CSS坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要使用的图层。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要转化的X坐标"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要转化的Y坐标"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layertocanvasy",
+      "scriptName": "LayerToCanvasY",
+      "category": "layers",
+      "translated-name": "图层转换画布坐标Y",
+      "description": "将指定位置从图层坐标转换为画布CSS坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要使用的图层。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "要转化的X坐标"
+        },
+        "y": {
+          "type": "number",
+          "name": "y",
+          "desc": "要转化的Y坐标"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "canvastolayerx",
+      "scriptName": "CanvasToLayerX",
+      "category": "layers",
+      "translated-name": "画布转换图层坐标X",
+      "description": "将指定位置从Canvas层的CSS坐标转换为图层坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要使用的图层。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "要转化的X坐标"
+        },
+        "y": {
+          "type": "number",
+          "name": "y",
+          "desc": "要转化的Y坐标"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "canvastolayery",
+      "scriptName": "CanvasToLayerY",
+      "category": "layers",
+      "translated-name": "画布转换图层坐标Y",
+      "description": "将指定位置从Canvas层的CSS坐标转换为图层坐标。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要使用的图层。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要转化的X坐标"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要转化的Y坐标"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layertolayerx",
+      "scriptName": "LayerToLayerX",
+      "category": "layers",
+      "translated-name": "图层转换图层坐标X",
+      "description": "将指定位置从当前图层转换到另一个图层的坐标。",
+      "params": {
+        "from-layer": {
+          "type": "layer",
+          "name": "原始图层",
+          "desc": "当前所在的位置。"
+        },
+        "to-layer": {
+          "type": "layer",
+          "name": "目标图层",
+          "desc": "要转换到的图层。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "要转换的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "y",
+          "desc": "要转换的Y坐标。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layertolayery",
+      "scriptName": "LayerToLayerY",
+      "category": "layers",
+      "translated-name": "图层转换图层坐标Y",
+      "description": "将指定位置从当前图层转换到另一个图层的坐标。",
+      "params": {
+        "from-layer": {
+          "type": "layer",
+          "name": "原始图层",
+          "desc": "当前所在的位置。"
+        },
+        "to-layer": {
+          "type": "layer",
+          "name": "目标图层",
+          "desc": "要转换的目标位置。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "要转换的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "y",
+          "desc": "要转换的Y坐标。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerscrollx",
+      "scriptName": "LayerScrollX",
+      "category": "layers",
+      "translated-name": "图层位置X",
+      "description": "获取指定图层的镜头X位置。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerscrolly",
+      "scriptName": "LayerScrollY",
+      "category": "layers",
+      "translated-name": "图层位置Y",
+      "description": "获取指定图层的镜头Y位置。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerparallaxx",
+      "scriptName": "LayerParallaxX",
+      "category": "layers",
+      "translated-name": "图层滚动视差X",
+      "description": "获取指定图层的 X 轴滚动视差比例。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerparallaxy",
+      "scriptName": "LayerParallaxY",
+      "category": "layers",
+      "translated-name": "图层滚动视差Y",
+      "description": "获取指定图层的 Y 轴滚动视差比例。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layerindex",
+      "scriptName": "LayerIndex",
+      "category": "layers",
+      "translated-name": "图层编号",
+      "description": "获取指定名称的图层编号。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "layer-z-elevation",
+      "scriptName": "LayerZElevation",
+      "category": "layers",
+      "translated-name": "图层视距高度",
+      "description": "获取指定图层的视距高度。",
+      "params": {
+        "layer": {
+          "type": "layer",
+          "name": "图层",
+          "desc": "要获取的图层。可以是编号或者名字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "call-mapped-function-expression",
+      "scriptName": "CallMapped",
+      "category": "function-maps",
+      "translated-name": "映射动作组",
+      "description": "通过字符串调用关联的动作组，并具有返回值。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "映射名称",
+          "desc": "通过映射名称关联字符串，通过此字符串调用动作组，不区分大小写。"
+        },
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "使用字符串调用已关联的动作组，不区分大小写。"
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "scrollx",
+      "scriptName": "scrollx",
+      "category": "layout",
+      "translated-name": "镜头位置X",
+      "description": "当前镜头位置的X坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "scrolly",
+      "scriptName": "scrolly",
+      "category": "layout",
+      "translated-name": "镜头位置Y",
+      "description": "当前镜头位置的Y坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutwidth",
+      "scriptName": "LayoutWidth",
+      "category": "layout",
+      "translated-name": "场景宽度",
+      "description": "获取当前场景的宽度。",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutheight",
+      "scriptName": "LayoutHeight",
+      "category": "layout",
+      "translated-name": "场景高度",
+      "description": "获取当前场景的高度。",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutscale",
+      "scriptName": "LayoutScale",
+      "category": "layout",
+      "translated-name": "场景缩放倍数",
+      "description": "获取场景当前的缩放倍数。",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutname",
+      "scriptName": "LayoutName",
+      "category": "layout",
+      "translated-name": "场景名称",
+      "description": "获取当前场景的名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "layoutangle",
+      "scriptName": "LayoutAngle",
+      "category": "layout",
+      "translated-name": "场景角度",
+      "description": "获取场景当前的角度。",
+      "returnType": "number"
+    },
+    {
+      "id": "canvassnapshot",
+      "scriptName": "CanvasSnapshot",
+      "category": "layout",
+      "translated-name": "截屏快照",
+      "description": "在 '截图完成' 条件中，返回的画布快照图像。可用于精灵或平铺图加载远程图像。",
+      "returnType": "string"
+    },
+    {
+      "id": "vanishing-point-x",
+      "scriptName": "VanishingPointX",
+      "category": "layout",
+      "translated-name": "透视点X",
+      "description": "获取当前视区的透视消失点X，从 0 - 100。",
+      "returnType": "number"
+    },
+    {
+      "id": "vanishing-point-y",
+      "scriptName": "VanishingPointY",
+      "category": "layout",
+      "translated-name": "透视点Y",
+      "description": "获取当前视区的透视消失点Y，从 0 - 100。",
+      "returnType": "number"
+    },
+    {
+      "id": "sqrt",
+      "scriptName": "sqrt",
+      "category": "math",
+      "translated-name": "sqrt",
+      "description": "计算平方根。sqrt(9) = 3",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "取平方根的数"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "abs",
+      "scriptName": "abs",
+      "category": "math",
+      "translated-name": "abs",
+      "description": "计算绝对值，即去除正负符号后的值。abs(-5) = 5",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要取绝对值的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "round",
+      "scriptName": "round",
+      "category": "math",
+      "translated-name": "round",
+      "description": "四舍五入，取最接近的整数。round(5.6) = 6",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要进行四舍五入到整数的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "round-to-dp",
+      "scriptName": "roundToDp",
+      "category": "math",
+      "translated-name": "roundToDp",
+      "description": "四舍五入到小数位。roundToDp(3.141592, 2) = 3.14",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要进行四舍五入并保留小数的数字。"
+        },
+        "digits": {
+          "type": "number",
+          "name": "保留小数位",
+          "desc": "保留到第几位小数位。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "floor",
+      "scriptName": "floor",
+      "category": "math",
+      "translated-name": "floor",
+      "description": "向下取整。floor(5.9) = 5",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要进行向下取整的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "ceil",
+      "scriptName": "ceil",
+      "category": "math",
+      "translated-name": "ceil",
+      "description": "向上取整。ceil(5.1) = 6",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要进行向上取整的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "sign",
+      "scriptName": "sign",
+      "category": "math",
+      "translated-name": "sign",
+      "description": "判断数是正数、负数或零。若大于 0 返回 1；小于 0 返回 -1；等于 0 返回 0。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要返回正负符号的数字。若数字大于 0 则返回 1，等于 0 返回 0，小于 0 返回 -1。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "sin",
+      "scriptName": "sin",
+      "category": "math",
+      "translated-name": "sin",
+      "description": "三角函数，计算角度的正弦值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算正弦值的角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cos",
+      "scriptName": "cos",
+      "category": "math",
+      "translated-name": "cos",
+      "description": "三角函数，计算角度的余弦值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算余弦值的角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tan",
+      "scriptName": "tan",
+      "category": "math",
+      "translated-name": "tan",
+      "description": "三角函数，计算角度的正切值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算正切值的角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "asin",
+      "scriptName": "asin",
+      "category": "math",
+      "translated-name": "asin",
+      "description": "三角函数，计算角度的反正弦值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算角度的正弦值，取值区间为 [-1, 1] 。将返回正弦值为 n 的角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "acos",
+      "scriptName": "acos",
+      "category": "math",
+      "translated-name": "acos",
+      "description": "三角函数，计算角度的反余弦值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算角度的余弦值，取值区间为 [-1, 1] 。将返回余弦值为 n 的角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "atan",
+      "scriptName": "atan",
+      "category": "math",
+      "translated-name": "atan",
+      "description": "三角函数，计算角度的反正切值。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "三角函数，计算角度的反正切值。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "exp",
+      "scriptName": "exp",
+      "category": "math",
+      "translated-name": "exp",
+      "description": "计算 e 的 n 次幂。若需计算任意底数的次方，请使用 ^ 运算符：A ^ B。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "计算以 e 为底数时，此数字作为 e 的指数的结果。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "ln",
+      "scriptName": "ln",
+      "category": "math",
+      "translated-name": "In",
+      "description": "计算 n 在以 e 为底数的自然对数。是 exp 的反函数。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "计算以 e 为底数时，此数字的自然对数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "log10",
+      "scriptName": "log10",
+      "category": "math",
+      "translated-name": "log10",
+      "description": "计算以 10 为底数的对数。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "计算以 10 为底时，此数字的对数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "max",
+      "scriptName": "max",
+      "category": "math",
+      "translated-name": "max",
+      "description": "计算一组数字的最大值。",
+      "params": {
+        "number1": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算最大值的数字。"
+        },
+        "number2": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算最大值的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "min",
+      "scriptName": "min",
+      "category": "math",
+      "translated-name": "min",
+      "description": "计算一组数字的最小值。",
+      "params": {
+        "number1": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算最小值的数字。"
+        },
+        "number2": {
+          "type": "number",
+          "name": "数字",
+          "desc": "用于计算最小值的数字。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "distance",
+      "scriptName": "distance",
+      "category": "math",
+      "translated-name": "distance",
+      "description": "计算两点之间的距离。",
+      "params": {
+        "x1": {
+          "type": "number",
+          "name": "x1",
+          "desc": "第一个坐标点的X坐标。"
+        },
+        "y1": {
+          "type": "number",
+          "name": "y1",
+          "desc": "第一个坐标点的Y坐标。"
+        },
+        "x2": {
+          "type": "number",
+          "name": "x2",
+          "desc": "第二个坐标点的X坐标。"
+        },
+        "y2": {
+          "type": "number",
+          "name": "y2",
+          "desc": "第二个坐标点的Y坐标。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "distance3d",
+      "scriptName": "distance3d",
+      "category": "math",
+      "translated-name": "计算三维距离",
+      "description": "计算三维空间中两点之间的距离。",
+      "params": {
+        "x1": {
+          "type": "number",
+          "name": "x1",
+          "desc": "第一个点的 X 坐标。"
+        },
+        "y1": {
+          "type": "number",
+          "name": "y1",
+          "desc": "第一个点的 Y 坐标。"
+        },
+        "z1": {
+          "type": "number",
+          "name": "z1",
+          "desc": "第一个点的 Z 坐标。"
+        },
+        "x2": {
+          "type": "number",
+          "name": "x2",
+          "desc": "第二个点的 X 坐标。"
+        },
+        "y2": {
+          "type": "number",
+          "name": "y2",
+          "desc": "第二个点的 Y 坐标。"
+        },
+        "z2": {
+          "type": "number",
+          "name": "z2",
+          "desc": "第二个点的 Z 坐标。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "angle",
+      "scriptName": "angle",
+      "category": "math",
+      "translated-name": "angle",
+      "description": "计算两点之间的角度。",
+      "params": {
+        "x1": {
+          "type": "number",
+          "name": "x1",
+          "desc": "第一个坐标点的X坐标。"
+        },
+        "y1": {
+          "type": "number",
+          "name": "y1",
+          "desc": "第一个坐标点的Y坐标。"
+        },
+        "x2": {
+          "type": "number",
+          "name": "x2",
+          "desc": "第二点的X位置。"
+        },
+        "y2": {
+          "type": "number",
+          "name": "y2",
+          "desc": "第二点的Y位置。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "lerp",
+      "scriptName": "lerp",
+      "category": "math",
+      "translated-name": "lerp",
+      "description": "在两个数之间，按比例取值。如 lerp(0, 100, 0.5) = 50。",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个数字。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个数字。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "插值因子，表示两个数字范围内的一个位置。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "pi",
+      "scriptName": "pi",
+      "category": "math",
+      "translated-name": "pi",
+      "description": "返回圆周率的数学常数，近似值约 3.14159265",
+      "returnType": "number"
+    },
+    {
+      "id": "anglediff",
+      "scriptName": "anglediff",
+      "category": "math",
+      "translated-name": "anglediff",
+      "description": "计算两个角度之间，最小度数差。",
+      "params": {
+        "angle1": {
+          "type": "number",
+          "name": "角度1",
+          "desc": "第一个角度。"
+        },
+        "angle2": {
+          "type": "number",
+          "name": "角度2",
+          "desc": "第二个角度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "anglelerp",
+      "scriptName": "anglelerp",
+      "category": "math",
+      "translated-name": "anglelerp",
+      "description": "在两个角度之间，按比例取值。与标准 lerp 不同，会考虑角度的周期性。",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个角度。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个角度。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "插值因子，表示两个角度范围之间的位置。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "anglerotate",
+      "scriptName": "anglerotate",
+      "category": "math",
+      "translated-name": "anglerotate",
+      "description": "从开始到结束的'步进'的旋转角度。",
+      "params": {
+        "start": {
+          "type": "number",
+          "name": "起始角度",
+          "desc": "第一个角度。"
+        },
+        "end": {
+          "type": "number",
+          "name": "结束角度",
+          "desc": "第二个角度。"
+        },
+        "step": {
+          "type": "number",
+          "name": "步数",
+          "desc": "要旋转的度数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "unlerp",
+      "scriptName": "unlerp",
+      "category": "math",
+      "translated-name": "unlerp",
+      "description": "在两个数之间，按数值求比例。如 unlerp(0, 100, 50) = 0.5",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个数字。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个数字。"
+        },
+        "y": {
+          "type": "number",
+          "name": "y",
+          "desc": "要计算的数字，将返回此数字在范围的位置。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "infinity",
+      "scriptName": "Infinity",
+      "category": "math",
+      "translated-name": "infinity",
+      "description": "返回一个正无穷大的浮点数。",
+      "returnType": "number"
+    },
+    {
+      "id": "setbit",
+      "scriptName": "setbit",
+      "category": "math",
+      "translated-name": "setbit",
+      "description": "元字节操作。设置索引位置的字节位，在 32 位整数的范围之间。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "数字"
+        },
+        "bit": {
+          "type": "number",
+          "name": "字节",
+          "desc": "字节"
+        },
+        "value": {
+          "type": "number",
+          "name": "状态值",
+          "desc": "状态值 (0或1)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "togglebit",
+      "scriptName": "togglebit",
+      "category": "math",
+      "translated-name": "togglebit",
+      "description": "元字节操作。切换索引位置的字节位，在 32 位整数的范围之间。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "数字"
+        },
+        "bit": {
+          "type": "number",
+          "name": "字节",
+          "desc": "字节"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "getbit",
+      "scriptName": "getbit",
+      "category": "math",
+      "translated-name": "getbit",
+      "description": "元字节操作。获取索引位置的字节位，在 32 位整数的范围之间。",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "数字"
+        },
+        "bit": {
+          "type": "number",
+          "name": "字节",
+          "desc": "字节"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "qarp",
+      "scriptName": "qarp",
+      "category": "math",
+      "translated-name": "qarp",
+      "description": "在 a，b, c 之间，通过 x 进行二次插值。",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个数字。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个数字。"
+        },
+        "c": {
+          "type": "number",
+          "name": "c",
+          "desc": "第三个数字。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "插值因子。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cubic",
+      "scriptName": "cubic",
+      "category": "math",
+      "translated-name": "cubic",
+      "description": "在 a，b，c，d 之间，通过 x 进行三次插值。",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个数字。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个数字。"
+        },
+        "c": {
+          "type": "number",
+          "name": "c",
+          "desc": "第三个数字。"
+        },
+        "d": {
+          "type": "number",
+          "name": "d",
+          "desc": "第四个数字。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "插值因子。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cosp",
+      "scriptName": "cosp",
+      "category": "math",
+      "translated-name": "cosp",
+      "description": "在 a, b 之间，通过 x 进行余弦插值。",
+      "params": {
+        "a": {
+          "type": "number",
+          "name": "a",
+          "desc": "第一个数字。"
+        },
+        "b": {
+          "type": "number",
+          "name": "b",
+          "desc": "第二个数字。"
+        },
+        "x": {
+          "type": "number",
+          "name": "x",
+          "desc": "插值因子。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "imageloadingprogress",
+      "scriptName": "imageloadingprogress",
+      "category": "memory-management",
+      "translated-name": "图像加载进度",
+      "description": "获取从0到1的图像加载进度。",
+      "returnType": "number"
+    },
+    {
+      "id": "savestatejson",
+      "scriptName": "SaveStateJSON",
+      "category": "save-load",
+      "translated-name": "游戏保存数据",
+      "description": "在 '保存完成' 条件中，返回的游戏数据的 JSON 字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "objectcount",
+      "scriptName": "objectcount",
+      "category": "system",
+      "translated-name": "对象数量",
+      "description": "获取当前已创建的所有对象总数。",
+      "returnType": "number"
+    },
+    {
+      "id": "loopindex",
+      "scriptName": "loopindex",
+      "category": "system",
+      "translated-name": "当前循环索引值",
+      "description": "返回当前事件块范围正在运行的循环事件的索引值，从0开始计数。仅在 '系统' 对象的各循环类型条件。",
+      "returnType": "number"
+    },
+    {
+      "id": "renderer",
+      "scriptName": "renderer",
+      "category": "system",
+      "translated-name": "渲染器",
+      "description": "获取当前渲染器的名称。返回 'canvas2d' 或 'webgl' 或 'webgpu'。",
+      "returnType": "string"
+    },
+    {
+      "id": "projectversion",
+      "scriptName": "projectversion",
+      "category": "system",
+      "translated-name": "项目版本",
+      "description": "从项目属性返回项目版本。",
+      "returnType": "string"
+    },
+    {
+      "id": "projectid",
+      "scriptName": "projectid",
+      "category": "system",
+      "translated-name": "项目ID",
+      "description": "返回项目属性ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "projectuniqueid",
+      "scriptName": "projectuniqueid",
+      "category": "system",
+      "translated-name": "项目唯一识别码",
+      "description": "为此特定项目生成的随机字符字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "loadingprogress",
+      "scriptName": "loadingprogress",
+      "category": "system",
+      "translated-name": "加载进度",
+      "description": "在加载场景中或后台更新期间，获取从0到1的加载进度。",
+      "returnType": "number"
+    },
+    {
+      "id": "imagememoryusage",
+      "scriptName": "ImageMemoryUsage",
+      "category": "system",
+      "translated-name": "图像内存使用量",
+      "description": "预估的图像内存使用量，以 MB 为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "projectname",
+      "scriptName": "projectname",
+      "category": "system",
+      "translated-name": "项目名称",
+      "description": "返回项目名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "rendererdetail",
+      "scriptName": "rendererDetail",
+      "category": "system",
+      "translated-name": "渲染器详情",
+      "description": "获取描述渲染硬件的字符串（如果有）。",
+      "returnType": "string"
+    },
+    {
+      "id": "currenteventsheetname",
+      "scriptName": "CurrentEventSheetName",
+      "category": "system",
+      "translated-name": "当前事件表名称",
+      "description": "当前事件所属的事件表的名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "currenteventnumber",
+      "scriptName": "CurrentEventNumber",
+      "category": "system",
+      "translated-name": "当前事件表行号",
+      "description": "当前事件所在事件表的行号。",
+      "returnType": "number"
+    },
+    {
+      "id": "projectfilecount",
+      "scriptName": "ProjectFileCount",
+      "category": "system",
+      "translated-name": "项目文件总数",
+      "description": "获取项目预览/导出时包含的文件数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "projectfilenameat",
+      "scriptName": "ProjectFileNameAt",
+      "category": "system",
+      "translated-name": "项目文件名称",
+      "description": "获取指定索引的项目文件名称。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要获取的第几个文件，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "len",
+      "scriptName": "len",
+      "category": "text",
+      "translated-name": "统计字数",
+      "description": "获取文本字符串中的字符数。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "获取字符串的长度。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "newline",
+      "scriptName": "newline",
+      "category": "text",
+      "translated-name": "换行",
+      "description": "带换行符的字符串。用 & 连接其他的字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "uppercase",
+      "scriptName": "uppercase",
+      "category": "text",
+      "translated-name": "转换大写",
+      "description": "将文本转换为大写。如 TeXt -> TEXT",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要转换为大写的字符串。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "lowercase",
+      "scriptName": "lowercase",
+      "category": "text",
+      "translated-name": "转换小写",
+      "description": "将文本转换为小写。 如 TeXt -> text",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要转换为小写的字符串。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "find",
+      "scriptName": "find",
+      "category": "text",
+      "translated-name": "查找",
+      "description": "查找字符串在另一个字符串中，首次出现的第一个字符的位置，不区分大小写。找不到则返回 -1。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "原始字符串。"
+        },
+        "find": {
+          "type": "string",
+          "name": "查找",
+          "desc": "要查找的字符串。如果找到将返回第一个字符在文本中的位置，否则返回 -1。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "left",
+      "scriptName": "left",
+      "category": "text",
+      "translated-name": "截断文字",
+      "description": "截取字符串。从左侧第一个字符开始，截取特定数量的字符。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要处理的字符串。"
+        },
+        "count": {
+          "type": "number",
+          "name": "数量",
+          "desc": "返回的字符数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "right",
+      "scriptName": "right",
+      "category": "text",
+      "translated-name": "反向截断文字",
+      "description": "截取字符串。从末尾最后一个字符开始，截取特定数量的字符。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要提取字符的原始文本。"
+        },
+        "count": {
+          "type": "number",
+          "name": "数量",
+          "desc": "要截取的字符数量。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "mid",
+      "scriptName": "mid",
+      "category": "text",
+      "translated-name": "截取文字",
+      "description": "截取字符串。从指定位置开始，截取特定数量的字符。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "要截取的原始文本。"
+        },
+        "index": {
+          "type": "number",
+          "name": "起始位置",
+          "desc": "要截取的字符起始位置，从 0 开始计数。"
+        },
+        "length": {
+          "type": "number",
+          "name": "长度",
+          "desc": "要截取的文本数量。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "tokenat",
+      "scriptName": "tokenat",
+      "category": "text",
+      "translated-name": "词组提取",
+      "description": "根据分隔符，从字符串提取被分隔的词组。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "包含特定的分隔符的原始字符串。如 \"A|B|C\""
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要提取第几个被分隔的词组，从 0 开始计数。"
+        },
+        "separator": {
+          "type": "string",
+          "name": "分隔符",
+          "desc": "要识别的分隔符。可以是某个字符，或者字符串。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "tokencount",
+      "scriptName": "tokencount",
+      "category": "text",
+      "translated-name": "词组统计",
+      "description": "根据分隔符，统计有多少组被分隔的字符串。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "包含特定的分隔符的原始字符串。如 \"A|B|C\"，将返回 3。"
+        },
+        "separator": {
+          "type": "string",
+          "name": "分隔符",
+          "desc": "要识别的分隔符。可以是某个字符，或者字符串。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "replace",
+      "scriptName": "replace",
+      "category": "text",
+      "translated-name": "替换",
+      "description": "替换字符串中出现的所有关键词。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "准备被替换的原始文本。"
+        },
+        "find": {
+          "type": "string",
+          "name": "查找",
+          "desc": "要搜索的文字。"
+        },
+        "replace": {
+          "type": "string",
+          "name": "替换",
+          "desc": "用于替换搜索字符串的文本。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "string-substitute",
+      "scriptName": "StringSub",
+      "category": "text",
+      "translated-name": "模板字符串",
+      "description": "替换字符串中的占位符为表达式。占位符类似 {0}, {1}... 的标签，使用以 0 起始的数字。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "包含占位符的字符串。"
+        },
+        "substitution": {
+          "type": "any",
+          "name": "替换",
+          "desc": "用于替换占位符的值。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "trim",
+      "scriptName": "trim",
+      "category": "text",
+      "translated-name": "清除首尾空格",
+      "description": "删除首尾的空白字符，如空格、制表符。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "源文本"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "zeropad",
+      "scriptName": "zeropad",
+      "category": "text",
+      "translated-name": "补零",
+      "description": "对位数不足的数字在前面加 0 填充，如 0045",
+      "params": {
+        "number": {
+          "type": "number",
+          "name": "数字",
+          "desc": "要被补零的数字。"
+        },
+        "digits": {
+          "type": "number",
+          "name": "位数",
+          "desc": "要显示的位数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "urlencode",
+      "scriptName": "URLEncode",
+      "category": "text",
+      "translated-name": "网络链接编码",
+      "description": "将字符串进行编码。可用于 AJAX 网络请求的 URL 地址。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要编码的字符串。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "urldecode",
+      "scriptName": "URLDecode",
+      "category": "text",
+      "translated-name": "网络链接解码",
+      "description": "将 URL 网络地址解码。转换成可被读取的字符串。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要解码的字符串。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "regexsearch",
+      "scriptName": "RegexSearch",
+      "category": "text",
+      "translated-name": "正则匹配查找",
+      "description": "通过正则表达式，返回第一个匹配结果位于原始字符串的索引位置。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要搜索的字符串"
+        },
+        "regex": {
+          "type": "string",
+          "name": "正则表达式",
+          "desc": "正则表达式匹配"
+        },
+        "flags": {
+          "type": "string",
+          "name": "修饰符",
+          "desc": "正则表达式的修饰符。如 \"g\" 表示全局匹配，查找所有匹配项。留空则在匹配到第一个后停止。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "regexreplace",
+      "scriptName": "RegexReplace",
+      "category": "text",
+      "translated-name": "正则匹配替换",
+      "description": "通过正则表达式，替换第一个匹配结果。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要搜索的字符串"
+        },
+        "regex": {
+          "type": "string",
+          "name": "正则表达式",
+          "desc": "要匹配的正则表达式"
+        },
+        "flags": {
+          "type": "string",
+          "name": "修饰符",
+          "desc": "正则表达式的修饰符"
+        },
+        "replace": {
+          "type": "string",
+          "name": "要替换的内容",
+          "desc": "将匹配的内容替换为"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "regexmatchcount",
+      "scriptName": "RegexMatchCount",
+      "category": "text",
+      "translated-name": "正则匹配数量",
+      "description": "通过正则表达式，返回匹配到的结果数量。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要搜索的字符串"
+        },
+        "regex": {
+          "type": "string",
+          "name": "正则表达式",
+          "desc": "用于匹配的正则表达式。"
+        },
+        "flags": {
+          "type": "string",
+          "name": "修饰符",
+          "desc": "用于指定额外匹配策略的标记符。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "regexmatchat",
+      "scriptName": "RegexMatchAt",
+      "category": "text",
+      "translated-name": "正则匹配提取",
+      "description": "通过正则表达式，返回第N个匹配结果的字符串。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要搜索的字符串"
+        },
+        "regex": {
+          "type": "string",
+          "name": "正则表达式",
+          "desc": "要用于匹配的正则表达式"
+        },
+        "flags": {
+          "type": "string",
+          "name": "修饰符",
+          "desc": "正则表达式的修饰符"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "返回第 n 个匹配项。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "findcase",
+      "scriptName": "findCase",
+      "category": "text",
+      "translated-name": "精确查找",
+      "description": "查找字符串在另一个字符串中，首次出现的第一个字符的位置，区分大小写。找不到则返回 -1。",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "文本",
+          "desc": "原始字符串。"
+        },
+        "find": {
+          "type": "string",
+          "name": "查找",
+          "desc": "要查找的字符串。如果找到将返回第一个字符在文本中的位置，否则返回 -1。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "dt",
+      "scriptName": "dt",
+      "category": "time",
+      "translated-name": "dt",
+      "description": "时间增量，从上一帧到这一帧的时间差 (delta-time)。",
+      "returnType": "number"
+    },
+    {
+      "id": "wallclockdt",
+      "scriptName": "wallclockdt",
+      "category": "time",
+      "translated-name": "真实时间增量",
+      "description": "真实时间增量，即不受时间倍速影响的 dt 值。",
+      "returnType": "number"
+    },
+    {
+      "id": "timescale",
+      "scriptName": "timescale",
+      "category": "time",
+      "translated-name": "时间速率",
+      "description": "时间速率，用于加快或减慢游戏整体运行速度。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+      "returnType": "number"
+    },
+    {
+      "id": "time",
+      "scriptName": "time",
+      "category": "time",
+      "translated-name": "游戏运行时间",
+      "description": "自游戏启动后，累计运行的秒数。受到时间速率的影响。",
+      "returnType": "number"
+    },
+    {
+      "id": "tickcount",
+      "scriptName": "tickcount",
+      "category": "time",
+      "translated-name": "累计帧数",
+      "description": "自游戏启动后，累计的帧数。",
+      "returnType": "number"
+    },
+    {
+      "id": "fps",
+      "scriptName": "fps",
+      "category": "time",
+      "translated-name": "fps",
+      "description": "预估的每秒刷新帧数速率。",
+      "returnType": "number"
+    },
+    {
+      "id": "wallclocktime",
+      "scriptName": "wallclocktime",
+      "category": "time",
+      "translated-name": "真实运行时间",
+      "description": "自游戏启动后，累计运行的真实世界秒数。不受到时间速率的影响。",
+      "returnType": "number"
+    },
+    {
+      "id": "cpuutilisation",
+      "scriptName": "cpuutilisation",
+      "category": "time",
+      "translated-name": "预估CPU利用率",
+      "description": "预估上一秒在运算逻辑所花费的时间，以秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "gpuutilisation",
+      "scriptName": "gpuutilisation",
+      "category": "time",
+      "translated-name": "预估GPU利用率",
+      "description": "预估上一秒在渲染所花费的时间，以秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "int",
+      "scriptName": "int",
+      "category": "values",
+      "translated-name": "转换整数",
+      "description": "将字符串或浮点数转换为整数。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要转换为整数的值"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "float",
+      "scriptName": "float",
+      "category": "values",
+      "translated-name": "转换浮点数",
+      "description": "将字符串或整数转换为浮点数。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要转换为浮点数的值"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "str",
+      "scriptName": "str",
+      "category": "values",
+      "translated-name": "转换字符串",
+      "description": "将整数或浮点数转换为字符串。 您还可以使用＆运算符进行连接。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要转换为字符串的值"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "random",
+      "scriptName": "random",
+      "category": "values",
+      "translated-name": "生成随机数",
+      "description": "从 0 到小于 X 之间随机生成一个浮点数。如果传入 2 个参数，随机数在包含 a 但不包含 b 范围之间。",
+      "params": {
+        "range": {
+          "type": "number",
+          "name": "范围",
+          "desc": "要生成的随机浮点数范围，从 0 到小于此值。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "clamp",
+      "scriptName": "clamp",
+      "category": "values",
+      "translated-name": "约束范围",
+      "description": "约束数值在一个范围内。若小于最小值，则返回最小值。若大于最大值，则返回最大值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "当前值",
+          "desc": "被约束在范围的数值。"
+        },
+        "lower": {
+          "type": "number",
+          "name": "最小值",
+          "desc": "若数值小于最小值，则返回最小值。"
+        },
+        "upper": {
+          "type": "number",
+          "name": "最大值",
+          "desc": "若数值大于最大值，则返回最大值。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "choose",
+      "scriptName": "choose",
+      "category": "values",
+      "translated-name": "选择随机项",
+      "description": "从提供的参数中，随机选择一个值。",
+      "params": {
+        "value1": {
+          "type": "any",
+          "name": "值",
+          "desc": "要被随机选择的值。"
+        },
+        "value2": {
+          "type": "any",
+          "name": "值",
+          "desc": "另一个可以随机选择的值。"
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "chooseindex",
+      "scriptName": "chooseindex",
+      "category": "values",
+      "translated-name": "选择索引项",
+      "description": "从提供的参数中，根据索引选择对应值。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "选择第几个参数，从 0 开始计数。"
+        },
+        "value1": {
+          "type": "any",
+          "name": "值",
+          "desc": "用于被索引选择的值。"
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "rgb",
+      "scriptName": "rgb",
+      "category": "values",
+      "translated-name": "rgb",
+      "description": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "params": {
+        "red": {
+          "type": "number",
+          "name": "红",
+          "desc": "红色值，0-255"
+        },
+        "green": {
+          "type": "number",
+          "name": "绿",
+          "desc": "绿色值，0-255"
+        },
+        "blue": {
+          "type": "number",
+          "name": "蓝",
+          "desc": "蓝色值，0-255"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "rgbex",
+      "scriptName": "rgbEx",
+      "category": "values",
+      "translated-name": "rgbEx",
+      "description": "生成RGB颜色值，数值在 0 - 100 范围。",
+      "params": {
+        "red": {
+          "type": "number",
+          "name": "红",
+          "desc": "红色值, 0-100"
+        },
+        "green": {
+          "type": "number",
+          "name": "绿",
+          "desc": "绿色值, 0-100"
+        },
+        "blue": {
+          "type": "number",
+          "name": "蓝",
+          "desc": "蓝色值, 0-100"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "rgba",
+      "scriptName": "rgba",
+      "category": "values",
+      "translated-name": "rgba",
+      "description": "生成RGBA颜色值，数值在 0 - 100 范围。",
+      "params": {
+        "red": {
+          "type": "number",
+          "name": "红",
+          "desc": "红色值, 0-100"
+        },
+        "green": {
+          "type": "number",
+          "name": "绿",
+          "desc": "绿色值, 0-100"
+        },
+        "blue": {
+          "type": "number",
+          "name": "蓝",
+          "desc": "蓝色值, 0-100"
+        },
+        "alpha": {
+          "type": "number",
+          "name": "不透明度",
+          "desc": "不透明度值，0-100"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "rgbex255",
+      "scriptName": "rgbEx255",
+      "category": "values",
+      "translated-name": "rgbEx255",
+      "description": "生成RGB颜色值，数值在 0 - 255 范围。",
+      "params": {
+        "red": {
+          "type": "number",
+          "name": "红",
+          "desc": "红色值，0-255"
+        },
+        "green": {
+          "type": "number",
+          "name": "绿",
+          "desc": "绿色值，0-255"
+        },
+        "blue": {
+          "type": "number",
+          "name": "蓝",
+          "desc": "蓝色值，0-255"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "rgba255",
+      "scriptName": "rgba255",
+      "category": "values",
+      "translated-name": "rgba255",
+      "description": "生成RGBA颜色值，数值在 0 - 255 范围。",
+      "params": {
+        "red": {
+          "type": "number",
+          "name": "红",
+          "desc": "红色值，0-255"
+        },
+        "green": {
+          "type": "number",
+          "name": "绿",
+          "desc": "绿色值，0-255"
+        },
+        "blue": {
+          "type": "number",
+          "name": "蓝",
+          "desc": "蓝色值，0-255"
+        },
+        "alpha": {
+          "type": "number",
+          "name": "不透明度",
+          "desc": "不透明度的值，0-255"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "hex-color",
+      "scriptName": "HexColor",
+      "category": "values",
+      "translated-name": "转换颜色值",
+      "description": "将十六进制颜色值转换为 RGBA 颜色值格式。",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "十六进制颜色值",
+          "desc": "十六进制字符串，例如 \"#FF0000\"。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "color-to-hex-string",
+      "scriptName": "ColorToHexString",
+      "category": "values",
+      "translated-name": "转换颜色值",
+      "description": "将 RGBA 值生成 CSS 样式的十六进制字符串。",
+      "params": {
+        "color-value": {
+          "type": "number",
+          "name": "颜色",
+          "desc": "要转换为十六进制字符串的 RGBA 颜色值。"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

@@ -1,0 +1,599 @@
+{
+  "id": "pathfinding",
+  "name": "寻路",
+  "description": "寻找前往某个位置的路线并绕过途径的障碍物。",
+  "type": "behavior",
+  "aceCategories": {
+    "movement": "移动",
+    "path": "路径",
+    "rabbit": "目标",
+    "settings": "设置"
+  },
+  "conditions": [
+    {
+      "id": "on-path-found",
+      "scriptName": "OnPathFound",
+      "category": "",
+      "list-name": "找到路线",
+      "display-text": "{my} 找到路线",
+      "description": "执行在寻路动作后，成功找到寻路路线时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-failed-to-find-path",
+      "scriptName": "OnFailedToFindPath",
+      "category": "",
+      "list-name": "寻找路线失败",
+      "display-text": "{my} 寻找路线失败",
+      "description": "执行在寻路动作后，无法找到寻路路线时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-cell-obstacle",
+      "scriptName": "IsCellObstacle",
+      "category": "",
+      "list-name": "检查单元格位置存在障碍物",
+      "display-text": "{my}寻路单元格({0}, {1}) 存在障碍物",
+      "description": "检测指定的单元格坐标位置是否存在障碍物。",
+      "params": {
+        "cell-x": {
+          "type": "number",
+          "name": "单元格X",
+          "desc": "要检测的寻路单元格X，基于 0 开始计数。"
+        },
+        "cell-y": {
+          "type": "number",
+          "name": "单元格Y",
+          "desc": "要检测的寻路单元格Y，基于 0 开始计数。"
+        }
+      }
+    },
+    {
+      "id": "is-calculating-path",
+      "scriptName": "IsCalculatingPath",
+      "category": "",
+      "list-name": "正在计算路线",
+      "display-text": "{my} 正在计算路线",
+      "description": "检测对象当前是否正在寻找路线。"
+    },
+    {
+      "id": "is-moving-along-path",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "正沿着路线移动",
+      "display-text": "正沿着 {my} 路线移动",
+      "description": "检测对象是否正沿着一条已找到的路线移动。"
+    },
+    {
+      "id": "on-arrived",
+      "scriptName": "OnArrived",
+      "category": "",
+      "list-name": "到达目的地",
+      "display-text": "{my} 到达目的地",
+      "description": "当沿着路线移动并抵达目的时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "比较移动速度",
+      "display-text": "{my} 速度 {0} [b]{1}[/b]",
+      "description": "以当前对象的移动速度进行对比",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "进行速度对比的对象，以像素/秒为单位"
+        }
+      }
+    },
+    {
+      "id": "diagonals-are-enabled",
+      "scriptName": "DiagonalsEnabled",
+      "category": "",
+      "list-name": "允许斜向移动",
+      "display-text": "{my} 允许对角线移动",
+      "description": "检测是否允许跨越单元格进行斜向对角移动。"
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "检测当前行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "find-path",
+      "scriptName": "FindPath",
+      "category": "",
+      "list-name": "寻找路线",
+      "display-text": "{my}: 寻找路径 ([i]{0}[/i], [i]{1}[/i])",
+      "description": "开始寻找前往目的地的路线，完成后将会触发 '找到路线' 或 '寻找路线失败'。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要寻找路线的位置 X 坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要寻找路线的位置 Y 坐标。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "{0} {my}",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "set": {
+          "type": "combo",
+          "name": "设置",
+          "desc": "启用或禁用此行为。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "regenerate-obstacle-map",
+      "scriptName": "RegenerateMap",
+      "category": "",
+      "list-name": "重新生成障碍物地图",
+      "display-text": "{my}重新生成障碍物地图",
+      "description": "重新检查场景内的每个单元格，检测障碍物是否存在，防止障碍物的位置已经改变。注意，此动作需要一定时间，在下一帧触发完成条件。",
+      "isAsync": true
+    },
+    {
+      "id": "add-obstacle",
+      "scriptName": "AddObstacle",
+      "category": "",
+      "list-name": "添加障碍物",
+      "display-text": "{my}添加 {0} 为障碍物",
+      "description": "使用自定义障碍物时，添加一个家族对象或特定对象作为目标。",
+      "params": {
+        "obstacle": {
+          "type": "object",
+          "name": "障碍物",
+          "desc": "在寻路图中选择一个家族对象或特定对象作为障碍物。"
+        }
+      }
+    },
+    {
+      "id": "clear-obstacles",
+      "scriptName": "ClearObstacles",
+      "category": "",
+      "list-name": "清除障碍物",
+      "display-text": "{my} 清除所有自定义障碍物",
+      "description": "清除所有添加的自定义障碍物。"
+    },
+    {
+      "id": "set-move-cost",
+      "scriptName": "SetMoveCost",
+      "category": "",
+      "list-name": "设置移动成本",
+      "display-text": "设置 {my}移动成本为[i]{0}[/i]",
+      "description": "设置移动到相邻单元格的基本成本，这会影响其他成本的相对效果。",
+      "params": {
+        "move-cost": {
+          "type": "number",
+          "name": "移动成本",
+          "desc": "移动到相邻单元格的基本成本。"
+        }
+      }
+    },
+    {
+      "id": "add-path-cost",
+      "scriptName": "AddCost",
+      "category": "",
+      "list-name": "增加路径成本",
+      "display-text": "增加 {my} 经过对象 {0} 的寻路成本 [i]{1}[/i]",
+      "description": "增加对象在前进路径的成本，用于模拟不同的地形的难易度。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "选择一个对象，增加寻路路线经过的成本。"
+        },
+        "cost": {
+          "type": "number",
+          "name": "成本",
+          "desc": "增加此物体在寻路计算时的额外成本。注意，默认情况下，水平/对角线运动的成本分别为 10 和14。"
+        }
+      }
+    },
+    {
+      "id": "clear-cost",
+      "scriptName": "ClearCost",
+      "category": "",
+      "list-name": "清除额外成本",
+      "display-text": "清除 {my} 的额外寻路成本",
+      "description": "清除当前添加的所有额外寻路成本"
+    },
+    {
+      "id": "regenerate-region",
+      "scriptName": "RegenerateRegion",
+      "category": "",
+      "list-name": "重新生成区域",
+      "display-text": "{my} 重新生成 ([i]{0}[/i], [i]{1}[/i]) 到 ([i]{2}[/i], [i]{3}[/i])的障碍物地图",
+      "description": "从场景坐标中的矩形区域重新生成障碍物地图。下次运行事件时完成(即下一帧)。",
+      "params": {
+        "start-x": {
+          "type": "number",
+          "name": "开始 X",
+          "desc": "在矩形场景中重新生成的起始X坐标"
+        },
+        "start-y": {
+          "type": "number",
+          "name": "开始 Y",
+          "desc": "在矩形场景中重新生成的起始Y坐标"
+        },
+        "end-x": {
+          "type": "number",
+          "name": "结束 X",
+          "desc": "在矩形场景中重新生成的结束X坐标"
+        },
+        "end-y": {
+          "type": "number",
+          "name": "结束 Y",
+          "desc": "在矩形场景中重新生成的结束Y坐标"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "regenerate-region-around-object",
+      "scriptName": "RegenerateObjectRegion",
+      "category": "",
+      "list-name": "重新生成物体周围的区域",
+      "display-text": "{my} 重新计算 {0} 周围的障碍路线",
+      "description": "从指定对象的边界框中重新生成障碍路线。此动作需要到下一个运行周期完成。",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "目标",
+          "desc": "选择一个对象，使用该对象的碰撞边界框重新生成障碍图的矩形部分。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "start-path-group",
+      "scriptName": "StartPathGroup",
+      "category": "",
+      "list-name": "开始路径组",
+      "display-text": "{my}: 开始路径组 (基础成本: [i]{0}[/i], 分散单元格: [i]{1}[/i], 最大线程数: [i]{2}[/i])",
+      "description": "对相同分组的寻路路径四周增加临时寻路成本来分散路径，防止它们采用完全相同的路径。",
+      "params": {
+        "base-cost": {
+          "type": "number",
+          "name": "基础成本",
+          "desc": "在寻路路径周围增加额外的寻路成本，该成本根据使用的线程数量成倍增加。"
+        },
+        "cell-spread": {
+          "type": "number",
+          "name": "分散单元格",
+          "desc": "增加的额外寻路成本，最好使用奇数。"
+        },
+        "max-workers": {
+          "type": "number",
+          "name": "最大线程数",
+          "desc": "为此分组分配路径的最大线程数，每个线程单独跟踪寻路成本。"
+        }
+      }
+    },
+    {
+      "id": "end-path-group",
+      "scriptName": "EndPathGroup",
+      "category": "",
+      "list-name": "结束路径组",
+      "display-text": "{my}: 结束路径组",
+      "description": "结束一个路径组，恢复正常的寻路。"
+    },
+    {
+      "id": "move-along-path",
+      "scriptName": "StartMoving",
+      "category": "movement",
+      "list-name": "沿着路线移动",
+      "display-text": "{my}: 开始寻路",
+      "description": "在 '找到路线' 条件中使用。开始沿着一条找到的路线移动。"
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "movement",
+      "list-name": "停止",
+      "display-text": "{my}: 停止",
+      "description": "停止沿着路线移动"
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "movement",
+      "list-name": "设置最大移动速度",
+      "display-text": "设置 {my}最大移动速度为[i]{0}[/i]",
+      "description": "设置移动时可达到的最大移动速度，以像素/秒为单位。",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "设置移动时可达到的最大移动速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcc",
+      "category": "movement",
+      "list-name": "设置加速度",
+      "display-text": "设置 {my}加速度为[i]{0}[/i]",
+      "description": "设置沿路径移动时的加速度。",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "加速度",
+          "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDec",
+      "category": "movement",
+      "list-name": "设置减速度",
+      "display-text": "设置 {my}减速度[i]{0}[/i]",
+      "description": "设置沿路径移动时的减速度。",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "减速度",
+          "desc": "从正常移动至完全停止的减速度，以像素/秒为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-rotate-speed",
+      "scriptName": "SetRotateSpeed",
+      "category": "movement",
+      "list-name": "设置转向速度",
+      "display-text": "设置 {my}转向速度为[i]{0}[/i]",
+      "description": "设置沿路径移动时的转向速度。",
+      "params": {
+        "rotate-speed": {
+          "type": "number",
+          "name": "转向速度",
+          "desc": "沿路线移动时的转向速度，以每秒度数为单位。"
+        }
+      }
+    },
+    {
+      "id": "set-diagonals-enabled",
+      "scriptName": "SetDiagonalsEnabled",
+      "category": "movement",
+      "list-name": "启用对角线移动",
+      "display-text": "{0} {my} 对角线移动",
+      "description": "启用或禁用穿过单元格时的对角线移动",
+      "params": {
+        "diagonals": {
+          "type": "combo",
+          "name": "对角线",
+          "desc": "是否启用或禁用穿过单元格时的对角线移动",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-direct-movement",
+      "scriptName": "SetDirectMovement",
+      "category": "movement",
+      "list-name": "设置直接移动模式",
+      "display-text": "设置 {my}直接移动模式为 [i]{0}[/i]",
+      "description": "设置 '直接移动' 模式。当周围没有障碍物时，如何向下一个路径点移动。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "直接移动",
+          "desc": "当周围没有障碍物时，允许直接向下一个路径点移动。",
+          "items": {
+            "none": "禁止",
+            "to-destination": "前往目的地",
+            "anywhere-along-path": "沿路径任意点"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "movement",
+      "list-name": "设置速度",
+      "display-text": "设置 {my}移动速度为[i]{0}[/i]",
+      "description": "设置沿路径移动时的移动速度。",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "速度",
+          "desc": "设置的速度，以像素/秒为单位"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "nodecount",
+      "scriptName": "NodeCount",
+      "category": "path",
+      "translated-name": "节点数量",
+      "description": "沿着找到的路径途中的节点数。",
+      "returnType": "number"
+    },
+    {
+      "id": "nodexat",
+      "scriptName": "NodeXAt",
+      "category": "path",
+      "translated-name": "节点坐标X",
+      "description": "获取路径节点的X坐标。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "路径节点的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "nodeyat",
+      "scriptName": "NodeYAt",
+      "category": "path",
+      "translated-name": "节点坐标Y",
+      "description": "获取路径节点的Y坐标。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "路径节点的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "path",
+      "translated-name": "移动角度",
+      "description": "当前的移动角度，以角度/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "currentnode",
+      "scriptName": "CurrentNode",
+      "category": "path",
+      "translated-name": "当前节点",
+      "description": "当前朝向的路径节点，从 0 开始计数。",
+      "returnType": "number"
+    },
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "path",
+      "translated-name": "移动速度",
+      "description": "当前的移动速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "cellsize",
+      "scriptName": "CellSize",
+      "category": "settings",
+      "translated-name": "单元格大小",
+      "description": "当前单元格大小",
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "settings",
+      "translated-name": "最大移动速度",
+      "description": "当前最高速度，以像素/秒为单位",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "settings",
+      "translated-name": "加速度",
+      "description": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "settings",
+      "translated-name": "减速度",
+      "description": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "rotatespeed",
+      "scriptName": "RotateSpeed",
+      "category": "settings",
+      "translated-name": "转向速度",
+      "description": "当前最大转向速度，以角度/秒为单位。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "cell-size": {
+      "name": "单元格大小",
+      "desc": "路线使用的单元格大小。单元格越小寻路越精细，CPU负载也更大。"
+    },
+    "cell-border": {
+      "name": "单元格边界",
+      "desc": "用于侦测障碍物的额外尺寸，以防止行进路线过于贴近障碍物"
+    },
+    "obstacles": {
+      "name": "障碍物",
+      "desc": "指定实体对象或自定义对象作为障碍物。",
+      "items": {
+        "solids": "实体",
+        "custom": "自定义"
+      }
+    },
+    "max-speed": {
+      "name": "最大移动速度",
+      "desc": "移动时可达到的最大移动速度，以像素/秒为单位。"
+    },
+    "acceleration": {
+      "name": "加速度",
+      "desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。"
+    },
+    "deceleration": {
+      "name": "减速度",
+      "desc": "从正常移动至完全停止的减速度，以像素/秒为单位。"
+    },
+    "rotate-speed": {
+      "name": "转向速度",
+      "desc": "移动时的转向速度,以度/秒为单位。"
+    },
+    "rotate-object": {
+      "name": "旋转对象",
+      "desc": "移动中是否改变对象的角度"
+    },
+    "diagonals": {
+      "name": "对角线",
+      "desc": "是否允许路径使用对角线方向"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    },
+    "direct-movement": {
+      "name": "直接移动",
+      "desc": "当周围没有障碍物时，允许直接向下一个节点移动。",
+      "items": {
+        "none": "禁用",
+        "to-destination": "前往目的地",
+        "anywhere-along-path": "沿路径任意点"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "burn",
+  "name": "加深",
+  "description": "将背景层和混合层的颜色通道加深混合，使较暗的颜色变得更暗。此混合模式比 '正片叠底' 的结果影响更大。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

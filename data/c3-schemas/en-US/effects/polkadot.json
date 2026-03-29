@@ -1,0 +1,23 @@
+{
+  "id": "polkadot",
+  "name": "Polka dot",
+  "description": "Breaks an image up into colored dots within a regular grid.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "dot-size",
+      "type": "percent",
+      "name": "Dot size",
+      "desc": "Size of the dots."
+    },
+    {
+      "id": "dot-scale",
+      "type": "percent",
+      "name": "Dot scale",
+      "desc": "Amount of space taken up by the dots."
+    }
+  ]
+}

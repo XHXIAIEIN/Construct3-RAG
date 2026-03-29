@@ -1,0 +1,1003 @@
+{
+  "id": "model3d",
+  "name": "3D model",
+  "description": "Display a 3D model that has been imported to the project.",
+  "type": "plugin",
+  "aceCategories": {
+    "3d-model": "3D model",
+    "playback": "Playback",
+    "collisions": "Collisions",
+    "misc": "Misc"
+  },
+  "conditions": [
+    {
+      "id": "on-load-model",
+      "scriptName": "OnLoadModel",
+      "category": "3d-model",
+      "list-name": "On model loaded",
+      "display-text": "On model loaded",
+      "description": "Triggered when a model is successfully loaded.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-model-fail",
+      "scriptName": "OnLoadModelFail",
+      "category": "3d-model",
+      "list-name": "On model load error",
+      "display-text": "On model load error",
+      "description": "Triggered if an error occurs loading a model.",
+      "isTrigger": true
+    },
+    {
+      "id": "for-each-mesh",
+      "scriptName": "ForEachMesh",
+      "category": "3d-model",
+      "list-name": "For each mesh",
+      "display-text": "For each mesh",
+      "description": "Loop through all the meshes in the model."
+    },
+    {
+      "id": "for-each-animation",
+      "scriptName": "ForEachAnimation",
+      "category": "3d-model",
+      "list-name": "For each animation",
+      "display-text": "For each animation",
+      "description": "Loop through all the animations in the model."
+    },
+    {
+      "id": "playing",
+      "scriptName": "IsPlaying",
+      "category": "3d-model",
+      "list-name": "Is playing",
+      "display-text": "Is playing",
+      "description": "Check if the model is playing an animation using delta time."
+    },
+    {
+      "id": "looping",
+      "scriptName": "IsLooping",
+      "category": "3d-model",
+      "list-name": "Is looping",
+      "display-text": "Is looping",
+      "description": "Check if the model is looping an animation."
+    },
+    {
+      "id": "mesh-render-mode",
+      "scriptName": "MeshRenderMode",
+      "category": "3d-model",
+      "list-name": "Render mode",
+      "display-text": "Render mode is [b]{0}[/b]",
+      "description": "Check the render mode being used.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "How the individual meshes are being drawn, either following the hierarchy in the model file or in isolation.",
+          "items": {
+            "hierarchy": "Model hierarchy",
+            "isolate": "Isolate"
+          },
+          "initialValue": "hierarchy"
+        }
+      }
+    },
+    {
+      "id": "is-mesh-enabled",
+      "scriptName": "IsMeshEnabled",
+      "category": "3d-model",
+      "list-name": "Is mesh enabled",
+      "display-text": "Is mesh [b]{0}[/b] enabled",
+      "description": "Check if a mesh is enabled.",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "Mesh",
+          "desc": "The name of the mesh to check for."
+        }
+      }
+    },
+    {
+      "id": "are-all-meshes-enabled",
+      "scriptName": "AreAllMeshesEnabled",
+      "category": "3d-model",
+      "list-name": "Are all meshes enabled",
+      "display-text": "Are all meshes enabled",
+      "description": "Check if all the meshes are being drawn."
+    },
+    {
+      "id": "is-backface-culling-enabled",
+      "scriptName": "IsBackFaceCullingEnabled",
+      "category": "3d-model",
+      "list-name": "Is back face culling enabled",
+      "display-text": "Is back face culling enabled",
+      "description": "Check if back face culling is enabled."
+    },
+    {
+      "id": "mesh-exists",
+      "scriptName": "MeshExists",
+      "category": "3d-model",
+      "list-name": "Mesh exists",
+      "display-text": "Mesh [b]{0}[/b] exists",
+      "description": "Check if a mesh exists in the 3D model.",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "Mesh",
+          "desc": "The name of the mesh to check for."
+        }
+      }
+    },
+    {
+      "id": "on-animation-finished",
+      "scriptName": "OnAnimationFinished",
+      "category": "3d-model",
+      "list-name": "On animation finished",
+      "display-text": "On animation [b]{0}[/b] finished",
+      "description": "Check an animation finished.",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The name of the animation to check for."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-animation-looped",
+      "scriptName": "OnAnimationLooped",
+      "category": "3d-model",
+      "list-name": "On animation looped",
+      "display-text": "On animation [b]{0}[/b] looped",
+      "description": "Check an animation looped.",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The name of the animation to check for."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-animation-finished",
+      "scriptName": "OnAnyAnimationFinished",
+      "category": "3d-model",
+      "list-name": "On any animation finished",
+      "display-text": "On any animation finished",
+      "description": "Check if any animation finished.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-animation-looped",
+      "scriptName": "OnAnyAnimationLooped",
+      "category": "3d-model",
+      "list-name": "On any animation looped",
+      "display-text": "On any animation looped",
+      "description": "Check if any animation looped.",
+      "isTrigger": true
+    },
+    {
+      "id": "collisions-enabled",
+      "scriptName": "IsCollisionEnabled",
+      "category": "collisions",
+      "list-name": "Collisions enabled",
+      "display-text": "Collisions enabled",
+      "description": "True if the object's collisions are enabled and will fire collision events."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-model",
+      "scriptName": "SetModel",
+      "category": "3d-model",
+      "list-name": "Set 3D model",
+      "display-text": "Set 3D model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], loop: [i]{4}[/i], progress: [i]{5}[/i])",
+      "description": "Change the 3D model shown.",
+      "params": {
+        "model": {
+          "type": "model3d",
+          "name": "3D model",
+          "desc": "The 3D model object to use."
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "Mesh",
+          "desc": "The mesh to draw. Leave empty to draw all the meshes in the model."
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The animation to play (if the model has any)."
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "Playing",
+          "desc": "Choose if the selected animation should start playing immediately."
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "Loop",
+          "desc": "Choose if the selected animation should loop."
+        },
+        "progress": {
+          "type": "number",
+          "name": "Progress",
+          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-model-by-name",
+      "scriptName": "SetModelByName",
+      "category": "3d-model",
+      "list-name": "Set 3D model (by name)",
+      "display-text": "Set 3D model to [b]{0}[/b] with mesh [i]{1}[/i], animation [i]{2}[/i] (playing: [i]{3}[/i], loop: [i]{4}[/i], progress: [i]{5}[/i])",
+      "description": "Change the 3D model shown, using a string to look for it.",
+      "params": {
+        "model": {
+          "type": "model3d-string",
+          "name": "3D model",
+          "desc": "The name of the 3D model object to use."
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "Mesh",
+          "desc": "The mesh to draw. Leave empty to draw all the meshes in the model."
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The animation to play (if the model has any)."
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "Playing",
+          "desc": "Choose if the selected animation should start playing immediately."
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "Loop",
+          "desc": "Choose if the selected animation should loop."
+        },
+        "progress": {
+          "type": "number",
+          "name": "Progress",
+          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-mesh-enabled",
+      "scriptName": "SetMeshEnabled",
+      "category": "3d-model",
+      "list-name": "Set mesh enabled",
+      "display-text": "Set mesh [b]{0}[/b] enabled: {1}",
+      "description": "Enable or disable the provided mesh.",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "Mesh",
+          "desc": "The mesh to affect. If the mesh is not found in the model, nothing changes."
+        },
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Choose if the specified in mesh should be shown or hidden."
+        }
+      }
+    },
+    {
+      "id": "set-all-meshes-enabled",
+      "scriptName": "SetAllMeshesEnabled",
+      "category": "3d-model",
+      "list-name": "Set all meshes enabled",
+      "display-text": "Set all meshes enabled: {0}",
+      "description": "Enable or disable all the meshes in the model.",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Choose if all the meshes should be shown or hidden."
+        }
+      }
+    },
+    {
+      "id": "set-animation",
+      "scriptName": "SetAnimation",
+      "category": "3d-model",
+      "list-name": "Set animation",
+      "display-text": "Set animation to [b]{0}[/b] (playing: [i]{1}[/i], loop: [i]{2}[/i], progress: [i]{3}[/i])",
+      "description": "Change the animation (if the model has any).",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The animation to play (if the model has any)."
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "Playing",
+          "desc": "Choose if the selected animation should start playing immediately."
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "Loop",
+          "desc": "Choose if the selected animation should loop."
+        },
+        "progress": {
+          "type": "number",
+          "name": "Progress",
+          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+        }
+      }
+    },
+    {
+      "id": "set-progress",
+      "scriptName": "SetProgress",
+      "category": "3d-model",
+      "list-name": "Set progress",
+      "display-text": "Set animation progress to [b]{0}[/b]",
+      "description": "Change the progress of the current animation with a value in the range [0-1].",
+      "params": {
+        "progress": {
+          "type": "number",
+          "name": "Progress",
+          "desc": "Choose the progress of the current animation with a value in the range [0-1]."
+        }
+      }
+    },
+    {
+      "id": "set-transform",
+      "scriptName": "SetTransform",
+      "category": "3d-model",
+      "list-name": "Set transform",
+      "display-text": "{3} [b]{4}[/b] X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
+      "description": "Set the transformation of the model.",
+      "params": {
+        "x-transform": {
+          "type": "number",
+          "name": "Transform X",
+          "desc": "The transformation value to apply in the X axis."
+        },
+        "y-transform": {
+          "type": "number",
+          "name": "Transform Y",
+          "desc": "The transformation value to apply in the Y axis."
+        },
+        "z-transform": {
+          "type": "number",
+          "name": "Transform Z",
+          "desc": "The transformation value to apply in the Z axis."
+        },
+        "operation": {
+          "type": "combo",
+          "name": "Operation",
+          "desc": "The kind of operation to perform.",
+          "items": {
+            "set": "Set",
+            "add": "Add",
+            "sub": "Subtract",
+            "mul": "Multiply",
+            "div": "Divide"
+          },
+          "initialValue": "set"
+        },
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The type of transformation to do.",
+          "items": {
+            "position": "Offset",
+            "rotation": "Rotation",
+            "scale": "Scale"
+          },
+          "initialValue": "position"
+        }
+      }
+    },
+    {
+      "id": "set-quaternion",
+      "scriptName": "SetQuaternion",
+      "category": "3d-model",
+      "list-name": "Set rotation quaternion",
+      "display-text": "Set rotation quaternion to X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i], W: [i]{3}[/i]",
+      "description": "Set the rotation of the model using values for a quaternion.",
+      "params": {
+        "x-component": {
+          "type": "number",
+          "name": "Component X",
+          "desc": "The X component of the rotation quaternion."
+        },
+        "y-component": {
+          "type": "number",
+          "name": "Component Y",
+          "desc": "The Y component of the rotation quaternion."
+        },
+        "z-component": {
+          "type": "number",
+          "name": "Component Z",
+          "desc": "The Z component of the rotation quaternion."
+        },
+        "w-component": {
+          "type": "number",
+          "name": "Component W",
+          "desc": "The scalar component of the rotation quaternion."
+        }
+      }
+    },
+    {
+      "id": "set-origin",
+      "scriptName": "SetOrigin",
+      "category": "3d-model",
+      "list-name": "Set origin",
+      "display-text": "Set origin to X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
+      "description": "Set the transformation origin of the model.",
+      "params": {
+        "x-origin": {
+          "type": "combo",
+          "name": "Origin X",
+          "desc": "The origin value to apply in the X axis.",
+          "items": {
+            "left": "Left",
+            "middle": "Middle",
+            "right": "Right",
+            "unset": "Unset"
+          },
+          "initialValue": "middle"
+        },
+        "y-origin": {
+          "type": "combo",
+          "name": "Origin Y",
+          "desc": "The origin value to apply in the Y axis.",
+          "items": {
+            "top": "Top",
+            "middle": "Middle",
+            "bottom": "Bottom",
+            "unset": "Unset"
+          },
+          "initialValue": "middle"
+        },
+        "z-origin": {
+          "type": "combo",
+          "name": "Origin Z",
+          "desc": "The origin value to apply in the Z axis.",
+          "items": {
+            "back": "Back",
+            "middle": "Middle",
+            "front": "Front",
+            "unset": "Unset"
+          },
+          "initialValue": "middle"
+        }
+      }
+    },
+    {
+      "id": "set-mesh-render-mode",
+      "scriptName": "SetMeshRenderMode",
+      "category": "3d-model",
+      "list-name": "Set mesh render mode",
+      "display-text": "Set mesh render mode to [b]{0}[/b]",
+      "description": "Set how individual meshes should be rendered.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "How to draw individual meshes, either following the hierarchy in the model file or in isolation.",
+          "items": {
+            "hierarchy": "Model hierarchy",
+            "isolate": "Isolate"
+          },
+          "initialValue": "hierarchy"
+        }
+      }
+    },
+    {
+      "id": "set-backface-culling",
+      "scriptName": "SetBackfaceCulling",
+      "category": "3d-model",
+      "list-name": "Set back face culling",
+      "display-text": "[b]{0}[/b] back face culling",
+      "description": "Change the back face culling state.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "The new back face culling state.",
+          "items": {
+            "disabled": "Disable",
+            "enabled": "Enable",
+            "toggle": "Toggle"
+          },
+          "initialValue": "disabled"
+        }
+      }
+    },
+    {
+      "id": "set-looping",
+      "scriptName": "SetLooping",
+      "category": "3d-model",
+      "list-name": "Set looping",
+      "display-text": "Loop state of current animation: [b]{0}[/b]",
+      "description": "Change the looping state of the current animation.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "Loop",
+          "desc": "The new loop state.",
+          "items": {
+            "no": "No",
+            "yes": "Yes",
+            "toggle": "Toggle"
+          },
+          "initialValue": "no"
+        }
+      }
+    },
+    {
+      "id": "play",
+      "scriptName": "Play",
+      "category": "playback",
+      "list-name": "Play",
+      "display-text": "Play animation [b]{0}[/b] (loop: [i]{1}[/i], from progress: [i]{2}[/i])",
+      "description": "Play an animation in the 3D model.",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "Animation",
+          "desc": "The animation to play. Leave empty to use the current animation."
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "Loop",
+          "desc": "Choose if the animation should loop."
+        },
+        "progress": {
+          "type": "number",
+          "name": "Progress",
+          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+        }
+      }
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "playback",
+      "list-name": "Stop",
+      "display-text": "Stop current animation",
+      "description": "Stop the current animation in the 3D model and reset progress to 0."
+    },
+    {
+      "id": "pause",
+      "scriptName": "Pause",
+      "category": "playback",
+      "list-name": "Pause",
+      "display-text": "Pause current animation",
+      "description": "Pause the current animation in the 3D model at its current progress."
+    },
+    {
+      "id": "resume",
+      "scriptName": "Resume",
+      "category": "playback",
+      "list-name": "Resume",
+      "display-text": "Resume current animation",
+      "description": "Resume the current animation in the 3D model from the current progress."
+    },
+    {
+      "id": "set-collisions-enabled",
+      "scriptName": "SetCollisions",
+      "category": "misc",
+      "list-name": "Set collisions enabled",
+      "display-text": "Set collisions [b]{0}[/b]",
+      "description": "Set whether the object will register collision events or not.",
+      "params": {
+        "collisions": {
+          "type": "combo",
+          "name": "Collisions",
+          "desc": "Whether to enable or disable collisions for this object.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "error-model-3d-name",
+      "scriptName": "Error3dModelName",
+      "category": "3d-model",
+      "translated-name": "Error3dModelName",
+      "description": "In 'On model load error', the name of the model that failed.",
+      "returnType": "string"
+    },
+    {
+      "id": "name",
+      "scriptName": "Name",
+      "category": "3d-model",
+      "translated-name": "Name",
+      "description": "The current 3D model. If nothing is loaded yet, the expression returns an empty string.",
+      "returnType": "string"
+    },
+    {
+      "id": "meshes",
+      "scriptName": "Meshes",
+      "category": "3d-model",
+      "translated-name": "Meshes",
+      "description": "A comma separated string with all the meshes being drawn. If all the meshes are being drawn, the expression returns an empty string.",
+      "returnType": "string"
+    },
+    {
+      "id": "animation",
+      "scriptName": "Animation",
+      "category": "3d-model",
+      "translated-name": "Animation",
+      "description": "The current animation. If there is no animation, the expression returns an empty string.",
+      "returnType": "string"
+    },
+    {
+      "id": "animation-duration",
+      "scriptName": "AnimationDuration",
+      "category": "3d-model",
+      "translated-name": "AnimationDuration",
+      "description": "The duration of an animation in the model.",
+      "params": {
+        "animation": {
+          "type": "string",
+          "name": "Animation",
+          "desc": "The name of the animation to get the duration for."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "progress",
+      "scriptName": "Progress",
+      "category": "3d-model",
+      "translated-name": "Progress",
+      "description": "The progress of the current animation in the range [0-1].",
+      "returnType": "number"
+    },
+    {
+      "id": "mesh-count",
+      "scriptName": "MeshCount",
+      "category": "3d-model",
+      "translated-name": "MeshCount",
+      "description": "The amount of meshes in the model.",
+      "returnType": "number"
+    },
+    {
+      "id": "mesh-at",
+      "scriptName": "MeshAt",
+      "category": "3d-model",
+      "translated-name": "MeshAt",
+      "description": "The mesh at a given index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index of the mesh."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "animation-count",
+      "scriptName": "AnimationCount",
+      "category": "3d-model",
+      "translated-name": "AnimationCount",
+      "description": "The amount of animations in the model.",
+      "returnType": "number"
+    },
+    {
+      "id": "animation-at",
+      "scriptName": "AnimationAt",
+      "category": "3d-model",
+      "translated-name": "AnimationAt",
+      "description": "The animation at a given index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index of the animation."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "cur-mesh",
+      "scriptName": "CurMesh",
+      "category": "3d-model",
+      "translated-name": "CurMesh",
+      "description": "The current mesh name in a 'For each mesh' loop.",
+      "returnType": "string"
+    },
+    {
+      "id": "cur-animation",
+      "scriptName": "CurAnimation",
+      "category": "3d-model",
+      "translated-name": "CurAnimation",
+      "description": "The current animation name in a 'For each animation' loop.",
+      "returnType": "string"
+    },
+    {
+      "id": "position-x",
+      "scriptName": "OffsetX",
+      "category": "3d-model",
+      "translated-name": "OffsetX",
+      "description": "Get the offset in the X axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "position-y",
+      "scriptName": "OffsetY",
+      "category": "3d-model",
+      "translated-name": "OffsetY",
+      "description": "Get the offset in the Y axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "position-z",
+      "scriptName": "OffsetZ",
+      "category": "3d-model",
+      "translated-name": "OffsetZ",
+      "description": "Get the offset in the Z axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "rotation-x",
+      "scriptName": "RotationX",
+      "category": "3d-model",
+      "translated-name": "RotationX",
+      "description": "Get the rotation in the X axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "rotation-y",
+      "scriptName": "RotationY",
+      "category": "3d-model",
+      "translated-name": "RotationY",
+      "description": "Get the rotation in the Y axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "rotation-z",
+      "scriptName": "RotationZ",
+      "category": "3d-model",
+      "translated-name": "RotationZ",
+      "description": "Get the rotation in the Z axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-x",
+      "scriptName": "ScaleX",
+      "category": "3d-model",
+      "translated-name": "ScaleX",
+      "description": "Get the scale in the X axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-y",
+      "scriptName": "ScaleY",
+      "category": "3d-model",
+      "translated-name": "ScaleY",
+      "description": "Get the scale in the Y axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-z",
+      "scriptName": "ScaleZ",
+      "category": "3d-model",
+      "translated-name": "ScaleZ",
+      "description": "Get the scale in the Z axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-x",
+      "scriptName": "OriginX",
+      "category": "3d-model",
+      "translated-name": "OriginX",
+      "description": "Get the origin in the X axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-y",
+      "scriptName": "OriginY",
+      "category": "3d-model",
+      "translated-name": "OriginY",
+      "description": "Get the origin in the Y axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-z",
+      "scriptName": "OriginZ",
+      "category": "3d-model",
+      "translated-name": "OriginZ",
+      "description": "Get the origin in the Z axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "quaternion-x",
+      "scriptName": "QuaternionX",
+      "category": "3d-model",
+      "translated-name": "QuaternionX",
+      "description": "Get the rotation quaternion X component.",
+      "returnType": "number"
+    },
+    {
+      "id": "quaternion-y",
+      "scriptName": "QuaternionY",
+      "category": "3d-model",
+      "translated-name": "QuaternionY",
+      "description": "Get the rotation quaternion Y component.",
+      "returnType": "number"
+    },
+    {
+      "id": "quaternion-z",
+      "scriptName": "QuaternionZ",
+      "category": "3d-model",
+      "translated-name": "QuaternionZ",
+      "description": "Get the rotation quaternion Z component.",
+      "returnType": "number"
+    },
+    {
+      "id": "quaternion-w",
+      "scriptName": "QuaternionW",
+      "category": "3d-model",
+      "translated-name": "QuaternionW",
+      "description": "Get the rotation quaternion W component.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "meshes": {
+      "name": "Meshes",
+      "desc": "Pick any of the available meshes to draw."
+    },
+    "animation": {
+      "name": "Animation",
+      "desc": "Pick one of the available animations."
+    },
+    "3d-model-object": {
+      "name": "3D model",
+      "desc": "Pick a 3D model from the project."
+    },
+    "x-position": {
+      "name": "X offset",
+      "desc": "Offset on the X axis."
+    },
+    "y-position": {
+      "name": "Y offset",
+      "desc": "Offset on the Y axis."
+    },
+    "z-position": {
+      "name": "Z offset",
+      "desc": "Offset on the Z axis."
+    },
+    "x-rotation": {
+      "name": "X rotation",
+      "desc": "Rotation on the X axis."
+    },
+    "y-rotation": {
+      "name": "Y rotation",
+      "desc": "Rotation on the Y axis."
+    },
+    "z-rotation": {
+      "name": "Z rotation",
+      "desc": "Rotation on the Z axis."
+    },
+    "x-scale": {
+      "name": "X Scale",
+      "desc": "Scale on the X axis."
+    },
+    "y-scale": {
+      "name": "Y Scale",
+      "desc": "Scale on the Y axis."
+    },
+    "z-scale": {
+      "name": "Z Scale",
+      "desc": "Scale on the Z axis."
+    },
+    "x-origin": {
+      "name": "X Origin",
+      "desc": "Origin on the X axis",
+      "items": {
+        "left": "Left",
+        "middle": "Middle",
+        "right": "Right"
+      }
+    },
+    "y-origin": {
+      "name": "Y Origin",
+      "desc": "Origin on the Y axis",
+      "items": {
+        "top": "Top",
+        "middle": "Middle",
+        "bottom": "Bottom"
+      }
+    },
+    "z-origin": {
+      "name": "Z Origin",
+      "desc": "Origin on the Z axis",
+      "items": {
+        "back": "Back",
+        "middle": "Middle",
+        "front": "Front"
+      }
+    },
+    "bounding-box": {
+      "name": "Show bounding box",
+      "desc": "Show the bounding box of the current mesh in the editor."
+    },
+    "bounding-box-color": {
+      "name": "Bounding box color",
+      "desc": "The color of the bouding box in the editor."
+    },
+    "live-preview": {
+      "name": "Preview",
+      "desc": "Tick to run a live preview in the editor."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "initially-playing": {
+      "name": "Initially playing",
+      "desc": "Choose if the model should start playing the current animation immediately."
+    },
+    "initial-animation-progress": {
+      "name": "Initial animation progress",
+      "desc": "The progress the current animation should start playing from."
+    },
+    "loop": {
+      "name": "Loop",
+      "desc": "Check so they animation loops."
+    },
+    "enable-collisions": {
+      "name": "Enable collisions",
+      "desc": "Whether the object will register collision events or not."
+    },
+    "mesh-render-mode": {
+      "name": "Render mode",
+      "desc": "How to draw individual meshes: either following the hierarchy in the model file or in isolation.",
+      "items": {
+        "hierarchy": "Model hierarchy",
+        "isolate": "Isolate"
+      }
+    },
+    "back-face-culling": {
+      "name": "Back face culling",
+      "desc": "Check to ignore drawing polygon faces which are not visible."
+    },
+    "editor-properties": {
+      "name": "3D model editor properties",
+      "desc": "Settings which only affect how 3D model instances are used in the editor."
+    },
+    "animation-properties": {
+      "name": "3D model animation properties",
+      "desc": "Settings specific to 3D model animations."
+    },
+    "position": {
+      "name": "Model offset",
+      "desc": "The offset of the model.",
+      "separator": ", "
+    },
+    "rotation": {
+      "name": "Model rotation",
+      "desc": "The rotation of the model.",
+      "separator": ", "
+    },
+    "scale": {
+      "name": "Model scale",
+      "desc": "The scale of the model.",
+      "separator": ", "
+    },
+    "origin": {
+      "name": "Model origin",
+      "desc": "The origin of the model.",
+      "separator": ", "
+    }
+  }
+}

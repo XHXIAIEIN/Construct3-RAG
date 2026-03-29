@@ -1,0 +1,65 @@
+{
+  "id": "water",
+  "name": "Water",
+  "description": "An animated water-surface like distortion.",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "speed",
+      "type": "percent",
+      "name": "Speed",
+      "desc": "Overall speed of the effect."
+    },
+    {
+      "id": "x-speed",
+      "type": "percent",
+      "name": "X speed",
+      "desc": "Horizontal speed of the waves."
+    },
+    {
+      "id": "y-speed",
+      "type": "percent",
+      "name": "Y speed",
+      "desc": "Vertical speed of the waves."
+    },
+    {
+      "id": "intensity",
+      "type": "float",
+      "name": "Intensity",
+      "desc": "Intensity of the waves."
+    },
+    {
+      "id": "frequency",
+      "type": "float",
+      "name": "Frequency",
+      "desc": "Frequency of the waves."
+    },
+    {
+      "id": "angle",
+      "type": "float",
+      "name": "Angle",
+      "desc": "Angle of the waves (prime numbers work best)."
+    },
+    {
+      "id": "delta",
+      "type": "float",
+      "name": "Delta",
+      "desc": "Amount of distortion caused by waves.  Lower values cause more distortion."
+    },
+    {
+      "id": "reflectivity",
+      "type": "float",
+      "name": "Reflectivity",
+      "desc": "Intensity of the wave highlights."
+    },
+    {
+      "id": "emboss",
+      "type": "percent",
+      "name": "Emboss",
+      "desc": "Depth of the waves."
+    }
+  ]
+}
