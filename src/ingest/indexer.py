@@ -193,20 +193,24 @@ class BM25Vectorizer:
         return vec
 
     def save(self, path: Path) -> None:
-        """Persist vocab and IDF to JSON for later loading by the retriever."""
+        """Persist vocab and IDF to msgpack."""
+        import msgpack
         data = {
             "vocab": self.vocab,
-            "idf": {str(k): v for k, v in self.idf.items()},
+            "idf": {k: v for k, v in self.idf.items()},
             "avg_dl": self._avg_dl,
         }
-        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        path = path.with_suffix(".msgpack")
+        path.write_bytes(msgpack.packb(data, use_bin_type=True))
         print(f"[BM25] Saved vocab ({len(self.vocab)} terms) → {path}")
 
     def load(self, path: Path) -> "BM25Vectorizer":
-        """Load vocab and IDF from JSON file."""
-        data = json.loads(path.read_text(encoding="utf-8"))
+        """Load vocab and IDF from msgpack."""
+        import msgpack
+        path = path.with_suffix(".msgpack")
+        data = msgpack.unpackb(path.read_bytes(), raw=False, strict_map_key=False)
         self.vocab = data["vocab"]
-        self.idf = {int(k): v for k, v in data["idf"].items()}
+        self.idf = {k: v for k, v in data["idf"].items()}
         self._avg_dl = data["avg_dl"]
         self._fitted = True
         print(f"[BM25] Loaded vocab ({len(self.vocab)} terms) from {path}")
@@ -246,7 +250,7 @@ class Indexer:
         print(f"[BM25] Fitting on {len(corpus)} documents...")
         self._bm25 = BM25Vectorizer()
         self._bm25.fit(corpus)
-        path = vocab_path or (DATA_DIR / "bm25_vocab.json")
+        path = vocab_path or (DATA_DIR / "bm25_vocab.msgpack")
         self._bm25.save(path)
 
     def create_collection(self, collection_name: str, recreate: bool = False):
@@ -609,6 +613,8 @@ def index_all_data(rebuild: bool = False):
         CONTEXTUAL_CHUNKING_ENABLED, BM25_ENABLED,
         EXAMPLE_PROJECTS_DIR, EXAMPLES_AVAILABLE,
         MANUAL_AVAILABLE,
+        ADDON_SDK_MANUAL_AVAILABLE, ADDON_SDK_MANUAL_DIR,
+        ADDON_SDK_CODE_AVAILABLE, ADDON_SDK_CODE_DIR,
         C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR,
     )
     from src.collections import DOC_COLLECTIONS, ALL_COLLECTIONS, COLLECTIONS
@@ -664,6 +670,13 @@ def index_all_data(rebuild: bool = False):
         cdn_terms_bm25 = fetcher.export_terms()
         if cdn_terms_bm25:
             corpus += [t["full_text"] for t in cdn_terms_bm25]
+        # Addon SDK docs + code
+        if ADDON_SDK_MANUAL_AVAILABLE:
+            sdk_md = MarkdownParser(base_dir=ADDON_SDK_MANUAL_DIR).parse_directory()
+            corpus += [c.text for c in sdk_md]
+        if ADDON_SDK_CODE_AVAILABLE:
+            from src.ingest.sdk_parser import load_sdk_for_vectordb
+            corpus += [d["text"] for d in load_sdk_for_vectordb(ADDON_SDK_CODE_DIR)]
         indexer.fit_bm25(corpus)
 
     # ── Index each markdown doc collection ────────────────────────────────────
@@ -756,6 +769,42 @@ def index_all_data(rebuild: bool = False):
     # NOTE: Do NOT recreate here — markdown scripting docs are already indexed
     # in the DOC_COLLECTIONS loop above. This only appends structured API data.
     index_scripting_api(indexer, COLLECTIONS["scripting"])
+
+    # ── Addon SDK ─────────────────────────────────────────────────────────────
+    print("\n=== Indexing Addon SDK ===")
+    sdk_collection = COLLECTIONS["addon_sdk"]
+    # DOC_COLLECTIONS loop already creates this with recreate=rebuild,
+    # but ensure it exists if somehow skipped.
+    indexer.create_collection(sdk_collection, recreate=False)
+
+    # SDK manual docs (Construct3-Manual/Construct3-Addon-SDK/)
+    if ADDON_SDK_MANUAL_AVAILABLE:
+        sdk_md_parser = MarkdownParser(base_dir=ADDON_SDK_MANUAL_DIR)
+        sdk_chunks = sdk_md_parser.parse_directory()
+        if sdk_chunks:
+            sdk_md_docs = []
+            for i, chunk in enumerate(sdk_chunks):
+                chunk.metadata["collection"] = sdk_collection
+                chunk_key = hashlib.md5(chunk.text[:500].encode()).hexdigest()
+                text = indexer._prepend_context(chunk_key, chunk.text)
+                sdk_md_docs.append({
+                    "id": f"addon_sdk_doc_{i}",
+                    "text": text,
+                    "metadata": chunk.metadata,
+                })
+            indexer.index_documents(sdk_collection, sdk_md_docs)
+            print(f"  Indexed {len(sdk_md_docs)} SDK manual chunks")
+    else:
+        print("  Addon SDK manual not found — skipping docs")
+
+    # SDK code samples (Construct-Addon-SDK/)
+    if ADDON_SDK_CODE_AVAILABLE:
+        from src.ingest.sdk_parser import load_sdk_for_vectordb
+        sdk_code_docs = load_sdk_for_vectordb(ADDON_SDK_CODE_DIR)
+        if sdk_code_docs:
+            indexer.index_documents(sdk_collection, sdk_code_docs)
+    else:
+        print("  Addon SDK code repo not found — skipping code samples")
 
     print("\n=== Indexing Complete ===")
     for collection in ALL_COLLECTIONS:

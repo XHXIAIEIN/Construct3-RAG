@@ -27,14 +27,19 @@ SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))
 # Both are optional — the pipeline degrades gracefully when missing.
 MANUAL_REPO = "Construct3-Manual"  # https://github.com/XHXIAIEIN/Construct3-Manual
 EXAMPLE_REPO = "Construct-Example-Projects"  # https://github.com/Scirra/Construct-Example-Projects
+ADDON_SDK_REPO = "Construct-Addon-SDK"  # https://github.com/Scirra/Construct-Addon-SDK
 
 # Derived paths (may not exist)
 MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO / "Construct3-Manual"
 EXAMPLE_PROJECTS_DIR = BASE_DIR.parent / EXAMPLE_REPO / "example-projects"
+ADDON_SDK_MANUAL_DIR = BASE_DIR.parent / MANUAL_REPO / "Construct3-Addon-SDK"
+ADDON_SDK_CODE_DIR = BASE_DIR.parent / ADDON_SDK_REPO
 
 # Availability flags — checked once at import time
 MANUAL_AVAILABLE: bool = MANUAL_DIR.exists()
 EXAMPLES_AVAILABLE: bool = EXAMPLE_PROJECTS_DIR.exists()
+ADDON_SDK_MANUAL_AVAILABLE: bool = ADDON_SDK_MANUAL_DIR.exists()
+ADDON_SDK_CODE_AVAILABLE: bool = ADDON_SDK_CODE_DIR.exists()
 
 # =============================================================================
 # Construct 3 CDN (official data source)

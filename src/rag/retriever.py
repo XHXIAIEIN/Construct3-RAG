@@ -79,11 +79,11 @@ class HybridRetriever:
             if not BM25_ENABLED:
                 return None
             from src.ingest.indexer import BM25Vectorizer
-            vocab_path = DATA_DIR / "bm25_vocab.json"
+            vocab_path = DATA_DIR / "bm25_vocab.msgpack"
             if vocab_path.exists():
                 self._bm25 = BM25Vectorizer().load(vocab_path)
             else:
-                logger.warning("[BM25] Vocab file not found at %s — BM25 disabled", vocab_path)
+                logger.warning("[BM25] Vocab not found at %s — BM25 disabled", vocab_path)
         return self._bm25
 
     @property

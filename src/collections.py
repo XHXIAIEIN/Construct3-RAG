@@ -37,6 +37,8 @@ COLLECTIONS = {
     # === 工具集合 ===
     "terms": "c3_terms",  # 术语翻译
     "examples": "c3_examples",  # 示例项目
+    # === Addon SDK 集合 ===
+    "addon_sdk": "c3_addon_sdk",  # Addon SDK 文档 + 代码示例
 }
 
 # 文档集合 (不含 terms/examples/ace/effects)
@@ -47,6 +49,7 @@ DOC_COLLECTIONS = [
     COLLECTIONS["plugins"],
     COLLECTIONS["behaviors"],
     COLLECTIONS["scripting"],
+    COLLECTIONS["addon_sdk"],
 ]
 
 # 所有集合
@@ -353,6 +356,7 @@ COLLECTION_DESCRIPTIONS = {
     COLLECTIONS["ace"]: "ACE Schema (Actions/Conditions/Expressions 2,701 条)",
     COLLECTIONS["scripting"]: "脚本 API (JavaScript/TypeScript)",
     COLLECTIONS["examples"]: "示例项目代码",
+    COLLECTIONS["addon_sdk"]: "Addon SDK (开发指南、API 参考、代码模板)",
 }
 
 
