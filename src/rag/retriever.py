@@ -8,11 +8,13 @@ Features:
 - Adaptive score threshold filtering
 - Query decomposition for complex multi-step workflows
 - Reciprocal Rank Fusion (RRF) for multi-query results
+- Query complexity routing (simple/moderate/complex → retrieval params)
 """
+import re
 import time
 import logging
 import statistics
-from typing import List, Dict, Any, Set, Tuple
+from typing import List, Dict, Any, Set, Tuple, Literal
 from dataclasses import dataclass
 
 from ._trace import _trace
@@ -25,6 +27,98 @@ try:
     from qdrant_client import QdrantClient
 except ImportError:
     print("Warning: qdrant-client not installed")
+
+
+# =============================================================================
+# Query Complexity Routing
+# =============================================================================
+
+QueryComplexity = Literal["simple", "moderate", "complex"]
+
+
+@dataclass
+class RetrievalPreset:
+    """Retrieval parameters derived from query complexity."""
+    complexity: QueryComplexity
+    top_k_per_collection: int
+    final_top_k: int
+
+_PRESETS: dict[QueryComplexity, RetrievalPreset] = {
+    "simple":   RetrievalPreset("simple",   3,  5),
+    "moderate": RetrievalPreset("moderate", 5, 10),
+    "complex":  RetrievalPreset("complex",  8, 15),
+}
+
+# Signals that suggest compound / multi-concept queries
+_COMPOUND_SPLITTERS = re.compile(r'[？?；;、]')
+_MULTI_QUESTION = re.compile(r'[？?]')
+
+
+def estimate_query_complexity(query: str) -> RetrievalPreset:
+    """Estimate query complexity and return matching retrieval parameters.
+
+    Rules (zero-cost, pure heuristic):
+    - simple:   ≤15 chars, single-concept lookup
+    - complex:  2+ question marks/semicolons, or ≥50 chars with 3+ splitter tokens
+    - moderate: everything else (current default behavior)
+    """
+    q = query.strip()
+    length = len(q)
+
+    # Short queries are simple
+    if length <= 15:
+        return _PRESETS["simple"]
+
+    # Count compound signals
+    questions = len(_MULTI_QUESTION.findall(q))
+    splitters = len(_COMPOUND_SPLITTERS.findall(q))
+
+    if questions >= 2 or (length >= 25 and splitters >= 3):
+        return _PRESETS["complex"]
+
+    if length >= 30 and splitters >= 1:
+        return _PRESETS["complex"]
+
+    return _PRESETS["moderate"]
+
+
+# =============================================================================
+# Context Tier Assignment
+# =============================================================================
+
+ContextTier = Literal["full", "normal", "brief"]
+
+
+def assign_context_tiers(results: list) -> list:
+    """Annotate each result dict with a 'context_tier' field.
+
+    Tier assignment:
+    - full:   rank 0 (top result) AND score >= 0.8 relative to max
+    - normal: score >= 0.5 relative to max
+    - brief:  everything else
+
+    For RRF scores (typically 0.01-0.03), thresholds are applied as
+    ratios relative to the top score, not absolute values.
+    """
+    if not results:
+        return results
+
+    max_score = max(r.get("score", 0) for r in results)
+    if max_score <= 0:
+        for r in results:
+            r["context_tier"] = "normal"
+        return results
+
+    for i, r in enumerate(results):
+        ratio = r.get("score", 0) / max_score
+        if i == 0 and ratio >= 0.8:
+            r["context_tier"] = "full"
+        elif ratio >= 0.5:
+            r["context_tier"] = "normal"
+        else:
+            r["context_tier"] = "brief"
+
+    return results
 
 
 @dataclass

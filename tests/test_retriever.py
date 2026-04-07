@@ -173,5 +173,99 @@ class TestWeightedRRF(unittest.TestCase):
         assert len(out) == 1
 
 
+# ---------------------------------------------------------------------------
+# Query complexity routing tests
+# ---------------------------------------------------------------------------
+
+class TestQueryComplexity(unittest.TestCase):
+
+    def test_short_query_is_simple(self):
+        from src.rag.retriever import estimate_query_complexity
+        preset = estimate_query_complexity("Sprite动画")
+        self.assertEqual(preset.complexity, "simple")
+        self.assertEqual(preset.top_k_per_collection, 3)
+        self.assertEqual(preset.final_top_k, 5)
+
+    def test_normal_query_is_moderate(self):
+        from src.rag.retriever import estimate_query_complexity
+        preset = estimate_query_complexity("如何使用 Timer 行为设置倒计时")
+        self.assertEqual(preset.complexity, "moderate")
+        self.assertEqual(preset.top_k_per_collection, 5)
+
+    def test_multi_question_is_complex(self):
+        from src.rag.retriever import estimate_query_complexity
+        preset = estimate_query_complexity("Sprite 有哪些碰撞条件？Platform 行为怎么设置跳跃高度？")
+        self.assertEqual(preset.complexity, "complex")
+        self.assertEqual(preset.top_k_per_collection, 8)
+        self.assertEqual(preset.final_top_k, 15)
+
+    def test_long_with_splitters_is_complex(self):
+        from src.rag.retriever import estimate_query_complexity
+        preset = estimate_query_complexity("实现平台跳跃游戏、支持物理碰撞、带存档功能、还有多人联机")
+        self.assertEqual(preset.complexity, "complex")
+
+    def test_empty_query_is_simple(self):
+        from src.rag.retriever import estimate_query_complexity
+        preset = estimate_query_complexity("")
+        self.assertEqual(preset.complexity, "simple")
+
+    def test_medium_with_one_splitter_is_complex(self):
+        from src.rag.retriever import estimate_query_complexity
+        # 40+ chars with 1 splitter → complex
+        preset = estimate_query_complexity("如何让 Sprite 在碰到 Solid 对象时停下来；同时播放动画")
+        self.assertEqual(preset.complexity, "complex")
+
+
+# ---------------------------------------------------------------------------
+# Context tier assignment tests
+# ---------------------------------------------------------------------------
+
+class TestContextTier(unittest.TestCase):
+
+    def test_top_result_gets_full(self):
+        from src.rag.retriever import assign_context_tiers
+        results = [
+            {"score": 0.95, "text": "A"},
+            {"score": 0.60, "text": "B"},
+            {"score": 0.20, "text": "C"},
+        ]
+        assign_context_tiers(results)
+        self.assertEqual(results[0]["context_tier"], "full")
+        self.assertEqual(results[1]["context_tier"], "normal")
+        self.assertEqual(results[2]["context_tier"], "brief")
+
+    def test_low_top_score_still_works(self):
+        """RRF scores are tiny (0.01-0.03) — ratios still apply."""
+        from src.rag.retriever import assign_context_tiers
+        results = [
+            {"score": 0.016, "text": "A"},
+            {"score": 0.014, "text": "B"},
+            {"score": 0.003, "text": "C"},
+        ]
+        assign_context_tiers(results)
+        self.assertEqual(results[0]["context_tier"], "full")
+        self.assertEqual(results[1]["context_tier"], "normal")  # 0.014/0.016 = 0.875
+        self.assertEqual(results[2]["context_tier"], "brief")   # 0.003/0.016 = 0.19
+
+    def test_empty_results(self):
+        from src.rag.retriever import assign_context_tiers
+        self.assertEqual(assign_context_tiers([]), [])
+
+    def test_single_result_is_full(self):
+        from src.rag.retriever import assign_context_tiers
+        results = [{"score": 0.5, "text": "only"}]
+        assign_context_tiers(results)
+        self.assertEqual(results[0]["context_tier"], "full")
+
+    def test_all_same_score(self):
+        from src.rag.retriever import assign_context_tiers
+        results = [{"score": 0.7, "text": f"r{i}"} for i in range(5)]
+        assign_context_tiers(results)
+        # First is full (rank 0, ratio=1.0), rest are normal (ratio=1.0 >= 0.5)
+        self.assertEqual(results[0]["context_tier"], "full")
+        for r in results[1:]:
+            self.assertEqual(r["context_tier"], "normal")
+
+
 if __name__ == "__main__":
     unittest.main()

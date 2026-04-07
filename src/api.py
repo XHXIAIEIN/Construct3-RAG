@@ -585,18 +585,25 @@ def _do_semantic(req: SearchRequest, _trace) -> list:
 
     # Default: full cross-collection search with rerank
     else:
+        from src.rag.retriever import estimate_query_complexity
         lang = req.lang or _detect_lang(req.query)
         exclude = {"terms"} if lang not in _TERMS_USEFUL_LANGS else None
-        _trace(f"语义搜索: lang={lang}, exclude={exclude or 'none'}", "search")
+        preset = estimate_query_complexity(req.query)
+        _trace(
+            f"语义搜索: lang={lang}, complexity={preset.complexity}, "
+            f"per_coll={preset.top_k_per_collection}, final={preset.final_top_k}, "
+            f"exclude={exclude or 'none'}",
+            "search",
+        )
 
         results = retriever.search_all_with_rerank(
             query=req.query,
-            top_k_per_collection=5,
-            final_top_k=req.top_k,
+            top_k_per_collection=preset.top_k_per_collection,
+            final_top_k=max(preset.final_top_k, req.top_k),
             exclude_collections=exclude,
         )
         total = len(results)
-        _trace(f"检索完成: {total} 候选", "search")
+        _trace(f"检索完成: {total} 候选 ({preset.complexity})", "search")
 
     # Adaptive threshold filtering
     if req.apply_threshold and results:
@@ -604,7 +611,9 @@ def _do_semantic(req: SearchRequest, _trace) -> list:
         results = retriever.filter_by_adaptive_threshold(results)
         _trace(f"阈值过滤: {before} → {len(results)}", "filter")
 
-    return [_convert_result(r) for r in results]
+    from src.rag.retriever import assign_context_tiers
+    converted = [_convert_result(r) for r in results]
+    return assign_context_tiers(converted)
 
 
 # ---------------------------------------------------------------------------
