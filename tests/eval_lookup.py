@@ -68,8 +68,8 @@ CASES = [
     Case("如何制作一个平台跳跃游戏", expect_miss=True),
     Case("事件表和脚本的区别", expect_miss=True),
 
-    # === Translation (TODO: Tier 1 regex only matches Chinese patterns) ===
-    # Case("翻译 Destroy", expect_intent="term_translate"),
+    # === Translation ===
+    Case("翻译 Destroy", expect_intent="term_translate"),
 
     # === Properties (TODO: "属性" keyword not routed to prop_list) ===
     # Case("Platform 属性", expect_plugin="platform", expect_intent="prop_list"),

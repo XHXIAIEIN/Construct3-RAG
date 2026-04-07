@@ -544,6 +544,7 @@ class TermIndex:
     """
     Index of translation terms from CDN lang data.
     Accepts pre-loaded terms (from C3Fetcher.export_terms()).
+    Falls back to schema-derived terms when CDN terms are unavailable.
     """
 
     def __init__(self, terms: Optional[List[Dict]] = None):
@@ -562,6 +563,42 @@ class TermIndex:
             if zh and en:
                 self._terms.append({"key": key, "zh": zh, "en": en})
         logger.info(f"[TermIndex] Loaded {len(self._terms)} terms")
+
+    def load_from_schema(self, schema_index: "SchemaIndex"):
+        """Extract en/zh name pairs from schema data as fallback terms."""
+        schema_index._load()
+        seen: set[tuple[str, str]] = {(t["zh"], t["en"]) for t in self._terms}
+        added = 0
+        for addon_type, store in [("plugins", schema_index._plugins),
+                                   ("behaviors", schema_index._behaviors)]:
+            for pid, schema in store.items():
+                # Plugin/behavior name pair
+                name_en = schema.get("name_en", "")
+                name_zh = schema.get("name_zh", "")
+                if name_en and name_zh and name_en != name_zh:
+                    pair = (name_zh, name_en)
+                    if pair not in seen:
+                        seen.add(pair)
+                        self._terms.append({"key": f"{addon_type}.{pid}.name", "zh": name_zh, "en": name_en})
+                        added += 1
+                # ACE name pairs
+                for ace_type in ("conditions", "actions", "expressions"):
+                    for item in schema.get(ace_type, []):
+                        en = item.get("name_en", "")
+                        zh = item.get("name_zh", "")
+                        if en and zh and en != zh:
+                            pair = (zh, en)
+                            if pair not in seen:
+                                seen.add(pair)
+                                ace_id = item.get("id", "")
+                                self._terms.append({
+                                    "key": f"{addon_type}.{pid}.{ace_type}.{ace_id}",
+                                    "zh": zh, "en": en,
+                                })
+                                added += 1
+        if added:
+            self._loaded = True
+            logger.info(f"[TermIndex] Added {added} terms from schema data")
 
     def search(self, query: str, max_results: int = 20) -> List[Dict[str, str]]:
         """
@@ -1255,6 +1292,8 @@ class LookupEngine:
     ):
         self.schema_index = SchemaIndex(schema_dir)
         self.term_index = TermIndex(terms=terms)
+        if not self.term_index._loaded:
+            self.term_index.load_from_schema(self.schema_index)
         self.examples_index = ExamplesIndex()
         self.scripting_index = ScriptingIndex()
         self.classifier = IntentClassifier(
@@ -1652,7 +1691,7 @@ class LookupEngine:
         """Format translation term lookup."""
         results = self.term_index.search(intent.term, max_results=15)
         if not results:
-            return "", []
+            return f'No translation found for "{intent.term}" in Construct 3 terminology.', []
 
         lines = [
             TERM_TRANSLATE_HEADER.format(term=intent.term, count=len(results)),
