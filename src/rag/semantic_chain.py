@@ -229,6 +229,7 @@ COLLECTION_DESCRIPTORS: dict[str, str] = {
     "c3_effects":   "Construct 3 visual effect shader WebGL blend parameter",
     "c3_terms":     "Construct 3 Chinese English translation term glossary vocabulary",
     "c3_examples":  "Construct 3 example project game template event sheet code sample",
+    "c3_addon_sdk": "Construct 3 addon SDK plugin development custom behavior effect theme aces.json addon.json c3runtime",
 }
 
 QUERY_TYPE_BIAS: dict[str, dict[str, float]] = {
@@ -237,7 +238,7 @@ QUERY_TYPE_BIAS: dict[str, dict[str, float]] = {
     "troubleshoot": {"c3_guide": 0.2, "c3_examples": 0.3},
     "translate":    {"c3_terms": 0.6},
     "list_ace":     {"c3_ace": 0.5},
-    "code_gen":     {"c3_scripting": 0.3, "c3_examples": 0.3},
+    "code_gen":     {"c3_scripting": 0.3, "c3_examples": 0.2, "c3_addon_sdk": 0.2},
     "unknown":      {},
 }
 
