@@ -19,6 +19,7 @@ Project source code. 2 top-level modules and 2 subpackages.
 | `markdown_parser.py` | Markdown document parser and chunker |
 | `project_parser.py` | C3 project file parser |
 | `schema_parser.py` | ACE Schema JSON parser |
+| `sdk_parser.py` | Addon SDK code sample parser (addon.json, aces.json, lang, JS/TS) |
 
 ### `rag/` — RAG Core
 

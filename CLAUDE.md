@@ -8,7 +8,7 @@ Construct 3 documentation retrieval service. Fetches ACE definitions from offici
 |-----------|------------|
 | Vector DB | Qdrant |
 | Embedding | BAAI/bge-m3 |
-| Data source | Construct 3 CDN (live) + Markdown manual |
+| Data source | Construct 3 CDN (live) + Markdown manual + Addon SDK |
 | Language | Python 3.11+ |
 
 ## Directory Structure
