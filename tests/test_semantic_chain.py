@@ -155,9 +155,11 @@ class TestInstructorBackend:
 class TestCollectionRouter:
     def _make_embedder(self, sim_value: float = 0.5):
         """Embedder that returns fixed similarity for all collections."""
+        from src.rag.semantic_chain import COLLECTION_DESCRIPTORS
+        n = len(COLLECTION_DESCRIPTORS)
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.1] * 10
-        embedder.encode.return_value = [[0.1] * 10] * 10
+        embedder.encode.return_value = [[0.1] * 10] * n
         return embedder
 
     def test_returns_weights_for_all_collections(self):
@@ -167,7 +169,7 @@ class TestCollectionRouter:
         assert set(weights.keys()) == {
             "c3_guide", "c3_interface", "c3_project", "c3_plugins",
             "c3_behaviors", "c3_scripting", "c3_ace", "c3_effects",
-            "c3_terms", "c3_examples",
+            "c3_terms", "c3_examples", "c3_addon_sdk",
         }
 
     def test_translate_query_boosts_terms(self):
@@ -177,11 +179,12 @@ class TestCollectionRouter:
         assert weights["c3_terms"] >= 0.5  # bias +0.6 applied
 
     def test_threshold_filters_low_collections(self):
-        from src.rag.semantic_chain import CollectionRouter, _DOC_COLLECTION_SET
+        from src.rag.semantic_chain import CollectionRouter, _DOC_COLLECTION_SET, COLLECTION_DESCRIPTORS
+        n = len(COLLECTION_DESCRIPTORS)
         embedder = MagicMock()
         # Non-zero embeddings produce non-zero cosine similarity (~1.0 for identical vecs)
         embedder.encode_single.return_value = [1.0] * 10
-        embedder.encode.return_value = [[1.0] * 10] * 10
+        embedder.encode.return_value = [[1.0] * 10] * n
         router = CollectionRouter(embedder)
         # With threshold=1.1 (above max possible weight of 1.0), non-doc collections
         # are zeroed out; doc collections get floor weight (0.05)
@@ -194,10 +197,11 @@ class TestCollectionRouter:
                 assert v == pytest.approx(0.05)
 
     def test_threshold_allows_above_threshold(self):
-        from src.rag.semantic_chain import CollectionRouter
+        from src.rag.semantic_chain import CollectionRouter, COLLECTION_DESCRIPTORS
+        n = len(COLLECTION_DESCRIPTORS)
         embedder = MagicMock()
         embedder.encode_single.return_value = [1.0] * 10
-        embedder.encode.return_value = [[1.0] * 10] * 10
+        embedder.encode.return_value = [[1.0] * 10] * n
         router = CollectionRouter(embedder)
         # With threshold=0.0, all collections with any weight are kept
         weights = router.route("test", "unknown", threshold=0.0)
@@ -213,7 +217,8 @@ class TestCollectionRouter:
 
 class TestSemanticChain:
     def _make_chain(self):
-        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter
+        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter, COLLECTION_DESCRIPTORS
+        n = len(COLLECTION_DESCRIPTORS)
         llm = MagicMock()
         llm.provider = "huggingface"
         llm.generate.return_value = (
@@ -224,7 +229,7 @@ class TestSemanticChain:
         )
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.5] * 10
-        embedder.encode.return_value = [[0.5] * 10] * 10
+        embedder.encode.return_value = [[0.5] * 10] * n
 
         retriever = MagicMock()
         retriever.search_collection.return_value = []
@@ -255,7 +260,8 @@ class TestSemanticChain:
         assert chain._backend._llm.generate.call_count == call_count_after_first
 
     def test_low_confidence_reduces_blend_weight(self):
-        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter
+        from src.rag.semantic_chain import SemanticChain, RawLLMBackend, CollectionRouter, COLLECTION_DESCRIPTORS
+        n = len(COLLECTION_DESCRIPTORS)
         llm = MagicMock()
         llm.provider = "huggingface"
         llm.generate.return_value = (
@@ -264,7 +270,7 @@ class TestSemanticChain:
         )
         embedder = MagicMock()
         embedder.encode_single.return_value = [0.3] * 10
-        embedder.encode.return_value = [[0.3] * 10] * 10
+        embedder.encode.return_value = [[0.3] * 10] * n
         retriever = MagicMock()
         retriever.search_collection.return_value = []
         chain = SemanticChain(
