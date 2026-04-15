@@ -1,54 +1,14 @@
 {
-  "version": "r478-2",
+  "version": "r476.3",
   "languages": [
     "en-US",
     "zh-CN"
   ],
   "supported_languages": [
-    "be-BY",
-    "bn-IN",
-    "bs-BA",
-    "cs-CZ",
-    "da-DK",
-    "de-DE",
-    "el-GR",
     "en-US",
-    "es-ES",
-    "fr-FR",
-    "hi-IN",
-    "hr-HR",
-    "hu-HU",
-    "id-ID",
-    "it-IT",
-    "ja-JP",
-    "ko-KR",
-    "ms-MY",
-    "nl-NL",
-    "pa-IN",
-    "pl-PL",
-    "pt-BR",
-    "ro-RO",
-    "ru-RU",
-    "sl-SI",
-    "sr-RS",
-    "sv-SE",
-    "th-TH",
-    "tr-TR",
-    "uk-UA",
-    "vi-VN",
-    "zh-CN",
-    "zh-TW"
+    "zh-CN"
   ],
   "plugins": {
-    "ninepatch": {
-      "originalId": "NinePatch",
-      "name_en": "9-patch",
-      "name_zh": "九宫图",
-      "file": "plugins/ninepatch.json",
-      "conditions": 2,
-      "actions": 8,
-      "expressions": 6
-    },
     "system": {
       "originalId": "system",
       "name_en": "System",
@@ -57,6 +17,15 @@
       "conditions": 56,
       "actions": 85,
       "expressions": 136
+    },
+    "ninepatch": {
+      "originalId": "NinePatch",
+      "name_en": "9-patch",
+      "name_zh": "九宫图",
+      "file": "plugins/ninepatch.json",
+      "conditions": 2,
+      "actions": 8,
+      "expressions": 6
     },
     "advert": {
       "originalId": "advert",
@@ -103,24 +72,6 @@
       "actions": 43,
       "expressions": 14
     },
-    "binarydata": {
-      "originalId": "BinaryData",
-      "name_en": "Binary Data",
-      "name_zh": "二进制",
-      "file": "plugins/binarydata.json",
-      "conditions": 6,
-      "actions": 11,
-      "expressions": 14
-    },
-    "bluetooth": {
-      "originalId": "Bluetooth",
-      "name_en": "Bluetooth",
-      "name_zh": "蓝牙",
-      "file": "plugins/bluetooth.json",
-      "conditions": 17,
-      "actions": 8,
-      "expressions": 12
-    },
     "bbcmicrobit": {
       "originalId": "BBCMicroBit",
       "name_en": "BBC micro:bit",
@@ -129,6 +80,15 @@
       "conditions": 9,
       "actions": 6,
       "expressions": 9
+    },
+    "binarydata": {
+      "originalId": "BinaryData",
+      "name_en": "Binary Data",
+      "name_zh": "二进制",
+      "file": "plugins/binarydata.json",
+      "conditions": 6,
+      "actions": 11,
+      "expressions": 14
     },
     "browser": {
       "originalId": "Browser",
@@ -148,6 +108,15 @@
       "actions": 4,
       "expressions": 1
     },
+    "bluetooth": {
+      "originalId": "Bluetooth",
+      "name_en": "Bluetooth",
+      "name_zh": "蓝牙",
+      "file": "plugins/bluetooth.json",
+      "conditions": 17,
+      "actions": 8,
+      "expressions": 12
+    },
     "camera3d": {
       "originalId": "Camera3D",
       "name_en": "3D camera",
@@ -163,35 +132,8 @@
       "name_zh": "游戏服务",
       "file": "plugins/constructgameservices.json",
       "conditions": 10,
-      "actions": 13,
-      "expressions": 19
-    },
-    "clipboard": {
-      "originalId": "Clipboard",
-      "name_en": "Clipboard",
-      "name_zh": "剪贴板",
-      "file": "plugins/clipboard.json",
-      "conditions": 5,
-      "actions": 4,
-      "expressions": 1
-    },
-    "cryptography": {
-      "originalId": "Cryptography",
-      "name_en": "Cryptography",
-      "name_zh": "密码学",
-      "file": "plugins/cryptography.json",
-      "conditions": 10,
-      "actions": 3,
-      "expressions": 3
-    },
-    "csv": {
-      "originalId": "CSV",
-      "name_en": "CSV",
-      "name_zh": "CSV",
-      "file": "plugins/csv.json",
-      "conditions": 2,
-      "actions": 2,
-      "expressions": 2
+      "actions": 11,
+      "expressions": 16
     },
     "date": {
       "originalId": "Date",
@@ -202,6 +144,15 @@
       "actions": 0,
       "expressions": 54
     },
+    "cryptography": {
+      "originalId": "Cryptography",
+      "name_en": "Cryptography",
+      "name_zh": "密码学",
+      "file": "plugins/cryptography.json",
+      "conditions": 10,
+      "actions": 3,
+      "expressions": 3
+    },
     "dictionary": {
       "originalId": "Dictionary",
       "name_en": "Dictionary",
@@ -211,14 +162,23 @@
       "actions": 6,
       "expressions": 6
     },
-    "facebook": {
-      "originalId": "Facebook",
-      "name_en": "Facebook",
-      "name_zh": "Facebook",
-      "file": "plugins/facebook.json",
-      "conditions": 9,
-      "actions": 12,
-      "expressions": 10
+    "clipboard": {
+      "originalId": "Clipboard",
+      "name_en": "Clipboard",
+      "name_zh": "剪贴板",
+      "file": "plugins/clipboard.json",
+      "conditions": 5,
+      "actions": 4,
+      "expressions": 1
+    },
+    "csv": {
+      "originalId": "CSV",
+      "name_en": "CSV",
+      "name_zh": "CSV",
+      "file": "plugins/csv.json",
+      "conditions": 2,
+      "actions": 2,
+      "expressions": 2
     },
     "drawingcanvas": {
       "originalId": "DrawingCanvas",
@@ -227,6 +187,24 @@
       "file": "plugins/drawingcanvas.json",
       "conditions": 3,
       "actions": 23,
+      "expressions": 10
+    },
+    "filechooser": {
+      "originalId": "filechooser",
+      "name_en": "File chooser",
+      "name_zh": "文件选择",
+      "file": "plugins/filechooser.json",
+      "conditions": 1,
+      "actions": 3,
+      "expressions": 5
+    },
+    "facebook": {
+      "originalId": "Facebook",
+      "name_en": "Facebook",
+      "name_zh": "Facebook",
+      "file": "plugins/facebook.json",
+      "conditions": 9,
+      "actions": 12,
       "expressions": 10
     },
     "filesystem": {
@@ -238,15 +216,6 @@
       "actions": 15,
       "expressions": 8
     },
-    "filechooser": {
-      "originalId": "filechooser",
-      "name_en": "File chooser",
-      "name_zh": "文件选择",
-      "file": "plugins/filechooser.json",
-      "conditions": 1,
-      "actions": 3,
-      "expressions": 5
-    },
     "gamepad": {
       "originalId": "gamepad",
       "name_en": "Gamepad",
@@ -255,15 +224,6 @@
       "conditions": 14,
       "actions": 3,
       "expressions": 13
-    },
-    "gamerecorder": {
-      "originalId": "GameRecorder",
-      "name_en": "Video recorder",
-      "name_zh": "屏幕录制",
-      "file": "plugins/gamerecorder.json",
-      "conditions": 9,
-      "actions": 7,
-      "expressions": 3
     },
     "geolocation": {
       "originalId": "Geolocation",
@@ -274,6 +234,15 @@
       "actions": 3,
       "expressions": 9
     },
+    "gamerecorder": {
+      "originalId": "GameRecorder",
+      "name_en": "Video recorder",
+      "name_zh": "屏幕录制",
+      "file": "plugins/gamerecorder.json",
+      "conditions": 9,
+      "actions": 7,
+      "expressions": 3
+    },
     "htmlelement": {
       "originalId": "HTMLElement",
       "name_en": "HTML Element",
@@ -283,14 +252,14 @@
       "actions": 9,
       "expressions": 5
     },
-    "cordovaiap": {
-      "originalId": "CORDOVAIAP",
-      "name_en": "Mobile IAP",
-      "name_zh": "应用内购",
-      "file": "plugins/cordovaiap.json",
-      "conditions": 14,
-      "actions": 5,
-      "expressions": 7
+    "iframe": {
+      "originalId": "iframe",
+      "name_en": "iframe",
+      "name_zh": "内嵌网页",
+      "file": "plugins/iframe.json",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "googleplay": {
       "originalId": "googleplay",
@@ -301,14 +270,14 @@
       "actions": 14,
       "expressions": 28
     },
-    "iframe": {
-      "originalId": "iframe",
-      "name_en": "iframe",
-      "name_zh": "内嵌网页",
-      "file": "plugins/iframe.json",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
+    "cordovaiap": {
+      "originalId": "CORDOVAIAP",
+      "name_en": "Mobile IAP",
+      "name_zh": "应用内购",
+      "file": "plugins/cordovaiap.json",
+      "conditions": 14,
+      "actions": 5,
+      "expressions": 7
     },
     "instantgames": {
       "originalId": "InstantGames",
@@ -337,15 +306,6 @@
       "actions": 16,
       "expressions": 13
     },
-    "keyboard": {
-      "originalId": "Keyboard",
-      "name_en": "Keyboard",
-      "name_zh": "键盘",
-      "file": "plugins/keyboard.json",
-      "conditions": 14,
-      "actions": 2,
-      "expressions": 3
-    },
     "list": {
       "originalId": "List",
       "name_en": "List",
@@ -355,14 +315,14 @@
       "actions": 7,
       "expressions": 7
     },
-    "localstorage": {
-      "originalId": "LocalStorage",
-      "name_en": "Local storage",
-      "name_zh": "本地存储",
-      "file": "plugins/localstorage.json",
-      "conditions": 18,
-      "actions": 10,
-      "expressions": 6
+    "keyboard": {
+      "originalId": "Keyboard",
+      "name_en": "Keyboard",
+      "name_zh": "键盘",
+      "file": "plugins/keyboard.json",
+      "conditions": 14,
+      "actions": 2,
+      "expressions": 3
     },
     "midi": {
       "originalId": "MIDI",
@@ -373,14 +333,14 @@
       "actions": 9,
       "expressions": 22
     },
-    "model3d": {
-      "originalId": "Model3D",
-      "name_en": "3D model",
-      "name_zh": "3D 模型",
-      "file": "plugins/model3d.json",
-      "conditions": 16,
-      "actions": 19,
-      "expressions": 29
+    "localstorage": {
+      "originalId": "LocalStorage",
+      "name_en": "Local storage",
+      "name_zh": "本地存储",
+      "file": "plugins/localstorage.json",
+      "conditions": 18,
+      "actions": 10,
+      "expressions": 6
     },
     "mouse": {
       "originalId": "Mouse",
@@ -390,6 +350,24 @@
       "conditions": 12,
       "actions": 5,
       "expressions": 9
+    },
+    "nodewebkit": {
+      "originalId": "NodeWebkit",
+      "name_en": "NW.js",
+      "name_zh": "NW.js",
+      "file": "plugins/nodewebkit.json",
+      "conditions": 13,
+      "actions": 33,
+      "expressions": 21
+    },
+    "model3d": {
+      "originalId": "Model3D",
+      "name_en": "3D model",
+      "name_zh": "3D 模型",
+      "file": "plugins/model3d.json",
+      "conditions": 10,
+      "actions": 15,
+      "expressions": 22
     },
     "multiplayer": {
       "originalId": "Multiplayer",
@@ -409,23 +387,14 @@
       "actions": 22,
       "expressions": 18
     },
-    "platforminfo": {
-      "originalId": "PlatformInfo",
-      "name_en": "Platform info",
-      "name_zh": "设备信息",
-      "file": "plugins/platforminfo.json",
-      "conditions": 20,
+    "qrcode": {
+      "originalId": "qrcode",
+      "name_en": "QR code",
+      "name_zh": "二维码",
+      "file": "plugins/qrcode.json",
+      "conditions": 0,
       "actions": 2,
-      "expressions": 26
-    },
-    "nodewebkit": {
-      "originalId": "NodeWebkit",
-      "name_en": "NW.js",
-      "name_zh": "NW.js",
-      "file": "plugins/nodewebkit.json",
-      "conditions": 13,
-      "actions": 33,
-      "expressions": 21
+      "expressions": 0
     },
     "progressbar": {
       "originalId": "progressbar",
@@ -436,14 +405,14 @@
       "actions": 4,
       "expressions": 2
     },
-    "qrcode": {
-      "originalId": "qrcode",
-      "name_en": "QR code",
-      "name_zh": "二维码",
-      "file": "plugins/qrcode.json",
-      "conditions": 0,
+    "platforminfo": {
+      "originalId": "PlatformInfo",
+      "name_en": "Platform info",
+      "name_zh": "设备信息",
+      "file": "plugins/platforminfo.json",
+      "conditions": 20,
       "actions": 2,
-      "expressions": 0
+      "expressions": 26
     },
     "shadowlight": {
       "originalId": "shadowlight",
@@ -454,6 +423,15 @@
       "actions": 5,
       "expressions": 3
     },
+    "share": {
+      "originalId": "Share",
+      "name_en": "Share",
+      "name_zh": "分享",
+      "file": "plugins/share.json",
+      "conditions": 4,
+      "actions": 4,
+      "expressions": 0
+    },
     "shape3d": {
       "originalId": "Shape3D",
       "name_en": "3D shape",
@@ -463,13 +441,22 @@
       "actions": 7,
       "expressions": 6
     },
-    "share": {
-      "originalId": "Share",
-      "name_en": "Share",
-      "name_zh": "分享",
-      "file": "plugins/share.json",
+    "sliderbar": {
+      "originalId": "sliderbar",
+      "name_en": "Slider bar",
+      "name_zh": "滑动条",
+      "file": "plugins/sliderbar.json",
       "conditions": 4,
-      "actions": 4,
+      "actions": 5,
+      "expressions": 4
+    },
+    "svgpicture": {
+      "originalId": "SVGPicture",
+      "name_en": "SVG Picture",
+      "name_zh": "矢量图",
+      "file": "plugins/svgpicture.json",
+      "conditions": 0,
+      "actions": 3,
       "expressions": 0
     },
     "speechrecognition": {
@@ -490,14 +477,23 @@
       "actions": 4,
       "expressions": 4
     },
-    "sliderbar": {
-      "originalId": "sliderbar",
-      "name_en": "Slider bar",
-      "name_zh": "滑动条",
-      "file": "plugins/sliderbar.json",
+    "spritefont2": {
+      "originalId": "Spritefont2",
+      "name_en": "Sprite font",
+      "name_zh": "位图字体",
+      "file": "plugins/spritefont2.json",
       "conditions": 4,
-      "actions": 5,
-      "expressions": 4
+      "actions": 13,
+      "expressions": 15
+    },
+    "text": {
+      "originalId": "Text",
+      "name_en": "Text",
+      "name_zh": "文本",
+      "file": "plugins/text.json",
+      "conditions": 4,
+      "actions": 18,
+      "expressions": 14
     },
     "sprite": {
       "originalId": "Sprite",
@@ -506,24 +502,6 @@
       "file": "plugins/sprite.json",
       "conditions": 12,
       "actions": 16,
-      "expressions": 15
-    },
-    "svgpicture": {
-      "originalId": "SVGPicture",
-      "name_en": "SVG Picture",
-      "name_zh": "矢量图",
-      "file": "plugins/svgpicture.json",
-      "conditions": 0,
-      "actions": 3,
-      "expressions": 0
-    },
-    "spritefont2": {
-      "originalId": "Spritefont2",
-      "name_en": "Sprite font",
-      "name_zh": "位图字体",
-      "file": "plugins/spritefont2.json",
-      "conditions": 4,
-      "actions": 13,
       "expressions": 15
     },
     "textbox": {
@@ -544,14 +522,14 @@
       "actions": 11,
       "expressions": 12
     },
-    "text": {
-      "originalId": "Text",
-      "name_en": "Text",
-      "name_zh": "文本",
-      "file": "plugins/text.json",
-      "conditions": 4,
-      "actions": 18,
-      "expressions": 14
+    "timeline": {
+      "originalId": "Timeline",
+      "name_en": "Timeline controller",
+      "name_zh": "时间轴",
+      "file": "plugins/timeline.json",
+      "conditions": 19,
+      "actions": 23,
+      "expressions": 9
     },
     "tilemap": {
       "originalId": "Tilemap",
@@ -571,24 +549,6 @@
       "actions": 12,
       "expressions": 28
     },
-    "timeline": {
-      "originalId": "Timeline",
-      "name_en": "Timeline controller",
-      "name_zh": "时间轴",
-      "file": "plugins/timeline.json",
-      "conditions": 19,
-      "actions": 23,
-      "expressions": 9
-    },
-    "usermedia": {
-      "originalId": "UserMedia",
-      "name_en": "User Media",
-      "name_zh": "用户媒体",
-      "file": "plugins/usermedia.json",
-      "conditions": 17,
-      "actions": 13,
-      "expressions": 17
-    },
     "touch": {
       "originalId": "Touch",
       "name_en": "Touch",
@@ -597,6 +557,15 @@
       "conditions": 21,
       "actions": 1,
       "expressions": 32
+    },
+    "c2websocket": {
+      "originalId": "C2WebSocket",
+      "name_en": "WebSocket",
+      "name_zh": "WebSocket",
+      "file": "plugins/c2websocket.json",
+      "conditions": 8,
+      "actions": 4,
+      "expressions": 4
     },
     "video": {
       "originalId": "video",
@@ -607,14 +576,14 @@
       "actions": 9,
       "expressions": 6
     },
-    "c2websocket": {
-      "originalId": "C2WebSocket",
-      "name_en": "WebSocket",
-      "name_zh": "WebSocket",
-      "file": "plugins/c2websocket.json",
-      "conditions": 8,
-      "actions": 4,
-      "expressions": 4
+    "usermedia": {
+      "originalId": "UserMedia",
+      "name_en": "User Media",
+      "name_zh": "用户媒体",
+      "file": "plugins/usermedia.json",
+      "conditions": 17,
+      "actions": 13,
+      "expressions": 17
     },
     "xml": {
       "originalId": "XML",
@@ -662,15 +631,6 @@
       "actions": 0,
       "expressions": 0
     },
-    "car": {
-      "originalId": "Car",
-      "name_en": "Car",
-      "name_zh": "车辆",
-      "file": "behaviors/car.json",
-      "conditions": 3,
-      "actions": 13,
-      "expressions": 10
-    },
     "bullet": {
       "originalId": "Bullet",
       "name_en": "Bullet",
@@ -679,15 +639,6 @@
       "conditions": 4,
       "actions": 9,
       "expressions": 5
-    },
-    "custom": {
-      "originalId": "custom",
-      "name_en": "Custom",
-      "name_zh": "自定义移动",
-      "file": "behaviors/custom.json",
-      "conditions": 6,
-      "actions": 13,
-      "expressions": 4
     },
     "destroy": {
       "originalId": "destroy",
@@ -698,14 +649,23 @@
       "actions": 0,
       "expressions": 0
     },
-    "dragndrop": {
-      "originalId": "DragnDrop",
-      "name_en": "Drag & Drop",
-      "name_zh": "拖放",
-      "file": "behaviors/dragndrop.json",
-      "conditions": 4,
-      "actions": 3,
-      "expressions": 0
+    "car": {
+      "originalId": "Car",
+      "name_en": "Car",
+      "name_zh": "车辆",
+      "file": "behaviors/car.json",
+      "conditions": 3,
+      "actions": 13,
+      "expressions": 10
+    },
+    "custom": {
+      "originalId": "custom",
+      "name_en": "Custom",
+      "name_zh": "自定义移动",
+      "file": "behaviors/custom.json",
+      "conditions": 6,
+      "actions": 13,
+      "expressions": 4
     },
     "fade": {
       "originalId": "Fade",
@@ -716,6 +676,15 @@
       "actions": 5,
       "expressions": 3
     },
+    "dragndrop": {
+      "originalId": "DragnDrop",
+      "name_en": "Drag & Drop",
+      "name_zh": "拖放",
+      "file": "behaviors/dragndrop.json",
+      "conditions": 4,
+      "actions": 3,
+      "expressions": 0
+    },
     "follow": {
       "originalId": "Follow",
       "name_en": "Follow",
@@ -725,15 +694,6 @@
       "actions": 17,
       "expressions": 6
     },
-    "flash": {
-      "originalId": "Flash",
-      "name_en": "Flash",
-      "name_zh": "闪烁",
-      "file": "behaviors/flash.json",
-      "conditions": 2,
-      "actions": 2,
-      "expressions": 0
-    },
     "jumpthru": {
       "originalId": "jumpthru",
       "name_en": "Jump-thru",
@@ -741,6 +701,15 @@
       "file": "behaviors/jumpthru.json",
       "conditions": 1,
       "actions": 1,
+      "expressions": 0
+    },
+    "flash": {
+      "originalId": "Flash",
+      "name_en": "Flash",
+      "name_zh": "闪烁",
+      "file": "behaviors/flash.json",
+      "conditions": 2,
+      "actions": 2,
       "expressions": 0
     },
     "moveto": {
@@ -770,14 +739,14 @@
       "actions": 0,
       "expressions": 0
     },
-    "pathfinding": {
-      "originalId": "Pathfinding",
-      "name_en": "Pathfinding",
-      "name_zh": "寻路",
-      "file": "behaviors/pathfinding.json",
-      "conditions": 9,
-      "actions": 21,
-      "expressions": 13
+    "orbit": {
+      "originalId": "Orbit",
+      "name_en": "Orbit",
+      "name_zh": "环绕",
+      "file": "behaviors/orbit.json",
+      "conditions": 1,
+      "actions": 11,
+      "expressions": 11
     },
     "persist": {
       "originalId": "Persist",
@@ -788,23 +757,14 @@
       "actions": 0,
       "expressions": 0
     },
-    "orbit": {
-      "originalId": "Orbit",
-      "name_en": "Orbit",
-      "name_zh": "环绕",
-      "file": "behaviors/orbit.json",
-      "conditions": 1,
-      "actions": 11,
-      "expressions": 11
-    },
-    "pin": {
-      "originalId": "Pin",
-      "name_en": "Pin",
-      "name_zh": "固定",
-      "file": "behaviors/pin.json",
-      "conditions": 2,
-      "actions": 7,
-      "expressions": 1
+    "pathfinding": {
+      "originalId": "Pathfinding",
+      "name_en": "Pathfinding",
+      "name_zh": "寻路",
+      "file": "behaviors/pathfinding.json",
+      "conditions": 9,
+      "actions": 21,
+      "expressions": 13
     },
     "physics": {
       "originalId": "Physics",
@@ -815,23 +775,23 @@
       "actions": 32,
       "expressions": 14
     },
-    "scrollto": {
-      "originalId": "scrollto",
-      "name_en": "Scroll To",
-      "name_zh": "镜头跟随",
-      "file": "behaviors/scrollto.json",
-      "conditions": 1,
-      "actions": 2,
-      "expressions": 0
+    "platform": {
+      "originalId": "Platform",
+      "name_en": "Platform",
+      "name_zh": "平台",
+      "file": "behaviors/platform.json",
+      "conditions": 13,
+      "actions": 18,
+      "expressions": 12
     },
-    "rotate": {
-      "originalId": "Rotate",
-      "name_en": "Rotate",
-      "name_zh": "旋转",
-      "file": "behaviors/rotate.json",
-      "conditions": 1,
-      "actions": 3,
-      "expressions": 2
+    "pin": {
+      "originalId": "Pin",
+      "name_en": "Pin",
+      "name_zh": "固定",
+      "file": "behaviors/pin.json",
+      "conditions": 2,
+      "actions": 7,
+      "expressions": 1
     },
     "shadowcaster": {
       "originalId": "shadowcaster",
@@ -841,15 +801,6 @@
       "conditions": 2,
       "actions": 3,
       "expressions": 2
-    },
-    "platform": {
-      "originalId": "Platform",
-      "name_en": "Platform",
-      "name_zh": "平台",
-      "file": "behaviors/platform.json",
-      "conditions": 13,
-      "actions": 18,
-      "expressions": 12
     },
     "sin": {
       "originalId": "Sin",
@@ -869,14 +820,23 @@
       "actions": 2,
       "expressions": 0
     },
-    "turret": {
-      "originalId": "Turret",
-      "name_en": "Turret",
-      "name_zh": "炮台",
-      "file": "behaviors/turret.json",
-      "conditions": 4,
-      "actions": 12,
-      "expressions": 4
+    "rotate": {
+      "originalId": "Rotate",
+      "name_en": "Rotate",
+      "name_zh": "旋转",
+      "file": "behaviors/rotate.json",
+      "conditions": 1,
+      "actions": 3,
+      "expressions": 2
+    },
+    "scrollto": {
+      "originalId": "scrollto",
+      "name_en": "Scroll To",
+      "name_zh": "镜头跟随",
+      "file": "behaviors/scrollto.json",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 0
     },
     "timer": {
       "originalId": "Timer",
@@ -887,15 +847,6 @@
       "actions": 5,
       "expressions": 4
     },
-    "tilemovement": {
-      "originalId": "TileMovement",
-      "name_en": "Tile movement",
-      "name_zh": "网格移动",
-      "file": "behaviors/tilemovement.json",
-      "conditions": 5,
-      "actions": 7,
-      "expressions": 8
-    },
     "wrap": {
       "originalId": "wrap",
       "name_en": "Wrap",
@@ -904,6 +855,24 @@
       "conditions": 1,
       "actions": 0,
       "expressions": 0
+    },
+    "turret": {
+      "originalId": "Turret",
+      "name_en": "Turret",
+      "name_zh": "炮台",
+      "file": "behaviors/turret.json",
+      "conditions": 4,
+      "actions": 12,
+      "expressions": 4
+    },
+    "tilemovement": {
+      "originalId": "TileMovement",
+      "name_en": "Tile movement",
+      "name_zh": "网格移动",
+      "file": "behaviors/tilemovement.json",
+      "conditions": 5,
+      "actions": 7,
+      "expressions": 8
     },
     "tween": {
       "originalId": "Tween",
@@ -1451,5 +1420,5 @@
       "category": "distortion"
     }
   },
-  "examples": 482
+  "examples": 481
 }
