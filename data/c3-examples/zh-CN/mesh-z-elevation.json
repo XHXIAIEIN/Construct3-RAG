@@ -15,8 +15,8 @@
     ],
     "behaviors": [
       "EightDir",
-      "scrollto",
-      "Sin"
+      "Sin",
+      "scrollto"
     ],
     "effects": []
   },

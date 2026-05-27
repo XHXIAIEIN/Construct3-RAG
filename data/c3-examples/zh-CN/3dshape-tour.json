@@ -15,10 +15,10 @@
       "TiledBg"
     ],
     "behaviors": [
-      "solid",
       "EightDir",
+      "bound",
       "scrollto",
-      "bound"
+      "solid"
     ],
     "effects": []
   },

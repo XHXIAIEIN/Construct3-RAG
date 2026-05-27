@@ -10,18 +10,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Shape3D",
-      "Keyboard",
-      "Sprite",
       "Arr",
+      "Keyboard",
       "Particles",
-      "TiledBg",
+      "Shape3D",
+      "Sprite",
       "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer"
+      "Timer",
+      "Tween"
     ],
     "effects": [
       "darken",

@@ -1,0 +1,41 @@
+{
+  "id": "3d-file-explorer",
+  "name": "3D file explorer",
+  "description": "Explore a local folder in a 3D first person view.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Feature example",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "BinaryData",
+      "Camera3D",
+      "FileSystem",
+      "Keyboard",
+      "Mouse",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=3d-file-explorer"
+}

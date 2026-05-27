@@ -11,20 +11,20 @@
   ],
   "used-addons": {
     "plugins": [
+      "Browser",
+      "Keyboard",
       "Shape3D",
       "Sprite",
-      "Keyboard",
-      "gamepad",
-      "Browser",
-      "Spritefont2"
+      "Spritefont2",
+      "gamepad"
     ],
     "behaviors": [
+      "Car",
       "EightDir",
-      "Tween",
       "Fade",
       "Flash",
-      "solid",
-      "Car"
+      "Tween",
+      "solid"
     ],
     "effects": [
       "hsladjust",

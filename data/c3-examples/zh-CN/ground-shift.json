@@ -11,27 +11,27 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Keyboard",
-      "Sprite",
-      "Shape3D",
-      "TiledBg",
-      "NinePatch",
-      "gamepad",
-      "Particles",
       "Camera3D",
-      "Spritefont2"
+      "Keyboard",
+      "NinePatch",
+      "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
+      "Bullet",
+      "Fade",
       "Platform",
       "Tween",
-      "Fade",
-      "Bullet"
+      "solid"
     ],
     "effects": [
-      "inverse",
-      "blurhorizontal"
+      "blurhorizontal",
+      "inverse"
     ]
   },
   "open": "https://editor.construct.net/#open=ground-shift"
