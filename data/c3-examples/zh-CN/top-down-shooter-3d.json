@@ -11,22 +11,22 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Shape3D",
       "Camera3D",
-      "Mouse",
       "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
       "Spritefont2",
       "TiledBg"
     ],
     "behaviors": [
-      "solid",
       "Bullet",
-      "destroy",
+      "EightDir",
+      "LOS",
       "Rotate",
       "Tween",
-      "LOS",
-      "EightDir"
+      "destroy",
+      "solid"
     ],
     "effects": []
   },

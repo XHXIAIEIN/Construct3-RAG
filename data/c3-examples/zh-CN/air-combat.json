@@ -10,25 +10,25 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "Shape3D",
       "Particles",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "gamepad",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "custom",
-      "scrollto",
-      "Timer",
-      "Tween",
       "Bullet",
-      "Sin",
+      "Fade",
       "LOS",
       "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "custom",
       "destroy",
-      "Fade"
+      "scrollto"
     ],
     "effects": [
       "hsladjust"

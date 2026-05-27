@@ -12,12 +12,12 @@
   "used-addons": {
     "plugins": [
       "Camera3D",
-      "Shape3D",
       "Mouse",
-      "Sprite",
       "NinePatch",
-      "Touch",
-      "Spritefont2"
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "Touch"
     ],
     "behaviors": [
       "Sin",

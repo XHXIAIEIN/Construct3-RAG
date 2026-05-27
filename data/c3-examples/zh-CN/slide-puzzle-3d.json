@@ -11,23 +11,23 @@
   ],
   "used-addons": {
     "plugins": [
-      "Camera3D",
-      "Shape3D",
-      "Mouse",
-      "Sprite",
       "AdvancedRandom",
       "Arr",
-      "Touch",
+      "Camera3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
       "Spritefont2",
-      "TiledBg"
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
-      "Sin"
+      "Sin",
+      "Tween"
     ],
     "effects": [
-      "hsladjust",
-      "fogexponential"
+      "fogexponential",
+      "hsladjust"
     ]
   },
   "open": "https://editor.construct.net/#open=slide-puzzle-3d"

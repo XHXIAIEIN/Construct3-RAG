@@ -14,9 +14,9 @@
       "Sprite"
     ],
     "behaviors": [
-      "solid",
       "Platform",
-      "scrollto"
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

@@ -11,14 +11,14 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Camera3D",
       "Keyboard",
-      "TiledBg",
       "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
       "Tilemap",
-      "gamepad",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
       "EightDir",
@@ -26,8 +26,8 @@
       "solid"
     ],
     "effects": [
-      "darken",
-      "blurhorizontal"
+      "blurhorizontal",
+      "darken"
     ]
   },
   "open": "https://editor.construct.net/#open=toggle-camera-perspective"

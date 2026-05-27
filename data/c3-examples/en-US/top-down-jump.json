@@ -10,28 +10,28 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "Tilemap",
-      "gamepad",
-      "TiledBg",
       "Particles",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
+      "Bullet",
       "EightDir",
       "Fade",
-      "Bullet",
+      "Rotate",
       "Sin",
-      "Rotate"
+      "Tween"
     ],
     "effects": [
       "blurhorizontal",
       "blurvertical",
       "glowhorizontal",
-      "warpobject",
-      "glowvertical"
+      "glowvertical",
+      "warpobject"
     ]
   },
   "open": "https://editor.construct.net/#open=top-down-jump"
