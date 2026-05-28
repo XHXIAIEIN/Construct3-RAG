@@ -14,9 +14,9 @@
       "Text"
     ],
     "behaviors": [
-      "solid",
       "EightDir",
-      "scrollto"
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

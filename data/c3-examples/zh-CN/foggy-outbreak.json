@@ -10,18 +10,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Shape3D",
       "Camera3D",
-      "Sprite",
-      "Mouse",
       "Keyboard",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
       "Spritefont2"
     ],
     "behaviors": [
-      "solid",
       "EightDir",
+      "LOS",
       "Tween",
-      "LOS"
+      "solid"
     ],
     "effects": [
       "fogexponential"

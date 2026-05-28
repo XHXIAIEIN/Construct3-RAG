@@ -10,11 +10,11 @@
   ],
   "used-addons": {
     "plugins": [
-      "TiledBg",
-      "Sprite",
-      "Touch",
       "Keyboard",
-      "Text"
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
       "Bullet",

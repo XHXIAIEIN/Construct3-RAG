@@ -1,0 +1,26 @@
+{
+  "id": "stylist",
+  "name": "游戏示例：造型师",
+  "description": "为你的模特搭配服装、鞋子、配饰、发型和颜色，然后下载由你打造的舞台造型照片。",
+  "tags": [
+    "新增",
+    "高级",
+    "游戏模板"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Browser",
+      "Dictionary",
+      "Sprite",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=stylist"
+}

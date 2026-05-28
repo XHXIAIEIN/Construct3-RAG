@@ -11,25 +11,25 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Camera3D",
       "Arr",
+      "Camera3D",
+      "Keyboard",
       "LocalStorage",
       "Shape3D",
-      "Keyboard",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Tilemap",
-      "Spritefont2"
+      "Tilemap"
     ],
     "behaviors": [
       "Car",
-      "Tween",
+      "Fade",
       "Timer",
-      "Fade"
+      "Tween"
     ],
     "effects": [
-      "lighten",
-      "blurvertical"
+      "blurvertical",
+      "lighten"
     ]
   },
   "open": "https://editor.construct.net/#open=ghost-racer"

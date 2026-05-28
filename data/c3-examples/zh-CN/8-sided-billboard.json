@@ -11,17 +11,17 @@
   "used-addons": {
     "plugins": [
       "Camera3D",
+      "Keyboard",
       "Shape3D",
       "Sprite",
-      "Keyboard",
-      "gamepad",
       "Spritefont2",
-      "TiledBg"
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
+      "Fade",
       "Sin",
-      "Tween",
-      "Fade"
+      "Tween"
     ],
     "effects": []
   },
