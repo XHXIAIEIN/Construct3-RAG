@@ -12,6 +12,7 @@
       "Audio",
       "Keyboard",
       "Mouse",
+      "PlatformInfo",
       "Sprite",
       "Text",
       "TiledBg"

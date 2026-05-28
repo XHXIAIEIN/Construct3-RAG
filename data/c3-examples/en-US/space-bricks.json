@@ -10,23 +10,23 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "gamepad",
       "Camera3D",
+      "Keyboard",
       "Shape3D",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
       "LOS",
-      "custom",
       "Tween",
+      "custom",
       "solid"
     ],
     "effects": [
-      "hsladjust",
-      "blurvertical"
+      "blurvertical",
+      "hsladjust"
     ]
   },
   "open": "https://editor.construct.net/#open=space-bricks"

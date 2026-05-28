@@ -11,21 +11,21 @@
   ],
   "used-addons": {
     "plugins": [
-      "Shape3D",
       "Camera3D",
       "Keyboard",
+      "Shape3D",
       "Sprite",
-      "Tilemap",
-      "gamepad",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "solid",
-      "Flash",
       "EightDir",
-      "Rotate"
+      "Flash",
+      "Rotate",
+      "Tween",
+      "solid"
     ],
     "effects": []
   },

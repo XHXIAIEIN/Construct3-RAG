@@ -11,32 +11,32 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
+      "Camera3D",
       "Keyboard",
-      "Shape3D",
-      "TiledBg",
-      "gamepad",
       "Particles",
       "PlatformInfo",
+      "Shape3D",
+      "Sprite",
       "Spritefont2",
-      "Camera3D"
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
+      "Fade",
       "Tween",
-      "solid",
-      "Fade"
+      "solid"
     ],
     "effects": [
-      "hsladjustmask",
-      "blurhorizontal",
-      "warpobject",
-      "vignette",
-      "bulge",
-      "pixellate",
       "alphaclamp",
+      "blurhorizontal",
+      "bulge",
       "hsladjust",
+      "hsladjustmask",
+      "pixellate",
       "posterize",
-      "replacecolor"
+      "replacecolor",
+      "vignette",
+      "warpobject"
     ]
   },
   "open": "https://editor.construct.net/#open=3d-castle-maze"

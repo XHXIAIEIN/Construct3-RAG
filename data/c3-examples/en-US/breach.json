@@ -1,0 +1,52 @@
+{
+  "id": "breach",
+  "name": "Breach",
+  "description": "Seize control of digital networks in a tactical hacking puzzle game.",
+  "tags": [
+    "New",
+    "Advanced",
+    "Demo game",
+    "Puzzle",
+    "Strategy",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Model3D",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "DragnDrop",
+      "Flash",
+      "MoveTo",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=breach"
+}
