@@ -1,43 +1,12 @@
 {
-  "version": "r487",
+  "version": "r487.2",
   "languages": [
     "en-US",
     "zh-CN"
   ],
   "supported_languages": [
-    "be-BY",
-    "bn-IN",
-    "bs-BA",
-    "cs-CZ",
-    "da-DK",
-    "de-DE",
-    "el-GR",
     "en-US",
-    "es-ES",
-    "fr-FR",
-    "hi-IN",
-    "hr-HR",
-    "hu-HU",
-    "id-ID",
-    "it-IT",
-    "ja-JP",
-    "ko-KR",
-    "ms-MY",
-    "nl-NL",
-    "pa-IN",
-    "pl-PL",
-    "pt-BR",
-    "ro-RO",
-    "ru-RU",
-    "sl-SI",
-    "sr-RS",
-    "sv-SE",
-    "th-TH",
-    "tr-TR",
-    "uk-UA",
-    "vi-VN",
-    "zh-CN",
-    "zh-TW"
+    "zh-CN"
   ],
   "plugins": {
     "ninepatch": {
