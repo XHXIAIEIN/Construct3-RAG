@@ -1,0 +1,40 @@
+{
+  "id": "lifeform-sampler",
+  "name": "Life Form Sampler",
+  "description": "Collect life form samples from an alien world while managing oxygen supply and avoiding dangerous creatures.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Tilemap"
+    ],
+    "behaviors": [
+      "Pathfinding",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "tint",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=lifeform-sampler"
+}

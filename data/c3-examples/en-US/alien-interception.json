@@ -1,0 +1,39 @@
+{
+  "id": "alien-interception",
+  "name": "Alien interception",
+  "description": "Take control of the Blade Mk4 and intercept the alien invasion in this 3D space shooter.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Shooter",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Browser",
+      "Camera3D",
+      "Keyboard",
+      "Model3D",
+      "Mouse",
+      "PlatformInfo",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=alien-interception"
+}

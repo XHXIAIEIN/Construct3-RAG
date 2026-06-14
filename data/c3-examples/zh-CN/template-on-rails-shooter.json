@@ -10,24 +10,24 @@
   ],
   "used-addons": {
     "plugins": [
-      "TiledBg",
-      "Sprite",
-      "Keyboard",
-      "Spritefont2",
       "AJAX",
       "Arr",
+      "Keyboard",
       "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [
-      "Tween",
       "EightDir",
-      "Timer",
-      "Pin",
-      "Flash",
       "Fade",
+      "Flash",
+      "Pin",
       "Rotate",
-      "Sin"
+      "Sin",
+      "Timer",
+      "Tween"
     ],
     "effects": []
   },

@@ -9,15 +9,15 @@
   ],
   "used-addons": {
     "plugins": [
-      "TiledBg",
-      "Shape3D",
       "Camera3D",
       "Keyboard",
-      "Text"
+      "Shape3D",
+      "Text",
+      "TiledBg"
     ],
     "behaviors": [
-      "solid",
-      "EightDir"
+      "EightDir",
+      "solid"
     ],
     "effects": []
   },

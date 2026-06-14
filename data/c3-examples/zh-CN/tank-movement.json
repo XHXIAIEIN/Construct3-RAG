@@ -11,14 +11,14 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
+      "Camera3D",
       "Keyboard",
       "Shape3D",
-      "Camera3D",
-      "gamepad",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
       "Sin",

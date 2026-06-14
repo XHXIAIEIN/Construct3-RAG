@@ -12,20 +12,20 @@
   "used-addons": {
     "plugins": [
       "Camera3D",
-      "Shape3D",
-      "Touch",
       "Keyboard",
-      "TiledBg",
+      "Shape3D",
+      "Sprite",
       "Spritefont2",
-      "Sprite"
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
       "Sin",
       "Tween"
     ],
     "effects": [
-      "hsladjust",
-      "fogexponential"
+      "fogexponential",
+      "hsladjust"
     ]
   },
   "open": "https://editor.construct.net/#open=skyscraper-builder"
