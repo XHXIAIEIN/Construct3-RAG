@@ -12,18 +12,18 @@
   "used-addons": {
     "plugins": [
       "Camera3D",
-      "Shape3D",
       "Keyboard",
-      "Sprite",
-      "TiledBg",
       "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
       "Touch",
-      "gamepad",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Bullet"
+      "Bullet",
+      "Tween"
     ],
     "effects": []
   },

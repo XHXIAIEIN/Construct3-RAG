@@ -12,21 +12,21 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "gamepad",
       "Browser",
+      "Keyboard",
+      "Particles",
       "Shape3D",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Particles",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
       "Pin",
-      "Sin"
+      "Sin",
+      "Timer",
+      "Tween"
     ],
     "effects": []
   },

@@ -10,20 +10,20 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
+      "Camera3D",
       "Keyboard",
       "Shape3D",
-      "Camera3D",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "gamepad",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
       "Platform",
-      "scrollto",
-      "solid",
+      "Sin",
       "Tween",
-      "Sin"
+      "scrollto",
+      "solid"
     ],
     "effects": [
       "hsladjust"

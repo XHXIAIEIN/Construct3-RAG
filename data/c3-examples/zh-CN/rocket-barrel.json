@@ -11,29 +11,29 @@
   ],
   "used-addons": {
     "plugins": [
+      "Keyboard",
+      "PlatformInfo",
       "Shape3D",
       "Sprite",
-      "TiledBg",
-      "Keyboard",
-      "gamepad",
       "Spritefont2",
+      "TiledBg",
       "Touch",
-      "PlatformInfo"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
-      "EightDir",
-      "Rotate",
       "Bullet",
-      "Sin",
+      "EightDir",
       "Fade",
-      "Flash"
+      "Flash",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
     ],
     "effects": [
-      "pulse",
       "hsladjust",
       "posterize",
+      "pulse",
       "replacecolor"
     ]
   },
