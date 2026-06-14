@@ -14,7 +14,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-python@v5
         with:
@@ -61,7 +61,7 @@ jobs:
           p = pathlib.Path("src/config.py")
           src = p.read_text()
           src = re.sub(
-              r"""(os\.getenv\(["']C3_VERSION["'],\s*["'])r[\w.]+(['"])""",
+              r"""(os\.getenv\(["']C3_VERSION["'],\s*["'])r[\w.-]+(['"])""",
               lambda m: m.group(1) + ver + m.group(2),
               src,
           )
@@ -128,7 +128,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.check.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "sync Construct 3 ${{ steps.check.outputs.latest }}"
