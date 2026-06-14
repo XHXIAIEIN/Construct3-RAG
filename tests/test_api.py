@@ -175,10 +175,12 @@ def test_search_semantic_basic(client):
 
 def test_search_top_k(client):
     c, retriever, _ = client
+    # "test" is short (4 chars) → simple preset: per_coll=3, final=5
+    # final_top_k = max(preset.final_top_k, req.top_k) = max(5, 3) = 5
     resp = c.post("/search", json={"query": "test", "top_k": 3, "mode": "semantic"})
     assert resp.status_code == 200
     retriever.search_all_with_rerank.assert_called_once_with(
-        query="test", top_k_per_collection=5, final_top_k=3,
+        query="test", top_k_per_collection=3, final_top_k=5,
         exclude_collections={"terms"},
     )
 
