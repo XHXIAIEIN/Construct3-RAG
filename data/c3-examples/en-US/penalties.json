@@ -1,0 +1,37 @@
+{
+  "id": "penalties",
+  "name": "Penalties",
+  "description": "Take the shot or guard the goal in penalty shootouts!",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Arcade",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Model3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Billboard",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust",
+      "replacesolidcolor",
+      "toon"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=penalties"
+}

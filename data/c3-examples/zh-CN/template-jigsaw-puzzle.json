@@ -11,17 +11,17 @@
   "used-addons": {
     "plugins": [
       "DrawingCanvas",
-      "Sprite",
-      "TiledBg",
+      "Keyboard",
       "NinePatch",
       "Particles",
-      "Keyboard",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
     ],
     "behaviors": [
-      "Tween",
       "DragnDrop",
-      "Fade"
+      "Fade",
+      "Tween"
     ],
     "effects": []
   },

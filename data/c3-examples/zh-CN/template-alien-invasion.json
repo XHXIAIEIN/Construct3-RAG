@@ -9,28 +9,28 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
       "Particles",
-      "gamepad",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
-      "Sin",
-      "EightDir",
-      "bound",
       "Bullet",
-      "wrap",
+      "EightDir",
+      "Fade",
       "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "bound",
       "destroy",
-      "Fade"
+      "wrap"
     ],
     "effects": [
-      "hsladjust",
       "glowhorizontal",
-      "glowvertical"
+      "glowvertical",
+      "hsladjust"
     ]
   },
   "open": "https://editor.construct.net/#open=template-alien-invasion"

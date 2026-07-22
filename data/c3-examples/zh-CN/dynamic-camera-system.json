@@ -8,22 +8,22 @@
   ],
   "used-addons": {
     "plugins": [
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Sprite",
-      "NinePatch",
-      "Keyboard",
-      "Spritefont2",
       "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "Tween",
-      "TileMovement",
       "Bullet",
       "Fade",
       "Rotate",
-      "Sin"
+      "Sin",
+      "TileMovement",
+      "Tween",
+      "solid"
     ],
     "effects": [
       "brightness",

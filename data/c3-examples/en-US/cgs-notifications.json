@@ -1,0 +1,21 @@
+{
+  "id": "cgs-notifications",
+  "name": "CGS Notifications",
+  "description": "An example of using Construct Game Services to receive notifications in real time.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Feature example"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-notifications"
+}

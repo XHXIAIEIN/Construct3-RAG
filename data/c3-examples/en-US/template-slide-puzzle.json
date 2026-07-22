@@ -10,14 +10,24 @@
   ],
   "used-addons": {
     "plugins": [
+      "AdvancedRandom",
+      "Arr",
+      "Camera3D",
+      "Mouse",
+      "Shape3D",
       "Sprite",
-      "Touch",
-      "Text"
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
-      "MoveTo"
+      "Sin",
+      "Tween"
     ],
-    "effects": []
+    "effects": [
+      "fogexponential",
+      "hsladjust"
+    ]
   },
   "open": "https://editor.construct.net/#open=template-slide-puzzle"
 }

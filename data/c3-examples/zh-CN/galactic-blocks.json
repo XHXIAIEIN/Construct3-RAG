@@ -9,26 +9,26 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "gamepad",
       "Arr",
-      "TiledBg",
       "DrawingCanvas",
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
       "Spritefont2",
-      "NinePatch"
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
       "Bullet",
-      "Rotate",
       "Fade",
       "Flash",
-      "Pin"
+      "Pin",
+      "Rotate",
+      "Tween"
     ],
     "effects": [
-      "glowvertical",
       "glowhorizontal",
+      "glowvertical",
       "hsladjust"
     ]
   },

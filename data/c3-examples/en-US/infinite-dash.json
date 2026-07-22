@@ -11,19 +11,19 @@
     "plugins": [
       "Keyboard",
       "Sprite",
-      "gamepad",
-      "Tilemap",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "Tween",
+      "Fade",
       "LOS",
-      "scrollto",
       "Platform",
       "Timer",
-      "Fade"
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },
