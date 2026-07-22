@@ -1,6 +1,6 @@
 {
   "id": "3dshape-tour",
-  "name": "功能示例：3D多边形",
+  "name": "功能示例：3D形状",
   "description": "以导览方式展示 3D 形状对象的各种类型。",
   "tags": [
     "简单",

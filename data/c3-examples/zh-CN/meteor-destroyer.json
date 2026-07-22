@@ -10,20 +10,20 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Touch",
-      "TiledBg",
-      "Particles",
       "Keyboard",
-      "Spritefont2"
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
-      "Flash",
-      "Timer",
-      "Sin",
-      "Fade",
       "Bullet",
+      "Fade",
+      "Flash",
+      "Sin",
+      "Timer",
+      "Tween",
       "destroy"
     ],
     "effects": [

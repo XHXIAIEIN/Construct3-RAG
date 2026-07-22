@@ -10,24 +10,24 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Sprite",
       "Keyboard",
-      "Particles",
       "Mouse",
-      "TiledBg",
-      "Touch",
+      "Particles",
       "PlatformInfo",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
     ],
     "behaviors": [
-      "solid",
-      "scrollto",
-      "Tween",
+      "Fade",
       "LOS",
       "Pin",
       "Sin",
-      "Fade"
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

@@ -1,0 +1,26 @@
+{
+  "id": "word-search",
+  "name": "Word search",
+  "description": "How fast can you find every word on the list?",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=word-search"
+}

@@ -10,24 +10,24 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Tilemap",
       "Keyboard",
-      "gamepad",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "EightDir",
-      "bound",
-      "scrollto",
-      "MoveTo",
-      "Timer",
       "Bullet",
-      "destroy",
-      "solid",
+      "EightDir",
+      "MoveTo",
+      "Rotate",
+      "Timer",
       "Tween",
-      "Rotate"
+      "bound",
+      "destroy",
+      "scrollto",
+      "solid"
     ],
     "effects": [
       "hsladjust",

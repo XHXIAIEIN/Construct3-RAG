@@ -1,0 +1,25 @@
+{
+  "id": "billboard-styles",
+  "name": "功能示例: 展示板",
+  "description": "演示了使用 3D 摄像机显示 2D 精灵的多种方法。",
+  "tags": [
+    "新增",
+    "进阶",
+    "功能示例",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Billboard",
+      "Orbit"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=billboard-styles"
+}

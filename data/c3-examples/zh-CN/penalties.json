@@ -1,0 +1,37 @@
+{
+  "id": "penalties",
+  "name": "游戏示例：点球大战",
+  "description": "在点球大战中，你可以选择射门或守门！",
+  "tags": [
+    "新增",
+    "进阶",
+    "游戏模板",
+    "街机",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Model3D",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Billboard",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust",
+      "replacesolidcolor",
+      "toon"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=penalties"
+}

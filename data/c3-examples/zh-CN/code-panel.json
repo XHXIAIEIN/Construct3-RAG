@@ -10,18 +10,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Spritefont2",
       "Arr",
       "Keyboard",
-      "Sprite",
       "Particles",
+      "Sprite",
+      "Spritefont2",
       "Touch"
     ],
     "behaviors": [
       "Fade",
       "Flash",
-      "Tween",
-      "Timer"
+      "Timer",
+      "Tween"
     ],
     "effects": [
       "glowhorizontal",

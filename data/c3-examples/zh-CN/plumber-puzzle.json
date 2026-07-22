@@ -9,18 +9,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "NinePatch",
       "Keyboard",
-      "gamepad",
+      "NinePatch",
       "Particles",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
+      "Rotate",
       "Sin",
-      "Rotate"
+      "Tween"
     ],
     "effects": [
       "warpobjectmask"

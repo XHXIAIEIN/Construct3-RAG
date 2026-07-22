@@ -1,0 +1,25 @@
+{
+  "id": "billboard-styles",
+  "name": "Billboard styles",
+  "description": "Demonstrates a variety of ways to show a 2D sprite with a 3D camera.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Feature example",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Billboard",
+      "Orbit"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=billboard-styles"
+}

@@ -9,17 +9,17 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "TiledBg",
+      "Sprite",
       "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Sin",
-      "Fade",
       "Bullet",
+      "Fade",
+      "Sin",
+      "Tween",
       "destroy"
     ],
     "effects": []

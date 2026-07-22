@@ -4,11 +4,11 @@
   "description": "A script-based equivalent to the 'Local storage - high score' example.",
   "used-addons": {
     "plugins": [
-      "LocalStorage",
-      "TextBox",
       "Button",
+      "Keyboard",
+      "LocalStorage",
       "Text",
-      "Keyboard"
+      "TextBox"
     ],
     "behaviors": [],
     "effects": []

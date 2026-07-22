@@ -9,21 +9,21 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Touch",
-      "Mouse",
-      "Spritefont2",
       "AdvancedRandom",
+      "Keyboard",
+      "Mouse",
       "NinePatch",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Keyboard"
+      "Touch"
     ],
     "behaviors": [
-      "Timer",
-      "Tween",
       "Bullet",
+      "Fade",
       "Rotate",
-      "Fade"
+      "Timer",
+      "Tween"
     ],
     "effects": []
   },

@@ -4,11 +4,11 @@
   "description": "使用脚本实现《本地数据存储 - 高分榜》示例。",
   "used-addons": {
     "plugins": [
-      "LocalStorage",
-      "TextBox",
       "Button",
+      "Keyboard",
+      "LocalStorage",
       "Text",
-      "Keyboard"
+      "TextBox"
     ],
     "behaviors": [],
     "effects": []

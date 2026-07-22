@@ -9,20 +9,20 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "gamepad",
-      "Tilemap",
       "DrawingCanvas",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "EightDir",
-      "Pin",
       "Bullet",
-      "solid",
-      "Timer",
+      "EightDir",
+      "Fade",
+      "Pin",
       "Rotate",
-      "Fade"
+      "Timer",
+      "solid"
     ],
     "effects": []
   },
