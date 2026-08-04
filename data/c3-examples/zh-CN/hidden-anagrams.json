@@ -11,12 +11,12 @@
   ],
   "used-addons": {
     "plugins": [
-      "Shape3D",
-      "Spritefont2",
-      "Sprite",
-      "Touch",
       "Camera3D",
-      "TiledBg"
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
       "Tween"

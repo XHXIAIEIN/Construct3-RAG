@@ -10,24 +10,24 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Sprite",
       "Keyboard",
-      "Spritefont2",
       "Particles",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap",
       "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "Pin",
-      "Tween",
-      "Platform",
-      "wrap",
-      "Sin",
       "Bullet",
+      "Fade",
+      "Pin",
+      "Platform",
+      "Sin",
       "Timer",
+      "Tween",
       "scrollto",
-      "Fade"
+      "solid",
+      "wrap"
     ],
     "effects": [
       "replacecolor"

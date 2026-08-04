@@ -1,0 +1,21 @@
+{
+  "id": "cgs-notifications",
+  "name": "游戏服务：推送通知",
+  "description": "演示游戏服务功能，实时接收通知推送。",
+  "tags": [
+    "新增",
+    "进阶",
+    "功能示例"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Button",
+      "ConstructGameServices",
+      "Text",
+      "TextBox"
+    ],
+    "behaviors": [],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=cgs-notifications"
+}

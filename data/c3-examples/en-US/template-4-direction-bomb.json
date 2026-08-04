@@ -9,21 +9,21 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Sprite",
       "Keyboard",
       "Particles",
-      "gamepad",
+      "Sprite",
       "Spritefont2",
-      "TiledBg"
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "TileMovement",
+      "Fade",
       "Flash",
+      "TileMovement",
       "Timer",
       "Tween",
-      "Fade"
+      "solid"
     ],
     "effects": [
       "warpobject"

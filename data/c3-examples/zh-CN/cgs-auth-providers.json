@@ -1,7 +1,7 @@
 {
   "id": "cgs-auth-providers",
-  "name": "功能示例：第三方登录",
-  "description": "展示 Construct 游戏服务功能，允许用户使用第三方登录。",
+  "name": "游戏服务：第三方登录",
+  "description": "演示游戏服务功能，授权第三方账号登录绑定。",
   "tags": [
     "简单",
     "功能示例"

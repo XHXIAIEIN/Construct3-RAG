@@ -1,0 +1,37 @@
+{
+  "id": "pushout-mahjong",
+  "name": "Pushout Mahjong",
+  "description": "A simple 3D mahjong puzzle game where you attempt to complete nine matching columns first.",
+  "tags": [
+    "New",
+    "Advanced",
+    "3D",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Camera3D",
+      "Keyboard",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pushout-mahjong"
+}

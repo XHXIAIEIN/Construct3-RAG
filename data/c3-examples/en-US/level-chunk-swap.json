@@ -10,19 +10,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "NinePatch",
-      "TiledBg",
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Spritefont2"
+      "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "solid",
-      "Timer",
+      "Fade",
       "Platform",
-      "Fade"
+      "Timer",
+      "Tween",
+      "solid"
     ],
     "effects": []
   },

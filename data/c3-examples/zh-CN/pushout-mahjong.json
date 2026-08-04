@@ -1,0 +1,37 @@
+{
+  "id": "pushout-mahjong",
+  "name": "游戏示例：麻将推推乐",
+  "description": "一款经典的 3D 麻将益智游戏，完成九列相同的图案。",
+  "tags": [
+    "新增",
+    "高级",
+    "3D",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Camera3D",
+      "Keyboard",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=pushout-mahjong"
+}

@@ -9,21 +9,21 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "gamepad",
       "Browser",
-      "TiledBg",
+      "Keyboard",
+      "Particles",
+      "Sprite",
       "Spritefont2",
-      "Particles"
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
-      "Flash",
-      "Fade",
-      "Timer",
-      "Tween",
       "Bullet",
-      "Rotate"
+      "Fade",
+      "Flash",
+      "Rotate",
+      "Timer",
+      "Tween"
     ],
     "effects": [
       "hsladjust",

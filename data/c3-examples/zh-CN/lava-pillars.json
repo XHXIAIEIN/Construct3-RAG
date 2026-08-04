@@ -10,36 +10,36 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
-      "Sprite",
-      "PlatformInfo",
-      "Spritefont2",
       "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
-      "Sin",
-      "Fade",
       "Bullet",
+      "Fade",
+      "LOS",
       "Platform",
-      "solid",
-      "LOS"
+      "Sin",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
-      "glowhorizontal",
-      "glowvertical",
       "blurhorizontal",
       "blurvertical",
-      "warpobject",
-      "warpobjectmask",
       "bulge",
+      "glowhorizontal",
+      "glowvertical",
+      "pixellate",
       "sharpen",
-      "pixellate"
+      "warpobject",
+      "warpobjectmask"
     ]
   },
   "open": "https://editor.construct.net/#open=lava-pillars"

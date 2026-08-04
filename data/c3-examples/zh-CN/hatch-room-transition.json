@@ -10,21 +10,21 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
+      "NinePatch",
       "Sprite",
       "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "NinePatch"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
-      "Fade",
       "Bullet",
+      "Fade",
       "Pin",
       "Platform",
+      "Timer",
+      "Tween",
       "solid"
     ],
     "effects": []

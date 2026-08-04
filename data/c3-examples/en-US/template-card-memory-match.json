@@ -10,23 +10,23 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Mouse",
+      "AdvancedRandom",
       "Arr",
       "Browser",
-      "AdvancedRandom",
-      "Particles",
-      "TiledBg",
       "Keyboard",
-      "Spritefont2",
+      "Mouse",
       "NinePatch",
-      "Touch",
-      "PlatformInfo"
+      "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
+      "Fade",
       "Pin",
-      "Fade"
+      "Tween"
     ],
     "effects": []
   },

@@ -9,11 +9,11 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "TiledBg",
       "Keyboard",
-      "Spritefont2",
       "NinePatch",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [

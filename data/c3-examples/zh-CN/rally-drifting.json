@@ -16,13 +16,11 @@
       "Shape3D",
       "Sprite",
       "Spritefont2",
-      "TiledBg",
-      "shadowlight"
+      "TiledBg"
     ],
     "behaviors": [
       "Car",
       "Fade",
-      "Tween",
       "solid"
     ],
     "effects": [
