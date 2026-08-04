@@ -10,14 +10,14 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Touch",
-      "Tilemap",
-      "TiledBg",
+      "Particles",
+      "Sprite",
       "Spritefont2",
-      "Particles"
+      "TiledBg",
+      "Tilemap",
+      "Touch",
+      "gamepad"
     ],
     "behaviors": [
       "Rotate",

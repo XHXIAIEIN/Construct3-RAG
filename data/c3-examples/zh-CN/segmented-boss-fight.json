@@ -12,25 +12,25 @@
   ],
   "used-addons": {
     "plugins": [
-      "gamepad",
       "Keyboard",
       "Sprite",
-      "Timeline",
       "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "Timeline",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
+      "Bullet",
       "Fade",
       "Platform",
-      "solid",
-      "Bullet",
-      "Sin",
       "Rotate",
-      "destroy"
+      "Sin",
+      "Timer",
+      "Tween",
+      "destroy",
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

@@ -1,0 +1,47 @@
+{
+  "id": "selene",
+  "name": "Selene",
+  "description": "A strategic base-building defense game where you must mine resources, run pipelines and build lunar defenses to survive waves of enemy attacks.",
+  "tags": [
+    "New",
+    "Demo game",
+    "Advanced",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "DrawingCanvas",
+      "Json",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "LOS",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Turret",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "hsladjust",
+      "tintmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=selene"
+}

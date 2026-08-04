@@ -9,24 +9,24 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Tilemap",
-      "Mouse",
       "Keyboard",
-      "gamepad",
-      "TiledBg",
+      "Mouse",
       "Particles",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "Tween",
       "Bullet",
-      "destroy"
+      "Tween",
+      "destroy",
+      "solid"
     ],
     "effects": [
-      "warpobject",
-      "alphaclamp"
+      "alphaclamp",
+      "warpobject"
     ]
   },
   "open": "https://editor.construct.net/#open=artillery-war"

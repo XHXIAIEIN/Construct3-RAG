@@ -10,31 +10,31 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
-      "Sprite",
-      "PlatformInfo",
-      "Spritefont2",
       "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
-      "Fade",
       "Bullet",
+      "Fade",
+      "LOS",
       "Pin",
       "Platform",
-      "solid",
-      "LOS"
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
+      "bulge",
       "glowhorizontal",
       "glowvertical",
-      "hsladjust",
-      "bulge"
+      "hsladjust"
     ]
   },
   "open": "https://editor.construct.net/#open=manual-elevator"

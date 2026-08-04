@@ -10,22 +10,22 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Tilemap",
-      "TiledBg",
-      "PlatformInfo",
-      "Spritefont2",
-      "gamepad",
+      "DrawingCanvas",
       "Keyboard",
-      "DrawingCanvas"
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "solid",
-      "EightDir",
       "Bullet",
+      "EightDir",
+      "Fade",
       "Timer",
-      "Fade"
+      "Tween",
+      "solid"
     ],
     "effects": []
   },

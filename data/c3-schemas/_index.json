@@ -1,5 +1,5 @@
 {
-  "version": "r487.3",
+  "version": "r495",
   "languages": [
     "en-US",
     "zh-CN"
@@ -40,15 +40,6 @@
     "zh-TW"
   ],
   "plugins": {
-    "ninepatch": {
-      "originalId": "NinePatch",
-      "name_en": "9-patch",
-      "name_zh": "九宫图",
-      "file": "plugins/ninepatch.json",
-      "conditions": 2,
-      "actions": 8,
-      "expressions": 6
-    },
     "system": {
       "originalId": "system",
       "name_en": "System",
@@ -57,6 +48,15 @@
       "conditions": 56,
       "actions": 85,
       "expressions": 136
+    },
+    "ninepatch": {
+      "originalId": "NinePatch",
+      "name_en": "9-patch",
+      "name_zh": "九宫图",
+      "file": "plugins/ninepatch.json",
+      "conditions": 2,
+      "actions": 8,
+      "expressions": 6
     },
     "advert": {
       "originalId": "advert",
@@ -139,15 +139,6 @@
       "actions": 32,
       "expressions": 32
     },
-    "button": {
-      "originalId": "Button",
-      "name_en": "Button",
-      "name_zh": "按钮",
-      "file": "plugins/button.json",
-      "conditions": 3,
-      "actions": 4,
-      "expressions": 1
-    },
     "camera3d": {
       "originalId": "Camera3D",
       "name_en": "3D camera",
@@ -157,14 +148,23 @@
       "actions": 8,
       "expressions": 37
     },
+    "button": {
+      "originalId": "Button",
+      "name_en": "Button",
+      "name_zh": "按钮",
+      "file": "plugins/button.json",
+      "conditions": 3,
+      "actions": 4,
+      "expressions": 1
+    },
     "constructgameservices": {
       "originalId": "ConstructGameServices",
       "name_en": "Construct Game Services",
       "name_zh": "游戏服务",
       "file": "plugins/constructgameservices.json",
-      "conditions": 17,
-      "actions": 49,
-      "expressions": 125
+      "conditions": 24,
+      "actions": 59,
+      "expressions": 180
     },
     "clipboard": {
       "originalId": "Clipboard",
@@ -220,15 +220,6 @@
       "actions": 23,
       "expressions": 10
     },
-    "facebook": {
-      "originalId": "Facebook",
-      "name_en": "Facebook",
-      "name_zh": "Facebook",
-      "file": "plugins/facebook.json",
-      "conditions": 9,
-      "actions": 12,
-      "expressions": 10
-    },
     "filechooser": {
       "originalId": "filechooser",
       "name_en": "File chooser",
@@ -237,6 +228,15 @@
       "conditions": 1,
       "actions": 3,
       "expressions": 5
+    },
+    "facebook": {
+      "originalId": "Facebook",
+      "name_en": "Facebook",
+      "name_zh": "Facebook",
+      "file": "plugins/facebook.json",
+      "conditions": 9,
+      "actions": 12,
+      "expressions": 10
     },
     "filesystem": {
       "originalId": "FileSystem",
@@ -265,15 +265,6 @@
       "actions": 8,
       "expressions": 3
     },
-    "googleplay": {
-      "originalId": "googleplay",
-      "name_en": "Google Play",
-      "name_zh": "Google Play",
-      "file": "plugins/googleplay.json",
-      "conditions": 20,
-      "actions": 14,
-      "expressions": 28
-    },
     "geolocation": {
       "originalId": "Geolocation",
       "name_en": "Geolocation",
@@ -282,6 +273,15 @@
       "conditions": 4,
       "actions": 3,
       "expressions": 9
+    },
+    "googleplay": {
+      "originalId": "googleplay",
+      "name_en": "Google Play",
+      "name_zh": "Google Play",
+      "file": "plugins/googleplay.json",
+      "conditions": 20,
+      "actions": 14,
+      "expressions": 28
     },
     "htmlelement": {
       "originalId": "HTMLElement",
@@ -318,6 +318,15 @@
       "conditions": 17,
       "actions": 17,
       "expressions": 22
+    },
+    "internationalization": {
+      "originalId": "Internationalization",
+      "name_en": "Internationalization",
+      "name_zh": "本地化",
+      "file": "plugins/internationalization.json",
+      "conditions": 1,
+      "actions": 6,
+      "expressions": 16
     },
     "json": {
       "originalId": "Json",
@@ -364,23 +373,14 @@
       "actions": 9,
       "expressions": 22
     },
-    "internationalization": {
-      "originalId": "Internationalization",
-      "name_en": "Internationalization",
-      "name_zh": "本地化",
-      "file": "plugins/internationalization.json",
-      "conditions": 1,
-      "actions": 6,
-      "expressions": 16
-    },
     "model3d": {
       "originalId": "Model3D",
       "name_en": "3D model",
       "name_zh": "3D模型",
       "file": "plugins/model3d.json",
-      "conditions": 16,
-      "actions": 19,
-      "expressions": 29
+      "conditions": 20,
+      "actions": 23,
+      "expressions": 22
     },
     "mouse": {
       "originalId": "Mouse",
@@ -391,15 +391,6 @@
       "actions": 5,
       "expressions": 9
     },
-    "multiplayer": {
-      "originalId": "Multiplayer",
-      "name_en": "Multiplayer",
-      "name_zh": "多人联机",
-      "file": "plugins/multiplayer.json",
-      "conditions": 28,
-      "actions": 26,
-      "expressions": 58
-    },
     "nodewebkit": {
       "originalId": "NodeWebkit",
       "name_en": "NW.js",
@@ -408,6 +399,15 @@
       "conditions": 13,
       "actions": 33,
       "expressions": 21
+    },
+    "multiplayer": {
+      "originalId": "Multiplayer",
+      "name_en": "Multiplayer",
+      "name_zh": "多人联机",
+      "file": "plugins/multiplayer.json",
+      "conditions": 28,
+      "actions": 26,
+      "expressions": 58
     },
     "particles": {
       "originalId": "Particles",
@@ -490,15 +490,6 @@
       "actions": 4,
       "expressions": 3
     },
-    "sprite": {
-      "originalId": "Sprite",
-      "name_en": "Sprite",
-      "name_zh": "精灵",
-      "file": "plugins/sprite.json",
-      "conditions": 12,
-      "actions": 16,
-      "expressions": 15
-    },
     "speechsynthesis": {
       "originalId": "SpeechSynthesis",
       "name_en": "Speech synthesis",
@@ -507,6 +498,15 @@
       "conditions": 4,
       "actions": 4,
       "expressions": 4
+    },
+    "sprite": {
+      "originalId": "Sprite",
+      "name_en": "Sprite",
+      "name_zh": "精灵",
+      "file": "plugins/sprite.json",
+      "conditions": 12,
+      "actions": 16,
+      "expressions": 15
     },
     "spritefont2": {
       "originalId": "Spritefont2",
@@ -589,15 +589,6 @@
       "actions": 1,
       "expressions": 32
     },
-    "usermedia": {
-      "originalId": "UserMedia",
-      "name_en": "User Media",
-      "name_zh": "用户媒体",
-      "file": "plugins/usermedia.json",
-      "conditions": 17,
-      "actions": 13,
-      "expressions": 17
-    },
     "video": {
       "originalId": "video",
       "name_en": "Video",
@@ -606,6 +597,15 @@
       "conditions": 5,
       "actions": 9,
       "expressions": 6
+    },
+    "usermedia": {
+      "originalId": "UserMedia",
+      "name_en": "User Media",
+      "name_zh": "用户媒体",
+      "file": "plugins/usermedia.json",
+      "conditions": 17,
+      "actions": 13,
+      "expressions": 17
     },
     "c2websocket": {
       "originalId": "C2WebSocket",
@@ -630,20 +630,11 @@
       "name_zh": "公共",
       "file": "plugins/_common.json",
       "conditions": 37,
-      "actions": 50,
-      "expressions": 40
+      "actions": 52,
+      "expressions": 47
     }
   },
   "behaviors": {
-    "anchor": {
-      "originalId": "Anchor",
-      "name_en": "Anchor",
-      "name_zh": "锚点",
-      "file": "behaviors/anchor.json",
-      "conditions": 1,
-      "actions": 1,
-      "expressions": 0
-    },
     "eightdir": {
       "originalId": "EightDir",
       "name_en": "8 Direction",
@@ -652,6 +643,24 @@
       "conditions": 4,
       "actions": 13,
       "expressions": 7
+    },
+    "billboard": {
+      "originalId": "Billboard",
+      "name_en": "Billboard",
+      "name_zh": "展示板",
+      "file": "behaviors/billboard.json",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 3
+    },
+    "anchor": {
+      "originalId": "Anchor",
+      "name_en": "Anchor",
+      "name_zh": "锚点",
+      "file": "behaviors/anchor.json",
+      "conditions": 1,
+      "actions": 1,
+      "expressions": 0
     },
     "bound": {
       "originalId": "bound",
@@ -734,15 +743,6 @@
       "actions": 2,
       "expressions": 0
     },
-    "los": {
-      "originalId": "LOS",
-      "name_en": "Line of sight",
-      "name_zh": "视线",
-      "file": "behaviors/los.json",
-      "conditions": 4,
-      "actions": 5,
-      "expressions": 12
-    },
     "jumpthru": {
       "originalId": "jumpthru",
       "name_en": "Jump-thru",
@@ -752,6 +752,15 @@
       "actions": 1,
       "expressions": 0
     },
+    "los": {
+      "originalId": "LOS",
+      "name_en": "Line of sight",
+      "name_zh": "视线",
+      "file": "behaviors/los.json",
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 12
+    },
     "moveto": {
       "originalId": "MoveTo",
       "name_en": "Move To",
@@ -759,15 +768,6 @@
       "file": "behaviors/moveto.json",
       "conditions": 5,
       "actions": 14,
-      "expressions": 11
-    },
-    "orbit": {
-      "originalId": "Orbit",
-      "name_en": "Orbit",
-      "name_zh": "环绕",
-      "file": "behaviors/orbit.json",
-      "conditions": 1,
-      "actions": 11,
       "expressions": 11
     },
     "nosave": {
@@ -779,6 +779,15 @@
       "actions": 0,
       "expressions": 0
     },
+    "orbit": {
+      "originalId": "Orbit",
+      "name_en": "Orbit",
+      "name_zh": "环绕",
+      "file": "behaviors/orbit.json",
+      "conditions": 1,
+      "actions": 11,
+      "expressions": 11
+    },
     "pathfinding": {
       "originalId": "Pathfinding",
       "name_en": "Pathfinding",
@@ -788,15 +797,6 @@
       "actions": 21,
       "expressions": 13
     },
-    "persist": {
-      "originalId": "Persist",
-      "name_en": "Persist",
-      "name_zh": "持久化",
-      "file": "behaviors/persist.json",
-      "conditions": 0,
-      "actions": 0,
-      "expressions": 0
-    },
     "physics": {
       "originalId": "Physics",
       "name_en": "Physics",
@@ -805,6 +805,15 @@
       "conditions": 6,
       "actions": 32,
       "expressions": 14
+    },
+    "persist": {
+      "originalId": "Persist",
+      "name_en": "Persist",
+      "name_zh": "持久化",
+      "file": "behaviors/persist.json",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
     },
     "pin": {
       "originalId": "Pin",
@@ -824,6 +833,15 @@
       "actions": 18,
       "expressions": 12
     },
+    "rotate": {
+      "originalId": "Rotate",
+      "name_en": "Rotate",
+      "name_zh": "旋转",
+      "file": "behaviors/rotate.json",
+      "conditions": 1,
+      "actions": 4,
+      "expressions": 2
+    },
     "scrollto": {
       "originalId": "scrollto",
       "name_en": "Scroll To",
@@ -833,15 +851,6 @@
       "actions": 2,
       "expressions": 0
     },
-    "sin": {
-      "originalId": "Sin",
-      "name_en": "Sine",
-      "name_zh": "正弦运动",
-      "file": "behaviors/sin.json",
-      "conditions": 5,
-      "actions": 7,
-      "expressions": 4
-    },
     "shadowcaster": {
       "originalId": "shadowcaster",
       "name_en": "Shadow caster",
@@ -850,6 +859,15 @@
       "conditions": 2,
       "actions": 3,
       "expressions": 2
+    },
+    "sin": {
+      "originalId": "Sin",
+      "name_en": "Sine",
+      "name_zh": "正弦运动",
+      "file": "behaviors/sin.json",
+      "conditions": 5,
+      "actions": 7,
+      "expressions": 4
     },
     "solid": {
       "originalId": "solid",
@@ -868,15 +886,6 @@
       "conditions": 5,
       "actions": 7,
       "expressions": 8
-    },
-    "rotate": {
-      "originalId": "Rotate",
-      "name_en": "Rotate",
-      "name_zh": "旋转",
-      "file": "behaviors/rotate.json",
-      "conditions": 1,
-      "actions": 3,
-      "expressions": 2
     },
     "timer": {
       "originalId": "Timer",
@@ -1451,5 +1460,5 @@
       "category": "distortion"
     }
   },
-  "examples": 486
+  "examples": 493
 }

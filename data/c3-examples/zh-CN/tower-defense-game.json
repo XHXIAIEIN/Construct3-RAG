@@ -10,17 +10,17 @@
   ],
   "used-addons": {
     "plugins": [
+      "Keyboard",
+      "NinePatch",
       "Sprite",
       "Spritefont2",
-      "NinePatch",
-      "Touch",
       "TiledBg",
-      "Keyboard"
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
       "Bullet",
+      "Timer",
+      "Tween",
       "destroy"
     ],
     "effects": [

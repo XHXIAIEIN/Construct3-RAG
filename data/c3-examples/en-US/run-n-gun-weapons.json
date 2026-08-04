@@ -9,34 +9,34 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Tilemap",
-      "TiledBg",
-      "PlatformInfo",
       "Particles",
-      "Spritefont2"
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Platform",
-      "Timer",
-      "Pin",
-      "solid",
       "Bullet",
-      "Tween",
-      "LOS",
-      "scrollto",
-      "Turret",
       "Fade",
-      "Sin"
+      "LOS",
+      "Pin",
+      "Platform",
+      "Sin",
+      "Timer",
+      "Turret",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
-      "replacesolidcolor",
       "hsladjust",
+      "pixellate",
       "posterize",
       "replacecolor",
-      "pixellate"
+      "replacesolidcolor"
     ]
   },
   "open": "https://editor.construct.net/#open=run-n-gun-weapons"

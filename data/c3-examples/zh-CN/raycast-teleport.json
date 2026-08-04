@@ -9,19 +9,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Sprite",
       "Keyboard",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "gamepad",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
-      "Platform",
+      "Fade",
       "LOS",
+      "Platform",
       "Tween",
-      "Fade"
+      "solid"
     ],
     "effects": []
   },

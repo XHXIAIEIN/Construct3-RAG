@@ -11,25 +11,25 @@
   "used-addons": {
     "plugins": [
       "Keyboard",
+      "Particles",
       "Sprite",
-      "gamepad",
-      "Tilemap",
-      "TiledBg",
       "Spritefont2",
-      "Particles"
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "solid",
       "Bullet",
-      "Sin",
-      "Tween",
-      "LOS",
-      "scrollto",
       "Fade",
-      "Timer",
-      "TileMovement",
+      "LOS",
       "Rotate",
-      "destroy"
+      "Sin",
+      "TileMovement",
+      "Timer",
+      "Tween",
+      "destroy",
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

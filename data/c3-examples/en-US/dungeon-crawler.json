@@ -9,26 +9,26 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "TiledBg",
-      "Keyboard",
-      "gamepad",
-      "Particles",
       "DrawingCanvas",
-      "Spritefont2"
+      "Keyboard",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
+      "Fade",
       "Timer",
-      "Fade"
+      "Tween"
     ],
     "effects": [
-      "hsladjust",
-      "warpobject",
       "blurhorizontal",
       "blurvertical",
+      "hsladjust",
       "posterize",
-      "replacecolor"
+      "replacecolor",
+      "warpobject"
     ]
   },
   "open": "https://editor.construct.net/#open=dungeon-crawler"

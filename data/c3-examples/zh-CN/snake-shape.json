@@ -9,32 +9,32 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Particles",
-      "gamepad",
+      "Arr",
       "Browser",
       "Keyboard",
-      "Arr",
+      "Particles",
       "PlatformInfo",
+      "Sprite",
       "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Sin",
       "Fade",
-      "Tween",
       "LOS",
+      "Sin",
       "Timer",
+      "Tween",
       "solid"
     ],
     "effects": [
+      "bulge",
       "glowhorizontal",
       "glowvertical",
-      "warpobjectmask",
       "overlay",
-      "bulge",
-      "pixellate"
+      "pixellate",
+      "warpobjectmask"
     ]
   },
   "open": "https://editor.construct.net/#open=snake-shape"

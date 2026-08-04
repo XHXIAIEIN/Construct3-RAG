@@ -10,26 +10,26 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "TiledBg",
-      "Mouse",
-      "Tilemap",
-      "Particles",
       "Keyboard",
-      "Spritefont2"
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap"
     ],
     "behaviors": [
-      "Platform",
-      "scrollto",
-      "Tween",
-      "Fade",
-      "solid",
-      "Sin",
-      "LOS",
       "Bullet",
-      "jumpthru",
+      "Fade",
+      "LOS",
       "Pin",
-      "Timer"
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "jumpthru",
+      "scrollto",
+      "solid"
     ],
     "effects": [
       "warpobject"

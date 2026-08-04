@@ -9,19 +9,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
+      "AJAX",
       "Arr",
       "Mouse",
-      "TiledBg",
-      "AJAX",
       "NinePatch",
+      "Sprite",
       "Spritefont2",
+      "TiledBg",
       "Touch"
     ],
     "behaviors": [
+      "Fade",
       "Tween",
-      "scrollto",
-      "Fade"
+      "scrollto"
     ],
     "effects": []
   },
