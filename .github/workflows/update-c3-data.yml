@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     steps:
       - uses: actions/checkout@v5
@@ -128,6 +129,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.check.outputs.changed == 'true'
+        id: pr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -136,3 +138,26 @@ jobs:
           body: "${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}"
           branch: c3-${{ steps.check.outputs.latest }}
           delete-branch: true
+
+      - name: Enable auto-merge for PR
+        if: steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          # Wait for status checks to complete (max 10 minutes)
+          for i in {1..60}; do
+            STATUS=$(gh pr checks $PR_NUMBER --json state --jq '.[0].state // "pending"' 2>/dev/null || echo "pending")
+            if [ "$STATUS" = "PASS" ]; then
+              echo "✓ All checks passed"
+              break
+            elif [ "$STATUS" = "FAIL" ]; then
+              echo "✗ Checks failed, skipping auto-merge"
+              exit 1
+            fi
+            echo "Waiting for checks... ($i/60)"
+            sleep 10
+          done
+
+          # Merge PR with squash strategy
+          gh pr merge $PR_NUMBER --auto --squash || echo "Could not enable auto-merge (may already be merged)"
