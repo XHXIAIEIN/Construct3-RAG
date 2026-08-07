@@ -10,19 +10,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "Touch",
-      "Sprite",
-      "NinePatch",
       "DrawingCanvas",
+      "Mouse",
+      "NinePatch",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Mouse",
-      "Particles",
-      "Spritefont2"
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
-      "Fade"
+      "Fade",
+      "Tween"
     ],
     "effects": [
       "hsladjust",

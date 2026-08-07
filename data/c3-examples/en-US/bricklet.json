@@ -1,0 +1,40 @@
+{
+  "id": "bricklet",
+  "name": "Bricklet",
+  "description": "Build 3D designs in this brick creation studio.",
+  "tags": [
+    "New",
+    "Advanced",
+    "3D",
+    "Tech demo"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "CSV",
+      "Camera3D",
+      "DrawingCanvas",
+      "FileSystem",
+      "Keyboard",
+      "Model3D",
+      "Mouse",
+      "NinePatch",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=bricklet"
+}

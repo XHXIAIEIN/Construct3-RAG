@@ -10,20 +10,20 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Arr",
-      "Touch",
+      "Browser",
       "Keyboard",
       "LocalStorage",
       "Mouse",
-      "Spritefont2",
       "NinePatch",
-      "Browser"
+      "Sprite",
+      "Spritefont2",
+      "Touch"
     ],
     "behaviors": [
       "DragnDrop",
-      "Tween",
-      "Sin"
+      "Sin",
+      "Tween"
     ],
     "effects": [
       "hsladjust"

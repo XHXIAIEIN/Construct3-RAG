@@ -1,0 +1,47 @@
+{
+  "id": "selene",
+  "name": "游戏示例：月球基地",
+  "description": "一款策略性基地建设防御游戏，玩家必须开采资源、运行管道并建造月球防御工事，才能抵御一波又一波的敌人攻击。",
+  "tags": [
+    "新增",
+    "完整游戏",
+    "高级",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Audio",
+      "Dictionary",
+      "DrawingCanvas",
+      "Json",
+      "Keyboard",
+      "LocalStorage",
+      "Mouse",
+      "NinePatch",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "Flash",
+      "LOS",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Turret",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "hsladjust",
+      "tintmask"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=selene"
+}

@@ -9,33 +9,33 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "TiledBg",
-      "Keyboard",
-      "Arr",
-      "AdvancedRandom",
       "AJAX",
+      "AdvancedRandom",
+      "Arr",
+      "Keyboard",
       "NinePatch",
       "Particles",
+      "Sprite",
       "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [
-      "Sin",
-      "Tween",
       "Fade",
-      "Flash"
+      "Flash",
+      "Sin",
+      "Tween"
     ],
     "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "contrast",
       "glowhorizontal",
       "glowvertical",
       "hsladjust",
       "lighten",
-      "blurhorizontal",
-      "blurvertical",
-      "softlight",
-      "contrast",
-      "sharpen"
+      "sharpen",
+      "softlight"
     ]
   },
   "open": "https://editor.construct.net/#open=gold-mining"

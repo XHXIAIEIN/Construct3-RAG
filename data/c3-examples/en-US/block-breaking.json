@@ -10,31 +10,31 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
-      "Sprite",
-      "PlatformInfo",
-      "Spritefont2",
       "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
+      "Bullet",
       "Fade",
-      "Platform",
-      "solid",
       "LOS",
-      "Bullet"
+      "Platform",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
+      "bulge",
       "glowhorizontal",
       "glowvertical",
-      "bulge",
-      "sharpen",
-      "pixellate"
+      "pixellate",
+      "sharpen"
     ]
   },
   "open": "https://editor.construct.net/#open=block-breaking"

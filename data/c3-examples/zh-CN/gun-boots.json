@@ -9,28 +9,28 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Tilemap",
-      "TiledBg",
       "Particles",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Platform",
-      "Timer",
       "Bullet",
-      "destroy",
+      "Platform",
+      "Rotate",
+      "Timer",
       "Tween",
-      "solid",
-      "Rotate"
+      "destroy",
+      "solid"
     ],
     "effects": [
       "glowvertical",
       "hsladjust",
-      "warpobject",
-      "tint"
+      "tint",
+      "warpobject"
     ]
   },
   "open": "https://editor.construct.net/#open=gun-boots"

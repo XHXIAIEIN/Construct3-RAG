@@ -9,19 +9,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "TiledBg",
-      "Spritefont2",
       "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
       "gamepad"
     ],
     "behaviors": [
-      "Physics",
-      "Tween",
-      "LOS",
       "Fade",
+      "LOS",
+      "Physics",
       "Timer",
+      "Tween",
       "solid"
     ],
     "effects": [

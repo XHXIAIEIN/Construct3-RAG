@@ -9,29 +9,29 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
+      "Sprite",
+      "Spritefont2",
       "Tilemap",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "jumpthru",
-      "LOS",
-      "Pin",
       "Bullet",
-      "destroy",
-      "solid",
-      "Tween",
       "Fade",
       "Flash",
-      "Platform"
+      "LOS",
+      "Pin",
+      "Platform",
+      "Tween",
+      "destroy",
+      "jumpthru",
+      "solid"
     ],
     "effects": [
-      "warpobjectmask",
       "hsladjust",
       "posterize",
-      "replacecolor"
+      "replacecolor",
+      "warpobjectmask"
     ]
   },
   "open": "https://editor.construct.net/#open=tank-pilot"

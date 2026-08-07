@@ -10,29 +10,29 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
-      "Sprite",
+      "Particles",
       "PlatformInfo",
+      "Sprite",
       "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Particles"
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
       "Fade",
+      "LOS",
       "Platform",
-      "solid",
-      "LOS"
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
+      "bulge",
       "glowhorizontal",
       "glowvertical",
       "hsladjust",
-      "bulge",
       "pixellate"
     ]
   },

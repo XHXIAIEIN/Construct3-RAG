@@ -10,15 +10,15 @@
   ],
   "used-addons": {
     "plugins": [
-      "Touch",
-      "Sprite",
-      "Shape3D",
       "Camera3D",
-      "Spritefont2"
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "Touch"
     ],
     "behaviors": [
-      "Tween",
-      "Sin"
+      "Sin",
+      "Tween"
     ],
     "effects": [
       "hsladjust"

@@ -10,25 +10,25 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
+      "DrawingCanvas",
       "Keyboard",
-      "Sprite",
+      "NinePatch",
+      "Particles",
       "PlatformInfo",
+      "Sprite",
       "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "DrawingCanvas",
-      "Particles",
-      "NinePatch"
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
       "Fade",
+      "LOS",
       "Platform",
-      "solid",
-      "LOS"
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
       "glowhorizontal",
