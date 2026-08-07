@@ -9,22 +9,22 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Tilemap",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Platform",
-      "solid",
-      "Tween",
+      "Fade",
       "LOS",
+      "Platform",
+      "Timer",
+      "Tween",
       "destroy",
       "scrollto",
-      "Timer",
-      "Fade"
+      "solid"
     ],
     "effects": []
   },

@@ -10,18 +10,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "gamepad",
-      "TiledBg",
       "DrawingCanvas",
-      "Spritefont2"
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "solid",
       "EightDir",
-      "Fade"
+      "Fade",
+      "Tween",
+      "solid"
     ],
     "effects": [
       "hsladjust",

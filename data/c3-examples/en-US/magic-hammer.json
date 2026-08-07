@@ -10,32 +10,32 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
-      "Sprite",
-      "PlatformInfo",
-      "Spritefont2",
       "Particles",
+      "PlatformInfo",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
       "Fade",
+      "LOS",
       "Platform",
       "Rotate",
-      "solid",
-      "LOS"
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
-      "glowhorizontal",
-      "glowvertical",
       "blurhorizontal",
       "blurvertical",
-      "hsladjust",
       "bulge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
       "pixellate"
     ]
   },

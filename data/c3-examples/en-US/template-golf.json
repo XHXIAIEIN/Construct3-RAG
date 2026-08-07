@@ -10,18 +10,18 @@
   ],
   "used-addons": {
     "plugins": [
-      "Tilemap",
-      "Sprite",
-      "TiledBg",
       "Particles",
-      "Touch",
-      "Spritefont2"
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Tilemap",
+      "Touch"
     ],
     "behaviors": [
-      "Physics",
       "Bullet",
-      "destroy",
-      "Fade"
+      "Fade",
+      "Physics",
+      "destroy"
     ],
     "effects": []
   },

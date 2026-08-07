@@ -10,23 +10,23 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Keyboard",
-      "TiledBg",
-      "Browser",
-      "DrawingCanvas",
-      "Touch",
       "AJAX",
       "Arr",
-      "Spritefont2"
+      "Browser",
+      "DrawingCanvas",
+      "Keyboard",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg",
+      "Touch"
     ],
     "behaviors": [
       "Bullet",
-      "Tween",
-      "Timer",
-      "Sin",
+      "Fade",
       "Flash",
-      "Fade"
+      "Sin",
+      "Timer",
+      "Tween"
     ],
     "effects": []
   },

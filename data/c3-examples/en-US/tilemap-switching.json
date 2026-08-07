@@ -10,27 +10,27 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
-      "Tilemap",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
-      "Spritefont2"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "Platform",
-      "Tween",
-      "Pin",
-      "solid",
       "Bullet",
-      "scrollto",
+      "Fade",
+      "Pin",
+      "Platform",
       "Timer",
-      "Fade"
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": [
-      "darken",
       "blurhorizontal",
-      "blurvertical"
+      "blurvertical",
+      "darken"
     ]
   },
   "open": "https://editor.construct.net/#open=tilemap-switching"

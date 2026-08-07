@@ -10,24 +10,24 @@
   "used-addons": {
     "plugins": [
       "Browser",
-      "gamepad",
       "Keyboard",
       "Sprite",
       "Spritefont2",
       "TiledBg",
-      "Tilemap"
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
-      "scrollto",
-      "Tween",
-      "Timer",
-      "Fade",
-      "Platform",
-      "EightDir",
       "Bullet",
-      "solid",
+      "EightDir",
+      "Fade",
       "LOS",
-      "Sin"
+      "Platform",
+      "Sin",
+      "Timer",
+      "Tween",
+      "scrollto",
+      "solid"
     ],
     "effects": []
   },

@@ -9,30 +9,30 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
       "Particles",
+      "Sprite",
       "Spritefont2",
       "gamepad"
     ],
     "behaviors": [
-      "Sin",
-      "scrollto",
-      "custom",
-      "Timer",
-      "wrap",
       "Bullet",
-      "destroy",
-      "Tween",
+      "Fade",
       "Rotate",
-      "Fade"
+      "Sin",
+      "Timer",
+      "Tween",
+      "custom",
+      "destroy",
+      "scrollto",
+      "wrap"
     ],
     "effects": [
       "glowhorizontal",
       "glowvertical",
-      "warpobjectmask",
       "hsladjust",
-      "warplayout"
+      "warplayout",
+      "warpobjectmask"
     ]
   },
   "open": "https://editor.construct.net/#open=template-asteroid-shooter"

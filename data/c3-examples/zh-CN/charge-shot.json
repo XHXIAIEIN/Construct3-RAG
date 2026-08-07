@@ -9,29 +9,29 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "Keyboard",
-      "gamepad",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
       "TiledBg",
       "Tilemap",
-      "Particles",
-      "Spritefont2"
+      "gamepad"
     ],
     "behaviors": [
-      "Platform",
-      "Sin",
       "Bullet",
-      "Tween",
       "Fade",
-      "solid",
+      "Flash",
+      "Platform",
       "Rotate",
+      "Sin",
+      "Tween",
       "destroy",
-      "Flash"
+      "solid"
     ],
     "effects": [
-      "hsladjust",
       "blurhorizontal",
       "blurvertical",
+      "hsladjust",
       "posterize",
       "replacecolor"
     ]

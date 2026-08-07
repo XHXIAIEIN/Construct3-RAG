@@ -9,23 +9,23 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
       "AJAX",
       "Arr",
-      "Keyboard",
-      "gamepad",
       "Audio",
+      "Keyboard",
+      "NinePatch",
+      "Sprite",
       "Spritefont2",
       "TiledBg",
-      "NinePatch"
+      "gamepad"
     ],
     "behaviors": [
-      "Tween",
-      "Timer",
       "Bullet",
+      "Fade",
       "Rotate",
-      "destroy",
-      "Fade"
+      "Timer",
+      "Tween",
+      "destroy"
     ],
     "effects": [
       "warpobjectmask"

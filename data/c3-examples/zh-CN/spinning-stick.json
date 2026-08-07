@@ -10,19 +10,19 @@
   ],
   "used-addons": {
     "plugins": [
-      "Sprite",
-      "Shape3D",
-      "Tilemap",
       "Camera3D",
-      "gamepad",
       "Keyboard",
       "Particles",
-      "Spritefont2"
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "Tilemap",
+      "gamepad"
     ],
     "behaviors": [
+      "EightDir",
       "Rotate",
       "Sin",
-      "EightDir",
       "Tween"
     ],
     "effects": []

@@ -81,6 +81,10 @@ interface ConstructSaveCompleteEvent extends ConstructEvent {
 	jsonString: string;
 }
 
+interface ConstructLoadCompleteEvent extends ConstructEvent {
+	jsonString: string;
+}
+
 interface ConstructDrawEvent extends ConstructEvent {
 	renderer: IRenderer;
 }
