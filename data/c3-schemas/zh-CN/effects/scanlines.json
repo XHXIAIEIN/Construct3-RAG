@@ -1,0 +1,17 @@
+{
+  "id": "scanlines",
+  "name": "扫描线",
+  "description": "将隔行的颜色变暗，实现扫描线的效果。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "line-height",
+      "type": "float",
+      "name": "行距",
+      "desc": "每条扫描线的高度，以像素为单位。"
+    }
+  ]
+}

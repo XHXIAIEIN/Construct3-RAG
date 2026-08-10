@@ -1,0 +1,604 @@
+{
+  "id": "spritefont2",
+  "name": "位图字体",
+  "description": "使用位图的方式，在画面显示由精灵组成的文字。",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "显示",
+    "text": "文本"
+  },
+  "conditions": [
+    {
+      "id": "compare-text",
+      "scriptName": "CompareText",
+      "category": "text",
+      "list-name": "比较文本",
+      "display-text": "文本内容是[b]{0}[/b] [i]({1})[/i]",
+      "description": "比较此对象的文本内容。",
+      "params": {
+        "text-to-compare": {
+          "type": "string",
+          "name": "要比较的文字",
+          "desc": "输入要与对象内容进行比较的文本。"
+        },
+        "case-sensitivity": {
+          "type": "combo",
+          "name": "区分大小写",
+          "desc": "是否区分大小写字母。如果不区分，则 'ABC' 也能匹配到 'abc'。",
+          "items": {
+            "ignore-case": "忽略大小写",
+            "case-sensitive": "区分大小写"
+          }
+        }
+      }
+    },
+    {
+      "id": "is-running-typewriter-text",
+      "scriptName": "IsRunningTypewriterText",
+      "category": "text",
+      "list-name": "打字机正在运行",
+      "display-text": "打字机正在运行",
+      "description": "检测打字机当前是否正在运行。"
+    },
+    {
+      "id": "on-typewriter-text-finished",
+      "scriptName": "OnTypewriterTextFinished",
+      "category": "text",
+      "list-name": "打字机效果完成",
+      "display-text": "打字机效果完成",
+      "description": "当文本将所有文字全部显示完成时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "has-tag-at-position",
+      "scriptName": "HasTagAtPosition",
+      "category": "text",
+      "list-name": "位置存在标签",
+      "display-text": "位置 ([i]{1}[/i], [i]{2}[/i]) 存在标签 [b]{0}[/b]",
+      "description": "检测指定位置是否包含指定的标签。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的标签。"
+        },
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要检测的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要检测的Y坐标。"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "设置混合模式",
+      "display-text": "设置混合模式为[i]{0}[/i]",
+      "description": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "混合模式",
+          "desc": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+          "items": {
+            "normal": "正常",
+            "additive": "叠加",
+            "xor": "重叠消除",
+            "copy": "覆盖",
+            "destination-over": "背景穿透",
+            "source-in": "前景剪贴",
+            "destination-in": "背景剪贴",
+            "source-out": "前景剔除",
+            "destination-out": "背景剔除",
+            "source-atop": "前景混合",
+            "destination-atop": "背景混合",
+            "lighten": "变亮",
+            "darken": "变暗",
+            "multiply": "正片叠底",
+            "screen": "滤色"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-scale",
+      "scriptName": "SetScale",
+      "category": "appearance",
+      "list-name": "设置缩放倍数",
+      "display-text": "设置缩放倍数为[i]{0}[/i]倍",
+      "description": "设置位图字体的缩放比例，使其看起来更大或更小。",
+      "params": {
+        "scale": {
+          "type": "number",
+          "name": "大小",
+          "desc": "位图字体的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。"
+        }
+      }
+    },
+    {
+      "id": "set-character-spacing",
+      "scriptName": "SetCharacterSpacing",
+      "category": "appearance",
+      "list-name": "设置字符间距",
+      "display-text": "设置字符间距 [i]{0}[/i]",
+      "description": "设置每个字符之间的间距。",
+      "params": {
+        "character-spacing": {
+          "type": "number",
+          "name": "字符间距",
+          "desc": "输入字符间距的像素数。"
+        }
+      }
+    },
+    {
+      "id": "set-line-height",
+      "scriptName": "SetLineHeight",
+      "category": "appearance",
+      "list-name": "设置行距",
+      "display-text": "设置行距为[i]{0}[/i]",
+      "description": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
+      "params": {
+        "line-height": {
+          "type": "number",
+          "name": "行距",
+          "desc": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。"
+        }
+      }
+    },
+    {
+      "id": "set-character-width",
+      "scriptName": "SetCharacterWidth",
+      "category": "appearance",
+      "list-name": "设置字符宽度",
+      "display-text": "设置[i]{0}[/i]字符宽度为[i]{1}[/i]",
+      "description": "更改部分字符的宽度。",
+      "params": {
+        "character": {
+          "type": "string",
+          "name": "字符",
+          "desc": "输入一个或多个字符以更改宽度，如 \"abcd\"。"
+        },
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": "输入您希望字符占据的像素宽度数。 这应该小于单元格宽度。"
+        }
+      }
+    },
+    {
+      "id": "set-horizontal-alignment",
+      "scriptName": "SetHAlign",
+      "category": "appearance",
+      "list-name": "设置水平对齐",
+      "display-text": "设置水平对齐为[i]{0}[/i]",
+      "description": "设置文本的水平对齐方式。",
+      "params": {
+        "horizontal-alignment": {
+          "type": "combo",
+          "name": "水平对齐",
+          "desc": "为文本选择新的水平对齐方式。",
+          "items": {
+            "left": "左对齐",
+            "center": "居中",
+            "right": "右对齐"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-vertical-alignment",
+      "scriptName": "SetVAlign",
+      "category": "appearance",
+      "list-name": "设置垂直对齐",
+      "display-text": "设置垂直对齐为[i]{0}[/i]",
+      "description": "设置文本的垂直对齐方式。",
+      "params": {
+        "vertical-alignment": {
+          "type": "combo",
+          "name": "垂直对齐",
+          "desc": "选择文本的新垂直对齐方式。",
+          "items": {
+            "top": "顶部",
+            "center": "居中",
+            "bottom": "底部"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-wrapping",
+      "scriptName": "SetWrapping",
+      "category": "appearance",
+      "list-name": "设置自动换行",
+      "display-text": "设置换行规则为[i]{0}[/i]",
+      "description": "换行规则，是以空格所分隔的词组，还是按每个字符。",
+      "params": {
+        "wrapping": {
+          "type": "combo",
+          "name": "自动换行",
+          "desc": "换行规则，换行时保留按空格分隔的词组，或是单个字符。",
+          "items": {
+            "word": "词组",
+            "character": "字符",
+            "cjk": "亚洲语言"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-text",
+      "scriptName": "SetText",
+      "category": "text",
+      "list-name": "设置文本",
+      "display-text": "设置文本内容为[i]{0}[/i]",
+      "description": "设置文本显示的内容。",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "文本",
+          "desc": "在 \"双引号\" 里填写要更改的文本内容。字符串中可使用 BBCode 进行文本格式化。在字符串外可通过 & 符号拼接变量或表达式。"
+        }
+      }
+    },
+    {
+      "id": "append-text",
+      "scriptName": "AppendText",
+      "category": "text",
+      "list-name": "追加文本",
+      "display-text": "追加文本 [i]{0}[/i]",
+      "description": "将文本添加到现有文本的末尾。",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "文本",
+          "desc": "当前文本内容后面继续追加的内容。如需换行，请使用 & 符号连接字符串与换行表达式。例如：\"文本1\" & newline & \"文本2\""
+        }
+      }
+    },
+    {
+      "id": "typewriter-text",
+      "scriptName": "TypewriterText",
+      "category": "text",
+      "list-name": "逐字显示",
+      "display-text": "在 [i]{1}[/i] 秒内，逐字显示[i]{0}[/i]",
+      "description": "在一段时间内，逐字显示一串文本，直到完全显示。实现打字机效果。",
+      "params": {
+        "text": {
+          "type": "any",
+          "name": "文本",
+          "desc": "要逐字显示的文本。"
+        },
+        "duration": {
+          "type": "number",
+          "name": "持续时间",
+          "desc": "文本完全显示所需的总时间，以秒为单位。如希望每秒显示字符数，可使用 len(Self.PlainText) / 10 表达式，表示每秒显示 10 个字符。"
+        }
+      }
+    },
+    {
+      "id": "typewriter-finish",
+      "scriptName": "TypewriterFinish",
+      "category": "text",
+      "list-name": "立即显示完成",
+      "display-text": "立即显示完成",
+      "description": "强制将打字机效果立即显示所有文本。"
+    },
+    {
+      "id": "set-read-aloud",
+      "scriptName": "SetReadAloud",
+      "category": "text",
+      "list-name": "设置文本朗读",
+      "display-text": "[i]{0}[/i]朗读内容",
+      "description": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
+      "params": {
+        "enable": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "是否允许朗读内容。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "characterwidth",
+      "scriptName": "CharacterWidth",
+      "category": "appearance",
+      "translated-name": "字符宽度",
+      "description": "获取字符的宽度。",
+      "params": {
+        "character": {
+          "type": "string",
+          "name": "字符",
+          "desc": "要获取其宽度的字符。默认为空，如果字符串包含多个字符，仅获取第 1 个字符。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "characterheight",
+      "scriptName": "CharacterHeight",
+      "category": "appearance",
+      "translated-name": "字符高度",
+      "description": "获取字符的高度。",
+      "returnType": "number"
+    },
+    {
+      "id": "characterscale",
+      "scriptName": "CharacterScale",
+      "category": "appearance",
+      "translated-name": "字符缩放倍数",
+      "description": "获取字符的缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "characterspacing",
+      "scriptName": "CharacterSpacing",
+      "category": "appearance",
+      "translated-name": "字符间距",
+      "description": "获取字符之间的间距。",
+      "returnType": "number"
+    },
+    {
+      "id": "lineheight",
+      "scriptName": "LineHeight",
+      "category": "appearance",
+      "translated-name": "行距",
+      "description": "获取行高",
+      "returnType": "number"
+    },
+    {
+      "id": "textwidth",
+      "scriptName": "TextWidth",
+      "category": "appearance",
+      "translated-name": "文本宽度",
+      "description": "获取文本的实际内容宽度，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "textheight",
+      "scriptName": "TextHeight",
+      "category": "appearance",
+      "translated-name": "文本高度",
+      "description": "获取文本的实际内容高度，以像素为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "text",
+      "scriptName": "Text",
+      "category": "text",
+      "translated-name": "文本内容",
+      "description": "获取对象的文本。",
+      "returnType": "string"
+    },
+    {
+      "id": "plaintext",
+      "scriptName": "PlainText",
+      "category": "text",
+      "translated-name": "纯文本",
+      "description": "获取带有任何BBcode标记的对象的文本",
+      "returnType": "string"
+    },
+    {
+      "id": "tag-at-position",
+      "scriptName": "TagAtPosition",
+      "category": "text",
+      "translated-name": "获取标签",
+      "description": "获取指定位置的BBcode的标签，如果没有则返回空字符串。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要检测的X坐标。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要检测的Y坐标。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "tag-count",
+      "scriptName": "TagCount",
+      "category": "text",
+      "translated-name": "标签数量",
+      "description": "获取指定的标签的数量。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要使用的标签。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-x",
+      "scriptName": "TagX",
+      "category": "text",
+      "translated-name": "标签位置X",
+      "description": "获取指定标签的X坐标。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要使用的标签。"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "标签的索引编号，从0开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-y",
+      "scriptName": "TagY",
+      "category": "text",
+      "translated-name": "标签位置Y",
+      "description": "获取指定标签的Y坐标。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要使用的标签。"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "标签的索引编号，从0开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-width",
+      "scriptName": "TagWidth",
+      "category": "text",
+      "translated-name": "标签宽度",
+      "description": "获取指定的标签的宽度。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要使用的标签。"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "标签的索引编号，从0开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "tag-height",
+      "scriptName": "TagHeight",
+      "category": "text",
+      "translated-name": "标签高度",
+      "description": "获取指定的标签的高度。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要使用的标签。"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "标签的索引编号，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "text": {
+      "name": "文本",
+      "desc": "要显示的初始文本。",
+      "initial-value": "文本"
+    },
+    "edit-image": {
+      "name": "位图字体",
+      "desc": "单击以编辑对象的位图字体。",
+      "link-text": "编辑"
+    },
+    "character-width": {
+      "name": "字符宽度",
+      "desc": "图像中每个单元格的宽度。"
+    },
+    "character-height": {
+      "name": "字符高度",
+      "desc": "图像中每个单元格的高度。"
+    },
+    "character-set": {
+      "name": "字符集",
+      "desc": "图像每个位置对应的字符，从左上角开始。"
+    },
+    "spacing-data": {
+      "name": "间距数据",
+      "desc": "用于微调单个字符宽度，这是一组JSON数据。"
+    },
+    "scale": {
+      "name": "缩放比例",
+      "desc": "绘制文字时，对其进行缩放。"
+    },
+    "character-spacing": {
+      "name": "字符间距",
+      "desc": "在字符之间添加的额外像素宽度。"
+    },
+    "line-height": {
+      "name": "行距",
+      "desc": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。"
+    },
+    "horizontal-alignment": {
+      "name": "水平对齐",
+      "desc": "文本在边框内的水平对齐方式。",
+      "items": {
+        "left": "左对齐",
+        "center": "居中",
+        "right": "右对齐"
+      }
+    },
+    "vertical-alignment": {
+      "name": "垂直对齐",
+      "desc": "文本在边框内的垂直对齐方式。",
+      "items": {
+        "top": "顶部",
+        "center": "居中",
+        "bottom": "底部"
+      }
+    },
+    "wrapping": {
+      "name": "自动换行",
+      "desc": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
+      "items": {
+        "word": "词组",
+        "character": "字符",
+        "cjk": "亚洲语言"
+      }
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "在场景开始时，对象是否可见。"
+    },
+    "origin": {
+      "name": "图像原点",
+      "desc": "选择图像原点的位置。",
+      "items": {
+        "top-left": "左上",
+        "top": "顶部",
+        "top-right": "右上",
+        "left": "左",
+        "center": "中心",
+        "right": "右",
+        "bottom-left": "左下",
+        "bottom": "底部",
+        "bottom-right": "右下"
+      }
+    },
+    "enable-bbcode": {
+      "name": "启用富文本",
+      "desc": "在文本中使用 BBCode 标签，例如[scale=2]更大的文字[/scale]。"
+    },
+    "accessibility": {
+      "name": "辅助功能",
+      "desc": "辅助功能的设置。"
+    },
+    "read-aloud": {
+      "name": "朗读内容",
+      "desc": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。"
+    }
+  }
+}

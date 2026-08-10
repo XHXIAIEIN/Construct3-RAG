@@ -1,107 +1,24 @@
-"""
-Schema Parser - 从 CDN 读取 Construct 3 ACE/effect/property 数据用于向量索引
-
-数据来源: C3Fetcher CDN (allAces.json, allEffects.json, lang files)
-包含: plugins, behaviors, effects 的完整双语数据
-"""
+"""Parse CDN ACE and effect data for vector indexing."""
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
 
-# Semantic enrichment for _common ACEs whose descriptions are too terse
-# to compete with longer plugin-specific documents in embedding similarity.
-_COMMON_ACE_ENRICHMENT: dict[str, str] = {
-    "on-collision-with-another-object": (
-        "用途: 碰撞检测、碰撞判定、碰撞事件。"
-        "当两个对象接触/碰到时自动触发。"
-        "常见用法: 子弹碰到敌人、角色碰到墙壁、物体间接触判断。"
-        "Usage: collision detection event between two game objects."
-    ),
-    "is-overlapping-another-object": (
-        "用途: 重叠检测、重叠判定。"
-        "检测两个对象当前是否重叠在一起。"
-        "常见用法: 判断角色是否站在平台上、物体是否在某个区域内。"
-        "Usage: overlap detection, test if two objects currently overlap."
-    ),
-    "is-overlapping-at-offset": (
-        "用途: 偏移位置重叠检测。"
-        "在指定偏移坐标检测对象是否与另一个对象重叠。"
-        "常见用法: 预判移动后是否会碰到障碍物。"
-        "Usage: overlap check at an offset position, predictive collision."
-    ),
-    "destroy": (
-        "用途: 销毁对象、删除对象、移除实例。"
-        "从场景中删除对象并释放资源。"
-        "Usage: remove/delete an object instance from the layout."
-    ),
-    "on-destroyed": (
-        "用途: 销毁事件、删除回调。"
-        "对象被 Destroy 动作删除时触发。"
-        "Usage: triggered when an object is destroyed/removed."
-    ),
-    "set-position": (
-        "用途: 设置位置、移动对象到指定坐标。"
-        "Usage: move object to specific X,Y coordinates."
-    ),
-    "set-visible": (
-        "用途: 显示/隐藏对象、设置可见性。"
-        "Usage: show or hide an object in the layout."
-    ),
-    "is-visible": (
-        "用途: 判断对象是否可见。"
-        "Usage: test if the object is currently visible."
-    ),
-}
-
-
-@dataclass
-class ACEEntry:
-    """单个 ACE 条目"""
-    plugin_name: str           # 插件/行为名称
-    plugin_name_zh: str        # 中文名称
-    plugin_name_en: str        # 英文名称
-    plugin_type: str           # "plugin" or "behavior"
-    category: str              # ACE 分类
-    ace_type: str              # "action", "condition", "expression"
-    ace_id: str                # ACE ID
-    name_zh: str               # 中文名称
-    name_en: str               # 英文名称
-    description_zh: str        # 中文描述
-    description_en: str        # 英文描述
-    script_name: str = ""      # 脚本名称
-    params: List[Dict] = field(default_factory=list)
-    return_type: Optional[str] = None
-    is_trigger: bool = False
-    is_async: bool = False
-
-
-@dataclass
-class EffectEntry:
-    """效果条目"""
-    id: str
-    name_zh: str
-    name_en: str
-    description_zh: str
-    description_en: str
-    category: str
-    parameters: List[Dict] = field(default_factory=list)
-
-
-@dataclass
-class PropertyEntry:
-    """属性条目"""
-    plugin_name: str
-    plugin_name_zh: str
-    plugin_type: str
-    prop_id: str
-    name_zh: str
-    name_en: str
-    description_zh: str
-    description_en: str
-    items: Optional[Dict] = None
-
+from src.ingest.models import ACEEntry, EffectEntry
+from src.locale.resources import (
+    ASYNC_TAG_ZH_EN,
+    CATEGORY_LABEL_ZH,
+    COMMON_ADDON_NAME_ZH,
+    COMMON_ACE_SEMANTIC_HINTS_ZH_EN,
+    DESCRIPTION_LABEL_ZH,
+    OPTIONS_LABEL_ZH,
+    PARAMETERS_LABEL_ZH,
+    RETURN_TYPE_LABEL_ZH,
+    SCRIPT_NAME_LABEL_ZH,
+    TRIGGER_TAG_ZH_EN,
+    format_ace_title_zh_en,
+    format_effect_title_zh_en,
+)
 
 class SchemaParser:
-    """Parse Construct 3 ACE/effect/property data from CDN.
+    """Parse Construct 3 ACE and effect data from CDN.
 
     Requires a C3Fetcher instance. Reads allAces.json + precompiled lang from CDN.
     """
@@ -142,7 +59,7 @@ class SchemaParser:
                         name_zh = zh_ace.get("list-name", name_en)
                     entries.append(ACEEntry(
                         plugin_name="_common",
-                        plugin_name_zh="公共",
+                        plugin_name_zh=COMMON_ADDON_NAME_ZH,
                         plugin_name_en="Common",
                         plugin_type="plugin",
                         category="common",
@@ -252,39 +169,35 @@ class SchemaParser:
             ))
         return entries
 
-    def parse_properties(self) -> List[PropertyEntry]:
-        """Parse all properties. CDN properties not yet implemented; returns empty list."""
-        return []
-
     def export_ace_for_vectordb(self, entries: Optional[List[ACEEntry]] = None) -> List[Dict[str, Any]]:
-        """导出 ACE 为向量数据库格式"""
+        """Build bilingual vector documents for ACE entries."""
         if entries is None:
             entries = self.parse_ace_entries()
 
         docs = []
-        type_zh = {"action": "动作", "condition": "条件", "expression": "表达式"}
-        plugin_type_zh = {"plugin": "插件", "behavior": "行为"}
-
         for entry in entries:
             text_parts = []
 
-            # 标题行：中英文都包含
+            # The title contains both languages so either query language can match.
             text_parts.append(
-                f"{plugin_type_zh[entry.plugin_type]} {entry.plugin_name_zh}({entry.plugin_name}) "
-                f"的{type_zh[entry.ace_type]}: {entry.name_zh} ({entry.name_en})"
+                format_ace_title_zh_en(
+                    addon_type=entry.plugin_type,
+                    addon_zh=entry.plugin_name_zh,
+                    addon_en=entry.plugin_name,
+                    ace_type=entry.ace_type,
+                    ace_zh=entry.name_zh,
+                    ace_en=entry.name_en,
+                )
             )
 
-            # 描述
             if entry.description_zh:
-                text_parts.append(f"描述: {entry.description_zh}")
+                text_parts.append(f"{DESCRIPTION_LABEL_ZH}: {entry.description_zh}")
             if entry.description_en and entry.description_en != entry.description_zh:
                 text_parts.append(f"Description: {entry.description_en}")
 
-            # 脚本名称
             if entry.script_name:
-                text_parts.append(f"脚本名称/Script: {entry.script_name}")
+                text_parts.append(f"{SCRIPT_NAME_LABEL_ZH}/Script: {entry.script_name}")
 
-            # 参数信息
             if entry.params:
                 param_strs = []
                 for p in entry.params:
@@ -293,26 +206,24 @@ class SchemaParser:
                         items = p.get('items_i18n', {})
                         if items:
                             item_labels = [v.get('zh', k) for k, v in list(items.items())[:3]]
-                            param_str += f" 选项: {', '.join(item_labels)}"
+                            param_str += f" {OPTIONS_LABEL_ZH}: {', '.join(item_labels)}"
                     param_strs.append(param_str)
-                text_parts.append("参数: " + ", ".join(param_strs))
+                text_parts.append(f"{PARAMETERS_LABEL_ZH}: " + ", ".join(param_strs))
 
-            # 返回类型
             if entry.return_type:
-                text_parts.append(f"返回类型: {entry.return_type}")
+                text_parts.append(f"{RETURN_TYPE_LABEL_ZH}: {entry.return_type}")
 
-            # 特殊标记
             if entry.is_trigger:
-                text_parts.append("[触发器/Trigger]")
+                text_parts.append(TRIGGER_TAG_ZH_EN)
             if entry.is_async:
-                text_parts.append("[异步/Async]")
+                text_parts.append(ASYNC_TAG_ZH_EN)
 
             # Semantic enrichment for _common ACEs with short descriptions.
             # These shared ACEs (collision, overlap, destroy, position) have
             # very terse descriptions that lose to longer plugin-specific docs
             # in embedding similarity. Add synonyms and usage context.
             if entry.plugin_name == "_common":
-                enrichment = _COMMON_ACE_ENRICHMENT.get(entry.ace_id)
+                enrichment = COMMON_ACE_SEMANTIC_HINTS_ZH_EN.get(entry.ace_id)
                 if enrichment:
                     text_parts.append(enrichment)
 
@@ -344,25 +255,25 @@ class SchemaParser:
         return docs
 
     def export_effects_for_vectordb(self, entries: Optional[List[EffectEntry]] = None) -> List[Dict[str, Any]]:
-        """导出效果为向量数据库格式"""
+        """Build bilingual vector documents for effect entries."""
         if entries is None:
             entries = self.parse_effects()
 
         docs = []
         for entry in entries:
             text_parts = [
-                f"效果/Effect: {entry.name_zh} ({entry.name_en})",
-                f"分类: {entry.category}"
+                format_effect_title_zh_en(entry.name_zh, entry.name_en),
+                f"{CATEGORY_LABEL_ZH}: {entry.category}"
             ]
 
             if entry.description_zh:
-                text_parts.append(f"描述: {entry.description_zh}")
+                text_parts.append(f"{DESCRIPTION_LABEL_ZH}: {entry.description_zh}")
             if entry.description_en:
                 text_parts.append(f"Description: {entry.description_en}")
 
             if entry.parameters:
                 param_names = [f"{p.get('name_zh', p.get('id', ''))}" for p in entry.parameters]
-                text_parts.append(f"参数: {', '.join(param_names)}")
+                text_parts.append(f"{PARAMETERS_LABEL_ZH}: {', '.join(param_names)}")
 
             text = "\n".join(text_parts)
 
@@ -382,51 +293,12 @@ class SchemaParser:
 
         return docs
 
-    def export_properties_for_vectordb(self, entries: Optional[List[PropertyEntry]] = None) -> List[Dict[str, Any]]:
-        """导出属性为向量数据库格式"""
-        if entries is None:
-            entries = self.parse_properties()
-
-        plugin_type_zh = {"plugin": "插件", "behavior": "行为"}
-        docs = []
-        for entry in entries:
-            text_parts = [
-                f"{plugin_type_zh.get(entry.plugin_type, entry.plugin_type)} "
-                f"{entry.plugin_name_zh}({entry.plugin_name}) 的属性: "
-                f"{entry.name_zh} ({entry.name_en})"
-            ]
-            if entry.description_zh:
-                text_parts.append(f"描述: {entry.description_zh}")
-            if entry.description_en and entry.description_en != entry.description_zh:
-                text_parts.append(f"Description: {entry.description_en}")
-            if entry.items:
-                item_labels = [str(v) for v in list(entry.items.values())[:5]]
-                text_parts.append(f"选项: {', '.join(item_labels)}")
-
-            docs.append({
-                "id": f"prop_{entry.plugin_type}_{entry.plugin_name}_{entry.prop_id}",
-                "text": "\n".join(text_parts),
-                "metadata": {
-                    "source": "construct3-schema",
-                    "plugin_name": entry.plugin_name,
-                    "plugin_name_zh": entry.plugin_name_zh,
-                    "plugin_type": entry.plugin_type,
-                    "prop_id": entry.prop_id,
-                    "name_zh": entry.name_zh,
-                    "name_en": entry.name_en,
-                    "section_type": "properties",
-                }
-            })
-        return docs
-
     def get_stats(self, ace_entries: Optional[List[ACEEntry]] = None) -> Dict[str, Any]:
-        """获取统计信息"""
+        """Summarize parsed ACE and effect counts."""
         if ace_entries is None:
             ace_entries = self.parse_ace_entries()
 
         effects = self.parse_effects()
-        properties = self.parse_properties()
-
         stats = {
             "total_aces": len(ace_entries),
             "by_type": {"action": 0, "condition": 0, "expression": 0},
@@ -434,7 +306,6 @@ class SchemaParser:
             "plugins": set(),
             "behaviors": set(),
             "effects": len(effects),
-            "properties": len(properties),
         }
 
         for entry in ace_entries:
@@ -452,32 +323,28 @@ class SchemaParser:
 
 
 def main():
-    """测试解析器"""
+    """Print a small parser diagnostic report."""
     from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
     from src.ingest.c3_fetcher import C3Fetcher
     fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
     parser = SchemaParser(fetcher=fetcher)
 
-    print("=== 解析 Construct3-Schema ===\n")
+    print("=== Parse Construct 3 schema ===\n")
 
     ace_entries = parser.parse_ace_entries()
     stats = parser.get_stats(ace_entries)
 
-    print(f"ACE 总计: {stats['total_aces']} 条")
-    print(f"  - 条件: {stats['by_type']['condition']}")
-    print(f"  - 动作: {stats['by_type']['action']}")
-    print(f"  - 表达式: {stats['by_type']['expression']}")
-    print(f"  - 插件: {stats['plugins']} 个")
-    print(f"  - 行为: {stats['behaviors']} 个")
-    print(f"\n效果: {stats['effects']} 个")
-    print(f"属性: {stats['properties']} 个")
-
-    # 导出示例
+    print(f"ACE total: {stats['total_aces']}")
+    print(f"  - Conditions: {stats['by_type']['condition']}")
+    print(f"  - Actions: {stats['by_type']['action']}")
+    print(f"  - Expressions: {stats['by_type']['expression']}")
+    print(f"  - Plugins: {stats['plugins']}")
+    print(f"  - Behaviors: {stats['behaviors']}")
+    print(f"\nEffects: {stats['effects']}")
     docs = parser.export_ace_for_vectordb(ace_entries)
-    print(f"\n生成 {len(docs)} 个 ACE 向量文档")
+    print(f"\nGenerated {len(docs)} ACE vector documents")
 
-    # 显示示例
-    print("\n=== 示例文档 ===")
+    print("\n=== Sample documents ===")
     for doc in docs[:2]:
         print(f"\nID: {doc['id']}")
         print(f"Text:\n{doc['text'][:300]}...")

@@ -2,13 +2,11 @@
 
 [English](README.md) | **中文**
 
-回答 [Construct 3](https://www.construct.net) 相关问题所需的一切——完整的游戏引擎知识库，结构化 JSON 格式。每个插件有什么功能？有哪些动作、条件、表达式可用？参数是什么？全在这里，中英双语，无需任何安装直接读取。
+面向 Construct 3 问答的结构化参考数据与检索 API，覆盖插件、行为、ACE、特效、示例项目和脚本接口。仓库内的数据可以直接读取；可选服务提供关键词与语义检索。
 
-66 个插件 · 31 个行为 · 89 个特效 · 481 个示例 · 150 个 TypeScript 定义
+> 当前 Construct 版本与数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准；[数据更新工作流](.github/workflows/update.yml)负责提出更新。
 
-> 当前数据版本：**r476** · 通过 [GitHub Action](.github/workflows/update-c3-data.yml) 每周自动更新
-
-> **LLM 请注意：** 回答 Construct 3 问题前，先读 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——定义了如何查找和准确引用 ACE。数据在 `data/c3-schemas/{lang}/`。
+> **LLM 请注意：** 回答 Construct 3 问题前，先读 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——定义了如何查找和准确引用 ACE。数据在 `data/c3-schemas/{locale}/`，其中 `locale` 为 `en-US` 或 `zh-CN`。
 
 ## 核心概念
 
@@ -35,17 +33,17 @@ Schema 文件中每个 ACE 条目的字段含义：
 
 ## 数据文件
 
-无需安装。选择语言（`en` 或 `zh`）直接读取。
+无需安装。选择数据目录（`en-US` 或 `zh-CN`）直接读取。
 
 | 路径 | 数量 | 内容 |
 |------|-----:|------|
 | `c3-schemas/_index.json` | — | 总索引：id → 名称、文件路径、ACE 数量 |
-| `c3-schemas/{lang}/plugins/{id}.json` | 66 | 条件、动作、表达式、属性 |
-| `c3-schemas/{lang}/behaviors/{id}.json` | 31 | 行为 ACE 定义 |
-| `c3-schemas/{lang}/effects/{id}.json` | 89 | 特效参数、分类 |
-| `c3-examples/{lang}/{id}.json` | 481 | 名称、描述、标签、使用的插件、打开链接 |
-| `c3-ts-defs/autocomplete-data.json` | 109 | 脚本类 → 方法/属性 |
-| `c3-ts-defs/**/*.d.ts` | 150 | 完整 TypeScript 接口签名 |
+| `c3-schemas/{locale}/plugins/{id}.json` | 见索引 | 条件、动作、表达式、属性 |
+| `c3-schemas/{locale}/behaviors/{id}.json` | 见索引 | 行为 ACE 定义 |
+| `c3-schemas/{locale}/effects/{id}.json` | 见索引 | 特效参数、分类 |
+| `c3-examples/{locale}/{id}.json` | 随版本变化 | 名称、描述、标签、使用的插件、打开链接 |
+| `c3-ts-defs/autocomplete-data.json` | 随版本变化 | 脚本类 → 方法/属性 |
+| `c3-ts-defs/**/*.d.ts` | 随版本变化 | 完整 TypeScript 接口签名 |
 
 所有路径基于 `data/`。Schema 文件使用 CDN 原始字段名（`list-name`、`display-text`、`translated-name`）。
 
@@ -96,11 +94,11 @@ Schema 文件中每个 ACE 条目的字段含义：
 | 问题 | 去哪找 |
 |------|--------|
 | 有哪些插件/行为/特效？ | `_index.json` |
-| X 有什么 ACE？ | `{lang}/plugins/{id}.json` |
+| X 有什么 ACE？ | `{locale}/plugins/{id}.json` |
 | ACE 在事件表中长什么样？ | `display-text` 字段 |
 | ACE 需要什么参数？ | `params` 对象 |
-| 有哪些特效？ | `{lang}/effects/{id}.json` |
-| 哪些示例用了 X？ | `c3-examples/{lang}/*.json` → `used-addons` |
+| 有哪些特效？ | `{locale}/effects/{id}.json` |
+| 哪些示例用了 X？ | `c3-examples/{locale}/*.json` → `used-addons` |
 | JavaScript/TypeScript API？ | `autocomplete-data.json` → `.d.ts` |
 
 ## LLM 集成
@@ -114,6 +112,10 @@ pip install -r requirements.txt
 python scripts/setup.py          # → http://localhost:8765/playground
 ```
 
+该命令启动确定性、离线的 Direct Lookup，不连接 Qdrant，也不加载嵌入模型。
+`mode=auto` 只有在显式启用完整模式时才会追加语义结果。默认使用本地已有
+Schema 快照；只有明确需要刷新 CDN 数据时才传入 `--refresh-data`。
+
 ### POST /search
 
 | 参数 | 值 | 默认 |
@@ -125,7 +127,7 @@ python scripts/setup.py          # → http://localhost:8765/playground
 
 完整规格：[docs/api-reference.md](docs/api-reference.md)
 
-### 语义搜索
+### 语义搜索（显式启用）
 
 需要 Qdrant + 嵌入模型，推荐 GPU。
 
@@ -135,18 +137,28 @@ docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdran
 python scripts/setup.py --full
 ```
 
+`--full` 会检查 Qdrant、构建向量索引（除非跳过），并以
+`LITE_MODE=false` 启动服务；普通 setup 始终保持 lookup-only。
+
 ## 项目结构
 
 ```
-src/api.py              FastAPI 服务
-src/ingest/             CDN 拉取、schema 导出、索引构建
-src/rag/                Lookup 引擎、向量检索、查询扩展
-data/c3-schemas/        ACE 定义、特效（en + zh）
-data/c3-examples/       示例项目元数据（en + zh）
+src/api.py              FastAPI 轻量装配入口
+src/interfaces/http/    HTTP DTO 与响应映射（规范实现）
+src/application/        搜索与健康检查 SOP 工作流
+src/domain/             与传输无关的 Lookup/Retrieval 数据
+src/lookup/             离线查询服务、处理器与四类索引
+src/retrieval/          语义适配器、策略、稳定 ID 与精确去重
+src/vector/             共享稠密/稀疏向量适配器
+src/ingest/             解析器、契约与四阶段发布管线
+src/observability/      请求级跟踪（规范实现）
+src/rag/                仅保留旧导入兼容层
+data/c3-schemas/        ACE 定义、特效（en-US + zh-CN）
+data/c3-examples/       示例项目元数据（en-US + zh-CN）
 data/c3-ts-defs/        TypeScript 接口
-tests/                  173 个测试
+tests/                  单元测试与回归测试
 docs/                   API 参考、架构、数据管线
-.github/workflows/      每周自动更新
+.github/workflows/      数据更新自动化
 ```
 
 ## 致谢

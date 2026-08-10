@@ -1,0 +1,17 @@
+{
+  "id": "contrast",
+  "name": "对比度",
+  "description": "调整图像的对比度。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "contrast",
+      "type": "percent",
+      "name": "对比度",
+      "desc": "对比度调整，其中100显示不变。"
+    }
+  ]
+}

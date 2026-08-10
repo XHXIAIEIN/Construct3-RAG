@@ -1,0 +1,10 @@
+{
+  "id": "screen",
+  "name": "滤色",
+  "description": "将背景层和混合层的颜色通道相乘，较亮的颜色变得更亮，暗部保持不变。效果类似投影仪投射的画面效果。此混合模式与 '正片叠底' 的结果相反。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

@@ -1,0 +1,4194 @@
+{
+  "id": "constructgameservices",
+  "name": "Construct Game Services",
+  "description": "Access Construct-hosted game services such as leaderboards.",
+  "type": "plugin",
+  "aceCategories": {
+    "construct-game-services": "Construct Game Services",
+    "authentication": "Authentication",
+    "leaderboards": "Leaderboards",
+    "cloud-save": "Cloud save",
+    "xp": "XP",
+    "broadcasts": "Broadcasts",
+    "achievements": "Achievements",
+    "notifications": "Notifications"
+  },
+  "conditions": [
+    {
+      "id": "on-success",
+      "scriptName": "OnSuccess",
+      "category": "construct-game-services",
+      "list-name": "On success",
+      "display-text": "On {0} success",
+      "description": "Triggered after various actions upon completing successfully.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The type of action to check completed successfully.",
+          "items": {
+            "sign-in-with-provider": "sign in with provider",
+            "sign-in-persistent": "sign in persistent",
+            "submit-score": "submit score",
+            "get-scores": "get scores",
+            "set-player-name": "set player name",
+            "any-create-cloud-save": "any create cloud save",
+            "any-get-cloud-save": "any get cloud save",
+            "get-xp": "get XP",
+            "get-xp-ranks": "get XP ranks",
+            "get-active-xp-bonuses": "get active XP bonuses",
+            "get-upcoming-xp-bonuses": "get upcoming XP bonuses",
+            "get-broadcast-channels": "get broadcast channels",
+            "get-broadcast-messages": "get broadcast messages",
+            "get-broadcast-message": "get broadcast message",
+            "get-cloud-save-buckets": "get cloud save buckets",
+            "set-player-email-address": "set player email address",
+            "set-player-username-password": "set player username and password",
+            "set-player-username": "set player username",
+            "set-player-password": "set player password",
+            "delete-player": "delete player",
+            "register-player": "register player",
+            "delete-avatar": "delete avatar",
+            "set-avatar": "set avatar",
+            "disconnect-login-provider": "disconnect login provider",
+            "get-login-providers": "get login providers",
+            "set-cloud-save-picture": "set cloud save picture",
+            "delete-cloud-save-picture": "delete cloud save picture",
+            "delete-cloud-save": "delete cloud save",
+            "get-leaderboard-teams": "get leaderboard teams",
+            "adjust-leaderboard-score": "adjust leaderboard score",
+            "get-leaderboard-score-history": "get leaderboard score history",
+            "link-provider": "link provider",
+            "link-provider-force-required": "force link provider required",
+            "link-provider-force-result": "forced link provider",
+            "get-all-achievements": "get all achievements",
+            "get-achievement": "get achievement",
+            "get-players-achievements": "get players achievements",
+            "get-awarded-players": "get players awarded achievement",
+            "award-achievement": "award or progress achievement",
+            "connect-to-notifications": "connect to notifications"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "construct-game-services",
+      "list-name": "On error",
+      "display-text": "On {0} error",
+      "description": "Triggered after various actions upon failing to complete.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The type of action to check if failed.",
+          "items": {
+            "sign-in-with-provider": "sign in with provider",
+            "sign-in-persistent": "sign in persistent",
+            "submit-score": "submit score",
+            "get-scores": "get scores",
+            "set-player-name": "set player name",
+            "any-create-cloud-save": "any create cloud save",
+            "any-get-cloud-save": "any get cloud save",
+            "get-xp": "get XP",
+            "get-xp-ranks": "get XP ranks",
+            "get-active-xp-bonuses": "get active XP bonuses",
+            "get-upcoming-xp-bonuses": "get upcoming XP bonuses",
+            "get-broadcast-channels": "get broadcast channels",
+            "get-broadcast-messages": "get broadcast messages",
+            "get-broadcast-message": "get broadcast message",
+            "get-cloud-save-buckets": "get cloud save buckets",
+            "set-player-email-address": "set player email address",
+            "set-player-username-password": "set player username and password",
+            "set-player-username": "set player username",
+            "set-player-password": "set player password",
+            "delete-player": "delete player",
+            "register-player": "register player",
+            "delete-avatar": "delete avatar",
+            "set-avatar": "set avatar",
+            "disconnect-login-provider": "disconnect login provider",
+            "get-login-providers": "get login providers",
+            "set-cloud-save-picture": "set cloud save picture",
+            "delete-cloud-save-picture": "delete cloud save picture",
+            "delete-cloud-save": "delete cloud save",
+            "get-leaderboard-teams": "get leaderboard teams",
+            "adjust-leaderboard-score": "adjust leaderboard score",
+            "get-leaderboard-score-history": "get leaderboard score history",
+            "link-provider": "link provider",
+            "link-provider-force-required": "force link provider required",
+            "link-provider-force-result": "forced link provider",
+            "get-all-achievements": "get all achievements",
+            "get-achievement": "get achievement",
+            "get-players-achievements": "get players achievements",
+            "get-awarded-players": "get players awarded achievement",
+            "award-achievement": "award or progress achievement",
+            "connect-to-notifications": "connect to notifications"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-notification-received",
+      "scriptName": "OnNotificationReceived",
+      "category": "notifications",
+      "list-name": "On notification received",
+      "display-text": "On {0} notification received",
+      "description": "Triggered when a notification is sent to the player.",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The type of received notification.",
+          "items": {
+            "new-broadcast-message": "new broadcast message",
+            "achievement-awarded": "player achievement awarded",
+            "xp-changed": "player XP changed",
+            "xp-rank-changed": "player XP rank changed"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-notification-connection-closed",
+      "scriptName": "OnNotificationConnectionClosed",
+      "category": "notifications",
+      "list-name": "On notification connection closed",
+      "display-text": "On notification connection closed",
+      "description": "Triggered when a web socket connection for notifications is closed for any reason.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-xp-rank-change-promotion",
+      "scriptName": "IsXPRankChangePromotion",
+      "category": "notifications",
+      "list-name": "Is XP rank change a promotion",
+      "display-text": "XP rank change is promotion",
+      "description": "Is the player XP rank change a promotion.  If false, player has been demoted to a lower XP rank."
+    },
+    {
+      "id": "is-achievement-progressive",
+      "scriptName": "IsAchievementProgressive",
+      "category": "achievements",
+      "list-name": "Is achievement progressive",
+      "display-text": "Is achievement ID [b]{0}[/b] progressive",
+      "description": "True if the achievement is progressive.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-client-progress-allowed",
+      "scriptName": "IsAchievementClientProgressAllowed",
+      "category": "achievements",
+      "list-name": "Is achievement client progressable/awardable",
+      "display-text": "Is achievement ID [b]{0}[/b] allowed to be progressed/awarded by clients",
+      "description": "True if the achievement can be awarded/progressed by clients.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-increment-only",
+      "scriptName": "IsAchievementIncrementOnly",
+      "category": "achievements",
+      "list-name": "Is achievement increment only",
+      "display-text": "Is achievement ID [b]{0}[/b] increment only",
+      "description": "True if the achievement is increment only..",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-secret",
+      "scriptName": "IsAchievementSecret",
+      "category": "achievements",
+      "list-name": "Is achievement secret",
+      "display-text": "Is achievement ID [b]{0}[/b] secret",
+      "description": "True if the achievement is secret.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      }
+    },
+    {
+      "id": "are-broadcast-channel-messages-rateable",
+      "scriptName": "AreBroadcastChannelMessagesRateable",
+      "category": "broadcasts",
+      "list-name": "Are messages rateable",
+      "display-text": "Are messages rateable in channel ID [b]{0}[/b]",
+      "description": "True if messages in this channel are rateable by signed in players.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      }
+    },
+    {
+      "id": "any-broadcast-channel-unread-messages",
+      "scriptName": "HasBroadcastChannelGotUnreadMessages",
+      "category": "broadcasts",
+      "list-name": "Has any unread messages",
+      "display-text": "Are there any unread messages in channel ID [b]{0}[/b]",
+      "description": "True if there are unread messages in this channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      }
+    },
+    {
+      "id": "is-broadcast-message-unread",
+      "scriptName": "IsBroadcastMessageUnread",
+      "category": "broadcasts",
+      "list-name": "Is message unread",
+      "display-text": "Is the message [b]{0}[/b] unread",
+      "description": "True if this message is unread by the current player.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      }
+    },
+    {
+      "id": "is-broadcast-message-rateable",
+      "scriptName": "IsBroadcastMessageRateable",
+      "category": "broadcasts",
+      "list-name": "Is message rateable",
+      "display-text": "Is the message [b]{0}[/b] rateable",
+      "description": "True if this message is rateable by signed in players.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      }
+    },
+    {
+      "id": "on-link-popup-blocked",
+      "scriptName": "OnLinkPopupBlocked",
+      "category": "authentication",
+      "list-name": "On link popup blocked",
+      "display-text": "On link popup blocked",
+      "description": "Triggered when the browser popup blocker prevents the link popup window appearing.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-sign-in-popup-blocked",
+      "scriptName": "OnSignInPopupBlocked",
+      "category": "authentication",
+      "list-name": "On sign in popup blocked",
+      "display-text": "On sign in popup blocked",
+      "description": "Triggered when the browser popup blocker prevents the sign in popup window appearing.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-signed-in",
+      "scriptName": "IsSignedIn",
+      "category": "authentication",
+      "list-name": "Is signed in",
+      "display-text": "Is signed in",
+      "description": "True if the player is currently signed in."
+    },
+    {
+      "id": "can-sign-in-persistent",
+      "scriptName": "CanSignInPersistent",
+      "category": "authentication",
+      "list-name": "Can sign in persistent",
+      "display-text": "Can sign in persistent",
+      "description": "True if a previous sign in which allowed persisting is available."
+    },
+    {
+      "id": "can-sign-in-with-provider",
+      "scriptName": "CanSignInWithProvider",
+      "category": "authentication",
+      "list-name": "Can sign in with provider",
+      "display-text": "Can signed in player sign in with [b]{0}[/b]",
+      "description": "True if a currently signed in player can sign in with a specified provider.",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "Provider",
+          "desc": "The third-party service.",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-create-cloud-save-success",
+      "scriptName": "OnCreateCloudSaveSuccess",
+      "category": "cloud-save",
+      "list-name": "On create success",
+      "display-text": "On create cloud save [b]{0}[/b] success (bucket [i]{1}[/i])",
+      "description": "Triggered when creating a cloud save completes successfully.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-create-cloud-save-error",
+      "scriptName": "OnCreateCloudSaveError",
+      "category": "cloud-save",
+      "list-name": "On create error",
+      "display-text": "On create cloud save [b]{0}[/b] error (bucket [i]{1}[/i])",
+      "description": "Triggered when creating a cloud save fails to complete.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-success",
+      "scriptName": "OnGetCloudSaveSuccess",
+      "category": "cloud-save",
+      "list-name": "On get success",
+      "display-text": "On get cloud save [b]{0}[/b] success (bucket [i]{1}[/i])",
+      "description": "Triggered when retrieving a cloud save completes successfully.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-binary-success",
+      "scriptName": "OnGetCloudSaveBinarySuccess",
+      "category": "cloud-save",
+      "list-name": "On get binary success",
+      "display-text": "On get binary cloud save [b]{0}[/b] to {2} success (bucket [i]{1}[/i])",
+      "description": "Triggered when retrieving a binary cloud save completes successfully.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        },
+        "data": {
+          "type": "object",
+          "name": "Binary Data",
+          "desc": "The Binary Data object to receive the cloud save data."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-error",
+      "scriptName": "OnGetCloudSaveError",
+      "category": "cloud-save",
+      "list-name": "On get error",
+      "display-text": "On get cloud save [b]{0}[/b] error (bucket [i]{1}[/i])",
+      "description": "Triggered when retrieving a cloud save fails to complete.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "are-bucket-cloud-saves-rateable",
+      "scriptName": "AreCloudSaveBucketSavesRateable",
+      "category": "cloud-save",
+      "list-name": "Are cloud saves rateable",
+      "display-text": "Are cloud saves rateable in bucket ID [b]{0}[/b]",
+      "description": "True if cloud saves in this bucket are rateable by signed in players.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-game-id",
+      "scriptName": "SetGameID",
+      "category": "construct-game-services",
+      "list-name": "Set game ID",
+      "display-text": "Set game ID to [b]{0}[/b]",
+      "description": "Set the curent game ID.",
+      "params": {
+        "game-id": {
+          "type": "string",
+          "name": "Game ID",
+          "desc": "The game ID to set."
+        }
+      }
+    },
+    {
+      "id": "set-target-language",
+      "scriptName": "SetTargetLanguage",
+      "category": "construct-game-services",
+      "list-name": "Set target language",
+      "display-text": "Set target language to [b]{0}[/b]",
+      "description": "Set the curent target language.",
+      "params": {
+        "languageISO": {
+          "type": "string",
+          "name": "Language ISO",
+          "desc": "The language ISO to set to."
+        }
+      }
+    },
+    {
+      "id": "notifications-connect",
+      "scriptName": "ConnectToNotifications",
+      "category": "notifications",
+      "list-name": "Connect to notifications",
+      "display-text": "Create a new notifications connection.",
+      "description": "Creates a new connection to receive notifications relevant to the current player.",
+      "isAsync": true
+    },
+    {
+      "id": "notifications-diconnect",
+      "scriptName": "DisconnectFromNotifications",
+      "category": "notifications",
+      "list-name": "Disconnect from notifications",
+      "display-text": "Close existing notification connection.",
+      "description": "Closes the existing notifications connection if it is open.",
+      "isAsync": true
+    },
+    {
+      "id": "get-all-achievements",
+      "scriptName": "GetAllAchievements",
+      "category": "achievements",
+      "list-name": "Get Achievements",
+      "display-text": "Get achievements",
+      "description": "Get all achievements.",
+      "isAsync": true
+    },
+    {
+      "id": "get-achievement",
+      "scriptName": "GetAchievement",
+      "category": "achievements",
+      "list-name": "Get Achievement",
+      "display-text": "Get achievement ID [b]{0}[/b]",
+      "description": "Get a single achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "The ID of the achievement to get."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-player-achievements",
+      "scriptName": "GetPlayerAchievements",
+      "category": "achievements",
+      "list-name": "Get Players Achievements",
+      "display-text": "Get all player achievements",
+      "description": "Lists all achievements signed in player has been awarded or has progression.",
+      "isAsync": true
+    },
+    {
+      "id": "get-awarded-players",
+      "scriptName": "GetAwardedPlayers",
+      "category": "achievements",
+      "list-name": "Get Awarded Players",
+      "display-text": "List all players awarded Achievement ID [b]{0}[/b] ordered by [b]{1}[/b] (results per page [i]{2}[/i], page [i]{3}[/i])",
+      "description": "Lists all players who have been awarded an achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "The ID of the achievement to get awarded players of."
+        },
+        "orderBy": {
+          "type": "combo",
+          "name": "Order by",
+          "desc": "How to order returned results.",
+          "items": {
+            "MostRecentlyAwarded": "Players most recently awarded",
+            "LeastRecentlyAwarded": "Players least recently awarded",
+            "MostAwarded": "Most of this achievement awarded",
+            "LeastAwarded": "Least of this achievement awarded"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 50."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "award-achievement",
+      "scriptName": "AwardAchievement",
+      "category": "achievements",
+      "list-name": "Award Achievement",
+      "display-text": "Award or progress the achievement ID [b]{0}[/b] with value [b]{1}[/b] for the signed in player",
+      "description": "Award or progress an achievement for the signed in player",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "Achievement ID",
+          "desc": "The ID of the achievement to get awarded players of."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value to pass",
+          "desc": "For non-progressive achievements, how many to award.  For progressive achievements, the progression value to award."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-channels",
+      "scriptName": "GetBroadcastChannels",
+      "category": "broadcasts",
+      "list-name": "Get Channels",
+      "display-text": "Get channels",
+      "description": "Get all broadcast channels.",
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-channel-messages",
+      "scriptName": "GetBroadcastChannelMessages",
+      "category": "broadcasts",
+      "list-name": "Get Messages",
+      "display-text": "Get messages in channel [b]{0}[/b] (results per page [i]{1}[/i], page [i]{2}[/i])",
+      "description": "Get messages in a channel",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "Channel ID",
+          "desc": "The channel ID to mark all messages as read in."
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 50."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-message",
+      "scriptName": "GetBroadcastMessage",
+      "category": "broadcasts",
+      "list-name": "Get Message",
+      "display-text": "Get a message [b]{0}[/b].",
+      "description": "Get a message",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "Message ID",
+          "desc": "The message ID to retieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "rate-broadcast-message",
+      "scriptName": "RateBroadcastMessage",
+      "category": "broadcasts",
+      "list-name": "Rate Message",
+      "display-text": "Rate message ID [b]{0}[/b] with value [i]{1}[/i]",
+      "description": "Rate a message",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "Message ID",
+          "desc": "The message ID being rated."
+        },
+        "value": {
+          "type": "number",
+          "name": "Rating Value",
+          "desc": "The value of the rating being cast."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-xp",
+      "scriptName": "GetXP",
+      "category": "xp",
+      "list-name": "Get XP",
+      "display-text": "Get XP",
+      "description": "Get the signed in players current XP and rank details.",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-ranks",
+      "scriptName": "GetXPRanks",
+      "category": "xp",
+      "list-name": "Get all XP ranks",
+      "display-text": "Get all XP Ranks",
+      "description": "Get all XP ranks in order.",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-active-bonuses",
+      "scriptName": "GetActiveXPBonuses",
+      "category": "xp",
+      "list-name": "Get active XP bonuses",
+      "display-text": "Get active XP bonuses",
+      "description": "Get all currently active XP bonsues.",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-upcoming-bonuses",
+      "scriptName": "GetUpcomingXPBonuses",
+      "category": "xp",
+      "list-name": "Get upcoming XP bonuses",
+      "display-text": "Get all upcoming XP bonuses up until [b]{0}[/b]",
+      "description": "Get all upcoming XP bonsues.",
+      "params": {
+        "endDate": {
+          "type": "number",
+          "name": "End date",
+          "desc": "How far ahead to search for upcoming bonuses"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-login-providers",
+      "scriptName": "GetLoginProviders",
+      "category": "authentication",
+      "list-name": "Get Login Providers",
+      "display-text": "Retrieve all currently connected login providers",
+      "description": "Retrieve all currently connected login providers for the current signed in player.",
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-email-link",
+      "scriptName": "SignInWithEmail",
+      "category": "authentication",
+      "list-name": "Sign in with email link",
+      "display-text": "Send sign in link to email address [b]{0}[/b] (allow persisting [i]{1}[/i], expiry [i]{2}[/i] minutes)",
+      "description": "Sign in with a link delivered to players email address.",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "Email address",
+          "desc": "The verified email address of the player wishing to sign in."
+        },
+        "allowPersisting": {
+          "type": "boolean",
+          "name": "Allow persisting",
+          "desc": "Allow re-using this sign in session later on."
+        },
+        "expiry": {
+          "type": "number",
+          "name": "Expiry",
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-username-password",
+      "scriptName": "SignInWithUsernamePassword",
+      "category": "authentication",
+      "list-name": "Sign in with username & password",
+      "display-text": "Attempt to sign into account with username [b]{0}[/b] and password [b]{1}[/b] (allow persisting [i]{2}[/i], expiry [i]{3}[/i] minutes)",
+      "description": "Sign in to a players account with username & password.",
+      "params": {
+        "username": {
+          "type": "string",
+          "name": "Username",
+          "desc": "The username of the players account."
+        },
+        "password": {
+          "type": "string",
+          "name": "Password",
+          "desc": "The password of the players account."
+        },
+        "allowPersisting": {
+          "type": "boolean",
+          "name": "Allow persisting",
+          "desc": "Allow re-using this sign in session later on."
+        },
+        "expiry": {
+          "type": "number",
+          "name": "Expiry",
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-provider",
+      "scriptName": "SignInWithProvider",
+      "category": "authentication",
+      "list-name": "Sign in with provider",
+      "display-text": "Sign in with [b]{0}[/b] (allow persisting [i]{1}[/i], expiry [i]{2}[/i] minutes, popup window [i]{3}[/i] x [i]{4}[/i])",
+      "description": "Sign in with a third-party identity service.",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "Provider",
+          "desc": "The third-party service to sign in with.",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        },
+        "allow-persisting": {
+          "type": "boolean",
+          "name": "Allow persisting",
+          "desc": "Allow re-using this sign in session later on."
+        },
+        "expiry": {
+          "type": "number",
+          "name": "Expiry",
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+        },
+        "popup-window-width": {
+          "type": "number",
+          "name": "Popup window width",
+          "desc": "The width of the authentication popup window."
+        },
+        "popup-window-height": {
+          "type": "number",
+          "name": "Popup window height",
+          "desc": "The height of the authentication popup window."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "force-link-provider",
+      "scriptName": "ForceLinkProvider",
+      "category": "authentication",
+      "list-name": "Force link login provider",
+      "display-text": "Force link login provider",
+      "description": "When linking a login provider, if the provider is attached to another account this forces the connection.",
+      "isAsync": true
+    },
+    {
+      "id": "link-provider",
+      "scriptName": "LinkProvider",
+      "category": "authentication",
+      "list-name": "Link login provider",
+      "display-text": "Link [b]{0}[/b] (popup window [i]{1}[/i] x [i]{2}[/i])",
+      "description": "Link another third-party identity service to this players account.",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "Provider",
+          "desc": "The third-party service to link.",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        },
+        "popup-window-width": {
+          "type": "number",
+          "name": "Popup window width",
+          "desc": "The width of the authentication popup window."
+        },
+        "popup-window-height": {
+          "type": "number",
+          "name": "Popup window height",
+          "desc": "The height of the authentication popup window."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "disconnect-provider",
+      "scriptName": "DisconnectProvider",
+      "category": "authentication",
+      "list-name": "Disconnect provider",
+      "display-text": "Disconnect [b]{0}[/b] from signed in players account",
+      "description": "Disconnect a login provider from a players account",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "Provider",
+          "desc": "The third-party service to sign in with.",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-persistent",
+      "scriptName": "SignInPersistent",
+      "category": "authentication",
+      "list-name": "Sign in persistent",
+      "display-text": "Sign in persistent",
+      "description": "Sign in using a previous session that allowed persisting.",
+      "isAsync": true
+    },
+    {
+      "id": "retry-open-sign-in-popup",
+      "scriptName": "RetryOpenSignInPopup",
+      "category": "authentication",
+      "list-name": "Retry sign in popup",
+      "display-text": "Retry sign in popup",
+      "description": "Make another attempt to open the sign in popup window. This should be used in a user input event like a mouse click or touch."
+    },
+    {
+      "id": "retry-open-link-popup",
+      "scriptName": "RetryOpenLinkPopup",
+      "category": "authentication",
+      "list-name": "Retry link popup",
+      "display-text": "Retry link popup",
+      "description": "Make another attempt to open the link login provider in popup window. This should be used in a user input event like a mouse click or touch."
+    },
+    {
+      "id": "sign-out",
+      "scriptName": "SignOut",
+      "category": "authentication",
+      "list-name": "Sign out",
+      "display-text": "Sign out",
+      "description": "Sign out of any account currently signed in to."
+    },
+    {
+      "id": "set-player-name",
+      "scriptName": "SetPlayerName",
+      "category": "authentication",
+      "list-name": "Set player name",
+      "display-text": "Set player name to [b]{0}[/b]",
+      "description": "Set the name of the currently signed in player.",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "Player name",
+          "desc": "The player name to set for the currently signed in player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-email-address",
+      "scriptName": "SetPlayerEmailAddress",
+      "category": "authentication",
+      "list-name": "Set player email address",
+      "display-text": "Set player email address to [b]{0}[/b]",
+      "description": "Set the email address of the currently signed in player.",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "Email address",
+          "desc": "The email address to set for the currently signed in player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-username-and-password",
+      "scriptName": "SetPlayerUsernameAndPassword",
+      "category": "authentication",
+      "list-name": "Set player username and password",
+      "display-text": "Set player username to [b]{0}[/b] and password to [b]{1}[/b]",
+      "description": "Set the username and password of the currently signed in player.",
+      "params": {
+        "username": {
+          "type": "string",
+          "name": "Username",
+          "desc": "The username to set for the currently signed in player."
+        },
+        "password": {
+          "type": "string",
+          "name": "Password",
+          "desc": "The password to set for the currently signed in player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-username",
+      "scriptName": "SetPlayerUsername",
+      "category": "authentication",
+      "list-name": "Change player username",
+      "display-text": "Change player username to [b]{0}[/b]",
+      "description": "Change the username of the currently signed in player.",
+      "params": {
+        "newUsername": {
+          "type": "string",
+          "name": "New username",
+          "desc": "The new username to set for the currently signed in player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-password",
+      "scriptName": "SetPlayerPassword",
+      "category": "authentication",
+      "list-name": "Change player password",
+      "display-text": "Change player password to [b]{0}[/b]",
+      "description": "Change the password of the currently signed in player.",
+      "params": {
+        "newPassword": {
+          "type": "string",
+          "name": "New password",
+          "desc": "The new password to set for the currently signed in player."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-binary",
+      "scriptName": "SetPlayerAvatarByBinary",
+      "category": "authentication",
+      "list-name": "Set player avatar (binary)",
+      "display-text": "Set the players avatar to the binary data [b]{0}[/b].",
+      "description": "Set the players avatar.",
+      "params": {
+        "avatarData": {
+          "type": "object",
+          "name": "Data",
+          "desc": "The binary data of the avatar."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-url",
+      "scriptName": "SetPlayerAvatarByURL",
+      "category": "authentication",
+      "list-name": "Set player avatar (URL)",
+      "display-text": "Set the players avatar to the image at URL [b]{0}[/b].",
+      "description": "Set the players avatar.",
+      "params": {
+        "avatarURL": {
+          "type": "string",
+          "name": "URL",
+          "desc": "The URL of the avatar image."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-base64",
+      "scriptName": "SetPlayerAvatarByBase64",
+      "category": "authentication",
+      "list-name": "Set player avatar (base64)",
+      "display-text": "Set the players avatar to the Base64 encoded image [b]{0}[/b].",
+      "description": "Set the players avatar.",
+      "params": {
+        "avatar": {
+          "type": "string",
+          "name": "Data",
+          "desc": "The Base64 encoded avatar image."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-forgotten-password",
+      "scriptName": "RequestForgottenPassword",
+      "category": "authentication",
+      "list-name": "Request forgotten password",
+      "display-text": "Request forgotten password email to [b]{0}[/b]",
+      "description": "Request a forgotten password email.  Will only send an email if the players email address is registered and verified.",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "Email address",
+          "desc": "The email address of the players account."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-player",
+      "scriptName": "DeletePlayer",
+      "category": "authentication",
+      "list-name": "Delete player",
+      "display-text": "Permanently delete the signed in players account.",
+      "description": "Permanently deletes the signed in players account.  THIS ACTION IS IRREVERSIBLE.",
+      "isAsync": true
+    },
+    {
+      "id": "delete-avatar",
+      "scriptName": "DeleteAvatar",
+      "category": "authentication",
+      "list-name": "Delete avatar",
+      "display-text": "Deletes the signed in players avatar.",
+      "description": "Deletes the signed in players avatar.",
+      "isAsync": true
+    },
+    {
+      "id": "register-player",
+      "scriptName": "RegisterPlayer",
+      "category": "authentication",
+      "list-name": "Register player",
+      "display-text": "Create a new player account with the player name [b]{0}[/b] (username [i]{1}[/i], password [i]{2}[/i], email address [i]{3}[/i], allow persisting [i]{4}[/i], expiry [i]{5}[/i]).",
+      "description": "Create a new player account and sign in with it",
+      "params": {
+        "playerName": {
+          "type": "string",
+          "name": "Player name",
+          "desc": "The public facing player name for this new player"
+        },
+        "username": {
+          "type": "string",
+          "name": "Username",
+          "desc": "A username the player can sign in with"
+        },
+        "password": {
+          "type": "string",
+          "name": "Password",
+          "desc": "A password the player can sign in with"
+        },
+        "emailAddress": {
+          "type": "string",
+          "name": "Email address",
+          "desc": "An email address to associate with the players account"
+        },
+        "allow-persisting": {
+          "type": "boolean",
+          "name": "Allow persisting",
+          "desc": "Allow re-using this sign in session later on."
+        },
+        "expiry": {
+          "type": "number",
+          "name": "Expiry",
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-newest-scores",
+      "scriptName": "GetLeaderboardNewestScores",
+      "category": "leaderboards",
+      "list-name": "Get newest scores",
+      "display-text": "Retrieve newest scores on leaderboard ID [b]{0}[/b] (country [i]{1}[/i], results per page [i]{2}[/i], page [i]{3}[/i])",
+      "description": "Return the newest posted scores in a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to retrieve scores from."
+        },
+        "country": {
+          "type": "string",
+          "name": "Country",
+          "desc": "If specified only returns scores from this country."
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 100."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-player-scores",
+      "scriptName": "GetLeaderboardPlayerScores",
+      "category": "leaderboards",
+      "list-name": "Get player scores",
+      "display-text": "Retrieve player ID [b]{1}[/b] scores from leaderboard ID [b]{0}[/b] (results per page [i]{2}[/i], page [i]{3}[/i])",
+      "description": "Return scores posted by a player in a leaderboard, best first.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to retrieve players scores from."
+        },
+        "playerID": {
+          "type": "string",
+          "name": "PlayerID",
+          "desc": "The player ID to retrive scores for."
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 100."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-neighbour-scores",
+      "scriptName": "GetLeaderboardNeighbourScores",
+      "category": "leaderboards",
+      "list-name": "Get neighbour scores",
+      "display-text": "Retrieve score neighbours for player ID [b]{1}[/b] score ID [b]{2}[/b] from leaderboard ID [b]{0}[/b] (range [i]{3}[/i])",
+      "description": "Return the neighbouring scores (those directly better and worse).",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to retrieve players scores from."
+        },
+        "playerID": {
+          "type": "string",
+          "name": "PlayerID",
+          "desc": "The player ID to retrive neighbour scores on."
+        },
+        "scoreID": {
+          "type": "string",
+          "name": "ScoreID",
+          "desc": "The score ID to retrive neighbour scores for."
+        },
+        "range": {
+          "type": "number",
+          "name": "Range",
+          "desc": "How many scores to return on either side of the queried score."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-score-history",
+      "scriptName": "GetLeaderboardScoreHistory",
+      "category": "leaderboards",
+      "list-name": "Get score history",
+      "display-text": "Retrieve player [b]{1}[/b] score [b]{2}[/b] history (leaderboard ID [i]{0}[/i])",
+      "description": "Return the historic records for a score through time by player ID or score ID.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard the score resides on."
+        },
+        "playerID": {
+          "type": "string",
+          "name": "Player ID",
+          "desc": "The ID of the player to query."
+        },
+        "scoreID": {
+          "type": "string",
+          "name": "Score ID",
+          "desc": "The ID of the score to query."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "submit-score",
+      "scriptName": "SubmitScore",
+      "category": "leaderboards",
+      "list-name": "Submit score",
+      "display-text": "Submit score [b]{0}[/b] to leaderboard [i]{4}[/i] (optional values [[i]{1}[/i], [i]{2}[/i], [i]{3}[/i]])",
+      "description": "Submit a score to a leaderboard.",
+      "params": {
+        "score": {
+          "type": "number",
+          "name": "Score",
+          "desc": "The score to submit. Must be an integer."
+        },
+        "optionalValue1": {
+          "type": "number",
+          "name": "Optional Value 1",
+          "desc": "An optional value to store with this score record."
+        },
+        "optionalValue2": {
+          "type": "number",
+          "name": "Optional Value 2",
+          "desc": "An optional value to store with this score record."
+        },
+        "optionalValue3": {
+          "type": "number",
+          "name": "Optional Value 3",
+          "desc": "An optional value to store with this score record."
+        },
+        "leaderboard-id": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to modify. Leave empty for the Construct Arcade."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "adjust-score",
+      "scriptName": "AdjustScore",
+      "category": "leaderboards",
+      "list-name": "Adjust score",
+      "display-text": "Adjust score ID [b]{0}[/b] on leaderboard [i]{1}[/i] by [i]{2}[/i] (adjust optional values [[i]{3}[/i], [i]{4}[/i], [i]{5}[/i]])",
+      "description": "Adjust an existing score in a leaderboard.",
+      "params": {
+        "scoreID": {
+          "type": "string",
+          "name": "Score ID",
+          "desc": "The ID of the score to adjust."
+        },
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard the score exists on."
+        },
+        "scoreAdjustment": {
+          "type": "number",
+          "name": "Adjustment",
+          "desc": "How much to adjust the scores value by."
+        },
+        "optValue1Adjustment": {
+          "type": "number",
+          "name": "Optional Value 1 Adjustment",
+          "desc": "How much to adjust the optional value 1 by."
+        },
+        "optValue2Adjustment": {
+          "type": "number",
+          "name": "Optional Value 2 Adjustment",
+          "desc": "How much to adjust the optional value 1 by."
+        },
+        "optValue3Adjustment": {
+          "type": "number",
+          "name": "Optional Value 3 Adjustment",
+          "desc": "How much to adjust the optional value 1 by."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-scores",
+      "scriptName": "GetLeaderboardScores",
+      "category": "leaderboards",
+      "list-name": "Get leaderboard scores",
+      "display-text": "Get leaderboard [b]{0}[/b] scores (results per page [i]{1}[/i], page [i]{2}[/i], country [i]{3}[/i], range [i]{4}[/i], range offset [i]{5}[/i], culture [i]{6}[/i])",
+      "description": "Retrieve a list of scores from a leaderboard.",
+      "params": {
+        "leaderboard-id": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to retrieve scores from."
+        },
+        "results-per-page": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 500."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        },
+        "country": {
+          "type": "string",
+          "name": "Country",
+          "desc": "The ISO 3166-1 alpha-2 country code to filter results by. Leave empty to show all counties."
+        },
+        "range": {
+          "type": "combo",
+          "name": "Range",
+          "desc": "Filter results according to a time period.",
+          "items": {
+            "all": "All",
+            "daily": "Daily",
+            "weekly": "Weekly",
+            "monthly": "Monthly",
+            "yearly": "Yearly"
+          }
+        },
+        "range-offset": {
+          "type": "number",
+          "name": "Range offset",
+          "desc": "When filtering to a time period, the offset of the time period. For example a daily time period with an offset of 1 retrieves yesterday's scores."
+        },
+        "culture": {
+          "type": "string",
+          "name": "Culture",
+          "desc": "The locale to use for returned values. Leave empty to use the leaderboard's default culture."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-teams",
+      "scriptName": "GetLeaderboardTeams",
+      "category": "leaderboards",
+      "list-name": "Get leaderboard teams",
+      "display-text": "Get leaderboard [b]{0}[/b] teams ordered by [i]{1}[/i] (results per page [i]{2}[/i], page [i]{3}[/i])",
+      "description": "Retrieve a list of teams in a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "Leaderboard ID",
+          "desc": "The ID of the leaderboard to retrieve teams from."
+        },
+        "orderBy": {
+          "type": "combo",
+          "name": "Order by",
+          "desc": "How to order returned results.",
+          "items": {
+            "BestRanked": "Best ranked",
+            "WorstRanked": "Worst ranked",
+            "NameAZ": "Name A-Z",
+            "NameZA": "Name Z-A",
+            "MostPlayers": "Most players on team",
+            "LeastPlayers": "Least players on team",
+            "Newest": "Newest teams",
+            "Oldest": "Oldest teams"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 100."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      }
+    },
+    {
+      "id": "rate-cloud-save",
+      "scriptName": "RateCloudSave",
+      "category": "cloud-save",
+      "list-name": "Rate cloud Save",
+      "display-text": "Rate cloud save ID [b]{0}[/b] with value [i]{1}[/i]",
+      "description": "Rate a cloud save",
+      "params": {
+        "cloudSaveID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save being rated."
+        },
+        "value": {
+          "type": "number",
+          "name": "Rating Value",
+          "desc": "The value of the rating being cast."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "create-cloud-save-text",
+      "scriptName": "CreateCloudSaveText",
+      "category": "cloud-save",
+      "list-name": "Create (text)",
+      "display-text": "Create cloud save [b]{0}[/b] bucket [i]{1}[/i] name [i]{2}[/i] with data [b]{3}[/b]",
+      "description": "Create a cloud save storing text data.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        },
+        "name": {
+          "type": "string",
+          "name": "Name (optional)",
+          "desc": "An optional name for the data, e.g. a file name."
+        },
+        "data": {
+          "type": "string",
+          "name": "Data",
+          "desc": "A string of the data to save."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "create-cloud-save-binary",
+      "scriptName": "CreateCloudSaveBinary",
+      "category": "cloud-save",
+      "list-name": "Create (binary)",
+      "display-text": "Create cloud save [b]{0}[/b] bucket [i]{1}[/i] name [i]{2}[/i] with data {3}",
+      "description": "Create a cloud save storing binary data.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        },
+        "name": {
+          "type": "string",
+          "name": "Name (optional)",
+          "desc": "An optional name for the data, e.g. a file name."
+        },
+        "data": {
+          "type": "object",
+          "name": "Binary Data",
+          "desc": "The Binary Data object to use as the data to save."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-cloud-save",
+      "scriptName": "GetCloudSave",
+      "category": "cloud-save",
+      "list-name": "Get",
+      "display-text": "Get cloud save [b]{0}[/b] bucket [i]{1}[/i] (type [i]{2}[/i])",
+      "description": "Retrieve the data of a prior cloud save.",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "Key",
+          "desc": "The storage key name (lowercase alphanumeric characters and dots only)."
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "Bucket ID",
+          "desc": "The storage bucket ID (optional)."
+        },
+        "type": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "Whether to download as text or binary data.",
+          "items": {
+            "text": "text",
+            "binary": "binary"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-cloud-save-buckets",
+      "scriptName": "GetCloudSaveBuckets",
+      "category": "cloud-save",
+      "list-name": "Get buckets",
+      "display-text": "Get cloud save buckets ordered by [b]{0}[/b] (results per page [i]{1}[/i], page [i]{2}[/i])",
+      "description": "Retrieve a paginated list of all buckets.",
+      "params": {
+        "orderBy": {
+          "type": "combo",
+          "name": "Order by",
+          "desc": "How to order returned results.",
+          "items": {
+            "AZ": "A to Z",
+            "ZA": "Z to A",
+            "MostBlobs": "Most saves",
+            "LeastBlobs": "Least saves",
+            "MostData": "Most data",
+            "LeastData": "Least data"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "Results per page",
+          "desc": "The number of results to retrieve, from 1 to 100."
+        },
+        "page": {
+          "type": "number",
+          "name": "Page",
+          "desc": "The zero-based index of the page number to retrieve."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-binary",
+      "scriptName": "SetCloudSavePictureByBinary",
+      "category": "cloud-save",
+      "list-name": "Set picture (binary)",
+      "display-text": "Set the cloud save [b]{0}[/b] associated picture to binary data [i]{1}[/i].",
+      "description": "Set a cloud saves associated picture.",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save the picture is being set for."
+        },
+        "pictureData": {
+          "type": "object",
+          "name": "Data",
+          "desc": "The binary data of the image."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-url",
+      "scriptName": "SetCloudSavePictureByURL",
+      "category": "cloud-save",
+      "list-name": "Set picture (URL)",
+      "display-text": "Set the cloud save [b]{0}[/b] associated picture to the image at URL [i]{1}[/i].",
+      "description": "Set a cloud saves associated picture.",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save the picture is being set for."
+        },
+        "pictureURL": {
+          "type": "string",
+          "name": "URL",
+          "desc": "The URL of the image."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-base64",
+      "scriptName": "SetCloudSavePictureByBase64",
+      "category": "cloud-save",
+      "list-name": "Set picture (base64)",
+      "display-text": "Set the cloud save [b]{0}[/b] associated picture to the Base64 encoded image [i]{1}[/i].",
+      "description": "Set a cloud saves associated picture.",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save the picture is being set for."
+        },
+        "picture": {
+          "type": "string",
+          "name": "Data",
+          "desc": "The Base64 encoded image."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-cloud-save-picture",
+      "scriptName": "DeleteCloudSavePicture",
+      "category": "cloud-save",
+      "list-name": "Delete picture",
+      "display-text": "Deletes cloud save [b]{0}[/b] associated picture.",
+      "description": "Deletes the associated picture for a cloud save.",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save the picture is being set for."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-cloud-save",
+      "scriptName": "DeleteCloudSave",
+      "category": "cloud-save",
+      "list-name": "Delete",
+      "display-text": "Deletes cloud save [b]{0}[/b].",
+      "description": "Deletes a cloud save.",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "Cloud save ID",
+          "desc": "The ID of the cloud save being deleted that the signed in player has permission to delete."
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "game-id",
+      "scriptName": "GameID",
+      "category": "construct-game-services",
+      "translated-name": "GameID",
+      "description": "The ID of the game currently signed in to.",
+      "returnType": "string"
+    },
+    {
+      "id": "target-language",
+      "scriptName": "TargetLanguage",
+      "category": "construct-game-services",
+      "translated-name": "TargetLanguage",
+      "description": "Target language translatable content should be returned in.",
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-date-created",
+      "scriptName": "AchievementDateCreated",
+      "category": "achievements",
+      "translated-name": "AchievementDateCreated",
+      "description": "The date an achievement was created.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-date-created-formatted",
+      "scriptName": "AchievementDateCreatedFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementDateCreatedFormatted",
+      "description": "The date an achievement was created formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-name",
+      "scriptName": "AchievementName",
+      "category": "achievements",
+      "translated-name": "AchievementName",
+      "description": "The name of an achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-description",
+      "scriptName": "AchievementDescription",
+      "category": "achievements",
+      "translated-name": "AchievementDescription",
+      "description": "The description of an achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-progress-required",
+      "scriptName": "AchievementProgressionRequired",
+      "category": "achievements",
+      "translated-name": "AchievementProgressRequired",
+      "description": "The progress required to unlock this achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-max-unlocks",
+      "scriptName": "AchievementMaxUnlocks",
+      "category": "achievements",
+      "translated-name": "AchievementMaxUnlocks",
+      "description": "Maximum number of times this achievement can be unlocked.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-max-unlocks-formatted",
+      "scriptName": "AchievementMaxUnlocksFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementMaxUnlocksFormatted",
+      "description": "Maximum number of times this achievement can be unlocked formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-total-awarded",
+      "scriptName": "AchievementTotalAwarded",
+      "category": "achievements",
+      "translated-name": "AchievementTotalAwarded",
+      "description": "Total times this achievement has been awarded.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-total-awarded-formatted",
+      "scriptName": "AchievementTotalAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementTotalAwardedFormatted",
+      "description": "Total times this achievement has been awarded formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-total-unique-players-awarded",
+      "scriptName": "AchievementTotalUniquePlayersAwarded",
+      "category": "achievements",
+      "translated-name": "AchievementTotalUniquePlayersAwarded",
+      "description": "Total number of players who have this achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-total-unique-players-awarded-formatted",
+      "scriptName": "AchievementTotalUniquePlayersAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementTotalUniquePlayersAwardedFormatted",
+      "description": "Total number of players who have this achievement formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-percentage-player-base-owned",
+      "scriptName": "AchievementPercentagePlayerBaseOwned",
+      "category": "achievements",
+      "translated-name": "AchievementPercentagePlayerBaseOwned",
+      "description": "Percentage of players who have been awarded this achievement.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-first-awarded",
+      "scriptName": "AchievementFirstAwarded",
+      "category": "achievements",
+      "translated-name": "AchievementFirstAwarded",
+      "description": "Date this achievement was first awarded to a player.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-first-awarded-formatted",
+      "scriptName": "AchievementFirstAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementFirstAwardedFormatted",
+      "description": "Date this achievement was first awarded to a player formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-last-awarded",
+      "scriptName": "AchievementLastAwarded",
+      "category": "achievements",
+      "translated-name": "AchievementLastAwarded",
+      "description": "Date this achievement was last awarded to a player.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-last-awarded-formatted",
+      "scriptName": "AchievementLastAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementLastAwardedFormatted",
+      "description": "Date this achievement was last awarded to a player formatted to the requested culture.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-achieved-logo-url",
+      "scriptName": "AchievementAchievedLogoURL",
+      "category": "achievements",
+      "translated-name": "AchievementAchievedLogoURL",
+      "description": "The URL of the achieved logo.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        },
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "Requested width in pixels"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-unachieved-logo-url",
+      "scriptName": "AchievementUnachievedLogoURL",
+      "category": "achievements",
+      "translated-name": "AchievementUnachievedLogoURL",
+      "description": "The URL of the unachieved logo.",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "AchievementID",
+          "desc": "Achievement ID"
+        },
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "Requested width in pixels"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-player-achievements",
+      "scriptName": "PlayerTotalAchievements",
+      "category": "achievements",
+      "translated-name": "PlayerTotalAchievements",
+      "description": "Total number of achievements awarded or progressed for the signed in player.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-times-awarded",
+      "scriptName": "PlayerAchievementTimesAwarded",
+      "category": "achievements",
+      "translated-name": "TotalPlayerAchievementTimesAwarded",
+      "description": "Total number of times the signed in player has been awarded an achievement.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-times-awarded-formatted",
+      "scriptName": "PlayerAchievementTimesAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "TotalPlayerAchievementTimesAwardedFormatted",
+      "description": "Total number of times the signed in player has been awarded an achievement formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-first-awarded",
+      "scriptName": "PlayerAchievementFirstAwarded",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementFirstAwarded",
+      "description": "The first time the signed in player was awarded this achievement.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-first-awarded-formatted",
+      "scriptName": "PlayerAchievementFirstAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementFirstAwardedFormatted",
+      "description": "The first time the signed in player was awarded this achievement formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-last-awarded",
+      "scriptName": "PlayerAchievementLastAwarded",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementLastAwarded",
+      "description": "The last time the signed in player was awarded this achievement.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-last-awarded-formatted",
+      "scriptName": "PlayerAchievementLastAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementLastAwardedFormatted",
+      "description": "The last time the signed in player was awarded this achievement formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-progress",
+      "scriptName": "PlayerAchievementProgress",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementProgress",
+      "description": "The current progress of an achievement for the signed in player.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-progress-formatted",
+      "scriptName": "PlayerAchievementProgressFormatted",
+      "category": "achievements",
+      "translated-name": "PlayerAchievementProgressFormatted",
+      "description": "The current progress of an achievement for the signed in player formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-id-at",
+      "scriptName": "AchievementAwardedPlayersIDAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersIDAt",
+      "description": "The ID of the player in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-player-name-at",
+      "scriptName": "AchievementAwardedPlayersPlayerNameAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersPlayerNameAt",
+      "description": "The player name of the player in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-active-at",
+      "scriptName": "AchievementAwardedPlayersLastActiveAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersLastActiveAt",
+      "description": "The date and time a player was last active in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-avatar-url-at",
+      "scriptName": "AchievementAwardedPlayersAvatarURLAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersAvatarURLAt",
+      "description": "The avatar URL of the player in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        },
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "The requested with of the avatar"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-awarded-count-at",
+      "scriptName": "AchievementAwardedPlayersAwardedCountAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersAwardedCountAt",
+      "description": "The number of times this player has earned this achievement in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-awarded-players-awarded-count-at-formatted",
+      "scriptName": "AchievementAwardedPlayersAwardedCountAtFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersAwardedCountAtFormatted",
+      "description": "The number of times this player has earned this achievement in the awarded players list at index formatted to the requested culture",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-first-awarded-at",
+      "scriptName": "AchievementAwardedPlayersFirstAwardedAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersFirstAwardedAt",
+      "description": "The date and time this player was first awarded the achievement in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-first-awarded-at-formatted",
+      "scriptName": "AchievementAwardedPlayersFirstAwardedAtFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersFirstAwardedAtFormatted",
+      "description": "The date and time this player was first awarded the achievement in the awarded players list at index formatted to the requested culture",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-awarded-at",
+      "scriptName": "AchievementAwardedPlayersLastAwardedAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersLastAwardedAt",
+      "description": "The date and time this player was last awarded the achievement in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-awarded-at-formatted",
+      "scriptName": "AchievementAwardedPlayersLastAwardedAtFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersLastAwardedAtFormatted",
+      "description": "The date and time this player was last awarded the achievement in the awarded players list at index formatted to the requested culture",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-current-progress-at",
+      "scriptName": "AchievementAwardedPlayersCurrentProgressAt",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersCurrentProgressAt",
+      "description": "The current progress of this player towards unlocking this achievement again in the awarded players list at index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-awarded-players-current-progress-at-formatted",
+      "scriptName": "AchievementAwardedPlayersCurrentProgressAtFormatted",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersCurrentProgressAtFormatted",
+      "description": "The current progress of this player towards unlocking this achievement again in the awarded players list at index formatted to the requested culture",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Awarded player achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-broadcast-channels",
+      "scriptName": "TotalBroadcastChannels",
+      "category": "broadcasts",
+      "translated-name": "TotalBroadcastChannels",
+      "description": "Total number of broadcast channels.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-id-at",
+      "scriptName": "BroadcastChannelIDAt",
+      "category": "broadcasts",
+      "translated-name": "ChannelIDAt",
+      "description": "The broadcast channel ID at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Channel index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-name",
+      "scriptName": "BroadcastChannelName",
+      "category": "broadcasts",
+      "translated-name": "ChannelName",
+      "description": "Name of a channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-description",
+      "scriptName": "BroadcastChannelDescription",
+      "category": "broadcasts",
+      "translated-name": "ChannelDescription",
+      "description": "Description of a channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-date-created",
+      "scriptName": "BroadcastChannelDateCreated",
+      "category": "broadcasts",
+      "translated-name": "ChannelDateCreated",
+      "description": "Date channel was created.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-message-count",
+      "scriptName": "BroadcastChannelMessageCount",
+      "category": "broadcasts",
+      "translated-name": "ChannelTotalMessages",
+      "description": "Total number of messages in a channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-last-message-date",
+      "scriptName": "BroadcastChannelLastMessageDate",
+      "category": "broadcasts",
+      "translated-name": "ChannelLastMessageDate",
+      "description": "Date of last message in a channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "broadcast-channel-messages-page-count",
+      "scriptName": "ChannelPageCount",
+      "category": "broadcasts",
+      "translated-name": "ChannelTotalPageCount",
+      "description": "Total number of pages when retrieving messages in a channel.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-message-id-at",
+      "scriptName": "ChannelMessageIDAt",
+      "category": "broadcasts",
+      "translated-name": "ChannelMessageIDAt",
+      "description": "Message ID at an index",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "ChannelID",
+          "desc": "Channel ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Channel index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-date",
+      "scriptName": "BroadcastMessageDate",
+      "category": "broadcasts",
+      "translated-name": "MessageDate",
+      "description": "Date message was published.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-title",
+      "scriptName": "BroadcastMessageTitle",
+      "category": "broadcasts",
+      "translated-name": "MessageTitle",
+      "description": "Title of message.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-text",
+      "scriptName": "BroadcastMessageText",
+      "category": "broadcasts",
+      "translated-name": "MessageText",
+      "description": "Text of message.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-excerpt",
+      "scriptName": "BroadcastMessageExcerpt",
+      "category": "broadcasts",
+      "translated-name": "MessageExcerpt",
+      "description": "Short preview of messages text.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-reads",
+      "scriptName": "BroadcastMessageReads",
+      "category": "broadcasts",
+      "translated-name": "MessageReads",
+      "description": "Total number of times message has been read.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-unique-reads",
+      "scriptName": "BroadcastMessageUniqueReads",
+      "category": "broadcasts",
+      "translated-name": "MessageUniqueReads",
+      "description": "Total number of times message has been uniquely read.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-updates",
+      "scriptName": "BroadcastMessageUpdates",
+      "category": "broadcasts",
+      "translated-name": "MessageUpdates",
+      "description": "Total number of times a messages title or text was updated.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-last-update",
+      "scriptName": "BroadcastMessageLastUpdate",
+      "category": "broadcasts",
+      "translated-name": "MessageLastUpdated",
+      "description": "Date a messages title and/or text was last updated.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-total-chars",
+      "scriptName": "BroadcastMessageCharCount",
+      "category": "broadcasts",
+      "translated-name": "MessageCharacterCount",
+      "description": "Total number of characters in messages text.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-my-rating-value",
+      "scriptName": "BroadcastMessageMyRatingValue",
+      "category": "broadcasts",
+      "translated-name": "CastMessageRating",
+      "description": "Cast rating value for signed in player.  Returns -1 if not yet rated the message.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-total-ratings",
+      "scriptName": "BroadcastMessageTotalRatings",
+      "category": "broadcasts",
+      "translated-name": "TotalMessageRatings",
+      "description": "Total ratings cast on message.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-average-rating",
+      "scriptName": "BroadcastMessageAverageRating",
+      "category": "broadcasts",
+      "translated-name": "AverageMessageRating",
+      "description": "Average rating of message.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-max-rating-value",
+      "scriptName": "BroadcastMessageMaxRatingValue",
+      "category": "broadcasts",
+      "translated-name": "MaxAllowedMessageRating",
+      "description": "Maxmimum allowed rating value.  Minimum is always 0.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-last-rating",
+      "scriptName": "BroadcastMessageLastRating",
+      "category": "broadcasts",
+      "translated-name": "LastMessageRating",
+      "description": "Date the last rating cast.",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "MessageID",
+          "desc": "Message ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp",
+      "scriptName": "XP",
+      "category": "xp",
+      "translated-name": "XP",
+      "description": "XP value.",
+      "returnType": "number"
+    },
+    {
+      "id": "formatted-xp",
+      "scriptName": "FormattedXP",
+      "category": "xp",
+      "translated-name": "XPFormatted",
+      "description": "XP value formatted to requested culture.",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-leaderboard-score-id",
+      "scriptName": "XPLeaderboardScoreID",
+      "category": "xp",
+      "translated-name": "XPLeaderboardScoreID",
+      "description": "ID of the corresponding score record in XP Leaderboard.",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-rank-id",
+      "scriptName": "RankID",
+      "category": "xp",
+      "translated-name": "XPRankID",
+      "description": "ID of the current XP rank.",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-next-rank-id",
+      "scriptName": "NextRankID",
+      "category": "xp",
+      "translated-name": "XPNextRankID",
+      "description": "ID of the next XP rank.",
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-title",
+      "scriptName": "XPRankTitle",
+      "category": "xp",
+      "translated-name": "RankTitle",
+      "description": "Title of XP rank.",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "RankID",
+          "desc": "Rank ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-description",
+      "scriptName": "XPRankDescription",
+      "category": "xp",
+      "translated-name": "RankDescription",
+      "description": "Description of XP rank.",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "RankID",
+          "desc": "Rank ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-at-xp",
+      "scriptName": "XPRankAtXP",
+      "category": "xp",
+      "translated-name": "RankAtXP",
+      "description": "XP requirement for rank.",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "RankID",
+          "desc": "Rank ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-rank-at-xp-formatted",
+      "scriptName": "XPRankAtXPFormatted",
+      "category": "xp",
+      "translated-name": "RankAtXPFormatted",
+      "description": "XP requirement for this rank formatted to requested culture.",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "RankID",
+          "desc": "Rank ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-logo",
+      "scriptName": "XPRankLogo",
+      "category": "xp",
+      "translated-name": "RankLogo",
+      "description": "Logo for XP rank.",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "RankID",
+          "desc": "Rank ID"
+        },
+        "minWidth": {
+          "type": "number",
+          "name": "MinWidth",
+          "desc": "Minimum width"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-rank-id-at",
+      "scriptName": "XPRankIDAt",
+      "category": "xp",
+      "translated-name": "RankIDAt",
+      "description": "Rank ID at index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Rank index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-get-active-bonus-id-at",
+      "scriptName": "XPActiveBonusIDAt",
+      "category": "xp",
+      "translated-name": "ActiveBonusIDAt",
+      "description": "Active bonus ID at index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Active bonus index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-get-upcoming-bonus-id-at",
+      "scriptName": "XPUpcomingBonusIDAt",
+      "category": "xp",
+      "translated-name": "UpcomingBonusIDAt",
+      "description": "Upcoming bonus ID at index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Upcoming bonus index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-title",
+      "scriptName": "XPBonusTitle",
+      "category": "xp",
+      "translated-name": "BonusTitle",
+      "description": "Title of XP bonus.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-description",
+      "scriptName": "XPBonusDescription",
+      "category": "xp",
+      "translated-name": "BonusDescription",
+      "description": "Description of XP bonus.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-start-date",
+      "scriptName": "XPBonusStartDate",
+      "category": "xp",
+      "translated-name": "BonusStartDate",
+      "description": "Start date of XP bonus.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-end-date",
+      "scriptName": "XPBonusEndDate",
+      "category": "xp",
+      "translated-name": "BonusEndDate",
+      "description": "End date of XP bonus.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-start-date-formatted",
+      "scriptName": "XPBonusStartDateFormatted",
+      "category": "xp",
+      "translated-name": "BonusStartDateFormatted",
+      "description": "Start date of XP bonus formatted to requested culture.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-end-date-formatted",
+      "scriptName": "XPBonusEndDateFormatted",
+      "category": "xp",
+      "translated-name": "BonusEndDateFormatted",
+      "description": "End date of XP bonus formatted to requested culture.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-multiplier",
+      "scriptName": "XPBonusMultiplier",
+      "category": "xp",
+      "translated-name": "BonusXPMultiplier",
+      "description": "XP multiplier for bonus.",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "BonusID",
+          "desc": "Bonus ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "player-id",
+      "scriptName": "PlayerID",
+      "category": "authentication",
+      "translated-name": "PlayerID",
+      "description": "Unique ID for the currently signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "player-name",
+      "scriptName": "PlayerName",
+      "category": "authentication",
+      "translated-name": "PlayerName",
+      "description": "The display name for the currently signed in player.",
+      "returnType": "string"
+    },
+    {
+      "id": "avatar-url",
+      "scriptName": "AvatarURL",
+      "category": "authentication",
+      "translated-name": "AvatarURL",
+      "description": "The URL of the currently signed in players avatar.",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "Requested avatar width"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-connected-login-providers",
+      "scriptName": "TotalConnectedLoginProviders",
+      "category": "authentication",
+      "translated-name": "TotalConnectedLoginProviders",
+      "description": "Total number of login providers connected to signed in user.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-connected-login-provider-total-sign-ins",
+      "scriptName": "ConnectedLoginProviderTotalSignIns",
+      "category": "authentication",
+      "translated-name": "TotalSignIns",
+      "description": "Total sign ins with a login provider for the signed in player.",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "LoginProvider",
+          "desc": "Login Provider"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-connected-login-provider-first-sign-in",
+      "scriptName": "ConnectedLoginProviderFirstSignIn",
+      "category": "authentication",
+      "translated-name": "FirstSignIn",
+      "description": "First time signed in with a login provider for the signed in player.",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "LoginProvider",
+          "desc": "Login Provider"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-connected-login-provider-last-sign-in",
+      "scriptName": "ConnectedLoginProviderLastSignIn",
+      "category": "authentication",
+      "translated-name": "LastSignIn",
+      "description": "Last time signed in with a login provider for the signed in player.",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "LoginProvider",
+          "desc": "Login Provider"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-patreon-memberships",
+      "scriptName": "TotalPatreonMemberships",
+      "category": "authentication",
+      "translated-name": "TotalPatreonMemberships",
+      "description": "Total number of Patreon memberships for signed in user.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-membership-id-at",
+      "scriptName": "PatreonMembershipIDAt",
+      "category": "authentication",
+      "translated-name": "PatreonMembershipIDAt",
+      "description": "ID of a Patreon membership at an index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Membership index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-lifetime-support-cents",
+      "scriptName": "PatreonLifetimeSupportCents",
+      "category": "authentication",
+      "translated-name": "PatreonLifetimeSupportCents",
+      "description": "Total lifetime support cents for a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-currently-entitled-amount-cents",
+      "scriptName": "PatreonCurrentlyEntitledAmountCents",
+      "category": "authentication",
+      "translated-name": "PatreonCurrentlyEntitledCents",
+      "description": "Currently entitled to cents for a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-campaign-id",
+      "scriptName": "PatreonCampaignID",
+      "category": "authentication",
+      "translated-name": "PatreonCampaignID",
+      "description": "Campaign ID of a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-campaign-vanity",
+      "scriptName": "PatreonCampaignVanity",
+      "category": "authentication",
+      "translated-name": "PatreonCampaignVanity",
+      "description": "Campaign vanity name of a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-campaign-creation-name",
+      "scriptName": "PatreonCampaignCreationName",
+      "category": "authentication",
+      "translated-name": "PatreonCampaignCreationName",
+      "description": "Campaign creation name of a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-campaign-url",
+      "scriptName": "PatreonCampaignURL",
+      "category": "authentication",
+      "translated-name": "PatreonCampaignURL",
+      "description": "Campaign URL of a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-patreon-membership-entitled-tiers",
+      "scriptName": "TotalPatreonMembershipEntitledTiers",
+      "category": "authentication",
+      "translated-name": "TotalPatreonMembershipEntitledTiers",
+      "description": "Total number of entitled tiers of a Patreon membership.",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-id-at",
+      "scriptName": "PatreonMembershipEntitledTierIDAt",
+      "category": "authentication",
+      "translated-name": "PatreonMembershipEntitledTierIDAt",
+      "description": "Entitled tier ID of a Patreon membership at index",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Entitled tier index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-title-at",
+      "scriptName": "PatreonMembershipEntitledTierTitleAt",
+      "category": "authentication",
+      "translated-name": "PatreonMembershipEntitledTierTitleAt",
+      "description": "Entitled tier title of a Patreon membership at index",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Entitled tier index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-description-at",
+      "scriptName": "PatreonMembershipEntitledTierDescriptionAt",
+      "category": "authentication",
+      "translated-name": "PatreonMembershipEntitledTierDescriptionAt",
+      "description": "Entitled tier description of a Patreon membership at index",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "MembershipID",
+          "desc": "Membership ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Entitled tier index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-date-at",
+      "scriptName": "ScoreHistoryDateAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryDateAt",
+      "description": "The date of a score history record at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-score-at",
+      "scriptName": "ScoreHistoryScoreAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryScoreAt",
+      "description": "The score value of a score history record at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-score-at",
+      "scriptName": "ScoreHistoryFormattedScoreAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryFormattedScoreAt",
+      "description": "The score value of a score history record at an index formatted to leaderboard score formatting settings.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-rank-at",
+      "scriptName": "ScoreHistoryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryRankAt",
+      "description": "The rank of a score history record at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-rank-at",
+      "scriptName": "ScoreHistoryFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryFormattedRankAt",
+      "description": "The rank of a score history record at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-country-rank-at",
+      "scriptName": "ScoreHistoryCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryCountryRankAt",
+      "description": "The country rank of a score history record at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-country-rank-at",
+      "scriptName": "ScoreHistoryFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryFormattedCountryRankAt",
+      "description": "The country rank of a score history record at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score history index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-score-history-records",
+      "scriptName": "ScoreHistoryCount",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryCount",
+      "description": "The number of score history records retrieved.",
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-score-id",
+      "scriptName": "ScoreHistoryScoreID",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryScoreID",
+      "description": "The related score ID of the score history records retrieved.",
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-player-id",
+      "scriptName": "ScoreHistoryPlayerID",
+      "category": "leaderboards",
+      "translated-name": "ScoreHistoryPlayerID",
+      "description": "The related player ID of the score history records retrieved.",
+      "returnType": "string"
+    },
+    {
+      "id": "total-page-count",
+      "scriptName": "TotalPageCount",
+      "category": "leaderboards",
+      "translated-name": "TotalPageCount",
+      "description": "The total number of pages when retrieving scores.",
+      "returnType": "number"
+    },
+    {
+      "id": "score-count",
+      "scriptName": "ScoreCount",
+      "category": "leaderboards",
+      "translated-name": "ScoreCount",
+      "description": "The number of scores retrieved.",
+      "returnType": "number"
+    },
+    {
+      "id": "score-at",
+      "scriptName": "ScoreAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreAt",
+      "description": "The numerical score value at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-at",
+      "scriptName": "ScoreFormattedAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreFormattedAt",
+      "description": "A string of the formatted score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-at",
+      "scriptName": "ScoreRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankAt",
+      "description": "The numerical score rank at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-rank-at",
+      "scriptName": "ScoreFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreFormattedRankAt",
+      "description": "A string of the formatted score rank at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-country-at",
+      "scriptName": "ScoreCountryAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreCountryAt",
+      "description": "A string of the ISO 3166-1 alpha-2 country code the score at an index was submitted from.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-player-id-at",
+      "scriptName": "ScorePlayerIDAt",
+      "category": "leaderboards",
+      "translated-name": "ScorePlayerIDAt",
+      "description": "A string of the player ID that submitted the score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-player-name-at",
+      "scriptName": "ScorePlayerNameAt",
+      "category": "leaderboards",
+      "translated-name": "ScorePlayerNameAt",
+      "description": "A string of the player display name that submitted the score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-id-at",
+      "scriptName": "ScoreIDAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreIDAt",
+      "description": "The unique ID of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-date-at",
+      "scriptName": "ScoreDateAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreDateAt",
+      "description": "The date of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-formatted-date-at",
+      "scriptName": "ScoreFormattedDateAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreFormattedDateAt",
+      "description": "The date of a score at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-updates-at",
+      "scriptName": "ScoreUpdatesAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreUpdatesAt",
+      "description": "The number of updates posted on a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-country-rank-at",
+      "scriptName": "ScoreCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreCountryRankAt",
+      "description": "The country rank of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-country-rank-at",
+      "scriptName": "ScoreFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreFormattedCountryRankAt",
+      "description": "The country rank of a score at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-team-id-at",
+      "scriptName": "ScoreTeamIDAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreTeamIDAt",
+      "description": "The team ID of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-team-name-at",
+      "scriptName": "ScoreTeamNameAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreTeamNameAt",
+      "description": "The team name of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-optional-value-1-at",
+      "scriptName": "ScoreOptionalValue1At",
+      "category": "leaderboards",
+      "translated-name": "ScoreOptionalValue1At",
+      "description": "The optional value 1 of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-optional-value-2-at",
+      "scriptName": "ScoreOptionalValue2At",
+      "category": "leaderboards",
+      "translated-name": "ScoreOptionalValue2At",
+      "description": "The optional value 2 of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-optional-value-3-at",
+      "scriptName": "ScoreOptionalValue3At",
+      "category": "leaderboards",
+      "translated-name": "ScoreOptionalValue3At",
+      "description": "The optional value 3 of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-tier-id-at",
+      "scriptName": "ScoreTierIDAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreTierIDAt",
+      "description": "The tier ID of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-tier-name-at",
+      "scriptName": "ScoreTierNameAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreTierNameAt",
+      "description": "The tier name of a score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-date-at",
+      "scriptName": "ScoreRankComparisonDateAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonDateAt",
+      "description": "The date of a comparison score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-score-at",
+      "scriptName": "ScoreRankComparisonScoreAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonScoreAt",
+      "description": "The historic score of a comparison score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-score-at",
+      "scriptName": "ScoreRankComparisonFormattedScoreAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonFormattedScoreAt",
+      "description": "The historic score of a comparison score at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-rank-at",
+      "scriptName": "ScoreRankComparisonRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonRankAt",
+      "description": "The historic rank of a comparison score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-rank-at",
+      "scriptName": "ScoreRankComparisonFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonFormattedRankAt",
+      "description": "The historic rank of a comparison score at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-country-rank-at",
+      "scriptName": "ScoreRankComparisonCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonCountryRankAt",
+      "description": "The historic country rank of a comparison score at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-country-rank-at",
+      "scriptName": "ScoreRankComparisonFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "ScoreRankComparisonFormattedCountryRankAt",
+      "description": "The historic country rank of a comparison score at an index formatted to the requested culture.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Score index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-leaderboard-teams",
+      "scriptName": "TotalLeaderboardTeams",
+      "category": "leaderboards",
+      "translated-name": "TotalTeams",
+      "description": "Total number of teams in a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-id-at",
+      "scriptName": "LeaderboardTeamIDAt",
+      "category": "leaderboards",
+      "translated-name": "TeamIDAt",
+      "description": "ID of a leaderboard team at index.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Team index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-name",
+      "scriptName": "LeaderboardTeamName",
+      "category": "leaderboards",
+      "translated-name": "TeamName",
+      "description": "Name of a leaderboard team.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-total-players",
+      "scriptName": "LeaderboardTeamTotalPlayers",
+      "category": "leaderboards",
+      "translated-name": "TeamTotalPlayers",
+      "description": "Total players on a leaderboard team.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-date-created",
+      "scriptName": "LeaderboardTeamDateCreated",
+      "category": "leaderboards",
+      "translated-name": "TeamDateCreated",
+      "description": "Date leaderboard team was created.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-total-scores",
+      "scriptName": "LeaderboardTeamTotalScores",
+      "category": "leaderboards",
+      "translated-name": "TeamTotalScores",
+      "description": "Teams total number of posted scores on a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-total-score-value",
+      "scriptName": "LeaderboardTeamTotalScoreValue",
+      "category": "leaderboards",
+      "translated-name": "TeamTotalScoreValue",
+      "description": "Teams total score value on a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-average-score",
+      "scriptName": "LeaderboardTeamAverageScore",
+      "category": "leaderboards",
+      "translated-name": "TeamAverageScore",
+      "description": "Teams average score on a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-best-score",
+      "scriptName": "LeaderboardTeamBestScore",
+      "category": "leaderboards",
+      "translated-name": "TeamBestScore",
+      "description": "Teams best score value on a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-rank",
+      "scriptName": "LeaderboardTeamRank",
+      "category": "leaderboards",
+      "translated-name": "TeamRank",
+      "description": "Teams current rank on a leaderboard.",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "LeaderboardID",
+          "desc": "Leaderboard ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "Team ID",
+          "desc": "Team ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cloud-save-text",
+      "scriptName": "CloudSaveText",
+      "category": "cloud-save",
+      "translated-name": "CloudSaveText",
+      "description": "The text data retrieved for a cloud save.",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-key",
+      "scriptName": "CloudSaveKey",
+      "category": "cloud-save",
+      "translated-name": "CloudSaveKey",
+      "description": "The key of the cloud save.",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-bucket-id",
+      "scriptName": "CloudSaveBucketID",
+      "category": "cloud-save",
+      "translated-name": "CloudSaveBucketID",
+      "description": "The bucket ID of the cloud save.",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-name",
+      "scriptName": "CloudSaveName",
+      "category": "cloud-save",
+      "translated-name": "CloudSaveName",
+      "description": "The name of the cloud save (if specified).",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-id",
+      "scriptName": "CloudSaveID",
+      "category": "cloud-save",
+      "translated-name": "CloudSaveID",
+      "description": "The ID of the cloud save.",
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-id-at",
+      "scriptName": "CloudSaveBucketIDAt",
+      "category": "cloud-save",
+      "translated-name": "BucketIDAt",
+      "description": "The bucket ID at an index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-name",
+      "scriptName": "CloudSaveBucketName",
+      "category": "cloud-save",
+      "translated-name": "BucketName",
+      "description": "The name of a bucket",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-access-mode",
+      "scriptName": "CloudSaveBucketAccessMode",
+      "category": "cloud-save",
+      "translated-name": "BucketAccessMode",
+      "description": "The access mode of a bucket.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-date-created",
+      "scriptName": "CloudSaveBucketDateCreated",
+      "category": "cloud-save",
+      "translated-name": "BucketDateCreated",
+      "description": "The date a bucket was created.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blobs",
+      "scriptName": "CloudSaveBucketMaxBlobs",
+      "category": "cloud-save",
+      "translated-name": "BucketMaxCloudSaves",
+      "description": "The max allowed cloud saves in a bucket.  Returns -1 if there is no limit.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blob-size",
+      "scriptName": "CloudSaveBucketMaxBlobsize",
+      "category": "cloud-save",
+      "translated-name": "BucketMaxBlobSize",
+      "description": "The max size in bytes of a single cloud save in a bucket.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blobs-per-player",
+      "scriptName": "CloudSaveBucketMaxBlobsPerPlayer",
+      "category": "cloud-save",
+      "translated-name": "BucketMaxCloudSavesPerPlayer",
+      "description": "The max cloud saves a player is allowed to save in a bucket.  Returns -1 if there is no limit.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-total-blobs",
+      "scriptName": "CloudSaveBucketTotalBlobs",
+      "category": "cloud-save",
+      "translated-name": "BucketTotalCloudSaves",
+      "description": "The total cloud saves in a bucket.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-total-size",
+      "scriptName": "CloudSaveBucketTotalSize",
+      "category": "cloud-save",
+      "translated-name": "BucketTotalCloudSavesSize",
+      "description": "The total size in bytes of all cloud saves in a bucket.",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "BucketID",
+          "desc": "Bucket ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-picture-url",
+      "scriptName": "CloudSavePictureURL",
+      "category": "cloud-save",
+      "translated-name": "CloudSavePictureURL",
+      "description": "Get the URL of the associated picture of the cloud save.",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "Width",
+          "desc": "Requested image width in pixels"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "simulate-popup-blocked": {
+      "name": "Simulate popup blocked",
+      "desc": "For testing purposes, act as if the first attempt to open a sign in popup window is blocked."
+    },
+    "game-id": {
+      "name": "Game ID",
+      "desc": "The initial game ID to set."
+    },
+    "target-language": {
+      "name": "Target Language",
+      "desc": "The langauge to return all translatable content in.",
+      "items": {
+        "": "Original",
+        "AR": "Arabic",
+        "BG": "Bulgarian",
+        "ZH-HANS": "Chinese (simplified)",
+        "ZH-HANT": "Chinese (traditional)",
+        "CS": "Czech",
+        "DA": "Danish",
+        "NL": "Dutch",
+        "EN-US": "English (American)",
+        "EN-GB": "English (British)",
+        "ET": "Estonian",
+        "FI": "Finnish",
+        "FR": "French",
+        "DE": "German",
+        "EL": "Greek",
+        "HE": "Hebrew",
+        "HU": "Hungarian",
+        "ID": "Indonesian",
+        "IT": "Italian",
+        "JA": "Japanese",
+        "KO": "Korean",
+        "LV": "Latvian",
+        "LT": "Lithuanian",
+        "NB": "Norwegian Bokmål",
+        "PL": "Polish",
+        "PT-PT": "Portuguese",
+        "PT-BR": "Portuguese (Brazilian)",
+        "RO": "Romanian",
+        "RU": "Russian",
+        "SK": "Slovak",
+        "SL": "Slovenian",
+        "ES": "Spanish",
+        "ES-419": "Spanish (Latin American)",
+        "SV": "Swedish",
+        "TH": "Thai",
+        "TR": "Turkish",
+        "UK": "Ukrainian",
+        "VI": "Vietnamese"
+      }
+    }
+  }
+}

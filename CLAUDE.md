@@ -1,161 +1,253 @@
-# Construct3-RAG
+# Construct3-RAG 项目工作章程
 
-Construct 3 documentation retrieval service. Fetches ACE definitions from official CDN, indexes with Qdrant, provides structured search API.
+本文件是整个仓库的最高级项目说明。子目录中的 `CLAUDE.md` 只补充局部
+实现约束，不得覆盖这里定义的产品方向、判断原则和验证要求。
 
-## Tech Stack
+## 1. 产品定位
 
-| Component | Technology |
-|-----------|------------|
-| Vector DB | Qdrant |
-| Embedding | BAAI/bge-m3 |
-| Data source | Construct 3 CDN (live) + Markdown manual + Addon SDK |
-| Language | Python 3.11+ |
+Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参考数据集。
+仓库内提交的数据应当能够被 LLM、脚本和其他应用直接读取，不要求先启动
+数据库、模型或 API 服务。
 
-## Directory Structure
+搜索 API 是数据之上的可选能力：
 
-| Directory | Purpose |
-|-----------|---------|
-| `src/` | Source code (api, ingest, rag) |
-| `src/ingest/` | CDN fetching, parsing, indexing |
-| `src/rag/` | Lookup engine, vector retriever, query expander |
-| `scripts/` | Setup, init, evaluation |
-| `tests/` | Unit tests (no external services required) |
-| `docs/` | Architecture, API reference, data pipeline |
-| `.cache/c3-cdn/` | CDN cache + exported schemas (auto-generated) |
+- Direct Lookup 用于可证明的精确查询。
+- Qdrant、Embedding、Reranker 和语义检索属于可选完整模式。
+- 没有生产调用者的 QueryExpander、Lookup Tier 2/3 和 Semantic Chain 已删除；
+  类似复杂能力只有在独立实验和基准证明有效后，才可以重新引入。
 
-## Common Commands
+本项目不是通用聊天机器人，也不以堆叠所有常见 RAG 技术为目标。复杂方案
+必须解决已确认的用户问题，并且相对简单基线具有可重复的实际收益。
+
+### 核心用户结果
+
+优先保障以下结果：
+
+1. 准确查找插件、行为、ACE、特效和脚本接口。
+2. 返回可核对、可引用的中英文官方数据。
+3. 查找与插件、行为或主题相关的官方示例项目。
+4. 在不安装外部服务的情况下直接消费仓库数据。
+5. 可选搜索服务能够明确区分精确查询与需要语义检索的问题。
+
+## 2. 产品先于实现
+
+不要因为代码、配置、测试或文档已经存在，就假定对应功能应该继续保留。
+历史实现可能来自错误的问题定义，后续补丁、测试和注释也可能受到污染。
+
+处理重要功能或重构时，必须先回答：
+
+1. 它解决哪个真实用户任务？
+2. 当前默认运行路径是否实际调用它？
+3. 有什么真实查询、日志、用户反馈或基准数据支持它？
+4. 更简单的实现或直接读取数据能否解决同一问题？
+5. 收益是否足以覆盖代码、依赖、部署和维护成本？
+
+每项能力都可以得出以下结论之一：
+
+- 保留：产品价值明确，当前方向正确。
+- 简化：价值存在，但实现复杂度超过需要。
+- 重写：问题真实，但现有抽象或算法方向错误。
+- 删除：没有运行调用、没有产品价值或成本明显高于收益。
+- 调研：证据不足，先建立基线和实验，不直接修改生产路径。
+
+测试只能证明实现满足了测试中写下的预期，不能单独证明预期本身正确。如果
+测试固化了错误产品行为，应先修正产品预期，再修改或删除测试。
+
+## 3. 强制工作流程
+
+### 3.1 开始工作前
+
+1. 阅读本文件和修改目录中更具体的 `CLAUDE.md`。
+2. 检查 `git status`，保留用户已有和其他任务产生的修改。
+3. 阅读与任务相关的 README、架构、API 或审计文档。
+4. 追踪真实入口、调用链、数据流和配置，不根据文件名猜测运行行为。
+5. 区分默认能力、可选能力、实验代码、测试专用代码和历史残留。
+
+### 3.2 作出方案前
+
+- 先定义用户可观察的成功结果，再决定模块和算法。
+- 对复杂方案建立更简单的基线。
+- 检查问题是否来自数据质量、字段权重、路由或产品边界，而不是立即增加
+  关键词、提示词或新的模型层。
+- 对历史代码检查最初假设、当前调用者和最近变更；不要继续修补错误抽象。
+- 如果关键产品选择会产生明显不同的结果，记录证据、选项和取舍。
+
+### 3.3 实施时
+
+- 只修改已确认在任务范围内的代码和数据。
+- 优先删除不必要的复杂度，再考虑新增抽象。
+- 默认路径保持离线、确定性和可解释。
+- 不得在模块导入或普通查询时隐式下载数据、加载大型模型或访问网络。
+- 外部服务和实验能力必须显式配置、可检测、可关闭并能安全回退。
+- 公共 API 变更必须同步更新模型、文档和兼容测试；内部历史结构不享有自动
+  兼容承诺。
+
+### 3.4 完成前
+
+1. 运行与修改范围相称的测试。
+2. 验证真实运行路径，而不是只确认导入或构建成功。
+3. 运行 Python 编译检查和 `git diff --check`。
+4. 扫描已删除模块、旧路径、旧集合名和失效配置的残余引用。
+5. 更新受行为变化影响的文档和注释。
+6. 明确说明未能验证的外部服务或完整模式，不得把模拟测试描述成现场验证。
+
+## 4. 当前能力边界
+
+下表描述当前状态，不代表永久产品承诺。改变状态需要产品证据和决策记录。
+
+| 能力 | 当前定位 |
+|---|---|
+| `data/c3-schemas/` | 核心、已提交、无需服务即可读取 |
+| `data/c3-examples/` | 核心参考数据，可直接读取 |
+| `data/c3-ts-defs/` | 核心脚本接口数据，可直接读取 |
+| CDN 拉取、导出和更新自动化 | 核心数据维护能力 |
+| Schema Direct Lookup | 可选搜索能力，必须严格控制错误截获 |
+| FastAPI 服务 | 可选数据访问和检索接口 |
+| Qdrant 语义检索 | 可选完整模式，不是基础数据使用前提 |
+| QueryExpander | 已删除：无生产调用者，扩展规模不可控 |
+| Tier 2 意图模板向量 | 已删除：生产从未注入 embedder |
+| Tier 3 Ollama 分类 | 已删除：生产从未配置或调用 Ollama |
+| Semantic Chain / HyDE | 已删除：无生产调用者 |
+| 多集合路由与 Reranker | 必须用同集基准证明相对简单检索的收益 |
+
+查询理解相关工作必须先阅读：
+
+- `docs/query-understanding-refactor-requirements.md`
+- `docs/refactoring-audit.md`
+- `docs/architecture.md`
+- `docs/query-understanding-stage-one-baseline.md`
+
+其中“产品方向与历史假设复核”是关键词、扩展和提示词重构之前的强制门禁。
+
+## 5. 数据契约
+
+### 5.1 权威数据
+
+- `data/c3-schemas/_index.json` 是已提交 Schema 的版本和数量来源。
+- 标准语言目录为 `en-US` 和 `zh-CN`，不要重新引入 `en`、`zh` 等旧目录名。
+- `src/schema_layout.py` 负责 Schema 完整性、版本选择和目录优先级；其他模块
+  不得复制这一逻辑。
+- 仓库内完整数据必须可离线使用。刷新 CDN 数据是显式的初始化或维护操作，
+  不能成为查询时的隐式副作用。
+- `.cache/c3-cdn/` 是可再生缓存，不是提交数据的替代品。
+
+### 5.2 数据修改
+
+- CDN 原始字段名和结构字段保持官方格式，不为了内部方便静默改写。
+- 中英文结构字段必须一致；本地化文本可以不同。
+- 不手工修改大量生成文件来掩盖导出器问题。先修复生成逻辑，再重新生成并
+  检查输出。
+- 版本和数据数量属于易变信息，文档应引用 `_index.json`，不要重复硬编码。
+- 数据更新工作流必须复制导出器实际产生的目录，不能维护第二套布局定义。
+
+## 6. Construct 3 事实使用规则
+
+回答或实现涉及 Construct 3 插件、行为、ACE、特效或脚本接口的功能时，必须
+查阅仓库数据，不能仅凭模型记忆猜测。
+
+| 问题 | 首选数据 |
+|---|---|
+| 插件、行为或特效列表 | `data/c3-schemas/_index.json` |
+| 插件 ACE | `data/c3-schemas/{locale}/plugins/{id}.json` |
+| 行为 ACE | `data/c3-schemas/{locale}/behaviors/{id}.json` |
+| ACE 参数和事件表显示 | 对应条目的 `params`、`display-text` 和描述字段 |
+| JavaScript/TypeScript 接口 | `data/c3-ts-defs/autocomplete-data.json` 和 `.d.ts` |
+| 示例项目 | `data/c3-examples/{locale}/` 中的元数据 |
+
+一般概念可以使用通用知识，但涉及具体名称、参数、签名或可用性时必须核对数据。
+
+## 7. 模块职责
+
+| 路径 | 职责 |
+|---|---|
+| `src/api.py` | HTTP 路由、依赖装配和兼容导出，不实现搜索算法 |
+| `src/domain/` | 稳定数据契约，不加载数据、模型或外部服务 |
+| `src/application/` | 搜索与健康检查 SOP、回退、计时和响应组装 |
+| `src/lookup/` | 离线索引与确定性意图分类 |
+| `src/retrieval/` | 稳定 ID、精确去重、预算和融合等纯策略 |
+| `src/config.py` | 当前实际使用的环境配置，不保存未来设想或已失效选项 |
+| `src/schema_layout.py` | Schema 布局、完整性、版本和路径选择 |
+| `src/ingest/` | 数据抓取、解析、标准化记录、向量适配和索引构建 |
+| `src/rag/lookup.py` | 结构化查询结果编排与旧导入路径兼容 |
+| `src/rag/retriever.py` | 可选 Qdrant 访问、健康状态和重排适配 |
+| `src/locale/` | 查询语法、词表和本地化索引文本等语言资源 |
+| `scripts/` | 显式的设置、初始化和维护入口 |
+| `tests/` | 行为回归与产品金标验证，不保存生成产物 |
+| `docs/` | 当前行为、决策依据和操作说明 |
+
+算法层不得重新嵌入中文词表。语言资源应有明确调用者、适用边界、来源和回归
+测试，不能把所有中文字符串继续堆入一个通用 `keywords.py`。
+
+## 8. 查询与检索变更规则
+
+- 不要默认查询扩展是必要步骤；先建立无扩展基线。
+- 不使用无方向、无权重、可级联的同义词整组并集。
+- 不把 Schema 节点中的全部共现词直接加入查询。
+- 正则或规则命中 Direct Lookup 时，要重点验证错误截获 RAG 的情况。
+- LLM 输出必须结构化并经过字段、枚举、数量和本地实体校验。
+- LLM 结果不能覆盖高置信度确定性结果，也不能让默认路径依赖网络。
+- 增加新词、提示词或模型前，必须有失败案例和可验证的预期结果。
+- 评估至少包含意图准确率、错误直接查询率、Top-N 命中率、禁止结果出现率、
+  扩展规模、延迟和部署成本。
+
+## 9. 代码与文件约束
+
+- 使用清晰的类型提示和稳定的数据结构。
+- 捕获具体异常；边界处记录有用上下文，不能静默吞掉系统性错误。
+- 使用 `pathlib.Path` 处理路径。
+- 配置必须有真实运行调用者。删除功能时同时删除失效配置、依赖、测试和文档。
+- 不以“可能以后使用”为由保留大段未调用实现；实验代码应隔离并明确标记。
+- 注释解释原因、限制和决策依据，不复述代码，也不虚构无法复现的数据结论。
+- 保留工作区中不属于当前任务的修改，避免广泛格式化和无关重写。
+- 私密数据、密钥和机器本地配置不得进入仓库。
+- 生成数据提交到约定的 `data/` 路径；缓存和临时诊断留在忽略目录。
+
+### UI
+
+Playground 是调试界面，不是独立产品设计项目。除非任务明确要求，保持简洁、
+清晰并与现有样式一致，不增加装饰性组件。
+
+## 10. 测试和验证
+
+默认单元测试必须在没有 Qdrant、GPU 和外部网络的环境中运行。
+
+常用命令：
 
 ```bash
-# One-command setup (deps + CDN + index + server)
-python scripts/setup.py
-
-# Run tests
-python -m pytest tests/ -v
-
-# Rebuild index only
-python -m src.ingest.indexer --rebuild
-
-# Start server only
-python -m uvicorn src.api:app --port 8765 --reload
+python -m pytest -q
+python -m compileall -q src scripts tests
+git diff --check
 ```
 
-## Configuration
+根据修改范围增加以下验证：
 
-Environment variables (`.env` file supported), defined in `src/config.py`:
+- 数据布局：运行 `scripts/init.py` 的相关路径并检查 Schema 数量和结构。
+- Direct Lookup：使用真实提交数据执行代表性中英文查询。
+- API：检查 `/health` 与 `/search`，区分 Schema 就绪和 Qdrant 状态。
+- Qdrant 或 Reranker：只有服务真实运行时才能声称完成现场验证。
+- 工作流：解析 YAML，并确认使用导出器的标准目录。
+- 查询质量：运行结构化金标集，同时检查必须结果和禁止结果。
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `C3_VERSION` | see `src/config.py` | Construct 3 editor version for CDN |
-| `EMBEDDING_MODEL` | `BAAI/bge-m3` | Embedding model |
-| `QDRANT_HOST` | `localhost` | Qdrant host |
-| `RAG_SERVER_PORT` | `8765` | API server port |
+不要在文档中硬编码测试总数。第三方弃用警告应记录，但不能与项目失败混为
+一谈。
 
-## Code Style
+## 11. 文档和决策记录
 
-- Python PEP 8; `snake_case` for functions/variables, `PascalCase` for classes, `UPPER_SNAKE_CASE` for constants
-- `_leading_underscore` for private methods
-- Type hints for function signatures
-- `pathlib.Path` for file operations
-- Functions under 50 lines; return early for error cases
-- Catch specific exceptions, not bare `except:`
-- Comments only for non-obvious logic
+- README 面向使用者，优先说明数据如何直接使用，再说明可选服务。
+- `docs/architecture.md` 必须描述真实运行架构，不展示未接入模块作为默认路径。
+- 产品或架构取舍写入决策记录，包括问题、证据、替代方案、选择和重新评估条件。
+- 删除历史能力时记录删除原因，不把失效代码留作注释或“备用实现”。
+- 英文和中文 README 描述同一行为；术语和路径必须一致。
+- 行为、配置或目录变化必须同步更新受影响文档。
 
-### Imports
+## 12. 完成定义
 
-```python
-# 1. Standard library
-# 2. Third-party
-# 3. Local (from src.xxx import ...)
-```
+任务只有同时满足以下条件才算完成：
 
-## UI / Frontend
-
-- Match existing page style exactly. Do not add borders, cards, or decorative elements unless requested.
-- Minimal approach — if it works without styling, don't add styling.
-
-## File Placement
-
-- Private/sensitive files (API keys, prompts, local configs) → `.local/` (gitignored)
-- Never write secrets or local paths to git-tracked files
-- Pre-built data → `data/` (committed)
-- CDN cache → `.cache/` (gitignored, auto-generated)
-
-## Testing
-
-- Run `python -m pytest tests/ -v` before committing
-- All tests must pass with no external services (no Qdrant, no GPU)
-
-## Documentation
-
-- Write for end users, not developers
-- No hardcoded versions, paths, or Chinese-only examples in English docs
-- Keep README examples minimal and runnable
-
-## Environment Constraints
-
-- VRAM limited (24GB RTX 5090); check `nvidia-smi` before GPU tasks
-- Ollama may consume VRAM; stop before training: `ollama stop`
-- WSL memory constrained; avoid running Qdrant + training simultaneously
-- Windows paths: use forward slashes in bash, `MSYS_NO_PATHCONV=1` for taskkill
-
-## Construct 3 Knowledge
-
-This repo contains pre-built Construct 3 API definitions. When answering questions about C3 plugins, behaviors, ACEs, or scripting, **always look up the data files below** instead of guessing from training data.
-
-### Data files (always available, no setup needed)
-
-Per-language files using CDN-native field names (`list-name`, `display-text`, `translated-name`).
-Each language is a complete, independent copy — pick one directory and read it.
-
-```
-data/c3-schemas/
-  _index.json                               — START HERE: plugin/behavior/effect index
-  {lang}/plugins/{id}.json                  — ACE definitions (conditions, actions, expressions)
-  {lang}/behaviors/{id}.json                — behavior ACE definitions
-  {lang}/effects/{id}.json                  — effect definitions (parameters, categories)
-  (lang = en-US, zh-CN, ...)
-
-data/c3-examples/{lang}/{id}.json             — 481 example projects (name, description, tags, used-addons, open URL)
-
-data/c3-ts-defs/
-  autocomplete-data.json                    — scripting API: 109 classes → method/property lists
-  plugins/.../*.d.ts                        — full TypeScript interface signatures
-  behaviors/.../*.d.ts                      — behavior TypeScript interfaces
-  preview/interfaces/...                    — runtime base classes (IInstance, IWorldInstance, etc.)
-```
-
-### How to answer C3 questions
-
-**"What actions/conditions/expressions does [plugin] have?"**
-→ Read `_index.json`, find the plugin id, then read `{lang}/plugins/{id}.json`
-
-**"How do I use [ACE] in event sheets?"**
-→ Read the plugin schema JSON, find the ACE entry. Look at `display-text` (editor format), `params`, `description`.
-
-**"How do I use [plugin] in JavaScript/TypeScript?"**
-→ Read `data/c3-ts-defs/autocomplete-data.json` to find the interface class name.
-→ Then read the `.d.ts` file for full method signatures.
-→ Example: Sprite → `ISpriteInstance` → `data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`
-
-**"What effects are available?"**
-→ Read `_index.json` effects section, then `{lang}/effects/{id}.json`
-
-**"Are there example projects for [topic]?"**
-→ Browse `data/c3-examples/{lang}/` — each file has `name`, `description`, `tags`, `used-addons`, and an `open` URL to launch in the editor.
-
-**"What is [C3 concept]?" (layouts, event sheets, behaviors, etc.)**
-→ General knowledge is fine. No lookup needed.
-
-### API (optional, if server is running)
-
-Full spec: `docs/api-reference.md`
-
-```
-POST /search  mode=list     — ACE name listing (grouped by type)
-POST /search  mode=lookup   — keyword search with full ACE details
-POST /search  mode=auto     — lookup + semantic vector search
-```
-
-## Related Files
-
-- `CLAUDE.md` in each subdirectory — directory-level details
+1. 解决了用户可观察的问题，而不是只完成代码移动或测试适配。
+2. 方案符合已确认的产品方向，并与简单基线比较过。
+3. 真实默认运行路径已经验证。
+4. 失败和回退行为可解释，不会隐式依赖外部服务。
+5. 相关测试、编译检查和差异检查通过。
+6. 没有留下旧路径、死配置、孤立测试或失真文档。
+7. 最终汇报区分已验证、未验证、保留风险和下一步决策。

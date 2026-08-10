@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Lookup quality evaluation — fixed queries with expected results.
+"""Historical lookup smoke diagnostic — not the product quality gold set.
 
-Run after any change to lookup scoring/filtering/synonyms to check for regressions.
+This intentionally keeps its legacy bare-ID checks for compatibility. Product
+quality, stable identities, ranking, routing, and expansion attribution live in
+``tests/eval_query_quality.py`` and ``tests/fixtures/query_gold.jsonl``.
 
 Usage:
     python tests/eval_lookup.py
@@ -36,11 +38,11 @@ CASES = [
 
     # === Chinese keyword search ===
     Case("Sprite 碰撞检测", expect_plugin="sprite",
-         expect_ids=["on-collision-with-another-object", "is-overlapping-another-object"],
+         expect_ids=["on-collision-with-another-object"],
          reject_ids=["is-animation-playing", "is-visible"]),
 
     Case("Sprite 动画", expect_plugin="sprite",
-         expect_ids=["set-animation", "stop-animation", "start-animation"]),
+         expect_ids=["set-animation"]),
 
     Case("Platform 跳跃", expect_plugin="platform",
          expect_ids=["is-jumping"]),
@@ -74,14 +76,14 @@ CASES = [
     # === Properties (TODO: "属性" keyword not routed to prop_list) ===
     # Case("Platform 属性", expect_plugin="platform", expect_intent="prop_list"),
 
-    # === Synonym expansion ===
+    # === Literal structural match (not a synonym requirement) ===
     Case("Sprite 重叠", expect_plugin="sprite",
-         expect_ids=["is-overlapping-another-object"]),  # 重叠 via synonym of 碰撞
+         expect_ids=["is-overlapping-another-object"]),
 
-    # === Category expansion ===
+    # === Focused collision result; no category-wide expansion ===
     Case("Sprite 碰撞", expect_plugin="sprite",
-         expect_ids=["collisions-enabled", "on-collision-with-another-object",
-                      "is-overlapping-another-object"]),
+         expect_ids=["on-collision-with-another-object"],
+         reject_ids=["is-animation-playing"]),
 
     # === Scripting API ===
     Case("callFunction", expect_intent="script_api",

@@ -1,0 +1,1024 @@
+{
+  "id": "flowchart",
+  "name": "Flowchart controller",
+  "description": "Control flowcharts from event sheets.",
+  "type": "plugin",
+  "aceCategories": {
+    "current-flowchart": "Current flowchart",
+    "by-flowchart-tag": "By flowchart tag",
+    "current-node": "Current node",
+    "current-node-default": "Current node default output",
+    "loops": "Loops",
+    "flowchart-management": "Flowchart management"
+  },
+  "conditions": [
+    {
+      "id": "on-any-node-change",
+      "scriptName": "OnAnyNodeChange",
+      "category": "current-flowchart",
+      "list-name": "On any node entered",
+      "display-text": "On any node entered",
+      "description": "Triggered when any node is reached.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-tagged-node-change",
+      "scriptName": "OnTaggedNodeChange",
+      "category": "current-flowchart",
+      "list-name": "On tagged node entered",
+      "display-text": "On node [b]{0}[/b] entered",
+      "description": "Triggered when a tagged node is reached.",
+      "params": {
+        "node-tag": {
+          "type": "string",
+          "name": "Node tags",
+          "desc": "A space separated string of tags. The node must match all passed tags for the condition to be met."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-before-any-node-change",
+      "scriptName": "OnBeforeAnyNodeChange",
+      "category": "current-flowchart",
+      "list-name": "On any node exited",
+      "display-text": "On any node exited",
+      "description": "Triggered when any node is exited.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-before-tagged-node-change",
+      "scriptName": "OnBeforeTaggedNodeChange",
+      "category": "current-flowchart",
+      "list-name": "On tagged node exited",
+      "display-text": "On node [b]{0}[/b] exited",
+      "description": "Triggered when a tagged node is exited.",
+      "params": {
+        "node-tag": {
+          "type": "string",
+          "name": "Node tags",
+          "desc": "A space separated string of tags. The node must match all passed tags for the condition to be met."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "is-at-start-node",
+      "scriptName": "IsAtStartNode",
+      "category": "current-flowchart",
+      "list-name": "Is at start node",
+      "display-text": "Is at start node",
+      "description": "Check if the current node is the starting one."
+    },
+    {
+      "id": "on-any-node-change-in-flowchart",
+      "scriptName": "OnAnyNodeChangeInFlowchart",
+      "category": "by-flowchart-tag",
+      "list-name": "On any node entered",
+      "display-text": "On any node entered in flowchart [b]{0}[/b]",
+      "description": "Triggered when any node is reached in the specified flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to target."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-tagged-node-change-in-flowchart",
+      "scriptName": "OnTaggedNodeChangeInFlowchart",
+      "category": "by-flowchart-tag",
+      "list-name": "On tagged node entered",
+      "display-text": "On node [b]{1}[/b] entered in flowchart [i]{0}[/i]",
+      "description": "Triggered when a tagged node is reached in the specified flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart Tag",
+          "desc": "The tag of the flowchart to target."
+        },
+        "node-tag": {
+          "type": "string",
+          "name": "Node tags",
+          "desc": "A space separated string of tags. The node must match all passed tags for the condition to be met."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-before-any-node-change-in-flowchart",
+      "scriptName": "OnBeforeAnyNodeChangeInFlowchart",
+      "category": "by-flowchart-tag",
+      "list-name": "On any node exited",
+      "display-text": "On any node exited in flowchart [b]{0}[/b]",
+      "description": "Triggered when any node is exited in the specified flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to target."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-before-tagged-node-change-in-flowchart",
+      "scriptName": "OnBeforeTaggedNodeChangeInFlowchart",
+      "category": "by-flowchart-tag",
+      "list-name": "On tagged node exited",
+      "display-text": "On node [b]{1}[/b] exited in flowchart [i]{0}[/i]",
+      "description": "Triggered when a tagged node is exited in the specified flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart Tag",
+          "desc": "The tag of the flowchart to target."
+        },
+        "node-tag": {
+          "type": "string",
+          "name": "Node tags",
+          "desc": "A space separated string of tags. The node must match all passed tags for the condition to be met."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "is-at-start-node-in-flowchart",
+      "scriptName": "IsAtStartNodeInFlowchart",
+      "category": "by-flowchart-tag",
+      "list-name": "Is at start node",
+      "display-text": "Is at start node in flowchart [b]{0}[/b]",
+      "description": "Check if the current node is the starting one in the specified flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to target."
+        }
+      }
+    },
+    {
+      "id": "compare-output-count",
+      "scriptName": "CompareOutputCount",
+      "category": "current-node",
+      "list-name": "Compare output count",
+      "display-text": "Output count {0} {1}",
+      "description": "Compare the output count of the current node to a value.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "The value to compare the output count of the current node against."
+        }
+      }
+    },
+    {
+      "id": "compare-output-name",
+      "scriptName": "CompareOutputName",
+      "category": "current-node",
+      "list-name": "Compare output name",
+      "display-text": "Output {0} name {1} {2}",
+      "description": "Compare an output's name of the current node to a value.",
+      "params": {
+        "output-index": {
+          "type": "number",
+          "name": "Output index",
+          "desc": "The index of the output to get the name for comparison."
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the output name against."
+        }
+      }
+    },
+    {
+      "id": "compare-output-value",
+      "scriptName": "CompareOutputValue",
+      "category": "current-node",
+      "list-name": "Compare output value",
+      "display-text": "Output {0} value {1} {2}",
+      "description": "Compare an output's value of the current node.",
+      "params": {
+        "output-index-or-name": {
+          "type": "any",
+          "name": "Index or name",
+          "desc": "The name or index (0-based) of the output to get."
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the output value against."
+        }
+      }
+    },
+    {
+      "id": "compare-node-tag",
+      "scriptName": "CompareNodeTag",
+      "category": "current-node",
+      "list-name": "Compare node tags",
+      "display-text": "Node tags {0} {1}",
+      "description": "Compare the tags of the current node.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the tags of the current node against. A space separated string will be interpreted as multiple tags."
+        }
+      }
+    },
+    {
+      "id": "compare-node-tag-count",
+      "scriptName": "CompareNodeTagCount",
+      "category": "current-node",
+      "list-name": "Compare node tag count",
+      "display-text": "Node tag count {0} {1}",
+      "description": "Compare the tag count of the current node.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "The value to compare the tag count of the current node against."
+        }
+      }
+    },
+    {
+      "id": "has-output",
+      "scriptName": "HasOutput",
+      "category": "current-node",
+      "list-name": "Has output",
+      "display-text": "Has output [b]{0}[/b]",
+      "description": "Check if there is an output with the provided name or index.",
+      "params": {
+        "output-index-or-name": {
+          "type": "any",
+          "name": "Index or name",
+          "desc": "The output name or index (0-based) to check for."
+        }
+      }
+    },
+    {
+      "id": "output-name-match-regex",
+      "scriptName": "OutputNameMatchRegex",
+      "category": "current-node",
+      "list-name": "Output name match regex",
+      "display-text": "Output name at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])",
+      "description": "Check if the output name in the given index matches the provided regular expression",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index (0-based) of the output to check for."
+        },
+        "regex": {
+          "type": "string",
+          "name": "Regex",
+          "desc": "Enter the regular expression to test the output name with."
+        },
+        "flags": {
+          "type": "string",
+          "name": "Flags",
+          "desc": "Regular expression flags"
+        }
+      }
+    },
+    {
+      "id": "output-value-match-regex",
+      "scriptName": "OutputValueMatchRegex",
+      "category": "current-node",
+      "list-name": "Output value match regex",
+      "display-text": "Output value at [b]{0}[/b], matches regex [i]{1}[/i] ([i]{2}[/i])",
+      "description": "Check if the output value in the given index or name matches the provided regular expression",
+      "params": {
+        "index-or-name": {
+          "type": "any",
+          "name": "Index or name",
+          "desc": "The name or index (0-based) of the output."
+        },
+        "regex": {
+          "type": "string",
+          "name": "Regex",
+          "desc": "Enter the regular expression to test the output value with."
+        },
+        "flags": {
+          "type": "string",
+          "name": "Flags",
+          "desc": "Regular expression flags"
+        }
+      }
+    },
+    {
+      "id": "compare-output-name-default",
+      "scriptName": "CompareOutputNameDefault",
+      "category": "current-node-default",
+      "list-name": "Compare default output name",
+      "display-text": "Default output name {0} {1}",
+      "description": "Compare the default output's name of the current node to a value.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the output name against."
+        }
+      }
+    },
+    {
+      "id": "compare-output-value-default",
+      "scriptName": "CompareOutputValueDefault",
+      "category": "current-node-default",
+      "list-name": "Compare default output value",
+      "display-text": "Default output value {0} {1}",
+      "description": "Compare the default output's value of the current node.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the output value against."
+        }
+      }
+    },
+    {
+      "id": "has-output-default",
+      "scriptName": "HasOutputDefault",
+      "category": "current-node-default",
+      "list-name": "Has default output",
+      "display-text": "Has default output",
+      "description": "Check if there is a default output."
+    },
+    {
+      "id": "for-each-output",
+      "scriptName": "ForEachOutput",
+      "category": "loops",
+      "list-name": "For Each Output",
+      "display-text": "For Each Output",
+      "description": "Repeat the event for each output in the current node."
+    },
+    {
+      "id": "on-flowchart-change",
+      "scriptName": "OnFlowchartChange",
+      "category": "flowchart-management",
+      "list-name": "On any flowchart entered",
+      "display-text": "On any flowchart entered",
+      "description": "Triggered when a new flowchart is entered.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-before-flowchart-change",
+      "scriptName": "OnBeforeFlowchartChange",
+      "category": "flowchart-management",
+      "list-name": "On any flowchart exited",
+      "display-text": "On any flowchart exited",
+      "description": "Triggered when a flowchart is exited.",
+      "isTrigger": true
+    },
+    {
+      "id": "has-flow-chart",
+      "scriptName": "HasFlowchart",
+      "category": "flowchart-management",
+      "list-name": "Has flowchart",
+      "display-text": "Has flowchart [b]{0}[/b]",
+      "description": "Check if there is a flowchart with the given tag",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to check for."
+        }
+      }
+    },
+    {
+      "id": "compare-flowchart-tag",
+      "scriptName": "CompareFlowchartTag",
+      "category": "flowchart-management",
+      "list-name": "Compare flowchart tag",
+      "display-text": "Flowchart tag {0} {1}",
+      "description": "Compare the tag of the current flowchart.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Select the way to compare the values."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "The value to compare the flowchart tag of the current node against."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "end-flowchart",
+      "scriptName": "EndFlowchart",
+      "category": "current-flowchart",
+      "list-name": "End flowchart",
+      "display-text": "End current flowchart",
+      "description": "End the current flowchart. This destroys the created flowchart and the plugin will no longer have a current flowchart."
+    },
+    {
+      "id": "reset-flowchart",
+      "scriptName": "ResetFlowchart",
+      "category": "current-flowchart",
+      "list-name": "Reset flowchart",
+      "display-text": "Reset current flowchart",
+      "description": "Reset the current flowchart, setting the current node to the default start node and clearing previous nodes."
+    },
+    {
+      "id": "goto-next-flowchart-node",
+      "scriptName": "GotoNextFlowchartNode",
+      "category": "current-flowchart",
+      "list-name": "Go to next node",
+      "display-text": "Go to output [b]{0}[/b]",
+      "description": "Go to the next node of the current flowchart via an output name or index.",
+      "params": {
+        "index-or-name": {
+          "type": "any",
+          "name": "Index or name",
+          "desc": "The name or index (0-based) of the output to follow."
+        }
+      }
+    },
+    {
+      "id": "goto-any-flowchart-node",
+      "scriptName": "GotoAnyFlowchartNode",
+      "category": "current-flowchart",
+      "list-name": "Go to node",
+      "display-text": "Go to node [b]{0}[/b]",
+      "description": "Jump to a node in the current flowchart.",
+      "params": {
+        "node-tag": {
+          "type": "string",
+          "name": "Node tags",
+          "desc": "The tags of the node the flowchart should move to. Flow will move to the first node found that matches all the passed in tags."
+        }
+      }
+    },
+    {
+      "id": "goto-previous-flowchart-node",
+      "scriptName": "GotoPreviousFlowchartNode",
+      "category": "current-flowchart",
+      "list-name": "Go to previous node",
+      "display-text": "Go to previous node",
+      "description": "Go to the previous node of the current flowchart."
+    },
+    {
+      "id": "goto-parent-flowchart-node",
+      "scriptName": "GotoParentFlowchartNode",
+      "category": "current-flowchart",
+      "list-name": "Go to parent node",
+      "display-text": "Go to parent node [b]{0}[/b]",
+      "description": "Go to the parent node of the current node in the current flowchart.",
+      "params": {
+        "index-or-tag": {
+          "type": "any",
+          "name": "Index or tags",
+          "desc": "The index (0-based) or tags of the parent node the flowchart should move to. In the case of using tags, flow will move to the first parent node that matches all the passed in tags."
+        }
+      }
+    },
+    {
+      "id": "end-flowchart-by-tag",
+      "scriptName": "EndFlowchartByTag",
+      "category": "by-flowchart-tag",
+      "list-name": "End flowchart by tag",
+      "display-text": "End the flowchart with tag [b]{0}[/b]",
+      "description": "End a flowchart by its tag.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to end."
+        }
+      }
+    },
+    {
+      "id": "reset-flowchart-by-tag",
+      "scriptName": "ResetFlowchartByTag",
+      "category": "by-flowchart-tag",
+      "list-name": "Reset flowchart by tag",
+      "display-text": "Reset the flowchart with tag [b]{0}[/b]",
+      "description": "Reset a flowchart by its tag.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to reset."
+        }
+      }
+    },
+    {
+      "id": "goto-next-flowchart-node-default",
+      "scriptName": "GotoNextFlowchartNodeDefault",
+      "category": "current-node-default",
+      "list-name": "Go to default node",
+      "display-text": "Go to default output",
+      "description": "Go to the next node of the current flowchart via the default output. If there is no default nothing will happen."
+    },
+    {
+      "id": "start-flowchart",
+      "scriptName": "StartFlowchart",
+      "category": "flowchart-management",
+      "list-name": "Start flowchart",
+      "display-text": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])",
+      "description": "Start a new flowchart.",
+      "params": {
+        "flowchart-name": {
+          "type": "flowchart",
+          "name": "Flowchart name",
+          "desc": "The flowchart to start."
+        },
+        "start-node-tag": {
+          "type": "string",
+          "name": "Start node tags",
+          "desc": "The tags of the node the flowchart should start in. Use multiple tags in a space separated string. The first node found that matches all tags will be used. If empty the default start node is used."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "A tag to later identify this flowchart."
+        },
+        "set-as-current": {
+          "type": "boolean",
+          "name": "Set as current",
+          "desc": "Make this flowchart the current one on creation."
+        }
+      }
+    },
+    {
+      "id": "start-flowchart-by-name",
+      "scriptName": "StartFlowchartByName",
+      "category": "flowchart-management",
+      "list-name": "Start flowchart (by name)",
+      "display-text": "Start [b]{0}[/b] at node [i]{1}[/i] with tag [i]{2}[/i] (set current [i]{3}[/i])",
+      "description": "Start a new flowchart by a string of the flowchart name.",
+      "params": {
+        "flowchart-name": {
+          "type": "flowchart-string",
+          "name": "Flowchart name",
+          "desc": "The name of the flowchart to start."
+        },
+        "start-node-tag": {
+          "type": "string",
+          "name": "Start node tags",
+          "desc": "The tags of the node the flowchart should start in. Use multiple tags in a space separated string. The first node found that matches all tags will be used. If empty the default start node is used."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "A tag to later identify this flowchart."
+        },
+        "set-as-current": {
+          "type": "boolean",
+          "name": "Set as current",
+          "desc": "Make this flowchart the current one on creation."
+        }
+      }
+    },
+    {
+      "id": "set-flowchart",
+      "scriptName": "SetFlowchart",
+      "category": "flowchart-management",
+      "list-name": "Set flowchart",
+      "display-text": "Set flowchart with tag [b]{0}[/b]",
+      "description": "Set a flowchart to use in the following actions.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "Flowchart tag",
+          "desc": "The tag of the flowchart to set as the current one."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "current-flowchart-tag",
+      "scriptName": "FlowchartTag",
+      "category": "current-flowchart",
+      "translated-name": "FlowchartTag",
+      "description": "Get the tag of the current flowchart.",
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag",
+      "scriptName": "NodeTag",
+      "category": "current-flowchart",
+      "translated-name": "NodeTag",
+      "description": "Get the whole tag string of the current node.",
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag-at",
+      "scriptName": "NodeTagAt",
+      "category": "current-flowchart",
+      "translated-name": "NodeTagAt",
+      "description": "Get the tag at the provided index of the current node.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index (0-based) of the tag to get."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag-count",
+      "scriptName": "NodeTagCount",
+      "category": "current-flowchart",
+      "translated-name": "NodeTagCount",
+      "description": "Get the amount of tags of the current node.",
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-output-count",
+      "scriptName": "OutputCount",
+      "category": "current-flowchart",
+      "translated-name": "OutputCount",
+      "description": "Get the number of outputs of the current the node in the current flowchart.",
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-output-name-at",
+      "scriptName": "OutputNameAt",
+      "category": "current-flowchart",
+      "translated-name": "OutputNameAt",
+      "description": "Get the name of one of the outputs of the current node in the current flowchart.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index (0-based) of the output name to get."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-value",
+      "scriptName": "OutputValue",
+      "category": "current-flowchart",
+      "translated-name": "OutputValue",
+      "description": "Get the value of one of the outputs of the current node in the current flowchart.",
+      "params": {
+        "index-or-name": {
+          "type": "any",
+          "name": "IndexOrName",
+          "desc": "The name or index (0-based) of the output value to get."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-parent-count",
+      "scriptName": "ParentCount",
+      "category": "current-flowchart",
+      "translated-name": "ParentCount",
+      "description": "Get the number of parents of the current node in the current flowchart.",
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-tag",
+      "scriptName": "ParentTag",
+      "category": "current-flowchart",
+      "translated-name": "ParentTag",
+      "description": "Get the whole tag string of a parent of the current node in the current flowchart.",
+      "params": {
+        "parent-index": {
+          "type": "number",
+          "name": "ParentIndex",
+          "desc": "The index (0-based) of the parent to get the tag string for."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-tag-at",
+      "scriptName": "ParentTagAt",
+      "category": "current-flowchart",
+      "translated-name": "ParentTagAt",
+      "description": "Get a tag of a parent of the current node in the current flowchart.",
+      "params": {
+        "parent-index": {
+          "type": "number",
+          "name": "ParentIndex",
+          "desc": "The index (0-based) of the parent to get the tag for."
+        },
+        "tag-index": {
+          "type": "number",
+          "name": "TagIndex",
+          "desc": "The index (0-based) of the tag."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-index",
+      "scriptName": "ParentIndex",
+      "category": "current-flowchart",
+      "translated-name": "ParentIndex",
+      "description": "Get the index of a parent of the current node in the current flowchart.",
+      "params": {
+        "parent-tag": {
+          "type": "string",
+          "name": "ParentTags",
+          "desc": "The tags of the parent to get the index of. Pass multiple tags separated by a space. Returns '-1' if no parent is found which matches all the tags."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cur-output-name",
+      "scriptName": "CurOutputName",
+      "category": "current-flowchart",
+      "translated-name": "CurOutputName",
+      "description": "Get the current output name in a For Each Output loop.",
+      "returnType": "string"
+    },
+    {
+      "id": "cur-output-value",
+      "scriptName": "CurOutputValue",
+      "category": "current-flowchart",
+      "translated-name": "CurOutputValue",
+      "description": "Get the current output value in a For Each Output loop.",
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag-in-flowchart",
+      "scriptName": "NodeTagInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "NodeTagInFlowchart",
+      "description": "Get the whole tag string of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag-count-in-flowchart",
+      "scriptName": "NodeTagCountInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "NodeTagCountInFlowchart",
+      "description": "Get the amount of tags of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-tag-at-in-flowchart",
+      "scriptName": "NodeTagAtInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "NodeTagAtInFlowchart",
+      "description": "Get one of the tags of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index (0-based)",
+          "desc": "The index of the tag"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-count-in-flowchart",
+      "scriptName": "OutputCountInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "OutputCountInFlowchart",
+      "description": "Get the number of outputs of the current the node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-output-name-at-in-flowchart",
+      "scriptName": "OutputNameAtInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "OutputNameAtInFlowchart",
+      "description": "Get the name of one of the outputs of the current node in a specific flowchart.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "The index (0-based) of the output name to get."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-value-in-flowchart",
+      "scriptName": "OutputValueInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "OutputValueInFlowchart",
+      "description": "Get the value of one of the outputs of the current node in a specific flowchart.",
+      "params": {
+        "index-or-name": {
+          "type": "any",
+          "name": "IndexOrName",
+          "desc": "The name or index (0-based) of the output value to get."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-parent-count-in-flowchart",
+      "scriptName": "ParentCountInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "ParentCountInFlowchart",
+      "description": "Get the number of parents of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-tag-in-flowchart",
+      "scriptName": "ParentTagInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "ParentTagInFlowchart",
+      "description": "Get the whole tag string of a parent of the current node in a specific flowchart.",
+      "params": {
+        "parent-index": {
+          "type": "number",
+          "name": "ParentIndex",
+          "desc": "The index (0-based) of the parent to get the tag string for."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-tag-at-in-flowchart",
+      "scriptName": "ParentTagAtInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "ParentTagAtInFlowchart",
+      "description": "Get a tag of a parent of the current node in a specific flowchart.",
+      "params": {
+        "parent-index": {
+          "type": "number",
+          "name": "ParentIndex",
+          "desc": "The index (0-based) of the parent to get the tag for."
+        },
+        "tag-index": {
+          "type": "number",
+          "name": "TagIndex",
+          "desc": "The index (0-based) of the tag."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-parent-index-in-flowchart",
+      "scriptName": "ParentIndexInFlowchart",
+      "category": "by-flowchart-tag",
+      "translated-name": "ParentIndexInFlowchart",
+      "description": "Get the index of a parent of the current node in a specific flowchart.",
+      "params": {
+        "parent-tag": {
+          "type": "string",
+          "name": "ParentTags",
+          "desc": "The tags of the parent to get the index of. Pass multiple tags separated by a space. Returns '-1' if no parent is found which matches all the tags."
+        },
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "current-node-output-name-default",
+      "scriptName": "OutputNameDefault",
+      "category": "current-node-default",
+      "translated-name": "OutputNameDefault",
+      "description": "Get the name of the default output of the current node in the current flowchart.",
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-value-default",
+      "scriptName": "OutputValueDefault",
+      "category": "current-node-default",
+      "translated-name": "OutputValueDefault",
+      "description": "Get the value of the default output of the current node in the current flowchart.",
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-name-default-in-flowchart",
+      "scriptName": "OutputNameDefaultInFlowchart",
+      "category": "current-node-default",
+      "translated-name": "OutputNameDefaultInFlowchart",
+      "description": "Get the name of the default output of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "current-node-output-value-default-in-flowchart",
+      "scriptName": "OutputValueDefaultInFlowchart",
+      "category": "current-node-default",
+      "translated-name": "OutputValueDefaultInFlowchart",
+      "description": "Get the value of the default output of the current node in a specific flowchart.",
+      "params": {
+        "flowchart-tag": {
+          "type": "string",
+          "name": "FlowchartTag",
+          "desc": "The tag of the flowchart to get the information from."
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "cur-output-default",
+      "scriptName": "CurIsDefault",
+      "category": "current-node-default",
+      "translated-name": "CurIsDefault",
+      "description": "Check if the current output in For Each Output loop is the default one.",
+      "returnType": "any"
+    }
+  ],
+  "properties": {}
+}

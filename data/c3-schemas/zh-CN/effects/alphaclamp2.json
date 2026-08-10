@@ -1,0 +1,29 @@
+{
+  "id": "alphaclamp2",
+  "name": "透明度约束",
+  "description": "设置透明度的最小值或最大值。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "threshold",
+      "type": "percent",
+      "name": "阈值",
+      "desc": "透明度阈值 (0-100)"
+    },
+    {
+      "id": "lower-clamp",
+      "type": "percent",
+      "name": "最小值",
+      "desc": "若透明度低于阈值，则约束到该数值。(0-100)"
+    },
+    {
+      "id": "upper-clamp",
+      "type": "percent",
+      "name": "最大值",
+      "desc": "若透明度大于阈值，则约束到该数值。(0-100)"
+    }
+  ]
+}

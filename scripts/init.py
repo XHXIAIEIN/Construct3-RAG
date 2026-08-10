@@ -5,7 +5,7 @@ Run this once after cloning, or after updating C3_VERSION.
 
 Usage:
     python scripts/init.py
-    python scripts/init.py --version r477   # use specific version
+    python scripts/init.py --version <release>   # use a specific version
 """
 import argparse
 import sys
@@ -13,10 +13,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.schema_layout import schema_counts
+
 
 def main():
     parser = argparse.ArgumentParser(description="Initialize Construct3-RAG")
-    parser.add_argument("--version", type=str, help="C3 version override (e.g. r477)")
+    parser.add_argument("--version", type=str, help="C3 version override (for example rNNN)")
     args = parser.parse_args()
 
     from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
@@ -60,10 +62,10 @@ def main():
     # 2. Export schemas for lookup.py
     print("[5/5] Exporting schemas...")
     schemas_dir = fetcher.export_schemas()
-    plugins = list((schemas_dir / "plugins").glob("*.json"))
-    behaviors = list((schemas_dir / "behaviors").glob("*.json"))
-    print(f"  {len(plugins)} plugin schemas")
-    print(f"  {len(behaviors)} behavior schemas")
+    counts = schema_counts(schemas_dir)
+    print(f"  {counts['plugins']} plugin schemas")
+    print(f"  {counts['behaviors']} behavior schemas")
+    print(f"  {counts['effects']} effect schemas")
 
     # 3. Discover locales
     locales = fetcher.fetch_available_locales()

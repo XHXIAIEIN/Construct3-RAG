@@ -1,0 +1,47 @@
+{
+  "id": "depthstripe",
+  "name": "深度条纹",
+  "description": "向远处逐渐褪色的颜色条纹。",
+  "category": "3d",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color1",
+      "type": "color",
+      "name": "颜色 1",
+      "desc": "第1个颜色条纹。"
+    },
+    {
+      "id": "opacity1",
+      "type": "percent",
+      "name": "透明度 1",
+      "desc": "第1个透明度条纹。"
+    },
+    {
+      "id": "color2",
+      "type": "color",
+      "name": "颜色 1",
+      "desc": "交替出现的第2个颜色条纹。"
+    },
+    {
+      "id": "opacity2",
+      "type": "percent",
+      "name": "透明度 2",
+      "desc": "交替出现的第2个透明度条纹。"
+    },
+    {
+      "id": "stripe-depth",
+      "type": "float",
+      "name": "条纹深度",
+      "desc": "增加条纹在深度维度的宽度。"
+    },
+    {
+      "id": "offset",
+      "type": "float",
+      "name": "偏移",
+      "desc": "偏移条纹图案的深度。"
+    }
+  ]
+}

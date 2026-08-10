@@ -1,0 +1,567 @@
+{
+  "id": "bluetooth",
+  "name": "Bluetooth",
+  "description": "Connect to Bluetooth devices and communicate with them.",
+  "type": "plugin",
+  "aceCategories": {
+    "bluetooth": "Bluetooth",
+    "services": "Services",
+    "characteristics": "Characteristics"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "bluetooth",
+      "list-name": "Is supported",
+      "display-text": "Is bluetooth supported",
+      "description": "True if the current platform supports Bluetooth features."
+    },
+    {
+      "id": "on-device-connected",
+      "scriptName": "OnDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "On device connected",
+      "display-text": "On device connected",
+      "description": "Triggered after 'Request device' successfully connects to a device.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-device-disconnected",
+      "scriptName": "OnDeviceDisconnected",
+      "category": "bluetooth",
+      "list-name": "On device disconnected",
+      "display-text": "On device disconnected",
+      "description": "Triggered when a connected device disconnects and is no longer accessible.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-request-device-failed",
+      "scriptName": "OnRequestDeviceFailed",
+      "category": "bluetooth",
+      "list-name": "On request device failed",
+      "display-text": "On request device failed",
+      "description": "Triggered after 'Request device' if the user cancels or connecting to a device failed.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-device-connected",
+      "scriptName": "IsDeviceConnected",
+      "category": "bluetooth",
+      "list-name": "Is device connected",
+      "display-text": "Is device [b]{0}[/b] connected",
+      "description": "Test if a given device ID is currently connected.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-primary-services-loaded",
+      "scriptName": "OnPrimaryServicesLoaded",
+      "category": "services",
+      "list-name": "On primary services loaded",
+      "display-text": "On primary services loaded",
+      "description": "Triggered after 'Request primary services' once the services have been loaded successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-primary-services-error",
+      "scriptName": "OnPrimaryServicesError",
+      "category": "services",
+      "list-name": "On primary services error",
+      "display-text": "On primary services error",
+      "description": "Triggered after 'Request primary services' if the services fail to load.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristics-loaded",
+      "scriptName": "OnCharacteristicsLoaded",
+      "category": "services",
+      "list-name": "On characteristics loaded",
+      "display-text": "On characteristics loaded",
+      "description": "Triggered after 'Request characteristics' once the characteristics have been loaded successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristics-error",
+      "scriptName": "OnCharacteristicsError",
+      "category": "services",
+      "list-name": "On characteristics error",
+      "display-text": "On characteristics error",
+      "description": "Triggered after 'Request characteristics' if the characteristics fail to load.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-read",
+      "scriptName": "OnAnyCharacteristicRead",
+      "category": "characteristics",
+      "list-name": "On any characteristic read",
+      "display-text": "On any characteristic read",
+      "description": "Triggered after any read of a characteristic completes successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-read",
+      "scriptName": "OnCharacteristicRead",
+      "category": "characteristics",
+      "list-name": "On characteristic read",
+      "display-text": "On characteristic [b]{0}[/b] read",
+      "description": "Triggered after a read of a given characteristic completes successfully.",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-written",
+      "scriptName": "OnAnyCharacteristicWritten",
+      "category": "characteristics",
+      "list-name": "On any characteristic written",
+      "display-text": "On any characteristic written",
+      "description": "Triggered after any write to a characteristic completes successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-written",
+      "scriptName": "OnCharacteristicWritten",
+      "category": "characteristics",
+      "list-name": "On characteristic written",
+      "display-text": "On characteristic [b]{0}[/b] written",
+      "description": "Triggered after writing to a given characteristic completes successfully.",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-characteristic-notification",
+      "scriptName": "OnAnyCharacteristicNotification",
+      "category": "characteristics",
+      "list-name": "On any characteristic notification",
+      "display-text": "On any characteristic notification (in {0})",
+      "description": "Triggered when a notification is received from any characteristic.",
+      "params": {
+        "binary-data": {
+          "type": "object",
+          "name": "Binary Data",
+          "desc": "A Binary Data object to read the notification data in to."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-notification",
+      "scriptName": "OnCharacteristicNotification",
+      "category": "characteristics",
+      "list-name": "On characteristic notification",
+      "display-text": "On characteristic [b]{0}[/b] notification (in {1})",
+      "description": "Triggered when a notification is received from a given characteristic.",
+      "params": {
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "Binary Data",
+          "desc": "A Binary Data object to read the notification data in to."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-read-error",
+      "scriptName": "OnCharacteristicReadError",
+      "category": "characteristics",
+      "list-name": "On characteristic read error",
+      "display-text": "On characteristic read error",
+      "description": "Triggered after any read of a characteristic fails.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-characteristic-write-error",
+      "scriptName": "OnCharacteristicWriteError",
+      "category": "characteristics",
+      "list-name": "On characteristic write error",
+      "display-text": "On characteristic write error",
+      "description": "Triggered after any write to a characteristic fails.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-device",
+      "scriptName": "RequestDevice",
+      "category": "bluetooth",
+      "list-name": "Request device",
+      "display-text": "Request device (services [i]{0}[/i], device name [i]{1}[/i], device name prefix [i]{2}[/i], optional services [i]{3}[/i], accept all devices [i]{4}[/i])",
+      "description": "Request access to a nearby Bluetooth device. Must be used in a user input trigger.",
+      "params": {
+        "services": {
+          "type": "string",
+          "name": "Services",
+          "desc": "Comma-separated list of bluetooth service names, hexadecimal IDs, or UUIDs to filter by."
+        },
+        "device-name": {
+          "type": "string",
+          "name": "Device name",
+          "desc": "Device name to filter by."
+        },
+        "device-name-prefix": {
+          "type": "string",
+          "name": "Device name prefix",
+          "desc": "Device name prefix to filter by."
+        },
+        "optional-services": {
+          "type": "string",
+          "name": "Optional services",
+          "desc": "Comma-separated list of optional bluetooth service names, hexadecimal IDs, or UUIDs."
+        },
+        "accept-all-devices": {
+          "type": "combo",
+          "name": "Accept all devices",
+          "desc": "Whether to display all devices, even if they do not match the above filters.",
+          "items": {
+            "no": "No",
+            "yes": "Yes"
+          }
+        }
+      }
+    },
+    {
+      "id": "disconnect-device",
+      "scriptName": "DisconnectDevice",
+      "category": "bluetooth",
+      "list-name": "Disconnect device",
+      "display-text": "Disconnect device [i]{0}[/i]",
+      "description": "Disconnect a currently connected device.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device to disconnect. Leave empty to disconnect default device."
+        }
+      }
+    },
+    {
+      "id": "request-primary-services",
+      "scriptName": "RequestPrimaryServices",
+      "category": "services",
+      "list-name": "Request primary services",
+      "display-text": "Request primary services for device [i]{0}[/i]",
+      "description": "Load a list of available primary services for a device. Triggers 'On primary services loaded' when completed.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device to get primary services for. Leave empty for default device."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-characteristics",
+      "scriptName": "RequestCharacteristics",
+      "category": "services",
+      "list-name": "Request characteristics",
+      "display-text": "Request characteristics for device [i]{0}[/i] service [i]{1}[/i]",
+      "description": "Load a list of available characteristics for a primary service. Triggers 'On characteristics loaded' when completed.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device. Leave empty for default device."
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "The service name, UUID, or hexadecimal ID, to get characteristics for."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "read-characteristic-binary",
+      "scriptName": "ReadCharacteristicBinary",
+      "category": "characteristics",
+      "list-name": "Read binary",
+      "display-text": "Read binary from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i] in to {3}",
+      "description": "Read data from a Bluetooth characteristic in to a Binary Data object.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device. Leave empty for default device."
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "The service name, UUID, or hexadecimal ID."
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "Destination",
+          "desc": "A Binary Data object to read the data to."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "read-characteristic-value",
+      "scriptName": "ReadCharacteristicValue",
+      "category": "characteristics",
+      "list-name": "Read value",
+      "display-text": "Read value from device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "description": "Read text or a number from a Bluetooth characteristic.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device. Leave empty for default device."
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "The service name, UUID, or hexadecimal ID."
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "write-characteristic-binary",
+      "scriptName": "WriteCharacteristicBinary",
+      "category": "characteristics",
+      "list-name": "Write binary",
+      "display-text": "Write {3} to device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "description": "Write data from a Binary Data object to a Bluetooth characteristic.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device. Leave empty for default device."
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "The service name, UUID, or hexadecimal ID."
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        "binary-data": {
+          "type": "object",
+          "name": "Data",
+          "desc": "A Binary Data object with data to write."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "start-stop-characteristic-notifications",
+      "scriptName": "StartStopCharacteristicNotifications",
+      "category": "characteristics",
+      "list-name": "Start/stop notifications",
+      "display-text": "{3} notifications for device [i]{0}[/i] service [i]{1}[/i] characteristic [i]{2}[/i]",
+      "description": "Start or stop notifications for a characteristic.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "Device ID",
+          "desc": "The ID of the device. Leave empty for default device."
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "The service name, UUID, or hexadecimal ID."
+        },
+        "characteristic": {
+          "type": "string",
+          "name": "Characteristic",
+          "desc": "The characteristic name, UUID, or hexadecimal ID."
+        },
+        "notifications": {
+          "type": "combo",
+          "name": "Notifications",
+          "desc": "Whether to start or stop notifications for this characteristic.",
+          "items": {
+            "start": "Start",
+            "stop": "Stop"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "device-id",
+      "scriptName": "DeviceID",
+      "category": "bluetooth",
+      "translated-name": "DeviceID",
+      "description": "In a trigger, the ID of the relevant device.",
+      "returnType": "string"
+    },
+    {
+      "id": "device-name",
+      "scriptName": "DeviceName",
+      "category": "bluetooth",
+      "translated-name": "DeviceName",
+      "description": "In 'On device connected', a string with the name of the device.",
+      "returnType": "string"
+    },
+    {
+      "id": "primary-service-id",
+      "scriptName": "PrimaryServiceID",
+      "category": "bluetooth",
+      "translated-name": "PrimaryServiceID",
+      "description": "In a trigger, the ID of the relevant primary service.",
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-id",
+      "scriptName": "CharacteristicID",
+      "category": "bluetooth",
+      "translated-name": "CharacteristicID",
+      "description": "In a trigger, the ID of the relevant characteristic.",
+      "returnType": "string"
+    },
+    {
+      "id": "primary-service-count",
+      "scriptName": "PrimaryServiceCount",
+      "category": "services",
+      "translated-name": "PrimaryServiceCount",
+      "description": "After 'On primary services loaded', the number of primary services available for a device.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "DeviceID",
+          "desc": "Device ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "primary-service-at",
+      "scriptName": "PrimaryServiceAt",
+      "category": "services",
+      "translated-name": "PrimaryServiceAt",
+      "description": "After 'On primary services loaded', the primary service identifier at an index.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "DeviceID",
+          "desc": "Device ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of primary service"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-count",
+      "scriptName": "CharacteristicCount",
+      "category": "services",
+      "translated-name": "CharacteristicCount",
+      "description": "After 'On characteristics loaded', the number of characteristics available for a service.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "DeviceID",
+          "desc": "Device ID"
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "Service identifier"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-at",
+      "scriptName": "CharacteristicAt",
+      "category": "services",
+      "translated-name": "CharacteristicAt",
+      "description": "After 'On characteristics loaded', the characteristic identifier at an index.",
+      "params": {
+        "device-id": {
+          "type": "string",
+          "name": "DeviceID",
+          "desc": "Device ID"
+        },
+        "service": {
+          "type": "string",
+          "name": "Service",
+          "desc": "Service identifier"
+        },
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of characteristic"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-text",
+      "scriptName": "CharacteristicText",
+      "category": "characteristics",
+      "translated-name": "CharacteristicText",
+      "description": "After 'Read value', the data as a string.",
+      "returnType": "string"
+    },
+    {
+      "id": "characteristic-signed-int",
+      "scriptName": "CharacteristicSignedInteger",
+      "category": "characteristics",
+      "translated-name": "CharacteristicSignedInteger",
+      "description": "After 'Read value', the data as a signed integer.",
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-unsigned-int",
+      "scriptName": "CharacteristicUnsignedInteger",
+      "category": "characteristics",
+      "translated-name": "CharacteristicUnsignedInteger",
+      "description": "After 'Read value', the data as an unsigned integer.",
+      "returnType": "number"
+    },
+    {
+      "id": "characteristic-float",
+      "scriptName": "CharacteristicFloat",
+      "category": "characteristics",
+      "translated-name": "CharacteristicFloat",
+      "description": "After 'Read value', the data as a floating point number.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

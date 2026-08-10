@@ -1,0 +1,207 @@
+{
+  "id": "sliderbar",
+  "name": "滑动条",
+  "description": "一个滑动条，允许用户在两个值之间选择一个值。",
+  "type": "plugin",
+  "aceCategories": {
+    "slider-bar": "滑动条"
+  },
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "slider-bar",
+      "list-name": "点击",
+      "display-text": "点击",
+      "description": "当滑动条被点击时触发",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-value",
+      "scriptName": "CompareValue",
+      "category": "slider-bar",
+      "list-name": "比较值",
+      "display-text": "滑块值 {0} [i]{1}[/i]",
+      "description": "比较当前值。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "要比较的值。"
+        }
+      }
+    },
+    {
+      "id": "on-changed",
+      "scriptName": "OnChanged",
+      "category": "slider-bar",
+      "list-name": "进度已改变",
+      "display-text": "进度已改变",
+      "description": "滑块数值发生更改时触发。如果在拖动，则在松开后触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-changing",
+      "scriptName": "OnChanging",
+      "category": "slider-bar",
+      "list-name": "被拖动",
+      "display-text": "被拖动",
+      "description": "滑块数值更改时触发。如果在拖动，则每次步进时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "scriptName": "SetTooltip",
+      "category": "slider-bar",
+      "list-name": "设置工具提示",
+      "display-text": "设置工具提示为{0}",
+      "description": "设置滑块的工具提示。",
+      "params": {
+        "tooltip": {
+          "type": "string",
+          "name": "提示",
+          "desc": "在滑块栏上出现的工具提示信息。"
+        }
+      }
+    },
+    {
+      "id": "set-value",
+      "scriptName": "SetValue",
+      "category": "slider-bar",
+      "list-name": "设置值",
+      "display-text": "设置值为[b]{0}[/b]",
+      "description": "设置滑块值。",
+      "params": {
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "要设置的值。"
+        }
+      }
+    },
+    {
+      "id": "set-maximum",
+      "scriptName": "SetMaximum",
+      "category": "slider-bar",
+      "list-name": "设置最大值",
+      "display-text": "设置最大值为[b]{0}[/b]",
+      "description": "设置滑块的最大值。",
+      "params": {
+        "maximum": {
+          "type": "number",
+          "name": "最大值",
+          "desc": "滑块的新最大值。"
+        }
+      }
+    },
+    {
+      "id": "set-minimum",
+      "scriptName": "SetMinimum",
+      "category": "slider-bar",
+      "list-name": "设置最小值",
+      "display-text": "设置最小值为[b]{0}[/b]",
+      "description": "设置滑动条的最小值。",
+      "params": {
+        "minimum": {
+          "type": "number",
+          "name": "最小值",
+          "desc": "滑块的新最小值。"
+        }
+      }
+    },
+    {
+      "id": "set-step",
+      "scriptName": "SetStep",
+      "category": "slider-bar",
+      "list-name": "设置步长",
+      "display-text": "设置步长为[b]{0}[/b]",
+      "description": "设置滑块的步长值。",
+      "params": {
+        "step": {
+          "type": "number",
+          "name": "步长",
+          "desc": "设置滑块步长值。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "value",
+      "scriptName": "Value",
+      "category": "slider-bar",
+      "translated-name": "值",
+      "description": "当前滑块值",
+      "returnType": "number"
+    },
+    {
+      "id": "maximum",
+      "scriptName": "Maximum",
+      "category": "slider-bar",
+      "translated-name": "最大值",
+      "description": "当前最大值。",
+      "returnType": "number"
+    },
+    {
+      "id": "minimum",
+      "scriptName": "Minimum",
+      "category": "slider-bar",
+      "translated-name": "最小值",
+      "description": "当前最小值。",
+      "returnType": "number"
+    },
+    {
+      "id": "step",
+      "scriptName": "Step",
+      "category": "slider-bar",
+      "translated-name": "步长",
+      "description": "当前步长。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "value": {
+      "name": "值",
+      "desc": "滑块的初始值。"
+    },
+    "minimum": {
+      "name": "最小值",
+      "desc": "滑块的最小值。"
+    },
+    "maximum": {
+      "name": "最大值",
+      "desc": "滑块的最大值。"
+    },
+    "step": {
+      "name": "步长",
+      "desc": "步长值，滑块每次拖动的增量。"
+    },
+    "tooltip": {
+      "name": "提示",
+      "desc": "将鼠标悬停在控件上时显示此文本。"
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "选择在场景开始时，对象是否可见。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "是否在启动时启用或禁用滑块。"
+    },
+    "id": {
+      "name": "ID",
+      "desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。"
+    },
+    "class": {
+      "name": "Class",
+      "desc": "可选项，添加 Class 元素来设置样式。"
+    }
+  }
+}

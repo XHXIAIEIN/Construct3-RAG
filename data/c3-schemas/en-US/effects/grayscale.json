@@ -1,0 +1,17 @@
+{
+  "id": "grayscale",
+  "name": "Grayscale",
+  "description": "Remove colors, resulting in a grayscale image.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "Intensity",
+      "desc": "How much of the effect to apply, from 0 (none) to 100 (all) or beyond."
+    }
+  ]
+}

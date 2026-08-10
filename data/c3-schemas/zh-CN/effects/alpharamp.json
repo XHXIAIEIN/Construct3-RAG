@@ -1,0 +1,29 @@
+{
+  "id": "alpharamp",
+  "name": "透明度过渡",
+  "description": "设置透明度的最大值和最小值，低于阈值的部分渐变至透明。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "upper-threshold",
+      "type": "percent",
+      "name": "最大值",
+      "desc": "若透明度大于阈值，将不做任何改变。(0-100)"
+    },
+    {
+      "id": "lower-threshold",
+      "type": "percent",
+      "name": "最小值",
+      "desc": "低于阈值的透明度数值，逐渐减小至0。"
+    },
+    {
+      "id": "post-opacity",
+      "type": "percent",
+      "name": "不透明度",
+      "desc": "应用的不透明度效果。"
+    }
+  ]
+}
