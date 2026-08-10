@@ -1,0 +1,10 @@
+{
+  "id": "dodge",
+  "name": "Dodge",
+  "description": "Dodge blend with the background.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

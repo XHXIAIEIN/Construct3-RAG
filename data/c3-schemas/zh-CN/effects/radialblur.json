@@ -1,0 +1,23 @@
+{
+  "id": "radialblur",
+  "name": "径向模糊",
+  "description": "采样11 次的径向模糊。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "radius",
+      "type": "percent",
+      "name": "半径",
+      "desc": "径向模糊的大小。"
+    },
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "强度",
+      "desc": "强度等级。(0-100)"
+    }
+  ]
+}

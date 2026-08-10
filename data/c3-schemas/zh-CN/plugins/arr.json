@@ -1,0 +1,714 @@
+{
+  "id": "arr",
+  "name": "数组",
+  "description": "允许将数据储存在最多三维的数组空间中，类似表格的作用。",
+  "type": "plugin",
+  "aceCategories": {
+    "array": "数组:元素",
+    "for-each": "数组:遍历",
+    "json": "JSON",
+    "manipulation": "数组:操作"
+  },
+  "conditions": [
+    {
+      "id": "compare-at-x",
+      "scriptName": "CompareX",
+      "category": "array",
+      "list-name": "比较X",
+      "display-text": "[b]{0}[/b] {1} [b]{2}[/b]",
+      "description": "比较数组在 X 轴的某个值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要进行比较的值。"
+        }
+      }
+    },
+    {
+      "id": "compare-at-xy",
+      "scriptName": "CompareXY",
+      "category": "array",
+      "list-name": "比较XY",
+      "display-text": "([b]{0}[/b], [b]{1}[/b]) {2} [b]{3}[/b]",
+      "description": "比较二维数组中的某个值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要进行比较的值。"
+        }
+      }
+    },
+    {
+      "id": "compare-at-xyz",
+      "scriptName": "CompareXYZ",
+      "category": "array",
+      "list-name": "比较XYZ",
+      "display-text": "([b]{0}[/b], [b]{1}[/b], [b]{2}[/b]) {3} [b]{4}[/b]",
+      "description": "比较在三维数组中 X，Y，Z 位置的值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要比较的数组值位于 X 轴的索引，从 0 开始计数。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要比较的数组值位于 Y 轴的索引，从 0 开始计数。"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "要比较的数组值位于 Z 轴的索引，从 0 开始计数。"
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要进行比较的值。"
+        }
+      }
+    },
+    {
+      "id": "contains-value",
+      "scriptName": "Contains",
+      "category": "array",
+      "list-name": "如果包含值",
+      "display-text": "数组包含 {0}",
+      "description": "查找整个数组，检测在任何位置是否包含某个值。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要在数组中查找的值。"
+        }
+      }
+    },
+    {
+      "id": "is-empty",
+      "scriptName": "IsEmpty",
+      "category": "array",
+      "list-name": "如果为空",
+      "display-text": "如果为空",
+      "description": "检查数组大小是否为 0，且不包含任何元素。"
+    },
+    {
+      "id": "compare-size",
+      "scriptName": "CompareSize",
+      "category": "array",
+      "list-name": "比较大小",
+      "display-text": "{0}轴大小 {1} [b]{2}[/b]",
+      "description": "比较数组其中一个维度的大小。",
+      "params": {
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "选择要比较的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        },
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "要比较的值。"
+        }
+      }
+    },
+    {
+      "id": "for-each-element",
+      "scriptName": "ArrForEach",
+      "category": "for-each",
+      "list-name": "遍历数组元素",
+      "display-text": "遍历 {0} 轴",
+      "description": "遍历数组中的每个元素。",
+      "params": {
+        "axes": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "选择要遍历的轴。",
+          "items": {
+            "xyz": "XYZ",
+            "xy": "XY",
+            "x": "X"
+          }
+        }
+      }
+    },
+    {
+      "id": "compare-current-value",
+      "scriptName": "CompareCurrent",
+      "category": "for-each",
+      "list-name": "比较当前值",
+      "display-text": "当前值 {0} [b]{1}[/b]",
+      "description": "在 '遍历数组' 条件中，比较当前的值。",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "比较",
+          "desc": "选择一种比较方式。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要进行比较的值。"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "clear",
+      "scriptName": "Clear",
+      "category": "array",
+      "list-name": "清空",
+      "display-text": "清空并填充[i]{0}[/i]",
+      "description": "重置数组每个轴的所有的值，设置为预设值。",
+      "params": {
+        "value": {
+          "type": "number",
+          "name": "值",
+          "desc": "用于覆盖整个数组的值。"
+        }
+      }
+    },
+    {
+      "id": "set-size",
+      "scriptName": "SetSize",
+      "category": "array",
+      "list-name": "设置大小",
+      "display-text": "设置数组大小为([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "description": "设置数组在每个轴上的元素数量。",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "X",
+          "desc": "数组在X轴的元素数量。"
+        },
+        "height": {
+          "type": "number",
+          "name": "Y",
+          "desc": "数组在Y轴的元素数量。"
+        },
+        "depth": {
+          "type": "number",
+          "name": "Z",
+          "desc": "数组在Z轴的元素数量。"
+        }
+      }
+    },
+    {
+      "id": "set-at-x",
+      "scriptName": "SetX",
+      "category": "array",
+      "list-name": "设置X",
+      "display-text": "设置数组[i]{0}[/i]值为[i]{1}[/i]",
+      "description": "设置一维数组位于 X 轴位置的值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要设置的值位于数组X轴的位置，从 0 开始计数。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要存储在数组中的值。"
+        }
+      }
+    },
+    {
+      "id": "set-at-xy",
+      "scriptName": "SetXY",
+      "category": "array",
+      "list-name": "设置XY",
+      "display-text": "设置数组([i]{0}[/i], [i]{1}[/i])值为[i]{2}[/i]",
+      "description": "设置二维数组位于 X、Y 位置的值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要存储在数组中的值。"
+        }
+      }
+    },
+    {
+      "id": "set-at-xyz",
+      "scriptName": "SetXYZ",
+      "category": "array",
+      "list-name": "设置XYZ",
+      "display-text": "设置数组([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])值为[i]{3}[/i]",
+      "description": "设置三维数组位于 X、Y、Z 位置的值。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要设置的值位于数组X轴的索引，从 0 开始计数。"
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要设置的值位于数组Y轴的索引，从 0 开始计数。"
+        },
+        "z": {
+          "type": "number",
+          "name": "Z",
+          "desc": "要设置的值位于数组Z轴的索引，从 0 开始计数。"
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要存储在数组中的值。"
+        }
+      }
+    },
+    {
+      "id": "load",
+      "scriptName": "JSONLoad",
+      "category": "json",
+      "list-name": "从JSON导入",
+      "display-text": "加载对象数据 [i]{0}[/i]",
+      "description": "加载数组文件的 JSON 字符串。",
+      "params": {
+        "json": {
+          "type": "string",
+          "name": "JSON",
+          "desc": "数组文件的 JSON 格式。如果希望导入项目文件夹的数组文件，请先通过 AJAX 对象请求项目文件，请求完成后通过 'AJAX.请求数据' 表达式在此处输入。"
+        }
+      }
+    },
+    {
+      "id": "download",
+      "scriptName": "JSONDownload",
+      "category": "json",
+      "list-name": "下载",
+      "display-text": "下载数组文件(保存文件: [i]{0}[/i])",
+      "description": "将数组内容导出为 JSON 格式的文件并下载至本地。",
+      "params": {
+        "filename": {
+          "type": "string",
+          "name": "文件名",
+          "desc": "要下载的文件的名称。"
+        }
+      }
+    },
+    {
+      "id": "push",
+      "scriptName": "Push",
+      "category": "manipulation",
+      "list-name": "推入",
+      "display-text": "在{2}轴{0}推入[i]{1}[/i]",
+      "description": "在数组的顶部或末尾，添加一个新元素，并增加其大小。",
+      "params": {
+        "where": {
+          "type": "combo",
+          "name": "位置",
+          "desc": "将一个值推入到数组的顶部或末尾。",
+          "items": {
+            "back": "末尾",
+            "front": "顶部"
+          }
+        },
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要推进数组的值。"
+        },
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要插入的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "pop",
+      "scriptName": "Pop",
+      "category": "manipulation",
+      "list-name": "弹出",
+      "display-text": "从{1}轴{0}弹出元素",
+      "description": "从数组的顶部或末尾，移除一个元素。",
+      "params": {
+        "where": {
+          "type": "combo",
+          "name": "位置",
+          "desc": "删除数组的顶部或末尾的值。",
+          "items": {
+            "back": "末尾",
+            "front": "顶部"
+          }
+        },
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要从中移除的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "reverse",
+      "scriptName": "Reverse",
+      "category": "manipulation",
+      "list-name": "反转",
+      "display-text": "反转{0}轴",
+      "description": "反转轴上元素的顺序。",
+      "params": {
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要反转的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "sort2",
+      "scriptName": "Sort2",
+      "category": "manipulation",
+      "list-name": "排序",
+      "display-text": "排序{0}",
+      "description": "对数组的元素进行排序。",
+      "params": {
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "选择首项排序时，以首项的排序结果应用到其他行/列。选择逐项排序时，则每行/列单独排序。",
+          "items": {
+            "x-by-col": "X轴 (首列)",
+            "x-separate": "X轴 (逐列)",
+            "y-by-row": "Y轴 (首行)",
+            "y-separate": "Y轴 (逐行)",
+            "z": "Z轴"
+          }
+        }
+      }
+    },
+    {
+      "id": "shuffle",
+      "scriptName": "Shuffle",
+      "category": "manipulation",
+      "list-name": "打乱",
+      "display-text": "打乱{0} 轴",
+      "description": "将指定轴的数组元素随机打乱重新排序。实现洗牌的效果。",
+      "params": {
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要打乱的轴",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "delete",
+      "scriptName": "Delete",
+      "category": "manipulation",
+      "list-name": "删除",
+      "display-text": "从{1}轴删除第{0}项",
+      "description": "从轴中删除元素。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要删除的值位于轴的索引，从 0 开始计数。"
+        },
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要删除的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "insert",
+      "scriptName": "Insert",
+      "category": "manipulation",
+      "list-name": "插入",
+      "display-text": "在{2}轴第[i]{1}[/i]项插入[i]{0}[/i]",
+      "description": "在数组的指定位置，插入一个新元素，并增加其大小。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要插入数组的值。"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "要插入的值位于数组 X 轴的索引，从 0 开始计数。"
+        },
+        "axis": {
+          "type": "combo",
+          "name": "轴",
+          "desc": "要插入的轴。",
+          "items": {
+            "x": "X",
+            "y": "Y",
+            "z": "Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "split-string",
+      "scriptName": "SplitString",
+      "category": "manipulation",
+      "list-name": "拆分字符串",
+      "display-text": "拆分字符串 [i]{0}[/i] (分隔符:[i]{1}[/i], 类型: [i]{2}[/i])",
+      "description": "将字符串拆分并导入为一维数组，如 \"1,2,3\"",
+      "params": {
+        "string": {
+          "type": "string",
+          "name": "字符串",
+          "desc": "要进行拆分的字符串。"
+        },
+        "separator": {
+          "type": "string",
+          "name": "分隔符",
+          "desc": "用于拆分的字符。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "拆分后的值的数据类型。",
+          "items": {
+            "auto": "自动",
+            "string": "字符串",
+            "number": "数字"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "at",
+      "scriptName": "At",
+      "category": "array",
+      "translated-name": "读取",
+      "description": "获取数组索引位置的值。可传入多个参数来获取二维或三维数组。",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "要获取的值位于数组X轴的位置，从 0 开始计数。"
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "id": "width",
+      "scriptName": "Width",
+      "category": "array",
+      "translated-name": "宽度",
+      "description": "获取数组在 X 轴的元素数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "height",
+      "scriptName": "Height",
+      "category": "array",
+      "translated-name": "高度",
+      "description": "获取数组在 Y 轴的元素数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "depth",
+      "scriptName": "Depth",
+      "category": "array",
+      "translated-name": "深度",
+      "description": "获取数组在 Z 轴的元素数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "front",
+      "scriptName": "Front",
+      "category": "array",
+      "translated-name": "首项",
+      "description": "获取数组在 X 轴的第一个值。",
+      "returnType": "any"
+    },
+    {
+      "id": "back",
+      "scriptName": "Back",
+      "category": "array",
+      "translated-name": "末尾",
+      "description": "获取数组在 X 轴的最后一个值。",
+      "returnType": "any"
+    },
+    {
+      "id": "indexof",
+      "scriptName": "IndexOf",
+      "category": "array",
+      "translated-name": "查找标题行",
+      "description": "在一维数组查找值，返回匹配到的第一个元素的索引。如果找不到，则返回 -1。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要搜索的值。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "lastindexof",
+      "scriptName": "LastIndexOf",
+      "category": "array",
+      "translated-name": "反向查找标题行",
+      "description": "在一维数组查找值，返回最后一个匹配到的元素的索引。如果找不到，则返回 -1。",
+      "params": {
+        "value": {
+          "type": "any",
+          "name": "值",
+          "desc": "要搜索的值。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "curx",
+      "scriptName": "CurX",
+      "category": "for-each",
+      "translated-name": "当前X",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 X 轴索引。",
+      "returnType": "number"
+    },
+    {
+      "id": "cury",
+      "scriptName": "CurY",
+      "category": "for-each",
+      "translated-name": "当前Y",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 Y 轴索引。",
+      "returnType": "number"
+    },
+    {
+      "id": "curz",
+      "scriptName": "CurZ",
+      "category": "for-each",
+      "translated-name": "当前Z",
+      "description": "在 '遍历数组' 条件中，返回当前循环的 Z 轴索引。",
+      "returnType": "number"
+    },
+    {
+      "id": "curvalue",
+      "scriptName": "CurValue",
+      "category": "for-each",
+      "translated-name": "当前值",
+      "description": "在 '遍历数组' 条件中，返回当前循环的值。",
+      "returnType": "any"
+    },
+    {
+      "id": "asjson",
+      "scriptName": "AsJSON",
+      "category": "json",
+      "translated-name": "导出对象数据",
+      "description": "将数组内容为JSON格式的字符串。用于在对象的 '导入数据' 动作中使用。",
+      "returnType": "string"
+    },
+    {
+      "id": "join-string",
+      "scriptName": "JoinString",
+      "category": "manipulation",
+      "translated-name": "合并字符串",
+      "description": "将一维数组的内容合并为字符串。仅包含第一个 X 轴。",
+      "params": {
+        "separator": {
+          "type": "string",
+          "name": "分隔符",
+          "desc": "用于拼接字符串的字符。"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "width": {
+      "name": "宽度",
+      "desc": "数组在 X 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    "height": {
+      "name": "高度",
+      "desc": "数组在 Y 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    "depth": {
+      "name": "深度",
+      "desc": "数组在 Z 轴的初始元素数量，大小为 0 会使数组为空。"
+    },
+    "elements": {
+      "name": "元素",
+      "desc": "数组中的初始元素数量。如果数量为0，表示数组为空，无法储存数据。"
+    }
+  }
+}

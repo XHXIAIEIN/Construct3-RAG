@@ -1,0 +1,17 @@
+{
+  "id": "hexpixellate",
+  "name": "Hexagonal pixellate",
+  "description": "A hexagon shaped pixellate effect.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "scale",
+      "type": "float",
+      "name": "Scale",
+      "desc": "Size of the hexagons."
+    }
+  ]
+}

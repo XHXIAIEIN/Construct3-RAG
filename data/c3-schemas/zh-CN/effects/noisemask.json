@@ -1,0 +1,23 @@
+{
+  "id": "noisemask",
+  "name": "噪点蒙版",
+  "description": "将伪随机噪点添加到背景颜色通道。",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "强度",
+      "desc": "要添加的噪点等级"
+    },
+    {
+      "id": "color",
+      "type": "percent",
+      "name": "颜色",
+      "desc": "从0（单色噪点）到100（颜色噪点）。"
+    }
+  ]
+}

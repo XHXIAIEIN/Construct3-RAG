@@ -1,0 +1,163 @@
+{
+  "id": "button",
+  "name": "Button",
+  "description": "A clickable push button or checkbox.",
+  "type": "plugin",
+  "aceCategories": {
+    "button": "Button"
+  },
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "button",
+      "list-name": "On clicked",
+      "display-text": "On clicked",
+      "description": "Triggered when the button is clicked.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-checked",
+      "scriptName": "IsChecked",
+      "category": "button",
+      "list-name": "Is checked",
+      "display-text": "Is checked",
+      "description": "True if the checkbox is checked."
+    },
+    {
+      "id": "compare-text",
+      "scriptName": "CompareText",
+      "category": "button",
+      "list-name": "Compare text",
+      "display-text": "Text is [b]{0}[/b] [i]({1})[/i]",
+      "description": "Compare the button's text.",
+      "params": {
+        "text-to-compare": {
+          "type": "string",
+          "name": "Text to compare",
+          "desc": "Enter the text to compare with the button text."
+        },
+        "case-sensitivity": {
+          "type": "combo",
+          "name": "Case sensitivity",
+          "desc": "Choose whether capital letters count as different to lowercase.  If ignoring case, \"ABC\" matches \"abc\".",
+          "items": {
+            "ignore-case": "Ignore case",
+            "case-sensitive": "Case sensitive"
+          }
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-text",
+      "scriptName": "SetText",
+      "category": "button",
+      "list-name": "Set text",
+      "display-text": "Set text to {0}",
+      "description": "Set the button's text.",
+      "params": {
+        "text": {
+          "type": "string",
+          "name": "Text",
+          "desc": "The text to set in the button."
+        }
+      }
+    },
+    {
+      "id": "set-tooltip",
+      "scriptName": "SetTooltip",
+      "category": "button",
+      "list-name": "Set tooltip",
+      "display-text": "Set tooltip to {0}",
+      "description": "Set the button's tooltip.",
+      "params": {
+        "tooltip": {
+          "type": "string",
+          "name": "Tooltip",
+          "desc": "The tooltip to set on the button."
+        }
+      }
+    },
+    {
+      "id": "set-checked",
+      "scriptName": "SetChecked",
+      "category": "button",
+      "list-name": "Set checked",
+      "display-text": "Set [b]{0}[/b]",
+      "description": "Check or uncheck a checkbox.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Choose the checkbox state.",
+          "items": {
+            "unchecked": "Unchecked",
+            "checked": "Checked"
+          }
+        }
+      }
+    },
+    {
+      "id": "toggle-checked",
+      "scriptName": "ToggleChecked",
+      "category": "button",
+      "list-name": "Toggle checked",
+      "display-text": "Toggle checked",
+      "description": "Toggle a checkbox."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "text",
+      "scriptName": "Text",
+      "category": "button",
+      "translated-name": "Text",
+      "description": "Get the button text.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "type": {
+      "name": "Type",
+      "desc": "The kind of button to use.",
+      "items": {
+        "button": "Button",
+        "checkbox": "Checkbox"
+      }
+    },
+    "text": {
+      "name": "Text",
+      "desc": "The initial text for the button."
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "desc": "Display this text when hovering the mouse over the control."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose if the object is visible when the layout starts."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the button is enabled or disabled on startup."
+    },
+    "auto-font-size": {
+      "name": "Auto font size",
+      "desc": "Automatically set the font size depending on the layer scale."
+    },
+    "checked": {
+      "name": "Checked",
+      "desc": "For checkboxes, the initial check state."
+    },
+    "id": {
+      "name": "ID",
+      "desc": "An optional ID for the element allowing it to be styled with CSS."
+    },
+    "class": {
+      "name": "Class",
+      "desc": "An optional class for the element allowing it to be styled with CSS."
+    }
+  }
+}

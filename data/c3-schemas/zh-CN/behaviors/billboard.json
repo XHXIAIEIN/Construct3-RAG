@@ -1,0 +1,103 @@
+{
+  "id": "billboard",
+  "name": "展示板",
+  "description": "一个能始终面朝相机旋转的对象。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my}已启用",
+      "description": "检测当前行为是否已启用。"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-offset",
+      "scriptName": "SetOffset",
+      "category": "",
+      "list-name": "设置偏移",
+      "display-text": "设置 {my} 偏移量（[i]{0}[/i], [i]{1}[/i], [i]{2}[/i]）",
+      "description": "设置要进行的额外旋转角度。",
+      "params": {
+        "offset-x": {
+          "type": "number",
+          "name": "偏移X",
+          "desc": "沿X轴进行额外的旋转。"
+        },
+        "offset-y": {
+          "type": "number",
+          "name": "偏移Y",
+          "desc": "沿Y轴进行额外的旋转。"
+        },
+        "offset-z": {
+          "type": "number",
+          "name": "偏移Z",
+          "desc": "沿Z轴进行额外的旋转。"
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用状态",
+      "display-text": "设置 {my} 启用 [b]{0}[/b]",
+      "description": "启用或禁用此行为。",
+      "params": {
+        "state": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "启用或禁用此行为。"
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "offset-x",
+      "scriptName": "OffsetX",
+      "category": "",
+      "translated-name": "X轴偏移",
+      "description": "绕X轴进行额外旋转。",
+      "returnType": "number"
+    },
+    {
+      "id": "offset-y",
+      "scriptName": "OffsetY",
+      "category": "",
+      "translated-name": "Y轴偏移",
+      "description": "绕Y轴进行额外旋转。",
+      "returnType": "number"
+    },
+    {
+      "id": "offset-z",
+      "scriptName": "OffsetZ",
+      "category": "",
+      "translated-name": "Z轴偏移",
+      "description": "绕Z轴进行额外旋转。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "offset-x": {
+      "name": "偏移X",
+      "desc": "沿X轴进行额外的旋转。"
+    },
+    "offset-y": {
+      "name": "偏移Y",
+      "desc": "沿Y轴进行额外的旋转。"
+    },
+    "offset-z": {
+      "name": "偏移Z",
+      "desc": "沿Z轴进行额外的旋转。"
+    },
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

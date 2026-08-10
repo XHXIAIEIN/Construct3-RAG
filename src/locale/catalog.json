@@ -1,0 +1,1020 @@
+{
+  "schema_version": 1,
+  "locales": [
+    "en-US",
+    "zh-CN"
+  ],
+  "query_locale_order": [
+    "zh-CN",
+    "en-US"
+  ],
+  "catalog_contract": {
+    "key_rule": "Stable keys identify a product concept or rule, never translated display text.",
+    "metadata_rule": "Every maintained resource declares purpose, source, consumers, and tests beside its values.",
+    "source_prefixes": {
+      "schema": "Authoritative data under data/c3-schemas/{locale}.",
+      "gold": "Adjudicated case ID in tests/fixtures/query_gold.jsonl.",
+      "contract": "Existing production input or output compatibility requirement.",
+      "curated": "Manually maintained policy with the rationale stated in the source string."
+    }
+  },
+  "query": {
+    "ace_types": {
+      "conditions": {
+        "purpose": "Recognize explicit condition aliases and narrow Chinese topics to condition ACE names.",
+        "source": [
+          "schema:r495 ACE type conditions",
+          "gold:topic-ace-zh-02",
+          "gold:topic-ace-zh-03"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "aliases": {
+          "en-US": [
+            "condition",
+            "conditions"
+          ],
+          "zh-CN": [
+            "条件"
+          ]
+        },
+        "intent_keywords": {
+          "en-US": [],
+          "zh-CN": [
+            "触发",
+            "是否",
+            "比较",
+            "检测",
+            "完成",
+            "任意",
+            "失败",
+            "正在",
+            "成功",
+            "执行",
+            "检查",
+            "存在",
+            "运行",
+            "测试",
+            "点击",
+            "重叠",
+            "碰撞",
+            "可见",
+            "跳跃",
+            "包含",
+            "判断",
+            "筛选",
+            "过滤",
+            "满足",
+            "相等",
+            "查找",
+            "搜索",
+            "找到",
+            "检索",
+            "遍历"
+          ]
+        }
+      },
+      "actions": {
+        "purpose": "Recognize explicit action aliases and narrow action-oriented topics to action ACE names.",
+        "source": [
+          "schema:r495 ACE type actions",
+          "gold:topic-ace-mixed-07",
+          "gold:ambiguous-verb-request-zh-14"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "aliases": {
+          "en-US": [
+            "action",
+            "actions"
+          ],
+          "zh-CN": [
+            "动作"
+          ]
+        },
+        "intent_keywords": {
+          "en-US": [],
+          "zh-CN": [
+            "设置",
+            "添加",
+            "播放",
+            "启用",
+            "停止",
+            "禁用",
+            "显示",
+            "删除",
+            "创建",
+            "恢复",
+            "效果",
+            "模式",
+            "清空",
+            "移动",
+            "修改",
+            "排序",
+            "插入",
+            "替换",
+            "复制",
+            "加载",
+            "保存",
+            "暂停",
+            "销毁",
+            "生成",
+            "旋转",
+            "重置",
+            "调整",
+            "切换",
+            "发送"
+          ]
+        }
+      },
+      "expressions": {
+        "purpose": "Recognize explicit expression aliases and narrow value-reading topics to expression ACE names.",
+        "source": [
+          "schema:r495 ACE type expressions",
+          "gold:ambiguous-verb-find-zh-11"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "aliases": {
+          "en-US": [
+            "expression",
+            "expressions"
+          ],
+          "zh-CN": [
+            "表达式"
+          ]
+        },
+        "intent_keywords": {
+          "en-US": [],
+          "zh-CN": [
+            "获取",
+            "返回",
+            "单位",
+            "坐标",
+            "时间",
+            "像素",
+            "字符串",
+            "索引",
+            "数量",
+            "转换",
+            "每秒",
+            "之间",
+            "宽度",
+            "高度",
+            "计算",
+            "获得",
+            "范围",
+            "读取",
+            "查找",
+            "搜索",
+            "找到",
+            "检索",
+            "筛选",
+            "位置",
+            "角度",
+            "速度",
+            "长度",
+            "大小",
+            "取值",
+            "提取",
+            "统计",
+            "计数"
+          ]
+        }
+      },
+      "properties": {
+        "purpose": "Recognize property and parameter list requests without treating parameters as an ACE type.",
+        "source": [
+          "schema:r495 addon properties",
+          "gold:property-list-zh-01",
+          "gold:property-list-en-03"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "aliases": {
+          "en-US": [
+            "property",
+            "properties"
+          ],
+          "zh-CN": [
+            "属性",
+            "参数"
+          ]
+        },
+        "intent_keywords": {
+          "en-US": [],
+          "zh-CN": [
+            "属性",
+            "参数",
+            "状态",
+            "尺寸",
+            "维度",
+            "名称",
+            "类型"
+          ]
+        }
+      }
+    },
+    "grammar": {
+      "list": {
+        "entity-quantifier-type": {
+          "purpose": "Match an entity followed by a Chinese list quantifier and an ACE type.",
+          "source": [
+            "gold:ace-list-zh-02",
+            "gold:ace-list-mixed-07"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._rule_based"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": null,
+            "zh-CN": "^\\s*(?P<plugin>.+?)\\s*(?:有哪些|列出|所有|列举|的)\\s*(?:主要\\s*)?(?P<ace_type>{ace_type})\\s*$"
+          }
+        },
+        "verb-entity-type": {
+          "purpose": "Match an explicit Chinese list verb before an entity and ACE type.",
+          "source": [
+            "gold:ace-list-zh-03",
+            "gold:ace-list-zh-08"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._rule_based"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": null,
+            "zh-CN": "^\\s*(?:列出|列举|查看|显示|有哪些)\\s*(?P<plugin>.+?)\\s*(?:的|中的)?\\s*(?P<ace_type>{ace_type})\\s*$"
+          }
+        },
+        "entity-type-suffix": {
+          "purpose": "Match explicit list suffix forms in English, Chinese, and mixed-language requests.",
+          "source": [
+            "gold:ace-list-en-04",
+            "gold:ace-list-mixed-06"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._rule_based"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": "^\\s*(?P<plugin>.+?)\\s*(?:的)?\\s*(?P<ace_type>{ace_type})\\s*list\\s*$",
+            "zh-CN": "^\\s*(?P<plugin>.+?)\\s*(?:的)?\\s*(?P<ace_type>{ace_type})\\s*(?:列表|有哪些|一览)\\s*$"
+          }
+        }
+      },
+      "detail": {
+        "entity-ace-usage": {
+          "purpose": "Match bounded ACE detail requests that name both the Schema entity and ACE.",
+          "source": [
+            "gold:ace-detail-zh-01",
+            "gold:ace-detail-en-03"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._rule_based"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": "^\\s*(?P<plugin>\\S+)\\s+(?P<ace_name>.+?)\\s+(?:parameters?|usage)\\s*$",
+            "zh-CN": "^\\s*(?P<plugin>.+?)\\s*(?:的|中的)\\s*(?P<ace_name>.+?)\\s*(?:怎么用|参数|用法|怎么使用|有什么参数|参数是什么)\\s*$"
+          }
+        },
+        "qualified-identifier": {
+          "purpose": "Support the compact plugin:ace identifier form for deterministic detail lookup.",
+          "source": [
+            "contract:public direct lookup syntax",
+            "gold:ace-detail-neutral-06"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._rule_based"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": "^\\s*(?P<plugin>[A-Za-z0-9_-]+):(?P<ace_name>[A-Za-z0-9_-]+)\\s*$",
+            "zh-CN": null
+          }
+        }
+      },
+      "translate": {
+        "command-term": {
+          "purpose": "Match an explicit translation command followed by one bounded term.",
+          "source": [
+            "gold:translation-explicit-mixed-01"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._detect_translation"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": "^\\s*translate\\s+(?P<term>.+?)\\s*$",
+            "zh-CN": "^\\s*翻译\\s+(?P<term>.+?)\\s*$"
+          }
+        },
+        "term-to-language": {
+          "purpose": "Match an explicit source term and requested target language.",
+          "source": [
+            "gold:translation-explicit-mixed-02",
+            "gold:translation-explicit-zh-04"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._detect_translation"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": "^\\s*(?P<term>.+?)\\s*translate\\s*(?:to)?\\s*(?:chinese|english)\\s*$",
+            "zh-CN": "^\\s*(?:把\\s*)?(?P<term>.+?)\\s*翻译\\s*(?:成)?\\s*(?:中文|英文)\\s*$"
+          }
+        },
+        "term-language-name": {
+          "purpose": "Match Chinese questions asking for the localized name of a concrete term.",
+          "source": [
+            "gold:translation-explicit-zh-03",
+            "gold:translation-explicit-zh-05"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._detect_translation"
+          ],
+          "tests": [
+            "tests/test_lookup.py",
+            "tests/fixtures/query_gold.jsonl"
+          ],
+          "patterns": {
+            "en-US": null,
+            "zh-CN": "^\\s*(?P<term>.+?)\\s*(?:的)?\\s*(?:中文|英文)\\s*(?:是什么|怎么说)?\\s*$"
+          }
+        },
+        "how-do-you-say": {
+          "purpose": "Match the explicit English how-do-you-say translation construction.",
+          "source": [
+            "contract:bounded English term translation syntax"
+          ],
+          "consumers": [
+            "src.lookup.intent.IntentClassifier._detect_translation"
+          ],
+          "tests": [
+            "tests/test_lookup.py"
+          ],
+          "patterns": {
+            "en-US": "^\\s*how\\s+do\\s+you\\s+say\\s+(?P<term>.+?)\\s+in\\s+(?:chinese|english)\\s*[?？]?\\s*$",
+            "zh-CN": null
+          }
+        }
+      }
+    },
+    "howto": {
+      "hard_skip": {
+        "purpose": "Force solution, concept, comparison, and tutorial requests out of Direct Lookup.",
+        "source": [
+          "gold:translation-negative-zh-01",
+          "gold:semantic-fallback-zh-01",
+          "gold:semantic-fallback-zh-03"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [],
+          "zh-CN": [
+            "区别",
+            "对比",
+            "是什么",
+            "什么是",
+            "概念",
+            "原理",
+            "介绍",
+            "怎么做",
+            "怎么实现",
+            "怎么检测",
+            "步骤",
+            "流程",
+            "教程"
+          ]
+        }
+      },
+      "soft_skip": {
+        "purpose": "Remove conversational how-to words from a topic after an exact Schema entity is known.",
+        "source": [
+          "gold:ambiguous-verb-find-zh-11"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [],
+          "zh-CN": [
+            "如何",
+            "怎么",
+            "怎样"
+          ]
+        }
+      },
+      "pre_lookup_fallback": {
+        "purpose": "Block broad how-to forms before inference while preserving bounded 怎么 queries.",
+        "source": [
+          "gold:semantic-fallback-zh-01",
+          "gold:ambiguous-verb-get-zh-10",
+          "gold:ambiguous-verb-find-zh-11"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [],
+          "zh-CN": [
+            "如何",
+            "怎样"
+          ]
+        }
+      },
+      "semantic_fallback_markers": {
+        "purpose": "Route English workflow, explanation, and comparison phrasing to semantic retrieval.",
+        "source": [
+          "gold:translation-negative-en-03",
+          "gold:semantic-fallback-en-04",
+          "gold:semantic-fallback-en-06"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+        ],
+        "tests": [
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [
+            "how to ",
+            "tutorial",
+            "what is ",
+            "explain ",
+            "principles",
+            "difference",
+            "compare ",
+            "complete ",
+            " solution",
+            "localize "
+          ],
+          "zh-CN": []
+        }
+      }
+    },
+    "example_keywords": {
+      "purpose": "Detect requests for committed official example projects after semantic-style blockers.",
+      "source": [
+        "gold:example-effect-en-01",
+        "gold:example-effect-zh-02"
+      ],
+      "consumers": [
+        "src.lookup.intent.IntentClassifier._detect_example_find"
+      ],
+      "tests": [
+        "tests/test_lookup.py",
+        "tests/fixtures/query_gold.jsonl"
+      ],
+      "values": {
+        "en-US": [
+          "example",
+          "template"
+        ],
+        "zh-CN": [
+          "示例",
+          "案例",
+          "样例",
+          "模板"
+        ]
+      }
+    },
+    "tokenization": {
+      "particle_split_patterns": {
+        "purpose": "Split exact-entity query remainders without a model or network tokenizer.",
+        "source": [
+          "contract:offline deterministic Direct Lookup tokenization"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py"
+        ],
+        "values": {
+          "en-US": [],
+          "zh-CN": [
+            "(?:以及|或者|但是|然后|并且|还是|而且|因为|所以|可以|怎么|如果|或是|[\\s,，、的。？！?!在中把了将用从到里跟和与])+"
+          ]
+        }
+      },
+      "entity_role_words": {
+        "purpose": "Remove explicit plugin or behavior role words after resolving the Schema entity.",
+        "source": [
+          "gold:entity-ambiguity-en-04",
+          "gold:entity-ambiguity-mixed-06"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [
+            "plugin",
+            "behavior"
+          ],
+          "zh-CN": [
+            "插件",
+            "行为"
+          ]
+        }
+      }
+    },
+    "ambiguity": {
+      "plugin_ids": {
+        "purpose": "Identify Schema IDs that are also ordinary English words and need a meaningful topic.",
+        "source": [
+          "gold:entity-ambiguity-en-02",
+          "gold:fallback-edge-zh-01"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [
+            "custom",
+            "system",
+            "audio",
+            "text",
+            "video",
+            "browser",
+            "touch",
+            "mouse",
+            "list",
+            "button",
+            "timer",
+            "json",
+            "array"
+          ],
+          "zh-CN": []
+        }
+      },
+      "generic_query_words": {
+        "purpose": "Define generic words that cannot disambiguate an ordinary-word plugin ID.",
+        "source": [
+          "gold:fallback-edge-mixed-02",
+          "contract:false-direct prevention"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [
+            "action",
+            "actions",
+            "condition",
+            "conditions",
+            "expression",
+            "expressions",
+            "event",
+            "events",
+            "function",
+            "functions",
+            "property",
+            "properties",
+            "variable",
+            "variables",
+            "how",
+            "what",
+            "use",
+            "create",
+            "add",
+            "make"
+          ],
+          "zh-CN": []
+        }
+      },
+      "bare_topics": {
+        "purpose": "Prevent underspecified verbs from guessing one of several structurally valid ACEs.",
+        "source": [
+          "gold:ambiguous-verb-save-mixed-01",
+          "gold:ambiguous-verb-move-zh-07"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "values": {
+          "en-US": [
+            "save",
+            "move"
+          ],
+          "zh-CN": [
+            "保存",
+            "存档",
+            "移动"
+          ]
+        }
+      }
+    },
+    "scoped_ace_type_rules": {
+      "array-find-expression": {
+        "purpose": "Resolve Array find/index topics to expressions instead of overlapping condition keywords.",
+        "source": [
+          "gold:ambiguous-verb-find-zh-11",
+          "schema:data/c3-schemas/{locale}/plugins/arr.json"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "plugin_id": "arr",
+        "ace_types": [
+          "expressions"
+        ],
+        "terms": {
+          "en-US": [
+            "find",
+            "index"
+          ],
+          "zh-CN": [
+            "查找",
+            "搜索"
+          ]
+        }
+      },
+      "local-storage-get-action": {
+        "purpose": "Resolve Local storage get-item topics to the asynchronous action rather than expressions.",
+        "source": [
+          "gold:ambiguous-verb-get-mixed-09",
+          "schema:data/c3-schemas/{locale}/plugins/localstorage.json"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "plugin_id": "localstorage",
+        "ace_types": [
+          "actions"
+        ],
+        "terms": {
+          "en-US": [
+            "get",
+            "item"
+          ],
+          "zh-CN": [
+            "获取"
+          ]
+        }
+      },
+      "collision-jump-condition": {
+        "purpose": "Prefer condition ACEs for collision and jump trigger topics across exact entities.",
+        "source": [
+          "gold:topic-ace-zh-02",
+          "gold:topic-ace-zh-03"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "plugin_id": null,
+        "ace_types": [
+          "conditions"
+        ],
+        "terms": {
+          "en-US": [
+            "collision",
+            "jump"
+          ],
+          "zh-CN": [
+            "碰撞",
+            "跳跃"
+          ]
+        }
+      },
+      "common-action-topics": {
+        "purpose": "Prefer action ACEs for observed imperative topics whose words overlap other ACE types.",
+        "source": [
+          "gold:topic-ace-en-04",
+          "gold:topic-ace-mixed-08",
+          "gold:ambiguous-verb-request-en-13"
+        ],
+        "consumers": [
+          "src.lookup.intent.IntentClassifier._keyword_infer"
+        ],
+        "tests": [
+          "tests/test_lookup.py",
+          "tests/fixtures/query_gold.jsonl"
+        ],
+        "plugin_id": null,
+        "ace_types": [
+          "actions"
+        ],
+        "terms": {
+          "en-US": [
+            "animation",
+            "parse",
+            "typewriter",
+            "pause",
+            "volume",
+            "request",
+            "load",
+            "save",
+            "move",
+            "item",
+            "permission"
+          ],
+          "zh-CN": [
+            "音量",
+            "请求",
+            "权限"
+          ]
+        }
+      }
+    }
+  },
+  "expansion": {
+    "directed_aliases": {
+      "world.action.show-to-visible": {
+        "purpose": "Bridge the exact Chinese display topic to the shared set-visible action without broad synonym expansion.",
+        "source": [
+          "gold:ambiguous-verb-display-zh-05",
+          "gold:translation-negative-mixed-02",
+          "schema:data/c3-schemas/{locale}/plugins/_common.json"
+        ],
+        "consumers": [
+          "src.lookup.handlers.LookupHandlers._scoped_filter_words",
+          "tests/eval_query_quality.py"
+        ],
+        "tests": [
+          "tests/test_lookup.py::test_sprite_display_uses_directed_common_alias",
+          "tests/test_lookup.py::test_display_alias_does_not_expand_a_more_specific_text_topic"
+        ],
+        "enabled_locales": [
+          "zh-CN"
+        ],
+        "triggers": {
+          "en-US": [
+            "show"
+          ],
+          "zh-CN": [
+            "显示"
+          ]
+        },
+        "additions": {
+          "en-US": [
+            "visible"
+          ],
+          "zh-CN": [
+            "可见"
+          ]
+        },
+        "plugin_ids": [
+          "_common"
+        ],
+        "ace_types": [
+          "actions"
+        ],
+        "weight": 0.8,
+        "exact": true,
+        "allow_chaining": false
+      }
+    }
+  },
+  "index": {
+    "labels": {
+      "purpose": "Provide localized labels used to build and later clean bilingual vector text.",
+      "source": [
+        "contract:existing vector text format",
+        "schema:r495 bilingual exported fields"
+      ],
+      "consumers": [
+        "src.ingest.schema_parser",
+        "src.interfaces.http.presenters._clean_content",
+        "src.ingest.c3_fetcher"
+      ],
+      "tests": [
+        "tests/test_locale.py",
+        "tests/test_api.py"
+      ],
+      "values": {
+        "ace_types": {
+          "action": {
+            "en-US": "Action",
+            "zh-CN": "动作"
+          },
+          "condition": {
+            "en-US": "Condition",
+            "zh-CN": "条件"
+          },
+          "expression": {
+            "en-US": "Expression",
+            "zh-CN": "表达式"
+          }
+        },
+        "addon_types": {
+          "plugin": {
+            "en-US": "Plugin",
+            "zh-CN": "插件"
+          },
+          "behavior": {
+            "en-US": "Behavior",
+            "zh-CN": "行为"
+          }
+        },
+        "common_addon_name": {
+          "en-US": "Common",
+          "zh-CN": "公共"
+        },
+        "description": {
+          "en-US": "Description",
+          "zh-CN": "描述"
+        },
+        "script_name": {
+          "en-US": "Script",
+          "zh-CN": "脚本名称"
+        },
+        "options": {
+          "en-US": "Options",
+          "zh-CN": "选项"
+        },
+        "parameters": {
+          "en-US": "Parameters",
+          "zh-CN": "参数"
+        },
+        "return_type": {
+          "en-US": "Return type",
+          "zh-CN": "返回类型"
+        },
+        "category": {
+          "en-US": "Category",
+          "zh-CN": "分类"
+        },
+        "effect": {
+          "en-US": "Effect",
+          "zh-CN": "效果"
+        },
+        "trigger": {
+          "en-US": "Trigger",
+          "zh-CN": "触发器"
+        },
+        "async": {
+          "en-US": "Async",
+          "zh-CN": "异步"
+        }
+      }
+    },
+    "ace_title_template": {
+      "purpose": "Preserve the bilingual ACE title contract consumed by vector indexing and API cleanup.",
+      "source": [
+        "contract:existing SchemaParser vector title format"
+      ],
+      "consumers": [
+        "src.locale.resources.format_ace_title_zh_en"
+      ],
+      "tests": [
+        "tests/test_locale.py::test_bilingual_index_format_stays_compatible"
+      ],
+      "values": {
+        "en-US": "{addon_type} {addon_local} ({addon_other}) {ace_type}: {ace_local} ({ace_other})",
+        "zh-CN": "{addon_type} {addon_local}({addon_other}) 的{ace_type}: {ace_local} ({ace_other})"
+      }
+    },
+    "ace_title_markers": {
+      "purpose": "Identify generated ACE title lines that API responses replace with structured fields.",
+      "source": [
+        "contract:src.interfaces.http.presenters._clean_content"
+      ],
+      "consumers": [
+        "src.interfaces.http.presenters._clean_content"
+      ],
+      "tests": [
+        "tests/test_api.py"
+      ],
+      "values": {
+        "en-US": [],
+        "zh-CN": [
+          "的条件:",
+          "的动作:",
+          "的表达式:"
+        ]
+      }
+    },
+    "common_ace_semantic_hints": {
+      "purpose": "Add bounded bilingual context to terse shared World ACE descriptions during optional vector indexing.",
+      "source": [
+        "curated:r495 _common descriptions are too terse to express observed use cases"
+      ],
+      "consumers": [
+        "src.ingest.schema_parser.SchemaParser.export_ace_for_vectordb"
+      ],
+      "tests": [
+        "tests/test_locale.py",
+        "tests/test_schema_parser_cdn.py"
+      ],
+      "values": {
+        "on-collision-with-another-object": {
+          "en-US": "Usage: collision detection event between two game objects.",
+          "zh-CN": "用途: 碰撞检测、碰撞判定、碰撞事件。当两个对象接触/碰到时自动触发。常见用法: 子弹碰到敌人、角色碰到墙壁、物体间接触判断。"
+        },
+        "is-overlapping-another-object": {
+          "en-US": "Usage: overlap detection, test if two objects currently overlap.",
+          "zh-CN": "用途: 重叠检测、重叠判定。检测两个对象当前是否重叠在一起。常见用法: 判断角色是否站在平台上、物体是否在某个区域内。"
+        },
+        "is-overlapping-at-offset": {
+          "en-US": "Usage: overlap check at an offset position, predictive collision.",
+          "zh-CN": "用途: 偏移位置重叠检测。在指定偏移坐标检测对象是否与另一个对象重叠。常见用法: 预判移动后是否会碰到障碍物。"
+        },
+        "destroy": {
+          "en-US": "Usage: remove/delete an object instance from the layout.",
+          "zh-CN": "用途: 销毁对象、删除对象、移除实例。从场景中删除对象并释放资源。"
+        },
+        "on-destroyed": {
+          "en-US": "Usage: triggered when an object is destroyed/removed.",
+          "zh-CN": "用途: 销毁事件、删除回调。对象被 Destroy 动作删除时触发。"
+        },
+        "set-position": {
+          "en-US": "Usage: move object to specific X,Y coordinates.",
+          "zh-CN": "用途: 设置位置、移动对象到指定坐标。"
+        },
+        "set-visible": {
+          "en-US": "Usage: show or hide an object in the layout.",
+          "zh-CN": "用途: 显示/隐藏对象、设置可见性。"
+        },
+        "is-visible": {
+          "en-US": "Usage: test if the object is currently visible.",
+          "zh-CN": "用途: 判断对象是否可见。"
+        }
+      }
+    }
+  }
+}

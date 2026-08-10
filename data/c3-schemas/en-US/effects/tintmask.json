@@ -1,0 +1,17 @@
+{
+  "id": "tintmask",
+  "name": "Tint mask",
+  "description": "Adjust the RGB levels of the background.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color",
+      "type": "color",
+      "name": "Color",
+      "desc": "Red, green and blue level adjustments."
+    }
+  ]
+}

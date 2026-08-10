@@ -1,0 +1,105 @@
+{
+  "id": "csv",
+  "name": "CSV",
+  "description": "Load and create data in comma-separated value (CSV) format.",
+  "type": "plugin",
+  "aceCategories": {
+    "csv": "CSV"
+  },
+  "conditions": [
+    {
+      "id": "on-parse-error",
+      "scriptName": "OnParseError",
+      "category": "csv",
+      "list-name": "On parse error",
+      "display-text": "On parse error",
+      "description": "Triggered when using the 'Parse' action with invalid data.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-parse-success",
+      "scriptName": "OnParseSuccess",
+      "category": "csv",
+      "list-name": "On parse success",
+      "display-text": "On parse success",
+      "description": "Triggered when the 'Parse' action completes successfully.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "parse-csv",
+      "scriptName": "ParseCSV",
+      "category": "csv",
+      "list-name": "Parse CSV",
+      "display-text": "Parse CSV from string [i]{0}[/i] in to {2} (delimiter [i]{1}[/i], data type [i]{3}[/i])",
+      "description": "Parse data from a CSV file and store the result in an Array object.",
+      "params": {
+        "csv": {
+          "type": "string",
+          "name": "CSV",
+          "desc": "A string of comma-separated values to parse."
+        },
+        "delimiter": {
+          "type": "string",
+          "name": "Delimiter",
+          "desc": "The character that separates values."
+        },
+        "array": {
+          "type": "object",
+          "name": "Array",
+          "desc": "Choose an array object to store the resulting data in."
+        },
+        "data-type": {
+          "type": "combo",
+          "name": "Data type",
+          "desc": "Choose the data type to read values.",
+          "items": {
+            "auto": "Auto",
+            "string": "String",
+            "number": "Number"
+          }
+        }
+      }
+    },
+    {
+      "id": "generate-csv",
+      "scriptName": "GenerateCSV",
+      "category": "csv",
+      "list-name": "Generate CSV",
+      "display-text": "Generate CSV from [i]{0}[/i] (delimiter [i]{1}[/i])",
+      "description": "Convert data in a two-dimensional Array object back in to CSV data.",
+      "params": {
+        "array": {
+          "type": "object",
+          "name": "Array",
+          "desc": "Choose an array object to convert to CSV."
+        },
+        "delimiter": {
+          "type": "string",
+          "name": "Delimiter",
+          "desc": "The character that separates values."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "generated-csv",
+      "scriptName": "GeneratedCSV",
+      "category": "csv",
+      "translated-name": "GeneratedCSV",
+      "description": "Get the generated string of CSV data after the 'Generate CSV' action.",
+      "returnType": "string"
+    },
+    {
+      "id": "tab-character",
+      "scriptName": "TabCharacter",
+      "category": "csv",
+      "translated-name": "TabCharacter",
+      "description": "A tab character, which can be useful as a delimiter.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

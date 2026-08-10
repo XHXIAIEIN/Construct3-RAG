@@ -1,0 +1,10 @@
+{
+  "id": "grayscalemask",
+  "name": "Grayscale mask",
+  "description": "Remove colors from the background, resulting in a grayscale image.",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

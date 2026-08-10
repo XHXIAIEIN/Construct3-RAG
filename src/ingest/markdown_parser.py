@@ -258,6 +258,27 @@ class MarkdownParser:
         intro_end = h2_matches[0].start()
         intro_content = content[:intro_end].strip()
 
+        # Preserve substantive document introductions as their own root chunk.
+        # Previously ``intro_content`` was only used as a boolean below: the
+        # parser prefixed each H2 with the H1 title, but silently discarded all
+        # introductory prose.  Important answers that live before the first H2
+        # (for example how to open the Animations Editor and how sub-event
+        # picking is inherited) therefore could not be indexed at all.
+        intro_body = re.sub(r'^#\s+.+$', '', intro_content, count=1, flags=re.MULTILINE).strip()
+        if intro_body:
+            intro_text = intro_content
+            if not re.search(r'^#\s+.+$', intro_content, re.MULTILINE):
+                intro_text = f"# {h1_title}\n\n{intro_content}"
+            chunks.append(MarkdownChunk(
+                text=intro_text,
+                metadata={
+                    **base_metadata,
+                    'h1_heading': h1_title,
+                    'h2_heading': '',
+                    'section_type': None,
+                }
+            ))
+
         # Process each H2 section
         for i, match in enumerate(h2_matches):
             h2_heading = match.group(1).strip()
@@ -285,7 +306,7 @@ class MarkdownParser:
                 text=chunk_text,
                 metadata={
                     **base_metadata,
-                    'h1_heading': h1_title,  # 统一用 heading
+                    'h1_heading': h1_title,
                     'h2_heading': h2_heading,
                     'section_type': section_type,
                 }
@@ -311,7 +332,7 @@ class MarkdownParser:
 
         try:
             content = file_path.read_text(encoding='utf-8')
-        except Exception as e:
+        except OSError as e:
             print(f"Error reading {file_path}: {e}")
             return []
 
@@ -319,10 +340,10 @@ class MarkdownParser:
         frontmatter, body = self.parse_frontmatter(content)
 
         # Build base metadata
-        # 注：category 和 breadcrumb 可从 source 推导，故不存储
+        # Category and breadcrumb are derivable from the relative source path.
         base_metadata = {
             'title': frontmatter.get('title', file_path.stem),
-            'source': str(file_path.relative_to(self.base_dir)),  # 相对路径，如 "plugin-reference/sprite.md"
+            'source': str(file_path.relative_to(self.base_dir)),
             'collection': self.detect_collection(file_path),
             'subcategory': self.detect_subcategory(file_path),
         }
@@ -400,7 +421,7 @@ class MarkdownParser:
             collection = chunk.metadata.get('collection', 'unknown')
             stats['by_collection'][collection] = stats['by_collection'].get(collection, 0) + 1
 
-            # By category (从 source 推导)
+            # Category is derived from the first source-path component.
             source = chunk.metadata.get('source', '')
             category = source.split('/')[0] if '/' in source else 'unknown'
             stats['by_category'][category] = stats['by_category'].get(category, 0) + 1

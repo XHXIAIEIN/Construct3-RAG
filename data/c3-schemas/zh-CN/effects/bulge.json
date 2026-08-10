@@ -1,0 +1,23 @@
+{
+  "id": "bulge",
+  "name": "膨胀",
+  "description": "模拟凹凸或放大镜效果。",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "radius",
+      "type": "percent",
+      "name": "半径",
+      "desc": "膨胀区域的水平半径。数值在 0 - 100 范围。"
+    },
+    {
+      "id": "scale",
+      "type": "percent",
+      "name": "强度",
+      "desc": "膨胀区域的凸起程度。数值在 0 - 100 范围。"
+    }
+  ]
+}

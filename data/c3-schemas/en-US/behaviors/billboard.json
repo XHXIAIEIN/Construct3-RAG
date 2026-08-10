@@ -1,0 +1,103 @@
+{
+  "id": "billboard",
+  "name": "Billboard",
+  "description": "Set an object's 3D rotation to always face the camera.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-offset",
+      "scriptName": "SetOffset",
+      "category": "",
+      "list-name": "Set offset",
+      "display-text": "Set {my} offset ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "description": "Set the additional rotation to apply.",
+      "params": {
+        "offset-x": {
+          "type": "number",
+          "name": "Offset X",
+          "desc": "Additional rotation on the X axis to apply."
+        },
+        "offset-y": {
+          "type": "number",
+          "name": "Offset Y",
+          "desc": "Additional rotation on the Y axis to apply."
+        },
+        "offset-z": {
+          "type": "number",
+          "name": "Offset Z",
+          "desc": "Additional rotation on the Z axis to apply."
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} enabled [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "state": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Whether to enable or disable the behavior."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "offset-x",
+      "scriptName": "OffsetX",
+      "category": "",
+      "translated-name": "OffsetX",
+      "description": "Additional rotation on the X axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "offset-y",
+      "scriptName": "OffsetY",
+      "category": "",
+      "translated-name": "OffsetY",
+      "description": "Additional rotation on the Y axis.",
+      "returnType": "number"
+    },
+    {
+      "id": "offset-z",
+      "scriptName": "OffsetZ",
+      "category": "",
+      "translated-name": "OffsetZ",
+      "description": "Additional rotation on the Z axis.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "offset-x": {
+      "name": "Offset X",
+      "desc": "Additional rotation on the X axis to apply."
+    },
+    "offset-y": {
+      "name": "Offset Y",
+      "desc": "Additional rotation on the Y axis to apply."
+    },
+    "offset-z": {
+      "name": "Offset Z",
+      "desc": "Additional rotation on the Z axis to apply."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

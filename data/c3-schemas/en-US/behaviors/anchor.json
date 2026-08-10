@@ -1,0 +1,79 @@
+{
+  "id": "anchor",
+  "name": "Anchor",
+  "description": "Position objects relative to the viewport.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} {0}",
+      "description": "Enable or disable the behavior.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "disabled",
+            "enabled": "enabled"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "left-edge": {
+      "name": "Left edge",
+      "desc": "Anchor the object's left edge to a viewport edge.",
+      "items": {
+        "window-left": "Viewport left",
+        "window-right": "Viewport right",
+        "none": "None"
+      }
+    },
+    "top-edge": {
+      "name": "Top edge",
+      "desc": "Anchor the object's top edge to a viewport edge.",
+      "items": {
+        "window-top": "Viewport top",
+        "window-bottom": "Viewport bottom",
+        "none": "None"
+      }
+    },
+    "right-edge": {
+      "name": "Right edge",
+      "desc": "Anchor the object's right edge.",
+      "items": {
+        "window-right": "Viewport right",
+        "none": "None"
+      }
+    },
+    "bottom-edge": {
+      "name": "Bottom edge",
+      "desc": "Anchor the object's bottom edge.",
+      "items": {
+        "window-bottom": "Viewport bottom",
+        "none": "None"
+      }
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "pixellate",
+  "name": "Pixellate",
+  "description": "Create a blocky low-resolution image, also known as mosaic.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "size",
+      "type": "float",
+      "name": "Size",
+      "desc": "Size of each tile, in pixels."
+    }
+  ]
+}

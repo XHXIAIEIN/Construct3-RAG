@@ -1,0 +1,464 @@
+{
+  "id": "moveto",
+  "name": "Move To",
+  "description": "Move an object to a position with an acceleration and deceleration.",
+  "type": "behavior",
+  "aceCategories": {
+    "properties": "Properties"
+  },
+  "conditions": [
+    {
+      "id": "is-moving",
+      "scriptName": "IsMoving",
+      "category": "",
+      "list-name": "Is moving",
+      "display-text": "{my} is moving",
+      "description": "True when the object is moving."
+    },
+    {
+      "id": "compare-speed",
+      "scriptName": "CompareSpeed",
+      "category": "",
+      "list-name": "Compare speed",
+      "display-text": "{my} speed {0} {1}",
+      "description": "Compare the current speed of the object.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "Choose the way to compare the current speed."
+        },
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The speed, in pixels per second, to compare the current speed to."
+        }
+      }
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    },
+    {
+      "id": "on-arrived",
+      "scriptName": "OnArrived",
+      "category": "",
+      "list-name": "On arrived",
+      "display-text": "On {my} arrived",
+      "description": "Triggered when arrived at target position.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-hit-solid",
+      "scriptName": "OnHitSolid",
+      "category": "",
+      "list-name": "On hit solid",
+      "display-text": "On {my} hit solid",
+      "description": "Triggered if 'Stop on solids' is enabled and the object hit a solid while moving.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "move-to-position",
+      "scriptName": "MoveToPosition",
+      "category": "",
+      "list-name": "Move to position",
+      "display-text": "{my}: Move to ([i]{0}[/i], [i]{1}[/i]) ({2})",
+      "description": "Start moving towards a position in the layout, or add a waypoint to move to next.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "X",
+          "desc": "The X co-ordinate to move to."
+        },
+        "y": {
+          "type": "number",
+          "name": "Y",
+          "desc": "The Y co-ordinate to move to."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements.",
+          "items": {
+            "direct": "Direct",
+            "add-waypoint": "Add waypoint"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-to-object",
+      "scriptName": "MoveToObject",
+      "category": "",
+      "list-name": "Move to object",
+      "display-text": "{my}: Move to {0} image point [i]{1}[/i] ({2})",
+      "description": "Start moving towards an object, or add a waypoint to move to next.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to move to."
+        },
+        "image-point": {
+          "type": "any",
+          "name": "Image point (optional)",
+          "desc": "The name or number of an image point in the object to move to. Leave 0 for object's origin."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to move directly (removing any previous waypoints), or add a new waypoint to move to after prior movements.",
+          "items": {
+            "direct": "Direct",
+            "add-waypoint": "Add waypoint"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-pathfinding-path",
+      "scriptName": "MoveAlongPathfindingPath",
+      "category": "",
+      "list-name": "Move along Pathfinding path",
+      "display-text": "{my}: Move along Pathfinding path ({0})",
+      "description": "Start moving along all the points of a path calculated by a Pathfinding behavior on the same object.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "items": {
+            "direct": "Direct",
+            "add-waypoints": "Add waypoints"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-timeline",
+      "scriptName": "MoveAlongTimeline",
+      "category": "",
+      "list-name": "Move along timeline",
+      "display-text": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})",
+      "description": "Start moving along all the points of a timeline track with X and Y properties.",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "Timeline",
+          "desc": "The timeline to use a track from."
+        },
+        "track": {
+          "type": "string",
+          "name": "Track ID",
+          "desc": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "items": {
+            "direct": "Direct",
+            "add-waypoints": "Add waypoints"
+          }
+        }
+      }
+    },
+    {
+      "id": "move-along-timeline-by-name",
+      "scriptName": "MoveAlongTimelineByName",
+      "category": "",
+      "list-name": "Move along timeline (by name)",
+      "display-text": "{my}: Move along [b]{0}[/b] track [i]{1}[/i] ({2})",
+      "description": "Start moving along all the points of a timeline track with X and Y properties, using a string for the timeline name.",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "Timeline name",
+          "desc": "A string with the name of the timeline to use a track from."
+        },
+        "track": {
+          "type": "string",
+          "name": "Track ID",
+          "desc": "The track ID in the timeline to use X and Y positions from. Leave empty to use first track."
+        },
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether to move directly (removing any previous waypoints), or add new waypoints to move to after prior movements.",
+          "items": {
+            "direct": "Direct",
+            "add-waypoints": "Add waypoints"
+          }
+        }
+      }
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "",
+      "list-name": "Stop",
+      "display-text": "Stop {my}",
+      "description": "Stop movement and remove all waypoints."
+    },
+    {
+      "id": "set-moving-angle",
+      "scriptName": "SetMovingAngle",
+      "category": "",
+      "list-name": "Set angle of motion",
+      "display-text": "Set {my} angle of motion to [i]{0}[/i] degrees",
+      "description": "Set the angle the object is moving at.",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The new angle of motion, in degrees."
+        }
+      }
+    },
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "Set speed",
+      "display-text": "Set {my} speed to [i]{0}[/i]",
+      "description": "Set the object's current speed.",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The new speed of the object to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-max-speed",
+      "scriptName": "SetMaxSpeed",
+      "category": "properties",
+      "list-name": "Set max speed",
+      "display-text": "Set {my} maximum speed to [i]{0}[/i]",
+      "description": "Set the object's maximum speed.",
+      "params": {
+        "max-speed": {
+          "type": "number",
+          "name": "Max Speed",
+          "desc": "The new maximum speed of the object to set, in pixels per second."
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "properties",
+      "list-name": "Set acceleration",
+      "display-text": "Set {my} acceleration to [i]{0}[/i]",
+      "description": "Set the object's acceleration.",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "Acceleration",
+          "desc": "The new acceleration of the object to set, in pixels per second per second. Use 0 for instant acceleration."
+        }
+      }
+    },
+    {
+      "id": "set-deceleration",
+      "scriptName": "SetDeceleration",
+      "category": "properties",
+      "list-name": "Set deceleration",
+      "display-text": "Set {my} deceleration to [i]{0}[/i]",
+      "description": "Set the object's deceleration.",
+      "params": {
+        "deceleration": {
+          "type": "number",
+          "name": "Deceleration",
+          "desc": "The new deceleration of the object to set, in pixels per second per second. Use 0 for instant deceleration."
+        }
+      }
+    },
+    {
+      "id": "set-rotate-speed",
+      "scriptName": "SetRotateSpeed",
+      "category": "properties",
+      "list-name": "Set rotate speed",
+      "display-text": "Set {my} rotate speed to [i]{0}[/i] degrees per second",
+      "description": "Set the turn speed for rotating towards the target position.",
+      "params": {
+        "rotate-speed": {
+          "type": "number",
+          "name": "Rotate speed",
+          "desc": "The turn speed to set, in degrees per second. Use 0 to disable turning."
+        }
+      }
+    },
+    {
+      "id": "set-stop-on-solids",
+      "scriptName": "SetStopOnSolids",
+      "category": "properties",
+      "list-name": "Set stop on solids",
+      "display-text": "Set {my} stop on solids [b]{0}[/b]",
+      "description": "Set whether to automatically stop movement if hitting a solid object.",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Set whether to stop on solids."
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "properties",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} enabled [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Set whether to enable or disable the behavior."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "Speed",
+      "description": "The current object speed, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "movingangle",
+      "scriptName": "MovingAngle",
+      "category": "",
+      "translated-name": "MovingAngle",
+      "description": "The current angle of motion, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "targetx",
+      "scriptName": "TargetX",
+      "category": "",
+      "translated-name": "TargetX",
+      "description": "The X co-ordinate of the current target position moving towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "targety",
+      "scriptName": "TargetY",
+      "category": "",
+      "translated-name": "TargetY",
+      "description": "The Y co-ordinate of the current target position moving towards.",
+      "returnType": "number"
+    },
+    {
+      "id": "waypointcount",
+      "scriptName": "WaypointCount",
+      "category": "",
+      "translated-name": "WaypointCount",
+      "description": "The number of remaining waypoints to move to.",
+      "returnType": "number"
+    },
+    {
+      "id": "waypointxat",
+      "scriptName": "WaypointXAt",
+      "category": "",
+      "translated-name": "WaypointXAt",
+      "description": "The X co-ordinate of a waypoint at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of waypoint."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "waypointyat",
+      "scriptName": "WaypointYAt",
+      "category": "",
+      "translated-name": "WaypointYAt",
+      "description": "The Y co-ordinate of a waypoint at an index.",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Zero-based index of waypoint."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "maxspeed",
+      "scriptName": "MaxSpeed",
+      "category": "properties",
+      "translated-name": "MaxSpeed",
+      "description": "The maximum speed setting, in pixels per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "properties",
+      "translated-name": "Acceleration",
+      "description": "The acceleration setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "deceleration",
+      "scriptName": "Deceleration",
+      "category": "properties",
+      "translated-name": "Deceleration",
+      "description": "The deceleration setting, in pixels per second per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "rotatespeed",
+      "scriptName": "RotateSpeed",
+      "category": "properties",
+      "translated-name": "RotateSpeed",
+      "description": "The current maximum turn speed in degrees per second.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "max-speed": {
+      "name": "Max speed",
+      "desc": "The maximum speed, in pixels per second, the object can travel at."
+    },
+    "acceleration": {
+      "name": "Acceleration",
+      "desc": "The rate of acceleration, in pixels per second per second. Use 0 for instant acceleration."
+    },
+    "deceleration": {
+      "name": "Deceleration",
+      "desc": "The rate of deceleration, in pixels per second per second. Use 0 for instant deceleration."
+    },
+    "rotate-speed": {
+      "name": "Rotate speed",
+      "desc": "When turning, the maximum turn speed in degrees per second. Use 0 to disable turning."
+    },
+    "set-angle": {
+      "name": "Set angle",
+      "desc": "Automatically set the object's angle to the angle of motion."
+    },
+    "stop-on-solids": {
+      "name": "Stop on solids",
+      "desc": "Automatically stop movement if hitting a solid object."
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}
