@@ -17,7 +17,7 @@ except ImportError:
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 # Schema directory: CDN-exported schemas
-SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))) / os.getenv("C3_VERSION", "r495") / "schemas"
+SCHEMA_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn"))) / os.getenv("C3_VERSION", "r495.2") / "schemas"
 
 # =============================================================================
 # External Sources
@@ -44,7 +44,7 @@ ADDON_SDK_CODE_AVAILABLE: bool = ADDON_SDK_CODE_DIR.exists()
 # =============================================================================
 # Construct 3 CDN (official data source)
 # =============================================================================
-C3_VERSION = os.getenv("C3_VERSION", "r495")
+C3_VERSION = os.getenv("C3_VERSION", "r495.2")
 C3_CDN_BASE = os.getenv("C3_CDN_BASE", "https://editor.construct.net")
 C3_CACHE_DIR = Path(os.getenv("C3_CACHE_DIR", str(BASE_DIR / ".cache" / "c3-cdn")))
 
