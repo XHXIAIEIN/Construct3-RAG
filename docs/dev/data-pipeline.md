@@ -38,7 +38,16 @@
 .cache/c3-cdn/{version}/examples/
   en-US/{id}.json               — English example project metadata
   zh-CN/{id}.json               — Chinese equivalent
+
+.cache/c3-cdn/{version}/lang/
+  en-US.json                    — raw precompiled language pack, re-indented
+  zh-CN.json                    — Chinese equivalent
 ```
+
+`C3Fetcher.export_lang()` writes the `lang/` files. They are the CDN text
+unchanged apart from indentation, so a release-to-release diff of
+`data/c3-lang/` shows exactly which strings Scirra added, removed, or
+retranslated.
 
 Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
@@ -228,5 +237,6 @@ python scripts/init.py --version <release>
 python -m src.ingest.indexer --rebuild
 ```
 
-The update workflow copies every exported locale directory instead of naming
-locales itself. This keeps generated and committed layouts identical.
+The update workflow copies every exported directory, schemas, examples,
+language packs, and ts-defs, instead of naming locales itself. This keeps
+generated and committed layouts identical.

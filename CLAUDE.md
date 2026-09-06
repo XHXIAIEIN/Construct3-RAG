@@ -157,6 +157,7 @@ Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参�
 | ACE 参数和事件表显示 | 对应条目的 `params`、`display-text` 和描述字段 |
 | JavaScript/TypeScript 接口 | `data/c3-ts-defs/autocomplete-data.json` 和 `.d.ts` |
 | 示例项目 | `data/c3-examples/{locale}/` 中的元数据 |
+| 翻译对照或 Schema 之外的编辑器文本 | `data/c3-lang/{locale}.json` 的 `text` 字段 |
 
 一般概念可以使用通用知识，但涉及具体名称、参数、签名或可用性时必须核对数据。
 
