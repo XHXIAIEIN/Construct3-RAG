@@ -112,6 +112,15 @@ jobs:
               en_count = len(list((examples_target / 'en-US').glob('*.json'))) if (examples_target / 'en-US').exists() else 0
               print(f'Examples: {en_count}')
 
+          # Language packs: raw CDN text, pretty printed so releases can be diffed
+          print('Exporting language packs...')
+          lang_dir = f.export_lang()
+          lang_target = Path('data/c3-lang')
+          if lang_target.exists():
+              shutil.rmtree(lang_target)
+          shutil.copytree(lang_dir, lang_target)
+          print('Language packs: ' + ', '.join(sorted(p.name for p in lang_target.glob('*.json'))))
+
           # 2. Export ts-defs
           print('Exporting ts-defs...')
           ts_dir = f.export_ts_defs()

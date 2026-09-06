@@ -102,3 +102,20 @@ def test_fetch_effects(fetcher):
     with patch.object(fetcher, "fetch", return_value=mock):
         result = fetcher.fetch_effects()
         assert result == [{"json": {"id": "blur"}}]
+
+
+def test_export_lang_writes_readable_json_per_locale(fetcher):
+    """Language packs are written per locale, pretty printed, without ASCII escaping."""
+    payload = {
+        "en-US": {"languageTag": "en-US", "text": {"plugins": {"sprite": {"name": "Sprite"}}}},
+        "zh-CN": {"languageTag": "zh-CN", "text": {"plugins": {"sprite": {"name": "精灵"}}}},
+    }
+    with patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": payload[locale]):
+        out_dir = fetcher.export_lang(("en-US", "zh-CN"))
+
+    assert out_dir == fetcher.cache_dir / "lang"
+    assert sorted(p.name for p in out_dir.glob("*.json")) == ["en-US.json", "zh-CN.json"]
+    zh_text = (out_dir / "zh-CN.json").read_text(encoding="utf-8")
+    assert json.loads(zh_text) == payload["zh-CN"]
+    assert "精灵" in zh_text
+    assert zh_text.count("\n") > 3

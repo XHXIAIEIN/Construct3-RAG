@@ -621,6 +621,24 @@ class C3Fetcher:
         """Fetch precompiled language file (en-US or zh-CN)."""
         return self.fetch(ENDPOINTS["lang"].format(locale=locale))
 
+    def export_lang(self, locales: tuple[str, ...] = ("en-US", "zh-CN")) -> Path:
+        """Save the raw precompiled language packs as readable JSON.
+
+        The CDN serves them minified on one line. Re-serialising with
+        indentation and without ASCII escaping puts every string on its own
+        line, so two releases can be compared with a plain text diff.
+
+        Returns the output directory containing ``{locale}.json`` files.
+        """
+        out_dir = self.cache_dir / "lang"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for locale in locales:
+            data = self.fetch_lang(locale)
+            (out_dir / f"{locale}.json").write_text(
+                json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+            )
+        return out_dir
+
     def fetch_effects(self) -> list:
         """Fetch all effect definitions."""
         data = self.fetch(ENDPOINTS["effects"])

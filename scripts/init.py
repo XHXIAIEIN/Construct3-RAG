@@ -67,6 +67,8 @@ def main():
     print(f"  {counts['plugins']} plugin schemas")
     print(f"  {counts['behaviors']} behavior schemas")
     print(f"  {counts['effects']} effect schemas")
+    lang_dir = fetcher.export_lang()
+    print(f"  language packs: {', '.join(sorted(p.stem for p in lang_dir.glob('*.json')))}")
 
     # 3. Discover locales. Informational only; the CDN path can change
     # between releases, so a failure here must not discard the export above.

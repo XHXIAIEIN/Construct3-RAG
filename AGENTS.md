@@ -45,6 +45,7 @@ questions from memory when the repository can be checked.
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the matching `.d.ts` |
 | Example projects for a topic | `data/c3-examples/{locale}/*.json`, filter `tags` and `used-addons` |
+| How a string is translated, or editor text outside the schemas | `data/c3-lang/{locale}.json` under `text` |
 | Data field meanings | `docs/guide/data-format.md` |
 
 Rules that matter:

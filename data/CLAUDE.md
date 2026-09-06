@@ -8,6 +8,7 @@ Committed Construct 3 reference data. Readable without the API or Qdrant.
 | `c3-schemas/_index.json` | Plugin, behavior, and effect index. Language neutral. |
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
 | `c3-examples/{locale}/` | Example projects: name, description, tags, used-addons, open URL |
+| `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed. Source text behind the schemas; diff it between releases. |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to method and property listings |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
 | `bm25_vocab.msgpack` | Sparse vocabulary for optional full mode |
