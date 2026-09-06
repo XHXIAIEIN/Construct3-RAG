@@ -14,6 +14,7 @@ data/
     {locale}/behaviors/{id}.json   behavior ACEs
     {locale}/effects/{id}.json     effect parameters and categories
   c3-examples/{locale}/{id}.json   example project metadata
+  c3-lang/{locale}.json            raw CDN language pack, pretty printed
   c3-ts-defs/
     autocomplete-data.json         scripting class to member listings
     plugins/**/*.d.ts              plugin instance interfaces
@@ -83,6 +84,21 @@ Each file in `c3-examples/{locale}/` describes one official example:
 
 To find examples for a plugin, filter on `used-addons`. To find examples for
 a topic, filter on `tags`.
+
+## Language packs
+
+`c3-lang/{locale}.json` is the editor's precompiled language pack for that
+locale, saved exactly as the CDN serves it but re-indented with one string
+per line. The `text` object holds every localized string: `plugins`,
+`behaviors`, `effects`, `ui`, `runtime`, and more. Schema files are built
+from the `plugins`, `behaviors`, and `effects` branches.
+
+Use it to see how a string was translated, to find text that the schema
+export does not carry, or to diff two releases:
+
+```bash
+git diff <old-commit> -- data/c3-lang/zh-CN.json
+```
 
 ## Scripting interfaces
 

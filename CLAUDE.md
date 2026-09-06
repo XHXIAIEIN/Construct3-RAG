@@ -103,6 +103,7 @@ Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参�
 | `data/c3-schemas/` | 核心、已提交、无需服务即可读取 |
 | `data/c3-examples/` | 核心参考数据，可直接读取 |
 | `data/c3-ts-defs/` | 核心脚本接口数据，可直接读取 |
+| `data/c3-lang/` | CDN 原始语言包，已格式化，用于本地对比翻译 |
 | CDN 拉取、导出和更新自动化 | 核心数据维护能力 |
 | Schema Direct Lookup | 可选搜索能力，必须严格控制错误截获 |
 | FastAPI 服务 | 可选数据访问和检索接口 |

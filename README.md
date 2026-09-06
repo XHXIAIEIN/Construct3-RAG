@@ -42,6 +42,7 @@ No install needed. Pick a language (`en-US` or `zh-CN`) and read.
 | `c3-schemas/{locale}/behaviors/{id}.json` | indexed | Behavior ACE definitions |
 | `c3-schemas/{locale}/effects/{id}.json` | indexed | Effect parameters, categories |
 | `c3-examples/{locale}/{id}.json` | per release | Name, description, tags, used-addons, open URL |
+| `c3-lang/{locale}.json` | per release | Raw CDN language pack, pretty printed for diffing translations |
 | `c3-ts-defs/autocomplete-data.json` | per release | Scripting classes → methods/properties |
 | `c3-ts-defs/**/*.d.ts` | per release | Full TypeScript interface signatures |
 
@@ -163,6 +164,7 @@ AGENTS.md               Entry point for AI agents: repo map, retrieval SOP, work
 data/                   Committed reference data. Read directly, no install
   c3-schemas/           ACE definitions, effects (en-US + zh-CN)
   c3-examples/          Example project metadata (en-US + zh-CN)
+  c3-lang/              Raw CDN language packs (en-US + zh-CN)
   c3-ts-defs/           TypeScript scripting interfaces
 prompts/                Ready-to-use LLM system prompts for event sheet help
 src/                    Optional search service (see src/CLAUDE.md for packages)

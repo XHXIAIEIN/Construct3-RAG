@@ -42,6 +42,7 @@ Schema 文件中每个 ACE 条目的字段含义：
 | `c3-schemas/{locale}/behaviors/{id}.json` | 见索引 | 行为 ACE 定义 |
 | `c3-schemas/{locale}/effects/{id}.json` | 见索引 | 特效参数、分类 |
 | `c3-examples/{locale}/{id}.json` | 随版本变化 | 名称、描述、标签、使用的插件、打开链接 |
+| `c3-lang/{locale}.json` | 随版本变化 | CDN 原始语言包，已格式化，便于对比翻译差异 |
 | `c3-ts-defs/autocomplete-data.json` | 随版本变化 | 脚本类 → 方法/属性 |
 | `c3-ts-defs/**/*.d.ts` | 随版本变化 | 完整 TypeScript 接口签名 |
 
@@ -147,6 +148,7 @@ AGENTS.md               AI 代理入口：仓库地图、检索 SOP、工作 SOP
 data/                   已提交的参考数据，直接读取，无需安装
   c3-schemas/           ACE 定义、特效（en-US + zh-CN）
   c3-examples/          示例项目元数据（en-US + zh-CN）
+  c3-lang/              CDN 原始语言包，每行一个字符串
   c3-ts-defs/           TypeScript 脚本接口
 prompts/                可直接使用的事件表助手 system prompt
 src/                    可选搜索服务（包结构见 src/CLAUDE.md）
