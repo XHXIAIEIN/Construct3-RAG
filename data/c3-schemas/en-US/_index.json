@@ -1,0 +1,758 @@
+{
+  "version": "r495.2",
+  "language": "en-US",
+  "plugins": {
+    "advert": {
+      "name": "Mobile advert",
+      "file": "plugins/advert.json"
+    },
+    "ninepatch": {
+      "name": "9-patch",
+      "file": "plugins/ninepatch.json"
+    },
+    "system": {
+      "name": "System",
+      "file": "plugins/system.json"
+    },
+    "ajax": {
+      "name": "AJAX",
+      "file": "plugins/ajax.json"
+    },
+    "advancedrandom": {
+      "name": "Advanced Random",
+      "file": "plugins/advancedrandom.json"
+    },
+    "audio": {
+      "name": "Audio",
+      "file": "plugins/audio.json"
+    },
+    "arr": {
+      "name": "Array",
+      "file": "plugins/arr.json"
+    },
+    "bbcmicrobit": {
+      "name": "BBC micro:bit",
+      "file": "plugins/bbcmicrobit.json"
+    },
+    "binarydata": {
+      "name": "Binary Data",
+      "file": "plugins/binarydata.json"
+    },
+    "bluetooth": {
+      "name": "Bluetooth",
+      "file": "plugins/bluetooth.json"
+    },
+    "browser": {
+      "name": "Browser",
+      "file": "plugins/browser.json"
+    },
+    "button": {
+      "name": "Button",
+      "file": "plugins/button.json"
+    },
+    "camera3d": {
+      "name": "3D camera",
+      "file": "plugins/camera3d.json"
+    },
+    "clipboard": {
+      "name": "Clipboard",
+      "file": "plugins/clipboard.json"
+    },
+    "constructgameservices": {
+      "name": "Construct Game Services",
+      "file": "plugins/constructgameservices.json"
+    },
+    "cryptography": {
+      "name": "Cryptography",
+      "file": "plugins/cryptography.json"
+    },
+    "csv": {
+      "name": "CSV",
+      "file": "plugins/csv.json"
+    },
+    "date": {
+      "name": "Date",
+      "file": "plugins/date.json"
+    },
+    "dictionary": {
+      "name": "Dictionary",
+      "file": "plugins/dictionary.json"
+    },
+    "drawingcanvas": {
+      "name": "Drawing canvas",
+      "file": "plugins/drawingcanvas.json"
+    },
+    "facebook": {
+      "name": "Facebook",
+      "file": "plugins/facebook.json"
+    },
+    "filechooser": {
+      "name": "File chooser",
+      "file": "plugins/filechooser.json"
+    },
+    "filesystem": {
+      "name": "File system",
+      "file": "plugins/filesystem.json"
+    },
+    "gamepad": {
+      "name": "Gamepad",
+      "file": "plugins/gamepad.json"
+    },
+    "gamerecorder": {
+      "name": "Video recorder",
+      "file": "plugins/gamerecorder.json"
+    },
+    "geolocation": {
+      "name": "Geolocation",
+      "file": "plugins/geolocation.json"
+    },
+    "iframe": {
+      "name": "iframe",
+      "file": "plugins/iframe.json"
+    },
+    "googleplay": {
+      "name": "Google Play",
+      "file": "plugins/googleplay.json"
+    },
+    "htmlelement": {
+      "name": "HTML Element",
+      "file": "plugins/htmlelement.json"
+    },
+    "cordovaiap": {
+      "name": "Mobile IAP",
+      "file": "plugins/cordovaiap.json"
+    },
+    "instantgames": {
+      "name": "Instant Games",
+      "file": "plugins/instantgames.json"
+    },
+    "internationalization": {
+      "name": "Internationalization",
+      "file": "plugins/internationalization.json"
+    },
+    "json": {
+      "name": "JSON",
+      "file": "plugins/json.json"
+    },
+    "keyboard": {
+      "name": "Keyboard",
+      "file": "plugins/keyboard.json"
+    },
+    "midi": {
+      "name": "MIDI",
+      "file": "plugins/midi.json"
+    },
+    "list": {
+      "name": "List",
+      "file": "plugins/list.json"
+    },
+    "localstorage": {
+      "name": "Local storage",
+      "file": "plugins/localstorage.json"
+    },
+    "model3d": {
+      "name": "3D model",
+      "file": "plugins/model3d.json"
+    },
+    "mouse": {
+      "name": "Mouse",
+      "file": "plugins/mouse.json"
+    },
+    "multiplayer": {
+      "name": "Multiplayer",
+      "file": "plugins/multiplayer.json"
+    },
+    "nodewebkit": {
+      "name": "NW.js",
+      "file": "plugins/nodewebkit.json"
+    },
+    "particles": {
+      "name": "Particles",
+      "file": "plugins/particles.json"
+    },
+    "platforminfo": {
+      "name": "Platform info",
+      "file": "plugins/platforminfo.json"
+    },
+    "qrcode": {
+      "name": "QR code",
+      "file": "plugins/qrcode.json"
+    },
+    "progressbar": {
+      "name": "Progress bar",
+      "file": "plugins/progressbar.json"
+    },
+    "shape3d": {
+      "name": "3D shape",
+      "file": "plugins/shape3d.json"
+    },
+    "shadowlight": {
+      "name": "Shadow light",
+      "file": "plugins/shadowlight.json"
+    },
+    "share": {
+      "name": "Share",
+      "file": "plugins/share.json"
+    },
+    "sliderbar": {
+      "name": "Slider bar",
+      "file": "plugins/sliderbar.json"
+    },
+    "speechrecognition": {
+      "name": "Speech recognition",
+      "file": "plugins/speechrecognition.json"
+    },
+    "speechsynthesis": {
+      "name": "Speech synthesis",
+      "file": "plugins/speechsynthesis.json"
+    },
+    "sprite": {
+      "name": "Sprite",
+      "file": "plugins/sprite.json"
+    },
+    "spritefont2": {
+      "name": "Sprite font",
+      "file": "plugins/spritefont2.json"
+    },
+    "svgpicture": {
+      "name": "SVG Picture",
+      "file": "plugins/svgpicture.json"
+    },
+    "text": {
+      "name": "Text",
+      "file": "plugins/text.json"
+    },
+    "textbox": {
+      "name": "Text input",
+      "file": "plugins/textbox.json"
+    },
+    "tiledbg": {
+      "name": "Tiled Background",
+      "file": "plugins/tiledbg.json"
+    },
+    "timeline": {
+      "name": "Timeline controller",
+      "file": "plugins/timeline.json"
+    },
+    "tilemap": {
+      "name": "Tilemap",
+      "file": "plugins/tilemap.json"
+    },
+    "flowchart": {
+      "name": "Flowchart controller",
+      "file": "plugins/flowchart.json"
+    },
+    "touch": {
+      "name": "Touch",
+      "file": "plugins/touch.json"
+    },
+    "usermedia": {
+      "name": "User Media",
+      "file": "plugins/usermedia.json"
+    },
+    "video": {
+      "name": "Video",
+      "file": "plugins/video.json"
+    },
+    "c2websocket": {
+      "name": "WebSocket",
+      "file": "plugins/c2websocket.json"
+    },
+    "xml": {
+      "name": "XML",
+      "file": "plugins/xml.json"
+    },
+    "_common": {
+      "name": "(unused)",
+      "file": "plugins/_common.json"
+    }
+  },
+  "behaviors": {
+    "anchor": {
+      "name": "Anchor",
+      "file": "behaviors/anchor.json"
+    },
+    "eightdir": {
+      "name": "8 Direction",
+      "file": "behaviors/eightdir.json"
+    },
+    "bound": {
+      "name": "Bound to",
+      "file": "behaviors/bound.json"
+    },
+    "bullet": {
+      "name": "Bullet",
+      "file": "behaviors/bullet.json"
+    },
+    "billboard": {
+      "name": "Billboard",
+      "file": "behaviors/billboard.json"
+    },
+    "car": {
+      "name": "Car",
+      "file": "behaviors/car.json"
+    },
+    "custom": {
+      "name": "Custom",
+      "file": "behaviors/custom.json"
+    },
+    "destroy": {
+      "name": "Destroy outside",
+      "file": "behaviors/destroy.json"
+    },
+    "dragndrop": {
+      "name": "Drag & Drop",
+      "file": "behaviors/dragndrop.json"
+    },
+    "fade": {
+      "name": "Fade",
+      "file": "behaviors/fade.json"
+    },
+    "jumpthru": {
+      "name": "Jump-thru",
+      "file": "behaviors/jumpthru.json"
+    },
+    "follow": {
+      "name": "Follow",
+      "file": "behaviors/follow.json"
+    },
+    "flash": {
+      "name": "Flash",
+      "file": "behaviors/flash.json"
+    },
+    "nosave": {
+      "name": "No save",
+      "file": "behaviors/nosave.json"
+    },
+    "los": {
+      "name": "Line of sight",
+      "file": "behaviors/los.json"
+    },
+    "moveto": {
+      "name": "Move To",
+      "file": "behaviors/moveto.json"
+    },
+    "orbit": {
+      "name": "Orbit",
+      "file": "behaviors/orbit.json"
+    },
+    "persist": {
+      "name": "Persist",
+      "file": "behaviors/persist.json"
+    },
+    "pathfinding": {
+      "name": "Pathfinding",
+      "file": "behaviors/pathfinding.json"
+    },
+    "physics": {
+      "name": "Physics",
+      "file": "behaviors/physics.json"
+    },
+    "pin": {
+      "name": "Pin",
+      "file": "behaviors/pin.json"
+    },
+    "platform": {
+      "name": "Platform",
+      "file": "behaviors/platform.json"
+    },
+    "rotate": {
+      "name": "Rotate",
+      "file": "behaviors/rotate.json"
+    },
+    "scrollto": {
+      "name": "Scroll To",
+      "file": "behaviors/scrollto.json"
+    },
+    "shadowcaster": {
+      "name": "Shadow caster",
+      "file": "behaviors/shadowcaster.json"
+    },
+    "solid": {
+      "name": "Solid",
+      "file": "behaviors/solid.json"
+    },
+    "sin": {
+      "name": "Sine",
+      "file": "behaviors/sin.json"
+    },
+    "tilemovement": {
+      "name": "Tile movement",
+      "file": "behaviors/tilemovement.json"
+    },
+    "timer": {
+      "name": "Timer",
+      "file": "behaviors/timer.json"
+    },
+    "tween": {
+      "name": "Tween",
+      "file": "behaviors/tween.json"
+    },
+    "turret": {
+      "name": "Turret",
+      "file": "behaviors/turret.json"
+    },
+    "wrap": {
+      "name": "Wrap",
+      "file": "behaviors/wrap.json"
+    }
+  },
+  "effects": {
+    "alphaclamp": {
+      "name": "Alpha cutoff",
+      "file": "effects/alphaclamp.json"
+    },
+    "alphaclamp2": {
+      "name": "Alpha clamp",
+      "file": "effects/alphaclamp2.json"
+    },
+    "alpharamp": {
+      "name": "Alpha ramp",
+      "file": "effects/alpharamp.json"
+    },
+    "blacknwhite": {
+      "name": "Black & white",
+      "file": "effects/blacknwhite.json"
+    },
+    "blacknwhitemask": {
+      "name": "Black & white mask",
+      "file": "effects/blacknwhitemask.json"
+    },
+    "blurhorizontal": {
+      "name": "Blur horizontal",
+      "file": "effects/blurhorizontal.json"
+    },
+    "blurvertical": {
+      "name": "Blur vertical",
+      "file": "effects/blurvertical.json"
+    },
+    "brightness": {
+      "name": "Brightness",
+      "file": "effects/brightness.json"
+    },
+    "bulge": {
+      "name": "Bulge",
+      "file": "effects/bulge.json"
+    },
+    "bumpmapping": {
+      "name": "Bumpmapping",
+      "file": "effects/bumpmapping.json"
+    },
+    "burn": {
+      "name": "Burn",
+      "file": "effects/burn.json"
+    },
+    "cga": {
+      "name": "CGA",
+      "file": "effects/cga.json"
+    },
+    "colorblend": {
+      "name": "Color",
+      "file": "effects/colorblend.json"
+    },
+    "colorhalftone": {
+      "name": "Color halftone",
+      "file": "effects/colorhalftone.json"
+    },
+    "contrast": {
+      "name": "Contrast",
+      "file": "effects/contrast.json"
+    },
+    "crosshatch": {
+      "name": "Crosshatch",
+      "file": "effects/crosshatch.json"
+    },
+    "crystalball": {
+      "name": "Crystal ball",
+      "file": "effects/crystalball.json"
+    },
+    "darken": {
+      "name": "Darken",
+      "file": "effects/darken.json"
+    },
+    "depthstripe": {
+      "name": "Depth stripe",
+      "file": "effects/depthstripe.json"
+    },
+    "difference": {
+      "name": "Difference",
+      "file": "effects/difference.json"
+    },
+    "divide": {
+      "name": "Divide",
+      "file": "effects/divide.json"
+    },
+    "dodge": {
+      "name": "Dodge",
+      "file": "effects/dodge.json"
+    },
+    "dotscreen": {
+      "name": "Dot screen",
+      "file": "effects/dotscreen.json"
+    },
+    "emboss": {
+      "name": "Emboss",
+      "file": "effects/emboss.json"
+    },
+    "exclusion": {
+      "name": "Exclusion",
+      "file": "effects/exclusion.json"
+    },
+    "exposure": {
+      "name": "Exposure",
+      "file": "effects/exposure.json"
+    },
+    "fogexponential": {
+      "name": "Fog (exponential)",
+      "file": "effects/fogexponential.json"
+    },
+    "gamma": {
+      "name": "Gamma",
+      "file": "effects/gamma.json"
+    },
+    "glass": {
+      "name": "Glass",
+      "file": "effects/glass.json"
+    },
+    "glowhorizontal": {
+      "name": "Glow horizontal",
+      "file": "effects/glowhorizontal.json"
+    },
+    "glowvertical": {
+      "name": "Glow vertical",
+      "file": "effects/glowvertical.json"
+    },
+    "grayscale": {
+      "name": "Grayscale",
+      "file": "effects/grayscale.json"
+    },
+    "grayscalemask": {
+      "name": "Grayscale mask",
+      "file": "effects/grayscalemask.json"
+    },
+    "hardlight": {
+      "name": "Hard light",
+      "file": "effects/hardlight.json"
+    },
+    "hexpixellate": {
+      "name": "Hexagonal pixellate",
+      "file": "effects/hexpixellate.json"
+    },
+    "hexpixellatemask": {
+      "name": "Hexagonal pixellate mask",
+      "file": "effects/hexpixellatemask.json"
+    },
+    "highlightshadow": {
+      "name": "Highlight shadow",
+      "file": "effects/highlightshadow.json"
+    },
+    "hsladjust": {
+      "name": "Adjust HSL",
+      "file": "effects/hsladjust.json"
+    },
+    "hsladjustmask": {
+      "name": "Adjust HSL mask",
+      "file": "effects/hsladjustmask.json"
+    },
+    "hueblend": {
+      "name": "Hue",
+      "file": "effects/hueblend.json"
+    },
+    "inverse": {
+      "name": "Inverse",
+      "file": "effects/inverse.json"
+    },
+    "lens2": {
+      "name": "Lens2",
+      "file": "effects/lens2.json"
+    },
+    "lighten": {
+      "name": "Lighten",
+      "file": "effects/lighten.json"
+    },
+    "lumblend": {
+      "name": "Luminosity",
+      "file": "effects/lumblend.json"
+    },
+    "multiply": {
+      "name": "Multiply",
+      "file": "effects/multiply.json"
+    },
+    "noise": {
+      "name": "Noise",
+      "file": "effects/noise.json"
+    },
+    "noisemask": {
+      "name": "Noise mask",
+      "file": "effects/noisemask.json"
+    },
+    "oilpainting": {
+      "name": "Oil painting",
+      "file": "effects/oilpainting.json"
+    },
+    "overlay": {
+      "name": "Overlay",
+      "file": "effects/overlay.json"
+    },
+    "pixellate": {
+      "name": "Pixellate",
+      "file": "effects/pixellate.json"
+    },
+    "pixellatemask": {
+      "name": "Pixellate mask",
+      "file": "effects/pixellatemask.json"
+    },
+    "polarinvert": {
+      "name": "Polar invert",
+      "file": "effects/polarinvert.json"
+    },
+    "polkadot": {
+      "name": "Polka dot",
+      "file": "effects/polkadot.json"
+    },
+    "posterize": {
+      "name": "Posterize",
+      "file": "effects/posterize.json"
+    },
+    "posterizemask": {
+      "name": "Posterize mask",
+      "file": "effects/posterizemask.json"
+    },
+    "pulse": {
+      "name": "Pulse",
+      "file": "effects/pulse.json"
+    },
+    "radialblur": {
+      "name": "Radial blur",
+      "file": "effects/radialblur.json"
+    },
+    "radialpixellate": {
+      "name": "Radial pixellate",
+      "file": "effects/radialpixellate.json"
+    },
+    "radialpixellatemask": {
+      "name": "Radial pixellate mask",
+      "file": "effects/radialpixellatemask.json"
+    },
+    "randomizetiling": {
+      "name": "Randomize tiling",
+      "file": "effects/randomizetiling.json"
+    },
+    "replacecolor": {
+      "name": "Replace color",
+      "file": "effects/replacecolor.json"
+    },
+    "replacesolidcolor": {
+      "name": "Replace solid color",
+      "file": "effects/replacesolidcolor.json"
+    },
+    "satblend": {
+      "name": "Saturation",
+      "file": "effects/satblend.json"
+    },
+    "scanlines": {
+      "name": "Scan lines",
+      "file": "effects/scanlines.json"
+    },
+    "screen": {
+      "name": "Screen",
+      "file": "effects/screen.json"
+    },
+    "sepia": {
+      "name": "Sepia",
+      "file": "effects/sepia.json"
+    },
+    "sepiamask": {
+      "name": "Sepia mask",
+      "file": "effects/sepiamask.json"
+    },
+    "setcolor": {
+      "name": "Set color",
+      "file": "effects/setcolor.json"
+    },
+    "sharpen": {
+      "name": "Sharpen",
+      "file": "effects/sharpen.json"
+    },
+    "sketch": {
+      "name": "Sketch",
+      "file": "effects/sketch.json"
+    },
+    "softlight": {
+      "name": "Soft light",
+      "file": "effects/softlight.json"
+    },
+    "sphere": {
+      "name": "Sphere",
+      "file": "effects/sphere.json"
+    },
+    "stretch": {
+      "name": "Stretch",
+      "file": "effects/stretch.json"
+    },
+    "subtract": {
+      "name": "Subtract",
+      "file": "effects/subtract.json"
+    },
+    "swirl": {
+      "name": "Swirl",
+      "file": "effects/swirl.json"
+    },
+    "tint": {
+      "name": "Tint",
+      "file": "effects/tint.json"
+    },
+    "tintmask": {
+      "name": "Tint mask",
+      "file": "effects/tintmask.json"
+    },
+    "toon": {
+      "name": "Toon",
+      "file": "effects/toon.json"
+    },
+    "vibrance": {
+      "name": "Vibrance",
+      "file": "effects/vibrance.json"
+    },
+    "vignette": {
+      "name": "Vignette",
+      "file": "effects/vignette.json"
+    },
+    "warp": {
+      "name": "Warp",
+      "file": "effects/warp.json"
+    },
+    "warpobject": {
+      "name": "Warp object",
+      "file": "effects/warpobject.json"
+    },
+    "warpobjectmask": {
+      "name": "Warp object mask",
+      "file": "effects/warpobjectmask.json"
+    },
+    "warplayout": {
+      "name": "Warp layout",
+      "file": "effects/warplayout.json"
+    },
+    "warpmask": {
+      "name": "Warp mask",
+      "file": "effects/warpmask.json"
+    },
+    "warpradial": {
+      "name": "Warp radial",
+      "file": "effects/warpradial.json"
+    },
+    "warpripple": {
+      "name": "Warp ripple",
+      "file": "effects/warpripple.json"
+    },
+    "water": {
+      "name": "Water",
+      "file": "effects/water.json"
+    },
+    "waterbg": {
+      "name": "Water background",
+      "file": "effects/waterbg.json"
+    }
+  }
+}

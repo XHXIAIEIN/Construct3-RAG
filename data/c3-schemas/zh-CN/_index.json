@@ -1,0 +1,758 @@
+{
+  "version": "r495.2",
+  "language": "zh-CN",
+  "plugins": {
+    "advert": {
+      "name": "激励广告",
+      "file": "plugins/advert.json"
+    },
+    "ninepatch": {
+      "name": "九宫图",
+      "file": "plugins/ninepatch.json"
+    },
+    "system": {
+      "name": "系统",
+      "file": "plugins/system.json"
+    },
+    "ajax": {
+      "name": "AJAX",
+      "file": "plugins/ajax.json"
+    },
+    "advancedrandom": {
+      "name": "高级随机",
+      "file": "plugins/advancedrandom.json"
+    },
+    "audio": {
+      "name": "音频",
+      "file": "plugins/audio.json"
+    },
+    "arr": {
+      "name": "数组",
+      "file": "plugins/arr.json"
+    },
+    "bbcmicrobit": {
+      "name": "BBC micro:bit",
+      "file": "plugins/bbcmicrobit.json"
+    },
+    "binarydata": {
+      "name": "二进制",
+      "file": "plugins/binarydata.json"
+    },
+    "bluetooth": {
+      "name": "蓝牙",
+      "file": "plugins/bluetooth.json"
+    },
+    "browser": {
+      "name": "浏览器",
+      "file": "plugins/browser.json"
+    },
+    "button": {
+      "name": "按钮",
+      "file": "plugins/button.json"
+    },
+    "camera3d": {
+      "name": "3D相机",
+      "file": "plugins/camera3d.json"
+    },
+    "clipboard": {
+      "name": "剪贴板",
+      "file": "plugins/clipboard.json"
+    },
+    "constructgameservices": {
+      "name": "游戏服务",
+      "file": "plugins/constructgameservices.json"
+    },
+    "cryptography": {
+      "name": "密码学",
+      "file": "plugins/cryptography.json"
+    },
+    "csv": {
+      "name": "CSV",
+      "file": "plugins/csv.json"
+    },
+    "date": {
+      "name": "日期",
+      "file": "plugins/date.json"
+    },
+    "dictionary": {
+      "name": "字典",
+      "file": "plugins/dictionary.json"
+    },
+    "drawingcanvas": {
+      "name": "画布",
+      "file": "plugins/drawingcanvas.json"
+    },
+    "facebook": {
+      "name": "Facebook",
+      "file": "plugins/facebook.json"
+    },
+    "filechooser": {
+      "name": "文件选择",
+      "file": "plugins/filechooser.json"
+    },
+    "filesystem": {
+      "name": "文件系统",
+      "file": "plugins/filesystem.json"
+    },
+    "gamepad": {
+      "name": "手柄",
+      "file": "plugins/gamepad.json"
+    },
+    "gamerecorder": {
+      "name": "屏幕录制",
+      "file": "plugins/gamerecorder.json"
+    },
+    "geolocation": {
+      "name": "地理位置",
+      "file": "plugins/geolocation.json"
+    },
+    "iframe": {
+      "name": "内嵌网页",
+      "file": "plugins/iframe.json"
+    },
+    "googleplay": {
+      "name": "Google Play",
+      "file": "plugins/googleplay.json"
+    },
+    "htmlelement": {
+      "name": "HTML",
+      "file": "plugins/htmlelement.json"
+    },
+    "cordovaiap": {
+      "name": "应用内购",
+      "file": "plugins/cordovaiap.json"
+    },
+    "instantgames": {
+      "name": "Instant Games",
+      "file": "plugins/instantgames.json"
+    },
+    "internationalization": {
+      "name": "本地化",
+      "file": "plugins/internationalization.json"
+    },
+    "json": {
+      "name": "JSON",
+      "file": "plugins/json.json"
+    },
+    "keyboard": {
+      "name": "键盘",
+      "file": "plugins/keyboard.json"
+    },
+    "midi": {
+      "name": "MIDI",
+      "file": "plugins/midi.json"
+    },
+    "list": {
+      "name": "列表",
+      "file": "plugins/list.json"
+    },
+    "localstorage": {
+      "name": "本地存储",
+      "file": "plugins/localstorage.json"
+    },
+    "model3d": {
+      "name": "3D模型",
+      "file": "plugins/model3d.json"
+    },
+    "mouse": {
+      "name": "鼠标",
+      "file": "plugins/mouse.json"
+    },
+    "multiplayer": {
+      "name": "多人联机",
+      "file": "plugins/multiplayer.json"
+    },
+    "nodewebkit": {
+      "name": "NW.js",
+      "file": "plugins/nodewebkit.json"
+    },
+    "particles": {
+      "name": "粒子",
+      "file": "plugins/particles.json"
+    },
+    "platforminfo": {
+      "name": "设备信息",
+      "file": "plugins/platforminfo.json"
+    },
+    "qrcode": {
+      "name": "二维码",
+      "file": "plugins/qrcode.json"
+    },
+    "progressbar": {
+      "name": "进度条",
+      "file": "plugins/progressbar.json"
+    },
+    "shape3d": {
+      "name": "3D形状",
+      "file": "plugins/shape3d.json"
+    },
+    "shadowlight": {
+      "name": "投影光",
+      "file": "plugins/shadowlight.json"
+    },
+    "share": {
+      "name": "分享",
+      "file": "plugins/share.json"
+    },
+    "sliderbar": {
+      "name": "滑动条",
+      "file": "plugins/sliderbar.json"
+    },
+    "speechrecognition": {
+      "name": "语音识别",
+      "file": "plugins/speechrecognition.json"
+    },
+    "speechsynthesis": {
+      "name": "语音合成",
+      "file": "plugins/speechsynthesis.json"
+    },
+    "sprite": {
+      "name": "精灵",
+      "file": "plugins/sprite.json"
+    },
+    "spritefont2": {
+      "name": "位图字体",
+      "file": "plugins/spritefont2.json"
+    },
+    "svgpicture": {
+      "name": "矢量图",
+      "file": "plugins/svgpicture.json"
+    },
+    "text": {
+      "name": "文本",
+      "file": "plugins/text.json"
+    },
+    "textbox": {
+      "name": "输入框",
+      "file": "plugins/textbox.json"
+    },
+    "tiledbg": {
+      "name": "平铺图",
+      "file": "plugins/tiledbg.json"
+    },
+    "timeline": {
+      "name": "时间轴",
+      "file": "plugins/timeline.json"
+    },
+    "tilemap": {
+      "name": "瓦片图",
+      "file": "plugins/tilemap.json"
+    },
+    "flowchart": {
+      "name": "流程图",
+      "file": "plugins/flowchart.json"
+    },
+    "touch": {
+      "name": "触控",
+      "file": "plugins/touch.json"
+    },
+    "usermedia": {
+      "name": "用户媒体",
+      "file": "plugins/usermedia.json"
+    },
+    "video": {
+      "name": "视频",
+      "file": "plugins/video.json"
+    },
+    "c2websocket": {
+      "name": "WebSocket",
+      "file": "plugins/c2websocket.json"
+    },
+    "xml": {
+      "name": "XML",
+      "file": "plugins/xml.json"
+    },
+    "_common": {
+      "name": "Common",
+      "file": "plugins/_common.json"
+    }
+  },
+  "behaviors": {
+    "anchor": {
+      "name": "锚点",
+      "file": "behaviors/anchor.json"
+    },
+    "eightdir": {
+      "name": "八方向",
+      "file": "behaviors/eightdir.json"
+    },
+    "bound": {
+      "name": "边界约束",
+      "file": "behaviors/bound.json"
+    },
+    "bullet": {
+      "name": "子弹",
+      "file": "behaviors/bullet.json"
+    },
+    "billboard": {
+      "name": "展示板",
+      "file": "behaviors/billboard.json"
+    },
+    "car": {
+      "name": "车辆",
+      "file": "behaviors/car.json"
+    },
+    "custom": {
+      "name": "自定义移动",
+      "file": "behaviors/custom.json"
+    },
+    "destroy": {
+      "name": "出界销毁",
+      "file": "behaviors/destroy.json"
+    },
+    "dragndrop": {
+      "name": "拖放",
+      "file": "behaviors/dragndrop.json"
+    },
+    "fade": {
+      "name": "淡入淡出",
+      "file": "behaviors/fade.json"
+    },
+    "jumpthru": {
+      "name": "跳跃穿透",
+      "file": "behaviors/jumpthru.json"
+    },
+    "follow": {
+      "name": "轨迹跟随",
+      "file": "behaviors/follow.json"
+    },
+    "flash": {
+      "name": "闪烁",
+      "file": "behaviors/flash.json"
+    },
+    "nosave": {
+      "name": "不存档",
+      "file": "behaviors/nosave.json"
+    },
+    "los": {
+      "name": "视线",
+      "file": "behaviors/los.json"
+    },
+    "moveto": {
+      "name": "移动到",
+      "file": "behaviors/moveto.json"
+    },
+    "orbit": {
+      "name": "环绕",
+      "file": "behaviors/orbit.json"
+    },
+    "persist": {
+      "name": "持久化",
+      "file": "behaviors/persist.json"
+    },
+    "pathfinding": {
+      "name": "寻路",
+      "file": "behaviors/pathfinding.json"
+    },
+    "physics": {
+      "name": "物理",
+      "file": "behaviors/physics.json"
+    },
+    "pin": {
+      "name": "固定",
+      "file": "behaviors/pin.json"
+    },
+    "platform": {
+      "name": "平台",
+      "file": "behaviors/platform.json"
+    },
+    "rotate": {
+      "name": "旋转",
+      "file": "behaviors/rotate.json"
+    },
+    "scrollto": {
+      "name": "镜头跟随",
+      "file": "behaviors/scrollto.json"
+    },
+    "shadowcaster": {
+      "name": "投影对象",
+      "file": "behaviors/shadowcaster.json"
+    },
+    "solid": {
+      "name": "实体",
+      "file": "behaviors/solid.json"
+    },
+    "sin": {
+      "name": "正弦运动",
+      "file": "behaviors/sin.json"
+    },
+    "tilemovement": {
+      "name": "网格移动",
+      "file": "behaviors/tilemovement.json"
+    },
+    "timer": {
+      "name": "计时器",
+      "file": "behaviors/timer.json"
+    },
+    "tween": {
+      "name": "补间动画",
+      "file": "behaviors/tween.json"
+    },
+    "turret": {
+      "name": "炮台",
+      "file": "behaviors/turret.json"
+    },
+    "wrap": {
+      "name": "边界穿梭",
+      "file": "behaviors/wrap.json"
+    }
+  },
+  "effects": {
+    "alphaclamp": {
+      "name": "透明度截断",
+      "file": "effects/alphaclamp.json"
+    },
+    "alphaclamp2": {
+      "name": "透明度约束",
+      "file": "effects/alphaclamp2.json"
+    },
+    "alpharamp": {
+      "name": "透明度过渡",
+      "file": "effects/alpharamp.json"
+    },
+    "blacknwhite": {
+      "name": "黑白",
+      "file": "effects/blacknwhite.json"
+    },
+    "blacknwhitemask": {
+      "name": "黑白蒙版",
+      "file": "effects/blacknwhitemask.json"
+    },
+    "blurhorizontal": {
+      "name": "水平模糊",
+      "file": "effects/blurhorizontal.json"
+    },
+    "blurvertical": {
+      "name": "垂直模糊",
+      "file": "effects/blurvertical.json"
+    },
+    "brightness": {
+      "name": "亮度",
+      "file": "effects/brightness.json"
+    },
+    "bulge": {
+      "name": "膨胀",
+      "file": "effects/bulge.json"
+    },
+    "bumpmapping": {
+      "name": "凹凸映射",
+      "file": "effects/bumpmapping.json"
+    },
+    "burn": {
+      "name": "加深",
+      "file": "effects/burn.json"
+    },
+    "cga": {
+      "name": "CGA",
+      "file": "effects/cga.json"
+    },
+    "colorblend": {
+      "name": "颜色",
+      "file": "effects/colorblend.json"
+    },
+    "colorhalftone": {
+      "name": "彩色半调",
+      "file": "effects/colorhalftone.json"
+    },
+    "contrast": {
+      "name": "对比度",
+      "file": "effects/contrast.json"
+    },
+    "crosshatch": {
+      "name": "阴影线",
+      "file": "effects/crosshatch.json"
+    },
+    "crystalball": {
+      "name": "水晶球",
+      "file": "effects/crystalball.json"
+    },
+    "darken": {
+      "name": "变暗",
+      "file": "effects/darken.json"
+    },
+    "depthstripe": {
+      "name": "深度条纹",
+      "file": "effects/depthstripe.json"
+    },
+    "difference": {
+      "name": "差值",
+      "file": "effects/difference.json"
+    },
+    "divide": {
+      "name": "划分",
+      "file": "effects/divide.json"
+    },
+    "dodge": {
+      "name": "减淡",
+      "file": "effects/dodge.json"
+    },
+    "dotscreen": {
+      "name": "半调",
+      "file": "effects/dotscreen.json"
+    },
+    "emboss": {
+      "name": "浮雕",
+      "file": "effects/emboss.json"
+    },
+    "exclusion": {
+      "name": "排除",
+      "file": "effects/exclusion.json"
+    },
+    "exposure": {
+      "name": "曝光",
+      "file": "effects/exposure.json"
+    },
+    "fogexponential": {
+      "name": "雾场",
+      "file": "effects/fogexponential.json"
+    },
+    "gamma": {
+      "name": "伽马",
+      "file": "effects/gamma.json"
+    },
+    "glass": {
+      "name": "玻璃",
+      "file": "effects/glass.json"
+    },
+    "glowhorizontal": {
+      "name": "水平发光",
+      "file": "effects/glowhorizontal.json"
+    },
+    "glowvertical": {
+      "name": "垂直发光",
+      "file": "effects/glowvertical.json"
+    },
+    "grayscale": {
+      "name": "灰度",
+      "file": "effects/grayscale.json"
+    },
+    "grayscalemask": {
+      "name": "灰度蒙版",
+      "file": "effects/grayscalemask.json"
+    },
+    "hardlight": {
+      "name": "强光",
+      "file": "effects/hardlight.json"
+    },
+    "hexpixellate": {
+      "name": "像素化(晶体)",
+      "file": "effects/hexpixellate.json"
+    },
+    "hexpixellatemask": {
+      "name": "晶体像素化蒙版",
+      "file": "effects/hexpixellatemask.json"
+    },
+    "highlightshadow": {
+      "name": "高光阴影",
+      "file": "effects/highlightshadow.json"
+    },
+    "hsladjust": {
+      "name": "HSL调整",
+      "file": "effects/hsladjust.json"
+    },
+    "hsladjustmask": {
+      "name": "HSL调整蒙版",
+      "file": "effects/hsladjustmask.json"
+    },
+    "hueblend": {
+      "name": "色相",
+      "file": "effects/hueblend.json"
+    },
+    "inverse": {
+      "name": "反相",
+      "file": "effects/inverse.json"
+    },
+    "lens2": {
+      "name": "放大镜",
+      "file": "effects/lens2.json"
+    },
+    "lighten": {
+      "name": "亮度",
+      "file": "effects/lighten.json"
+    },
+    "lumblend": {
+      "name": "明度",
+      "file": "effects/lumblend.json"
+    },
+    "multiply": {
+      "name": "正片叠底",
+      "file": "effects/multiply.json"
+    },
+    "noise": {
+      "name": "噪点",
+      "file": "effects/noise.json"
+    },
+    "noisemask": {
+      "name": "噪点蒙版",
+      "file": "effects/noisemask.json"
+    },
+    "oilpainting": {
+      "name": "油画",
+      "file": "effects/oilpainting.json"
+    },
+    "overlay": {
+      "name": "叠加",
+      "file": "effects/overlay.json"
+    },
+    "pixellate": {
+      "name": "像素化",
+      "file": "effects/pixellate.json"
+    },
+    "pixellatemask": {
+      "name": "像素化蒙版",
+      "file": "effects/pixellatemask.json"
+    },
+    "polarinvert": {
+      "name": "极反转",
+      "file": "effects/polarinvert.json"
+    },
+    "polkadot": {
+      "name": "圆点",
+      "file": "effects/polkadot.json"
+    },
+    "posterize": {
+      "name": "色调分离",
+      "file": "effects/posterize.json"
+    },
+    "posterizemask": {
+      "name": "色调分离蒙版",
+      "file": "effects/posterizemask.json"
+    },
+    "pulse": {
+      "name": "脉冲",
+      "file": "effects/pulse.json"
+    },
+    "radialblur": {
+      "name": "径向模糊",
+      "file": "effects/radialblur.json"
+    },
+    "radialpixellate": {
+      "name": "像素化(径向)",
+      "file": "effects/radialpixellate.json"
+    },
+    "radialpixellatemask": {
+      "name": "径向像素化蒙版",
+      "file": "effects/radialpixellatemask.json"
+    },
+    "randomizetiling": {
+      "name": "平铺扰动",
+      "file": "effects/randomizetiling.json"
+    },
+    "replacecolor": {
+      "name": "替换颜色",
+      "file": "effects/replacecolor.json"
+    },
+    "replacesolidcolor": {
+      "name": "替换纯色",
+      "file": "effects/replacesolidcolor.json"
+    },
+    "satblend": {
+      "name": "饱和度",
+      "file": "effects/satblend.json"
+    },
+    "scanlines": {
+      "name": "扫描线",
+      "file": "effects/scanlines.json"
+    },
+    "screen": {
+      "name": "滤色",
+      "file": "effects/screen.json"
+    },
+    "sepia": {
+      "name": "怀旧",
+      "file": "effects/sepia.json"
+    },
+    "sepiamask": {
+      "name": "怀旧蒙版",
+      "file": "effects/sepiamask.json"
+    },
+    "setcolor": {
+      "name": "颜色覆盖",
+      "file": "effects/setcolor.json"
+    },
+    "sharpen": {
+      "name": "锐化",
+      "file": "effects/sharpen.json"
+    },
+    "sketch": {
+      "name": "素描",
+      "file": "effects/sketch.json"
+    },
+    "softlight": {
+      "name": "柔光",
+      "file": "effects/softlight.json"
+    },
+    "sphere": {
+      "name": "球面",
+      "file": "effects/sphere.json"
+    },
+    "stretch": {
+      "name": "拉伸",
+      "file": "effects/stretch.json"
+    },
+    "subtract": {
+      "name": "减去",
+      "file": "effects/subtract.json"
+    },
+    "swirl": {
+      "name": "漩涡",
+      "file": "effects/swirl.json"
+    },
+    "tint": {
+      "name": "颜色叠加",
+      "file": "effects/tint.json"
+    },
+    "tintmask": {
+      "name": "颜色叠加蒙版",
+      "file": "effects/tintmask.json"
+    },
+    "toon": {
+      "name": "卡通",
+      "file": "effects/toon.json"
+    },
+    "vibrance": {
+      "name": "自然饱和度",
+      "file": "effects/vibrance.json"
+    },
+    "vignette": {
+      "name": "暗角",
+      "file": "effects/vignette.json"
+    },
+    "warp": {
+      "name": "变形",
+      "file": "effects/warp.json"
+    },
+    "warpobject": {
+      "name": "对象扭曲",
+      "file": "effects/warpobject.json"
+    },
+    "warpobjectmask": {
+      "name": "扭曲对象蒙版",
+      "file": "effects/warpobjectmask.json"
+    },
+    "warplayout": {
+      "name": "场景扭曲",
+      "file": "effects/warplayout.json"
+    },
+    "warpmask": {
+      "name": "扭曲蒙版",
+      "file": "effects/warpmask.json"
+    },
+    "warpradial": {
+      "name": "径向扭曲",
+      "file": "effects/warpradial.json"
+    },
+    "warpripple": {
+      "name": "波纹扭曲",
+      "file": "effects/warpripple.json"
+    },
+    "water": {
+      "name": "水面",
+      "file": "effects/water.json"
+    },
+    "waterbg": {
+      "name": "水面背景",
+      "file": "effects/waterbg.json"
+    }
+  }
+}

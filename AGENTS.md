@@ -30,7 +30,8 @@ questions from memory when the repository can be checked.
 
 1. Open `data/c3-schemas/_index.json`. Find the plugin, behavior, or effect id
    under `plugins`, `behaviors`, or `effects`. Each entry gives `file` and
-   the ACE counts.
+   the ACE counts. If you only have a localized name, find the id in
+   `data/c3-schemas/{locale}/_index.json` first.
 2. Pick a locale directory listed in `_index.json` under `languages`
    (`en-US` or `zh-CN`). Read `data/c3-schemas/{locale}/{file}`.
 3. Inside the file, find the ACE by `id`, `list-name`, or `translated-name`.
@@ -40,6 +41,7 @@ questions from memory when the repository can be checked.
 | Question | Where to look |
 |----------|---------------|
 | Which plugins, behaviors, effects exist | `data/c3-schemas/_index.json` |
+| Addon names in one language | `data/c3-schemas/{locale}/_index.json` |
 | ACEs of a plugin | `data/c3-schemas/{locale}/plugins/{id}.json` |
 | ACEs of a behavior | `data/c3-schemas/{locale}/behaviors/{id}.json` |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |

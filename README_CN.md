@@ -25,7 +25,8 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 | 路径 | 内容 |
 |---|---|
-| `c3-schemas/_index.json` | 版本、语言列表，以及每个插件、行为、特效的文件路径和 ACE 数量 |
+| `c3-schemas/_index.json` | 版本、语言列表，以及每个插件、行为、特效的文件路径和 ACE 数量。不含本地化名称 |
+| `c3-schemas/{locale}/_index.json` | 该语言下的插件、行为、特效名称，键与根索引相同 |
 | `c3-schemas/{locale}/plugins/{id}.json` | 条件、动作、表达式、属性 |
 | `c3-schemas/{locale}/behaviors/{id}.json` | 行为 ACE |
 | `c3-schemas/{locale}/effects/{id}.json` | 特效参数和分类 |
@@ -38,7 +39,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 ## 读取数据
 
-1. 在 `_index.json` 中找到插件或行为，条目给出 `file` 路径和 ACE 数量。
+1. 在 `_index.json` 中找到插件或行为，条目给出 `file` 路径和 ACE 数量。只知道中文名时，先在 `{locale}/_index.json` 中查到 id。
 2. 打开 `data/c3-schemas/{locale}/{file}`，用 `id` 定位 ACE；条件和动作也可以用 `list-name`，表达式用 `translated-name`。`display-text` 是事件表中的显示文本，`params` 列出参数。
 3. 脚本接口先在 `autocomplete-data.json` 中找到类名，再打开对应的 `.d.ts`。
 

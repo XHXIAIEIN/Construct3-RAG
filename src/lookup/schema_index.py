@@ -8,6 +8,13 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from src.schema_layout import (
+    SCHEMA_LOCALES,
+    SchemaManifestError,
+    load_locale_index,
+    locale_index_path,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -227,14 +234,23 @@ class SchemaIndex:
                         exc,
                     )
 
-        for effect_id, effect in index_data.get("effects", {}).items():
-            for value in (
-                effect_id,
-                effect.get("name_en", ""),
-                effect.get("name_zh", ""),
-            ):
-                if value:
-                    self._effect_name_map[value.lower()] = effect_id
+        # The root index only lists effect ids; display names come from each
+        # locale index so a query can name an effect in either language.
+        for effect_id in index_data.get("effects", {}):
+            self._effect_name_map[effect_id.lower()] = effect_id
+        for locale in SCHEMA_LOCALES:
+            if not locale_index_path(self._schema_dir, locale).is_file():
+                continue
+            try:
+                locale_sections = load_locale_index(self._schema_dir, locale)
+            except SchemaManifestError as exc:
+                logger.error("[SchemaIndex] Invalid %s locale index: %s", locale, exc)
+                continue
+            for effect_id, entry in locale_sections["effects"].items():
+                self._effect_name_map.setdefault(effect_id.lower(), effect_id)
+                name = entry.get("name", "")
+                if isinstance(name, str) and name:
+                    self._effect_name_map[name.lower()] = effect_id
 
         if not self._plugins and not self._behaviors:
             logger.error(

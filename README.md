@@ -25,7 +25,8 @@ No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are un
 
 | Path | Content |
 |---|---|
-| `c3-schemas/_index.json` | Version, locales, and every plugin, behavior, and effect with its file path and ACE counts |
+| `c3-schemas/_index.json` | Version, locales, and every plugin, behavior, and effect with its file path and ACE counts. Language neutral |
+| `c3-schemas/{locale}/_index.json` | Addon names in that language, keyed by the same ids |
 | `c3-schemas/{locale}/plugins/{id}.json` | Conditions, actions, expressions, properties |
 | `c3-schemas/{locale}/behaviors/{id}.json` | Behavior ACEs |
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
@@ -38,7 +39,7 @@ Field names match the Construct CDN. Structural fields such as `id`, `scriptName
 
 ## Reading the data
 
-1. Find the addon in `_index.json`. Its entry gives the `file` path and the ACE counts.
+1. Find the addon in `_index.json`. Its entry gives the `file` path and the ACE counts. If you only have a localized name, look it up in `{locale}/_index.json` first.
 2. Open `data/c3-schemas/{locale}/{file}` and locate the ACE by `id`, by `list-name` for conditions and actions, or by `translated-name` for expressions. `display-text` is the event sheet wording and `params` lists the parameters.
 3. For scripting, look the class up in `autocomplete-data.json`, then open the matching `.d.ts`.
 
