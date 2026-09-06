@@ -229,8 +229,11 @@ contracts and the current non-atomic, per-collection publication boundary.
 `schema_layout.py` validates `_index.json` into `SchemaManifest`. A usable
 snapshot must declare `en-US` and `zh-CN`, contain non-empty plugin, behavior,
 and effect sections, and provide a parseable bilingual JSON file for every
-manifest entry. Runtime selection prefers a complete version-matched cache,
-then the bundled dataset. Explicit path overrides remain explicit.
+manifest entry. Each locale directory also carries an `_index.json` with
+display names; it must list exactly the manifest's ids, and
+`schema_index.py` reads it to match effect names in queries. Runtime
+selection prefers a complete version-matched cache, then the bundled
+dataset. Explicit path overrides remain explicit.
 
 No ordinary import or query refreshes the CDN. Fetch/export is an initialization
 or maintenance action.

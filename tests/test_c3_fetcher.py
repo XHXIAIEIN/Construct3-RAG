@@ -119,3 +119,76 @@ def test_export_lang_writes_readable_json_per_locale(fetcher):
     assert json.loads(zh_text) == payload["zh-CN"]
     assert "精灵" in zh_text
     assert zh_text.count("\n") > 3
+
+
+def test_export_schemas_keeps_root_index_language_neutral(fetcher):
+    """Localized names go to {locale}/_index.json; the root index stays structural."""
+    from src.lookup.indexes import SchemaIndex
+    from src.schema_layout import schema_is_complete
+
+    aces = {
+        "plugins": {"Sprite": {"general": {
+            "conditions": [{"id": "is-visible", "scriptName": "isVisible"}],
+            "actions": [],
+            "expressions": [],
+        }}},
+        "behaviors": {"Platform": {"general": {
+            "conditions": [],
+            "actions": [{"id": "set-speed", "scriptName": "setSpeed",
+                         "params": [{"id": "speed", "type": "number"}]}],
+            "expressions": [],
+        }}},
+    }
+    texts = {
+        "en-US": {"text": {
+            "plugins": {"sprite": {"name": "Sprite",
+                                   "conditions": {"is-visible": {"list-name": "Is visible"}}},
+                        "_common": {"name": "Common",
+                                    "actions": {"destroy": {"list-name": "Destroy"}}}},
+            "behaviors": {"platform": {"name": "Platform",
+                                       "actions": {"set-speed": {"list-name": "Set speed"}}}},
+            "effects": {"blur": {"name": "Blur"}},
+        }},
+        "zh-CN": {"text": {
+            "plugins": {"sprite": {"name": "精灵",
+                                   "conditions": {"is-visible": {"list-name": "可见"}}},
+                        "_common": {"name": "公共",
+                                    "actions": {"destroy": {"list-name": "销毁"}}}},
+            "behaviors": {"platform": {"name": "平台",
+                                       "actions": {"set-speed": {"list-name": "设置速度"}}}},
+            "effects": {"blur": {"name": "模糊"}},
+        }},
+    }
+    effects = [{"id": "blur", "category": "blur", "parameters": []}]
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
+         patch.object(fetcher, "fetch_effects", return_value=effects), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+
+    root_text = (schemas_dir / "_index.json").read_text(encoding="utf-8")
+    root = json.loads(root_text)
+    assert root["version"] == fetcher.version
+    assert root["languages"] == ["en-US", "zh-CN"]
+    assert "supported_languages" not in root
+    assert "name_en" not in root_text and "name_zh" not in root_text
+    assert root["plugins"]["sprite"] == {
+        "originalId": "Sprite", "file": "plugins/sprite.json",
+        "conditions": 1, "actions": 0, "expressions": 0,
+    }
+    assert root["effects"]["blur"] == {"file": "effects/blur.json", "category": "blur"}
+    assert root["plugins"]["_common"] == {
+        "file": "plugins/_common.json", "conditions": 0, "actions": 1, "expressions": 0,
+    }
+
+    en = json.loads((schemas_dir / "en-US" / "_index.json").read_text(encoding="utf-8"))
+    zh = json.loads((schemas_dir / "zh-CN" / "_index.json").read_text(encoding="utf-8"))
+    assert (en["version"], en["language"]) == (fetcher.version, "en-US")
+    assert en["plugins"]["sprite"] == {"name": "Sprite", "file": "plugins/sprite.json"}
+    assert zh["plugins"]["sprite"] == {"name": "精灵", "file": "plugins/sprite.json"}
+    assert zh["behaviors"]["platform"]["name"] == "平台"
+    assert zh["plugins"]["_common"] == {"name": "公共", "file": "plugins/_common.json"}
+    assert zh["effects"]["blur"] == {"name": "模糊", "file": "effects/blur.json"}
+
+    assert schema_is_complete(schemas_dir)
+    assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == ("blur", 0, 2)

@@ -2,7 +2,9 @@
 
 Everything under `data/` is committed and readable without the service.
 `data/c3-schemas/_index.json` records the Construct version, the exported
-locales, and per-addon ACE counts. Treat it as the source of truth.
+locales, and per-addon ACE counts. Treat it as the source of truth. It is
+language neutral; each locale directory has its own `_index.json` with the
+display names in that language.
 
 ## Layout
 
@@ -10,6 +12,7 @@ locales, and per-addon ACE counts. Treat it as the source of truth.
 data/
   c3-schemas/
     _index.json                    version, languages, plugins, behaviors, effects
+    {locale}/_index.json           addon names in that language, same ids
     {locale}/plugins/{id}.json     conditions, actions, expressions, properties
     {locale}/behaviors/{id}.json   behavior ACEs
     {locale}/effects/{id}.json     effect parameters and categories
@@ -29,6 +32,8 @@ with the same files and structure. Only text values differ.
 
 ## Index entries
 
+The root index is language neutral:
+
 ```json
 {
   "version": "...",
@@ -36,8 +41,6 @@ with the same files and structure. Only text values differ.
   "plugins": {
     "sprite": {
       "originalId": "Sprite",
-      "name_en": "Sprite",
-      "name_zh": "精灵",
       "file": "plugins/sprite.json",
       "conditions": 12,
       "actions": 16,
@@ -45,12 +48,29 @@ with the same files and structure. Only text values differ.
     }
   },
   "behaviors": { "...": {} },
-  "effects": { "...": {} }
+  "effects": { "pixellate": { "file": "effects/pixellate.json", "category": "color" } }
 }
 ```
 
 The key is the lowercase addon id used in file names. `originalId` is the
-CDN id. `file` is relative to a locale directory.
+CDN id. `file` is relative to a locale directory. A top-level `examples`
+number records how many example projects were exported.
+
+Each locale directory carries the names for that language in
+`{locale}/_index.json`, keyed by the same ids:
+
+```json
+{
+  "version": "...",
+  "language": "zh-CN",
+  "plugins": { "sprite": { "name": "精灵", "file": "plugins/sprite.json" } },
+  "behaviors": { "platform": { "name": "平台", "file": "behaviors/platform.json" } },
+  "effects": { "pixellate": { "name": "像素化", "file": "effects/pixellate.json" } }
+}
+```
+
+Use the root index to enumerate addons and counts. Use the locale index to
+turn a localized name into an id without opening every schema file.
 
 ## ACE entries
 

@@ -127,7 +127,8 @@ Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参�
 
 ### 5.1 权威数据
 
-- `data/c3-schemas/_index.json` 是已提交 Schema 的版本和数量来源。
+- `data/c3-schemas/_index.json` 是已提交 Schema 的版本和数量来源。根索引不含
+  本地化名称；名称只在 `{locale}/_index.json` 中，键与根索引相同。
 - 标准语言目录为 `en-US` 和 `zh-CN`，不要重新引入 `en`、`zh` 等旧目录名。
 - `src/schema_layout.py` 负责 Schema 完整性、版本选择和目录优先级；其他模块
   不得复制这一逻辑。
@@ -152,6 +153,7 @@ Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参�
 | 问题 | 首选数据 |
 |---|---|
 | 插件、行为或特效列表 | `data/c3-schemas/_index.json` |
+| 插件、行为或特效的本地化名称 | `data/c3-schemas/{locale}/_index.json` |
 | 插件 ACE | `data/c3-schemas/{locale}/plugins/{id}.json` |
 | 行为 ACE | `data/c3-schemas/{locale}/behaviors/{id}.json` |
 | ACE 参数和事件表显示 | 对应条目的 `params`、`display-text` 和描述字段 |

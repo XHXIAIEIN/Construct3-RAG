@@ -11,6 +11,7 @@ from typing import Any, Mapping
 SCHEMA_LOCALES: tuple[str, ...] = ("en-US", "zh-CN")
 PRIMARY_SCHEMA_LOCALE = "en-US"
 SCHEMA_ADDON_TYPES: tuple[str, ...] = ("plugins", "behaviors", "effects")
+SCHEMA_INDEX_FILE = "_index.json"
 
 
 class SchemaManifestError(ValueError):
@@ -77,7 +78,7 @@ def _manifest_entry(
 
 def load_schema_manifest(root: Path) -> SchemaManifest:
     """Load and validate ``root/_index.json`` without validating data files."""
-    index_path = Path(root) / "_index.json"
+    index_path = Path(root) / SCHEMA_INDEX_FILE
     try:
         raw = json.loads(index_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
@@ -131,6 +132,57 @@ def _schema_file_is_valid(path: Path) -> bool:
     return isinstance(value, dict)
 
 
+def locale_index_path(root: Path, locale: str) -> Path:
+    """Path of the localized index that carries display names for one locale."""
+    return Path(root) / locale / SCHEMA_INDEX_FILE
+
+
+def load_locale_index(root: Path, locale: str) -> dict[str, dict[str, dict[str, Any]]]:
+    """Load ``root/{locale}/_index.json`` and return its addon sections.
+
+    The root index is language neutral; localized names live here so a reader
+    of one locale never has to parse the other. Entries that are not objects
+    are dropped rather than raising, because the manifest, not this file,
+    defines which addons exist.
+    """
+    path = locale_index_path(root, locale)
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SchemaManifestError(f"invalid locale index: {path}") from exc
+    if not isinstance(raw, dict):
+        raise SchemaManifestError(f"locale index root must be an object: {path}")
+
+    sections: dict[str, dict[str, dict[str, Any]]] = {}
+    for addon_type in SCHEMA_ADDON_TYPES:
+        raw_section = raw.get(addon_type, {})
+        if not isinstance(raw_section, dict):
+            raise SchemaManifestError(f"{path}: {addon_type} must be an object")
+        sections[addon_type] = {
+            str(addon_id): value
+            for addon_id, value in raw_section.items()
+            if isinstance(value, dict)
+        }
+    return sections
+
+
+def _locale_index_is_valid(root: Path, locale: str, manifest: SchemaManifest) -> bool:
+    """A locale index must name exactly the addons the manifest lists."""
+    try:
+        sections = load_locale_index(root, locale)
+    except SchemaManifestError:
+        return False
+    for addon_type, entries in manifest.sections.items():
+        section = sections[addon_type]
+        if set(section) != set(entries):
+            return False
+        for value in section.values():
+            name = value.get("name")
+            if not isinstance(name, str) or not name.strip():
+                return False
+    return True
+
+
 def schema_is_complete(root: Path) -> bool:
     """Return whether *root* is a complete, parseable bilingual dataset."""
     root = Path(root)
@@ -145,7 +197,9 @@ def schema_is_complete(root: Path) -> bool:
             for locale in SCHEMA_LOCALES:
                 if not _schema_file_is_valid(root / locale / relative_path):
                     return False
-    return True
+    return all(
+        _locale_index_is_valid(root, locale, manifest) for locale in SCHEMA_LOCALES
+    )
 
 
 def schema_version(root: Path) -> str:

@@ -6,6 +6,7 @@ Committed Construct 3 reference data. Readable without the API or Qdrant.
 | Path | Content |
 |------|---------|
 | `c3-schemas/_index.json` | Plugin, behavior, and effect index. Language neutral. |
+| `c3-schemas/{locale}/_index.json` | Display names for that locale, keyed by the same ids |
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
 | `c3-examples/{locale}/` | Example projects: name, description, tags, used-addons, open URL |
 | `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed. Source text behind the schemas; diff it between releases. |

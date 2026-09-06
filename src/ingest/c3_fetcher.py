@@ -21,7 +21,6 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-from src.locale.resources import COMMON_ADDON_NAME_ZH
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +149,8 @@ class C3Fetcher:
             schemas/zh-CN/plugins/sprite.json
             schemas/en-US/behaviors/platform.json
             schemas/en-US/effects/alphaclamp.json
-            schemas/_index.json   (language-neutral)
+            schemas/en-US/_index.json   (localized names + file paths)
+            schemas/_index.json         (language-neutral: ids, files, counts)
 
         Returns the schemas root directory path.
         """
@@ -166,16 +166,20 @@ class C3Fetcher:
         }
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
-        try:
-            all_locales = self.fetch_available_locales()
-        except Exception as e:
-            logger.warning(f"[CDN] Failed to fetch locales: {e}")
-            all_locales = sorted(lang_texts.keys())
+        # The root index is language neutral. Each locale directory gets its
+        # own _index.json with display names, so one locale can be read alone.
         index_data: dict = {
             "version": self.version,
             "languages": sorted(lang_texts.keys()),
-            "supported_languages": all_locales,
             "plugins": {}, "behaviors": {}, "effects": {},
+        }
+        locale_index: dict[str, dict] = {
+            lang: {
+                "version": self.version,
+                "language": lang,
+                "plugins": {}, "behaviors": {}, "effects": {},
+            }
+            for lang in lang_texts
         }
 
         # ── Plugins & Behaviors ───────────────────────────────────────────
@@ -268,17 +272,18 @@ class C3Fetcher:
                         json.dumps(plugin_json, ensure_ascii=False, indent=2),
                         encoding="utf-8",
                     )
+                    locale_index[lang][addon_type][pid_lower] = {
+                        "name": plugin_json["name"],
+                        "file": f"{addon_type}/{pid_lower}.json",
+                    }
 
                 # Index entry (language-neutral)
-                en_p = lang_texts["en-US"].get(addon_type, {}).get(pid_lower, {})
                 section = "plugins" if plugin_type == "plugin" else "behaviors"
                 c_count = sum(len(at.get("conditions", [])) for at in categories.values())
                 a_count = sum(len(at.get("actions", [])) for at in categories.values())
                 e_count = sum(len(at.get("expressions", [])) for at in categories.values())
                 index_data[section][pid_lower] = {
                     "originalId": plugin_id,
-                    "name_en": en_p.get("name", plugin_id),
-                    "name_zh": zh_p.get("name", en_p.get("name", plugin_id)),
                     "file": f"{addon_type}/{pid_lower}.json",
                     "conditions": c_count,
                     "actions": a_count,
@@ -338,14 +343,16 @@ class C3Fetcher:
                 (out_dir / "_common.json").write_text(
                     json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8",
                 )
+                locale_index[lang]["plugins"]["_common"] = {
+                    "name": common_json["name"],
+                    "file": "plugins/_common.json",
+                }
 
             c_count = len(common_json["conditions"])
             a_count = len(common_json["actions"])
             e_count = len(common_json["expressions"])
             logger.info(f"[CDN] Exported _common: {c_count}C {a_count}A {e_count}E")
             index_data["plugins"]["_common"] = {
-                "name_en": en_common.get("name", "Common"),
-                "name_zh": zh_common.get("name", COMMON_ADDON_NAME_ZH),
                 "file": "plugins/_common.json",
                 "conditions": c_count, "actions": a_count, "expressions": e_count,
             }
@@ -385,18 +392,18 @@ class C3Fetcher:
                 (out_dir / f"{eid}.json").write_text(
                     json.dumps(fx_json, ensure_ascii=False, indent=2), encoding="utf-8",
                 )
+                locale_index[lang]["effects"][eid] = {
+                    "name": fx_json["name"],
+                    "file": f"effects/{eid}.json",
+                }
 
             # Index effects
             if lang == "en-US":
                 for item in effects_raw:
                     data = item.get("json", item)
                     eid = data.get("id", "")
-                    en_fx = l_effects.get(eid, {})
-                    zh_fx = lang_texts["zh-CN"].get("effects", {}).get(eid, {})
-                    if en_fx:
+                    if l_effects.get(eid):
                         index_data["effects"][eid] = {
-                            "name_en": en_fx.get("name", eid),
-                            "name_zh": zh_fx.get("name", en_fx.get("name", eid)),
                             "file": f"effects/{eid}.json",
                             "category": data.get("category", ""),
                         }
@@ -453,10 +460,14 @@ class C3Fetcher:
         except Exception as e:
             logger.warning(f"[CDN] Failed to export examples: {e}")
 
-        # ── Write _index.json ─────────────────────────────────────────────
+        # ── Write _index.json (root + one per locale) ─────────────────────
         (schemas_dir / "_index.json").write_text(
             json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8",
         )
+        for lang, data in locale_index.items():
+            (schemas_dir / lang / "_index.json").write_text(
+                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8",
+            )
 
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")

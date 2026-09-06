@@ -29,6 +29,8 @@
 ```
 .cache/c3-cdn/{version}/schemas/
   _index.json                  — language-neutral index (plugin/behavior/effect counts, originalId)
+  en-US/_index.json            — English names + file paths, same ids as the root index
+  zh-CN/_index.json            — Chinese equivalent
   en-US/plugins/sprite.json       — English Sprite ACE definitions
   zh-CN/plugins/sprite.json       — Chinese Sprite ACE definitions
   en-US/behaviors/platform.json   — English Platform behavior ACEs
@@ -60,8 +62,9 @@ Consumers that need both languages use `_merge_bilingual()` in
 in-memory format. `src/schema_layout.py` owns the typed `SchemaManifest`,
 canonical locale names, manifest loading, completeness checks, counts, and
 runtime path selection. A schema snapshot is complete only when `_index.json`
-is valid, its plugin/behavior/effect sections are non-empty, and every manifest
-file exists as valid JSON under both `en-US` and `zh-CN`.
+is valid, its plugin/behavior/effect sections are non-empty, every manifest
+file exists as valid JSON under both `en-US` and `zh-CN`, and each locale's
+`_index.json` names exactly the manifest's addons.
 
 ### Deprecation Filter
 
