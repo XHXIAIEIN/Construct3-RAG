@@ -1,0 +1,188 @@
+{
+  "id": "geolocation",
+  "name": "地理位置",
+  "description": "访问用户的位置信息，如纬度和经度。",
+  "type": "plugin",
+  "aceCategories": {
+    "geolocation": "地理位置"
+  },
+  "conditions": [
+    {
+      "id": "is-supported",
+      "scriptName": "IsSupported",
+      "category": "geolocation",
+      "list-name": "设备支持功能",
+      "display-text": "设备支持访问地理位置",
+      "description": "检测当前运行设备是否支持获取地理位置信息。"
+    },
+    {
+      "id": "is-watching-location",
+      "scriptName": "IsWatching",
+      "category": "geolocation",
+      "list-name": "正在跟踪位置",
+      "display-text": "正在跟踪位置",
+      "description": "检测当前是否正在跟踪用户的地理位置。"
+    },
+    {
+      "id": "on-location-update",
+      "scriptName": "OnUpdate",
+      "category": "geolocation",
+      "list-name": "位置更新时",
+      "display-text": "位置更新时",
+      "description": "在更新位置时请求或观察用户位置时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "geolocation",
+      "list-name": "在出错时",
+      "display-text": "在出错时",
+      "description": "发生地理位置错误时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-location",
+      "scriptName": "RequestLocation",
+      "category": "geolocation",
+      "list-name": "请求位置",
+      "display-text": "请求位置（{0}准确度，超时{1}，最大年龄{2}）",
+      "description": "获取一次性请求以获取用户的当前位置。",
+      "params": {
+        "accuracy": {
+          "type": "combo",
+          "name": "准确性",
+          "desc": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "items": {
+            "normal": "普通",
+            "high": "高度"
+          }
+        },
+        "timeout": {
+          "type": "number",
+          "name": "超时",
+          "desc": "设备返回位置的最大时长，以秒为单位。"
+        },
+        "maximum-age": {
+          "type": "number",
+          "name": "最长缓存时间",
+          "desc": "缓存结果可记录的最大时长，以秒为单位。使用 0 禁用缓存。"
+        }
+      }
+    },
+    {
+      "id": "watch-location",
+      "scriptName": "WatchLocation",
+      "category": "geolocation",
+      "list-name": "监测位置",
+      "display-text": "监测位置（{0}准确度，超时{1}，最大时长{2}）",
+      "description": "开始接收用户位置的定期更新。",
+      "params": {
+        "accuracy": {
+          "type": "combo",
+          "name": "准确性",
+          "desc": "请求的位置准确性。高精度的请求可能需要更长时间才能获得结果，并消耗更多电量。",
+          "items": {
+            "normal": "普通",
+            "high": "高度"
+          }
+        },
+        "timeout": {
+          "type": "number",
+          "name": "超时",
+          "desc": "设备返回位置的最大时长，以秒为单位。"
+        },
+        "maximum-age": {
+          "type": "number",
+          "name": "最长缓存时间",
+          "desc": "缓存结果可保留的最长时间，以秒为单位。 使用 0 禁用缓存。"
+        }
+      }
+    },
+    {
+      "id": "stop-watching",
+      "scriptName": "StopWatching",
+      "category": "geolocation",
+      "list-name": "停止监测",
+      "display-text": "停止监测位置信息",
+      "description": "停止监测之前的发起的定位"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "errormessage",
+      "scriptName": "ErrorMessage",
+      "category": "geolocation",
+      "translated-name": "错误信息",
+      "description": "在出错时返回的相关的错误消息。",
+      "returnType": "string"
+    },
+    {
+      "id": "timestamp",
+      "scriptName": "Timestamp",
+      "category": "geolocation",
+      "translated-name": "时间戳",
+      "description": "检索当前详细信息的时间戳。",
+      "returnType": "number"
+    },
+    {
+      "id": "latitude",
+      "scriptName": "Latitude",
+      "category": "geolocation",
+      "translated-name": "纬度",
+      "description": "纬度位置以十进制度表示。",
+      "returnType": "number"
+    },
+    {
+      "id": "longitude",
+      "scriptName": "Longitude",
+      "category": "geolocation",
+      "translated-name": "经度",
+      "description": "十进制度的经度位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "altitude",
+      "scriptName": "Altitude",
+      "category": "geolocation",
+      "translated-name": "海拔",
+      "description": "海拔高度以米为单位（如果有）。",
+      "returnType": "number"
+    },
+    {
+      "id": "accuracy",
+      "scriptName": "Accuracy",
+      "category": "geolocation",
+      "translated-name": "精度",
+      "description": "纬度和经度的估计精度（米）。",
+      "returnType": "number"
+    },
+    {
+      "id": "altitudeaccuracy",
+      "scriptName": "AltitudeAccuracy",
+      "category": "geolocation",
+      "translated-name": "海拔精度",
+      "description": "如果可用，获取预估的海拔精度，以米为单位。",
+      "returnType": "number"
+    },
+    {
+      "id": "heading",
+      "scriptName": "Heading",
+      "category": "geolocation",
+      "translated-name": "前进方向",
+      "description": "相对于正北方向的行进方向（如果有）。",
+      "returnType": "number"
+    },
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "geolocation",
+      "translated-name": "前进速度",
+      "description": "以米为单位的行程速度（如果可用）。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}

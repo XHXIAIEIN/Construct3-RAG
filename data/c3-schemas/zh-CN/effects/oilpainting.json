@@ -1,0 +1,10 @@
+{
+  "id": "oilpainting",
+  "name": "油画",
+  "description": "使用Kuwahara滤波器，创造油画风格。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

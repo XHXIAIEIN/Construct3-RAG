@@ -1,0 +1,47 @@
+{
+  "id": "warplayout",
+  "name": "场景扭曲",
+  "description": "与场景的相关的动态波形扭曲效果。",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "x-period",
+      "type": "float",
+      "name": "X周期",
+      "desc": "X轴上的波形周期，以像素为单位。"
+    },
+    {
+      "id": "y-period",
+      "type": "float",
+      "name": "Y周期",
+      "desc": "Y轴上的波形周期，以像素为单位。"
+    },
+    {
+      "id": "x-amplitude",
+      "type": "float",
+      "name": "X振幅",
+      "desc": "X轴上的波形振幅，以像素为单位。"
+    },
+    {
+      "id": "y-amplitude",
+      "type": "float",
+      "name": "Y振幅",
+      "desc": "Y轴上的波形振幅，以像素为单位。"
+    },
+    {
+      "id": "x-speed",
+      "type": "float",
+      "name": "X速度",
+      "desc": "X轴上的波形动画速度，以每秒周期为单位。"
+    },
+    {
+      "id": "y-speed",
+      "type": "float",
+      "name": "Y速度",
+      "desc": "Y轴上的波形动画速度，以每秒周期为单位。"
+    }
+  ]
+}

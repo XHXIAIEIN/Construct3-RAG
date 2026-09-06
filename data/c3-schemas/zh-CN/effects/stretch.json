@@ -1,0 +1,10 @@
+{
+  "id": "stretch",
+  "name": "拉伸",
+  "description": "与众不同的线性拉伸效果。(阿什利同款表情包)",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

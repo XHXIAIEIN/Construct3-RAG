@@ -1,0 +1,221 @@
+{
+  "id": "facebook",
+  "name": "Facebook",
+  "description": "访问 Facebook API 功能。",
+  "type": "plugin",
+  "aceCategories": {
+    "facebook": "Facebook",
+    "prompt-no-permissions-required": "提示 (无需权限)",
+    "publish-to-stream-when-logged-in-with-permission": "发布到动态 (需用户登录授权)",
+    "scores-when-logged-in-with-permission": "分数 (需用户登录授权)",
+    "playable-ads": "可试玩广告"
+  },
+  "conditions": [
+    {
+      "id": "is-ready",
+      "scriptName": "IsReady",
+      "category": "facebook",
+      "list-name": "准备就绪",
+      "display-text": "准备就绪",
+      "description": "检测 Facebook API 是否已加载完成，并随时可以使用。"
+    },
+    {
+      "id": "is-user-logged-in",
+      "scriptName": "IsLoggedIn",
+      "category": "facebook",
+      "list-name": "用户已登录",
+      "display-text": "用户已登录",
+      "description": "检测用户是否已登录 Facebook 账号。"
+    },
+    {
+      "id": "on-user-logged-in",
+      "scriptName": "OnLogIn",
+      "category": "facebook",
+      "list-name": "用户登录成功",
+      "display-text": "用户登录成功",
+      "description": "用户成功登录时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-user-logged-out",
+      "scriptName": "OnLogOut",
+      "category": "facebook",
+      "list-name": "用户注销完成",
+      "display-text": "用户注销完成",
+      "description": "用户注销完成时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-name-available",
+      "scriptName": "OnNameAvailable",
+      "category": "facebook",
+      "list-name": "已获取到用户名",
+      "display-text": "已获取到用户名",
+      "description": "登录后，用户名称可用时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "log-out",
+      "scriptName": "LogOut",
+      "category": "facebook",
+      "list-name": "注销",
+      "display-text": "注销",
+      "description": "用户注销登录。"
+    },
+    {
+      "id": "log-in",
+      "scriptName": "LogIn2",
+      "category": "facebook",
+      "list-name": "登录",
+      "display-text": "登录 (权限：[i]{0}[/i])",
+      "description": "登录到应用程序，以便访问用户详细信息。",
+      "params": {
+        "permissions": {
+          "type": "string",
+          "name": "权限",
+          "desc": "要请求的权限指令，使用逗号分割多个。如 \"public_profile\""
+        }
+      }
+    },
+    {
+      "id": "prompt-wall-post",
+      "scriptName": "PromptWallPost",
+      "category": "prompt-no-permissions-required",
+      "list-name": "发表到动态",
+      "display-text": "发表到动态",
+      "description": "弹出分享对话框，用户可以输入文字，也可以选择取消。"
+    },
+    {
+      "id": "prompt-to-share-this-app",
+      "scriptName": "PromptToShareApp",
+      "category": "prompt-no-permissions-required",
+      "list-name": "分享此应用",
+      "display-text": "提示分享此应用",
+      "description": "弹出分享对话框，用户可以共享应用程序的链接，也可以选择取消。"
+    },
+    {
+      "id": "prompt-to-share-link",
+      "scriptName": "PromptToShareLink",
+      "category": "prompt-no-permissions-required",
+      "list-name": "分享链接",
+      "display-text": "提示分享链接[b]{0}[/b]",
+      "description": "弹出分享对话框，用户可以共享指定的链接，也可以选择取消。",
+      "params": {
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "分享的链接。"
+        }
+      }
+    },
+    {
+      "id": "publish-wall-post",
+      "scriptName": "PublishToWall",
+      "category": "publish-to-stream-when-logged-in-with-permission",
+      "list-name": "发布动态",
+      "display-text": "发表文字动态: [i]{0}[/i]",
+      "description": "将消息发布到用户的墙上。 用户应明确启动此操作。",
+      "params": {
+        "message": {
+          "type": "string",
+          "name": "消息",
+          "desc": "要发布到用户动态中的文本。建议仅在用户发起该操作时才执行此操作。"
+        }
+      }
+    },
+    {
+      "id": "publish-link",
+      "scriptName": "PublishLink",
+      "category": "publish-to-stream-when-logged-in-with-permission",
+      "list-name": "发布链接",
+      "display-text": "发表链接动态 [b]{1}[/b] ([i]{0}[/i], [i]{2}[/i], [i]{3}[/i], [i]{4}[/i], [i]{5}[/i])",
+      "description": "发布指向用户墙的链接。 用户应明确启动此操作。",
+      "params": {
+        "message": {
+          "type": "string",
+          "name": "消息",
+          "desc": "要发布到用户动态消息中的文本内容。建议仅在用户发起操作时才进行此操作。"
+        },
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "分享的链接。"
+        },
+        "name": {
+          "type": "string",
+          "name": "名称",
+          "desc": "链接文字。"
+        },
+        "caption": {
+          "type": "string",
+          "name": "标题",
+          "desc": "标题出现在链接文本下方。"
+        },
+        "description": {
+          "type": "string",
+          "name": "描述",
+          "desc": "说明出现在标题下方。"
+        },
+        "picture-url-optional": {
+          "type": "string",
+          "name": "图像URL(可选)",
+          "desc": "要在 '分享' 对话框中使用的图像的URL。必须包含 http://"
+        }
+      }
+    },
+    {
+      "id": "on-cta-click",
+      "scriptName": "OnCTAClick",
+      "category": "playable-ads",
+      "list-name": "点击行动号召按钮",
+      "display-text": "点击行动号召按钮",
+      "description": "在 Facebook 可试玩广告中，当用户点击行动号召按钮 (CTA) 时，触发此动作。"
+    }
+  ],
+  "expressions": [
+    {
+      "id": "fullname",
+      "scriptName": "FullName",
+      "category": "facebook",
+      "translated-name": "完整名称",
+      "description": "获取用户的全名，如果用户已登录。",
+      "returnType": "string"
+    },
+    {
+      "id": "firstname",
+      "scriptName": "FirstName",
+      "category": "facebook",
+      "translated-name": "姓氏",
+      "description": "获取用户的名字，如果用户已登录。",
+      "returnType": "string"
+    },
+    {
+      "id": "lastname",
+      "scriptName": "LastName",
+      "category": "facebook",
+      "translated-name": "姓氏",
+      "description": "获取用户的姓氏，如果用户已登录。",
+      "returnType": "string"
+    },
+    {
+      "id": "useridstr",
+      "scriptName": "UserIDStr",
+      "category": "facebook",
+      "translated-name": "用户ID",
+      "description": "获取用户ID作为字符串，即使对于具有相同名称的用户也是如此。",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "app-id": {
+      "name": "App ID",
+      "desc": "Facebook创建应用程序后为您提供App ID。"
+    },
+    "app-secret": {
+      "name": "App secret",
+      "desc": "App Secret在创建应用程序后Facebook为您提供。 仅必要提交分数！"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "exposure",
+  "name": "Exposure",
+  "description": "Adjust the exposure of the image.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "exposure",
+      "type": "percent",
+      "name": "Exposure",
+      "desc": "Amount to adjust the exposure."
+    }
+  ]
+}

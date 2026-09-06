@@ -1,0 +1,17 @@
+{
+  "id": "pixellatemask",
+  "name": "像素化蒙版",
+  "description": "从背景创建块状低分辨率图像。",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": true,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "size",
+      "type": "float",
+      "name": "大小",
+      "desc": "每个图块的大小，以像素为单位。"
+    }
+  ]
+}

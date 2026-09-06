@@ -2,13 +2,11 @@
 
 **English** | [中文](README_CN.md)
 
-Everything you need to answer questions about [Construct 3](https://www.construct.net) — the complete game engine knowledge base in structured JSON. What does each plugin do? What actions, conditions, and expressions are available? What parameters do they take? It's all here, in English and Chinese, ready to read without any setup.
+Structured Construct 3 reference data and a retrieval API for answering questions about plugins, behaviors, ACEs, effects, examples, and scripting interfaces. The committed reference files can be read directly; the optional service adds keyword and semantic search.
 
-66 plugins · 31 behaviors · 89 effects · 481 examples · 150 TypeScript definitions
+> The current Construct version and dataset counts are recorded in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). Updates are proposed by [the data workflow](.github/workflows/update.yml).
 
-> Current data version: **r476** · Auto-updated weekly via [GitHub Action](.github/workflows/update-c3-data.yml)
-
-> **For LLMs:** Read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) before answering Construct 3 questions — it defines how to look up and reference ACEs accurately. Data is in `data/c3-schemas/{lang}/`.
+> **For LLMs:** Read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) before answering Construct 3 questions — it defines how to look up and reference ACEs accurately. Data is in `data/c3-schemas/{locale}/`, where `locale` is `en-US` or `zh-CN`.
 
 ## Key Concepts
 
@@ -40,12 +38,12 @@ No install needed. Pick a language (`en-US` or `zh-CN`) and read.
 | Path | Count | Content |
 |------|------:|---------|
 | `c3-schemas/_index.json` | — | Master index: id → name, file path, ACE counts |
-| `c3-schemas/{lang}/plugins/{id}.json` | 66 | Conditions, actions, expressions, properties |
-| `c3-schemas/{lang}/behaviors/{id}.json` | 31 | Behavior ACE definitions |
-| `c3-schemas/{lang}/effects/{id}.json` | 89 | Effect parameters, categories |
-| `c3-examples/{lang}/{id}.json` | 481 | Name, description, tags, used-addons, open URL |
-| `c3-ts-defs/autocomplete-data.json` | 109 | Scripting classes → methods/properties |
-| `c3-ts-defs/**/*.d.ts` | 150 | Full TypeScript interface signatures |
+| `c3-schemas/{locale}/plugins/{id}.json` | indexed | Conditions, actions, expressions, properties |
+| `c3-schemas/{locale}/behaviors/{id}.json` | indexed | Behavior ACE definitions |
+| `c3-schemas/{locale}/effects/{id}.json` | indexed | Effect parameters, categories |
+| `c3-examples/{locale}/{id}.json` | per release | Name, description, tags, used-addons, open URL |
+| `c3-ts-defs/autocomplete-data.json` | per release | Scripting classes → methods/properties |
+| `c3-ts-defs/**/*.d.ts` | per release | Full TypeScript interface signatures |
 
 All paths are under `data/`. Schema files use CDN-native field names (`list-name`, `display-text`, `translated-name`).
 
@@ -111,11 +109,11 @@ Field names match the official CDN: `list-name`, `display-text` for conditions/a
 | Question | Where to look |
 |----------|---------------|
 | What plugins/behaviors/effects exist? | `_index.json` |
-| What ACEs does X have? | `{lang}/plugins/{id}.json` |
+| What ACEs does X have? | `{locale}/plugins/{id}.json` |
 | How does an ACE look in the event sheet? | `display-text` field |
 | What parameters does an ACE take? | `params` object |
-| What effects are available? | `{lang}/effects/{id}.json` |
-| Example projects using X? | `c3-examples/{lang}/*.json` → `used-addons` |
+| What effects are available? | `{locale}/effects/{id}.json` |
+| Example projects using X? | `c3-examples/{locale}/*.json` → `used-addons` |
 | JavaScript/TypeScript API? | `autocomplete-data.json` → `.d.ts` |
 
 ## LLM Integration
@@ -129,6 +127,11 @@ pip install -r requirements.txt
 python scripts/setup.py          # → http://localhost:8765/playground
 ```
 
+This starts the deterministic offline lookup service. It does not connect to
+Qdrant or load an embedding model. `mode=auto` adds semantic results only when
+full mode has been explicitly enabled. It uses an existing local schema snapshot;
+pass `--refresh-data` only when a CDN refresh is intended.
+
 ### POST /search
 
 | Parameter | Values | Default |
@@ -140,7 +143,7 @@ python scripts/setup.py          # → http://localhost:8765/playground
 
 Full spec: [docs/api-reference.md](docs/api-reference.md)
 
-### Semantic search
+### Semantic search (explicit opt-in)
 
 Requires Qdrant + embedding model. GPU recommended.
 
@@ -150,18 +153,28 @@ docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdran
 python scripts/setup.py --full
 ```
 
+`--full` verifies Qdrant, builds the vector index unless skipped, and starts the
+server process with `LITE_MODE=false`. A normal setup remains lookup-only.
+
 ## Project Structure
 
 ```
-src/api.py              FastAPI service
-src/ingest/             CDN fetching, schema export, indexing
-src/rag/                Lookup engine, vector retriever, query expander
-data/c3-schemas/        ACE definitions, effects (en + zh)
-data/c3-examples/       Example project metadata (en + zh)
+src/api.py              Thin FastAPI composition root
+src/interfaces/http/    Canonical HTTP DTOs and response presenters
+src/application/        Search and health SOP workflows
+src/domain/             Transport-independent lookup/retrieval data
+src/lookup/             Offline lookup service, handlers, and four indexes
+src/retrieval/          Semantic adapter, policies, stable IDs, and deduplication
+src/vector/             Shared dense and sparse vector adapters
+src/ingest/             Parsers, contracts, and prepare-to-verify pipeline
+src/observability/      Canonical request-local tracing
+src/rag/                Legacy compatibility facades only
+data/c3-schemas/        ACE definitions, effects (en-US + zh-CN)
+data/c3-examples/       Example project metadata (en-US + zh-CN)
 data/c3-ts-defs/        TypeScript interfaces
-tests/                  173 tests
+tests/                  Unit and regression tests
 docs/                   API reference, architecture, data pipeline
-.github/workflows/      Weekly auto-update
+.github/workflows/      Data update automation
 ```
 
 ## Credits

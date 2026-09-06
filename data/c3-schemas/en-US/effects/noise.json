@@ -1,0 +1,23 @@
+{
+  "id": "noise",
+  "name": "Noise",
+  "description": "Add pseudorandom noise to the color channel.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "Intensity",
+      "desc": "Noise level to add."
+    },
+    {
+      "id": "color",
+      "type": "percent",
+      "name": "Color",
+      "desc": "From 0 (monochrome noise) to 100 (color noise)."
+    }
+  ]
+}

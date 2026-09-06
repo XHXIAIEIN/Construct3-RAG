@@ -1,0 +1,29 @@
+{
+  "id": "fogexponential",
+  "name": "雾场",
+  "description": "基于对象与3D相机的距离远近，通过颜色变化产生深度视错觉。以指数级速度衰减，将画面淡出至指定的颜色。",
+  "category": "3d",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "fog-color",
+      "type": "color",
+      "name": "颜色",
+      "desc": "物体与相机的距离越远，颜色会逐渐变淡。"
+    },
+    {
+      "id": "fog-density",
+      "type": "percent",
+      "name": "浓度",
+      "desc": "浓度值越高，雾效果对颜色的影响更明显。"
+    },
+    {
+      "id": "near-dist",
+      "type": "float",
+      "name": "起始距离",
+      "desc": "雾场的起始距离，比这个距离近的对象不会产生雾效果。"
+    }
+  ]
+}

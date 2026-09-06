@@ -1,0 +1,319 @@
+{
+  "id": "video",
+  "name": "Video",
+  "description": "Play back a video in the project.",
+  "type": "plugin",
+  "aceCategories": {
+    "video": "Video"
+  },
+  "conditions": [
+    {
+      "id": "is-playing",
+      "scriptName": "IsPlaying",
+      "category": "video",
+      "list-name": "Is playing",
+      "display-text": "Is playing",
+      "description": "True if video is currently playing."
+    },
+    {
+      "id": "is-paused",
+      "scriptName": "IsPaused",
+      "category": "video",
+      "list-name": "Is paused",
+      "display-text": "Is paused",
+      "description": "True if video is currently paused."
+    },
+    {
+      "id": "has-ended",
+      "scriptName": "HasEnded",
+      "category": "video",
+      "list-name": "Has ended",
+      "display-text": "Has ended",
+      "description": "True if video has finished playing."
+    },
+    {
+      "id": "is-muted",
+      "scriptName": "IsMuted",
+      "category": "video",
+      "list-name": "Is muted",
+      "display-text": "Is muted",
+      "description": "True if video sound is muted."
+    },
+    {
+      "id": "on-playback-event",
+      "scriptName": "OnPlaybackEvent",
+      "category": "video",
+      "list-name": "On playback event",
+      "display-text": "On {0}",
+      "description": "Triggered when a playback event occurs.",
+      "params": {
+        "event": {
+          "type": "combo",
+          "name": "Event",
+          "desc": "The playback event to check for.",
+          "items": {
+            "can-play": "Can play",
+            "can-play-through": "Can play through",
+            "ended": "Ended",
+            "error": "Error",
+            "started-loading": "Started loading",
+            "played": "Played",
+            "paused": "Paused",
+            "stalled": "Stalled"
+          }
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-source-2",
+      "scriptName": "SetSource2",
+      "category": "video",
+      "list-name": "Set source",
+      "display-text": "Set video primary source [i]{0}[/i] ({1}), secondary source [i]{2}[/i] ({3})",
+      "description": "Switch to a different video. This does not automatically start playing it.",
+      "params": {
+        "primary-source": {
+          "type": "string",
+          "name": "Primary source",
+          "desc": "File name of primary video source to use if supported."
+        },
+        "primary-format": {
+          "type": "combo",
+          "name": "Primary format",
+          "desc": "The container format and video codec of the primary source.",
+          "items": {
+            "webm-vp8": "WebM VP8",
+            "webm-vp9": "WebM VP9",
+            "webm-av1": "WebM AV1",
+            "mp4-h264": "MP4 H.264",
+            "mp4-h265": "MP4 H.265",
+            "mp4-av1": "MP4 AV1"
+          },
+          "initialValue": "mp4-h264"
+        },
+        "secondary-source": {
+          "type": "string",
+          "name": "Secondary source",
+          "desc": "File name of secondary video source to use if the primary format is not supported."
+        },
+        "secondary-format": {
+          "type": "combo",
+          "name": "Secondary format",
+          "desc": "The container format and video codec of the secondary source.",
+          "items": {
+            "webm-vp8": "WebM VP8",
+            "webm-vp9": "WebM VP9",
+            "webm-av1": "WebM AV1",
+            "mp4-h264": "MP4 H.264",
+            "mp4-h265": "MP4 H.265",
+            "mp4-av1": "MP4 AV1"
+          },
+          "initialValue": "webm-vp9"
+        }
+      }
+    },
+    {
+      "id": "set-playback-time",
+      "scriptName": "SetPlaybackTime",
+      "category": "video",
+      "list-name": "Set playback time",
+      "display-text": "Set playback time to [b]{0}[/b] seconds",
+      "description": "Set the current playback time in seconds.",
+      "params": {
+        "time": {
+          "type": "number",
+          "name": "Time",
+          "desc": "Playback time in seconds to seek to."
+        }
+      }
+    },
+    {
+      "id": "set-playback-rate",
+      "scriptName": "SetPlaybackRate",
+      "category": "video",
+      "list-name": "Set playback rate",
+      "display-text": "Set playback rate to [b]{0}[/b]",
+      "description": "Set how fast the video plays, as a multiplier of its original speed.",
+      "params": {
+        "rate": {
+          "type": "number",
+          "name": "Rate",
+          "desc": "The playback rate to set. 1 is original speed, 2 is double speed, etc."
+        }
+      }
+    },
+    {
+      "id": "set-looping",
+      "scriptName": "SetLooping",
+      "category": "video",
+      "list-name": "Set looping",
+      "display-text": "Set {0}",
+      "description": "Set whether the video loops when it reaches the end.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether or not the video should loop when it reaches the end.",
+          "items": {
+            "not-looping": "not looping",
+            "looping": "looping"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-muted",
+      "scriptName": "SetMuted",
+      "category": "video",
+      "list-name": "Set muted",
+      "display-text": "Set {0}",
+      "description": "Set whether the audio is muted.",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "Mode",
+          "desc": "Whether or not the audio should be muted.",
+          "items": {
+            "not-muted": "not muted",
+            "muted": "muted"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-volume",
+      "scriptName": "SetVolume",
+      "category": "video",
+      "list-name": "Set volume",
+      "display-text": "Set volume to [b]{0}[/b] dB",
+      "description": "Set the volume of the accompanying audio.",
+      "params": {
+        "volume": {
+          "type": "number",
+          "name": "Volume",
+          "desc": "The volume of the audio to set, in dB attenuation."
+        }
+      }
+    },
+    {
+      "id": "pause",
+      "scriptName": "Pause",
+      "category": "video",
+      "list-name": "Pause",
+      "display-text": "Pause",
+      "description": "Pause the current playback."
+    },
+    {
+      "id": "play",
+      "scriptName": "Play",
+      "category": "video",
+      "list-name": "Play",
+      "display-text": "Play",
+      "description": "Start playing the video if stopped or paused. On mobile, may only work in a user input trigger."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "playbacktime",
+      "scriptName": "PlaybackTime",
+      "category": "video",
+      "translated-name": "PlaybackTime",
+      "description": "Current playback time in seconds.",
+      "returnType": "number"
+    },
+    {
+      "id": "playbackrate",
+      "scriptName": "PlaybackRate",
+      "category": "video",
+      "translated-name": "PlaybackRate",
+      "description": "Current playback rate, 1 being normal speed.",
+      "returnType": "number"
+    },
+    {
+      "id": "duration",
+      "scriptName": "Duration",
+      "category": "video",
+      "translated-name": "Duration",
+      "description": "Video duration in seconds, if known.",
+      "returnType": "number"
+    },
+    {
+      "id": "volume",
+      "scriptName": "Volume",
+      "category": "video",
+      "translated-name": "Volume",
+      "description": "Current video volume in dB attenuation.",
+      "returnType": "number"
+    },
+    {
+      "id": "videowidth",
+      "scriptName": "VideoWidth",
+      "category": "video",
+      "translated-name": "VideoWidth",
+      "description": "The width of the source video.",
+      "returnType": "number"
+    },
+    {
+      "id": "videoheight",
+      "scriptName": "VideoHeight",
+      "category": "video",
+      "translated-name": "VideoHeight",
+      "description": "The height of the source video.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "primary-source": {
+      "name": "Primary source",
+      "desc": "File name of primary video source to use if supported."
+    },
+    "primary-format": {
+      "name": "Primary format",
+      "desc": "The container format and video codec of the primary source.",
+      "items": {
+        "webm-vp8": "WebM VP8",
+        "webm-vp9": "WebM VP9",
+        "webm-av1": "WebM AV1",
+        "mp4-h264": "MP4 H.264",
+        "mp4-h265": "MP4 H.265",
+        "mp4-av1": "MP4 AV1"
+      }
+    },
+    "secondary-source": {
+      "name": "Secondary source",
+      "desc": "File name of secondary video source to use if the primary format is not supported."
+    },
+    "secondary-format": {
+      "name": "Secondary format",
+      "desc": "The container format and video codec of the secondary source.",
+      "items": {
+        "webm-vp8": "WebM VP8",
+        "webm-vp9": "WebM VP9",
+        "webm-av1": "WebM AV1",
+        "mp4-h264": "MP4 H.264",
+        "mp4-h265": "MP4 H.265",
+        "mp4-av1": "MP4 AV1"
+      }
+    },
+    "autoplay": {
+      "name": "Autoplay",
+      "desc": "Whether to do nothing, start downloading, or start playing upon creation (if supported).",
+      "items": {
+        "no": "No",
+        "preload": "Preload",
+        "yes": "Yes"
+      }
+    },
+    "play-in-background": {
+      "name": "Play in background",
+      "desc": "Keep playing video even when the tab or app goes in to the background."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    }
+  }
+}

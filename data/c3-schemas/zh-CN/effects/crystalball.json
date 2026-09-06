@@ -1,0 +1,23 @@
+{
+  "id": "crystalball",
+  "name": "水晶球",
+  "description": "具有模拟照明的球形球效果。",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "radius",
+      "type": "percent",
+      "name": "半径",
+      "desc": "球体的大小。"
+    },
+    {
+      "id": "refractive-index",
+      "type": "percent",
+      "name": "折射率",
+      "desc": "用于照亮球体的折射率。"
+    }
+  ]
+}

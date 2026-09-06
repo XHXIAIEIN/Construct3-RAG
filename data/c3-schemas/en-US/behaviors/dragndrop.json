@@ -1,0 +1,108 @@
+{
+  "id": "dragndrop",
+  "name": "Drag & Drop",
+  "description": "Drag and drop objects either by mouse or touch.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-dragging",
+      "scriptName": "IsDragging",
+      "category": "",
+      "list-name": "Is dragging",
+      "display-text": "{my} is dragging",
+      "description": "True if the object is currently being dragged."
+    },
+    {
+      "id": "on-drag-start",
+      "scriptName": "OnDragStart",
+      "category": "",
+      "list-name": "On drag start",
+      "display-text": "On {my} drag start",
+      "description": "Triggered when the object begins to be dragged.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-drop",
+      "scriptName": "OnDrop",
+      "category": "",
+      "list-name": "On drop",
+      "display-text": "On {my} drop",
+      "description": "Triggered when the object is dropped (the drag stops).",
+      "isTrigger": true
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "True if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} {0}",
+      "description": "Enable or disable the drag and drop behavior.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Choose whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-axes",
+      "scriptName": "SetAxes",
+      "category": "",
+      "list-name": "Set axes",
+      "display-text": "Set {my} axes [b]{0}[/b]",
+      "description": "Set which ways the object can be dragged.",
+      "params": {
+        "axes": {
+          "type": "combo",
+          "name": "Axes",
+          "desc": "The ways in which the object can be dragged.",
+          "items": {
+            "both": "Both",
+            "horizontal-only": "Horizontal only",
+            "vertical-only": "Vertical only"
+          }
+        }
+      }
+    },
+    {
+      "id": "drop",
+      "scriptName": "Drop",
+      "category": "",
+      "list-name": "Drop",
+      "display-text": "Drop {my}",
+      "description": "If currently being dragged, force the object to be dropped."
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "axes": {
+      "name": "Axes",
+      "desc": "Which ways the object can be dragged.",
+      "items": {
+        "both": "Both",
+        "horizontal-only": "Horizontal only",
+        "vertical-only": "Vertical only"
+      }
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    }
+  }
+}

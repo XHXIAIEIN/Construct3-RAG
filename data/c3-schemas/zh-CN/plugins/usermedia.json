@@ -1,0 +1,251 @@
+{
+  "id": "usermedia",
+  "name": "用户媒体",
+  "description": "访问摄像头或麦克风设备，获取用户设备的实时媒体信息。",
+  "type": "plugin",
+  "aceCategories": {
+    "ambient-light": "环境光",
+    "canvas-recording": "屏幕录制",
+    "media-request": "媒体捕获",
+    "speech-recognition": "语音识别",
+    "speech-synthesis": "语音合成",
+    "user-media": "用户媒体"
+  },
+  "conditions": [
+    {
+      "id": "on-media-request-approved",
+      "scriptName": "OnApproved",
+      "category": "media-request",
+      "list-name": "权限被允许",
+      "display-text": "权限被允许",
+      "description": "用户批准媒体请求提示时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-media-request-declined",
+      "scriptName": "OnDeclined",
+      "category": "media-request",
+      "list-name": "权限被拒绝",
+      "display-text": "权限被拒绝",
+      "description": "用户拒绝媒体请求提示，或遇到了错误时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-retrieved-media-sources",
+      "scriptName": "OnMediaSources",
+      "category": "media-request",
+      "list-name": "获取设备列表成功",
+      "display-text": "获取设备列表成功",
+      "description": "执行 '获取设备列表' 动作后，成功获取到设备列表时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-snapshot",
+      "scriptName": "OnSnapshot",
+      "category": "media-request",
+      "list-name": "截屏完成",
+      "display-text": "截屏完成",
+      "description": "执行 '截屏' 动作后，成功返回 '截屏文件地址' 表达式时触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-camera",
+      "scriptName": "RequestCamera",
+      "category": "media-request",
+      "list-name": "请求使用摄像头",
+      "display-text": "请求使用摄像头权限 (设备源: [i]{0}[/i],  摄像头: [i]{1}[/i],  预设分辨率: {2}x{3}, 麦克风: [i]{4}[/i], 麦克风设备源: [i]{5}[/i])",
+      "description": "向用户请求访问相机的权限作为视频输入。（如果设备支持）",
+      "params": {
+        "source": {
+          "type": "number",
+          "name": "设备源",
+          "desc": "要使用的相机源的从0开始的索引。"
+        },
+        "preferred-direction": {
+          "type": "combo",
+          "name": "摄像头",
+          "desc": "如果存在多个摄像头，优先选择的摄像头朝向。移动设备通常包含多个摄像头。",
+          "items": {
+            "any": "任意",
+            "user": "前置",
+            "environment": "后置"
+          }
+        },
+        "preferred-width": {
+          "type": "number",
+          "name": "预设宽度",
+          "desc": "预设的水平分辨率。 默认值为0。"
+        },
+        "preferred-height": {
+          "type": "number",
+          "name": "预设高度",
+          "desc": "预设的垂直分辨率。 默认值为0。"
+        },
+        "include-mic": {
+          "type": "boolean",
+          "name": "包含麦克风",
+          "desc": "是否请求麦克风作为音频输入的权限，有助于同时录制视频和音频。"
+        },
+        "mic-source": {
+          "type": "number",
+          "name": "麦克风源",
+          "desc": "使用麦克风时，指定麦克风设备源的索引，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "media-request",
+      "list-name": "结束",
+      "display-text": "结束",
+      "description": "结束访问用户媒体。"
+    },
+    {
+      "id": "snapshot",
+      "scriptName": "Snapshot",
+      "category": "media-request",
+      "list-name": "截屏",
+      "display-text": "截屏 (格式: {0}, 质量: [i]{1}[/i])",
+      "description": "保存摄像头当前拍摄的画面快照。完成后触发 '截屏完成' 条件。",
+      "params": {
+        "format": {
+          "type": "combo",
+          "name": "格式",
+          "desc": "选择快照保存的文件格式。PNG为无损图像，但JPEG文件小。",
+          "items": {
+            "png": "PNG",
+            "jpeg": "JPEG"
+          }
+        },
+        "jpeg-quality": {
+          "type": "number",
+          "name": "JPEG品质",
+          "desc": "仅适用于 'JPEG' 格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-microphone",
+      "scriptName": "RequestMic",
+      "category": "media-request",
+      "list-name": "请求使用麦克风",
+      "display-text": "请求麦克风源 [i]{1}[/i] 并路由到音频标签{0}",
+      "description": "提示用户访问麦克风的音频输入（如果有）。 必须将Audio对象添加到项目中。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "用于在音频对象中，关联麦克风输入的标签。"
+        },
+        "source": {
+          "type": "number",
+          "name": "设备源",
+          "desc": "要使用的音频源的从零开始的索引。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-media-sources",
+      "scriptName": "GetMediaSources",
+      "category": "media-request",
+      "list-name": "获取设备源列表",
+      "display-text": "获取设备源列表",
+      "description": "请求当前可用的媒体设备列表。完成后触发 '获取设备列表成功' 条件。",
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "videowidth",
+      "scriptName": "VideoWidth",
+      "category": "user-media",
+      "translated-name": "视频宽度",
+      "description": "获取相机设备返回图像宽度。",
+      "returnType": "number"
+    },
+    {
+      "id": "videoheight",
+      "scriptName": "VideoHeight",
+      "category": "user-media",
+      "translated-name": "视频高度",
+      "description": "获取相机设备返回图像高度。",
+      "returnType": "number"
+    },
+    {
+      "id": "snapshoturl",
+      "scriptName": "SnapshotURL",
+      "category": "user-media",
+      "translated-name": "截屏快照",
+      "description": "在 '截屏完成' 条件中，返回的图像文件地址。可用于精灵或平铺图的加载远程图像动作。",
+      "returnType": "string"
+    },
+    {
+      "id": "audiosourcecount",
+      "scriptName": "AudioSourceCount",
+      "category": "user-media",
+      "translated-name": "获取音频源数量",
+      "description": "获取音频源的数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "audiosourcelabelat",
+      "scriptName": "AudioSourceLabelAt",
+      "category": "user-media",
+      "translated-name": "获取音频源标签",
+      "description": "获取音频源的标签。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "音频源的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "camerasourcecount",
+      "scriptName": "CameraSourceCount",
+      "category": "user-media",
+      "translated-name": "获取相机源数量",
+      "description": "获取可用的摄像机源的数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "camerasourcelabelat",
+      "scriptName": "CameraSourceLabelAt",
+      "category": "user-media",
+      "translated-name": "获取相机源标签",
+      "description": "获取摄像头的标签。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "相机源的索引，从 0 开始的计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "camerasourcefacingat",
+      "scriptName": "CameraSourceFacingAt",
+      "category": "user-media",
+      "translated-name": "获取相机源朝向",
+      "description": "获取摄像机源的朝向，例如前置/后置摄像头。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "多个摄像头设备的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

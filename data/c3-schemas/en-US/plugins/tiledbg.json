@@ -1,0 +1,438 @@
+{
+  "id": "tiledbg",
+  "name": "Tiled Background",
+  "description": "Tile an image over an area. Tiled Backgrounds are faster than tiling Sprites.",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "Appearance",
+    "tile-randomization": "Tile randomization",
+    "image": "Image",
+    "web": "Web"
+  },
+  "conditions": [
+    {
+      "id": "is-tile-randomization-enabled",
+      "scriptName": "IsTileRandomizationEnabled",
+      "category": "tile-randomization",
+      "list-name": "Is tile randomization enabled",
+      "display-text": "Is tile randomization enabled",
+      "description": "True if tile randomization is currently enabled."
+    },
+    {
+      "id": "on-image-url-loaded",
+      "scriptName": "OnURLLoaded",
+      "category": "web",
+      "list-name": "On image URL loaded",
+      "display-text": "On image URL loaded",
+      "description": "Triggered after 'Load image from URL' when the image has finished loading.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-image-url-failed",
+      "scriptName": "OnURLFailed",
+      "category": "web",
+      "list-name": "On image URL failed",
+      "display-text": "On image URL failed to load",
+      "description": "Triggered after 'Load image from URL' if the image fails to load.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "Set blend mode",
+      "display-text": "Set blend mode to [i]{0}[/i]",
+      "description": "Set the background blend mode for this object.",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for this object.",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "xor": "XOR",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-image-offset-x",
+      "scriptName": "SetImageOffsetX",
+      "category": "image",
+      "list-name": "Set image X offset",
+      "display-text": "Set image X offset to [i]{0}[/i]",
+      "description": "Set the X offset of the image within the object.",
+      "params": {
+        "offset-x": {
+          "type": "number",
+          "name": "X offset",
+          "desc": "The X offset of the image within the object, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-image-offset-y",
+      "scriptName": "SetImageOffsetY",
+      "category": "image",
+      "list-name": "Set image Y offset",
+      "display-text": "Set image Y offset to [i]{0}[/i]",
+      "description": "Set the Y offset of the image within the object.",
+      "params": {
+        "offset-y": {
+          "type": "number",
+          "name": "Y offset",
+          "desc": "The Y offset of the image within the object, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-image-scale-x",
+      "scriptName": "SetImageScaleX",
+      "category": "image",
+      "list-name": "Set image X scale",
+      "display-text": "Set image X scale to [i]{0}[/i]",
+      "description": "Set the X scale of the image within the object.",
+      "params": {
+        "scale-x": {
+          "type": "number",
+          "name": "X scale",
+          "desc": "The X scale of the image within the object, as a percentage."
+        }
+      }
+    },
+    {
+      "id": "set-image-scale-y",
+      "scriptName": "SetImageScaleY",
+      "category": "image",
+      "list-name": "Set image Y scale",
+      "display-text": "Set image Y scale to [i]{0}[/i]",
+      "description": "Set the Y scale of the image within the object.",
+      "params": {
+        "scale-y": {
+          "type": "number",
+          "name": "Y scale",
+          "desc": "The Y scale of the image within the object, as a percentage."
+        }
+      }
+    },
+    {
+      "id": "set-image-angle",
+      "scriptName": "SetImageAngle",
+      "category": "image",
+      "list-name": "Set image angle",
+      "display-text": "Set image angle to [i]{0}[/i] degrees",
+      "description": "Set the angle of the image within the object.",
+      "params": {
+        "angle": {
+          "type": "number",
+          "name": "Angle",
+          "desc": "The angle of the image within the object, in degrees."
+        }
+      }
+    },
+    {
+      "id": "set-tile-randomization-enabled",
+      "scriptName": "SetTileRandomizationEnabled",
+      "category": "tile-randomization",
+      "list-name": "Set tile randomization enabled",
+      "display-text": "Set tile randomization enabled: [b]{0}[/b]",
+      "description": "Set whether tile randomization is enabled.",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Whether to enable or disable tile randomization."
+        }
+      }
+    },
+    {
+      "id": "set-tile-pos-random",
+      "scriptName": "SetTilePosRandom",
+      "category": "tile-randomization",
+      "list-name": "Set position random",
+      "display-text": "Set tile position randomization to [i]{0}[/i], [i]{1}[/i]",
+      "description": "Set the amount of horizontal and vertical randomness for tile randomization.",
+      "params": {
+        "x-random": {
+          "type": "number",
+          "name": "X random",
+          "desc": "Amount of horizontal randomness, from 0 to 100."
+        },
+        "y-random": {
+          "type": "number",
+          "name": "Y random",
+          "desc": "Amount of vertical randomness, from 0 to 100."
+        }
+      }
+    },
+    {
+      "id": "set-tile-angle-random",
+      "scriptName": "SetTileAngleRandom",
+      "category": "tile-randomization",
+      "list-name": "Set angle random",
+      "display-text": "Set tile angle randomization to [i]{0}[/i]",
+      "description": "Set the amount of angle randomness for tile randomization.",
+      "params": {
+        "angle-random": {
+          "type": "number",
+          "name": "Angle random",
+          "desc": "Amount of angle randomness, from 0 to 100."
+        }
+      }
+    },
+    {
+      "id": "set-tile-blend-margin",
+      "scriptName": "SetTileBlendMargin",
+      "category": "tile-randomization",
+      "list-name": "Set tile blend margin",
+      "display-text": "Set tile blend margin to [i]{0}[/i], [i]{1}[/i]",
+      "description": "Set the percentage of the tile that fades to adjacent tile.",
+      "params": {
+        "blend-margin-x": {
+          "type": "number",
+          "name": "Blend margin X",
+          "desc": "Percentage of tile width that fades to adjacent tile, 0-100."
+        },
+        "blend-margin-y": {
+          "type": "number",
+          "name": "Blend margin Y",
+          "desc": "Percentage of tile height that fades to adjacent tile, 0-100."
+        }
+      }
+    },
+    {
+      "id": "load-image-from-url",
+      "scriptName": "LoadURL",
+      "category": "web",
+      "list-name": "Load image from URL",
+      "display-text": "Load image from [i]{0}[/i] (cross-origin {1})",
+      "description": "Load an image from a web address or data URI.",
+      "params": {
+        "uri": {
+          "type": "string",
+          "name": "URI",
+          "desc": "Enter the URL on the web, or data URI, of an image to load."
+        },
+        "cross-origin": {
+          "type": "combo",
+          "name": "Cross-origin",
+          "desc": "The cross-origin (CORS) mode to use for the request.",
+          "items": {
+            "anonymous": "anonymous",
+            "none": "none"
+          }
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "imagewidth",
+      "scriptName": "ImageWidth",
+      "category": "image",
+      "translated-name": "ImageWidth",
+      "description": "The width of the current image, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "imageheight",
+      "scriptName": "ImageHeight",
+      "category": "image",
+      "translated-name": "ImageHeight",
+      "description": "The height of the current image, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-offset-x",
+      "scriptName": "ImageOffsetX",
+      "category": "image",
+      "translated-name": "ImageOffsetX",
+      "description": "The X offset of the image within the object, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-offset-y",
+      "scriptName": "ImageOffsetY",
+      "category": "image",
+      "translated-name": "ImageOffsetY",
+      "description": "The Y offset of the image within the object, in pixels.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-x",
+      "scriptName": "ImageScaleX",
+      "category": "image",
+      "translated-name": "ImageScaleX",
+      "description": "The X scale of the image within the object.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-scale-y",
+      "scriptName": "ImageScaleY",
+      "category": "image",
+      "translated-name": "ImageScaleY",
+      "description": "The Y scale of the image within the object.",
+      "returnType": "number"
+    },
+    {
+      "id": "image-angle",
+      "scriptName": "ImageAngle",
+      "category": "image",
+      "translated-name": "ImageAngle",
+      "description": "The angle of the image within the object, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "tile-x-random",
+      "scriptName": "TileXRandom",
+      "category": "tile-randomization",
+      "translated-name": "TileXRandom",
+      "description": "The tile horizontal randomness, 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "tile-y-random",
+      "scriptName": "TileYRandom",
+      "category": "tile-randomization",
+      "translated-name": "TileYRandom",
+      "description": "The tile vertical randomness, 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "tile-angle-random",
+      "scriptName": "TileAngleRandom",
+      "category": "tile-randomization",
+      "translated-name": "TileAngleRandom",
+      "description": "The tile angle randomness, 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "tile-blend-margin-x",
+      "scriptName": "TileBlendMarginX",
+      "category": "tile-randomization",
+      "translated-name": "TileBlendMarginX",
+      "description": "The tile randomization horizontal blend margin, 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "tile-blend-margin-y",
+      "scriptName": "TileBlendMarginY",
+      "category": "tile-randomization",
+      "translated-name": "TileBlendMarginY",
+      "description": "The tile randomization vertical blend margin, 0-100.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "edit-image": {
+      "name": "Image",
+      "desc": "Click to edit the object's image.",
+      "link-text": "Edit"
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "origin": {
+      "name": "Origin",
+      "desc": "Choose the location of the origin in the object.",
+      "items": {
+        "top-left": "Top-left",
+        "top": "Top",
+        "top-right": "Top-right",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "bottom-left": "Bottom-left",
+        "bottom": "Bottom",
+        "bottom-right": "Bottom-right"
+      }
+    },
+    "wrap-horizontal": {
+      "name": "Wrap horizontal",
+      "desc": "How the image wraps horizontally. Note: this applies to all instances of this object type.",
+      "items": {
+        "clamp-to-edge": "Clamp to edge",
+        "repeat": "Repeat",
+        "mirror-repeat": "Mirrored repeat"
+      }
+    },
+    "wrap-vertical": {
+      "name": "Wrap vertical",
+      "desc": "How the image wraps vertically. Note: this applies to all instances of this object type.",
+      "items": {
+        "clamp-to-edge": "Clamp to edge",
+        "repeat": "Repeat",
+        "mirror-repeat": "Mirrored repeat"
+      }
+    },
+    "image-transform": {
+      "name": "Image transform",
+      "desc": "Adjust how the tiled image is displayed within the object."
+    },
+    "image-offset-x": {
+      "name": "Image offset X",
+      "desc": "The X offset of the image within the object, in pixels."
+    },
+    "image-offset-y": {
+      "name": "Image offset Y",
+      "desc": "The Y offset of the image within the object, in pixels."
+    },
+    "image-scale-x": {
+      "name": "Image scale X",
+      "desc": "The X scale of the image within the object."
+    },
+    "image-scale-y": {
+      "name": "Image scale Y",
+      "desc": "The Y scale of the image within the object."
+    },
+    "image-angle": {
+      "name": "Image angle",
+      "desc": "The angle of the image within the object, in degrees."
+    },
+    "tile-randomization": {
+      "name": "Tile randomization",
+      "desc": "Break up repetitive patterns by applying a random offset and orientation for each tile and blending the edges."
+    },
+    "enable-tile-randomization": {
+      "name": "Enable tile randomization",
+      "desc": "Whether to enable random offsets and orientation for tiles to break up repetitive patterns."
+    },
+    "x-random": {
+      "name": "X random",
+      "desc": "Amount of horizontal shift randomization."
+    },
+    "y-random": {
+      "name": "Y random",
+      "desc": "Amount of vertical shift randomization."
+    },
+    "angle-random": {
+      "name": "Angle random",
+      "desc": "Amount of rotation randomization."
+    },
+    "blend-margin-x": {
+      "name": "Blend margin X",
+      "desc": "Percentage of tile width that fades to adjacent tile."
+    },
+    "blend-margin-y": {
+      "name": "Blend margin Y",
+      "desc": "Percentage of tile height that fades to adjacent tile."
+    }
+  }
+}

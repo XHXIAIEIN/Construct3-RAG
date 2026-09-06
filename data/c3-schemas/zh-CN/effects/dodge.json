@@ -1,0 +1,10 @@
+{
+  "id": "dodge",
+  "name": "减淡",
+  "description": "将前景减淡混合到背景中。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

@@ -1,0 +1,46 @@
+{
+  "id": "jumpthru",
+  "name": "跳跃穿透",
+  "description": "让平台行为识别此对象为实体，也允许从上下两端穿透而过。",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "已启用",
+      "display-text": "{my} 已启用",
+      "description": "测试该行为在当前是否启用"
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "设置启用",
+      "display-text": "[b]{0}[/b] {my}",
+      "description": "该对象是否被视为平台。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "设置对象是否被视为平台",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          },
+          "initialValue": "enabled"
+        }
+      }
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "enabled": {
+      "name": "启用",
+      "desc": "游戏初始化时，是否默认启用该行为。"
+    }
+  }
+}

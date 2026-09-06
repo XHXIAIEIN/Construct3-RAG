@@ -129,6 +129,7 @@ def _extract_blocks(
     depth: int = 0,
     parent_comment: str = "",
     plugin_map: Optional[dict[str, str]] = None,
+    event_path: tuple[int, ...] = (),
 ) -> list[dict]:
     """Recursively extract block/function-block events as indexable docs.
 
@@ -140,6 +141,7 @@ def _extract_blocks(
 
     for idx, event in enumerate(events):
         etype = event.get("eventType", "")
+        current_path = (*event_path, idx)
 
         if etype == "comment":
             pending_comment = event.get("text", "").replace("\n", " ").strip()[:200]
@@ -150,6 +152,7 @@ def _extract_blocks(
             docs.extend(_extract_blocks(
                 event.get("children", []), project_meta, sheet_name,
                 depth=depth, parent_comment=pending_comment, plugin_map=plugin_map,
+                event_path=current_path,
             ))
             pending_comment = ""
             continue
@@ -199,7 +202,15 @@ def _extract_blocks(
         action_objs = list({_resolve_plugin(a.get("objectClass", ""), pm) for a in actions if a.get("objectClass")})
 
         slug = project_meta.get("slug", "")
-        doc_id = f"event_{slug}_{re.sub(r'[^a-z0-9]', '_', sheet_name.lower())}_{depth}_{idx}"
+        # ``idx`` is only local to the current event/group list.  Using it with
+        # ``depth`` alone caused blocks in separate groups (and separate parent
+        # blocks) to receive the same point ID, so Qdrant upserts silently
+        # replaced thousands of example blocks.  The complete ancestry path is
+        # deterministic for the source snapshot and unique within an event
+        # sheet, including transparent group containers.
+        path_key = "_".join(str(part) for part in current_path)
+        sheet_key = re.sub(r"[^a-z0-9]", "_", sheet_name.lower())
+        doc_id = f"event_{slug}_{sheet_key}_{path_key}"
 
         docs.append({
             "id": doc_id,
@@ -220,7 +231,14 @@ def _extract_blocks(
 
         # Recurse into children (depth + 1, no deeper than 1 to limit volume)
         if depth == 0 and children:
-            docs.extend(_extract_blocks(children, project_meta, sheet_name, depth=1, plugin_map=plugin_map))
+            docs.extend(_extract_blocks(
+                children,
+                project_meta,
+                sheet_name,
+                depth=1,
+                plugin_map=plugin_map,
+                event_path=current_path,
+            ))
 
         pending_comment = ""
 

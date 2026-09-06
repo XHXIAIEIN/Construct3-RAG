@@ -87,9 +87,12 @@ jobs:
           if target.exists():
               shutil.rmtree(target)
           target.mkdir(parents=True, exist_ok=True)
-          # Copy schemas (per-language dirs + _index.json)
-          for item in ('en', 'zh', '_index.json'):
-              src_path = schemas_dir / item
+          # Copy every exported locale directory plus the language-neutral index.
+          # Hidden cache markers are deliberately excluded from version control.
+          for src_path in schemas_dir.iterdir():
+              if src_path.name.startswith('.'):
+                  continue
+              item = src_path.name
               dst_path = target / item
               if src_path.is_dir():
                   shutil.copytree(src_path, dst_path)
@@ -105,7 +108,7 @@ jobs:
               shutil.rmtree(examples_target)
           if examples_src.exists():
               shutil.copytree(examples_src, examples_target)
-              en_count = len(list((examples_target / 'en').glob('*.json'))) if (examples_target / 'en').exists() else 0
+              en_count = len(list((examples_target / 'en-US').glob('*.json'))) if (examples_target / 'en-US').exists() else 0
               print(f'Examples: {en_count}')
 
           # 2. Export ts-defs

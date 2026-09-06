@@ -1,0 +1,30 @@
+{
+  "id": "wrap",
+  "name": "Wrap",
+  "description": "Make an object leaving the layout reappear on the other side.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "on-wrap",
+      "scriptName": "OnWrap",
+      "category": "",
+      "list-name": "On wrap",
+      "display-text": "On wrap",
+      "description": "Triggered when the object position is changed by wrapping.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [],
+  "expressions": [],
+  "properties": {
+    "wrap-to": {
+      "name": "Wrap to",
+      "desc": "Whether to wrap to layout bounds or viewport bounds.",
+      "items": {
+        "layout": "Layout",
+        "viewport": "Viewport"
+      }
+    }
+  }
+}
