@@ -55,17 +55,18 @@ jobs:
         run: |
           echo "Updating from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
 
-          # Update default version in config (all os.getenv C3_VERSION defaults)
+          # Update the default version. src/settings.py owns the C3_VERSION
+          # default; src/config.py only re-exports it. Fail loudly if the
+          # pattern is not found so the sync PR cannot ship a stale default.
           python - "$C3_VERSION" <<'PYEOF'
           import re, sys, pathlib
           ver = sys.argv[1]
-          p = pathlib.Path("src/config.py")
+          p = pathlib.Path("src/settings.py")
           src = p.read_text()
-          src = re.sub(
-              r"""(os\.getenv\(["']C3_VERSION["'],\s*["'])r[\w.-]+(['"])""",
-              lambda m: m.group(1) + ver + m.group(2),
-              src,
-          )
+          pattern = r"""(_string\(source,\s*["']C3_VERSION["'],\s*["'])r[\w.-]+(['"])"""
+          src, n = re.subn(pattern, lambda m: m.group(1) + ver + m.group(2), src)
+          if n != 1:
+              sys.exit(f"expected one C3_VERSION default in {p}, found {n}")
           p.write_text(src)
           PYEOF
 
