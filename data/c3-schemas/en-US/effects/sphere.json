@@ -1,0 +1,29 @@
+{
+  "id": "sphere",
+  "name": "Sphere",
+  "description": "A spherical ball effect.",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "radius",
+      "type": "percent",
+      "name": "Radius",
+      "desc": "The size of the sphere."
+    },
+    {
+      "id": "refractive-index",
+      "type": "percent",
+      "name": "Refractive index",
+      "desc": "The refractive index for lighting the sphere."
+    },
+    {
+      "id": "progress",
+      "type": "percent",
+      "name": "Progress",
+      "desc": "The progress from flat to a sphere."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "oilpainting",
+  "name": "Oil painting",
+  "description": "Apply a Kuwahara filter, creating an oil painting style.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

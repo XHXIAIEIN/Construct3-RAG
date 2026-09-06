@@ -1,0 +1,35 @@
+{
+  "id": "bumpmapping",
+  "name": "凹凸映射",
+  "description": "使用前景作为法线贴图将凹凸贴图应用于背景。",
+  "category": "normal-mapping",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "light-x",
+      "type": "percent",
+      "name": "光线X",
+      "desc": "光的X位置。数值在 0 - 100 范围。"
+    },
+    {
+      "id": "light-y",
+      "type": "percent",
+      "name": "光线Y",
+      "desc": "光的Y位置。数值在 0 - 100 范围。"
+    },
+    {
+      "id": "light-z",
+      "type": "percent",
+      "name": "光线高度",
+      "desc": "光的高度。数值在 0 - 100 范围。"
+    },
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "强度",
+      "desc": "光的强度。"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "id": "progressbar",
+  "name": "Progress bar",
+  "description": "A browser-styled progress bar to show the amount of completion of a task.",
+  "type": "plugin",
+  "aceCategories": {
+    "progress-bar": "Progress bar"
+  },
+  "conditions": [
+    {
+      "id": "on-clicked",
+      "scriptName": "OnClicked",
+      "category": "progress-bar",
+      "list-name": "On clicked",
+      "display-text": "On clicked",
+      "description": "Triggered when the progress bar is clicked.",
+      "isTrigger": true
+    },
+    {
+      "id": "compare-progress",
+      "scriptName": "CompareProgress",
+      "category": "progress-bar",
+      "list-name": "Compare progress",
+      "display-text": "Progress {0} [i]{1}[/i]",
+      "description": "Compare the current progress value.",
+      "params": {
+        "comparison": {
+          "type": "cmp",
+          "name": "Comparison",
+          "desc": "How to compare the current progress."
+        },
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "Progress value to compare to."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-tooltip",
+      "scriptName": "SetTooltip",
+      "category": "progress-bar",
+      "list-name": "Set tooltip",
+      "display-text": "Set tooltip to {0}",
+      "description": "Set the progress bar's tooltip.",
+      "params": {
+        "tooltip": {
+          "type": "string",
+          "name": "Tooltip",
+          "desc": "The tooltip to set on the progress bar."
+        }
+      }
+    },
+    {
+      "id": "set-progress",
+      "scriptName": "SetProgress",
+      "category": "progress-bar",
+      "list-name": "Set progress",
+      "display-text": "Set progress to [b]{0}[/b]",
+      "description": "Set the progress value for the bar.",
+      "params": {
+        "value": {
+          "type": "number",
+          "name": "Value",
+          "desc": "The value to set for the progress."
+        }
+      }
+    },
+    {
+      "id": "set-maximum",
+      "scriptName": "SetMaximum",
+      "category": "progress-bar",
+      "list-name": "Set maximum",
+      "display-text": "Set maximum to [b]{0}[/b]",
+      "description": "Set the maximum progress value for the bar.",
+      "params": {
+        "maximum": {
+          "type": "number",
+          "name": "Maximum",
+          "desc": "The new maximum value for the progress."
+        }
+      }
+    },
+    {
+      "id": "make-indeterminate",
+      "scriptName": "SetIndeterminate",
+      "category": "progress-bar",
+      "list-name": "Make indeterminate",
+      "display-text": "Make indeterminate",
+      "description": "Make the progress bar show indeterminate (unknown) progress."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "progress",
+      "scriptName": "Progress",
+      "category": "progress-bar",
+      "translated-name": "Progress",
+      "description": "Current progress value.",
+      "returnType": "number"
+    },
+    {
+      "id": "maximum",
+      "scriptName": "Maximum",
+      "category": "progress-bar",
+      "translated-name": "Maximum",
+      "description": "Current maximum progress value.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "value": {
+      "name": "Value",
+      "desc": "Initial value of the progress bar."
+    },
+    "maximum": {
+      "name": "Maximum",
+      "desc": "The maximum value of the progress bar. Set to 0 for an indeterminate progress bar."
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "desc": "Display this text when hovering the mouse over the control."
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose if the object is visible when the layout starts."
+    },
+    "id": {
+      "name": "ID",
+      "desc": "An optional ID for the element allowing it to be styled with CSS."
+    },
+    "class": {
+      "name": "Class",
+      "desc": "An optional class for the element allowing it to be styled with CSS."
+    }
+  }
+}

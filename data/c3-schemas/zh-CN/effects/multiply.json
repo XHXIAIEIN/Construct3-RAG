@@ -1,0 +1,10 @@
+{
+  "id": "multiply",
+  "name": "正片叠底",
+  "description": "将背景层和混合层的颜色通道相乘，较亮的颜色变得更亮，较暗的颜色变得更暗。此混合模式与 '滤色混合' 的结果相反。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

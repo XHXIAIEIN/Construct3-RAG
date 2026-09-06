@@ -21,6 +21,8 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from src.locale.resources import COMMON_ADDON_NAME_ZH
+
 logger = logging.getLogger(__name__)
 
 _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
@@ -65,16 +67,19 @@ class C3Fetcher:
 
     def __init__(
         self,
-        version: str = "r476",
+        version: str | None = None,
         base_url: str = "https://editor.construct.net",
         cache_dir: Path | None = None,
     ):
+        if version is None:
+            from src.config import C3_VERSION
+            version = C3_VERSION
         self.version = version
         self.base_url = base_url.rstrip("/")
         if cache_dir is None:
             from src.config import C3_CACHE_DIR
             cache_dir = C3_CACHE_DIR
-        self.cache_dir = Path(cache_dir) / version
+        self.cache_dir = Path(cache_dir) / self.version
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def _http_get(self, url: str) -> bytes:
@@ -141,11 +146,10 @@ class C3Fetcher:
         params[].type) are merged in.
 
         Directory layout:
-            schemas/en/plugins/sprite.json
-            schemas/zh/plugins/sprite.json
-            schemas/en/behaviors/platform.json
-            schemas/en/effects/alphaclamp.json
-            schemas/en/editor/index.json
+            schemas/en-US/plugins/sprite.json
+            schemas/zh-CN/plugins/sprite.json
+            schemas/en-US/behaviors/platform.json
+            schemas/en-US/effects/alphaclamp.json
             schemas/_index.json   (language-neutral)
 
         Returns the schemas root directory path.
@@ -341,7 +345,7 @@ class C3Fetcher:
             logger.info(f"[CDN] Exported _common: {c_count}C {a_count}A {e_count}E")
             index_data["plugins"]["_common"] = {
                 "name_en": en_common.get("name", "Common"),
-                "name_zh": zh_common.get("name", "公共"),
+                "name_zh": zh_common.get("name", COMMON_ADDON_NAME_ZH),
                 "file": "plugins/_common.json",
                 "conditions": c_count, "actions": a_count, "expressions": e_count,
             }

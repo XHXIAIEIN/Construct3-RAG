@@ -1,0 +1,10 @@
+{
+  "id": "hueblend",
+  "name": "Hue",
+  "description": "Use the hue of the foreground and saturation and luminosity of the background.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

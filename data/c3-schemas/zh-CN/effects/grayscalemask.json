@@ -1,0 +1,10 @@
+{
+  "id": "grayscalemask",
+  "name": "灰度蒙版",
+  "description": "从背景中删除颜色，生成灰度图像。",
+  "category": "mask",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

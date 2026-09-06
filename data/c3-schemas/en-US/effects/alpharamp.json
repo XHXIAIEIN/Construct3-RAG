@@ -1,0 +1,29 @@
+{
+  "id": "alpharamp",
+  "name": "Alpha ramp",
+  "description": "Smoothly fade the alpha to zero below a threshold.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "upper-threshold",
+      "type": "percent",
+      "name": "Upper threshold",
+      "desc": "Alpha value above which alpha is not modified."
+    },
+    {
+      "id": "lower-threshold",
+      "type": "percent",
+      "name": "Lower threshold",
+      "desc": "Alpha value below which alpha is zero."
+    },
+    {
+      "id": "post-opacity",
+      "type": "percent",
+      "name": "Post opacity",
+      "desc": "Opacity to apply after the effect."
+    }
+  ]
+}

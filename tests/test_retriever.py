@@ -7,12 +7,51 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.rag.retriever import HybridRetriever, SearchResult
+from src.domain.retrieval import RetrievalHealth, SearchResult
+from src.retrieval.semantic import HybridRetriever
 
 
 def _make_results(texts_scores):
     return [SearchResult(text=t, score=s, source="c3_plugins", metadata={})
             for t, s in texts_scores]
+
+
+class TestHybridRetrieverConfiguration(unittest.TestCase):
+
+    def test_constructor_preserves_positional_api_and_accepts_runtime_policy(self):
+        vocab_path = Path("custom-bm25.msgpack")
+        with patch("src.retrieval.semantic.QdrantClient") as client_type:
+            retriever = HybridRetriever(
+                "vector.internal",
+                7333,
+                "example/embedding",
+                bm25_enabled=True,
+                bm25_vocab_path=vocab_path,
+                native_sparse=True,
+                reranker_enabled=False,
+                reranker_model="example/reranker",
+                reranker_top_k=37,
+            )
+
+        client_type.assert_called_once_with(host="vector.internal", port=7333)
+        assert retriever.embedding_model_name == "example/embedding"
+        assert retriever.bm25_enabled is True
+        assert retriever.bm25_vocab_path == vocab_path
+        assert retriever.native_sparse is True
+        assert retriever.reranker_enabled is False
+        assert retriever.reranker_model == "example/reranker"
+        assert retriever.reranker_top_k == 37
+
+    def test_constructor_policy_defaults_match_historical_runtime(self):
+        with patch("src.retrieval.semantic.QdrantClient"):
+            retriever = HybridRetriever()
+
+        assert retriever.bm25_enabled is False
+        assert retriever.bm25_vocab_path.name == "bm25_vocab.msgpack"
+        assert retriever.native_sparse is False
+        assert retriever.reranker_enabled is True
+        assert retriever.reranker_model == "BAAI/bge-reranker-v2-m3"
+        assert retriever.reranker_top_k == 20
 
 
 # ---------------------------------------------------------------------------
@@ -36,8 +75,8 @@ class TestCrossEncoderReranker(unittest.TestCase):
         mock_model.predict.return_value = np.array([0.95, 0.1, 0.88])
         retriever._reranker = mock_model
 
-        with patch("src.rag.retriever.RERANKER_ENABLED", True):
-            reranked = retriever._rerank_with_cross_encoder(query, results)
+        retriever.reranker_enabled = True
+        reranked = retriever._rerank_with_cross_encoder(query, results)
         # Timer docs should now be at top
         assert reranked[0].text.startswith("Timer: 等待"), \
             f"Expected timer doc first, got: {reranked[0].text}"
@@ -48,8 +87,8 @@ class TestCrossEncoderReranker(unittest.TestCase):
         """When RERANKER_ENABLED=False, results pass through unchanged."""
         retriever = HybridRetriever.__new__(HybridRetriever)
         results = _make_results([("doc A", 0.9), ("doc B", 0.8)])
-        with patch("src.rag.retriever.RERANKER_ENABLED", False):
-            out = retriever._rerank_with_cross_encoder("query", results)
+        retriever.reranker_enabled = False
+        out = retriever._rerank_with_cross_encoder("query", results)
         assert out == results
 
     def test_rerank_empty_input(self):
@@ -68,8 +107,8 @@ class TestCrossEncoderReranker(unittest.TestCase):
         mock_model.predict.return_value = np.array([0.5, 0.95])
         retriever._reranker = mock_model
 
-        with patch("src.rag.retriever.RERANKER_ENABLED", True):
-            reranked = retriever._rerank_with_cross_encoder("query", results)
+        retriever.reranker_enabled = True
+        reranked = retriever._rerank_with_cross_encoder("query", results)
         assert "original_score" in reranked[0].metadata
         assert "reranker_score" in reranked[0].metadata
 
@@ -140,7 +179,12 @@ class TestContextualChunking(unittest.TestCase):
 
 class TestWeightedRRF(unittest.TestCase):
     def make_sr(self, text: str, score: float = 0.8) -> SearchResult:
-        return SearchResult(text=text, score=score, source="c3_guide", metadata={})
+        return SearchResult(
+            text=text,
+            score=score,
+            source="c3_guide",
+            metadata={"source": f"guide/{text}.md", "h2_heading": "Result"},
+        )
 
     def test_single_list_returns_sorted(self):
         from src.rag.retriever import weighted_rrf
@@ -171,6 +215,230 @@ class TestWeightedRRF(unittest.TestCase):
         from src.rag.retriever import weighted_rrf
         out = weighted_rrf([[self.make_sr("x")]], [0.0])
         assert len(out) == 1
+
+    def test_exact_identity_keeps_distinct_sections_and_unknown_payloads(self):
+        from src.rag.retriever import deduplicate_results, stable_result_id
+
+        section_a = SearchResult(
+            text="same prefix",
+            score=0.9,
+            source="c3_plugins",
+            metadata={"source": "plugin-reference/sprite.md", "h2_heading": "Actions"},
+        )
+        section_b = SearchResult(
+            text="same prefix",
+            score=0.8,
+            source="c3_plugins",
+            metadata={"source": "plugin-reference/sprite.md", "h2_heading": "Conditions"},
+        )
+        unknown_a = SearchResult("identical", 0.7, "c3_plugins", {})
+        unknown_b = SearchResult("identical", 0.6, "c3_plugins", {})
+
+        assert stable_result_id(section_a) != stable_result_id(section_b)
+        assert stable_result_id(unknown_a) is None
+        assert deduplicate_results([section_a, section_b, unknown_a, unknown_b]) == [
+            section_a,
+            section_b,
+            unknown_a,
+            unknown_b,
+        ]
+
+    def test_exact_identity_collapses_same_example_slug_not_text(self):
+        from src.rag.retriever import deduplicate_results
+
+        first = SearchResult("metadata", 0.9, "c3_examples", {"slug": "lava-fall"})
+        second = SearchResult("event", 0.8, "c3_examples", {"slug": "lava-fall"})
+        other = SearchResult("metadata", 0.7, "c3_examples", {"slug": "template-platformer"})
+
+        assert deduplicate_results([first, second, other]) == [first, other]
+
+    def test_search_collection_uses_named_dense_vector_and_filter(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever.client.query_points.return_value = MagicMock(points=[])
+        retriever._embedder = MagicMock()
+        retriever._embedder._is_bge_m3_native = False
+        retriever._embedder.encode_single.return_value = [0.1, 0.2]
+        retriever._bm25 = None
+        marker = MagicMock(name="query_filter")
+
+        retriever.bm25_enabled = False
+        retriever.search_collection(
+            "c3_plugins",
+            "Sprite",
+            query_filter=marker,
+        )
+
+        kwargs = retriever.client.query_points.call_args.kwargs
+        assert kwargs["using"] == "dense"
+        assert kwargs["query_filter"] is marker
+
+    def test_plugin_filter_uses_named_dense_and_mandatory_section_or(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever.client.query_points.return_value = MagicMock(points=[])
+        retriever._embedder = MagicMock()
+        retriever._embedder.encode_single.return_value = [0.1, 0.2]
+
+        retriever.search_plugin_by_name(
+            "animation finished",
+            "Sprite",
+            section_types=["conditions", "expressions"],
+        )
+
+        kwargs = retriever.client.query_points.call_args.kwargs
+        assert kwargs["using"] == "dense"
+        query_filter = kwargs["query_filter"]
+        assert len(query_filter.must) == 2
+        assert not query_filter.should
+        assert set(query_filter.must[1].match.any) == {"conditions", "expressions"}
+
+    def test_addon_sdk_is_explicitly_searchable_but_not_default_fanout(self):
+        assert "addon_sdk" in HybridRetriever._COLLECTION_DEFAULTS
+        assert "addon_sdk" not in HybridRetriever._DEFAULT_FANOUT_COLLECTIONS
+
+    def test_semantic_policy_class_attributes_are_catalog_derived(self):
+        from src.collection_registry import COLLECTION_CATALOG
+
+        assert HybridRetriever._COLLECTION_DEFAULTS == {
+            spec.key: (spec.default_top_k, spec.score_threshold)
+            for spec in COLLECTION_CATALOG.collections
+        }
+        assert HybridRetriever._DEFAULT_FANOUT_COLLECTIONS == tuple(
+            spec.key
+            for spec in COLLECTION_CATALOG.collections
+            if spec.default_fanout
+        )
+        assert HybridRetriever._COLL_WEIGHTS == {
+            spec.key: spec.fusion_weight
+            for spec in COLLECTION_CATALOG.collections
+        }
+        assert HybridRetriever._COLLECTION_NAMES == {
+            spec.key: spec.name
+            for spec in COLLECTION_CATALOG.collections
+        }
+        assert HybridRetriever._ALL_MANAGED_COLLECTIONS == tuple(
+            spec.name
+            for spec in COLLECTION_CATALOG.collections
+        )
+
+    def test_public_collection_search_deduplicates_and_backfills(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._qdrant_available = True
+        retriever._search = MagicMock(
+            return_value=[
+                SearchResult("metadata", 0.9, "c3_examples", {"slug": "lava-fall"}),
+                SearchResult("event", 0.8, "c3_examples", {"slug": "lava-fall"}),
+                SearchResult(
+                    "metadata",
+                    0.7,
+                    "c3_examples",
+                    {"slug": "template-platformer"},
+                ),
+            ]
+        )
+
+        results = retriever.search_collections(
+            "double jump",
+            collection_keys=["examples"],
+            top_k=2,
+        )
+
+        assert [item.metadata["slug"] for item in results] == [
+            "lava-fall",
+            "template-platformer",
+        ]
+        retriever._search.assert_called_once_with("examples", "double jump", top_k=6)
+
+    def test_recent_backend_failure_fast_fails_then_reprobes(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever._qdrant_available = False
+        retriever._qdrant_failure_at = 100.0
+
+        with patch("src.retrieval.semantic.time.monotonic", return_value=101.0):
+            assert retriever.semantic_backend_available(retry_after_seconds=2.0) is False
+        retriever.client.get_collections.assert_not_called()
+
+        with patch("src.retrieval.semantic.time.monotonic", return_value=103.0):
+            assert retriever.semantic_backend_available(retry_after_seconds=2.0) is True
+        retriever.client.get_collections.assert_called_once_with()
+
+    def test_unknown_backend_state_probes_before_embedding_can_load(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever._qdrant_available = None
+        retriever._qdrant_failure_at = 0.0
+        retriever._embedder = None
+
+        assert retriever.semantic_backend_available() is True
+
+        retriever.client.get_collections.assert_called_once_with()
+        assert retriever._embedder is None
+
+    def test_unknown_backend_failure_does_not_load_embedding(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever.client.get_collections.side_effect = ConnectionError("offline")
+        retriever._qdrant_available = None
+        retriever._qdrant_failure_at = 0.0
+        retriever._embedder = None
+
+        assert retriever.semantic_backend_available() is False
+
+        assert retriever._qdrant_available is False
+        assert retriever._embedder is None
+
+    def test_typed_health_and_legacy_dict_share_values(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever.client = MagicMock()
+        retriever.client.get_collections.side_effect = ConnectionError("offline")
+        retriever._qdrant_available = None
+        retriever._qdrant_failure_at = 0.0
+
+        typed = retriever.get_health()
+        legacy = retriever.health_check()
+
+        assert isinstance(typed, RetrievalHealth)
+        assert typed.status == "unavailable"
+        assert legacy["status"] == typed.status
+        assert legacy["qdrant_connected"] == typed.qdrant_connected
+
+    def test_retired_decomposition_helpers_are_absent(self):
+        assert not hasattr(HybridRetriever, "reciprocal_rank_fusion")
+        assert not hasattr(HybridRetriever, "_split_compound_query")
+
+    def test_rerank_tail_backfills_and_never_exceeds_budget(self):
+        from src.rag.retriever import stable_result_id
+
+        retriever = HybridRetriever.__new__(HybridRetriever)
+
+        def search(key, query, top_k=None, score_threshold=None, query_filter=None):
+            return [
+                SearchResult(
+                    text=f"{key} result",
+                    score=0.9,
+                    source=f"c3_{key}",
+                    metadata={"source": f"{key}/result.md", "h2_heading": "Result"},
+                )
+            ]
+
+        retriever._search = MagicMock(side_effect=search)
+        retriever._rerank_with_cross_encoder = MagicMock(
+            side_effect=lambda query, candidates: [candidates[0], candidates[0]]
+        )
+
+        retriever.reranker_enabled = True
+        retriever.reranker_top_k = 2
+        results = retriever._search_single_query(
+            "query",
+            top_k_per_collection=1,
+            final_top_k=3,
+        )
+
+        assert len(results) == 3
+        identities = [identity for item in results if (identity := stable_result_id(item))]
+        assert len(identities) == len(set(identities))
 
 
 # ---------------------------------------------------------------------------

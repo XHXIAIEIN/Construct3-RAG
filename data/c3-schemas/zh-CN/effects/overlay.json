@@ -1,0 +1,10 @@
+{
+  "id": "overlay",
+  "name": "叠加",
+  "description": "根据背景层的颜色通道，较亮的颜色变得更亮，较暗的颜色变得更暗。该模式由 '滤色混合'  与 '正片叠底' 混合的结果。",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

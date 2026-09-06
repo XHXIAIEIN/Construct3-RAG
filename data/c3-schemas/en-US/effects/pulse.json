@@ -1,0 +1,47 @@
+{
+  "id": "pulse",
+  "name": "Pulse",
+  "description": "An animated warping pulse effect.",
+  "category": "distortion",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": true,
+  "parameters": [
+    {
+      "id": "intensity",
+      "type": "percent",
+      "name": "Intensity",
+      "desc": "How much of the effect to apply, from 0 to 100."
+    },
+    {
+      "id": "lighting",
+      "type": "percent",
+      "name": "Lighting",
+      "desc": "How much lighting to apply, from 0 to 100."
+    },
+    {
+      "id": "speed",
+      "type": "float",
+      "name": "Speed",
+      "desc": "Speed of the pulse waves."
+    },
+    {
+      "id": "frequency",
+      "type": "float",
+      "name": "Frequency",
+      "desc": "Frequency of the pulse waves."
+    },
+    {
+      "id": "center-x",
+      "type": "percent",
+      "name": "Center X",
+      "desc": "X position of the effect center, from 0 (left edge) to 100 (right edge)."
+    },
+    {
+      "id": "center-y",
+      "type": "percent",
+      "name": "Center Y",
+      "desc": "Y position of the effect center, from 0 (bottom edge) to 100 (top edge)."
+    }
+  ]
+}

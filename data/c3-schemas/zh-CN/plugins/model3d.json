@@ -1,0 +1,1062 @@
+{
+  "id": "model3d",
+  "name": "3D模型",
+  "description": "展示项目的 3D 模型。目前仅支持 GLTF 或 GLB 格式。",
+  "type": "plugin",
+  "aceCategories": {
+    "3d-model": "3D模型",
+    "playback": "动画播放",
+    "collisions": "碰撞",
+    "misc": "杂项",
+    "web": "网络",
+    "memory-management": "资源内存"
+  },
+  "conditions": [
+    {
+      "id": "on-load-model",
+      "scriptName": "OnLoadModel",
+      "category": "3d-model",
+      "list-name": "导入模型完成",
+      "display-text": "导入模型完成",
+      "description": "模型成功加载时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-load-model-fail",
+      "scriptName": "OnLoadModelFail",
+      "category": "3d-model",
+      "list-name": "导入模型失败",
+      "display-text": "导入模型失败",
+      "description": "模型加载发生错误时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "for-each-mesh",
+      "scriptName": "ForEachMesh",
+      "category": "3d-model",
+      "list-name": "遍历网格",
+      "display-text": "遍历网格",
+      "description": "遍历模型中的所有网格。"
+    },
+    {
+      "id": "for-each-animation",
+      "scriptName": "ForEachAnimation",
+      "category": "3d-model",
+      "list-name": "遍历动画",
+      "display-text": "遍历动画",
+      "description": "遍历模型中的所有动画。"
+    },
+    {
+      "id": "playing",
+      "scriptName": "IsPlaying",
+      "category": "3d-model",
+      "list-name": "正在播放",
+      "display-text": "正在播放",
+      "description": "检查模型是否正在播放动画。"
+    },
+    {
+      "id": "looping",
+      "scriptName": "IsLooping",
+      "category": "3d-model",
+      "list-name": "正在循环播放",
+      "display-text": "正在循环播放",
+      "description": "检查模型是否正在循环播放动画。"
+    },
+    {
+      "id": "mesh-render-mode",
+      "scriptName": "MeshRenderMode",
+      "category": "3d-model",
+      "list-name": "检测渲染模式",
+      "display-text": "渲染模式为 [b]{0}[/b]",
+      "description": "检测正在使用的渲染模式。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "每个网格的绘制方式，是遵循模型文件中的层级关系，还是隔离绘制。",
+          "items": {
+            "hierarchy": "层级",
+            "isolate": "隔离"
+          },
+          "initialValue": "hierarchy"
+        }
+      }
+    },
+    {
+      "id": "axis-scale-mode",
+      "scriptName": "AxisScaleMode",
+      "category": "3d-model",
+      "list-name": "变换模式",
+      "display-text": "使用[b]{0}[/b]变换模式",
+      "description": "检查所使用的变换模式。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
+          "items": {
+            "legacy": "兼容旧版",
+            "fit": "等比适配",
+            "stretch": "拉伸填满"
+          },
+          "initialValue": "fit"
+        }
+      }
+    },
+    {
+      "id": "is-mesh-enabled",
+      "scriptName": "IsMeshEnabled",
+      "category": "3d-model",
+      "list-name": "网格已启用",
+      "display-text": "网格[b]{0}[/b]已启用",
+      "description": "检查一个网格是否已启用",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要检查的网格名称。"
+        }
+      }
+    },
+    {
+      "id": "are-all-meshes-enabled",
+      "scriptName": "AreAllMeshesEnabled",
+      "category": "3d-model",
+      "list-name": "启用所有网格吗",
+      "display-text": "启用所有网格",
+      "description": "检查是否所有网格都已绘制。"
+    },
+    {
+      "id": "is-backface-culling-enabled",
+      "scriptName": "IsBackFaceCullingEnabled",
+      "category": "3d-model",
+      "list-name": "已启用背面剔除",
+      "display-text": "已启用背面剔除",
+      "description": "检查是否启用了背面剔除。"
+    },
+    {
+      "id": "mesh-exists",
+      "scriptName": "MeshExists",
+      "category": "3d-model",
+      "list-name": "存在网格",
+      "display-text": "存在网格 [b]{0}[/b]",
+      "description": "检查3D模型中是否存在网格",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "纹理",
+          "desc": "要检查的网格名称。"
+        }
+      }
+    },
+    {
+      "id": "on-animation-finished",
+      "scriptName": "OnAnimationFinished",
+      "category": "3d-model",
+      "list-name": "动画播放完成",
+      "display-text": "动画 [b]{0}[/b] 播放完成",
+      "description": "检查动画是否完成。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要检查的动画名称。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-animation-looped",
+      "scriptName": "OnAnimationLooped",
+      "category": "3d-model",
+      "list-name": "动画循环播放完成",
+      "display-text": "动画 [b]{0}[/b] 循环播放完成",
+      "description": "动画进入循环周期时触发。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要检查的动画名称。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-animation-finished",
+      "scriptName": "OnAnyAnimationFinished",
+      "category": "3d-model",
+      "list-name": "任意动画播放完成",
+      "display-text": "任意动画播放完成",
+      "description": "检测任意动画是否播放完成。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-animation-looped",
+      "scriptName": "OnAnyAnimationLooped",
+      "category": "3d-model",
+      "list-name": "任意动画循环完成",
+      "display-text": "任意动画循环完成",
+      "description": "任意动画进入循环播放时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "collisions-enabled",
+      "scriptName": "IsCollisionEnabled",
+      "category": "collisions",
+      "list-name": "已启用碰撞",
+      "display-text": "已启用碰撞",
+      "description": "检查对象的碰撞是否被启用，会触发碰撞事件。"
+    },
+    {
+      "id": "on-texture-url-loaded",
+      "scriptName": "OnURLLoaded",
+      "category": "web",
+      "list-name": "远程纹理加载成功",
+      "display-text": "远程纹理加载成功",
+      "description": "在执行 \"加载远程纹理\" 动作后，纹理加载成功时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-texture-url-failed",
+      "scriptName": "OnURLFailed",
+      "category": "web",
+      "list-name": "远程纹理加载失败",
+      "display-text": "远程纹理加载失败",
+      "description": "在执行 \"加载远程纹理\" 动作后，纹理加载失败时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-textures-released",
+      "scriptName": "OnTexturesReleased",
+      "category": "web",
+      "list-name": "所有纹理已释放",
+      "display-text": "所有纹理已释放",
+      "description": "动态纹理卸载完成后触发。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-model",
+      "scriptName": "SetModel",
+      "category": "3d-model",
+      "list-name": "设置3D模型",
+      "display-text": "设置3D模型 [b]{0}[/b] (网格: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 循环播放: [i]{4}[/i], 播放进度: [i]{5}[/i])",
+      "description": "更改显示的 3D 模型。",
+      "params": {
+        "model": {
+          "type": "model3d",
+          "name": "3D模型",
+          "desc": "要使用的 3D 模型对象。"
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "纹理",
+          "desc": "要绘制的网格。留空则绘制到所有网格。"
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "如果有动画，设置要播放的动画。"
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "初始播放",
+          "desc": "场景开始时，是否立即播放所选动画。"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "所选动画是否循环播放。"
+        },
+        "progress": {
+          "type": "number",
+          "name": "动画进度",
+          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-model-by-name",
+      "scriptName": "SetModelByName",
+      "category": "3d-model",
+      "list-name": "设置3D模型 (根据名称)",
+      "display-text": "设置3D模型 [b]{0}[/b] (网格: [i]{1}[/i], 动画: [i]{2}[/i], 初始播放: [i]{3}[/i], 循环播放: [i]{4}[/i], 播放进度: [i]{5}[/i])",
+      "description": "使用字符串名称更改显示的 3D 模型。",
+      "params": {
+        "model": {
+          "type": "model3d-string",
+          "name": "3D模型",
+          "desc": "要使用的3D模型对象的名称。"
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要绘制的网格。留空则绘制到所有网格。"
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "如果有动画，设置要播放的动画。"
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "初始播放",
+          "desc": "场景开始时，是否立即播放所选动画。"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "所选动画是否循环播放。"
+        },
+        "progress": {
+          "type": "number",
+          "name": "动画进度",
+          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-mesh-enabled",
+      "scriptName": "SetMeshEnabled",
+      "category": "3d-model",
+      "list-name": "启用网格",
+      "display-text": "启用网格 [b]{0}[/b]: {1}",
+      "description": "启用或禁用指定的网格。",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要修改的网格。如果模型中找不到该网格，则不进行任何更改。"
+        },
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "选择是否显示或隐藏网格中指定的元素。"
+        }
+      }
+    },
+    {
+      "id": "set-all-meshes-enabled",
+      "scriptName": "SetAllMeshesEnabled",
+      "category": "3d-model",
+      "list-name": "启用网格(全部)",
+      "display-text": "启用全部网格: {0}",
+      "description": "启用或禁用模型中的所有网格。",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "选择是否显示或隐藏所有网格。"
+        }
+      }
+    },
+    {
+      "id": "set-animation",
+      "scriptName": "SetAnimation",
+      "category": "3d-model",
+      "list-name": "设置动画",
+      "display-text": "设置动画为 [b]{0}[/b] (初始播放: [i]{1}[/i], 循环播放: [i]{2}[/i], 播放进度: [i]{3}[/i])",
+      "description": "如果模型存在动画，更改播放的动画。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "如果有动画，设置要播放的动画。"
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "初始播放",
+          "desc": "场景开始时，是否立即播放所选动画。"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "所选动画是否循环播放。"
+        },
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "所选动画从哪里开始播放，取值区间在 [0-1] 范围。"
+        }
+      }
+    },
+    {
+      "id": "set-progress",
+      "scriptName": "SetProgress",
+      "category": "3d-model",
+      "list-name": "设置进度",
+      "display-text": "设置动画进度为[b]{0}[/b]",
+      "description": "设置当前动画的播放进度在 [0-1] 范围。",
+      "params": {
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "设置动画的进度，取值在 [0-1] 范围内。"
+        }
+      }
+    },
+    {
+      "id": "set-transform",
+      "scriptName": "SetTransform",
+      "category": "3d-model",
+      "list-name": "设置变换",
+      "display-text": "{3} [b]{4}[/b] X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
+      "description": "设置模型属性的变换。",
+      "params": {
+        "x-transform": {
+          "type": "number",
+          "name": "X",
+          "desc": "要应用在 X 轴的变换值。"
+        },
+        "y-transform": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要应用在 Y 轴的变换值。"
+        },
+        "z-transform": {
+          "type": "number",
+          "name": "Z",
+          "desc": "要应用在 Z 轴的变换值。"
+        },
+        "operation": {
+          "type": "combo",
+          "name": "运算",
+          "desc": "要变化的运算方式。",
+          "items": {
+            "set": "设置",
+            "add": "相加",
+            "sub": "相减",
+            "mul": "相乘",
+            "div": "相除"
+          },
+          "initialValue": "set"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要变换的方式。",
+          "items": {
+            "position": "偏移",
+            "rotation": "旋转",
+            "scale": "缩放"
+          },
+          "initialValue": "position"
+        }
+      }
+    },
+    {
+      "id": "set-origin",
+      "scriptName": "SetOrigin",
+      "category": "3d-model",
+      "list-name": "设置原点",
+      "display-text": "设置原点为 X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
+      "description": "设置模型的变换原点。",
+      "params": {
+        "x-origin": {
+          "type": "combo",
+          "name": "原点X",
+          "desc": "在 X 轴的原点。",
+          "items": {
+            "left": "左面",
+            "middle": "中间",
+            "right": "右面",
+            "unset": "未设置"
+          },
+          "initialValue": "middle"
+        },
+        "y-origin": {
+          "type": "combo",
+          "name": "原点Y",
+          "desc": "在 Y 轴的原点。",
+          "items": {
+            "top": "顶面",
+            "middle": "中间",
+            "bottom": "底面",
+            "unset": "未设置"
+          },
+          "initialValue": "middle"
+        },
+        "z-origin": {
+          "type": "combo",
+          "name": "Z轴原点",
+          "desc": "在 Z 轴的原点值。",
+          "items": {
+            "back": "背面",
+            "middle": "中间",
+            "front": "顶面",
+            "unset": "未设置"
+          },
+          "initialValue": "middle"
+        }
+      }
+    },
+    {
+      "id": "set-mesh-render-mode",
+      "scriptName": "SetMeshRenderMode",
+      "category": "3d-model",
+      "list-name": "设置网格的渲染模式",
+      "display-text": "设置网格渲染模式为 [b]{0}[/b]",
+      "description": "设置单个网格的渲染方式。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "绘制单个网格的方式，可以按照模型文件中的层级结构绘制，也可以隔离绘制。",
+          "items": {
+            "hierarchy": "层级",
+            "isolate": "隔离"
+          },
+          "initialValue": "hierarchy"
+        }
+      }
+    },
+    {
+      "id": "set-axis-scale-mode",
+      "scriptName": "SetAxisScaleMode",
+      "category": "3d-model",
+      "list-name": "设置变换模式",
+      "display-text": "设置变换模式为[b]{0}[/b]",
+      "description": "选择处理模型缩放变换的方式。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
+          "items": {
+            "legacy": "兼容旧版",
+            "fit": "等比适配",
+            "stretch": "拉伸填满"
+          },
+          "initialValue": "fit"
+        }
+      }
+    },
+    {
+      "id": "set-backface-culling",
+      "scriptName": "SetBackfaceCulling",
+      "category": "3d-model",
+      "list-name": "设置背面剔除",
+      "display-text": "设置背面剔除: [b]{0}[/b]",
+      "description": "设置背面剔除的状态。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "状态",
+          "desc": "要设置的状态。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用",
+            "toggle": "反转"
+          },
+          "initialValue": "disabled"
+        }
+      }
+    },
+    {
+      "id": "set-looping",
+      "scriptName": "SetLooping",
+      "category": "3d-model",
+      "list-name": "设置循环",
+      "display-text": "设置动画循环状态: [b]{0}[/b]",
+      "description": "更改当前动画的循环状态。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "循环播放",
+          "desc": "要设置的循环状态。",
+          "items": {
+            "no": "禁用",
+            "yes": "启用",
+            "toggle": "反转"
+          },
+          "initialValue": "no"
+        }
+      }
+    },
+    {
+      "id": "play",
+      "scriptName": "Play",
+      "category": "playback",
+      "list-name": "播放",
+      "display-text": "播放动画[b]{0}[/b] (初始进度: [i]{2}[/i], 循环播放: [i]{1}[/i])",
+      "description": "播放 3D 模型的动画。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "播放动画。留空则使用当前动画。"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "设置动画是否进入循环播放。"
+        },
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "所选动画应从哪里开始播放，使用区间 [0-1] 的值。"
+        }
+      }
+    },
+    {
+      "id": "stop",
+      "scriptName": "Stop",
+      "category": "playback",
+      "list-name": "停止播放",
+      "display-text": "停止当前动画",
+      "description": "停止播放当前 3D 模型的动画，并将进度重置为 0。"
+    },
+    {
+      "id": "pause",
+      "scriptName": "Pause",
+      "category": "playback",
+      "list-name": "暂停播放",
+      "display-text": "暂停当前动画",
+      "description": "暂停播放当前 3D 模型的动画。"
+    },
+    {
+      "id": "resume",
+      "scriptName": "Resume",
+      "category": "playback",
+      "list-name": "恢复播放",
+      "display-text": "继续播放当前的动画",
+      "description": "恢复 3D 模型当前正在播放的动画进度。"
+    },
+    {
+      "id": "set-collisions-enabled",
+      "scriptName": "SetCollisions",
+      "category": "misc",
+      "list-name": "启用碰撞检测",
+      "display-text": "启用碰撞检查: [b]{0}[/b]",
+      "description": "设置对象是否记录碰撞事件。",
+      "params": {
+        "collisions": {
+          "type": "combo",
+          "name": "碰撞",
+          "desc": "启用或禁用此对象的碰撞检查。",
+          "items": {
+            "disabled": "禁用",
+            "enabled": "启用"
+          }
+        }
+      }
+    },
+    {
+      "id": "load-texture-from-url",
+      "scriptName": "LoadURL",
+      "category": "web",
+      "list-name": "加载远程纹理",
+      "display-text": "加载远程纹理(地址: [b]{0}[/b], 网格: [i]{1}[/i], 对象: [i]{2}[/i])",
+      "description": "加载远程图像或数据表达式的图像。",
+      "params": {
+        "uri": {
+          "type": "string",
+          "name": "URL",
+          "desc": "要加载的远程图像地址，或通过表达式返回的数据地址。"
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "网格会影响纹理的外观。"
+        },
+        "target": {
+          "type": "combo",
+          "name": "目标",
+          "desc": "哪些实例会受到此变更的影响？",
+          "items": {
+            "all": "对象类型",
+            "picked": "选择实例"
+          },
+          "initialValue": "all"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "unload-dynamic-textures",
+      "scriptName": "ReleaseDynamicTextures",
+      "category": "memory-management",
+      "list-name": "卸载所有动态纹理",
+      "display-text": "卸载所有动态纹理",
+      "description": "卸所有动态加载的纹理。",
+      "isAsync": true
+    },
+    {
+      "id": "unload-some-dynamic-textures",
+      "scriptName": "ReleaseSomeDynamicTextures",
+      "category": "memory-management",
+      "list-name": "卸载部分动态纹理",
+      "display-text": "卸载动态纹理 (3D模型: [i]{0}[/i], 网格:[b]{1}[/b])",
+      "description": "从特定 3D 模型中的特定网格卸载动态加载的纹理。",
+      "params": {
+        "model": {
+          "type": "model3d",
+          "name": "3D模型",
+          "desc": "要卸载的 3D 模型。"
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要卸载动态纹理的网格的字符串名称。留空卸载所选的3D模型的所有实例中所有网格中动态纹理。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "unload-some-dynamic-textures-by-name",
+      "scriptName": "ReleaseSomeDynamicTexturesByName",
+      "category": "memory-management",
+      "list-name": "卸载部分动态纹理(按名称)",
+      "display-text": "卸载动态纹理 (3D模型: [i]{0}[/i], 网格:[b]{1}[/b])",
+      "description": "从特定 3D 模型中的特定网格卸载动态加载的纹理。",
+      "params": {
+        "model": {
+          "type": "model3d-string",
+          "name": "3D模型",
+          "desc": "要卸载动态纹理的网格的字符串名称。留空卸载所选的3D模型的所有实例中所有网格中动态纹理。"
+        },
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要卸载动态纹理的网格的字符串名称。留空卸载指定 3D 模型中所有网格中动态纹理。"
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "error-model-3d-name",
+      "scriptName": "Error3dModelName",
+      "category": "3d-model",
+      "translated-name": "异常模型名称",
+      "description": "在 '模型导入失败' 事件中，返回的异常模型名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "name",
+      "scriptName": "Name",
+      "category": "3d-model",
+      "translated-name": "名称",
+      "description": "当前使用的3D模型。没有则返回空字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "meshes",
+      "scriptName": "Meshes",
+      "category": "3d-model",
+      "translated-name": "网格",
+      "description": "一个包含要绘制的所有网格的字符串， 以逗号分隔名称。如果所有网格都已绘制，则返回空字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "animation",
+      "scriptName": "Animation",
+      "category": "3d-model",
+      "translated-name": "动画",
+      "description": "当前的动画。如果没有动画，将返回一个空字符串。",
+      "returnType": "string"
+    },
+    {
+      "id": "animation-duration",
+      "scriptName": "AnimationDuration",
+      "category": "3d-model",
+      "translated-name": "动画持续时间",
+      "description": "模型正在播放的动画的持续时间，以秒为单位。",
+      "params": {
+        "animation": {
+          "type": "string",
+          "name": "动画",
+          "desc": "动画名称"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "progress",
+      "scriptName": "Progress",
+      "category": "3d-model",
+      "translated-name": "动画进度",
+      "description": "当前动画的播放进度，区间在 [0-1] 范围。",
+      "returnType": "number"
+    },
+    {
+      "id": "mesh-count",
+      "scriptName": "MeshCount",
+      "category": "3d-model",
+      "translated-name": "纹理数量",
+      "description": "模型中的网格数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "mesh-at",
+      "scriptName": "MeshAt",
+      "category": "3d-model",
+      "translated-name": "获取纹理",
+      "description": "获取指定的网格。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "网格的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "animation-count",
+      "scriptName": "AnimationCount",
+      "category": "3d-model",
+      "translated-name": "动画数量",
+      "description": "模型中的动画数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "animation-at",
+      "scriptName": "AnimationAt",
+      "category": "3d-model",
+      "translated-name": "获取动画",
+      "description": "获取指定的动画。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "动画的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "cur-mesh",
+      "scriptName": "CurMesh",
+      "category": "3d-model",
+      "translated-name": "当前纹理",
+      "description": "在 '遍历网格' 条件中，当前循环的网格名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "cur-animation",
+      "scriptName": "CurAnimation",
+      "category": "3d-model",
+      "translated-name": "当前动画",
+      "description": "在 '遍历动画' 条件中，当前循环的动画名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "position-x",
+      "scriptName": "OffsetX",
+      "category": "3d-model",
+      "translated-name": "X轴偏移",
+      "description": "在 X 轴的偏移量。",
+      "returnType": "number"
+    },
+    {
+      "id": "position-y",
+      "scriptName": "OffsetY",
+      "category": "3d-model",
+      "translated-name": "Y轴偏移",
+      "description": "在 Y 轴的偏移量。",
+      "returnType": "number"
+    },
+    {
+      "id": "position-z",
+      "scriptName": "OffsetZ",
+      "category": "3d-model",
+      "translated-name": "Z轴偏移",
+      "description": "在 Z 轴的偏移量。",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-x",
+      "scriptName": "ScaleX",
+      "category": "3d-model",
+      "translated-name": "X轴缩放",
+      "description": "在 X 轴的缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-y",
+      "scriptName": "ScaleY",
+      "category": "3d-model",
+      "translated-name": "Y轴缩放",
+      "description": "在 Y 轴的缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "scale-z",
+      "scriptName": "ScaleZ",
+      "category": "3d-model",
+      "translated-name": "Z轴缩放",
+      "description": "在 Z 轴的缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-x",
+      "scriptName": "OriginX",
+      "category": "3d-model",
+      "translated-name": "原点X",
+      "description": "获取X轴原点坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-y",
+      "scriptName": "OriginY",
+      "category": "3d-model",
+      "translated-name": "原点Y",
+      "description": "获取Y轴原点坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "origin-z",
+      "scriptName": "OriginZ",
+      "category": "3d-model",
+      "translated-name": "Z轴原点",
+      "description": "获取Z轴原点坐标。",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "animation": {
+      "name": "动画",
+      "desc": "选择一个可用的动画。"
+    },
+    "x-position": {
+      "name": "X 偏移",
+      "desc": "显示到 X 轴的偏移值。"
+    },
+    "y-position": {
+      "name": "Y 偏移",
+      "desc": "显示到 Y 轴的偏移值。"
+    },
+    "z-position": {
+      "name": "Z 偏移",
+      "desc": "显示到 Z 轴的偏移值。"
+    },
+    "x-scale": {
+      "name": "X 缩放",
+      "desc": "在X轴的缩放倍数。"
+    },
+    "y-scale": {
+      "name": "Y 缩放",
+      "desc": "在Y轴的缩放倍数。"
+    },
+    "z-scale": {
+      "name": "Z 缩放",
+      "desc": "在Z轴的缩放倍数。"
+    },
+    "bounding-box": {
+      "name": "显示边界框",
+      "desc": "在编辑器中显示当前网格的边界框。"
+    },
+    "bounding-box-color": {
+      "name": "边界框颜色",
+      "desc": "在编辑器中显示的边界框颜色。"
+    },
+    "live-preview": {
+      "name": "预览",
+      "desc": "在编辑器中进行实时预览。"
+    },
+    "initially-visible": {
+      "name": "初始可见",
+      "desc": "在场景开始时，对象是否可见。"
+    },
+    "initially-playing": {
+      "name": "初始播放动画",
+      "desc": "在场景开始时，是否立即播放当前动画。"
+    },
+    "initial-animation-progress": {
+      "name": "初始动画进度",
+      "desc": "在场景开始时，动画的播放进度。"
+    },
+    "enable-collisions": {
+      "name": "启用碰撞",
+      "desc": "对象是否注册碰撞事件。注意，在真正触发碰撞事件前，禁用此选项不会提升性能。"
+    },
+    "mesh-render-mode": {
+      "name": "渲染模式",
+      "desc": "选择绘制单个网格的渲染模式，是按层级绘制，或组件隔离。",
+      "items": {
+        "hierarchy": "层级",
+        "isolate": "隔离"
+      }
+    },
+    "editor-properties": {
+      "name": "编辑器属性",
+      "desc": "这些设置只影响编辑器中 3D 模型实例的使用方式。"
+    },
+    "position": {
+      "name": "模型偏移",
+      "desc": "模型的偏移量。",
+      "separator": ", "
+    },
+    "scale": {
+      "name": "模型缩放",
+      "desc": "模型的缩放比例。",
+      "separator": ", "
+    },
+    "3d-model-object": {
+      "name": "3D模型",
+      "desc": "从项目中选择一个3D模型。"
+    },
+    "meshes": {
+      "name": "网格",
+      "desc": "选择任意可用的网格进行绘制。"
+    },
+    "x-origin": {
+      "name": "原点X",
+      "desc": "在 X 轴上的原点。",
+      "items": {
+        "left": "左",
+        "middle": "中心",
+        "right": "右"
+      }
+    },
+    "y-origin": {
+      "name": "原点Y",
+      "desc": "在 Y 轴上的原点。",
+      "items": {
+        "top": "上",
+        "middle": "中心",
+        "bottom": "下"
+      }
+    },
+    "z-origin": {
+      "name": "Z轴原点",
+      "desc": "在 Z 轴上的原点。",
+      "items": {
+        "back": "底部",
+        "middle": "中心",
+        "front": "顶部"
+      }
+    },
+    "loop": {
+      "name": "循环播放",
+      "desc": "检查动画是否循环播放。"
+    },
+    "back-face-culling": {
+      "name": "背面剔除",
+      "desc": "启用后，绘制时将忽略不可见的多边形面。"
+    },
+    "animation-properties": {
+      "name": "3D模型动画属性",
+      "desc": "3D模型动画专用设置。"
+    },
+    "origin": {
+      "name": "模型原点",
+      "desc": "模型的位置原点。",
+      "separator": ", "
+    },
+    "axis-scale-mode": {
+      "name": "变换模式",
+      "desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
+      "items": {
+        "legacy": "兼容旧版",
+        "fit": "等比适配",
+        "stretch": "拉伸填满"
+      }
+    }
+  }
+}

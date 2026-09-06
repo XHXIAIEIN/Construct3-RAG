@@ -1,0 +1,271 @@
+{
+  "id": "cryptography",
+  "name": "密码学",
+  "description": "使用密码学技术对内容进行加密，例如 Hash、AES 算法。",
+  "type": "plugin",
+  "aceCategories": {
+    "hashing": "单向加密",
+    "encryption": "加密",
+    "random": "随机数"
+  },
+  "conditions": [
+    {
+      "id": "on-hash-finished",
+      "scriptName": "OnHashFinished",
+      "category": "hashing",
+      "list-name": "哈希加密完成",
+      "display-text": "哈希加密完成 ([i]{0}[/i])",
+      "description": "指定标签的哈希函数动作完成后触发。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的哈希加密动作的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-hash-finished",
+      "scriptName": "OnAnyHashFinished",
+      "category": "hashing",
+      "list-name": "任何哈希加密完成",
+      "display-text": "任意哈希加密完成",
+      "description": "任意哈希加密动作完成时触发，并返回 '标签' 表达式。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-encryption-finished",
+      "scriptName": "OnEncryptionFinished",
+      "category": "encryption",
+      "list-name": "加密完成",
+      "display-text": "加密 [i]{0}[/i] 完成",
+      "description": "指定标签的加密动作完成时触发。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的加密动作的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-encryption-failed",
+      "scriptName": "OnEncryptionFailed",
+      "category": "encryption",
+      "list-name": "加密失败",
+      "display-text": "加密 [i]{0}[/i] 失败",
+      "description": "指定标签的加密动作失败时触发。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的加密动作的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-decryption-finished",
+      "scriptName": "OnDecryptionFinished",
+      "category": "encryption",
+      "list-name": "解密完成",
+      "display-text": "解密 [i]{0}[/i] 完成",
+      "description": "指定标签的解密动作完成时触发。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的解密动作的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-decryption-failed",
+      "scriptName": "OnDecryptionFailed",
+      "category": "encryption",
+      "list-name": "解密失败",
+      "display-text": "解密 [i]{0}[/i] 失败",
+      "description": "指定标签的解密动作失败时触发。",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "标签",
+          "desc": "要检测的解密动作的标签。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-encryption-finished",
+      "scriptName": "OnAnyEncryptionFinished",
+      "category": "encryption",
+      "list-name": "任意加密完成",
+      "display-text": "加密完成",
+      "description": "任意加密操作完成时触发，并返回 '标签' 表达式。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-encryption-failed",
+      "scriptName": "OnAnyEncryptionFailed",
+      "category": "encryption",
+      "list-name": "任意加密失败",
+      "display-text": "任意加密失败",
+      "description": "任意加密操作失败时触发，并返回 '标签' 表达式。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-decryption-finished",
+      "scriptName": "OnAnyDecryptionFinished",
+      "category": "encryption",
+      "list-name": "任意解密完成",
+      "display-text": "任意解密完成",
+      "description": "任意解密操作完成时触发，并返回 '标签' 表达式。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-decryption-failed",
+      "scriptName": "OnAnyDecryptionFailed",
+      "category": "encryption",
+      "list-name": "任意解密失败",
+      "display-text": "任意解密失败",
+      "description": "任意加密操作完成时触发，并返回 '文件标签' 表达式。",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "hash-binary",
+      "scriptName": "HashBinary",
+      "category": "hashing",
+      "list-name": "哈希加密",
+      "display-text": "哈希加密 {0} (算法: [i]{1}[/i], 标签: [i]{2}[/i])",
+      "description": "通过哈希加密算法，对二进制数据对象的内容进行单向加密。",
+      "params": {
+        "binary-data": {
+          "type": "object",
+          "name": "二进制数据",
+          "desc": "选择二进制数据对象，对其数据内容进行哈希加密。"
+        },
+        "algorithm": {
+          "type": "combo",
+          "name": "算法",
+          "desc": "要使用的哈希加密算法。",
+          "items": {
+            "sha-256": "SHA-256",
+            "sha-384": "SHA-384",
+            "sha-512": "SHA-512"
+          }
+        },
+        "tag": {
+          "type": "string",
+          "name": "标签(可选)",
+          "desc": "用于识别不同的哈希加密动作，方便进行管理。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "encrypt-binary",
+      "scriptName": "EncryptBinary",
+      "category": "encryption",
+      "list-name": "加密数据(二进制对象)",
+      "display-text": "加密 {0} (算法: [i]{1}[/i], 密钥: [i]{2}[/i], 加密次数: [i]{3}[/i], 标签: [i]{4}[/i])",
+      "description": "通过密码学算法，对二进制数据对象的内容进行加密。",
+      "params": {
+        "binary-data": {
+          "type": "object",
+          "name": "来源",
+          "desc": "选择二进制数据对象，对其数据内容进行加密。"
+        },
+        "algorithm": {
+          "type": "combo",
+          "name": "算法",
+          "desc": "要使用的加密算法。",
+          "items": {
+            "aes-gcm": "AES-GCM"
+          }
+        },
+        "password": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "用来加密数据的密钥（区分大小写）。反向解密时，只有相同的密钥才能正确读取内容。"
+        },
+        "iterations": {
+          "type": "number",
+          "name": "迭代",
+          "desc": "对内容反复加密的次数。越高的值需要更长的生成时间，但会更加安全，更难被破解。"
+        },
+        "tag": {
+          "type": "string",
+          "name": "标签(可选)",
+          "desc": "用于识别不同的加密动作，方便进行管理。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "decrypt-binary",
+      "scriptName": "DecryptBinary",
+      "category": "encryption",
+      "list-name": "解密数据(二进制对象)",
+      "display-text": "解密 {0} (算法: [i]{1}[/i], 密钥: [i]{2}[/i],标签: [i]{3}[/i])",
+      "description": "通过密码学算法，对二进制数据对象的内容进行解密。",
+      "params": {
+        "binary-data": {
+          "type": "object",
+          "name": "来源",
+          "desc": "选择二进制数据对象，对其数据内容进行解密。"
+        },
+        "algorithm": {
+          "type": "combo",
+          "name": "算法",
+          "desc": "要使用的加密算法。",
+          "items": {
+            "aes-gcm": "AES-GCM"
+          }
+        },
+        "password": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "用来解密数据的密钥（区分大小写）。只有与加密时使用的相同密钥才能正确读取内容。"
+        },
+        "tag": {
+          "type": "string",
+          "name": "标签(可选)",
+          "desc": "用于识别不同的解密动作，方便进行管理。"
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "hash",
+      "scriptName": "Hash",
+      "category": "hashing",
+      "translated-name": "哈希加密",
+      "description": "产生的十六进制字符串哈希值。",
+      "returnType": "string"
+    },
+    {
+      "id": "tag",
+      "scriptName": "Tag",
+      "category": "encryption",
+      "translated-name": "标签",
+      "description": "在执行动作中相应的标签。",
+      "returnType": "string"
+    },
+    {
+      "id": "random-uuid",
+      "scriptName": "RandomUUID",
+      "category": "random",
+      "translated-name": "随机序列码",
+      "description": "使用密码学生成一个安全的 v4 UUID 随机数，格式类似 \"36b8f84d-df4e-4d49-b662-bcde71a8764f\"",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

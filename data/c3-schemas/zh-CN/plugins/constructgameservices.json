@@ -1,0 +1,4194 @@
+{
+  "id": "constructgameservices",
+  "name": "游戏服务",
+  "description": "访问由 Construct 托管的游戏服务，如排行榜，成就系统、账号系统，云存档，经验积分，第三方账号登录。",
+  "type": "plugin",
+  "aceCategories": {
+    "construct-game-services": "Construct 游戏服务",
+    "leaderboards": "排行榜",
+    "authentication": "用户登录",
+    "cloud-save": "云存储",
+    "xp": "XP",
+    "broadcasts": "通信平台",
+    "achievements": "成就",
+    "notifications": "通知"
+  },
+  "conditions": [
+    {
+      "id": "on-success",
+      "scriptName": "OnSuccess",
+      "category": "construct-game-services",
+      "list-name": "成功事件",
+      "display-text": "{0}成功",
+      "description": "包含各个事件的成功回调。",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "事件",
+          "desc": "选择要检查的事件。",
+          "items": {
+            "sign-in-with-provider": "第三方登录",
+            "sign-in-persistent": "保持登录",
+            "submit-score": "提交分数",
+            "get-scores": "获取分数",
+            "set-player-name": "设置玩家名称",
+            "any-create-cloud-save": "任意创建完成",
+            "any-get-cloud-save": "任意读取完成",
+            "get-xp": "获取XP",
+            "get-xp-ranks": "获取等级",
+            "get-active-xp-bonuses": "获得当前经验奖励",
+            "get-upcoming-xp-bonuses": "获取即将到来经验奖励",
+            "get-broadcast-channels": "获取广播频道",
+            "get-broadcast-messages": "获取广播消息",
+            "get-broadcast-message": "获取广播消息",
+            "get-cloud-save-buckets": "获取云存储容器",
+            "set-player-email-address": "获取玩家邮箱",
+            "set-player-username-password": "设置玩家账户信息",
+            "set-player-username": "设置玩家用户名",
+            "set-player-password": "设置用户密码",
+            "delete-player": "删除用户",
+            "register-player": "注册用户",
+            "delete-avatar": "删除头像",
+            "set-avatar": "设置头像",
+            "disconnect-login-provider": "解绑第三方账号",
+            "get-login-providers": "获取第三方登录",
+            "set-cloud-save-picture": "设置云相片",
+            "delete-cloud-save-picture": "删除云相片",
+            "delete-cloud-save": "删除云存档",
+            "get-leaderboard-teams": "获取排行榜队伍",
+            "adjust-leaderboard-score": "设置排行榜分数",
+            "get-leaderboard-score-history": "获取排行榜分数历史",
+            "link-provider": "绑定第三方账号",
+            "link-provider-force-required": "请求强制绑定第三方",
+            "link-provider-force-result": "强制绑定第三方账号",
+            "get-all-achievements": "获取所有成就",
+            "get-achievement": "获取成就",
+            "get-players-achievements": "获取玩家成就",
+            "get-awarded-players": "获取玩家成就",
+            "award-achievement": "获得或增加成就里程",
+            "connect-to-notifications": "连接到通知"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "construct-game-services",
+      "list-name": "失败事件",
+      "display-text": "{0}失败",
+      "description": "包含各个事件的失败回调。",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "事件",
+          "desc": "选择要检查的事件。",
+          "items": {
+            "sign-in-with-provider": "第三方登录",
+            "sign-in-persistent": "保持登录",
+            "submit-score": "提交分数",
+            "get-scores": "获取分数",
+            "set-player-name": "设置玩家名称",
+            "any-create-cloud-save": "任意保存完成",
+            "any-get-cloud-save": "任意获取完成",
+            "get-xp": "获取XP",
+            "get-xp-ranks": "获取等级",
+            "get-active-xp-bonuses": "获得当前经验奖励",
+            "get-upcoming-xp-bonuses": "获得即将到来的经验奖励",
+            "get-broadcast-channels": "获取公告频道",
+            "get-broadcast-messages": "获取公告消息",
+            "get-broadcast-message": "获取公告消息",
+            "get-cloud-save-buckets": "获取云存储桶",
+            "set-player-email-address": "获取玩家邮箱",
+            "set-player-username-password": "设置玩家账户信息",
+            "set-player-username": "设置玩家用户名",
+            "set-player-password": "设置玩家密码",
+            "delete-player": "删除玩家账号",
+            "register-player": "注册玩家账号",
+            "delete-avatar": "删除头像",
+            "set-avatar": "设置头像",
+            "disconnect-login-provider": "解绑第三方账号",
+            "get-login-providers": "查询已关联第三方登录",
+            "set-cloud-save-picture": "设置云相片",
+            "delete-cloud-save-picture": "删除云相片",
+            "delete-cloud-save": "删除云存档",
+            "get-leaderboard-teams": "获取排行榜队伍",
+            "adjust-leaderboard-score": "设置排行榜分数",
+            "get-leaderboard-score-history": "获取排行榜分数历史",
+            "link-provider": "绑定第三方账号",
+            "link-provider-force-required": "请求强制绑定第三方",
+            "link-provider-force-result": "强制绑定第三方账号",
+            "get-all-achievements": "获取所有成就",
+            "get-achievement": "获取成就",
+            "get-players-achievements": "获取玩家成就",
+            "get-awarded-players": "玩家获得成就奖励",
+            "award-achievement": "获得或增加成就里程",
+            "connect-to-notifications": "连接到通知"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-notification-received",
+      "scriptName": "OnNotificationReceived",
+      "category": "notifications",
+      "list-name": "收到通知",
+      "display-text": "收到通知 {0}",
+      "description": "当向玩家发送通知时触发。",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "收到的通知类型。",
+          "items": {
+            "new-broadcast-message": "新广播消息",
+            "achievement-awarded": "玩家成就奖励",
+            "xp-changed": "玩家经验值变化",
+            "xp-rank-changed": "玩家经验等级阶段变化"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-notification-connection-closed",
+      "scriptName": "OnNotificationConnectionClosed",
+      "category": "notifications",
+      "list-name": "连接已关闭通知",
+      "display-text": "连接已关闭通知",
+      "description": "用于通知的 WebSocket 连接因任何原因关闭时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-xp-rank-change-promotion",
+      "scriptName": "IsXPRankChangePromotion",
+      "category": "notifications",
+      "list-name": "经验等级变更是否可晋升\n",
+      "display-text": "XP 等级变更即晋升",
+      "description": "玩家经验等级的变化是否意味着晋升？如果不是，则表示玩家的经验等级被降级了。"
+    },
+    {
+      "id": "is-achievement-progressive",
+      "scriptName": "IsAchievementProgressive",
+      "category": "achievements",
+      "list-name": "是阶段性成就",
+      "display-text": "成就 [b]{0}[/b]  是阶段性成就",
+      "description": "检测这项成就是否为阶段性成就。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-client-progress-allowed",
+      "scriptName": "IsAchievementClientProgressAllowed",
+      "category": "achievements",
+      "list-name": "is-achievement-client-progress-allowed",
+      "display-text": "",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-increment-only",
+      "scriptName": "IsAchievementIncrementOnly",
+      "category": "achievements",
+      "list-name": "is-achievement-increment-only",
+      "display-text": "",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      }
+    },
+    {
+      "id": "is-achievement-secret",
+      "scriptName": "IsAchievementSecret",
+      "category": "achievements",
+      "list-name": "是隐藏成就",
+      "display-text": "成就 [b]{0}[/b] 是隐藏成就",
+      "description": "检测该成就是否为隐藏成就",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      }
+    },
+    {
+      "id": "are-broadcast-channel-messages-rateable",
+      "scriptName": "AreBroadcastChannelMessagesRateable",
+      "category": "broadcasts",
+      "list-name": "消息可评分",
+      "display-text": "有评分消息 (频道: [b]{0}[/b])",
+      "description": "检测已登录玩家是否能对该频道中的消息进行评分。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      }
+    },
+    {
+      "id": "any-broadcast-channel-unread-messages",
+      "scriptName": "HasBroadcastChannelGotUnreadMessages",
+      "category": "broadcasts",
+      "list-name": "包含未读消息",
+      "display-text": "有未读消息 (频道: [b]{0}[/b])",
+      "description": "检测此频道中是否包含未读消息。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      }
+    },
+    {
+      "id": "is-broadcast-message-unread",
+      "scriptName": "IsBroadcastMessageUnread",
+      "category": "broadcasts",
+      "list-name": "是未读消息",
+      "display-text": "是未读消息 [b]{0}[/b]",
+      "description": "检查这条消息当前玩家尚未阅读。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      }
+    },
+    {
+      "id": "is-broadcast-message-rateable",
+      "scriptName": "IsBroadcastMessageRateable",
+      "category": "broadcasts",
+      "list-name": "消息可评分",
+      "display-text": "消息可评分 [b]{0}[/b]",
+      "description": "检测已登录玩家是否能对此消息进行评分。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      }
+    },
+    {
+      "id": "on-link-popup-blocked",
+      "scriptName": "OnLinkPopupBlocked",
+      "category": "authentication",
+      "list-name": "弹出窗口被阻止",
+      "display-text": "弹出窗口被阻止",
+      "description": "浏览器的弹出窗口被拦截时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "on-sign-in-popup-blocked",
+      "scriptName": "OnSignInPopupBlocked",
+      "category": "authentication",
+      "list-name": "登录弹窗被阻止",
+      "display-text": "登录弹窗被阻止",
+      "description": "当浏览器弹窗拦截器阻止登录弹窗显示时触发。",
+      "isTrigger": true
+    },
+    {
+      "id": "is-signed-in",
+      "scriptName": "IsSignedIn",
+      "category": "authentication",
+      "list-name": "已登录",
+      "display-text": "已登录",
+      "description": "检查玩家当前是否已登录。"
+    },
+    {
+      "id": "can-sign-in-persistent",
+      "scriptName": "CanSignInPersistent",
+      "category": "authentication",
+      "list-name": "可保持登录状态",
+      "display-text": "可保持登录状态",
+      "description": "如果上次登录时勾选了保持登录且状态仍然有效，则触发此条件。"
+    },
+    {
+      "id": "can-sign-in-with-provider",
+      "scriptName": "CanSignInWithProvider",
+      "category": "authentication",
+      "list-name": "第三方登录可用",
+      "display-text": "已绑定 [b]{0}[/b]",
+      "description": "检测已登录玩家是否能使用指定的第三方平台登录。",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "平台",
+          "desc": "平台",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        }
+      }
+    },
+    {
+      "id": "on-create-cloud-save-success",
+      "scriptName": "OnCreateCloudSaveSuccess",
+      "category": "cloud-save",
+      "list-name": "创建完成",
+      "display-text": "云存档创建完成 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "description": "当云保存创建完成时触发。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-create-cloud-save-error",
+      "scriptName": "OnCreateCloudSaveError",
+      "category": "cloud-save",
+      "list-name": "创建失败",
+      "display-text": "云存档创建失败 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "description": "当云保存创建失败时触发。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-success",
+      "scriptName": "OnGetCloudSaveSuccess",
+      "category": "cloud-save",
+      "list-name": "获取成功",
+      "display-text": "云存档获取成功 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i])",
+      "description": "当云保存的数据获取成功时触发。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-binary-success",
+      "scriptName": "OnGetCloudSaveBinarySuccess",
+      "category": "cloud-save",
+      "list-name": "获取二进制完成",
+      "display-text": "云存档创建成功 (密钥:[b]{0}[/b],  存储容器: [i]{1}[/i], 二进制: {2})",
+      "description": "获取二进制云存档数据成功时触发。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        },
+        "data": {
+          "type": "object",
+          "name": "二进制",
+          "desc": "用于接收云端存储数据的二进制对象。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-get-cloud-save-error",
+      "scriptName": "OnGetCloudSaveError",
+      "category": "cloud-save",
+      "list-name": "获取失败",
+      "display-text": "云存档获取失败 (密钥:[b]{0}[/b],  存储容器: [i]{1}[/i])",
+      "description": "获取云存档数据失败时触发。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "are-bucket-cloud-saves-rateable",
+      "scriptName": "AreCloudSaveBucketSavesRateable",
+      "category": "cloud-save",
+      "list-name": "云存储可评分",
+      "display-text": "评估可上传到云存储 (存储桶 [b]{0}[/b])",
+      "description": "检测已登录玩家是否能对此存储桶的云存档进行评分。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-game-id",
+      "scriptName": "SetGameID",
+      "category": "construct-game-services",
+      "list-name": "设置游戏ID",
+      "display-text": "设置游戏ID为[b]{0}[/b]",
+      "description": "设置当前游戏ID",
+      "params": {
+        "game-id": {
+          "type": "string",
+          "name": "游戏ID",
+          "desc": "要设置的游戏ID"
+        }
+      }
+    },
+    {
+      "id": "set-target-language",
+      "scriptName": "SetTargetLanguage",
+      "category": "construct-game-services",
+      "list-name": "设置目标语言",
+      "display-text": "设置目标语言为 [b]{0}[/b]",
+      "description": "设置当前目标语言。",
+      "params": {
+        "languageISO": {
+          "type": "string",
+          "name": "语言代码",
+          "desc": "要设置的 ISO 语言代码。如中文为 'zh' 英文为 'en'。"
+        }
+      }
+    },
+    {
+      "id": "notifications-connect",
+      "scriptName": "ConnectToNotifications",
+      "category": "notifications",
+      "list-name": "连接到通知",
+      "display-text": "创建新的通知连接。",
+      "description": "创建新连接以接收与当前玩家相关的通知。",
+      "isAsync": true
+    },
+    {
+      "id": "notifications-diconnect",
+      "scriptName": "DisconnectFromNotifications",
+      "category": "notifications",
+      "list-name": "断开通知",
+      "display-text": "关闭现有通知连接。",
+      "description": "如果通知连接已打开，则将其关闭。",
+      "isAsync": true
+    },
+    {
+      "id": "get-all-achievements",
+      "scriptName": "GetAllAchievements",
+      "category": "achievements",
+      "list-name": "获取成就",
+      "display-text": "获得成就",
+      "description": "获得所有成就。",
+      "isAsync": true
+    },
+    {
+      "id": "get-achievement",
+      "scriptName": "GetAchievement",
+      "category": "achievements",
+      "list-name": "获取成就",
+      "display-text": "获取成就 ID [b]{0}[/b]",
+      "description": "获得一项成就。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "要获得的成就ID。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-player-achievements",
+      "scriptName": "GetPlayerAchievements",
+      "category": "achievements",
+      "list-name": "获取玩家成就",
+      "display-text": "获得所有玩家成就",
+      "description": "列出已登录玩家获得或取得的所有成就或进度。",
+      "isAsync": true
+    },
+    {
+      "id": "get-awarded-players",
+      "scriptName": "GetAwardedPlayers",
+      "category": "achievements",
+      "list-name": "获取已获得成就的玩家",
+      "display-text": "列出所有获得成就 ID [b]{0}[/b] 的玩家 (排序: [b]{1}[/b] , 每页结果数: [i]{2}[/i], 第 [i]{3}[/i] 页)",
+      "description": "列出所有获得成就的玩家。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "玩家将获得的成就ID。"
+        },
+        "orderBy": {
+          "type": "combo",
+          "name": "顺序",
+          "desc": "使用哪种方式对返回的结果进行排序。",
+          "items": {
+            "MostRecentlyAwarded": "最近获得",
+            "LeastRecentlyAwarded": "最先获得",
+            "MostAwarded": "最高里程",
+            "LeastAwarded": "最少里程"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围为 1 到 50。"
+        },
+        "page": {
+          "type": "number",
+          "name": "分页",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "award-achievement",
+      "scriptName": "AwardAchievement",
+      "category": "achievements",
+      "list-name": "获得成就",
+      "display-text": "获得成就 [b]{0}[/b], 步进值 [b]{1}[/b]",
+      "description": "奖励或提升已登录玩家的成就。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "玩家将获得的成就ID。"
+        },
+        "value": {
+          "type": "number",
+          "name": "步进值",
+          "desc": "对于非渐进式成就，应奖励多少枚奖章？对于渐进式成就，应奖励的步进值是多少？"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-channels",
+      "scriptName": "GetBroadcastChannels",
+      "category": "broadcasts",
+      "list-name": "获取频道",
+      "display-text": "获取频道",
+      "description": "获取所有广播频道。",
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-channel-messages",
+      "scriptName": "GetBroadcastChannelMessages",
+      "category": "broadcasts",
+      "list-name": "获取消息",
+      "display-text": "获取频道消息 (频道: [b]{0}[/b], 每页结果: [i]{1}[/i], 第 [i]{2}[/i] 页)",
+      "description": "接收频道的消息。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "要标记已读消息的频道ID。"
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围为 1 到 50。"
+        },
+        "page": {
+          "type": "number",
+          "name": "页数",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-broadcast-message",
+      "scriptName": "GetBroadcastMessage",
+      "category": "broadcasts",
+      "list-name": "接收消息",
+      "display-text": "接收消息 [b]{0}[/b]",
+      "description": "接收消息",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "要接收的消息ID。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "rate-broadcast-message",
+      "scriptName": "RateBroadcastMessage",
+      "category": "broadcasts",
+      "list-name": "评价信息",
+      "display-text": "提交信息 [b]{0}[/b] 评分 [i]{1}[/i]",
+      "description": "提交消息评分",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "被评分的消息 ID。"
+        },
+        "value": {
+          "type": "number",
+          "name": "分数",
+          "desc": "要提交的分数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-xp",
+      "scriptName": "GetXP",
+      "category": "xp",
+      "list-name": "获取XP",
+      "display-text": "获取XP",
+      "description": "获取已登录玩家的当前经验和等级详情。",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-ranks",
+      "scriptName": "GetXPRanks",
+      "category": "xp",
+      "list-name": "获得所有等级",
+      "display-text": "获得全部经验值排名",
+      "description": "获取按顺序排列的所有经验排名。",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-active-bonuses",
+      "scriptName": "GetActiveXPBonuses",
+      "category": "xp",
+      "list-name": "获得当前经验加成",
+      "display-text": "获得当前经验奖励",
+      "description": "获得当前所有活跃的经验加成。",
+      "isAsync": true
+    },
+    {
+      "id": "get-xp-upcoming-bonuses",
+      "scriptName": "GetUpcomingXPBonuses",
+      "category": "xp",
+      "list-name": "获得即将到来的经验值奖励",
+      "display-text": "获取即将到来的经验值奖励，截至到[b]{0}[/b]",
+      "description": "获取所有即将到来的经验值奖励。",
+      "params": {
+        "endDate": {
+          "type": "number",
+          "name": "结束日期",
+          "desc": "要获取即将到来的加成活动的时间范围。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-login-providers",
+      "scriptName": "GetLoginProviders",
+      "category": "authentication",
+      "list-name": "查询已关联第三方登录",
+      "display-text": "获取所有当前已绑定的第三方平台。",
+      "description": "检索当前已登录玩家的所有已关联的第三方登录服务商。",
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-email-link",
+      "scriptName": "SignInWithEmail",
+      "category": "authentication",
+      "list-name": "登录账号 (邮箱)",
+      "display-text": "登录账号 (邮箱: [b]{0}[/b], 保持登录: [i]{1}[/i],  有效时间: [i]{2}[/i] 分钟)",
+      "description": "向玩家绑定的邮箱发送链接登录账号。",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "邮箱",
+          "desc": "玩家登录时需要提供的已验证电子邮件地址。"
+        },
+        "allowPersisting": {
+          "type": "boolean",
+          "name": "保持登录",
+          "desc": "保持当前登录状态，允许下次直接登录。"
+        },
+        "expiry": {
+          "type": "number",
+          "name": "保持时长",
+          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-username-password",
+      "scriptName": "SignInWithUsernamePassword",
+      "category": "authentication",
+      "list-name": "登录账号 (账号密码)",
+      "display-text": "登录账号 (用户名: [b]{0}[/b], 密码: [b]{1}[/b], 保持登录: [i]{2}[/i], 有效时间: [i]{3}[/i] 分钟)",
+      "description": "使用用户名和密码登录账号。",
+      "params": {
+        "username": {
+          "type": "string",
+          "name": "用户名",
+          "desc": "玩家账号的用户名。"
+        },
+        "password": {
+          "type": "string",
+          "name": "密码",
+          "desc": "玩家账号的密码。"
+        },
+        "allowPersisting": {
+          "type": "boolean",
+          "name": "保持登录",
+          "desc": "保持当前登录状态，允许下次直接登录。"
+        },
+        "expiry": {
+          "type": "number",
+          "name": "保持时长",
+          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-with-provider",
+      "scriptName": "SignInWithProvider",
+      "category": "authentication",
+      "list-name": "使用第三方登录",
+      "display-text": "跳转第三方授权登录(平台: [b]{0}[/b], 保持登录: [i]{1}[/i], 有效时长:[i]{2}[/i]分钟, 弹窗大小: [i]{3}[/i] x [i]{4}[/i])",
+      "description": "使用到第三方平台账号登录。",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "平台",
+          "desc": "用于登录的第三方账号平台。",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "google": "Google",
+            "microsoft": "Microsoft",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "yandex": "Yandex",
+            "github": "GitHub",
+            "itch-io": "itch.io",
+            "twitch": "Twitch",
+            "patreon": "Patreon"
+          }
+        },
+        "allow-persisting": {
+          "type": "boolean",
+          "name": "保持登录",
+          "desc": "保持当前登录状态，允许下次直接登录。"
+        },
+        "expiry": {
+          "type": "number",
+          "name": "保持时长",
+          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。"
+        },
+        "popup-window-width": {
+          "type": "number",
+          "name": "弹窗宽度",
+          "desc": "登录弹窗的宽度，以像素为单位。"
+        },
+        "popup-window-height": {
+          "type": "number",
+          "name": "弹窗高度",
+          "desc": "登录弹窗的高度，以像素为单位。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "force-link-provider",
+      "scriptName": "ForceLinkProvider",
+      "category": "authentication",
+      "list-name": "绑定第三方账号 (强制覆盖)",
+      "display-text": "强制绑定第三方账号",
+      "description": "关联第三方平台登录时，如果该平台已关联到另一个帐户，会强制覆盖绑定关系。",
+      "isAsync": true
+    },
+    {
+      "id": "link-provider",
+      "scriptName": "LinkProvider",
+      "category": "authentication",
+      "list-name": "绑定第三方账号",
+      "display-text": "绑定 [b]{0}[/b] (弹出窗口尺寸: [i]{1}[/i] x [i]{2}[/i])",
+      "description": "绑定第三方平台账号关联到玩家账号。",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "平台",
+          "desc": "需要绑定的第三方服务。",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        },
+        "popup-window-width": {
+          "type": "number",
+          "name": "弹窗宽度",
+          "desc": "登录弹窗的宽度，以像素为单位。"
+        },
+        "popup-window-height": {
+          "type": "number",
+          "name": "弹窗高度",
+          "desc": "登录弹窗的高度，以像素为单位。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "disconnect-provider",
+      "scriptName": "DisconnectProvider",
+      "category": "authentication",
+      "list-name": "解绑第三方账号",
+      "display-text": "解绑 [b]{0}[/b] 账号关联",
+      "description": "解绑第三方账号",
+      "params": {
+        "provider": {
+          "type": "combo",
+          "name": "平台",
+          "desc": "用于登录的第三方账号平台。",
+          "items": {
+            "apple": "Apple",
+            "battle-net": "Battle.net",
+            "discord": "Discord",
+            "facebook": "Facebook",
+            "github": "GitHub",
+            "google": "Google",
+            "itch-io": "itch.io",
+            "microsoft": "Microsoft",
+            "patreon": "Patreon",
+            "reddit": "Reddit",
+            "steam": "Steam",
+            "twitch": "Twitch",
+            "yandex": "Yandex"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "sign-in-persistent",
+      "scriptName": "SignInPersistent",
+      "category": "authentication",
+      "list-name": "恢复登录状态",
+      "display-text": "保持登录",
+      "description": "如果上次登录时勾选了 '保持登录'，恢复登录状态。若登录状态失效，则触发 '恢复登录失败' 错误。",
+      "isAsync": true
+    },
+    {
+      "id": "retry-open-sign-in-popup",
+      "scriptName": "RetryOpenSignInPopup",
+      "category": "authentication",
+      "list-name": "重试登录弹窗",
+      "display-text": "重试登录弹窗",
+      "description": "再尝试打开登录弹窗。此动作需要触发在用户主动交互事件，如鼠标点击或触摸。"
+    },
+    {
+      "id": "retry-open-link-popup",
+      "scriptName": "RetryOpenLinkPopup",
+      "category": "authentication",
+      "list-name": "重新弹出窗口",
+      "display-text": "重试弹出窗口",
+      "description": "再次尝试弹出第三方平台登录窗口。此动作需要在用户主动输入事件中使用，例如鼠标点击或按下事件。"
+    },
+    {
+      "id": "sign-out",
+      "scriptName": "SignOut",
+      "category": "authentication",
+      "list-name": "退出登录",
+      "display-text": "退出登录",
+      "description": "退出当前已登录的任何账户。"
+    },
+    {
+      "id": "set-player-name",
+      "scriptName": "SetPlayerName",
+      "category": "authentication",
+      "list-name": "设置玩家名称",
+      "display-text": "设置玩家名称为[b]{0}[/b]",
+      "description": "设置当前登录玩家的名称。",
+      "params": {
+        "name": {
+          "type": "string",
+          "name": "玩家名称",
+          "desc": "要设置的玩家名称。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-email-address",
+      "scriptName": "SetPlayerEmailAddress",
+      "category": "authentication",
+      "list-name": "获取玩家邮箱",
+      "display-text": "设置玩家绑定邮箱为 [b]{0}[/b]",
+      "description": "设置当前登录玩家的电子邮箱地址。",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "邮箱",
+          "desc": "要设置的电子邮箱地址。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-username-and-password",
+      "scriptName": "SetPlayerUsernameAndPassword",
+      "category": "authentication",
+      "list-name": "设置玩家账户信息",
+      "display-text": "设置玩家用户名为 [b]{0}[/b]，密码为 [b]{1}[/b]",
+      "description": "设置当前登录玩家的用户名和密码。",
+      "params": {
+        "username": {
+          "type": "string",
+          "name": "用户名",
+          "desc": "要设置的用户名。"
+        },
+        "password": {
+          "type": "string",
+          "name": "密码",
+          "desc": "要设置的密码。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-username",
+      "scriptName": "SetPlayerUsername",
+      "category": "authentication",
+      "list-name": "更改玩家用户名",
+      "display-text": "设置玩家用户名为 [b]{0}[/b]",
+      "description": "更改当前登录玩家的用户名。",
+      "params": {
+        "newUsername": {
+          "type": "string",
+          "name": "用户名",
+          "desc": "要设置的新用户名。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-password",
+      "scriptName": "SetPlayerPassword",
+      "category": "authentication",
+      "list-name": "更改玩家密码",
+      "display-text": "更改玩家密码为 [b]{0}[/b]",
+      "description": "更改当前玩家的登录密码。",
+      "params": {
+        "newPassword": {
+          "type": "string",
+          "name": "新密码",
+          "desc": "要设置的新密码。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-binary",
+      "scriptName": "SetPlayerAvatarByBinary",
+      "category": "authentication",
+      "list-name": "设置玩家头像 (二进制)",
+      "display-text": "设置玩家头像 [b]{0}[/b]",
+      "description": "设置玩家的头像。",
+      "params": {
+        "avatarData": {
+          "type": "object",
+          "name": "数据",
+          "desc": "选择包含图像数据的二进制对象。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-url",
+      "scriptName": "SetPlayerAvatarByURL",
+      "category": "authentication",
+      "list-name": "设置玩家头像 (URL)",
+      "display-text": "设置玩家头像 URL: [b]{0}[/b]",
+      "description": "设置玩家头像。",
+      "params": {
+        "avatarURL": {
+          "type": "string",
+          "name": "链接",
+          "desc": "头像图片的网址。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-player-avatar-by-base64",
+      "scriptName": "SetPlayerAvatarByBase64",
+      "category": "authentication",
+      "list-name": "设置玩家头像 (base64)",
+      "display-text": "设置玩家头像为 [b]{0}[/b]",
+      "description": "设置玩家头像。",
+      "params": {
+        "avatar": {
+          "type": "string",
+          "name": "数据",
+          "desc": "Base64 编码的头像图片。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-forgotten-password",
+      "scriptName": "RequestForgottenPassword",
+      "category": "authentication",
+      "list-name": "重置密码",
+      "display-text": "发送重置密码邮件至 [b]{0}[/b]",
+      "description": "发送重置密码的邮件。需要玩家账号已绑定并验证邮箱地址。",
+      "params": {
+        "emailAddress": {
+          "type": "string",
+          "name": "邮箱",
+          "desc": "玩家账号绑定的电子邮件地址。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-player",
+      "scriptName": "DeletePlayer",
+      "category": "authentication",
+      "list-name": "删除玩家账号",
+      "display-text": "永久删除已登录玩家的账号。",
+      "description": "永久删除已登录玩家的账号。此操作不可逆。",
+      "isAsync": true
+    },
+    {
+      "id": "delete-avatar",
+      "scriptName": "DeleteAvatar",
+      "category": "authentication",
+      "list-name": "删除头像",
+      "display-text": "删除已登录玩家的头像。",
+      "description": "删除已登录玩家的头像。",
+      "isAsync": true
+    },
+    {
+      "id": "register-player",
+      "scriptName": "RegisterPlayer",
+      "category": "authentication",
+      "list-name": "注册玩家账号",
+      "display-text": "创建新账号并登录 (昵称: [b]{0}[/b], 用户名: [i]{1}[/i], 密码: [i]{2}[/i], 邮箱: [i]{3}[/i], 保持登录: [i]{4}[/i], 保持时长: [i]{5}[/i])",
+      "description": "创建一个新的玩家账号并登录",
+      "params": {
+        "playerName": {
+          "type": "string",
+          "name": "玩家名称",
+          "desc": "公开的新玩家的昵称。"
+        },
+        "username": {
+          "type": "string",
+          "name": "用户名",
+          "desc": "玩家用来登录的用户名。"
+        },
+        "password": {
+          "type": "string",
+          "name": "密码",
+          "desc": "玩家用来登录的密码。"
+        },
+        "emailAddress": {
+          "type": "string",
+          "name": "电子邮箱",
+          "desc": "要与玩家帐户关联的电子邮件地址"
+        },
+        "allow-persisting": {
+          "type": "boolean",
+          "name": "保持登录",
+          "desc": "保持当前登录状态，允许下次直接登录。"
+        },
+        "expiry": {
+          "type": "number",
+          "name": "保持时长",
+          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-newest-scores",
+      "scriptName": "GetLeaderboardNewestScores",
+      "category": "leaderboards",
+      "list-name": "获取最新分数",
+      "display-text": "获取排行榜地区分数 (排行榜ID: [b]{0}[/b], 地区: [i]{1}[/i], 每页结果: [i]{2}[/i], 分页: [i]{3}[/i])",
+      "description": "获取排行榜中最新发布的分数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要检索的排行榜ID。"
+        },
+        "country": {
+          "type": "string",
+          "name": "地区代码",
+          "desc": "可选的地区代码。只查询指定地区的分数。留空则查找所有地区。"
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围从 1 到 100。"
+        },
+        "page": {
+          "type": "number",
+          "name": "页数",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-player-scores",
+      "scriptName": "GetLeaderboardPlayerScores",
+      "category": "leaderboards",
+      "list-name": "获取玩家分数",
+      "display-text": "获取排行榜玩家分数(玩家ID: [b]{1}[/b], 排行榜ID: [b]{0}[/b], 每页结果: [i]{2}[/i], 分页: [i]{3}[/i])",
+      "description": "返回排行榜上玩家发布的分数，从最高分开始。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要查询的排行榜 ID。"
+        },
+        "playerID": {
+          "type": "string",
+          "name": "玩家ID",
+          "desc": "要获取得分的玩家 ID。"
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围从 1 到 100。"
+        },
+        "page": {
+          "type": "number",
+          "name": "页数",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-neighbour-scores",
+      "scriptName": "GetLeaderboardNeighbourScores",
+      "category": "leaderboards",
+      "list-name": "获取临近分数",
+      "display-text": "获取排行榜玩家相邻分数(玩家ID: [b]{1}[/b], 分数ID: [b]{2}[/b], 范围: [i]{3}[/i], 排行榜ID [b]{0}[/b])",
+      "description": "返回相邻分数，直接高于和低于该分数的分数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要获取分数的排行榜ID。"
+        },
+        "playerID": {
+          "type": "string",
+          "name": "玩家ID",
+          "desc": "要获取分数的玩家ID。"
+        },
+        "scoreID": {
+          "type": "string",
+          "name": "分数ID",
+          "desc": "要获取相邻分数的分数ID。"
+        },
+        "range": {
+          "type": "number",
+          "name": "范围",
+          "desc": "要查询相邻高低分数的范围。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-score-history",
+      "scriptName": "GetLeaderboardScoreHistory",
+      "category": "leaderboards",
+      "list-name": "获取历史分数",
+      "display-text": "获取玩家历史分数 (玩家ID: [b]{1}[/b], 分数ID: [b]{2}[/b], 排行榜ID: [i]{0}[/i]）",
+      "description": "获取玩家或分数ID的历史记录。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "该分数所在的排行榜 ID。"
+        },
+        "playerID": {
+          "type": "string",
+          "name": "玩家ID",
+          "desc": "要查询的玩家 ID。"
+        },
+        "scoreID": {
+          "type": "string",
+          "name": "分数ID",
+          "desc": "要查询的分数ID。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "submit-score",
+      "scriptName": "SubmitScore",
+      "category": "leaderboards",
+      "list-name": "提交分数",
+      "display-text": "提交分数 [b]{0}[/b] 到排行榜 [i]{4}[/i]（可选值 [[i]{1}[/i], [i]{2}[/i], [i]{3}[/i]）",
+      "description": "提交分数到排行榜。",
+      "params": {
+        "score": {
+          "type": "number",
+          "name": "分数",
+          "desc": "要提交的分数。必须是整数。"
+        },
+        "optionalValue1": {
+          "type": "number",
+          "name": "附加值1",
+          "desc": "获取此分数记录中的可选附加信息。"
+        },
+        "optionalValue2": {
+          "type": "number",
+          "name": "附加值2",
+          "desc": "获取此分数记录中的可选附加信息。"
+        },
+        "optionalValue3": {
+          "type": "number",
+          "name": "附加值3",
+          "desc": "获取此分数记录中的可选附加信息。"
+        },
+        "leaderboard-id": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要提交的排行榜的 ID。留空则默认选择 Construct Arcade。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "adjust-score",
+      "scriptName": "AdjustScore",
+      "category": "leaderboards",
+      "list-name": "修改分数",
+      "display-text": "修改排行榜分数为 [i]{2}[/i] (分数ID: [i]{1}[/i], 排行榜ID: [b]{0}[/b], 附加信息: [[i]{3}[/i], [i]{4}[/i], [i]{5}[/i]])",
+      "description": "调整排行榜中的现有分数。",
+      "params": {
+        "scoreID": {
+          "type": "string",
+          "name": "分数ID",
+          "desc": "要调整的分数 ID。"
+        },
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "该分数所在的排行榜 ID。"
+        },
+        "scoreAdjustment": {
+          "type": "number",
+          "name": "值",
+          "desc": "要调整的分数。"
+        },
+        "optValue1Adjustment": {
+          "type": "number",
+          "name": "附加值1",
+          "desc": "要调整的可选值 1。"
+        },
+        "optValue2Adjustment": {
+          "type": "number",
+          "name": "附加值2",
+          "desc": "要调整的可选值 2。"
+        },
+        "optValue3Adjustment": {
+          "type": "number",
+          "name": "附加值3",
+          "desc": "要调整的可选值 3。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-scores",
+      "scriptName": "GetLeaderboardScores",
+      "category": "leaderboards",
+      "list-name": "获取排行榜分数",
+      "display-text": "获取排行榜 [b]{0}[/b]  (每页包含: [i]{1}[/i], 页码: [i]{2}[/i], 国家: [i]{3}[/i], 地区: [i]{6}[/i], 周期: [i]{4}[/i], 时间偏移: [i]{5}[/i])",
+      "description": "检索指定排行榜的分数列表。",
+      "params": {
+        "leaderboard-id": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要检索的排行榜ID。"
+        },
+        "results-per-page": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "每次检索结果的数量，从 1 到 500。"
+        },
+        "page": {
+          "type": "number",
+          "name": "分页",
+          "desc": "要获取的分页，从 0 开始计数。"
+        },
+        "country": {
+          "type": "string",
+          "name": "地区代码",
+          "desc": "符合 ISO 3166-1 alpha-2 标准的国家或地区代码，由 2 个大写字母组成。如 US、CN、TW、HK... 留空则展示所有国家或地区。"
+        },
+        "range": {
+          "type": "combo",
+          "name": "周期",
+          "desc": "根据时间段筛选结果。",
+          "items": {
+            "all": "全部",
+            "daily": "天",
+            "weekly": "周",
+            "monthly": "月",
+            "yearly": "年"
+          }
+        },
+        "range-offset": {
+          "type": "number",
+          "name": "时间偏移",
+          "desc": "在筛选时间范围基础上增加偏移天数。例如，在每日统计中偏移 1 天，将获取到昨天的分数。"
+        },
+        "culture": {
+          "type": "string",
+          "name": "语言环境",
+          "desc": "本地语言环境，影响本地化的显示格式。如 zh-CN, zh-HK, zh-TW... 留空则使用预设的文化环境。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-leaderboard-teams",
+      "scriptName": "GetLeaderboardTeams",
+      "category": "leaderboards",
+      "list-name": "获取排行榜队伍",
+      "display-text": "获取榜单队伍列表 (排行榜: [b]{0}[/b], 排序方式: [i]{1}[/i], 每页结果: [i]{2}[/i], 页数: [i]{3}[/i])",
+      "description": "获取排行榜中的队伍列表。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "要检索队伍的排行榜 ID。"
+        },
+        "orderBy": {
+          "type": "combo",
+          "name": "顺序",
+          "desc": "使用哪种方式对返回的结果进行排序。",
+          "items": {
+            "BestRanked": "排名 (最高优先)",
+            "WorstRanked": "排名 (最低优先)",
+            "NameAZ": "名称 (A-Z)",
+            "NameZA": "名称 (Z-A)",
+            "MostPlayers": "人数 (最多优先)",
+            "LeastPlayers": "人数 (最少优先)",
+            "Newest": "创建时间 (最新优先)",
+            "Oldest": "创建时间 (最早优先)"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围从 1 到 100。"
+        },
+        "page": {
+          "type": "number",
+          "name": "页数",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      }
+    },
+    {
+      "id": "rate-cloud-save",
+      "scriptName": "RateCloudSave",
+      "category": "cloud-save",
+      "list-name": "提交云保存评分",
+      "display-text": "提交云存储 [b]{0}[/b] 评分 [i]{1}[/i]",
+      "description": "对云存储进行评分。",
+      "params": {
+        "cloudSaveID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "被评分的云存档 ID。"
+        },
+        "value": {
+          "type": "number",
+          "name": "评分值",
+          "desc": "要提交的分数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "create-cloud-save-text",
+      "scriptName": "CreateCloudSaveText",
+      "category": "cloud-save",
+      "list-name": "新建数据 (文本)",
+      "display-text": "创建云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 名称: [i]{2}[/i],  数据: [b]{3}[/b])",
+      "description": "在云服务中创建并存储文本数据。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        },
+        "name": {
+          "type": "string",
+          "name": "名称 (可选)",
+          "desc": "用于标记这段数据的名称，例如文件名。"
+        },
+        "data": {
+          "type": "string",
+          "name": "数据",
+          "desc": "要保存到云端的文本数据。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "create-cloud-save-binary",
+      "scriptName": "CreateCloudSaveBinary",
+      "category": "cloud-save",
+      "list-name": "新建数据 (二进制)",
+      "display-text": "创建云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 名称: [i]{2}[/i],  数据: {3})",
+      "description": "在云存储中创建并存储二进制数据。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        },
+        "name": {
+          "type": "string",
+          "name": "名称 (可选)",
+          "desc": "用于标记这段数据的名称，例如文件名。"
+        },
+        "data": {
+          "type": "object",
+          "name": "二进制",
+          "desc": "选择要将保存的二进制数据对象。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-cloud-save",
+      "scriptName": "GetCloudSave",
+      "category": "cloud-save",
+      "list-name": "获取数据",
+      "display-text": "获取云端数据 (密钥:[b]{0}[/b], 存储容器: [i]{1}[/i], 类型: [i]{2}[/i])",
+      "description": "获取云储存的数据。",
+      "params": {
+        "key": {
+          "type": "string",
+          "name": "密钥",
+          "desc": "存储密钥名称。仅限英文小写字母、数字、或小数点。"
+        },
+        "bucket-id": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶的ID。用于指定数据保存的 Bucket 容器。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "数据使用哪种方式下载，选择文本或二进制数据。",
+          "items": {
+            "text": "文本",
+            "binary": "二进制"
+          }
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "get-cloud-save-buckets",
+      "scriptName": "GetCloudSaveBuckets",
+      "category": "cloud-save",
+      "list-name": "获取存储桶",
+      "display-text": "获取云存储桶列表 (排序方式:  [b]{0}[/b], 每页结果: [i]{1}[/i], 第 [i]{2}[/i] 页)",
+      "description": "获取所有存储桶的分页列表。",
+      "params": {
+        "orderBy": {
+          "type": "combo",
+          "name": "顺序",
+          "desc": "使用哪种方式对返回的结果进行排序。",
+          "items": {
+            "AZ": "顺序 A to Z",
+            "ZA": "倒序 Z to A",
+            "MostBlobs": "存储数量 (最多优先)",
+            "LeastBlobs": "存储数量 (最少优先)",
+            "MostData": "占用空间  (最大优先)",
+            "LeastData": "占用空间 (最小优先)"
+          }
+        },
+        "resultsPerPage": {
+          "type": "number",
+          "name": "每页结果",
+          "desc": "要检索的结果数量，范围从 1 到 100。"
+        },
+        "page": {
+          "type": "number",
+          "name": "页数",
+          "desc": "要获取的分页，从 0 开始计数。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-binary",
+      "scriptName": "SetCloudSavePictureByBinary",
+      "category": "cloud-save",
+      "list-name": "设置云图像 (二进制)",
+      "display-text": "设置云存储关联图片为(ID: [b]{0}[/b], 图像: [i]{1}[/i])",
+      "description": "设置云存储关联的图片。",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "用于保存图片的云存储 ID。"
+        },
+        "pictureData": {
+          "type": "object",
+          "name": "数据",
+          "desc": "图像的二进制数据"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-url",
+      "scriptName": "SetCloudSavePictureByURL",
+      "category": "cloud-save",
+      "list-name": "设置云图像 (URL)",
+      "display-text": "设置云存储关联图片 (ID: [b]{0}[/b], 地址: [i]{1}[/i])",
+      "description": "设置云存储的关联图片。",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "用于保存图片的云存储 ID。"
+        },
+        "pictureURL": {
+          "type": "string",
+          "name": "链接",
+          "desc": "图像的远程地址。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-cloud-save-picture-base64",
+      "scriptName": "SetCloudSavePictureByBase64",
+      "category": "cloud-save",
+      "list-name": "设置云图像 (base64)",
+      "display-text": "设置云存储关联图片(ID: [b]{0}[/b], 图像 [i]{1}[/i])",
+      "description": "设置云存储关联的图片。",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "用于保存图片的云存储 ID。"
+        },
+        "picture": {
+          "type": "string",
+          "name": "数据",
+          "desc": "使用 Base64 编码的图像。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-cloud-save-picture",
+      "scriptName": "DeleteCloudSavePicture",
+      "category": "cloud-save",
+      "list-name": "删除云图像",
+      "display-text": "删除云存储关联的图片 [b]{0}[/b]",
+      "description": "删除与云存储关联的图片。",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "用于保存图片的云存储 ID。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "delete-cloud-save",
+      "scriptName": "DeleteCloudSave",
+      "category": "cloud-save",
+      "list-name": "删除",
+      "display-text": "删除云存档 [b]{0}[/b]",
+      "description": "删除云存档记录。",
+      "params": {
+        "blobID": {
+          "type": "string",
+          "name": "云存储 ID",
+          "desc": "要删除的云存储 ID。玩家需处于登录状态，并拥有删除的权限。"
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "game-id",
+      "scriptName": "GameID",
+      "category": "construct-game-services",
+      "translated-name": "游戏ID",
+      "description": "当前登录的游戏ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "target-language",
+      "scriptName": "TargetLanguage",
+      "category": "construct-game-services",
+      "translated-name": "目标语言",
+      "description": "返回目标语言的翻译内容。",
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-date-created",
+      "scriptName": "AchievementDateCreated",
+      "category": "achievements",
+      "translated-name": "get-achievement-date-created",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-date-created-formatted",
+      "scriptName": "AchievementDateCreatedFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-date-created-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-name",
+      "scriptName": "AchievementName",
+      "category": "achievements",
+      "translated-name": "成就名称",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-description",
+      "scriptName": "AchievementDescription",
+      "category": "achievements",
+      "translated-name": "成就描述",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-progress-required",
+      "scriptName": "AchievementProgressionRequired",
+      "category": "achievements",
+      "translated-name": "所需成就进度",
+      "description": "解锁此成就所需的进度。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-max-unlocks",
+      "scriptName": "AchievementMaxUnlocks",
+      "category": "achievements",
+      "translated-name": "get-achievement-max-unlocks",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-max-unlocks-formatted",
+      "scriptName": "AchievementMaxUnlocksFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-max-unlocks-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-total-awarded",
+      "scriptName": "AchievementTotalAwarded",
+      "category": "achievements",
+      "translated-name": "成就总解锁次数",
+      "description": "该成就已被所有玩家获得的次数。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-total-awarded-formatted",
+      "scriptName": "AchievementTotalAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-total-awarded-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-total-unique-players-awarded",
+      "scriptName": "AchievementTotalUniquePlayersAwarded",
+      "category": "achievements",
+      "translated-name": "get-achievement-total-unique-players-awarded",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-total-unique-players-awarded-formatted",
+      "scriptName": "AchievementTotalUniquePlayersAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-total-unique-players-awarded-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-percentage-player-base-owned",
+      "scriptName": "AchievementPercentagePlayerBaseOwned",
+      "category": "achievements",
+      "translated-name": "玩家拥有百分比",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-first-awarded",
+      "scriptName": "AchievementFirstAwarded",
+      "category": "achievements",
+      "translated-name": "get-achievement-first-awarded",
+      "description": "该成就首次被玩家获得的日期。",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-first-awarded-formatted",
+      "scriptName": "AchievementFirstAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-first-awarded-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-last-awarded",
+      "scriptName": "AchievementLastAwarded",
+      "category": "achievements",
+      "translated-name": "get-achievement-last-awarded",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-last-awarded-formatted",
+      "scriptName": "AchievementLastAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-last-awarded-formatted",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-achieved-logo-url",
+      "scriptName": "AchievementAchievedLogoURL",
+      "category": "achievements",
+      "translated-name": "get-achievement-achieved-logo-url",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        },
+        "width": {
+          "type": "number",
+          "name": "width",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-unachieved-logo-url",
+      "scriptName": "AchievementUnachievedLogoURL",
+      "category": "achievements",
+      "translated-name": "get-achievement-unachieved-logo-url",
+      "description": "",
+      "params": {
+        "achievementID": {
+          "type": "string",
+          "name": "成就ID",
+          "desc": "成就ID"
+        },
+        "width": {
+          "type": "number",
+          "name": "width",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-player-achievements",
+      "scriptName": "PlayerTotalAchievements",
+      "category": "achievements",
+      "translated-name": "玩家总成就",
+      "description": "已登录玩家获得的或取得的成就总数。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-times-awarded",
+      "scriptName": "PlayerAchievementTimesAwarded",
+      "category": "achievements",
+      "translated-name": "玩家总成就次数",
+      "description": "已登录玩家获得成就的总次数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "玩家成就的索引。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-times-awarded-formatted",
+      "scriptName": "PlayerAchievementTimesAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-times-awarded-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "玩家成就的索引。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-first-awarded",
+      "scriptName": "PlayerAchievementFirstAwarded",
+      "category": "achievements",
+      "translated-name": "玩家首次获得成就",
+      "description": "这是该注册玩家首次获得此项成就。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "玩家成就的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-first-awarded-formatted",
+      "scriptName": "PlayerAchievementFirstAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-first-awarded-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-last-awarded",
+      "scriptName": "PlayerAchievementLastAwarded",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-last-awarded",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-last-awarded-formatted",
+      "scriptName": "PlayerAchievementLastAwardedFormatted",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-last-awarded-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-player-achievement-progress",
+      "scriptName": "PlayerAchievementProgress",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-progress",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-player-achievement-progress-formatted",
+      "scriptName": "PlayerAchievementProgressFormatted",
+      "category": "achievements",
+      "translated-name": "get-player-achievement-progress-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-id-at",
+      "scriptName": "AchievementAwardedPlayersIDAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-id-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-player-name-at",
+      "scriptName": "AchievementAwardedPlayersPlayerNameAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-player-name-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-active-at",
+      "scriptName": "AchievementAwardedPlayersLastActiveAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-last-active-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-avatar-url-at",
+      "scriptName": "AchievementAwardedPlayersAvatarURLAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-avatar-url-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        },
+        "width": {
+          "type": "number",
+          "name": "width",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-awarded-count-at",
+      "scriptName": "AchievementAwardedPlayersAwardedCountAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-awarded-count-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-awarded-players-awarded-count-at-formatted",
+      "scriptName": "AchievementAwardedPlayersAwardedCountAtFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-awarded-count-at-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-first-awarded-at",
+      "scriptName": "AchievementAwardedPlayersFirstAwardedAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-first-awarded-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-first-awarded-at-formatted",
+      "scriptName": "AchievementAwardedPlayersFirstAwardedAtFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-first-awarded-at-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-awarded-at",
+      "scriptName": "AchievementAwardedPlayersLastAwardedAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-last-awarded-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-last-awarded-at-formatted",
+      "scriptName": "AchievementAwardedPlayersLastAwardedAtFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-last-awarded-at-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-current-progress-at",
+      "scriptName": "AchievementAwardedPlayersCurrentProgressAt",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-current-progress-at",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-awarded-players-current-progress-at-formatted",
+      "scriptName": "AchievementAwardedPlayersCurrentProgressAtFormatted",
+      "category": "achievements",
+      "translated-name": "get-achievement-awarded-players-current-progress-at-formatted",
+      "description": "",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-broadcast-channels",
+      "scriptName": "TotalBroadcastChannels",
+      "category": "broadcasts",
+      "translated-name": "总公告数量",
+      "description": "公告频道的总数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-id-at",
+      "scriptName": "BroadcastChannelIDAt",
+      "category": "broadcasts",
+      "translated-name": "获取频道ID",
+      "description": "索引出的公告频道ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "频道的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-name",
+      "scriptName": "BroadcastChannelName",
+      "category": "broadcasts",
+      "translated-name": "频道名称",
+      "description": "频道的名称。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-description",
+      "scriptName": "BroadcastChannelDescription",
+      "category": "broadcasts",
+      "translated-name": "频道简介",
+      "description": "频道的简介。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-date-created",
+      "scriptName": "BroadcastChannelDateCreated",
+      "category": "broadcasts",
+      "translated-name": "频道创建日期",
+      "description": "频道创建的日期。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-channel-message-count",
+      "scriptName": "BroadcastChannelMessageCount",
+      "category": "broadcasts",
+      "translated-name": "频道消息总数量",
+      "description": "频道中的消息总数。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-last-message-date",
+      "scriptName": "BroadcastChannelLastMessageDate",
+      "category": "broadcasts",
+      "translated-name": "上次公告时间",
+      "description": "频道中最后一条消息的日期.",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "broadcast-channel-messages-page-count",
+      "scriptName": "ChannelPageCount",
+      "category": "broadcasts",
+      "translated-name": "频道总页数",
+      "description": "在频道中检索消息的总页数。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-channel-message-id-at",
+      "scriptName": "ChannelMessageIDAt",
+      "category": "broadcasts",
+      "translated-name": "获取频道消息",
+      "description": "获取索引处的频道消息。",
+      "params": {
+        "channelID": {
+          "type": "string",
+          "name": "频道ID",
+          "desc": "频道ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "频道的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-date",
+      "scriptName": "BroadcastMessageDate",
+      "category": "broadcasts",
+      "translated-name": "消息日期",
+      "description": "消息的发送日期。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-title",
+      "scriptName": "BroadcastMessageTitle",
+      "category": "broadcasts",
+      "translated-name": "消息标题",
+      "description": "消息的标题。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-text",
+      "scriptName": "BroadcastMessageText",
+      "category": "broadcasts",
+      "translated-name": "消息文本",
+      "description": "消息的正文内容。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-excerpt",
+      "scriptName": "BroadcastMessageExcerpt",
+      "category": "broadcasts",
+      "translated-name": "消息摘要",
+      "description": "消息文本的简短预览。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-reads",
+      "scriptName": "BroadcastMessageReads",
+      "category": "broadcasts",
+      "translated-name": "消息已读次数",
+      "description": "消息已被阅读的次数。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-unique-reads",
+      "scriptName": "BroadcastMessageUniqueReads",
+      "category": "broadcasts",
+      "translated-name": "消息已读人数",
+      "description": "消息被首次阅读的次数。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-updates",
+      "scriptName": "BroadcastMessageUpdates",
+      "category": "broadcasts",
+      "translated-name": "消息更新次数",
+      "description": "消息更新次数，包括标题或正文内容。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-last-update",
+      "scriptName": "BroadcastMessageLastUpdate",
+      "category": "broadcasts",
+      "translated-name": "消息最后更新时间",
+      "description": "消息最后更新日期，包括标题或正文内容。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-broadcast-message-total-chars",
+      "scriptName": "BroadcastMessageCharCount",
+      "category": "broadcasts",
+      "translated-name": "消息正文字数",
+      "description": "消息正文的字符数量。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-my-rating-value",
+      "scriptName": "BroadcastMessageMyRatingValue",
+      "category": "broadcasts",
+      "translated-name": "消息评分",
+      "description": "向已登录的用户发起的评分值。如果未评分，则返回 -1。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-total-ratings",
+      "scriptName": "BroadcastMessageTotalRatings",
+      "category": "broadcasts",
+      "translated-name": "消息总评分",
+      "description": "此条消息的评分总值。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-average-rating",
+      "scriptName": "BroadcastMessageAverageRating",
+      "category": "broadcasts",
+      "translated-name": "消息平均评分",
+      "description": "此条消息的评分平均值。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-max-rating-value",
+      "scriptName": "BroadcastMessageMaxRatingValue",
+      "category": "broadcasts",
+      "translated-name": "消息允许最高评分",
+      "description": "允许提交的最高评分值。最低值始终为0。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-broadcast-message-last-rating",
+      "scriptName": "BroadcastMessageLastRating",
+      "category": "broadcasts",
+      "translated-name": "最后一条消息",
+      "description": "上次评分的时间。",
+      "params": {
+        "messageID": {
+          "type": "string",
+          "name": "消息ID",
+          "desc": "消息ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp",
+      "scriptName": "XP",
+      "category": "xp",
+      "translated-name": "XP",
+      "description": "经验值",
+      "returnType": "number"
+    },
+    {
+      "id": "formatted-xp",
+      "scriptName": "FormattedXP",
+      "category": "xp",
+      "translated-name": "获取格式化经验值",
+      "description": "获取经验值，以地区格式显示。",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-leaderboard-score-id",
+      "scriptName": "XPLeaderboardScoreID",
+      "category": "xp",
+      "translated-name": "排行榜分数ID",
+      "description": "排行榜中对应分数记录的ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-rank-id",
+      "scriptName": "RankID",
+      "category": "xp",
+      "translated-name": "等级ID",
+      "description": "当前等级的 ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "xp-next-rank-id",
+      "scriptName": "NextRankID",
+      "category": "xp",
+      "translated-name": "下个等级ID",
+      "description": "下一级等级的 ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-title",
+      "scriptName": "XPRankTitle",
+      "category": "xp",
+      "translated-name": "等级称号",
+      "description": "等级的标题。",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "等级ID",
+          "desc": "等级ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-description",
+      "scriptName": "XPRankDescription",
+      "category": "xp",
+      "translated-name": "等级描述",
+      "description": "等级的描述。",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "等级ID",
+          "desc": "等级ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-at-xp",
+      "scriptName": "XPRankAtXP",
+      "category": "xp",
+      "translated-name": "等级所需经验",
+      "description": "到达等级所需经验值。",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "等级ID",
+          "desc": "等级ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-rank-at-xp-formatted",
+      "scriptName": "XPRankAtXPFormatted",
+      "category": "xp",
+      "translated-name": "等级所需经验格式化",
+      "description": "该等级所需的 XP，以地区格式显示。",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "等级ID",
+          "desc": "等级ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-logo",
+      "scriptName": "XPRankLogo",
+      "category": "xp",
+      "translated-name": "等级图标",
+      "description": "等级的图标。",
+      "params": {
+        "rankID": {
+          "type": "string",
+          "name": "等级ID",
+          "desc": "等级ID"
+        },
+        "minWidth": {
+          "type": "number",
+          "name": "最小宽度",
+          "desc": "最小宽度。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-rank-id-at",
+      "scriptName": "XPRankIDAt",
+      "category": "xp",
+      "translated-name": "获取等级ID",
+      "description": "索引处的等级ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "等级的索引编号，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-get-active-bonus-id-at",
+      "scriptName": "XPActiveBonusIDAt",
+      "category": "xp",
+      "translated-name": "获取有效活动",
+      "description": "索引处的有效活动ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "有效活动的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "xp-get-upcoming-bonus-id-at",
+      "scriptName": "XPUpcomingBonusIDAt",
+      "category": "xp",
+      "translated-name": "获取预告活动",
+      "description": "即将到来的活动的索引。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "即将到来的活动的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-title",
+      "scriptName": "XPBonusTitle",
+      "category": "xp",
+      "translated-name": "活动标题",
+      "description": "活动的标题。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-description",
+      "scriptName": "XPBonusDescription",
+      "category": "xp",
+      "translated-name": "活动描述",
+      "description": "活动的描述。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-start-date",
+      "scriptName": "XPBonusStartDate",
+      "category": "xp",
+      "translated-name": "活动开始日期",
+      "description": "活动的起始日期。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-end-date",
+      "scriptName": "XPBonusEndDate",
+      "category": "xp",
+      "translated-name": "活动结束日期",
+      "description": "活动的结束日期。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-start-date-formatted",
+      "scriptName": "XPBonusStartDateFormatted",
+      "category": "xp",
+      "translated-name": "活动开始日期格式化",
+      "description": "活动的开始日期，以地区格式显示。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-end-date-formatted",
+      "scriptName": "XPBonusEndDateFormatted",
+      "category": "xp",
+      "translated-name": "活动结束日期格式化",
+      "description": "活动的结束日期，以地区格式显示。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-bonus-multiplier",
+      "scriptName": "XPBonusMultiplier",
+      "category": "xp",
+      "translated-name": "活动经验倍数",
+      "description": "活动期间，获取经验的倍数加成。",
+      "params": {
+        "bonusID": {
+          "type": "string",
+          "name": "活动ID",
+          "desc": "活动ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "player-id",
+      "scriptName": "PlayerID",
+      "category": "authentication",
+      "translated-name": "玩家ID",
+      "description": "当前登录玩家的唯一ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "player-name",
+      "scriptName": "PlayerName",
+      "category": "authentication",
+      "translated-name": "玩家名称",
+      "description": "当前登录玩家的昵称。",
+      "returnType": "string"
+    },
+    {
+      "id": "avatar-url",
+      "scriptName": "AvatarURL",
+      "category": "authentication",
+      "translated-name": "avatar-url",
+      "description": "",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": ""
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-connected-login-providers",
+      "scriptName": "TotalConnectedLoginProviders",
+      "category": "authentication",
+      "translated-name": "第三方登录用户数量",
+      "description": "使用第三方登录的在线用户数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-connected-login-provider-total-sign-ins",
+      "scriptName": "ConnectedLoginProviderTotalSignIns",
+      "category": "authentication",
+      "translated-name": "总登录次数",
+      "description": "第三方登录玩家次数",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "平台",
+          "desc": "第三方平台"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-connected-login-provider-first-sign-in",
+      "scriptName": "ConnectedLoginProviderFirstSignIn",
+      "category": "authentication",
+      "translated-name": "首次登录",
+      "description": "首次使用第三方登录的用户数量。",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "平台",
+          "desc": "第三方平台"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-connected-login-provider-last-sign-in",
+      "scriptName": "ConnectedLoginProviderLastSignIn",
+      "category": "authentication",
+      "translated-name": "上次登录",
+      "description": "上次登录使用的第三方平台。",
+      "params": {
+        "provider": {
+          "type": "string",
+          "name": "平台",
+          "desc": "第三方平台"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-patreon-memberships",
+      "scriptName": "TotalPatreonMemberships",
+      "category": "authentication",
+      "translated-name": "会员在线人数",
+      "description": "当前在线的会员数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-membership-id-at",
+      "scriptName": "PatreonMembershipIDAt",
+      "category": "authentication",
+      "translated-name": "获取会员信息",
+      "description": "会员 ID",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "会员的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-lifetime-support-cents",
+      "scriptName": "PatreonLifetimeSupportCents",
+      "category": "authentication",
+      "translated-name": "会员收益历史总金额",
+      "description": "会员收益历史总金额。以美分为单位。100 美分为 1 美元。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-currently-entitled-amount-cents",
+      "scriptName": "PatreonCurrentlyEntitledAmountCents",
+      "category": "authentication",
+      "translated-name": "会员当前收益",
+      "description": "目前可通过会员资格获得的收益。以美分为单位。100 美分为 1 美元。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-campaign-id",
+      "scriptName": "PatreonCampaignID",
+      "category": "authentication",
+      "translated-name": "会员活动ID",
+      "description": "会员活动 ID",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-patreon-campaign-vanity",
+      "scriptName": "PatreonCampaignVanity",
+      "category": "authentication",
+      "translated-name": "会员活动宣传名称",
+      "description": "会员的活动的个性化名称。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-campaign-creation-name",
+      "scriptName": "PatreonCampaignCreationName",
+      "category": "authentication",
+      "translated-name": "会员活动创建名称",
+      "description": "会员活动的创建名称。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-campaign-url",
+      "scriptName": "PatreonCampaignURL",
+      "category": "authentication",
+      "translated-name": "会员活动网址",
+      "description": "会员活动的网址。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-patreon-membership-entitled-tiers",
+      "scriptName": "TotalPatreonMembershipEntitledTiers",
+      "category": "authentication",
+      "translated-name": "会员档次数量",
+      "description": "会员身份的等级数量。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-id-at",
+      "scriptName": "PatreonMembershipEntitledTierIDAt",
+      "category": "authentication",
+      "translated-name": "获取会员档次",
+      "description": "获取会员资格的档次ID，从 0 开始计数。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "索引"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-title-at",
+      "scriptName": "PatreonMembershipEntitledTierTitleAt",
+      "category": "authentication",
+      "translated-name": "获取会员档次名称",
+      "description": "要获取的会员档次的索引，从 0 开始计数。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "档次"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-patreon-membership-entitled-tier-description-at",
+      "scriptName": "PatreonMembershipEntitledTierDescriptionAt",
+      "category": "authentication",
+      "translated-name": "获取会员档次描述",
+      "description": "要获取的会员档次的索引，从 0 开始计数。",
+      "params": {
+        "membershipID": {
+          "type": "string",
+          "name": "会员ID",
+          "desc": "会员ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "档次"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-date-at",
+      "scriptName": "ScoreHistoryDateAt",
+      "category": "leaderboards",
+      "translated-name": "获取历史创建日期",
+      "description": "获取某项分数的历史创建日期。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-score-at",
+      "scriptName": "ScoreHistoryScoreAt",
+      "category": "leaderboards",
+      "translated-name": "获取历史分数",
+      "description": "获取某项的历史分数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-score-at",
+      "scriptName": "ScoreHistoryFormattedScoreAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化历史排名",
+      "description": "获取某项分数的历史得分，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此历史分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-rank-at",
+      "scriptName": "ScoreHistoryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取历史排名",
+      "description": "获取某项分数的历史排名。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-rank-at",
+      "scriptName": "ScoreHistoryFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化历史排名",
+      "description": "获取某项分数的历史排名，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此历史分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-country-rank-at",
+      "scriptName": "ScoreHistoryCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取历史地区排名",
+      "description": "获取某项分数的历史地区排名。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此历史分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-formatted-country-rank-at",
+      "scriptName": "ScoreHistoryFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化历史地区排名",
+      "description": "获取某项分数的历史地区排名，",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "历史分数的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-score-history-records",
+      "scriptName": "ScoreHistoryCount",
+      "category": "leaderboards",
+      "translated-name": "历史分数总数",
+      "description": "获取检索到的历史分数的记录数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "score-history-score-id",
+      "scriptName": "ScoreHistoryScoreID",
+      "category": "leaderboards",
+      "translated-name": "历史分数的索引。",
+      "description": "历史分数的分数ID",
+      "returnType": "string"
+    },
+    {
+      "id": "score-history-player-id",
+      "scriptName": "ScoreHistoryPlayerID",
+      "category": "leaderboards",
+      "translated-name": "获取历史分数玩家ID",
+      "description": "历史分数的玩家ID",
+      "returnType": "string"
+    },
+    {
+      "id": "total-page-count",
+      "scriptName": "TotalPageCount",
+      "category": "leaderboards",
+      "translated-name": "页数",
+      "description": "获取分数列表的分页数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "score-count",
+      "scriptName": "ScoreCount",
+      "category": "leaderboards",
+      "translated-name": "分数数量",
+      "description": "获取分数列表的记录数量。",
+      "returnType": "number"
+    },
+    {
+      "id": "score-at",
+      "scriptName": "ScoreAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数",
+      "description": "获取分数列表中，指定位置的分数，返回一个数字。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-at",
+      "scriptName": "ScoreFormattedAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数文本",
+      "description": "获取分数列表中，指定位置的格式化分数，返回一个字符串。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-at",
+      "scriptName": "ScoreRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名",
+      "description": "获取分数列表中，指定位置的分数排名，返回一个数字。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-rank-at",
+      "scriptName": "ScoreFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名文本",
+      "description": "获取分数列表中，指定位置的格式化排名，返回一个字符串。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-country-at",
+      "scriptName": "ScoreCountryAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名地区",
+      "description": "获取分数列表中，玩家提交分数时的所在地区码 (由 2 个大写字母组成)。 如 US、CN、HK、TW...",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-player-id-at",
+      "scriptName": "ScorePlayerIDAt",
+      "category": "leaderboards",
+      "translated-name": "获取提交者ID",
+      "description": "获取分数列表中，指定位置的分数其提交者的用户ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-player-name-at",
+      "scriptName": "ScorePlayerNameAt",
+      "category": "leaderboards",
+      "translated-name": "获取提交者昵称",
+      "description": "获取分数列表中，指定位置的分数其提交者的用户昵称。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-id-at",
+      "scriptName": "ScoreIDAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数",
+      "description": "获取某项分数的唯一ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-date-at",
+      "scriptName": "ScoreDateAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数日期",
+      "description": "获取某项分数的创建日期。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-formatted-date-at",
+      "scriptName": "ScoreFormattedDateAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化分数日期",
+      "description": "获取某项分数的创建日期，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-updates-at",
+      "scriptName": "ScoreUpdatesAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数更新时间",
+      "description": "获取某项分数的更新次数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-country-rank-at",
+      "scriptName": "ScoreCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取地区排名",
+      "description": "获取某项分数的地区排名。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-formatted-country-rank-at",
+      "scriptName": "ScoreFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化地区排名",
+      "description": "获取某项分数的地区排名，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-team-id-at",
+      "scriptName": "ScoreTeamIDAt",
+      "category": "leaderboards",
+      "translated-name": "获取队伍ID",
+      "description": "获取某项分数的队伍ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-team-name-at",
+      "scriptName": "ScoreTeamNameAt",
+      "category": "leaderboards",
+      "translated-name": "获取队伍名称",
+      "description": "获取某项分数的队伍名称",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-optional-value-1-at",
+      "scriptName": "ScoreOptionalValue1At",
+      "category": "leaderboards",
+      "translated-name": "分数附加值一",
+      "description": "获取分数附加的信息值 1。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-optional-value-2-at",
+      "scriptName": "ScoreOptionalValue2At",
+      "category": "leaderboards",
+      "translated-name": "分数附加值二",
+      "description": "获取分数附加的第 2 项信息值。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-optional-value-3-at",
+      "scriptName": "ScoreOptionalValue3At",
+      "category": "leaderboards",
+      "translated-name": "分数附加值三",
+      "description": "获取分数附加的第 3 项信息值。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-tier-id-at",
+      "scriptName": "ScoreTierIDAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数等级ID",
+      "description": "获取某项分数的等级ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-tier-name-at",
+      "scriptName": "ScoreTierNameAt",
+      "category": "leaderboards",
+      "translated-name": "获取分数等级名称",
+      "description": "获取某项分数的等级名称。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-date-at",
+      "scriptName": "ScoreRankComparisonDateAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名对比日期",
+      "description": "获取某项分数的排名指标日期。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-score-at",
+      "scriptName": "ScoreRankComparisonScoreAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名对比分数",
+      "description": "获取某项分数的对比历史分数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-score-at",
+      "scriptName": "ScoreRankComparisonFormattedScoreAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化排名对比分数",
+      "description": "获取某项比较分数的历史得分，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-rank-at",
+      "scriptName": "ScoreRankComparisonRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名对比排名",
+      "description": "此历史分数位于列表的索引，从 0 开始计数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-rank-at",
+      "scriptName": "ScoreRankComparisonFormattedRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化排名对比排名",
+      "description": "获取某项比较分数的历史排名，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "score-rank-comparison-country-rank-at",
+      "scriptName": "ScoreRankComparisonCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取排名对比地区排名",
+      "description": "获取比较得分的国家历史排名。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "score-rank-comparison-formatted-country-rank-at",
+      "scriptName": "ScoreRankComparisonFormattedCountryRankAt",
+      "category": "leaderboards",
+      "translated-name": "获取格式化排名对比地区排名",
+      "description": "获取索引处的国家排名，以地区格式显示。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此分数位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "total-leaderboard-teams",
+      "scriptName": "TotalLeaderboardTeams",
+      "category": "leaderboards",
+      "translated-name": "队伍总数",
+      "description": "获取排行榜单的队伍数量。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-id-at",
+      "scriptName": "LeaderboardTeamIDAt",
+      "category": "leaderboards",
+      "translated-name": "获取队伍ID",
+      "description": "获取排行榜单对应的队伍ID",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "此队伍位于列表的索引，从 0 开始计数。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-name",
+      "scriptName": "LeaderboardTeamName",
+      "category": "leaderboards",
+      "translated-name": "队伍名称",
+      "description": "队伍的名称。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-total-players",
+      "scriptName": "LeaderboardTeamTotalPlayers",
+      "category": "leaderboards",
+      "translated-name": "队伍玩家数量",
+      "description": "队伍的人数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-date-created",
+      "scriptName": "LeaderboardTeamDateCreated",
+      "category": "leaderboards",
+      "translated-name": "队伍创建日期",
+      "description": "队伍的创建日期。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-leaderboard-team-total-scores",
+      "scriptName": "LeaderboardTeamTotalScores",
+      "category": "leaderboards",
+      "translated-name": "队伍总得分",
+      "description": "队伍在排行榜的总分数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-total-score-value",
+      "scriptName": "LeaderboardTeamTotalScoreValue",
+      "category": "leaderboards",
+      "translated-name": "队伍总得分",
+      "description": "队伍在排行榜的总分。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-average-score",
+      "scriptName": "LeaderboardTeamAverageScore",
+      "category": "leaderboards",
+      "translated-name": "队伍平均分数",
+      "description": "队伍在排行榜的平均分数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-best-score",
+      "scriptName": "LeaderboardTeamBestScore",
+      "category": "leaderboards",
+      "translated-name": "队伍最高分数",
+      "description": "队伍在排行榜的最高分数。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-leaderboard-team-rank",
+      "scriptName": "LeaderboardTeamRank",
+      "category": "leaderboards",
+      "translated-name": "队伍排名",
+      "description": "队伍在排行榜的当前排名。",
+      "params": {
+        "leaderboardID": {
+          "type": "string",
+          "name": "排行榜ID",
+          "desc": "排行榜ID"
+        },
+        "teamID": {
+          "type": "string",
+          "name": "队伍ID",
+          "desc": "队伍ID"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "cloud-save-text",
+      "scriptName": "CloudSaveText",
+      "category": "cloud-save",
+      "translated-name": "云储存文本",
+      "description": "在 '获取成功' 条件中，返回云端下载的文本数据。",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-key",
+      "scriptName": "CloudSaveKey",
+      "category": "cloud-save",
+      "translated-name": "云储存密钥",
+      "description": "云储存的密钥。",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-bucket-id",
+      "scriptName": "CloudSaveBucketID",
+      "category": "cloud-save",
+      "translated-name": "云储存容器ID",
+      "description": "云保存的存储桶ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-name",
+      "scriptName": "CloudSaveName",
+      "category": "cloud-save",
+      "translated-name": "云储存名称",
+      "description": "可选，云储存的名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "cloud-save-id",
+      "scriptName": "CloudSaveID",
+      "category": "cloud-save",
+      "translated-name": "云存档ID",
+      "description": "云存档的 ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-id-at",
+      "scriptName": "CloudSaveBucketIDAt",
+      "category": "cloud-save",
+      "translated-name": "获取存储桶",
+      "description": "获取指定索引的存储桶ID，从 0 开始计数。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-name",
+      "scriptName": "CloudSaveBucketName",
+      "category": "cloud-save",
+      "translated-name": "存储桶名称",
+      "description": "存储桶的名称。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-access-mode",
+      "scriptName": "CloudSaveBucketAccessMode",
+      "category": "cloud-save",
+      "translated-name": "存储桶访问模式",
+      "description": "存储桶的访问模式。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-date-created",
+      "scriptName": "CloudSaveBucketDateCreated",
+      "category": "cloud-save",
+      "translated-name": "存储桶创建日期",
+      "description": "存储桶的创建日期。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blobs",
+      "scriptName": "CloudSaveBucketMaxBlobs",
+      "category": "cloud-save",
+      "translated-name": "云存档文件数量",
+      "description": "存储桶中允许的最大云保存数量。如果没有限制，则返回 -1。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blob-size",
+      "scriptName": "CloudSaveBucketMaxBlobsize",
+      "category": "cloud-save",
+      "translated-name": "云存档单文件大小",
+      "description": "单个云存档文件的大小限制，以字节为单位。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-max-blobs-per-player",
+      "scriptName": "CloudSaveBucketMaxBlobsPerPlayer",
+      "category": "cloud-save",
+      "translated-name": "云存档最大数量",
+      "description": "玩家在存储桶中允许保存的最大云端存档数量。如果没有限制，则返回 -1。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-total-blobs",
+      "scriptName": "CloudSaveBucketTotalBlobs",
+      "category": "cloud-save",
+      "translated-name": "云存档数量",
+      "description": "已保存的云存档数量。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-bucket-total-size",
+      "scriptName": "CloudSaveBucketTotalSize",
+      "category": "cloud-save",
+      "translated-name": "云存档占用量",
+      "description": "存储桶中所有云端保存文件的总大小，以字节为单位。",
+      "params": {
+        "bucketID": {
+          "type": "string",
+          "name": "存储桶 (可选)",
+          "desc": "存储桶 (可选)"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "get-cloud-save-picture-url",
+      "scriptName": "CloudSavePictureURL",
+      "category": "cloud-save",
+      "translated-name": "get-cloud-save-picture-url",
+      "description": "",
+      "params": {
+        "width": {
+          "type": "number",
+          "name": "宽度",
+          "desc": "请求的图像宽度，以像素为单位"
+        }
+      },
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "simulate-popup-blocked": {
+      "name": "模拟弹出窗口被阻止",
+      "desc": "作为测试功能，模拟首次尝试打开登录弹窗被阻止的情况。"
+    },
+    "game-id": {
+      "name": "游戏ID",
+      "desc": "要设置的初始游戏 ID。"
+    },
+    "target-language": {
+      "name": "目标语言",
+      "desc": "将所有内容翻译为目标语言。",
+      "items": {
+        "": "原始",
+        "AR": "阿拉伯语",
+        "BG": "保加利亚语",
+        "ZH-HANS": "简体中文",
+        "ZH-HANT": "繁體中文",
+        "CS": "捷克语",
+        "DA": "丹麦语",
+        "NL": "荷兰语",
+        "EN-US": "英语(美式)",
+        "EN-GB": "英语(英式)",
+        "ET": "爱沙尼亚语",
+        "FI": "芬兰语",
+        "FR": "法语",
+        "DE": "德语",
+        "EL": "希腊语",
+        "HE": "希伯来语",
+        "HU": "匈牙利语",
+        "ID": "印度尼西亚语",
+        "IT": "意大利语",
+        "JA": "日语",
+        "KO": "韩语",
+        "LV": "拉脱维亚语",
+        "LT": "立陶宛语",
+        "NB": "挪威语",
+        "PL": "波兰语",
+        "PT-PT": "葡萄牙语",
+        "PT-BR": "葡萄牙语（巴西）",
+        "RO": "罗马尼亚语",
+        "RU": "俄语",
+        "SK": "斯洛伐克语",
+        "SL": "斯洛文尼亚语",
+        "ES": "西班牙语",
+        "ES-419": "西班牙语（拉丁美洲）",
+        "SV": "瑞典语",
+        "TH": "泰语",
+        "TR": "土耳其语",
+        "UK": "乌克兰语",
+        "VI": "越南语"
+      }
+    }
+  }
+}

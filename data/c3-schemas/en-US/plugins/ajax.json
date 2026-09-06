@@ -1,0 +1,330 @@
+{
+  "id": "ajax",
+  "name": "AJAX",
+  "description": "Request and receive other web pages. Note for cross-domain requests (including in preview mode), CORS must be set up on the server.",
+  "type": "plugin",
+  "aceCategories": {
+    "ajax": "AJAX",
+    "binary-data": "Binary data"
+  },
+  "conditions": [
+    {
+      "id": "on-completed",
+      "scriptName": "OnComplete",
+      "category": "ajax",
+      "list-name": "On completed",
+      "display-text": "On [b]{0}[/b] completed",
+      "description": "Triggered when an AJAX request completes successfully.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-completed",
+      "scriptName": "OnAnyComplete",
+      "category": "ajax",
+      "list-name": "On any completed",
+      "display-text": "On any completed",
+      "description": "Triggered when any AJAX request completes successfully. The 'Tag' expression identifies the request.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-error",
+      "scriptName": "OnError",
+      "category": "ajax",
+      "list-name": "On error",
+      "display-text": "On [b]{0}[/b] error",
+      "description": "Triggered when an AJAX request fails.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-error",
+      "scriptName": "OnAnyError",
+      "category": "ajax",
+      "list-name": "On any error",
+      "display-text": "On any error",
+      "description": "Triggered when any AJAX request fails. The 'Tag' expression identifies the request.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-progress",
+      "scriptName": "OnProgress",
+      "category": "ajax",
+      "list-name": "On progress",
+      "display-text": "On [b]{0}[/b] progress",
+      "description": "Triggered when an AJAX request has a progress update.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-upload-progress",
+      "scriptName": "OnUploadProgress",
+      "category": "ajax",
+      "list-name": "On upload progress",
+      "display-text": "On [b]{0}[/b] upload progress",
+      "description": "Triggered when an AJAX request which is uploading data has a progress update.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "request-url",
+      "scriptName": "Request",
+      "category": "ajax",
+      "list-name": "Request URL",
+      "display-text": "Request [b]{1}[/b] (tag [i]{0}[/i])",
+      "description": "Request a URL by a GET request and retrieve the server response.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "The URL to request.  Note: most browsers prevent cross-domain requests."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "request-project-file",
+      "scriptName": "RequestFile",
+      "category": "ajax",
+      "list-name": "Request project file",
+      "display-text": "Request [b]{1}[/b] (tag [i]{0}[/i])",
+      "description": "Request a file in the project and retrieve its contents.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        "file": {
+          "type": "projectfile",
+          "name": "File",
+          "desc": "Select a project file to request."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "post-to-url",
+      "scriptName": "Post",
+      "category": "ajax",
+      "list-name": "Post to URL",
+      "display-text": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])",
+      "description": "Send data with a request to a URL and retrieve the server response.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "The URL to post to.  Note: most browsers prevent cross-domain posts."
+        },
+        "data": {
+          "type": "string",
+          "name": "Data",
+          "desc": "The data to post, in query string form.  Be sure to URLEncode any user-entered data."
+        },
+        "method": {
+          "type": "string",
+          "name": "Method",
+          "desc": "The HTTP method to use, typically \"POST\"."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-timeout",
+      "scriptName": "SetTimeout",
+      "category": "ajax",
+      "list-name": "Set timeout",
+      "display-text": "Set timeout to [i]{0}[/i] seconds",
+      "description": "Set the maximum time before a request is considered to have failed.",
+      "params": {
+        "timeout": {
+          "type": "number",
+          "name": "Timeout",
+          "desc": "The timeout for AJAX requests in seconds. Use -1 for no timeout."
+        }
+      }
+    },
+    {
+      "id": "set-request-header",
+      "scriptName": "SetHeader",
+      "category": "ajax",
+      "list-name": "Set request header",
+      "display-text": "Set request header [i]{0}[/i] to [i]{1}[/i]",
+      "description": "Set an HTTP header on the next request that is made.",
+      "params": {
+        "header": {
+          "type": "string",
+          "name": "Header",
+          "desc": "The HTTP header name to set on the request."
+        },
+        "value": {
+          "type": "string",
+          "name": "Value",
+          "desc": "A string of the value to set the header to."
+        }
+      }
+    },
+    {
+      "id": "override-mime-type",
+      "scriptName": "OverrideMIMEType",
+      "category": "ajax",
+      "list-name": "Override MIME type",
+      "display-text": "Override MIME type with [b]{0}[/b]",
+      "description": "In the next request, override the MIME type indicated by the response.",
+      "params": {
+        "mime-type": {
+          "type": "string",
+          "name": "MIME type",
+          "desc": "The MIME type to interpret the response as."
+        }
+      }
+    },
+    {
+      "id": "set-with-credentials",
+      "scriptName": "SetWithCredentials",
+      "category": "ajax",
+      "list-name": "Set with credentials",
+      "display-text": "Set with credentials [b]{0}[/b]",
+      "description": "Set whether the next request is sent with credentials such as cookies and authorization headers.",
+      "params": {
+        "with-credentials": {
+          "type": "boolean",
+          "name": "With credentials",
+          "desc": "Whether the next request is sent with credentials."
+        }
+      }
+    },
+    {
+      "id": "set-upload-progress-enabled",
+      "scriptName": "SetUploadProgressEnabled",
+      "category": "ajax",
+      "list-name": "Set upload progress enabled",
+      "display-text": "Set upload progress enabled [i]{0}[/i]",
+      "description": "Set whether tracking upload progress is enabled. When enabled this can affect cross-domain requests.",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "Enabled",
+          "desc": "Whether to enable tracking upload progress."
+        }
+      }
+    },
+    {
+      "id": "post-binary",
+      "scriptName": "PostBinary",
+      "category": "binary-data",
+      "list-name": "Post binary to URL",
+      "display-text": "Send [b]{2}[/b] to URL [b]{1}[/b] (method [i]{3}[/i], tag [i]{0}[/i])",
+      "description": "Send binary data with a request to a URL and retrieve the server response.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "A tag, which can be anything you like, to distinguish between different AJAX requests."
+        },
+        "url": {
+          "type": "string",
+          "name": "URL",
+          "desc": "The URL to post to. Note: most browsers prevent cross-domain posts."
+        },
+        "data": {
+          "type": "object",
+          "name": "Data",
+          "desc": "The data to post, from a Binary Data object."
+        },
+        "method": {
+          "type": "string",
+          "name": "Method",
+          "desc": "The HTTP method to use, typically \"POST\"."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-response-binary",
+      "scriptName": "SetResponseBinary",
+      "category": "binary-data",
+      "list-name": "Set response binary",
+      "display-text": "Set response binary to [i]{0}[/i]",
+      "description": "Set a Binary Data object to receive the binary response of the next request.",
+      "params": {
+        "destination": {
+          "type": "object",
+          "name": "Destination",
+          "desc": "The Binary Data object to receive the response in to."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lastdata",
+      "scriptName": "LastData",
+      "category": "ajax",
+      "translated-name": "LastData",
+      "description": "Get the data returned by the last successful request.",
+      "returnType": "string"
+    },
+    {
+      "id": "laststatuscode",
+      "scriptName": "LastStatusCode",
+      "category": "ajax",
+      "translated-name": "LastStatusCode",
+      "description": "Get the HTTP status code of the last request.",
+      "returnType": "number"
+    },
+    {
+      "id": "progress",
+      "scriptName": "Progress",
+      "category": "ajax",
+      "translated-name": "Progress",
+      "description": "Get the progress, from 0 to 1, of the request in 'On progress'.",
+      "returnType": "number"
+    },
+    {
+      "id": "tag",
+      "scriptName": "Tag",
+      "category": "ajax",
+      "translated-name": "Tag",
+      "description": "Get the tag for the request in a trigger.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {}
+}

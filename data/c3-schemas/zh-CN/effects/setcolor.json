@@ -1,0 +1,17 @@
+{
+  "id": "setcolor",
+  "name": "颜色覆盖",
+  "description": "将RGB通道设置为固定颜色，同时保留alpha。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color",
+      "type": "color",
+      "name": "颜色",
+      "desc": "要在图像上设置的颜色。"
+    }
+  ]
+}

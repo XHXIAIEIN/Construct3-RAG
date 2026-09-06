@@ -29,11 +29,21 @@ Default: `http://localhost:8765`
 | `mode` | string | `"auto"` | `list` / `lookup` / `semantic` / `auto` |
 | `scope` | string | `"eventsheet"` | `eventsheet` / `scripts` / `js` / `ts` / `all` |
 | `lang` | string | auto | `en` / `zh` / `ja` / `ko` |
-| `top_k` | int | 10 | Max results (1-50) |
-| `include_context` | bool | false | Include compact LLM text |
-| `debug` | bool | false | Include timing info |
-| `plugin` | string | null | Filter by plugin name |
-| `apply_threshold` | bool | true | Adaptive score filtering |
+| `top_k` | int | 10 | Requested semantic result budget (1-50); complexity routing may raise it, while Direct Schema lists remain complete |
+| `context` | bool | false | Include compact compatibility text; never establishes a lookup hit by itself |
+| `debug` | bool | false | Include timing and lookup/semantic routing diagnostics |
+| `plugin` | string | null | Full-mode semantic filter by plugin name; bypasses Direct Lookup |
+| `section_types` | string[] | null | Full-mode section filter used with `plugin` |
+| `collections` | string[] | null | Full-mode semantic collection filter; bypasses Direct Lookup |
+| `apply_threshold` | bool | true | Apply adaptive filtering to semantic results in full mode |
+
+### Validation Errors
+
+- `422 Unprocessable Entity`: blank `query`, unsupported `lang`, invalid
+  `mode`/`scope`, out-of-range `top_k`, or any semantic filter (`plugin`,
+  `section_types`, `collections`) combined with `mode=lookup` or `mode=list`.
+- `400 Bad Request`: a requested semantic collection is not in the collection
+  registry.
 
 ### Modes
 
@@ -41,12 +51,19 @@ Default: `http://localhost:8765`
 |------|--------|----------|--------|
 | `list` | yes | no | ACE names grouped by type |
 | `lookup` | yes | no | Full match objects |
-| `auto` | yes | yes | Matches + semantic results |
-| `semantic` | no | yes | Semantic results only |
+| `auto` | yes | full mode only | Lookup plus semantic results when `LITE_MODE=false` |
+| `semantic` | no | full mode only | Semantic results when explicitly enabled |
+
+The default service runs with `LITE_MODE=true`. In that mode, `semantic` returns
+a normal response with no `semantic` section, and semantic-only filters cannot
+produce results. `plugin`, `section_types`, and `collections` all bypass Direct
+Lookup rather than being silently ignored. Use `scripts/setup.py --full` for
+those request shapes.
 
 ### Response
 
-Null fields are omitted from the response.
+Canonical response types live in `src/interfaces/http/models.py`. Null fields
+are omitted from the response.
 
 ```json
 {
@@ -65,14 +82,10 @@ Null fields are omitted from the response.
 ```json
 {
   "query": "Sprite",
+  "lang": "en",
   "mode": "list",
   "ms": 0.5,
   "lookup": {
-    "hit": true,
-    "tier": 1,
-    "confidence": 0.9,
-    "intent": "ace_list",
-    "plugin": {"id": "sprite", "name": "Sprite"},
     "conditions": ["Is playing", "On finished", "Collisions enabled"],
     "actions": ["Set animation", "Stop", "Start"],
     "expressions": ["AnimationFrame", "AnimationName", "AnimationSpeed"]
@@ -85,71 +98,81 @@ Null fields are omitted from the response.
 ```json
 {
   "query": "Sprite collision",
+  "lang": "en",
   "mode": "lookup",
   "ms": 0.5,
   "lookup": {
-    "hit": true,
-    "tier": 1,
-    "confidence": 0.85,
-    "intent": "ace_search",
-    "plugin": {"id": "sprite", "name": "Sprite"},
-    "keywords": ["collision"],
-    "matches": [
-      {
-        "ace_id": "on-collision-with-another-object",
-        "ace_type": "condition",
-        "plugin_id": "_common",
-        "en": {
-          "name": "On collision with another object",
-          "desc": "Triggered when the object collides with another object.",
-          "display": "On collision with {0}"
-        },
-        "category": "common",
-        "params": [{"name": "Object", "type": "object", "desc": "..."}]
+    "matches": {
+      "_common": {
+        "conditions": [
+          {
+            "ace_id": "on-collision-with-another-object",
+            "name": {
+              "en": {
+                "name": "On collision with another object",
+                "desc": "Triggered when the object collides with another object.",
+                "display": "On collision with {0}"
+              }
+            },
+            "category": "common",
+            "params": [{"name": "Object", "type": "object", "desc": "..."}]
+          }
+        ]
       }
-    ]
+    }
   }
 }
 ```
 
-With `lang=zh`, each match adds `localized` and the section adds `lang`:
+The grouping keys carry the stable `plugin_id` and plural `ace_type`; each item
+carries `ace_id`. With `lang=zh`, the localized value is added under `name.zh`:
 
 ```json
 {
   "lookup": {
-    "lang": "zh",
-    "matches": [{
-      "en": {"name": "On collision with another object"},
-      "localized": {"name": "碰撞到其他对象", "desc": "...", "display": "碰撞到 {0}"}
-    }]
+    "matches": {
+      "_common": {
+        "conditions": [{
+          "ace_id": "on-collision-with-another-object",
+          "name": {
+            "en": {"name": "On collision with another object"},
+            "zh": {"name": "碰撞到其他对象", "desc": "...", "display": "碰撞到 {0}"}
+          }
+        }]
+      }
+    }
   }
 }
 ```
 
-With `scope=scripts`, each match includes `script_name` instead of `display`.
+With `scope=scripts`, each match includes `script_name` and omits `display`.
+The presence of a non-empty `lookup` section is the hit signal; there is no
+separate `lookup.hit` field.
 
 ### mode=semantic
 
 ```json
 {
   "query": "how to detect collision",
+  "lang": "en",
   "mode": "semantic",
   "ms": 8500,
   "semantic": {
     "docs": [
-      {"score": 0.385, "collection": "plugins", "title": "Sprite", "section": "properties", "content": "..."}
+      {"score": 0.91, "collection": "plugins", "title": "Sprite", "section": "properties", "content": "...", "context_tier": "full"}
     ],
     "terms": [
-      {"score": 0.08, "zh": "碰撞", "en": "collision"}
+      {"score": 0.55, "zh": "碰撞", "en": "collision", "context_tier": "normal"}
     ],
     "examples": [
-      {"score": 0.53, "project": "Platformer Basics", "content": "..."}
+      {"score": 0.32, "project": "Platformer Basics", "content": "...", "context_tier": "brief"}
     ]
   }
 }
 ```
 
-Empty groups are omitted.
+Empty groups are omitted. Every semantic item has a relative `context_tier` of
+`full`, `normal`, or `brief`.
 
 ### debug
 
@@ -159,6 +182,13 @@ When `debug=true`:
 {
   "debug": {
     "lookup_ms": 0.5,
+    "lookup": {
+      "plugin": "sprite",
+      "tier": 1,
+      "confidence": 0.9,
+      "intent": "ace_search",
+      "keywords": ["collision"]
+    },
     "semantic_ms": 8500,
     "semantic": {
       "collections": {"ace": {"hits": 3, "top_score": 0.99}},
@@ -174,10 +204,24 @@ When `debug=true`:
 ## GET /health
 
 ```json
-{"status": "healthy", "qdrant": true, "embedding_model": "...", "total_documents": 36558}
+{
+  "status": "lite",
+  "qdrant": false,
+  "schema_ready": true,
+  "embedding_model": "",
+  "message": "Lite mode: lookup only",
+  "collections": {},
+  "total_documents": 0,
+  "missing_collections": []
+}
 ```
 
-Returns `"status": "lite"` when Qdrant is unavailable.
+Returns `"status": "lite"` for the default lookup-only service. An explicitly
+enabled full service reports its semantic backend state (for example,
+`"unavailable"` when Qdrant cannot be reached); initialization failure can fall
+back to `"lite"` when the local schema remains usable. `schema_ready` reports
+whether Direct Lookup has a complete bilingual schema dataset. Run
+`scripts/setup.py --full` to prepare and enable semantic retrieval.
 
 ---
 

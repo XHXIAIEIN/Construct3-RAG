@@ -1,0 +1,23 @@
+{
+  "id": "dotscreen",
+  "name": "Dot screen",
+  "description": "A black and white halftone effect.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "scale",
+      "type": "percent",
+      "name": "Scale",
+      "desc": "Size of the dots."
+    },
+    {
+      "id": "angle",
+      "type": "float",
+      "name": "Angle",
+      "desc": "Angle of the dot lines."
+    }
+  ]
+}

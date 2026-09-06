@@ -1,0 +1,310 @@
+{
+  "id": "cordovaiap",
+  "name": "Mobile IAP",
+  "description": "Handle in-app purchases (IAP) for Cordova on iOS and Android.",
+  "type": "plugin",
+  "aceCategories": {
+    "cordovaiap": "Cordova IAP"
+  },
+  "conditions": [
+    {
+      "id": "on-purchase-success",
+      "scriptName": "OnPurchaseSuccess",
+      "category": "cordovaiap",
+      "list-name": "On purchase success",
+      "display-text": "On product [i]{0}[/i] purchase success",
+      "description": "Triggered when a specific product ID has been purchased successfully.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID that has been purchased successfully."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-purchase-success",
+      "scriptName": "OnAnyPurchaseSuccess",
+      "category": "cordovaiap",
+      "list-name": "On any purchase success",
+      "display-text": "On any purchase success",
+      "description": "Triggered when any product has been purchased successfully.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-purchase-failed",
+      "scriptName": "OnPurchaseFail",
+      "category": "cordovaiap",
+      "list-name": "On purchase failed",
+      "display-text": "On product [i]{0}[/i] purchase failed",
+      "description": "Triggered when a specific product ID has failed to be purchased.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID that has failed to purchase."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-purchase-failed",
+      "scriptName": "OnAnyPurchaseFail",
+      "category": "cordovaiap",
+      "list-name": "On any purchase failed",
+      "display-text": "On any purchase failed",
+      "description": "Triggered when any product has failed to be purchased.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-registration-success",
+      "scriptName": "OnRegistrationSuccess",
+      "category": "cordovaiap",
+      "list-name": "On store registration success",
+      "display-text": "On store registration success",
+      "description": "Triggered when store registration succeeds.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-registration-failure",
+      "scriptName": "OnRegistrationFail",
+      "category": "cordovaiap",
+      "list-name": "On store registration failed",
+      "display-text": "On store registration failed",
+      "description": "Triggered when store registration fails.",
+      "isTrigger": true
+    },
+    {
+      "id": "product-owned",
+      "scriptName": "ProductOwned",
+      "category": "cordovaiap",
+      "list-name": "Has product",
+      "display-text": "Has product [i]{0}[/i]",
+      "description": "True if the current user has purchased a given product ID.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID to check if owned."
+        }
+      }
+    },
+    {
+      "id": "product-available",
+      "scriptName": "ProductAvailable",
+      "category": "cordovaiap",
+      "list-name": "Product available",
+      "display-text": "Product [i]{0}[/i] available for purchase",
+      "description": "True if the product can be purchased.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID to check if available."
+        }
+      }
+    },
+    {
+      "id": "store-registered",
+      "scriptName": "StoreRegistered",
+      "category": "cordovaiap",
+      "list-name": "Is registration complete",
+      "display-text": "Is registration complete",
+      "description": "True if the store has been registered and is ready to make purchase requests."
+    },
+    {
+      "id": "on-product-available",
+      "scriptName": "OnProductAvailable",
+      "category": "cordovaiap",
+      "list-name": "On product available",
+      "display-text": "On product [i]{0}[/i] available for purchase",
+      "description": "Triggered when the product becomes available for purchase.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID to check if available."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-product-available",
+      "scriptName": "OnAnyProductAvailable",
+      "category": "cordovaiap",
+      "list-name": "On any product available",
+      "display-text": "On any product available for purchase",
+      "description": "Triggered when a product becomes available for purchase.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-product-owned",
+      "scriptName": "OnProductOwned",
+      "category": "cordovaiap",
+      "list-name": "On product owned",
+      "display-text": "On product [i]{0}[/i] owned",
+      "description": "Triggered when a specified non-consumable product becomes owned.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "Product ID to check if owned."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-product-owned",
+      "scriptName": "OnAnyProductOwned",
+      "category": "cordovaiap",
+      "list-name": "On any product owned",
+      "display-text": "On any product owned",
+      "description": "Triggered when a non-consumable product becomes owned.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-transaction-finished",
+      "scriptName": "OnTransactionFinished",
+      "category": "cordovaiap",
+      "list-name": "On transaction finished",
+      "display-text": "On transaction finished",
+      "description": "Triggered when a transaction finishes. The ID is available in the 'TransactionID' expression.",
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "register-product",
+      "scriptName": "RegisterProduct",
+      "category": "cordovaiap",
+      "list-name": "Add product ID",
+      "display-text": "Add product ID [b]{0}[/b] with type [b]{1}[/b]",
+      "description": "Add the product IDs that the app will be using for IAP.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "The product ID you are registering."
+        },
+        "product-type": {
+          "type": "combo",
+          "name": "Product Type",
+          "desc": "The product type you are registering.",
+          "items": {
+            "consumable": "Consumable",
+            "non-consumable": "Non-consumable"
+          }
+        }
+      }
+    },
+    {
+      "id": "complete-registration",
+      "scriptName": "CompleteRegistration",
+      "category": "cordovaiap",
+      "list-name": "Complete product registration",
+      "display-text": "Complete product registration",
+      "description": "Complete the product registration stage."
+    },
+    {
+      "id": "purchase-product",
+      "scriptName": "PurchaseProduct",
+      "category": "cordovaiap",
+      "list-name": "Purchase product",
+      "display-text": "Purchase product [b]{0}[/b]",
+      "description": "Prompt the user to purchase a product.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "Product ID",
+          "desc": "The product ID to purchase."
+        }
+      }
+    },
+    {
+      "id": "restore-purchases",
+      "scriptName": "RestorePurchases",
+      "category": "cordovaiap",
+      "list-name": "Restore purchases",
+      "display-text": "Restore purchases",
+      "description": "Restore the purchases state from the store."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "product-name",
+      "scriptName": "ProductName",
+      "category": "cordovaiap",
+      "translated-name": "ProductName",
+      "description": "Return the name of a product from its ID.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "ProductID",
+          "desc": "Product ID to get name from"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "product-price",
+      "scriptName": "ProductPrice",
+      "category": "cordovaiap",
+      "translated-name": "ProductPrice",
+      "description": "Return the formatted price of a product from its ID.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "ProductID",
+          "desc": "Product ID to get price from"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "product-description",
+      "scriptName": "ProductDescription",
+      "category": "cordovaiap",
+      "translated-name": "ProductDescription",
+      "description": "Return the description of a product from its ID.",
+      "params": {
+        "product-id": {
+          "type": "string",
+          "name": "ProductID",
+          "desc": "Product ID to get description from"
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "id": "product-id",
+      "scriptName": "ProductID",
+      "category": "cordovaiap",
+      "translated-name": "ProductID",
+      "description": "In a trigger, the relevant product ID.",
+      "returnType": "string"
+    },
+    {
+      "id": "error-message",
+      "scriptName": "ErrorMessage",
+      "category": "cordovaiap",
+      "translated-name": "ErrorMessage",
+      "description": "In a trigger, an error message if available.",
+      "returnType": "string"
+    },
+    {
+      "id": "transaction-id",
+      "scriptName": "TransactionID",
+      "category": "cordovaiap",
+      "translated-name": "TransactionID",
+      "description": "After 'On transaction finished', the ID of the last finished transaction.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "validator-url": {
+      "name": "Validator URL",
+      "desc": "Optional URL of receipt validation service to verify purchases with."
+    }
+  }
+}

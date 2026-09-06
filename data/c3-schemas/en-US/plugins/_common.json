@@ -1,0 +1,1952 @@
+{
+  "id": "_common",
+  "name": "(unused)",
+  "description": "(unused)",
+  "type": "plugin",
+  "aceCategories": {
+    "3d-rotation": "3D rotation",
+    "angle": "Angle",
+    "appearance": "Appearance",
+    "collisions": "Collisions",
+    "html-element": "HTML element",
+    "instance-variables": "Instance variables",
+    "misc": "Misc",
+    "size-position": "Size & Position",
+    "time": "Time",
+    "z-order": "Z Order",
+    "hierarchy": "Hierarchy",
+    "mesh": "Mesh",
+    "template": "Template"
+  },
+  "conditions": [
+    {
+      "id": "is-within-angle",
+      "scriptName": "is-within-angle",
+      "category": "common",
+      "list-name": "Is within angle",
+      "display-text": "Within {0} degrees of {1}",
+      "description": "Compare if the object's angle is within X degrees of another angle.",
+      "params": {
+        "within": {
+          "type": "object",
+          "name": "Within",
+          "desc": "Number of degrees that object must be within."
+        },
+        "angle": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "Angle, in degrees, to compare if object facing towards."
+        }
+      }
+    },
+    {
+      "id": "is-clockwise-from",
+      "scriptName": "is-clockwise-from",
+      "category": "common",
+      "list-name": "Is clockwise from",
+      "display-text": "Is clockwise from {0}",
+      "description": "Compare if the object's angle is clockwise from another angle.",
+      "params": {
+        "angle": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "Angle, in degrees, to test if object's angle is clockwise from."
+        }
+      }
+    },
+    {
+      "id": "is-between-angles",
+      "scriptName": "is-between-angles",
+      "category": "common",
+      "list-name": "Is between angles",
+      "display-text": "Is between {0} and {1} degrees",
+      "description": "Compare if the object's angle is between two angles.",
+      "params": {
+        "first-angle": {
+          "type": "object",
+          "name": "First angle",
+          "desc": "First angle, in degrees.  Specify in clockwise order."
+        },
+        "second-angle": {
+          "type": "object",
+          "name": "Second angle",
+          "desc": "Second angle, in degrees.  Specify in clockwise order."
+        }
+      }
+    },
+    {
+      "id": "is-visible",
+      "scriptName": "is-visible",
+      "category": "common",
+      "list-name": "Is visible",
+      "display-text": "Is visible",
+      "description": "Test if the object is currently visible."
+    },
+    {
+      "id": "compare-opacity",
+      "scriptName": "compare-opacity",
+      "category": "common",
+      "list-name": "Compare opacity",
+      "display-text": "Opacity {0} {1}",
+      "description": "Compare the object's current opacity.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the opacity."
+        },
+        "opacity": {
+          "type": "object",
+          "name": "Opacity",
+          "desc": "The opacity (0-100) to compare to."
+        }
+      }
+    },
+    {
+      "id": "compare-instance-variable",
+      "scriptName": "compare-instance-variable",
+      "category": "common",
+      "list-name": "Compare instance variable",
+      "display-text": "[b]{0}[/b] {1} {2}",
+      "description": "Compare the value of an instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to compare."
+        },
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the instance variable."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Value to compare to the instance variable."
+        }
+      }
+    },
+    {
+      "id": "is-boolean-instance-variable-set",
+      "scriptName": "is-boolean-instance-variable-set",
+      "category": "common",
+      "list-name": "Is boolean instance variable set",
+      "display-text": "Is [b]{0}[/b]",
+      "description": "Test if a boolean instance variable is true.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to test."
+        }
+      }
+    },
+    {
+      "id": "pick-highestlowest",
+      "scriptName": "pick-highestlowest",
+      "category": "common",
+      "list-name": "Pick highest/lowest",
+      "display-text": "Pick instance with {0} [b]{1}[/b] (pick all tied: [i]{2}[/i])",
+      "description": "Pick according to the highest or lowest instance variable value.",
+      "params": {
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Choose whether to pick the highest or lowest variable value."
+        },
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to compare."
+        },
+        "pick-all-tied": {
+          "type": "object",
+          "name": "Pick all tied",
+          "desc": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
+        }
+      }
+    },
+    {
+      "id": "pick-by-unique-id",
+      "scriptName": "pick-by-unique-id",
+      "category": "common",
+      "list-name": "Pick by unique ID",
+      "display-text": "Pick instance with UID [b]{0}[/b]",
+      "description": "Pick a specific instance by its unique ID (UID).",
+      "params": {
+        "unique-id": {
+          "type": "object",
+          "name": "Unique ID",
+          "desc": "The unique ID (UID) of the instance to pick."
+        }
+      }
+    },
+    {
+      "id": "has-tags",
+      "scriptName": "has-tags",
+      "category": "common",
+      "list-name": "Has tags",
+      "display-text": "Instance has tags [b]{0}[/b]",
+      "description": "Check if an instance matches the provided tags.",
+      "params": {
+        "tags": {
+          "type": "object",
+          "name": "Tags",
+          "desc": "A space separated list of tags"
+        }
+      }
+    },
+    {
+      "id": "on-created",
+      "scriptName": "on-created",
+      "category": "common",
+      "list-name": "On created",
+      "display-text": "On created",
+      "description": "Triggered when a new instance is created."
+    },
+    {
+      "id": "on-hierarchy-ready",
+      "scriptName": "on-hierarchy-ready",
+      "category": "common",
+      "list-name": "On hierarchy ready",
+      "display-text": "On hierarchy ready",
+      "description": "Triggered for the root of a hierarchy after creation, when all childen have finished creating."
+    },
+    {
+      "id": "on-destroyed",
+      "scriptName": "on-destroyed",
+      "category": "common",
+      "list-name": "On destroyed",
+      "display-text": "On destroyed",
+      "description": "Triggered when an instance is destroyed."
+    },
+    {
+      "id": "compare-x",
+      "scriptName": "compare-x",
+      "category": "common",
+      "list-name": "Compare X",
+      "display-text": "X {0} {1}",
+      "description": "Compare the X co-ordinate to a value.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the X co-ordinate."
+        },
+        "x-co-ordinate": {
+          "type": "object",
+          "name": "X co-ordinate",
+          "desc": "The X co-ordinate to compare to."
+        }
+      }
+    },
+    {
+      "id": "compare-y",
+      "scriptName": "compare-y",
+      "category": "common",
+      "list-name": "Compare Y",
+      "display-text": "Y {0} {1}",
+      "description": "Compare the Y co-ordinate to a value.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the Y co-ordinate."
+        },
+        "y-co-ordinate": {
+          "type": "object",
+          "name": "Y co-ordinate",
+          "desc": "The Y co-ordinate to compare to."
+        }
+      }
+    },
+    {
+      "id": "is-on-screen",
+      "scriptName": "is-on-screen",
+      "category": "common",
+      "list-name": "Is on-screen",
+      "display-text": "Is on-screen",
+      "description": "Test if the object is currently in the visible screen."
+    },
+    {
+      "id": "is-outside-layout",
+      "scriptName": "is-outside-layout",
+      "category": "common",
+      "list-name": "Is outside layout",
+      "display-text": "Is outside layout",
+      "description": "Test if the object is outside the layout boundary."
+    },
+    {
+      "id": "pick-nearestfurthest",
+      "scriptName": "pick-nearestfurthest",
+      "category": "common",
+      "list-name": "Pick nearest/furthest",
+      "display-text": "Pick {0} to ({1}, {2}, {3}) (pick all tied: [i]{4}[/i])",
+      "description": "Pick according to being nearest to, or furthest from, a point in the layout.",
+      "params": {
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Choose whether to pick according to being the nearest to, or furthest from, the point."
+        },
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "X co-ordinate of position to compare distance to."
+        },
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "Y co-ordinate of position to compare distance to."
+        },
+        "z": {
+          "type": "object",
+          "name": "Z",
+          "desc": "Z co-ordinate of position to compare distance to."
+        },
+        "pick-all-tied": {
+          "type": "object",
+          "name": "Pick all tied",
+          "desc": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
+        }
+      }
+    },
+    {
+      "id": "compare-width",
+      "scriptName": "compare-width",
+      "category": "common",
+      "list-name": "Compare width",
+      "display-text": "Width {0} {1}",
+      "description": "Compare the width to a value.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the width."
+        },
+        "width": {
+          "type": "object",
+          "name": "Width",
+          "desc": "The width to compare to."
+        }
+      }
+    },
+    {
+      "id": "compare-height",
+      "scriptName": "compare-height",
+      "category": "common",
+      "list-name": "Compare height",
+      "display-text": "Height {0} {1}",
+      "description": "Compare the height to a value.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the height."
+        },
+        "height": {
+          "type": "object",
+          "name": "Height",
+          "desc": "The height to compare to."
+        }
+      }
+    },
+    {
+      "id": "compare-depth",
+      "scriptName": "compare-depth",
+      "category": "common",
+      "list-name": "Compare depth",
+      "display-text": "Depth {0} {1}",
+      "description": "Compare the depth to a value.",
+      "params": {
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the depth."
+        },
+        "depth": {
+          "type": "object",
+          "name": "Depth",
+          "desc": "The depth to compare to."
+        }
+      }
+    },
+    {
+      "id": "is-on-layer",
+      "scriptName": "is-on-layer",
+      "category": "common",
+      "list-name": "Is on layer",
+      "display-text": "Is on layer {0}",
+      "description": "Pick all objects on a given layer.",
+      "params": {
+        "layer": {
+          "type": "object",
+          "name": "Layer",
+          "desc": "Layer name or number to test if the object is on."
+        }
+      }
+    },
+    {
+      "id": "pick-topbottom",
+      "scriptName": "pick-topbottom",
+      "category": "common",
+      "list-name": "Pick top/bottom",
+      "display-text": "Pick {0} instance",
+      "description": "Pick either the top-most or bottom-most object in Z order.",
+      "params": {
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Choose whether to pick the top-most or bottom-most instance in Z order."
+        }
+      }
+    },
+    {
+      "id": "compare-z-elevation",
+      "scriptName": "compare-z-elevation",
+      "category": "common",
+      "list-name": "Compare Z",
+      "display-text": "{0} {1} {2}",
+      "description": "Compare the Z co-ordinate to a value.",
+      "params": {
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Compare either the Z relative to its own layer, or the total Z taking in to account the layer Z elevation."
+        },
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the Z."
+        },
+        "z-elevation": {
+          "type": "object",
+          "name": "Z",
+          "desc": "The Z to compare to."
+        }
+      }
+    },
+    {
+      "id": "is-focused",
+      "scriptName": "is-focused",
+      "category": "common",
+      "list-name": "Is focused",
+      "display-text": "Is focused",
+      "description": "True if the element currently has focus."
+    },
+    {
+      "id": "is-enabled",
+      "scriptName": "is-enabled",
+      "category": "common",
+      "list-name": "Is enabled",
+      "display-text": "Is enabled",
+      "description": "True if the element is currently enabled."
+    },
+    {
+      "id": "has-parent",
+      "scriptName": "has-parent",
+      "category": "common",
+      "list-name": "Has parent",
+      "display-text": "Has parent",
+      "description": "True if the instance is connected to a parent in its hierarchy."
+    },
+    {
+      "id": "has-children",
+      "scriptName": "has-children",
+      "category": "common",
+      "list-name": "Has children",
+      "display-text": "Has children",
+      "description": "True if the instance is connected to any children in its hierarchy."
+    },
+    {
+      "id": "pick-parent",
+      "scriptName": "pick-parent",
+      "category": "common",
+      "list-name": "Pick parent",
+      "display-text": "Pick [i]{1}[/i] parent {0}",
+      "description": "Pick the parents of the picked instances, according to their hierarchy.",
+      "params": {
+        "parent": {
+          "type": "object",
+          "name": "Parent",
+          "desc": "The object type or family of the parent to pick."
+        },
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Whether to pick the object's own parent, all parents to the top, or the parent at the top of the hierarchy."
+        }
+      }
+    },
+    {
+      "id": "pick-children",
+      "scriptName": "pick-children",
+      "category": "common",
+      "list-name": "Pick children",
+      "display-text": "Pick [i]{1}[/i] children {0}",
+      "description": "Pick all the children of the picked instances, according to their hierarchy.",
+      "params": {
+        "child": {
+          "type": "object",
+          "name": "Child",
+          "desc": "The object type or family of the children to pick."
+        },
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Whether to pick the object's own children, all children to the bottom, or the children at the bottom of the hierarchy."
+        }
+      }
+    },
+    {
+      "id": "pick-nth-child",
+      "scriptName": "pick-nth-child",
+      "category": "common",
+      "list-name": "Pick nth child",
+      "display-text": "Pick child {0} instance {2} ([i]{1}[/i])",
+      "description": "Pick just the nth child instance, according to their hierarchy.",
+      "params": {
+        "child": {
+          "type": "object",
+          "name": "Child",
+          "desc": "The object type or family of the children to pick."
+        },
+        "index-type": {
+          "type": "object",
+          "name": "Index type",
+          "desc": "Whether the provided index is in to the list of all children, or just the children of the provided object."
+        },
+        "instance": {
+          "type": "object",
+          "name": "Instance",
+          "desc": "Index of the child instance to pick (0-based, either in all children or just the children of the provided object)."
+        }
+      }
+    },
+    {
+      "id": "compare-child-count",
+      "scriptName": "compare-child-count",
+      "category": "common",
+      "list-name": "Compare child count",
+      "display-text": "{0} child count {1} {2}",
+      "description": "Compare the number of connected children in the hierarchy.",
+      "params": {
+        "which": {
+          "type": "object",
+          "name": "Which",
+          "desc": "Whether to count the instance's own immediate children or all children to the bottom of the hierarchy."
+        },
+        "comparison": {
+          "type": "object",
+          "name": "Comparison",
+          "desc": "How to compare the number of children."
+        },
+        "count": {
+          "type": "object",
+          "name": "Count",
+          "desc": "The number to compare to."
+        }
+      }
+    },
+    {
+      "id": "on-collision-with-another-object",
+      "scriptName": "on-collision-with-another-object",
+      "category": "common",
+      "list-name": "On collision with another object",
+      "display-text": "On collision with {0}",
+      "description": "Triggered when the object collides with another object.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Select the object to test for a collision with."
+        }
+      }
+    },
+    {
+      "id": "is-overlapping-another-object",
+      "scriptName": "is-overlapping-another-object",
+      "category": "common",
+      "list-name": "Is overlapping another object",
+      "display-text": "Is overlapping {0}",
+      "description": "Test if the object is overlapping another object.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Select the object to test for overlap with."
+        }
+      }
+    },
+    {
+      "id": "is-overlapping-at-offset",
+      "scriptName": "is-overlapping-at-offset",
+      "category": "common",
+      "list-name": "Is overlapping at offset",
+      "display-text": "Is overlapping {0} at offset ([i]{1}[/i], [i]{2}[/i])",
+      "description": "Test if the object is overlapping another object at an offset position.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Select the object to test for overlap with."
+        },
+        "offset-x": {
+          "type": "object",
+          "name": "Offset X",
+          "desc": "The amount to offset the X co-ordinate (in pixels) before checking for a collision."
+        },
+        "offset-y": {
+          "type": "object",
+          "name": "Offset Y",
+          "desc": "The amount to offset the Y co-ordinate (in pixels) before checking for a collision."
+        }
+      }
+    },
+    {
+      "id": "is-effect-enabled",
+      "scriptName": "is-effect-enabled",
+      "category": "common",
+      "list-name": "Is effect enabled",
+      "display-text": "Effect {0} is enabled",
+      "description": "Test whether an effect is currently enabled.",
+      "params": {
+        "effect": {
+          "type": "object",
+          "name": "Effect",
+          "desc": "Choose the object effect to test if enabled."
+        }
+      }
+    },
+    {
+      "id": "on-instance-signal",
+      "scriptName": "on-instance-signal",
+      "category": "common",
+      "list-name": "On signal",
+      "display-text": "On signal [i]{0}[/i]",
+      "description": "Triggered by the 'Signal' action with a matching tag.",
+      "params": {
+        "tag": {
+          "type": "object",
+          "name": "Tag",
+          "desc": "The tag of the 'Signal' action."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-angle",
+      "scriptName": "set-angle",
+      "category": "common",
+      "list-name": "Set angle",
+      "display-text": "Set angle to [i]{0}[/i] degrees",
+      "description": "Set the angle the object is oriented at.",
+      "params": {
+        "angle": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "New object angle, in degrees."
+        }
+      }
+    },
+    {
+      "id": "rotate-clockwise",
+      "scriptName": "rotate-clockwise",
+      "category": "common",
+      "list-name": "Rotate clockwise",
+      "display-text": "Rotate [i]{0}[/i] degrees clockwise",
+      "description": "Rotate the object's angle clockwise by a number of degrees.",
+      "params": {
+        "degrees": {
+          "type": "object",
+          "name": "Degrees",
+          "desc": "Number of degrees to rotate the object clockwise."
+        }
+      }
+    },
+    {
+      "id": "rotate-counter-clockwise",
+      "scriptName": "rotate-counter-clockwise",
+      "category": "common",
+      "list-name": "Rotate counter-clockwise",
+      "display-text": "Rotate [i]{0}[/i] degrees counter-clockwise",
+      "description": "Rotate the object's angle counter-clockwise by a number of degrees.",
+      "params": {
+        "degrees": {
+          "type": "object",
+          "name": "Degrees",
+          "desc": "Number of degrees to rotate the object counter-clockwise."
+        }
+      }
+    },
+    {
+      "id": "rotate-toward-angle",
+      "scriptName": "rotate-toward-angle",
+      "category": "common",
+      "list-name": "Rotate toward angle",
+      "display-text": "Rotate [i]{0}[/i] degrees toward [i]{1}[/i]",
+      "description": "Rotate the object towards another angle.",
+      "params": {
+        "degrees": {
+          "type": "object",
+          "name": "Degrees",
+          "desc": "Number of degrees to rotate towards the target angle."
+        },
+        "angle": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "Angle, in degrees, to rotate towards."
+        }
+      }
+    },
+    {
+      "id": "rotate-toward-position",
+      "scriptName": "rotate-toward-position",
+      "category": "common",
+      "list-name": "Rotate toward position",
+      "display-text": "Rotate [i]{0}[/i] degrees toward ([i]{1}[/i], [i]{2}[/i])",
+      "description": "Rotate the object towards a position.",
+      "params": {
+        "degrees": {
+          "type": "object",
+          "name": "Degrees",
+          "desc": "Number of degrees to rotate towards the target position."
+        },
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "X position to rotate toward."
+        },
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "Y position to rotate toward."
+        }
+      }
+    },
+    {
+      "id": "set-angle-toward-position",
+      "scriptName": "set-angle-toward-position",
+      "category": "common",
+      "list-name": "Set angle toward position",
+      "display-text": "Set angle toward ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the object's angle towards a position.",
+      "params": {
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "X position to set angle toward."
+        },
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "Y position to set angle toward."
+        }
+      }
+    },
+    {
+      "id": "set-quaternion",
+      "scriptName": "set-quaternion",
+      "category": "common",
+      "list-name": "Set quaternion",
+      "display-text": "Set quaternion to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i], [i]{3}[/i])",
+      "description": "Set the 3D orientation according to a quaternion.",
+      "params": {
+        "x-component": {
+          "type": "object",
+          "name": "Quaternion X",
+          "desc": "X component of quaternion."
+        },
+        "y-component": {
+          "type": "object",
+          "name": "Quaternion Y",
+          "desc": "Y component of quaternion."
+        },
+        "z-component": {
+          "type": "object",
+          "name": "Quaternion Z",
+          "desc": "Z component of quaternion."
+        },
+        "w-component": {
+          "type": "object",
+          "name": "Quaternion W",
+          "desc": "W component of quaternion."
+        }
+      }
+    },
+    {
+      "id": "set-rotation-euler",
+      "scriptName": "set-rotation-euler",
+      "category": "common",
+      "list-name": "Set Euler rotation",
+      "display-text": "Set Euler rotation to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "description": "Set the 3D orientation according to Euler rotation.",
+      "params": {
+        "rotation-x": {
+          "type": "object",
+          "name": "Rotation X",
+          "desc": "Rotation about the X axis in degrees."
+        },
+        "rotation-y": {
+          "type": "object",
+          "name": "Rotation Y",
+          "desc": "Rotation about the Y axis in degrees."
+        },
+        "rotation-z": {
+          "type": "object",
+          "name": "Rotation Z",
+          "desc": "Rotation about the Z axis in degrees."
+        }
+      }
+    },
+    {
+      "id": "set-visible",
+      "scriptName": "set-visible",
+      "category": "common",
+      "list-name": "Set visible",
+      "display-text": "Set visibility [b]{0}[/b]",
+      "description": "Set whether the object is hidden or shown.",
+      "params": {
+        "visibility": {
+          "type": "object",
+          "name": "Visibility",
+          "desc": "Choose whether the object is hidden, shown, or toggled."
+        }
+      }
+    },
+    {
+      "id": "set-opacity",
+      "scriptName": "set-opacity",
+      "category": "common",
+      "list-name": "Set opacity",
+      "display-text": "Set opacity to [i]{0}[/i]",
+      "description": "Set how transparent the object appears.",
+      "params": {
+        "opacity": {
+          "type": "object",
+          "name": "Opacity",
+          "desc": "Choose the object opacity, from 0 (transparent) to 100 (opaque)."
+        }
+      }
+    },
+    {
+      "id": "set-default-color",
+      "scriptName": "set-default-color",
+      "category": "common",
+      "list-name": "Set color",
+      "display-text": "Set color to [i]{0}[/i]",
+      "description": "Set the color to apply to the object.",
+      "params": {
+        "color": {
+          "type": "object",
+          "name": "Color",
+          "desc": "Choose the color to apply using an expression like rgbEx(100, 0, 0) for red."
+        }
+      }
+    },
+    {
+      "id": "set-sampling",
+      "scriptName": "set-sampling",
+      "category": "common",
+      "list-name": "Set sampling",
+      "display-text": "Set sampling [b]{0}[/b]",
+      "description": "Set the sampling mode.",
+      "params": {
+        "sampling": {
+          "type": "object",
+          "name": "Sampling",
+          "desc": "The quality to use when scaling images."
+        }
+      }
+    },
+    {
+      "id": "set-effect-enabled",
+      "scriptName": "set-effect-enabled",
+      "category": "common",
+      "list-name": "Set effect enabled",
+      "display-text": "{0} effect {1}",
+      "description": "Enable or disable an effect on the object layout.",
+      "params": {
+        "mode": {
+          "type": "object",
+          "name": "Mode",
+          "desc": "Whether to enable or disable the effect."
+        },
+        "effect": {
+          "type": "object",
+          "name": "Effect",
+          "desc": "Choose the object effect to modify."
+        }
+      }
+    },
+    {
+      "id": "set-effect-parameter",
+      "scriptName": "set-effect-parameter",
+      "category": "common",
+      "list-name": "Set effect parameter",
+      "display-text": "Set effect {0} parameter {1} to [b]{2}[/b]",
+      "description": "Set the value of a parameter in one of the object's effects.",
+      "params": {
+        "effect": {
+          "type": "object",
+          "name": "Effect",
+          "desc": "Choose the effect to modify."
+        },
+        "parameter-index": {
+          "type": "object",
+          "name": "Parameter index",
+          "desc": "Enter the zero-based index of the parameter to change, e.g. 0 = first param, 1 = second param, etc."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Enter the new parameter value."
+        }
+      }
+    },
+    {
+      "id": "set-instvar-value",
+      "scriptName": "set-instvar-value",
+      "category": "common",
+      "list-name": "Set value",
+      "display-text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "description": "Set the value of an instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to change."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Value to store in this instance variable."
+        }
+      }
+    },
+    {
+      "id": "add-to-instvar",
+      "scriptName": "add-to-instvar",
+      "category": "common",
+      "list-name": "Add to",
+      "display-text": "Add [i]{1}[/i] to [b]{0}[/b]",
+      "description": "Add to the value of an instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to change."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Value to add to this instance variable."
+        }
+      }
+    },
+    {
+      "id": "subtract-from-instvar",
+      "scriptName": "subtract-from-instvar",
+      "category": "common",
+      "list-name": "Subtract from",
+      "display-text": "Subtract [i]{1}[/i] from [b]{0}[/b]",
+      "description": "Subtract from the value of an instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to change."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Value to subtract from this instance variable."
+        }
+      }
+    },
+    {
+      "id": "set-boolean-instvar",
+      "scriptName": "set-boolean-instvar",
+      "category": "common",
+      "list-name": "Set boolean",
+      "display-text": "Set [b]{0}[/b] to [i]{1}[/i]",
+      "description": "Set the value of a boolean instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to change."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "Value to store in this instance variable."
+        }
+      }
+    },
+    {
+      "id": "toggle-boolean-instvar",
+      "scriptName": "toggle-boolean-instvar",
+      "category": "common",
+      "list-name": "Toggle boolean",
+      "display-text": "Toggle [b]{0}[/b]",
+      "description": "Invert the value of a boolean instance variable.",
+      "params": {
+        "instance-variable": {
+          "type": "object",
+          "name": "Instance variable",
+          "desc": "Choose the instance variable to toggle."
+        }
+      }
+    },
+    {
+      "id": "change-tags",
+      "scriptName": "change-tags",
+      "category": "common",
+      "list-name": "Change tags",
+      "display-text": "{0} tags [i]{1}[/i]",
+      "description": "Add, remove or replace tags for this instance.",
+      "params": {
+        "tags": {
+          "type": "object",
+          "name": "Tags",
+          "desc": "A space separated list of tags to add, remove or replace."
+        },
+        "action": {
+          "type": "object",
+          "name": "Action",
+          "desc": "What to do with the passed in tags."
+        }
+      }
+    },
+    {
+      "id": "destroy",
+      "scriptName": "destroy",
+      "category": "common",
+      "list-name": "Destroy",
+      "display-text": "Destroy",
+      "description": "Destroy the object."
+    },
+    {
+      "id": "set-from-json",
+      "scriptName": "set-from-json",
+      "category": "common",
+      "list-name": "Set from JSON",
+      "display-text": "Set from JSON string [i]{0}[/i]",
+      "description": "Load the state of the object from a JSON string.",
+      "params": {
+        "json": {
+          "type": "object",
+          "name": "JSON",
+          "desc": "A string of JSON data from a previous AsJSON expression to load the object state from."
+        }
+      }
+    },
+    {
+      "id": "set-x",
+      "scriptName": "set-x",
+      "category": "common",
+      "list-name": "Set X",
+      "display-text": "Set X to [i]{0}[/i]",
+      "description": "Set the object's X co-ordinate.",
+      "params": {
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "New X co-ordinate, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-y",
+      "scriptName": "set-y",
+      "category": "common",
+      "list-name": "Set Y",
+      "display-text": "Set Y to [i]{0}[/i]",
+      "description": "Set the object's Y co-ordinate.",
+      "params": {
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "New Y co-ordinate, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-position",
+      "scriptName": "set-position",
+      "category": "common",
+      "list-name": "Set position",
+      "display-text": "Set position to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the object's X and Y co-ordinates at the same time.",
+      "params": {
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "New X co-ordinate, in pixels."
+        },
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "New Y co-ordinate, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-position-3d",
+      "scriptName": "set-position-3d",
+      "category": "common",
+      "list-name": "Set position 3D",
+      "display-text": "Set position to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "description": "Set the object's X, Y and Z co-ordinates at the same time.",
+      "params": {
+        "x": {
+          "type": "object",
+          "name": "X",
+          "desc": "New X co-ordinate, in pixels."
+        },
+        "y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "New Y co-ordinate, in pixels."
+        },
+        "z": {
+          "type": "object",
+          "name": "Z",
+          "desc": "New Z co-ordinate, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-position-to-another-object",
+      "scriptName": "set-position-to-another-object",
+      "category": "common",
+      "list-name": "Set position to another object",
+      "display-text": "Set position to {0} [i](image point {1})[/i]",
+      "description": "Position object relative to another object.",
+      "params": {
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "Object to position by."
+        },
+        "image-point-optional": {
+          "type": "object",
+          "name": "Image point (optional)",
+          "desc": "The name or number of an image point in the object to position by.  Leave 0 for object's origin."
+        }
+      }
+    },
+    {
+      "id": "move-forward",
+      "scriptName": "move-forward",
+      "category": "common",
+      "list-name": "Move forward",
+      "display-text": "Move forward [i]{0}[/i] pixels",
+      "description": "Move object forwards a number of pixels at its current angle.",
+      "params": {
+        "distance": {
+          "type": "object",
+          "name": "Distance",
+          "desc": "Distance, in pixels, to move the object forwards at its current angle."
+        }
+      }
+    },
+    {
+      "id": "move-at-angle",
+      "scriptName": "move-at-angle",
+      "category": "common",
+      "list-name": "Move at angle",
+      "display-text": "Move [i]{1}[/i] pixels at angle [i]{0}[/i]",
+      "description": "Move object a number of pixels at a given angle.",
+      "params": {
+        "angle": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "Angle, in degrees, at which to move the object."
+        },
+        "distance": {
+          "type": "object",
+          "name": "Distance",
+          "desc": "Distance, in pixels, to move the object at the given angle."
+        }
+      }
+    },
+    {
+      "id": "set-width",
+      "scriptName": "set-width",
+      "category": "common",
+      "list-name": "Set width",
+      "display-text": "Set width to [i]{0}[/i]",
+      "description": "Set the object's width.",
+      "params": {
+        "width": {
+          "type": "object",
+          "name": "Width",
+          "desc": "New object width, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-height",
+      "scriptName": "set-height",
+      "category": "common",
+      "list-name": "Set height",
+      "display-text": "Set height to [i]{0}[/i]",
+      "description": "Set the object's height.",
+      "params": {
+        "height": {
+          "type": "object",
+          "name": "Height",
+          "desc": "New object height, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-depth",
+      "scriptName": "set-depth",
+      "category": "common",
+      "list-name": "Set depth",
+      "display-text": "Set depth to [i]{0}[/i]",
+      "description": "Set the object's depth.",
+      "params": {
+        "depth": {
+          "type": "object",
+          "name": "Depth",
+          "desc": "New object depth, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-size",
+      "scriptName": "set-size",
+      "category": "common",
+      "list-name": "Set size",
+      "display-text": "Set size to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the object's width and height at the same time.",
+      "params": {
+        "width": {
+          "type": "object",
+          "name": "Width",
+          "desc": "New object width, in pixels."
+        },
+        "height": {
+          "type": "object",
+          "name": "Height",
+          "desc": "New object height, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-size-3d",
+      "scriptName": "set-size-3d",
+      "category": "common",
+      "list-name": "Set size 3D",
+      "display-text": "Set size to ([i]{0}[/i], [i]{1}[/i], [i]{2}[/i])",
+      "description": "Set the object's width, height and depth at the same time.",
+      "params": {
+        "width": {
+          "type": "object",
+          "name": "Width",
+          "desc": "New object width, in pixels."
+        },
+        "height": {
+          "type": "object",
+          "name": "Height",
+          "desc": "New object height, in pixels."
+        },
+        "depth": {
+          "type": "object",
+          "name": "Depth",
+          "desc": "New object depth, in pixels."
+        }
+      }
+    },
+    {
+      "id": "move-to-top",
+      "scriptName": "move-to-top",
+      "category": "common",
+      "list-name": "Move to top",
+      "display-text": "Move to top of layer",
+      "description": "Place the object at the top of its layer."
+    },
+    {
+      "id": "move-to-bottom",
+      "scriptName": "move-to-bottom",
+      "category": "common",
+      "list-name": "Move to bottom",
+      "display-text": "Move to bottom of layer",
+      "description": "Place the object at the bottom of its layer."
+    },
+    {
+      "id": "move-to-layer",
+      "scriptName": "move-to-layer",
+      "category": "common",
+      "list-name": "Move to layer",
+      "display-text": "Move to layer [b]{0}[/b]",
+      "description": "Change the object's layer.",
+      "params": {
+        "layer": {
+          "type": "object",
+          "name": "Layer",
+          "desc": "Layer name or number to move this object to.  The object will be placed at the top of this layer."
+        }
+      }
+    },
+    {
+      "id": "move-to-object",
+      "scriptName": "move-to-object",
+      "category": "common",
+      "list-name": "Move to object",
+      "display-text": "Move {0} {1}",
+      "description": "Move the object next to another object in the Z order.",
+      "params": {
+        "where": {
+          "type": "object",
+          "name": "Where",
+          "desc": "Choose whether to position just in front, or just behind, the other object."
+        },
+        "object": {
+          "type": "object",
+          "name": "Object",
+          "desc": "The object to move next to in the Z order."
+        }
+      }
+    },
+    {
+      "id": "set-z-elevation",
+      "scriptName": "set-z-elevation",
+      "category": "common",
+      "list-name": "Set Z",
+      "display-text": "Set Z to [i]{0}[/i]",
+      "description": "Set the object's Z co-ordinate.",
+      "params": {
+        "z": {
+          "type": "object",
+          "name": "Z",
+          "desc": "New Z co-ordinate."
+        }
+      }
+    },
+    {
+      "id": "set-css-style",
+      "scriptName": "set-css-style",
+      "category": "common",
+      "list-name": "Set CSS style",
+      "display-text": "Set CSS style [b]{0}[/b] to [i]{1}[/i]",
+      "description": "Set a CSS style on the HTML element.",
+      "params": {
+        "property-name": {
+          "type": "object",
+          "name": "Property name",
+          "desc": "A CSS property name to set on the HTML element."
+        },
+        "value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "A string to assign as the value for this CSS property."
+        }
+      }
+    },
+    {
+      "id": "set-elem-attribute",
+      "scriptName": "set-elem-attribute",
+      "category": "common",
+      "list-name": "Set attribute",
+      "display-text": "Set attribute [b]{0}[/b] to [i]{1}[/i]",
+      "description": "Set the value of an attribute on the HTML element.",
+      "params": {
+        "attribute-name": {
+          "type": "object",
+          "name": "Attribute",
+          "desc": "The name of the attribute to set."
+        },
+        "attribute-value": {
+          "type": "object",
+          "name": "Value",
+          "desc": "The value to set the attribute to."
+        }
+      }
+    },
+    {
+      "id": "remove-elem-attribute",
+      "scriptName": "remove-elem-attribute",
+      "category": "common",
+      "list-name": "Remove attribute",
+      "display-text": "Remove attribute [b]{0}[/b]",
+      "description": "Remove an attribute from the HTML element.",
+      "params": {
+        "attribute-name": {
+          "type": "object",
+          "name": "Attribute",
+          "desc": "The name of the attribute to set."
+        }
+      }
+    },
+    {
+      "id": "set-focused",
+      "scriptName": "set-focused",
+      "category": "common",
+      "list-name": "Set focused",
+      "display-text": "Set focused",
+      "description": "Set the input focus to the element."
+    },
+    {
+      "id": "set-unfocused",
+      "scriptName": "set-unfocused",
+      "category": "common",
+      "list-name": "Set unfocused",
+      "display-text": "Set unfocused",
+      "description": "Remove the input focus from the element."
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "set-enabled",
+      "category": "common",
+      "list-name": "Set enabled",
+      "display-text": "Set [b]{0}[/b]",
+      "description": "Enable or disable the element.",
+      "params": {
+        "mode": {
+          "type": "object",
+          "name": "Mode",
+          "desc": "Choose whether to enable or disable the element."
+        }
+      }
+    },
+    {
+      "id": "add-child",
+      "scriptName": "add-child",
+      "category": "common",
+      "list-name": "Add child",
+      "display-text": "Add child {0} (X: [i]{1}[/i], Y: [i]{2}[/i], Z: [i]{3}[/i], width: [i]{4}[/i], height: [i]{5}[/i], depth: [i]{6}[/i], angle: [i]{7}[/i], opacity: [i]{8}[/i], visibility: [i]{9}[/i], destroy with parent: [i]{10}[/i])",
+      "description": "Add a child to this object, making it follow the movement of this object.",
+      "params": {
+        "child": {
+          "type": "object",
+          "name": "Child",
+          "desc": "The object to set as a child."
+        },
+        "transform-x": {
+          "type": "object",
+          "name": "X",
+          "desc": "Transform with the parent's X position."
+        },
+        "transform-y": {
+          "type": "object",
+          "name": "Y",
+          "desc": "Transform with the parent's Y position."
+        },
+        "transform-z-elevation": {
+          "type": "object",
+          "name": "Z",
+          "desc": "Transform with the parent's Z position."
+        },
+        "transform-w": {
+          "type": "object",
+          "name": "Width",
+          "desc": "Transform with the parent's width."
+        },
+        "transform-h": {
+          "type": "object",
+          "name": "Height",
+          "desc": "Transform with the parent's height."
+        },
+        "transform-d": {
+          "type": "object",
+          "name": "Depth",
+          "desc": "Transform with the parent's depth."
+        },
+        "transform-a": {
+          "type": "object",
+          "name": "Angle",
+          "desc": "Transform with the parent's angle."
+        },
+        "transform-o": {
+          "type": "object",
+          "name": "Opacity",
+          "desc": "Transform with the parent's opacity."
+        },
+        "transform-visibility": {
+          "type": "object",
+          "name": "Visibility",
+          "desc": "Transform with the parent's visibility."
+        },
+        "destroy-with-parent": {
+          "type": "object",
+          "name": "Destroy with parent",
+          "desc": "Whether to also destroy this instance when its parent is destroyed."
+        }
+      }
+    },
+    {
+      "id": "remove-child",
+      "scriptName": "remove-child",
+      "category": "common",
+      "list-name": "Remove child",
+      "display-text": "Remove child {0}",
+      "description": "Remove a child from this object, detaching it so it no longer follows this object.",
+      "params": {
+        "child": {
+          "type": "object",
+          "name": "Child",
+          "desc": "The object to remove from the parent."
+        }
+      }
+    },
+    {
+      "id": "remove-from-parent",
+      "scriptName": "remove-from-parent",
+      "category": "common",
+      "list-name": "Remove from parent",
+      "display-text": "Remove from parent",
+      "description": "Remove from the parent object (if any), detaching it so it no longer follows the parent."
+    },
+    {
+      "id": "set-mesh-size",
+      "scriptName": "set-mesh-size",
+      "category": "common",
+      "list-name": "Set mesh size",
+      "display-text": "Set mesh [i]{0}[/i] x [i]{1}[/i] (copy from old mesh: [i]{2}[/i])",
+      "description": "Create or remove a mesh of points across the object. A mesh allows for distortion by moving the points.",
+      "params": {
+        "cols": {
+          "type": "object",
+          "name": "Columns",
+          "desc": "Number of mesh points horizontally. Use at least 2 to create a mesh, or 0 to remove the mesh."
+        },
+        "rows": {
+          "type": "object",
+          "name": "Rows",
+          "desc": "Number of mesh points vertically. Use at least 2 to create a mesh, or 0 to remove the mesh."
+        },
+        "copy-from-old-mesh": {
+          "type": "object",
+          "name": "Copy from old mesh",
+          "desc": "If there is an existing mesh being resized, whether to copy the old mesh points over to the new mesh."
+        }
+      }
+    },
+    {
+      "id": "set-mesh-point",
+      "scriptName": "set-mesh-point",
+      "category": "common",
+      "list-name": "Set mesh point",
+      "display-text": "Set mesh point ([i]{0}[/i], [i]{1}[/i]) to [i]{2}[/i] position ([i]{3}[/i], [i]{4}[/i], [i]{5}[/i]), texture ([i]{6}[/i], [i]{7}[/i])",
+      "description": "Set the position and texture co-ordinates of a point on the object's mesh.",
+      "params": {
+        "col": {
+          "type": "object",
+          "name": "Column",
+          "desc": "Zero-based column number of the mesh point to set."
+        },
+        "row": {
+          "type": "object",
+          "name": "Row",
+          "desc": "Zero-based row number of the mesh point to set."
+        },
+        "mode": {
+          "type": "object",
+          "name": "Mode",
+          "desc": "Whether to set points using absolute values within the object's box, or apply a relative displacement from its default position."
+        },
+        "posx": {
+          "type": "object",
+          "name": "Position X",
+          "desc": "X position of the mesh point, from 0-1 within to the object's box."
+        },
+        "posy": {
+          "type": "object",
+          "name": "Position Y",
+          "desc": "Y position of the mesh point, from 0-1 within to the object's box."
+        },
+        "z-elevation": {
+          "type": "object",
+          "name": "Position Z",
+          "desc": "Z position of the mesh point, relative to the object Z position."
+        },
+        "texx": {
+          "type": "object",
+          "name": "Texture X",
+          "desc": "X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+        },
+        "texy": {
+          "type": "object",
+          "name": "Texture Y",
+          "desc": "Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+        }
+      }
+    },
+    {
+      "id": "instance-wait-for-signal",
+      "scriptName": "instance-wait-for-signal",
+      "category": "common",
+      "list-name": "Wait for signal",
+      "display-text": "Wait for signal [b]{0}[/b]",
+      "description": "Wait until a corresponding 'Signal' action is used.",
+      "params": {
+        "tag": {
+          "type": "object",
+          "name": "Tag",
+          "desc": "The tag of the signal to wait for. This will wait until the corresponding 'Signal' action is used."
+        }
+      }
+    },
+    {
+      "id": "instance-signal",
+      "scriptName": "instance-signal",
+      "category": "common",
+      "list-name": "Signal",
+      "display-text": "Signal [b]{0}[/b]",
+      "description": "Trigger 'On signal' and resume any 'Wait for signal' actions.",
+      "params": {
+        "tag": {
+          "type": "object",
+          "name": "Tag",
+          "desc": "The tag to signal."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "angle",
+      "scriptName": "angle",
+      "category": "common",
+      "translated-name": "Angle",
+      "description": "Get the object's current angle, in degrees."
+    },
+    {
+      "id": "quaternion-x",
+      "scriptName": "quaternion-x",
+      "category": "common",
+      "translated-name": "QuaternionX",
+      "description": "X component of the quaternion."
+    },
+    {
+      "id": "quaternion-y",
+      "scriptName": "quaternion-y",
+      "category": "common",
+      "translated-name": "QuaternionY",
+      "description": "Y component of the quaternion."
+    },
+    {
+      "id": "quaternion-z",
+      "scriptName": "quaternion-z",
+      "category": "common",
+      "translated-name": "QuaternionZ",
+      "description": "Z component of the quaternion."
+    },
+    {
+      "id": "quaternion-w",
+      "scriptName": "quaternion-w",
+      "category": "common",
+      "translated-name": "QuaternionW",
+      "description": "W component of the quaternion."
+    },
+    {
+      "id": "rotation-x",
+      "scriptName": "rotation-x",
+      "category": "common",
+      "translated-name": "RotationX",
+      "description": "Rotation about X axis in degrees (Euler rotation)."
+    },
+    {
+      "id": "rotation-y",
+      "scriptName": "rotation-y",
+      "category": "common",
+      "translated-name": "RotationY",
+      "description": "Rotation about Y axis in degrees (Euler rotation)."
+    },
+    {
+      "id": "rotation-z",
+      "scriptName": "rotation-z",
+      "category": "common",
+      "translated-name": "RotationZ",
+      "description": "Rotation about Z axis in degrees (Euler rotation)."
+    },
+    {
+      "id": "opacity",
+      "scriptName": "opacity",
+      "category": "common",
+      "translated-name": "Opacity",
+      "description": "Get the object's current opacity, from 0 (transparent) to 100 (opaque)."
+    },
+    {
+      "id": "color-value",
+      "scriptName": "color-value",
+      "category": "common",
+      "translated-name": "ColorValue",
+      "description": "Get the object's current color."
+    },
+    {
+      "id": "count",
+      "scriptName": "count",
+      "category": "common",
+      "translated-name": "Count",
+      "description": "Get the total number of instances of this object type."
+    },
+    {
+      "id": "pickedcount",
+      "scriptName": "pickedcount",
+      "category": "common",
+      "translated-name": "PickedCount",
+      "description": "Get the number of instances matching the event's conditions."
+    },
+    {
+      "id": "uid",
+      "scriptName": "uid",
+      "category": "common",
+      "translated-name": "UID",
+      "description": "Get the instance's unique ID (UID)."
+    },
+    {
+      "id": "iid",
+      "scriptName": "iid",
+      "category": "common",
+      "translated-name": "IID",
+      "description": "Get the instance's index ID (IID)."
+    },
+    {
+      "id": "asjson",
+      "scriptName": "asjson",
+      "category": "common",
+      "translated-name": "AsJSON",
+      "description": "Save the object state to a string in JSON format."
+    },
+    {
+      "id": "objecttypename",
+      "scriptName": "objecttypename",
+      "category": "common",
+      "translated-name": "ObjectTypeName",
+      "description": "Get the name of the object type the instance belongs to."
+    },
+    {
+      "id": "x",
+      "scriptName": "x",
+      "category": "common",
+      "translated-name": "X",
+      "description": "Get the object's X co-ordinate, in pixels."
+    },
+    {
+      "id": "y",
+      "scriptName": "y",
+      "category": "common",
+      "translated-name": "Y",
+      "description": "Get the object's Y co-ordinate, in pixels."
+    },
+    {
+      "id": "width",
+      "scriptName": "width",
+      "category": "common",
+      "translated-name": "Width",
+      "description": "Get the object's width, in pixels."
+    },
+    {
+      "id": "height",
+      "scriptName": "height",
+      "category": "common",
+      "translated-name": "Height",
+      "description": "Get the object's height, in pixels."
+    },
+    {
+      "id": "depth",
+      "scriptName": "depth",
+      "category": "common",
+      "translated-name": "Depth",
+      "description": "Get the object's depth, in pixels."
+    },
+    {
+      "id": "bboxleft",
+      "scriptName": "bboxleft",
+      "category": "common",
+      "translated-name": "BBoxLeft",
+      "description": "Get the X co-ordinate of the left side of the object's bounding box."
+    },
+    {
+      "id": "bboxtop",
+      "scriptName": "bboxtop",
+      "category": "common",
+      "translated-name": "BBoxTop",
+      "description": "Get the Y co-ordinate of the top side of the object's bounding box."
+    },
+    {
+      "id": "bboxback",
+      "scriptName": "bboxback",
+      "category": "common",
+      "translated-name": "BBoxBack",
+      "description": "Get the Z co-ordinate of the back side of the object's bounding box."
+    },
+    {
+      "id": "bboxright",
+      "scriptName": "bboxright",
+      "category": "common",
+      "translated-name": "BBoxRight",
+      "description": "Get the X co-ordinate of the right side of the object's bounding box."
+    },
+    {
+      "id": "bboxbottom",
+      "scriptName": "bboxbottom",
+      "category": "common",
+      "translated-name": "BBoxBottom",
+      "description": "Get the Y co-ordinate of the bottom side of the object's bounding box."
+    },
+    {
+      "id": "bboxfront",
+      "scriptName": "bboxfront",
+      "category": "common",
+      "translated-name": "BBoxFront",
+      "description": "Get the Z co-ordinate of the front side of the object's bounding box."
+    },
+    {
+      "id": "bboxmidx",
+      "scriptName": "bboxmidx",
+      "category": "common",
+      "translated-name": "BBoxMidX",
+      "description": "Get the X co-ordinate of the middle of the object's bounding box."
+    },
+    {
+      "id": "bboxmidy",
+      "scriptName": "bboxmidy",
+      "category": "common",
+      "translated-name": "BBoxMidY",
+      "description": "Get the Y co-ordinate of the middle of the object's bounding box."
+    },
+    {
+      "id": "bboxmidz",
+      "scriptName": "bboxmidz",
+      "category": "common",
+      "translated-name": "BBoxMidZ",
+      "description": "Get the Z co-ordinate of the middle of the object's bounding box."
+    },
+    {
+      "id": "dt",
+      "scriptName": "dt",
+      "category": "common",
+      "translated-name": "dt",
+      "description": "Get delta-time for this object (in case it has its own timescale)."
+    },
+    {
+      "id": "layernumber",
+      "scriptName": "layernumber",
+      "category": "common",
+      "translated-name": "LayerNumber",
+      "description": "Get the layer number this object is on."
+    },
+    {
+      "id": "layername",
+      "scriptName": "layername",
+      "category": "common",
+      "translated-name": "LayerName",
+      "description": "Get the name of the layer this object is on."
+    },
+    {
+      "id": "zindex",
+      "scriptName": "zindex",
+      "category": "common",
+      "translated-name": "ZIndex",
+      "description": "Get the Z index of this object on its current layer."
+    },
+    {
+      "id": "z",
+      "scriptName": "z",
+      "category": "common",
+      "translated-name": "Z",
+      "description": "Get the Z co-ordinate (relative to its layer)."
+    },
+    {
+      "id": "total-z",
+      "scriptName": "total-z",
+      "category": "common",
+      "translated-name": "TotalZ",
+      "description": "Get the total Z co-ordinate taking in to account the layer Z elevation."
+    },
+    {
+      "id": "z-elevation",
+      "scriptName": "z-elevation",
+      "category": "common",
+      "translated-name": "ZElevation",
+      "description": "Get the Z position relative to its layer."
+    },
+    {
+      "id": "total-z-elevation",
+      "scriptName": "total-z-elevation",
+      "category": "common",
+      "translated-name": "TotalZElevation",
+      "description": "Get the total Z position taking in to account the layer Z elevation."
+    },
+    {
+      "id": "parent-uid",
+      "scriptName": "parent-uid",
+      "category": "common",
+      "translated-name": "ParentUID",
+      "description": "The UID of this object's parent in the hierarchy, or -1 if none."
+    },
+    {
+      "id": "child-count",
+      "scriptName": "child-count",
+      "category": "common",
+      "translated-name": "ChildCount",
+      "description": "Get the number of children connected to this object in the hierarchy."
+    },
+    {
+      "id": "all-child-count",
+      "scriptName": "all-child-count",
+      "category": "common",
+      "translated-name": "AllChildCount",
+      "description": "Get the number of children connected to this object in the hierarchy, including all descendants."
+    },
+    {
+      "id": "mesh-columns",
+      "scriptName": "mesh-columns",
+      "category": "common",
+      "translated-name": "MeshColumns",
+      "description": "Get the number of columns on the object's mesh, or 0 if no mesh in use."
+    },
+    {
+      "id": "mesh-rows",
+      "scriptName": "mesh-rows",
+      "category": "common",
+      "translated-name": "MeshRows",
+      "description": "Get the number of rows on the object's mesh, or 0 if no mesh in use."
+    },
+    {
+      "id": "template-name",
+      "scriptName": "template-name",
+      "category": "common",
+      "translated-name": "TemplateName",
+      "description": "Get the name of the template used to create an instance."
+    },
+    {
+      "id": "get-tags",
+      "scriptName": "get-tags",
+      "category": "common",
+      "translated-name": "Tags",
+      "description": "Get the tags of an instance."
+    },
+    {
+      "id": "get-tags-count",
+      "scriptName": "get-tags-count",
+      "category": "common",
+      "translated-name": "TagsCount",
+      "description": "Get the amount of tags of an instance."
+    },
+    {
+      "id": "get-tag-at",
+      "scriptName": "get-tag-at",
+      "category": "common",
+      "translated-name": "TagAt",
+      "description": "Get the tag at the given index.",
+      "params": {
+        "index": {
+          "type": "object",
+          "name": "Index",
+          "desc": "0 based index of a tag."
+        }
+      }
+    }
+  ],
+  "properties": {}
+}

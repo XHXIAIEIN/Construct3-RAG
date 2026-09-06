@@ -1,0 +1,505 @@
+{
+  "id": "timeline",
+  "name": "Timeline controller",
+  "description": "Control timelines from event sheets, such as starting and stopping them.",
+  "type": "plugin",
+  "aceCategories": {
+    "timeline": "Timeline",
+    "by-timeline": "By timeline",
+    "all": "All timelines",
+    "triggers": "Triggers",
+    "misc": "Miscellaneous"
+  },
+  "conditions": [
+    {
+      "id": "on-timeline-started-by-tags",
+      "scriptName": "OnTimelineStartedByTags",
+      "category": "timeline",
+      "list-name": "On started",
+      "display-text": "On [b]{0}[/b] started on [i]{1}[/i]",
+      "description": "Triggered when a specific timeline starts.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Timeline tags to check for."
+        },
+        "trigger-on": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The timeline state when this trigger runs.",
+          "items": {
+            "any": "Any",
+            "start-only": "Starting",
+            "resume-only": "Resuming"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-timeline-started",
+      "scriptName": "OnAnyTimelineStarted",
+      "category": "timeline",
+      "list-name": "On any started",
+      "display-text": "On any started on [b]{0}[/b]",
+      "description": "Triggered when any timeline starts.",
+      "params": {
+        "trigger-on": {
+          "type": "combo",
+          "name": "Type",
+          "desc": "The timeline state when this trigger runs.",
+          "items": {
+            "any": "Any",
+            "start-only": "Starting",
+            "resume-only": "Resuming"
+          }
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-timeline-finished-by-tags",
+      "scriptName": "OnTimelineFinishedByTags",
+      "category": "timeline",
+      "list-name": "On finished",
+      "display-text": "On [b]{0}[/b] finished",
+      "description": "Triggered when a specific timeline finishes.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Timeline tags to check for."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-timeline-finished",
+      "scriptName": "OnAnyTimelineFinished",
+      "category": "timeline",
+      "list-name": "On any finished",
+      "display-text": "On any finished",
+      "description": "Triggered when any timeline finishes.",
+      "isTrigger": true
+    },
+    {
+      "id": "is-playing-by-tags",
+      "scriptName": "IsPlayingByTags",
+      "category": "timeline",
+      "list-name": "Is playing",
+      "display-text": "Is [b]{0}[/b] playing",
+      "description": "Test if a specific timeline is currently playing.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Timeline tags to check for."
+        }
+      }
+    },
+    {
+      "id": "is-any-playing",
+      "scriptName": "IsAnyPlaying",
+      "category": "timeline",
+      "list-name": "Is any playing",
+      "display-text": "Is any playing",
+      "description": "Test if any timeline is currently playing."
+    },
+    {
+      "id": "is-paused-by-tags",
+      "scriptName": "IsPausedByTags",
+      "category": "timeline",
+      "list-name": "Is paused",
+      "display-text": "Is [b]{0}[/b] paused",
+      "description": "Test if a specific timeline is currently paused.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Timeline tags to check for."
+        }
+      }
+    },
+    {
+      "id": "is-any-paused",
+      "scriptName": "IsAnyPaused",
+      "category": "timeline",
+      "list-name": "Is any paused",
+      "display-text": "Is any paused",
+      "description": "Test if any timeline is currently paused."
+    },
+    {
+      "id": "on-time-set-by-tags",
+      "scriptName": "OnTimeSetByTags",
+      "category": "timeline",
+      "list-name": "On time set",
+      "display-text": "On [b]{0}[/b] time set",
+      "description": "Triggered when the playback time of a specific timeline has been changed.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Timeline tags to check for."
+        }
+      },
+      "isTrigger": true
+    },
+    {
+      "id": "on-any-keyframe-reached",
+      "scriptName": "OnAnyKeyframeReached",
+      "category": "timeline",
+      "list-name": "On any keyframe reached",
+      "display-text": "On any keyframe reached",
+      "description": "Triggered when any master keyframe has been reached during timeline playback.",
+      "isTrigger": true
+    },
+    {
+      "id": "on-keyframe-reached",
+      "scriptName": "OnKeyframeReached",
+      "category": "timeline",
+      "list-name": "On keyframe reached",
+      "display-text": "On keyframe [b]{0}[/b] (match [b]{1}[/b]) reached",
+      "description": "Triggered when a master keyframe with specific tags has been reached during timeline playback.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space-separated tags to check for to determine if a master keyframe has been reached."
+        },
+        "match": {
+          "type": "combo",
+          "name": "Match",
+          "desc": "Whether to match if the keyframe has any of the tags or all of the tags.",
+          "items": {
+            "any-tags": "Any tags",
+            "all-tags": "All tags"
+          }
+        }
+      },
+      "isTrigger": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "play-timeline",
+      "scriptName": "PlayTimeline",
+      "category": "by-timeline",
+      "list-name": "Play",
+      "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i]",
+      "description": "Play a timeline.",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "Timeline",
+          "desc": "The timeline to start playing."
+        },
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Optional space separated list of tags to identify a timeline later on."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "play-timeline-by-name",
+      "scriptName": "PlayTimelineByName",
+      "category": "by-timeline",
+      "list-name": "Play (by name)",
+      "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i]",
+      "description": "Play a timeline, using a string to select it.",
+      "params": {
+        "timeline-name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the timeline to start playing."
+        },
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Optional space separated list of tags to identify a timeline later on."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "pause-timeline-by-tags",
+      "scriptName": "PauseTimelineByTags",
+      "category": "by-timeline",
+      "list-name": "Pause",
+      "display-text": "Pause [b]{0}[/b]",
+      "description": "Pause all timelines with the specified tags.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of timeline tags to change."
+        }
+      }
+    },
+    {
+      "id": "resume-timeline-by-tags",
+      "scriptName": "ResumeTimelineByTags",
+      "category": "by-timeline",
+      "list-name": "Resume",
+      "display-text": "Resume [b]{0}[/b]",
+      "description": "Resume all timelines with the specified tags.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of timeline tags to change."
+        }
+      }
+    },
+    {
+      "id": "stop-timeline-by-tags",
+      "scriptName": "StopTimelineByTags",
+      "category": "by-timeline",
+      "list-name": "Stop",
+      "display-text": "Stop [b]{0}[/b]",
+      "description": "Stop all timelines with the specified tags.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of timeline tags to change."
+        }
+      }
+    },
+    {
+      "id": "set-timeline-time-by-tags",
+      "scriptName": "SetTimelineTimeByTags",
+      "category": "by-timeline",
+      "list-name": "Set time",
+      "display-text": "Set [b]{0}[/b] time to [b]{1}[/b]",
+      "description": "Set the time of all timelines with the specified tags.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of tags to find timelines with."
+        },
+        "time": {
+          "type": "any",
+          "name": "Time",
+          "desc": "The time to set in seconds, or a string with a keyframe's tags, to set the time to the first keyframe that matches all the tags."
+        }
+      }
+    },
+    {
+      "id": "set-timeline-playback-rate-by-tags",
+      "scriptName": "SetTimelinePlaybackRateByTags",
+      "category": "by-timeline",
+      "list-name": "Set playback rate",
+      "display-text": "Set [b]{0}[/b] playback rate to [b]{1}[/b]",
+      "description": "Set the playback rate of all timelines with the specified tags.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of timeline tags to change."
+        },
+        "rate": {
+          "type": "number",
+          "name": "Rate",
+          "desc": "The rate to set, 1 being normal speed, 0.5 half speed, etc. Negative values produce backwards playback."
+        }
+      }
+    },
+    {
+      "id": "play-all-timelines",
+      "scriptName": "PlayAllTimelines",
+      "category": "all",
+      "list-name": "Play all",
+      "display-text": "Play all",
+      "description": "Play all timelines which are not already playing.",
+      "isAsync": true
+    },
+    {
+      "id": "pause-all-timelines",
+      "scriptName": "PauseAllTimelines",
+      "category": "all",
+      "list-name": "Pause all",
+      "display-text": "Pause all",
+      "description": "Pause all active timelines."
+    },
+    {
+      "id": "resume-all-timelines",
+      "scriptName": "ResumeAllTimelines",
+      "category": "all",
+      "list-name": "Resume all",
+      "display-text": "Resume all",
+      "description": "Resume all active timelines."
+    },
+    {
+      "id": "stop-all-timelines",
+      "scriptName": "StopAllTimelines",
+      "category": "all",
+      "list-name": "Stop all",
+      "display-text": "Stop all",
+      "description": "Stop all active timelines."
+    },
+    {
+      "id": "set-instance",
+      "scriptName": "SetInstance",
+      "category": "misc",
+      "list-name": "Set instance",
+      "display-text": "Set [b]{0}[/b] to track [b]{1}[/b] of the next timeline",
+      "description": "Set an instance to use in the next timeline playback.",
+      "params": {
+        "object-class": {
+          "type": "object",
+          "name": "Object to set",
+          "desc": "The object to set to the next timeline played."
+        },
+        "track-id": {
+          "type": "string",
+          "name": "Track ID",
+          "desc": "The ID of the track to set the instance to. If empty, the instance will be set to the first track found, which hasn't been previously set."
+        }
+      }
+    },
+    {
+      "id": "unset-instances",
+      "scriptName": "UnsetInstances",
+      "category": "misc",
+      "list-name": "Unset instances",
+      "display-text": "Unset all instances",
+      "description": "Unset all previously set instances for the next timeline."
+    }
+  ],
+  "expressions": [
+    {
+      "id": "time",
+      "scriptName": "Time",
+      "category": "timeline",
+      "translated-name": "Time",
+      "description": "The current playback time of a timeline in seconds.",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "TimelineNameOrTags",
+          "desc": "Name or tags of the timeline to get the time from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "total-time",
+      "scriptName": "TotalTime",
+      "category": "timeline",
+      "translated-name": "TotalTime",
+      "description": "The total playing time of a timeline in seconds.",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "TimelineNameOrTags",
+          "desc": "Name or tags of the timeline to get the total time from."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "progress",
+      "scriptName": "Progress",
+      "category": "timeline",
+      "translated-name": "Progress",
+      "description": "The current playback progress of a timeline in the range 0-1.",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "TimelineNameOrTags",
+          "desc": "Name or tags of the timeline to get the progress for."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "ease",
+      "scriptName": "Ease",
+      "category": "timeline",
+      "translated-name": "Ease",
+      "description": "Get the value of an easing function.",
+      "params": {
+        "ease": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of a built-in or custom ease."
+        },
+        "progress": {
+          "type": "number",
+          "name": "Value",
+          "desc": "A value in the range 0-1."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "keyframe-time",
+      "scriptName": "KeyframeTime",
+      "category": "timeline",
+      "translated-name": "KeyframeTime",
+      "description": "Get the time of a keyframe in the specified timeline.",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "TimelineNameOrTags",
+          "desc": "Name or tags of the timeline the keyframe is in."
+        },
+        "keyframe": {
+          "type": "string",
+          "name": "KeyframeTags",
+          "desc": "Tags of the keyframe to get the time of."
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "keyframe-tags",
+      "scriptName": "KeyframeTags",
+      "category": "triggers",
+      "translated-name": "KeyframeTags",
+      "description": "In a trigger, the tags of the relevant keyframe.",
+      "returnType": "string"
+    },
+    {
+      "id": "timeline-name",
+      "scriptName": "TimelineName",
+      "category": "triggers",
+      "translated-name": "TimelineName",
+      "description": "In a trigger, the name of the relevant timeline.",
+      "returnType": "string"
+    },
+    {
+      "id": "timeline-tags",
+      "scriptName": "TimelineTags",
+      "category": "triggers",
+      "translated-name": "TimelineTags",
+      "description": "In a trigger, the tags of the relevant timeline.",
+      "returnType": "string"
+    },
+    {
+      "id": "value",
+      "scriptName": "Value",
+      "category": "by-timeline",
+      "translated-name": "Value",
+      "description": "The value of a value track in the specified timeline",
+      "params": {
+        "timeline": {
+          "type": "string",
+          "name": "TimelineNameOrTags",
+          "desc": "Name or tags of the timeline that has the value track."
+        },
+        "track": {
+          "type": "string",
+          "name": "ValueTrackNameOrId",
+          "desc": "Name or id of the track to get the value for."
+        }
+      },
+      "returnType": "number"
+    }
+  ],
+  "properties": {}
+}
