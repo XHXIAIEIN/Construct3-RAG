@@ -2,151 +2,73 @@
 
 **English** | [中文](README_CN.md)
 
-Structured Construct 3 reference data and a retrieval API for answering questions about plugins, behaviors, ACEs, effects, examples, and scripting interfaces. The committed reference files can be read directly; the optional service adds keyword and semantic search.
+Structured, bilingual reference data for [Construct 3](https://www.construct.net): plugins, behaviors, ACEs, effects, example projects, scripting interfaces, and the raw language packs. Everything under `data/` is committed JSON and `.d.ts` that a script or an LLM can read directly. An optional service adds lookup and semantic search on top.
 
-> The current Construct version and dataset counts are recorded in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). Updates are proposed by [the data workflow](.github/workflows/update.yml).
+The Construct version and dataset counts live in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). [The update workflow](.github/workflows/update.yml) opens a pull request when Scirra ships a new stable release.
 
-> **For AI agents:** Start with [`AGENTS.md`](AGENTS.md). It maps the repository and gives the lookup procedure. To help users write event sheets, load [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) as a system prompt. Data is in `data/c3-schemas/{locale}/`, where `locale` is `en-US` or `zh-CN`.
+## Related repositories
 
-## Key Concepts
+This repository holds the machine-readable data. The prose, the project sources, and the SDK live elsewhere:
 
-[Construct 3](https://www.construct.net) is a visual game engine. Games are built with **event sheets** (visual if/then logic) rather than code.
+| Repository | What it holds | How it fits |
+|---|---|---|
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. Full mode indexes it when cloned alongside. |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | Concepts and how-to text. Full mode indexes it when cloned alongside. |
+| [XHXIAIEIN/Construct3-Manual-PDF](https://github.com/XHXIAIEIN/Construct3-Manual-PDF) | The same manual split into chapter PDFs | Offline reading. |
 
-- **Plugin** — an object type (Sprite, Audio, Keyboard, etc.)
-- **Behavior** — reusable logic attached to plugins (Platform, Tween, Physics, etc.)
-- **ACE** — Actions, Conditions, Expressions. The building blocks of event sheets:
-  - **Condition** — a test (`Is animation playing`, `On collision with...`)
-  - **Action** — something that happens (`Set animation`, `Destroy`)
-  - **Expression** — a value to read (`AnimationFrame`, `X`, `Y`)
-- **Effect** — a visual shader (blur, tint, glow, etc.)
+"Cloned alongside" means a sibling directory of this repository. Paths and options are in [docs/guide/quick-start.md](docs/guide/quick-start.md).
 
-Each ACE entry in the schema files has:
+## Data files
 
-| Field | Meaning |
-|-------|---------|
-| `list-name` | Name shown in the "Add condition/action" dialog |
-| `display-text` | Template shown in the event sheet (e.g. `Set animation to {0}`) |
-| `translated-name` | Expression identifier (expressions only, e.g. `AnimationFrame`) |
-| `scriptName` | JavaScript API method name (for scripting, not event sheets) |
-| `description` | Tooltip / help text |
-| `params` | Parameter definitions (`{id: {type, name, desc}}`) |
+No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are under `data/`.
 
-## Data Files
+| Path | Content |
+|---|---|
+| `c3-schemas/_index.json` | Version, locales, and every plugin, behavior, and effect with its file path and ACE counts |
+| `c3-schemas/{locale}/plugins/{id}.json` | Conditions, actions, expressions, properties |
+| `c3-schemas/{locale}/behaviors/{id}.json` | Behavior ACEs |
+| `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
+| `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |
+| `c3-lang/{locale}.json` | Raw CDN language pack, one string per line, for diffing releases and translations |
+| `c3-ts-defs/autocomplete-data.json` | Scripting class to methods and properties |
+| `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
 
-No install needed. Pick a language (`en-US` or `zh-CN`) and read.
+Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category`, and parameter types are identical in every locale, so an ACE found in one language can be read in the other. Field meanings, layout, and worked examples: [docs/guide/data-format.md](docs/guide/data-format.md).
 
-| Path | Count | Content |
-|------|------:|---------|
-| `c3-schemas/_index.json` | — | Master index: id → name, file path, ACE counts |
-| `c3-schemas/{locale}/plugins/{id}.json` | indexed | Conditions, actions, expressions, properties |
-| `c3-schemas/{locale}/behaviors/{id}.json` | indexed | Behavior ACE definitions |
-| `c3-schemas/{locale}/effects/{id}.json` | indexed | Effect parameters, categories |
-| `c3-examples/{locale}/{id}.json` | per release | Name, description, tags, used-addons, open URL |
-| `c3-lang/{locale}.json` | per release | Raw CDN language pack, pretty printed for diffing translations |
-| `c3-ts-defs/autocomplete-data.json` | per release | Scripting classes → methods/properties |
-| `c3-ts-defs/**/*.d.ts` | per release | Full TypeScript interface signatures |
+## Reading the data
 
-All paths are under `data/`. Schema files use CDN-native field names (`list-name`, `display-text`, `translated-name`). Field meanings and file layout: [docs/guide/data-format.md](docs/guide/data-format.md).
+1. Find the addon in `_index.json`. Its entry gives the `file` path and the ACE counts.
+2. Open `data/c3-schemas/{locale}/{file}` and locate the ACE by `id`, by `list-name` for conditions and actions, or by `translated-name` for expressions. `display-text` is the event sheet wording and `params` lists the parameters.
+3. For scripting, look the class up in `autocomplete-data.json`, then open the matching `.d.ts`.
 
-## Usage
+A condition from `en-US/plugins/sprite.json`:
 
-### 1. Find a plugin/behavior
-
-Read `_index.json`:
-```json
-{
-  "plugins": {
-    "sprite": {
-      "originalId": "Sprite",
-      "name_en": "Sprite", "name_zh": "精灵",
-      "file": "plugins/sprite.json",
-      "conditions": 12, "actions": 16, "expressions": 15
-    }
-  }
-}
-```
-
-### 2. Read its ACE definitions
-
-`en-US/plugins/sprite.json` — a condition entry:
 ```json
 {
   "id": "is-animation-playing",
   "list-name": "Is playing",
   "display-text": "Is animation {0} playing",
-  "description": "Test which of the object's animations is currently playing.",
   "scriptName": "IsAnimPlaying",
   "category": "animations",
-  "params": {
-    "animation": { "type": "animation", "name": "Animation", "desc": "..." }
-  }
+  "params": { "animation": { "type": "animation", "name": "Animation", "desc": "..." } }
 }
 ```
 
-`zh-CN/plugins/sprite.json` — same ACE, Chinese:
-```json
-{
-  "id": "is-animation-playing",
-  "list-name": "正在播放",
-  "display-text": "正在播放 {0} 动画",
-  "description": "检测当前正在播放哪个的动画。",
-  "scriptName": "IsAnimPlaying",
-  "category": "animations",
-  "params": {
-    "animation": { "type": "animation", "name": "动画", "desc": "要检测的动画名称。" }
-  }
-}
-```
+The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `display-text`, and parameter names.
 
-Field names match the official CDN: `list-name`, `display-text` for conditions/actions; `translated-name` for expressions. Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are identical across languages.
+## For AI agents and LLMs
 
-### 3. JavaScript/TypeScript API
+Start with [`AGENTS.md`](AGENTS.md): a repository map and the step-by-step lookup procedure. To help users write event sheets, load [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) as a system prompt. It covers output format, naming rules, and common pitfalls.
 
-1. `autocomplete-data.json` → find the class (e.g. `ISpriteInstance`)
-2. Read `plugins/general/sprite/c3runtime/ISpriteInstance.d.ts` for full signatures
-
-### Quick reference
-
-| Question | Where to look |
-|----------|---------------|
-| What plugins/behaviors/effects exist? | `_index.json` |
-| What ACEs does X have? | `{locale}/plugins/{id}.json` |
-| How does an ACE look in the event sheet? | `display-text` field |
-| What parameters does an ACE take? | `params` object |
-| What effects are available? | `{locale}/effects/{id}.json` |
-| Example projects using X? | `c3-examples/{locale}/*.json` → `used-addons` |
-| JavaScript/TypeScript API? | `autocomplete-data.json` → `.d.ts` |
-
-## LLM Integration
-
-If you're building an LLM that helps users write event sheets, see [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) — a ready-to-use system prompt with output format, naming rules, and common pitfalls.
-
-## Search API (optional)
+## Search service (optional)
 
 ```bash
 pip install -r requirements.txt
-python scripts/setup.py          # → http://localhost:8765/playground
+python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-This starts the deterministic offline lookup service. It does not connect to
-Qdrant or load an embedding model. `mode=auto` adds semantic results only when
-full mode has been explicitly enabled. It uses an existing local schema snapshot;
-pass `--refresh-data` only when a CDN refresh is intended.
-
-### POST /search
-
-| Parameter | Values | Default |
-|-----------|--------|---------|
-| `mode` | `list` · `lookup` · `semantic` · `auto` | `auto` |
-| `scope` | `eventsheet` · `scripts` · `js` · `ts` · `all` | `eventsheet` |
-| `lang` | `en` · `zh` · `ja` · `ko` | auto-detect |
-| `context` | include LLM-ready text | `false` |
-
-Full spec: [docs/guide/api-reference.md](docs/guide/api-reference.md)
-
-### Semantic search (explicit opt-in)
-
-Requires Qdrant + embedding model. GPU recommended.
+This runs the deterministic offline lookup service over the committed data. It does not connect to Qdrant or load a model. Semantic search over the schemas, the manual, and the example projects is an explicit opt-in that needs Qdrant and an embedding model:
 
 ```bash
 pip install -r requirements-full.txt
@@ -154,10 +76,9 @@ docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdran
 python scripts/setup.py --full
 ```
 
-`--full` verifies Qdrant, builds the vector index unless skipped, and starts the
-server process with `LITE_MODE=false`. A normal setup remains lookup-only.
+Setup options, the `/search` and `/health` endpoints, and response shapes: [docs/guide/quick-start.md](docs/guide/quick-start.md) and [docs/guide/api-reference.md](docs/guide/api-reference.md).
 
-## Project Structure
+## Project structure
 
 ```
 AGENTS.md               Entry point for AI agents: repo map, retrieval SOP, work SOP
@@ -170,7 +91,7 @@ prompts/                Ready-to-use LLM system prompts for event sheet help
 src/                    Optional search service (see src/CLAUDE.md for packages)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite, gold sets, evaluation runners
-docs/guide/             For users: quick start, API reference
+docs/guide/             For users: quick start, API reference, data format
 docs/dev/               For contributors: architecture, data pipeline
 docs/decisions/         Audits and decision records
 .github/workflows/      Data update automation
@@ -178,13 +99,6 @@ docs/decisions/         Audits and decision records
 
 ## Credits
 
-Data from [Construct 3](https://www.construct.net) by [Scirra Ltd](https://www.scirra.com). Construct 3 is a trademark of Scirra Ltd.
-
-| Source | Usage |
-|--------|-------|
-| [Construct 3 Editor CDN](https://editor.construct.net) | ACE definitions, effects, examples, TypeScript interfaces, translations |
-| [Construct 3 Manual](https://www.construct.net/en/make-games/manuals/construct-3) | Official documentation |
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | Markdown mirror of official manual |
-| [huyingxi/Synonyms](https://github.com/huyingxi/Synonyms) | Chinese synonym dictionary |
+Data from [Construct 3](https://www.construct.net) by [Scirra Ltd](https://www.scirra.com), fetched from the [editor CDN](https://editor.construct.net). Construct 3 is a trademark of Scirra Ltd.
 
 [MIT](LICENSE)

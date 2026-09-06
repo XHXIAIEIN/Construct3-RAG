@@ -71,6 +71,51 @@ Field names match the official CDN.
 Structural fields are the same in every locale, so an ACE can be matched by
 `id` in one locale and read in another.
 
+### Worked example
+
+The condition `is-animation-playing` in `en-US/plugins/sprite.json`:
+
+```json
+{
+  "id": "is-animation-playing",
+  "list-name": "Is playing",
+  "display-text": "Is animation {0} playing",
+  "description": "Test which of the object's animations is currently playing.",
+  "scriptName": "IsAnimPlaying",
+  "category": "animations",
+  "params": {
+    "animation": {
+      "type": "animation",
+      "name": "Animation",
+      "desc": "Enter the name of the animation to check if playing."
+    }
+  }
+}
+```
+
+The same entry in `zh-CN/plugins/sprite.json`:
+
+```json
+{
+  "id": "is-animation-playing",
+  "list-name": "正在播放",
+  "display-text": "正在播放 {0} 动画",
+  "description": "检测当前正在播放哪个的动画。",
+  "scriptName": "IsAnimPlaying",
+  "category": "animations",
+  "params": {
+    "animation": {
+      "type": "animation",
+      "name": "动画",
+      "desc": "要检测的动画名称。"
+    }
+  }
+}
+```
+
+Only the text values differ. Because `params.animation.type` is `animation`,
+the editor offers a list of the object's animations for that parameter.
+
 ## Example projects
 
 Each file in `c3-examples/{locale}/` describes one official example:
