@@ -9,6 +9,7 @@ Usage:
 """
 import argparse
 import sys
+import urllib.error
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -67,9 +68,13 @@ def main():
     print(f"  {counts['behaviors']} behavior schemas")
     print(f"  {counts['effects']} effect schemas")
 
-    # 3. Discover locales
-    locales = fetcher.fetch_available_locales()
-    print(f"\nAvailable locales: {len(locales)}")
+    # 3. Discover locales. Informational only; the CDN path can change
+    # between releases, so a failure here must not discard the export above.
+    try:
+        locales = fetcher.fetch_available_locales()
+        print(f"\nAvailable locales: {len(locales)}")
+    except (urllib.error.URLError, OSError) as exc:
+        print(f"\nAvailable locales: unknown ({exc})")
 
     # 4. Terms
     terms = fetcher.export_terms()
