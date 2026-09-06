@@ -6,7 +6,7 @@ Structured Construct 3 reference data and a retrieval API for answering question
 
 > The current Construct version and dataset counts are recorded in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). Updates are proposed by [the data workflow](.github/workflows/update.yml).
 
-> **For LLMs:** Read [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) before answering Construct 3 questions — it defines how to look up and reference ACEs accurately. Data is in `data/c3-schemas/{locale}/`, where `locale` is `en-US` or `zh-CN`.
+> **For AI agents:** Start with [`AGENTS.md`](AGENTS.md). It maps the repository and gives the lookup procedure. To help users write event sheets, load [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) as a system prompt. Data is in `data/c3-schemas/{locale}/`, where `locale` is `en-US` or `zh-CN`.
 
 ## Key Concepts
 
@@ -45,7 +45,7 @@ No install needed. Pick a language (`en-US` or `zh-CN`) and read.
 | `c3-ts-defs/autocomplete-data.json` | per release | Scripting classes → methods/properties |
 | `c3-ts-defs/**/*.d.ts` | per release | Full TypeScript interface signatures |
 
-All paths are under `data/`. Schema files use CDN-native field names (`list-name`, `display-text`, `translated-name`).
+All paths are under `data/`. Schema files use CDN-native field names (`list-name`, `display-text`, `translated-name`). Field meanings and file layout: [docs/guide/data-format.md](docs/guide/data-format.md).
 
 ## Usage
 
@@ -118,7 +118,7 @@ Field names match the official CDN: `list-name`, `display-text` for conditions/a
 
 ## LLM Integration
 
-If you're building an LLM that helps users write event sheets, see [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md) — a ready-to-use system prompt with output format, naming rules, and common pitfalls.
+If you're building an LLM that helps users write event sheets, see [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) — a ready-to-use system prompt with output format, naming rules, and common pitfalls.
 
 ## Search API (optional)
 
@@ -141,7 +141,7 @@ pass `--refresh-data` only when a CDN refresh is intended.
 | `lang` | `en` · `zh` · `ja` · `ko` | auto-detect |
 | `context` | include LLM-ready text | `false` |
 
-Full spec: [docs/api-reference.md](docs/api-reference.md)
+Full spec: [docs/guide/api-reference.md](docs/guide/api-reference.md)
 
 ### Semantic search (explicit opt-in)
 
@@ -159,21 +159,18 @@ server process with `LITE_MODE=false`. A normal setup remains lookup-only.
 ## Project Structure
 
 ```
-src/api.py              Thin FastAPI composition root
-src/interfaces/http/    Canonical HTTP DTOs and response presenters
-src/application/        Search and health SOP workflows
-src/domain/             Transport-independent lookup/retrieval data
-src/lookup/             Offline lookup service, handlers, and four indexes
-src/retrieval/          Semantic adapter, policies, stable IDs, and deduplication
-src/vector/             Shared dense and sparse vector adapters
-src/ingest/             Parsers, contracts, and prepare-to-verify pipeline
-src/observability/      Canonical request-local tracing
-src/rag/                Legacy compatibility facades only
-data/c3-schemas/        ACE definitions, effects (en-US + zh-CN)
-data/c3-examples/       Example project metadata (en-US + zh-CN)
-data/c3-ts-defs/        TypeScript interfaces
-tests/                  Unit and regression tests
-docs/                   API reference, architecture, data pipeline
+AGENTS.md               Entry point for AI agents: repo map, retrieval SOP, work SOP
+data/                   Committed reference data. Read directly, no install
+  c3-schemas/           ACE definitions, effects (en-US + zh-CN)
+  c3-examples/          Example project metadata (en-US + zh-CN)
+  c3-ts-defs/           TypeScript scripting interfaces
+prompts/                Ready-to-use LLM system prompts for event sheet help
+src/                    Optional search service (see src/CLAUDE.md for packages)
+scripts/                Setup, data refresh, version check
+tests/                  Offline pytest suite, gold sets, evaluation runners
+docs/guide/             For users: quick start, API reference
+docs/dev/               For contributors: architecture, data pipeline
+docs/decisions/         Audits and decision records
 .github/workflows/      Data update automation
 ```
 

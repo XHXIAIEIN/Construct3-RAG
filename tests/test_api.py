@@ -32,7 +32,7 @@ def test_lookup_import_does_not_load_optional_retriever():
 
 
 def test_playground_uses_current_nested_search_contract():
-    html = (Path(__file__).parent / "playground.html").read_text(encoding="utf-8")
+    html = (Path(__file__).parent.parent / "src" / "interfaces" / "http" / "playground.html").read_text(encoding="utf-8")
 
     assert "data.lookup?.hit" not in html
     assert "data.latency_ms" not in html

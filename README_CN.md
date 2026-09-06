@@ -6,7 +6,7 @@
 
 > 当前 Construct 版本与数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准；[数据更新工作流](.github/workflows/update.yml)负责提出更新。
 
-> **LLM 请注意：** 回答 Construct 3 问题前，先读 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——定义了如何查找和准确引用 ACE。数据在 `data/c3-schemas/{locale}/`，其中 `locale` 为 `en-US` 或 `zh-CN`。
+> **AI 代理请注意：** 先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图和查找流程。要帮用户写事件表，把 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 作为 system prompt 加载。数据在 `data/c3-schemas/{locale}/`，其中 `locale` 为 `en-US` 或 `zh-CN`。
 
 ## 核心概念
 
@@ -45,7 +45,7 @@ Schema 文件中每个 ACE 条目的字段含义：
 | `c3-ts-defs/autocomplete-data.json` | 随版本变化 | 脚本类 → 方法/属性 |
 | `c3-ts-defs/**/*.d.ts` | 随版本变化 | 完整 TypeScript 接口签名 |
 
-所有路径基于 `data/`。Schema 文件使用 CDN 原始字段名（`list-name`、`display-text`、`translated-name`）。
+所有路径基于 `data/`。Schema 文件使用 CDN 原始字段名（`list-name`、`display-text`、`translated-name`）。字段含义和文件布局见 [docs/guide/data-format.md](docs/guide/data-format.md)。
 
 ## 使用方法
 
@@ -103,7 +103,7 @@ Schema 文件中每个 ACE 条目的字段含义：
 
 ## LLM 集成
 
-如果你在构建一个帮用户写事件表的 LLM，参见 [`data/LLM_PROMPT.md`](data/LLM_PROMPT.md)——现成的 system prompt，包含输出格式、命名规范和常见错误。
+如果你在构建一个帮用户写事件表的 LLM，参见 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md)——现成的 system prompt，包含输出格式、命名规范和常见错误。
 
 ## 搜索 API（可选）
 
@@ -125,7 +125,7 @@ Schema 快照；只有明确需要刷新 CDN 数据时才传入 `--refresh-data`
 | `lang` | `en` · `zh` · `ja` · `ko` | 自动检测 |
 | `context` | 返回 LLM 可用的文本 | `false` |
 
-完整规格：[docs/api-reference.md](docs/api-reference.md)
+完整规格：[docs/guide/api-reference.md](docs/guide/api-reference.md)
 
 ### 语义搜索（显式启用）
 
@@ -143,21 +143,18 @@ python scripts/setup.py --full
 ## 项目结构
 
 ```
-src/api.py              FastAPI 轻量装配入口
-src/interfaces/http/    HTTP DTO 与响应映射（规范实现）
-src/application/        搜索与健康检查 SOP 工作流
-src/domain/             与传输无关的 Lookup/Retrieval 数据
-src/lookup/             离线查询服务、处理器与四类索引
-src/retrieval/          语义适配器、策略、稳定 ID 与精确去重
-src/vector/             共享稠密/稀疏向量适配器
-src/ingest/             解析器、契约与四阶段发布管线
-src/observability/      请求级跟踪（规范实现）
-src/rag/                仅保留旧导入兼容层
-data/c3-schemas/        ACE 定义、特效（en-US + zh-CN）
-data/c3-examples/       示例项目元数据（en-US + zh-CN）
-data/c3-ts-defs/        TypeScript 接口
-tests/                  单元测试与回归测试
-docs/                   API 参考、架构、数据管线
+AGENTS.md               AI 代理入口：仓库地图、检索 SOP、工作 SOP
+data/                   已提交的参考数据，直接读取，无需安装
+  c3-schemas/           ACE 定义、特效（en-US + zh-CN）
+  c3-examples/          示例项目元数据（en-US + zh-CN）
+  c3-ts-defs/           TypeScript 脚本接口
+prompts/                可直接使用的事件表助手 system prompt
+src/                    可选搜索服务（包结构见 src/CLAUDE.md）
+scripts/                安装、数据刷新、版本检查
+tests/                  离线 pytest 套件、金标集、评估脚本
+docs/guide/             面向使用者：快速开始、API 参考
+docs/dev/               面向贡献者：架构、数据管线
+docs/decisions/         审计与决策记录
 .github/workflows/      数据更新自动化
 ```
 
