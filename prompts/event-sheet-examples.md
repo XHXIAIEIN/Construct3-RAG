@@ -1,6 +1,6 @@
 # Event Sheet Output Examples
 
-Reference examples for [LLM_PROMPT.md](LLM_PROMPT.md). All ACE names verified against `en/` schema files.
+Reference examples for [event-sheet-assistant.md](event-sheet-assistant.md). All ACE names verified against `data/c3-schemas/en-US/` schema files.
 
 ---
 

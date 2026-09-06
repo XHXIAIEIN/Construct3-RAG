@@ -1,16 +1,16 @@
 # docs/ Directory
 
-Project documentation.
+Three audiences, three folders. Put a new document where its reader is.
 
-## Documents
+| Folder | Reader | Contents |
+|--------|--------|----------|
+| `guide/` | People and agents using the data or API | `quick-start.md`, `api-reference.md`, `data-format.md` |
+| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md` |
+| `decisions/` | Anyone asking why something exists or was removed | `refactoring-audit.md`, `query-understanding-*.md` |
 
-| File | Content |
-|------|---------|
-| `quick-start.md` | Setup, install, run |
-| `architecture.md` | System design, lookup engine, collections, design decisions |
-| `api-reference.md` | Endpoint specs, request/response schemas, examples |
-| `data-pipeline.md` | CDN fetching, deprecation filter, indexing, version updates |
-| `refactoring-audit.md` | Cleanup decisions, language policy, next module boundaries |
-| `query-understanding-refactor-requirements.md` | Query/terminology refactor goals and acceptance criteria |
-| `query-understanding-stage-zero-audit.md` | Runtime/history audit, capability decisions, baseline, gold-set plan |
-| `query-understanding-stage-one-baseline.md` | 72-query gold set, current/literal baselines, phase-one boundary changes |
+`guide/` and `dev/` describe current behavior and must be updated with the
+change that alters it. `decisions/` records are dated evidence; append a new
+record rather than rewriting history.
+
+The agent entry point is `AGENTS.md` at the repository root. Keep its tables
+in sync when a document here moves or is added.

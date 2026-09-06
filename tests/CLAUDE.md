@@ -59,7 +59,6 @@ endpoint, collection, model, and frozen gold set used.
 | `fixtures/semantic_gold.jsonl` | Frozen development/held-out semantic evaluation cases |
 | `eval_semantic_quality.py` | Optional live semantic evaluation entry point |
 | `eval_lookup.py` | Historical bare-ID compatibility diagnostic; not a product-quality gold test |
-| `playground.html` | Interactive API test UI, served at `/playground` |
 
 The product Direct Lookup quality command is:
 

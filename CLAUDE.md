@@ -1,7 +1,10 @@
 # Construct3-RAG 项目工作章程
 
-本文件是整个仓库的最高级项目说明。子目录中的 `CLAUDE.md` 只补充局部
-实现约束，不得覆盖这里定义的产品方向、判断原则和验证要求。
+@AGENTS.md
+
+`AGENTS.md` 是仓库地图和操作 SOP：怎样从数据回答 Construct 3 问题，改代码前后
+要做什么。本文件是整个仓库的最高级项目说明，定义产品方向、判断原则和验证要求。
+子目录中的 `CLAUDE.md` 只补充局部实现约束，不得覆盖这里的规则。
 
 ## 1. 产品定位
 
@@ -112,10 +115,10 @@ Construct3-RAG 首先是面向 Construct 3 问答和工具集成的结构化参�
 
 查询理解相关工作必须先阅读：
 
-- `docs/query-understanding-refactor-requirements.md`
-- `docs/refactoring-audit.md`
-- `docs/architecture.md`
-- `docs/query-understanding-stage-one-baseline.md`
+- `docs/decisions/query-understanding-refactor-requirements.md`
+- `docs/decisions/refactoring-audit.md`
+- `docs/dev/architecture.md`
+- `docs/decisions/query-understanding-stage-one-baseline.md`
 
 其中“产品方向与历史假设复核”是关键词、扩展和提示词重构之前的强制门禁。
 
@@ -234,7 +237,7 @@ git diff --check
 ## 11. 文档和决策记录
 
 - README 面向使用者，优先说明数据如何直接使用，再说明可选服务。
-- `docs/architecture.md` 必须描述真实运行架构，不展示未接入模块作为默认路径。
+- `docs/dev/architecture.md` 必须描述真实运行架构，不展示未接入模块作为默认路径。
 - 产品或架构取舍写入决策记录，包括问题、证据、替代方案、选择和重新评估条件。
 - 删除历史能力时记录删除原因，不把失效代码留作注释或“备用实现”。
 - 英文和中文 README 描述同一行为；术语和路径必须一致。

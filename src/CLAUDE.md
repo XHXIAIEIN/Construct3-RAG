@@ -30,8 +30,8 @@ but canonical packages must not import their legacy `rag/` facades.
 
 The HTTP boundary. `models.py` owns Pydantic request/response DTOs and transport
 validation. `presenters.py` maps requests to application commands and application
-outcomes back to HTTP responses. Transport types do not belong in domain or
-lookup code.
+outcomes back to HTTP responses. `playground.html` is the debug UI served at
+`/playground`. Transport types do not belong in domain or lookup code.
 
 ### `application/`
 

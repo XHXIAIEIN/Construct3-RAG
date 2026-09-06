@@ -1,7 +1,7 @@
 # Construct 3 Event Sheet — LLM System Prompt
 
 > Include this in your system prompt when helping users build Construct 3 event sheets.
-> For full examples, see [LLM_EXAMPLES.md](LLM_EXAMPLES.md).
+> For full examples, see [event-sheet-examples.md](event-sheet-examples.md).
 
 ---
 

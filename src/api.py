@@ -65,7 +65,7 @@ app = FastAPI(
 
 _retriever = None
 _lookup_engine = None
-_PLAYGROUND_HTML = Path(__file__).parent.parent / "tests" / "playground.html"
+_PLAYGROUND_HTML = Path(__file__).parent / "interfaces" / "http" / "playground.html"
 
 
 def _get_retriever():

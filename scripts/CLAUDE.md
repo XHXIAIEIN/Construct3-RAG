@@ -12,6 +12,6 @@
 `init.py` and `setup.py` read the canonical `en-US`/`zh-CN` schema layout from
 `src/schema_layout.py`; do not duplicate locale directory names in new scripts.
 
-Qdrant lifecycle commands are documented in `docs/quick-start.md`. Keep database
+Qdrant lifecycle commands are documented in `docs/guide/quick-start.md`. Keep database
 deletion out of helper scripts unless it enumerates the live collection registry
 from `src/collections.py` and requires an explicit confirmation.
