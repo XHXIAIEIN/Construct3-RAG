@@ -60,7 +60,9 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 ## AI 代理与 LLM
 
-先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图和逐步的查找流程。要帮用户写事件表，把 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 作为 system prompt 加载，其中包含输出格式、命名规范和常见错误。
+先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图、事实查找流程和事件表设计流程。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) 和 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 一起作为 system prompt 加载。前者用 Construct 的方式决定结构：拾取、族、容器、`Else`；后者规定输出格式和名称核对。
+
+在游戏项目里工作的 agent 不会自己找到这个仓库。把 [`prompts/game-project-CLAUDE.md`](prompts/game-project-CLAUDE.md) 复制进该项目的 `CLAUDE.md` 并填上真实路径；原因见 `AGENTS.md` 第 4 节。
 
 ## 搜索服务（可选）
 
@@ -88,7 +90,7 @@ data/                   已提交的参考数据，直接读取，无需安装
   c3-examples/          示例项目元数据（en-US + zh-CN）
   c3-lang/              CDN 原始语言包（en-US + zh-CN）
   c3-ts-defs/           TypeScript 脚本接口
-prompts/                可直接使用的事件表助手 system prompt
+prompts/                LLM system prompt：设计指南、书写规则、游戏项目用的 CLAUDE.md 模板
 src/                    可选搜索服务（包结构见 src/CLAUDE.md）
 scripts/                安装、数据刷新、版本检查
 tests/                  离线 pytest 套件、金标集、评估脚本
