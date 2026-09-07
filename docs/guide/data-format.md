@@ -14,6 +14,7 @@ data/
     _index.json                    version, languages, plugins, behaviors, effects
     {locale}/_index.json           addon names in that language, same ids
     {locale}/plugins/{id}.json     conditions, actions, expressions, properties
+    {locale}/plugins/_common.json  ACEs shared by every world object
     {locale}/behaviors/{id}.json   behavior ACEs
     {locale}/effects/{id}.json     effect parameters and categories
   c3-examples/{locale}/{id}.json   example project metadata
@@ -90,6 +91,13 @@ Field names match the official CDN.
 
 Structural fields are the same in every locale, so an ACE can be matched by
 `id` in one locale and read in another.
+
+Conditions, actions, and expressions that every world object has, such as
+`Is overlapping another object`, `Pick by unique ID`, `Set value`,
+`Pick children`, `Move to top`, `X`, and `UID`, are exported once
+to `plugins/_common.json` and are not repeated in each plugin file. The
+complete ACE list of a Sprite is its own file plus `_common.json`. The
+lookup service merges the two; a direct reader must open both.
 
 ### Worked example
 

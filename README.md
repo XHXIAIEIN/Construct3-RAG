@@ -60,7 +60,9 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 ## For AI agents and LLMs
 
-Start with [`AGENTS.md`](AGENTS.md): a repository map and the step-by-step lookup procedure. To help users write event sheets, load [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) as a system prompt. It covers output format, naming rules, and common pitfalls.
+Start with [`AGENTS.md`](AGENTS.md): a repository map, the fact lookup procedure, and the event sheet design procedure. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) and [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) together as the system prompt. The first decides the structure in Construct terms: picking, families, containers, `Else`. The second covers output format and name verification.
+
+An agent working inside a game project does not find this repository on its own. Copy [`prompts/game-project-CLAUDE.md`](prompts/game-project-CLAUDE.md) into that project's `CLAUDE.md` with the real path; `AGENTS.md` section 4 explains why.
 
 ## Search service (optional)
 
@@ -88,7 +90,7 @@ data/                   Committed reference data. Read directly, no install
   c3-examples/          Example project metadata (en-US + zh-CN)
   c3-lang/              Raw CDN language packs (en-US + zh-CN)
   c3-ts-defs/           TypeScript scripting interfaces
-prompts/                Ready-to-use LLM system prompts for event sheet help
+prompts/                LLM system prompts: design guide, writing rules, CLAUDE.md template for game projects
 src/                    Optional search service (see src/CLAUDE.md for packages)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite, gold sets, evaluation runners
