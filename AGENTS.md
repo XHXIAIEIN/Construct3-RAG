@@ -158,6 +158,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design rules and the worked case | `prompts/event-sheet-thinking.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Sourced runtime facts and pitfalls | `prompts/event-sheet-pitfalls.md` |
+| Editing project JSON by hand, checks without the editor | `prompts/references/hand-editing-project-files.md` |
 | Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/CLAUDE.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
