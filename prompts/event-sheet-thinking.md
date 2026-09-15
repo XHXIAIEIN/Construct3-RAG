@@ -6,9 +6,10 @@ lists the runtime facts intuition gets wrong. Run every draft through the smell
 table below before showing it.
 
 A sheet that links objects through UID variables, resets picking with
-`Pick all`, or copies picked results into variables and branches on the numbers
-is a program transcribed into events. It works, and an experienced Construct
-user rejects it.
+`Pick all`, copies picked results into variables and branches on the numbers,
+or rebuilds a timer, a tween or a lookup table out of variables and `Every
+tick` is a program transcribed into events. It works, and an experienced
+Construct user rejects it.
 
 ## The model
 
@@ -60,6 +61,40 @@ repository; the same path without `.md` after
    singletons. Inside one interaction they mean the trigger's pick was thrown
    away and rebuilt by hand.
 
+## Native first
+
+Before a variable, an `Every tick` or a formula, ask which built-in already
+does it. The mechanisms below exist; a draft that rebuilds one by hand is a
+program transcribed into events even when no picking smell shows.
+
+| Need | Use | Not |
+|------|-----|-----|
+| A delay, a countdown, a cooldown | Timer behavior: *Start timer*, *On timer*, `Duration(tag) - CurrentTime(tag)` | An instance variable decremented by `dt` and compared every tick |
+| A fixed-duration move, scale, fade, colour change | Tween behavior: *Tween (one/two/three properties)*, *On any finished* | `lerp` or `dt` arithmetic in `Every tick` with a "done" flag |
+| Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
+| Repeating or periodic movement, flashing, fading out | Sine, Flash, Fade, Rotate | Hand-written oscillation |
+| Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
+| Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
+| Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
+| Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events, or a global "mode" variable that other events branch on |
+| A set of objects treated alike | Family; instance variables and behaviors declared on the family | Duplicate event blocks per object type |
+| Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
+
+[manual: behavior-reference/timer.md, behavior-reference/tween.md,
+behavior-reference/move.md, behavior-reference/bullet.md,
+plugin-reference/array.md "Load", plugin-reference/ajax.md "Request project
+file", plugin-reference/json.md, plugin-reference/advanced-random.md
+"Probability tables", plugin-reference/local-storage.md,
+project-primitives/events/functions.md,
+project-primitives/events/custom-actions.md,
+project-primitives/objects/families.md,
+project-primitives/objects/containers.md]
+
+Two checks before choosing: a Timer is state with transitions, list them
+(pitfalls, "Timer"); an Array *Load* reads Construct's own JSON layout, so the
+file comes from the Array editor, not a hand-written JSON (the JSON plugin
+reads those).
+
 ## Smell table
 
 One hit means redesign, not patch.
@@ -74,6 +109,8 @@ One hit means redesign, not patch.
 | Custom actions named `attach`, `detach`, `sync` that write two variables | Two copies of one fact | One source, usually the engine's |
 | `Pick by unique ID` for the object the trigger already picked | Re-picking what is picked | Delete the condition |
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see pitfalls) |
+| `Every tick` with `lerp`, `dt` or a progress variable driving a fixed-length change | A tween written by hand, with its own "finished" bookkeeping | Tween behavior, *On any finished* |
+| Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
 
 ## Before proposing a structure
 
@@ -85,9 +122,11 @@ One hit means redesign, not patch.
    alongside, copy the event shape from `example-projects/{id}/eventSheets/`.
    The drop pattern in `family-tree` and `alchemist` is `On drop`, a sub-event
    `Is overlapping another object`, narrowing conditions, then `Else`.
-3. Read the manual page for each mechanism you are about to use.
-4. Draft, then run the smell table and the pitfalls.
-5. Only then verify names as [event-sheet-assistant.md](event-sheet-assistant.md)
+3. Walk the Native first table: for each delay, motion, table or shared
+   piece of logic in the draft, name the built-in that owns it.
+4. Read the manual page for each mechanism you are about to use.
+5. Draft, then run the smell table and the pitfalls.
+6. Only then verify names as [event-sheet-assistant.md](event-sheet-assistant.md)
    says; shared world-object ACEs are in `plugins/_common.json`.
 
 ## Worked case: pieces on a slot grid
