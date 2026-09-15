@@ -70,8 +70,11 @@ first.
 
 - *Create object* picks only the new instance, plus the created children when
   *Create hierarchy* is on; container siblings are created too. Whether the new
-  instance is also picked in its families is undocumented, so do not depend on
-  it. [manual: system-reference/system-actions.md "Create object"]
+  instance is also picked in its families is undocumented. To act on it through
+  the family, use *System: Pick last created* with the family in a sub-event;
+  the manual names that as the way to pick a created instance from its family.
+  [manual: system-reference/system-actions.md "Create object";
+  system-reference/system-conditions.md "Pick last created"]
 - A runtime-created instance takes its properties from an existing instance or
   the named template. Keep one template instance per runtime-created object in
   a layout that never runs. [same; creation with zero instances anywhere is
