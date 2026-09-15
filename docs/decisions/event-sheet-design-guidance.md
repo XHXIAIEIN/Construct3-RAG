@@ -96,3 +96,67 @@ original task with the new guide loaded. That is the re-evaluation test.
   cases into their own file and keep the rules short.
 - Construct changes the picking model, `Else` semantics, or family picking.
   The manual pages listed in the guide are the source to re-read.
+
+## Update 2026-09-15
+
+Applied the re-evaluation clause "the guide grows past a few screens": the
+prompts were trimmed to what an agent gets wrong without them, following the
+Claude Code guidance on instruction files (keep them short, one question per
+line: would removing it cause a mistake) and the Agent Skills guidance on
+progressive disclosure (core instructions always, reference material named
+with the situation that calls for it).
+
+- `event-sheet-thinking.md`: 2024 to 1092 words. Model facts that overlap the
+  pitfalls file removed, ten rules merged to eight, source URL table replaced
+  by one path-to-URL rule, the transcribed-program half of the worked case
+  moved to `prompts/references/worked-case-slot-grid.md`.
+- `event-sheet-pitfalls.md` added (2026-09-15) and cut from 1406 to 614 words;
+  JSON encodings and editor limits moved to
+  `prompts/references/hand-editing-project-files.md`.
+- `event-sheet-assistant.md`: 529 to 407 words, rule 1 reduced to a pointer,
+  one inline output example; `event-sheet-examples.md` deleted, its remaining
+  content restated the rules.
+- `AGENTS.md` section 3 and `game-project-CLAUDE.md` point at the guide
+  instead of repeating its steps; the template no longer inlines the guide
+  with `@` by default and says what that line costs.
+
+Not done: no agent run compares the trimmed prompts against the previous
+version on the original task. That remains the test named above.
+
+## Evaluation 2026-09-15: trimmed prompts against the previous version
+
+Method from agentskills.io "Evaluating skill output quality": four prompts,
+each run once with the previous prompt set (commit 1ec1ccd, 4440 words loaded)
+and once with the trimmed set (commit abf57ea, 2113 words), in fresh subagent
+contexts that received only the file paths, the data paths and the user text.
+Assertions were graded by hand with quoted evidence; ACE names were checked by
+script against the r495.2 schema.
+
+| Case | What it tests | Assertions | Old | New |
+|------|---------------|-----------:|----:|----:|
+| A drop on a slot grid (casual wording) | family as second pick, spatial pick, collisions off, trigger/sub-event/Else shape | 8 | 8 | 8 |
+| B tower Timer, nearest enemy in range | For each after On timer, pick nearest relative to the tower, range filter | 5 | 5 | 5 |
+| C function called after Create (type) and after merge (family) | Copy picked, act on the family with Self, caveat on family pick after Create | 5 | 5 | 5 |
+| D "die or walk" every tick | Else is per block, per-instance branch as two events | 3 | 3 | 3 |
+
+| | Old | New |
+|---|---:|---:|
+| Pass rate | 21/21 | 21/21 |
+| Subagent tokens, four runs | 501,651 | 473,185 (−5.7%) |
+| Wall time, four runs | 1634 s | 1631 s |
+
+Reading: the trim removed nothing these tasks needed, and the prompts are not
+where the tokens go. Each run spent 100k+ tokens on lookups the guide asks
+for: manual pages (5 to 10 per run), schema files (`plugins/system.json` alone
+is 148 KB) and example event sheets; two runs touched every file under
+`c3-examples/` while filtering on `used-addons`. The prompt-size saving
+(about 3k tokens) is inside the run-to-run noise (case A: 138k old, 148k new).
+
+Both arms answered case C with *Pick last created* on the family, a documented
+tool this record's guide had not mentioned; added to the pitfalls file.
+
+Not measured: a no-prompt baseline, which is what would show whether the
+prompts add value at all on these cases; and repeated runs, so no variance
+figure. Next levers if cost matters: tell the agent to search a schema file
+for the `list-name` instead of reading it whole, and give the example filter
+a script instead of a glob over 549 files.

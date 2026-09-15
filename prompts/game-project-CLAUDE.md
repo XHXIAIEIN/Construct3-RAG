@@ -1,32 +1,32 @@
 # CLAUDE.md for a Construct 3 project
 
-Copy the block below into `CLAUDE.md` (or `AGENTS.md`) at the root of the
-game project and replace `<path-to>` with the directory that holds this
-repository. Nothing in a Construct project points here on its own: the
-`llm-context.md` that Construct writes into every project describes the file
-format, not this data. Without these lines an agent working in the game
-folder answers from memory, and a drag-and-drop interaction comes back as
-UID links, `Pick all`, and global variables.
+Nothing in a Construct project points here: the `llm-context.md` Construct
+writes into every project describes the file format, not this data. Without
+the lines below an agent in the game folder answers from memory, and a
+drag-and-drop interaction comes back as UID links, `Pick all` and globals.
 
-The `@` line is Claude Code syntax. It inlines the design guide into the
-project's context so the picking rules are present before the first event is
-proposed. Other tools ignore it.
+Copy the block into the project's `CLAUDE.md` (or `AGENTS.md`) and replace
+`<path-to>` with the directory holding this repository, or with a symlink
+inside the project that points to it.
 
 ```markdown
 # Construct 3
 
-Construct 3 reference data and event sheet rules live in
-<path-to>/Construct3-RAG. Read its AGENTS.md first.
+Construct 3 reference data and event sheet rules: <path-to>/Construct3-RAG.
+Read its AGENTS.md first.
 
-Before proposing event sheet logic, load prompts/event-sheet-thinking.md and
-prompts/event-sheet-assistant.md from that repository and follow them:
-relations are conditions, families, containers, or hierarchy, not UID
-variables; the trigger's picked instance is used directly; the draft is
-checked against the smell table before it is shown.
+Before proposing event sheet logic, read prompts/event-sheet-thinking.md,
+prompts/event-sheet-assistant.md and prompts/event-sheet-pitfalls.md there
+and follow them. Verify every plugin, behavior and ACE name against
+data/c3-schemas/ before writing it down; shared world-object ACEs are in
+plugins/_common.json.
 
-Verify every plugin, behavior, and ACE name against
-<path-to>/Construct3-RAG/data/c3-schemas/ before writing it down. Shared
-world-object ACEs are in plugins/_common.json.
-
-@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md
+Write new runtime facts learned in this project back into
+prompts/event-sheet-pitfalls.md, with a source.
 ```
+
+The block loads nothing at startup; the agent reads the three files when it
+starts event sheet work. If it keeps skipping them, add one line at the end:
+`@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
+inlines that file into every session of the project, which costs its full
+length each time; other tools ignore the line.
