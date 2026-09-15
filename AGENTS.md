@@ -83,7 +83,9 @@ form:
    variables. The trigger's picked instance is used directly.
 5. Run the smell table in the guide. A UID link, a `Pick all` inside a
    trigger, a global holding the dragged instance, or a flag that mirrors a
-   condition means redesign, not patch.
+   condition means redesign, not patch. Then check the draft against
+   `prompts/event-sheet-pitfalls.md`: Else is per block, triggers can carry
+   several instances, Copy picked keeps type and family picks apart.
 6. Only then verify every name with section 2. Shared world-object ACEs are
    in `plugins/_common.json`.
 
@@ -97,8 +99,9 @@ folder will not find this repository unless that project says so. Copy
 ```text
 Construct 3 reference data and event sheet rules live in
 <path-to>/Construct3-RAG. Read its AGENTS.md first. Before proposing
-event sheet logic, load prompts/event-sheet-thinking.md and
-prompts/event-sheet-assistant.md from that repository and follow them.
+event sheet logic, load prompts/event-sheet-thinking.md,
+prompts/event-sheet-assistant.md and prompts/event-sheet-pitfalls.md from
+that repository and follow them.
 ```
 
 Claude Code can also pull the files in directly with import lines such as
@@ -154,6 +157,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design rules and the worked case | `prompts/event-sheet-thinking.md`, `docs/decisions/event-sheet-design-guidance.md` |
+| Sourced runtime facts and pitfalls | `prompts/event-sheet-pitfalls.md` |
 | Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/CLAUDE.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
