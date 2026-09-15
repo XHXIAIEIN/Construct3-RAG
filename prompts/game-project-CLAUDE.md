@@ -18,8 +18,9 @@ proposed. Other tools ignore it.
 Construct 3 reference data and event sheet rules live in
 <path-to>/Construct3-RAG. Read its AGENTS.md first.
 
-Before proposing event sheet logic, load prompts/event-sheet-thinking.md and
-prompts/event-sheet-assistant.md from that repository and follow them:
+Before proposing event sheet logic, load prompts/event-sheet-thinking.md,
+prompts/event-sheet-assistant.md and prompts/event-sheet-pitfalls.md from
+that repository and follow them:
 relations are conditions, families, containers, or hierarchy, not UID
 variables; the trigger's picked instance is used directly; the draft is
 checked against the smell table before it is shown.

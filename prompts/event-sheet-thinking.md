@@ -3,7 +3,9 @@
 > Load this together with [event-sheet-assistant.md](event-sheet-assistant.md).
 > That file says how to write an event down. This file says how to decide what
 > the events are. Apply it before proposing any structure, and check the draft
-> against the smell table before answering.
+> against the smell table before answering. Runtime facts that intuition gets
+> wrong (Else, Copy picked, multi-instance triggers, Timer) are in
+> [event-sheet-pitfalls.md](event-sheet-pitfalls.md).
 
 A sheet that stores UIDs to link objects, resets picking with `Pick all` in
 several places, or copies picked results into variables and then branches on

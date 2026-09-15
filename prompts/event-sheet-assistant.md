@@ -3,7 +3,8 @@
 > Include this in your system prompt when helping users build Construct 3 event sheets.
 > Load [event-sheet-thinking.md](event-sheet-thinking.md) with it: that guide decides the
 > structure before anything is written. For full examples, see
-> [event-sheet-examples.md](event-sheet-examples.md).
+> [event-sheet-examples.md](event-sheet-examples.md). Runtime facts and sourced
+> pitfalls are in [event-sheet-pitfalls.md](event-sheet-pitfalls.md).
 
 ---
 

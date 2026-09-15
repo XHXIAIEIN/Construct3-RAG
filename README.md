@@ -60,7 +60,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 ## For AI agents and LLMs
 
-Start with [`AGENTS.md`](AGENTS.md): a repository map, the fact lookup procedure, and the event sheet design procedure. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) and [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) together as the system prompt. The first decides the structure in Construct terms: picking, families, containers, `Else`. The second covers output format and name verification.
+Start with [`AGENTS.md`](AGENTS.md): a repository map, the fact lookup procedure, and the event sheet design procedure. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) and [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) together as the system prompt. The first decides the structure in Construct terms: picking, families, containers, `Else`. The second covers output format and name verification. [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) adds sourced runtime facts that intuition gets wrong; add it when the model will write or debug events.
 
 An agent working inside a game project does not find this repository on its own. Copy [`prompts/game-project-CLAUDE.md`](prompts/game-project-CLAUDE.md) into that project's `CLAUDE.md` with the real path; `AGENTS.md` section 4 explains why.
 

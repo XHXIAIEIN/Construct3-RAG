@@ -60,7 +60,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 ## AI 代理与 LLM
 
-先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图、事实查找流程和事件表设计流程。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) 和 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 一起作为 system prompt 加载。前者用 Construct 的方式决定结构：拾取、族、容器、`Else`；后者规定输出格式和名称核对。
+先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图、事实查找流程和事件表设计流程。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md) 和 [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 一起作为 system prompt 加载。前者用 Construct 的方式决定结构：拾取、族、容器、`Else`；后者规定输出格式和名称核对。[`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 补充带出处的运行时事实，都是凭直觉容易写错的地方；模型要写或调试事件时一起加载。
 
 在游戏项目里工作的 agent 不会自己找到这个仓库。把 [`prompts/game-project-CLAUDE.md`](prompts/game-project-CLAUDE.md) 复制进该项目的 `CLAUDE.md` 并填上真实路径；原因见 `AGENTS.md` 第 4 节。
 
