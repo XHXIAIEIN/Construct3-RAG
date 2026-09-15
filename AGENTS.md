@@ -65,15 +65,18 @@ lookup and optional semantic modes. See `docs/guide/api-reference.md`.
 
 ## 3. SOP: design event sheet logic
 
-Use this when the user asks how to build an interaction, not only which ACE
-exists. Read `prompts/event-sheet-thinking.md` and follow its "Before
+Use this when the user asks how to build an interaction, where to keep data
+(levels, tables, saves), or how to time or animate something, not only which
+ACE exists. Read `prompts/event-sheet-thinking.md` and follow its "Before
 proposing a structure" steps: relations first, an official example with the
 same behaviors (`data/c3-examples/{locale}/*.json`, filter `used-addons`;
-event sheets in `Construct-Example-Projects` cloned alongside), the manual
-page for each mechanism, then the draft through the smell table and
+event sheets in `Construct-Example-Projects` cloned alongside), the "Native
+first" table for every delay, motion, table and shared piece of logic, the
+manual page for each mechanism, then the draft through the smell table and
 `prompts/event-sheet-pitfalls.md`. Only then verify names with section 2.
-A UID link, a `Pick all` inside a trigger, or a global holding the dragged
-instance means redesign, not patch.
+A UID link, a `Pick all` inside a trigger, a global holding the dragged
+instance, or a countdown, tween or lookup table rebuilt from variables means
+redesign, not patch.
 
 ## 4. Use from another project
 
