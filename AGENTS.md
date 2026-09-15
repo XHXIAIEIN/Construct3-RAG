@@ -65,29 +65,15 @@ lookup and optional semantic modes. See `docs/guide/api-reference.md`.
 
 ## 3. SOP: design event sheet logic
 
-Use this when the user asks how to build an interaction, not only which
-ACE exists. Load `prompts/event-sheet-thinking.md` and follow it. The short
-form:
-
-1. Restate the relations: what touches what, what owns what, which instance
-   the trigger hands over.
-2. Find an official example with the same behaviors. Filter
-   `data/c3-examples/{locale}/*.json` on `used-addons`. If
-   `Construct-Example-Projects` is cloned alongside this repository, read
-   `example-projects/{id}/eventSheets/*.json` and copy the event shape.
-3. Read the manual page for each mechanism, from `Construct3-Manual`
-   alongside or online. How events work, families, containers, and `Else`
-   decide most designs.
-4. Draft in Construct terms: trigger, narrowing sub-events, `Else`.
-   Relations are conditions, containers, hierarchy, or families, not UID
-   variables. The trigger's picked instance is used directly.
-5. Run the smell table in the guide. A UID link, a `Pick all` inside a
-   trigger, a global holding the dragged instance, or a flag that mirrors a
-   condition means redesign, not patch. Then check the draft against
-   `prompts/event-sheet-pitfalls.md`: Else is per block, triggers can carry
-   several instances, Copy picked keeps type and family picks apart.
-6. Only then verify every name with section 2. Shared world-object ACEs are
-   in `plugins/_common.json`.
+Use this when the user asks how to build an interaction, not only which ACE
+exists. Read `prompts/event-sheet-thinking.md` and follow its "Before
+proposing a structure" steps: relations first, an official example with the
+same behaviors (`data/c3-examples/{locale}/*.json`, filter `used-addons`;
+event sheets in `Construct-Example-Projects` cloned alongside), the manual
+page for each mechanism, then the draft through the smell table and
+`prompts/event-sheet-pitfalls.md`. Only then verify names with section 2.
+A UID link, a `Pick all` inside a trigger, or a global holding the dragged
+instance means redesign, not patch.
 
 ## 4. Use from another project
 
@@ -97,15 +83,13 @@ folder will not find this repository unless that project says so. Copy
 `AGENTS.md` with the real path filled in. The minimum is:
 
 ```text
-Construct 3 reference data and event sheet rules live in
-<path-to>/Construct3-RAG. Read its AGENTS.md first. Before proposing
-event sheet logic, load prompts/event-sheet-thinking.md,
-prompts/event-sheet-assistant.md and prompts/event-sheet-pitfalls.md from
-that repository and follow them.
+Construct 3 reference data and event sheet rules: <path-to>/Construct3-RAG.
+Read its AGENTS.md first. Before proposing event sheet logic, read
+prompts/event-sheet-thinking.md, prompts/event-sheet-assistant.md and
+prompts/event-sheet-pitfalls.md there and follow them.
 ```
 
-Claude Code can also pull the files in directly with import lines such as
-`@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md` in `CLAUDE.md`.
+The template explains when an `@` import line is worth its cost.
 
 ## 5. SOP: change code or data
 
@@ -158,7 +142,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design rules and the worked case | `prompts/event-sheet-thinking.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Sourced runtime facts and pitfalls | `prompts/event-sheet-pitfalls.md` |
-| Editing project JSON by hand, checks without the editor | `prompts/references/hand-editing-project-files.md` |
+| Loaded on demand from the prompts: the slot case as a transcribed program, hand-editing project JSON | `prompts/references/` |
 | Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/CLAUDE.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

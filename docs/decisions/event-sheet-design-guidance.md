@@ -96,3 +96,29 @@ original task with the new guide loaded. That is the re-evaluation test.
   cases into their own file and keep the rules short.
 - Construct changes the picking model, `Else` semantics, or family picking.
   The manual pages listed in the guide are the source to re-read.
+
+## Update 2026-09-15
+
+Applied the re-evaluation clause "the guide grows past a few screens": the
+prompts were trimmed to what an agent gets wrong without them, following the
+Claude Code guidance on instruction files (keep them short, one question per
+line: would removing it cause a mistake) and the Agent Skills guidance on
+progressive disclosure (core instructions always, reference material named
+with the situation that calls for it).
+
+- `event-sheet-thinking.md`: 2024 to 1092 words. Model facts that overlap the
+  pitfalls file removed, ten rules merged to eight, source URL table replaced
+  by one path-to-URL rule, the transcribed-program half of the worked case
+  moved to `prompts/references/worked-case-slot-grid.md`.
+- `event-sheet-pitfalls.md` added (2026-09-15) and cut from 1406 to 614 words;
+  JSON encodings and editor limits moved to
+  `prompts/references/hand-editing-project-files.md`.
+- `event-sheet-assistant.md`: 529 to 407 words, rule 1 reduced to a pointer,
+  one inline output example; `event-sheet-examples.md` deleted, its remaining
+  content restated the rules.
+- `AGENTS.md` section 3 and `game-project-CLAUDE.md` point at the guide
+  instead of repeating its steps; the template no longer inlines the guide
+  with `@` by default and says what that line costs.
+
+Not done: no agent run compares the trimmed prompts against the previous
+version on the original task. That remains the test named above.
