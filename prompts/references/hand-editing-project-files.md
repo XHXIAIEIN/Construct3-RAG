@@ -19,6 +19,18 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
 - Function call: `{"callFunction": "name", "sid": N, "parameters": ["expr", ...]}`.
   Function block: `functionCopyPicked` (boolean) and `functionParameters`
   entries with `name`, `type`, `initialValue`, `comment`, `sid`.
+- Custom action block: `"eventType": "custom-ace-block"`, `"aceType": "action"`,
+  `"aceName"`, `"objectClass"` (the owning type or family), then the same
+  `function*` keys as a function block; `functionCopyPicked` is *Copy all
+  picked*. Call: `{"customAction": "name", "objectClass": "<row object>", "sid": N}`,
+  with `"parameters": ["expr", ...]` exactly when the block declares
+  parameters, plus `"customActionObjectClass": "<family>"` when the row object
+  is a member type and the block belongs to the family. In every official
+  example the row object owns a block of that name itself; the family key
+  appears only where a member with its own override calls the family block.
+  [152 blocks and 333 calls across the example projects, 2026-09-17; family
+  key: custom-action-overrides; the member-without-override call form is
+  inferred from it and loads in the editor, mergeGame r502, 2026-09-17]
 - Parameters an ACE gained in a later release may be omitted; the editor fills
   defaults on load. Every official example that uses `pick-nearestfurthest`
   (saved r184 to r437) writes only `which`, `x`, `y`; the r495.2 schema also
