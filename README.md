@@ -15,7 +15,6 @@ This repository holds the machine-readable data. The prose, the project sources,
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. Full mode indexes it when cloned alongside. |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | Concepts and how-to text. Full mode indexes it when cloned alongside. |
-| [XHXIAIEIN/Construct3-Manual-PDF](https://github.com/XHXIAIEIN/Construct3-Manual-PDF) | The same manual split into chapter PDFs | Offline reading. |
 
 "Cloned alongside" means a sibling directory of this repository. Paths and options are in [docs/guide/quick-start.md](docs/guide/quick-start.md).
 
