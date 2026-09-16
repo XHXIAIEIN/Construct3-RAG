@@ -12,11 +12,19 @@ from typing import Optional
 
 # ACE ids that convey little meaning on their own (e.g. pure flow control)
 _LOW_INFO_ACE_IDS = frozenset({
-    "else", "end", "stop", "noop", "comment",
+    "else", "end", "stop", "noop",
 })
 
 # Max parameters to include per ACE in embed text
 _MAX_PARAMS = 3
+
+# Function-like event types and their label in the embed text. Custom action
+# blocks are function blocks owned by an object type or family (same function*
+# keys, plus aceName and objectClass), so they are indexed the same way.
+_FUNCTION_LABELS = {"function-block": "function", "custom-ace-block": "custom-action"}
+
+# Event types that become docs.
+_INDEXED_EVENT_TYPES = frozenset({"block", *_FUNCTION_LABELS})
 
 # Heuristic suffix/prefix patterns for inferring plugin-id when objectTypes
 # files are absent (newer project format). Maps lowercase pattern → plugin-id.
@@ -83,25 +91,47 @@ def _resolve_plugin(obj: str, plugin_map: dict[str, str]) -> str:
 
 # ── ACE rendering ──────────────────────────────────────────────────────────────
 
+def _display_name(obj: str, plugin_map: Optional[dict[str, str]]) -> str:
+    """PluginId(InstanceName) when the two differ, else the name itself."""
+    if plugin_map is None:
+        return obj
+    plugin_id = _resolve_plugin(obj, plugin_map)
+    return f"{plugin_id}({obj})" if plugin_id != obj else obj
+
+
+def _render_args(params) -> str:
+    """Positional call arguments: function and custom action calls carry a list."""
+    if not isinstance(params, list) or not params:
+        return ""
+    return "(" + ", ".join(str(p) for p in params[:_MAX_PARAMS]) + ")"
+
+
 def _render_ace(ace: dict, plugin_map: Optional[dict[str, str]] = None) -> str:
     """Render a condition or action as a compact readable string.
 
-    When plugin_map is provided, instance names are resolved to plugin IDs.
-    Format: PluginId(InstanceName).ace_id(params) when name ≠ plugin_id,
-    or PluginId.ace_id(params) when name = plugin_id (singleton).
+    Built-in ACEs: PluginId(InstanceName).ace_id(params), or
+    PluginId.ace_id(params) for singletons. Function calls:
+    function:name(args). Custom action calls: Owner.name(args), with
+    " via Family" when the call names a family block through a member type.
     """
+    if "callFunction" in ace:
+        return f"function:{ace['callFunction']}{_render_args(ace.get('parameters'))}"
+
+    if "customAction" in ace:
+        display = _display_name(ace.get("objectClass", ""), plugin_map)
+        text = f"{display}.{ace['customAction']}{_render_args(ace.get('parameters'))}"
+        family = ace.get("customActionObjectClass")
+        return f"{text} via {family}" if family else text
+
+    if ace.get("type") == "script":
+        return "script"
+
     obj = ace.get("objectClass", "")
     ace_id = ace.get("id", "")
     params = ace.get("parameters", {}) or {}
     if not isinstance(params, dict):
         params = {}
-
-    # Resolve instance name → plugin id
-    if plugin_map is not None:
-        plugin_id = _resolve_plugin(obj, plugin_map)
-        display = f"{plugin_id}({obj})" if plugin_id != obj else obj
-    else:
-        display = obj
+    display = _display_name(obj, plugin_map)
 
     # Keep only non-trivial parameter values
     meaningful = {
@@ -116,7 +146,9 @@ def _render_ace(ace: dict, plugin_map: Optional[dict[str, str]] = None) -> str:
 
 def _render_ace_list(aces: list[dict], plugin_map: Optional[dict[str, str]] = None) -> str:
     return "; ".join(
-        _render_ace(a, plugin_map) for a in aces if a.get("id") not in _LOW_INFO_ACE_IDS
+        _render_ace(a, plugin_map)
+        for a in aces
+        if a.get("type") != "comment" and a.get("id") not in _LOW_INFO_ACE_IDS
     ) or "(none)"
 
 
@@ -131,7 +163,7 @@ def _extract_blocks(
     plugin_map: Optional[dict[str, str]] = None,
     event_path: tuple[int, ...] = (),
 ) -> list[dict]:
-    """Recursively extract block/function-block events as indexable docs.
+    """Recursively extract events in _INDEXED_EVENT_TYPES as indexable docs.
 
     Returns list of {id, text, metadata} dicts. Nested blocks are included
     up to depth 1 (sub-events summary appended to parent text).
@@ -157,15 +189,19 @@ def _extract_blocks(
             pending_comment = ""
             continue
 
-        if etype not in ("block", "function-block"):
+        if etype not in _INDEXED_EVENT_TYPES:
             pending_comment = ""
             continue
 
         conditions = event.get("conditions", [])
         actions = event.get("actions", [])
         children = event.get("children", [])
-        is_func = etype == "function-block"
-        func_name = event.get("functionName", "")
+        is_func = etype in _FUNCTION_LABELS
+        if etype == "custom-ace-block":
+            # Owner-qualified so two objects' actions of the same name stay apart
+            func_name = f"{event.get('objectClass', '')}.{event.get('aceName', '')}"
+        else:
+            func_name = event.get("functionName", "")
 
         # ── Build embed text ──
         title_zh = project_meta.get("title_zh", "")
@@ -174,7 +210,7 @@ def _extract_blocks(
         parts = [f"{header} | sheet:{sheet_name}"]
 
         if is_func and func_name:
-            parts.append(f"function:{func_name}")
+            parts.append(f"{_FUNCTION_LABELS[etype]}:{func_name}")
         if pending_comment:
             parts.append(f"[{pending_comment}]")
 
@@ -185,7 +221,7 @@ def _extract_blocks(
 
         # Summarize direct children (depth 0 only — avoid deep recursion in text)
         if depth == 0 and children:
-            child_blocks = [c for c in children if c.get("eventType") in ("block", "function-block")]
+            child_blocks = [c for c in children if c.get("eventType") in _INDEXED_EVENT_TYPES]
             if child_blocks:
                 child_summaries = []
                 for cb in child_blocks[:4]:  # max 4 sub-events in summary
@@ -221,6 +257,7 @@ def _extract_blocks(
                 "title_en": title_en,
                 "title_zh": title_zh,
                 "sheet_name": sheet_name,
+                "event_type": etype,
                 "is_function": is_func,
                 "function_name": func_name,
                 "condition_objs": condition_objs,
