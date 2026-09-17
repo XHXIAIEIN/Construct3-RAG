@@ -70,7 +70,10 @@ program transcribed into events even when no picking smell shows.
 | Need | Use | Not |
 |------|-----|-----|
 | A delay, a countdown, a cooldown | Timer behavior: *Start timer*, *On timer*, `Duration(tag) - CurrentTime(tag)` | An instance variable decremented by `dt` and compared every tick |
-| A fixed-duration move, scale, fade, colour change | Tween behavior: *Tween (one/two/three properties)*, *On any finished* | `lerp` or `dt` arithmetic in `Every tick` with a "done" flag |
+| A fixed-duration move, scale, fade, colour change: known start, known end, known time | Tween behavior: *Tween (one/two/three properties)*, *On any finished* | A progress variable stepped by `dt`, fed to `lerp` and checked for 1 |
+| A fixed-duration change of something Tween has no property for: an effect parameter, a behavior property, Z height, a full 360° turn | *Tween (value)*, then *Is playing* with *Set …* to `Self.Tween.Value(tag)` (pitfalls, "Tween") | The same progress variable, or a one-property angle tween asked for a full turn |
+| Smooth follow of a target that keeps moving: camera, cursor, aim angle | `lerp(a, b, 1 - f^dt)` (`anglelerp` for angles) in `Every tick`; the target is read fresh each tick and nothing finishes | A Tween restarted every tick; `lerp(a, b, 0.1)` with a constant factor, which is framerate-dependent |
+| A value derived from another live value: colour from health, zoom from speed, a slider position | `lerp(lo, hi, t)` with `t` from `unlerp`, a ratio, `Tween.Value(tag)` or a timeline; no time of its own | A variable holding the mapped value, updated from several events |
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
 | Repeating or periodic movement, flashing, fading out | Sine, Flash, Fade, Rotate | Hand-written oscillation |
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
@@ -81,6 +84,7 @@ program transcribed into events even when no picking smell shows.
 | Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
 
 [manual: behavior-reference/timer.md, behavior-reference/tween.md,
+system-reference/system-expressions.md "lerp", "dt",
 behavior-reference/move.md, behavior-reference/bullet.md,
 plugin-reference/array.md "Load", plugin-reference/ajax.md "Request project
 file", plugin-reference/json.md, plugin-reference/advanced-random.md
@@ -109,7 +113,7 @@ One hit means redesign, not patch.
 | Custom actions named `attach`, `detach`, `sync` that write two variables | Two copies of one fact | One source, usually the engine's |
 | `Pick by unique ID` for the object the trigger already picked | Re-picking what is picked | Delete the condition |
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see pitfalls) |
-| `Every tick` with `lerp`, `dt` or a progress variable driving a fixed-length change | A tween written by hand, with its own "finished" bookkeeping | Tween behavior, *On any finished* |
+| `Every tick` stepping a progress variable by `dt` and feeding it to `lerp` between fixed ends | A tween written by hand, with its own "finished" bookkeeping. `lerp` toward a moving target, or from a value the engine owns, is not this | Tween behavior, *On any finished* |
 | Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
 
 ## Before proposing a structure
