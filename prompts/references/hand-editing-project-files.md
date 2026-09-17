@@ -31,6 +31,15 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   [152 blocks and 333 calls across the example projects, 2026-09-17; family
   key: custom-action-overrides; the member-without-override call form is
   inferred from it and loads in the editor, mergeGame r502, 2026-09-17]
+- A `projectfile` parameter is the bare file name for a file at the root
+  (`"file": "DefaultProfile.json"`, official examples); the editor writes a
+  file inside a subfolder as `"file": {"path": "data/enemy.json"}`. The
+  hand-written bare name `"enemy.json"` loaded and was rewritten to the
+  object form on save. [observed: mergeGame r502, 2026-09-17]
+- A family instance variable can be written through a member type
+  (`"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
+  declared on family `EnemyGroup`); the editor loads it and the runtime
+  applies it. [observed: mergeGame r502, 2026-09-17]
 - Parameters an ACE gained in a later release may be omitted; the editor fills
   defaults on load. Every official example that uses `pick-nearestfurthest`
   (saved r184 to r437) writes only `which`, `x`, `y`; the r495.2 schema also
