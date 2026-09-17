@@ -26,67 +26,48 @@ _FUNCTION_LABELS = {"function-block": "function", "custom-ace-block": "custom-ac
 # Event types that become docs.
 _INDEXED_EVENT_TYPES = frozenset({"block", *_FUNCTION_LABELS})
 
-# Heuristic suffix/prefix patterns for inferring plugin-id when objectTypes
-# files are absent (newer project format). Maps lowercase pattern → plugin-id.
-_NAME_PLUGIN_HINTS: list[tuple[str, str]] = [
-    ("arr",   "Arr"),
-    ("array", "Arr"),
-    ("dict",  "Dictionary"),
-    ("json",  "JSON"),
-    ("ajax",  "AJAX"),
-    ("xhr",   "AJAX"),
-    ("ls",    "LocalStorage"),
-    ("save",  "LocalStorage"),
-    ("storage", "LocalStorage"),
-    ("xml",   "XML"),
-    ("csv",   "CSV"),
-]
+# Directories whose JSON files carry a "plugin-id": object types and families.
+# Both may be nested in editor subfolders, so they are walked recursively.
+_PLUGIN_ID_DIRS = ("objectTypes", "families")
 
 
 # ── Plugin map ──────────────────────────────────────────────────────────────────
 
-def _build_plugin_map(proj_dir: Path) -> dict[str, str]:
-    """Build {instance_name → plugin_id} map from objectTypes/*.json.
-
-    For projects where the JSON files exist (older format), this gives exact
-    mappings. For newer-format projects the directory may be sparse; a
-    heuristic fallback is applied at render time for unmapped names.
-    """
-    name_to_plugin: dict[str, str] = {}
-    ot_dir = proj_dir / "objectTypes"
-    if not ot_dir.exists():
-        return name_to_plugin
-    for f in ot_dir.glob("*.json"):
+def _iter_json_files(directory: Path):
+    """Yield (path, parsed dict) for every readable JSON file under directory."""
+    if not directory.exists():
+        return
+    for f in sorted(directory.rglob("*.json")):
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
-            name = d.get("name") or f.stem
+        except (json.JSONDecodeError, OSError):
+            continue
+        if isinstance(d, dict):
+            yield f, d
+
+
+def _build_plugin_map(proj_dir: Path) -> dict[str, str]:
+    """Build {instance_name → plugin_id} from objectTypes/ and families/.
+
+    Every example project ships these files, so exact lookup is enough. Names
+    without a file (System, Functions) are built-in objects and stay as they
+    are; a name-based guess used to turn e.g. "Animals" into LocalStorage and
+    "Arrow" into Arr, so there is deliberately no fallback.
+    """
+    name_to_plugin: dict[str, str] = {}
+    for sub in _PLUGIN_ID_DIRS:
+        for f, d in _iter_json_files(proj_dir / sub):
             plugin_id = d.get("plugin-id", "")
             if plugin_id:
-                name_to_plugin[name] = plugin_id
-        except (json.JSONDecodeError, OSError):
-            pass
+                name_to_plugin[d.get("name") or f.stem] = plugin_id
     return name_to_plugin
 
 
 def _resolve_plugin(obj: str, plugin_map: dict[str, str]) -> str:
-    """Return plugin_id for an objectClass instance name.
-
-    Priority:
-    1. Exact match in plugin_map (from objectTypes/*.json)
-    2. Heuristic pattern match on the instance name
-    3. Return original name unchanged
-    """
+    """Return the plugin_id for an objectClass name, or the name itself."""
     if not obj:
         return obj
-    # Exact match
-    if obj in plugin_map:
-        return plugin_map[obj]
-    # Heuristic: check if any known pattern appears in the lowercase name
-    obj_lower = obj.lower()
-    for pattern, plugin_id in _NAME_PLUGIN_HINTS:
-        if pattern in obj_lower:
-            return plugin_id
-    return obj
+    return plugin_map.get(obj, obj)
 
 
 # ── ACE rendering ──────────────────────────────────────────────────────────────
@@ -376,17 +357,13 @@ def load_project_extra_metadata(proj_dir: Path) -> dict:
     has_scripts = False
     script_languages: set[str] = set()
 
-    # families
-    for f in (proj_dir / "families").glob("*.json") if (proj_dir / "families").exists() else []:
-        try:
-            d = json.loads(f.read_text(encoding="utf-8"))
-            families.append({
-                "name": d.get("name", f.stem),
-                "plugin_id": d.get("plugin-id", ""),
-                "behaviors": [b.get("behaviorId", "") for b in d.get("behaviorTypes", [])],
-            })
-        except (json.JSONDecodeError, OSError):
-            pass
+    # families (may sit in editor subfolders, like objectTypes)
+    for f, d in _iter_json_files(proj_dir / "families"):
+        families.append({
+            "name": d.get("name", f.stem),
+            "plugin_id": d.get("plugin-id", ""),
+            "behaviors": [b.get("behaviorId", "") for b in d.get("behaviorTypes", [])],
+        })
 
     # timelines
     for f in (proj_dir / "timelines").glob("*.json") if (proj_dir / "timelines").exists() else []:
@@ -468,7 +445,7 @@ def load_event_and_script_docs(
         except (json.JSONDecodeError, OSError):
             continue
 
-        # Build instance-name → plugin-id map from objectTypes/*.json
+        # Build instance-name → plugin-id map from objectTypes/ and families/
         plugin_map = _build_plugin_map(proj_dir)
 
         # Event sheets
