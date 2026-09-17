@@ -34,6 +34,19 @@ first.
 - Sub-events run after the parent's actions, so a change made there (collisions
   re-enabled) is visible to the sub-event's conditions. [manual:
   project-primitives/events/sub-events.md]
+- *Destroy* does not detach a child from its parent. The instance is only
+  released at the end of the top-level event, and until then *Compare child
+  count*, *Has children*, `ChildCount` and *Pick children* still see it.
+  Destroying a child in one sub-event and counting children in the next
+  sub-event of the same trigger counts the destroyed one, so an emptied tube
+  whose Mask was just destroyed reads as "has children". Count the type you
+  mean with *Pick children* plus `PickedCount`, or do the count from a
+  later top-level event. [manual: system-reference/system-actions.md "Unload
+  images" note "destroying objects does not really release them until the
+  end of the next top-level event"; runtime: exported c3runtime.js (Sep
+  2026), `DestroyInstance` marks the instance and defers, `GetChildCount`
+  is `GetChildren().length`; observed: WaterSort CheckWin never showed the
+  win text, 2026-09-17]
 
 ## Triggers and Else
 
