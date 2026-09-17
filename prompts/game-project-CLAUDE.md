@@ -1,38 +1,42 @@
 # CLAUDE.md for a Construct 3 project
 
-Nothing in a Construct project points here: the `llm-context.md` Construct
-writes into every project describes the file format, not this data. Without
-the lines below an agent in the game folder answers from memory, and a
-drag-and-drop interaction comes back as UID links, `Pick all` and globals.
+Nothing in a Construct project points here. The `llm-context.md` Construct
+writes into every project describes the folder layout, not this data, so an
+agent in the game folder answers from memory: a drag-and-drop interaction
+comes back as UID links, `Pick all` and globals.
 
-Copy the block into the project's `CLAUDE.md` (or `AGENTS.md`) and replace
-`<path-to>` with the directory holding this repository and the
-`Construct3-Manual` clone next to it, or with symlinks inside the project that
-point to them.
+Copy the block into the project's `CLAUDE.md` (or `AGENTS.md`) and fill in
+the three paths at the top: this repository and the `Construct3-Manual` and
+`Construct-Example-Projects` clones, or symlinks inside the project that
+point to them. Nothing else in the block needs editing.
 
 ```markdown
 # Construct 3
 
-Construct 3 reference data and event sheet rules: <path-to>/Construct3-RAG.
-Read its AGENTS.md first.
+- Construct3-RAG: <path-to>/Construct3-RAG
+- Construct3-Manual: <path-to>/Construct3-Manual
+- Construct-Example-Projects: <path-to>/Construct-Example-Projects
 
-The official manual as Markdown: <path-to>/Construct3-Manual. `[manual: ...]`
-references in the rule files are paths under its `Construct3-Manual/`
-directory. Read the manual there; construct.net sits behind a bot check and
-fetches from an agent fail.
+Anything that changes what the game does is event sheet work: a new
+mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
+eventSheets/*.json. Do not answer it from memory. Before the first event,
+name or edit, read the file for what you are doing:
 
-Before proposing event sheet logic, read prompts/event-sheet-thinking.md,
-prompts/event-sheet-assistant.md and prompts/event-sheet-pitfalls.md there
-and follow them. Verify every plugin, behavior and ACE name against
-data/c3-schemas/ before writing it down; shared world-object ACEs are in
-plugins/_common.json.
+| Doing | Read first |
+|-------|------------|
+| Anything, at the start of the session | Construct3-RAG/AGENTS.md |
+| Deciding what the events are | Construct3-RAG/prompts/event-sheet-thinking.md, then event-sheet-assistant.md and event-sheet-pitfalls.md next to it |
+| Writing a plugin, behavior, ACE, effect or script name | Construct3-RAG/data/c3-schemas/{locale}/ (ACEs every world object shares: plugins/_common.json); scripting: data/c3-ts-defs/ |
+| Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand | Construct3-RAG/prompts/references/hand-editing-project-files.md, then its checks before handing over |
+| Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path>. construct.net rejects fetches from an agent |
+| Looking for how an official example does it | Construct3-RAG/data/c3-examples/{locale}/*.json filtered on `used-addons`, then Construct-Example-Projects/example-projects/{id}/eventSheets/ |
 
-Write new runtime facts learned in this project back into
-prompts/event-sheet-pitfalls.md, with a source.
+A runtime fact learned in this project goes into
+Construct3-RAG/prompts/event-sheet-pitfalls.md, with a source.
 ```
 
-The block loads nothing at startup; the agent reads the three files when it
-starts event sheet work. If it keeps skipping them, add one line at the end:
+The block loads nothing at startup; the agent reads each file when the work
+calls for it. If it keeps skipping them, add one line at the end:
 `@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
-inlines that file into every session of the project, which costs its full
+inlines that file into every session of the project, at the cost of its full
 length each time; other tools ignore the line.
