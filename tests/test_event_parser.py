@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from src.ingest.event_parser import parse_event_sheet
+from src.ingest.event_parser import load_event_and_script_docs, parse_event_sheet
 
 
 def _block(*, children: list[dict] | None = None) -> dict:
@@ -143,3 +143,48 @@ def test_function_calls_comments_and_scripts_render_readably(tmp_path):
 
     then = docs[0]["text"].split("THEN ", 1)[1]
     assert then == "function:OffsetHand(Self.X, 0); script"
+
+
+def _write_json(path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def test_plugin_ids_come_from_object_types_and_families_not_name_guesses(tmp_path):
+    proj = tmp_path / "zoo"
+    _write_json(proj / "project.c3proj", {"eventSheets": {"items": ["Main"]}})
+    # Object types can sit in editor subfolders; families carry plugin-id too.
+    _write_json(proj / "objectTypes" / "Animals.json", {"name": "Animals", "plugin-id": "Sprite"})
+    _write_json(proj / "objectTypes" / "UI" / "Arrow.json", {"name": "Arrow", "plugin-id": "Sprite"})
+    _write_json(proj / "objectTypes" / "SaveData.json", {"name": "SaveData", "plugin-id": "Dictionary"})
+    _write_json(proj / "families" / "Enemies.json", {"name": "Enemies", "plugin-id": "Sprite"})
+    _write_json(proj / "eventSheets" / "Main.json", {
+        "name": "Main",
+        "events": [{
+            "eventType": "block",
+            "conditions": [
+                {"id": "every-tick", "objectClass": "System"},
+                {"id": "is-overlapping-another-object", "objectClass": "Enemies"},
+            ],
+            "actions": [
+                {"id": "set-animation", "objectClass": "Animals"},
+                {"id": "destroy", "objectClass": "Arrow"},
+                {"id": "set-value", "objectClass": "SaveData"},
+                {"id": "set-function-return-value", "objectClass": "Functions"},
+            ],
+            "children": [],
+        }],
+    })
+
+    (doc,) = load_event_and_script_docs(tmp_path)
+
+    body = doc["text"].split(" | IF ", 1)[1]
+    assert body == (
+        "System.every-tick; Sprite(Enemies).is-overlapping-another-object"
+        " | THEN Sprite(Animals).set-animation; Sprite(Arrow).destroy;"
+        " Dictionary(SaveData).set-value; Functions.set-function-return-value"
+    )
+    assert "LocalStorage" not in doc["text"]
+    assert "Arr(" not in doc["text"]
+    assert sorted(doc["metadata"]["condition_objs"]) == ["Sprite", "System"]
+    assert sorted(doc["metadata"]["action_objs"]) == ["Dictionary", "Functions", "Sprite"]
