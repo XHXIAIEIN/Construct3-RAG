@@ -23,6 +23,13 @@ first.
   children are not picked with their parent, use *Pick children*. [manual:
   project-primitives/objects/containers.md; plugin-reference/common-features/common-conditions.md
   "Hierarchy"]
+- A data object (Dictionary, JSON) in a container gives each instance its own
+  copy, and picking the world member through a family picks that copy too:
+  `EnemyGroup: Is overlapping AttackRange` then `EnemyStats: Subtract from
+  "hp"` hits the right enemy's sheet. Use it instead of a growing list of
+  family instance variables when stats come from a data file. [manual:
+  project-primitives/objects/containers.md "data storage objects";
+  observed: mergeGame, enemyBase + EnemyStats, 2026-09-17]
 - Sub-events run after the parent's actions, so a change made there (collisions
   re-enabled) is visible to the sub-event's conditions. [manual:
   project-primitives/events/sub-events.md]
