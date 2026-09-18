@@ -80,19 +80,21 @@ is a redesign, not a patch. A runtime fact learned from a project goes into
 Nothing in a Construct project points here. An agent working in a game
 folder will not find this repository unless that project says so. The block
 in `prompts/game-project-AGENTS.md` goes into the project's `AGENTS.md` with
-the real path filled in, plus a `CLAUDE.md` of `@AGENTS.md` for Claude
-Code. The block is a table from what the agent is doing to the one file to
-read first; that file says what to read next. It also says what to do when
-the path was left as `<path-to>`, and when an `@` import line is worth its
-cost.
+the real path filled in, plus a `CLAUDE.md` of `@AGENTS.md`, because Claude
+Code loads `CLAUDE.md` and not `AGENTS.md`; a block that only sits in
+`AGENTS.md` is invisible to it. The block is a table from what the agent is
+doing to the one file to read first; that file says what to read next. It
+also says what to do when the path was left as `<path-to>`, and when an `@`
+import line is worth its cost.
 
 The project's instruction file belongs to the user. An agent that knows this
-repository and is about to do event sheet work in a project without the
-block offers it once, in one sentence, and writes it only on a yes: appended
-to the file the tool reads, nothing else in that file touched, `AGENTS.md`
-and the one-line `CLAUDE.md` created only when neither exists. A no ends it
-for the session. Having read the block in one project is not a reason to
-write it into another.
+repository and is about to do event sheet work in a project where its tool
+does not see the block offers what is missing once, in one sentence, and
+writes it only on a yes: the block appended to the file the tool reads, or
+for Claude Code the one `@AGENTS.md` line when the block is already in
+`AGENTS.md`; nothing else in that file touched, files created only when
+absent. A no ends it for the session. Having read the block in one project
+is not a reason to write it into another.
 
 When the agent writes the whole project rather than editing the user's,
 `prompts/project-tools/` has a generator to copy into the project and a
