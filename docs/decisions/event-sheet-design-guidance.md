@@ -76,8 +76,9 @@ Option 2.
 - `AGENTS.md`: section 3 "SOP: design event sheet logic", section 4 "Use from
   another project", `_common.json` in the lookup table, later sections
   renumbered.
-- `prompts/game-project-CLAUDE.md`: the block to copy into a game project's
-  `CLAUDE.md`, with the reason it is needed.
+- `prompts/game-project-AGENTS.md` (named `game-project-CLAUDE.md` until
+  2026-09-18): the block to copy into a game project's `AGENTS.md`, with the
+  reason it is needed.
 - `README.md`, `README_CN.md`, `docs/guide/data-format.md` updated to match.
 
 Verification for this record: every ACE name in the guide's worked case was
@@ -116,7 +117,7 @@ with the situation that calls for it).
 - `event-sheet-assistant.md`: 529 to 407 words, rule 1 reduced to a pointer,
   one inline output example; `event-sheet-examples.md` deleted, its remaining
   content restated the rules.
-- `AGENTS.md` section 3 and `game-project-CLAUDE.md` point at the guide
+- `AGENTS.md` section 3 and `game-project-AGENTS.md` point at the guide
   instead of repeating its steps; the template no longer inlines the guide
   with `@` by default and says what that line costs.
 
