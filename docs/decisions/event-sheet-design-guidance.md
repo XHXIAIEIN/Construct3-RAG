@@ -206,3 +206,32 @@ manual does not define it).
 
 Not done: no agent run on a multi-layout task or a pause task compares the
 guide with and without these sections.
+
+## Update 2026-09-19: the project template routes, it does not repeat
+
+The 2026-09-15 rule (point at the guide instead of repeating its steps) had
+been lost twice. `AGENTS.md` section 3 listed the guide's steps again on
+2026-09-18 to name the new sections, and section 4 kept a prose "minimum"
+block, the shape commit 29a895a had replaced because it did not fire on
+"add a jump". The table in `game-project-AGENTS.md` had the right shape but
+each cell repeated details that live in one place already: `_common.json`
+(section 2), the `--outline` command (`hand-editing-project-files.md`,
+`project-tools/README.md`), the manual path rule (`event-sheet-thinking.md`),
+the pitfalls write-back (`project-tools/README.md`). Two of those had already
+drifted: `_common.json` was added to both tables in one commit, and the
+manual path was `Construct3-Manual/` in the guide and
+`Construct3-Manual/Construct3-Manual/` in the template; the template was
+right.
+
+Changes: every template row names one file, which says what to read next;
+the trigger sentence and the four clone paths stay, since only the project
+knows them. Section 3 is the scope, the pointer, the redesign trigger and
+the write-back rule. Section 4 drops the prose block. The guide's manual
+path note now gives the real nesting and the reason to read the clone
+rather than construct.net. A row for writing an addon (Addon SDK guide in
+the manual clone, samples in `Construct-Addon-SDK`) and a section 2 row for
+the SDK type definitions were missing and are added; `README.md` had listed
+the SDK clone since the start.
+
+Not done: no agent run checks that a one-file pointer per row is read as
+reliably as the inlined detail was.

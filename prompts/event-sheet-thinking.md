@@ -23,9 +23,11 @@ conditions: they pick. [manual: project-primitives/events/how-events-work.md,
 project-primitives/events/sub-events.md,
 plugin-reference/common-features/common-conditions.md]
 
-Manual paths are relative to `Construct3-Manual/` cloned alongside this
-repository; the same path without `.md` after
-`https://www.construct.net/en/make-games/manuals/construct-3/` is the live page.
+Manual paths are relative to the `Construct3-Manual/` directory inside the
+`Construct3-Manual` clone alongside this repository. The same path without
+`.md` after `https://www.construct.net/en/make-games/manuals/construct-3/`
+is the live page, but construct.net rejects fetches from an agent, so read
+the clone.
 
 ## Rules
 
