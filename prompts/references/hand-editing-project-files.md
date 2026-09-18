@@ -66,7 +66,8 @@ behavior name exists, families included; `sid` and `uid` are unique; every ACE
 `id` and parameter key is present in `data/c3-schemas/` (shared world ACEs in
 `plugins/_common.json`); every called function is defined with the right
 parameter count; every object created at runtime has a template instance in
-some layout.
+some layout. `prompts/project-tools/check-project.py` runs these checks on a
+project folder; copy it into the project's `tools/` and run it from there.
 
 On editor.construct.net (observed r495.2, 2026-09-15): a guest session is
 capped at 25 events and a verified free account at 50; families are a paid

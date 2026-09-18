@@ -196,12 +196,14 @@ first.
   system-reference/system-conditions.md "Is between angles"; cheat sheet
   "Coordinate system"]
 
-- A local variable placed as a sub-event is visible to the sibling events
-  after it and their sub-events, not to the parent's own actions. Set it in a
-  sibling block with no conditions, then read it in the blocks that follow; it
-  resets to its initial value every time the scope is entered unless static.
-  [manual: project-primitives/events/variables.md "Local variables", "Static
-  and constant variables"]
+- A local variable placed as a sub-event or in a group is visible to every
+  event at its level, whichever comes first, and to their sub-events; not to
+  the parent's own actions. Set it in a sibling block with no conditions,
+  then read it in the others; it resets to its initial value every time the
+  scope is entered unless static. [manual:
+  project-primitives/events/variables.md "Local variables", "Static and
+  constant variables"; example: galactic-blocks, group Controls sets
+  `StoredY` in its second event and declares it in its fifteenth]
 - *Set mesh point* in *Relative* mode adds to the point's current position,
   not to its default, so a per-tick derivation accumulates. Derive with
   *Absolute* and normalised coordinates (0..1 across the object box, which may

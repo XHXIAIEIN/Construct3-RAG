@@ -1,0 +1,149 @@
+# Generating a Construct project from a script
+
+Two scripts for a project an agent writes end to end: `build-project.py`
+generates the object types, families, layouts, event sheets, images and the
+index in `project.c3proj`; `check-project.py` checks the result against the
+schemas in this repository before the editor opens it. They came out of the
+Water Sort project (r502, September 2026), where the event sheet grew past
+what hand-editing JSON can keep consistent: every rerun of the generator
+produces the whole project from one Python file, and the checker catches the
+mistakes the editor would otherwise report one at a time.
+
+Generate when the agent owns the project and the user reviews it in the
+editor: a prototype, a game built from a design conversation, a rewrite. Edit
+JSON by hand ([../references/hand-editing-project-files.md](../references/hand-editing-project-files.md))
+when the change is small and the project is the user's, made in the editor.
+Do not generate over a project the user edits in parallel: the generator
+overwrites the files it produces.
+
+## Set up
+
+1. In Construct, create the project (**Menu** > **Project** > **New**) and
+   save it as a folder (**Menu** > **Project** > **Save As** > **Save as
+   project folder**). `project.c3proj` now has the `uniqueId`, icons and
+   scripts the generator keeps. The editor's `Layout 1` and `Event sheet 1`
+   are left in place but no longer listed once the generator has run; delete
+   the two files or give the generated ones those names.
+2. Copy `build-project.py` and `check-project.py` into `tools/` in the
+   project.
+3. Put the block from [../game-project-AGENTS.md](../game-project-AGENTS.md)
+   into the project's `CLAUDE.md` or `AGENTS.md`, whichever the agent's tool
+   reads, with the real paths. The checker reads the `Construct3-RAG:` line
+   from either file to find the schemas; `--rag` and `CONSTRUCT3_RAG`
+   override it.
+4. Ignore what the editor and the scripts leave behind:
+
+   ```gitignore
+   *.uistate.json
+   .trash/
+   .tmp/
+   __pycache__/
+   ```
+
+## Build, check, open
+
+Design first, as [../event-sheet-thinking.md](../event-sheet-thinking.md)
+says: relations, an official example with the same behaviors, the Native
+first and Feel tables, the layout of the sheet. Then:
+
+1. Write the design into the generator: the constants at the top, the
+   objects and their variables and behaviors, the layouts, the groups of the
+   event sheet in the order the guide gives (Setup, Input, ..., Restart).
+2. Run the generator, then the checker, until the checker prints `ok`:
+
+   ```bash
+   python tools/build-project.py
+   ```
+
+   ```bash
+   python tools/check-project.py
+   ```
+
+   Warnings do not fail the run; read them anyway, a generated project should
+   have none.
+3. Hand over. The agent cannot open the editor: ask the user to open the
+   folder (**Menu** > **Project** > **Open**, the local project folder
+   option) and to preview, and say what to look at. A load error names the event
+   variable, object or parameter at fault; paste it back and fix the
+   generator, not the JSON.
+4. What the preview shows that the checker cannot (an instance picked twice,
+   a tween and a timer ending a tick apart, a mask that leaves a corner
+   uncovered) is a runtime fact. Fix the generator, and when the fact would
+   trip the next agent, add it to
+   [../event-sheet-pitfalls.md](../event-sheet-pitfalls.md) with its source.
+5. Commit the generator with the files it produced; the diff of the
+   generated JSON is the review of the change.
+
+The project's README explains the objects, the groups, the constants and how
+to regenerate. It is the second copy of the design, for the user, and it says
+that running the generator discards edits made in the editor.
+
+## What the checker sees
+
+For every condition and action: the object or family exists, the behavior is
+on it, the ACE id is in the plugin's, the behavior's or the shared world
+object schema, the parameter keys are the schema's, a combo value is one of
+its items, a comparison is an integer 0 to 5, a boolean is a JSON boolean.
+Expressions are scanned for object, behavior, expression, instance variable,
+function, global, local and parameter names, case-insensitively, as the
+editor reads them. Layout instances must carry every instance variable and
+behavior block of their type and only properties the schema has. Layers,
+layouts, animations, groups, timelines, flowcharts, project files, images and
+called functions and custom actions must exist, with the right parameter
+count. Uids, and the sids of events, variables, object types and instances,
+must be unique; a condition or action that shares a sid is a warning, since
+the editor tolerates what its own paste leaves behind. A missing schema (a
+third-party addon) is a warning, and its ACEs pass unchecked.
+
+It does not see what happens at runtime: which instances a condition picks,
+what order triggers fire in, whether an expression means what the comment
+says. The editor and the preview judge those; the Water Sort observations in
+the pitfalls came from previewing, not from the checker.
+
+Run over the official example projects (saved r184 to r502) with the r495.2
+schemas on 2026-09-18, it passed 493 of 524. The rest fail on ACEs and
+parameters that a later release renamed, on layers and animations the
+examples name but no longer have, and on duplicate sids in r184 projects;
+each is a real finding, not a false one.
+
+## Writing the generator
+
+The stand-in game in `build-project.py` shows the shape. Keep these habits;
+they are what made rerunning safe in Water Sort.
+
+- Constants once, at the top, and a global constant in the sheet for every
+  number an event reads; a tunable value has one place to change. What a
+  behavior owns (a Sine period, a particle rate) is an instance property set
+  in `build_layouts()`, not an event.
+- `random.seed(...)` before the first `sid()`: a rerun then produces the same
+  ids and the diff shows only what changed.
+- One helper per ACE, named for what it does, its parameters in the
+  schema's order, with a docstring only where the schema does not say enough
+  (which pick it leaves, what a tick later looks like). A helper is added
+  when the design needs the ACE; read its entry in
+  `data/c3-schemas/{locale}/` first and copy the parameter keys from there.
+- Behaviors are referred to by the name given on the object, not the
+  behavior id: `beh_def("Sin", "Shake")` and `beh_def("Sin", "Rock")` are
+  two behaviors, and a helper takes `beh="Shake"`.
+- Every runtime-created type has a template instance in a layout that never
+  runs (`Objects` in the stand-in).
+- Family variables and behaviors are declared on the family and set on every
+  member instance; the checker reports the instance that lacks one.
+- A custom action on the object or family for logic that runs on the caller's
+  picked instances; a function only for a return value or for logic that
+  picks its own instances. Inside a family's block, write the family's name.
+- Locals declared as children of a function block are not in scope for the
+  block's own actions; put the actions that read them in a child block.
+- Comments in the sheet (`comment(...)`) say what a group is for and which
+  fact a block relies on; they are what the user reads in the editor.
+
+## Keeping the editor's changes
+
+The generator overwrites what it produces, so a change made in the editor is
+either moved into the generator or lost. Before regenerating over files the
+editor has touched, copy them to `.trash/<date>/<relative path>` (untracked
+projects) or commit (tracked projects). `json.dumps(obj, indent="\t",
+ensure_ascii=False)` written with `newline="\n"` and no trailing newline is
+the editor's own file layout, so what the editor saves over a generated
+project differs only where it changed something (roundtrip checked on
+mergeGame, r502).

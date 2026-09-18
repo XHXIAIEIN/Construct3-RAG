@@ -83,8 +83,9 @@ lookup table rebuilt from variables means redesign, not patch.
 
 Nothing in a Construct project points here. An agent working in a game
 folder will not find this repository unless that project says so. Copy
-`prompts/game-project-CLAUDE.md` into the project's `CLAUDE.md` or
-`AGENTS.md` with the real path filled in. The minimum is:
+`prompts/game-project-AGENTS.md` into the project's `AGENTS.md`, with the
+real path filled in and a `CLAUDE.md` of `@AGENTS.md` for Claude Code. The
+minimum is:
 
 ```text
 Construct 3 reference data and event sheet rules: <path-to>/Construct3-RAG.
@@ -94,6 +95,11 @@ prompts/event-sheet-pitfalls.md there and follow them.
 ```
 
 The template explains when an `@` import line is worth its cost.
+
+When the agent writes the whole project rather than editing the user's,
+`prompts/project-tools/` has a generator to copy into the project and a
+checker that validates the generated files against the schemas; its README
+is the workflow.
 
 ## 5. SOP: change code or data
 
@@ -147,6 +153,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Event sheet design rules and the worked case | `prompts/event-sheet-thinking.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Sourced runtime facts and pitfalls | `prompts/event-sheet-pitfalls.md` |
 | Loaded on demand from the prompts: the slot case as a transcribed program, hand-editing project JSON | `prompts/references/` |
+| Generating a whole project from a script and checking it before the editor opens it | `prompts/project-tools/README.md` |
 | Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/CLAUDE.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

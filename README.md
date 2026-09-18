@@ -61,7 +61,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 Start with [`AGENTS.md`](AGENTS.md): a repository map, the fact lookup procedure, and the event sheet design procedure. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and sourced runtime facts that intuition gets wrong. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent working inside a game project does not find this repository on its own. Copy [`prompts/game-project-CLAUDE.md`](prompts/game-project-CLAUDE.md) into that project's `CLAUDE.md` with the real path; `AGENTS.md` section 4 explains why.
+An agent working inside a game project does not find this repository on its own, and the `llm-context.md` Construct writes there does not point here. If you are the agent creating or first entering a Construct project, check that its `CLAUDE.md` or `AGENTS.md` (whichever your tool reads) carries the block from [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) with the real paths filled in, and add it before the first event sheet edit; `AGENTS.md` section 4 explains why.
 
 ## Search service (optional)
 
@@ -89,8 +89,9 @@ data/                   Committed reference data. Read directly, no install
   c3-examples/          Example project metadata (en-US + zh-CN)
   c3-lang/              Raw CDN language packs (en-US + zh-CN)
   c3-ts-defs/           TypeScript scripting interfaces
-prompts/                LLM system prompts: design guide, writing rules, pitfalls, CLAUDE.md template for game projects
+prompts/                LLM system prompts: design guide, writing rules, pitfalls, AGENTS.md template for game projects
   references/           Loaded on demand: the slot case as a transcribed program, hand-editing project JSON
+  project-tools/        Generate a whole project from a Python script and check it against the schemas
 src/                    Optional search service (see src/CLAUDE.md for packages)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite, gold sets, evaluation runners
