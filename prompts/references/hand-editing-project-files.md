@@ -59,6 +59,18 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   `scene-graphs-folder-root`. [examples: pixel-data-reader r472, drag-on r466;
   observed: new project r502, 2026-09-17]
 
+## Naming an event to the user
+
+The JSON has no event numbers; the editor does. Its margin and its Find
+results (`Event 15 action 2`) count blocks, groups and function blocks per
+sheet in document order, sub-events included; variables, comments and
+includes take no number and are filed under the next numbered event.
+Quote those numbers, never JSON line numbers, and read a screenshot or a
+pasted Find result back the same way. To find the JSON behind a number, run
+`python <Construct3-RAG>/prompts/project-tools/check-project.py --outline
+<sheet>` in the project folder: each row prints with its number and its
+`sid`, which is the string to search the sheet file for.
+
 ## Checks before handing over
 
 Without the editor: JSON parses; every `objectClass`, instance variable and
