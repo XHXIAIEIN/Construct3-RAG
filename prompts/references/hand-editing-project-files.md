@@ -48,6 +48,16 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   across all layouts. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
   reproduces the editor's output byte for byte (roundtrip checked on mergeGame).
+- A behavior declared on a family is used through a member type with the
+  family's behavior name: `"objectClass": "DragonHead", "behaviorType":
+  "Physics"` where only family `Parts` declares Physics. The member's layout
+  instances carry the family behavior's properties block as if it were their
+  own. [example: drag-on, r466]
+- Instance `world` entries write Z elevation as `"z"` with a `"depth"` key
+  from r472 (`"zElevation"` in r466); layers keep `zElevation`. An empty
+  layout saved by r502 has `sampling` and `ambientLight` and no
+  `scene-graphs-folder-root`. [examples: pixel-data-reader r472, drag-on r466;
+  observed: new project r502, 2026-09-17]
 
 ## Checks before handing over
 
