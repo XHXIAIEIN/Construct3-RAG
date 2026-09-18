@@ -47,7 +47,8 @@ questions from memory when the repository can be checked.
 | ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json` |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the matching `.d.ts` |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json`, filter `tags` and `used-addons` |
+| Types for an addon under development | editor side `data/c3-ts-defs/sdk/`, runtime side `data/c3-ts-defs/preview/interfaces/sdk/`; the guide and samples are in the `Construct3-Manual` and `Construct-Addon-SDK` clones (README) |
+| Example projects for a topic | `data/c3-examples/{locale}/*.json`, filter `tags` and `used-addons`; the event sheets are in the `Construct-Example-Projects` clone under `example-projects/{id}/eventSheets/` |
 | How a string is translated, or editor text outside the schemas | `data/c3-lang/{locale}.json` under `text` |
 | Data field meanings | `docs/guide/data-format.md` |
 
@@ -67,34 +68,22 @@ lookup and optional semantic modes. See `docs/guide/api-reference.md`.
 
 Use this when the user asks how to build an interaction, where to keep data
 (levels, tables, saves), or how to time or animate something, not only which
-ACE exists. Read `prompts/event-sheet-thinking.md` and follow its "Before
-proposing a structure" steps: relations first, an official example with the
-same behaviors (`data/c3-examples/{locale}/*.json`, filter `used-addons`;
-event sheets in `Construct-Example-Projects` cloned alongside), the "Native
-first" and "Feel" tables for every delay, motion, table, phase, sequence and
-effect, "Layout of the sheet" for where the events go, the manual page for
-each mechanism, then the draft through the smell table and
-`prompts/event-sheet-pitfalls.md`. Only then verify names with section 2.
-A UID link, a `Pick all` inside a trigger, a global holding the dragged
-instance, a `paused` global every event compares, or a countdown, tween or
-lookup table rebuilt from variables means redesign, not patch.
+ACE exists. Read `prompts/event-sheet-thinking.md` and follow it; it links
+the writing format and the runtime facts it relies on. Only then verify
+names with section 2. A draft that links objects through UIDs, resets
+picking with `Pick all`, or rebuilds a timer, tween or table from variables
+is a redesign, not a patch. A runtime fact learned from a project goes into
+`prompts/event-sheet-pitfalls.md`, with a source.
 
 ## 4. Use from another project
 
 Nothing in a Construct project points here. An agent working in a game
-folder will not find this repository unless that project says so. Copy
-`prompts/game-project-AGENTS.md` into the project's `AGENTS.md`, with the
-real path filled in and a `CLAUDE.md` of `@AGENTS.md` for Claude Code. The
-minimum is:
-
-```text
-Construct 3 reference data and event sheet rules: <path-to>/Construct3-RAG.
-Read its AGENTS.md first. Before proposing event sheet logic, read
-prompts/event-sheet-thinking.md, prompts/event-sheet-assistant.md and
-prompts/event-sheet-pitfalls.md there and follow them.
-```
-
-The template explains when an `@` import line is worth its cost.
+folder will not find this repository unless that project says so. Copy the
+block in `prompts/game-project-AGENTS.md` into the project's `AGENTS.md`
+with the real paths filled in, and give the project a `CLAUDE.md` of
+`@AGENTS.md` for Claude Code. The block is a table from what the agent is
+doing to the one file to read first; that file says what to read next. The
+template explains when an `@` import line is worth its cost.
 
 When the agent writes the whole project rather than editing the user's,
 `prompts/project-tools/` has a generator to copy into the project and a
