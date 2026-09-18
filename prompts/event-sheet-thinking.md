@@ -40,7 +40,11 @@ repository; the same path without `.md` after
    soon as instances move, and every event that writes it is a place to
    forget. Store only what nothing can ask (level, score, where a drag
    started), on the instance that owns it, declared on the family when family
-   events read it.
+   events read it. A decision that then plays out as an animation is one of
+   these: while the units of a pour drain and fill, the engine's state answers
+   for the tube it was, and a check that reads it seals the tube it is about
+   to empty. Record the decision the moment it is made, and let the animation
+   catch up.
 3. **Use the trigger's pick.** Inside `On drop`, `Piece` is the dropped piece.
    Narrow with sub-events; do not copy its UID out and re-pick it.
 4. **Second instance of the same type: a family.** The dropped `Piece` and the

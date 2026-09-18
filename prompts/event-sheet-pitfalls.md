@@ -34,6 +34,22 @@ first.
 - Sub-events run after the parent's actions, so a change made there (collisions
   re-enabled) is visible to the sub-event's conditions. [manual:
   project-primitives/events/sub-events.md]
+
+- Hierarchy children may live on a different layer than their parent; the
+  connection is per instance, not per layer. A child on a lower layer stays
+  a child, so a lifted parent can be drawn above everything while its parts
+  stay under an outline. [releases: beta.json, "hierarchy information not
+  duplicated properly if connections were setup between instances in
+  different layers"; observed: WaterSort, Liquid on layer Liquid under Tube on
+  layer Tubes, 2026-09-17, unverified at runtime]
+- *ChildCount*, *Compare child count* and *Has children* count every attached
+  child whatever its type. A second child type on the same parent (a Stream
+  added to the pouring Tube) shifts every count that meant one type. Get the
+  top index from *Pick children* plus *Pick highest* on that type, or count in
+  a *For each* over the picked children. [manual:
+  plugin-reference/common-features/common-expressions.md "ChildCount",
+  common-conditions.md "Compare child count"; observed: WaterSort, the top
+  unit lost its flat edge while pouring, 2026-09-17]
 - *Destroy* does not detach a child from its parent. The instance is only
   released at the end of the top-level event, and until then *Compare child
   count*, *Has children*, `ChildCount` and *Pick children* still see it.
@@ -64,6 +80,12 @@ first.
 
 ## Functions
 
+- Function local variables declared as children of the function block are
+  in scope for its sub-events, but NOT for the function block's own
+  top-level actions: a `Set value` on the local there makes the editor
+  reject the whole project at load with "cannot find event variable".
+  Compute the locals in a child block placed after the declarations
+  instead. [observed: waterGames, r502 editor, 2026-09-17]
 - Without *Copy picked* a function runs with every object reset to all picked:
   "modify this sprite" modifies every instance. [manual:
   interface/dialogs/function.md "Copy picked"]
@@ -95,6 +117,16 @@ first.
   countdown gated by an overlap condition has no transitions but needs
   *compare + For each* to dispatch. Both are valid. [observed: mergeGame,
   2026-09-15]
+- Timers and tweens each round their end to the first tick at or past it,
+  counted from their own start. A tween started by *On timer* at `D` and a
+  timer set for `D + T` where `T` is the tween's length do not end together:
+  they overlap by a tick or leave a tick's gap, and *Destroy on complete* leaves
+  the instance in place for the rest of that tick. Logic that assumes the
+  schedule (a sum of heights that is "always at least one unit", a count of
+  children) jumps for that tick; derive state from *Is playing* and from the
+  instance whose tween it is. [observed: WaterSort, the tube snapping to its
+  end tilt for one frame when the last unit's drain began before the unit
+  above it was destroyed, 2026-09-18]
 
 ## Expressions
 
@@ -127,6 +159,29 @@ first.
   system-reference/system-conditions.md "Is between angles"; cheat sheet
   "Coordinate system"]
 
+- A local variable placed as a sub-event is visible to the sibling events
+  after it and their sub-events, not to the parent's own actions. Set it in a
+  sibling block with no conditions, then read it in the blocks that follow; it
+  resets to its initial value every time the scope is entered unless static.
+  [manual: project-primitives/events/variables.md "Local variables", "Static
+  and constant variables"]
+- *Set mesh point* in *Relative* mode adds to the point's current position,
+  not to its default, so a per-tick derivation accumulates. Derive with
+  *Absolute* and normalised coordinates (0..1 across the object box, which may
+  be exceeded); texture -1 leaves the texture position alone. [manual:
+  plugin-reference/common-features/common-actions.md "Set mesh point"]
+
+## Rendering
+
+- A blend mode such as *Destination in* only touches the pixels under the
+  object's own quad: a mask sprite the size of the shape it reveals leaves
+  everything outside its bounding box untouched, and the layer needs *Force
+  own texture* or the blend hits the whole screen. Size the mask to cover
+  everything it must erase, or keep the content inside its box. [manual:
+  project-primitives/layers.md "Force own texture"; example:
+  mask-effect-puzzle (layer HiddenWorld); observed: WaterSort, sheared liquid
+  past the tube bottom stayed visible next to a cavity-sized mask, 2026-09-17]
+
 ## Tween
 
 - A value tween drives what Tween cannot address: *Tween (value)* with start,
@@ -152,6 +207,30 @@ first.
   the named template. Keep one template instance per runtime-created object in
   a layout that never runs. [same; creation with zero instances anywhere is
   unverified]
+- A Particles object given a Sprite as its *Object* spawns real instances:
+  *On created* fires for each, and they are not children of the emitter (the
+  example parents them by hand). Per-particle state such as a colour frame
+  comes from *On created* plus *Pick nearest* emitter, read from the emitter's
+  instance variable. [example: child-particles; observed: WaterSort Splash
+  and Drop, 2026-09-17, unverified at runtime]
+
+## Storage and preview
+
+- *Preview* (F5, the toolbar button) starts from the layout open in the
+  editor, not from the project's first layout; only *Preview project* uses
+  that. A loader layout that reads Local Storage and then goes to the game
+  layout is skipped whenever the game layout is previewed, and the save
+  appears not to work. Read the save in the sheet of the layout that needs
+  it, gated by a global such as `loaded`, and build from the trigger.
+  [manual: overview/testing-projects.md "Preview project"; observed:
+  WaterSort, 2026-09-18]
+- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
+  project's `uniqueId`, so it survives closing the preview and is separate
+  per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
+  or the saved data is orphaned. [runtime: exported c3runtime.js
+  `_GetProjectStorage`, Sep 2026; manual:
+  scripting/scripting-reference/interfaces/istorage.md "unique to the
+  specific project"]
 
 ## Adding an entry
 
