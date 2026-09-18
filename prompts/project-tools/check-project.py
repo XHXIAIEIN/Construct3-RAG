@@ -77,9 +77,6 @@ else:
     ROOT = Path(__file__).resolve().parent.parent
 RAG = find_rag(ROOT, args.rag)
 SCHEMAS = RAG / "data" / "c3-schemas" / args.locale
-# The _common schema carries no parameter types or combo items; the language
-# pack has the items, so combos of shared ACEs are checked from there.
-LANG = load(RAG / "data" / "c3-lang" / f"{args.locale}.json")["text"]
 
 project = load(ROOT / "project.c3proj")
 FUNCTIONS_OBJECT = project.get("functionsName", "Functions")
@@ -135,11 +132,6 @@ SYSTEM_EXPRESSIONS = {LOWER(e["translated-name"]) for e in SYSTEM["expressions"]
 COMMON_EXPRESSIONS = {LOWER(e["translated-name"]) for e in COMMON["expressions"]}
 
 
-def lang_items(kind: str, addon_id: str, ace_kind: str, ace_id: str, key: str) -> dict | None:
-    entry = LANG.get(kind, {}).get(addon_id.lower(), {}).get(ace_kind, {}).get(ace_id, {})
-    return (entry.get("params", {}).get(key) or {}).get("items")
-
-
 # --- object types and families -----------------------------------------------
 types = load_listed("objectTypes")
 families = load_listed("families")
@@ -154,15 +146,20 @@ def families_of(obj: str) -> list[str]:
     return [f for f, d in families.items() if obj in d.get("members", [])]
 
 
-def ivars_of(obj: str) -> set[str]:
-    names = set()
+def ivar_types_of(obj: str) -> dict[str, str]:
+    """instance variable name -> type, family variables included for member types."""
+    ivars = {}
     if obj in types:
-        names |= {v["name"] for v in types[obj].get("instanceVariables", [])}
+        ivars.update({v["name"]: v["type"] for v in types[obj].get("instanceVariables", [])})
         for f in families_of(obj):
-            names |= {v["name"] for v in families[f].get("instanceVariables", [])}
+            ivars.update({v["name"]: v["type"] for v in families[f].get("instanceVariables", [])})
     if obj in families:
-        names |= {v["name"] for v in families[obj].get("instanceVariables", [])}
-    return names
+        ivars.update({v["name"]: v["type"] for v in families[obj].get("instanceVariables", [])})
+    return ivars
+
+
+def ivars_of(obj: str) -> set[str]:
+    return set(ivar_types_of(obj))
 
 
 def behaviors_of(obj: str) -> dict[str, str]:
@@ -441,25 +438,7 @@ def check_expr(where: str, expr, scope: dict) -> None:
         err(f"{where}: identifier {name!r} is not a variable, parameter or system expression")
 
 
-def check_param(where: str, key: str, value, ptype: str | None, items: dict | None, obj: str, scope: dict) -> None:
-    """ptype is the schema type, or None for a shared (_common) ACE whose schema has no types."""
-    if ptype is None:
-        if key == "comparison":
-            ptype = "cmp"
-        elif isinstance(value, bool):
-            return
-        elif items:
-            ptype = "combo"
-        elif key == "instance-variable":
-            ptype = "objinstancevar"
-        elif key in ("object", "child", "parent"):
-            ptype = "object"
-        elif key == "layer":
-            ptype = "layer"
-        elif key == "effect":
-            return
-        else:
-            ptype = "any"
+def check_param(where: str, key: str, value, ptype: str, items: dict | None, obj: str, scope: dict) -> None:
     if ptype == "cmp":
         if value not in (0, 1, 2, 3, 4, 5):
             err(f"{where}: comparison {value!r} is not an integer 0-5 (=, ≠, <, ≤, >, ≥)")
@@ -469,11 +448,18 @@ def check_param(where: str, key: str, value, ptype: str | None, items: dict | No
     elif ptype in ("combo", "combo-grouped"):
         if items and value not in items:
             err(f"{where}: {key}={value!r} is not one of {list(items)}")
-    elif ptype in ("ease", "keyb", "audiofile", "tilemapbrush", "function", "model3d", "template"):
+    elif ptype in ("ease", "keyb", "audiofile", "tilemapbrush", "function", "model3d", "template", "objecteffect"):
         return
     elif ptype == "object":
         if value not in plugin_of or value == "System":
             err(f"{where}: {key}={value!r} is not an object type or family")
+    elif ptype in ("instancevar", "instancevarbool"):
+        # shared ACEs name one of the object's own variables
+        ivars = ivar_types_of(obj)
+        if value not in ivars:
+            err(f"{where}: {obj} has no instance variable {value!r}")
+        elif ptype == "instancevarbool" and ivars[value] != "boolean":
+            err(f"{where}: instance variable {value!r} is not a boolean")
     elif ptype == "objinstancevar":
         target, ivar = (value.get("objectClass", obj), value.get("name")) if isinstance(value, dict) else (obj, value)
         if ivar not in ivars_of(target):
@@ -527,7 +513,6 @@ def check_ace(kind: str, ace: dict, scope: dict, where: str) -> None:
     if obj not in plugin_of:
         err(f"{where}: unknown object {obj}")
         return
-    common = False
     if "behaviorType" in ace:
         behs = behaviors_of(obj)
         if ace["behaviorType"] not in behs:
@@ -546,7 +531,6 @@ def check_ace(kind: str, ace: dict, scope: dict, where: str) -> None:
         entry = next((it for it in src.get(kind, []) if it["id"] == ace_id), None)
         if entry is None and obj != "System":
             entry = next((it for it in COMMON.get(kind, []) if it["id"] == ace_id), None)
-            common = entry is not None
             addon_id = "_common"
     if entry is None:
         err(f"{where}: {plugin_of[obj] if addon_id == '_common' else addon_id} has no {kind[:-1]} {ace_id}"
@@ -562,9 +546,7 @@ def check_ace(kind: str, ace: dict, scope: dict, where: str) -> None:
     for k, v in params.items():
         if k not in schema_params:
             continue
-        ptype = None if common else schema_params[k].get("type")
-        items = schema_params[k].get("items") or lang_items(addon_kind, addon_id, kind, ace_id, k)
-        check_param(where, k, v, ptype, items, obj, scope)
+        check_param(where, k, v, schema_params[k]["type"], schema_params[k].get("items"), obj, scope)
     if ace_id == "create-object" and obj == "System":
         created.add(params.get("object-to-create"))
     if ace_id == "set-eventvar-value" and scope.get(params.get("variable")) == "boolean":
