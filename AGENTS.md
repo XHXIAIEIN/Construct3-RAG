@@ -78,17 +78,27 @@ is a redesign, not a patch. A runtime fact learned from a project goes into
 ## 4. Use from another project
 
 Nothing in a Construct project points here. An agent working in a game
-folder will not find this repository unless that project says so. Copy the
-block in `prompts/game-project-AGENTS.md` into the project's `AGENTS.md`
-with the real paths filled in, and give the project a `CLAUDE.md` of
-`@AGENTS.md` for Claude Code. The block is a table from what the agent is
-doing to the one file to read first; that file says what to read next. The
-template explains when an `@` import line is worth its cost.
+folder will not find this repository unless that project says so. The block
+in `prompts/game-project-AGENTS.md` goes into the project's `AGENTS.md` with
+the real paths filled in, plus a `CLAUDE.md` of `@AGENTS.md` for Claude
+Code. The block is a table from what the agent is doing to the one file to
+read first; that file says what to read next. The template explains when an
+`@` import line is worth its cost.
+
+The project's instruction file belongs to the user. An agent that knows this
+repository and is about to do event sheet work in a project without the
+block offers it once, in one sentence, and writes it only on a yes: appended
+to the file the tool reads, nothing else in that file touched, `AGENTS.md`
+and the one-line `CLAUDE.md` created only when neither exists. A no ends it
+for the session. Having read the block in one project is not a reason to
+write it into another.
 
 When the agent writes the whole project rather than editing the user's,
 `prompts/project-tools/` has a generator to copy into the project and a
 checker that validates the generated files against the schemas; its README
-is the workflow.
+is the workflow. There the block is part of the output, since the checker
+reads the `Construct3-RAG:` line from it to find the schemas; the handover
+says it was written.
 
 ## 5. SOP: change code or data
 

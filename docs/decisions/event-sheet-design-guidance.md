@@ -233,5 +233,21 @@ the manual clone, samples in `Construct-Addon-SDK`) and a section 2 row for
 the SDK type definitions were missing and are added; `README.md` had listed
 the SDK clone since the start.
 
+Same day, the install rule. `README.md` and section 4 told the agent to
+add the block to any Construct project it entered without one, and the
+block's first row leads back to section 4, so an agent carrying the block
+from one project would write it into the next: a config file that spreads
+itself. The project's instruction file is the user's, and "add a jump" is
+not a request to change it. Section 4 now says: offer once, one sentence,
+write only on a yes, append and touch nothing else, a no holds for the
+session, and a block read in one project is no reason to write it into
+another. The generator flow in `project-tools/` is the exception: the user
+chose a workflow whose checker reads the `Construct3-RAG:` line from that
+file, so the block is part of the output and the handover says so. A no
+has nowhere durable to live (the only file that would remember it is the
+one the user declined to change), so the question can recur in a later
+session; tying it to the first event sheet edit rather than session start
+keeps that rare.
+
 Not done: no agent run checks that a one-file pointer per row is read as
 reliably as the inlined detail was.
