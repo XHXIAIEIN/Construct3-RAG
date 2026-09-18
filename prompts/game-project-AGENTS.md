@@ -5,20 +5,27 @@ writes into every project describes the folder layout, not this data, so an
 agent in the game folder answers from memory: a drag-and-drop interaction
 comes back as UID links, `Pick all` and globals.
 
-Copy the block into the project's `AGENTS.md` and fill in the paths at the
-top: this repository and the `Construct3-Manual`, `Construct-Example-Projects`
-and `Construct-Addon-SDK` clones, or symlinks inside the project that point
-to them. Nothing else in the block needs editing. Claude Code reads
-`CLAUDE.md`, not `AGENTS.md`: give the project a `CLAUDE.md` holding the one
-line `@AGENTS.md`, as this repository does, or put the block in both.
+Copy the block into the project's `AGENTS.md` and fill in the one path at
+the top, or a symlink inside the project that points here. The
+`Construct3-Manual`, `Construct-Example-Projects` and `Construct-Addon-SDK`
+clones are expected beside this repository, where the README places them;
+a clone kept elsewhere gets its own line. Nothing else in the block needs
+editing, and the block says what the agent does if the path was left
+unfilled. Claude Code reads `CLAUDE.md`, not `AGENTS.md`: give the project
+a `CLAUDE.md` holding the one line `@AGENTS.md`, as this repository does,
+or put the block in both.
 
 ```markdown
 # Construct 3
 
 - Construct3-RAG: <path-to>/Construct3-RAG
-- Construct3-Manual: <path-to>/Construct3-Manual
-- Construct-Example-Projects: <path-to>/Construct-Example-Projects
-- Construct-Addon-SDK: <path-to>/Construct-Addon-SDK
+
+Construct3-Manual, Construct-Example-Projects and Construct-Addon-SDK are
+cloned beside it; add a line like the one above for any that is elsewhere.
+If the path still reads `<path-to>`, the block was copied unfilled: use
+`$CONSTRUCT3_RAG` if it is set, otherwise ask the user where the clone is
+and offer to fill the line in. Do not guess a path, and do not go on from
+memory.
 
 Anything that changes what the game does is event sheet work: a new
 mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to

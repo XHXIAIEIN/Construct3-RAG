@@ -80,10 +80,11 @@ is a redesign, not a patch. A runtime fact learned from a project goes into
 Nothing in a Construct project points here. An agent working in a game
 folder will not find this repository unless that project says so. The block
 in `prompts/game-project-AGENTS.md` goes into the project's `AGENTS.md` with
-the real paths filled in, plus a `CLAUDE.md` of `@AGENTS.md` for Claude
+the real path filled in, plus a `CLAUDE.md` of `@AGENTS.md` for Claude
 Code. The block is a table from what the agent is doing to the one file to
-read first; that file says what to read next. The template explains when an
-`@` import line is worth its cost.
+read first; that file says what to read next. It also says what to do when
+the path was left as `<path-to>`, and when an `@` import line is worth its
+cost.
 
 The project's instruction file belongs to the user. An agent that knows this
 repository and is about to do event sheet work in a project without the
