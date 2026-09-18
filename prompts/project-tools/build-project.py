@@ -26,7 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 # Seeded so a rerun produces the same sids and the diff shows only what changed.
-random.seed(20260918)
+random.seed(20170328)
 
 VIEW_W, VIEW_H = 720, 1280
 COIN_SIZE = 96
@@ -76,7 +76,8 @@ def q(s: str) -> str:
     return '"' + s.replace('"', '""') + '"'
 
 
-EQ, NE, LT, LE, GT, GE = 0, 1, 2, 3, 4, 5   # the comparison parameter is an index into =, ≠, <, ≤, >, ≥
+# the comparison parameter is an index into =, ≠, <, ≤, >, ≥
+EQ, NE, LT, LE, GT, GE = 0, 1, 2, 3, 4, 5
 
 
 # --- images ----------------------------------------------------------------------
@@ -406,7 +407,8 @@ def build_event_sheet() -> dict:
         comment("Coins. Tap a coin to collect it; when the last one is gone the layout restarts.\n"
                 "The touched coin is the trigger's pick: Collect runs on it and nothing else."),
         var("score", "number", 0, "Points collected this round."),
-        var("COIN_COUNT", "number", COIN_COUNT, "Coins dealt at the start.", const=True),
+        var("COIN_COUNT", "number", COIN_COUNT,
+            "Coins dealt at the start.", const=True),
 
         group("Setup", [
             block([on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
@@ -423,7 +425,8 @@ def build_event_sheet() -> dict:
         ]),
 
         custom_action("Coin", "Collect", [
-            tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True),
+            tween2("Coin", "collect", "size", "0", "0",
+                   "0.25", "easeinback", destroy=True),
             call("AddScore", "Coin.value"),
         ], description="Shrink away and score."),
 
@@ -433,7 +436,8 @@ def build_event_sheet() -> dict:
         ], params=[param("points", "number", 0)]),
 
         group("Restart", [
-            block([cmp2("Coin.Count", EQ, "0"), trigger_once()], [wait("1"), restart_layout()]),
+            block([cmp2("Coin.Count", EQ, "0"), trigger_once()],
+                  [wait("1"), restart_layout()]),
         ]),
     ]
     return {"name": "Game", "events": events, "sid": sid()}
@@ -493,7 +497,8 @@ def family(name: str, plugin_id: str, members: list, ivars: list = (), behaviors
 def build_object_types() -> tuple[dict, dict]:
     types = {
         "Coin": sprite_type("Coin", [animation("Default", [frame(COIN_SIZE, COIN_SIZE)])],
-                            ivars=[ivar_def("value", "number", "Points it is worth.")],
+                            ivars=[ivar_def("value", "number",
+                                            "Points it is worth.")],
                             behaviors=[beh_def("Tween")]),
         "ScoreText": text_type("ScoreText"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
@@ -563,7 +568,8 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    game["layers"][2]["instances"].append(text_inst("ScoreText", "Score: 0", 24, 24, 400, 48, size=32, bold=True))
+    game["layers"][2]["instances"].append(
+        text_inst("ScoreText", "Score: 0", 24, 24, 400, 48, size=32, bold=True))
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
     objects["layers"][0]["instances"].append(
@@ -577,10 +583,14 @@ def build_project(existing: dict, types: dict, families: dict, layouts: dict, sh
     p = dict(existing)
     p["name"] = "Coins"
     p["usedAddons"] = [
-        {"type": "plugin", "id": "Sprite", "name": "Sprite", "author": "Scirra", "bundled": False},
-        {"type": "plugin", "id": "Text", "name": "Text", "author": "Scirra", "bundled": False},
-        {"type": "plugin", "id": "Touch", "name": "Touch", "author": "Scirra", "bundled": False},
-        {"type": "behavior", "id": "Tween", "name": "Tween", "author": "Scirra", "bundled": False},
+        {"type": "plugin", "id": "Sprite", "name": "Sprite",
+            "author": "Scirra", "bundled": False},
+        {"type": "plugin", "id": "Text", "name": "Text",
+            "author": "Scirra", "bundled": False},
+        {"type": "plugin", "id": "Touch", "name": "Touch",
+            "author": "Scirra", "bundled": False},
+        {"type": "behavior", "id": "Tween", "name": "Tween",
+            "author": "Scirra", "bundled": False},
     ]
     p["objectTypes"] = {"items": list(types), "subfolders": []}
     p["families"] = {"items": list(families), "subfolders": []}
@@ -596,7 +606,8 @@ def build_project(existing: dict, types: dict, families: dict, layouts: dict, sh
 def build_all() -> None:
     c3proj = ROOT / "project.c3proj"
     if not c3proj.exists():
-        sys.exit(f"{c3proj} not found: create the project in the editor and save it as a folder first")
+        sys.exit(
+            f"{c3proj} not found: create the project in the editor and save it as a folder first")
     build_images()
     types, families = build_object_types()
     for name, t in types.items():
@@ -610,7 +621,8 @@ def build_all() -> None:
     write_json(f"eventSheets/{sheet['name']}.json", sheet)
     with c3proj.open(encoding="utf-8") as f:
         existing = json.load(f)
-    write_json("project.c3proj", build_project(existing, types, families, layouts, [sheet["name"]]))
+    write_json("project.c3proj", build_project(
+        existing, types, families, layouts, [sheet["name"]]))
 
 
 if __name__ == "__main__":
