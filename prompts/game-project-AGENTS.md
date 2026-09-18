@@ -30,6 +30,7 @@ name or edit, read the file for what you are doing:
 | Deciding what the events are | Construct3-RAG/prompts/event-sheet-thinking.md, then event-sheet-assistant.md and event-sheet-pitfalls.md next to it |
 | Writing a plugin, behavior, ACE, effect or script name | Construct3-RAG/data/c3-schemas/{locale}/ (ACEs every world object shares: plugins/_common.json); scripting: data/c3-ts-defs/ |
 | Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand | Construct3-RAG/prompts/references/hand-editing-project-files.md, then its checks before handing over |
+| Naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | The editor's numbers, never JSON lines: `python Construct3-RAG/prompts/project-tools/check-project.py --outline <sheet>` in the project folder maps each number to its sid |
 | Generating the whole project from a script, or checking generated files | Construct3-RAG/prompts/project-tools/README.md; its build-project.py and check-project.py go in tools/ |
 | Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path>. construct.net rejects fetches from an agent |
 | Looking for how an official example does it | Construct3-RAG/data/c3-examples/{locale}/*.json filtered on `used-addons`, then Construct-Example-Projects/example-projects/{id}/eventSheets/ |

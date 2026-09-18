@@ -95,6 +95,19 @@ must be unique; a condition or action that shares a sid is a warning, since
 the editor tolerates what its own paste leaves behind. A missing schema (a
 third-party addon) is a warning, and its ACEs pass unchecked.
 
+A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
+event number is the editor's: the one in the margin of the event sheet and
+in the **Where** column of Find results. Blocks, groups and function blocks
+are counted per sheet in document order, sub-events included. A variable,
+comment or include has no number of its own: the margin leaves it blank and
+Find files it under the next numbered event, so the nine locals above event
+15 of the Water Sort sheet are `Event 15` too. Conditions and actions count
+from 1. Talk to the user in these numbers, not in JSON line numbers, and read
+a screenshot or a Find result back the same way. `check-project.py --outline
+Game` prints the numbering of a sheet with each event's sid, which is what to
+search the JSON for, unnumbered rows in parentheses; `--outline` alone prints
+every sheet.
+
 It does not see what happens at runtime: which instances a condition picks,
 what order triggers fire in, whether an expression means what the comment
 says. The editor and the preview judge those; the Water Sort observations in

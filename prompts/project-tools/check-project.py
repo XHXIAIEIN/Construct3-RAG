@@ -15,6 +15,17 @@ every object created at runtime needs a template instance in some layout.
 It cannot run the events: picking, timing and the meaning of an expression
 are the editor's and the preview's to judge.
 
+Findings in event sheets are placed as `sheet Game event 15 action 2`: the
+event number is the one the editor prints in the margin and in Find results,
+so it can be quoted to the user and read back from a screenshot. A row's
+number is the count of blocks, groups, function blocks and custom action
+blocks before it in the sheet, sub-events included, plus one. Those rows take
+the number for themselves; a variable, comment or include takes no number of
+its own and belongs to the next one, which is how the editor's Find lists it
+(`Event 15: Local number srcColor`). Conditions and actions count from 1.
+`--outline` prints that numbering for one sheet or all of them, with the sid
+of each event, for finding the JSON behind a number.
+
 Construct3-RAG is found from --rag, the CONSTRUCT3_RAG environment variable,
 or a `Construct3-RAG: <path>` line in the project's CLAUDE.md or AGENTS.md.
 
@@ -67,6 +78,8 @@ ap.add_argument("root", nargs="?", default=None,
                 help="project folder (default: the current directory, else the parent of this script's folder)")
 ap.add_argument("--rag", help="path to the Construct3-RAG checkout")
 ap.add_argument("--locale", default="en-US", help="schema locale to read; ids are the same in every locale")
+ap.add_argument("--outline", nargs="?", const="*", metavar="SHEET",
+                help="print the event numbering of one sheet, or of every sheet, instead of checking")
 args = ap.parse_args()
 
 if args.root:
@@ -554,10 +567,10 @@ def check_ace(kind: str, ace: dict, scope: dict, where: str) -> None:
 
 
 def check_block(ev: dict, scope: dict, where: str) -> None:
-    for i, c in enumerate(ev.get("conditions", [])):
-        check_ace("conditions", c, scope, f"{where} cond#{i}")
-    for i, a in enumerate(ev.get("actions", [])):
-        w = f"{where} act#{i}"
+    for i, c in enumerate(ev.get("conditions", []), 1):
+        check_ace("conditions", c, scope, f"{where} condition {i}")
+    for i, a in enumerate(ev.get("actions", []), 1):
+        w = f"{where} action {i}"
         if a.get("type") in ("comment", "script"):
             continue
         if "callFunction" in a:
@@ -574,25 +587,35 @@ def check_block(ev: dict, scope: dict, where: str) -> None:
         check_ace("actions", a, scope, w)
 
 
-def walk(events: list, scope: dict, where: str) -> None:
+# The editor numbers these in document order, sub-events included, one
+# sequence per sheet. A variable, comment or include takes no number of its
+# own: the margin leaves it blank and Find files it under the next numbered
+# event, so every row's number is the count of numbered rows before it plus one.
+NUMBERED = ("block", "group", "function-block", "custom-ace-block")
+
+
+def walk(events: list, scope: dict, where: str, counter: list[int]) -> None:
     """A local declared in a list of sibling events is visible to every event of
     that list, whatever the order, and to their sub-events; not to the parent's
     own actions. So the list's variables enter the scope first, and a block is
-    checked before its children are walked."""
+    checked before its children are walked. counter holds the sheet's running
+    event number."""
     scope = dict(scope)
     for ev in events:
         if ev.get("eventType") == "variable":
             scope[ev["name"]] = ev["type"]
     for ev in events:
         et = ev.get("eventType")
-        w = f"{where} {ev.get('sid', '?')}"
+        if et in NUMBERED:
+            counter[0] += 1
+        w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
         if et == "variable":
             continue
         elif et in ("comment", "include"):
             if et == "include" and ev["includeSheet"] not in sheets:
                 err(f"{w}: included sheet {ev['includeSheet']} does not exist")
         elif et == "group":
-            walk(ev["children"], scope, w)
+            walk(ev["children"], scope, where, counter)
         elif et in ("function-block", "custom-ace-block"):
             fscope = dict(scope)
             for p in ev["functionParameters"]:
@@ -601,18 +624,52 @@ def walk(events: list, scope: dict, where: str) -> None:
             if et == "custom-ace-block" and ev["objectClass"] not in plugin_of:
                 err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
             check_block(ev, fscope, f"{w} {label}")
-            walk(ev.get("children", []), fscope, w)
+            walk(ev.get("children", []), fscope, where, counter)
         elif et == "block":
             check_block(ev, scope, w)
-            walk(ev.get("children", []), scope, w)
+            walk(ev.get("children", []), scope, where, counter)
         else:
             err(f"{w}: unknown eventType {et!r}")
 
 
+def outline(events: list, counter: list[int], depth: int = 0) -> None:
+    for ev in events:
+        et = ev.get("eventType")
+        if et == "variable":
+            text = f"{ev['type']} {ev['name']} = {ev.get('initialValue', '')!s}"
+        elif et == "comment":
+            text = "// " + ev.get("text", "").split("\n")[0]
+        elif et == "group":
+            text = f"group {ev.get('title', '')}"
+        elif et == "include":
+            text = f"include {ev.get('includeSheet', '')}"
+        elif et in ("function-block", "custom-ace-block"):
+            text = "function " + (ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}")
+        else:
+            conds = ev.get("conditions", [])
+            text = "; ".join(f"{c['objectClass']}:{c['id']}" for c in conds) or "(no condition)"
+        sid = f"  [sid {ev['sid']}]" if "sid" in ev else ""
+        if et in NUMBERED:
+            counter[0] += 1
+            print(f"{counter[0]:>4} {'  ' * depth}{text}{sid}")
+        else:
+            print(f"{f'({counter[0] + 1})':>6} {'  ' * depth}{text}{sid}")
+        outline(ev.get("children", []), counter, depth + 1)
+
+
+if args.outline:
+    wanted = sheets if args.outline == "*" else {args.outline: sheets.get(args.outline)}
+    for sname, sheet in wanted.items():
+        if sheet is None:
+            sys.exit(f"no event sheet named {sname!r}; sheets: {', '.join(sheets)}")
+        print(f"== {sname}")
+        outline(sheet["events"], [0])
+    sys.exit(0)
+
 # A global declared at the top level of any sheet is visible from every sheet.
 globals_ = {ev["name"]: ev["type"] for s in sheets.values() for ev in s["events"] if ev.get("eventType") == "variable"}
 for sname, sheet in sheets.items():
-    walk(sheet["events"], globals_, f"sheet {sname}")
+    walk(sheet["events"], globals_, f"sheet {sname}", [0])
 
 for kind, name, owner, nparams, where in pending_calls:
     if kind == "function":
