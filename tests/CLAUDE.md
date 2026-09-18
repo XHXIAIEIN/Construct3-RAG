@@ -39,6 +39,7 @@ endpoint, collection, model, and frozen gold set used.
 | `test_schema_parser_cdn.py` | CDN schema parsing |
 | `test_examples_parser_cdn.py` | CDN examples parsing |
 | `test_c3_fetcher.py` | CDN fetcher |
+| `test_common_aces.py` | Shared world-object ACE extract: coverage of the language packs, bundle parser, exported `_common.json` |
 | `test_event_parser.py` | Event/script document parsing |
 | `test_examples_parser.py` | Example parsing and metadata |
 | `test_markdown_parser.py` | Manual Markdown parsing |

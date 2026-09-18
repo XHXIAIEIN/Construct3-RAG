@@ -13,6 +13,10 @@ Endpoints:
     plugins/pluginList.json      — plugin ID → path mapping
     behaviors/behaviorList.json  — behavior ID → path mapping
     versions.json                — all release versions
+
+The shared world-object ACEs (``plugins/_common``) are not on any of these
+endpoints; ``export_schemas`` reads them from ``common_aces.json`` next to
+``src/ingest/common_aces.py``, which explains how that file is produced.
 """
 import json
 import logging
@@ -20,6 +24,13 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+from src.ingest.common_aces import (
+    COMMON_ADDON_ID,
+    COMMON_ADDON_NAME,
+    check_common_coverage,
+    load_common_aces,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -165,6 +176,17 @@ class C3Fetcher:
             "zh-CN": self.fetch_lang("zh-CN").get("text", {}),
         }
 
+        # _common is exported through the same loop as every plugin so its
+        # file has the same structural fields. Its definitions come from the
+        # committed extract of the editor bundle; a language pack that names
+        # a shared ACE the extract lacks stops the export rather than
+        # producing untyped parameters.
+        en_common = lang_texts["en-US"].get("plugins", {}).get(COMMON_ADDON_ID, {})
+        if en_common:
+            common_aces = load_common_aces()
+            check_common_coverage(common_aces, en_common)
+            aces_data["plugins"] = {**aces_data["plugins"], COMMON_ADDON_ID: common_aces}
+
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
         # The root index is language neutral. Each locale directory gets its
         # own _index.json with display names, so one locale can be read alone.
@@ -186,6 +208,9 @@ class C3Fetcher:
         for addon_type, plugin_type in type_map.items():
             for plugin_id, categories in aces_data.get(addon_type, {}).items():
                 pid_lower = plugin_id.lower()
+                # zh-CN has no name for _common; keep the value the locale
+                # index has always carried (docs/decisions/schema-index-per-locale-split.md).
+                fallback_name = COMMON_ADDON_NAME if plugin_id == COMMON_ADDON_ID else plugin_id
 
                 # Skip deprecated addons (absent from zh-CN lang)
                 zh_p = lang_texts["zh-CN"].get(addon_type, {}).get(pid_lower, {})
@@ -199,7 +224,7 @@ class C3Fetcher:
 
                     plugin_json = {
                         "id": pid_lower,
-                        "name": lp.get("name", plugin_id),
+                        "name": lp.get("name", fallback_name),
                         "description": lp.get("description", ""),
                         "type": plugin_type,
                         "aceCategories": lp.get("aceCategories", {}),
@@ -277,85 +302,20 @@ class C3Fetcher:
                         "file": f"{addon_type}/{pid_lower}.json",
                     }
 
-                # Index entry (language-neutral)
+                # Index entry (language-neutral). Counts are those of the
+                # written file, not of allAces: deprecated ACEs were skipped
+                # above, identically for every locale.
                 section = "plugins" if plugin_type == "plugin" else "behaviors"
-                c_count = sum(len(at.get("conditions", [])) for at in categories.values())
-                a_count = sum(len(at.get("actions", [])) for at in categories.values())
-                e_count = sum(len(at.get("expressions", [])) for at in categories.values())
-                index_data[section][pid_lower] = {
-                    "originalId": plugin_id,
+                index_entry: dict = {
                     "file": f"{addon_type}/{pid_lower}.json",
-                    "conditions": c_count,
-                    "actions": a_count,
-                    "expressions": e_count,
+                    "conditions": len(plugin_json["conditions"]),
+                    "actions": len(plugin_json["actions"]),
+                    "expressions": len(plugin_json["expressions"]),
                 }
-
-        # ── _common (shared ACEs for World instances) ─────────────────────
-        en_common = lang_texts["en-US"].get("plugins", {}).get("_common", {})
-        zh_common = lang_texts["zh-CN"].get("plugins", {}).get("_common", {})
-        if en_common:
-            for lang in ("en-US", "zh-CN"):
-                lc = lang_texts[lang].get("plugins", {}).get("_common", {})
-                common_json: dict = {
-                    "id": "_common",
-                    "name": lc.get("name", "Common"),
-                    "description": lc.get("description", ""),
-                    "type": "plugin",
-                    "aceCategories": lc.get("aceCategories", {}),
-                    "conditions": [],
-                    "actions": [],
-                    "expressions": [],
-                    "properties": lc.get("properties", {}),
-                }
-                for ace_type_plural in ("conditions", "actions", "expressions"):
-                    en_aces = en_common.get(ace_type_plural, {})
-                    zh_aces = zh_common.get(ace_type_plural, {})
-                    l_aces = lc.get(ace_type_plural, {})
-                    for ace_id in en_aces:
-                        if not zh_aces.get(ace_id):
-                            continue
-                        l_ace = l_aces.get(ace_id, en_aces[ace_id])
-                        # Build params from lang (allAces doesn't include _common)
-                        params = {}
-                        for pid_param, l_param in l_ace.get("params", {}).items():
-                            params[pid_param] = {
-                                "type": "object",
-                                "name": l_param.get("name", pid_param),
-                                "desc": l_param.get("desc", ""),
-                            }
-                        entry: dict = {
-                            "id": ace_id,
-                            "scriptName": ace_id,
-                            "category": "common",
-                        }
-                        if ace_type_plural == "expressions":
-                            entry["translated-name"] = l_ace.get("translated-name", ace_id)
-                        else:
-                            entry["list-name"] = l_ace.get("list-name", ace_id)
-                            entry["display-text"] = l_ace.get("display-text", "")
-                        entry["description"] = l_ace.get("description", "")
-                        if params:
-                            entry["params"] = params
-                        common_json[ace_type_plural].append(entry)
-
-                out_dir = schemas_dir / lang / "plugins"
-                out_dir.mkdir(parents=True, exist_ok=True)
-                (out_dir / "_common.json").write_text(
-                    json.dumps(common_json, ensure_ascii=False, indent=2), encoding="utf-8",
-                )
-                locale_index[lang]["plugins"]["_common"] = {
-                    "name": common_json["name"],
-                    "file": "plugins/_common.json",
-                }
-
-            c_count = len(common_json["conditions"])
-            a_count = len(common_json["actions"])
-            e_count = len(common_json["expressions"])
-            logger.info(f"[CDN] Exported _common: {c_count}C {a_count}A {e_count}E")
-            index_data["plugins"]["_common"] = {
-                "file": "plugins/_common.json",
-                "conditions": c_count, "actions": a_count, "expressions": e_count,
-            }
+                if plugin_id != COMMON_ADDON_ID:
+                    # The CDN spelling of the id; _common has none.
+                    index_entry = {"originalId": plugin_id, **index_entry}
+                index_data[section][pid_lower] = index_entry
 
         # ── Effects ───────────────────────────────────────────────────────
         effects_raw = self.fetch_effects()

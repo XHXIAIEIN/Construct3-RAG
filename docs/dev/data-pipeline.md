@@ -8,6 +8,7 @@
 | Language (en/zh) | `editor.construct.net/{ver}/loader/lang/precompiled-{lang}.json` | JSON | Each C3 release |
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
+| Shared world-object ACEs | `editor.construct.net/main.js`, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
 | Manual docs | Construct3-Manual repository (Markdown) | Markdown | Manual sync |
 | Example projects | Construct-Example-Projects repository | .c3proj | Manual sync |
 
@@ -56,6 +57,17 @@ Each plugin/behavior file uses CDN field names:
 - Expressions: `translated-name`, `description`
 - Params: `{param_id: {type, name, desc}}` (object keyed by param id)
 - Structural fields from allAces: `scriptName`, `isTrigger`, `isAsync`, `returnType`, `category`
+
+`plugins/_common.json` goes through the same merge. Its structural side is
+not on any CDN endpoint: the editor registers the shared ACEs in `main.js`,
+and `scripts/extract_common_aces.py` copies that block into
+`src/ingest/common_aces.json` in the `allAces` shape, with the release it was
+taken from. The export stops when the language pack names a shared ACE or
+parameter the file does not define; rerun the script, review the diff and
+commit it with the data. See `docs/decisions/common-aces-from-editor-bundle.md`.
+
+The ACE counts in `_index.json` are those of the written files, after the
+deprecation filter below.
 
 Consumers that need both languages use `_merge_bilingual()` in
 `src/lookup/schema_index.py` to load `en-US` + `zh-CN` and produce a unified

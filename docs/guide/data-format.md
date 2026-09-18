@@ -97,7 +97,11 @@ Conditions, actions, and expressions that every world object has, such as
 `Pick children`, `Move to top`, `X`, and `UID`, are exported once
 to `plugins/_common.json` and are not repeated in each plugin file. The
 complete ACE list of a Sprite is its own file plus `_common.json`. The
-lookup service merges the two; a direct reader must open both.
+lookup service merges the two; a direct reader must open both. The file has
+the same fields as a plugin file, including parameter `type`, combo `items`
+and the editor `category` (`collisions`, `hierarchy`, `instance-variables`
+...); its structure comes from the editor bundle, see
+`docs/dev/data-pipeline.md`.
 
 ### Worked example
 

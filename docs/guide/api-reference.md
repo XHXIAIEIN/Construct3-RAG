@@ -114,7 +114,7 @@ are omitted from the response.
                 "display": "On collision with {0}"
               }
             },
-            "category": "common",
+            "category": "collisions",
             "params": [{"name": "Object", "type": "object", "desc": "..."}]
           }
         ]
