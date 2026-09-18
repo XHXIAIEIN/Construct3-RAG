@@ -334,8 +334,6 @@ def _canonical_match_source(
     collection = _infer_collection(match, response)
     raw_plugin_id = str(getattr(match, "plugin_id", ""))
     intent = getattr(response, "intent", None)
-    if str(getattr(match, "category", "")).strip().lower() == "common":
-        return "plugins", "_common"
     if (
         collection not in {"plugins", "behaviors"}
         or intent is None

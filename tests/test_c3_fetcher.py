@@ -144,7 +144,10 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
             "plugins": {"sprite": {"name": "Sprite",
                                    "conditions": {"is-visible": {"list-name": "Is visible"}}},
                         "_common": {"name": "Common",
-                                    "actions": {"destroy": {"list-name": "Destroy"}}}},
+                                    "actions": {"destroy": {"list-name": "Destroy"},
+                                                "set-visible": {"list-name": "Set visible",
+                                                                "params": {"visibility": {"name": "Visibility",
+                                                                                          "items": {"invisible": "Invisible", "visible": "Visible", "toggle": "Toggle"}}}}}}},
             "behaviors": {"platform": {"name": "Platform",
                                        "actions": {"set-speed": {"list-name": "Set speed"}}}},
             "effects": {"blur": {"name": "Blur"}},
@@ -153,7 +156,10 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
             "plugins": {"sprite": {"name": "精灵",
                                    "conditions": {"is-visible": {"list-name": "可见"}}},
                         "_common": {"name": "公共",
-                                    "actions": {"destroy": {"list-name": "销毁"}}}},
+                                    "actions": {"destroy": {"list-name": "销毁"},
+                                                "set-visible": {"list-name": "设置可见性",
+                                                                "params": {"visibility": {"name": "可见性",
+                                                                                          "items": {"invisible": "不可见", "visible": "可见", "toggle": "切换"}}}}}}},
             "behaviors": {"platform": {"name": "平台",
                                        "actions": {"set-speed": {"list-name": "设置速度"}}}},
             "effects": {"blur": {"name": "模糊"}},
@@ -178,7 +184,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     }
     assert root["effects"]["blur"] == {"file": "effects/blur.json", "category": "blur"}
     assert root["plugins"]["_common"] == {
-        "file": "plugins/_common.json", "conditions": 0, "actions": 1, "expressions": 0,
+        "file": "plugins/_common.json", "conditions": 0, "actions": 2, "expressions": 0,
     }
 
     en = json.loads((schemas_dir / "en-US" / "_index.json").read_text(encoding="utf-8"))
@@ -192,3 +198,58 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
 
     assert schema_is_complete(schemas_dir)
     assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == ("blur", 0, 2)
+
+
+def _export_with(fetcher, texts):
+    aces = {"plugins": {}, "behaviors": {}}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
+        return fetcher.export_schemas()
+
+
+def _common_texts(en_actions, zh_actions):
+    return {
+        "en-US": {"text": {"plugins": {"_common": {"actions": en_actions}}}},
+        "zh-CN": {"text": {"plugins": {"_common": {"actions": zh_actions}}}},
+    }
+
+
+def test_export_common_merges_bundle_structure_with_language_text(fetcher):
+    """_common gets the same structural fields as a plugin: real type, items
+    labelled per locale, initialValue, scriptName and editor category."""
+    texts = _common_texts(
+        {"set-visible": {"list-name": "Set visible", "display-text": "Set {0}",
+                         "params": {"visibility": {"name": "Visibility", "desc": "Which.",
+                                                   "items": {"invisible": "Invisible", "visible": "Visible", "toggle": "Toggle"}}}}},
+        {"set-visible": {"list-name": "设置可见性", "display-text": "设置 {0}",
+                         "params": {"visibility": {"name": "可见性", "desc": "哪种。",
+                                                   "items": {"invisible": "不可见", "visible": "可见", "toggle": "切换"}}}}},
+    )
+    schemas_dir = _export_with(fetcher, texts)
+
+    en = json.loads((schemas_dir / "en-US" / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    zh = json.loads((schemas_dir / "zh-CN" / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    assert (en["name"], zh["name"]) == ("Common", "Common")  # neither pack names it here
+    assert en["actions"] == [{
+        "id": "set-visible", "scriptName": "SetVisible", "category": "appearance",
+        "list-name": "Set visible", "display-text": "Set {0}", "description": "",
+        "params": {"visibility": {
+            "type": "combo", "name": "Visibility", "desc": "Which.",
+            "items": {"invisible": "Invisible", "visible": "Visible", "toggle": "Toggle"},
+            "initialValue": "visible",
+        }},
+    }]
+    assert zh["actions"][0]["params"]["visibility"]["items"] == {"invisible": "不可见", "visible": "可见", "toggle": "切换"}
+    assert zh["actions"][0]["params"]["visibility"]["type"] == "combo"
+    zh_index = json.loads((schemas_dir / "zh-CN" / "_index.json").read_text(encoding="utf-8"))
+    assert zh_index["plugins"]["_common"] == {"name": "Common", "file": "plugins/_common.json"}
+
+
+def test_export_stops_when_language_pack_names_an_unknown_common_ace(fetcher):
+    """A shared ACE the committed extract lacks must not be exported with guessed types."""
+    texts = _common_texts(
+        {"destroy": {"list-name": "Destroy"}, "levitate": {"list-name": "Levitate"}},
+        {"destroy": {"list-name": "销毁"}, "levitate": {"list-name": "悬浮"}},
+    )
+    with pytest.raises(ValueError, match="actions/levitate"):
+        _export_with(fetcher, texts)
+    assert not (fetcher.cache_dir / "schemas" / ".exported").exists()

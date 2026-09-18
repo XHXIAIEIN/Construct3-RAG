@@ -1,0 +1,1695 @@
+{
+  "_source": {
+    "file": "main.js",
+    "url": "https://editor.construct.net/main.js",
+    "block": "the function that registers plugins._common in the editor bundle",
+    "release": "r495.2",
+    "extracted": "2026-09-18",
+    "script": "scripts/extract_common_aces.py"
+  },
+  "categories": {
+    "angle": {
+      "conditions": [
+        {
+          "id": "is-within-angle",
+          "c2id": -11,
+          "scriptName": "AngleWithin",
+          "params": [
+            {
+              "id": "within",
+              "type": "number",
+              "initialValue": 0.5
+            },
+            {
+              "id": "angle",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "is-clockwise-from",
+          "c2id": -12,
+          "scriptName": "IsClockwiseFrom",
+          "params": [
+            {
+              "id": "angle",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "is-between-angles",
+          "c2id": -13,
+          "scriptName": "IsBetweenAngles",
+          "params": [
+            {
+              "id": "first-angle",
+              "type": "number"
+            },
+            {
+              "id": "second-angle",
+              "type": "number",
+              "initialValue": 45
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "set-angle",
+          "c2id": -8,
+          "scriptName": "SetAngle",
+          "params": [
+            {
+              "id": "angle",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "rotate-clockwise",
+          "c2id": -18,
+          "scriptName": "RotateClockwise",
+          "params": [
+            {
+              "id": "degrees",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "rotate-counter-clockwise",
+          "c2id": -19,
+          "scriptName": "RotateCounterclockwise",
+          "params": [
+            {
+              "id": "degrees",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "rotate-toward-angle",
+          "c2id": -20,
+          "scriptName": "RotateTowardAngle",
+          "params": [
+            {
+              "id": "degrees",
+              "type": "number"
+            },
+            {
+              "id": "angle",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "rotate-toward-position",
+          "c2id": -21,
+          "scriptName": "RotateTowardPosition",
+          "params": [
+            {
+              "id": "degrees",
+              "type": "number"
+            },
+            {
+              "id": "x",
+              "type": "number"
+            },
+            {
+              "id": "y",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-angle-toward-position",
+          "c2id": -22,
+          "scriptName": "SetTowardPosition",
+          "params": [
+            {
+              "id": "x",
+              "type": "number"
+            },
+            {
+              "id": "y",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "angle",
+          "c2id": -5,
+          "expressionName": "Angle",
+          "returnType": "number"
+        }
+      ]
+    },
+    "3d-rotation": {
+      "conditions": [],
+      "actions": [
+        {
+          "id": "set-quaternion",
+          "scriptName": "SetQuaternion",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "x-component",
+              "type": "number"
+            },
+            {
+              "id": "y-component",
+              "type": "number"
+            },
+            {
+              "id": "z-component",
+              "type": "number"
+            },
+            {
+              "id": "w-component",
+              "type": "number",
+              "initialValue": "1"
+            }
+          ]
+        },
+        {
+          "id": "set-rotation-euler",
+          "scriptName": "SetRotationEuler",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "rotation-x",
+              "type": "number"
+            },
+            {
+              "id": "rotation-y",
+              "type": "number"
+            },
+            {
+              "id": "rotation-z",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "quaternion-x",
+          "expressionName": "QuaternionX",
+          "returnType": "number"
+        },
+        {
+          "id": "quaternion-y",
+          "expressionName": "QuaternionY",
+          "returnType": "number"
+        },
+        {
+          "id": "quaternion-z",
+          "expressionName": "QuaternionZ",
+          "returnType": "number"
+        },
+        {
+          "id": "quaternion-w",
+          "expressionName": "QuaternionW",
+          "returnType": "number"
+        },
+        {
+          "id": "rotation-x",
+          "expressionName": "RotationX",
+          "returnType": "number"
+        },
+        {
+          "id": "rotation-y",
+          "expressionName": "RotationY",
+          "returnType": "number"
+        },
+        {
+          "id": "rotation-z",
+          "expressionName": "RotationZ",
+          "returnType": "number"
+        }
+      ]
+    },
+    "appearance": {
+      "conditions": [
+        {
+          "id": "is-visible",
+          "c2id": -9,
+          "scriptName": "IsVisible"
+        },
+        {
+          "id": "compare-opacity",
+          "c2id": -10,
+          "scriptName": "CompareOpacity",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "opacity",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "is-effect-enabled",
+          "scriptName": "IsEffectEnabled",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "effect",
+              "type": "objecteffect"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "set-visible",
+          "c2id": -15,
+          "scriptName": "SetVisible",
+          "params": [
+            {
+              "id": "visibility",
+              "type": "combo",
+              "items": [
+                "invisible",
+                "visible",
+                "toggle"
+              ],
+              "initialValue": "visible"
+            }
+          ]
+        },
+        {
+          "id": "set-opacity",
+          "c2id": -16,
+          "scriptName": "SetOpacity",
+          "params": [
+            {
+              "id": "opacity",
+              "type": "number",
+              "initialValue": 100
+            }
+          ]
+        },
+        {
+          "id": "set-default-color",
+          "scriptName": "SetDefaultColor",
+          "params": [
+            {
+              "id": "color",
+              "type": "number",
+              "initialValue": "rgbEx(0, 0, 0)"
+            }
+          ]
+        },
+        {
+          "id": "set-sampling",
+          "scriptName": "SetSampling",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "sampling",
+              "type": "combo",
+              "items": [
+                "auto",
+                "nearest",
+                "bilinear",
+                "trilinear"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "set-effect-enabled",
+          "c2id": -27,
+          "scriptName": "SetEffectEnabled",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "mode",
+              "type": "combo",
+              "items": [
+                "disable",
+                "enable"
+              ]
+            },
+            {
+              "id": "effect",
+              "type": "objecteffect"
+            }
+          ]
+        },
+        {
+          "id": "set-effect-parameter",
+          "c2id": -28,
+          "scriptName": "SetEffectParam",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "effect",
+              "type": "objecteffect"
+            },
+            {
+              "id": "parameter-index",
+              "type": "number"
+            },
+            {
+              "id": "value",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "color-value",
+          "expressionName": "ColorValue",
+          "returnType": "number"
+        },
+        {
+          "id": "opacity",
+          "c2id": -7,
+          "expressionName": "Opacity",
+          "returnType": "number"
+        }
+      ]
+    },
+    "instance-variables": {
+      "conditions": [
+        {
+          "id": "compare-instance-variable",
+          "c2id": -7,
+          "scriptName": "CompareInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevar"
+            },
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "value",
+              "type": "any"
+            }
+          ]
+        },
+        {
+          "id": "is-boolean-instance-variable-set",
+          "c2id": -8,
+          "scriptName": "IsBoolInstanceVarSet",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevarbool"
+            }
+          ]
+        },
+        {
+          "id": "pick-highestlowest",
+          "c2id": -20,
+          "scriptName": "PickInstVarHiLow",
+          "params": [
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "lowest",
+                "highest"
+              ]
+            },
+            {
+              "id": "instance-variable",
+              "type": "instancevar"
+            },
+            {
+              "id": "pick-all-tied",
+              "type": "boolean"
+            }
+          ],
+          "isStatic": true,
+          "isInvertible": false
+        }
+      ],
+      "actions": [
+        {
+          "id": "set-instvar-value",
+          "c2id": -10,
+          "scriptName": "SetInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevar"
+            },
+            {
+              "id": "value",
+              "type": "any"
+            }
+          ]
+        },
+        {
+          "id": "add-to-instvar",
+          "c2id": -11,
+          "scriptName": "AddInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevar"
+            },
+            {
+              "id": "value",
+              "type": "any",
+              "initialValue": 1
+            }
+          ]
+        },
+        {
+          "id": "subtract-from-instvar",
+          "c2id": -12,
+          "scriptName": "SubInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevar"
+            },
+            {
+              "id": "value",
+              "type": "any",
+              "initialValue": 1
+            }
+          ]
+        },
+        {
+          "id": "set-boolean-instvar",
+          "c2id": -13,
+          "scriptName": "SetBoolInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevarbool"
+            },
+            {
+              "id": "value",
+              "type": "combo",
+              "items": [
+                "false",
+                "true"
+              ],
+              "initialValue": "true"
+            }
+          ]
+        },
+        {
+          "id": "toggle-boolean-instvar",
+          "c2id": -14,
+          "scriptName": "ToggleBoolInstanceVar",
+          "params": [
+            {
+              "id": "instance-variable",
+              "type": "instancevarbool"
+            }
+          ]
+        }
+      ],
+      "expressions": []
+    },
+    "misc": {
+      "conditions": [
+        {
+          "id": "pick-by-unique-id",
+          "c2id": -14,
+          "scriptName": "PickByUID",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "unique-id",
+              "type": "number"
+            }
+          ],
+          "isStatic": true
+        },
+        {
+          "id": "has-tags",
+          "scriptName": "HasTags",
+          "params": [
+            {
+              "id": "tags",
+              "type": "objectinsttags"
+            }
+          ],
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "on-created",
+          "c2id": -18,
+          "scriptName": "OnCreated",
+          "isTrigger": true
+        },
+        {
+          "id": "on-destroyed",
+          "c2id": -19,
+          "scriptName": "OnDestroyed",
+          "isTrigger": true
+        },
+        {
+          "id": "on-instance-signal",
+          "scriptName": "OnInstanceSignal",
+          "isTrigger": true,
+          "canDebug": false,
+          "params": [
+            {
+              "id": "tag",
+              "type": "string",
+              "autocompleteId": "instance-signal"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "destroy",
+          "c2id": -9,
+          "scriptName": "Destroy"
+        },
+        {
+          "id": "change-tags",
+          "params": [
+            {
+              "id": "action",
+              "type": "combo",
+              "items": [
+                "add",
+                "remove",
+                "replace"
+              ]
+            },
+            {
+              "id": "tags",
+              "type": "objectinsttags"
+            }
+          ],
+          "scriptName": "ChangeTags",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "set-from-json",
+          "c2id": -30,
+          "scriptName": "LoadFromJsonString",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "json",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "id": "instance-signal",
+          "scriptName": "InstanceSignal",
+          "params": [
+            {
+              "id": "tag",
+              "type": "string",
+              "autocompleteId": "instance-signal"
+            }
+          ]
+        },
+        {
+          "id": "instance-wait-for-signal",
+          "scriptName": "InstanceWaitForSignal",
+          "isStatic": true,
+          "canBailOut": true,
+          "params": [
+            {
+              "id": "tag",
+              "type": "string",
+              "autocompleteId": "instance-signal"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "count",
+          "c2id": -6,
+          "expressionName": "Count",
+          "returnType": "number"
+        },
+        {
+          "id": "pickedcount",
+          "c2id": -14,
+          "expressionName": "PickedCount",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "uid",
+          "c2id": -9,
+          "expressionName": "UID",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "iid",
+          "c2id": -13,
+          "expressionName": "IID",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "asjson",
+          "c2id": -19,
+          "expressionName": "AsJSON",
+          "hideInSimplifiedMode": true,
+          "returnType": "string"
+        },
+        {
+          "id": "objecttypename",
+          "expressionName": "ObjectTypeName",
+          "hideInSimplifiedMode": true,
+          "returnType": "string"
+        },
+        {
+          "id": "get-tags",
+          "expressionName": "Tags",
+          "returnType": "string",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "get-tags-count",
+          "expressionName": "TagsCount",
+          "returnType": "number",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "get-tag-at",
+          "expressionName": "TagAt",
+          "returnType": "string",
+          "params": [
+            {
+              "id": "index",
+              "type": "number"
+            }
+          ],
+          "hideInSimplifiedMode": true
+        }
+      ]
+    },
+    "size-position": {
+      "conditions": [
+        {
+          "id": "compare-x",
+          "c2id": -1,
+          "scriptName": "CompareX",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "x-co-ordinate",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "compare-y",
+          "c2id": -2,
+          "scriptName": "CompareY",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "y-co-ordinate",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "is-on-screen",
+          "c2id": -3,
+          "scriptName": "IsOnScreen"
+        },
+        {
+          "id": "is-outside-layout",
+          "c2id": -4,
+          "scriptName": "IsOutsideLayout"
+        },
+        {
+          "id": "pick-nearestfurthest",
+          "c2id": -15,
+          "scriptName": "PickDistance",
+          "params": [
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "nearest",
+                "furthest"
+              ]
+            },
+            {
+              "id": "x",
+              "type": "number"
+            },
+            {
+              "id": "y",
+              "type": "number"
+            },
+            {
+              "id": "z",
+              "type": "number"
+            },
+            {
+              "id": "pick-all-tied",
+              "type": "boolean"
+            }
+          ],
+          "isStatic": true,
+          "isInvertible": false
+        },
+        {
+          "id": "compare-z-elevation",
+          "scriptName": "CompareZ",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "z-elevation",
+                "total-z-elevation"
+              ]
+            },
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "z-elevation",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "compare-width",
+          "c2id": -5,
+          "scriptName": "CompareWidth",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "width",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "compare-height",
+          "c2id": -6,
+          "scriptName": "CompareHeight",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "height",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "compare-depth",
+          "scriptName": "CompareDepth",
+          "params": [
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "depth",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "set-x",
+          "c2id": -1,
+          "scriptName": "SetX",
+          "params": [
+            {
+              "id": "x",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-y",
+          "c2id": -2,
+          "scriptName": "SetY",
+          "params": [
+            {
+              "id": "y",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-position",
+          "c2id": -3,
+          "scriptName": "SetPos",
+          "params": [
+            {
+              "id": "x",
+              "type": "number"
+            },
+            {
+              "id": "y",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-position-to-another-object",
+          "c2id": -4,
+          "scriptName": "SetPosToObject",
+          "params": [
+            {
+              "id": "object",
+              "type": "object"
+            },
+            {
+              "id": "image-point-optional",
+              "type": "any"
+            }
+          ]
+        },
+        {
+          "id": "move-forward",
+          "c2id": -17,
+          "scriptName": "MoveForward",
+          "params": [
+            {
+              "id": "distance",
+              "type": "number",
+              "initialValue": 1
+            }
+          ]
+        },
+        {
+          "id": "move-at-angle",
+          "c2id": -23,
+          "scriptName": "MoveAtAngle",
+          "params": [
+            {
+              "id": "angle",
+              "type": "number"
+            },
+            {
+              "id": "distance",
+              "type": "number",
+              "initialValue": 1
+            }
+          ]
+        },
+        {
+          "id": "set-position-3d",
+          "scriptName": "SetPos3D",
+          "params": [
+            {
+              "id": "x",
+              "type": "number"
+            },
+            {
+              "id": "y",
+              "type": "number"
+            },
+            {
+              "id": "z",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-z-elevation",
+          "scriptName": "SetZ",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "z",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-width",
+          "c2id": -5,
+          "scriptName": "SetWidth",
+          "params": [
+            {
+              "id": "width",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-height",
+          "c2id": -6,
+          "scriptName": "SetHeight",
+          "params": [
+            {
+              "id": "height",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-size",
+          "c2id": -7,
+          "scriptName": "SetSize",
+          "params": [
+            {
+              "id": "width",
+              "type": "number"
+            },
+            {
+              "id": "height",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-depth",
+          "scriptName": "SetDepth",
+          "params": [
+            {
+              "id": "depth",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-size-3d",
+          "scriptName": "SetSize3D",
+          "params": [
+            {
+              "id": "width",
+              "type": "number"
+            },
+            {
+              "id": "height",
+              "type": "number"
+            },
+            {
+              "id": "depth",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "x",
+          "c2id": -1,
+          "expressionName": "X",
+          "returnType": "number"
+        },
+        {
+          "id": "y",
+          "c2id": -2,
+          "expressionName": "Y",
+          "returnType": "number"
+        },
+        {
+          "id": "z",
+          "expressionName": "Z",
+          "returnType": "number"
+        },
+        {
+          "id": "total-z",
+          "expressionName": "TotalZ",
+          "returnType": "number"
+        },
+        {
+          "id": "z-elevation",
+          "expressionName": "ZElevation",
+          "isDeprecated": true,
+          "returnType": "number"
+        },
+        {
+          "id": "total-z-elevation",
+          "expressionName": "TotalZElevation",
+          "isDeprecated": true,
+          "returnType": "number"
+        },
+        {
+          "id": "width",
+          "c2id": -3,
+          "expressionName": "Width",
+          "returnType": "number"
+        },
+        {
+          "id": "height",
+          "c2id": -4,
+          "expressionName": "Height",
+          "returnType": "number"
+        },
+        {
+          "id": "bboxleft",
+          "c2id": -15,
+          "expressionName": "BBoxLeft",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxtop",
+          "c2id": -16,
+          "expressionName": "BBoxTop",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxback",
+          "expressionName": "BBoxBack",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxright",
+          "c2id": -17,
+          "expressionName": "BBoxRight",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxbottom",
+          "c2id": -18,
+          "expressionName": "BBoxBottom",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxfront",
+          "expressionName": "BBoxFront",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxmidx",
+          "expressionName": "BBoxMidX",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxmidy",
+          "expressionName": "BBoxMidY",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "bboxmidz",
+          "expressionName": "BBoxMidZ",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "depth",
+          "expressionName": "Depth",
+          "returnType": "number"
+        }
+      ]
+    },
+    "time": {
+      "conditions": [],
+      "actions": [],
+      "expressions": [
+        {
+          "id": "dt",
+          "c2id": -8,
+          "expressionName": "dt",
+          "returnType": "number"
+        }
+      ]
+    },
+    "z-order": {
+      "conditions": [
+        {
+          "id": "is-on-layer",
+          "c2id": -16,
+          "scriptName": "IsOnLayer",
+          "params": [
+            {
+              "id": "layer",
+              "type": "layer"
+            }
+          ]
+        },
+        {
+          "id": "pick-topbottom",
+          "c2id": -17,
+          "scriptName": "PickTopBottom",
+          "params": [
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "top",
+                "bottom"
+              ]
+            }
+          ],
+          "isStatic": true
+        }
+      ],
+      "actions": [
+        {
+          "id": "move-to-top",
+          "c2id": -24,
+          "scriptName": "MoveToTop"
+        },
+        {
+          "id": "move-to-bottom",
+          "c2id": -25,
+          "scriptName": "MoveToBottom"
+        },
+        {
+          "id": "move-to-layer",
+          "c2id": -26,
+          "scriptName": "MoveToLayer",
+          "params": [
+            {
+              "id": "layer",
+              "type": "layer"
+            }
+          ]
+        },
+        {
+          "id": "move-to-object",
+          "c2id": -29,
+          "scriptName": "ZMoveToObject",
+          "params": [
+            {
+              "id": "where",
+              "type": "combo",
+              "items": [
+                "in-front",
+                "behind"
+              ]
+            },
+            {
+              "id": "object",
+              "type": "object"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "layernumber",
+          "c2id": -10,
+          "expressionName": "LayerNumber",
+          "returnType": "number"
+        },
+        {
+          "id": "layername",
+          "c2id": -11,
+          "expressionName": "LayerName",
+          "returnType": "string"
+        },
+        {
+          "id": "zindex",
+          "c2id": -12,
+          "expressionName": "ZIndex",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        }
+      ]
+    },
+    "collisions": {
+      "conditions": [
+        {
+          "id": "on-collision-with-another-object",
+          "c2id": 0,
+          "scriptName": "OnCollision",
+          "params": [
+            {
+              "id": "object",
+              "type": "object"
+            }
+          ],
+          "isFakeTrigger": true,
+          "canDebug": true,
+          "isStatic": true,
+          "highlight": true
+        },
+        {
+          "id": "is-overlapping-another-object",
+          "c2id": 1,
+          "scriptName": "IsOverlapping",
+          "params": [
+            {
+              "id": "object",
+              "type": "object"
+            }
+          ]
+        },
+        {
+          "id": "is-overlapping-at-offset",
+          "c2id": 9,
+          "scriptName": "IsOverlappingOffset",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "object",
+              "type": "object"
+            },
+            {
+              "id": "offset-x",
+              "type": "number"
+            },
+            {
+              "id": "offset-y",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "actions": [],
+      "expressions": []
+    },
+    "hierarchy": {
+      "conditions": [
+        {
+          "id": "on-hierarchy-ready",
+          "scriptName": "OnHierarchyReady",
+          "isTrigger": true
+        },
+        {
+          "id": "has-parent",
+          "scriptName": "HasParent",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "has-children",
+          "scriptName": "HasChildren",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "pick-parent",
+          "scriptName": "PickParent",
+          "isStatic": true,
+          "isInvertible": false,
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "parent",
+              "type": "object",
+              "allowedPluginIds": [
+                "<scene-graph>"
+              ]
+            },
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "own",
+                "all",
+                "top"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pick-children",
+          "scriptName": "PickChildren",
+          "isStatic": true,
+          "isInvertible": false,
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "child",
+              "type": "object",
+              "allowedPluginIds": [
+                "<scene-graph>"
+              ]
+            },
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "own",
+                "all",
+                "bottom"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pick-nth-child",
+          "scriptName": "PickNthChild",
+          "isStatic": true,
+          "isInvertible": false,
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "child",
+              "type": "object",
+              "allowedPluginIds": [
+                "<scene-graph>"
+              ]
+            },
+            {
+              "id": "index-type",
+              "type": "combo",
+              "items": [
+                "all",
+                "filtered"
+              ]
+            },
+            {
+              "id": "instance",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "compare-child-count",
+          "scriptName": "CompareChildCount",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "which",
+              "type": "combo",
+              "items": [
+                "own",
+                "all"
+              ]
+            },
+            {
+              "id": "comparison",
+              "type": "cmp"
+            },
+            {
+              "id": "count",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "add-child",
+          "scriptName": "AddChild",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "child",
+              "type": "object",
+              "allowedPluginIds": [
+                "<scene-graph>"
+              ]
+            },
+            {
+              "id": "transform-x",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-y",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-z-elevation",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-w",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-h",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-d",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-a",
+              "type": "boolean",
+              "initialValue": "true"
+            },
+            {
+              "id": "transform-o",
+              "type": "boolean",
+              "initialValue": "false"
+            },
+            {
+              "id": "transform-visibility",
+              "type": "boolean",
+              "initialValue": "false"
+            },
+            {
+              "id": "destroy-with-parent",
+              "type": "boolean"
+            }
+          ]
+        },
+        {
+          "id": "remove-child",
+          "scriptName": "RemoveChild",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "child",
+              "type": "object",
+              "allowedPluginIds": [
+                "<scene-graph>"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "remove-from-parent",
+          "scriptName": "RemoveFromParent",
+          "hideInSimplifiedMode": true
+        }
+      ],
+      "expressions": [
+        {
+          "id": "parent-uid",
+          "expressionName": "ParentUID",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "child-count",
+          "expressionName": "ChildCount",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "all-child-count",
+          "expressionName": "AllChildCount",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        }
+      ]
+    },
+    "mesh": {
+      "conditions": [],
+      "actions": [
+        {
+          "id": "set-mesh-size",
+          "scriptName": "SetMeshSize",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "cols",
+              "type": "number"
+            },
+            {
+              "id": "rows",
+              "type": "number"
+            },
+            {
+              "id": "copy-from-old-mesh",
+              "type": "boolean"
+            }
+          ]
+        },
+        {
+          "id": "set-mesh-point",
+          "scriptName": "SetMeshPoint",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "col",
+              "type": "number"
+            },
+            {
+              "id": "row",
+              "type": "number"
+            },
+            {
+              "id": "mode",
+              "type": "combo",
+              "items": [
+                "absolute",
+                "relative"
+              ]
+            },
+            {
+              "id": "posx",
+              "type": "number"
+            },
+            {
+              "id": "posy",
+              "type": "number"
+            },
+            {
+              "id": "z-elevation",
+              "type": "number"
+            },
+            {
+              "id": "texx",
+              "type": "number",
+              "initialValue": "-1"
+            },
+            {
+              "id": "texy",
+              "type": "number",
+              "initialValue": "-1"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "mesh-columns",
+          "expressionName": "MeshColumns",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        },
+        {
+          "id": "mesh-rows",
+          "expressionName": "MeshRows",
+          "hideInSimplifiedMode": true,
+          "returnType": "number"
+        }
+      ]
+    },
+    "html-element": {
+      "conditions": [
+        {
+          "id": "is-focused",
+          "scriptName": "IsFocused"
+        },
+        {
+          "id": "is-enabled",
+          "scriptName": "IsEnabled"
+        }
+      ],
+      "actions": [
+        {
+          "id": "set-css-style",
+          "scriptName": "SetCSSStyle",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "property-name",
+              "type": "string",
+              "initialValue": "\"border\""
+            },
+            {
+              "id": "value",
+              "type": "string",
+              "initialValue": "\"1px solid red\""
+            }
+          ]
+        },
+        {
+          "id": "set-elem-attribute",
+          "scriptName": "SetElemAttribute",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "attribute-name",
+              "type": "string"
+            },
+            {
+              "id": "attribute-value",
+              "type": "any",
+              "initialValue": "\"\""
+            }
+          ]
+        },
+        {
+          "id": "remove-elem-attribute",
+          "scriptName": "RemoveElemAttribute",
+          "hideInSimplifiedMode": true,
+          "params": [
+            {
+              "id": "attribute-name",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "id": "set-focused",
+          "scriptName": "SetFocus",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "set-unfocused",
+          "scriptName": "SetBlur",
+          "hideInSimplifiedMode": true
+        },
+        {
+          "id": "set-enabled",
+          "scriptName": "SetEnabled",
+          "params": [
+            {
+              "id": "mode",
+              "type": "combo",
+              "items": [
+                "disabled",
+                "enabled"
+              ]
+            }
+          ]
+        }
+      ],
+      "expressions": []
+    },
+    "template": {
+      "conditions": [],
+      "actions": [],
+      "expressions": [
+        {
+          "id": "template-name",
+          "expressionName": "TemplateName",
+          "returnType": "string"
+        }
+      ]
+    }
+  }
+}

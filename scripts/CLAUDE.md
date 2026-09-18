@@ -8,6 +8,7 @@
 | `setup.py --full` | Full setup (+ Qdrant + embedding + index) | `python scripts/setup.py --full` |
 | `init.py` | Fetch CDN data; export schemas, examples, language packs, and terms | `python scripts/init.py` |
 | `check_c3_version.py` | Check latest C3 version on CDN | `python scripts/check_c3_version.py` |
+| `extract_common_aces.py` | Regenerate `src/ingest/common_aces.json` (shared world-object ACEs) from the editor bundle | `python scripts/extract_common_aces.py` |
 
 `init.py` and `setup.py` read the canonical `en-US`/`zh-CN` schema layout from
 `src/schema_layout.py`; do not duplicate locale directory names in new scripts.

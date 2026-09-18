@@ -110,6 +110,11 @@ Preparation materializes documents without Qdrant mutation. Validation must
 complete before publication, and verification checks the published collection
 counts. `indexer.py` remains the Qdrant adapter and command entry point.
 
+`c3_fetcher.py` exports the schema files. The shared world-object ACEs are
+not on the CDN endpoints it reads; `common_aces.py` loads them from
+`common_aces.json`, an extract of the editor bundle kept next to it, and
+`export_schemas()` merges that entry like any plugin.
+
 ### `observability/`
 
 `trace.py` is the canonical request-local trace implementation shared by the

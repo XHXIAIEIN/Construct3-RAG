@@ -8,8 +8,8 @@
     "advert": {
       "originalId": "advert",
       "file": "plugins/advert.json",
-      "conditions": 36,
-      "actions": 18,
+      "conditions": 29,
+      "actions": 14,
       "expressions": 7
     },
     "ninepatch": {
@@ -23,8 +23,8 @@
       "originalId": "system",
       "file": "plugins/system.json",
       "conditions": 56,
-      "actions": 85,
-      "expressions": 136
+      "actions": 83,
+      "expressions": 133
     },
     "ajax": {
       "originalId": "AJAX",
@@ -43,7 +43,7 @@
     "audio": {
       "originalId": "Audio",
       "file": "plugins/audio.json",
-      "conditions": 7,
+      "conditions": 6,
       "actions": 43,
       "expressions": 14
     },
@@ -51,7 +51,7 @@
       "originalId": "Arr",
       "file": "plugins/arr.json",
       "conditions": 8,
-      "actions": 16,
+      "actions": 15,
       "expressions": 14
     },
     "bbcmicrobit": {
@@ -65,7 +65,7 @@
       "originalId": "BinaryData",
       "file": "plugins/binarydata.json",
       "conditions": 6,
-      "actions": 11,
+      "actions": 9,
       "expressions": 14
     },
     "bluetooth": {
@@ -78,9 +78,9 @@
     "browser": {
       "originalId": "Browser",
       "file": "plugins/browser.json",
-      "conditions": 35,
-      "actions": 32,
-      "expressions": 32
+      "conditions": 24,
+      "actions": 30,
+      "expressions": 16
     },
     "button": {
       "originalId": "Button",
@@ -107,8 +107,8 @@
       "originalId": "ConstructGameServices",
       "file": "plugins/constructgameservices.json",
       "conditions": 24,
-      "actions": 59,
-      "expressions": 180
+      "actions": 58,
+      "expressions": 167
     },
     "cryptography": {
       "originalId": "Cryptography",
@@ -148,9 +148,9 @@
     "facebook": {
       "originalId": "Facebook",
       "file": "plugins/facebook.json",
-      "conditions": 9,
-      "actions": 12,
-      "expressions": 10
+      "conditions": 5,
+      "actions": 8,
+      "expressions": 4
     },
     "filechooser": {
       "originalId": "filechooser",
@@ -169,15 +169,15 @@
     "gamepad": {
       "originalId": "gamepad",
       "file": "plugins/gamepad.json",
-      "conditions": 14,
+      "conditions": 13,
       "actions": 3,
-      "expressions": 13
+      "expressions": 11
     },
     "gamerecorder": {
       "originalId": "GameRecorder",
       "file": "plugins/gamerecorder.json",
-      "conditions": 9,
-      "actions": 8,
+      "conditions": 7,
+      "actions": 5,
       "expressions": 3
     },
     "geolocation": {
@@ -197,7 +197,7 @@
     "googleplay": {
       "originalId": "googleplay",
       "file": "plugins/googleplay.json",
-      "conditions": 20,
+      "conditions": 19,
       "actions": 14,
       "expressions": 28
     },
@@ -212,15 +212,15 @@
       "originalId": "CORDOVAIAP",
       "file": "plugins/cordovaiap.json",
       "conditions": 14,
-      "actions": 5,
-      "expressions": 7
+      "actions": 4,
+      "expressions": 6
     },
     "instantgames": {
       "originalId": "InstantGames",
       "file": "plugins/instantgames.json",
       "conditions": 17,
-      "actions": 17,
-      "expressions": 22
+      "actions": 16,
+      "expressions": 16
     },
     "internationalization": {
       "originalId": "Internationalization",
@@ -268,29 +268,29 @@
       "originalId": "Model3D",
       "file": "plugins/model3d.json",
       "conditions": 20,
-      "actions": 23,
-      "expressions": 22
+      "actions": 21,
+      "expressions": 21
     },
     "mouse": {
       "originalId": "Mouse",
       "file": "plugins/mouse.json",
       "conditions": 12,
-      "actions": 5,
+      "actions": 4,
       "expressions": 9
     },
     "multiplayer": {
       "originalId": "Multiplayer",
       "file": "plugins/multiplayer.json",
-      "conditions": 28,
-      "actions": 26,
-      "expressions": 58
+      "conditions": 26,
+      "actions": 24,
+      "expressions": 53
     },
     "nodewebkit": {
       "originalId": "NodeWebkit",
       "file": "plugins/nodewebkit.json",
       "conditions": 13,
-      "actions": 33,
-      "expressions": 21
+      "actions": 31,
+      "expressions": 20
     },
     "particles": {
       "originalId": "Particles",
@@ -302,7 +302,7 @@
     "platforminfo": {
       "originalId": "PlatformInfo",
       "file": "plugins/platforminfo.json",
-      "conditions": 20,
+      "conditions": 18,
       "actions": 2,
       "expressions": 26
     },
@@ -387,7 +387,7 @@
       "originalId": "Text",
       "file": "plugins/text.json",
       "conditions": 4,
-      "actions": 18,
+      "actions": 17,
       "expressions": 14
     },
     "textbox": {
@@ -407,8 +407,8 @@
     "timeline": {
       "originalId": "Timeline",
       "file": "plugins/timeline.json",
-      "conditions": 19,
-      "actions": 23,
+      "conditions": 11,
+      "actions": 13,
       "expressions": 9
     },
     "tilemap": {
@@ -428,22 +428,22 @@
     "touch": {
       "originalId": "Touch",
       "file": "plugins/touch.json",
-      "conditions": 21,
+      "conditions": 19,
       "actions": 1,
       "expressions": 32
     },
     "usermedia": {
       "originalId": "UserMedia",
       "file": "plugins/usermedia.json",
-      "conditions": 17,
-      "actions": 13,
-      "expressions": 17
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 8
     },
     "video": {
       "originalId": "video",
       "file": "plugins/video.json",
       "conditions": 5,
-      "actions": 9,
+      "actions": 8,
       "expressions": 6
     },
     "c2websocket": {
@@ -599,7 +599,7 @@
       "file": "behaviors/pathfinding.json",
       "conditions": 9,
       "actions": 21,
-      "expressions": 13
+      "expressions": 11
     },
     "physics": {
       "originalId": "Physics",
