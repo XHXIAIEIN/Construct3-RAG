@@ -160,3 +160,48 @@ prompts add value at all on these cases; and repeated runs, so no variance
 figure. Next levers if cost matters: tell the agent to search a schema file
 for the `list-name` instead of reading it whole, and give the example filter
 a script instead of a glob over 549 files.
+
+## Update 2026-09-18: sheet organisation, phases, sequences, feel
+
+The guide covered the shape of one interaction and nothing around it: no
+rule for where events go once a project has a menu and levels, none for a
+phase switch or a pause, none for *Wait*, and nothing on the effects a player
+notices first. One existing row was wrong: "Logic shared by several events"
+listed a global mode variable next to pasted action blocks, with Functions as
+the replacement for both.
+
+Evidence, from the 432 example projects with event sheets
+(`Construct-Example-Projects`, r466 to r502) and the manual clone:
+
+- Groups in 237 projects, toggled at runtime in 50, initially inactive in 19
+  (tutorial, debug tools, a boss's AI). Pause is *Set time scale* 0 in the 9
+  projects that pause, with *Set object time scale* 1 on the UI
+  (airborne-explorer); no project pauses by deactivating a group.
+- *Wait* in 133 projects, *Wait for previous actions to complete* in 72,
+  most often after a Tween in the same block; Timer in 128. The prompts did
+  not mention *Wait*.
+- Several sheets in 48 projects, includes in 14, always the same split: a
+  sheet per screen, levels sharing one, subsystems included (kiwi-story eMain
+  includes nine), globals on one sheet. Group names repeat: camera 84,
+  setup 82, player 68, controls 59, restart 45.
+- Effects: Scroll To *Shake* in 4 projects, time scale 0.1 for a hit stop
+  (segmented-boss-fight), a value tween driving the time scale (samuroof,
+  eventide), Timeline actions in 17, Flash from `On collision` in 5, a
+  parallax-0 UI layer in 151, global layers in 10.
+
+Changes: the shared-logic row split into shared logic, phase, pause,
+sequence-in-one-block and trigger rows plus a HUD-layer row; a "Feel" table
+and a "Layout of the sheet" section; two smell rows (a global compared at the
+top of many events; a sequence finished by another event); a "Wait and time
+scale" section in the pitfalls; `AGENTS.md` section 3 names the new parts.
+`event-sheet-thinking.md` is 2652 words, above the 2024 the 2026-09-15 trim
+started from, so the next trim pass applies to it.
+
+Withdrawn before writing, for lack of a source: an events-versus-scripts
+rule (the manual has none; the 29 examples with scripts are mostly -js/-ts
+twins of event versions), positional audio (*Play at object* in 3 projects
+against *Play* in 214), and a rule for `Wait 0` (39 projects use it, the
+manual does not define it).
+
+Not done: no agent run on a multi-layout task or a pause task compares the
+guide with and without these sections.

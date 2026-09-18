@@ -83,7 +83,12 @@ program transcribed into events even when no picking smell shows.
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
 | Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
-| Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events, or a global "mode" variable that other events branch on |
+| Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events |
+| A slice of the sheet that only runs in one phase: tutorial, a boss's AI, debug tools | A Group, off at start when the phase is later, *Set group active* at the transition. Only events stop: behaviors, timers and tweens in it run on | A global mode variable that every event in the slice compares |
+| Pause, slow motion, hit stop | *Set time scale* 0 (pause) or 0.1 (hit stop, slow motion); *Set object time scale* 1 on the UI that must keep moving; *Use time scale* off on the wait that ends it | A `paused` global checked in every event; behaviors disabled one by one |
+| One thing after another inside one interaction: knock back, then re-enable; fade out, then go to layout | *Wait* and *Wait for previous actions* in the same block; the picked instances are kept | A flag set now and a Timer or `On any finished` elsewhere to finish the sequence |
+| Reacting to a state any instance may reach, whoever started it | Timer *On timer*; Tween *On any finished* | A *Wait* that assumes one caller |
+| HUD and UI that stay on screen while the layout scrolls | A layer with parallax 0, 0; *Global* on that layer when every layout shows the same HUD | Every-tick *Set position* from `ViewportLeft`/`ViewportTop` |
 | A set of objects treated alike | Family; instance variables and behaviors declared on the family | Duplicate event blocks per object type |
 | Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
 
@@ -95,13 +100,61 @@ file", plugin-reference/json.md, plugin-reference/advanced-random.md
 "Probability tables", plugin-reference/local-storage.md,
 project-primitives/events/functions.md,
 project-primitives/events/custom-actions.md,
-project-primitives/objects/families.md,
-project-primitives/objects/containers.md]
+project-primitives/events/groups.md, system-reference/system-actions.md
+"Set group active", "Set time scale", "Set object time scale", "Wait", "Wait
+for previous actions to complete", project-primitives/layers.md "Parallax",
+"Global layers", project-primitives/objects/families.md,
+project-primitives/objects/containers.md; the pause, hit-stop and wait rows
+are sourced in the pitfalls, "Wait and time scale"]
 
 Two checks before choosing: a Timer is state with transitions, list them
 (pitfalls, "Timer"); an Array *Load* reads Construct's own JSON layout, so the
 file comes from the Array editor, not a hand-written JSON (the JSON plugin
 reads those).
+
+## Feel
+
+The same rule for what the player notices first. Each row is what the
+official examples do.
+
+| Need | Use | Example |
+|------|-----|---------|
+| Screen shake on impact | Scroll To *Shake*, *Reducing magnitude*, duration tied to the effect (`Timeline.TotalTime(tag)`) | cave-bridge, three-cups |
+| Hit stop, slow motion | *Set time scale* 0.1, *Wait*, *Set time scale* 1; a *Tween (value)* driving *Set time scale* for a smooth ramp | segmented-boss-fight, samuroof, eventide |
+| Squash, pop, bounce on impact | Tween *Size* or *X Scale*/*Y Scale* from `On collision`, *Ping pong* for a pop that returns, an *In Back* ease for a wind-up | gold-mining, cannon-launch, gravity-portal |
+| Hit feedback | Flash *Flash* from `On collision`; Tween *Color* to `rgbEx(...)` and back | bewitched-torches, turret-predictive-aim; pinball, shifting-dungeon |
+| A choreographed sequence over several objects: opening, level clear, a bridge rebuilding | Timeline *Play*, *Set instance* for runtime-created objects | cave-bridge, 17 examples |
+| Camera that follows, clamped to a zone | Scroll To on the target when plain following is enough; System *Scroll to position* with `lerp(scrollx, clamp(target, zone edges), …)` every tick for bounds and smoothing | dynamic-camera-system |
+| Fade between layouts | A *Fader* sprite on the parallax-0 layer, Tween opacity, *Wait for previous actions*, *Go to layout* | avalanche, airborne-explorer |
+
+[manual: behavior-reference/scroll-to.md "Shake",
+system-reference/system-actions.md "Set time scale", behavior-reference/tween.md,
+behavior-reference/flash.md, project-primitives/timelines.md]
+
+## Layout of the sheet
+
+The official examples split the same way every time (groups in 237 of 432,
+several sheets in 48, includes in 14).
+
+- One layout: one sheet. Groups by subsystem, named as the examples name them:
+  *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*, *Tutorial*,
+  *Game over*, *Restart* (the restart key and *Restart layout*).
+- A second layout: each screen gets its own sheet (*Menu*, *Game*,
+  *Credits*); levels share one (samuroof: Level1 to Level5 use *Game*). A
+  subsystem several screens need, or one that outgrows the sheet, moves to
+  its own sheet (*Player*, *Enemies*, *HUD*, *Camera*, *Effects*, *Sound*) and
+  the screen's sheet includes it (kiwi-story: eMain includes nine).
+- Globals are project-wide wherever they are declared. Declare them on one
+  sheet (*Globals*) so they can be found; kiwi-story, samuroof and
+  kitty-katcher do.
+- A group that starts inactive is for a phase that begins later: tutorial,
+  a boss enabled on entry, debug tools (19 examples). Deactivating a group
+  stops its events and nothing else, so it is not a pause.
+
+[manual: project-primitives/events/groups.md, includes.md, event-sheets.md
+"share events between layouts", variables.md "Global variables"; examples:
+kiwi-story, samuroof, airborne-explorer, family-tree, labyrinth; survey of
+Construct-Example-Projects, 2026-09-18]
 
 ## Smell table
 
@@ -119,6 +172,8 @@ One hit means redesign, not patch.
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see pitfalls) |
 | `Every tick` stepping a progress variable by `dt` and feeding it to `lerp` between fixed ends | A tween written by hand, with its own "finished" bookkeeping. `lerp` toward a moving target, or from a value the engine owns, is not this | Tween behavior, *On any finished* |
 | Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
+| A global `state` or `paused` compared at the top of many events | A phase switch or a pause written as a flag | A Group and *Set group active*; *Set time scale* for pause; a layout of its own for another screen |
+| A boolean set by one event and a Timer or `Every tick` elsewhere waiting to finish what that event started | A sequence split across events | *Wait* or *Wait for previous actions* in the block that started it |
 
 ## Before proposing a structure
 
@@ -130,8 +185,9 @@ One hit means redesign, not patch.
    alongside, copy the event shape from `example-projects/{id}/eventSheets/`.
    The drop pattern in `family-tree` and `alchemist` is `On drop`, a sub-event
    `Is overlapping another object`, narrowing conditions, then `Else`.
-3. Walk the Native first table: for each delay, motion, table or shared
-   piece of logic in the draft, name the built-in that owns it.
+3. Walk the Native first and Feel tables: for each delay, motion, table,
+   phase, sequence or effect in the draft, name the built-in that owns it.
+   Place the events by "Layout of the sheet".
 4. Read the manual page for each mechanism you are about to use.
 5. Draft, then run the smell table and the pitfalls.
 6. Only then verify names as [event-sheet-assistant.md](event-sheet-assistant.md)
