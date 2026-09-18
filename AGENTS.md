@@ -77,31 +77,21 @@ is a redesign, not a patch. A runtime fact learned from a project goes into
 
 ## 4. Use from another project
 
-Nothing in a Construct project points here. An agent working in a game
-folder will not find this repository unless that project says so. The block
-in `prompts/game-project-AGENTS.md` goes into the project's `AGENTS.md` with
-the real path filled in, plus a `CLAUDE.md` of `@AGENTS.md`, because Claude
-Code loads `CLAUDE.md` and not `AGENTS.md`; a block that only sits in
-`AGENTS.md` is invisible to it. The block is a table from what the agent is
-doing to the one file to read first; that file says what to read next. It
-also says what to do when the path was left as `<path-to>`, and when an `@`
-import line is worth its cost.
+Nothing in a Construct project points here. An agent in a game folder finds
+this repository only when the project's `AGENTS.md` carries the block from
+`prompts/game-project-AGENTS.md`; that file says how to install it, including
+the `CLAUDE.md` line Claude Code needs.
 
-The project's instruction file belongs to the user. An agent that knows this
-repository and is about to do event sheet work in a project where its tool
-does not see the block offers what is missing once, in one sentence, and
-writes it only on a yes: the block appended to the file the tool reads, or
-for Claude Code the one `@AGENTS.md` line when the block is already in
-`AGENTS.md`; nothing else in that file touched, files created only when
-absent. A no ends it for the session. Having read the block in one project
-is not a reason to write it into another.
+The project's instruction file belongs to the user. If the block is missing
+where the agent is about to do event sheet work, offer it once, in one
+sentence, and write it only on a yes: the block, or for Claude Code the
+`@AGENTS.md` line, appended to the file the tool reads, nothing else in it
+touched. A no ends it for the session, and a block seen in one project is
+no reason to write it into another.
 
-When the agent writes the whole project rather than editing the user's,
-`prompts/project-tools/` has a generator to copy into the project and a
-checker that validates the generated files against the schemas; its README
-is the workflow. There the block is part of the output, since the checker
-reads the `Construct3-RAG:` line from it to find the schemas; the handover
-says it was written.
+When the agent generates the whole project, `prompts/project-tools/README.md`
+is the workflow. There the block is part of the output, because the checker
+reads its `Construct3-RAG:` line to find the schemas.
 
 ## 5. SOP: change code or data
 
