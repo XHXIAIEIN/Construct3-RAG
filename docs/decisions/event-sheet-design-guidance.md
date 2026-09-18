@@ -249,5 +249,15 @@ one the user declined to change), so the question can recur in a later
 session; tying it to the first event sheet edit rather than session start
 keeps that rare.
 
+The block had four `<path-to>` placeholders and no rule for a block copied
+with them unfilled: the agent's first read fails and nothing says what
+comes next, so it goes on from memory, the failure the block exists to
+stop. The checker already skips a value containing `<` and falls back to
+`$CONSTRUCT3_RAG`; the agent had no equivalent. The block now carries one
+path, treats the three clones as siblings of it (where every other document
+places them) with an extra line only for one kept elsewhere, and says: use
+`$CONSTRUCT3_RAG` if set, otherwise ask and offer to fill the line in,
+never guess or continue without the data.
+
 Not done: no agent run checks that a one-file pointer per row is read as
 reliably as the inlined detail was.

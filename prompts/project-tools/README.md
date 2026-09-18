@@ -28,7 +28,7 @@ overwrites the files it produces.
    project.
 3. Put the block from [../game-project-AGENTS.md](../game-project-AGENTS.md)
    into the project's `CLAUDE.md` or `AGENTS.md`, whichever the agent's tool
-   reads, with the real paths. The checker reads the `Construct3-RAG:` line
+   reads, with the real path. The checker reads the `Construct3-RAG:` line
    from either file to find the schemas; `--rag` and `CONSTRUCT3_RAG`
    override it.
 4. Ignore what the editor and the scripts leave behind:
