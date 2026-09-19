@@ -93,11 +93,11 @@ class Indexer:
         """Fit BM25 only when the resolved vector mode requires it."""
         if not self.vector_mode.uses_bm25:
             return
-        from src.config import DATA_DIR
+        from src.config import C3_CACHE_DIR
 
         print(f"[BM25] Fitting on {len(corpus)} documents...")
         self._bm25 = BM25Vectorizer().fit(corpus)
-        path = vocab_path or (DATA_DIR / "bm25_vocab.msgpack")
+        path = vocab_path or (C3_CACHE_DIR / "bm25_vocab.msgpack")
         path.parent.mkdir(parents=True, exist_ok=True)
         self._bm25.save(path)
 
