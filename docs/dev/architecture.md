@@ -23,6 +23,7 @@ src/
   interfaces/http/
     models.py                    Pydantic request/response contracts
     presenters.py                Search/health outcome -> HTTP DTO mapping
+    playground.html              Debug UI served at /playground
   application/
     models.py                    SearchCommand, execution state, outcome, stages
     ports.py                     Lookup and semantic Protocols
@@ -31,6 +32,7 @@ src/
   domain/
     lookup.py                    Lookup intent/match/result records
     retrieval.py                 SearchResult, preset, and health records
+    api.py                       Legacy re-export of interfaces/http/models.py
   lookup/
     service.py                   Canonical deterministic LookupEngine
     intent.py                    Conservative query classification
@@ -55,6 +57,8 @@ src/
       embedding.py               Shared lazy dense/native-sparse model adapter
       sparse.py                  Shared deterministic BM25 adapter
   ingest/
+    c3_fetcher.py                CDN fetch, cache, schema/example/lang export
+    common_aces.py               Shared world-object ACEs from common_aces.json
     contracts.py                 VectorDocument, VectorMode, pipeline reports
     pipeline.py                  Prepare -> validate -> publish -> verify SOP
     indexer.py                   Historical facade and compatibility CLI
@@ -62,12 +66,16 @@ src/
     sparse.py                    Compatibility export of qdrant/vector/sparse.py
     models.py                    Normalized ACE/effect parser records
     *_parser.py                  Source-specific parsing/building
+  locale/
+    catalog.json                 Query vocabulary, aliases, and index hints per locale
+    resources.py                 Catalog validation, merging, and format adapters
   settings/__init__.py           Immutable, grouped settings loader
   observability/trace.py        Optional request-local diagnostics
   rag/
     lookup.py                    Historical Lookup facade
     retriever.py                 Historical semantic facade
     _trace.py                    Historical trace facade
+    messages.py                  Remaining lookup compatibility text templates
 ```
 
 `src/domain/api.py`, `src/ingest/embedding.py`, and

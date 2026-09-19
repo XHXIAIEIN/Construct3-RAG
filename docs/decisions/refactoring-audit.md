@@ -12,7 +12,7 @@ explicit design decision.
 - Restored repository-bundled bilingual r495 schemas so direct lookup and tests
   no longer depend on a developer-specific cache once these files are committed.
 - Centralized schema layout validation, version selection, and counting in
-  `src/schema_layout.py`.
+  `src/lookup/schema_layout.py`.
 - Removed a runtime CDN fetch from API lookup initialization. Committed data is
   usable offline; refreshing data is an explicit setup/init responsibility.
 - Replaced the missing `data/examples_index.json` build artifact with an
@@ -81,6 +81,25 @@ Implemented product decisions:
 - exact entity spans and globally ranked structural name matches prevent the
   `Array 保存` cascade, `_common` leakage, and unknown-plugin substring matches.
 
+## Stage-two live semantic evaluation
+
+[`query-understanding-stage-two-semantic-evaluation.md`](query-understanding-stage-two-semantic-evaluation.md)
+ran the comparison the stage-one record required: limited collections, fixed
+fanout, cross-collection weighted RRF, and the real CrossEncoder reranker on
+one frozen r495 index against the 57-row semantic gold set.
+
+Decisions established by that run:
+
+- the default stays `LITE_MODE=true`; full semantic retrieval is opt-in;
+- standalone weighted RRF is rejected, since it regressed nDCG@10 on both
+  splits;
+- the reranker is the strongest full-mode strategy but stays optional: warm
+  p95 latency and VRAM are too high for a default, and every strategy returned
+  noise for the four negative-only queries;
+- `addon_sdk` is searchable by explicit filter and is not in default fanout;
+- exact stable-ID deduplication, named-vector plugin search, mandatory section
+  filters, and the two-second outage cache are the production changes kept.
+
 ## SOP and module-boundary refactor
 
 The structural split is now implemented while preserving the established
@@ -97,23 +116,25 @@ external import paths:
 4. Canonical Lookup lives under `src/lookup/`: service, handlers, formatting,
    intent classification, and four repositories are separate. `src.rag.lookup`
    is a small compatibility facade that injects historical defaults.
-5. `src/retrieval/semantic.py` is the optional adapter; identity and ranking
-   policy remain pure modules. Application code uses public port methods and
+5. `src/qdrant/retrieval/semantic.py` is the optional adapter; identity and
+   ranking policy remain pure modules. Application code uses public port methods and
    never reads `_qdrant_available` or calls `_search()`.
-6. Dense and sparse vector adapters live under `src/vector/`, shared by runtime
-   retrieval and ingest without a runtime-to-maintenance dependency.
+6. Dense and sparse vector adapters live under `src/qdrant/vector/`, shared by
+   runtime retrieval and ingest without a runtime-to-maintenance dependency.
+   Everything specific to Qdrant sits in `src/qdrant/`, so the optional stack
+   is one package.
 7. `VectorDocument`, `VectorMode`, and pipeline reports make the ingest boundary
    explicit. `index_all_data()` is a facade over the named
    prepare → validate → publish → verify workflow. The canonical Qdrant writer
-   lives in `src.ingest.qdrant_adapter`, so orchestration no longer forms an
+   lives in `src.qdrant.adapter`, so orchestration no longer forms an
    import cycle with its historical `src.ingest.indexer` facade.
 8. Collection routing/taxonomy moved to a validated JSON registry, and Schema
    selection now validates a typed bilingual manifest rather than accepting
    empty directories.
-9. Configuration parsing moved into immutable grouped settings. `src.config`
-   is now the explicit dotenv and historical-constant compatibility boundary;
-   importing `src.settings` neither loads dotenv nor probes network/model
-   services. Retired LLM/expander names remain facade-only for compatibility.
+9. Configuration parsing moved into immutable grouped settings under
+   `src/settings/`. Importing it neither loads dotenv nor probes network/model
+   services; each process entry point calls `load_dotenv()` itself. The flat
+   constant module `src.config` was deleted with the last of its callers.
 10. The uncalled `src/evaluation` module pointing at a missing RAGAS fixture was
    removed. Current query and semantic evaluation tools remain explicit under
    `tests/`.
@@ -159,6 +180,9 @@ Remaining boundaries and deliberate limits:
   string alongside structured matches. Remove it only with an API version bump.
 - `requirements-full.txt` still groups Qdrant, embedding, and reranking packages;
   extras or lock files would make the optional installation boundary clearer.
-- Qdrant fixed multi-collection fan-out, weighted RRF, Reranker, and addon SDK
-  routing remain unchanged until the same live index can compare limited/single
-  collection, fixed fan-out, +RRF, and +Reranker on the gold set.
+- Full mode still runs fanout, then cross-collection weighted RRF, then the
+  reranker over the RRF top-20. Stage two measured RRF without the reranker
+  as worse than raw fanout, so `RERANKER_ENABLED=false` selects the weakest
+  strategy. Changing the fusion step, or making the reranker the default,
+  needs a new run on a current index that also addresses the negative-query
+  noise recorded there.

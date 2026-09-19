@@ -9,8 +9,13 @@
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
 | Shared world-object ACEs | `editor.construct.net/main.js`, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
-| Manual docs | Construct3-Manual repository (Markdown) | Markdown | Manual sync |
-| Example projects | Construct-Example-Projects repository | .c3proj | Manual sync |
+| Manual docs | `Construct3-Manual/Construct3-Manual/` in the manual clone | Markdown | Manual sync |
+| Addon SDK guide | `Construct3-Manual/Construct3-Addon-SDK/` in the same clone | Markdown | Manual sync |
+| Addon SDK samples | `Construct-Addon-SDK` clone | JavaScript, TypeScript | Manual sync |
+| Example projects | Construct-Example-Projects clone, folder projects | `project.c3proj`, event sheet and script JSON | Manual sync |
+
+The three clones sit beside this repository; `src/settings/__init__.py`
+resolves their paths and the pipeline skips a source whose clone is absent.
 
 ## CDN Fetching (C3Fetcher)
 

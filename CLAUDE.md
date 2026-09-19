@@ -3,7 +3,7 @@
 @AGENTS.md
 
 本文件定义产品方向、判断原则和完成标准。`AGENTS.md` 是仓库地图和操作 SOP，
-各目录的 `CLAUDE.md` 说明该目录的结构和局部约束；两者不得与这里冲突。三者
+各目录的 `AGENTS.md` 说明该目录的结构和局部约束；两者不得与这里冲突。三者
 不重复：改代码的步骤、数据字段和模块职责以那两处为准，这里只写别处没有的
 内容。
 
@@ -73,7 +73,7 @@ Tier 2/3、Semantic Chain/HyDE）及其原因在 `docs/decisions/refactoring-aud
 - 增加新词、提示词或模型前，必须有失败案例和可验证的预期结果。
 - 公共 API 变更同步更新模型、文档和兼容测试；内部历史结构不承诺兼容。
 - Construct 3 事实按 `AGENTS.md` 第 2 节查数据，不凭记忆作答。数据契约、
-  模块职责和测试约定分别见 `data/CLAUDE.md`、`src/CLAUDE.md`、`tests/CLAUDE.md`。
+  模块职责和测试约定分别见 `data/AGENTS.md`、`src/AGENTS.md`、`tests/AGENTS.md`。
 - 代码使用类型提示和 `pathlib.Path`，捕获具体异常并在边界记录上下文。注释
   解释原因和限制，不复述代码。私密数据和机器本地配置不进仓库。
 - README 先说数据如何直接使用，再说可选服务；中英文 README 描述同一行为，
@@ -90,7 +90,7 @@ Tier 2/3、Semantic Chain/HyDE）及其原因在 `docs/decisions/refactoring-aud
 - API：检查 `/health` 与 `/search`，区分 Schema 就绪和 Qdrant 状态。
 - Qdrant 或 Reranker：只有服务真实运行时才能声称现场验证。
 - 更新工作流：解析 YAML，确认使用导出器的标准目录。
-- 查询质量：运行 `tests/CLAUDE.md` 列出的金标集，检查必须结果和禁止结果。
+- 查询质量：运行 `tests/AGENTS.md` 列出的金标集，检查必须结果和禁止结果。
 
 不在文档中硬编码测试总数。第三方弃用警告记录即可，不算项目失败。
 

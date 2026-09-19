@@ -93,7 +93,7 @@ data/                   已提交的参考数据，直接读取，无需安装
 prompts/                LLM system prompt：设计指南、书写规则、易错点、游戏项目用的 AGENTS.md 模板
   references/           按需加载：写成程序式事件表的格子案例、手工编辑项目 JSON
   project-tools/        用 Python 脚本生成整个项目，并按 schema 检查生成结果
-src/                    可选搜索服务（包结构见 src/CLAUDE.md）
+src/                    可选搜索服务（包结构见 src/AGENTS.md）
 scripts/                安装、数据刷新、版本检查
 tests/                  离线 pytest 套件、金标集、评估脚本
 docs/guide/             面向使用者：快速开始、API 参考、数据格式

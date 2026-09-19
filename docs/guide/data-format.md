@@ -73,10 +73,19 @@ Each locale directory carries the names for that language in
 Use the root index to enumerate addons and counts. Use the locale index to
 turn a localized name into an id without opening every schema file.
 
-## ACE entries
+## Plugin and behavior files
 
-Each schema file groups ACEs into `conditions`, `actions`, and `expressions`.
-Field names match the official CDN.
+Each file describes one addon. Field names match the official CDN.
+
+| Field | Meaning |
+|-------|---------|
+| `id`, `type` | Addon id and `plugin` or `behavior`. Identical across locales. |
+| `name`, `description` | Localized display name and summary. |
+| `aceCategories` | Map of category id to localized label, for example `collisions: Collisions`. |
+| `conditions`, `actions`, `expressions` | ACE lists, described below. |
+| `properties` | Editor properties, described below. |
+
+### ACE entries
 
 | Field | Applies to | Meaning |
 |-------|-----------|---------|
@@ -85,12 +94,39 @@ Field names match the official CDN.
 | `display-text` | conditions, actions | Template shown in the event sheet, for example `Set animation to {0}`. |
 | `translated-name` | expressions | Expression identifier, for example `AnimationFrame`. |
 | `scriptName` | all | JavaScript API name. Identical across locales. |
-| `category` | all | Grouping used in the editor dialogs. Identical across locales. |
+| `category` | all | Key into `aceCategories`. Identical across locales. |
 | `description` | all | Tooltip or help text. |
-| `params` | all | Parameter map: `{id: {type, name, desc}}`. `type` is identical across locales. |
+| `params` | all | Parameter map keyed by parameter id, described below. |
+| `isTrigger` | conditions | `true` for triggers such as `On collision`. Absent otherwise. |
+| `isAsync` | actions | `true` for actions that can be awaited. Absent otherwise. |
+| `returnType` | expressions | `number`, `string`, or `any`. |
 
 Structural fields are the same in every locale, so an ACE can be matched by
 `id` in one locale and read in another.
+
+### Parameters
+
+| Field | Meaning |
+|-------|---------|
+| `type` | Editor parameter type such as `number`, `string`, `object`, `combo`, `animation`, `instancevar`, `cmp`. Identical across locales. |
+| `name`, `desc` | Localized label and help text. |
+| `items` | `combo` only: map of stable item id to localized label, for example `{"current-frame": "current frame", "beginning": "beginning"}`. |
+| `initialValue` | `combo` only, when the CDN records a default: the item id selected by default. |
+
+### Properties
+
+`properties` is a map keyed by property id:
+
+| Field | Meaning |
+|-------|---------|
+| `name`, `desc` | Localized label and help text. |
+| `items` | Combo properties: map of item id to localized label. |
+| `initial-value` | Initial text of a text property, when the CDN records one. |
+| `link-text` | Label of a link property, for example `Edit` on the Sprite animations entry. |
+| `separator` | Separator string of a composite property, such as `, ` for a 3D offset. |
+
+Property types are not exported. The language pack is the only CDN source
+for properties, and it carries text only.
 
 Conditions, actions, and expressions that every world object has, such as
 `Is overlapping another object`, `Pick by unique ID`, `Set value`,
@@ -147,6 +183,18 @@ The same entry in `zh-CN/plugins/sprite.json`:
 
 Only the text values differ. Because `params.animation.type` is `animation`,
 the editor offers a list of the object's animations for that parameter.
+
+## Effect files
+
+Each file in `effects/` describes one effect:
+
+| Field | Meaning |
+|-------|---------|
+| `id` | Effect id. Identical across locales. |
+| `name`, `description` | Localized display name and summary. |
+| `category` | Editor group such as `color`, `blend`, `distortion`, `3d`. Identical across locales. |
+| `blends-background`, `cross-sampling`, `animated` | Editor flags copied from the CDN. |
+| `parameters` | List of `{id, type, name, desc}`. `type` is `float`, `percent`, or `color`. |
 
 ## Example projects
 

@@ -14,6 +14,7 @@ endpoint, collection, model, and frozen gold set used.
 | `test_api_models.py` | HTTP DTO validation and presenter mappings |
 | `test_module_boundaries.py` | Canonical import direction, public ports, trace ownership, and stable five-stage search SOP |
 | `test_setup.py` | Runtime setup and configuration smoke contracts |
+| `test_settings.py` | `load_settings()` defaults, overrides, and schema directory selection |
 
 `SearchStage` has exactly five stable values: `initialize`, `lookup`,
 `semantic`, `deduplicate`, and `respond`. Request validation occurs inside

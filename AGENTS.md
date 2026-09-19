@@ -97,12 +97,12 @@ reads its `Construct3-RAG:` line to find the schemas.
 
 Before editing:
 
-1. Read the `CLAUDE.md` in every directory you touch.
+1. Read the `AGENTS.md` in every directory you touch.
 2. Run `git status` and keep changes you did not make.
 3. Trace the real call chain from `src/api.py` or `scripts/`. Do not infer
    behavior from file names.
 4. Decide whether the feature is default, optional, experimental, or legacy.
-   `src/rag/` and the compatibility modules named in `src/CLAUDE.md` are
+   `src/rag/` and the compatibility modules named in `src/AGENTS.md` are
    facades only.
 
 While editing:
@@ -146,7 +146,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Sourced runtime facts and pitfalls | `prompts/event-sheet-pitfalls.md` |
 | Loaded on demand from the prompts: the slot case as a transcribed program, hand-editing project JSON | `prompts/references/` |
 | Generating a whole project from a script and checking it before the editor opens it | `prompts/project-tools/README.md` |
-| Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/CLAUDE.md` |
+| Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
 | Product rules and definition of done | `CLAUDE.md` |
