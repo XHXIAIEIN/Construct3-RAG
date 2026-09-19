@@ -1,4 +1,4 @@
-"""Typed settings and historical config facade regression tests."""
+"""Typed settings regression tests."""
 
 from __future__ import annotations
 
@@ -163,84 +163,6 @@ def test_typed_settings_module_has_no_dotenv_or_external_runtime_probe():
     assert "dotenv" not in source
     assert "qdrant_client" not in source
     assert "sentence_transformers" not in source
-
-
-def test_config_facade_matches_typed_settings_snapshot():
-    import src.config as config
-
-    assert config.BASE_DIR == config.SETTINGS.paths.base_dir
-    assert config.DATA_DIR == config.SETTINGS.paths.data_dir
-    assert config.C3_VERSION == config.SETTINGS.schema.version
-    assert config.SCHEMA_DIR == config.SETTINGS.schema.directory
-    assert config.QDRANT_PORT == config.SETTINGS.runtime.qdrant_port
-    assert config.LITE_MODE == config.SETTINGS.features.lite_mode
-    assert config.EMBEDDING_MODEL == config.SETTINGS.vector.embedding_model
-    assert config.EMBEDDING_DIMENSION == config.SETTINGS.vector.embedding_dimension
-    assert config.MANUAL_AVAILABLE == config.SETTINGS.paths.manual_available
-    assert config.LLM_PROVIDER == config.SETTINGS.llm.provider
-    assert config.LOOKUP_OLLAMA_URL == config.SETTINGS.lookup.ollama_url
-    assert config.EXPANDER_TIMEOUT_S == config.SETTINGS.expander.timeout_s
-
-
-def test_config_facade_preserves_every_historical_constant():
-    import src.config as config
-
-    historical_names = {
-        "ADDON_SDK_CODE_AVAILABLE",
-        "ADDON_SDK_CODE_DIR",
-        "ADDON_SDK_MANUAL_AVAILABLE",
-        "ADDON_SDK_MANUAL_DIR",
-        "ADDON_SDK_REPO",
-        "BASE_DIR",
-        "BGE_M3_NATIVE_SPARSE",
-        "BM25_ENABLED",
-        "C3_CACHE_DIR",
-        "C3_CDN_BASE",
-        "C3_VERSION",
-        "CONTEXTUAL_CHUNKING_CACHE",
-        "CONTEXTUAL_CHUNKING_ENABLED",
-        "DATA_DIR",
-        "EMBEDDING_DIMENSION",
-        "EMBEDDING_MODEL",
-        "EMBEDDING_MODEL_REGISTRY",
-        "EXAMPLE_PROJECTS_DIR",
-        "EXAMPLE_REPO",
-        "EXAMPLES_AVAILABLE",
-        "EXPANDER_API_KEY",
-        "EXPANDER_API_MODEL",
-        "EXPANDER_API_PROVIDER",
-        "EXPANDER_BACKEND",
-        "EXPANDER_DEVICE",
-        "EXPANDER_DICT_FILTER",
-        "EXPANDER_DICT_SOURCE",
-        "EXPANDER_LOCAL_MODEL",
-        "EXPANDER_MAX_TOKENS",
-        "EXPANDER_TIMEOUT_S",
-        "EXPANDER_TOP_K",
-        "LITE_MODE",
-        "LLM_API_KEY",
-        "LLM_BASE_URL",
-        "LLM_MODEL",
-        "LLM_PROVIDER",
-        "LOOKUP_OLLAMA_MODEL",
-        "LOOKUP_OLLAMA_URL",
-        "MANUAL_AVAILABLE",
-        "MANUAL_DIR",
-        "MANUAL_REPO",
-        "MAX_CHUNK_SIZE",
-        "QDRANT_HOST",
-        "QDRANT_PORT",
-        "RAG_SERVER_PORT",
-        "RERANKER_ENABLED",
-        "RERANKER_MODEL",
-        "RERANKER_TOP_K",
-        "SCHEMA_DIR",
-        "TOP_K",
-        "UI_LANGUAGE",
-    }
-
-    assert historical_names <= set(config.__all__)
-    assert all(hasattr(config, name) for name in historical_names)
 
 
 def test_default_path_derivation_matches_historical_layout(tmp_path):

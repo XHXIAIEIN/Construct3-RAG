@@ -17,7 +17,9 @@ from src.rag.lookup import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
-from src.config import SCHEMA_DIR
+from src.settings import load_settings
+
+SCHEMA_DIR = load_settings().schema.directory
 
 
 def make_schema_index() -> SchemaIndex:

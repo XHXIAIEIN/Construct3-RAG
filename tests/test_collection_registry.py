@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from src.collection_registry import load_collection_catalog
-from src.collections import (
+from src.qdrant.collection_registry import load_collection_catalog
+from src.qdrant.collections import (
     ALL_COLLECTIONS,
     COLLECTIONS,
     DIR_TO_COLLECTION,

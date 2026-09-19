@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.collection_registry import COLLECTION_CATALOG, CollectionCatalog, CollectionSpec
+from src.qdrant.collection_registry import COLLECTION_CATALOG, CollectionCatalog, CollectionSpec
 
 __all__ = [
     "COLLECTION_CATALOG",

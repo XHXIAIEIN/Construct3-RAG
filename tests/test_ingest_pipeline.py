@@ -77,19 +77,25 @@ def test_pipeline_rejects_unknown_collection_before_backend_mutation():
 
 
 def test_prepare_passes_example_projects_directory(monkeypatch, tmp_path):
-    import src.config as config
+    import dataclasses
+
+    from src.settings import load_settings
     import src.ingest.event_parser as event_parser
     import src.ingest.examples_parser as examples_parser
     import src.ingest.schema_parser as schema_parser
 
     projects_dir = tmp_path / "examples"
     projects_dir.mkdir()
-    monkeypatch.setattr(config, "MANUAL_AVAILABLE", False)
-    monkeypatch.setattr(config, "EXAMPLES_AVAILABLE", True)
-    monkeypatch.setattr(config, "EXAMPLE_PROJECTS_DIR", projects_dir)
-    monkeypatch.setattr(config, "ADDON_SDK_MANUAL_AVAILABLE", False)
-    monkeypatch.setattr(config, "ADDON_SDK_CODE_AVAILABLE", False)
-    monkeypatch.setattr(config, "CONTEXTUAL_CHUNKING_ENABLED", False)
+
+    # base_dir points at an otherwise-empty tmp_path, so manual/addon-sdk
+    # directories stay absent (their *_available properties read as False)
+    # while example_projects_dir is redirected to a real, existing directory.
+    base_settings = load_settings(environ={}, base_dir=tmp_path)
+    fake_settings = dataclasses.replace(
+        base_settings,
+        paths=dataclasses.replace(base_settings.paths, example_projects_dir=projects_dir),
+    )
+    monkeypatch.setattr("src.settings.load_settings", lambda: fake_settings)
 
     captured = {}
 

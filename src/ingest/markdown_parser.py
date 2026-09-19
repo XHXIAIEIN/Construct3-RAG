@@ -37,13 +37,13 @@ class MarkdownParser:
                       parse_directory() returns an empty list if it is missing.
         """
         if base_dir is None:
-            from src.config import MANUAL_DIR
-            self.base_dir = MANUAL_DIR
+            from src.settings import load_settings
+            self.base_dir = load_settings().paths.manual_dir
         else:
             self.base_dir = Path(base_dir)
 
         # Load mappings from collections
-        from src.collections import DIR_TO_COLLECTION, COLLECTIONS, SUBCATEGORY_MAPPING
+        from src.qdrant.collections import DIR_TO_COLLECTION, COLLECTIONS, SUBCATEGORY_MAPPING
         self.dir_to_collection = DIR_TO_COLLECTION
         self.default_collection = COLLECTIONS["guide"]
         self.subcategory_mapping = SUBCATEGORY_MAPPING

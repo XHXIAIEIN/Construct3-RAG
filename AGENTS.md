@@ -109,7 +109,7 @@ While editing:
 
 - Keep the default path offline and deterministic. No network, model loading,
   or CDN refresh during import or a normal query.
-- Keep the `en-US` and `zh-CN` layout. `src/schema_layout.py` owns layout logic.
+- Keep the `en-US` and `zh-CN` layout. `src/lookup/schema_layout.py` owns layout logic.
 - Fix generators, not generated files. Regenerate `data/` through
   `scripts/init.py` rather than hand editing many JSON files.
 - Update docs and tests in the same change when behavior moves.

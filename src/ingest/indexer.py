@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from src.ingest.contracts import VectorDocument, VectorMode
-from src.ingest.qdrant_adapter import Indexer
-from src.vector import BM25Vectorizer, EmbeddingModel
+from src.qdrant.adapter import Indexer
+from src.qdrant.vector import BM25Vectorizer, EmbeddingModel
 
 __all__ = [
     "BM25Vectorizer",

@@ -11,7 +11,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import C3_VERSION
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
+from src.settings import load_settings
 from src.ingest.c3_fetcher import C3Fetcher
 
 
@@ -21,17 +28,18 @@ def main():
                         help="Update C3_VERSION in .env if newer version found")
     args = parser.parse_args()
 
-    fetcher = C3Fetcher(version=C3_VERSION)
+    current_version = load_settings().schema.version
+    fetcher = C3Fetcher(version=current_version)
     try:
         latest = fetcher.get_latest_stable_version()
     except Exception as e:
         print(f"Failed to check versions: {e}")
         sys.exit(1)
 
-    print(f"Current: {C3_VERSION}")
+    print(f"Current: {current_version}")
     print(f"Latest stable: {latest}")
 
-    if latest == C3_VERSION:
+    if latest == current_version:
         print("Up to date.")
         return
 
@@ -41,8 +49,8 @@ def main():
         env_path = Path(__file__).parent.parent / ".env"
         if env_path.exists():
             content = env_path.read_text(encoding="utf-8")
-            if f"C3_VERSION={C3_VERSION}" in content:
-                content = content.replace(f"C3_VERSION={C3_VERSION}", f"C3_VERSION={latest}")
+            if f"C3_VERSION={current_version}" in content:
+                content = content.replace(f"C3_VERSION={current_version}", f"C3_VERSION={latest}")
                 env_path.write_text(content, encoding="utf-8")
                 print(f"Updated .env: C3_VERSION={latest}")
             else:

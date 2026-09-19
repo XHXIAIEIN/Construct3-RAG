@@ -6,13 +6,13 @@ import statistics
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
-from src.collection_registry import COLLECTION_CATALOG
+from src.qdrant.collection_registry import COLLECTION_CATALOG
 from src.observability.trace import _trace
 from src.domain.retrieval import RetrievalHealth, SearchResult
-from src.retrieval.identity import _collection_key, deduplicate_results, stable_result_id
-from src.retrieval.policy import weighted_rrf
-from src.config import C3_CACHE_DIR
-from src.vector import BM25Vectorizer, EmbeddingModel
+from src.qdrant.retrieval.identity import _collection_key, deduplicate_results, stable_result_id
+from src.qdrant.retrieval.policy import weighted_rrf
+from src.settings import load_settings
+from src.qdrant.vector import BM25Vectorizer, EmbeddingModel
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class HybridRetriever:
     # Runtime policy defaults. Composition roots should inject configured
     # values; class defaults keep direct and historical construction stable.
     bm25_enabled = False
-    bm25_vocab_path = C3_CACHE_DIR / "bm25_vocab.msgpack"
+    bm25_vocab_path = load_settings().schema.cache_dir / "bm25_vocab.msgpack"
     native_sparse = False
     reranker_enabled = True
     reranker_model = "BAAI/bge-reranker-v2-m3"

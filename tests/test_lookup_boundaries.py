@@ -46,8 +46,8 @@ def test_legacy_and_indexes_facades_export_canonical_types():
     assert LegacySchemaIndex().schema_dir == LegacySchemaDir
 
 
-def test_canonical_lookup_has_no_reverse_rag_or_config_imports():
-    forbidden = ("src.rag", "src.config")
+def test_canonical_lookup_has_no_reverse_rag_imports():
+    forbidden = ("src.rag",)
     violations = []
     for path in sorted(LOOKUP_DIR.glob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -72,7 +72,6 @@ from src.lookup.service import LookupEngine
 from src.lookup.schema_index import SchemaIndex
 assert 'src.rag' not in sys.modules
 assert 'src.rag.lookup' not in sys.modules
-assert 'src.config' not in sys.modules
 try:
     SchemaIndex()
 except TypeError:
@@ -82,7 +81,6 @@ else:
 engine = LookupEngine(schema_dir=Path('data/c3-schemas'))
 assert engine.try_lookup('Sprite 有哪些 action') is not None
 assert 'src.rag' not in sys.modules
-assert 'src.config' not in sys.modules
 """
     subprocess.run(
         [sys.executable, "-c", script],

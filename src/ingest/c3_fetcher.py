@@ -82,13 +82,13 @@ class C3Fetcher:
         cache_dir: Path | None = None,
     ):
         if version is None:
-            from src.config import C3_VERSION
-            version = C3_VERSION
+            from src.settings import load_settings
+            version = load_settings().schema.version
         self.version = version
         self.base_url = base_url.rstrip("/")
         if cache_dir is None:
-            from src.config import C3_CACHE_DIR
-            cache_dir = C3_CACHE_DIR
+            from src.settings import load_settings
+            cache_dir = load_settings().schema.cache_dir
         self.cache_dir = Path(cache_dir) / self.version
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 

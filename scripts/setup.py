@@ -17,8 +17,17 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.schema_layout import schema_counts, schema_version
-from src.config import C3_VERSION, RAG_SERVER_PORT, SCHEMA_DIR
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
+from src.lookup.schema_layout import schema_counts, schema_version
+from src.settings import load_settings
+
+SETTINGS = load_settings()
 
 
 def run(cmd: list[str], check: bool = True, **kw) -> subprocess.CompletedProcess:
@@ -60,11 +69,14 @@ def check_qdrant(host: str = "localhost", port: int = 6333) -> bool:
 
 def fetch_cdn(version: str | None = None):
     print("[cdn] Fetching Construct 3 CDN data...")
-    from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
     from src.ingest.c3_fetcher import C3Fetcher
 
-    ver = version or C3_VERSION
-    fetcher = C3Fetcher(version=ver, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    ver = version or SETTINGS.schema.version
+    fetcher = C3Fetcher(
+        version=ver,
+        base_url=SETTINGS.schema.cdn_base,
+        cache_dir=SETTINGS.schema.cache_dir,
+    )
 
     aces = fetcher.fetch_all_aces()
     fetcher.fetch_lang("en-US")
@@ -90,14 +102,15 @@ def fetch_cdn(version: str | None = None):
 
 def report_local_schema():
     """Report the already available deterministic lookup dataset."""
-    counts = schema_counts(SCHEMA_DIR)
-    actual_version = schema_version(SCHEMA_DIR) or C3_VERSION
+    schema_dir = SETTINGS.schema.directory
+    counts = schema_counts(schema_dir)
+    actual_version = schema_version(schema_dir) or SETTINGS.schema.version
     print("[data] Using existing local Construct schema (no CDN request)")
     print(
         f"  {actual_version}: {counts['plugins']} plugins, "
         f"{counts['behaviors']} behaviors, {counts['effects']} effects"
     )
-    print(f"  {SCHEMA_DIR}")
+    print(f"  {schema_dir}")
     print("  Use --refresh-data to refresh it explicitly.")
 
 
@@ -143,7 +156,7 @@ def main():
     parser.add_argument("--version", type=str, help="C3 version (default: from .env)")
     parser.add_argument("--skip-index", action="store_true", help="Skip index rebuild")
     parser.add_argument("--skip-deps", action="store_true", help="Skip pip install")
-    parser.add_argument("--port", type=int, default=RAG_SERVER_PORT, help="Server port")
+    parser.add_argument("--port", type=int, default=SETTINGS.runtime.server_port, help="Server port")
     args = parser.parse_args()
 
     print("=" * 50)

@@ -13,16 +13,17 @@ Keep Direct Lookup independent of semantic retrieval, vector models, Qdrant,
 and ingestion. Compatibility modules may re-export canonical implementations,
 but canonical packages must not import their legacy `rag/` facades.
 
+Everything specific to the optional Qdrant stack — collection metadata, the
+vector adapters, semantic retrieval, and the Qdrant publication adapter —
+lives under `qdrant/`, so the whole optional path is one package: easy to
+reason about, test, or remove as a unit. Ingestion parsers, Direct Lookup,
+and the application/HTTP layers do not own any Qdrant-specific code.
+
 ## Top-level Modules
 
 | File | Purpose |
 |------|---------|
 | `api.py` | Thin FastAPI composition root and compatibility exports |
-| `config.py` | Environment-backed runtime paths and feature settings |
-| `collection_registry.py` | Typed loader and validation for collection metadata |
-| `collections.json` | Canonical collection registry data |
-| `collections.py` | Compatibility constants and routes derived from the typed registry |
-| `schema_layout.py` | Shared schema locale/layout validation and path selection |
 
 ## Packages
 
@@ -73,6 +74,7 @@ Canonical offline Direct Lookup implementation:
 | `formatting.py` | Pure result formatting helpers |
 | `intent.py` | Deterministic query classification |
 | `schema_index.py` | Plugin, behavior, ACE, and schema metadata index |
+| `schema_layout.py` | Schema locale/layout validation and path selection, shared with `settings/` and `ingest/` |
 | `scripting_index.py` | Scripting API index |
 | `term_index.py` | Curated terminology index built through public schema contracts |
 | `examples_index.py` | Example lookup and public fallback-tag queries |
@@ -81,39 +83,57 @@ Canonical offline Direct Lookup implementation:
 Indexes expose public loading and query contracts. Callers must not inspect
 another index's private fields.
 
-### `retrieval/`
+### `qdrant/`
 
-Canonical semantic retrieval implementation:
+Everything specific to the optional Qdrant vector-retrieval stack:
 
 | File | Purpose |
 |------|---------|
-| `semantic.py` | `HybridRetriever`, Qdrant search/health, and optional reranking |
-| `policy.py` | Query budgets, context tiers, and weighted RRF policies |
-| `identity.py` | Stable result identities and exact deduplication |
+| `collection_registry.py` | Typed loader and validation for collection metadata |
+| `collections.json` | Canonical collection registry data |
+| `collections.py` | Compatibility constants and routes derived from the typed registry |
+| `adapter.py` | Canonical Qdrant publication adapter (`Indexer`); `ingest/indexer.py` is the compatibility facade/CLI in front of it |
+| `retrieval/semantic.py` | `HybridRetriever`, Qdrant search/health, and optional reranking |
+| `retrieval/policy.py` | Query budgets, context tiers, and weighted RRF policies |
+| `retrieval/identity.py` | Stable result identities and exact deduplication |
+| `vector/embedding.py` | `EmbeddingModel` |
+| `vector/sparse.py` | `BM25Vectorizer` |
 
-### `vector/`
-
-Canonical reusable vector adapters. `embedding.py` owns `EmbeddingModel` and
-`sparse.py` owns `BM25Vectorizer`. Ingestion and retrieval import from this
-package; `ingest/embedding.py` and `ingest/sparse.py` are compatibility exports.
+`vector/` adapters are reusable: both `qdrant/adapter.py` (ingestion) and
+`qdrant/retrieval/semantic.py` (runtime retrieval) import from it directly.
+`ingest/embedding.py` and `ingest/sparse.py` stay in `ingest/` as
+compatibility exports pointing at `qdrant/vector/`.
 
 ### `ingest/`
 
-CDN fetch/export, Markdown/SDK/schema/example parsing, vector-document building,
-and Qdrant publication. `models.py` owns normalized parser records,
-`contracts.py` owns vector documents/modes plus pipeline reports, and
-`pipeline.py` owns the explicit publication workflow:
+CDN fetch/export, Markdown/SDK/schema/example parsing, and vector-document
+building. `models.py` owns normalized parser records, `contracts.py` owns
+vector documents/modes plus pipeline reports, and `pipeline.py` owns the
+explicit publication workflow:
 
 `prepare` → `validate` → `publish` → `verify`
 
 Preparation materializes documents without Qdrant mutation. Validation must
 complete before publication, and verification checks the published collection
-counts. `indexer.py` remains the Qdrant adapter and command entry point.
+counts. Publication itself is `qdrant/adapter.py`; `indexer.py` remains the
+compatibility facade and command entry point (`python -m src.ingest.indexer
+--rebuild`).
 
 `c3_fetcher.py` exports the schema files. The shared world-object ACEs are
 not on the CDN endpoints it reads; `common_aces.py` loads them from
 `common_aces.json`, an extract of the editor bundle kept next to it, and
 `export_schemas()` merges that entry like any plugin.
+
+### `settings/`
+
+`__init__.py` owns `load_settings()` and the immutable, grouped `AppSettings`
+tree. It loads no dotenv file and probes nothing but the local schema
+directory; every process entry point (`src.api`, each `scripts/*.py`) calls
+`load_dotenv()` itself before calling `load_settings()`.
+
+`settings/__init__.py` selects the schema directory through
+`src.lookup.schema_layout.select_schema_dir`, so `settings` depends on that
+one leaf of `lookup/`; nothing in `lookup/` depends back on `settings`.
 
 ### `observability/`
 
@@ -127,7 +147,7 @@ Legacy import facades only:
 | File | Purpose |
 |------|---------|
 | `lookup.py` | Configured compatibility facade for `lookup/` and legacy exports |
-| `retriever.py` | Compatibility facade for `retrieval/semantic.py` and policies |
+| `retriever.py` | Compatibility facade for `qdrant/retrieval/semantic.py` and policies |
 | `_trace.py` | Compatibility re-export of `observability/trace.py` |
 | `messages.py` | Remaining lookup compatibility text templates |
 

@@ -30,7 +30,8 @@ jobs:
           python -c "
           import sys, json, urllib.request
           sys.path.insert(0, '.')
-          from src.config import C3_VERSION
+          from src.settings import load_settings
+          C3_VERSION = load_settings().schema.version
           req = urllib.request.Request(
               'https://editor.construct.net/versions.json',
               headers={'User-Agent': 'Mozilla/5.0'}
@@ -55,13 +56,13 @@ jobs:
         run: |
           echo "Updating from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
 
-          # Update the default version. src/settings.py owns the C3_VERSION
-          # default; src/config.py only re-exports it. Fail loudly if the
-          # pattern is not found so the sync PR cannot ship a stale default.
+          # Update the default version. src/settings/__init__.py owns the
+          # C3_VERSION default. Fail loudly if the pattern is not found so
+          # the sync PR cannot ship a stale default.
           python - "$C3_VERSION" <<'PYEOF'
           import re, sys, pathlib
           ver = sys.argv[1]
-          p = pathlib.Path("src/settings.py")
+          p = pathlib.Path("src/settings/__init__.py")
           src = p.read_text()
           pattern = r"""(_string\(source,\s*["']C3_VERSION["'],\s*["'])r[\w.-]+(['"])"""
           src, n = re.subn(pattern, lambda m: m.group(1) + ver + m.group(2), src)

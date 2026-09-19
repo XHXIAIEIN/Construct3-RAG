@@ -8,7 +8,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from src.schema_layout import (
+from src.lookup.schema_layout import (
     SCHEMA_LOCALES,
     SchemaManifestError,
     load_locale_index,

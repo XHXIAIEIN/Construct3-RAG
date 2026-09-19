@@ -15,7 +15,7 @@ except ImportError:  # pragma: no cover - exercised only in minimal installs
     Distance = PointStruct = VectorParams = None  # type: ignore[assignment]
 
 from src.ingest.contracts import VectorDocument, VectorMode
-from src.vector import BM25Vectorizer, EmbeddingModel
+from src.qdrant.vector import BM25Vectorizer, EmbeddingModel
 
 __all__ = ["Indexer"]
 
@@ -33,7 +33,7 @@ class Indexer:
         embedder: EmbeddingModel | None = None,
         vector_mode: VectorMode | None = None,
     ) -> None:
-        from src.config import BGE_M3_NATIVE_SPARSE
+        from src.settings import load_settings
 
         try:
             import torch
@@ -50,7 +50,7 @@ class Indexer:
         self.embedder = embedder or EmbeddingModel(
             embedding_model,
             device=device,
-            native_sparse=BGE_M3_NATIVE_SPARSE,
+            native_sparse=load_settings().features.bge_m3_native_sparse,
         )
         self._vector_mode_override = vector_mode
         self._bm25: BM25Vectorizer | None = None
@@ -66,10 +66,10 @@ class Indexer:
         if self._vector_mode_override is not None:
             return self._vector_mode_override
         _ = self.embedder.dimension
-        from src.config import BM25_ENABLED
+        from src.settings import load_settings
 
         return VectorMode.resolve(
-            bm25_enabled=BM25_ENABLED,
+            bm25_enabled=load_settings().features.bm25_enabled,
             native_sparse_enabled=bool(self.embedder._is_bge_m3_native),
         )
 
@@ -93,11 +93,11 @@ class Indexer:
         """Fit BM25 only when the resolved vector mode requires it."""
         if not self.vector_mode.uses_bm25:
             return
-        from src.config import C3_CACHE_DIR
+        from src.settings import load_settings
 
         print(f"[BM25] Fitting on {len(corpus)} documents...")
         self._bm25 = BM25Vectorizer().fit(corpus)
-        path = vocab_path or (C3_CACHE_DIR / "bm25_vocab.msgpack")
+        path = vocab_path or (load_settings().schema.cache_dir / "bm25_vocab.msgpack")
         path.parent.mkdir(parents=True, exist_ok=True)
         self._bm25.save(path)
 
@@ -228,9 +228,9 @@ class Indexer:
 
     def _load_chunk_contexts(self, cache_path: Path | str | None = None) -> None:
         """Load pre-generated contextual chunk summaries from JSON cache."""
-        from src.config import CONTEXTUAL_CHUNKING_CACHE
+        from src.settings import load_settings
 
-        path = Path(cache_path or CONTEXTUAL_CHUNKING_CACHE)
+        path = Path(cache_path or load_settings().vector.contextual_chunking_cache)
         if path.exists():
             self._chunk_contexts = json.loads(path.read_text(encoding="utf-8"))
             print(
