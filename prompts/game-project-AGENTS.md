@@ -11,9 +11,10 @@ the top, or a symlink inside the project that points here. The
 clones are expected beside this repository, where the README places them;
 a clone kept elsewhere gets its own line. Nothing else in the block needs
 editing, and the block says what the agent does if the path was left
-unfilled. Claude Code reads `CLAUDE.md`, not `AGENTS.md`: give the project
-a `CLAUDE.md` holding the one line `@AGENTS.md`, as this repository does,
-or put the block in both.
+unfilled. Claude Code 2.1.277 and later read `AGENTS.md` when the project
+has no `CLAUDE.md`; an earlier version, or a project that already has a
+`CLAUDE.md`, needs that `CLAUDE.md` to hold the line `@AGENTS.md`, as this
+repository's does.
 
 ```markdown
 # Construct 3

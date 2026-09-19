@@ -7,7 +7,7 @@
 > `query-understanding-stage-two-semantic-evaluation.md` 是另一项工作（Qdrant
 > 语义路径的现场评估），与本文第二阶段无关；第三阶段因 `QueryExpander` 和
 > Semantic Chain 被删除而不再需要，原因见 `refactoring-audit.md`。
-> 第 2 节的产品方向复核仍是查询理解改动前的门禁，见根目录 `CLAUDE.md` 第 3 节。
+> 第 2 节的产品方向复核仍是查询理解改动前的门禁，见根目录 `AGENTS.md` 第 5 节。
 
 ## 1. 背景
 
