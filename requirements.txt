@@ -1,0 +1,6 @@
+# Minimal deps for lookup-only mode (no Qdrant, no embedding, no GPU)
+fastapi>=0.100.0
+uvicorn>=0.20.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+jieba>=0.42.1

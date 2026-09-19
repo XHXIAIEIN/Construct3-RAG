@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Initialize Construct3-RAG: fetch CDN data, export schemas, verify setup.
+"""Refresh the committed Construct 3 data from the CDN.
 
-Run this once after cloning, or after updating C3_VERSION.
+Fetches the release named by C3_VERSION (or --version), exports schemas,
+example metadata, language packs and TypeScript definitions into the cache,
+then replaces the matching directories under data/. The runtime reads data/,
+so the refresh shows in `git diff` before it is committed. The update
+workflow runs this same command.
 
 Usage:
     python scripts/init.py
-    python scripts/init.py --version <release>   # use a specific version
+    python scripts/init.py --version <release>
 """
 import argparse
 import sys
-import urllib.error
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -25,7 +28,7 @@ from src.lookup.schema_layout import schema_counts
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Initialize Construct3-RAG")
+    parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN")
     parser.add_argument("--version", type=str, help="C3 version override (for example rNNN)")
     args = parser.parse_args()
 
@@ -34,7 +37,7 @@ def main():
 
     settings = load_settings()
     version = args.version or settings.schema.version
-    print(f"Initializing Construct3-RAG with Construct 3 {version}")
+    print(f"Refreshing Construct3-RAG data from Construct 3 {version}")
     print(f"CDN: {settings.schema.cdn_base}")
     print()
 
@@ -72,38 +75,24 @@ def main():
     examples = fetcher.fetch_examples()
     print(f"  {len(examples)} example projects")
 
-    # 2. Export schemas for lookup.py
-    print("[5/5] Exporting schemas...")
-    schemas_dir = fetcher.export_schemas()
-    counts = schema_counts(schemas_dir)
+    # 2. Export, then replace the committed copies
+    print("[5/5] Exporting schemas, language packs, and TypeScript definitions...")
+    targets = fetcher.export_to_data(settings.paths.data_dir)
+    counts = schema_counts(targets["c3-schemas"])
     print(f"  {counts['plugins']} plugin schemas")
     print(f"  {counts['behaviors']} behavior schemas")
     print(f"  {counts['effects']} effect schemas")
-    lang_dir = fetcher.export_lang()
-    print(f"  language packs: {', '.join(sorted(p.stem for p in lang_dir.glob('*.json')))}")
+    print(f"  language packs: {', '.join(sorted(p.stem for p in targets['c3-lang'].glob('*.json')))}")
+    print(f"  ts-defs: {len(list(targets['c3-ts-defs'].rglob('*.d.ts')))} files")
 
-    # 3. Discover locales. Informational only; the CDN path can change
-    # between releases, so a failure here must not discard the export above.
-    try:
-        locales = fetcher.fetch_available_locales()
-        print(f"\nAvailable locales: {len(locales)}")
-    except (urllib.error.URLError, OSError) as exc:
-        print(f"\nAvailable locales: unknown ({exc})")
-
-    # 4. Terms
-    terms = fetcher.export_terms()
-    print(f"Translation terms: {len(terms)}")
-
-    # 5. Summary
+    # 3. Summary
     print(f"\n{'='*50}")
-    print(f"  Construct 3 {version} — initialized")
+    print(f"  Construct 3 {version} — data refreshed")
     print(f"  Cache: {fetcher.cache_dir}")
-    print(f"  Schemas: {schemas_dir}")
+    print(f"  Data:  {settings.paths.data_dir}")
     print(f"{'='*50}")
-    print(f"\nNext steps:")
-    print(f"  1. Start Qdrant:  docker start qdrant")
-    print(f"  2. Build index:   python -m src.ingest.indexer --rebuild")
-    print(f"  3. Start server:  python -m uvicorn src.api:app --port 8765")
+    print("\nReview with `git diff --stat data/`, then commit.")
+    print("Full mode: rebuild the index with `python -m src.ingest.indexer --rebuild`.")
 
 
 if __name__ == "__main__":

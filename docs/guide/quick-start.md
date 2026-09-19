@@ -57,11 +57,13 @@ Environment variables (`.env` file supported), defined in `src/settings/`:
 | `EMBEDDING_MODEL` | `Qwen/Qwen3-Embedding-0.6B` | Embedding model (full mode) |
 | `QDRANT_HOST` | `localhost` | Qdrant host (full mode) |
 
-Schema lookup first uses a complete cache for `C3_VERSION`, then falls back to
-the committed `data/c3-schemas` dataset. Default setup and direct Uvicorn startup
-therefore do not trigger a CDN download. Use `--refresh-data`, `--version`, or
-`scripts/init.py` only when deliberately refreshing data; `--full` also refreshes
-before building its version-matched vector index.
+The service reads the committed `data/` directory. Default setup and direct
+Uvicorn startup therefore make no CDN request. `scripts/init.py`,
+`--refresh-data`, and `--version` fetch the release into `C3_CACHE_DIR` and
+replace `data/c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`; review
+the result with `git diff` before committing. `--full` refreshes the same way
+before building its index. The cache is read directly only when `C3_VERSION`
+names a release that `data/` does not yet hold.
 
 ## Test
 

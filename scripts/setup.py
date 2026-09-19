@@ -68,6 +68,7 @@ def check_qdrant(host: str = "localhost", port: int = 6333) -> bool:
 
 
 def fetch_cdn(version: str | None = None):
+    """Refresh data/ from the CDN; the runtime reads data/, not the cache."""
     print("[cdn] Fetching Construct 3 CDN data...")
     from src.ingest.c3_fetcher import C3Fetcher
 
@@ -79,11 +80,7 @@ def fetch_cdn(version: str | None = None):
     )
 
     aces = fetcher.fetch_all_aces()
-    fetcher.fetch_lang("en-US")
-    fetcher.fetch_lang("zh-CN")
-    fetcher.fetch_effects()
-    fetcher.fetch_examples()
-    schemas_dir = fetcher.export_schemas()
+    targets = fetcher.export_to_data(SETTINGS.paths.data_dir)
 
     total_aces = sum(
         len(cat.get(t, []))
@@ -92,11 +89,12 @@ def fetch_cdn(version: str | None = None):
         for cat in cats.values()
         for t in ("conditions", "actions", "expressions")
     )
-    counts = schema_counts(schemas_dir)
+    counts = schema_counts(targets["c3-schemas"])
     print(
         f"  {ver}: {total_aces} ACEs, {counts['plugins']} plugins, "
         f"{counts['behaviors']} behaviors, {counts['effects']} effects"
     )
+    print(f"  Refreshed {SETTINGS.paths.data_dir}; review with git diff before committing.")
     print("  OK")
 
 

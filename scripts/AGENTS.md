@@ -6,7 +6,7 @@
 |--------|---------|-------|
 | `setup.py` | Default setup (CDN + lookup server) | `python scripts/setup.py` |
 | `setup.py --full` | Full setup (+ Qdrant + embedding + index) | `python scripts/setup.py --full` |
-| `init.py` | Fetch CDN data; export schemas, examples, language packs, and terms | `python scripts/init.py` |
+| `init.py` | Fetch CDN data, export it into the cache, and replace `data/c3-schemas`, `c3-examples`, `c3-lang`, `c3-ts-defs` | `python scripts/init.py` |
 | `check_c3_version.py` | Check latest C3 version on CDN | `python scripts/check_c3_version.py` |
 | `extract_common_aces.py` | Regenerate `src/ingest/common_aces.json` (shared world-object ACEs) from the editor bundle | `python scripts/extract_common_aces.py` |
 

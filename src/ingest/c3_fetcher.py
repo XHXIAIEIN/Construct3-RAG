@@ -20,6 +20,7 @@ endpoints; ``export_schemas`` reads them from ``common_aces.json`` next to
 """
 import json
 import logging
+import shutil
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone, timedelta
@@ -39,7 +40,6 @@ _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
 _BEIJING = timezone(timedelta(hours=8))
 
 # CDN endpoint paths — update here if Scirra changes URL structure.
-# See data/c3-cdn-samples/ for expected response schemas.
 ENDPOINTS = {
     "versions":      "versions.json",
     "plugin_aces":   "plugins/allAces.json",
@@ -433,27 +433,6 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
         return schemas_dir
 
-    def fetch_available_locales(self) -> list[str]:
-        """Extract available locale codes from the editor's main.js.
-
-        Parses locale patterns like "zh-CN", "ja-JP" from the JavaScript source.
-        Results are cached alongside other CDN data.
-        """
-        import re
-        cache_path = self.cache_dir / "_locales.json"
-        if cache_path.exists() and not _cache_expired(cache_path):
-            return json.loads(cache_path.read_text(encoding="utf-8"))
-
-        url = f"{self.base_url}/{self.version}/main.js"
-        logger.info(f"[CDN] Fetching locales from {url}")
-        raw = self._http_get(url).decode("utf-8", errors="ignore")
-        locales = sorted(set(re.findall(r'"([a-z]{2}-[A-Z]{2})"', raw)))
-        if not locales:
-            locales = ["en-US"]  # fallback
-        cache_path.write_text(json.dumps(locales), encoding="utf-8")
-        logger.info(f"[CDN] Found {len(locales)} locales: {', '.join(locales)}")
-        return locales
-
     def export_terms(self) -> list[dict]:
         """Export CDN lang data as term entries for c3_terms indexing.
 
@@ -570,14 +549,57 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported {fetched} new .d.ts files to {ts_dir}")
         return ts_dir
 
-    def ensure_ready(self) -> None:
-        """Ensure CDN data is fetched and exported. Safe to call multiple times.
+    def export_to_data(self, data_dir: Path) -> dict[str, Path]:
+        """Refresh the committed ``data/`` layout from the exports.
 
-        Called automatically on first use in api.py and indexer.py.
-        Fetches all required CDN endpoints and exports schemas for lookup.py.
+        Runs every export first; each is cached until the weekly expiry, so a
+        repeated call copies without fetching. Every target directory is
+        replaced whole, so an addon or example that left the CDN also leaves
+        the commit. Cache markers (dot-files) stay behind. This is the one
+        place that knows how the cache maps onto ``data/``; ``scripts/init.py``
+        and the update workflow both call it.
+
+        Returns the refreshed target directories keyed by their name.
         """
-        self.export_schemas()
-        logger.info(f"[CDN] Ready: {self.version}")
+        schemas_dir = self.export_schemas()
+        lang_dir = self.export_lang()
+        ts_dir = self.export_ts_defs()
+        targets = {
+            "c3-schemas": data_dir / "c3-schemas",
+            "c3-examples": data_dir / "c3-examples",
+            "c3-lang": data_dir / "c3-lang",
+            "c3-ts-defs": data_dir / "c3-ts-defs",
+        }
+
+        def _replace(target: Path, source: Path) -> None:
+            if target.exists():
+                shutil.rmtree(target)
+            shutil.copytree(
+                source,
+                target,
+                ignore=lambda _dir, names: [n for n in names if n.startswith(".")],
+            )
+
+        _replace(targets["c3-schemas"], schemas_dir)
+        _replace(targets["c3-examples"], schemas_dir.parent / "examples")
+        _replace(targets["c3-lang"], lang_dir)
+
+        # ts-defs: only the interface files and the class listing, not the
+        # download bookkeeping the export leaves beside them.
+        ts_target = targets["c3-ts-defs"]
+        if ts_target.exists():
+            shutil.rmtree(ts_target)
+        for src_file in ts_dir.rglob("*.d.ts"):
+            dst = ts_target / src_file.relative_to(ts_dir)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src_file, dst)
+        autocomplete = ts_dir / "autocomplete-data.json"
+        if autocomplete.exists():
+            ts_target.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(autocomplete, ts_target / autocomplete.name)
+
+        logger.info(f"[CDN] Refreshed {data_dir} from {self.version} exports")
+        return targets
 
     # ── Convenience methods ──────────────────────────────────────────────
 

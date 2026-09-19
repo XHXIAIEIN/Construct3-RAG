@@ -22,7 +22,7 @@ def test_default_settings_are_grouped_immutable_and_lookup_only(tmp_path):
     assert settings.schema.generated_dir == (
         tmp_path / ".cache" / "c3-cdn" / "r495.2" / "schemas"
     )
-    assert settings.schema.directory == settings.schema.generated_dir
+    assert settings.schema.directory == settings.schema.bundled_dir
     assert settings.runtime.qdrant_host == "localhost"
     assert settings.runtime.qdrant_port == 6333
     assert settings.runtime.server_port == 8765

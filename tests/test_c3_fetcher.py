@@ -253,3 +253,45 @@ def test_export_stops_when_language_pack_names_an_unknown_common_ace(fetcher):
     with pytest.raises(ValueError, match="actions/levitate"):
         _export_with(fetcher, texts)
     assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
+
+
+def test_export_to_data_replaces_committed_directories_without_cache_markers(fetcher, tmp_path):
+    """data/ mirrors the four exports; stale files and dot-markers do not survive."""
+    schemas_dir = fetcher.cache_dir / "schemas"
+    (schemas_dir / "en-US" / "plugins").mkdir(parents=True)
+    (schemas_dir / "en-US" / "plugins" / "sprite.json").write_text("{}", encoding="utf-8")
+    (schemas_dir / "_index.json").write_text("{}", encoding="utf-8")
+    (schemas_dir / ".exported").write_text(fetcher.version, encoding="utf-8")
+    examples_dir = fetcher.cache_dir / "examples" / "zh-CN"
+    examples_dir.mkdir(parents=True)
+    (examples_dir / "demo.json").write_text("{}", encoding="utf-8")
+    lang_dir = fetcher.cache_dir / "lang"
+    lang_dir.mkdir()
+    (lang_dir / "en-US.json").write_text("{}", encoding="utf-8")
+    ts_dir = fetcher.cache_dir / "ts-defs"
+    (ts_dir / "plugins").mkdir(parents=True)
+    (ts_dir / "plugins" / "sprite.d.ts").write_text("interface X {}", encoding="utf-8")
+    (ts_dir / "autocomplete-data.json").write_text("{}", encoding="utf-8")
+    (ts_dir / ".exported").write_text(fetcher.version, encoding="utf-8")
+
+    data_dir = tmp_path / "data"
+    stale = data_dir / "c3-schemas" / "en-US" / "plugins" / "retired.json"
+    stale.parent.mkdir(parents=True)
+    stale.write_text("{}", encoding="utf-8")
+
+    with patch.object(fetcher, "export_schemas", return_value=schemas_dir) as schemas, \
+         patch.object(fetcher, "export_lang", return_value=lang_dir) as lang, \
+         patch.object(fetcher, "export_ts_defs", return_value=ts_dir) as ts:
+        targets = fetcher.export_to_data(data_dir)
+
+    assert schemas.called and lang.called and ts.called
+    assert targets["c3-schemas"] == data_dir / "c3-schemas"
+    assert (data_dir / "c3-schemas" / "en-US" / "plugins" / "sprite.json").exists()
+    assert (data_dir / "c3-schemas" / "_index.json").exists()
+    assert not stale.exists()
+    assert not (data_dir / "c3-schemas" / ".exported").exists()
+    assert (data_dir / "c3-examples" / "zh-CN" / "demo.json").exists()
+    assert (data_dir / "c3-lang" / "en-US.json").exists()
+    assert (data_dir / "c3-ts-defs" / "plugins" / "sprite.d.ts").exists()
+    assert (data_dir / "c3-ts-defs" / "autocomplete-data.json").exists()
+    assert not (data_dir / "c3-ts-defs" / ".exported").exists()

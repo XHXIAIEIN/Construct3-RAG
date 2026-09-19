@@ -130,9 +130,10 @@ Remaining boundaries and deliberate limits:
 - CDN export, vector normalization, and Lookup bilingual projection still have
   separate representations. Unify them only with golden output parity across
   committed Schema, Direct Lookup, and the frozen semantic corpus.
-- Runtime Schema may use a version-matched cache while example lookup reads the
-  bundled example dataset. A future dataset-snapshot manifest should make that
-  cross-source version choice explicit.
+- The runtime reads `data/` for schemas and examples alike; the cache is read
+  only for a `C3_VERSION` that `data/` does not hold yet. A stale same-version
+  cache used to win over committed data, which hid the 2026-09-18 `_common`
+  fix on the machine that produced it.
 - Lookup compatibility context remains a rendered English/Chinese string beside
   typed matches. Remove or version it only with an API contract decision.
 

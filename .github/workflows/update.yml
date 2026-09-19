@@ -21,8 +21,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install minimal deps
-        run: pip install python-dotenv
+      # The lookup-only requirements: src.settings imports the lookup package,
+      # which needs jieba, and python-dotenv alone is not enough.
+      - name: Install lookup-only deps
+        run: pip install -r requirements.txt
 
       - name: Check for new version
         id: check
@@ -71,75 +73,9 @@ jobs:
           p.write_text(src)
           PYEOF
 
-          # Fetch CDN data and export
-          python -c "
-          import sys, json, shutil
-          from pathlib import Path
-          sys.path.insert(0, '.')
-          from src.ingest.c3_fetcher import C3Fetcher
-
-          version = '${{ steps.check.outputs.latest }}'
-          f = C3Fetcher(version=version)
-
-          # 1. Export schemas (per-language files + _index.json)
-          print('Exporting schemas...')
-          schemas_dir = f.export_schemas()
-
-          target = Path('data/c3-schemas')
-          if target.exists():
-              shutil.rmtree(target)
-          target.mkdir(parents=True, exist_ok=True)
-          # Copy every exported locale directory plus the language-neutral index.
-          # Hidden cache markers are deliberately excluded from version control.
-          for src_path in schemas_dir.iterdir():
-              if src_path.name.startswith('.'):
-                  continue
-              item = src_path.name
-              dst_path = target / item
-              if src_path.is_dir():
-                  shutil.copytree(src_path, dst_path)
-              elif src_path.is_file():
-                  shutil.copy2(src_path, dst_path)
-          idx = json.loads((target / '_index.json').read_text(encoding='utf-8'))
-          print(f'Schemas: {len(idx.get(\"plugins\", {}))} plugins, {len(idx.get(\"behaviors\", {}))} behaviors, {len(idx.get(\"effects\", {}))} effects')
-
-          # Copy examples (separate from schemas)
-          examples_src = schemas_dir.parent / 'examples'
-          examples_target = Path('data/c3-examples')
-          if examples_target.exists():
-              shutil.rmtree(examples_target)
-          if examples_src.exists():
-              shutil.copytree(examples_src, examples_target)
-              en_count = len(list((examples_target / 'en-US').glob('*.json'))) if (examples_target / 'en-US').exists() else 0
-              print(f'Examples: {en_count}')
-
-          # Language packs: raw CDN text, pretty printed so releases can be diffed
-          print('Exporting language packs...')
-          lang_dir = f.export_lang()
-          lang_target = Path('data/c3-lang')
-          if lang_target.exists():
-              shutil.rmtree(lang_target)
-          shutil.copytree(lang_dir, lang_target)
-          print('Language packs: ' + ', '.join(sorted(p.name for p in lang_target.glob('*.json'))))
-
-          # 2. Export ts-defs
-          print('Exporting ts-defs...')
-          ts_dir = f.export_ts_defs()
-
-          ts_target = Path('data/c3-ts-defs')
-          if ts_target.exists():
-              shutil.rmtree(ts_target)
-          ts_target.mkdir(parents=True, exist_ok=True)
-          for src_file in ts_dir.rglob('*.d.ts'):
-              rel = src_file.relative_to(ts_dir)
-              dst = ts_target / rel
-              dst.parent.mkdir(parents=True, exist_ok=True)
-              shutil.copy2(src_file, dst)
-          ac = ts_dir / 'autocomplete-data.json'
-          if ac.exists():
-              shutil.copy2(ac, ts_target / 'autocomplete-data.json')
-          print(f'TS defs: {len(list(ts_target.rglob(\"*.d.ts\")))} files')
-          "
+          # Same refresh a developer runs locally: export into the cache,
+          # then replace data/c3-schemas, c3-examples, c3-lang and c3-ts-defs.
+          python scripts/init.py --version "$C3_VERSION"
 
       - name: Create Pull Request
         if: steps.check.outputs.changed == 'true'

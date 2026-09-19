@@ -243,15 +243,19 @@ Bilingual text lets Chinese and English queries find the same ACE.
 When Construct 3 releases a new version:
 
 ```bash
-# Set C3_VERSION=<release> in .env
-
-# Re-initialize (fetches new CDN data, re-exports schemas)
+# Fetch the release, export into the cache, replace data/
 python scripts/init.py --version <release>
 
-# Rebuild index
+# Review, then commit data/ together with the C3_VERSION default
+git diff --stat data/
+
+# Full mode only: rebuild the index
 python -m src.ingest.indexer --rebuild
 ```
 
-The update workflow copies every exported directory, schemas, examples,
-language packs, and ts-defs, instead of naming locales itself. This keeps
-generated and committed layouts identical.
+`C3Fetcher.export_to_data()` is the one place that maps the cache onto
+`data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
+whole, leaving cache markers behind. `scripts/init.py` and the update workflow
+both call it, so generated and committed layouts stay identical. The workflow
+also rewrites the `C3_VERSION` default in `src/settings/__init__.py` before
+the refresh and opens a pull request with the result.

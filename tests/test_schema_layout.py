@@ -139,7 +139,18 @@ def test_schema_is_complete_rejects_empty_manifest_section(tmp_path):
     assert not schema_is_complete(root)
 
 
-def test_select_schema_dir_prefers_matching_generated_data(tmp_path):
+def test_select_schema_dir_prefers_committed_data_of_the_expected_version(tmp_path):
+    """A same-version cache must not shadow the committed dataset."""
+    generated = _make_schema(tmp_path / "generated", "r2")
+    bundled = _make_schema(tmp_path / "bundled", "r2")
+    assert select_schema_dir(
+        generated=generated,
+        bundled=bundled,
+        expected_version="r2",
+    ) == bundled
+
+
+def test_select_schema_dir_uses_generated_data_until_committed_data_catches_up(tmp_path):
     generated = _make_schema(tmp_path / "generated", "r2")
     bundled = _make_schema(tmp_path / "bundled", "r1")
     assert select_schema_dir(
@@ -152,6 +163,17 @@ def test_select_schema_dir_prefers_matching_generated_data(tmp_path):
 def test_select_schema_dir_falls_back_to_bundled_data(tmp_path):
     generated = tmp_path / "generated"
     bundled = _make_schema(tmp_path / "bundled", "r1")
+    assert select_schema_dir(
+        generated=generated,
+        bundled=bundled,
+        expected_version="r2",
+    ) == bundled
+
+
+def test_select_schema_dir_reports_bundled_when_nothing_is_usable(tmp_path):
+    """Health then says the committed data is missing instead of a cache path."""
+    generated = _make_schema(tmp_path / "generated", "r1")
+    bundled = tmp_path / "bundled"
     assert select_schema_dir(
         generated=generated,
         bundled=bundled,
