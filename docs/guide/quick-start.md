@@ -27,6 +27,7 @@ docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdran
 # 3. Clone data sources (place alongside this project)
 git clone https://github.com/XHXIAIEIN/Construct3-Manual.git
 git clone https://github.com/Scirra/Construct-Example-Projects.git   # optional
+git clone https://github.com/Scirra/Construct-Addon-SDK.git          # optional
 
 # 4. Setup with indexing
 python scripts/setup.py --full
@@ -55,7 +56,11 @@ Environment variables (`.env` file supported), defined in `src/settings/`:
 | `RAG_SERVER_PORT` | `8765` | API server port |
 | `LITE_MODE` | `true` | Lookup-only default; set false only for a prepared full semantic service |
 | `EMBEDDING_MODEL` | `Qwen/Qwen3-Embedding-0.6B` | Embedding model (full mode) |
-| `QDRANT_HOST` | `localhost` | Qdrant host (full mode) |
+| `QDRANT_HOST`, `QDRANT_PORT` | `localhost`, `6333` | Qdrant address (full mode) |
+| `RERANKER_ENABLED`, `RERANKER_MODEL` | `true`, `BAAI/bge-reranker-v2-m3` | CrossEncoder over the fused top 20 (full mode) |
+| `BM25_ENABLED` | `false` | Add a BM25 sparse vector at index and query time (full mode) |
+| `BGE_M3_NATIVE_SPARSE` | `false` | Use bge-m3 lexical weights as the sparse vector; needs `EMBEDDING_MODEL=BAAI/bge-m3` |
+| `C3_CACHE_DIR` | `.cache/c3-cdn` | Where CDN downloads and exported schemas are cached |
 
 The service reads the committed `data/` directory. Default setup and direct
 Uvicorn startup therefore make no CDN request. `scripts/init.py`,

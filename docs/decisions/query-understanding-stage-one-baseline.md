@@ -18,12 +18,15 @@ using the initial adjudication snapshot:
 
 ```bash
 python tests/eval_query_quality.py --strategy all --split all \
-  --output .cache/query-quality/pre-change-r495.json
+  --output .local/docs/evidence/query-quality/pre-change-r495.json
 ```
 
-That exact 72-line fixture is preserved at
-`.cache/query-quality/query_gold-pre-review.jsonl` with SHA-256
-`b64e6751156c0413c267cfbf1173c5ef9541d411e068a3a5901e5459ddbfaf7b`.
+That exact 72-line fixture is kept outside the repository at
+`.local/docs/evidence/query-quality/query_gold-pre-review.jsonl` with SHA-256
+`b64e6751156c0413c267cfbf1173c5ef9541d411e068a3a5901e5459ddbfaf7b`, next to
+the reports below. The runner is offline and deterministic, so an r495 schema
+export and that fixture regenerate the reports.
+
 An independent second review then strengthened 24 list/property/entity/example
 judgments without changing the queries, splits, route labels, or family quotas.
 The final tracked fixture has SHA-256
@@ -33,15 +36,15 @@ The final reviewed stage-one report is reproduced with:
 
 ```bash
 python tests/eval_query_quality.py --strategy all --split all \
-  --output .cache/query-quality/post-change-r495.json
+  --output .local/docs/evidence/query-quality/post-change-r495.json
 ```
 
 For an exact pre/post comparison under the original adjudication snapshot, run:
 
 ```bash
 python tests/eval_query_quality.py --strategy all --split all \
-  --fixture .cache/query-quality/query_gold-pre-review.jsonl \
-  --output .cache/query-quality/post-change-r495-pre-review-gold.json
+  --fixture .local/docs/evidence/query-quality/query_gold-pre-review.jsonl \
+  --output .local/docs/evidence/query-quality/post-change-r495-pre-review-gold.json
 ```
 
 Every report records:
@@ -257,7 +260,7 @@ Deferred unchanged because Qdrant was not running:
 - `python -m pytest -q`: 160 passed; three warnings are third-party
   `jieba/pkg_resources` and FAISS SWIG deprecations.
 - final reviewed `current`/`literal` quality run: 72/72 and 71/72, with a full
-  per-query JSON report at `.cache/query-quality/post-change-r495.json`;
+  per-query JSON report at `.local/docs/evidence/query-quality/post-change-r495.json`;
 - `python tests/eval_lookup.py -v`: 22/22 historical diagnostics passed;
 - `python -m compileall -q src scripts tests`: passed;
 - production Playground inline JavaScript syntax check: passed;

@@ -240,24 +240,30 @@ is recorded as an environment limitation rather than a browser pass.
   unavailable as described above.
 
 The machine-readable final command, hash, runtime, worktree, and browser-status
-record is `.cache/query-quality/stage-two/final-validation.json`.
+record is `final-validation.json` in the artifact list below.
 
 ## Primary artifacts
 
+The run's reports, logs, protocols and helper scripts are kept outside the
+repository at `.local/docs/evidence/query-quality/stage-two/` on the evaluation machine; the model
+caches it used stay under `.cache/`. Re-running them needs the local
+embedding model, the frozen index, and the GPU, none of which the repository
+holds, and every number this record relies on is in the tables above. The
+hashes identify the files for anyone with access to that machine.
+
 | Artifact | SHA-256 |
 |---|---|
-| `.cache/query-quality/stage-two/semantic-dev-all.json` | `b668da5c3c8b56095df99502f1169662c8147b02a4307cbc24539e0cba346d83` |
-| `.cache/query-quality/stage-two/semantic-heldout-all-final.json` | `29008ab916f0cf57e1bfb2fe5fd59ff092a68f010896bf5f98b2466afdf9baa3` |
-| `.cache/query-quality/stage-two/index-manifest.json` | `c59754ebd278cd579e72f56e3500b0c64f30afe8d78d132425c66b00d9103e39` |
-| `.cache/query-quality/stage-two/index-manifest-post-heldout-final.json` | `c59754ebd278cd579e72f56e3500b0c64f30afe8d78d132425c66b00d9103e39` |
-| `.cache/query-quality/stage-two/index-manifest-post-api-final.json` | `c59754ebd278cd579e72f56e3500b0c64f30afe8d78d132425c66b00d9103e39` |
-| `.cache/query-quality/stage-two/api-full-probes-before.json` | `f1251b366d7945775e439fe49c44c7b02accdb9071693594b73886dba93eb168` |
-| `.cache/query-quality/stage-two/api-full-probes-final.json` | `72ba3d5f77e3c9d01223a7997245dc4a8be8cbb32f7aa8464fa0b6968df2f247` |
-| `.cache/query-quality/stage-two/api-full-probes-post-degradation.json` | `ddba1f3ffcca66fa865cfa3ab1f4cf14ca3fa0995558d7eee26fcde37f52441b` |
-| `.cache/query-quality/stage-two/api-degraded-probes-optimized.json` | `9f66d93427d0eedb632f071c10ce19e0ebf108d36eede676f25a11b07fd4211c` |
-| `.cache/query-quality/stage-two/api-lite-probes-final.json` | `1c5e7d75c78319d68343dd634a3f05e5be759b4f67fddeae333439cd770e42b8` |
-| `.cache/query-quality/stage-two/api-runtime-audit.json` | `8ee80e4b7f6973f5c8c8f23aff753b08fef7677df217bdb5e510e3111902f102` |
-| `.cache/query-quality/stage-two/direct-quality-final.json` | `5916459604d647688db15666f39920adce777bfa136d5195c41e0f1afa78bb2f` |
+| `semantic-dev-all.json` | `b668da5c3c8b56095df99502f1169662c8147b02a4307cbc24539e0cba346d83` |
+| `semantic-heldout-all-final.json` | `29008ab916f0cf57e1bfb2fe5fd59ff092a68f010896bf5f98b2466afdf9baa3` |
+| `index-manifest.json` (identical before and after heldout and API probes) | `c59754ebd278cd579e72f56e3500b0c64f30afe8d78d132425c66b00d9103e39` |
+| `api-full-probes-before.json` | `f1251b366d7945775e439fe49c44c7b02accdb9071693594b73886dba93eb168` |
+| `api-full-probes-final.json` | `72ba3d5f77e3c9d01223a7997245dc4a8be8cbb32f7aa8464fa0b6968df2f247` |
+| `api-full-probes-post-degradation.json` | `ddba1f3ffcca66fa865cfa3ab1f4cf14ca3fa0995558d7eee26fcde37f52441b` |
+| `api-degraded-probes-optimized.json` | `9f66d93427d0eedb632f071c10ce19e0ebf108d36eede676f25a11b07fd4211c` |
+| `api-lite-probes-final.json` | `1c5e7d75c78319d68343dd634a3f05e5be759b4f67fddeae333439cd770e42b8` |
+| `api-runtime-audit.json` | `8ee80e4b7f6973f5c8c8f23aff753b08fef7677df217bdb5e510e3111902f102` |
+| `direct-quality-final.json` | `5916459604d647688db15666f39920adce777bfa136d5195c41e0f1afa78bb2f` |
+| `final-validation.json` | `9df8d5802a11e84806ccaa93e9a8f129a11eddea20018ea802093043a7551ad8` |
 
 The isolated Qdrant container and the final LITE API process remain running for
 local inspection. Neither is attached to the historical volume.

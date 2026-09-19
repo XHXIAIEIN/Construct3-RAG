@@ -34,7 +34,7 @@ from .models import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_STAGE_DIR = ROOT / ".cache" / "query-quality" / "stage-two"
+DEFAULT_STAGE_DIR = ROOT / ".local" / "docs" / "evidence" / "query-quality" / "stage-two"
 LOCKED_BEFORE_DEV = "locked_before_dev"
 HELDOUT_OPEN = "dev_parameters_locked_heldout_open"
 _LOCKED_STATUSES = frozenset({LOCKED_BEFORE_DEV, HELDOUT_OPEN})

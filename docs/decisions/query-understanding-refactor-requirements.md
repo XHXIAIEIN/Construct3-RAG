@@ -1,5 +1,14 @@
 # 查询理解与术语系统重构要求
 
+> 写于 2026-08-08 第零阶段审计之前。第 1 节描述的是当时的代码状态。
+> 第 9 节各阶段的执行记录：第零阶段见 `query-understanding-stage-zero-audit.md`，
+> 第一阶段见 `query-understanding-stage-one-baseline.md`；第二阶段没有单独执行，
+> 第一阶段已删除无方向同义词和整类扩展，只保留一条有方向、有范围的单跳别名；
+> `query-understanding-stage-two-semantic-evaluation.md` 是另一项工作（Qdrant
+> 语义路径的现场评估），与本文第二阶段无关；第三阶段因 `QueryExpander` 和
+> Semantic Chain 被删除而不再需要，原因见 `refactoring-audit.md`。
+> 第 2 节的产品方向复核仍是查询理解改动前的门禁，见根目录 `CLAUDE.md` 第 3 节。
+
 ## 1. 背景
 
 当前项目已经将中文查询词、意图规则、索引文本和提示词集中到

@@ -28,13 +28,13 @@ Default: `http://localhost:8765`
 | `query` | string | required | Search query (max 500 chars) |
 | `mode` | string | `"auto"` | `list` / `lookup` / `semantic` / `auto` |
 | `scope` | string | `"eventsheet"` | `eventsheet` / `scripts` / `js` / `ts` / `all` |
-| `lang` | string | auto | `en` / `zh` / `ja` / `ko` |
+| `lang` | string | auto | `en` / `zh` |
 | `top_k` | int | 10 | Requested semantic result budget (1-50); complexity routing may raise it, while Direct Schema lists remain complete |
 | `context` | bool | false | Include compact compatibility text; never establishes a lookup hit by itself |
 | `debug` | bool | false | Include timing and lookup/semantic routing diagnostics |
 | `plugin` | string | null | Full-mode semantic filter by plugin name; bypasses Direct Lookup |
 | `section_types` | string[] | null | Full-mode section filter used with `plugin` |
-| `collections` | string[] | null | Full-mode semantic collection filter; bypasses Direct Lookup |
+| `collections` | string[] | null | Full-mode semantic collection filter by registry key (`guide`, `plugins`, `ace`, `examples`, ... from `src/qdrant/collections.json`); bypasses Direct Lookup |
 | `apply_threshold` | bool | true | Apply adaptive filtering to semantic results in full mode |
 
 ### Validation Errors
@@ -115,7 +115,10 @@ are omitted from the response.
               }
             },
             "category": "collisions",
-            "params": [{"name": "Object", "type": "object", "desc": "..."}]
+            "params": [{"name": "Object", "type": "object", "desc": "..."}],
+            "relevance": 1,
+            "is_trigger": true,
+            "is_async": false
           }
         ]
       }
@@ -125,7 +128,10 @@ are omitted from the response.
 ```
 
 The grouping keys carry the stable `plugin_id` and plural `ace_type`; each item
-carries `ace_id`. With `lang=zh`, the localized value is added under `name.zh`:
+carries `ace_id`. `is_trigger` and `is_async` are always present; expressions
+carry `return_type` instead. `relevance` is the number of query keywords the
+ACE name matched; it is omitted when the handler did not score, as in `list`
+mode. With `lang=zh`, the localized value is added under `name.zh`:
 
 ```json
 {
