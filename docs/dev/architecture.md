@@ -235,12 +235,16 @@ snapshot must declare `en-US` and `zh-CN`, contain non-empty plugin, behavior,
 and effect sections, and provide a parseable bilingual JSON file for every
 manifest entry. Each locale directory also carries an `_index.json` with
 display names; it must list exactly the manifest's ids, and
-`schema_index.py` reads it to match effect names in queries. Runtime
-selection prefers a complete version-matched cache, then the bundled
-dataset. Explicit path overrides remain explicit.
+`schema_index.py` reads it to match effect names in queries. The runtime
+reads the committed dataset when it is complete and matches `C3_VERSION`; a
+generated export in the cache is read only while it matches that version and
+the committed copy does not, which is the window between raising the version
+and refreshing `data/`. A same-version cache never shadows committed data.
+Explicit path overrides remain explicit.
 
-No ordinary import or query refreshes the CDN. Fetch/export is an initialization
-or maintenance action.
+No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
+exports into the cache, and replaces the `data/` directories; the update
+workflow runs the same script.
 
 ## Compatibility policy
 

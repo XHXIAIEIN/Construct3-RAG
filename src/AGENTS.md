@@ -119,7 +119,10 @@ counts. Publication itself is `qdrant/adapter.py`; `indexer.py` remains the
 compatibility facade and command entry point (`python -m src.ingest.indexer
 --rebuild`).
 
-`c3_fetcher.py` exports the schema files. The shared world-object ACEs are
+`c3_fetcher.py` fetches the CDN into the cache and exports the schema,
+example, language-pack, and ts-defs trees there; `export_to_data()` then
+replaces the matching `data/` directories, which is what the runtime reads.
+The shared world-object ACEs are
 not on the CDN endpoints it reads; `common_aces.py` loads them from
 `common_aces.json`, an extract of the editor bundle kept next to it, and
 `export_schemas()` merges that entry like any plugin.

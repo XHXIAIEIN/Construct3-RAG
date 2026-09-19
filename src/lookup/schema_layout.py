@@ -225,11 +225,19 @@ def select_schema_dir(
     expected_version: str,
     explicit: Path | None = None,
 ) -> Path:
-    """Choose a schema directory while preserving explicit override semantics."""
+    """Choose the schema directory the runtime reads.
+
+    The committed dataset is the source of truth, so it wins whenever it is
+    complete and carries ``expected_version``. A generated export is read only
+    while it matches that version and the committed copy does not: the window
+    between raising ``C3_VERSION`` and refreshing ``data/``. Reading the export
+    first would let a stale cache of the same version shadow committed fixes.
+    An explicit path always wins.
+    """
     if explicit is not None:
         return explicit
+    if schema_is_complete(bundled) and schema_version(bundled) == expected_version:
+        return bundled
     if schema_is_complete(generated) and schema_version(generated) == expected_version:
         return generated
-    if schema_is_complete(bundled):
-        return bundled
-    return generated
+    return bundled
