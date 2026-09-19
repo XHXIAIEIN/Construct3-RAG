@@ -78,7 +78,7 @@ HTTP contracts from `src.interfaces.http`, vector adapters from
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
 repository root, returning a frozen tree of path, Schema, runtime, vector,
-feature, LLM, lookup, and query-expansion groups. It does not load dotenv or
+and feature groups. Every field has a runtime reader. It does not load dotenv or
 probe external services; every process entry point (`src.api`, each
 `scripts/*.py`) calls `load_dotenv()` itself first.
 

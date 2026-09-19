@@ -20,9 +20,6 @@ from src.lookup.schema_layout import select_schema_dir
 class PathSettings:
     base_dir: Path
     data_dir: Path
-    manual_repo: str
-    example_repo: str
-    addon_sdk_repo: str
     manual_dir: Path
     example_projects_dir: Path
     addon_sdk_manual_dir: Path
@@ -60,16 +57,11 @@ class RuntimeSettings:
     qdrant_host: str
     qdrant_port: int
     server_port: int
-    ui_language: str
 
 
 @dataclass(frozen=True, slots=True)
 class VectorSettings:
-    embedding_model_registry: tuple[tuple[str, int], ...]
     embedding_model: str
-    embedding_dimension: int
-    max_chunk_size: int
-    top_k: int
     reranker_model: str
     reranker_top_k: int
     contextual_chunking_cache: Path
@@ -85,44 +77,12 @@ class FeatureSettings:
 
 
 @dataclass(frozen=True, slots=True)
-class LLMSettings:
-    provider: str
-    model: str
-    base_url: str
-    api_key: str
-
-
-@dataclass(frozen=True, slots=True)
-class LookupSettings:
-    ollama_model: str
-    ollama_url: str
-
-
-@dataclass(frozen=True, slots=True)
-class ExpanderSettings:
-    backend: str
-    dict_source: str
-    dict_filter: str
-    api_provider: str
-    api_key: str
-    api_model: str
-    local_model: str
-    device: str
-    timeout_s: float
-    max_tokens: int
-    top_k: int
-
-
-@dataclass(frozen=True, slots=True)
 class AppSettings:
     paths: PathSettings
     schema: SchemaSettings
     runtime: RuntimeSettings
     vector: VectorSettings
     features: FeatureSettings
-    llm: LLMSettings
-    lookup: LookupSettings
-    expander: ExpanderSettings
 
 
 def _string(source: Mapping[str, str], key: str, default: str) -> str:
@@ -140,11 +100,6 @@ def _boolean(source: Mapping[str, str], key: str, default: bool) -> bool:
 def _integer(source: Mapping[str, str], key: str, default: int) -> int:
     value = source.get(key)
     return default if value is None else int(value)
-
-
-def _float(source: Mapping[str, str], key: str, default: float) -> float:
-    value = source.get(key)
-    return default if value is None else float(value)
 
 
 def _path(source: Mapping[str, str], key: str, default: Path) -> Path:
@@ -173,9 +128,6 @@ def load_settings(
     paths = PathSettings(
         base_dir=root,
         data_dir=data_dir,
-        manual_repo=manual_repo,
-        example_repo=example_repo,
-        addon_sdk_repo=addon_sdk_repo,
         manual_dir=root.parent / manual_repo / "Construct3-Manual",
         example_projects_dir=root.parent / example_repo / "example-projects",
         addon_sdk_manual_dir=root.parent / manual_repo / "Construct3-Addon-SDK",
@@ -205,23 +157,13 @@ def load_settings(
         qdrant_host=_string(source, "QDRANT_HOST", "localhost"),
         qdrant_port=_integer(source, "QDRANT_PORT", 6333),
         server_port=_integer(source, "RAG_SERVER_PORT", 8765),
-        ui_language=_string(source, "UI_LANGUAGE", "zh"),
     )
     vector = VectorSettings(
-        embedding_model_registry=(
-            ("BAAI/bge-m3", 1024),
-            ("Qwen/Qwen3-Embedding-0.6B", 1024),
-            ("Qwen/Qwen3-Embedding-4B", 2560),
-            ("Qwen/Qwen3-Embedding-8B", 4096),
-        ),
         embedding_model=_string(
             source,
             "EMBEDDING_MODEL",
             "Qwen/Qwen3-Embedding-0.6B",
         ),
-        embedding_dimension=_integer(source, "EMBEDDING_DIMENSION", 1024),
-        max_chunk_size=2000,
-        top_k=5,
         reranker_model=_string(
             source,
             "RERANKER_MODEL",
@@ -245,55 +187,18 @@ def load_settings(
             False,
         ),
     )
-    llm = LLMSettings(
-        provider=_string(source, "LLM_PROVIDER", "ollama"),
-        model=_string(source, "LLM_MODEL", "qwen2.5:7b"),
-        base_url=_string(source, "LLM_BASE_URL", "http://localhost:11434"),
-        api_key=_string(source, "LLM_API_KEY", ""),
-    )
-    lookup = LookupSettings(
-        ollama_model=_string(source, "LOOKUP_OLLAMA_MODEL", "qwen2.5:7b"),
-        ollama_url=_string(
-            source,
-            "LOOKUP_OLLAMA_URL",
-            "http://localhost:11434",
-        ),
-    )
-    expander = ExpanderSettings(
-        backend=_string(source, "EXPANDER_BACKEND", "dict"),
-        dict_source=_string(source, "EXPANDER_DICT_SOURCE", "cilin"),
-        dict_filter=_string(source, "EXPANDER_DICT_FILTER", "true"),
-        api_provider=_string(source, "EXPANDER_API_PROVIDER", "dashscope"),
-        api_key=_string(source, "EXPANDER_API_KEY", ""),
-        api_model=_string(source, "EXPANDER_API_MODEL", "qwen-turbo"),
-        local_model=_string(
-            source,
-            "EXPANDER_LOCAL_MODEL",
-            "Qwen/Qwen3-0.5B",
-        ),
-        device=_string(source, "EXPANDER_DEVICE", "cpu"),
-        timeout_s=_float(source, "EXPANDER_TIMEOUT_S", 5.0),
-        max_tokens=_integer(source, "EXPANDER_MAX_TOKENS", 80),
-        top_k=_integer(source, "EXPANDER_TOP_K", 12),
-    )
     return AppSettings(
         paths=paths,
         schema=schema,
         runtime=runtime,
         vector=vector,
         features=features,
-        llm=llm,
-        lookup=lookup,
-        expander=expander,
     )
 
 
 __all__ = [
     "AppSettings",
     "FeatureSettings",
-    "ExpanderSettings",
-    "LLMSettings",
-    "LookupSettings",
     "PathSettings",
     "RuntimeSettings",
     "SchemaSettings",
