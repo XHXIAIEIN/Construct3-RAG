@@ -45,9 +45,7 @@ def test_environment_overrides_are_parsed_once(tmp_path):
             "QDRANT_HOST": "vector.internal",
             "QDRANT_PORT": "7333",
             "RAG_SERVER_PORT": "9876",
-            "UI_LANGUAGE": "en",
             "EMBEDDING_MODEL": "example/embedding",
-            "EMBEDDING_DIMENSION": "2048",
             "BGE_M3_NATIVE_SPARSE": "TRUE",
             "LITE_MODE": "false",
             "RERANKER_ENABLED": "FALSE",
@@ -56,23 +54,6 @@ def test_environment_overrides_are_parsed_once(tmp_path):
             "BM25_ENABLED": "true",
             "CONTEXTUAL_CHUNKING_ENABLED": "true",
             "CONTEXTUAL_CHUNKING_CACHE": str(context_cache),
-            "LLM_PROVIDER": "openai",
-            "LLM_MODEL": "example/chat",
-            "LLM_BASE_URL": "https://llm.example.invalid",
-            "LLM_API_KEY": "secret",
-            "LOOKUP_OLLAMA_MODEL": "example/lookup",
-            "LOOKUP_OLLAMA_URL": "https://lookup.example.invalid",
-            "EXPANDER_BACKEND": "local",
-            "EXPANDER_DICT_SOURCE": "hownet",
-            "EXPANDER_DICT_FILTER": "false",
-            "EXPANDER_API_PROVIDER": "deepseek",
-            "EXPANDER_API_KEY": "expand-secret",
-            "EXPANDER_API_MODEL": "example/expand-api",
-            "EXPANDER_LOCAL_MODEL": "example/expand-local",
-            "EXPANDER_DEVICE": "cuda",
-            "EXPANDER_TIMEOUT_S": "2.5",
-            "EXPANDER_MAX_TOKENS": "91",
-            "EXPANDER_TOP_K": "17",
         },
         base_dir=tmp_path,
     )
@@ -84,9 +65,7 @@ def test_environment_overrides_are_parsed_once(tmp_path):
     assert settings.runtime.qdrant_host == "vector.internal"
     assert settings.runtime.qdrant_port == 7333
     assert settings.runtime.server_port == 9876
-    assert settings.runtime.ui_language == "en"
     assert settings.vector.embedding_model == "example/embedding"
-    assert settings.vector.embedding_dimension == 2048
     assert settings.vector.reranker_model == "example/reranker"
     assert settings.vector.reranker_top_k == 37
     assert settings.vector.contextual_chunking_cache == context_cache
@@ -95,23 +74,6 @@ def test_environment_overrides_are_parsed_once(tmp_path):
     assert settings.features.reranker_enabled is False
     assert settings.features.bm25_enabled is True
     assert settings.features.contextual_chunking_enabled is True
-    assert settings.llm.provider == "openai"
-    assert settings.llm.model == "example/chat"
-    assert settings.llm.base_url == "https://llm.example.invalid"
-    assert settings.llm.api_key == "secret"
-    assert settings.lookup.ollama_model == "example/lookup"
-    assert settings.lookup.ollama_url == "https://lookup.example.invalid"
-    assert settings.expander.backend == "local"
-    assert settings.expander.dict_source == "hownet"
-    assert settings.expander.dict_filter == "false"
-    assert settings.expander.api_provider == "deepseek"
-    assert settings.expander.api_key == "expand-secret"
-    assert settings.expander.api_model == "example/expand-api"
-    assert settings.expander.local_model == "example/expand-local"
-    assert settings.expander.device == "cuda"
-    assert settings.expander.timeout_s == 2.5
-    assert settings.expander.max_tokens == 91
-    assert settings.expander.top_k == 17
 
 
 def test_explicit_schema_override_always_wins(tmp_path):
@@ -144,10 +106,7 @@ def test_external_repository_availability_is_dynamic(tmp_path):
     [
         "QDRANT_PORT",
         "RAG_SERVER_PORT",
-        "EMBEDDING_DIMENSION",
         "RERANKER_TOP_K",
-        "EXPANDER_MAX_TOKENS",
-        "EXPANDER_TOP_K",
     ],
 )
 def test_invalid_integer_setting_fails_with_source_key_context(tmp_path, key):
