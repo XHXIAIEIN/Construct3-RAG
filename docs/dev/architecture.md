@@ -37,29 +37,32 @@ src/
     handlers.py                  Intent -> typed match execution
     formatting.py                Compatibility context rendering
     schema_index.py              Bilingual Schema repository
+    schema_layout.py             Typed Schema manifest and snapshot validation
     term_index.py                Translation-term index
     examples_index.py            Example metadata index
     scripting_index.py           Script API index
     indexes.py                   Legacy index re-exports only
-  retrieval/
-    semantic.py                  Optional Qdrant semantic adapter
-    identity.py                  The single stable-identity implementation
-    policy.py                    Pure budgets, tiers, dedup, and fusion policy
-  vector/
-    embedding.py                 Shared lazy dense/native-sparse model adapter
-    sparse.py                    Shared deterministic BM25 adapter
+  qdrant/
+    collection_registry.py       Typed loader for collections.json
+    collections.json             Collection names, manual routes, taxonomy
+    collections.py               Compatibility constants derived from the registry
+    adapter.py                   Canonical Qdrant publication adapter
+    retrieval/
+      semantic.py                Optional Qdrant semantic adapter
+      identity.py                The single stable-identity implementation
+      policy.py                  Pure budgets, tiers, dedup, and fusion policy
+    vector/
+      embedding.py               Shared lazy dense/native-sparse model adapter
+      sparse.py                  Shared deterministic BM25 adapter
   ingest/
     contracts.py                 VectorDocument, VectorMode, pipeline reports
     pipeline.py                  Prepare -> validate -> publish -> verify SOP
-    qdrant_adapter.py            Canonical Qdrant publication adapter
     indexer.py                   Historical facade and compatibility CLI
+    embedding.py                 Compatibility export of qdrant/vector/embedding.py
+    sparse.py                    Compatibility export of qdrant/vector/sparse.py
     models.py                    Normalized ACE/effect parser records
     *_parser.py                  Source-specific parsing/building
-  collection_registry.py        Typed loader for collections.json
-  collections.json              Collection names, manual routes, taxonomy
-  settings.py                   Immutable, grouped settings loader
-  config.py                     Historical constant facade and dotenv boundary
-  schema_layout.py              Typed Schema manifest and snapshot validation
+  settings/__init__.py           Immutable, grouped settings loader
   observability/trace.py        Optional request-local diagnostics
   rag/
     lookup.py                    Historical Lookup facade
@@ -69,14 +72,15 @@ src/
 
 `src/domain/api.py`, `src/ingest/embedding.py`, and
 `src/ingest/sparse.py` are also compatibility re-exports. New code imports
-HTTP contracts from `src.interfaces.http`, vector adapters from `src.vector`,
-and search implementations from `src.lookup` / `src.retrieval`.
+HTTP contracts from `src.interfaces.http`, vector adapters from
+`src.qdrant.vector`, and search implementations from `src.lookup` /
+`src.qdrant.retrieval`.
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
-repository root, returning frozen path, Schema, runtime, vector, feature, and
-legacy-compatibility groups. It does not load dotenv or probe external
-services. `src.config` is the only dotenv/constant compatibility boundary;
-canonical composition may consume the typed settings tree instead.
+repository root, returning a frozen tree of path, Schema, runtime, vector,
+feature, LLM, lookup, and query-expansion groups. It does not load dotenv or
+probe external services; every process entry point (`src.api`, each
+`scripts/*.py`) calls `load_dotenv()` itself first.
 
 ## Dependency direction
 
@@ -93,7 +97,7 @@ api.py -------------- dependency construction only
 application/search.py -----> application/ports.py
     |                              |             |
     |                              v             v
-    |                         lookup/service  retrieval/semantic
+    |                         lookup/service  qdrant/retrieval/semantic
     v                              |             |
 domain/* <-------------------------+-------------+
     ^                                            |
@@ -105,10 +109,10 @@ ingest/pipeline.py -----> ingest/contracts.py
           |                       ^
           +---- parsers ----------+
           |
-          +---- qdrant_adapter.py -> vector/* -> Qdrant
+          +---- qdrant/adapter.py -> qdrant/vector/* -> Qdrant
 ```
 
-Static boundary tests reject `lookup -> rag`, runtime `retrieval -> ingest`,
+Static boundary tests reject `lookup -> rag`, runtime `qdrant/retrieval -> ingest`,
 and application calls to private retriever members.
 
 ## Search SOP
@@ -197,7 +201,7 @@ must support any change to their default status.
 
 ## Identity contract
 
-`src/retrieval/identity.py` is the only identity authority. Lookup and semantic
+`src/qdrant/retrieval/identity.py` is the only identity authority. Lookup and semantic
 results use equivalent stable keys, including:
 
 ```text
@@ -246,12 +250,11 @@ Compatibility facades preserve established imports while callers migrate:
 |---|---|
 | `src.domain.api` | `src.interfaces.http.models` |
 | `src.rag.lookup` | `src.lookup` |
-| `src.rag.retriever` | `src.retrieval.semantic` and pure retrieval modules |
+| `src.rag.retriever` | `src.qdrant.retrieval.semantic` and pure retrieval modules |
 | `src.rag._trace` | `src.observability.trace` |
-| `src.ingest.embedding` | `src.vector.embedding` |
-| `src.ingest.sparse` | `src.vector.sparse` |
+| `src.ingest.embedding` | `src.qdrant.vector.embedding` |
+| `src.ingest.sparse` | `src.qdrant.vector.sparse` |
 | `src.ingest.indexer.index_all_data` | `src.ingest.pipeline.run_index_pipeline` |
-| `src.config` constants | `src.settings.AppSettings` |
 
 Facades may bind legacy defaults or names, but canonical modules must not import
 them. Compatibility is checked by object-identity and import-boundary tests.

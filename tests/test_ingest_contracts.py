@@ -15,7 +15,7 @@ def test_vector_compatibility_imports_share_canonical_class_identity():
     from src.ingest.indexer import BM25Vectorizer as IndexerBM25Vectorizer
     from src.ingest.indexer import EmbeddingModel as IndexerEmbeddingModel
     from src.ingest.sparse import BM25Vectorizer as LegacyBM25Vectorizer
-    from src.vector import BM25Vectorizer, EmbeddingModel
+    from src.qdrant.vector import BM25Vectorizer, EmbeddingModel
 
     assert LegacyEmbeddingModel is EmbeddingModel
     assert IndexerEmbeddingModel is EmbeddingModel
@@ -25,7 +25,7 @@ def test_vector_compatibility_imports_share_canonical_class_identity():
 
 def test_indexer_facade_shares_canonical_adapter_identity():
     from src.ingest.indexer import Indexer as CompatibilityIndexer
-    from src.ingest.qdrant_adapter import Indexer
+    from src.qdrant.adapter import Indexer
 
     assert CompatibilityIndexer is Indexer
 
@@ -89,7 +89,7 @@ def test_vector_mode_matrix(bm25, native, expected):
 
 def test_indexer_dense_layout_is_named_and_payload_keeps_document_id():
     pytest.importorskip("qdrant_client")
-    from src.ingest.qdrant_adapter import Indexer
+    from src.qdrant.adapter import Indexer
 
     client = MagicMock()
     client.get_collections.return_value = SimpleNamespace(collections=[])
@@ -123,7 +123,7 @@ def test_indexer_dense_layout_is_named_and_payload_keeps_document_id():
 )
 def test_indexer_sparse_modes_create_named_dense_and_sparse(mode):
     pytest.importorskip("qdrant_client")
-    from src.ingest.qdrant_adapter import Indexer
+    from src.qdrant.adapter import Indexer
 
     client = MagicMock()
     client.get_collections.return_value = SimpleNamespace(collections=[])
@@ -144,7 +144,7 @@ def test_indexer_sparse_modes_create_named_dense_and_sparse(mode):
 )
 def test_indexer_sparse_modes_upsert_matching_named_vectors(mode):
     pytest.importorskip("qdrant_client")
-    from src.ingest.qdrant_adapter import Indexer
+    from src.qdrant.adapter import Indexer
 
     client = MagicMock()
     embedder = MagicMock()

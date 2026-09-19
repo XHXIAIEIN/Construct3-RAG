@@ -1,4 +1,5 @@
 """Tests for the FastAPI retrieval service (no external services needed)."""
+import dataclasses
 import sys
 import subprocess
 from pathlib import Path
@@ -104,10 +105,13 @@ def client():
     mock_lookup.try_lookup.return_value = None  # default: no match
 
     import src.api
-    original_lite_mode = src.api.LITE_MODE
+    original_settings = src.api.SETTINGS
     original_retriever = src.api._retriever
     original_lookup_engine = src.api._lookup_engine
-    src.api.LITE_MODE = True
+    src.api.SETTINGS = dataclasses.replace(
+        src.api.SETTINGS,
+        features=dataclasses.replace(src.api.SETTINGS.features, lite_mode=True),
+    )
     src.api._retriever = mock_retriever
     src.api._lookup_engine = mock_lookup
 
@@ -115,7 +119,7 @@ def client():
         with TestClient(src.api.app) as c:
             yield c, mock_retriever, mock_lookup
     finally:
-        src.api.LITE_MODE = original_lite_mode
+        src.api.SETTINGS = original_settings
         src.api._retriever = original_retriever
         src.api._lookup_engine = original_lookup_engine
 
@@ -124,28 +128,46 @@ def client():
 def full_client(client):
     """Explicitly enable semantic retrieval for one test, then restore it."""
     import src.api
-    with patch.object(src.api, "LITE_MODE", False):
+    original_settings = src.api.SETTINGS
+    src.api.SETTINGS = dataclasses.replace(
+        src.api.SETTINGS,
+        features=dataclasses.replace(src.api.SETTINGS.features, lite_mode=False),
+    )
+    try:
         yield client
+    finally:
+        src.api.SETTINGS = original_settings
 
 
 def test_retriever_provider_injects_semantic_runtime_policy(tmp_path):
     import src.api
 
     original_retriever = src.api._retriever
+    original_settings = src.api.SETTINGS
     src.api._retriever = None
+    src.api.SETTINGS = dataclasses.replace(
+        src.api.SETTINGS,
+        runtime=dataclasses.replace(
+            src.api.SETTINGS.runtime,
+            qdrant_host="vector.internal",
+            qdrant_port=7333,
+        ),
+        schema=dataclasses.replace(src.api.SETTINGS.schema, cache_dir=tmp_path),
+        vector=dataclasses.replace(
+            src.api.SETTINGS.vector,
+            embedding_model="example/embedding",
+            reranker_model="example/reranker",
+            reranker_top_k=37,
+        ),
+        features=dataclasses.replace(
+            src.api.SETTINGS.features,
+            bm25_enabled=True,
+            bge_m3_native_sparse=True,
+            reranker_enabled=False,
+        ),
+    )
     try:
-        with patch("src.retrieval.semantic.HybridRetriever") as retriever_type, patch.multiple(
-            src.api,
-            QDRANT_HOST="vector.internal",
-            QDRANT_PORT=7333,
-            EMBEDDING_MODEL="example/embedding",
-            BM25_ENABLED=True,
-            DATA_DIR=tmp_path,
-            BGE_M3_NATIVE_SPARSE=True,
-            RERANKER_ENABLED=False,
-            RERANKER_MODEL="example/reranker",
-            RERANKER_TOP_K=37,
-        ):
+        with patch("src.qdrant.retrieval.semantic.HybridRetriever") as retriever_type:
             result = src.api._get_retriever()
 
         assert result is retriever_type.return_value
@@ -162,6 +184,7 @@ def test_retriever_provider_injects_semantic_runtime_policy(tmp_path):
         )
     finally:
         src.api._retriever = original_retriever
+        src.api.SETTINGS = original_settings
 
 
 # ---------------------------------------------------------------------------

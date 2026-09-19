@@ -124,7 +124,7 @@ def test_export_lang_writes_readable_json_per_locale(fetcher):
 def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     """Localized names go to {locale}/_index.json; the root index stays structural."""
     from src.lookup.indexes import SchemaIndex
-    from src.schema_layout import schema_is_complete
+    from src.lookup.schema_layout import schema_is_complete
 
     aces = {
         "plugins": {"Sprite": {"general": {

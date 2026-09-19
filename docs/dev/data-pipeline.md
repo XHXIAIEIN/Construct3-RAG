@@ -71,7 +71,7 @@ deprecation filter below.
 
 Consumers that need both languages use `_merge_bilingual()` in
 `src/lookup/schema_index.py` to load `en-US` + `zh-CN` and produce a unified
-in-memory format. `src/schema_layout.py` owns the typed `SchemaManifest`,
+in-memory format. `src/lookup/schema_layout.py` owns the typed `SchemaManifest`,
 canonical locale names, manifest loading, completeness checks, counts, and
 runtime path selection. A schema snapshot is complete only when `_index.json`
 is valid, its plugin/behavior/effect sections are non-empty, every manifest
@@ -88,15 +88,15 @@ This is applied in both `SchemaParser` (vector indexing) and `C3Fetcher.export_s
 
 ## Collection Registry
 
-`src/collections.json` is the data authority for:
+`src/qdrant/collections.json` is the data authority for:
 
 - stable collection keys and Qdrant names;
 - which collections receive manual documents;
 - manual-directory routing;
 - manual subcategory taxonomy.
 
-`src/collection_registry.py` validates that data into typed `CollectionSpec`
-and `CollectionCatalog` values. `src/collections.py` is a compatibility facade
+`src/qdrant/collection_registry.py` validates that data into typed `CollectionSpec`
+and `CollectionCatalog` values. `src/qdrant/collections.py` is a compatibility facade
 that derives the historical `COLLECTIONS`, `DOC_COLLECTIONS`,
 `ALL_COLLECTIONS`, `DIR_TO_COLLECTION`, and `SUBCATEGORY_MAPPING` exports. Code
 must not maintain a second copy of this registry.
@@ -139,15 +139,15 @@ when the configured embedding backend actually supports it; otherwise the
 pipeline selects BM25 when enabled, or dense-only mode. Backend fallback is
 resolved before the collection schema is created.
 
-The canonical encoder implementations live under `src/vector/`. The historical
-`src/ingest/embedding.py` and `src/ingest/sparse.py` modules are compatibility
-re-exports.
+The canonical encoder implementations live under `src/qdrant/vector/`. The
+historical `src/ingest/embedding.py` and `src/ingest/sparse.py` modules are
+compatibility re-exports.
 
 ## Staged Indexing Pipeline
 
 `python -m src.ingest.indexer --rebuild`
 
-`src/ingest/qdrant_adapter.py` contains the canonical Qdrant adapter.
+`src/qdrant/adapter.py` contains the canonical Qdrant adapter.
 `src/ingest/indexer.py` is a compatibility facade that retains the historical
 exports, CLI, and `index_all_data()` wrapper. The orchestration lives in
 `src/ingest/pipeline.py` and follows four reported stages:

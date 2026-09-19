@@ -14,7 +14,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.schema_layout import schema_counts
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
+from src.lookup.schema_layout import schema_counts
 
 
 def main():
@@ -22,15 +29,20 @@ def main():
     parser.add_argument("--version", type=str, help="C3 version override (for example rNNN)")
     args = parser.parse_args()
 
-    from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+    from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher
 
-    version = args.version or C3_VERSION
+    settings = load_settings()
+    version = args.version or settings.schema.version
     print(f"Initializing Construct3-RAG with Construct 3 {version}")
-    print(f"CDN: {C3_CDN_BASE}")
+    print(f"CDN: {settings.schema.cdn_base}")
     print()
 
-    fetcher = C3Fetcher(version=version, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    fetcher = C3Fetcher(
+        version=version,
+        base_url=settings.schema.cdn_base,
+        cache_dir=settings.schema.cache_dir,
+    )
 
     # 1. Fetch core data
     print("[1/5] Fetching ACE definitions...")

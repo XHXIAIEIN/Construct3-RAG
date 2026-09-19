@@ -25,7 +25,7 @@ def test_default_setup_uses_local_schema_without_cdn(monkeypatch):
 
     assert ("local",) in calls
     assert not any(call[0] == "cdn" for call in calls)
-    assert ("server", setup.RAG_SERVER_PORT, False, None) in calls
+    assert ("server", setup.SETTINGS.runtime.server_port, False, None) in calls
 
 
 def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
@@ -48,7 +48,7 @@ def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
 
     assert calls[0] == ("cdn", None)
     assert ("local",) not in calls
-    assert calls[-1] == ("server", setup.RAG_SERVER_PORT, False, None)
+    assert calls[-1] == ("server", setup.SETTINGS.runtime.server_port, False, None)
 
 
 def test_start_server_passes_explicit_mode_and_version(monkeypatch):

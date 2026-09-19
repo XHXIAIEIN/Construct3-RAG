@@ -12,7 +12,7 @@ from src.ingest.contracts import (
     VectorDocument,
     validate_document_set,
 )
-from src.ingest.qdrant_adapter import Indexer
+from src.qdrant.adapter import Indexer
 
 
 DocumentsByCollection = dict[str, list[VectorDocument]]
@@ -34,30 +34,22 @@ def _collection_counts(documents: Mapping[str, Iterable[VectorDocument]]) -> dic
 
 def prepare_documents(indexer: Any, fetcher: Any) -> DocumentsByCollection:
     """Materialize every final vector document without mutating Qdrant."""
-    from src.collections import ALL_COLLECTIONS, COLLECTIONS, DOC_COLLECTIONS
-    from src.config import (
-        ADDON_SDK_CODE_AVAILABLE,
-        ADDON_SDK_CODE_DIR,
-        ADDON_SDK_MANUAL_AVAILABLE,
-        ADDON_SDK_MANUAL_DIR,
-        CONTEXTUAL_CHUNKING_ENABLED,
-        EXAMPLE_PROJECTS_DIR,
-        EXAMPLES_AVAILABLE,
-        MANUAL_AVAILABLE,
-    )
+    from src.qdrant.collections import ALL_COLLECTIONS, COLLECTIONS, DOC_COLLECTIONS
+    from src.settings import load_settings
     from src.ingest.markdown_parser import MarkdownParser
 
+    settings = load_settings()
     documents: DocumentsByCollection = {
         collection_name: [] for collection_name in ALL_COLLECTIONS
     }
 
     schemas_dir = fetcher.export_schemas()
     print(f"[prepare] Schemas exported to {schemas_dir}")
-    if CONTEXTUAL_CHUNKING_ENABLED:
+    if settings.features.contextual_chunking_enabled:
         indexer._load_chunk_contexts()
 
     # Manual documentation.
-    if MANUAL_AVAILABLE:
+    if settings.paths.manual_available:
         all_chunks = MarkdownParser().parse_directory()
     else:
         print("[prepare] Construct3-Manual not found; skipping manual documents")
@@ -103,7 +95,7 @@ def prepare_documents(indexer: Any, fetcher: Any) -> DocumentsByCollection:
     from src.ingest.event_parser import load_event_and_script_docs
     from src.ingest.examples_parser import load_examples_for_vectordb
 
-    projects_dir = EXAMPLE_PROJECTS_DIR if EXAMPLES_AVAILABLE else None
+    projects_dir = settings.paths.example_projects_dir if settings.paths.examples_available else None
     try:
         example_rows = load_examples_for_vectordb(
             fetcher=fetcher,
@@ -139,8 +131,8 @@ def prepare_documents(indexer: Any, fetcher: Any) -> DocumentsByCollection:
 
     # Addon SDK manual and code sources share one collection.
     sdk_collection = COLLECTIONS["addon_sdk"]
-    if ADDON_SDK_MANUAL_AVAILABLE:
-        sdk_chunks = MarkdownParser(base_dir=ADDON_SDK_MANUAL_DIR).parse_directory()
+    if settings.paths.addon_sdk_manual_available:
+        sdk_chunks = MarkdownParser(base_dir=settings.paths.addon_sdk_manual_dir).parse_directory()
         for index, chunk in enumerate(sdk_chunks):
             metadata = {**chunk.metadata, "collection": sdk_collection}
             chunk_key = hashlib.md5(chunk.text[:500].encode("utf-8")).hexdigest()
@@ -156,10 +148,10 @@ def prepare_documents(indexer: Any, fetcher: Any) -> DocumentsByCollection:
     else:
         print("[prepare] Addon SDK manual not found; skipping manual source")
 
-    if ADDON_SDK_CODE_AVAILABLE:
+    if settings.paths.addon_sdk_code_available:
         from src.ingest.sdk_parser import load_sdk_for_vectordb
 
-        for row in load_sdk_for_vectordb(ADDON_SDK_CODE_DIR):
+        for row in load_sdk_for_vectordb(settings.paths.addon_sdk_code_dir):
             _append_legacy(documents, sdk_collection, row)
     else:
         print("[prepare] Addon SDK code repository not found; skipping code source")
@@ -212,7 +204,7 @@ def run_prepared_pipeline(
     report = PipelineReport(rebuild=rebuild)
     report.add(PipelineStage.PREPARE, _collection_counts(materialized))
 
-    from src.collections import ALL_COLLECTIONS
+    from src.qdrant.collections import ALL_COLLECTIONS
 
     unknown_collections = sorted(set(materialized).difference(ALL_COLLECTIONS))
     if unknown_collections:
@@ -245,26 +237,20 @@ def run_index_pipeline(
     fetcher: Any | None = None,
 ) -> PipelineReport:
     """Prepare every source and execute the explicit indexing SOP."""
-    from src.config import (
-        C3_CACHE_DIR,
-        C3_CDN_BASE,
-        C3_VERSION,
-        EMBEDDING_MODEL,
-        QDRANT_HOST,
-        QDRANT_PORT,
-    )
+    from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher
+    settings = load_settings()
     source = fetcher or C3Fetcher(
-        version=C3_VERSION,
-        base_url=C3_CDN_BASE,
-        cache_dir=C3_CACHE_DIR,
+        version=settings.schema.version,
+        base_url=settings.schema.cdn_base,
+        cache_dir=settings.schema.cache_dir,
     )
     adapter = indexer or Indexer(
-        qdrant_host=QDRANT_HOST,
-        qdrant_port=QDRANT_PORT,
-        embedding_model=EMBEDDING_MODEL,
+        qdrant_host=settings.runtime.qdrant_host,
+        qdrant_port=settings.runtime.qdrant_port,
+        embedding_model=settings.vector.embedding_model,
     )
-    print(f"[pipeline] Construct 3 version: {C3_VERSION}")
+    print(f"[pipeline] Construct 3 version: {settings.schema.version}")
     documents = prepare_documents(adapter, source)
     report = run_prepared_pipeline(adapter, documents, rebuild=rebuild)
     print("[pipeline] Indexing complete")

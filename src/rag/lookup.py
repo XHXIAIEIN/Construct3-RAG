@@ -6,7 +6,7 @@ names and binds repository runtime defaults without owning Lookup behavior.
 
 import jieba
 
-from src.config import SCHEMA_DIR
+from src.settings import load_settings
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 from src.locale.resources import ACE_DIRECTED_ALIASES
 from src.lookup.examples_index import ExamplesIndex
@@ -35,6 +35,8 @@ def _current_directed_aliases():
     """Read the facade variable so evaluation overrides remain observable."""
     return ACE_DIRECTED_ALIASES
 
+
+SCHEMA_DIR = load_settings().schema.directory
 
 configure_schema_default(SCHEMA_DIR)
 configure_lookup_defaults(

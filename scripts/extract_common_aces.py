@@ -23,7 +23,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
+from src.settings import load_settings
 from src.ingest.c3_fetcher import C3Fetcher
 from src.ingest.common_aces import (
     ACE_TYPES,
@@ -40,7 +47,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=COMMON_ACES_PATH)
     args = parser.parse_args()
 
-    fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    settings = load_settings()
+    fetcher = C3Fetcher(
+        version=settings.schema.version,
+        base_url=settings.schema.cdn_base,
+        cache_dir=settings.schema.cache_dir,
+    )
     lang_common = fetcher.fetch_lang("en-US").get("text", {}).get("plugins", {}).get(COMMON_ADDON_ID, {})
     if not lang_common:
         sys.exit("en-US language pack has no plugins._common section")
@@ -59,7 +71,7 @@ def main() -> None:
     payload = {
         "_source": {
             "file": "main.js",
-            "url": f"{C3_CDN_BASE}/main.js",
+            "url": f"{settings.schema.cdn_base}/main.js",
             "block": "the function that registers plugins._common in the editor bundle",
             "release": source_version,
             "extracted": date.today().isoformat(),

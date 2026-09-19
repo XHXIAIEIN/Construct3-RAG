@@ -26,9 +26,9 @@ from src.rag.retriever import deduplicate_results as legacy_deduplicate_results
 from src.rag.retriever import estimate_query_complexity as legacy_estimate_query_complexity
 from src.rag.retriever import stable_result_id as legacy_stable_result_id
 from src.rag.retriever import weighted_rrf as legacy_weighted_rrf
-from src.retrieval.identity import deduplicate_results, stable_result_id
-from src.retrieval.policy import assign_context_tiers, estimate_query_complexity, weighted_rrf
-from src.retrieval.semantic import HybridRetriever as CanonicalHybridRetriever
+from src.qdrant.retrieval.identity import deduplicate_results, stable_result_id
+from src.qdrant.retrieval.policy import assign_context_tiers, estimate_query_complexity, weighted_rrf
+from src.qdrant.retrieval.semantic import HybridRetriever as CanonicalHybridRetriever
 from src.domain.api import SearchRequest
 from src.rag._trace import _trace as legacy_trace
 
@@ -96,13 +96,12 @@ def test_legacy_model_exports_point_to_domain_contracts():
 
 
 def test_semantic_runtime_does_not_depend_on_ingest_pipeline():
-    import src.retrieval.semantic as semantic_module
+    import src.qdrant.retrieval.semantic as semantic_module
 
     source = inspect.getsource(semantic_module)
 
     assert "src.ingest" not in source
-    assert "src.config" not in source
-    assert "src.collections" not in source
+    assert "src.qdrant.collections" not in source
     assert "logging.basicConfig" not in source
     assert "print(" not in source
 
@@ -110,12 +109,12 @@ def test_semantic_runtime_does_not_depend_on_ingest_pipeline():
 def test_ingest_pipeline_depends_on_canonical_adapter_not_compatibility_facade():
     import src.ingest.indexer as compatibility_module
     import src.ingest.pipeline as pipeline_module
-    from src.ingest.qdrant_adapter import Indexer
+    from src.qdrant.adapter import Indexer
 
     pipeline_source = inspect.getsource(pipeline_module)
     compatibility_source = inspect.getsource(compatibility_module)
 
-    assert "src.ingest.qdrant_adapter" in pipeline_source
+    assert "src.qdrant.adapter" in pipeline_source
     assert "src.ingest.indexer" not in pipeline_source
     assert compatibility_module.Indexer is Indexer
     assert "class Indexer" not in compatibility_source
@@ -124,10 +123,10 @@ def test_ingest_pipeline_depends_on_canonical_adapter_not_compatibility_facade()
 @pytest.mark.parametrize(
     ("package", "forbidden"),
     [
-        ("application", ("src.rag", "src.config", "src.collections", "src.ingest")),
-        ("lookup", ("src.rag", "src.config", "src.collections", "src.ingest")),
-        ("retrieval", ("src.rag", "src.config", "src.collections", "src.ingest")),
-        ("vector", ("src.rag", "src.config", "src.collections", "src.ingest")),
+        ("application", ("src.rag", "src.qdrant.collections", "src.ingest")),
+        ("lookup", ("src.rag", "src.qdrant.collections", "src.ingest")),
+        ("qdrant/retrieval", ("src.rag", "src.qdrant.collections", "src.ingest")),
+        ("qdrant/vector", ("src.rag", "src.qdrant.collections", "src.ingest")),
     ],
 )
 def test_canonical_packages_do_not_import_compatibility_or_maintenance_layers(

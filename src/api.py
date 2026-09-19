@@ -9,6 +9,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 
@@ -19,19 +26,7 @@ from src.application.search import (
     UnknownCollectionError,
     detect_language,
 )
-from src.config import (
-    BGE_M3_NATIVE_SPARSE,
-    BM25_ENABLED,
-    C3_CACHE_DIR,
-    EMBEDDING_MODEL,
-    LITE_MODE,
-    QDRANT_HOST,
-    QDRANT_PORT,
-    RERANKER_ENABLED,
-    RERANKER_MODEL,
-    RERANKER_TOP_K,
-    SCHEMA_DIR,
-)
+from src.settings import load_settings
 from src.interfaces.http.models import (
     ACELocaleResult,
     ACEParam,
@@ -57,6 +52,8 @@ from src.interfaces.http.presenters import (
 )
 from src.observability.trace import _trace_local
 
+SETTINGS = load_settings()
+
 app = FastAPI(
     title="Construct 3 RAG",
     description="Retrieval service for Construct 3 documentation",
@@ -72,18 +69,18 @@ def _get_retriever():
     """Construct the optional semantic adapter only when a request needs it."""
     global _retriever
     if _retriever is None:
-        from src.retrieval.semantic import HybridRetriever
+        from src.qdrant.retrieval.semantic import HybridRetriever
 
         _retriever = HybridRetriever(
-            qdrant_host=QDRANT_HOST,
-            qdrant_port=QDRANT_PORT,
-            embedding_model_name=EMBEDDING_MODEL,
-            bm25_enabled=BM25_ENABLED,
-            bm25_vocab_path=C3_CACHE_DIR / "bm25_vocab.msgpack",
-            native_sparse=BGE_M3_NATIVE_SPARSE,
-            reranker_enabled=RERANKER_ENABLED,
-            reranker_model=RERANKER_MODEL,
-            reranker_top_k=RERANKER_TOP_K,
+            qdrant_host=SETTINGS.runtime.qdrant_host,
+            qdrant_port=SETTINGS.runtime.qdrant_port,
+            embedding_model_name=SETTINGS.vector.embedding_model,
+            bm25_enabled=SETTINGS.features.bm25_enabled,
+            bm25_vocab_path=SETTINGS.schema.cache_dir / "bm25_vocab.msgpack",
+            native_sparse=SETTINGS.features.bge_m3_native_sparse,
+            reranker_enabled=SETTINGS.features.reranker_enabled,
+            reranker_model=SETTINGS.vector.reranker_model,
+            reranker_top_k=SETTINGS.vector.reranker_top_k,
         )
     return _retriever
 
@@ -94,7 +91,7 @@ def _get_lookup_engine():
     if _lookup_engine is None:
         from src.lookup import LookupEngine
 
-        _lookup_engine = LookupEngine(schema_dir=SCHEMA_DIR)
+        _lookup_engine = LookupEngine(schema_dir=SETTINGS.schema.directory)
     return _lookup_engine
 
 
@@ -103,7 +100,7 @@ def _search_workflow() -> SearchWorkflow:
     return SearchWorkflow(
         get_lookup_engine=_get_lookup_engine,
         get_retriever=_get_retriever,
-        lite_mode=LITE_MODE,
+        lite_mode=SETTINGS.features.lite_mode,
     )
 
 
@@ -121,9 +118,9 @@ def playground() -> Response:
 def health() -> HealthResponse:
     return present_health_outcome(
         build_health_outcome(
-            lite_mode=LITE_MODE,
-            schema_dir=SCHEMA_DIR,
-            embedding_model=EMBEDDING_MODEL,
+            lite_mode=SETTINGS.features.lite_mode,
+            schema_dir=SETTINGS.schema.directory,
+            embedding_model=SETTINGS.vector.embedding_model,
             get_retriever=_get_retriever,
         )
     )

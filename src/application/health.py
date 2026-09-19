@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Protocol
 
 from src.domain.retrieval import RetrievalHealth
-from src.schema_layout import schema_is_complete
+from src.lookup.schema_layout import schema_is_complete
 
 class RetrievalHealthPort(Protocol):
     def get_health(self) -> RetrievalHealth: ...

@@ -8,7 +8,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.domain.retrieval import RetrievalHealth, SearchResult
-from src.retrieval.semantic import HybridRetriever
+from src.qdrant.retrieval.semantic import HybridRetriever
 
 
 def _make_results(texts_scores):
@@ -20,7 +20,7 @@ class TestHybridRetrieverConfiguration(unittest.TestCase):
 
     def test_constructor_preserves_positional_api_and_accepts_runtime_policy(self):
         vocab_path = Path("custom-bm25.msgpack")
-        with patch("src.retrieval.semantic.QdrantClient") as client_type:
+        with patch("src.qdrant.retrieval.semantic.QdrantClient") as client_type:
             retriever = HybridRetriever(
                 "vector.internal",
                 7333,
@@ -43,7 +43,7 @@ class TestHybridRetrieverConfiguration(unittest.TestCase):
         assert retriever.reranker_top_k == 37
 
     def test_constructor_policy_defaults_match_historical_runtime(self):
-        with patch("src.retrieval.semantic.QdrantClient"):
+        with patch("src.qdrant.retrieval.semantic.QdrantClient"):
             retriever = HybridRetriever()
 
         assert retriever.bm25_enabled is False
@@ -298,7 +298,7 @@ class TestWeightedRRF(unittest.TestCase):
         assert "addon_sdk" not in HybridRetriever._DEFAULT_FANOUT_COLLECTIONS
 
     def test_semantic_policy_class_attributes_are_catalog_derived(self):
-        from src.collection_registry import COLLECTION_CATALOG
+        from src.qdrant.collection_registry import COLLECTION_CATALOG
 
         assert HybridRetriever._COLLECTION_DEFAULTS == {
             spec.key: (spec.default_top_k, spec.score_threshold)
@@ -356,11 +356,11 @@ class TestWeightedRRF(unittest.TestCase):
         retriever._qdrant_available = False
         retriever._qdrant_failure_at = 100.0
 
-        with patch("src.retrieval.semantic.time.monotonic", return_value=101.0):
+        with patch("src.qdrant.retrieval.semantic.time.monotonic", return_value=101.0):
             assert retriever.semantic_backend_available(retry_after_seconds=2.0) is False
         retriever.client.get_collections.assert_not_called()
 
-        with patch("src.retrieval.semantic.time.monotonic", return_value=103.0):
+        with patch("src.qdrant.retrieval.semantic.time.monotonic", return_value=103.0):
             assert retriever.semantic_backend_available(retry_after_seconds=2.0) is True
         retriever.client.get_collections.assert_called_once_with()
 

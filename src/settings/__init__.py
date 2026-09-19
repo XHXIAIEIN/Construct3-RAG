@@ -2,8 +2,8 @@
 
 Importing this module only defines immutable data structures and parsers.
 Call :func:`load_settings` explicitly to read an environment mapping and select
-the local schema directory. Dotenv loading remains a compatibility concern of
-``src.config`` and is intentionally absent here.
+the local schema directory. Dotenv loading is a process entry-point concern
+(``src.api``, each ``scripts/*.py``) and is intentionally absent here.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.schema_layout import select_schema_dir
+from src.lookup.schema_layout import select_schema_dir
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,7 +164,7 @@ def load_settings(
     the dynamic availability properties on :class:`PathSettings`.
     """
     source = os.environ if environ is None else environ
-    root = Path(base_dir) if base_dir is not None else Path(__file__).parent.parent
+    root = Path(base_dir) if base_dir is not None else Path(__file__).parent.parent.parent
     data_dir = root / "data"
 
     manual_repo = "Construct3-Manual"

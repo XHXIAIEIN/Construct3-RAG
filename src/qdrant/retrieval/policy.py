@@ -6,7 +6,7 @@ import re
 from typing import Any
 
 from src.domain.retrieval import QueryComplexity, RetrievalPreset, SearchResult
-from src.retrieval.identity import stable_result_id
+from src.qdrant.retrieval.identity import stable_result_id
 
 _PRESETS: dict[QueryComplexity, RetrievalPreset] = {
     "simple": RetrievalPreset("simple", 3, 5),

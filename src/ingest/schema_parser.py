@@ -324,9 +324,14 @@ class SchemaParser:
 
 def main():
     """Print a small parser diagnostic report."""
-    from src.config import C3_VERSION, C3_CDN_BASE, C3_CACHE_DIR
+    from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher
-    fetcher = C3Fetcher(version=C3_VERSION, base_url=C3_CDN_BASE, cache_dir=C3_CACHE_DIR)
+    settings = load_settings()
+    fetcher = C3Fetcher(
+        version=settings.schema.version,
+        base_url=settings.schema.cdn_base,
+        cache_dir=settings.schema.cache_dir,
+    )
     parser = SchemaParser(fetcher=fetcher)
 
     print("=== Parse Construct 3 schema ===\n")

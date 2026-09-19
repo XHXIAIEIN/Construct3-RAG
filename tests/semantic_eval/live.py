@@ -210,7 +210,7 @@ class LiveQdrantBackend:
         filters: ApiFilters,
     ) -> BackendSearchResult:
         from qdrant_client.models import Fusion, FusionQuery, Prefetch, SparseVector
-        from src.collections import COLLECTIONS
+        from src.qdrant.collections import COLLECTIONS
 
         collection_name = COLLECTIONS[collection_key]
         started = time.perf_counter()
@@ -265,7 +265,7 @@ class LiveQdrantBackend:
             )
 
     def identity(self) -> dict[str, Any]:
-        from src.collections import COLLECTIONS
+        from src.qdrant.collections import COLLECTIONS
 
         response = self.client.get_collections()
         existing = {item.name for item in response.collections}

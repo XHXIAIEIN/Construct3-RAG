@@ -46,7 +46,7 @@ python scripts/setup.py --port 9000    # custom port
 
 ## Configuration
 
-Environment variables (`.env` file supported), defined in `src/config.py`:
+Environment variables (`.env` file supported), defined in `src/settings/`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|

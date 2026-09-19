@@ -24,10 +24,10 @@ from src.application.models import (
     SearchStage,
 )
 from src.application.ports import LookupProvider, SemanticProvider, SemanticSearchPort
-from src.collection_registry import COLLECTION_CATALOG
 from src.domain.retrieval import SearchResult
-from src.retrieval.identity import lookup_match_stable_id, stable_result_id
-from src.retrieval.policy import estimate_query_complexity
+from src.qdrant.collection_registry import COLLECTION_CATALOG
+from src.qdrant.retrieval.identity import lookup_match_stable_id, stable_result_id
+from src.qdrant.retrieval.policy import estimate_query_complexity
 
 if TYPE_CHECKING:
     from src.interfaces.http.models import SearchRequest, SearchResponse

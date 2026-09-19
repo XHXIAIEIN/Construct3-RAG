@@ -11,7 +11,7 @@ from src.application.models import SearchCommand, SearchOutcome
 from src.domain.lookup import LookupResponse
 from src.domain.retrieval import SearchResult
 from src.locale.resources import ACE_TITLE_MARKERS_ZH, VECTOR_METADATA_PREFIXES_ZH_EN
-from src.retrieval.identity import collection_key
+from src.qdrant.retrieval.identity import collection_key
 
 from .models import (
     ACELocaleResult,
