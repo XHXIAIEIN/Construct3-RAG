@@ -22,7 +22,7 @@ from src.application.search import (
 from src.config import (
     BGE_M3_NATIVE_SPARSE,
     BM25_ENABLED,
-    DATA_DIR,
+    C3_CACHE_DIR,
     EMBEDDING_MODEL,
     LITE_MODE,
     QDRANT_HOST,
@@ -79,7 +79,7 @@ def _get_retriever():
             qdrant_port=QDRANT_PORT,
             embedding_model_name=EMBEDDING_MODEL,
             bm25_enabled=BM25_ENABLED,
-            bm25_vocab_path=DATA_DIR / "bm25_vocab.msgpack",
+            bm25_vocab_path=C3_CACHE_DIR / "bm25_vocab.msgpack",
             native_sparse=BGE_M3_NATIVE_SPARSE,
             reranker_enabled=RERANKER_ENABLED,
             reranker_model=RERANKER_MODEL,
