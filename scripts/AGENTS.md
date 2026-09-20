@@ -16,3 +16,7 @@
 Qdrant lifecycle commands are documented in `docs/guide/quick-start.md`. Keep database
 deletion out of helper scripts unless it enumerates the live collection registry
 from `src/qdrant/collections.py` and requires an explicit confirmation.
+
+Checks: after `init.py`, compare counts and structure in
+`data/c3-schemas/_index.json`; `.github/workflows/update.yml` calls `init.py`
+and must use the exporter's standard directories.

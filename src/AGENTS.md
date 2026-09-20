@@ -21,29 +21,26 @@ and the application/HTTP layers do not own any Qdrant-specific code.
 
 ## Rules
 
-- Direct Lookup and the FastAPI service are optional over the committed
-  data. The Qdrant stack (retrieval, multi-collection routing, reranker) is
-  the optional full mode and stays only while a same-gold-set benchmark
-  shows a gain over simple retrieval.
-- Removed, and not to return without their own experiment and benchmark:
-  QueryExpander, Lookup Tier 2/3, Semantic Chain/HyDE. Reasons in
-  `docs/decisions/refactoring-audit.md`.
-- Qdrant, embeddings, the reranker and any LLM are configured explicitly,
-  detectable, switchable off, and fall back safely. An LLM result never
-  overrides a high-confidence deterministic result.
-- Look for the cause of a bad result in data quality, field weights, routing
-  or product scope before adding keywords, prompts or a model layer. A new
-  keyword, prompt or model starts from a failing case with a checkable
-  expected result. Query-understanding changes start with the product
-  direction review in
-  `docs/decisions/query-understanding-refactor-requirements.md`, which owns
-  the rules for expansion, synonyms, LLM checks and metrics.
-- A public API change updates `interfaces/http/models.py`, the docs and the
-  compatibility tests together. Internal structures promise no compatibility.
-- Keep the `en-US` and `zh-CN` layout; `lookup/schema_layout.py` owns it.
-- Checks: `/health` and `/search` must tell schema readiness apart from
-  Qdrant status; a Qdrant or reranker check counts as live only when the
-  service ran; a collection change is followed by a search for the old name.
+- Direct Lookup and the FastAPI service are optional. The Qdrant stack
+  (retrieval, multi-collection routing, reranker) is the full mode and stays
+  while a same-gold-set benchmark shows a gain over simple retrieval.
+- Removed: QueryExpander, Lookup Tier 2/3, Semantic Chain/HyDE
+  (`docs/decisions/refactoring-audit.md`). Return needs an experiment and a
+  benchmark.
+- Qdrant, embeddings, reranker and LLM: configured explicitly, detectable,
+  switchable off, safe fallback. A high-confidence deterministic result
+  wins over an LLM result.
+- Bad result: check data quality, field weights, routing and product scope
+  before adding keywords, prompts or a model layer. A new keyword, prompt or
+  model starts from a failing case with a checkable expected result;
+  query-understanding changes start with
+  `docs/decisions/query-understanding-refactor-requirements.md`.
+- Public API change: `interfaces/http/models.py`, docs and compatibility
+  tests in one change. Internal structures promise no compatibility.
+- Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.
+- Checks: `/health` and `/search` tell schema readiness apart from Qdrant
+  status; a Qdrant or reranker check is live only when the service ran; a
+  collection rename is followed by a search for the old name.
 
 ## Top-level Modules
 
