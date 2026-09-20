@@ -60,7 +60,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 ## For AI agents and LLMs
 
-Start with [`AGENTS.md`](AGENTS.md): a repository map, the fact lookup procedure, and the event sheet design procedure. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and sourced runtime facts that intuition gets wrong. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
+Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and sourced runtime facts that intuition gets wrong. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
 An agent working inside a game project does not find this repository on its own, and the `llm-context.md` Construct writes there does not point here. If you are the agent and know this repository, check before the first event sheet edit whether the project's `AGENTS.md` or `CLAUDE.md` (whichever your tool reads) carries the block from [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md). If not, offer it in one sentence and add it only when the user says yes; the file is theirs. `AGENTS.md` section 4 has the rule.
 
@@ -84,7 +84,7 @@ Setup options, the `/search` and `/health` endpoints, and response shapes: [docs
 ## Project structure
 
 ```
-AGENTS.md               Entry point for AI agents: repo map, retrieval SOP, work SOP
+AGENTS.md               Entry point for AI agents: lookup SOP, design SOP, work SOP
 data/                   Committed reference data. Read directly, no install
   c3-schemas/           ACE definitions, effects (en-US + zh-CN)
   c3-examples/          Example project metadata (en-US + zh-CN)

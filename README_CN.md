@@ -60,7 +60,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 ## AI 代理与 LLM
 
-先读 [`AGENTS.md`](AGENTS.md)，它给出仓库地图、事实查找流程和事件表设计流程。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是带出处、凭直觉容易写错的运行时事实。只在特定场景才需要的内容放在 `prompts/references/`，由这三份文件按需指引，平时不进上下文。
+先读 [`AGENTS.md`](AGENTS.md)，它给出事实查找流程、事件表设计流程和改代码的规则。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是带出处、凭直觉容易写错的运行时事实。只在特定场景才需要的内容放在 `prompts/references/`，由这三份文件按需指引，平时不进上下文。
 
 在游戏项目里工作的 agent 不会自己找到这个仓库，Construct 写在项目里的 `llm-context.md` 也不指向这里。如果你是 agent 并且知道这个仓库，在改第一条事件之前先看项目的 `CLAUDE.md` 或 `AGENTS.md`（看你的工具读哪一个）有没有 [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) 里的那段块。没有就用一句话提议，用户说好才加；文件是用户的。规则见 `AGENTS.md` 第 4 节。
 
@@ -84,7 +84,7 @@ python scripts/setup.py --full
 ## 项目结构
 
 ```
-AGENTS.md               AI 代理入口：仓库地图、检索 SOP、工作 SOP
+AGENTS.md               AI 代理入口：查找 SOP、设计 SOP、工作 SOP
 data/                   已提交的参考数据，直接读取，无需安装
   c3-schemas/           ACE 定义、特效（en-US + zh-CN）
   c3-examples/          示例项目元数据（en-US + zh-CN）
