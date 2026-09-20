@@ -1,137 +1,104 @@
 # Construct3-RAG for AI Agents
 
-Sections 1 to 4 are for using the data; section 5 is for changing the code.
-
 ## 1. What this repository is
 
-A versioned, bilingual reference dataset for Construct 3, plus an optional
-search service. The data is the product: LLMs and scripts read the files
-under `data/` directly, with no database, model or server to start. Version
-and counts live in `data/c3-schemas/_index.json`; never hardcode them.
+Bilingual Construct 3 reference data under `data/`, read directly, plus an
+optional lookup and search service in `src/`. Version and counts:
+`data/c3-schemas/_index.json`, never hardcoded.
 
-What it must do well, in this order:
+Priorities, in order: exact addon, ACE and scripting lookup; citable
+English and Chinese data; example projects by topic; works from the
+committed files alone; the service tells exact queries from semantic ones.
 
-1. Find plugins, behaviors, ACEs, effects and scripting interfaces exactly.
-2. Return official English and Chinese data that can be checked and cited.
-3. Find the official example projects for a plugin, behavior or topic.
-4. Work from the committed files alone, with nothing installed.
-5. When the service runs, tell an exact query apart from a question that
-   needs semantic retrieval.
-
-It is not a general chatbot, and stacking RAG techniques is not a goal.
-
-- Core: the files under `data/`, and the CDN fetch, export and update
-  workflow that maintain them.
-- Optional: Direct Lookup and the FastAPI service over the same files.
-- Optional full mode: Qdrant semantic retrieval. Its standing, the removed
-  retrieval features and the rules for that code are in `src/AGENTS.md`.
-- Moving a feature between tiers takes evidence and a decision record;
-  `docs/decisions/refactoring-audit.md` is the running index.
+Tiers: `data/` and the CDN update pipeline are core; the lookup service is
+optional; Qdrant retrieval is the optional full mode (`src/AGENTS.md`).
+Moving a feature between tiers needs evidence and a record in
+`docs/decisions/`.
 
 ## 2. SOP: answer a Construct 3 fact question
 
-Do not answer plugin, behavior, ACE, effect or scripting questions from
-memory when the data can be checked. If an ACE is not in the schema, say so;
-do not invent a plausible name.
+Answer from the data. An ACE missing from the schema does not exist.
 
-1. Find the addon id in `data/c3-schemas/_index.json` under `plugins`,
-   `behaviors` or `effects`; the entry gives `file` and the ACE counts. From
-   a localized name, get the id in `data/c3-schemas/{locale}/_index.json`.
-2. Read `data/c3-schemas/{locale}/{file}` for a locale listed under
-   `languages` (`en-US`, `zh-CN`).
-3. Find the ACE by `id`, by `list-name` (conditions, actions) or by
-   `translated-name` (expressions). Report `display-text` for event sheet
-   wording, `params` for parameters, `scriptName` for scripting.
+1. Id: `data/c3-schemas/_index.json` under `plugins`, `behaviors` or
+   `effects`; the entry gives `file` and ACE counts. Localized name to id:
+   `data/c3-schemas/{locale}/_index.json`.
+2. File: `data/c3-schemas/{locale}/{file}`, locale from `languages`
+   (`en-US`, `zh-CN`).
+3. ACE: by `id`, `list-name` (conditions, actions) or `translated-name`
+   (expressions). `display-text` is the event sheet wording, `params` the
+   parameters, `scriptName` the scripting name.
 
-| Question | Where to look |
-|----------|---------------|
+| Question | Where |
+|----------|-------|
 | Which plugins, behaviors, effects exist | `data/c3-schemas/_index.json` |
 | Addon names in one language | `data/c3-schemas/{locale}/_index.json` |
 | ACEs of a plugin | `data/c3-schemas/{locale}/plugins/{id}.json` |
 | ACEs of a behavior | `data/c3-schemas/{locale}/behaviors/{id}.json` |
-| ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`; a Sprite's full list is its own file plus this one |
+| ACEs shared by every world object: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`, in addition to the plugin file |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
-| JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the matching `.d.ts` |
-| Types for an addon under development | editor side `data/c3-ts-defs/sdk/`, runtime side `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones (README) |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json`, filter `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone under `example-projects/{id}/eventSheets/` |
-| How a string is translated, or editor text outside the schemas | `data/c3-lang/{locale}.json` under `text` |
-| Data field meanings | `docs/guide/data-format.md` |
+| JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
+| Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
+| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/` |
+| Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
+| What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
-Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are the
-same in every locale; only text differs. General concepts such as layouts or
-event sheets need no lookup, and how to structure an interaction is a design
-question: section 3. The API's `POST /search` returns the same data; see
-`docs/guide/api-reference.md`.
+Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are
+identical across locales. How to structure an interaction is section 3.
+`POST /search` on the running service returns the same data
+(`docs/guide/api-reference.md`).
 
 ## 3. SOP: design event sheet logic
 
-For "how do I build this interaction", "where do I keep levels, tables or
-saves" or "how do I time or animate this", not only "which ACE exists":
+Interactions, data storage, timing, animation: read and follow
+`prompts/event-sheet-thinking.md`, then verify names with section 2.
 
-- Read and follow `prompts/event-sheet-thinking.md`; it links the writing
-  format and the runtime facts. Verify names with section 2 after the design.
-- A draft that links objects through UIDs, resets picking with `Pick all`,
-  or rebuilds a timer, tween or table from variables is a redesign, not a
-  patch.
+- UID links between objects, `Pick all` to reset picking, or a timer,
+  tween or table rebuilt from variables: redesign.
 - A runtime fact learned from a project goes into
-  `prompts/event-sheet-pitfalls.md`, with a source.
+  `prompts/event-sheet-pitfalls.md`, with its source.
 
 ## 4. Use from another project
 
-Nothing in a Construct project points here; an agent in a game folder finds
-this repository only through the block from `prompts/game-project-AGENTS.md`,
-which says how to install it and when Claude Code also needs a `CLAUDE.md`.
+A game project reaches this repository through the block in
+`prompts/game-project-AGENTS.md`, installed in its instruction file.
 
-- The project's instruction file belongs to the user. If the block is missing
-  where event sheet work is about to start, offer it once, in one sentence.
-- Write it only on a yes: the block, or for Claude Code the `@AGENTS.md`
-  line, appended to the file the tool reads, nothing else touched. A no ends
-  it for the session; a block seen in one project is no reason to write it
-  into another.
-- When the agent generates the whole project, follow
-  `prompts/project-tools/README.md`; there the block is part of the output,
-  because the checker reads its `Construct3-RAG:` line to find the schemas.
+- Block missing before event sheet work: offer it once, in one sentence.
+  On yes, append it and touch nothing else. On no, drop it for the session.
+- Generating the whole project: `prompts/project-tools/README.md`; the block
+  is part of the output, its `Construct3-RAG:` line locates the schemas.
 
 ## 5. SOP: change code or data
 
 Before editing:
 
-1. Read the `AGENTS.md` in every directory you touch. Run `git status` and
-   keep changes you did not make.
-2. Trace the real call chain from `src/api.py` or `scripts/`; do not infer
-   behavior from file names.
-3. Decide whether the feature is default, optional, experimental or legacy.
-4. For a significant feature or refactor, write down first: the user task it
-   solves, whether the default run path calls it today, the queries, logs or
-   benchmark data behind it, and why a simpler implementation or reading the
-   data directly would not do. Keep, simplify, rewrite or delete. Without
-   evidence, build a baseline and an experiment first and leave the
-   production path alone.
+1. Read the `AGENTS.md` of every directory touched; it holds that area's
+   rules and checks. `git status`, keep changes you did not make.
+2. Trace the call chain from `src/api.py` or `scripts/`.
+3. Classify the feature: default, optional, experimental, legacy.
+4. Significant feature or refactor: write down the user task, whether the
+   default path calls it today, the evidence (queries, logs, benchmark) and
+   why the simpler option, or reading the data directly, does not do. Then
+   keep, simplify, rewrite or delete. No evidence: baseline and experiment
+   first, production path untouched.
 
 Rules:
 
-- State the outcome the user can observe before choosing modules or
-  algorithms, and build the simpler baseline before the complex version.
-- Existing code, tests or docs are no reason to keep what they implement. A
-  test proves the code meets the expectation written into it, not that the
-  expectation is right; fix a wrong expectation first, then the test.
-- A product choice with visibly different results gets its evidence, options
-  and trade-offs in `docs/decisions/`.
-- The default path is offline, deterministic and explainable: no network,
-  model loading or CDN refresh during import or a normal query. Refreshing
-  CDN data is an explicit maintenance step.
-- Every configuration value has a caller at run time. Removing a feature
-  removes its configuration, dependencies, tests and docs in the same change,
-  with the reason in `docs/decisions/`. "Might be useful later" keeps nothing.
-- Fix generators, not generated files: regenerate `data/` with
-  `scripts/init.py` instead of editing JSON by hand.
+- Observable outcome first, simpler baseline before the complex version.
+- A test pins an expectation, not its correctness: fix a wrong expectation,
+  then the test.
+- A product choice with visible effect gets evidence, options and
+  trade-offs in `docs/decisions/`.
+- Default path offline and deterministic: no network, model loading or CDN
+  refresh during import or a query.
+- Every configuration value has a caller. Removing a feature removes its
+  configuration, dependencies, tests and docs in the same change, with the
+  reason in `docs/decisions/`.
 - Type hints, `pathlib.Path`, specific exceptions logged at the boundary.
-- Docs and tests change with the behavior. The README explains direct use of
-  the data before the optional service; the English and Chinese READMEs say
-  the same things with the same terms and paths; `docs/dev/architecture.md`
-  describes only the architecture that runs.
+- Docs and tests change with the behavior. README: data first, service
+  second, English and Chinese identical. `docs/dev/architecture.md`
+  describes only what runs. Test totals stay out of docs.
 
-Before finishing, run the floor, which needs no Qdrant, GPU or network:
+Before finishing, plus the checks in the touched directories' `AGENTS.md`:
 
 ```bash
 python -m pytest -q
@@ -139,21 +106,10 @@ python -m compileall -q src scripts tests
 git diff --check
 ```
 
-Then the checks the change touches; `src/AGENTS.md` lists the service's own:
-
-- Data layout: `scripts/init.py` on the relevant path; check schema counts and structure.
-- Direct Lookup: representative English and Chinese queries against the committed data.
-- Update workflow: parse the YAML; confirm the exporter's standard directories.
-- Query quality: the gold sets in `tests/AGENTS.md`; check required and forbidden results.
-
-Do not hardcode test totals in docs. A third-party deprecation warning is
-noted, not a failure.
-
-Done means: the change solves a problem the user can observe, not only moves
-code or adapts tests; the real default run path was exercised and its failure
-and fallback behavior can be explained; old paths, dead configuration,
-orphaned tests and stale documents were searched for and removed; the report
-separates verified, unverified, remaining risk and the next decision.
+Done: an observable problem solved; the default path run live, failure and
+fallback explained; old paths, dead configuration, orphaned tests and stale
+docs removed; the report split into verified, unverified, risk, next
+decision.
 
 ## 6. Entry points
 
@@ -172,9 +128,9 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Install and run | `docs/guide/quick-start.md` |
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
-| Event sheet design rules, the worked case, sourced pitfalls | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `docs/decisions/event-sheet-design-guidance.md` |
-| Loaded on demand from the prompts: the slot case as a program, hand-editing project JSON | `prompts/references/` |
-| Generating a whole project from a script and checking it before the editor opens it | `prompts/project-tools/README.md` |
-| Runtime architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
+| Event sheet design, worked case, sourced pitfalls | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `docs/decisions/event-sheet-design-guidance.md` |
+| Slot case as a program, hand-editing project JSON | `prompts/references/` |
+| Generating and checking a whole project | `prompts/project-tools/README.md` |
+| Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
-| Why features were kept or removed; open a record only when a rule cites it or the change touches that decision | `docs/decisions/` |
+| Why features were kept or removed | `docs/decisions/` |
