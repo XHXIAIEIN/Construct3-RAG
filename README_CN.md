@@ -13,9 +13,8 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 | 仓库 | 内容 | 与本仓库的关系 |
 |---|---|---|
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器中的全部示例，以文件夹项目形式保存 | `data/c3-examples/` 是元数据，这里是源文件。完整模式下克隆到同级目录即可被索引。 |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。 |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。完整模式下克隆到同级目录即可被索引。 |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | 概念和操作说明。完整模式下克隆到同级目录即可被索引。 |
-| [XHXIAIEIN/Construct3-Manual-PDF](https://github.com/XHXIAIEIN/Construct3-Manual-PDF) | 同一份手册按章节拆分的 PDF | 离线阅读。 |
 
 "同级目录"指与本仓库并列的目录。路径和选项见 [docs/guide/quick-start.md](docs/guide/quick-start.md)。
 
@@ -28,6 +27,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 | `c3-schemas/_index.json` | 版本、语言列表，以及每个插件、行为、特效的文件路径和 ACE 数量。不含本地化名称 |
 | `c3-schemas/{locale}/_index.json` | 该语言下的插件、行为、特效名称，键与根索引相同 |
 | `c3-schemas/{locale}/plugins/{id}.json` | 条件、动作、表达式、属性 |
+| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。只导出一次，不在各插件文件中重复 |
 | `c3-schemas/{locale}/behaviors/{id}.json` | 行为 ACE |
 | `c3-schemas/{locale}/effects/{id}.json` | 特效参数和分类 |
 | `c3-examples/{locale}/{id}.json` | 示例名称、描述、标签、使用的插件、打开链接 |
@@ -40,7 +40,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 ## 读取数据
 
 1. 在 `_index.json` 中找到插件或行为，条目给出 `file` 路径和 ACE 数量。只知道中文名时，先在 `{locale}/_index.json` 中查到 id。
-2. 打开 `data/c3-schemas/{locale}/{file}`，用 `id` 定位 ACE；条件和动作也可以用 `list-name`，表达式用 `translated-name`。`display-text` 是事件表中的显示文本，`params` 列出参数。
+2. 打开 `data/c3-schemas/{locale}/{file}`，用 `id` 定位 ACE；条件和动作也可以用 `list-name`，表达式用 `translated-name`。`display-text` 是事件表中的显示文本，`params` 列出参数。世界对象的 ACE 如果不在自己的文件里，就在 `plugins/_common.json`；Sprite 的完整 ACE 列表是自己的文件加上这一份。
 3. 脚本接口先在 `autocomplete-data.json` 中找到类名，再打开对应的 `.d.ts`。
 
 `zh-CN/plugins/sprite.json` 中的一个条件：
