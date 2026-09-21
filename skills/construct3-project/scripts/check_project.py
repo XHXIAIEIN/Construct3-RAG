@@ -336,7 +336,7 @@ class Checker:
                     self.err(f"{obj}: {label} has the same name as {declared[LOWER(name)]}")
                 declared[LOWER(name)] = label
         plugin = p.schema("plugins", p.plugin_of[obj])
-        expressions = {LOWER(e["translated-name"]) for e in (plugin or {}).get("expressions", [])}
+        expressions = p.expressions_of(plugin)
         members = p.families[obj].get("members", []) if obj in p.families else [obj]
         if any(m in self.world_types for m in members):
             expressions |= p.common_expressions
@@ -372,20 +372,19 @@ class Checker:
                 bs = p.schema("behaviors", behs[LOWER(member)])
                 if bs is None:
                     continue
-                if sub is None or LOWER(sub) not in {LOWER(e["translated-name"]) for e in bs["expressions"]}:
+                if sub is None or LOWER(sub) not in p.expressions_of(bs):
                     self.err(f"{where}: {obj}.{member}.{sub or ''} is not an expression of behavior "
                              f"{behs[LOWER(member)]}")
                 continue
             plugin = p.schema("plugins", p.plugin_of[obj])
             if plugin is None:
                 continue
-            known = {LOWER(e["translated-name"]) for e in plugin.get("expressions", [])} | p.common_expressions
+            known = p.expressions_of(plugin) | p.common_expressions
             known |= {LOWER(v) for v in p.ivars_of(obj)}
             if LOWER(member) not in known:
                 # Platform.Speed is reached as Player.Platform.Speed, through the behavior's name on the object.
-                owner = next((name for name, b in p.behaviors_of(obj).items() if LOWER(member) in
-                              {LOWER(e["translated-name"]) for e in (p.schema("behaviors", b) or {}).get("expressions", [])}),
-                             None)
+                owner = next((name for name, b in p.behaviors_of(obj).items()
+                              if LOWER(member) in p.expressions_of(p.schema("behaviors", b))), None)
                 hint = f"; it is an expression of a behavior: {obj}.{owner}.{member}" if owner \
                     else closest(member, known)
                 self.err(f"{where}: {obj}.{member} is neither an expression nor an instance variable of {obj}{hint}")

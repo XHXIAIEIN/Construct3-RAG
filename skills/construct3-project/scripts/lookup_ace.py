@@ -89,7 +89,8 @@ def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> 
     return f"{kind[:-1]:<10} {it['id']:<34} {title}{via}" + (f"  ({', '.join(params)})" if params else "")
 
 
-def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> list[str]:
+def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, written: str | None = None) -> list[str]:
+    """written: the name an expression has in a project file, English in every locale."""
     title = it.get("list-name") or it.get("translated-name")
     flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)] + \
             (["not invertible"] if it.get("isInvertible") is False else [])
@@ -100,7 +101,7 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -
     if kind == "expressions":
         call = f"({', '.join(params)})" if params else ""
         path = f"{owner}.{behavior}." if behavior else ("" if owner == "System" else f"{owner}.")
-        lines.append(f"  write: {path}{it['translated-name']}{call}  -> {it.get('returnType', 'any')}")
+        lines.append(f"  write: {path}{written or it['translated-name']}{call}  -> {it.get('returnType', 'any')}")
     else:
         values = {}
         for key, spec in params.items():
@@ -124,7 +125,9 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
     entries = []        # (its names, its names and category, owner, behavior, addon, kind, entry)
+    written = {}        # (behavior, addon, expression id) -> the name it is written under
     for owner, behavior, s in sources:
+        written.update({(behavior, s.get("id", ""), ace): name for ace, name in p.expression_names(s).items()})
         for kind in KINDS:
             for it in s.get(kind, []):
                 # A word may also name where the ACE lives: the behavior, the addon, "condition".
@@ -165,7 +168,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
 
     if len(found) <= 6:
         for e in found:
-            print("\n".join(in_full(*e)))
+            print("\n".join(in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)))
         if by_category:
             print(f"by category, not by name: {', '.join(e[4]['id'] for e in by_category[:20])}"
                   + (" ..." if len(by_category) > 20 else ""))
