@@ -51,18 +51,22 @@ first and Feel tables, the layout of the sheet. Then:
 1. Write the design into the generator: the constants at the top, the
    objects and their variables and behaviors, the layouts, the groups of the
    event sheet in the order the guide gives (Setup, Input, ..., Restart).
-2. Run the generator, then the checker, until the checker prints `ok`:
+2. Run the generator until its last line starts with `ok:`. It ends by
+   running the checker on what it wrote and exits with the checker's code:
 
    ```bash
    python tools/build-project.py
    ```
+
+   The checker alone, for a project edited by hand or to look something up:
 
    ```bash
    python tools/check-project.py
    ```
 
    Warnings do not fail the run; read them anyway, a generated project should
-   have none.
+   have none. Then read the sheet once as events,
+   `python tools/check-project.py --print`, before anyone opens the editor.
 3. Hand over. The agent cannot open the editor: ask the user to open the
    folder (**Menu** > **Project** > **Open**, the local project folder
    option) and to preview, and say what to look at. A load error names the event
