@@ -93,9 +93,9 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 ```bash
 # before the change
 git worktree add --detach <folder outside the clone>/rag-old HEAD
-python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json --examples <example-projects>
+python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json --examples <example-projects> --projects <game folder> ...
 # after the change
-python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json --examples <example-projects>
+python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json --examples <example-projects> --projects <game folder> ...
 python skills/construct3-project/evals/sweep_outputs.py --compare .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json
 python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
 # after each run has reported
