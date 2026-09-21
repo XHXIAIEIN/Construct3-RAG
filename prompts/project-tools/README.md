@@ -3,7 +3,8 @@
 Two scripts for a project an agent writes end to end: `build-project.py`
 generates the object types, families, layouts, event sheets, images and the
 index in `project.c3proj`; `check-project.py` checks the result against the
-schemas in this repository before the editor opens it. They came out of the
+schemas in this repository before the editor opens it, prints a sheet as
+events and looks an ACE up. They came out of the
 Water Sort project (r502, September 2026), where the event sheet grew past
 what hand-editing JSON can keep consistent: every rerun of the generator
 produces the whole project from one Python file, and the checker catches the
@@ -79,6 +80,36 @@ The project's README explains the objects, the groups, the constants and how
 to regenerate. It is the second copy of the design, for the user, and it says
 that running the generator discards edits made in the editor.
 
+## Looking an ACE up
+
+`plugins/system.json` is 4800 lines and `plugins/_common.json` 2000, more
+than most tools read in one call, and an ACE below the cut looks as if it
+did not exist. Ask for the part you need instead:
+
+```bash
+python tools/check-project.py --ace Coin tween two
+```
+
+```
+action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <isAsync>
+  Tween two properties of the object.
+  write: {"id": "tween-two-properties", "objectClass": "Coin", "behaviorType": "Tween", "sid": <new sid>, "parameters": {"tags": "\"\"", "property": "position", ...}}
+    tags                   string     expression string, text in inner quotes: "\"hello\""
+    property               combo      position | size | scale
+    ease                   ease       bare id of a built-in ease: noease, easeinoutsine, easeoutback ...
+```
+
+The first argument is an object of the project, which searches its plugin,
+the ACEs every world object shares and its behaviors under the names they
+have on the object; `System`; or a plugin or behavior by id or display name
+(`--ace "8 Direction" speed`), which needs no project. Every further word
+must occur in the id, the list name or the script name. More than six
+matches print one line each; six or fewer print in full, with `<isTrigger>`,
+`<isLooping>` and `<not invertible>` where the editor's rules depend on
+them. An expression prints the way it is reached:
+`Coin.Tween.Progress(tags)`. Copy the `write:` line into a helper of the
+generator and replace the values.
+
 ## What the checker sees
 
 For every condition and action: the object or family exists, the behavior is
@@ -137,6 +168,24 @@ a screenshot or a Find result back the same way. `check-project.py --outline
 Game` prints the numbering of a sheet with each event's sid, which is what to
 search the JSON for, unnumbered rows in parentheses; `--outline` alone prints
 every sheet.
+
+`check-project.py --print Game` prints the sheet as the editor words it,
+under the same numbers:
+
+```
+   5   Touch: On touched Coin (start)
+           -> Coin: Collect()
+   9   System: Coin.Count = 0
+       System: Trigger once
+           -> System: Wait 1 seconds (use time scale: True)
+```
+
+Read a generated sheet this way before handing over: a wrong pick or a
+missing branch shows in ten lines of events and hides in three hundred lines
+of JSON. It takes any folder project, so it is also the way to read an
+official example, at about a quarter of the JSON's length:
+`python tools/check-project.py <Construct-Example-Projects>/example-projects/template-snake --print`.
+`--locale zh-CN` prints the editor's Chinese wording.
 
 It does not see what happens at runtime: which instances a condition picks,
 what order triggers fire in, whether an expression means what the comment

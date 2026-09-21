@@ -1,6 +1,9 @@
 """Static checks for a Construct 3 folder project, run without the editor.
 
     python tools/check-project.py [project-root] [--rag PATH] [--locale en-US]
+    python tools/check-project.py --print [SHEET]          the sheet as the editor words it
+    python tools/check-project.py --outline [SHEET]        event numbers and sids
+    python tools/check-project.py --ace OBJECT [WORD ...]  look an ACE up, with the JSON to write
 
 Reads project.c3proj and every object type, family, layout and event sheet
 it lists, and checks them against the schemas in Construct3-RAG: every
@@ -34,7 +37,18 @@ the number for themselves; a variable, comment or include takes no number of
 its own and belongs to the next one, which is how the editor's Find lists it
 (`Event 15: Local number srcColor`). Conditions and actions count from 1.
 `--outline` prints that numbering for one sheet or all of them, with the sid
-of each event, for finding the JSON behind a number.
+of each event, for finding the JSON behind a number. `--print` prints the
+sheet itself as the editor words it, conditions and actions under each
+number, in the locale of --locale; it reads any folder project, an official
+example included, in a fraction of the JSON's length.
+
+`--ace Coin tween` lists the conditions, actions and expressions whose id or
+name holds every word, across the object's plugin, the shared world-object
+ACEs and its behaviors; six or fewer print in full, each parameter with the
+way it is written and the JSON to paste. `System`, or a plugin or behavior by
+id or display name (`--ace "8 Direction" speed`), works without a project.
+The schema files run to thousands of lines, more than most tools read at
+once; this prints the part that was asked for.
 
 Construct3-RAG is found from --rag, the CONSTRUCT3_RAG environment variable,
 a `Construct3-RAG: <path>` line in the project's CLAUDE.md or AGENTS.md
@@ -83,8 +97,8 @@ def stopped(exc_type, exc, tb) -> None:
         tb = tb.tb_next
     what = f"missing key {exc}" if exc_type is KeyError else f"{exc_type.__name__}: {exc}"
     print(f"check-project.py stopped at line {tb.tb_lineno} ({tb.tb_frame.f_code.co_name}): {what}. "
-          f"A project file lacks something the editor always writes; compare it with a file "
-          f"build-project.py generates, or with an official example.")
+          f"A project file lacks a key the editor always writes, or holds a value of another type than the "
+          f"editor writes; compare it with a file build-project.py generates, or with an official example.")
     for w in warnings:
         print(f"warning: {w}")
     if errors:
@@ -116,10 +130,13 @@ def rag_line(text: str) -> str | None:
 def find_rag(root: Path, override: str | None) -> Path:
     tried = []
     candidates = [("--rag", override), ("CONSTRUCT3_RAG", os.environ.get("CONSTRUCT3_RAG"))]
-    for name in ("CLAUDE.md", "AGENTS.md"):
-        f = root / name
-        if f.exists():
-            candidates.append((name, rag_line(f.read_text(encoding="utf-8"))))
+    # The project being checked, then the one this copy of the script belongs to:
+    # an official example printed from a game project has no instruction file of its own.
+    for folder in dict.fromkeys((root, Path.cwd(), Path(__file__).resolve().parent.parent)):
+        for name in ("CLAUDE.md", "AGENTS.md"):
+            f = folder / name
+            if f.exists():
+                candidates.append((str(f), rag_line(f.read_text(encoding="utf-8"))))
     for source, c in candidates:
         if not c:
             continue
@@ -143,6 +160,12 @@ ap.add_argument("--rag", help="path to the Construct3-RAG checkout")
 ap.add_argument("--locale", default="en-US", help="schema locale to read; ids are the same in every locale")
 ap.add_argument("--outline", nargs="?", const="*", metavar="SHEET",
                 help="print the event numbering of one sheet, or of every sheet, instead of checking")
+ap.add_argument("--print", nargs="?", const="*", metavar="SHEET",
+                help="print one sheet, or every sheet, as the editor words it: numbered events, conditions, actions")
+ap.add_argument("--ace", nargs="+", metavar=("OBJECT", "WORD"),
+                help="look up conditions, actions and expressions instead of checking: an object of the project "
+                     "(its plugin, the shared ACEs and its behaviors), System, or a plugin or behavior by id or "
+                     "name; the words narrow the list, and a short list prints each entry with the JSON to write")
 args = ap.parse_args()
 
 if args.root:
@@ -154,7 +177,8 @@ else:
 RAG = find_rag(ROOT, args.rag)
 SCHEMAS = RAG / "data" / "c3-schemas" / args.locale
 
-project = load(ROOT / "project.c3proj")
+# A lookup by plugin or behavior needs no project: --ace works from the clone alone.
+project = load(ROOT / "project.c3proj") if (ROOT / "project.c3proj").exists() or not args.ace else {}
 used_addons = {a["id"]: a for a in project.get("usedAddons", [])}
 FUNCTIONS_OBJECT = project.get("functionsName", "Functions")
 LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and ScrollY are one name
@@ -390,6 +414,111 @@ for c in project.get("containers", []):
     for m in c.get("members", []):
         if m not in types:
             err(f"container {c.get('members')}: member {m} is not an object type")
+
+# --- --ace: look an ACE up and print the JSON to write ---------------------------------
+# How each parameter type is written in an event sheet file, and a value that loads.
+WRITING = {
+    "number": ('"0"', "expression string: \"100\", \"Self.X + 50\""),
+    "string": ('"\\"\\""', "expression string, text in inner quotes: \"\\\"hello\\\"\""),
+    "any": ('"0"', "expression string, a number or a text in inner quotes"),
+    "boolean": ("false", "JSON true or false"),
+    "cmp": ("0", "JSON number: 0 =, 1 ≠, 2 <, 3 ≤, 4 >, 5 ≥"),
+    "object": ('"<object>"', "bare name of an object type or family"),
+    "layer": ('"0"', "expression string: an index \"0\" or a name in inner quotes \"\\\"HUD\\\"\""),
+    "layout": ('"<layout>"', "bare layout name"),
+    "keyb": ("32", "key code as a JSON number: 32 Space, 13 Enter, 37-40 arrows, 65-90 A-Z"),
+    "instancevar": ('"<variable>"', "bare name of an instance variable of the object"),
+    "instancevarbool": ('"<variable>"', "bare name of a boolean instance variable of the object"),
+    "objinstancevar": ('{"name": "<variable>", "objectClass": "<object>"}', "an instance variable of another object"),
+    "eventvar": ('"<variable>"', "bare name of a global or local variable in scope"),
+    "eventvarbool": ('"<variable>"', "bare name of a boolean variable in scope"),
+    "eventvarany": ('"<variable>"', "bare name of a variable in scope"),
+    "animation": ('"\\"\\""', "expression string, the animation name in inner quotes"),
+    "groupname": ('"\\"\\""', "expression string, the group title in inner quotes"),
+    "ease": ('"easeinoutsine"', "bare id of a built-in ease: noease, easeinoutsine, easeoutback ..."),
+    "projectfile": ('"<file>"', "bare file name under files/"),
+    "timeline": ('"<timeline>"', "bare timeline name"),
+    "flowchart": ('"<flowchart>"', "bare flowchart name"),
+    "template": ('"\\"\\""', "expression string, the template name in inner quotes, \"\\\"\\\"\" for none"),
+}
+
+
+def ace_lookup(target: str, words: list[str]) -> None:
+    """Sources of a project object are its plugin, the shared world-object ACEs
+    and its behaviors under the names they have on the object; of anything
+    else, the plugin or behavior with that id or display name."""
+    sources: list[tuple[str, str | None, dict]] = []      # (objectClass to write, behaviorType, schema)
+    obj = objects_lower.get(LOWER(target))
+    if obj == "System" or LOWER(target) == "system":
+        sources.append(("System", None, SYSTEM))
+    elif obj:
+        sources.append((obj, None, schema("plugins", plugin_of[obj]) or {}))
+        if "singleglobal-inst" not in types.get(obj, {}):     # Keyboard, Touch, Audio: nothing of a world object
+            sources.append((obj, None, COMMON))
+        sources += [(obj, name, schema("behaviors", b) or {}) for name, b in behaviors_of(obj).items()]
+    else:
+        for kind in ("plugins", "behaviors"):
+            addon = target if LOWER(target) in INDEX.get(kind, {}) else addon_hint(kind, target)
+            if addon and LOWER(addon) != "_common":
+                behavior = "<behavior name on the object>" if kind == "behaviors" else None
+                sources.append(("<object>", behavior, schema(kind, addon) or {}))
+                break
+    if not sources:
+        sys.exit(f"{target!r} is not an object of this project, System, or a plugin or behavior"
+                 + closest(target, list(plugin_of) + list(INDEX["plugins"]) + list(INDEX["behaviors"])))
+
+    kinds = ("conditions", "actions", "expressions")
+    found = []
+    for owner, behavior, s in sources:
+        for kind in kinds:
+            for it in s.get(kind, []):
+                hay = squash(" ".join(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")))
+                if all(squash(w) in hay for w in words):
+                    found.append((owner, behavior, s.get("id", ""), kind, it))
+    if not found:
+        ids = [it["id"] for _, _, s in sources for kind in kinds for it in s.get(kind, [])]
+        sys.exit(f"nothing under {target} matches {' '.join(words)!r}{closest(' '.join(words), ids, n=6)}")
+
+    brief = len(found) > 6
+    for owner, behavior, addon, kind, it in found:
+        title = it.get("list-name") or it.get("translated-name")
+        flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)] + \
+                (["not invertible"] if it.get("isInvertible") is False else [])
+        via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
+        params = it.get("params") or {}
+        if brief:
+            print(f"{kind[:-1]:<10} {it['id']:<34} {title}{via}" + (f"  ({', '.join(params)})" if params else ""))
+            continue
+        print(f"{kind[:-1]} {it['id']} - {title}{via}" + (f"  <{', '.join(flags)}>" if flags else ""))
+        print(f"  {it.get('description', '')}")
+        if kind == "expressions":
+            call = f"({', '.join(params)})" if params else ""
+            path = f"{owner}.{behavior}." if behavior else ("" if owner == "System" else f"{owner}.")
+            print(f"  write: {path}{it['translated-name']}{call}  -> {it.get('returnType', 'any')}")
+        else:
+            values = {}
+            for key, spec in params.items():
+                items = spec.get("items")
+                if items:
+                    first = spec.get("initialValue") if spec.get("initialValue") in items else next(iter(items))
+                    values[key] = json.dumps(first)
+                else:
+                    values[key] = WRITING.get(spec["type"], ('"0"', ""))[0]
+            head = f'{{"id": "{it["id"]}", "objectClass": "{owner}"' \
+                   + (f', "behaviorType": "{behavior}"' if behavior else "") + ', "sid": <new sid>'
+            body = ", ".join(f'"{k}": {v}' for k, v in values.items())
+            print("  write: " + head + (f', "parameters": {{{body}}}}}' if params else "}"))
+        for key, spec in params.items():
+            how = " | ".join(spec["items"]) if spec.get("items") \
+                else WRITING.get(spec["type"], ("", "expression string"))[1]
+            print(f"    {key:<22} {spec['type']:<10} {how}")
+    if brief:
+        print(f"{len(found)} entries; add a word to narrow them, six or fewer print with the JSON to write")
+    sys.exit(0)
+
+
+if args.ace:
+    ace_lookup(args.ace[0], args.ace[1:])
 
 # images: {type}-{animation}-{frame:03d}.png per frame, {type}.png for single-image plugins
 try:
@@ -903,7 +1032,8 @@ def check_structure(ev: dict, where: str, above: Holder | None, previous: dict |
     for c, e in zip(conds, entries):
         if c.get("isInverted") and (e.get("isTrigger") or e.get("isLooping") or e.get("isInvertible") is False):
             kind = "a trigger" if e.get("isTrigger") else "a loop" if e.get("isLooping") else "this condition"
-            err(f"{where}: {describe(c)} is inverted, and {kind} cannot be; the editor stops with 'condition not invertible'")
+            err(f"{where}: {describe(c)} is inverted, and {kind} cannot be; "
+                f"the editor stops with 'condition not invertible'")
         # Trigger once, Every X seconds: the editor keeps them out of a triggered branch, where they
         # are tested only in the tick the trigger fires. Else has its own rule below.
         if e.get("isCompatibleWithTriggers") is False and c["id"] != "else" and (triggers or (above and above.fires)):
@@ -923,8 +1053,8 @@ def check_structure(ev: dict, where: str, above: Holder | None, previous: dict |
         elif i != 0:
             problem = "it is not the first condition of its event"
         elif previous is None or previous.get("eventType") != "block":
-            problem = ("it is the first event of its list" if previous is None
-                       else f"it follows a {previous.get('eventType')}, and only comments may stand between it and the event it answers")
+            problem = "it is the first event of its list" if previous is None else \
+                f"it follows a {previous.get('eventType')}, and only comments may stand between it and the event it answers"
         elif len(before) == 1 and describe(before[0]) == "System:else":
             problem = "it follows an event whose only condition is Else"
         elif any(f.get("isTrigger") for f in flags):
@@ -1042,14 +1172,89 @@ def outline(events: list, counter: list[int], depth: int = 0) -> None:
         outline(ev.get("children", []), counter, depth + 1)
 
 
-if args.outline:
-    wanted = sheets if args.outline == "*" else {args.outline: sheets.get(args.outline)}
-    for sname, sheet in wanted.items():
-        if sheet is None:
-            sys.exit(f"no event sheet named {sname!r}; sheets: {', '.join(sheets)}")
-        print(f"== {sname}")
-        outline(sheet["events"], [0])
-    sys.exit(0)
+COMPARISONS = ("=", "≠", "<", "≤", ">", "≥")
+
+
+def wording(kind: str, ace: dict) -> str:
+    """A condition or action as the event sheet words it: the schema's
+    display-text with the parameters in place, in the locale of --locale."""
+    obj = ace.get("objectClass", "?")
+    args_ = ace.get("parameters", [])
+    if "callFunction" in ace:
+        return f"Functions: Call {ace['callFunction']}({', '.join(map(str, args_))})"
+    if "customAction" in ace:
+        return f"{obj}: {ace['customAction']}({', '.join(map(str, args_))})"
+    if ace.get("type") == "comment":
+        return "// " + str(ace.get("text", "")).split("\n")[0]
+    if ace.get("type") == "script":
+        return f"script, {len(ace.get('script', []))} lines"
+    params = args_ if isinstance(args_, dict) else {}
+    entry = ace_entry(kind, ace) if obj in plugin_of else None
+    if not entry or not entry.get("display-text"):
+        text = f"{ace.get('id')} ({', '.join(f'{k}: {v}' for k, v in params.items())})"
+    else:
+        shown = []
+        for key, spec in (entry.get("params") or {}).items():
+            value = params.get(key, "…")
+            if spec["type"] == "cmp" and value in range(6):
+                value = COMPARISONS[value]
+            elif spec.get("items") and value in spec["items"]:
+                value = spec["items"][value]
+            shown.append(str(value))
+        text = re.sub(r"\[/?[bi]\]", "", entry["display-text"]).replace("{my}", ace.get("behaviorType", ""))
+        text = re.sub(r"\{(\d+)\}", lambda m: shown[int(m.group(1))] if int(m.group(1)) < len(shown) else "…", text)
+    return f"{obj}: {'NOT ' if ace.get('isInverted') else ''}{text}"
+
+
+def print_sheet(events: list, counter: list[int], depth: int = 0, top: bool = True) -> None:
+    """The sheet as the editor shows it, with the editor's event numbers."""
+    for ev in events:
+        et = ev.get("eventType")
+        pad = "  " * depth
+        if et in NUMBERED:
+            counter[0] += 1
+        number = f"{counter[0]:>4} " if et in NUMBERED else "     "
+        if et == "variable":
+            kind = ("global" if top else "local") + (" constant" if ev.get("isConstant") else "") \
+                   + (" static" if ev.get("isStatic") else "")
+            print(f"{number}{pad}{kind} {ev['type']} {ev['name']} = {ev.get('initialValue', '')}")
+        elif et == "comment":
+            print(f"{number}{pad}// " + ev.get("text", "").replace("\n", f"\n{number}{pad}// "))
+        elif et == "include":
+            print(f"{number}{pad}include {ev.get('includeSheet', '')}")
+        elif et == "script":
+            print(f"{number}{pad}script, {len(ev.get('script', []))} lines")
+        elif et == "group":
+            print(f"{number}{pad}group {ev.get('title', '')}"
+                  + ("" if ev.get("isActiveOnStart", True) else " (inactive on start)"))
+        else:
+            head = []
+            if et in ("function-block", "custom-ace-block"):
+                name = ev.get("functionName") or f"{ev.get('objectClass')}.{ev.get('aceName')}"
+                params = ", ".join(f"{p['name']}: {p['type']}" for p in ev.get("functionParameters", []))
+                returns = ev.get("functionReturnType", "none")
+                head.append(f"{'function' if et == 'function-block' else 'custom action'} {name}({params})"
+                            + (f" -> {returns}" if returns != "none" else "")
+                            + (" [copy picked]" if ev.get("functionCopyPicked") else ""))
+            head += [wording("conditions", c) for c in ev.get("conditions", [])]
+            joiner = "OR " if ev.get("isOrBlock") else ""
+            for i, line in enumerate(head or ["(every tick)"]):
+                print(f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
+                      + (" [disabled]" if ev.get("disabled") and i == 0 else ""))
+            for a in ev.get("actions", []):
+                print(f"     {pad}    -> {wording('actions', a)}")
+        print_sheet(ev.get("children", []), counter, depth + 1, top=False)
+
+
+for flag, printer in ((args.outline, outline), (args.print, print_sheet)):
+    if flag:
+        wanted = sheets if flag == "*" else {flag: sheets.get(flag)}
+        for sname, sheet in wanted.items():
+            if sheet is None:
+                sys.exit(f"no event sheet named {flag!r}; sheets: {', '.join(sheets)}")
+            print(f"== {sname}")
+            printer(sheet["events"], [0])
+        sys.exit(0)
 
 # A global declared at the top level of any sheet is visible from every sheet.
 globals_ = {ev["name"]: ev for s in sheets.values() for ev in s["events"] if ev.get("eventType") == "variable"}
