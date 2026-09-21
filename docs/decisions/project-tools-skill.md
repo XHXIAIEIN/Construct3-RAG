@@ -471,3 +471,100 @@ The two projects whose block still names it, `new project - Doubao` and its
 copy, are small-model test outputs that no agent works in again, and they
 keep their old block. Nothing else in this repository or in the other game
 projects named the file.
+
+## Update 2026-09-22: Gotchas cut to what the tools do not say, and two rows of the block merged
+
+The Gotchas of `SKILL.md` had not changed since the first commit, and no
+iteration had tested one of them. Four of the eight repeated what the agent
+is told at the moment it matters: `behaviorType` and the path of a
+behavior's expression are in the `write:` line of `lookup_ace.py`, the
+spelling of an addon id and the project's object behind a plugin name are
+in the checker's finding, and the place of *Else* and what cannot be
+inverted are findings with the repair. All of them are also in
+`references/checker-rules.md` or `references/generating-a-project.md`, a
+second and third copy to keep in step with the checker.
+
+- Taken out: `behaviorType`, addon ids, *Else* and inversion.
+- Shortened: how a parameter is written, which now names the type
+  `lookup_ace.py` prints beside it.
+- Kept: one trigger per branch, whose repair is a change of structure;
+  names, since a name changed late changes every event that uses it; what
+  an added instance variable or behavior asks of the layouts.
+- Moved: what the checker cannot see, to "Check after every change", under
+  the step that ends at `ok:`.
+
+Iteration 7, Claude Haiku 4.5 subagents, two runs per case and arm, the
+previous skill (6a0b9c6, from a worktree) as the baseline, read with
+`evals/trace.py`. Means of two runs; lost calls per run:
+
+| Case, version | Assertions | Tokens | Seconds | Tool calls | Lost calls |
+|---------------|------------|--------|---------|------------|------------|
+| add-countdown, previous | 7/7, 7/7 | 67 834 | 145 | 21.5 | 3, 5 |
+| add-countdown, shortened | 7/7, 7/7 | 64 330 | 134 | 22.5 | 5, 2 |
+| fix-load-errors, previous | 8/8, 8/8 | 64 543 | 136 | 23 | 4, 2 |
+| fix-load-errors, shortened | 8/8, 8/8 | 56 252 | 78 | 14 | 2, 0 |
+
+No lost call of the shortened arm comes from a rule that was taken out:
+they are lookup words that matched nothing, guessed shapes of a plan
+operation, and a wrong ACE id or parameter key, each refused with the right
+one. The result is "not worse", no more: two runs per cell, and the same
+previous text ran fix-load-errors in 58 K tokens and 97 s in iteration 5.
+The two cases never write an addon id, name an object or add an instance
+variable, so those rules were not exercised in either arm.
+
+Iteration 6 is the same layout started with a prompt that named the
+project's `AGENTS.md` and not the skill. Four of its eight runs never opened
+`SKILL.md`, in both arms, against none of 18 in iterations 3 to 5, whose
+prompt names it; all eight passed every assertion, and the ones that skipped
+it edited the JSON with Edit or a script of their own. It says nothing about
+the Gotchas and is kept as a first count of how often the block alone leads
+a small model to the skill.
+
+In `assets/game-project-block.md` the two rows that sent to
+`Construct3-RAG/AGENTS.md` section 2 are one row, and so are the two that
+sent to the hand-editing reference. The block is in every session of a game
+project; what it routes to is unchanged. Not measured: the eval prompt names
+`SKILL.md` itself, and four runs of the other prompt cannot show what two
+rows do.
+
+### The block leads to the skill: iteration 9
+
+The four runs of iteration 6 that skipped `SKILL.md` went the same way: the
+block, in two of them a listing of `.agents/skills/`, then
+`eventSheets/Game.json` and a hand edit. The skill was the sixth row of the
+table, behind the row for changing `eventSheets/` JSON by hand, and the
+block asked for "the file for what you are doing", in no order.
+
+The block now has two steps above the table: read the installed `SKILL.md`
+before opening a project file, with what its scripts do and that
+`eventSheets/` is read and changed through them; then the table. The row is
+gone from the table.
+
+Iteration 9 repeats iteration 6 with this block (iteration 8 is the sweep of
+the expression names, `sweep-old.json` and `sweep-new.json`): the same prompt, which
+names the project's `AGENTS.md` and not the skill, Claude Haiku 4.5, four
+runs per case.
+
+| | Read `SKILL.md` | Changed the sheet with a plan | Assertions |
+|---|---|---|---|
+| Iteration 6, skill as a row | 4 of 8 | 3 of 8 | all |
+| Iteration 9, skill as the first step | 8 of 8 | 8 of 8 | all but one |
+
+The one failed assertion is the text in `AddScore` left without the time,
+the miss `edit-sheet-script.md` already counts in two of six plan runs; it
+is not the block's. The baseline is iteration 6 as it ran, whose block had
+the four rows not yet merged and the same skill row. Not measured: a client
+that discovers `.claude/skills` by itself, where `description` triggers the
+skill; that is the trigger evaluation, still not run.
+
+In three of the eight runs of fix-load-errors in iterations 7 and 9 a plan
+replaced or removed event 6 and then placed an event `"after": 6`,
+refused with "event 6 is gone". The refusal is right and costs a call each
+time; a candidate for the message or for `SKILL.md`.
+
+### Re-evaluate when
+
+- A run started from the block still edits a sheet's JSON by hand: read its
+  trace for what it opened instead.
+- A project shows a wrong `behaviorType`, addon id or *Else* that the
+  finding did not repair in one round: the rule goes back, with the case.

@@ -178,6 +178,13 @@ all of that and writes nothing.
 4. Repeat until the last line starts with `ok:`. Only then ask the user to
    open the project.
 
+`ok:` is about the files, not the game. The checker cannot run the events:
+which instances a condition picks, what order triggers fire in and what a
+tick later looks like are the preview's to judge. Design with
+`Construct3-RAG/prompts/event-sheet-thinking.md` first; a runtime fact the
+preview teaches goes into `Construct3-RAG/prompts/event-sheet-pitfalls.md`
+with its source.
+
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an
 official example. Read [references/checker-rules.md](references/checker-rules.md)
@@ -194,32 +201,18 @@ that keep a rerun safe.
 
 ## Gotchas
 
-- A parameter is written by its type. An expression parameter is a string
-  holding an expression: a number is `"100"`, a text carries inner quotes,
-  `"\"hello\""`. A combo item, an object, a layout, a variable and an ease
-  are bare: `"start"`, never `"\"start\""`. A comparison is a JSON number 0
-  to 5 (=, !=, <, <=, >, >=), a boolean a JSON boolean, a key a key code (32,
-  not `"Space"`).
-- `behaviorType` is the name the behavior has on the object, not the
-  behavior id, and a behavior's expression is reached through that name:
-  `Player.Platform.Speed`.
-- Addon ids are the editor's spelling, case-sensitive: `Arr`, `Json`,
-  `TiledBg`, `EightDir`, `Sin`, `solid`. An expression goes through the
-  project's object, not the plugin: `Levels.Get`, not `JSON.Get`.
+- A parameter is written by its type, which `lookup_ace.py` prints beside
+  it. An expression parameter is a string holding an expression: a number is
+  `"100"`, a text carries inner quotes, `"\"hello\""`. Every other type is
+  bare, or a JSON number or boolean: `"start"`, never `"\"start\""`.
 - One trigger per event and per branch of sub-events. A function or a custom
   action counts as one and holds none: react to *On tween finished* in a
   top-level event of its own that calls the next function.
-- *Else* is the first condition of an event that directly follows a plain
-  event. A trigger, a loop, *Else* and *Trigger once* are never inverted.
-- Names are plain words: no spaces or punctuation, an instance variable
-  starts with a letter, an object is not named like a system expression
-  (`Floor`, `Time`, `Random`), an instance variable not like an expression
-  of its object (`Angle`, `Width`, `Count`).
-- Every instance in a layout carries every instance variable of its type and
-  a properties block per behavior, those of its families included. Every
-  type created at runtime has a template instance in some layout.
-- The checker cannot run the events: which instances a condition picks, what
-  order triggers fire in and what a tick later looks like are the preview's
-  to judge. Design with `Construct3-RAG/prompts/event-sheet-thinking.md`
-  first; a runtime fact the preview teaches goes into
-  `Construct3-RAG/prompts/event-sheet-pitfalls.md` with its source.
+- A name is chosen once: every event that uses it changes with it. Names are
+  plain words without spaces or punctuation, an instance variable starts
+  with a letter, an object is not named like a system expression (`Floor`,
+  `Time`, `Random`), an instance variable not like an expression of its
+  object (`Angle`, `Width`, `Count`).
+- An instance variable or a behavior added to a type or a family goes into
+  every instance of it in every layout. A type created at runtime has a
+  template instance in some layout.

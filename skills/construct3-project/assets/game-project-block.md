@@ -12,18 +12,22 @@ go on from memory.
 
 Anything that changes what the game does is event sheet work: a new
 mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
-eventSheets/*.json. Do not answer it from memory. Before the first event,
-name or edit, read the file for what you are doing; each one says what to
-read next.
+eventSheets/*.json. Do not answer it from memory.
+
+1. Before opening a project file, read
+   `.agents/skills/construct3-project/SKILL.md`. Its scripts print an event
+   sheet as events, look an ACE up with the JSON to write, change a sheet
+   from a plan, check the project and generate one from a script; eventSheets/
+   is read and changed through them. If that folder is missing,
+   Construct3-RAG/AGENTS.md section 4 installs it.
+2. Before the first event, name or edit, read the file for what you are
+   doing; each one says what to read next.
 
 | Doing | Read first |
 |-------|------------|
 | Anything, at the start of the session | Construct3-RAG/AGENTS.md |
 | Deciding what the events are | Construct3-RAG/prompts/event-sheet-thinking.md |
-| Writing a plugin, behavior, ACE, effect or script name | Construct3-RAG/AGENTS.md section 2 |
-| Looking for how an official example does it | Construct3-RAG/AGENTS.md section 2 |
+| Writing a plugin, behavior, ACE, effect or script name, or looking for how an official example does it | Construct3-RAG/AGENTS.md section 2 |
 | Writing an addon: a new plugin, behavior, effect or theme for the Addon Manager, not an event that uses one | Construct3-Manual/Construct3-Addon-SDK/index.md, then a sample under Construct-Addon-SDK/ |
-| Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand | Construct3-RAG/prompts/references/hand-editing-project-files.md |
-| Naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md, "Naming an event to the user" |
-| Looking an ACE up, reading a sheet as events, putting events into a sheet, checking project files, generating the whole project from a script | the construct3-project skill, `.agents/skills/construct3-project/SKILL.md`; if that folder is missing, Construct3-RAG/AGENTS.md section 4 installs it |
+| Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand; naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md; for the event numbers, "Naming an event to the user" |
 | Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path> |
