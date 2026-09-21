@@ -107,6 +107,53 @@ def test_outline_numbers_events_as_the_editor_does(built):
     assert "   1 group Setup" in rows and "   2   System:on-start-of-layout" in rows
 
 
+def test_print_words_the_sheet_as_the_editor_does(built):
+    code, out = check(built, "--print", "Game")
+    assert code == 0
+    assert "   5   Touch: On touched Coin (start)\n           -> Coin: Collect()" in out
+    assert "     global constant number COIN_COUNT = 6" in out
+    assert "   7 function AddScore(points: number)\n         -> System: Add points to score" in out
+    assert "   9   System: Coin.Count = 0\n       System: Trigger once" in out
+
+
+def test_print_follows_the_locale(built):
+    code, out = check(built, "--print", "Game", "--locale", "zh-CN")
+    assert code == 0 and "System: 场景开始" in out
+
+
+# --- looking an ACE up -------------------------------------------------------------------
+def test_ace_lookup_reaches_a_behavior_through_the_object(built):
+    code, out = check(built, "--ace", "Coin", "tween", "two")
+    assert code == 0
+    assert "action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <isAsync>" in out
+    assert '"objectClass": "Coin", "behaviorType": "Tween", "sid": <new sid>, "parameters": {"tags": "\\"\\"", "property": "position"' in out
+    assert "property               combo      position | size | scale" in out
+
+
+def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
+    code, out = check(built, "--ace", "Coin", "collision", "another")
+    assert "condition on-collision-with-another-object - On collision with another object [_common]  <isTrigger>" in out
+    code, out = check(built, "--ace", "Coin", "progress")
+    assert "write: Coin.Tween.Progress(tags)  -> number" in out
+
+
+def test_ace_lookup_lists_briefly_when_many_match(built):
+    code, out = check(built, "--ace", "System", "layer")
+    assert code == 0 and "add a word to narrow them" in out and "write:" not in out
+
+
+def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
+    shutil.copytree(TOOLS, tmp_path / "tools")
+    code, out = check(tmp_path, "--ace", "8 Direction", "max", "speed")
+    assert code == 0, out
+    assert "action set-max-speed" in out and "[behavior <behavior name on the object>, eightdir]" in out
+
+
+def test_ace_lookup_offers_the_nearest_id(built):
+    code, out = check(built, "--ace", "System", "wiat")
+    assert code != 0 and "closest: wait" in out
+
+
 # --- finding the schemas ---------------------------------------------------------------
 @pytest.mark.parametrize("lines", [
     "- Construct3-RAG: {rag}",

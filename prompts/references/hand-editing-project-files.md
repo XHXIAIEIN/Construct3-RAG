@@ -85,7 +85,9 @@ Quote those numbers, never JSON line numbers, and read a screenshot or a
 pasted Find result back the same way. To find the JSON behind a number, run
 `python <Construct3-RAG>/prompts/project-tools/check-project.py --outline
 <sheet>` in the project folder: each row prints with its number and its
-`sid`, which is the string to search the sheet file for.
+`sid`, which is the string to search the sheet file for. `--print <sheet>`
+prints the same rows with their conditions and actions as the editor words
+them; read the sheet that way before and after an edit.
 
 ## Checks before handing over
 

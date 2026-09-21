@@ -111,6 +111,25 @@ Option 2.
 - `tests/test_project_tools.py` generates the stand-in project, breaks it one
   rule at a time and reads the finding.
 
+Two read-only modes went in with it, because the same projects showed what
+the agent reads, not only what it writes, going wrong:
+
+- `--ace OBJECT [WORD ...]` prints the ACEs of an object, a plugin or a
+  behavior that match, with each parameter's encoding and the JSON to write.
+  `plugins/system.json` is 4801 lines and `plugins/_common.json` 2081; a file
+  tool that returns 2000 lines at a time shows an agent the conditions and
+  part of the actions of System and none of its expressions, and the SOP
+  says an ACE that is not in the schema does not exist. The encoding mistakes
+  in the Flash project (combos quoted, comparisons as strings, Tween flags as
+  booleans) are what the printed JSON and the per-type legend settle. Reading
+  the JSON directly stays the SOP; this is the route for the long files. The
+  lookup service answers the same question over HTTP and needs a server.
+- `--print [SHEET]` prints a sheet as the editor words it, under the editor's
+  event numbers, from the schema's `display-text`. Over the 524 examples it
+  is 4.9 MB against 17.8 MB of event sheet JSON, and the design guide sends
+  the agent to those sheets for the shape of an interaction. It ran on all
+  524 without an error.
+
 Not done, because nothing here shows it is needed: parsing expressions for
 syntax, argument counts and types; checking `function`, `template` and
 `audiofile` parameters.

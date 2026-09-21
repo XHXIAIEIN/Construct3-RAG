@@ -38,7 +38,7 @@ Answer from the data. An ACE missing from the schema does not exist.
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/` |
+| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python prompts/project-tools/check-project.py <example folder> --print` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
@@ -46,6 +46,19 @@ Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are
 identical across locales. How to structure an interaction is section 3.
 `POST /search` on the running service returns the same data
 (`docs/guide/api-reference.md`).
+
+`plugins/system.json` and `plugins/_common.json` are thousands of lines
+long. A reader that stops at 2000 lines shows part of them, and an ACE below
+the cut looks missing. Ask for the part instead:
+
+```bash
+python prompts/project-tools/check-project.py --ace System wait
+```
+
+prints the matching conditions, actions and expressions of `System`, of a
+plugin or behavior by id or display name, or, run in a game project, of one
+of its objects with its behaviors, each with its parameters and the JSON to
+write (`prompts/project-tools/README.md`, "Looking an ACE up").
 
 ## 3. SOP: design event sheet logic
 
