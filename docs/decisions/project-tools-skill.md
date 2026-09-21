@@ -463,3 +463,11 @@ assertion of name-the-restart-event that allowed no number but 9 failed a
 correct answer which also named the group, event 8; it now allows another
 number on a line that calls it the group, and the baseline that answered 8
 still fails it.
+
+## Update 2026-09-22: the pointer is deleted
+
+`prompts/project-tools/README.md` is removed, on the maintainer's decision.
+The two projects whose block still names it, `new project - Doubao` and its
+copy, are small-model test outputs that no agent works in again, and they
+keep their old block. Nothing else in this repository or in the other game
+projects named the file.
