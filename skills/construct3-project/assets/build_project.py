@@ -1,22 +1,23 @@
 """Generate a Construct 3 folder project from Python: images, object types,
 families, layouts, event sheets and the parts of project.c3proj that list them.
 
-    python tools/build-project.py
+    python tools/build_project.py
 
-Run it in a project the editor created and saved as a folder, so that
-project.c3proj already has its uniqueId, icons and scripts. The generated
-files replace the previous ones; files the editor owns (uistate, icons,
-scripts) are left alone. It ends by running check-project.py, which sits next
-to it, on what it wrote, and exits with the checker's code: the project is
-ready for the editor when the last line starts with `ok:`.
+This file is the template of the construct3-project skill: copy it to tools/
+in a project the editor created and saved as a folder, so that project.c3proj
+already has its uniqueId, icons and scripts, and rewrite it for the game. The
+generated files replace the previous ones; files the editor owns (uistate,
+icons, scripts) are left alone. It ends by running the skill's
+check_project.py on what it wrote and exits with the checker's code: the
+project is ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the layout restarts. Replace
 build_images(), build_object_types(), build_layouts(), build_event_sheet() and
-the addon list in build_project(); keep the helpers, or grow them from
-`python tools/check-project.py --ace <object> <words>`, which prints an ACE
-with the JSON to write, when the game needs one they do not cover. The
-encodings are the ones the editor writes; see
+the addon list in build_project(); keep the helpers, or grow them from the
+skill's `scripts/lookup_ace.py <object> <words>`, which prints an ACE with the
+JSON to write, when the game needs one they do not cover. The encodings are
+the ones the editor writes; see
 Construct3-RAG/prompts/references/hand-editing-project-files.md.
 """
 import json
@@ -632,11 +633,14 @@ def build_all() -> None:
 if __name__ == "__main__":
     build_all()
     # Generating without checking is how a project reaches the editor with a mistake
-    # the checker names in one line; the two always run together.
-    checker = Path(__file__).with_name("check-project.py")
-    if not checker.exists():
-        sys.exit(f"generated, not checked: {checker.name} is not in {checker.parent}; copy it from "
-                 f"Construct3-RAG/prompts/project-tools/ and run it")
+    # the checker names in one line; the two always run together. The skill is
+    # installed in the project, or once for the user, under a client's skills folder.
+    checker = "skills/construct3-project/scripts/check_project.py"
+    found = sorted(ROOT.glob(f".*/{checker}")) or sorted(Path.home().glob(f".*/{checker}"))
+    if not found:
+        sys.exit("generated, not checked: the construct3-project skill is not installed in this project; "
+                 "run python <Construct3-RAG>/skills/construct3-project/scripts/install.py here, then "
+                 "its scripts/check_project.py")
     print("generated; checking")
     sys.stdout.flush()
-    sys.exit(subprocess.run([sys.executable, str(checker), str(ROOT)]).returncode)
+    sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT)]).returncode)
