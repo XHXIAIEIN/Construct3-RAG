@@ -66,6 +66,35 @@ first.
 
 ## Triggers and Else
 
+- One trigger per event, and one per branch of sub-events: no event above a
+  trigger may hold another. A function and a custom action count as the
+  trigger of their branch, so no trigger goes inside one: a function that
+  starts a tween cannot hold the tween's *On finished*. That is a top-level
+  event of its own, which calls the next function. Only an OR block lists
+  several triggers. The editor refuses the whole project otherwise, with
+  `cannot add another trigger to event branch`. [manual:
+  project-primitives/events/how-events-work.md "Triggers", sub-events.md
+  "Triggers in sub-events"; editor bundle `projectResources.js` r495.2,
+  function blocks report a trigger; observed: Water Sort (DeepSeek), `Tube:
+  On tweens finished` inside functions `StartPour` and `FinishPour`,
+  2026-09-17]
+- *On collision with another object*, Timer *On timer* and the Gamepad
+  button conditions are triggers to the editor, green arrow and every rule
+  above, although the runtime tests them in sheet order each tick. The schema
+  marks them `isTrigger` with `isFakeTrigger`. [Addon SDK guide
+  defining-aces.md "isFakeTrigger"; schema: plugins/_common.json,
+  behaviors/timer.json]
+- A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick
+  (*Pick all*, *Pick by comparison*, *Pick last created*, *Pick
+  nearest/furthest*, *Pick children*) cannot be inverted; "not on collision"
+  is *Is overlapping* inverted. The schema says
+  which: `isTrigger`, `isLooping`, `isInvertible: false`. [manual:
+  project-primitives/events/conditions.md "Inverting conditions"; editor
+  bundle, `condition not invertible`]
+- *Trigger once* and *Every X seconds* do nothing useful under a trigger:
+  they are tested only in the tick the trigger fires, and the editor does not
+  offer them there. [Addon SDK guide defining-aces.md
+  "isCompatibleWithTriggers"; schema: `isCompatibleWithTriggers: false`]
 - A trigger can fire with several instances picked. Timer *On timer* does when
   timers elapse in the same tick; a *Pick nearest* or a function call written
   for one instance then runs once. Add *For each* after such triggers. [manual:

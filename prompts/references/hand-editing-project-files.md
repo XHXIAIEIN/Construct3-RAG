@@ -16,6 +16,22 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
 - String parameters carry their quotes: `"tag": "\"attack\""`. `layer` is an
   index string `"2"` or a quoted name `"\"Graphics\""`. `create-hierarchy` is a
   JSON boolean. Inverted conditions carry `"isInverted": true`.
+- Everything that is not an expression is written bare: a combo item
+  (`"mouse-button": "left"`, `"loop": "no"`), an object, a layout, a
+  variable, an ease id (`"ease": "easeoutback"`, the ids under
+  `ui/bars/timeline/eases` in `data/c3-lang/en-US.json`). A quoted combo
+  value is not an error to the editor: it silently keeps the default. A key
+  is its key code as a JSON number (`"key": 32`); a string stops the load
+  with `expected finite number`. A JSON string `"false"` in a boolean
+  parameter reads as true. [editor bundle `projectResources.js`, parameter
+  loaders, r495.2, 2026-09-21; the 1238 Keyboard `key` parameters in the
+  official examples are all numbers]
+- `plugin-id`, `behaviorId` and the `id` of a `usedAddons` entry are the
+  editor's spelling, exactly: `originalId` in `data/c3-schemas/_index.json`.
+  `Arr` is Array, `Json` JSON, `TiledBg` Tiled Background, `EightDir`
+  8 Direction, `Sin` Sine; `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`,
+  `destroy` and `gamepad` are lowercase. [same source: the addon table is a
+  map keyed by id, `missing plugin id` otherwise]
 - Function call: `{"callFunction": "name", "sid": N, "parameters": ["expr", ...]}`.
   Function block: `functionCopyPicked` (boolean) and `functionParameters`
   entries with `name`, `type`, `initialValue`, `comment`, `sid`.
@@ -78,8 +94,13 @@ behavior name exists, families included; `sid` and `uid` are unique; every ACE
 `id` and parameter key is present in `data/c3-schemas/` (shared world ACEs in
 `plugins/_common.json`); every called function is defined with the right
 parameter count; every object created at runtime has a template instance in
-some layout. `prompts/project-tools/check-project.py` runs these checks on a
-project folder; copy it into the project's `tools/` and run it from there.
+some layout; and the rules the editor applies on opening: one trigger per
+branch and none inside a function or custom action, nothing inverted that
+cannot be, *Else* only after a plain event, names the editor keeps and does
+not reserve (the table in `prompts/project-tools/README.md`).
+`prompts/project-tools/check-project.py` runs these checks on a project
+folder; copy it into the project's `tools/` and run it from there, or run it
+in place with the project folder as the argument.
 
 On editor.construct.net (observed r495.2, 2026-09-15): a guest session is
 capped at 25 events and a verified free account at 50; families are a paid

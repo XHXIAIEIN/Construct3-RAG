@@ -6,7 +6,10 @@ agent in the game folder answers from memory: a drag-and-drop interaction
 comes back as UID links, `Pick all` and globals.
 
 Copy the block into the project's `AGENTS.md` and fill in the one path at
-the top, or a symlink inside the project that points here. The
+the top, or a symlink inside the project that points here. Replace
+`<path-to>` in place, or keep it and add a line `- path-to = <folder>` above
+it for the folder that holds the clones; the block and
+`check-project.py` read both. The
 `Construct3-Manual`, `Construct-Example-Projects` and `Construct-Addon-SDK`
 clones are expected beside this repository, where the README places them;
 a clone kept elsewhere gets its own line. Nothing else in the block needs
@@ -23,10 +26,11 @@ repository's does.
 
 Construct3-Manual, Construct-Example-Projects and Construct-Addon-SDK are
 cloned beside it; add a line like the one above for any that is elsewhere.
-If the path still reads `<path-to>`, the block was copied unfilled: use
-`$CONSTRUCT3_RAG` if it is set, otherwise ask the user where the clone is
-and offer to fill the line in. Do not guess a path, and do not go on from
-memory.
+`<path-to>` stands for the folder a `path-to = ...` line above gives. If
+the path reads `<path-to>` and no such line exists, the block was copied
+unfilled: use `$CONSTRUCT3_RAG` if it is set, otherwise ask the user where
+the clone is and offer to fill the line in. Do not guess a path, and do not
+go on from memory.
 
 Anything that changes what the game does is event sheet work: a new
 mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
