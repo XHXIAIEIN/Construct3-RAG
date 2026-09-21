@@ -84,21 +84,21 @@ python scripts/setup.py --full
 ## 项目结构
 
 ```
-AGENTS.md               AI 代理入口：查找 SOP、设计 SOP、工作 SOP
-data/                   已提交的参考数据，直接读取，无需安装
+AGENTS.md               AI 代理入口
+data/                   已提交的参考数据，直接读取
   c3-schemas/           ACE 定义、特效（en-US + zh-CN）
-  c3-examples/          示例项目元数据（en-US + zh-CN）
-  c3-lang/              CDN 原始语言包（en-US + zh-CN）
+  c3-examples/          示例项目元数据
+  c3-lang/              CDN 语言包
   c3-ts-defs/           TypeScript 脚本接口
-prompts/                LLM system prompt：设计指南、书写规则、易错点、游戏项目用的 AGENTS.md 模板
-  references/           按需加载：写成程序式事件表的格子案例、手工编辑项目 JSON
-  project-tools/        用 Python 脚本生成整个项目，并按 schema 检查生成结果
-src/                    可选搜索服务（包结构见 src/AGENTS.md）
+prompts/                LLM system prompt
+  references/           按需加载
+  project-tools/        生成并检查整个项目
+src/                    可选搜索服务，自带 .env（见 src/AGENTS.md）
 scripts/                安装、数据刷新、版本检查
-tests/                  离线 pytest 套件、金标集、评估脚本
-docs/guide/             面向使用者：快速开始、API 参考、数据格式
-docs/dev/               面向贡献者：架构、数据管线
-docs/decisions/         审计与决策记录
+tests/                  离线 pytest 套件
+docs/guide/             使用者文档
+docs/dev/               贡献者文档
+docs/decisions/         决策记录
 .github/workflows/      数据更新自动化
 ```
 
