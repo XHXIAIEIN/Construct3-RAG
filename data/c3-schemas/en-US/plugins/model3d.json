@@ -36,7 +36,8 @@
       "category": "3d-model",
       "list-name": "For each mesh",
       "display-text": "For each mesh",
-      "description": "Loop through all the meshes in the model."
+      "description": "Loop through all the meshes in the model.",
+      "isLooping": true
     },
     {
       "id": "for-each-animation",
@@ -44,7 +45,8 @@
       "category": "3d-model",
       "list-name": "For each animation",
       "display-text": "For each animation",
-      "description": "Loop through all the animations in the model."
+      "description": "Loop through all the animations in the model.",
+      "isLooping": true
     },
     {
       "id": "playing",

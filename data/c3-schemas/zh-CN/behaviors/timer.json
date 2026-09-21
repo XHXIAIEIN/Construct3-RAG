@@ -18,7 +18,9 @@
           "name": "标签",
           "desc": "计时器的标签。来自计时器 '开始计时' 动作填写的标签。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-timer-running",

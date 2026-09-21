@@ -21,7 +21,8 @@
           "name": "XPath",
           "desc": "The XPath expression to evaluate, returning a series of nodes to iterate."
         }
-      }
+      },
+      "isLooping": true
     }
   ],
   "actions": [

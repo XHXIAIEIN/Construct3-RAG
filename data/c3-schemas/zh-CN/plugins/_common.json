@@ -184,7 +184,8 @@
           "name": "包含并列结果",
           "desc": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-unique-id",
@@ -343,7 +344,8 @@
           "name": "包含并列结果",
           "desc": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "compare-z-elevation",
@@ -481,7 +483,9 @@
           "name": "对象",
           "desc": "被碰撞的对象。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-overlapping-another-object",
@@ -571,7 +575,8 @@
             "top": "顶部"
           }
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-children",
@@ -596,7 +601,8 @@
             "bottom": "底部"
           }
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-nth-child",
@@ -625,7 +631,8 @@
           "name": "实例",
           "desc": "要选择的子对象位于层级结构中的索引，从 0 开始计数。根据选择范围，决定是在所有子对象中选择，还是仅在已选择的子对象相同的对象类型中选择。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "compare-child-count",

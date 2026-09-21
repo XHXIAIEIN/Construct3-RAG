@@ -171,7 +171,8 @@
             "x": "X"
           }
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "compare-current-value",

@@ -170,7 +170,9 @@
             "d-pad-right": "D-pad right"
           }
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-button-released",
@@ -208,7 +210,9 @@
             "d-pad-right": "D-pad right"
           }
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-any-button-pressed",
@@ -223,7 +227,9 @@
           "name": "Gamepad",
           "desc": "Enter the zero-based index of the gamepad to test. Use -1 for any gamepad."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-any-button-released",
@@ -238,7 +244,9 @@
           "name": "Gamepad",
           "desc": "Enter the zero-based index of the gamepad to test. Use -1 for any gamepad."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-button-index-down",
@@ -278,7 +286,9 @@
           "name": "Button index",
           "desc": "Enter the zero-based index of the button to test if pressed."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-button-index-released",
@@ -298,7 +308,9 @@
           "name": "Button index",
           "desc": "Enter the zero-based index of the button to test if released."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     }
   ],
   "actions": [

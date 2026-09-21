@@ -63,7 +63,8 @@
       "category": "for-each",
       "list-name": "遍历字段",
       "display-text": "遍历字段",
-      "description": "对当前字典中的所有字段执行一遍动作。"
+      "description": "对当前字典中的所有字段执行一遍动作。",
+      "isLooping": true
     },
     {
       "id": "compare-current-value",

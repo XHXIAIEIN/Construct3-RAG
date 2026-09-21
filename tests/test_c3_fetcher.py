@@ -244,6 +244,49 @@ def test_export_common_merges_bundle_structure_with_language_text(fetcher):
     assert zh_index["plugins"]["_common"] == {"name": "Common", "file": "plugins/_common.json"}
 
 
+def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
+    """A fake trigger (On timer, On collision) is a trigger to the editor: one
+    per event branch, never inverted. isTrigger says so, the structural flags
+    that decide where a condition may go are kept, and defaults stay absent."""
+    aces = {
+        "plugins": {"system": {"general": {
+            "conditions": [
+                {"id": "on-start-of-layout", "scriptName": "OnLayoutStart", "isTrigger": True},
+                {"id": "for-each", "scriptName": "ForEach", "isLooping": True},
+                {"id": "else", "scriptName": "Else", "isInvertible": False, "isCompatibleWithTriggers": False},
+                {"id": "every-tick", "scriptName": "EveryTick"},
+            ],
+            "actions": [], "expressions": [],
+        }}},
+        "behaviors": {"Timer": {"general": {
+            "conditions": [{"id": "on-timer", "scriptName": "OnTimer", "isFakeTrigger": True}],
+            "actions": [], "expressions": [],
+        }}},
+    }
+    ids = ("on-start-of-layout", "for-each", "else", "every-tick")
+    text = {"text": {
+        "plugins": {"system": {"name": "System", "conditions": {i: {"list-name": i} for i in ids}}},
+        "behaviors": {"timer": {"name": "Timer", "conditions": {"on-timer": {"list-name": "On timer"}}}},
+    }}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_lang", return_value=text), \
+         patch.object(fetcher, "fetch_effects", return_value=[]), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+
+    flags = ("isTrigger", "isFakeTrigger", "isLooping", "isInvertible", "isCompatibleWithTriggers")
+    system = json.loads((schemas_dir / "en-US" / "plugins" / "system.json").read_text(encoding="utf-8"))
+    timer = json.loads((schemas_dir / "en-US" / "behaviors" / "timer.json").read_text(encoding="utf-8"))
+    by_id = {c["id"]: {k: c[k] for k in flags if k in c} for c in system["conditions"] + timer["conditions"]}
+    assert by_id == {
+        "on-start-of-layout": {"isTrigger": True},
+        "for-each": {"isLooping": True},
+        "else": {"isInvertible": False, "isCompatibleWithTriggers": False},
+        "every-tick": {},
+        "on-timer": {"isTrigger": True, "isFakeTrigger": True},
+    }
+
+
 def test_export_stops_when_language_pack_names_an_unknown_common_ace(fetcher):
     """A shared ACE the committed extract lacks must not be exported with guessed types."""
     texts = _common_texts(
