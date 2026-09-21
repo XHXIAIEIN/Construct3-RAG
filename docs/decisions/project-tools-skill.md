@@ -153,8 +153,9 @@ Three cases on the stand-in game (`skills/construct3-project/evals/evals.json`),
 one run per case and arm, Claude Haiku 4.5 as a subagent, each in a project
 folder outside the clone. `evals/grade.py` checks the assertions with the
 clone's checker; tokens and seconds are those of each run's completion
-notice. The runs are in `skills/construct3-project-workspace/iteration-1/`,
-which Git ignores.
+notice. The runs are in
+`.local/docs/evidence/skill-evals/construct3-project/iteration-1/`, which Git
+ignores.
 
 | Case | With the skill | Without | What the baseline got wrong |
 |------|----------------|---------|-----------------------------|
@@ -395,7 +396,7 @@ run prints more than 9 879.
 Claude Haiku 4.5 subagents, one run per case and arm, projects outside the
 clone. `with_skill` is the working tree; `old_skill` is eac319f, installed
 from a worktree of that commit which its block names as the clone. Runs in
-`skills/construct3-project-workspace/iteration-2/`.
+`.local/docs/evidence/skill-evals/construct3-project/iteration-2/`.
 
 | Case | With the skill | Previous skill |
 |------|----------------|----------------|
