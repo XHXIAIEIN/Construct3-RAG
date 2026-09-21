@@ -100,6 +100,18 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
     return notes
 
 
+def unnamed_clone(project: Path, rag: Path) -> list[str]:
+    """--no-block on a project whose instruction files do not lead to the clone:
+    the copied scripts would stop at 'Construct3-RAG not found', so say how they find it."""
+    for name in ("AGENTS.md", "CLAUDE.md"):
+        text = (project / name).read_text(encoding="utf-8") if (project / name).exists() else ""
+        found = c3.rag_line(text)
+        if found and c3.is_clone(Path(found)):
+            return []
+    return [f"no instruction file of the project names the clone, and --no-block adds none: the scripts find it "
+            f"through CONSTRUCT3_RAG={rag.as_posix()} or --rag {rag.as_posix()}"]
+
+
 def earlier_tools(project: Path, skill_path: str) -> list[str]:
     """The two files a project got by hand before the skill. Nothing refreshes
     them, and the generator among them ends by running the checker beside it."""
@@ -156,7 +168,8 @@ def main() -> int:
     for target in places:
         print(f"{shown(target, project)}: {mirror(SKILL_DIR, target, args.dry_run)}")
     if project:
-        notes = [] if args.no_block else add_block(project, rag, shown(places[0], project), args.dry_run)
+        notes = unnamed_clone(project, rag) if args.no_block else \
+            add_block(project, rag, shown(places[0], project), args.dry_run)
         for note in notes + earlier_tools(project, shown(places[0], project)):
             print(note)
     if args.dry_run:

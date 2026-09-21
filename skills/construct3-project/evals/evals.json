@@ -1,0 +1,53 @@
+{
+  "skill_name": "construct3-project",
+  "evals": [
+    {
+      "id": 1,
+      "name": "add-countdown",
+      "fixture": "coins",
+      "prompt": "in my coins game i want a 30 second countdown. show it next to the score in the same text (like \"Score: 3  Time: 27\") and when it reaches 0 restart the layout. also coins that are worth 5 should be 1.5x the size of the others so you can tell them apart. the project folder is <project> , its all in eventSheets/Game.json i think",
+      "expected_output": "eventSheets/Game.json edited by hand: a countdown variable that loses one per second, ScoreText showing score and time, a restart at 0, coins of value 5 made 1.5 times larger, and a project the checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "The countdown loses one per second: it is subtracted under Every X seconds with 1, or by dt every tick",
+        "An event restarts the layout under a condition that reads the countdown variable",
+        "Every action that sets ScoreText's text after the start writes both the score and the time",
+        "An action on Coin makes the coins of value 5 larger: a size or scale action that reads value",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "fix-load-errors",
+      "fixture": "coins-load-errors",
+      "prompt": "Construct 3 won't open my project any more. First it said \"cannot add another trigger to event branch\", I clicked OK and the project just didn't load. Folder: <project> . Another AI edited eventSheets/Game.json yesterday so there may be more than one thing wrong. Please fix it so it opens. The coin should still shrink away and the score should still go up when a coin is collected.",
+      "expected_output": "All five seeded mistakes repaired, not only the one the editor named, with the collect tween and the score kept, and a project the checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "On start of layout is no longer inverted",
+        "On touched's type is the bare combo value start",
+        "The tween action carries behaviorType Tween",
+        "No trigger is left inside the custom action Collect",
+        "ScoreText's action id is set-text",
+        "AddScore is still called when a coin is collected: from Collect, or from an event the collect tween's end triggers",
+        "Collect still tweens the coin with the tag collect"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "name-the-restart-event",
+      "fixture": "coins",
+      "prompt": "In the project at <project> , which event restarts the game, and what exactly has to be true for it to fire? Give me the event number as the Construct editor shows it in the event sheet margin, so I can find it.",
+      "expected_output": "Event 9, the number in the editor's margin: Coin.Count = 0 with Trigger once, then a 1 second wait and Restart layout. The project is left unchanged.",
+      "files": [],
+      "assertions": [
+        "The answer gives 9, and no other number, as the event that restarts the layout",
+        "The answer states both conditions, Coin.Count = 0 and Trigger once, and the 1 second wait",
+        "No project file differs from the fixture"
+      ]
+    }
+  ]
+}

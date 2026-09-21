@@ -44,3 +44,6 @@ qdrant_storage/
 tmp/
 .trash/
 .remember/
+
+# Skill eval runs: outputs, transcripts, gradings (skills/AGENTS.md)
+skills/*-workspace/
