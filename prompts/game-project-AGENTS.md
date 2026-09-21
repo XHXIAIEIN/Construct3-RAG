@@ -37,9 +37,11 @@ block and the skill's scripts read both. The `Construct3-Manual`,
 beside this repository, where the README places them; a clone kept elsewhere
 gets its own line. Nothing else in the block needs editing, and the block
 says what the agent does if the path was left unfilled. Claude Code 2.1.277
-and later read `AGENTS.md` when the project has no `CLAUDE.md`; an earlier
-version, or a project that already has a `CLAUDE.md`, needs that `CLAUDE.md`
-to hold the line `@AGENTS.md`, as this repository's does.
+and later read `AGENTS.md` when the project has no `CLAUDE.md`
+(<https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md>). A
+project that has a `CLAUDE.md` needs the line `@AGENTS.md` in it, as this
+repository's has; under an earlier version, a project without one needs a
+`CLAUDE.md` that holds that line. `claude --version` prints the version.
 
 The block is a router: each row names the one file that owns that task, and
 the details live there, so a change to a tool or a data path is made once.

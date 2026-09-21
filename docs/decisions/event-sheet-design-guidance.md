@@ -261,3 +261,14 @@ never guess or continue without the data.
 
 Not done: no agent run checks that a one-file pointer per row is read as
 reliably as the inlined detail was.
+
+## Update 2026-09-21: installing is the agent's step, and the tools are a skill
+
+The install rule of 2026-09-19 above (offer once, write only on a yes) no
+longer holds. `AGENTS.md` section 4 now has the agent install the
+`construct3-project` skill in a game project that lacks it and say in one
+sentence what was written; `--no-block` and `--dry-run` serve a user who
+wants it otherwise. `project-tools/` and its `README.md`, named above, are
+`skills/construct3-project/`, and the template's block is
+`skills/construct3-project/assets/game-project-block.md`. The reasons are in
+`project-tools-skill.md`.
