@@ -25,9 +25,9 @@ Three generated projects in `folder project folder/` (2026-09-17 to 09-21):
 - *new project - Doubao*: `python tools/check-project.py` stopped with
   `Construct3-RAG not found`. The project's `AGENTS.md` defines the folder
   once, `path-to = D:\...\GitHub\`, and keeps `Construct3-RAG:
-  <path-to>/Construct3-RAG`; the DeepSeek projects write `<path-to>: D:/...`.
-  The checker skipped any value containing `<`. Two of two real projects
-  write the path this way.
+  <path-to>/Construct3-RAG`; the two DeepSeek projects write `<path-to>:
+  D:/...`. The checker skipped any value containing `<`, so in all three
+  projects it could not find the schemas on its own.
 - *Water Sort Puzzle - DeepSeek V41 Flash*: its README records the rules it
   met by bisection (`tools/probe.py` writes five `.c3p` files to open in
   turn), among them `cannot add another trigger to event branch`. Its final
