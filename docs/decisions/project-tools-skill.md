@@ -453,3 +453,12 @@ from a worktree of that commit which its block names as the clone. Runs in
   file would do: print to a file with `--limit 0` and say so in `SKILL.md`.
 - Edits are to get cheaper: the event-insert script above, measured by lost
   calls on add-countdown and fix-load-errors.
+
+## Update 2026-09-22: the event script
+
+Built the same day as `scripts/edit_sheet.py`; its design, the counts behind
+it and iterations 3 and 4 of the evals are in `edit-sheet-script.md`. The
+assertion of name-the-restart-event that allowed no number but 9 failed a
+correct answer which also named the group, event 8; it now allows another
+number on a line that calls it the group, and the baseline that answered 8
+still fails it.

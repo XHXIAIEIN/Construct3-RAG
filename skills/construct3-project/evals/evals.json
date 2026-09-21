@@ -44,7 +44,7 @@
       "expected_output": "Event 9, the number in the editor's margin: Coin.Count = 0 with Trigger once, then a 1 second wait and Restart layout. The project is left unchanged.",
       "files": [],
       "assertions": [
-        "The answer gives 9, and no other number, as the event that restarts the layout",
+        "The answer gives 9 as the event that restarts the layout, and another number only for the group it sits in",
         "The answer states both conditions, Coin.Count = 0 and Trigger once, and the 1 second wait",
         "No project file differs from the fixture"
       ]
