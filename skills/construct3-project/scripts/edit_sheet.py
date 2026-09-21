@@ -10,6 +10,7 @@ whatever the operations before it do:
     {"before": 3, "events": [...]}         above event 3 and the comments directly above it
     {"into": 3, "events": [...]}           as the last sub-events of event 3; 0 is the sheet itself
     {"replace": 5, "events": [...]}        in the place of event 5 and its sub-events; one event keeps its sid
+                                           and the number 5 for the operations below
     {"remove": 5}                          event 5, its sub-events and the comments directly above it
     {"move": 7, "after": 6}                or "before" or "into"; the comments directly above go with it
     {"event": 2, "add-actions": [...]}     after its last action; "position": 1 makes the first new one the first
@@ -257,6 +258,7 @@ class Plan:
         self.own_row: set[int] = set()                    # events shown without their sub-events: only their actions changed
         self.operation_of: dict[int, int] = {}            # sid of a new entry, or of the event it went into -> operation
         self.sids_given = 0
+        self.gone: dict[int, str] = {}                    # id of an event taken out -> which operation did it, and how
 
     def index(self, events: list, counter: list[int]) -> None:
         for ev in events:
@@ -274,8 +276,20 @@ class Plan:
     def place(self, node: dict, n: int, op: str) -> tuple[list, int]:
         found = place_of(self.sheet["events"], node)
         if not found:
-            raise PlanError(f"{op}: event {n} is gone, an operation before this one removed or replaced it")
+            raise PlanError(f"{op}: event {n} is gone, {self.gone.get(id(node), 'an operation before this one took it out')}; "
+                            f"what is kept of an event goes into the \"events\" that replace it, or a \"move\" takes it out first")
         return found
+
+    def forget(self, taken: list[dict], said: str) -> None:
+        numbers = {id(ev): n for n, ev in self.by_number.items()}
+        for top in taken:
+            held = f"{said} event {numbers[id(top)]}, which held it" if id(top) in numbers else said + " the event that held it"
+            self.gone[id(top)] = said + " it"
+            stack = list(top.get("children", []))
+            while stack:
+                ev = stack.pop()
+                self.gone[id(ev)] = held
+                stack.extend(ev.get("children", []))
 
     def put(self, events: list[dict], where: str, n: int, op: str) -> None:
         if where == "into":
@@ -375,11 +389,15 @@ class Plan:
             self.used -= set(sids_of(siblings[at]))
             if len(events) == 1 and events[0].get("sid", 0) is None:       # the same event with other contents
                 events[0]["sid"] = siblings[at].get("sid")
+            self.forget([siblings[at]], f"operation {i} replaced")
+            if len(events) == 1 and events[0].get("eventType") in NUMBERED:
+                self.by_number[n] = events[0]                              # the number stays with what stands there now
             siblings[at:at + 1] = events
             self.sids_given += give_sids(events, self.used)
             self.done.append((f"event {n} replaced by {count(events, 'event')}", events))
         elif verb == "remove":
             taken = self.take(n, name, comments=True)
+            self.forget(taken, f"operation {i} removed")
             self.used -= set(sids_of(taken))
             self.done.append((f"event {n} removed" + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
         elif verb == "move":

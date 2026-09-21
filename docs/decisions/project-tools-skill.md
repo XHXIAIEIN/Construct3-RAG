@@ -559,8 +559,8 @@ skill; that is the trigger evaluation, still not run.
 
 In three of the eight runs of fix-load-errors in iterations 7 and 9 a plan
 replaced or removed event 6 and then placed an event `"after": 6`,
-refused with "event 6 is gone". The refusal is right and costs a call each
-time; a candidate for the message or for `SKILL.md`.
+refused with "event 6 is gone", a call each time. A replaced event now keeps
+its number (`edit-sheet-script.md`, the update of the same day).
 
 ### Re-evaluate when
 

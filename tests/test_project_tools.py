@@ -654,6 +654,28 @@ def test_an_event_replaced_by_one_without_a_sid_keeps_its_own(project):
     assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart"]["children"][0]["sid"] == was
 
 
+def test_an_event_replaced_by_one_keeps_its_number_for_the_operations_below(project):
+    wait = {"eventType": "block", "conditions": [{"id": "every-tick", "objectClass": "System"}], "actions": []}
+    code, out = plan(project, {"replace": 9, "events": [wait]},
+                     {"event": 9, "add-actions": [{"id": "restart-layout", "objectClass": "System"}]},
+                     {"after": 9, "events": [{"eventType": "comment", "text": "Below the restart."}]})
+    assert code == 0, out
+    assert "   9   System: Every tick\n           -> System: Restart layout\n       // Below the restart." in printed(project)
+
+
+@pytest.mark.parametrize("operations, said", [
+    (({"replace": 8, "events": [{"eventType": "group", "title": "Restart"}]}, {"event": 9, "set": {"disabled": True}}),
+     "operation 2 (event 9): event 9 is gone, operation 1 replaced event 8, which held it"),
+    (({"remove": 7}, {"after": 7, "events": [{"eventType": "comment", "text": "Score."}]}),
+     "operation 2 (after 7): event 7 is gone, operation 1 removed it"),
+])
+def test_an_event_that_is_gone_names_the_operation_that_took_it(project, operations, said):
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, *operations)
+    assert code == 1 and said in out and '"move" takes it out first' in out, out
+    assert (project / SHEET).read_bytes() == before
+
+
 def test_before_an_event_is_above_the_comments_about_it(project):
     assert plan(project, {"before": 9, "events": [{"eventType": "comment", "text": "All coins gone."}]})[0] == 0
     code, out = plan(project, {"before": 9, "events": [{"eventType": "block", "conditions": [], "actions": []}]})
