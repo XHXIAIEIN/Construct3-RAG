@@ -21,12 +21,13 @@ import sys
 from datetime import date
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(ROOT / "src" / ".env")
 except ImportError:
     pass
 

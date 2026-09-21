@@ -67,14 +67,14 @@ An agent working inside a game project does not find this repository on its own,
 ## Search service (optional)
 
 ```bash
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
 This runs the deterministic offline lookup service over the committed data. It does not connect to Qdrant or load a model. Semantic search over the schemas, the manual, and the example projects is an explicit opt-in that needs Qdrant and an embedding model:
 
 ```bash
-pip install -r requirements-full.txt
+pip install -r src/requirements-full.txt
 docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 python scripts/setup.py --full
 ```

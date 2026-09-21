@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT))
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(ROOT / "src" / ".env")
 except ImportError:
     pass
 
@@ -45,7 +45,7 @@ def check_python():
 
 
 def install_deps(full: bool = False):
-    req_file = ROOT / ("requirements-full.txt" if full else "requirements.txt")
+    req_file = ROOT / "src" / ("requirements-full.txt" if full else "requirements.txt")
     print(f"[deps] Installing from {req_file.name}...")
     run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
     print("  OK")
