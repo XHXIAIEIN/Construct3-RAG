@@ -5,51 +5,41 @@ writes into every project describes the folder layout, not this data, so an
 agent in the game folder answers from memory: a drag-and-drop interaction
 comes back as UID links, `Pick all` and globals.
 
-Copy the block into the project's `AGENTS.md` and fill in the one path at
-the top, or a symlink inside the project that points here. Replace
-`<path-to>` in place, or keep it and add a line `- path-to = <folder>` above
-it for the folder that holds the clones; the block and
-`check-project.py` read both. The
-`Construct3-Manual`, `Construct-Example-Projects` and `Construct-Addon-SDK`
-clones are expected beside this repository, where the README places them;
-a clone kept elsewhere gets its own line. Nothing else in the block needs
-editing, and the block says what the agent does if the path was left
-unfilled. Claude Code 2.1.277 and later read `AGENTS.md` when the project
-has no `CLAUDE.md`; an earlier version, or a project that already has a
-`CLAUDE.md`, needs that `CLAUDE.md` to hold the line `@AGENTS.md`, as this
-repository's does.
+Two things in the game project change that: a block in its `AGENTS.md` that
+routes each kind of work to the file that owns it, and a copy of the
+`construct3-project` skill with the tools. One command writes both, run in
+the project folder:
 
-```markdown
-# Construct 3
-
-- Construct3-RAG: <path-to>/Construct3-RAG
-
-Construct3-Manual, Construct-Example-Projects and Construct-Addon-SDK are
-cloned beside it; add a line like the one above for any that is elsewhere.
-`<path-to>` stands for the folder a `path-to = ...` line above gives. If
-the path reads `<path-to>` and no such line exists, the block was copied
-unfilled: use `$CONSTRUCT3_RAG` if it is set, otherwise ask the user where
-the clone is and offer to fill the line in. Do not guess a path, and do not
-go on from memory.
-
-Anything that changes what the game does is event sheet work: a new
-mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
-eventSheets/*.json. Do not answer it from memory. Before the first event,
-name or edit, read the file for what you are doing; each one says what to
-read next.
-
-| Doing | Read first |
-|-------|------------|
-| Anything, at the start of the session | Construct3-RAG/AGENTS.md |
-| Deciding what the events are | Construct3-RAG/prompts/event-sheet-thinking.md |
-| Writing a plugin, behavior, ACE, effect or script name | Construct3-RAG/AGENTS.md section 2 |
-| Looking for how an official example does it | Construct3-RAG/AGENTS.md section 2 |
-| Writing an addon: a new plugin, behavior, effect or theme for the Addon Manager, not an event that uses one | Construct3-Manual/Construct3-Addon-SDK/index.md, then a sample under Construct-Addon-SDK/ |
-| Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand | Construct3-RAG/prompts/references/hand-editing-project-files.md |
-| Naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md, "Naming an event to the user" |
-| Generating the whole project from a script, or checking generated files | Construct3-RAG/prompts/project-tools/README.md |
-| Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path> |
+```bash
+python <Construct3-RAG>/skills/construct3-project/scripts/install.py
 ```
+
+It copies [`skills/construct3-project/`](../skills/construct3-project/SKILL.md)
+to the project's `.agents/skills/` and, when no instruction file of the
+project names this repository yet, appends the block to `AGENTS.md` with the
+path of this clone on its `Construct3-RAG:` line. An instruction file that
+already names the clone is left as it is. `--into .claude/skills` installs
+where Claude Code discovers skills, `--into .trae/skills` where TRAE does;
+`.agents/skills/` is the folder most other agents read, and the block names
+the installed `SKILL.md` either way, so an agent without skill support
+reaches it too.
+
+## The block
+
+The text is
+[`skills/construct3-project/assets/game-project-block.md`](../skills/construct3-project/assets/game-project-block.md).
+To place it by hand, copy it into the project's `AGENTS.md` and fill in the
+one path at the top, or a symlink inside the project that points here.
+Replace `<path-to>` in place, or keep it and add a line
+`- path-to = <folder>` above it for the folder that holds the clones; the
+block and the skill's scripts read both. The `Construct3-Manual`,
+`Construct-Example-Projects` and `Construct-Addon-SDK` clones are expected
+beside this repository, where the README places them; a clone kept elsewhere
+gets its own line. Nothing else in the block needs editing, and the block
+says what the agent does if the path was left unfilled. Claude Code 2.1.277
+and later read `AGENTS.md` when the project has no `CLAUDE.md`; an earlier
+version, or a project that already has a `CLAUDE.md`, needs that `CLAUDE.md`
+to hold the line `@AGENTS.md`, as this repository's does.
 
 The block is a router: each row names the one file that owns that task, and
 the details live there, so a change to a tool or a data path is made once.

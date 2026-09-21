@@ -83,11 +83,11 @@ sheet in document order, sub-events included; variables, comments and
 includes take no number and are filed under the next numbered event.
 Quote those numbers, never JSON line numbers, and read a screenshot or a
 pasted Find result back the same way. To find the JSON behind a number, run
-`python <Construct3-RAG>/prompts/project-tools/check-project.py --outline
-<sheet>` in the project folder: each row prints with its number and its
-`sid`, which is the string to search the sheet file for. `--print <sheet>`
-prints the same rows with their conditions and actions as the editor words
-them; read the sheet that way before and after an edit.
+the `construct3-project` skill's `scripts/print_sheet.py --outline <sheet>`
+in the project folder: each row prints with its number and its `sid`, which
+is the string to search the sheet file for. Without `--outline` it prints
+the same rows with their conditions and actions as the editor words them;
+read the sheet that way before and after an edit.
 
 ## Checks before handing over
 
@@ -99,10 +99,11 @@ parameter count; every object created at runtime has a template instance in
 some layout; and the rules the editor applies on opening: one trigger per
 branch and none inside a function or custom action, nothing inverted that
 cannot be, *Else* only after a plain event, names the editor keeps and does
-not reserve (the table in `prompts/project-tools/README.md`).
-`prompts/project-tools/check-project.py` runs these checks on a project
-folder; copy it into the project's `tools/` and run it from there, or run it
-in place with the project folder as the argument.
+not reserve (the table in
+`skills/construct3-project/references/checker-rules.md`). The skill's
+`scripts/check_project.py` runs these checks on a project folder: from the
+copy installed in the project, `.agents/skills/construct3-project/`, or in
+place here with `--project <folder>`.
 
 On editor.construct.net (observed r495.2, 2026-09-15): a guest session is
 capped at 25 events and a verified free account at 50; families are a paid

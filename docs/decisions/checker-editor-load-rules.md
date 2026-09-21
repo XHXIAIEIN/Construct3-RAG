@@ -142,3 +142,11 @@ syntax, argument counts and types; checking `function`, `template` and
   option 3 then replaces guesswork for everything the checker cannot see.
 - A generated project passes the checker and the editor still refuses it:
   the message it gives is the next row of the table.
+
+## Update 2026-09-21: the tools are a skill
+
+`check-project.py` is `skills/construct3-project/scripts/check_project.py`,
+`--print` and `--outline` are `print_sheet.py`, `--ace` is `lookup_ace.py`,
+and a game project gets them through `install.py` instead of a copy in
+`tools/`. The rules, the messages and the output are the same
+(`project-tools-skill.md`).

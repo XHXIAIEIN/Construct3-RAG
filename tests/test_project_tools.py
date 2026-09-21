@@ -1,13 +1,15 @@
-"""The generator and the checker an agent copies into a game project.
+"""The construct3-project skill, used the way an agent uses it.
 
-Both are standalone scripts, so the tests run them the way an agent does: as
-subprocesses inside a project folder. The stand-in game of build-project.py is
-generated once; each test breaks a private copy in one way and reads what the
-checker says about it. Every rule tested here is one the editor enforces when
-it opens or previews a project (docs/decisions/checker-editor-load-rules.md).
+The skill is installed in a project folder by its own install.py and its
+scripts run as subprocesses from there. The stand-in game of
+assets/build_project.py is generated once; each test breaks a private copy in
+one way and reads what the checker says about it. Every rule tested here is
+one the editor enforces when it opens or previews a project
+(docs/decisions/checker-editor-load-rules.md).
 """
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -16,33 +18,48 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parent.parent
-TOOLS = REPO / "prompts" / "project-tools"
+SKILL = REPO / "skills" / "construct3-project"
+INSTALLED = ".agents/skills/construct3-project"
 SHEET = "eventSheets/Game.json"
 
 
-def run(root: Path, script: str, *args: str) -> tuple[int, str]:
+def run(root: Path, script: str | Path, *args: str) -> tuple[int, str]:
+    """A script run from the project folder. No CONSTRUCT3_RAG and an empty home:
+    the clone and the skill are found through the project alone."""
     env = {k: v for k, v in os.environ.items() if k != "CONSTRUCT3_RAG"}
-    env["PYTHONIOENCODING"] = "utf-8"
-    p = subprocess.run([sys.executable, f"tools/{script}", *args], cwd=root, env=env,
+    env.update(PYTHONIOENCODING="utf-8", HOME=str(root / ".home"), USERPROFILE=str(root / ".home"))
+    p = subprocess.run([sys.executable, str(script), *args], cwd=root, env=env,
                        capture_output=True, text=True, encoding="utf-8")
     return p.returncode, p.stdout + p.stderr
 
 
+def tool(root: Path, name: str, *args: str) -> tuple[int, str]:
+    return run(root, f"{INSTALLED}/scripts/{name}.py", "--rag", str(REPO), *args)
+
+
 def check(root: Path, *args: str) -> tuple[int, str]:
-    return run(root, "check-project.py", "--rag", str(REPO), *args)
+    return tool(root, "check_project", *args)
+
+
+def install(root: Path, *args: str) -> tuple[int, str]:
+    return run(root, SKILL / "scripts" / "install.py", *args)
+
+
+def new_project(root: Path) -> Path:
+    """What the editor leaves after "Save as project folder", reduced to the keys the generator reads."""
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "project.c3proj").write_text(json.dumps({"uniqueId": "test", "properties": {}}), encoding="utf-8")
+    return root
 
 
 @pytest.fixture(scope="module")
 def built(tmp_path_factory) -> Path:
-    root = tmp_path_factory.mktemp("coins")
+    root = new_project(tmp_path_factory.mktemp("coins"))
+    code, out = install(root)
+    assert code == 0, out
     (root / "tools").mkdir()
-    for name in ("build-project.py", "check-project.py"):
-        shutil.copy(TOOLS / name, root / "tools" / name)
-    # What the editor leaves after "Save as project folder", reduced to the keys the generator reads,
-    # and the block's path line, which is how the checker the generator ends with finds the schemas.
-    (root / "project.c3proj").write_text(json.dumps({"uniqueId": "test", "properties": {}}), encoding="utf-8")
-    (root / "AGENTS.md").write_text(f"# Construct 3\n\n- Construct3-RAG: {REPO.as_posix()}\n", encoding="utf-8")
-    code, out = run(root, "build-project.py")
+    shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
+    code, out = run(root, "tools/build_project.py")
     assert code == 0, out
     assert out.splitlines()[0] == "generated; checking" and out.splitlines()[-1].startswith("ok:")
     return root
@@ -93,6 +110,113 @@ def findings(root: Path, change, rel: str = SHEET) -> str:
     return out
 
 
+# --- the skill as the Agent Skills format defines it (https://agentskills.io/specification) -----
+def frontmatter() -> dict[str, str]:
+    text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    assert text.startswith("---\n")
+    return dict(re.findall(r"^([a-z-]+): (.+)$", text.split("---\n")[1], re.M))
+
+
+def test_skill_name_and_description_meet_the_specification():
+    fields = frontmatter()
+    assert fields["name"] == SKILL.name
+    assert re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", fields["name"]) and len(fields["name"]) <= 64
+    assert 0 < len(fields["description"]) <= 1024
+    assert len(fields["compatibility"]) <= 500
+    # a plain scalar ends at ": " or " #"; a client with a strict YAML parser would drop the skill
+    assert not re.search(r": | #", fields["description"] + fields["compatibility"])
+
+
+def test_skill_body_stays_within_what_is_loaded_on_activation():
+    assert len((SKILL / "SKILL.md").read_text(encoding="utf-8").splitlines()) < 500
+
+
+def test_every_file_the_skill_names_is_in_it():
+    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+        # a path of the clone, Construct3-RAG/prompts/references/..., is not one of the skill's own
+        for rel in set(re.findall(r"(?<![\w/])((?:scripts|references|assets)/[\w.-]+\.\w+)", doc.read_text(encoding="utf-8"))):
+            assert (SKILL / rel).is_file(), f"{doc.name} names {rel}"
+
+
+# --- installing the skill in a game project ---------------------------------------------------
+def test_install_copies_the_skill_and_writes_the_block_with_the_clones_path(tmp_path):
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0, out
+    assert out.rstrip().splitlines()[-1] == f"ok: read {INSTALLED}/SKILL.md"
+    assert (root / INSTALLED / "SKILL.md").is_file() and (root / INSTALLED / "scripts" / "check_project.py").is_file()
+    block = (root / "AGENTS.md").read_text(encoding="utf-8")
+    assert f"- Construct3-RAG: {REPO.as_posix()}" in block and f"`{INSTALLED}/SKILL.md`" in block
+    # the path line is what lets the installed scripts find the schemas on their own
+    code, out = run(root, f"{INSTALLED}/scripts/lookup_ace.py", "System", "wait")
+    assert code == 0 and "action wait - Wait [system]" in out
+
+
+def test_install_again_changes_nothing(project):
+    before = (project / "AGENTS.md").read_text(encoding="utf-8")
+    code, out = install(project)
+    assert code == 0 and "already current" in out and "left as it is" in out
+    assert (project / "AGENTS.md").read_text(encoding="utf-8") == before
+
+
+def test_install_leaves_an_instruction_file_that_names_the_clone(tmp_path):
+    root = new_project(tmp_path / "game")
+    mine = f"# My game\n\n- Construct3-RAG: {REPO.as_posix()}\n"
+    (root / "CLAUDE.md").write_text(mine, encoding="utf-8")
+    code, out = install(root)
+    assert code == 0 and "CLAUDE.md: left as it is" in out and "The row to add" in out
+    assert (root / "CLAUDE.md").read_text(encoding="utf-8") == mine and not (root / "AGENTS.md").exists()
+
+
+def test_install_into_a_clients_own_skills_folder(tmp_path):
+    root = new_project(tmp_path / "game")
+    code, out = install(root, "--into", ".claude/skills")
+    assert code == 0, out
+    assert "`.claude/skills/construct3-project/SKILL.md`" in (root / "AGENTS.md").read_text(encoding="utf-8")
+    (root / "tools").mkdir()
+    shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
+    code, out = run(root, "tools/build_project.py")     # the generator finds the checker there too
+    assert code == 0 and out.rstrip().splitlines()[-1].startswith("ok:"), out
+
+
+def test_install_dry_run_writes_nothing(tmp_path):
+    root = new_project(tmp_path / "game")
+    code, out = install(root, "--dry-run")
+    assert code == 0 and "nothing was written" in out
+    assert sorted(p.name for p in root.iterdir()) == ["project.c3proj"]
+
+
+def test_install_names_the_copies_a_project_got_by_hand(tmp_path):
+    """A project from before the skill: its tools/ holds a checker nothing refreshes."""
+    root = new_project(tmp_path / "game")
+    (root / "tools").mkdir()
+    for name in ("check-project.py", "build-project.py"):
+        (root / "tools" / name).write_text("", encoding="utf-8")
+    code, out = install(root)
+    assert code == 0
+    assert f"tools/check-project.py: an earlier copy of the checker that nothing refreshes; run {INSTALLED}/scripts/" in out
+    assert "tools/build-project.py: it ends by running the checker beside it" in out
+    assert (root / "tools" / "check-project.py").exists()       # said, not removed: the file is the user's
+
+
+def test_install_outside_a_project_says_what_to_pass(tmp_path):
+    code, out = install(tmp_path)
+    assert code != 0 and "--project" in out and "Traceback" not in out
+
+
+def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
+    script = project / INSTALLED / "scripts" / "print_sheet.py"
+    script.write_text(script.read_text(encoding="utf-8") + "\n# edited\n", encoding="utf-8")
+    code, out = check(project)
+    assert code == 0 and "warning: this copy of the construct3-project skill differs from the clone's" in out
+    assert "scripts/print_sheet.py" in out and "install.py" in out
+    # the installed copy hands over to the clone's install.py, which restores the file
+    code, out = run(project, f"{INSTALLED}/scripts/install.py")
+    assert code == 0 and "wrote scripts/print_sheet.py" in out, out
+    code, out = check(project)
+    assert "differs from the clone's" not in out
+
+
 # --- the generated project ----------------------------------------------------------
 def test_stand_in_project_passes_without_warnings(built):
     code, out = check(built)
@@ -103,23 +227,23 @@ def test_stand_in_project_passes_without_warnings(built):
 
 def test_generator_exits_with_the_checkers_findings(project):
     """One command builds and checks, so a finding cannot be skipped by forgetting the second."""
-    source = project / "tools" / "build-project.py"
+    source = project / "tools" / "build_project.py"
     source.write_text(source.read_text(encoding="utf-8").replace(
         'return cond("on-touched-object", "Touch", {"object": obj, "type": "start"})',
         'return cond("on-touched-object", "Touch", {"object": obj, "type": "\\"start\\""})'), encoding="utf-8")
-    code, out = run(project, "build-project.py")
+    code, out = run(project, "tools/build_project.py")
     assert code == 1
     assert "generated; checking" in out and 'write it bare, "start"' in out
 
 
-def test_generator_without_the_checker_says_so(project):
-    (project / "tools" / "check-project.py").unlink()
-    code, out = run(project, "build-project.py")
-    assert code != 0 and "generated, not checked" in out
+def test_generator_without_the_skill_says_so(project):
+    shutil.rmtree(project / INSTALLED)
+    code, out = run(project, "tools/build_project.py")
+    assert code != 0 and "generated, not checked" in out and "install.py" in out
 
 
 def test_outline_numbers_events_as_the_editor_does(built):
-    code, out = check(built, "--outline", "Game")
+    code, out = tool(built, "print_sheet", "--outline", "Game")
     rows = [line.split("[sid")[0].rstrip() for line in out.splitlines()]
     assert code == 0
     assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.",
@@ -128,7 +252,7 @@ def test_outline_numbers_events_as_the_editor_does(built):
 
 
 def test_print_words_the_sheet_as_the_editor_does(built):
-    code, out = check(built, "--print", "Game")
+    code, out = tool(built, "print_sheet", "Game")
     assert code == 0
     assert "   5   Touch: On touched Coin (start)\n           -> Coin: Collect()" in out
     assert "     global constant number COIN_COUNT = 6" in out
@@ -137,13 +261,13 @@ def test_print_words_the_sheet_as_the_editor_does(built):
 
 
 def test_print_follows_the_locale(built):
-    code, out = check(built, "--print", "Game", "--locale", "zh-CN")
+    code, out = tool(built, "print_sheet", "Game", "--locale", "zh-CN")
     assert code == 0 and "System: 场景开始" in out
 
 
 # --- looking an ACE up -------------------------------------------------------------------
 def test_ace_lookup_reaches_a_behavior_through_the_object(built):
-    code, out = check(built, "--ace", "Coin", "tween", "two")
+    code, out = tool(built, "lookup_ace", "Coin", "tween", "two")
     assert code == 0
     assert "action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <isAsync>" in out
     assert '"objectClass": "Coin", "behaviorType": "Tween", "sid": <new sid>, "parameters": {"tags": "\\"\\"", "property": "position"' in out
@@ -151,33 +275,33 @@ def test_ace_lookup_reaches_a_behavior_through_the_object(built):
 
 
 def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
-    code, out = check(built, "--ace", "Coin", "collision", "another")
+    code, out = tool(built, "lookup_ace", "Coin", "collision", "another")
     assert "condition on-collision-with-another-object - On collision with another object [_common]  <isTrigger>" in out
-    code, out = check(built, "--ace", "Coin", "progress")
+    code, out = tool(built, "lookup_ace", "Coin", "progress")
     assert "write: Coin.Tween.Progress(tags)  -> number" in out
 
 
 def test_ace_lookup_words_may_name_the_behavior_and_the_kind(built):
-    code, out = check(built, "--ace", "Coin", "tween", "condition", "playing")
+    code, out = tool(built, "lookup_ace", "Coin", "tween", "condition", "playing")
     assert code == 0
     assert [line.split(" - ")[0] for line in out.splitlines() if " - " in line and not line.startswith(" ")] == [
         "condition is-playing", "condition is-any-playing"]
 
 
 def test_ace_lookup_lists_briefly_when_many_match(built):
-    code, out = check(built, "--ace", "System", "layer")
+    code, out = tool(built, "lookup_ace", "System", "layer")
     assert code == 0 and "add a word to narrow them" in out and "write:" not in out
 
 
 def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
-    shutil.copytree(TOOLS, tmp_path / "tools")
-    code, out = check(tmp_path, "--ace", "8 Direction", "max", "speed")
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "8 Direction", "max", "speed")
     assert code == 0, out
     assert "action set-max-speed" in out and "[behavior <behavior name on the object>, eightdir]" in out
 
 
 def test_ace_lookup_offers_the_nearest_id(built):
-    code, out = check(built, "--ace", "System", "wiat")
+    code, out = tool(built, "lookup_ace", "System", "wiat")
     assert code != 0 and "closest: wait" in out
 
 
@@ -190,13 +314,13 @@ def test_ace_lookup_offers_the_nearest_id(built):
 def test_rag_is_read_from_the_project_instruction_file(project, lines):
     text = lines.format(rag=REPO.as_posix(), parent=REPO.parent.as_posix(), name=REPO.name)
     (project / "AGENTS.md").write_text(f"# Construct 3\n\n{text}\n\nText after the block.\n", encoding="utf-8")
-    code, out = run(project, "check-project.py")
+    code, out = run(project, f"{INSTALLED}/scripts/check_project.py")
     assert code == 0, out
 
 
 def test_unfilled_block_says_how_to_point_at_the_clone(project):
     (project / "AGENTS.md").write_text("- Construct3-RAG: <path-to>/Construct3-RAG\n", encoding="utf-8")
-    code, out = run(project, "check-project.py")
+    code, out = run(project, f"{INSTALLED}/scripts/check_project.py")
     assert code != 0
     assert "--rag" in out and "AGENTS.md" in out and "Traceback" not in out
 
@@ -424,7 +548,8 @@ def test_missing_key_stops_with_a_sentence(project):
     def change(s):
         del events(s)["add_score"]["functionParameters"]
     out = findings(project, change)
-    assert "check-project.py stopped at line" in out and "missing key 'functionParameters'" in out
+    assert "check_project.py stopped at check_project.py line" in out
+    assert "missing key 'functionParameters'" in out
 
 
 # --- the data the rules read ---------------------------------------------------------------------

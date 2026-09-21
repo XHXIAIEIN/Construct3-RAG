@@ -3,7 +3,9 @@
 ## 1. What this repository is
 
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
-optional lookup and search service in `src/`. Version and counts:
+optional lookup and search service in `src/`, and an agent skill in
+`skills/` that carries the project tools (ACE lookup, sheet printer,
+checker, generator) into a game project. Version and counts:
 `data/c3-schemas/_index.json`, never hardcoded.
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
@@ -38,7 +40,7 @@ Answer from the data. An ACE missing from the schema does not exist.
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python prompts/project-tools/check-project.py <example folder> --print` |
+| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-project/scripts/print_sheet.py --project <example folder>` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
@@ -52,13 +54,14 @@ long. A reader that stops at 2000 lines shows part of them, and an ACE below
 the cut looks missing. Ask for the part instead:
 
 ```bash
-python prompts/project-tools/check-project.py --ace System wait
+python skills/construct3-project/scripts/lookup_ace.py System wait
 ```
 
 prints the matching conditions, actions and expressions of `System`, of a
 plugin or behavior by id or display name, or, run in a game project, of one
 of its objects with its behaviors, each with its parameters and the JSON to
-write (`prompts/project-tools/README.md`, "Looking an ACE up").
+write (`skills/construct3-project/SKILL.md`, "Look an ACE up before writing
+it").
 
 ## 3. SOP: design event sheet logic
 
@@ -72,13 +75,31 @@ Interactions, data storage, timing, animation: read and follow
 
 ## 4. Use from another project
 
-A game project reaches this repository through the block in
-`prompts/game-project-AGENTS.md`, installed in its instruction file.
+A game project reaches this repository through two things it holds: the
+`construct3-project` skill, a copy of `skills/construct3-project/`, and the
+block of `prompts/game-project-AGENTS.md` in its instruction file, whose
+`Construct3-RAG:` line locates the schemas.
 
-- Block missing before event sheet work: offer it once, in one sentence.
-  On yes, append it and touch nothing else. On no, drop it for the session.
-- Generating the whole project: `prompts/project-tools/README.md`; the block
-  is part of the output, its `Construct3-RAG:` line locates the schemas.
+- Working in a game project that has no `construct3-project` folder under
+  `.agents/skills/` or another client's skills folder: install it before
+  the first project file is read or written, from the project folder:
+
+  ```bash
+  python <this repository>/skills/construct3-project/scripts/install.py
+  ```
+
+  It copies the skill, and adds the block to the project's `AGENTS.md` when
+  no instruction file there names this repository, with the path filled in.
+  It changes no other file. Say in one sentence what it wrote, then read the
+  installed `SKILL.md`. `--into .claude/skills` for Claude Code,
+  `--into .trae/skills` for TRAE; `--no-block` when the user keeps the
+  instruction files to themselves; `--dry-run` to see first.
+- An installed copy says when it differs from `skills/construct3-project/`
+  here and prints the command that refreshes it. Run it.
+- The user does not want it in the project: remove the copy, run the
+  scripts from this repository in place,
+  `python <this repository>/skills/construct3-project/scripts/<script>.py
+  --project <game folder>`, and do not install again in the session.
 
 ## 5. SOP: change code or data
 
@@ -115,7 +136,7 @@ Before finishing, plus the checks in the touched directories' `AGENTS.md`:
 
 ```bash
 python -m pytest -q
-python -m compileall -q src scripts tests
+python -m compileall -q src scripts tests skills
 git diff --check
 ```
 
@@ -143,7 +164,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design, worked case, sourced pitfalls | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Slot case as a program, hand-editing project JSON | `prompts/references/` |
-| Generating and checking a whole project | `prompts/project-tools/README.md` |
+| ACE lookup, sheet printer, checker and generator for a game project; changing them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
