@@ -43,8 +43,12 @@ project that has a `CLAUDE.md` needs the line `@AGENTS.md` in it, as this
 repository's has; under an earlier version, a project without one needs a
 `CLAUDE.md` that holds that line. `claude --version` prints the version.
 
-The block is a router: each row names the one file that owns that task, and
-the details live there, so a change to a tool or a data path is made once.
+The block is a router. Its first step sends to the installed `SKILL.md`
+before any project file is opened; as a row of the table, a small model
+passed it over in half the runs and edited the sheet's JSON by hand
+(`docs/decisions/project-tools-skill.md`). Each row of the table then names
+the one file that owns that task, and the details live there, so a change to
+a tool or a data path is made once.
 It loads nothing at startup; the agent reads each file when the work calls
 for it. If it keeps skipping them, add one line at the end:
 `@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
