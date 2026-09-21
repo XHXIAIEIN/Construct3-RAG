@@ -83,7 +83,9 @@ class IntentClassifier:
     def classify(self, query: str) -> Optional[LookupIntent]:
         """
         Classify a query using explicit grammar and versioned schema names.
-        Returns LookupIntent if matched, None if should go to RAG.
+        Returns LookupIntent if matched. None, or the ``semantic_fallback``
+        intent, declines: the query asks for a reading of the manual or the
+        examples, which is the caller's, not for a lookup.
         """
         # Explicit translation is checked before conceptual blockers because
         # valid phrases such as "数组英文是什么" contain "是什么".
@@ -310,7 +312,7 @@ class IntentClassifier:
 
         useful_tokens = [t for t in remaining_tokens if _is_useful(t)]
         if len(useful_tokens) > 3:
-            return None  # complex multi-concept query → fall through to RAG
+            return None  # complex multi-concept query: decline
 
         # 4. Build filter term
         if not useful_tokens:

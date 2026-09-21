@@ -6,9 +6,6 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
-# Vector database
-qdrant_storage/
-
 # CDN cache (auto-generated, weekly expiry)
 .cache/
 

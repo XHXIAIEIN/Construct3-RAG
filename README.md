@@ -2,7 +2,7 @@
 
 **English** | [中文](README_CN.md)
 
-Structured, bilingual reference data for [Construct 3](https://www.construct.net): plugins, behaviors, ACEs, effects, example projects, scripting interfaces, and the raw language packs. Everything under `data/` is committed JSON and `.d.ts` that a script or an LLM can read directly. An optional service adds lookup and semantic search on top.
+Structured, bilingual reference data for [Construct 3](https://www.construct.net): plugins, behaviors, ACEs, effects, example projects, scripting interfaces, and the raw language packs. Everything under `data/` is committed JSON and `.d.ts` that a script or an LLM can read directly. An optional service adds keyword lookup on top.
 
 The Construct version and dataset counts live in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). [The update workflow](.github/workflows/update.yml) opens a pull request when Scirra ships a new stable release.
 
@@ -12,9 +12,9 @@ This repository holds the machine-readable data. The prose, the project sources,
 
 | Repository | What it holds | How it fits |
 |---|---|---|
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. Full mode indexes it when cloned alongside. |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. Full mode indexes it when cloned alongside. |
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | Concepts and how-to text. Full mode indexes it when cloned alongside. |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | Concepts and how-to text. |
 
 "Cloned alongside" means a sibling directory of this repository. Paths and options are in [docs/guide/quick-start.md](docs/guide/quick-start.md).
 
@@ -71,13 +71,7 @@ pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-This runs the deterministic offline lookup service over the committed data. It does not connect to Qdrant or load a model. Semantic search over the schemas, the manual, and the example projects is an explicit opt-in that needs Qdrant and an embedding model:
-
-```bash
-pip install -r src/requirements-full.txt
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-python scripts/setup.py --full
-```
+This runs the deterministic offline lookup service over the committed data. It needs no database, no model and no network.
 
 Setup options, the `/search` and `/health` endpoints, and response shapes: [docs/guide/quick-start.md](docs/guide/quick-start.md) and [docs/guide/api-reference.md](docs/guide/api-reference.md).
 

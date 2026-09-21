@@ -1,7 +1,6 @@
 """Regression tests for runtime module compatibility and dependency boundaries."""
 
 import ast
-import inspect
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -9,26 +8,15 @@ import pytest
 
 from src.application.models import SearchCommand, SearchExecution
 from src.application.search import (
+    InvalidSearchRequestError,
     SearchStage,
     SearchWorkflow,
-    UnknownCollectionError,
     detect_language,
 )
 from src.domain.lookup import LookupIntent as DomainLookupIntent
-from src.domain.retrieval import SearchResult as DomainSearchResult
 from src.interfaces.http.models import SearchRequest as HttpSearchRequest
 from src.observability.trace import _trace as canonical_trace
 from src.rag.lookup import LookupIntent as LegacyLookupIntent
-from src.rag.retriever import SearchResult as LegacySearchResult
-from src.rag.retriever import HybridRetriever as LegacyHybridRetriever
-from src.rag.retriever import assign_context_tiers as legacy_assign_context_tiers
-from src.rag.retriever import deduplicate_results as legacy_deduplicate_results
-from src.rag.retriever import estimate_query_complexity as legacy_estimate_query_complexity
-from src.rag.retriever import stable_result_id as legacy_stable_result_id
-from src.rag.retriever import weighted_rrf as legacy_weighted_rrf
-from src.qdrant.retrieval.identity import deduplicate_results, stable_result_id
-from src.qdrant.retrieval.policy import assign_context_tiers, estimate_query_complexity, weighted_rrf
-from src.qdrant.retrieval.semantic import HybridRetriever as CanonicalHybridRetriever
 from src.domain.api import SearchRequest
 from src.rag._trace import _trace as legacy_trace
 
@@ -84,49 +72,15 @@ def _module_imports(module: str, path: Path, known: set[str]) -> set[str]:
 
 def test_legacy_model_exports_point_to_domain_contracts():
     assert LegacyLookupIntent is DomainLookupIntent
-    assert LegacySearchResult is DomainSearchResult
-    assert LegacyHybridRetriever is CanonicalHybridRetriever
-    assert legacy_assign_context_tiers is assign_context_tiers
-    assert legacy_deduplicate_results is deduplicate_results
-    assert legacy_estimate_query_complexity is estimate_query_complexity
-    assert legacy_stable_result_id is stable_result_id
-    assert legacy_weighted_rrf is weighted_rrf
     assert SearchRequest is HttpSearchRequest
     assert legacy_trace is canonical_trace
-
-
-def test_semantic_runtime_does_not_depend_on_ingest_pipeline():
-    import src.qdrant.retrieval.semantic as semantic_module
-
-    source = inspect.getsource(semantic_module)
-
-    assert "src.ingest" not in source
-    assert "src.qdrant.collections" not in source
-    assert "logging.basicConfig" not in source
-    assert "print(" not in source
-
-
-def test_ingest_pipeline_depends_on_canonical_adapter_not_compatibility_facade():
-    import src.ingest.indexer as compatibility_module
-    import src.ingest.pipeline as pipeline_module
-    from src.qdrant.adapter import Indexer
-
-    pipeline_source = inspect.getsource(pipeline_module)
-    compatibility_source = inspect.getsource(compatibility_module)
-
-    assert "src.qdrant.adapter" in pipeline_source
-    assert "src.ingest.indexer" not in pipeline_source
-    assert compatibility_module.Indexer is Indexer
-    assert "class Indexer" not in compatibility_source
 
 
 @pytest.mark.parametrize(
     ("package", "forbidden"),
     [
-        ("application", ("src.rag", "src.qdrant.collections", "src.ingest")),
-        ("lookup", ("src.rag", "src.qdrant.collections", "src.ingest")),
-        ("qdrant/retrieval", ("src.rag", "src.qdrant.collections", "src.ingest")),
-        ("qdrant/vector", ("src.rag", "src.qdrant.collections", "src.ingest")),
+        ("application", ("src.rag", "src.ingest")),
+        ("lookup", ("src.rag", "src.ingest")),
     ],
 )
 def test_canonical_packages_do_not_import_compatibility_or_maintenance_layers(
@@ -180,29 +134,21 @@ def test_language_detection_is_transport_independent():
     assert detect_language("스프라이트") == "ko"
 
 
-def test_lite_workflow_never_constructs_semantic_retriever():
+def test_workflow_runs_on_the_lookup_provider_alone():
     lookup = MagicMock()
     lookup.try_lookup.return_value = None
-    get_retriever = MagicMock()
-    workflow = SearchWorkflow(
-        get_lookup_engine=lambda: lookup,
-        get_retriever=get_retriever,
-        lite_mode=True,
-    )
+    workflow = SearchWorkflow(get_lookup_engine=lambda: lookup)
 
     response = workflow.run(SearchRequest(query="怎么实现碰撞检测"))
 
     assert response.lookup is None
-    assert response.semantic is None
-    get_retriever.assert_not_called()
+    lookup.try_lookup.assert_called_once_with("怎么实现碰撞检测")
 
 
 def test_search_sop_stage_names_are_stable():
     assert [stage.value for stage in SearchStage] == [
         "initialize",
         "lookup",
-        "semantic",
-        "deduplicate",
         "respond",
     ]
 
@@ -214,30 +160,14 @@ def test_internal_execution_state_contains_no_http_models():
     )
 
     assert execution.lookup_result is None
-    assert execution.semantic_results == []
-    assert execution.lookup_result_ids == set()
+    assert execution.timing_ms == {}
 
 
-def test_workflow_does_not_reach_retriever_private_api():
-    source = inspect.getsource(SearchWorkflow)
-
-    assert "._search(" not in source
-    assert "._qdrant_available" not in source
-
-
-def test_collection_validation_precedes_runtime_providers():
+def test_validation_precedes_the_lookup_provider():
     get_lookup = MagicMock()
-    get_retriever = MagicMock()
-    workflow = SearchWorkflow(
-        get_lookup_engine=get_lookup,
-        get_retriever=get_retriever,
-        lite_mode=True,
-    )
+    workflow = SearchWorkflow(get_lookup_engine=get_lookup)
 
-    with pytest.raises(UnknownCollectionError):
-        workflow.execute(
-            SearchCommand(query="test", mode="semantic", collections=("missing",))
-        )
+    with pytest.raises(InvalidSearchRequestError):
+        workflow.execute(SearchCommand(query="   "))
 
     get_lookup.assert_not_called()
-    get_retriever.assert_not_called()

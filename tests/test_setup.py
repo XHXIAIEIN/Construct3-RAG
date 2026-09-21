@@ -16,16 +16,14 @@ def test_default_setup_uses_local_schema_without_cdn(monkeypatch):
     monkeypatch.setattr(
         setup,
         "start_server",
-        lambda port, full=False, version=None: calls.append(
-            ("server", port, full, version)
-        ),
+        lambda port, version=None: calls.append(("server", port, version)),
     )
 
     setup.main()
 
     assert ("local",) in calls
     assert not any(call[0] == "cdn" for call in calls)
-    assert ("server", setup.SETTINGS.runtime.server_port, False, None) in calls
+    assert ("server", setup.SETTINGS.runtime.server_port, None) in calls
 
 
 def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
@@ -39,19 +37,17 @@ def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
     monkeypatch.setattr(
         setup,
         "start_server",
-        lambda port, full=False, version=None: calls.append(
-            ("server", port, full, version)
-        ),
+        lambda port, version=None: calls.append(("server", port, version)),
     )
 
     setup.main()
 
     assert calls[0] == ("cdn", None)
     assert ("local",) not in calls
-    assert calls[-1] == ("server", setup.SETTINGS.runtime.server_port, False, None)
+    assert calls[-1] == ("server", setup.SETTINGS.runtime.server_port, None)
 
 
-def test_start_server_passes_explicit_mode_and_version(monkeypatch):
+def test_start_server_passes_the_version(monkeypatch):
     captured: dict = {}
 
     def fake_run(command, **kwargs):
@@ -60,9 +56,8 @@ def test_start_server_passes_explicit_mode_and_version(monkeypatch):
 
     monkeypatch.setattr(setup, "run", fake_run)
 
-    setup.start_server(port=9000, full=True, version="r999")
+    setup.start_server(port=9000, version="r999")
 
-    assert captured["env"]["LITE_MODE"] == "false"
     assert captured["env"]["C3_VERSION"] == "r999"
     assert captured["command"][-1] == "--reload"
     assert "9000" in captured["command"]

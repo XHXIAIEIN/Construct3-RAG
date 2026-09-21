@@ -6,14 +6,12 @@ from src.application.models import SearchCommand, SearchOutcome
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 from src.api import (
     ACELocaleResult,
-    DocResult,
     LookupDebug,
     LookupItemResult,
     LookupMatchResult,
     LookupSection,
     PluginInfo,
     SearchRequest,
-    SemanticSection,
 )
 from src.interfaces.http.presenters import present_search_outcome
 
@@ -28,19 +26,15 @@ def test_search_request_mode_lookup():
     assert req.mode == "lookup"
 
 
-def test_search_request_mode_semantic():
-    req = SearchRequest(query="test", mode="semantic")
-    assert req.mode == "semantic"
-
-
 def test_search_request_mode_list():
     req = SearchRequest(query="test", mode="list")
     assert req.mode == "list"
 
 
-def test_search_request_mode_invalid():
-    with pytest.raises(Exception):
-        SearchRequest(query="test", mode="invalid")
+@pytest.mark.parametrize("mode", ["invalid", "semantic"])
+def test_search_request_mode_invalid(mode):
+    with pytest.raises(ValidationError):
+        SearchRequest(query="test", mode=mode)
 
 
 def test_lookup_match_to_dict_zh():
@@ -85,27 +79,17 @@ def test_search_request_rejects_unknown_language():
         SearchRequest(query="test", lang="xx")
 
 
-@pytest.mark.parametrize("mode", ["lookup", "list"])
 @pytest.mark.parametrize(
-    "semantic_filter",
+    "unknown_field",
     [
         {"plugin": "Sprite"},
         {"collections": ["plugins"]},
-        {"section_types": ["actions"]},
+        {"top_k": 5},
     ],
 )
-def test_lookup_modes_reject_semantic_filters(mode, semantic_filter):
+def test_search_request_rejects_fields_it_does_not_have(unknown_field):
     with pytest.raises(ValidationError):
-        SearchRequest(query="test", mode=mode, **semantic_filter)
-
-
-def test_semantic_section_parses_typed_results_and_context_tier():
-    section = SemanticSection(
-        docs=[{"score": 0.9, "content": "Sprite docs", "context_tier": "full"}]
-    )
-
-    assert isinstance(section.docs[0], DocResult)
-    assert section.docs[0].context_tier == "full"
+        SearchRequest(query="test", **unknown_field)
 
 
 def test_lookup_section_has_no_private_application_state():
@@ -151,9 +135,7 @@ def test_ja_hint_does_not_relabel_chinese_lookup_text():
             lang="ja",
             elapsed_ms=0.1,
             lookup_result=lookup,
-            semantic_results=(),
             timing_ms={"lookup": 0.1},
-            semantic_candidates=0,
         )
     )
 

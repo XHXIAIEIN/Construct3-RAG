@@ -18,8 +18,6 @@ from src.locale.resources import (
     SCOPED_ACE_TYPE_RULES_ZH_EN,
     SUPPORTED_LOCALES,
     TRANSLATE_QUERY_PATTERNS,
-    format_ace_title_zh_en,
-    format_effect_title_zh_en,
 )
 
 
@@ -32,9 +30,6 @@ def test_catalog_stores_localized_values_side_by_side():
         assert set(resource["intent_keywords"]) == locale_keys
     for rule in CATALOG["query"]["scoped_ace_type_rules"].values():
         assert set(rule["terms"]) == locale_keys
-    hints = CATALOG["index"]["common_ace_semantic_hints"]["values"]
-    for hint in hints.values():
-        assert set(hint) == locale_keys
 
 
 def _catalog_resources():
@@ -48,7 +43,6 @@ def _catalog_resources():
     yield from query["ambiguity"].values()
     yield from query["scoped_ace_type_rules"].values()
     yield from CATALOG["expansion"]["directed_aliases"].values()
-    yield from CATALOG["index"].values()
 
 
 def test_every_catalog_resource_explains_origin_usage_and_coverage():
@@ -135,15 +129,3 @@ def test_directed_aliases_are_scoped_weighted_single_hop_rules():
     assert all(rule.plugin_ids and rule.ace_types for rule in ACE_DIRECTED_ALIASES)
     assert all(0 < rule.weight <= 1 for rule in ACE_DIRECTED_ALIASES)
     assert all(not rule.allow_chaining for rule in ACE_DIRECTED_ALIASES)
-
-
-def test_bilingual_index_format_stays_compatible():
-    assert format_ace_title_zh_en(
-        addon_type="plugin",
-        addon_zh="精灵",
-        addon_en="Sprite",
-        ace_type="action",
-        ace_zh="设置动画",
-        ace_en="Set animation",
-    ) == "插件 精灵(Sprite) 的动作: 设置动画 (Set animation)"
-    assert format_effect_title_zh_en("膨胀", "Bulge") == "效果/Effect: 膨胀 (Bulge)"
