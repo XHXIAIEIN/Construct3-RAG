@@ -196,8 +196,9 @@ One hit means redesign, not patch.
    Place the events by "Layout of the sheet".
 4. Read the manual page for each mechanism you are about to use.
 5. Draft, then run the smell table and the pitfalls.
-6. Only then verify names as [event-sheet-assistant.md](event-sheet-assistant.md)
-   says; shared world-object ACEs are in `plugins/_common.json`.
+6. Only then verify names, with `lookup_ace.py` as
+   [event-sheet-assistant.md](event-sheet-assistant.md) says; shared
+   world-object ACEs are in `plugins/_common.json`.
 
 ## Worked case: pieces on a slot grid
 
