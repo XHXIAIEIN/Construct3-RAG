@@ -104,23 +104,57 @@ reference validator, `skills-ref validate` from agentskills/agentskills at
 69ef37e, reports a valid skill; `tests/test_project_tools.py` pins the same
 constraints offline and runs every tool from a copy `install.py` made.
 
-## Evaluation, 2026-09-22
+Not done, because nothing here shows it is needed:
 
-Against the format's guides: `skills-ref validate`, `read-properties` and
-`to-prompt` (agentskills/agentskills, run through `uvx`) accept the skill.
-The validator reads the frontmatter only, and it reads `SKILL.md` with the
-locale's codec: the file held three UTF-8 comparison signs, which do not
-decode under cp936, so `SKILL.md` is ASCII now and a test pins it. That
-failure was reproduced by decoding the bytes as GBK, not by running the
-validator on a cp936 machine.
+- Paging `print_sheet.py`. The longest sheet of the examples prints 2583
+  lines, and the format's guide warns that harnesses cut tool output at
+  10 to 30 thousand characters. No agent has been seen losing the end.
+- JSON output. A model reads the findings; no program does.
+- The trigger evaluation the format's guide describes for `description`. It
+  needs the harnesses, and no missed activation has been observed.
+- Turning `prompts/event-sheet-thinking.md` and its references into skills.
+  The block routes to them, and moving them breaks the blocks already
+  installed.
 
-Output quality, iteration 1, by
-<https://agentskills.io/skill-creation/evaluating-skills>: three cases on
-the stand-in game (`skills/construct3-project/evals/evals.json`), one run
-per case and arm, Claude Haiku 4.5 as a subagent, each in a project folder
-outside the clone. Assertions are checked by `evals/grade.py` with the
+## Re-evaluate when
+
+- An agent loses the end of a printed sheet to truncation: page by event
+  range.
+- TRAE or Deep Code does not activate the skill on event sheet work: run the
+  trigger evaluation and rewrite `description`.
+- A harness in use reads neither `.agents/skills/` nor the block: name its
+  folder in `install.py --help` and in `AGENTS.md` section 4.
+- No game project's block names `prompts/project-tools/README.md` any more:
+  delete the pointer.
+
+## Evaluation 2026-09-22: the validator, three output cases, the trigger queries not run
+
+Schema: Construct 3 r495.2; the guides as <https://agentskills.io> published
+them on that date.
+
+The record above left the evaluation of the skill undone. This is what ran,
+by <https://agentskills.io/skill-creation/evaluating-skills> and
+<https://agentskills.io/skill-creation/optimizing-descriptions>, and what
+did not.
+
+### The reference validator
+
+`skills-ref validate`, `read-properties` and `to-prompt`
+(agentskills/agentskills, run through `uvx`) accept the skill. The validator
+reads the frontmatter only: the fields, the name against the folder, the
+lengths. It reads `SKILL.md` with the locale's codec. The file held three
+UTF-8 comparison signs, which do not decode under cp936, so `SKILL.md` is
+ASCII now and a test pins it. The failure was reproduced by decoding the
+bytes as GBK, not by running the validator on a cp936 machine.
+
+### Output quality, iteration 1
+
+Three cases on the stand-in game (`skills/construct3-project/evals/evals.json`),
+one run per case and arm, Claude Haiku 4.5 as a subagent, each in a project
+folder outside the clone. `evals/grade.py` checks the assertions with the
 clone's checker; tokens and seconds are those of each run's completion
-notice.
+notice. The runs are in `skills/construct3-project-workspace/iteration-1/`,
+which Git ignores.
 
 | Case | With the skill | Without | What the baseline got wrong |
 |------|----------------|---------|-----------------------------|
@@ -128,7 +162,7 @@ notice.
 | fix-load-errors: five seeded mistakes, the editor's first message pasted | 8/8, 59981 tokens, 104.8 s | 3/8, 52888 tokens, 72.5 s | repaired the inverted trigger, left the other four, the quoted one among them, and reported the project ready |
 | name-the-restart-event: the editor's number of an event | 3/3, 48087 tokens, 30.8 s | 2/3, 49484 tokens, 52.0 s | answered 8, the group, where the editor shows 9 |
 
-What this does and does not show:
+What the counts do and do not show:
 
 - One run per cell. These are counts; no spread was measured, and a second
   run may differ.
@@ -146,62 +180,67 @@ What this does and does not show:
 - The checker is the judge of "opens in the editor", and it is part of the
   skill. No run was opened in Construct.
 - Both fixed sheets read `Coin.value` in *On tween finished* of a tween
-  that destroys the coin, the move the checker's message suggests. Whether
-  the value is still readable there is the preview's to say.
+  that destroys the coin, the move the checker's message suggests. The
+  manual says that *Destroy on complete* destroys the instance "when the
+  tween finishes" and that *On finished* triggers then
+  (`Construct3-Manual/Construct3-Manual/behavior-reference/tween.md`), and
+  gives no order.
+  Whether the value is still readable there is the preview's to say, and
+  the answer belongs in `prompts/event-sheet-pitfalls.md`.
 - The first grading had two faults in `grade.py`, corrected before these
   counts: it looked for `interval` where the schema has `interval-seconds`,
   which failed the run with the skill, and it failed "no warning" whenever
   the checker failed, which counted one fault twice against the baseline.
 
-Not run: the trigger evaluation of `description`
-(<https://agentskills.io/skill-creation/optimizing-descriptions>). The
-queries exist, 10 that should trigger and 10 near misses, split 12/8 with a
-fixed seed, and `evals/run_trigger_eval.py` runs them where the guide's
-shell script and skill-creator's `run_eval.py` cannot, on Windows. The
-`claude` CLI on this machine was signed out ("OAuth session expired and
-could not be refreshed"); the runner stops at that with exit code 2 and
-writes no rate. Its handling of a Skill call, a read of `SKILL.md`, a
-signed-out client and an unreadable stream is tested against a stand-in
-client; the shape of a real Skill call in the stream was not seen. The
-description is unchanged. Suspected before any measurement: "any other
+### The trigger evaluation of `description`: not run
+
+The queries exist, 10 that should trigger and 10 near misses, split 12/8
+with a fixed seed, and `evals/run_trigger_eval.py` runs them on Windows,
+where the guide's shell script and skill-creator's `run_eval.py` cannot. The
+`claude` CLI on the machine was signed out ("OAuth session expired and could
+not be refreshed"); the runner stops at that with exit code 2 and writes no
+rate. Its handling of a Skill call, a read of `SKILL.md`, a signed-out
+client and an unreadable stream is tested against a stand-in client; the
+shape of a real Skill call in the stream was not seen.
+
+The description is unchanged. Suspected before any measurement: "any other
 project file" claims `scripts/*.js` and `files/*.json`, which the tools do
 not read, and two of the near misses ask for exactly those.
 
-Measured for the first time: what the scripts print. `print_sheet.py`
-without a sheet name exceeds 10 000 characters on 170 of the 524 official
-examples, 30 000 on 20 and 100 000 on 5 (meowgix, 149 800). `lookup_ace.py
-System` prints 22 432 characters and an object with a behavior 18 837, both
-as one line per ACE. A naming word narrows it, `System wait` to 928; a kind
-alone does not, `System action` prints 7 729 and `System expression`
-10 172. `--help` is 1 234 to 1 812 characters per script. No run of the evals read a sheet that long, so
-paging still has no observed loss behind it.
+### What the scripts print
 
-`install.py --no-block` now says how the scripts find the clone when no
-instruction file names it. The project laid out that way for the trigger
-runs stopped at `Construct3-RAG not found` on its first command.
+Measured for the first time. `print_sheet.py` without a sheet name exceeds
+10 000 characters on 170 of the 524 official examples, 30 000 on 20 and
+100 000 on 5 (meowgix, 149 800). `lookup_ace.py System` prints 22 432
+characters and an object with a behavior 18 837, both as one line per ACE.
+A naming word narrows it, `System wait` to 928; a kind alone does not,
+`System action` prints 7 729 and `System expression` 10 172. `--help` is
+1 234 to 1 812 characters per script.
 
-Not done, because nothing here shows it is needed:
+Paging stays undone. A third of the official examples print more than the
+10 000 characters at which the guide says harnesses start to cut tool
+output, but no run of the evals read a sheet that long, and no agent has
+been seen losing the end.
 
-- Paging `print_sheet.py`. A third of the official examples print more
-  than the 10 000 characters at which the format's guide says harnesses
-  start to cut tool output. No agent has been seen losing the end.
-- JSON output. A model reads the findings; no program does.
-- Turning `prompts/event-sheet-thinking.md` and its references into skills.
-  The block routes to them, and moving them breaks the blocks already
-  installed.
+### Changes
 
-## Re-evaluate when
+- `evals/` beside `SKILL.md`: the cases, `make_fixtures.py`, `grade.py`, the
+  query files, `run_trigger_eval.py`. `install.py` leaves it out of a copy,
+  and a copy does not report it as a difference.
+- `SKILL.md` is ASCII.
+- `install.py --no-block` says how the scripts find the clone when no
+  instruction file names it. The project laid out that way for the trigger
+  runs stopped at `Construct3-RAG not found` on its first command.
+- `skills/AGENTS.md` has the rules of an eval run.
 
-- An agent loses the end of a printed sheet to truncation: page by event
-  range.
+### Re-evaluate when
+
 - The `claude` CLI is signed in: run `evals/run_trigger_eval.py` on both
-  query files, then change `description` from the train failures only.
-- TRAE or Deep Code does not activate the skill on event sheet work: the
-  runner's `--client` takes another command; its detection reads Claude
-  Code's stream and needs the other client's equivalent.
+  query files, then change `description` from the train failures only. This
+  replaces "needs the harnesses" above for Claude Code; TRAE and Deep Code
+  need their own way to see that `SKILL.md` was loaded, passed as the
+  runner's `--client` with detection to match.
 - A case is run several times per arm: report the spread, and extend
-  `grade.py`, which has one folder per case and arm today.
-- A harness in use reads neither `.agents/skills/` nor the block: name its
-  folder in `install.py --help` and in `AGENTS.md` section 4.
-- No game project's block names `prompts/project-tools/README.md` any more:
-  delete the pointer.
+  `grade.py`, which has one folder per case and arm.
+- `SKILL.md`, a reference or what a script prints changes: a new iteration,
+  with the previous skill as the baseline.

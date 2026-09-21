@@ -30,6 +30,11 @@ run, it is not a quality score.
 | `semantic_eval/` | Models, metrics, CLI and live adapter behind it |
 | `eval_lookup.py` | Historical bare-ID diagnostic. Not a substitute for the quality runner |
 
+The evals of the `construct3-project` skill are not here. They run agents,
+not the service, and live with the skill: `skills/AGENTS.md`, "Evals".
+`test_project_tools.py` covers the skill's scripts and, against a stand-in
+client, the trigger runner.
+
 ## Commands
 
 ```bash

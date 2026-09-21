@@ -7,6 +7,11 @@ The HTTP service is an optional access layer over that data. Direct Lookup is
 the default offline search path; Qdrant, embeddings, sparse vectors, and
 reranking are explicit full-mode capabilities.
 
+The `construct3-project` skill under `skills/` is outside this layout. Its
+scripts import the standard library and each other, read `data/c3-schemas/`
+directly, and run from a copy inside a game project with neither `src/` nor
+the service. Its rules are in `skills/AGENTS.md`.
+
 The project follows four dependency rules:
 
 1. Data contracts do not load files, configuration, models, or services.
