@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Rename the instance variable count on Item to qty everywhere it is used (objectTypes, layouts, every event sheet), then make sure nothing else broke before I open the editor.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up a GitHub Action that zips my Construct 3 project folder into a .c3p on every tag and uploads it as a release asset",
+    "should_trigger": false
+  },
+  {
+    "query": "after your last edit the preview button does nothing and the editor says 'An Else condition cannot be placed here'. fix pls",
+    "should_trigger": true
+  },
+  {
+    "query": "导出安卓 APK 的时候 Construct 3 的 build service 报 Gradle build failed，Cordova 导出要怎么配置才能过",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the difference between the Platform and 8 Direction behaviors in Construct 3, and which one fits a top-down zelda-like better?",
+    "should_trigger": false
+  },
+  {
+    "query": "my coin pickup should do a little pop (scale up, then shrink) before it disappears, right now it just vanishes. Tween is already on the Coin object",
+    "should_trigger": true
+  },
+  {
+    "query": "In eventSheets/Game.json, add an action to event 15 that sets the Platform behavior's max speed on Player to 420. What is the exact action id and what are its parameter names?",
+    "should_trigger": true
+  },
+  {
+    "query": "my GDevelop project's game.json got corrupted after a merge conflict, can you help me repair the events array so the editor opens it again",
+    "should_trigger": false
+  },
+  {
+    "query": "translate the UI strings of my game into Japanese, they're in files/strings.json as key/value pairs, keep the keys as they are",
+    "should_trigger": false
+  },
+  {
+    "query": "generate a complete Construct 3 project for a flappy bird clone from a python script so I can open the folder in the editor: objects, layout, event sheet, everything",
+    "should_trigger": true
+  },
+  {
+    "query": "whats the id of the pick nearest condition for sprites and how do i write its params in the json? need x and y from Player",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I start the Construct3-RAG lookup server and query /search for the Tween behavior's actions from curl?",
+    "should_trigger": false
+  }
+]

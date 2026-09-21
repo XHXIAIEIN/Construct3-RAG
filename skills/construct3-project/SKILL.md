@@ -129,7 +129,7 @@ that keep a rerun safe.
   holding an expression: a number is `"100"`, a text carries inner quotes,
   `"\"hello\""`. A combo item, an object, a layout, a variable and an ease
   are bare: `"start"`, never `"\"start\""`. A comparison is a JSON number 0
-  to 5 (=, ≠, <, ≤, >, ≥), a boolean a JSON boolean, a key a key code (32,
+  to 5 (=, !=, <, <=, >, >=), a boolean a JSON boolean, a key a key code (32,
   not `"Space"`).
 - `behaviorType` is the name the behavior has on the object, not the
   behavior id, and a behavior's expression is reached through that name:

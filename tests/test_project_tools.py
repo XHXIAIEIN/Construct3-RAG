@@ -131,6 +131,11 @@ def test_skill_body_stays_within_what_is_loaded_on_activation():
     assert len((SKILL / "SKILL.md").read_text(encoding="utf-8").splitlines()) < 500
 
 
+def test_skill_md_reads_under_any_locale_codec():
+    """skills-ref and plain clients read SKILL.md without naming an encoding; under cp936 a UTF-8 sign does not decode."""
+    (SKILL / "SKILL.md").read_bytes().decode("ascii")
+
+
 def test_every_file_the_skill_names_is_in_it():
     for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         # a path of the clone, Construct3-RAG/prompts/references/..., is not one of the skill's own
@@ -150,6 +155,14 @@ def test_install_copies_the_skill_and_writes_the_block_with_the_clones_path(tmp_
     # the path line is what lets the installed scripts find the schemas on their own
     code, out = run(root, f"{INSTALLED}/scripts/lookup_ace.py", "System", "wait")
     assert code == 0 and "action wait - Wait [system]" in out
+
+
+def test_a_copy_holds_no_evals_and_is_current_without_them(project):
+    """evals/ tests the skill from the clone: a game project neither carries it nor is told to refresh over it."""
+    assert (SKILL / "evals" / "evals.json").is_file()
+    assert not (project / INSTALLED / "evals").exists()
+    code, out = check(project)
+    assert code == 0 and "differs from the clone's" not in out, out
 
 
 def test_install_again_changes_nothing(project):
@@ -177,6 +190,16 @@ def test_install_into_a_clients_own_skills_folder(tmp_path):
     shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
     code, out = run(root, "tools/build_project.py")     # the generator finds the checker there too
     assert code == 0 and out.rstrip().splitlines()[-1].startswith("ok:"), out
+
+
+def test_install_without_the_block_says_how_the_scripts_find_the_clone(tmp_path):
+    root = new_project(tmp_path / "game")
+    code, out = install(root, "--no-block")
+    assert code == 0 and not (root / "AGENTS.md").exists()
+    assert f"CONSTRUCT3_RAG={REPO.as_posix()}" in out and "--rag" in out
+    (root / "CLAUDE.md").write_text(f"- Construct3-RAG: {REPO.as_posix()}\n", encoding="utf-8")
+    code, out = install(root, "--no-block")
+    assert code == 0 and "CONSTRUCT3_RAG" not in out
 
 
 def test_install_dry_run_writes_nothing(tmp_path):
@@ -215,6 +238,60 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
     assert code == 0 and "wrote scripts/print_sheet.py" in out, out
     code, out = check(project)
     assert "differs from the clone's" not in out
+
+
+# --- the trigger evaluation of the description, against a stand-in for the client -------------
+FAKE_CLIENT = '''
+import json, sys
+query = sys.argv[sys.argv.index("-p") + 1]
+def say(event): print(json.dumps(event), flush=True)
+def tool(name, **given): say({"type": "assistant", "message": {"content": [{"type": "tool_use", "name": name, "input": given}]}})
+if "signed out" in query:
+    say({"type": "result", "is_error": True, "result": "Failed to authenticate: OAuth session expired"})
+elif "silent" in query:
+    print("not json")
+elif "event sheet" in query:
+    tool("Glob", pattern="**/*.json")
+    tool("Skill", skill="construct3-project")
+elif "reads it" in query:
+    tool("Read", file_path="C:\\\\game\\\\.claude\\\\skills\\\\construct3-project\\\\SKILL.md")
+else:
+    tool("Bash", command="ls")
+    say({"type": "result", "is_error": False, "result": "done"})
+'''
+
+
+def trigger_eval(tmp_path: Path, queries: list[dict]) -> tuple[int, str, Path]:
+    root = new_project(tmp_path / "game")
+    code, out = install(root, "--into", ".claude/skills", "--no-block")
+    assert code == 0, out
+    (tmp_path / "client.py").write_text(FAKE_CLIENT, encoding="utf-8")
+    (tmp_path / "queries.json").write_text(json.dumps(queries), encoding="utf-8")
+    report = tmp_path / "report.json"
+    code, out = run(tmp_path, SKILL / "evals" / "run_trigger_eval.py", "queries.json", "--project", str(root),
+                    "--client", f"{Path(sys.executable).as_posix()} {(tmp_path / 'client.py').as_posix()}",
+                    "--runs", "2", "--output", str(report))
+    return code, out, report
+
+
+def test_trigger_eval_counts_a_skill_call_and_a_read_of_skill_md(tmp_path):
+    code, out, report = trigger_eval(tmp_path, [
+        {"query": "fix my event sheet", "should_trigger": True},
+        {"query": "the agent reads it", "should_trigger": True},
+        {"query": "zip the folder", "should_trigger": False},
+        {"query": "zip the folder, which should have triggered", "should_trigger": True}])
+    assert code == 1, out
+    results = json.loads(report.read_text(encoding="utf-8"))
+    assert [r["trigger_rate"] for r in results["results"]] == [1.0, 1.0, 0.0, 0.0]
+    assert [r["pass"] for r in results["results"]] == [True, True, True, False] and results["passed"] == 3
+
+
+@pytest.mark.parametrize("query, said", [("signed out", "Failed to authenticate"), ("silent", "no assistant or result event")])
+def test_trigger_eval_writes_nothing_when_the_client_cannot_answer(tmp_path, query, said):
+    """A client that is signed out has not declined to trigger: no rate of 0 is recorded for it."""
+    code, out, report = trigger_eval(tmp_path, [{"query": query, "should_trigger": True}])
+    assert code == 2 and "no result written" in out and said in out
+    assert not report.exists()
 
 
 # --- the generated project ----------------------------------------------------------

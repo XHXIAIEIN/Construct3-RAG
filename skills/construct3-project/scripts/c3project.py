@@ -159,9 +159,11 @@ def find_rag(root: Path | None, override: str | None) -> Path:
 
 
 def skill_files(skill_dir: Path) -> dict[str, Path]:
-    """The files a copy of the skill consists of, by their path inside it."""
-    return {p.relative_to(skill_dir).as_posix(): p for p in sorted(skill_dir.rglob("*"))
-            if p.is_file() and "__pycache__" not in p.parts}
+    """The files a copy of the skill consists of, by their path inside it.
+    evals/ tests the skill from the clone and is not part of a copy."""
+    files = {p.relative_to(skill_dir).as_posix(): p for p in sorted(skill_dir.rglob("*"))
+             if p.is_file() and "__pycache__" not in p.parts}
+    return {rel: p for rel, p in files.items() if not rel.startswith("evals/")}
 
 
 def same_text(a: Path, b: Path) -> bool:

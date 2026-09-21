@@ -1,0 +1,34 @@
+[
+  {
+    "query": "my Tiled map export level1.tmj has the wrong tile ids after I swapped the tileset, can you write a script that remaps them",
+    "should_trigger": false
+  },
+  {
+    "query": "I have an old Construct 2 .capx, can you unzip it and tell me which event sheet handles the save game logic? it's all XML inside",
+    "should_trigger": false
+  },
+  {
+    "query": "can you walk me through what the Enemies event sheet does? the json is 3000 lines and i cant follow it. which events spawn the boss",
+    "should_trigger": true
+  },
+  {
+    "query": "in my construct 3 project's scripts/main.js how do i get all instances of Enemy and set their opacity from javascript? whats the runtime api for that",
+    "should_trigger": false
+  },
+  {
+    "query": "add a double jump to the player, the second jump should be weaker than the first. project is saved as a folder in D:/games/ninja-run, Platform behavior is already on Player",
+    "should_trigger": true
+  },
+  {
+    "query": "我想参考官方示例 template-snake 里蛇身是怎么跟着蛇头走的，Construct-Example-Projects 我 clone 在 D:/GitHub 下面了，帮我读一下它的事件表讲讲思路",
+    "should_trigger": true
+  },
+  {
+    "query": "打开工程的时候 Construct 3 弹了个错误 condition not invertible 然后就打不开了，昨天让另一个 AI 改过 eventSheets/Level1.json，帮我看看哪里写错了",
+    "should_trigger": true
+  },
+  {
+    "query": "I'm writing a Construct 3 plugin with the Addon SDK v2. How do I declare a new action with a combo parameter in aces.json and implement it in instance.js?",
+    "should_trigger": false
+  }
+]
