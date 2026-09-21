@@ -84,21 +84,21 @@ Setup options, the `/search` and `/health` endpoints, and response shapes: [docs
 ## Project structure
 
 ```
-AGENTS.md               Entry point for AI agents: lookup SOP, design SOP, work SOP
-data/                   Committed reference data. Read directly, no install
+AGENTS.md               AI agent entry point
+data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions, effects (en-US + zh-CN)
-  c3-examples/          Example project metadata (en-US + zh-CN)
-  c3-lang/              Raw CDN language packs (en-US + zh-CN)
+  c3-examples/          Example project metadata
+  c3-lang/              CDN language packs
   c3-ts-defs/           TypeScript scripting interfaces
-prompts/                LLM system prompts: design guide, writing rules, pitfalls, AGENTS.md template for game projects
-  references/           Loaded on demand: the slot case as a transcribed program, hand-editing project JSON
-  project-tools/        Generate a whole project from a Python script and check it against the schemas
-src/                    Optional search service (see src/AGENTS.md for packages)
+prompts/                LLM system prompts
+  references/           Loaded on demand
+  project-tools/        Generate and check a whole project
+src/                    Optional search service, own .env (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
-tests/                  Offline pytest suite, gold sets, evaluation runners
-docs/guide/             For users: quick start, API reference, data format
-docs/dev/               For contributors: architecture, data pipeline
-docs/decisions/         Audits and decision records
+tests/                  Offline pytest suite
+docs/guide/             User docs
+docs/dev/               Contributor docs
+docs/decisions/         Decision records
 .github/workflows/      Data update automation
 ```
 
