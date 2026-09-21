@@ -29,8 +29,9 @@ overwrites the files it produces.
 3. Put the block from [../game-project-AGENTS.md](../game-project-AGENTS.md)
    into the project's `CLAUDE.md` or `AGENTS.md`, whichever the agent's tool
    reads, with the real path. The checker reads the `Construct3-RAG:` line
-   from either file to find the schemas; `--rag` and `CONSTRUCT3_RAG`
-   override it.
+   from either file to find the schemas, with `<path-to>` taken from a
+   `path-to = <folder>` line when the block defines the folder that way;
+   `--rag` and `CONSTRUCT3_RAG` override it.
 4. Ignore what the editor and the scripts leave behind:
 
    ```gitignore
@@ -95,6 +96,35 @@ must be unique; a condition or action that shares a sid is a warning, since
 the editor tolerates what its own paste leaves behind. A missing schema (a
 third-party addon) is a warning, and its ACEs pass unchecked.
 
+It also applies the rules the editor enforces when it opens or previews a
+project, so that they surface here with an event number instead of one at a
+time in a dialog
+([decision record](../../docs/decisions/checker-editor-load-rules.md)):
+
+| Rule | The editor's message |
+|------|----------------------|
+| One trigger per event and per branch of sub-events; a function or a custom action counts as one, so neither holds a trigger; an OR block may list several. *On collision* and *On timer* are triggers | `cannot add another trigger to event branch` |
+| A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick (*Pick all*, *Pick by comparison*, *Pick nearest/furthest*, *Pick children*) are never inverted | `condition not invertible` |
+| *Else* is the first condition of an event that directly follows a plain event: not a trigger, not a loop, not a group or a variable, only comments between | `An Else condition cannot be placed here`, before preview and export |
+| A plugin or behavior id is spelled as the editor spells it: `Arr`, `Json`, `TiledBg`, `EightDir`, `Sin`, `solid` | `missing plugin id` |
+| An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
+| A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
+| An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
+| A key is a key code, a JSON number | `expected finite number` |
+| An action does not write a constant | `event variable X is constant` |
+| An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
+
+*Trigger once* or *Every X seconds* in a triggered branch is a warning: the
+editor no longer offers them there, and official examples that do it still
+open.
+
+A finding says what to write where it can: the nearest id, the behavior that
+owns an ACE written without `behaviorType`, the editor's id for a display
+name (`Array` is `Arr`), the project's object behind a plugin name in an
+expression (`JSON.Get` is `Levels.Get`), a combo value written with inner
+quotes, a text value written without them. A file that lacks a key the editor
+always writes stops the run with the key and the place, exit code 2.
+
 A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
 event number is the editor's: the one in the margin of the event sheet and
 in the **Where** column of Find results. Blocks, groups and function blocks
@@ -114,10 +144,13 @@ says. The editor and the preview judge those; the Water Sort observations in
 the pitfalls came from previewing, not from the checker.
 
 Run over the official example projects (saved r184 to r502) with the r495.2
-schemas on 2026-09-18, it passed 493 of 524. The rest fail on ACEs and
+schemas on 2026-09-21, it passed 493 of 524. The rest fail on ACEs and
 parameters that a later release renamed, on layers and animations the
 examples name but no longer have, and on duplicate sids in r184 projects;
-each is a real finding, not a false one.
+each is a real finding, not a false one. None of them breaks an editor rule
+of the table above, which is how each rule was confirmed before it became an
+error. `tests/test_project_tools.py` generates the stand-in game, breaks it
+one rule at a time and reads the finding.
 
 ## Writing the generator
 
@@ -137,7 +170,17 @@ they are what made rerunning safe in Water Sort.
   `data/c3-schemas/{locale}/` first and copy the parameter keys from there.
 - Behaviors are referred to by the name given on the object, not the
   behavior id: `beh_def("Sin", "Shake")` and `beh_def("Sin", "Rock")` are
-  two behaviors, and a helper takes `beh="Shake"`.
+  two behaviors, and a helper takes `beh="Shake"`. The id is the editor's
+  spelling from `data/c3-schemas/_index.json` (`originalId`): `Sin`, not
+  `Sine`; `EightDir`, `TiledBg`, `Arr`, `Json`, `solid`.
+- A `block()` has one trigger, as its first condition, and `func()` and
+  `custom_action()` hold none. A function that starts a tween and must react
+  to its end ends there; the reaction is a top-level `on_tween_finished`
+  block that calls the next function.
+- Names are plain words: no spaces or hyphens, an instance variable starts
+  with a letter, an object is not named like a system expression (`Floor`,
+  `Time`, `Random`), an instance variable not like an expression of its
+  object (`Angle`, `Width`, `Count`).
 - Every runtime-created type has a template instance in a layout that never
   runs (`Objects` in the stand-in).
 - Family variables and behaviors are declared on the family and set on every

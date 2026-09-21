@@ -12,6 +12,16 @@ file that is referenced is defined. Expressions are scanned for object,
 behavior, expression and variable names. sids and uids must be unique, and
 every object created at runtime needs a template instance in some layout.
 
+It also applies the rules the editor enforces when it opens or previews a
+project, read from the editor's own project model: a plugin or behavior id
+is spelled exactly as the editor spells it (`Arr`, `TiledBg`, `EightDir`);
+an object, family, instance variable or behavior name is one the editor
+keeps as written, is not reserved, and does not collide with an expression
+of the object; an event branch holds one trigger, and none inside a function
+or custom action; a trigger or a loop is never inverted; an Else follows a
+plain event as its first condition; a key is a key code; an action does not
+write a constant.
+
 It cannot run the events: picking, timing and the meaning of an expression
 are the editor's and the preview's to judge.
 
@@ -27,24 +37,30 @@ its own and belongs to the next one, which is how the editor's Find lists it
 of each event, for finding the JSON behind a number.
 
 Construct3-RAG is found from --rag, the CONSTRUCT3_RAG environment variable,
-or a `Construct3-RAG: <path>` line in the project's CLAUDE.md or AGENTS.md.
+a `Construct3-RAG: <path>` line in the project's CLAUDE.md or AGENTS.md
+(`<path-to>` in it is read from a `path-to = <folder>` line), or the clone
+this script sits in when it is run from there.
 
 Errors exit 1. Warnings (a parameter the schema lists but the file omits, a
 plugin the schemas do not cover) are printed and do not fail the run.
 """
 import argparse
+import difflib
 import json
 import os
 import re
 import sys
+import unicodedata
 from pathlib import Path
+from typing import NamedTuple
 
 errors: list[str] = []
 warnings: list[str] = []
 
 
 def err(msg: str) -> None:
-    errors.append(msg)
+    if msg not in errors:
+        errors.append(msg)
 
 
 def warn(msg: str) -> None:
@@ -53,24 +69,71 @@ def warn(msg: str) -> None:
 
 
 def load(path: Path):
-    with path.open(encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with path.open(encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        sys.exit(f"{path}: not valid JSON, line {e.lineno} column {e.colno}: {e.msg}")
+
+
+def stopped(exc_type, exc, tb) -> None:
+    """A file that lacks a key the editor always writes stops the run; say which
+    key and where the checker was, instead of a traceback."""
+    while tb.tb_next:
+        tb = tb.tb_next
+    what = f"missing key {exc}" if exc_type is KeyError else f"{exc_type.__name__}: {exc}"
+    print(f"check-project.py stopped at line {tb.tb_lineno} ({tb.tb_frame.f_code.co_name}): {what}. "
+          f"A project file lacks something the editor always writes; compare it with a file "
+          f"build-project.py generates, or with an official example.")
+    for w in warnings:
+        print(f"warning: {w}")
+    if errors:
+        print("\n".join(errors))
+    sys.stdout.flush()
+    os._exit(2)     # sys.exit would raise inside the hook and print a second traceback
+
+
+sys.excepthook = stopped
 
 
 # --- locate the project and the schemas -----------------------------------
+def rag_line(text: str) -> str | None:
+    """The path on the `Construct3-RAG:` line of an instruction file. The line
+    may spell the folder out or keep `<path-to>` and define it once above, as
+    `path-to = D:\\GitHub` or `<path-to>: D:/GitHub`; a path may hold spaces."""
+    m = re.search(r"^[ \t>*-]*Construct3-RAG\s*[:=][ \t]*(.+)$", text, re.M)
+    if not m:
+        return None
+    value = m.group(1).strip().strip("`\"'")
+    if "<path-to>" in value:
+        base = re.search(r"^[ \t>*-]*<?path-to>?\s*[:=][ \t]*(.+)$", text, re.M)
+        if not base:
+            return None
+        value = value.replace("<path-to>", base.group(1).strip().strip("`\"'").rstrip("\\/"))
+    return None if "<" in value else value
+
+
 def find_rag(root: Path, override: str | None) -> Path:
-    candidates = [override, os.environ.get("CONSTRUCT3_RAG")]
+    tried = []
+    candidates = [("--rag", override), ("CONSTRUCT3_RAG", os.environ.get("CONSTRUCT3_RAG"))]
     for name in ("CLAUDE.md", "AGENTS.md"):
         f = root / name
         if f.exists():
-            m = re.search(r"Construct3-RAG:\s*(\S+)", f.read_text(encoding="utf-8"))
-            if m and "<" not in m.group(1):
-                candidates.append(m.group(1))
-    for c in candidates:
-        if c and (Path(c) / "data" / "c3-schemas" / "_index.json").exists():
+            candidates.append((name, rag_line(f.read_text(encoding="utf-8"))))
+    for source, c in candidates:
+        if not c:
+            continue
+        if (Path(c) / "data" / "c3-schemas" / "_index.json").exists():
             return Path(c)
-    sys.exit("Construct3-RAG not found: pass --rag, set CONSTRUCT3_RAG, or put a "
-             "'Construct3-RAG: <path>' line in the project's CLAUDE.md")
+        tried.append(f"{source}: {c}")
+    # Run in place, from <Construct3-RAG>/prompts/project-tools/, the clone is the script's own.
+    own = Path(__file__).resolve().parents[2]
+    if (own / "data" / "c3-schemas" / "_index.json").exists():
+        return own
+    sys.exit("Construct3-RAG not found. Pass --rag <folder>, set CONSTRUCT3_RAG, or write the line "
+             "'- Construct3-RAG: <folder>' in the project's AGENTS.md or CLAUDE.md; the folder is the "
+             "one that holds data/c3-schemas/_index.json."
+             + ("\nTried " + "; ".join(tried) if tried else ""))
 
 
 ap = argparse.ArgumentParser()
@@ -92,6 +155,7 @@ RAG = find_rag(ROOT, args.rag)
 SCHEMAS = RAG / "data" / "c3-schemas" / args.locale
 
 project = load(ROOT / "project.c3proj")
+used_addons = {a["id"]: a for a in project.get("usedAddons", [])}
 FUNCTIONS_OBJECT = project.get("functionsName", "Functions")
 LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and ScrollY are one name
 
@@ -127,6 +191,39 @@ def load_listed(kind: str) -> dict[str, dict]:
 
 # --- schemas -----------------------------------------------------------------
 _schema_cache: dict[tuple[str, str], dict | None] = {}
+INDEX = load(RAG / "data" / "c3-schemas" / "_index.json")
+
+
+def squash(s: str) -> str:
+    """Letters and digits only, lowercased: 'Set animation', 'SetAnimation' and 'set-animation' are one key."""
+    return re.sub(r"[\W_]+", "", str(s).lower())
+
+
+def closest(word: str, options, n: int = 3) -> str:
+    """'; closest: a, b' for an error message, or '' when nothing is near."""
+    table = {squash(o): o for o in options}
+    hits = difflib.get_close_matches(squash(word), list(table), n=n, cutoff=0.6)
+    return "; closest: " + ", ".join(table[h] for h in hits) if hits else ""
+
+
+def addon_hint(kind: str, addon_id: str) -> str | None:
+    """The id the editor uses for what the project calls addon_id, found through
+    the display name ('Array' is Arr, '8 Direction' is EightDir) or a near id."""
+    ids = INDEX.get(kind, {})
+    by_name = {}
+    for locale in {args.locale, "en-US"}:
+        names_file = RAG / "data" / "c3-schemas" / locale / "_index.json"
+        if names_file.exists():
+            for k, v in load(names_file).get(kind, {}).items():
+                by_name[squash(v.get("name", k))] = k
+    table = {**by_name, **{squash(k): k for k in ids}}
+    hit = table.get(squash(addon_id))
+    if hit is None:
+        near = difflib.get_close_matches(squash(addon_id), list(table), n=1, cutoff=0.75)
+        hit = table[near[0]] if near else None
+    if hit is None or hit not in ids or hit == "_common":
+        return None
+    return ids[hit].get("originalId", hit)
 
 
 def schema(kind: str, addon_id: str) -> dict | None:
@@ -135,13 +232,28 @@ def schema(kind: str, addon_id: str) -> dict | None:
         path = SCHEMAS / kind / f"{addon_id.lower()}.json"
         _schema_cache[key] = load(path) if path.exists() else None
         if _schema_cache[key] is None:
-            warn(f"no schema for {kind[:-1]} {addon_id}: its ACEs and properties are not checked")
+            # An addon the project lists under another author is a third-party one: no schema, no hint.
+            third_party = used_addons.get(addon_id, {}).get("author", "Scirra") != "Scirra"
+            hint = None if third_party else addon_hint(kind, addon_id)
+            if hint:
+                err(f"{kind[:-1]} id {addon_id!r} does not exist: the editor's id is {hint!r}")
+            else:
+                warn(f"no schema for {kind[:-1]} {addon_id}: its ACEs and properties are not checked")
     return _schema_cache[key]
+
+
+def check_addon_id(kind: str, addon_id: str, where: str) -> None:
+    """The editor looks an addon up by its exact id, so 'sprite' or 'Tiledbg'
+    fails to open even though the schema file is found case-insensitively."""
+    exact = INDEX.get(kind, {}).get(addon_id.lower(), {}).get("originalId")
+    if exact and exact != addon_id:
+        err(f"{where}: {kind[:-1]} id {addon_id!r} must be written {exact!r}; addon ids are case-sensitive")
 
 
 COMMON = schema("plugins", "_common")
 SYSTEM = schema("plugins", "system")
-SYSTEM_EXPRESSIONS = {LOWER(e["translated-name"]) for e in SYSTEM["expressions"]} | {"self", "loopindex", "infinity"}
+SYSTEM_EXPRESSION_NAMES = {LOWER(e["translated-name"]) for e in SYSTEM["expressions"]}
+SYSTEM_EXPRESSIONS = SYSTEM_EXPRESSION_NAMES | {"self", "loopindex", "infinity"}
 COMMON_EXPRESSIONS = {LOWER(e["translated-name"]) for e in COMMON["expressions"]}
 
 
@@ -205,6 +317,62 @@ def animations_of(obj: str) -> set[str] | None:
     return None
 
 
+# Names. The editor passes every name through a filter when it opens the
+# project and keeps the result, so a name the filter changes no longer matches
+# the events that use it; and it refuses a name that is reserved or already
+# taken in the object's namespace, where instance variables, behaviors, effects
+# and the plugin's expressions live side by side, compared without case.
+NAME_DROPS = set(".。,，\"“”(（)）?？:：\\/;*|'-`!¬£$%^&+=<>{}[]@#~­​")
+RESERVED_NAMES = {"self", "true", "false", "system", "con", "prn", "aux", "nul",
+                  *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
+
+
+def editor_name(name: str, is_object: bool) -> str:
+    """What the editor keeps of a name: the letter after a space is capitalised,
+    spaces and punctuation go, leading underscores go. An object or behavior
+    name may start with a digit but not be all digits; an instance variable
+    name loses its leading digits too."""
+    chars = list(unicodedata.normalize("NFC", name))
+    for i in range(len(chars) - 1):
+        if chars[i] == " ":
+            chars[i + 1] = chars[i + 1].upper()
+    chars = [c for c in chars if c not in NAME_DROPS and not c.isspace()]
+    if is_object:
+        while chars and chars[0] == "_":
+            chars.pop(0)
+        if all(c.isdigit() for c in chars):
+            chars = []
+    else:
+        while chars and (chars[0].isdigit() or chars[0] == "_"):
+            chars.pop(0)
+    return "".join(chars)
+
+
+def check_name(where: str, what: str, name: str, is_object: bool) -> None:
+    kept = editor_name(name, is_object)
+    if kept != name:
+        err(f"{where}: the editor does not keep the {what} name {name!r} as written"
+            + (f", it becomes {kept!r}" if kept else "") + "; use letters, digits and underscores, starting with a letter")
+
+
+for kind, listed in (("object type", types), ("family", families)):
+    for name, t in listed.items():
+        if t.get("name") != name:
+            err(f"{kind} {name}: the file says \"name\": {t.get('name')!r}; it must be the name listed in project.c3proj")
+        check_name(f"{kind} {name}", kind, name, True)
+        if LOWER(name) in RESERVED_NAMES or LOWER(name) in SYSTEM_EXPRESSION_NAMES:
+            err(f"{kind} {name}: the name is reserved ({LOWER(name)} is a keyword or a system expression); "
+                f"rename it, for example {name}Object")
+        check_addon_id("plugins", t["plugin-id"], f"{kind} {name}")
+        for b in t.get("behaviorTypes", []):
+            check_addon_id("behaviors", b["behaviorId"], f"{kind} {name} behavior {b['name']}")
+            check_name(f"{kind} {name}", "behavior", b["name"], True)
+        for v in t.get("instanceVariables", []):
+            check_name(f"{kind} {name}", "instance variable", v["name"], False)
+for a in project.get("usedAddons", []):
+    if a.get("type") in ("plugin", "behavior"):
+        check_addon_id(a["type"] + "s", a["id"], "project.c3proj usedAddons")
+
 for name, t in types.items():
     schema("plugins", t["plugin-id"])
     for b in t.get("behaviorTypes", []):
@@ -258,6 +426,7 @@ layouts = load_listed("layouts")
 sheets = load_listed("eventSheets")
 layers: set[str] = set()
 templates: set[str] = set()      # types with an instance in some layout
+world_types: set[str] = set()    # types with an instance on a layer: they have X, Width, Angle ...
 uids: list[int] = []
 sids: list[int] = []        # sids of events, variables, object types, instances, files
 ace_sids: list[int] = []    # sids of condition and action entries; the editor tolerates repeats here
@@ -298,11 +467,14 @@ def check_effects(effect_types: list) -> None:
 
 
 def check_instance(where: str, inst: dict) -> None:
-    uids.append(inst["uid"])
-    t = inst["type"]
+    t = inst.get("type")
+    if not isinstance(inst.get("uid"), int):
+        err(f"{where}: instance of {t} has no integer uid")
+    else:
+        uids.append(inst["uid"])
     templates.add(t)
     if t not in types:
-        err(f"{where}: instance of unknown type {t}")
+        err(f"{where}: instance of unknown type {t}{closest(t or '', types)}")
         return
     ivars = ivars_of(t)
     for iv in inst.get("instanceVariables", {}):
@@ -333,6 +505,7 @@ def walk_layers(where: str, layer_list: list) -> None:
         layers.add(layer["name"])
         check_effects(layer.get("effectTypes", []))
         for inst in layer.get("instances", []):
+            world_types.add(inst.get("type"))
             check_instance(f"{where} layer {layer['name']}", inst)
         walk_layers(where, layer.get("subLayers", []))
 
@@ -357,6 +530,35 @@ for name, t in types.items():
 for f in families.values():
     collect_sids(f)
 collect_sids(project.get("rootFileFolders", {}))
+
+
+def check_namespace(obj: str) -> None:
+    """`Enemy.Angle` has to mean one thing, so the editor refuses an instance
+    variable, behavior or effect named like another one on the object or its
+    families, or like an expression of the plugin. Names compare without case."""
+    declared: dict[str, str] = {}
+    for owner in [obj] + families_of(obj):
+        d = types.get(owner) or families.get(owner) or {}
+        entries = ([("instance variable", v["name"]) for v in d.get("instanceVariables", [])]
+                   + [("behavior", b["name"]) for b in d.get("behaviorTypes", [])]
+                   + [("effect", e["name"]) for e in d.get("effectTypes", []) if "name" in e])
+        for what, name in entries:
+            label = f"{what} {name}" + (f" of family {owner}" if owner != obj else "")
+            if LOWER(name) in declared:
+                err(f"{obj}: {label} has the same name as {declared[LOWER(name)]}")
+            declared[LOWER(name)] = label
+    plugin = schema("plugins", plugin_of[obj])
+    expressions = {LOWER(e["translated-name"]) for e in (plugin or {}).get("expressions", [])}
+    members = families[obj].get("members", []) if obj in families else [obj]
+    if any(m in world_types for m in members):
+        expressions |= COMMON_EXPRESSIONS
+    for key, label in declared.items():
+        if key in expressions and " of family " not in label:
+            err(f"{obj}: {label} collides with the expression {obj}.{key}; rename it")
+
+
+for obj in list(types) + list(families):
+    check_namespace(obj)
 
 # --- event sheets ----------------------------------------------------------------
 for sheet in sheets.values():
@@ -421,7 +623,11 @@ def check_expr(where: str, expr, scope: dict) -> None:
             continue
         obj = objects_lower.get(LOWER(obj))
         if obj is None or obj == "System":
-            err(f"{where}: unknown object {m.group(1)} in expression")
+            # JSON.Get names the plugin; an expression is reached through the project's object of it.
+            users = [n for n, p in plugin_of.items() if squash(p) == squash(m.group(1)) and p != "system"]
+            hint = f"; {m.group(1)} is the plugin, the object of it here is {', '.join(users)}" if users \
+                else closest(m.group(1), plugin_of)
+            err(f"{where}: unknown object {m.group(1)} in expression{hint}")
             continue
         behs = {LOWER(k): v for k, v in behaviors_of(obj).items()}
         if LOWER(member) in behs:
@@ -437,7 +643,11 @@ def check_expr(where: str, expr, scope: dict) -> None:
         known = {LOWER(e["translated-name"]) for e in plugin.get("expressions", [])} | COMMON_EXPRESSIONS
         known |= {LOWER(v) for v in ivars_of(obj)}
         if LOWER(member) not in known:
-            err(f"{where}: {obj}.{member} is neither an expression nor an instance variable of {obj}")
+            # Platform.Speed is reached as Player.Platform.Speed, through the behavior's name on the object.
+            owner = next((name for name, b in behaviors_of(obj).items() if LOWER(member) in
+                          {LOWER(e["translated-name"]) for e in (schema("behaviors", b) or {}).get("expressions", [])}), None)
+            hint = f"; it is an expression of a behavior: {obj}.{owner}.{member}" if owner else closest(member, known)
+            err(f"{where}: {obj}.{member} is neither an expression nor an instance variable of {obj}{hint}")
     for m in IDENT.finditer(text):
         name = m.group(0)
         if NUMBER.fullmatch(name):
@@ -448,40 +658,79 @@ def check_expr(where: str, expr, scope: dict) -> None:
             continue
         if LOWER(name) in objects_lower and text[m.end():].lstrip().startswith("("):
             continue
-        err(f"{where}: identifier {name!r} is not a variable, parameter or system expression")
+        hint = closest(name, list(scope) + list(plugin_of))
+        if LOWER(name) in objects_lower:
+            hint = f"; {objects_lower[LOWER(name)]} is an object, write {objects_lower[LOWER(name)]}.<expression>"
+        elif text.strip() == name:
+            hint += f"; a text value carries inner quotes: \"\\\"{name}\\\"\""
+        err(f"{where}: identifier {name!r} is not a variable, parameter or system expression{hint}")
 
 
-def check_param(where: str, key: str, value, ptype: str, items: dict | None, obj: str, scope: dict) -> None:
+def bare(value, options) -> str:
+    """A combo item, a layout, an object and a variable are written bare; only an
+    expression carries quotes. Says so when stripping the quotes gives a match."""
+    if isinstance(value, str) and len(value) > 1 and value[0] == value[-1] == '"' and value[1:-1] in options:
+        return f"; write it bare, \"{value[1:-1]}\": only an expression parameter carries inner quotes"
+    return ""
+
+
+_eases: set[str] = set()
+
+
+def builtin_eases() -> set[str]:
+    """Ids of the built-in eases, the keys the editor's language pack labels."""
+    if not _eases:
+        pack = RAG / "data" / "c3-lang" / "en-US.json"
+        if pack.exists():
+            _eases.update(load(pack)["text"]["ui"]["bars"]["timeline"]["eases"])
+    return _eases
+
+
+def check_param(where: str, key: str, value, ptype: str, items: dict | None, obj: str, scope: dict,
+                writes: bool = False) -> None:
+    """writes: the parameter belongs to an action, which assigns the variable it names."""
     if ptype == "cmp":
-        if value not in (0, 1, 2, 3, 4, 5):
+        if value not in (0, 1, 2, 3, 4, 5) or isinstance(value, bool):
             err(f"{where}: comparison {value!r} is not an integer 0-5 (=, ≠, <, ≤, >, ≥)")
     elif ptype == "boolean":
         if not isinstance(value, bool):
             err(f"{where}: {key} should be a JSON boolean, not {value!r}")
     elif ptype in ("combo", "combo-grouped"):
         if items and value not in items:
-            err(f"{where}: {key}={value!r} is not one of {list(items)}")
-    elif ptype in ("ease", "keyb", "audiofile", "tilemapbrush", "function", "model3d", "template", "objecteffect"):
+            err(f"{where}: {key}={value!r} is not one of {list(items)}{bare(value, items)}")
+    elif ptype == "keyb":
+        if not isinstance(value, int) or isinstance(value, bool):
+            err(f"{where}: {key}={value!r} should be a key code, a JSON number such as 32 for Space or 37-40 "
+                f"for the arrows; the editor stops with 'expected finite number'")
+    elif ptype == "ease":
+        eases = builtin_eases()
+        if isinstance(value, str) and eases and value not in eases and not project.get("eases"):
+            err(f"{where}: {key}={value!r} is not a built-in ease{closest(value, eases)}")
+    elif ptype in ("audiofile", "tilemapbrush", "function", "model3d", "template", "objecteffect"):
         return
     elif ptype == "object":
         if value not in plugin_of or value == "System":
-            err(f"{where}: {key}={value!r} is not an object type or family")
+            err(f"{where}: {key}={value!r} is not an object type or family"
+                + (bare(value, plugin_of) or closest(value, plugin_of)))
     elif ptype in ("instancevar", "instancevarbool"):
         # shared ACEs name one of the object's own variables
         ivars = ivar_types_of(obj)
         if value not in ivars:
-            err(f"{where}: {obj} has no instance variable {value!r}")
+            err(f"{where}: {obj} has no instance variable {value!r}{bare(value, ivars) or closest(value, ivars)}")
         elif ptype == "instancevarbool" and ivars[value] != "boolean":
             err(f"{where}: instance variable {value!r} is not a boolean")
     elif ptype == "objinstancevar":
         target, ivar = (value.get("objectClass", obj), value.get("name")) if isinstance(value, dict) else (obj, value)
         if ivar not in ivars_of(target):
-            err(f"{where}: {target} has no instance variable {ivar!r}")
+            err(f"{where}: {target} has no instance variable {ivar!r}{closest(ivar or '', ivars_of(target))}")
     elif ptype in ("eventvar", "eventvarbool", "eventvarany"):
         if value not in scope:
-            err(f"{where}: variable {value!r} is not in scope")
-        elif ptype == "eventvarbool" and scope[value] != "boolean":
+            err(f"{where}: variable {value!r} is not in scope{bare(value, scope) or closest(value, scope)}")
+        elif ptype == "eventvarbool" and scope[value]["type"] != "boolean":
             err(f"{where}: variable {value!r} is not a boolean")
+        elif writes and scope[value].get("isConstant"):
+            err(f"{where}: {value} is a constant and an action cannot change it; "
+                f"the editor stops with 'event variable {value} is constant'")
     elif ptype == "layer":
         if is_literal(value):
             if unquote(value) not in layers:
@@ -490,7 +739,7 @@ def check_param(where: str, key: str, value, ptype: str, items: dict | None, obj
             check_expr(f"{where} {key}", value, scope)
     elif ptype == "layout":
         if value not in layouts:
-            err(f"{where}: no layout named {value!r}")
+            err(f"{where}: no layout named {value!r}{bare(value, layouts) or closest(value, layouts)}")
     elif ptype == "groupname":
         if is_literal(value) and unquote(value) not in group_titles:
             err(f"{where}: no group titled {unquote(value)!r}")
@@ -518,52 +767,179 @@ def check_param(where: str, key: str, value, ptype: str, items: dict | None, obj
             check_expr(f"{where} {key}", value, scope)
 
 
+def ace_sources(ace: dict) -> list[dict]:
+    """The schemas an ACE is looked up in: the named behavior's, or the plugin's
+    and then the shared world-object one. Empty when the object, the behavior or
+    its schema is unknown."""
+    obj = ace.get("objectClass")
+    if obj not in plugin_of:
+        return []
+    if "behaviorType" in ace:
+        behavior_id = behaviors_of(obj).get(ace["behaviorType"])
+        own = schema("behaviors", behavior_id) if behavior_id else None
+        return [own] if own else []
+    own = schema("plugins", plugin_of[obj])
+    if own is None:
+        return []       # a third-party plugin: its own ACEs cannot be told from a wrong id
+    return [own] if obj == "System" else [own, COMMON]
+
+
+def ace_entry(kind: str, ace: dict) -> dict | None:
+    return next((it for s in ace_sources(ace) for it in s.get(kind, []) if it["id"] == ace.get("id")), None)
+
+
+def ace_hint(kind: str, ace: dict) -> str:
+    """Where an id the schema does not have under this object does exist: on one
+    of its behaviors, on the object itself, as the other kind, or under a near
+    spelling (the script name and the list name are tried as well as the id)."""
+    obj, ace_id = ace["objectClass"], ace["id"]
+    if "behaviorType" not in ace:
+        for name, behavior_id in behaviors_of(obj).items():
+            s = schema("behaviors", behavior_id)
+            if s and any(it["id"] == ace_id for it in s.get(kind, [])):
+                return f"; it belongs to the behavior {name}: add \"behaviorType\": \"{name}\""
+    elif any(it["id"] == ace_id for s in ace_sources({"objectClass": obj}) for it in s.get(kind, [])):
+        return "; it belongs to the object itself: remove \"behaviorType\""
+    sources = ace_sources(ace)
+    other = "actions" if kind == "conditions" else "conditions"
+    if any(it["id"] == ace_id for s in sources for it in s.get(other, [])):
+        return f"; {ace_id} is one of its {other}, not its {kind}"
+    spellings = {}
+    for s in sources:
+        for it in s.get(kind, []):
+            for text in (it["id"], it.get("scriptName", ""), it.get("list-name", "")):
+                spellings.setdefault(squash(text), it["id"])
+    if squash(ace_id) in spellings:
+        return f"; the id is {spellings[squash(ace_id)]!r}"
+    near = difflib.get_close_matches(squash(ace_id), list(spellings), n=4, cutoff=0.6)
+    ids = list(dict.fromkeys(spellings[n] for n in near))[:3]
+    return "; closest: " + ", ".join(ids) if ids else ""
+
+
 def check_ace(kind: str, ace: dict, scope: dict, where: str) -> None:
-    obj = ace["objectClass"]
-    ace_id = ace["id"]
+    obj = ace.get("objectClass")
+    ace_id = ace.get("id")
     params = ace.get("parameters", {})
     where = f"{where} {obj}:{ace_id}"
-    if obj not in plugin_of:
-        err(f"{where}: unknown object {obj}")
+    if obj is None or ace_id is None:
+        err(f"{where}: a {kind[:-1]} needs \"objectClass\" and \"id\"")
         return
-    if "behaviorType" in ace:
-        behs = behaviors_of(obj)
-        if ace["behaviorType"] not in behs:
-            err(f"{where}: {obj} has no behavior {ace['behaviorType']}")
-            return
-        addon_kind, addon_id = "behaviors", behs[ace["behaviorType"]]
-        src = schema(addon_kind, addon_id)
-        if src is None:
-            return
-        entry = next((it for it in src.get(kind, []) if it["id"] == ace_id), None)
-    else:
-        addon_kind, addon_id = "plugins", plugin_of[obj]
-        src = schema(addon_kind, addon_id)
-        if src is None:
-            return
-        entry = next((it for it in src.get(kind, []) if it["id"] == ace_id), None)
-        if entry is None and obj != "System":
-            entry = next((it for it in COMMON.get(kind, []) if it["id"] == ace_id), None)
-            addon_id = "_common"
+    if obj not in plugin_of:
+        err(f"{where}: unknown object {obj}{closest(obj, plugin_of)}")
+        return
+    if "behaviorType" in ace and ace["behaviorType"] not in behaviors_of(obj):
+        err(f"{where}: {obj} has no behavior {ace['behaviorType']}{closest(ace['behaviorType'], behaviors_of(obj))}; "
+            f"\"behaviorType\" is the name the behavior has on the object, not its id")
+        return
+    if not ace_sources(ace):
+        return      # no schema for this addon: warned about once, nothing to check against
+    entry = ace_entry(kind, ace)
     if entry is None:
-        err(f"{where}: {plugin_of[obj] if addon_id == '_common' else addon_id} has no {kind[:-1]} {ace_id}"
-            + (" (not in _common either)" if addon_id == "_common" else ""))
+        owner = behaviors_of(obj)[ace["behaviorType"]] if "behaviorType" in ace else plugin_of[obj]
+        err(f"{where}: {owner} has no {kind[:-1]} {ace_id}"
+            + ("" if "behaviorType" in ace or obj == "System" else " (not in _common either)") + ace_hint(kind, ace))
         return
     schema_params = entry.get("params") or {}
+    if not isinstance(params, dict):
+        err(f"{where}: \"parameters\" should be an object keyed by parameter id: {', '.join(schema_params) or 'none here'}")
+        return
     for k in params:
         if k not in schema_params:
-            err(f"{where}: unknown parameter {k}")
+            err(f"{where}: unknown parameter {k}; the parameters are: {', '.join(schema_params) or 'none'}")
     for k in schema_params:
         if k not in params:
             warn(f"{where}: parameter {k} is omitted; the editor fills its default")
     for k, v in params.items():
         if k not in schema_params:
             continue
-        check_param(where, k, v, schema_params[k]["type"], schema_params[k].get("items"), obj, scope)
+        check_param(where, k, v, schema_params[k]["type"], schema_params[k].get("items"), obj, scope,
+                    writes=kind == "actions")
     if ace_id == "create-object" and obj == "System":
         created.add(params.get("object-to-create"))
-    if ace_id == "set-eventvar-value" and scope.get(params.get("variable")) == "boolean":
+    if ace_id == "set-eventvar-value" and (scope.get(params.get("variable")) or {}).get("type") == "boolean":
         err(f"{where}: Set value on boolean {params['variable']}; use Set boolean")
+
+
+def describe(cond: dict) -> str:
+    return f"{cond.get('objectClass')}:{cond.get('id')}"
+
+
+class Holder(NamedTuple):
+    """What holds the trigger of an event branch."""
+    name: str       # "Touch:on-touched-object", or "the function AddScore"
+    fires: bool     # a trigger condition, as opposed to a function standing in for one
+
+    @property
+    def text(self) -> str:
+        return f"an event that already has the trigger {self.name}" if self.fires \
+            else f"{self.name}, which counts as a trigger"
+
+
+def check_structure(ev: dict, where: str, above: Holder | None, previous: dict | None) -> Holder | None:
+    """Where a condition may stand. These are the editor's own rules, the first
+    three applied as it opens the project and the fourth before every preview:
+    an event branch, from the top-level event down to a leaf, holds one trigger,
+    and a function or a custom action counts as one (only an OR block lists
+    several); a trigger, a loop and a condition the schema marks
+    isInvertible: false cannot be inverted; a function cannot be an OR block;
+    Else is the first condition of an event that directly follows a plain event.
+
+    above is the holder of the branch's trigger so far, previous the sibling
+    before this event with comments skipped. Returns the holder for the
+    sub-events: above, or this event if it brings the trigger."""
+    conds = [c for c in ev.get("conditions", []) if "id" in c]
+    entries = [ace_entry("conditions", c) or {} for c in conds]
+    is_function = ev.get("eventType") != "block"
+    triggers = [c for c, e in zip(conds, entries) if e.get("isTrigger")]
+    if is_function and ev.get("isOrBlock"):
+        err(f"{where}: a function or custom action cannot be an OR block")
+    if triggers and (above or is_function):
+        holder = above.text if above else "a function or custom action, which counts as a trigger"
+        err(f"{where}: {describe(triggers[0])} is a trigger inside {holder}; the editor stops with 'cannot add "
+            f"another trigger to event branch'. Move it to an event of its own, outside, and test the rest in sub-events")
+    elif len(triggers) > 1 and not ev.get("isOrBlock"):
+        err(f"{where}: {' and '.join(describe(c) for c in triggers)} are two triggers in one event; the editor "
+            f"stops with 'cannot add another trigger to event branch'. One event per trigger, or an OR block")
+    for c, e in zip(conds, entries):
+        if c.get("isInverted") and (e.get("isTrigger") or e.get("isLooping") or e.get("isInvertible") is False):
+            kind = "a trigger" if e.get("isTrigger") else "a loop" if e.get("isLooping") else "this condition"
+            err(f"{where}: {describe(c)} is inverted, and {kind} cannot be; the editor stops with 'condition not invertible'")
+        # Trigger once, Every X seconds: the editor keeps them out of a triggered branch, where they
+        # are tested only in the tick the trigger fires. Else has its own rule below.
+        if e.get("isCompatibleWithTriggers") is False and c["id"] != "else" and (triggers or (above and above.fires)):
+            warn(f"{where}: {describe(c)} is in a branch run by the trigger "
+                 f"{describe(triggers[0]) if triggers else above.name}; the editor does not offer it there, "
+                 f"since it is only tested when the trigger fires")
+    for i, c in enumerate(conds):
+        if c.get("objectClass") != "System" or c["id"] != "else":
+            continue
+        problem = None
+        before = [p for p in (previous or {}).get("conditions", []) if "id" in p]
+        flags = [ace_entry("conditions", p) or {} for p in before]
+        if ev.get("isOrBlock") or is_function:
+            problem = "its event is " + ("an OR block" if ev.get("isOrBlock") else "a function")
+        elif triggers:
+            problem = f"its event has the trigger {describe(triggers[0])}"
+        elif i != 0:
+            problem = "it is not the first condition of its event"
+        elif previous is None or previous.get("eventType") != "block":
+            problem = ("it is the first event of its list" if previous is None
+                       else f"it follows a {previous.get('eventType')}, and only comments may stand between it and the event it answers")
+        elif len(before) == 1 and describe(before[0]) == "System:else":
+            problem = "it follows an event whose only condition is Else"
+        elif any(f.get("isTrigger") for f in flags):
+            problem = "it follows a triggered event"
+        elif any(f.get("isLooping") for f in flags):
+            problem = "it follows a loop"
+        if problem:
+            err(f"{where}: Else cannot stand here, {problem}; the editor refuses to preview ('An Else condition "
+                f"cannot be placed here'). Use a second event with the inverted condition")
+    if above:
+        return above
+    if is_function:
+        kind = "function" if ev.get("eventType") == "function-block" else "custom action"
+        return Holder(f"the {kind} {ev.get('functionName') or ev.get('aceName')}", False)
+    return Holder(describe(triggers[0]), True) if triggers else None
 
 
 def check_block(ev: dict, scope: dict, where: str) -> None:
@@ -591,45 +967,52 @@ def check_block(ev: dict, scope: dict, where: str) -> None:
 # sequence per sheet. A variable, comment or include takes no number of its
 # own: the margin leaves it blank and Find files it under the next numbered
 # event, so every row's number is the count of numbered rows before it plus one.
-NUMBERED = ("block", "group", "function-block", "custom-ace-block")
+NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 
 
-def walk(events: list, scope: dict, where: str, counter: list[int]) -> None:
+def walk(events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None) -> None:
     """A local declared in a list of sibling events is visible to every event of
     that list, whatever the order, and to their sub-events; not to the parent's
     own actions. So the list's variables enter the scope first, and a block is
-    checked before its children are walked. counter holds the sheet's running
-    event number."""
+    checked before its children are walked. scope maps a name to the variable
+    event or function parameter that declares it. counter holds the sheet's
+    running event number, above what holds the trigger of this branch."""
     scope = dict(scope)
     for ev in events:
         if ev.get("eventType") == "variable":
-            scope[ev["name"]] = ev["type"]
+            scope[ev["name"]] = ev
+    previous = None
     for ev in events:
         et = ev.get("eventType")
         if et in NUMBERED:
             counter[0] += 1
         w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
         if et == "variable":
-            continue
+            pass
         elif et in ("comment", "include"):
             if et == "include" and ev["includeSheet"] not in sheets:
-                err(f"{w}: included sheet {ev['includeSheet']} does not exist")
+                err(f"{w}: included sheet {ev['includeSheet']} does not exist{closest(ev['includeSheet'], sheets)}")
+            elif et == "include" and where == f"sheet {ev['includeSheet']}":
+                err(f"{w}: a sheet cannot include itself")
         elif et == "group":
-            walk(ev["children"], scope, where, counter)
+            walk(ev["children"], scope, where, counter, above)
         elif et in ("function-block", "custom-ace-block"):
             fscope = dict(scope)
             for p in ev["functionParameters"]:
-                fscope[p["name"]] = p["type"]
+                fscope[p["name"]] = p
             label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
             if et == "custom-ace-block" and ev["objectClass"] not in plugin_of:
                 err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
             check_block(ev, fscope, f"{w} {label}")
-            walk(ev.get("children", []), fscope, where, counter)
+            walk(ev.get("children", []), fscope, where, counter, check_structure(ev, f"{w} {label}", above, previous))
         elif et == "block":
             check_block(ev, scope, w)
-            walk(ev.get("children", []), scope, where, counter)
-        else:
-            err(f"{w}: unknown eventType {et!r}")
+            walk(ev.get("children", []), scope, where, counter, check_structure(ev, w, above, previous))
+        elif et != "script":
+            err(f"{w}: unknown eventType {et!r}; the editor knows block, group, variable, comment, include, "
+                f"function-block, custom-ace-block and script")
+        if et != "comment":
+            previous = ev
 
 
 def outline(events: list, counter: list[int], depth: int = 0) -> None:
@@ -645,9 +1028,11 @@ def outline(events: list, counter: list[int], depth: int = 0) -> None:
             text = f"include {ev.get('includeSheet', '')}"
         elif et in ("function-block", "custom-ace-block"):
             text = "function " + (ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}")
+        elif et == "script":
+            text = "script"
         else:
             conds = ev.get("conditions", [])
-            text = "; ".join(f"{c['objectClass']}:{c['id']}" for c in conds) or "(no condition)"
+            text = "; ".join(describe(c) for c in conds) or "(no condition)"
         sid = f"  [sid {ev['sid']}]" if "sid" in ev else ""
         if et in NUMBERED:
             counter[0] += 1
@@ -667,21 +1052,22 @@ if args.outline:
     sys.exit(0)
 
 # A global declared at the top level of any sheet is visible from every sheet.
-globals_ = {ev["name"]: ev["type"] for s in sheets.values() for ev in s["events"] if ev.get("eventType") == "variable"}
+globals_ = {ev["name"]: ev for s in sheets.values() for ev in s["events"] if ev.get("eventType") == "variable"}
 for sname, sheet in sheets.items():
     walk(sheet["events"], globals_, f"sheet {sname}", [0])
 
 for kind, name, owner, nparams, where in pending_calls:
     if kind == "function":
         if name not in functions:
-            err(f"{where}: call to undefined function {name}")
+            err(f"{where}: call to undefined function {name}{closest(name, functions)}")
         elif functions[name] != nparams:
             err(f"{where}: {name} called with {nparams} parameters, defined with {functions[name]}")
     else:
         owners = [owner] + families_of(owner)
         hit = next(((o, name) for o in owners if (o, name) in custom_actions), None)
         if hit is None:
-            err(f"{where}: {owner} has no custom action {name!r}")
+            err(f"{where}: {owner} has no custom action {name!r}"
+                + closest(name, [n for o, n in custom_actions if o in owners]))
         elif custom_actions[hit] != nparams:
             err(f"{where}: {owner}.{name} called with {nparams} parameters, defined with {custom_actions[hit]}")
 
