@@ -12,6 +12,8 @@ are the editor's and the preview's to judge.
 
 Findings in event sheets are placed as `sheet Game event 15 action 2`, the
 number the editor prints in the margin; print_sheet.py prints that numbering.
+Under --limit the findings that fit are printed and the rest counted; the
+last line, `ok:` or the number of problems, always prints.
 
 Exit 0: no errors; warnings do not fail the run. Exit 1: findings, or the
 project or the clone was not found. Exit 2: a project file lacks a key the
@@ -111,8 +113,9 @@ class Checker:
     earlier one collected: the layers and template instances of the layouts,
     the functions and groups of every sheet."""
 
-    def __init__(self, p: c3.Project) -> None:
+    def __init__(self, p: c3.Project, limit: int = 0) -> None:
         self.p = p
+        self.limit = limit
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
         self.sheets: dict[str, dict] = {}
@@ -792,12 +795,23 @@ class Checker:
                 need_addon(e.get("effectId", e.get("id", "")), f"family {name}")
 
     def report(self) -> int:
+        """Warnings, then problems, then the line that says how it went. A report
+        longer than --limit prints what fits of each, warnings in a third of it
+        when there are problems too, and says how many it left out."""
         p = self.p
-        for w in p.findings.warnings:
-            print(f"warning: {w}")
-        if p.findings.errors:
-            print("\n".join(p.findings.errors))
-            print(f"{len(p.findings.errors)} problem(s)")
+        warnings, errors = [f"warning: {w}" for w in p.findings.warnings], p.findings.errors
+        room = max(self.limit - 300, 3)                                         # less the closing lines
+        cut = self.limit and c3.fitting(warnings + errors, room) < len(warnings + errors)
+        shares = (room // 3 if errors else room, room - room // 3) if cut else (0, 0)       # 0 is no limit
+        for lines, share, rest in ((warnings, shares[0], "warnings"),
+                                   (errors, shares[1], "problems; fix these and run again")):
+            fit = max(c3.fitting(lines, share), 1)
+            if lines:
+                print("\n".join(lines[:fit]))
+            if fit < len(lines):
+                print(f"... and {len(lines) - fit} more {rest} (--limit 0 prints all)")
+        if errors:
+            print(f"{len(errors)} problem(s)")
             return 1
         print(f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
               f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
@@ -816,13 +830,14 @@ def main() -> int:
         "exit codes: 0 no errors (warnings do not fail the run), 1 findings or project/clone not found,\n"
         "2 a project file lacks a key the editor always writes and the run stopped there")
     args = ap.parse_args()
+    c3.utf8_output()
     findings = c3.Findings()
     c3.stop_with_a_sentence("check_project.py", findings)
     project = c3.Project.open(args, findings)
     drift = c3.skill_drift(project.rag)
     if drift:
         findings.warn(drift)
-    return Checker(project).run()
+    return Checker(project, args.limit).run()
 
 
 if __name__ == "__main__":

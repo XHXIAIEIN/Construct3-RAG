@@ -50,7 +50,9 @@ owns an ACE written without `behaviorType`, the editor's id for a display
 name (`Array` is `Arr`), the project's object behind a plugin name in an
 expression (`JSON.Get` is `Levels.Get`), a combo value written with inner
 quotes, a text value written without them. A file that lacks a key the editor
-always writes stops the run with the key and the place, exit code 2.
+always writes stops the run with the key and the place, exit code 2. A long
+report prints the findings that fit 10 000 characters, a third of them
+warnings, and counts the rest: fix those and run again, or pass `--limit 0`.
 
 A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
 event number is the editor's: the one in the margin of the event sheet and

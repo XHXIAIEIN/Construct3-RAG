@@ -147,6 +147,7 @@ def main() -> int:
     ap.add_argument("--no-block", action="store_true", help="do not touch the project's AGENTS.md")
     ap.add_argument("--dry-run", action="store_true", help="say what would be written, write nothing")
     args = ap.parse_args()
+    c3.utf8_output()
 
     project = c3.find_project(args.project)
     if project and not (project / "project.c3proj").exists():
