@@ -6,9 +6,9 @@ one folder per skill, a `SKILL.md` with `name` and `description`, and
 source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
 
-| Skill | Carries |
-|-------|---------|
-| `construct3-project/` | ACE lookup, sheet printer, sheet editor, checker and generator template for a Construct 3 folder project; the block for the project's instruction file |
+`construct3-project/` is the one skill here: the ACE lookup, sheet printer,
+sheet editor, checker and generator template for a Construct 3 folder
+project, and the block for the project's instruction file.
 
 ## Rules
 
