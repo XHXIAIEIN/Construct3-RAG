@@ -145,6 +145,33 @@ Not verified: that the editor opens what the script writes. The keys and the
 layout are the editor's by the counts above, and the checker passes; nobody
 has opened a sheet changed this way in Construct.
 
+## Update 2026-09-22: a replaced event keeps its number
+
+In three of the eight runs of fix-load-errors in iterations 7 and 9 a plan
+replaced event 6, the custom action that held the trigger, and then placed
+the trigger `"after": 6`. It was refused with "event 6 is gone", up to four
+times in a run before the agent wrote the plan another way. The plan says
+what it means: 6 is the place the sheet prints, and one event stands there
+before and after.
+
+- An event replaced by one event keeps its number for the operations below
+  it: `after`, `before`, `into`, `move` and `"event": N` reach the event
+  that stands there now. Replaced by several, or removed, it is gone as
+  before, and so are the sub-events it held.
+- The refusal names the operation: "event 7 is gone, operation 1 replaced
+  event 6, which held it", and says that what is kept goes into the
+  `"events"` that replace it, or is moved out first.
+- `SKILL.md` says both under the sentence on numbers.
+
+`evals/sweep_outputs.py` over the 524 examples and five game projects: 0 of
+2 050 runs differ, as the plan it dry-runs replaces nothing. The plan one run
+of iteration 9 had refused twice passes its first two operations unchanged.
+Iteration 10, fix-load-errors four times with Claude Haiku 4.5: 8/8 each, no
+refusal of this kind, 57 875 tokens, 79 s, 14.75 tool calls and 0.75 lost
+calls on average, against 14 to 23 calls in iteration 7. Four runs do not
+show how often a plan now takes the path; the tests and the replayed plan
+show that it holds.
+
 ## Re-evaluate when
 
 - A sheet changed by a plan does not open in the editor: the message, then
