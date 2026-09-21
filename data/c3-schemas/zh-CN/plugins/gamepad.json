@@ -170,7 +170,9 @@
             "d-pad-right": "十字键右"
           }
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-button-released",
@@ -208,7 +210,9 @@
             "d-pad-right": "十字键右"
           }
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-any-button-pressed",
@@ -223,7 +227,9 @@
           "name": "手柄序列",
           "desc": "要检测的游戏手柄的索引值(从0开始计数，使用 -1 对所有手柄生效)。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-any-button-released",
@@ -238,7 +244,9 @@
           "name": "手柄序列",
           "desc": "要检测的游戏手柄的索引值(从0开始计数，使用 -1 对所有手柄生效)。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-button-index-down",
@@ -278,7 +286,9 @@
           "name": "按钮索引",
           "desc": "按钮的索引值，从 0 开始计数。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "on-button-index-released",
@@ -298,7 +308,9 @@
           "name": "按钮索引",
           "desc": "输入按钮的从零开始的索引以测试是否已松开。"
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     }
   ],
   "actions": [

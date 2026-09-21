@@ -443,7 +443,8 @@
           "name": "End index",
           "desc": "End index of the loop range (inclusive)."
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "for-each",
@@ -458,7 +459,8 @@
           "name": "Object",
           "desc": "Choose the object for the loop.  The actions will repeat once for each instance of the object."
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "repeat",
@@ -473,7 +475,8 @@
           "name": "Count",
           "desc": "Number of times to repeat the actions."
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "while",
@@ -481,7 +484,8 @@
       "category": "loops",
       "list-name": "While",
       "display-text": "While",
-      "description": "Repeat so long as the rest of the conditions in the event are true."
+      "description": "Repeat so long as the rest of the conditions in the event are true.",
+      "isLooping": true
     },
     {
       "id": "for-each-ordered",
@@ -510,7 +514,8 @@
             "descending": "descending"
           }
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "on-image-loading-complete",
@@ -547,7 +552,8 @@
           "name": "Instance",
           "desc": "Index of the instance to pick (0-based)."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-random-instance",
@@ -562,7 +568,8 @@
           "name": "Object",
           "desc": "Choose the object to pick a random instance from."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-all",
@@ -577,7 +584,8 @@
           "name": "Object",
           "desc": "Choose the object to reset to pick all instances."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-comparison",
@@ -607,7 +615,8 @@
           "name": "Value",
           "desc": "Enter a value to compare the expression to for each instance. It can also reference the chosen object."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-evaluate",
@@ -627,7 +636,8 @@
           "name": "Expression",
           "desc": "Enter an expression referencing the chosen object. If nonzero, the instance will be picked."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-highest-lowest-value",
@@ -661,7 +671,8 @@
           "name": "Pick all tied",
           "desc": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-overlapping-point",
@@ -701,7 +712,8 @@
           "name": "Object",
           "desc": "Choose the object to pick the last created instance from."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "on-save-complete",
@@ -745,7 +757,9 @@
       "category": "special-conditions",
       "list-name": "Trigger once while true",
       "display-text": "Trigger once",
-      "description": "Make a continuously true event trigger once only, when it first becomes true.  Place as the last condition."
+      "description": "Make a continuously true event trigger once only, when it first becomes true.  Place as the last condition.",
+      "isInvertible": false,
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "is-in-preview",
@@ -769,7 +783,9 @@
       "category": "special-conditions",
       "list-name": "Else",
       "display-text": "Else",
-      "description": "Run if the previous event was not true.  Note this does not pick any instances (logic only)."
+      "description": "Run if the previous event was not true.  Note this does not pick any instances (logic only).",
+      "isInvertible": false,
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "is-on-platform",
@@ -868,7 +884,8 @@
           "name": "Interval (seconds)",
           "desc": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick)."
         }
-      }
+      },
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "compare-time",

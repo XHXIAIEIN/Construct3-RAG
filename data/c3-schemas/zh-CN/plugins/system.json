@@ -443,7 +443,8 @@
           "name": "目标值",
           "desc": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。"
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "for-each",
@@ -458,7 +459,8 @@
           "name": "对象",
           "desc": "选择循环的对象。 对于对象的每个实例，操作将重复一次。"
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "repeat",
@@ -473,7 +475,8 @@
           "name": "次数",
           "desc": "要重复执行的次数。"
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "while",
@@ -481,7 +484,8 @@
       "category": "loops",
       "list-name": "重复",
       "display-text": "重复",
-      "description": "只要事件块的条件满足，就无限重复执行动作。"
+      "description": "只要事件块的条件满足，就无限重复执行动作。",
+      "isLooping": true
     },
     {
       "id": "for-each-ordered",
@@ -510,7 +514,8 @@
             "descending": "降序"
           }
         }
-      }
+      },
+      "isLooping": true
     },
     {
       "id": "on-image-loading-complete",
@@ -547,7 +552,8 @@
           "name": "实例",
           "desc": "要选择的实例的索引，从 0 开始计数。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-random-instance",
@@ -562,7 +568,8 @@
           "name": "对象",
           "desc": "选择要从中选择随机实例的对象。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-all",
@@ -577,7 +584,8 @@
           "name": "对象",
           "desc": "选择要重置的对象以选择所有实例。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-comparison",
@@ -607,7 +615,8 @@
           "name": "值",
           "desc": "通过表达式筛选出满足条件的实例对象。可以引用要选择的对象。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-evaluate",
@@ -627,7 +636,8 @@
           "name": "表达式",
           "desc": "通过表达式的结果选择实例对象，如果结果非零，将选择实例。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-highest-lowest-value",
@@ -661,7 +671,8 @@
           "name": "包含并列结果",
           "desc": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-overlapping-point",
@@ -701,7 +712,8 @@
           "name": "对象",
           "desc": "选择最后创建的对象实例。"
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "on-save-complete",
@@ -745,7 +757,9 @@
       "category": "special-conditions",
       "list-name": "仅触发一次",
       "display-text": "仅触发一次",
-      "description": "当持续条件第一次触发时，添加此特殊条件仅触发一次。需注意，此条件需要放在其他条件的最后一个。"
+      "description": "当持续条件第一次触发时，添加此特殊条件仅触发一次。需注意，此条件需要放在其他条件的最后一个。",
+      "isInvertible": false,
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "is-in-preview",
@@ -769,7 +783,9 @@
       "category": "special-conditions",
       "list-name": "否则",
       "display-text": "否则",
-      "description": "当上一个事件的触发条件不满足时，运行此条件的动作。需注意，此条件需要放在其他条件的第一个。且不会选择任何实例对象。"
+      "description": "当上一个事件的触发条件不满足时，运行此条件的动作。需注意，此条件需要放在其他条件的第一个。且不会选择任何实例对象。",
+      "isInvertible": false,
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "is-on-platform",
@@ -868,7 +884,8 @@
           "name": "间隔（秒）",
           "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。"
         }
-      }
+      },
+      "isCompatibleWithTriggers": false
     },
     {
       "id": "compare-time",

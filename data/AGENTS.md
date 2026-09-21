@@ -24,8 +24,13 @@ Fields that decide correctness:
 - `params.*.type` is the editor type (`number`, `string`, `object`, `combo`,
   `animation`, `instancevar`, `cmp`...); a `combo` lists its choices in
   `items` as stable id to localized label.
-- `isTrigger` marks a trigger condition, `isAsync` an awaitable action,
-  `returnType` an expression's type; `scriptName` is the JavaScript name.
+- `isTrigger` marks a trigger condition, `On collision` and `On timer`
+  included: one per event branch, none inside a function, never inverted, no
+  `Else` after it. `isLooping` marks a loop, `isInvertible: false` a condition
+  that cannot be inverted, `isCompatibleWithTriggers: false` one the editor
+  keeps out of a triggered branch.
+- `isAsync` marks an awaitable action, `returnType` an expression's type;
+  `scriptName` is the JavaScript name.
 - `properties` carry text only. Effects have `parameters` (`float`,
   `percent`, `color`) and no ACEs.
 - A world object's full ACE list is its plugin file plus `plugins/_common.json`.

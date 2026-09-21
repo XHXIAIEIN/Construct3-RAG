@@ -61,7 +61,7 @@ Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
 - Expressions: `translated-name`, `description`
 - Params: `{param_id: {type, name, desc}}` (object keyed by param id)
-- Structural fields from allAces: `scriptName`, `isTrigger`, `isAsync`, `returnType`, `category`
+- Structural fields from allAces: `scriptName`, `isTrigger`, `isFakeTrigger`, `isLooping`, `isInvertible`, `isCompatibleWithTriggers`, `isAsync`, `returnType`, `category`. `isTrigger` is also written for a CDN `isFakeTrigger` or `isFastTrigger`, since the editor holds all three to the same rules
 
 `plugins/_common.json` goes through the same merge. Its structural side is
 not on any CDN endpoint: the editor registers the shared ACEs in `main.js`,

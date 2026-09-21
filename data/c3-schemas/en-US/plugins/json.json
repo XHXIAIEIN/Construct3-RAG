@@ -123,7 +123,8 @@
           "name": "Path",
           "desc": "Location within the JSON data."
         }
-      }
+      },
+      "isLooping": true
     }
   ],
   "actions": [

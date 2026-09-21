@@ -152,7 +152,8 @@ class C3Fetcher:
           - expressions: translated-name, description
           - params: name, desc, items (object keyed by param id)
 
-        Structure fields from allAces (scriptName, isTrigger, isAsync, returnType,
+        Structure fields from allAces (scriptName, isTrigger, isFakeTrigger,
+        isLooping, isInvertible, isCompatibleWithTriggers, isAsync, returnType,
         params[].type) are merged in.
 
         Directory layout:
@@ -280,8 +281,24 @@ class C3Fetcher:
                                 entry["description"] = l_ace.get("description", "")
                                 if params:
                                     entry["params"] = params
-                                if ace.get("isTrigger"):
+                                # The editor treats a fake trigger (On collision, On
+                                # timer) as a trigger wherever structure is decided:
+                                # one per event branch, never inverted, no Else after
+                                # it. isTrigger carries that meaning; isFakeTrigger
+                                # keeps the CDN's distinction, that the runtime tests
+                                # it in sheet order instead of firing it out of band.
+                                if ace.get("isTrigger") or ace.get("isFakeTrigger") or ace.get("isFastTrigger"):
                                     entry["isTrigger"] = True
+                                if ace.get("isFakeTrigger"):
+                                    entry["isFakeTrigger"] = True
+                                if ace.get("isLooping"):
+                                    entry["isLooping"] = True
+                                # Both default to true in the editor, so only the
+                                # exceptions are written.
+                                if ace.get("isInvertible") is False:
+                                    entry["isInvertible"] = False
+                                if ace.get("isCompatibleWithTriggers") is False:
+                                    entry["isCompatibleWithTriggers"] = False
                                 if ace.get("isAsync"):
                                     entry["isAsync"] = True
                                 if ace.get("returnType"):

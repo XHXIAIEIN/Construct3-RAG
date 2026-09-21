@@ -184,7 +184,8 @@
           "name": "Pick all tied",
           "desc": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-by-unique-id",
@@ -343,7 +344,8 @@
           "name": "Pick all tied",
           "desc": "Check to pick all tied instances when there is a tie break. When unchecked, only a single instance will be picked even in a tie break."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "compare-z-elevation",
@@ -481,7 +483,9 @@
           "name": "Object",
           "desc": "Select the object to test for a collision with."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-overlapping-another-object",
@@ -571,7 +575,8 @@
             "top": "Top"
           }
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-children",
@@ -596,7 +601,8 @@
             "bottom": "Bottom"
           }
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "pick-nth-child",
@@ -625,7 +631,8 @@
           "name": "Instance",
           "desc": "Index of the child instance to pick (0-based, either in all children or just the children of the provided object)."
         }
-      }
+      },
+      "isInvertible": false
     },
     {
       "id": "compare-child-count",

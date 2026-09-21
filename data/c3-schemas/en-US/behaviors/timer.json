@@ -18,7 +18,9 @@
           "name": "Tag",
           "desc": "Enter the name of the timer."
         }
-      }
+      },
+      "isTrigger": true,
+      "isFakeTrigger": true
     },
     {
       "id": "is-timer-running",

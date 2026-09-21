@@ -388,7 +388,8 @@
       "category": "loops",
       "list-name": "遍历输出",
       "display-text": "遍历输出",
-      "description": "在当前节点中，对每项输出重复执行一些动作。"
+      "description": "在当前节点中，对每项输出重复执行一些动作。",
+      "isLooping": true
     },
     {
       "id": "on-flowchart-change",

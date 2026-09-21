@@ -21,7 +21,8 @@
           "name": "XPath",
           "desc": "要计算的XPath表达式，返回一系列要迭代的节点"
         }
-      }
+      },
+      "isLooping": true
     }
   ],
   "actions": [

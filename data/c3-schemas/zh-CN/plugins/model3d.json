@@ -36,7 +36,8 @@
       "category": "3d-model",
       "list-name": "遍历网格",
       "display-text": "遍历网格",
-      "description": "遍历模型中的所有网格。"
+      "description": "遍历模型中的所有网格。",
+      "isLooping": true
     },
     {
       "id": "for-each-animation",
@@ -44,7 +45,8 @@
       "category": "3d-model",
       "list-name": "遍历动画",
       "display-text": "遍历动画",
-      "description": "遍历模型中的所有动画。"
+      "description": "遍历模型中的所有动画。",
+      "isLooping": true
     },
     {
       "id": "playing",

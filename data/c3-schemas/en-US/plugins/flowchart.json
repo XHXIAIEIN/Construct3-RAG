@@ -388,7 +388,8 @@
       "category": "loops",
       "list-name": "For Each Output",
       "display-text": "For Each Output",
-      "description": "Repeat the event for each output in the current node."
+      "description": "Repeat the event for each output in the current node.",
+      "isLooping": true
     },
     {
       "id": "on-flowchart-change",
