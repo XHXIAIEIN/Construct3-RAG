@@ -92,7 +92,7 @@ Each file describes one addon. Field names match the official CDN.
 | `id` | all | Stable ACE id. Identical across locales. |
 | `list-name` | conditions, actions | Name shown in the add condition or action dialog. |
 | `display-text` | conditions, actions | Template shown in the event sheet, for example `Set animation to {0}`. |
-| `translated-name` | expressions | Expression identifier, for example `AnimationFrame`. |
+| `translated-name` | expressions | In `en-US` the expression identifier, for example `AnimationFrame`, which is the name a project file holds; in another locale the localized name, `动画帧`. |
 | `scriptName` | all | JavaScript API name. Identical across locales. |
 | `category` | all | Key into `aceCategories`. Identical across locales. |
 | `description` | all | Tooltip or help text. |

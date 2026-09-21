@@ -31,6 +31,9 @@ Fields that decide correctness:
   keeps out of a triggered branch.
 - `isAsync` marks an awaitable action, `returnType` an expression's type;
   `scriptName` is the JavaScript name.
+- An expression's `translated-name` is localized like any other text. The
+  name a project file holds is the `en-US` one, `AnimationFrame`, whatever
+  the locale; match the two files by `id`.
 - `properties` carry text only. Effects have `parameters` (`float`,
   `percent`, `color`) and no ACEs.
 - A world object's full ACE list is its plugin file plus `plugins/_common.json`.

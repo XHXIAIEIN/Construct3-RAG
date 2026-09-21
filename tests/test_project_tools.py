@@ -367,6 +367,14 @@ def test_print_follows_the_locale(built):
     assert code == 0 and "System: 场景开始" in out
 
 
+def test_expression_names_are_english_in_every_locale(built):
+    """A project file holds `Coin.Count` whatever language the editor runs in; the locale's name is wording."""
+    code, out = check(built, "--locale", "zh-CN")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    code, out = tool(built, "lookup_ace", "Coin", "tween", "progress", "--locale", "zh-CN")
+    assert code == 0 and "  write: Coin.Tween.Progress(tags)  -> number" in out, out
+
+
 def test_print_stops_at_the_limit_and_names_the_part_that_continues(built):
     """A harness cuts long output without saying where; the script stops at an event and says how to go on."""
     code, whole = tool(built, "print_sheet", "Game")
