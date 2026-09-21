@@ -177,6 +177,7 @@ What the counts do and do not show:
   project folder"; the row above is the rerun. The other two baselines ran
   without that line and list no file outside their project. Those lists
   are the runs' own; the harness kept no transcript to check them against.
+  (It did, in another folder: the second pass below reads them.)
 - The checker is the judge of "opens in the editor", and it is part of the
   skill. No run was opened in Construct.
 - Both fixed sheets read `Coin.value` in *On tween finished* of a tween
@@ -244,3 +245,211 @@ been seen losing the end.
   `grade.py`, which has one folder per case and arm.
 - `SKILL.md`, a reference or what a script prints changes: a new iteration,
   with the previous skill as the baseline.
+
+## Evaluation 2026-09-22, second pass: the four guides, heading by heading
+
+Schema: Construct 3 r495.2; the guides as <https://agentskills.io> published
+them on that date: `skill-creation/best-practices`,
+`optimizing-descriptions`, `evaluating-skills`, `using-scripts`.
+
+The first evaluation took the layout, the test cases and the trigger queries
+from the guides. This pass holds the skill against every heading of the
+four. A heading changed something, with the evidence, or it did not, with
+the reason.
+
+### What the transcripts show
+
+Claude Code keeps the transcript of a subagent as
+`~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`, with its
+description in `agent-<id>.meta.json`. The 0-byte files of the first
+evaluation were the task output files, another thing. `evals/trace.py`
+prints a transcript call by call and counts the calls a run lost.
+
+- An answer lists the commands a run remembers. The answer of add-countdown
+  with the skill names three; its transcript holds seven script runs.
+- Lookups by meaning miss. With the previous skill 4 of 8 lookups found
+  nothing, in both runs of add-countdown: `System timer`,
+  `Coin scale size`, `System wait time frame`, `Coin scale width`. A word
+  was matched against ids and names only, every word had to match, and the
+  miss named the nearest id of the words joined, `time, trim`.
+- Edits fail on tabs. 22 of the 60 Edit calls of the eight runs that edited
+  a sheet failed with "String to replace not found", in every arm: a match
+  of several lines with one tab too many, in files indented 7 to 17 tabs
+  deep inside an event.
+
+### What the scripts did to their reader
+
+- Size. Over the 524 official examples and the 7 game projects
+  (`evals/sweep_outputs.py`), `print_sheet.py` printed more than 10 000
+  characters on 173 and more than 30 000 on 21, the outline on 42 and 8,
+  the checker on 2 (glokar 24 930, of which 166 lines warn that a parameter
+  is omitted), `lookup_ace.py System` 22 432. WaterSort, the game
+  the generator came from, prints 49 253. Claude Code replaced a print of
+  37 KB with its first 2 KB and the path of a file; the run read the file,
+  39 756 characters in one call, and answered. A harness that cuts without
+  keeping the file loses the end of the sheet, and says so or does not.
+- Encoding. A piped Python on Windows writes the ANSI code page. With
+  `PYTHONIOENCODING=cp936` the Chinese wording of a sheet reached this
+  harness as mojibake; with `cp1252` the script stopped at exit 2 under the
+  sentence about a missing key. Both were produced by setting the variable:
+  the ANSI code page of this machine is UTF-8. The tests had set
+  `PYTHONIOENCODING=utf-8` for every run, which is why none saw it.
+- A guess. `lookup_ace.py Platform jump` answered "nothing matches": a near
+  match had read `Platform` as the plugin Platform Info, ahead of the
+  behavior of that name.
+- The scripts run under CPython 3.10.19, the version `compatibility` names.
+  Not checked before.
+
+### Heading by heading
+
+Best practices:
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| Start from real expertise | The rules and gotchas come from Water Sort, mergeGame and the load errors of the DeepSeek and Doubao projects (`checker-editor-load-rules.md`) | none |
+| Refine with real execution | Iteration 1 read answers, not traces | `evals/trace.py`; the findings above |
+| Add what the agent lacks, omit what it knows | `<new sid>` was never explained, and the encodings of a function block, a call, a `projectfile` parameter were one file away with nothing pointing there | two sentences in `SKILL.md` |
+| Design coherent units | One unit: the JSON of a folder project. Designing the events stays in `prompts/`, which installed blocks name | none |
+| Aim for moderate detail | 169 lines, about 2 400 tokens, under the 500 lines and 5 000 tokens of the specification | none |
+| Progressive disclosure | Both references say when to read them; the hand-editing reference of the clone was not named at all | named in `SKILL.md`, with its when |
+| Match specificity to fragility | The check loop and the way a parameter is written are prescribed; design is left to the guide it points to | none |
+| Provide defaults, not menus | `.agents/skills` with the clients' folders as the exception; generate or hand-edit is decided by who owns the project | none |
+| Favor procedures over declarations | The three traces of iteration 1 print, look up, edit, check and print again in that order without being told | no checklist added |
+| Gotchas | Each is a failure seen in a game project. A gotcha on tab-deep edits was tried in iteration 2: 8 of 19 edits failed with it, 14 of 41 without | taken out again |
+| Templates for output format | The `write:` line is the template of what is written most. No hand-over template: nobody has reviewed the answers yet | see Not done |
+| Checklists for multi-step workflows | As "procedures" above | none |
+| Validation loops | "Check after every change" is that loop; the checker caught `iif` in a run of iteration 2 and the run fixed it | none |
+| Plan-validate-execute | The destructive step is regenerating over files the editor touched; the reference says to move them aside first | see Not done |
+| Bundling reusable scripts | The baseline of name-the-restart-event wrote its own numbering script, which is `print_sheet.py`. The old-against-new sweep was rewritten in every session | `evals/sweep_outputs.py` |
+
+Using scripts:
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| One-off commands | The validator command in `skills/AGENTS.md` names no commit | see Not done |
+| Referencing scripts | Listed in a table, paths relative to the skill's folder | none |
+| Self-contained scripts | Standard library only; Pillow optional, and a declared dependency would make the first run need a network | no PEP 723 block |
+| Avoid interactive prompts | None | none |
+| Document usage with `--help` | 1 455 to 2 229 characters, examples and exit codes | the new flags are in it |
+| Write helpful error messages | A lookup miss did not say what to try | it lists the entries that have some of the words, or the categories |
+| Use structured output | The readers are a model and two programs that read the exit code and the `warning:` prefix | no JSON output |
+| Idempotency | `install.py` and a seeded generator repeat themselves | none |
+| Input constraints | A near name was taken for a plugin | an exact id or display name, or the nearest names and exit 1 |
+| Dry-run support | `install.py --dry-run`; the generator has none | see Not done |
+| Meaningful exit codes | Documented in every `--help`. 1 is findings and also "not found"; 2 is a malformed file and also argparse's usage error | see Not done |
+| Safe defaults | `install.py` writes a dot-folder and, where absent, a block | none |
+| Predictable output size | The measurements above | `--limit`, 10 000 by default, in the three scripts |
+
+Evaluating skills:
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| Designing test cases | Three cases on one 9-event sheet; none reads a long sheet, generates a project or lacks the clone | `find-in-a-long-sheet` on the official example abductractor |
+| Workspace structure, spawning runs | As the guide lays it out. The previous skill as baseline needs its own clone: pointed at this one the old copy reports a difference and the agent refreshes it | `make_fixtures.py --arms old_skill --old-clone`, a git worktree of the previous commit |
+| Capturing timing data | From the completion notices, when they arrive | none |
+| Writing assertions, grading | By script, with evidence | a grader for the new case |
+| Aggregating results | `benchmark.json` had no difference between arms | `delta`, with tool calls and lost calls where a run has a `trace.json` |
+| Analyzing patterns | 18 of 18 with the skill: the assertions no longer tell two versions apart. What differs is in the traces | lost calls per run |
+| Reviewing results with a human | Not done in either iteration; no `feedback.json` | the maintainer's step |
+| Iterating on the skill | Failed assertions: none. Human feedback: none. Transcripts: read | the changes below |
+
+Optimizing descriptions:
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| Writing effective descriptions | 683 of 1 024 characters; imperative second sentence; names what users say. The first sentence speaks of schemas and load rules, the mechanism, not the intent | none before a measurement, by the rule in `skills/AGENTS.md` |
+| Designing trigger eval queries | 10 and 10, near misses as negatives, two languages, file paths, typos | none |
+| Testing, running multiple times, the loop | `claude -p` answers "OAuth session expired and could not be refreshed", as on the day before. A subagent of this session is no substitute: it reads this repository's `AGENTS.md`, which names the skill | not run |
+
+### Changes
+
+- `print_sheet.py --events A-B` prints a range under the events it sits in,
+  marked `[context]`. A print over `--limit` stops at an event and ends
+  with the command that continues; without a sheet name, sheets that do not
+  fit are listed with their sizes and includes.
+- `lookup_ace.py`: a word may be a category (`System time` lists *Every X
+  seconds*, *Wait* and `dt`); names match first, so that `Physics force` is
+  still three entries in full with the rest of its category named below; a
+  miss lists the entries that have some of the words, names before
+  categories, or the categories; a list over the limit becomes counts per
+  kind and category; OBJECT is an exact id or display name.
+- `check_project.py`: a report over the limit prints the findings that fit,
+  warnings in a third of it, and counts the rest. The last line always
+  prints.
+- Every script writes UTF-8 and replaces what a chosen codec cannot encode.
+- `SKILL.md`: the limit and `--events`, how words match, `<new sid>`, when to
+  read the hand-editing reference.
+- `evals/`: `trace.py`, `sweep_outputs.py`, the old-skill arm and official
+  examples as fixtures in `make_fixtures.py`, `delta` and lost calls in
+  `grade.py`, the fourth case.
+
+Old against new over 1 618 runs: with `--limit 0`, 6 differ, all lookups and
+all meant (`System timer`, `Sprite scale size`, `Sprite animation`,
+`Platform jump`, `Physics force`, `NoSuchAddon`). With the default limit 225
+differ: the 173 prints, 42 outlines and 2 checks that had passed 10 000
+characters, and 8 lookups. Nothing within 10 000 characters changed, and no
+run prints more than 9 879.
+
+### Iteration 2
+
+Claude Haiku 4.5 subagents, one run per case and arm, projects outside the
+clone. `with_skill` is the working tree; `old_skill` is eac319f, installed
+from a worktree of that commit which its block names as the clone. Runs in
+`skills/construct3-project-workspace/iteration-2/`.
+
+| Case | With the skill | Previous skill |
+|------|----------------|----------------|
+| add-countdown | 7/7, 68 723 tokens, 167.9 s, 33 calls, 6 lost | 7/7, 65 405 tokens, 140.8 s, 31 calls, 6 lost |
+| fix-load-errors | 8/8, 58 896 tokens, 103.0 s, 18 calls, 4 lost | iteration 1: 8/8, 59 981 tokens, 104.8 s, 22 calls, 6 lost |
+| name-the-restart-event | 3/3, 48 795 tokens, 29.2 s, 5 calls, 0 lost | iteration 1: 3/3, 48 087 tokens, 30.8 s, 5 calls, 0 lost |
+| find-in-a-long-sheet | 5/5, 55 180 tokens, 54.7 s, 8 calls, 0 lost | 5/5, 66 345 tokens, 49.7 s, 7 calls, 0 lost |
+
+- No assertion failed in either arm. One run per cell: counts, no spread.
+- The long sheet. The previous skill printed 37 KB, the harness kept 2 KB
+  and a file, the run read the file whole. The skill now printed the
+  outline in parts, searched it with `--limit 0` through a pipe, and read
+  events 102 to 108 with `--events`: 11 165 tokens fewer. Both answered
+  103, 104, 105 and 108. This harness keeps the file; one that does not
+  was not tried.
+- Lookups: 1 of 4 missed with the skill, `System timer`, against 2 of 4 in
+  each run of the previous one. The run went on to `System every`, not to
+  the category the miss had listed.
+- Edits: 4 of 10 and 4 of 9 failed with the sentence about tabs in
+  `SKILL.md`. It bought nothing and is out again, which is the one
+  difference between the `SKILL.md` that ran and the one committed.
+- add-countdown costs the same in both arms; its time goes into edits.
+
+### Not done, and why
+
+- A script that inserts or replaces an event by its number, written as
+  JSON by the agent and checked before it lands. It is what the failed
+  edits point to, and what the guide calls plan, validate, execute: about
+  a third of all Edit calls are lost, in every arm. It is a new tool with
+  its own design, so a decision of its own.
+- A guard in the generator against overwriting files the editor changed
+  since the last build, and a `--dry-run`. The reference asks the agent to
+  move such files aside; no lost edit has been reported.
+- Separate exit codes for findings, not found and usage. Every caller
+  reads 0 or not 0, and every message says which it was.
+- JSON output: still no program reads the findings.
+- A hand-over template. It is a matter of what the maintainer wants to
+  read, and the answers of two iterations are unreviewed.
+- The description, for lack of a measurement.
+- `skills-ref validate` on this state: the permission mode of the session
+  refused code fetched from GitHub. The frontmatter did not change, and
+  `tests/test_project_tools.py` pins the same constraints. Pinning the
+  command in `skills/AGENTS.md` to 69ef37e waits for a run that shows the
+  short hash resolves.
+
+### Re-evaluate when
+
+- The maintainer has read the answers in `iteration-2/*/*/outputs/` and
+  written `feedback.json`: that, not the assertions, is the next signal.
+- The `claude` CLI is signed in: the trigger evaluation, unchanged from the
+  section above.
+- A harness in use cuts output below 10 000 characters: lower `LIMIT` in
+  `scripts/c3project.py`.
+- An agent is seen reading a long sheet part by part where one read of a
+  file would do: print to a file with `--limit 0` and say so in `SKILL.md`.
+- Edits are to get cheaper: the event-insert script above, measured by lost
+  calls on add-countdown and fix-load-errors.

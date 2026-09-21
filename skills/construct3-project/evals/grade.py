@@ -6,7 +6,9 @@ ITERATION_DIR holds <case>/<arm>/ with project/, outputs/answer.md,
 fixture.json and, once the run has reported, timing.json. Every assertion of
 evals/evals.json is checked by code against the files the run left, with the
 clone's own checker, and written to <case>/<arm>/grading.json with the
-evidence. benchmark.json sums the arms up.
+evidence. benchmark.json sums the arms up and gives with_skill less each
+other arm; a run with a trace.json (evals/trace.py --out) adds its tool calls
+and the ones it lost.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
@@ -175,24 +177,57 @@ def grade_name_the_restart_event(run: Path) -> list[tuple[bool, str]]:
              "1 second wait": re.search(r"\b(1|one)[\s-]*(s\b|sec)", answer, re.I)}
     results.append((all(parts.values()), "stated: " + ", ".join(k for k, v in parts.items() if v)
                     + ("; missing: " + ", ".join(k for k, v in parts.items() if not v) if not all(parts.values()) else "")))
+    results.append(unchanged(run))
+    return results
+
+
+def unchanged(run: Path) -> tuple[bool, str]:
     want = {k: v for k, v in json.loads((run / "fixture.json").read_text(encoding="utf-8")).items() if not k.endswith(".sids")}
     project = run / "project"
     have = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in sorted(project.rglob("*"))
             if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__"} & set(p.parts)}
     changed = sorted(k for k in set(want) | set(have) if want.get(k) != have.get(k))
-    results.append((not changed, f"files that differ from the fixture: {changed or 'none'}"))
-    return results
+    return not changed, f"files that differ from the fixture: {changed or 'none'}"
+
+
+def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
+    path = run / "outputs" / "answer.md"
+    text = path.read_text(encoding="utf-8") if path.exists() else ""
+    answer = re.split(r"^#+\s*commands?\s+run", text, flags=re.I | re.M)[0]
+    # Every number that follows the word: "event 103", "events 104 and 105", "Events 103-105".
+    numbers = sorted({int(n) for span in re.findall(r"\bevents?\b[^.\n]{0,40}", answer, re.I)
+                      for n in re.findall(r"(?<![\w.])\d{1,3}(?![\w.]|\s*(?:seconds?|s\b|px|%))", span)})
+    said = f"event numbers the answer gives: {numbers or 'none'}"
+    return [(103 in numbers and bool(re.search(r"finish\s*line", answer, re.I)), said),
+            (108 in numbers and "showgameover" in answer.lower() and bool(re.search(r"restart", answer, re.I)), said),
+            (all(re.search(word, answer, re.I) for word in ("player", "success", "fail")),
+             "stated: " + ", ".join(w for w in ("player", "success", "fail") if re.search(w, answer, re.I))),
+            (bool(numbers) and all(102 <= n <= 108 for n in numbers), said),
+            unchanged(run)]
 
 
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
-           "name-the-restart-event": grade_name_the_restart_event}
+           "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet}
 
 
 def mean(numbers: list[float]) -> dict | None:
     """A mean over the cases of an arm. No deviation: each case is run once per
     arm, and a spread across different cases measures the cases, not the arm."""
     return {"mean": round(statistics.mean(numbers), 3), "cases": len(numbers)} if numbers else None
+
+
+def deltas(by_case: dict[str, dict[str, dict]]) -> dict:
+    """with_skill less each other arm, over the cases both ran: what the skill
+    buys in pass rate and costs in seconds, tokens and tool calls."""
+    out = {}
+    for other in sorted({arm for runs in by_case.values() for arm in runs} - {"with_skill"}):
+        both = [runs for runs in by_case.values() if "with_skill" in runs and other in runs]
+        out[f"with_skill - {other}"] = {"cases": len(both), **{
+            key: round(statistics.mean(runs["with_skill"][key] - runs[other][key] for runs in pairs), 3)
+            for key in ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
+            if (pairs := [r for r in both if r["with_skill"].get(key) is not None and r[other].get(key) is not None])}}
+    return out
 
 
 def main() -> int:
@@ -219,12 +254,14 @@ def main() -> int:
             (run / "grading.json").write_text(json.dumps({"assertion_results": graded, "summary": summary},
                                                          indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
             timing = json.loads((run / "timing.json").read_text(encoding="utf-8")) if (run / "timing.json").exists() else {}
+            trace = json.loads((run / "trace.json").read_text(encoding="utf-8")) if (run / "trace.json").exists() else {}
             arm = arms.setdefault(run.name, {"pass_rate": [], "time_seconds": [], "tokens": [], "runs": []})
             arm["pass_rate"].append(summary["pass_rate"])
             arm["runs"].append(f"{name}: {passed}/{len(graded)}")
             by_case.setdefault(name, {})[run.name] = {
-                "passed": f"{passed}/{len(graded)}", "tokens": timing.get("total_tokens"),
-                "seconds": round(timing["duration_ms"] / 1000, 1) if timing else None}
+                "passed": f"{passed}/{len(graded)}", "pass_rate": summary["pass_rate"], "tokens": timing.get("total_tokens"),
+                "seconds": round(timing["duration_ms"] / 1000, 1) if timing else None,
+                **{k: trace[k] for k in ("tool_calls", "lost_calls") if k in trace}}
             if timing:
                 arm["time_seconds"].append(timing["duration_ms"] / 1000)
                 arm["tokens"].append(timing["total_tokens"])
@@ -237,6 +274,7 @@ def main() -> int:
 
     summary = {arm: {"pass_rate": mean(v["pass_rate"]), "time_seconds": mean(v["time_seconds"]),
                      "tokens": mean(v["tokens"]), "runs": v["runs"]} for arm, v in arms.items()}
+    summary["delta"] = deltas(by_case)
     (iteration / "benchmark.json").write_text(json.dumps(
         {"runs_per_case_and_arm": 1, "run_summary": summary, "by_case": by_case, "void_runs": void}, indent=2) + "\n",
         encoding="utf-8")

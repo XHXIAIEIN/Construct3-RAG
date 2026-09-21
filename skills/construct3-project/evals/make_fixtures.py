@@ -1,15 +1,24 @@
 """Lay out the project folders of one eval iteration, one per test case and arm.
 
-    python evals/make_fixtures.py RUNS_DIR [--arms with_skill without_skill]
+    python evals/make_fixtures.py RUNS_DIR [--arms with_skill without_skill] [--cases NAME ...]
+                                  [--old-clone FOLDER] [--examples FOLDER]
 
 RUNS_DIR must lie outside the Construct3-RAG clone: an agent started below
 the clone reads its AGENTS.md, which routes to this skill, and a baseline
-that has the skill is not a baseline. Every project is the stand-in game of
-assets/build_project.py. with_skill holds the skill and the block as
-install.py leaves them; without_skill holds neither. Both are without
-tools/, so the task is a hand edit of a project made in the editor.
+that has the skill is not a baseline. A project is the stand-in game of
+assets/build_project.py, without tools/, so that the task is a hand edit of
+a project made in the editor; or, for a fixture `example:<id>`, a copy of
+that official example from --examples.
 
-exit codes: 0 laid out, 1 RUNS_DIR is inside the clone or a target exists
+An arm named with_... holds the skill and the block as install.py leaves
+them, without_... holds neither, and old_... holds the previous version of
+the skill, installed by the install.py of --old-clone: a checkout of the
+commit before the change, such as `git worktree add --detach FOLDER HEAD`
+made before editing. The old copy then names the old checkout as its clone;
+pointed at this one it would report that it differs and be refreshed.
+
+exit codes: 0 laid out, 1 RUNS_DIR is inside the clone, a target exists, or
+an example or the old clone is missing
 """
 import argparse
 import hashlib
@@ -33,12 +42,16 @@ def run(*cmd: str, cwd: Path) -> str:
 
 
 def stand_in(root: Path) -> Path:
-    """The generated game with the skill installed, as tests/test_project_tools.py builds it."""
+    """The generated game, as tests/test_project_tools.py builds it, with the
+    generator and the skill taken out again: each arm installs its own."""
     (root / "tools").mkdir(parents=True)
     (root / "project.c3proj").write_text(json.dumps({"uniqueId": "eval", "properties": {}}), encoding="utf-8")
     run(str(SKILL / "scripts" / "install.py"), "--project", str(root), cwd=root)
     shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
     run("tools/build_project.py", cwd=root)
+    for left in ("tools", ".agents"):
+        shutil.rmtree(root / left)
+    (root / "AGENTS.md").unlink()
     return root
 
 
@@ -77,8 +90,10 @@ def digest(project: Path) -> dict:
     out: dict = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                  for p in sorted(project.rglob("*"))
                  if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__"} & set(p.parts)}
-    sheet = json.loads((project / "eventSheets" / "Game.json").read_text(encoding="utf-8"))
-    out["eventSheets/Game.json.sids"] = sids(sheet["events"])
+    for path in sorted((project / "eventSheets").rglob("*.json")):
+        if not path.name.endswith(".uistate.json"):
+            sheet = json.loads(path.read_text(encoding="utf-8"))
+            out[f"{path.relative_to(project).as_posix()}.sids"] = sids(sheet["events"])
     return out
 
 
@@ -86,7 +101,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("runs_dir", metavar="RUNS_DIR", help="a new or empty folder outside the clone, one per iteration")
     ap.add_argument("--arms", nargs="+", default=["with_skill", "without_skill"], metavar="ARM",
-                    help="folders to lay out per test case; a name starting with without_ gets no skill")
+                    help="folders to lay out per test case; without_... gets no skill, old_... the one of --old-clone")
+    ap.add_argument("--cases", nargs="+", metavar="NAME", help="test cases by name (default: all of evals.json)")
+    ap.add_argument("--old-clone", metavar="FOLDER", help="a checkout of the clone before the change, for old_... arms")
+    ap.add_argument("--examples", metavar="FOLDER",
+                    default=str(REPO.parent / "Construct-Example-Projects" / "example-projects"),
+                    help="the example-projects folder of the Construct-Example-Projects clone (default: beside this clone)")
     args = ap.parse_args()
 
     out = Path(args.runs_dir).resolve()
@@ -94,19 +114,36 @@ def main() -> int:
         sys.exit(f"{out} is inside the clone {REPO}: an agent started there reads the clone's AGENTS.md; "
                  f"name a folder outside it, such as one under the system's temporary directory")
 
+    installers = {"with_": SKILL / "scripts" / "install.py"}
+    if any(arm.startswith("old_") for arm in args.arms):
+        installers["old_"] = Path(args.old_clone or "") / "skills" / SKILL.name / "scripts" / "install.py"
+        if not args.old_clone or not installers["old_"].exists():
+            sys.exit(f"an old_... arm needs --old-clone, a checkout that holds skills/{SKILL.name}/scripts/install.py")
+    unknown = set(args.cases or []) - {c["name"] for c in CASES}
+    if unknown:
+        sys.exit(f"no test case named {', '.join(sorted(unknown))}; evals.json has: {', '.join(c['name'] for c in CASES)}")
+
     with tempfile.TemporaryDirectory() as tmp:
         game = stand_in(Path(tmp) / "coins")
-        for case in CASES:
+        for case in (c for c in CASES if not args.cases or c["name"] in args.cases):
+            source = game
+            if case["fixture"].startswith("example:"):
+                source = Path(args.examples) / case["fixture"].split(":", 1)[1]
+                if not (source / "project.c3proj").exists():
+                    sys.exit(f"{source} is not a folder project; --examples is the example-projects folder of the "
+                             f"Construct-Example-Projects clone")
             for arm in args.arms:
                 target = out / case["name"] / arm / "project"
                 if target.exists():
                     sys.exit(f"{target} exists; name a new folder for a new iteration")
-                bare = ["tools", "__pycache__"] + ([".agents", "AGENTS.md"] if arm.startswith("without_") else [])
-                shutil.copytree(game, target, ignore=shutil.ignore_patterns(*bare))
+                shutil.copytree(source, target, ignore=shutil.ignore_patterns("__pycache__", "*.uistate.json"))
                 (target.parent / "outputs").mkdir()
                 if case["fixture"] == "coins-load-errors":
                     seed_load_errors(target)
                 (target.parent / "fixture.json").write_text(json.dumps(digest(target), indent=2), encoding="utf-8")
+                installer = next((script for prefix, script in installers.items() if arm.startswith(prefix)), None)
+                if installer:
+                    run(str(installer), "--project", str(target), cwd=target)
                 print(target)
     return 0
 

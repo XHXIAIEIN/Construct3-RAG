@@ -48,6 +48,21 @@
         "The answer states both conditions, Coin.Count = 0 and Trigger once, and the 1 second wait",
         "No project file differs from the fixture"
       ]
+    },
+    {
+      "id": 4,
+      "name": "find-in-a-long-sheet",
+      "fixture": "example:abductractor",
+      "prompt": "this is the abductractor example from construct, folder <project> . what happens when a tractor gets to the finish line, and where does the game actually restart after that? give me the event numbers like the editor shows them in the margin so i can find them, the sheet is huge",
+      "expected_output": "Event 103, On collision with FinishLine in the group Finish Line (102), calls prepareForGameOver; its sub-events 104 and 105 call showGameOver with success when the tractor is the player's and with fail otherwise; the function showGameOver, event 108, shows the text, waits 4 seconds and restarts the layout. The sheet prints 38 000 characters and these events are its last, so the answer needs the end of it. The project is left unchanged.",
+      "files": [],
+      "assertions": [
+        "The answer gives 103 as the event where a tractor collides with the finish line",
+        "The answer gives 108, the function showGameOver, as the place where the layout restarts",
+        "The answer tells the player's tractor, a success, from any other, a fail",
+        "Every event number the answer gives lies between 102 and 108",
+        "No project file differs from the fixture"
+      ]
     }
   ]
 }
