@@ -252,14 +252,15 @@ class Project:
 
         self._schema_cache: dict[tuple[str, str], dict | None] = {}
         self._addon_names: dict[str, dict[str, str]] = {}
+        self._expression_names: dict[tuple[str, str], dict[str, str]] = {}
         self.index = load(rag / "data" / "c3-schemas" / "_index.json")
         if not self.schemas.is_dir():
             sys.exit(f"no schemas for --locale {locale}; the clone has: {', '.join(self.index.get('languages', []))}")
         self.common = self.schema("plugins", "_common")
         self.system = self.schema("plugins", "system")
-        self.system_expression_names = {LOWER(e["translated-name"]) for e in self.system["expressions"]}
+        self.system_expression_names = self.expressions_of(self.system)
         self.system_expressions = self.system_expression_names | {"self", "loopindex", "infinity"}
-        self.common_expressions = {LOWER(e["translated-name"]) for e in self.common["expressions"]}
+        self.common_expressions = self.expressions_of(self.common)
 
         self.types = self.load_listed("objectTypes")
         self.families = self.load_listed("families")
@@ -344,6 +345,22 @@ class Project:
                 else:
                     self.warn(f"no schema for {kind[:-1]} {addon_id}: its ACEs and properties are not checked")
         return self._schema_cache[key]
+
+    def expression_names(self, schema: dict | None) -> dict[str, str]:
+        """ACE id -> the name an expression is written under. A project file holds
+        the English name whatever language the editor runs in, so it is read from
+        en-US: in another locale `translated-name` is wording, `移动速度` for `Speed`."""
+        if not schema:
+            return {}
+        key = (schema["type"], schema["id"])
+        if key not in self._expression_names:
+            english = schema if self.locale == "en-US" else \
+                load(self.rag / "data" / "c3-schemas" / "en-US" / f"{schema['type']}s" / f"{schema['id']}.json")
+            self._expression_names[key] = {e["id"]: e["translated-name"] for e in english.get("expressions", [])}
+        return self._expression_names[key]
+
+    def expressions_of(self, schema: dict | None) -> set[str]:
+        return {LOWER(name) for name in self.expression_names(schema).values()}
 
     # --- object types and families ----------------------------------------------------
     def families_of(self, obj: str) -> list[str]:
