@@ -113,9 +113,10 @@ class Checker:
     earlier one collected: the layers and template instances of the layouts,
     the functions and groups of every sheet."""
 
-    def __init__(self, p: c3.Project, limit: int = 0) -> None:
+    def __init__(self, p: c3.Project, limit: int = 0, sheets: dict[str, dict] | None = None) -> None:
         self.p = p
         self.limit = limit
+        self.unsaved = sheets or {}     # edit_sheet.py checks a sheet before it writes it
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
         self.sheets: dict[str, dict] = {}
@@ -132,7 +133,7 @@ class Checker:
         self.created: set[str] = set()
         self._eases: set[str] = set()
 
-    def run(self) -> int:
+    def check(self) -> None:
         self.check_names()
         self.check_images()
         self.check_layouts()
@@ -142,6 +143,9 @@ class Checker:
         self.check_calls()
         self.check_uniqueness()
         self.check_files_and_addons()
+
+    def run(self) -> int:
+        self.check()
         return self.report()
 
     # --- names, addon ids, families -----------------------------------------------------
@@ -293,7 +297,7 @@ class Checker:
     def check_layouts(self) -> None:
         p = self.p
         self.layouts = p.load_listed("layouts")
-        self.sheets = p.load_listed("eventSheets")
+        self.sheets = {**p.load_listed("eventSheets"), **self.unsaved}
         for lname, lay in self.layouts.items():
             self.collect_sids(lay)
             self.walk_layers(f"layout {lname}", lay["layers"])
@@ -596,15 +600,17 @@ class Checker:
                      f"editor stops with 'cannot add another trigger to event branch'. One event per trigger, or an "
                      f"OR block")
         for c, e in zip(conds, entries):
+            # Both are mended in the one condition, so they name it, as check_ace does.
+            its = f"{where} condition {next(i for i, x in enumerate(ev['conditions'], 1) if x is c)}"
             if c.get("isInverted") and (e.get("isTrigger") or e.get("isLooping") or e.get("isInvertible") is False):
                 kind = "a trigger" if e.get("isTrigger") else "a loop" if e.get("isLooping") else "this condition"
-                self.err(f"{where}: {describe(c)} is inverted, and {kind} cannot be; "
+                self.err(f"{its}: {describe(c)} is inverted, and {kind} cannot be; "
                          f"the editor stops with 'condition not invertible'")
             # Trigger once, Every X seconds: the editor keeps them out of a triggered branch, where they
             # are tested only in the tick the trigger fires. Else has its own rule below.
             if e.get("isCompatibleWithTriggers") is False and c["id"] != "else" \
                     and (triggers or (above and above.fires)):
-                self.warn(f"{where}: {describe(c)} is in a branch run by the trigger "
+                self.warn(f"{its}: {describe(c)} is in a branch run by the trigger "
                           f"{describe(triggers[0]) if triggers else above.name}; the editor does not offer it there, "
                           f"since it is only tested when the trigger fires")
         for i, c in enumerate(conds):
@@ -813,10 +819,14 @@ class Checker:
         if errors:
             print(f"{len(errors)} problem(s)")
             return 1
-        print(f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
-              f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
-              f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
+        print(self.ok_line())
         return 0
+
+    def ok_line(self) -> str:
+        p = self.p
+        return (f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
+                f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
+                f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
 
 
 def main() -> int:

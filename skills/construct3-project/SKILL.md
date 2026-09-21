@@ -9,8 +9,9 @@ metadata:
 # Construct 3 project files
 
 Scripts for the JSON of a Construct 3 project saved as a folder: look an ACE
-up with the JSON to write, read a sheet as the editor words it, check the
-project before the editor opens it, generate a whole project from Python.
+up with the JSON to write, read a sheet as the editor words it, change it
+from a plan, check the project before the editor opens it, generate a whole
+project from Python.
 They read the schemas of the Construct3-RAG clone, so a name they accept
 exists and a name they reject does not.
 
@@ -39,7 +40,8 @@ exists and a name they reject does not.
 | Script | Use |
 |--------|-----|
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write |
-| `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only |
+| `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
+| `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:` |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
@@ -77,9 +79,10 @@ and against where the ACE lives: the behavior, the category, `condition`,
 `action`, `expression`. `System timer` finds nothing and lists the
 categories; `System time` lists *Every X seconds*, *Wait* and `dt`.
 
-Copy the `write:` line and replace the values. `<new sid>` is a 15-digit
-number the project does not use yet; the checker reports a repeat. An
-expression prints the way it is reached, `Coin.Tween.Progress(tags)`. What
+Copy the `write:` line and replace the values. Leave `"sid": <new sid>` out
+of a plan for `edit_sheet.py`, which gives every new entry one; in a hand
+edit it is a 15-digit number the project does not use yet. An expression
+prints the way it is reached, `Coin.Tween.Progress(tags)`. What
 the line does not show is in
 `Construct3-RAG/prompts/references/hand-editing-project-files.md`: read it
 before writing a function or custom action block or a call of one, a
@@ -99,9 +102,9 @@ python scripts/print_sheet.py Game
            -> System: Wait 1 seconds (use time scale: True)
 ```
 
-Read a sheet this way before and after an edit: a wrong pick or a missing
-branch shows in ten lines of events and hides in three hundred lines of JSON.
-Read an official example the same way, `--project
+Read a sheet this way before an edit, and read what a plan prints after it:
+a wrong pick or a missing branch shows in ten lines of events and hides in
+three hundred lines of JSON. Read an official example the same way, `--project
 <Construct-Example-Projects>/example-projects/template-snake`. A long sheet
 prints in parts: run the command its last line gives, or ask for a range,
 `--events 40-80`, which starts with the events the range sits in.
@@ -112,13 +115,66 @@ in JSON line numbers, and read a screenshot or a pasted Find result back the
 same way. `--outline` adds each event's sid, the string to search the JSON
 for.
 
+## Change a sheet with a plan
+
+Every change to an event sheet goes through a plan: what changes, as JSON in
+a file of its own, which the script puts into the sheet. The sheet's JSON is
+indented seven to seventeen tabs deep, and an exact-match edit of several
+lines there fails one time in three. Other project files are edited as they
+are.
+
+```json
+[
+  {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft", "initialValue": "30"}]},
+  {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "\"Time: \" & timeLeft"}}]},
+  {"event": 7, "action": 2, "set": {"parameters": {"text": "\"Score: \" & score & \"  Time: \" & timeLeft"}}},
+  {"after": 8, "events": [{"eventType": "group", "title": "Timer", "children": [
+    {"eventType": "block",
+     "conditions": [{"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}],
+     "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "timeLeft", "value": "1"}}]}]}]}
+]
+```
+
+```bash
+python scripts/edit_sheet.py Game plan.json
+```
+
+Every number is an event number of the sheet as it prints now, whatever the
+operations above it do, so one print serves a whole plan.
+
+- New events: `"before": N` goes above event N and the comments about it,
+  `"after": N` below it and its sub-events, `"into": N` among its
+  sub-events, last, and `"into": 0` to the end of the sheet. An event is
+  written as the sheet holds it, without `sid` and whatever the editor
+  always writes the same way: a group needs its `title`, a variable its
+  `name`, a block its conditions and actions.
+- What is there: `"add-actions"` and `"add-conditions"`, with
+  `"position": 1` for the front; `"set"` on a condition or an action, a
+  parameter at a time, or on the event itself, with `null` to take a key
+  out; `{"event": 6, "action": 3, "remove": true}`; `{"remove": N}`,
+  `{"move": N, "after": M}` and `{"replace": N, "events": [...]}` for whole
+  events. `python scripts/print_sheet.py Game --show N` prints event N as
+  JSON, to put back changed.
+- A finding of the checker names its place the same way: `sheet Game event 5
+  condition 1` is `{"event": 5, "condition": 1, "set": {...}}`, and a
+  trigger where none may be moves out with `{"move": 7, "after": 6}`.
+
+Nothing is written unless the whole plan holds. The sheet it makes is checked
+as `check_project.py` checks, and a problem the plan would add is printed
+under its operation, with the file left as it was; a problem that was there
+before does not stop it. It ends with the changed events as the editor words
+them, under their new numbers, and the checker's last line. `--dry-run` does
+all of that and writes nothing.
+
 ## Check after every change
 
-1. Edit the project files, or rerun the generator.
-2. Run `python scripts/check_project.py`.
-3. Fix every line it prints: each names its place, `sheet Game event 15
-   action 2`, and says what to write where it can. Warnings do not fail the
-   run; a project an agent wrote should have none.
+1. Change a sheet with `edit_sheet.py`, edit another project file, or rerun
+   the generator.
+2. Run `python scripts/check_project.py`; a plan that ended with `ok:` has
+   done it.
+3. Fix every line it prints, all of them in one plan: each names its place,
+   `sheet Game event 15 action 2`, and says what to write where it can.
+   Warnings do not fail the run; a project an agent wrote should have none.
 4. Repeat until the last line starts with `ok:`. Only then ask the user to
    open the project.
 

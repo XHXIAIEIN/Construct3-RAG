@@ -2,9 +2,12 @@
 
 Read this when writing or changing `eventSheets/*.json`, `layouts/*.json`,
 `objectTypes/**/*.json`, `families/*.json`, `project.c3proj` or clipboard
-payloads without the editor. Clipboard payloads use the same condition and
-action entries; the envelope is documented in
-`Construct3-Clipboard/docs/clipboard-format.md`.
+payloads without the editor. Events go into a sheet through the
+`construct3-project` skill's `scripts/edit_sheet.py`, which takes them as a
+plan, gives them their sids and checks the result before it writes; what
+follows is how each entry of such a plan, or of a hand edit, is written.
+Clipboard payloads use the same condition and action entries; the envelope
+is documented in `Construct3-Clipboard/docs/clipboard-format.md`.
 
 ## Encodings
 
