@@ -10,12 +10,11 @@ editor, checker, generator) into a game project. Version and counts:
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
 English and Chinese data; example projects by topic; works from the
-committed files alone; the service tells exact queries from semantic ones.
+committed files alone; the service answers exact queries and declines the rest.
 
 Tiers: `data/` and the CDN update pipeline are core; the lookup service is
-optional; Qdrant retrieval is the optional full mode (`src/AGENTS.md`).
-Moving a feature between tiers needs evidence and a record in
-`docs/decisions/`.
+optional (`src/AGENTS.md`). Moving a feature between tiers needs evidence and
+a record in `docs/decisions/`.
 
 ## 2. SOP: answer a Construct 3 fact question
 
@@ -148,8 +147,7 @@ decision.
 ## 6. Entry points
 
 ```bash
-python scripts/setup.py                       # lookup server, no Qdrant
-python scripts/setup.py --full                # Qdrant + embeddings + index
+python scripts/setup.py                       # lookup server
 python scripts/init.py                        # refresh CDN data, export schemas
 python -m uvicorn src.api:app --port 8765     # server only
 python tests/eval_query_quality.py --strategy all --split all --output query-quality.json

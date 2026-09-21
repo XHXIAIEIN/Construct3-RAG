@@ -3,9 +3,8 @@
 ## Product boundary
 
 Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
-The HTTP service is an optional access layer over that data. Direct Lookup is
-the default offline search path; Qdrant, embeddings, sparse vectors, and
-reranking are explicit full-mode capabilities.
+The HTTP service is an optional access layer over that data, and Direct Lookup
+is all it does: deterministic, offline, with no model and no database behind it.
 
 The `construct3-project` skill under `skills/` is outside this layout. Its
 scripts import the standard library and each other, read `data/c3-schemas/`
@@ -16,7 +15,7 @@ The project follows four dependency rules:
 
 1. Data contracts do not load files, configuration, models, or services.
 2. Application workflows depend on typed ports, never adapter internals.
-3. Network/model work is lazy and cannot run during a LITE import or lookup.
+3. No import and no query reaches the network or loads a model.
 4. Historical import paths are facades only; canonical modules never depend on
    a compatibility facade.
 
@@ -31,12 +30,11 @@ src/
     playground.html              Debug UI served at /playground
   application/
     models.py                    SearchCommand, execution state, outcome, stages
-    ports.py                     Lookup and semantic Protocols
+    ports.py                     Lookup Protocol
     search.py                    Search SOP orchestration
     health.py                    Typed health aggregation
   domain/
     lookup.py                    Lookup intent/match/result records
-    retrieval.py                 SearchResult, preset, and health records
     api.py                       Legacy re-export of interfaces/http/models.py
   lookup/
     service.py                   Canonical deterministic LookupEngine
@@ -49,49 +47,26 @@ src/
     examples_index.py            Example metadata index
     scripting_index.py           Script API index
     indexes.py                   Legacy index re-exports only
-  qdrant/
-    collection_registry.py       Typed loader for collections.json
-    collections.json             Collection names, manual routes, taxonomy
-    collections.py               Compatibility constants derived from the registry
-    adapter.py                   Canonical Qdrant publication adapter
-    retrieval/
-      semantic.py                Optional Qdrant semantic adapter
-      identity.py                The single stable-identity implementation
-      policy.py                  Pure budgets, tiers, dedup, and fusion policy
-    vector/
-      embedding.py               Shared lazy dense/native-sparse model adapter
-      sparse.py                  Shared deterministic BM25 adapter
   ingest/
     c3_fetcher.py                CDN fetch, cache, schema/example/lang export
     common_aces.py               Shared world-object ACEs from common_aces.json
-    contracts.py                 VectorDocument, VectorMode, pipeline reports
-    pipeline.py                  Prepare -> validate -> publish -> verify SOP
-    indexer.py                   Historical facade and compatibility CLI
-    embedding.py                 Compatibility export of qdrant/vector/embedding.py
-    sparse.py                    Compatibility export of qdrant/vector/sparse.py
-    models.py                    Normalized ACE/effect parser records
-    *_parser.py                  Source-specific parsing/building
   locale/
-    catalog.json                 Query vocabulary, aliases, and index hints per locale
+    catalog.json                 Query vocabulary, grammar, and aliases per locale
     resources.py                 Catalog validation, merging, and format adapters
   settings/__init__.py           Immutable, grouped settings loader
   observability/trace.py        Optional request-local diagnostics
   rag/
     lookup.py                    Historical Lookup facade
-    retriever.py                 Historical semantic facade
     _trace.py                    Historical trace facade
     messages.py                  Remaining lookup compatibility text templates
 ```
 
-`src/domain/api.py`, `src/ingest/embedding.py`, and
-`src/ingest/sparse.py` are also compatibility re-exports. New code imports
-HTTP contracts from `src.interfaces.http`, vector adapters from
-`src.qdrant.vector`, and search implementations from `src.lookup` /
-`src.qdrant.retrieval`.
+`src/domain/api.py` is also a compatibility re-export. New code imports HTTP
+contracts from `src.interfaces.http` and the lookup from `src.lookup`.
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
-repository root, returning a frozen tree of path, Schema, runtime, vector,
-and feature groups. Every field has a runtime reader. It does not load dotenv or
+repository root, returning a frozen tree of path, Schema, and runtime groups.
+Every field has a runtime reader. It does not load dotenv or
 probe external services; every process entry point (`src.api`, each
 `scripts/*.py`) calls `load_dotenv()` itself first.
 
@@ -108,42 +83,35 @@ api.py -------------- dependency construction only
     |
     v
 application/search.py -----> application/ports.py
-    |                              |             |
-    |                              v             v
-    |                         lookup/service  qdrant/retrieval/semantic
-    v                              |             |
-domain/* <-------------------------+-------------+
-    ^                                            |
-    +---------------- retrieval pure policy <----+
+    |                              |
+    |                              v
+    |                         lookup/service
+    v                              |
+domain/* <-------------------------+
 
 Explicit maintenance path:
 
-ingest/pipeline.py -----> ingest/contracts.py
-          |                       ^
-          +---- parsers ----------+
-          |
-          +---- qdrant/adapter.py -> qdrant/vector/* -> Qdrant
+scripts/init.py -----> ingest/c3_fetcher.py -----> data/
 ```
 
-Static boundary tests reject `lookup -> rag`, runtime `qdrant/retrieval -> ingest`,
-and application calls to private retriever members.
+Static boundary tests reject `lookup -> rag` and `application -> ingest`, keep
+the module graph acyclic, and check that importing the service loads no model
+or vector package.
 
 ## Search SOP
 
-`SearchWorkflow` carries one `SearchCommand` through five stable stages:
+`SearchWorkflow` carries one `SearchCommand` through three stable stages:
 
 | Stage | Responsibility | Data in state |
 |---|---|---|
-| `initialize` | Detect language and validate query/filter combinations | command, language |
-| `lookup` | Run deterministic structured lookup when the mode permits | `LookupResponse` |
-| `semantic` | Use the optional semantic port when full mode permits | `list[SearchResult]` |
-| `deduplicate` | Remove only exact identities already returned by lookup | domain results |
+| `initialize` | Detect language and validate the query and language hint | command, language |
+| `lookup` | Run deterministic structured lookup | `LookupResponse` |
 | `respond` | Freeze `SearchOutcome`; the HTTP presenter maps it to DTOs | typed outcome |
 
-Validation is part of initialization rather than a sixth public stage. Unknown
-collections, blank queries, invalid language hints, and semantic filters on
-lookup/list modes are rejected before LITE or Qdrant availability can affect
-the result.
+Validation is part of initialization rather than a fourth public stage. The
+HTTP model rejects a field or a mode it does not have instead of ignoring it;
+a blank query or an unknown language hint is rejected before the lookup engine
+is built.
 
 ```text
 SearchRequest (Pydantic)
@@ -153,18 +121,8 @@ SearchRequest (Pydantic)
     -> SearchResponse (Pydantic presenter output)
 ```
 
-Internal stable IDs and debug state never live in Pydantic private attributes
-or temporary response dictionaries. Semantic docs, terms, and examples have
-concrete OpenAPI item models, including their context tier.
-
-### Default and full modes
-
-- `LITE_MODE=true` is the default. It can construct Lookup but never constructs
-  Qdrant, an embedding model, BM25, or a reranker.
-- Full mode probes Qdrant before loading the embedding model. A recent outage
-  fast-fails and degrades to lookup-only behavior.
-- `mode=auto` means Lookup plus semantic retrieval when full mode is enabled.
-  It is not permission to download a model or fetch data implicitly.
+Debug state never lives in Pydantic private attributes or temporary response
+dictionaries.
 
 ## Direct Lookup SOP
 
@@ -185,61 +143,15 @@ Direct Lookup is deliberately conservative:
 
 - a hit requires non-empty structured matches;
 - exact entity spans win over substring guesses;
-- tutorial, comparison, concept, and solution requests fall back;
+- tutorial, comparison, concept, and solution requests are declined: the
+  response carries no `lookup` section, and reading the manual or the examples
+  is the caller's;
 - directed aliases are scoped, single-hop, and deterministic;
 - `_common` ACEs are searched only for compatible World-like objects;
 - examples, terms, script APIs, properties, and ACEs retain typed identities.
 
 The four repositories expose public loading/iteration/search methods. Callers
 do not inspect another repository's private dictionaries.
-
-## Semantic retrieval SOP
-
-`HybridRetriever` is the optional Qdrant adapter behind `SemanticSearchPort`:
-
-1. Probe backend availability without loading the model.
-2. Resolve an explicit plugin/section/collection route or fixed default fanout.
-3. Query named dense vectors and, when configured, named sparse vectors.
-4. Apply the existing weighted RRF and optional reranker policy.
-5. Enforce exact identity deduplication, result budget, and diversity backfill.
-6. Optionally apply the adaptive threshold.
-
-The adapter exposes public collection-search methods; the application workflow
-does not call `_search()` or read Qdrant state fields. Its historical
-`src.rag.retriever` path is a re-export facade.
-
-Weighted RRF and reranking remain optional, evidence-gated features. The
-frozen semantic gold set, identified live index, quality metrics, and latency
-must support any change to their default status.
-
-## Identity contract
-
-`src/qdrant/retrieval/identity.py` is the only identity authority. Lookup and semantic
-results use equivalent stable keys, including:
-
-```text
-ace|plugin|<plugin_id>|<ace_type>|<ace_id>
-ace|behavior|<behavior_id>|<ace_type>|<ace_id>
-examples|<slug>
-terms|<plugin_id>|<ace_type>|<ace_id>
-script_api|<class>|<method>
-```
-
-Unknown identities are preserved rather than deduplicated heuristically.
-
-## Data maintenance SOP
-
-The maintenance path is separate from request handling. It builds a complete,
-validated `VectorDocument` set before the first Qdrant mutation:
-
-```text
-prepare -> validate -> publish -> verify
-```
-
-BM25 is fitted from exactly the final document text set, including contextual
-text and example event/script enrichment. Collection layout comes from the
-typed JSON registry. See [data-pipeline.md](data-pipeline.md) for the detailed
-contracts and the current non-atomic, per-collection publication boundary.
 
 ## Schema snapshot contract
 
@@ -267,11 +179,7 @@ Compatibility facades preserve established imports while callers migrate:
 |---|---|
 | `src.domain.api` | `src.interfaces.http.models` |
 | `src.rag.lookup` | `src.lookup` |
-| `src.rag.retriever` | `src.qdrant.retrieval.semantic` and pure retrieval modules |
 | `src.rag._trace` | `src.observability.trace` |
-| `src.ingest.embedding` | `src.qdrant.vector.embedding` |
-| `src.ingest.sparse` | `src.qdrant.vector.sparse` |
-| `src.ingest.indexer.index_all_data` | `src.ingest.pipeline.run_index_pipeline` |
 
 Facades may bind legacy defaults or names, but canonical modules must not import
 them. Compatibility is checked by object-identity and import-boundary tests.

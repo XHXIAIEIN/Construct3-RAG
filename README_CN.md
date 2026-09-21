@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-[Construct 3](https://www.construct.net) 的结构化双语参考数据：插件、行为、ACE、特效、示例项目、脚本接口和原始语言包。`data/` 下的内容都是已提交的 JSON 和 `.d.ts`，脚本或 LLM 可以直接读取。可选服务在数据之上提供查找和语义检索。
+[Construct 3](https://www.construct.net) 的结构化双语参考数据：插件、行为、ACE、特效、示例项目、脚本接口和原始语言包。`data/` 下的内容都是已提交的 JSON 和 `.d.ts`，脚本或 LLM 可以直接读取。可选服务在数据之上提供关键词查找。
 
 Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准。Scirra 发布新的稳定版后，[更新工作流](.github/workflows/update.yml)会自动提出 pull request。
 
@@ -12,9 +12,9 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 | 仓库 | 内容 | 与本仓库的关系 |
 |---|---|---|
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器中的全部示例，以文件夹项目形式保存 | `data/c3-examples/` 是元数据，这里是源文件。完整模式下克隆到同级目录即可被索引。 |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。完整模式下克隆到同级目录即可被索引。 |
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | 概念和操作说明。完整模式下克隆到同级目录即可被索引。 |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器中的全部示例，以文件夹项目形式保存 | `data/c3-examples/` 是元数据，这里是源文件。 |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。 |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | 概念和操作说明。 |
 
 "同级目录"指与本仓库并列的目录。路径和选项见 [docs/guide/quick-start.md](docs/guide/quick-start.md)。
 
@@ -71,13 +71,7 @@ pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-该命令基于已提交的数据启动确定性、离线的查找服务，不连接 Qdrant，也不加载模型。覆盖 Schema、手册和示例项目的语义检索需要显式启用，依赖 Qdrant 和嵌入模型：
-
-```bash
-pip install -r src/requirements-full.txt
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-python scripts/setup.py --full
-```
+该命令基于已提交的数据启动确定性、离线的查找服务，不需要数据库、模型和网络。
 
 安装选项、`/search` 与 `/health` 接口和返回结构见 [docs/guide/quick-start.md](docs/guide/quick-start.md) 和 [docs/guide/api-reference.md](docs/guide/api-reference.md)。
 

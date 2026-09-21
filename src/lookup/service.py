@@ -85,7 +85,7 @@ class LookupEngine(LookupHandlers):
         )
 
     def try_lookup(self, query: str) -> LookupResponse | None:
-        """Return a structured direct hit, or ``None`` for semantic fallback."""
+        """Return a structured direct hit, or ``None`` when the lookup declines the query."""
         started_at = time.time()
         intent = self.classifier.classify(query)
         if intent is not None:

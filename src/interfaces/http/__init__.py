@@ -4,8 +4,6 @@ from .models import (
     ACELocaleResult,
     ACEParam,
     DebugInfo,
-    DocResult,
-    ExampleResult,
     HealthResponse,
     LookupDebug,
     LookupItemResult,
@@ -14,17 +12,12 @@ from .models import (
     PluginInfo,
     SearchRequest,
     SearchResponse,
-    SemanticDebug,
-    SemanticSection,
-    TermResult,
 )
 
 __all__ = [
     "ACELocaleResult",
     "ACEParam",
     "DebugInfo",
-    "DocResult",
-    "ExampleResult",
     "HealthResponse",
     "LookupDebug",
     "LookupItemResult",
@@ -33,7 +26,4 @@ __all__ = [
     "PluginInfo",
     "SearchRequest",
     "SearchResponse",
-    "SemanticDebug",
-    "SemanticSection",
-    "TermResult",
 ]

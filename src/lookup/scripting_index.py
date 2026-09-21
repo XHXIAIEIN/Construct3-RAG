@@ -46,7 +46,7 @@ class ScriptingIndex:
 
         Natural-language overlap is deliberately excluded: scripting lookup is
         authoritative only for a qualified ``Class.member`` or a standalone
-        class/member identifier. Everything else falls back to semantic search.
+        class/member identifier. Everything else is declined.
         """
         self.ensure_loaded()
         identifier = query.strip()

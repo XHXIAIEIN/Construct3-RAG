@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Evaluate offline Direct Lookup quality against the structured query gold set.
 
-The evaluator deliberately stops at the Direct Lookup boundary.  A lookup miss is
-reported as a semantic fallback route, but Qdrant, embedding models, Ollama and the
-network are never invoked.
+A lookup miss is reported as the ``semantic_fallback`` route: the query class
+Direct Lookup declines and leaves to the caller. No model and no network is
+involved.
 
 Examples:
     python tests/eval_query_quality.py
@@ -1612,7 +1612,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Compare offline Direct Lookup strategies against tests/fixtures/query_gold.jsonl. "
-            "No Qdrant, model or network access is used."
+            "No model or network access is used."
         )
     )
     parser.add_argument(
@@ -1679,7 +1679,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "schema": schema,
             "mode": "offline_direct_lookup",
             "semantic_route_interpretation": (
-                "A lookup miss is recorded as semantic_fallback; semantic retrieval is not executed."
+                "A lookup miss is recorded as semantic_fallback: the service declines the query."
             ),
             "ranking_definitions": {
                 "case_pass": (

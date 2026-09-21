@@ -111,24 +111,6 @@ for _rule_id, _rule in _DIRECTED_ALIAS_DATA.items():
     _localized(_rule["triggers"], f"expansion.directed_aliases.{_rule_id}.triggers")
     _localized(_rule["additions"], f"expansion.directed_aliases.{_rule_id}.additions")
 
-_INDEX = CATALOG["index"]
-for _name in (
-    "labels", "ace_title_template", "ace_title_markers",
-    "common_ace_semantic_hints",
-):
-    _validate_metadata(_INDEX[_name], f"index.{_name}")
-_LABELS = _INDEX["labels"]["values"]
-for _group in ("ace_types", "addon_types"):
-    for _key, _value in _LABELS[_group].items():
-        _localized(_value, f"index.labels.{_group}.{_key}")
-for _key, _value in _LABELS.items():
-    if _key not in {"ace_types", "addon_types"}:
-        _localized(_value, f"index.labels.{_key}")
-_localized(_INDEX["ace_title_template"]["values"], "index.ace_title_template.values")
-_localized(_INDEX["ace_title_markers"]["values"], "index.ace_title_markers.values")
-for _ace_id, _value in _INDEX["common_ace_semantic_hints"]["values"].items():
-    _localized(_value, f"index.common_ace_semantic_hints.{_ace_id}")
-
 
 ACE_INTENT_KEYWORDS: dict[str, frozenset[str]] = {
     ace_type: frozenset(
@@ -327,89 +309,15 @@ ACE_DIRECTED_ALIASES: tuple[DirectedAliasRule, ...] = tuple(
 )
 
 
-def _label(name: str, locale: str) -> str:
-    return _LABELS[name][locale]
-
-
-def _group_label(group: str, name: str, locale: str) -> str:
-    return _LABELS[group][name][locale]
-
-
-COMMON_ADDON_NAME_ZH = _label("common_addon_name", "zh-CN")
-DESCRIPTION_LABEL_ZH = _label("description", "zh-CN")
-SCRIPT_NAME_LABEL_ZH = _label("script_name", "zh-CN")
-OPTIONS_LABEL_ZH = _label("options", "zh-CN")
-PARAMETERS_LABEL_ZH = _label("parameters", "zh-CN")
-RETURN_TYPE_LABEL_ZH = _label("return_type", "zh-CN")
-CATEGORY_LABEL_ZH = _label("category", "zh-CN")
-EFFECT_LABEL_ZH = _label("effect", "zh-CN")
-TRIGGER_TAG_ZH_EN = (
-    f"[{_label('trigger', 'zh-CN')}/{_label('trigger', 'en-US')}]"
-)
-ASYNC_TAG_ZH_EN = f"[{_label('async', 'zh-CN')}/{_label('async', 'en-US')}]"
-
-VECTOR_METADATA_PREFIXES_ZH_EN: tuple[str, ...] = (
-    f"{SCRIPT_NAME_LABEL_ZH}/{_label('script_name', 'en-US')}:",
-    f"{DESCRIPTION_LABEL_ZH}:",
-    f"{_label('description', 'en-US')}:",
-    f"{PARAMETERS_LABEL_ZH}:",
-    f"[{_label('trigger', 'zh-CN')}",
-    f"[{_label('async', 'zh-CN')}",
-    f"{RETURN_TYPE_LABEL_ZH}:",
-)
-ACE_TITLE_MARKERS_ZH: tuple[str, ...] = tuple(
-    marker
-    for locale in QUERY_LOCALE_ORDER
-    for marker in _INDEX["ace_title_markers"]["values"][locale]
-)
-
-
-def format_ace_title_zh_en(
-    *,
-    addon_type: str,
-    addon_zh: str,
-    addon_en: str,
-    ace_type: str,
-    ace_zh: str,
-    ace_en: str,
-) -> str:
-    """Format the existing bilingual vector title from catalog values."""
-    return _INDEX["ace_title_template"]["values"]["zh-CN"].format(
-        addon_type=_group_label("addon_types", addon_type, "zh-CN"),
-        addon_local=addon_zh,
-        addon_other=addon_en,
-        ace_type=_group_label("ace_types", ace_type, "zh-CN"),
-        ace_local=ace_zh,
-        ace_other=ace_en,
-    )
-
-
-def format_effect_title_zh_en(name_zh: str, name_en: str) -> str:
-    """Format the existing bilingual effect title from catalog values."""
-    return f"{EFFECT_LABEL_ZH}/{_label('effect', 'en-US')}: {name_zh} ({name_en})"
-
-
-COMMON_ACE_SEMANTIC_HINTS_ZH_EN: dict[str, str] = {
-    ace_id: "".join(localized[locale] for locale in QUERY_LOCALE_ORDER)
-    for ace_id, localized in _INDEX["common_ace_semantic_hints"]["values"].items()
-}
-
-
 __all__ = [
     "ACE_DIRECTED_ALIASES",
     "ACE_INTENT_KEYWORDS",
-    "ACE_TITLE_MARKERS_ZH",
     "ACE_TYPE_ALIASES",
     "AMBIGUOUS_BARE_TOPICS_ZH_EN",
     "AMBIGUOUS_PLUGIN_IDS_EN",
-    "ASYNC_TAG_ZH_EN",
     "CATALOG",
     "CATALOG_PATH",
-    "CATEGORY_LABEL_ZH",
     "CJK_ASCII_BOUNDARY_PATTERN",
-    "COMMON_ADDON_NAME_ZH",
-    "COMMON_ACE_SEMANTIC_HINTS_ZH_EN",
-    "DESCRIPTION_LABEL_ZH",
     "DETAIL_QUERY_PATTERNS",
     "DirectedAliasRule",
     "ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN",
@@ -420,17 +328,9 @@ __all__ = [
     "HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN",
     "HOWTO_SOFT_SKIP_ZH",
     "LIST_QUERY_PATTERNS",
-    "OPTIONS_LABEL_ZH",
-    "PARAMETERS_LABEL_ZH",
     "QUERY_PARTICLE_SPLIT_PATTERN_ZH",
-    "RETURN_TYPE_LABEL_ZH",
     "SCOPED_ACE_TYPE_RULES_ZH_EN",
-    "SCRIPT_NAME_LABEL_ZH",
     "SEMANTIC_FALLBACK_MARKERS_EN",
     "SUPPORTED_LOCALES",
     "TRANSLATE_QUERY_PATTERNS",
-    "TRIGGER_TAG_ZH_EN",
-    "VECTOR_METADATA_PREFIXES_ZH_EN",
-    "format_ace_title_zh_en",
-    "format_effect_title_zh_en",
 ]

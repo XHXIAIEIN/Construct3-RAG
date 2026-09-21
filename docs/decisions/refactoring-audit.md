@@ -100,57 +100,55 @@ Decisions established by that run:
 - exact stable-ID deduplication, named-vector plugin search, mandatory section
   filters, and the two-second outage cache are the production changes kept.
 
+## Qdrant full mode removed
+
+[`remove-qdrant-full-mode.md`](remove-qdrant-full-mode.md) removes the optional
+full mode of 2026-09-22: Qdrant, the embedding and reranker adapters, the
+vector ingestion pipeline with its parsers, the semantic evaluator and its
+gold set, and their settings, dependencies and docs. The service is Direct
+Lookup only.
+
+Decisions established by that record:
+
+- vector or model retrieval is a consumer of `data/` and lives in a repository
+  of its own;
+- `POST /search` has the modes `auto`, `lookup` and `list`, rejects unknown
+  fields, and returns no `semantic` section; `GET /health` reports schema
+  readiness;
+- the `semantic_fallback` route stays as the name of the query class Direct
+  Lookup declines.
+
+The sections above describe the evaluation of a mode that no longer exists;
+they stand as the evidence it was removed on.
+
 ## SOP and module-boundary refactor
 
-The structural split is now implemented while preserving the established
-external import paths:
+The structural split preserves the established external import paths:
 
 1. HTTP Pydantic contracts and presentation mapping live under
-   `src/interfaces/http/`. `src/domain/` now contains transport-independent
-   lookup, retrieval, and health records only; `src.domain.api` is a facade.
+   `src/interfaces/http/`. `src/domain/` contains transport-independent lookup
+   records only; `src.domain.api` is a facade.
 2. `SearchWorkflow` consumes typed `SearchCommand` and port Protocols. Its
-   request state contains `LookupResponse` and `SearchResult`, not response DTOs,
-   Pydantic private attributes, or `_type`/`_result_id` sentinel dictionaries.
-3. Input validation runs before LITE/backend checks. Invalid collections can no
-   longer become a misleading HTTP 200 merely because Qdrant is disabled.
+   request state contains `LookupResponse`, not response DTOs, Pydantic private
+   attributes, or `_type`/`_result_id` sentinel dictionaries.
+3. Input validation runs before the lookup engine is built.
 4. Canonical Lookup lives under `src/lookup/`: service, handlers, formatting,
    intent classification, and four repositories are separate. `src.rag.lookup`
    is a small compatibility facade that injects historical defaults.
-5. `src/qdrant/retrieval/semantic.py` is the optional adapter; identity and
-   ranking policy remain pure modules. Application code uses public port methods and
-   never reads `_qdrant_available` or calls `_search()`.
-6. Dense and sparse vector adapters live under `src/qdrant/vector/`, shared by
-   runtime retrieval and ingest without a runtime-to-maintenance dependency.
-   Everything specific to Qdrant sits in `src/qdrant/`, so the optional stack
-   is one package.
-7. `VectorDocument`, `VectorMode`, and pipeline reports make the ingest boundary
-   explicit. `index_all_data()` is a facade over the named
-   prepare → validate → publish → verify workflow. The canonical Qdrant writer
-   lives in `src.qdrant.adapter`, so orchestration no longer forms an
-   import cycle with its historical `src.ingest.indexer` facade.
-8. Collection routing/taxonomy moved to a validated JSON registry, and Schema
-   selection now validates a typed bilingual manifest rather than accepting
+5. Schema selection validates a typed bilingual manifest rather than accepting
    empty directories.
-9. Configuration parsing moved into immutable grouped settings under
+6. Configuration parsing moved into immutable grouped settings under
    `src/settings/`. Importing it neither loads dotenv nor probes network/model
    services; each process entry point calls `load_dotenv()` itself. The flat
    constant module `src.config` was deleted with the last of its callers.
-10. The uncalled `src/evaluation` module pointing at a missing RAGAS fixture was
-   removed. Current query and semantic evaluation tools remain explicit under
-   `tests/`.
+7. The uncalled `src/evaluation` module pointing at a missing RAGAS fixture was
+   removed. The query evaluation tools remain explicit under `tests/`.
 
 Remaining boundaries and deliberate limits:
 
-- Qdrant access, embedding/reranker lifecycle, and full-mode fusion still share
-  `HybridRetriever`. They form one optional adapter today; split them further
-  only for a concrete second lifecycle/backend or an independently testable
-  product need.
-- Pipeline preparation is all-or-nothing, but publication is still sequential
-  per collection. It does not yet use temporary collections plus atomic alias
-  swaps, so a mid-publish infrastructure failure requires a rerun.
-- CDN export, vector normalization, and Lookup bilingual projection still have
-  separate representations. Unify them only with golden output parity across
-  committed Schema, Direct Lookup, and the frozen semantic corpus.
+- CDN export and Lookup bilingual projection have separate representations.
+  Unify them only with golden output parity across committed Schema and Direct
+  Lookup.
 - The runtime reads `data/` for schemas and examples alike; the cache is read
   only for a `C3_VERSION` that `data/` does not hold yet. A stale same-version
   cache used to win over committed data, which hid the 2026-09-18 `_common`
@@ -169,8 +167,6 @@ Remaining boundaries and deliberate limits:
   provenance is validated against the committed query fixture.
 - API response fields remain language-neutral; localized values are returned as
   structured `en`/`zh` objects.
-- Human-readable vector text may be bilingual, but its templates must not be
-  embedded in parser or transport control flow.
 - English and Chinese READMEs describe the same behavior; volatile counts come
   from `_index.json` rather than prose.
 
@@ -178,11 +174,5 @@ Remaining boundaries and deliberate limits:
 
 - The lookup context formatter still returns an English Markdown compatibility
   string alongside structured matches. Remove it only with an API version bump.
-- `requirements-full.txt` still groups Qdrant, embedding, and reranking packages;
-  extras or lock files would make the optional installation boundary clearer.
-- Full mode still runs fanout, then cross-collection weighted RRF, then the
-  reranker over the RRF top-20. Stage two measured RRF without the reranker
-  as worse than raw fanout, so `RERANKER_ENABLED=false` selects the weakest
-  strategy. Changing the fusion step, or making the reranker the default,
-  needs a new run on a current index that also addresses the negative-query
-  noise recorded there.
+- A declined query and an empty lookup produce the same response. A typed
+  reason is recorded as not done in `remove-qdrant-full-mode.md`.
