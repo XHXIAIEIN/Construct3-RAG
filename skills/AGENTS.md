@@ -32,13 +32,20 @@ source. A game project holds a copy of it, made and refreshed by the skill's
   say in every error what to write or run next. They find the project from
   the current directory upward and this repository through the project's
   `Construct3-RAG:` line; what they share is in `scripts/c3project.py`.
+- What a script prints is read by a harness, not a terminal. It is UTF-8
+  whatever the code page (`utf8_output`), and it stops at `--limit`, about
+  10 000 characters, with a last line that says how to get the rest: a
+  harness cuts longer output, not always at the end and not always saying
+  so. A miss lists what comes near. A name that is not spelled out is
+  refused with the nearest ones, not taken for one of them.
 - English only; `--locale` switches the schema wording, not the tool's.
 - A check becomes an error after the two steps in
   `construct3-project/references/checker-rules.md`: the editor's message,
   then a run over the official examples that adds no finding.
-- A restructure that should not change output is compared, old against new,
-  over every official example and the game projects: exit code, stdout and
-  stderr (`docs/decisions/project-tools-skill.md`).
+- A change to a script is compared, old against new, over every official
+  example and the game projects: exit code, stdout and stderr
+  (`construct3-project/evals/sweep_outputs.py`). A restructure shows no
+  difference; a change of output shows exactly the runs it was meant for.
 
 ## Checks
 
@@ -67,13 +74,18 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | File in `construct3-project/evals/` | Holds |
 |-------------------------------------|-------|
 | `evals.json` | The test cases: prompt, expected output, assertions a script can check |
-| `make_fixtures.py` | One project per case and arm, outside the clone |
-| `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration |
+| `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
+| `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
+| `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration with the difference between arms |
+| `sweep_outputs.py` | What the scripts print over every example and game project, recorded and compared |
 | `train_queries.json`, `validation_queries.json` | Trigger queries, a fixed 60/40 split; near misses as the negatives |
 | `run_trigger_eval.py` | Trigger rates from `claude -p`, on Windows too |
 
 ```bash
-python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N
+git worktree add --detach <folder outside the clone>/rag-old HEAD      # before the change
+python skills/construct3-project/evals/sweep_outputs.py <workspace>/iteration-N/sweep-old.json --examples <example-projects>
+python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
+python skills/construct3-project/evals/trace.py <transcript>.jsonl --out <run folder>
 python skills/construct3-project/evals/grade.py skills/construct3-project-workspace/iteration-N
 python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-project/evals/train_queries.json --project <game with .claude/skills>
 ```
@@ -83,6 +95,14 @@ python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-pro
   `AGENTS.md` and reaches for the checker: tell it to use nothing outside
   the project folder, read its commands, and give a run that broke its arm
   a `void.txt` with the reason. `grade.py` does not score it.
+- The previous version of the skill is the baseline of a change to it. Its
+  arm names a checkout of the previous commit as its clone: pointed at this
+  one, the old copy reports that it differs and the agent refreshes it.
+- Read the transcript of every run, not only its answer. Claude Code keeps
+  it as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`;
+  the answer lists the commands a run remembers. When every assertion
+  passes, the lost calls are what is left to improve: a lookup that found
+  nothing, an edit that did not match.
 - `timing.json` holds the tokens and the duration of the run's completion
   notice, written when it arrives. A run without one has none; nothing is
   estimated.
