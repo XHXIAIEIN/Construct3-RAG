@@ -527,10 +527,44 @@ project; what it routes to is unchanged. Not measured: the eval prompt names
 `SKILL.md` itself, and four runs of the other prompt cannot show what two
 rows do.
 
+### The block leads to the skill: iteration 9
+
+The four runs of iteration 6 that skipped `SKILL.md` went the same way: the
+block, in two of them a listing of `.agents/skills/`, then
+`eventSheets/Game.json` and a hand edit. The skill was the sixth row of the
+table, behind the row for changing `eventSheets/` JSON by hand, and the
+block asked for "the file for what you are doing", in no order.
+
+The block now has two steps above the table: read the installed `SKILL.md`
+before opening a project file, with what its scripts do and that
+`eventSheets/` is read and changed through them; then the table. The row is
+gone from the table.
+
+Iteration 9 repeats iteration 6 with this block (iteration 8 is the sweep of
+the expression names, `sweep-old.json` and `sweep-new.json`): the same prompt, which
+names the project's `AGENTS.md` and not the skill, Claude Haiku 4.5, four
+runs per case.
+
+| | Read `SKILL.md` | Changed the sheet with a plan | Assertions |
+|---|---|---|---|
+| Iteration 6, skill as a row | 4 of 8 | 3 of 8 | all |
+| Iteration 9, skill as the first step | 8 of 8 | 8 of 8 | all but one |
+
+The one failed assertion is the text in `AddScore` left without the time,
+the miss `edit-sheet-script.md` already counts in two of six plan runs; it
+is not the block's. The baseline is iteration 6 as it ran, whose block had
+the four rows not yet merged and the same skill row. Not measured: a client
+that discovers `.claude/skills` by itself, where `description` triggers the
+skill; that is the trigger evaluation, still not run.
+
+In three of the eight runs of fix-load-errors in iterations 7 and 9 a plan
+replaced or removed event 6 and then placed an event `"after": 6`,
+refused with "event 6 is gone". The refusal is right and costs a call each
+time; a candidate for the message or for `SKILL.md`.
+
 ### Re-evaluate when
 
-- The block alone is to lead to the skill more often: move its row up or
-  word it as the first step, and count `read_skill_md` over runs started
-  with the prompt of iteration 6.
+- A run started from the block still edits a sheet's JSON by hand: read its
+  trace for what it opened instead.
 - A project shows a wrong `behaviorType`, addon id or *Else* that the
   finding did not repair in one round: the rule goes back, with the case.
