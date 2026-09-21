@@ -99,7 +99,7 @@ among them.
 
 Claude Haiku 4.5 subagents, two runs per case and arm, the previous skill
 (5f39cf7, from a worktree) as the baseline; runs in
-`skills/construct3-project-workspace/iteration-3` to `iteration-5`, read
+`.local/docs/evidence/skill-evals/construct3-project/iteration-3` to `iteration-5`, read
 with `evals/trace.py`. Means of two runs:
 
 | Case, version | Assertions | Tokens | Seconds | Tool calls | Lost calls |

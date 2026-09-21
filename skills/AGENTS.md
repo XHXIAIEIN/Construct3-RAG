@@ -15,8 +15,8 @@ source. A game project holds a copy of it, made and refreshed by the skill's
 - The folder is what ships: `install.py` mirrors every file in it into the
   game project, except `evals/`, which tests the skill from here. Nothing
   else lives in it, no scratch files, outputs or notes. What an eval run
-  leaves goes to `<skill>-workspace/iteration-N/` beside the folder, which
-  Git ignores.
+  leaves goes to `.local/docs/evidence/skill-evals/<skill>/iteration-N/`,
+  which Git ignores (`docs/AGENTS.md`).
 - `SKILL.md` is ASCII: the reference validator and plain clients read it
   with the locale's codec, and under cp936 a UTF-8 sign stops them.
 - `name` is the folder's name, lowercase with hyphens. `description` says
@@ -88,10 +88,10 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 
 ```bash
 git worktree add --detach <folder outside the clone>/rag-old HEAD      # before the change
-python skills/construct3-project/evals/sweep_outputs.py <workspace>/iteration-N/sweep-old.json --examples <example-projects>
+python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json --examples <example-projects>
 python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
 python skills/construct3-project/evals/trace.py <transcript>.jsonl --out <run folder>
-python skills/construct3-project/evals/grade.py skills/construct3-project-workspace/iteration-N
+python skills/construct3-project/evals/grade.py .local/docs/evidence/skill-evals/construct3-project/iteration-N
 python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-project/evals/train_queries.json --project <game with .claude/skills>
 ```
 
