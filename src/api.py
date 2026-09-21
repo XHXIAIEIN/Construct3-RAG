@@ -23,7 +23,6 @@ from src.application.health import build_health_outcome
 from src.application.search import (
     InvalidSearchRequestError,
     SearchWorkflow,
-    UnknownCollectionError,
     detect_language,
 )
 from src.settings import load_settings
@@ -31,8 +30,6 @@ from src.interfaces.http.models import (
     ACELocaleResult,
     ACEParam,
     DebugInfo,
-    DocResult,
-    ExampleResult,
     HealthResponse,
     LookupDebug,
     LookupItemResult,
@@ -41,9 +38,6 @@ from src.interfaces.http.models import (
     PluginInfo,
     SearchRequest,
     SearchResponse,
-    SemanticDebug,
-    SemanticSection,
-    TermResult,
 )
 from src.interfaces.http.presenters import (
     present_health_outcome,
@@ -56,33 +50,12 @@ SETTINGS = load_settings()
 
 app = FastAPI(
     title="Construct 3 RAG",
-    description="Retrieval service for Construct 3 documentation",
+    description="Lookup service for Construct 3 reference data",
     version="1.0.0",
 )
 
-_retriever = None
 _lookup_engine = None
 _PLAYGROUND_HTML = Path(__file__).parent / "interfaces" / "http" / "playground.html"
-
-
-def _get_retriever():
-    """Construct the optional semantic adapter only when a request needs it."""
-    global _retriever
-    if _retriever is None:
-        from src.qdrant.retrieval.semantic import HybridRetriever
-
-        _retriever = HybridRetriever(
-            qdrant_host=SETTINGS.runtime.qdrant_host,
-            qdrant_port=SETTINGS.runtime.qdrant_port,
-            embedding_model_name=SETTINGS.vector.embedding_model,
-            bm25_enabled=SETTINGS.features.bm25_enabled,
-            bm25_vocab_path=SETTINGS.schema.cache_dir / "bm25_vocab.msgpack",
-            native_sparse=SETTINGS.features.bge_m3_native_sparse,
-            reranker_enabled=SETTINGS.features.reranker_enabled,
-            reranker_model=SETTINGS.vector.reranker_model,
-            reranker_top_k=SETTINGS.vector.reranker_top_k,
-        )
-    return _retriever
 
 
 def _get_lookup_engine():
@@ -96,12 +69,8 @@ def _get_lookup_engine():
 
 
 def _search_workflow() -> SearchWorkflow:
-    """Bind current runtime settings and lazy providers to one request workflow."""
-    return SearchWorkflow(
-        get_lookup_engine=_get_lookup_engine,
-        get_retriever=_get_retriever,
-        lite_mode=SETTINGS.features.lite_mode,
-    )
+    """Bind the lazy lookup provider to one request workflow."""
+    return SearchWorkflow(get_lookup_engine=_get_lookup_engine)
 
 
 @app.get("/playground")
@@ -117,12 +86,7 @@ def playground() -> Response:
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     return present_health_outcome(
-        build_health_outcome(
-            lite_mode=SETTINGS.features.lite_mode,
-            schema_dir=SETTINGS.schema.directory,
-            embedding_model=SETTINGS.vector.embedding_model,
-            get_retriever=_get_retriever,
-        )
+        build_health_outcome(schema_dir=SETTINGS.schema.directory)
     )
 
 
@@ -132,8 +96,6 @@ def search(request: SearchRequest) -> SearchResponse:
     try:
         outcome = _search_workflow().execute(request_to_command(request))
         return present_search_outcome(outcome)
-    except UnknownCollectionError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except InvalidSearchRequestError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
@@ -149,15 +111,10 @@ __all__ = [
     "HealthResponse",
     "PluginInfo",
     "ACEParam",
-    "DocResult",
-    "TermResult",
-    "ExampleResult",
     "ACELocaleResult",
     "LookupMatchResult",
     "LookupItemResult",
     "LookupSection",
     "LookupDebug",
-    "SemanticDebug",
-    "SemanticSection",
     "DebugInfo",
 ]

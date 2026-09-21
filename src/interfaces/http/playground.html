@@ -155,11 +155,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .result-header{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--deepBg)}
 .result-type{font-size:9px;font-weight:bold;padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.3px}
 .result-type.ace{background:#1a2a3a;color:var(--blue)}
-.result-type.doc{background:#2a2a1a;color:var(--yellow)}
-.result-type.example{background:#1a3a2a;color:var(--green)}
-.result-type.term{background:#2a1a3a;color:var(--purple)}
 .result-type.lookup{background:#3a2a1a;color:var(--orange)}
-.result-score{font-size:9px;color:var(--dis);margin-left:auto}
 .result-title{font-size:11px;font-weight:bold;color:var(--fg)}
 .result-subtitle{font-size:10px;color:var(--secondFg)}
 .result-body{padding:6px 8px;font-size:10px;line-height:1.5;color:var(--fg)}
@@ -474,7 +470,6 @@ function createCard(apiKey, posX, posY) {
           <button class="mode-btn" onclick="setMode('${id}',this,'auto')">auto</button>
           <button class="mode-btn active" onclick="setMode('${id}',this,'lookup')">lookup</button>
           <button class="mode-btn" onclick="setMode('${id}',this,'list')">list</button>
-          <button class="mode-btn" onclick="setMode('${id}',this,'semantic')">semantic</button>
           ${presetOptions ? `<span class="opt-label" style="margin-left:6px">preset</span>
           <select class="tb-select" style="font-size:9px;padding:2px 4px" onchange="applyPreset('${id}',this.value,'${apiKey}');this.selectedIndex=0"><option value="">--</option>${presetOptions}</select>` : ''}
         </div>
@@ -547,50 +542,6 @@ function applyPreset(cardId, presetIdx, apiKey) {
   syncToEditor(cardId);
 }
 
-function renderSemanticResult(r, kind) {
-  let html = `<div class="result-card">`;
-
-  if (kind === 'doc') {
-    html += `<div class="result-header">
-      <span class="result-type doc">DOC</span>
-      <span class="result-title">${esc(r.title)}</span>
-      ${r.section ? `<span class="result-subtitle">§ ${esc(r.section)}</span>` : ''}
-      <span class="result-score">${Number(r.score || 0).toFixed(3)}</span>
-    </div>
-    <div class="result-meta"><span class="result-tag">${esc(r.collection || '')}</span>${r.path ? `<span class="result-tag">${esc(r.path)}</span>` : ''}</div>
-    <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 300))}${r.content?.length > 300 ? '...' : ''}</div>`;
-  }
-
-  else if (kind === 'example') {
-    html += `<div class="result-header">
-      <span class="result-type example">EXAMPLE</span>
-      <span class="result-title">${esc(r.project)}</span>
-      <span class="result-score">${Number(r.score || 0).toFixed(3)}</span>
-    </div>
-    <div class="result-content" onclick="this.classList.toggle('expanded')">${esc(r.content?.substring(0, 200))}</div>`;
-  }
-
-  else if (kind === 'term') {
-    html += `<div class="result-header">
-      <span class="result-type term">TERM</span>
-      <span class="result-title">${esc(r.zh)}</span>
-      <span class="result-subtitle">${esc(r.en)}</span>
-      <span class="result-score">${Number(r.score || 0).toFixed(3)}</span>
-    </div>`;
-  }
-
-  else {
-    html += `<div class="result-header">
-      <span class="result-type">${esc(kind || '?')}</span>
-      <span class="result-score">${(r.score||0).toFixed(3)}</span>
-    </div>
-    <div class="result-content">${esc(JSON.stringify(r, null, 2))}</div>`;
-  }
-
-  html += `</div>`;
-  return html;
-}
-
 function flattenLookupMatches(matches) {
   const flattened = [];
   for (const [pluginId, groups] of Object.entries(matches || {})) {
@@ -601,22 +552,12 @@ function flattenLookupMatches(matches) {
   return flattened;
 }
 
-function semanticEntries(semantic) {
-  if (!semantic) return [];
-  return [
-    ...(semantic.docs || []).map(result => ({ kind: 'doc', result })),
-    ...(semantic.terms || []).map(result => ({ kind: 'term', result })),
-    ...(semantic.examples || []).map(result => ({ kind: 'example', result }))
-  ];
-}
-
 function renderSearchResults(data) {
   const lk = data.lookup;
   const lookupMatches = flattenLookupMatches(lk?.matches);
   const listCount = ['conditions', 'actions', 'expressions']
     .reduce((count, key) => count + (lk?.[key]?.length || 0), 0);
-  const semanticResults = semanticEntries(data.semantic);
-  const totalResults = lookupMatches.length + listCount + semanticResults.length;
+  const totalResults = lookupMatches.length + listCount;
   let html = `<div class="search-meta">
     <span>mode: <b>${data.mode}</b></span>
     <span>lang: <b>${data.lang}</b></span>
@@ -669,11 +610,6 @@ function renderSearchResults(data) {
       html += `<div class="result-content" onclick="this.classList.toggle('expanded')">${esc(lk.context)}</div>`;
     }
     html += `</div>`;
-  }
-
-  // Render semantic results
-  for (const { kind, result } of semanticResults) {
-    html += renderSemanticResult(result, kind);
   }
 
   html += `</div>`;

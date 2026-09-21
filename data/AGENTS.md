@@ -1,6 +1,6 @@
 # data/ Directory
 
-Committed Construct 3 reference data. Readable without the API or Qdrant.
+Committed Construct 3 reference data. Readable without the API.
 `c3-schemas/_index.json` is the source of truth for version and counts.
 
 | Path | Content |
