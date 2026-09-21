@@ -67,14 +67,14 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 ## 搜索服务（可选）
 
 ```bash
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
 该命令基于已提交的数据启动确定性、离线的查找服务，不连接 Qdrant，也不加载模型。覆盖 Schema、手册和示例项目的语义检索需要显式启用，依赖 Qdrant 和嵌入模型：
 
 ```bash
-pip install -r requirements-full.txt
+pip install -r src/requirements-full.txt
 docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 python scripts/setup.py --full
 ```

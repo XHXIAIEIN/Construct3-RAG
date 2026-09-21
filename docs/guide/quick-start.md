@@ -3,7 +3,7 @@
 ## Default Setup
 
 ```bash
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 python scripts/setup.py
 ```
 
@@ -19,7 +19,7 @@ Adds vector search across all documentation. Requires Docker, ~4GB disk, GPU rec
 
 ```bash
 # 1. Install full dependencies
-pip install -r requirements-full.txt
+pip install -r src/requirements-full.txt
 
 # 2. Start Qdrant
 docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
@@ -47,7 +47,7 @@ python scripts/setup.py --port 9000    # custom port
 
 ## Configuration
 
-Environment variables (`.env` file supported), defined in `src/settings/`:
+Environment variables (`src/.env` file supported, copy from `src/.env.example`), defined in `src/settings/`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|

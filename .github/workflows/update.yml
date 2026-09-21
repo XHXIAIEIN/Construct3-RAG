@@ -24,7 +24,7 @@ jobs:
       # The lookup-only requirements: src.settings imports the lookup package,
       # which needs jieba, and python-dotenv alone is not enough.
       - name: Install lookup-only deps
-        run: pip install -r requirements.txt
+        run: pip install -r src/requirements.txt
 
       - name: Check for new version
         id: check

@@ -9,12 +9,13 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(ROOT / "src" / ".env")
 except ImportError:
     pass
 
@@ -46,7 +47,7 @@ def main():
     print(f"\nNew version available: {latest}")
 
     if args.update:
-        env_path = Path(__file__).parent.parent / ".env"
+        env_path = ROOT / "src" / ".env"
         if env_path.exists():
             content = env_path.read_text(encoding="utf-8")
             if f"C3_VERSION={current_version}" in content:
