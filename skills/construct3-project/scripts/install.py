@@ -81,8 +81,8 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
                          f"the line to write is '- Construct3-RAG: {rag.as_posix()}'")
         if SKILL not in text:
             notes.append(f"{name}: left as it is; its table has no row for this skill. The row to add: "
-                         f"| Checking project files, looking an ACE up, reading a sheet as events, generating the "
-                         f"whole project | {row} |")
+                         f"| Looking an ACE up, reading a sheet as events, putting events into a sheet, checking "
+                         f"project files, generating the whole project | {row} |")
         return notes or [f"{name}: already names the clone and this skill, left as it is"]
 
     block = BLOCK.read_text(encoding="utf-8")

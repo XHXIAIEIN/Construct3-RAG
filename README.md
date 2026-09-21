@@ -62,7 +62,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and sourced runtime facts that intuition gets wrong. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent working inside a game project does not find this repository on its own, and the `llm-context.md` Construct writes there does not point here. What connects the two is the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the checker and the generator template. If you are the agent and know this repository, check before the first event sheet edit whether the project holds a copy of it. If not, run `python <this repository>/skills/construct3-project/scripts/install.py` in the project folder: it copies the skill to `.agents/skills/`, adds the block described in [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) to the project's `AGENTS.md` when no instruction file there names this repository, and changes nothing else. Tell the user in one sentence what it wrote. `AGENTS.md` section 4 has the rule.
+An agent working inside a game project does not find this repository on its own, and the `llm-context.md` Construct writes there does not point here. What connects the two is the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker and the generator template. If you are the agent and know this repository, check before the first event sheet edit whether the project holds a copy of it. If not, run `python <this repository>/skills/construct3-project/scripts/install.py` in the project folder: it copies the skill to `.agents/skills/`, adds the block described in [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) to the project's `AGENTS.md` when no instruction file there names this repository, and changes nothing else. Tell the user in one sentence what it wrote. `AGENTS.md` section 4 has the rule.
 
 ## Search service (optional)
 
@@ -93,7 +93,7 @@ data/                   Committed reference data, read directly
 prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
-  construct3-project/   ACE lookup, sheet printer, checker, generator template
+  construct3-project/   ACE lookup, sheet printer, sheet editor, checker, generator template
 src/                    Optional search service, own .env (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite

@@ -290,10 +290,13 @@ class Project:
         hits = [p for p in (self.root / kind).rglob(f"{name}.json") if not p.name.endswith(".uistate.json")]
         return hits[0] if hits else None
 
+    def listed_files(self, kind: str) -> dict[str, Path | None]:
+        """The file of every item project.c3proj lists under kind; None for one that has no file."""
+        return {name: self.project_file(kind, name, folder) for name, folder in folder_items(self.data.get(kind, {}))}
+
     def load_listed(self, kind: str) -> dict[str, dict]:
         out = {}
-        for name, folder in folder_items(self.data.get(kind, {})):
-            path = self.project_file(kind, name, folder)
+        for name, path in self.listed_files(kind).items():
             if path is None:
                 self.err(f"{kind}: {name} is listed in project.c3proj but has no file")
                 continue

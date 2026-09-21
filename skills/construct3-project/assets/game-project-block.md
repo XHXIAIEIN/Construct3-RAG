@@ -25,5 +25,5 @@ read next.
 | Writing an addon: a new plugin, behavior, effect or theme for the Addon Manager, not an event that uses one | Construct3-Manual/Construct3-Addon-SDK/index.md, then a sample under Construct-Addon-SDK/ |
 | Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand | Construct3-RAG/prompts/references/hand-editing-project-files.md |
 | Naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md, "Naming an event to the user" |
-| Checking project files, looking an ACE up, reading a sheet as events, generating the whole project from a script | the construct3-project skill, `.agents/skills/construct3-project/SKILL.md`; if that folder is missing, Construct3-RAG/AGENTS.md section 4 installs it |
+| Looking an ACE up, reading a sheet as events, putting events into a sheet, checking project files, generating the whole project from a script | the construct3-project skill, `.agents/skills/construct3-project/SKILL.md`; if that folder is missing, Construct3-RAG/AGENTS.md section 4 installs it |
 | Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path> |

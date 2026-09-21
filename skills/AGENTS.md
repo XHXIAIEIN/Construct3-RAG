@@ -8,7 +8,7 @@ source. A game project holds a copy of it, made and refreshed by the skill's
 
 | Skill | Carries |
 |-------|---------|
-| `construct3-project/` | ACE lookup, sheet printer, checker and generator template for a Construct 3 folder project; the block for the project's instruction file |
+| `construct3-project/` | ACE lookup, sheet printer, sheet editor, checker and generator template for a Construct 3 folder project; the block for the project's instruction file |
 
 ## Rules
 
@@ -38,6 +38,11 @@ source. A game project holds a copy of it, made and refreshed by the skill's
   harness cuts longer output, not always at the end and not always saying
   so. A miss lists what comes near. A name that is not spelled out is
   refused with the nearest ones, not taken for one of them.
+- A script that changes a project file checks the result before it writes
+  it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
+  newline at the end, the editor's keys in the editor's order), and has
+  `--dry-run`. `edit_sheet.py` is the one that does; what the editor writes
+  per kind of event is counted in `docs/decisions/edit-sheet-script.md`.
 - English only; `--locale` switches the schema wording, not the tool's.
 - A check becomes an error after the two steps in
   `construct3-project/references/checker-rules.md`: the editor's message,
@@ -76,8 +81,8 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `evals.json` | The test cases: prompt, expected output, assertions a script can check |
 | `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
-| `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration with the difference between arms |
-| `sweep_outputs.py` | What the scripts print over every example and game project, recorded and compared |
+| `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
+| `sweep_outputs.py` | What the scripts print over every example and game project, a dry run of a small plan included, recorded and compared |
 | `train_queries.json`, `validation_queries.json` | Trigger queries, a fixed 60/40 split; near misses as the negatives |
 | `run_trigger_eval.py` | Trigger rates from `claude -p`, on Windows too |
 
@@ -106,7 +111,8 @@ python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-pro
 - `timing.json` holds the tokens and the duration of the run's completion
   notice, written when it arrives. A run without one has none; nothing is
   estimated.
-- One run per case and arm gives counts, not a spread. Repeat the runs
-  before quoting a deviation.
+- One run per case and arm gives counts, not a spread. Lay a cell out more
+  than once, `--arms with_skill with_skill_2`, before quoting a deviation;
+  lost calls vary from 1 to 6 between two runs of the same cell.
 - The description changes on the failures of the train queries only, and
   the validation queries choose between descriptions.

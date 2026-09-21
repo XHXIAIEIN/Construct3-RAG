@@ -1,6 +1,6 @@
 """Print an event sheet as the editor words it, under the editor's event numbers.
 
-    python scripts/print_sheet.py [SHEET ...] [--events A-B] [--outline] [--limit CHARS]
+    python scripts/print_sheet.py [SHEET ...] [--events A-B] [--outline] [--show N] [--limit CHARS]
                                   [--project FOLDER] [--rag FOLDER] [--locale en-US]
 
 Conditions and actions are worded from the schema's display-text, in the
@@ -12,7 +12,8 @@ action blocks before it in the sheet, sub-events included, plus one: the
 number in the editor's margin and in its Find results. A variable, comment
 or include takes no number of its own and belongs to the next one.
 --outline prints the numbering alone, with the sid of each event, which is
-the string to search the sheet's JSON for.
+the string to search the sheet's JSON for. --show N prints one event as
+JSON, for a plan of edit_sheet.py that puts it back changed.
 
 A harness cuts long tool output, so printing stops at --limit characters, at
 an event, and the last line gives the --events range that continues. A part
@@ -20,6 +21,7 @@ printed with --events starts with the events it sits in, marked [context]
 and without their actions. Without a sheet name, a project whose sheets do
 not fit the limit prints the list of its sheets instead.
 """
+import json
 import re
 import sys
 from typing import Iterator, NamedTuple
@@ -172,6 +174,24 @@ def events_range(spec: str | None) -> tuple[int, int | None]:
     return first, last
 
 
+def show(sheet: dict, name: str, n: int, limit: int) -> int:
+    """Event n as JSON, two spaces deep: what edit_sheet.py takes back under "replace"."""
+    def numbered(events: list) -> Iterator[dict]:
+        for ev in events:
+            if ev.get("eventType") in NUMBERED:
+                yield ev
+            yield from numbered(ev.get("children", []))
+    events = list(numbered(sheet["events"]))
+    if not 1 <= n <= len(events):
+        sys.exit(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
+    text = json.dumps(events[n - 1], indent=2, ensure_ascii=False)
+    if limit and len(text) > limit:
+        sys.exit(f"event {n} is {len(text)} characters of JSON, over the limit of {limit} (--limit): show one of its "
+                 f"sub-events, or pass --limit 0 and send it to a file")
+    print(text)
+    return 0
+
+
 def again(args, sheets: list[str], events: str | None) -> str:
     """The command that prints sheets, or a range of one, with the options of this run."""
     def quoted(value) -> str:
@@ -193,6 +213,7 @@ def main() -> int:
         "  python scripts/print_sheet.py Game\n"
         "  python scripts/print_sheet.py Game --events 40-80   a part; the last line of a cut print names the next one\n"
         "  python scripts/print_sheet.py --outline Game        numbers and sids, to find the JSON behind a number\n"
+        "  python scripts/print_sheet.py Game --show 5         event 5 as JSON\n"
         "  python scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/template-snake\n"
         "  python scripts/print_sheet.py Game --locale zh-CN   the editor's Chinese wording\n\n"
         "exit codes: 0 printed, whole or the part that fits; 1 no such sheet, a range past the sheet's end, or\n"
@@ -202,6 +223,8 @@ def main() -> int:
                     help="print only the events numbered A to B of one sheet; 40- runs to the end, 40 is one event")
     ap.add_argument("--outline", action="store_true",
                     help="print the event numbering with each event's sid, without conditions and actions")
+    ap.add_argument("--show", type=int, metavar="N",
+                    help="print event N of one sheet as JSON, to change and put back with edit_sheet.py's replace")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -216,8 +239,10 @@ def main() -> int:
         if name not in sheets:
             sys.exit(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")
     names = args.sheets or list(sheets)
-    if args.events and len(names) != 1:
-        sys.exit(f"--events reads one sheet; name it: {', '.join(sheets)}")
+    if (args.events or args.show is not None) and len(names) != 1:
+        sys.exit(f"--events and --show read one sheet; name it: {', '.join(sheets)}")
+    if args.show is not None:
+        return show(sheets[names[0]], names[0], args.show, args.limit)
     first, last = events_range(args.events)
 
     rows, totals = {}, {}
