@@ -93,7 +93,6 @@ def main():
     print(f"  Data:  {settings.paths.data_dir}")
     print(f"{'='*50}")
     print("\nReview with `git diff --stat data/`, then commit.")
-    print("Full mode: rebuild the index with `python -m src.ingest.indexer --rebuild`.")
 
 
 if __name__ == "__main__":

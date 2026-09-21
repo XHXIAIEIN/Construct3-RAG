@@ -2,8 +2,7 @@
 """One-command setup for Construct3-RAG.
 
 Usage:
-    python scripts/setup.py              # default: lookup only (no Docker needed)
-    python scripts/setup.py --full       # full: install all deps + Qdrant + index
+    python scripts/setup.py                 # install deps, start the lookup server
     python scripts/setup.py --refresh-data  # explicitly refresh Construct data
     python scripts/setup.py --version <release>  # use a specific C3 version
 """
@@ -11,7 +10,6 @@ import argparse
 import os
 import subprocess
 import sys
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -44,27 +42,11 @@ def check_python():
     print("  OK")
 
 
-def install_deps(full: bool = False):
-    req_file = ROOT / "src" / ("requirements-full.txt" if full else "requirements.txt")
+def install_deps():
+    req_file = ROOT / "src" / "requirements.txt"
     print(f"[deps] Installing from {req_file.name}...")
     run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
     print("  OK")
-
-
-def check_qdrant(host: str = "localhost", port: int = 6333) -> bool:
-    print(f"[qdrant] Checking Qdrant at {host}:{port}...")
-    try:
-        urllib.request.urlopen(f"http://{host}:{port}", timeout=3)
-        print("  OK — Qdrant is running")
-        return True
-    except Exception:
-        print("  NOT RUNNING")
-        print()
-        print("  Start Qdrant with one of:")
-        print("    docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant")
-        print("    docker start qdrant  (if container already exists)")
-        print()
-        return False
 
 
 def fetch_cdn(version: str | None = None):
@@ -112,29 +94,12 @@ def report_local_schema():
     print("  Use --refresh-data to refresh it explicitly.")
 
 
-def build_index(version: str | None = None):
-    print("[index] Building vector index (this takes a few minutes)...")
-    index_env = os.environ.copy()
-    if version:
-        index_env["C3_VERSION"] = version
-    run(
-        [sys.executable, "-m", "src.ingest.indexer", "--rebuild"],
-        cwd=str(ROOT),
-        env=index_env,
-    )
-    print("  OK")
-
-
-def start_server(
-    port: int = 8765, full: bool = False, version: str | None = None
-):
+def start_server(port: int = 8765, version: str | None = None):
     print(f"[server] Starting API server on port {port}...")
-    print(f"  Mode:       {'full semantic (explicit)' if full else 'lookup only (default)'}")
     print(f"  Playground: http://localhost:{port}/playground")
     print(f"  Health:     http://localhost:{port}/health")
     print()
     server_env = os.environ.copy()
-    server_env["LITE_MODE"] = "false" if full else "true"
     if version:
         server_env["C3_VERSION"] = version
     run([sys.executable, "-m", "uvicorn", "src.api:app",
@@ -144,43 +109,30 @@ def start_server(
 
 def main():
     parser = argparse.ArgumentParser(description="Construct3-RAG setup")
-    parser.add_argument("--full", action="store_true",
-                        help="Full mode: install all deps including embedding/Qdrant, build index")
     parser.add_argument(
         "--refresh-data",
         action="store_true",
         help="Explicitly refresh the versioned Construct CDN dataset",
     )
     parser.add_argument("--version", type=str, help="C3 version (default: from .env)")
-    parser.add_argument("--skip-index", action="store_true", help="Skip index rebuild")
     parser.add_argument("--skip-deps", action="store_true", help="Skip pip install")
     parser.add_argument("--port", type=int, default=SETTINGS.runtime.server_port, help="Server port")
     args = parser.parse_args()
 
     print("=" * 50)
-    print(f"  Construct 3 RAG — {'Full' if args.full else 'Lookup'} Setup")
+    print("  Construct 3 RAG — Setup")
     print("=" * 50)
     print()
 
     check_python()
     if not args.skip_deps:
-        install_deps(full=args.full)
-    if args.full or args.refresh_data or args.version:
+        install_deps()
+    if args.refresh_data or args.version:
         fetch_cdn(args.version)
     else:
         report_local_schema()
 
-    if args.full:
-        qdrant_ok = check_qdrant()
-        if not qdrant_ok:
-            print("  Start Qdrant and re-run.")
-            sys.exit(1)
-        if not args.skip_index:
-            build_index(args.version)
-        else:
-            print("[index] Skipping (--skip-index)")
-
-    start_server(args.port, full=args.full, version=args.version)
+    start_server(args.port, version=args.version)
 
 
 if __name__ == "__main__":

@@ -1,48 +1,28 @@
 # Quick Start
 
-## Default Setup
+The data under `data/` needs no setup: read the files. This page starts the
+optional lookup service over them.
+
+## Setup
 
 ```bash
 pip install -r src/requirements.txt
 python scripts/setup.py
 ```
 
-Provides keyword lookup for ACE definitions. No Docker, no GPU needed.
-The launched server is explicitly given `LITE_MODE=true`; `mode=auto` therefore
-returns lookup results and safe fallbacks without attempting vector retrieval.
+Provides keyword lookup for ACE definitions. It runs offline and loads no
+model; there is no database to start.
 
 Open `http://localhost:8765/playground` to test.
-
-## Full Setup (semantic search)
-
-Adds vector search across all documentation. Requires Docker, ~4GB disk, GPU recommended.
-
-```bash
-# 1. Install full dependencies
-pip install -r src/requirements-full.txt
-
-# 2. Start Qdrant
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
-
-# 3. Clone data sources (place alongside this project)
-git clone https://github.com/XHXIAIEIN/Construct3-Manual.git
-git clone https://github.com/Scirra/Construct-Example-Projects.git   # optional
-git clone https://github.com/Scirra/Construct-Addon-SDK.git          # optional
-
-# 4. Setup with indexing
-python scripts/setup.py --full
-```
 
 ## Setup Options
 
 ```bash
-python scripts/setup.py               # default: lookup only
-python scripts/setup.py --full        # full: Qdrant + embedding + index
+python scripts/setup.py                 # install deps, start the lookup server
 python scripts/setup.py --refresh-data  # explicitly refresh Construct data
-python scripts/setup.py --skip-index  # skip index rebuild
-python scripts/setup.py --skip-deps   # skip pip install
+python scripts/setup.py --skip-deps     # skip pip install
 python scripts/setup.py --version <release>  # specific C3 version
-python scripts/setup.py --port 9000    # custom port
+python scripts/setup.py --port 9000     # custom port
 ```
 
 ## Configuration
@@ -54,21 +34,15 @@ Environment variables (`src/.env` file supported, copy from `src/.env.example`),
 | `C3_VERSION` | see config | Construct 3 editor version |
 | `C3_SCHEMA_DIR` | auto-resolved | Explicit schema directory override |
 | `RAG_SERVER_PORT` | `8765` | API server port |
-| `LITE_MODE` | `true` | Lookup-only default; set false only for a prepared full semantic service |
-| `EMBEDDING_MODEL` | `Qwen/Qwen3-Embedding-0.6B` | Embedding model (full mode) |
-| `QDRANT_HOST`, `QDRANT_PORT` | `localhost`, `6333` | Qdrant address (full mode) |
-| `RERANKER_ENABLED`, `RERANKER_MODEL` | `true`, `BAAI/bge-reranker-v2-m3` | CrossEncoder over the fused top 20 (full mode) |
-| `BM25_ENABLED` | `false` | Add a BM25 sparse vector at index and query time (full mode) |
-| `BGE_M3_NATIVE_SPARSE` | `false` | Use bge-m3 lexical weights as the sparse vector; needs `EMBEDDING_MODEL=BAAI/bge-m3` |
+| `C3_CDN_BASE` | `https://editor.construct.net` | Where a data refresh fetches from |
 | `C3_CACHE_DIR` | `.cache/c3-cdn` | Where CDN downloads and exported schemas are cached |
 
 The service reads the committed `data/` directory. Default setup and direct
 Uvicorn startup therefore make no CDN request. `scripts/init.py`,
 `--refresh-data`, and `--version` fetch the release into `C3_CACHE_DIR` and
 replace `data/c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`; review
-the result with `git diff` before committing. `--full` refreshes the same way
-before building its index. The cache is read directly only when `C3_VERSION`
-names a release that `data/` does not yet hold.
+the result with `git diff` before committing. The cache is read directly only
+when `C3_VERSION` names a release that `data/` does not yet hold.
 
 ## Test
 

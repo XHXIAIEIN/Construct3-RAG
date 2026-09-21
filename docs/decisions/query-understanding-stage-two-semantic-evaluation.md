@@ -267,3 +267,12 @@ hashes identify the files for anyone with access to that machine.
 
 The isolated Qdrant container and the final LITE API process remain running for
 local inspection. Neither is attached to the historical volume.
+
+## Update 2026-09-22
+
+The full mode this record evaluated is removed:
+[`remove-qdrant-full-mode.md`](remove-qdrant-full-mode.md). The evaluator, the
+semantic gold set and the retrieval code named above are last present at
+commit `5f39cf72ca064949ea4dca29827a833605c16364`. That record re-reads the two
+reports listed here by the rank of the gold ACE instead of nDCG over mixed
+documents.
